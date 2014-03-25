@@ -15,11 +15,9 @@ from pyatspi import KEY_PRESS, KEY_RELEASE
 class HelpFunc(BaseDogTail):
 
     def saveProject(self, path=None, saveAs=True):
-        proj_menu = self.menubar.menu("Project")
-        proj_menu.click()
         if saveAs:
             self.assertIsNotNone(path)
-            proj_menu.menuItem("Save As...").click()
+            dogtail.rawinput.keyCombo("<Control><Shift>s")  # Save project as
             save_dialog = self.pitivi.child(name="Save As...", roleName='file chooser', recursive=False)
             text_field = save_dialog.child(roleName="text")
             text_field.text = path
@@ -29,13 +27,11 @@ class HelpFunc(BaseDogTail):
             self.unlink.append(path)
         else:
             # Just save
-            proj_menu.menuItem("Save").click()
+            dogtail.rawinput.keyCombo("<Control>s")  # Save project
 
     def loadProject(self, url, unsaved_changes=None):
         dogtail.rawinput.pressKey("Esc")  # Ensure the welcome dialog is closed
-        proj_menu = self.menubar.menu("Project")
-        proj_menu.click()
-        proj_menu.menuItem("Open...").click()
+        dogtail.rawinput.keyCombo("<Control>o")  # Open project
         # If an "unsaved changes" prompt is expected to show up, deal with it:
         if unsaved_changes is not None:
             result = self._check_unsaved_changes_dialog(decision=unsaved_changes)

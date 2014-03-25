@@ -78,9 +78,8 @@ class BaseDogTail(unittest.TestCase):
         if kill:
             os.system("kill -9 %i" % self.pid)
         else:
-            proj_menu = self.menubar.menu("Project")
-            proj_menu.click()
-            proj_menu.child("Quit").click()
+            import dogtail.rawinput
+            dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         if clean:
             for filename in self.unlink:
                 try:

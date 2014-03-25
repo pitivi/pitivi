@@ -17,8 +17,7 @@ class ProjectPropertiesTest(HelpFunc):
         a project to load but cancel the file chooser, then try to import clips
         """
         dogtail.rawinput.pressKey("Esc")  # Dismiss the welcome dialog
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Open...").click()
+        dogtail.rawinput.keyCombo("<Control>o")  # Open project
         # The file chooser shows up, dismiss it without choosing any project:
         chooser = self.pitivi.child(name="Open File...", roleName="file chooser", recursive=False)
         chooser.child(name="Cancel", roleName="push button").click()
@@ -33,8 +32,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertEqual(len(iconview.children), 1)
         self.insert_clip(the_clip)
         # Try to quit, it should warn us about unsaved changes.
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Quit").click()
+        dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         unsaved_changes = self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False)
         unsaved_changes.button("Close without saving").click()
 
@@ -192,12 +190,10 @@ class ProjectPropertiesTest(HelpFunc):
                         "Backup is older than saved file")
 
         # Try to quit, it should warn us about unsaved changes.
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Quit").click()
+        dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Cancel").click()
         # Check again to ensure the backup didn't disappear - and then save
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Quit").click()
+        dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Save").click()
         # The backup should now be deleted, and should not come back:
         sleep(1)
@@ -229,8 +225,7 @@ class ProjectPropertiesTest(HelpFunc):
         self.goToEnd_button.click()
         self.assertEqual(seektime.text, DURATION_OF_TWO_CLIPS)
         # ...and that clicking "Save" actually triggers "Save As":
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Save").click()
+        dogtail.rawinput.keyCombo("<Control>s")  # Save project
         try:
             _save_as_dialog = self.pitivi.child(name="Save As...", roleName="file chooser", recursive=False, retry=False)
             dogtail.rawinput.pressKey("Esc")  # Dismiss the dialog
@@ -253,15 +248,13 @@ class ProjectPropertiesTest(HelpFunc):
         self.assertTrue(self.wait_for_update(backup_path, timestamp))
 
         # Quitting should warn us about unsaved changes (still in a newer version)
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Quit").click()
+        dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         # Dismiss the unsaved changes warning by cancelling it:
         self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False).button("Cancel").click()
         # Save stuff behind the scenes...
         self.saveProject(saveAs=False)
         # The backup file should now be gone, and no warning displayed:
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("Quit").click()
+        dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         self.assertFalse(os.path.exists(backup_path))
 
     def test_load_save(self):
@@ -286,8 +279,7 @@ class ProjectPropertiesTest(HelpFunc):
 
         # Creating a blank project should clear the library and show its infobar
         sleep(0.5)
-        self.menubar.menu("Project").click()
-        self.menubar.menu("Project").menuItem("New").click()
+        dogtail.rawinput.keyCombo("<Control>n")  # Create a new project
         self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False).button("OK").click()
 
         self.assertEqual(len(iconview.children), 0,
