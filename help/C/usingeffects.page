@@ -5,8 +5,12 @@
 
   <info>
     <link type="guide" xref="index#effects"/>
-    <revision pkgversion="0.15" version="0.1" date="2011-06-20" status="incomplete"/>
+    <revision pkgversion="0.93" version="0.1" date="2014-03-25" status="draft"/>
     <credit type="author">
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
+    </credit>
+    <credit type="contributor">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
     </credit>
