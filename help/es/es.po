@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2014-03-21 11:25+0000\n"
-"PO-Revision-Date: 2014-03-24 10:52+0100\n"
+"POT-Creation-Date: 2014-03-25 11:49+0000\n"
+"PO-Revision-Date: 2014-03-25 16:21+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -2554,8 +2554,7 @@ msgstr ""
 #: C/presets.page:38
 msgid "Some presets are provided by default and cannot be removed."
 msgstr ""
-"Algunos ajustes predefinidos están determinados por defecto y no se pueden "
-"quitar."
+"Algunos ajustes predefinidos están predeterminados y no se pueden quitar."
 
 #. (itstool) path: section/title
 #: C/presets.page:41
@@ -2670,6 +2669,16 @@ msgid ""
 "container, codecs, codec settings and the render output folder are saved so "
 "they appear as defaults in the next rendering."
 msgstr ""
+"En el renderizado, las configuración del proyecto se toman como valores "
+"predeterminados para la mayoría de las configuraciones de renderizado como "
+"imágenes por segundo, el número de canales de sonido o de su frecuencia de "
+"muestreo. Estos valores se pueden sustituir de forma temporal para un "
+"determinado renderizado. Una vez que el renderizado se completa, los valores "
+"se restablecerán a los valores predeterminados de las configuraciones del "
+"proyecto. Sin embargo, algunas configuraciones, como la escala de "
+"resolución, contenedor, códecs, configuración del códec y la carpeta de "
+"salida del renderizado se guardan para que aparezcan como valores "
+"predeterminados en el siguiente renderizado."
 
 #. (itstool) path: page/title
 #: C/savescreenshot.page:18
@@ -2720,6 +2729,10 @@ msgid ""
 "Multiple selections allow you to apply actions (dragging, deleting, "
 "grouping, etc.) to many clips at once."
 msgstr ""
+"Al seleccionar un archivo o un clip, se especifica qué elemento se debe "
+"aplicar a las acciones posteriores. Para seleccionar un elemento individual, "
+"simplemente pulse en él. Las selecciones múltiples le permiten aplicar "
+"acciones (arrastrar, eliminar, agrupar, etc.) para muchos clips a la vez."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:32
@@ -2779,6 +2792,9 @@ msgid ""
 "separate audio tracks from video clips, or when you want to create a block "
 "of clips that you can select, edit and move all at once."
 msgstr ""
+"Las funciones de agrupar y desagrupar son útiles cuando se quieren agregar o "
+"separar pistas de sonido desde clips de vídeo, o cuando se quiere crear un "
+"bloque de clips que se puedan seleccionar, editar y mover a la vez."
 
 #. (itstool) path: section/p
 #: C/selectiongrouping.page:50
@@ -3018,6 +3034,11 @@ msgid ""
 "between the remaining two parts by moving one of them towards the other "
 "until they align."
 msgstr ""
+"Cuando se quiere cortar una sección media de un clip, dividir el clip en dos "
+"ocasiones en las posiciones en las que la parte que quiere eliminar comience "
+"y termine. Seleccione la parte media y pulse <key>Supr</key>. Ahora, elimine "
+"el espacio vacío entre las dos partes restantes moviendo uno de ellos hacia "
+"el otro hasta que se alineen."
 
 #. (itstool) path: info/desc
 #: C/sysreq.page:18
@@ -3357,11 +3378,6 @@ msgstr "Insertar clips"
 
 #. (itstool) path: section/p
 #: C/usingclips.page:40
-#, fuzzy
-#| msgid ""
-#| "From the media library, you can insert one or more clips by selecting "
-#| "them (using the <key>Ctrl</key> or <key>Shift</key> keys to select "
-#| "multiple clips) and:"
 msgid ""
 "From the media library, you can insert one or more clips by selecting them "
 "(use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) "
@@ -3369,7 +3385,7 @@ msgid ""
 msgstr ""
 "Puede insertar uno o más clips de la biblioteca de medios seleccionándolos "
 "(usando las teclas <key>Ctrl</key> o <key>Mayús</key> para seleccionar "
-"varios clips) y:"
+"varios clips) y haciendo uno de los siguientes pasos:"
 
 #. (itstool) path: item/p
 #: C/usingclips.page:42
@@ -3382,11 +3398,13 @@ msgid ""
 "Clicking the <gui>Insert the selected clips at the end of the timeline</gui> "
 "button in the <gui>Media library</gui>."
 msgstr ""
+"Pulsando el botón <gui>Insertar los clips seleccionados al final de la línea "
+"del tiempo</gui> en la <gui>Biblioteca de medios</gui>."
 
 #. (itstool) path: item/p
 #: C/usingclips.page:44
 msgid "Pressing the <key>Insert</key> key."
-msgstr "Pulsando la tecla <key>Insert</key>."
+msgstr "Pulsando la tecla <key>Ins</key>."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:46
@@ -3395,6 +3413,10 @@ msgid ""
 "selected clips will be inserted one after another into the first layer of "
 "the timeline at a position, where the last clip on any layer ends."
 msgstr ""
+"Cuando después de la segunda y tercera opciones (pulsando o presionando "
+"insertar), los clips seleccionados se insertan uno tras otro en la primera "
+"capa de la línea del tiempo en una posición, donde termina el último clip en "
+"cualquier capa."
 
 #. (itstool) path: section/title
 #: C/usingclips.page:52
@@ -3409,11 +3431,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/usingclips.page:54
-#, fuzzy
-#| msgid ""
-#| "Click and drag a single clip to move it, and release the mouse button to "
-#| "place it. Dragging horizontally keeps the clip on the same layer, but "
-#| "dragging it vertically moves the clip to a different layer."
 msgid ""
 "Click and drag a single clip to move it, and release the mouse button to "
 "place it. Dragging horizontally keeps the clip on the same layer, but "
@@ -3422,7 +3439,9 @@ msgid ""
 msgstr ""
 "Pulse y arrastre un sólo clip para moverlo y suelte el botón del ratón para "
 "ubicarlo. Arrastrarlo horizontalmente mantiene el clip en la misma capa, "
-"pero arrastrarlo verticalmente mueve el clip a una capa diferente."
+"pero arrastrarlo verticalmente mueve el clip a una capa diferente (consulte "
+"el apartado <link xref=\"layers\">Entendiendo las capas</link> para obtener "
+"más información)."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:55
@@ -3433,16 +3452,14 @@ msgid ""
 "layers. Once the grey shadow (now a thin rectangle) appears between the "
 "layers, release it."
 msgstr ""
+"Para mover un clip a una capa existente, arrástrelo sobre la capa y suéltelo "
+"cuando una sombra gris que representa al espacio el clip que ocuparía "
+"aparezca. Para mover un clip a una nueva capa, arrástrelo hasta el espacio "
+"medio entre dos capas existentes. Una vez que aparezca la sombra gris (ahora "
+"un rectángulo delgado) entre las capas, suéltelo."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:56
-#, fuzzy
-#| msgid ""
-#| "To move multiple clips at the same time, use the <key>Ctrl</key> or "
-#| "<key>Shift</key> keys to select multiple clips. Selected clips do not "
-#| "need to be on the same layer. Then, drag the clips just as you would do "
-#| "for a single clip; their position relative to each other will be "
-#| "preserved."
 msgid ""
 "To move multiple clips at the same time, use the <key>Ctrl</key> or "
 "<key>Shift</key> keys to select multiple clips (see <link xref="
@@ -3451,10 +3468,12 @@ msgid ""
 "just as you would do for a single clip; their position relative to each "
 "other will be preserved."
 msgstr ""
-"Para mover varios clips al mismo tiempo use las teclas <key>Ctrl</key> o "
-"<key>Mayús</key> para seleccionar varios clips. Los clips seleccionados no "
-"tienen porqué estar en la misma capa. Después, arrastre los clips de igual "
-"forma que si fuera uno solo; se preservarán sus posiciones relativas."
+"Para mover varios clips al mismo tiempo, use las teclas <key>Ctrl</key> o "
+"<key>Mayús</key> para seleccionar varios clips (consulte el <link xref="
+"\"selectiongrouping\">Seleccionar y agrupar</link> para obtener más "
+"detalles). Los clips seleccionados no necesitan estar en la misma capa. "
+"Después, arrastre los clips de igual forma que si fuera uno solo; se "
+"preservarán sus posiciones relativas para cada uno."
 
 #. (itstool) path: section/title
 #: C/usingclips.page:58
@@ -3517,12 +3536,6 @@ msgstr "Diálogo de bienvenida"
 
 #. (itstool) path: page/p
 #: C/welcomedialog.page:26
-#, fuzzy
-#| msgid ""
-#| "When you launch <app>Pitivi</app>, a startup assistant appears, allowing "
-#| "you to create a new project or open an existing project in a few clicks. "
-#| "If you want to skip this dialog, press the <gui><key>Escape</key></gui> "
-#| "key on your keyboard or click the window's close button."
 msgid ""
 "When you launch <app>Pitivi</app>, a startup assistant appears, allowing you "
 "to create a new project or open an existing project in a few clicks. If you "
@@ -3530,10 +3543,11 @@ msgid ""
 "or click the window's close button. Skipping the dialog will open a new "
 "project with default settings."
 msgstr ""
-"Cuando abre <app>Pitivi</app>, aparece un asistente de inicio que le permite "
-"crear un proyecto nuevo o abrir un proyecto existente pulsando unas pocas "
-"veces. Si quiere omitir este diálogo, pulse la tecla <gui><key>Escape</key></"
-"gui> de su teclado o pulse en el botón de cerrar de la ventana."
+"Cuando ejecuta <app>Pitivi</app>, aparece un asistente de inicio que le "
+"permite crear un proyecto nuevo o abrir un proyecto existente pulsando unas "
+"pocas veces. Si quiere omitir este diálogo, pulse la tecla <key>Escape</key> "
+"de su teclado o pulse en el botón de cerrar de la ventana. Saltarse el "
+"diálogo abrirá un nuevo proyecto con las configuraciones predeterminadas."
 
 #. (itstool) path: page/p
 #: C/welcomedialog.page:27
@@ -3541,6 +3555,9 @@ msgid ""
 "The dialog offers you projects that are found among the recently used files. "
 "Double-click one of them to load it or use one of the following buttons:"
 msgstr ""
+"El diálogo ofrece proyectos que se encuentran entre los archivos utilizados "
+"recientemente. Pulse dos veces en uno de ellos para cargarlo o usar uno de "
+"los siguientes botones:"
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:29
@@ -3548,17 +3565,22 @@ msgid ""
 "<gui>New</gui> opens the <gui>Project settings</gui> dialog for a new "
 "project."
 msgstr ""
+"<gui>Nuevo</gui> abre el diálogo <gui>Configuración del proyecto</gui> para "
+"un nuevo proyecto."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:30
 msgid ""
 "<gui>Browse projects...</gui> opens file chooser in the last used directory."
 msgstr ""
+"<gui>Explorar proyectos…</gui> abre un selector de archivos en la última "
+"carpeta usada."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:31
 msgid "<gui>Help</gui> opens the user documenation on the index page."
 msgstr ""
+"<gui>Ayuda</gui> abre la documentación de usuario en la página del índice."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:32
@@ -3566,6 +3588,8 @@ msgid ""
 "<gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard "
 "shortcuts and cheatsheet page."
 msgstr ""
+"<gui>Atajos de teclado</gui> abre la documentación de usuario en los atajos "
+"de teclado y la página de trucos."
 
 #. (itstool) path: note/p
 #: C/welcomedialog.page:35
@@ -3574,11 +3598,16 @@ msgid ""
 "dialog</gui> you can get more options: copy project's location, remove "
 "project from the list, clear the list, or show private resources."
 msgstr ""
+"Pulsando el botón derecho en los proyectos individuales ofrecidos por el "
+"<gui>Diálogo de bienvenida</gui> puede obtener más opciones: la ubicación "
+"del proyecto de copia, eliminar el proyecto de la lista, vaciar la lista, o "
+"mostrar recursos privados."
 
 #. (itstool) path: info/desc
 #: C/workwithprojects.page:19
 msgid "How to load and save projects, edit their settings and metadata."
 msgstr ""
+"Cómo cargar y guardar proyectos, editar sus configuraciones y metadatos."
 
 #. (itstool) path: page/title
 #: C/workwithprojects.page:27
@@ -3592,11 +3621,6 @@ msgstr "Guardar un proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:31
-#, fuzzy
-#| msgid ""
-#| "To save your project work, use the <guiseq><gui>Project</gui><gui>Save</"
-#| "gui></guiseq> menu, the Save button on the main toolbar or press "
-#| "<keyseq><key>Ctrl</key><key>S</key></keyseq>."
 msgid ""
 "To save your project work, use <guiseq><gui>Project</gui><gui>Save</gui></"
 "guiseq> from the menu bar, the <gui>Save</gui> button on the main toolbar or "
@@ -3604,18 +3628,15 @@ msgid ""
 "for the first time, a dialog window appears, asking you where to save the "
 "project file and how to name it."
 msgstr ""
-"Para guardar su trabajo del proyecto, use el menú <guiseq><gui>Proyecto</"
-"gui><gui>Guardar</gui></guiseq>, el botón «Guardar» en la barra de "
-"herramientas principal o pulse <keyseq><key>Ctrl</key><key>S</key></keyseq>."
+"Para guardar su trabajo del proyecto, use de la barra de menú "
+"<guiseq><gui>Proyecto</gui><gui>Guardar</gui></guiseq>, el botón "
+"<gui>Guardar</gui> en la barra de herramientas principal o pulse "
+"<keyseq><key>Ctrl</key><key>S</key></keyseq>. Al guardar un proyecto por "
+"primera vez, aparece una ventana de diálogo que le preguntará dónde desea "
+"guardar el archivo de proyecto y cómo nombrarlo."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:33
-#, fuzzy
-#| msgid ""
-#| "If you want to save your project as a different file, use "
-#| "<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> or press "
-#| "<keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be "
-#| "used to create different versions of your project."
 msgid ""
 "If you want to save your project as a different file, use "
 "<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> from the menu bar or "
@@ -3623,9 +3644,9 @@ msgid ""
 "be used to create different versions of your project."
 msgstr ""
 "Si quiere guardar su proyecto como un archivo diferente, use "
-"<guiseq><gui>Proyecto</gui><gui>Guardar como</gui></guiseq> o pulse "
-"<keyseq><key>Ctrl</key><key>Mayús</key><key>S</key></keyseq>. Esto se puede "
-"usar para crear versiones diferentes de su proyecto."
+"<guiseq><gui>Proyecto</gui><gui>Guardar como</gui></guiseq> de la barra de "
+"menú o pulse <keyseq><key>Ctrl</key><key>Mayús</key><key>S</key></keyseq>. "
+"Esto se puede usar para crear versiones diferentes de su proyecto."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:37
@@ -3634,11 +3655,6 @@ msgstr "Deshacer y revertir cambios"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:38
-#, fuzzy
-#| msgid ""
-#| "In addition to undoing individual changes, you can also decide to revert "
-#| "all the changes you have made since the last time you saved your project. "
-#| "To do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq>."
 msgid ""
 "To undo a change, simply click on the <gui>Undo</gui> button in the main "
 "toolbar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition "
@@ -3646,9 +3662,12 @@ msgid ""
 "you have made since the last time you saved your project. To do so, use "
 "<guiseq><gui>Project</gui><gui>Revert</gui></guiseq> from the menu bar."
 msgstr ""
-"Además de deshacer los cambios individuales, puede decidir también si "
-"deshace los cambios realizados desde la última vez que guardó su proyecto. "
-"Para hacer esto, use <guiseq><gui>Proyecto</gui><gui>Deshacer</gui></guiseq>."
+"Para deshacer un cambio, simplemente pulse en el botón <gui>Deshacer</gui> "
+"en la barra de herramientas principal o pulse <keyseq><key>Ctrl</key><key>Z</"
+"key></keyseq>.Además de deshacer los cambios individuales, puede decidir "
+"también si deshace todos los cambios realizados desde la última vez que "
+"guardó su proyecto. Para hacer esto, use <guiseq><gui>Proyecto</"
+"gui><gui>Deshacer</gui></guiseq> de la barra de menú."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:42
@@ -3657,13 +3676,6 @@ msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:43
-#, fuzzy
-#| msgid ""
-#| "When starting a new project, you should make sure to go adjust the "
-#| "project settings, such as framerate, resolution and preferred codecs. The "
-#| "video resolution and aspect ratio will affect the appearance of the "
-#| "previewer. If you do not set the resolution and aspect ratio to match "
-#| "those of your footage, the video may look squished or letterboxed."
 msgid ""
 "When starting a new project, you should make sure to adjust the project "
 "settings, such as framerate, resolution and preferred codecs. The video "
@@ -3675,23 +3687,22 @@ msgstr ""
 "configuraciones del proyecto, tales como imágenes por segundo, resolución y "
 "códecs preferidos. La resolución del vídeo y la proporción del aspecto "
 "afectarán a la apariencia de la vista previa. Si no configura la resolución "
-"y la proporción del aspecto para que coincida con los de su metraje, el "
+"y la proporción del aspecto para que coincidan con los de sus imágenes, el "
 "vídeo puede verse aplastado o encajado."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:45
-#, fuzzy
-#| msgid ""
-#| "To edit the project settings after initial creation, use the "
-#| "<guiseq><gui>Edit</gui><gui>Project Settings</gui></guiseq> menu."
 msgid ""
 "Everytime you start a new project, a dialog window appears where you can "
 "adjust audio and video settings or metadata. To edit the project settings "
 "after initial creation, use <guiseq><gui>Edit</gui><gui>Project Settings</"
 "gui></guiseq> from the menu bar."
 msgstr ""
-"Para editar los ajustes del proyecto después de la creación inicial, use el "
-"menú <guiseq><gui>Editar</gui><gui>Ajustes del Proyecto</gui></guiseq>"
+"Cada vez que inicie un nuevo proyecto, aparecerá una ventana de diálogo "
+"donde podrá ajustar las configuraciones de sonido y vídeo o los metadatos. "
+"Para editar las configuraciones del proyecto después de la creación inicial, "
+"use de la barra de menú <guiseq><gui>Editar</gui><gui>Configuración del "
+"proyecto</gui></guiseq>."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:50
