@@ -1,7 +1,7 @@
 <page xmlns="http://projectmallard.org/1.0/"
       xmlns:e="http://projectmallard.org/experimental/"
       type="topic"
-      id="effectsanimation">
+      id="usingeffects">
 
   <info>
     <link type="guide" xref="index#effects"/>
@@ -10,13 +10,13 @@
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
     </credit>
-    <desc>Changing the properties of effects over time</desc>
+    <desc>Configuring effects and using Effect Library.</desc>
     <license>
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
 
-    <title>Animating effects with Keyframes</title>
+    <title>Using effects</title>
      
      <p>This feature is not yet implemented, but is planned to be completed as a GSoC 2011 project.</p>
 </page>

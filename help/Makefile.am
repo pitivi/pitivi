@@ -25,7 +25,6 @@ HELP_FILES = \
     codecscontainers.page \
     crossfading.page \
     effects.page \
-    effectsanimation.page \
     fadeinfadeout.page \
     gstreamer.page \
     importingmpegts.page \
@@ -47,6 +46,7 @@ HELP_FILES = \
     sysreq.page \
     trimming.page \
     usingclips.page \
+    usingeffects.page \
     welcomedialog.page \
     workwithprojects.page
 
