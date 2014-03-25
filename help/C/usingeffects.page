@@ -27,4 +27,11 @@
         <title>Configuring effects</title>
         <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables that can be adjusted will appear in the lower part of the <gui>Clip configuration</gui> tab. Each variable can be put back to it's original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
     </section>
+    <section>
+        <title>Animating effects with keyframes</title>
+        <p>Most effect variables can be controlled with keyframes. In order to access the keyframes, click the <gui>Show keyframes for this value</gui> button next to the variable you want to control. On the selected clip you will see a keyframe curve that belongs to the variable. You can now edit the keyframes to achieve the desired effect. Once you are done with editing, you can click the button again and the keyframe curve disappears from the clip. However, the effect variable is still controlled by the adjusted keyframe curve (which is indicated by the filled shape on the button). To revert the keyframe curve to the default flat state, use the <gui>Reset to default value</gui> button. For more information on how to use keyframes see the <link xref="keyframecurves">Keyframe curves</link> page.</p>
+        <note>
+            <p>If there is no <gui>Show keyframes for this value</gui> button next to the effect variable, it can not be controlled with keyframes.</p>
+        </note>
+    </section>
 </page>
