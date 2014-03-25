@@ -19,6 +19,11 @@
     <title>Using effects</title>
 
     <section>
+        <title>Effect Library</title>
+        <p><gui>Effect Library</gui> is a place where all available audio and video effects are stored. The library shows either audio or video effects depending on which button (<gui>Show video effects</gui> or <gui>Show audio effects</gui>) in its upper left corner is activated. Once you choose audio or video effects you can further sort them by choosing one of the categories from the drop down list next to the two buttons. By default, the list is set to show all effects.</p>
+        <p>Alternatively, you can use the <gui>Search Bar</gui> that is shown at the top of the <gui>Effect Library</gui>. Typing into the search entry filters the contents of the <gui>Effect Library</gui> to show only effects whose name or description match your search terms. To reset the search entry, click the <gui>Clear</gui> icon in the search entry.</p>
+    </section>
+    <section>
         <title>Configuring effects</title>
         <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables that can be adjusted will appear in the lower part of the <gui>Clip configuration</gui> tab. Each variable can be put back to it's original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
     </section>
