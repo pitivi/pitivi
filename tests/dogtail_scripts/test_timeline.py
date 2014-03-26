@@ -204,31 +204,36 @@ class TimelineTest(HelpFunc):
         sleep(1.1)
         ripple_roll(from_percent=0.25, to_percent=0.75)
 
-    def test_image_video_mix(self):
-        files = ["tears_of_steel.webm", "flat_colour2_640x480.png",
-                 "flat_colour4_1600x1200.jpg", "flat_colour1_640x480.png",
-                 "flat_colour3_320x180.png", "flat_colour5_1600x1200.jpg"]
-        samples = self.import_media_multiple(files)
+    def test_ripple_roll_image_video_mix(self):
+        videos = self.import_media_multiple(["tears_of_steel.webm"])
+        images = self.import_media_multiple([
+            "flat_colour2_640x480.png",
+            "flat_colour4_1600x1200.jpg",
+            "flat_colour1_640x480.png",
+            "flat_colour3_320x180.png",
+            "flat_colour5_1600x1200.jpg"])
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        tpos = self.timeline.position
 
-        #One video, one image
-        for sample in samples[1:]:
-            self.insert_clip(sample)
-            self.insert_clip(samples[0])
-
-        sleep(0.3)
-        end = self.search_clip_end(30, timecode_widget, self.timeline)
-        cend = end / 11.139
-        dogtail.rawinput.absoluteMotion(tpos[0] + cend - 2, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_PRESS)
-        dogtail.rawinput.press(tpos[0] + cend - 2, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.absoluteMotion(tpos[0] + cend - 40, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.release(tpos[0] + cend - 40, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
+        for image_sample in images:
+            self.insert_clip(videos[0])
+            self.insert_clip(image_sample)
         self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, "00:11.139")
+        sleep(0.1)
+        self.assertEqual(timecode_widget.text, "00:14.999")
 
-        #TODO: do something more with clips
+        image_percent = 1.0 / 15
+        video_percent = 2.0 / 15
+
+        # Delete the first clip to make some space.
+        dogtail.rawinput.click(self.getTimelineX(image_percent / 4), self.getTimelineY(0))
+        dogtail.rawinput.pressKey("Del")
+        sleep(0.1)
+
+        # Ripple roll to the left to cover the gap.
+        self.ripple_roll(video_percent + image_percent / 4, 0)
+        # Without this the next call does not work because
+        # the last riple_roll is a bit off because of the 0.
+        dogtail.rawinput.click(self.getTimelineX(image_percent / 4), self.getTimelineY(0))
+        self.goToEnd_button.click()
+        sleep(0.1)
+        self.assertEqual(timecode_widget.text, "00:12.999")
