@@ -47,19 +47,23 @@ class TimelineTest(HelpFunc):
         # timeline, where we will drag clips to. Here we don't have to worry
         # about the width of layer controls widget for our calculations.
         endpos = []
-        endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 30))
-        endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 120))
-        endpos.append((timeline.position[0] + timeline.size[0] - 30, timeline.position[1] + 80))
+        drag_x = timeline.position[0] + timeline.size[0] - 30
+        drag_y = timeline.position[1]
+        endpos.append((drag_x, drag_y + 30))
+        endpos.append((drag_x, drag_y + 120))
+        endpos.append((drag_x, drag_y + 80))
         for i in range(20):
-            if (i % 4 == 0):
+            if i % 4 == 0:
                 # Drag to center, next layer, out, and then back in
-                self.improved_drag(self.center(sample), endpos[i % 3], middle=[self.center(timeline), endpos[(i + 1) % 2], self.center(sample)])
+                middle = [self.center(timeline), endpos[(i + 1) % 2], self.center(sample)]
+                self.improved_drag(self.center(sample), endpos[i % 3], middle=middle)
             else:
                 # Simple drag
                 self.improved_drag(self.center(sample), endpos[i % 3])
             # Give time to insert the object. If you don't wait long enough,
             # dogtail won't be able to click goToEnd_button:
             sleep(0.7)
+            dogtail.rawinput.keyCombo("<Control>minus")  # Zoom out
             try:
                 self.goToEnd_button.click()
             except NotImplementedError:
@@ -68,8 +72,9 @@ class TimelineTest(HelpFunc):
                 # Wait and try again.
                 sleep(0.5)
                 self.goToEnd_button.click()
-            self.assertNotEqual(oldseek, timecode_widget.text)
-            oldseek = timecode_widget.text
+            seek = timecode_widget.text
+            self.assertNotEqual(oldseek, seek)
+            oldseek = seek
 
     def test_split(self):
         self.insertTwoClipsAndSeekToEnd()
