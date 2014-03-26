@@ -14,6 +14,7 @@ class TimelineTest(HelpFunc):
     def setUp(self):
         super(TimelineTest, self).setUp()
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
+        self.goToStart_button = self.viewer.child(name="goToStart_button")
 
     def insertTwoClipsAndSeekToEnd(self):
         # Just a small helper method to facilitate timeline setup
@@ -161,43 +162,47 @@ class TimelineTest(HelpFunc):
         #+5 due to handle size
         return maxx - timeline.position[0] + 5
 
+    def ripple_roll(self, from_percent, to_percent):
+        dogtail.rawinput.click(self.getTimelineX(from_percent), self.getTimelineY(0))
+        sleep(0.1)
+        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_PRESS)
+        try:
+            dogtail.rawinput.press(self.getTimelineX(from_percent), self.getTimelineY(0))
+            dogtail.rawinput.absoluteMotion(self.getTimelineX(to_percent), self.getTimelineY(0))
+            sleep(0.1)
+            dogtail.rawinput.release(self.getTimelineX(to_percent), self.getTimelineY(0))
+        finally:
+            registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
+        sleep(0.1)
+
     def test_ripple_roll(self):
         self.insertTwoClipsAndSeekToEnd()
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
-        tpos = self.timeline.position
-        end = self.search_clip_end(30, timecode_widget, self.timeline)
 
-        dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 2, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_PRESS)
-        dogtail.rawinput.press(tpos[0] + end / 2 - 2, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 100, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.release(tpos[0] + end / 2 - 100, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_RELEASE)
-        self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS, "Not rippled, but trimmed")
+        def ripple_roll(from_percent, to_percent):
+            self.ripple_roll(from_percent, to_percent)
+            self.goToEnd_button.click()
+            sleep(0.1)
+            self.assertGreater(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+            self.goToStart_button.click()
+            sleep(0.1)
+            self.ripple_roll(to_percent, from_percent)
+            self.goToEnd_button.click()
+            sleep(0.1)
+            self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+            self.goToStart_button.click()
 
-        # Check if adding an effect causes a regression in behavior
+        ripple_roll(from_percent=0.25, to_percent=0.75)
+
+        # Check if adding an effect causes a regression in behavior.
         self.effectslibrary.click()
         self.clipproperties.click()
         table = self.clipproperties.child(roleName="table")
         effect_from_library = self.search_by_text("Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
         self.improved_drag(self.center(effect_from_library), self.center(table))
-        self.goToEnd_button.click()
-        seekbefore = timecode_widget.text
-        # Try ripple and roll
-        dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 102, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_PRESS)
-        dogtail.rawinput.press(tpos[0] + end / 2 - 102, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.absoluteMotion(tpos[0] + end / 2 - 200, tpos[1] + 30)
-        sleep(0.5)
-        dogtail.rawinput.release(tpos[0] + end / 2 - 200, tpos[1] + 30)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Control_L"), None, KEY_RELEASE)
-        self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, seekbefore, "Not rippled after adding effect")
+        sleep(1.1)
+        ripple_roll(from_percent=0.25, to_percent=0.75)
 
     def test_image_video_mix(self):
         files = ["tears_of_steel.webm", "flat_colour2_640x480.png",
