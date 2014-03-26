@@ -22,8 +22,7 @@
 # Boston, MA 02110-1301, USA.
 
 """
-UI utilities. This file contain the UI constants, and various functions and
-classes that help with UI drawing around the application
+UI constants and various functions and classes that help with UI drawing.
 """
 
 
@@ -47,18 +46,11 @@ from gi.repository import Gtk
 from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
 
+from pitivi.utils.loggable import doLog, ERROR
 from pitivi.utils.misc import path_from_uri
 
-from pitivi.utils.loggable import doLog, ERROR
 
-# ---------------------- Constants -------------------------------------------#
-
-##
-# UI pixels information constants
-##
-
-LAYER_HEIGHT_EXPANDED = 50
-LAYER_HEIGHT_COLLAPSED = 15
+# Dimensions in pixels
 TRACK_SPACING = 8
 EXPANDED_SIZE = 65
 CONTROL_WIDTH = 250
@@ -75,16 +67,14 @@ PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2
 
-##
-#   Drag'n drop constants
-##
+# Drag and drop
 TYPE_TEXT_PLAIN = 24
 TYPE_URI_LIST = 25
 
 # FileSourceFactory (or subclasses)
 TYPE_PITIVI_FILESOURCE = 26
 
-# What objects to these correspond to ???
+# What objects do these correspond to ???
 TYPE_PITIVI_EFFECT = 27
 TYPE_PITIVI_AUDIO_EFFECT = 28
 TYPE_PITIVI_VIDEO_EFFECT = 29
@@ -141,8 +131,7 @@ def pack_color_64(red, green, blue, alpha=0xFFFF):
 def unpack_color(value):
     """Unpacks the specified RGBA value into four 16bit color values.
 
-    Args:
-      value: A 32bit or 64bit RGBA value.
+    @param value: A 32bit or 64bit RGBA value.
     """
     if not (value >> 32):
         return unpack_color_32(value)

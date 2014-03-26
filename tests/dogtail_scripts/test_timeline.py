@@ -80,23 +80,22 @@ class TimelineTest(HelpFunc):
         self.insertTwoClipsAndSeekToEnd()
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
-        timeline = self.timeline
-        #Adjust to different screen sizes
-        adj = (float)(timeline.size[0]) / 883
 
-        dogtail.rawinput.click(timeline.position[0] + 500 * adj, timeline.position[1] + 50)
+        dogtail.rawinput.click(self.getTimelineX(0.75), self.getTimelineY(0))
         self.timeline_toolbar.child(name="Split", roleName="push button").click()
-        dogtail.rawinput.click(timeline.position[0] + 450 * adj, timeline.position[1] + 50)
+        # Delete the first half of the split clip.
+        dogtail.rawinput.click(self.getTimelineX(0.75 - 0.125), self.getTimelineY(0))
         self.timeline_toolbar.child(name="Delete", roleName="push button").click()
-
         self.goToEnd_button.click()
         self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
-        dogtail.rawinput.click(timeline.position[0] + 550 * adj, timeline.position[1] + 50)
+        # Delete also the second half of the split clip.
+        dogtail.rawinput.click(self.getTimelineX(0.75 + 0.125), self.getTimelineY(0))
         dogtail.rawinput.pressKey("Del")
-        #self.timeline_toolbar.child(name="Delete", roleName="push button").click()
 
         self.goToEnd_button.click()
+        # Allow the UI to update
+        sleep(0.1)
         self.assertEqual(timecode_widget.text, DURATION_OF_ONE_CLIP)
 
     def test_multiple_split(self):

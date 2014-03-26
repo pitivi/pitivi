@@ -11,6 +11,8 @@ from time import sleep
 from pyatspi import Registry as registry
 from pyatspi import KEY_PRESS, KEY_RELEASE
 
+from pitivi.utils import ui
+
 
 class HelpFunc(BaseDogTail):
 
@@ -314,3 +316,24 @@ class HelpFunc(BaseDogTail):
             sleep(2)
             new_timestamp = os.path.getmtime(path)
         return new_timestamp != timestamp
+
+    def getTimelineX(self, percent):
+        assert percent >= 0
+        assert percent <= 1
+        perceived_width = self.timeline.size[0] - ui.CONTROL_WIDTH
+        return self.timeline.position[0] + ui.CONTROL_WIDTH + percent * perceived_width
+
+    def getTimelineY(self, layer, above=False):
+        """
+        Get the absolute y for the middle of the specified layer.
+
+        @param layer: 0-based layer index.
+        @param above: Whether instead middle of the space above.
+        """
+        assert layer >= 0
+        perceived_top = layer * (ui.EXPANDED_SIZE + ui.SPACING)
+        if above:
+            perceived_top += ui.SPACING / 2
+        else:
+            perceived_top += ui.SPACING + ui.EXPANDED_SIZE / 2
+        return self.timeline.position[1] + perceived_top
