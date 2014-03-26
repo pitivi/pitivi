@@ -102,15 +102,13 @@ class TimelineTest(HelpFunc):
         self.insertTwoClipsAndSeekToEnd()
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
-        #Adjust to different screen sizes
-        adj = (float)(self.timeline.size[0]) / 883
-        tpos = self.timeline.position
-        pos = [50, 480, 170, 240, 350, 610, 410, 510]
-        #Sleeps needed for atspi
+        pos = (0.05, 0.48, 0.17, 0.24, 0.35, 0.61, 0.41, 0.51)
         for k in pos:
             for p in pos:
-                dogtail.rawinput.click(tpos[0] + (p + k / 10) * adj, tpos[1] + 50)
+                dogtail.rawinput.click(self.getTimelineX(p + k / 10), self.getTimelineY(0))
+                # Allow the UI to update
                 sleep(0.1)
+                # Split
                 dogtail.rawinput.pressKey("s")
                 try:
                     self.pitivi.child(roleName="icon")
@@ -121,24 +119,24 @@ class TimelineTest(HelpFunc):
         self.insertTwoClipsAndSeekToEnd()
         timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
-        tpos = self.timeline.position
 
-        #Adjust to different screen sizes
-        adj = (float)(self.timeline.size[0]) / 883
+        sleep(0.1)
+        dogtail.rawinput.press(self.getTimelineX(0.75), self.getTimelineY(0))
+        # Drag in, this should create a transition.
+        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.5), self.getTimelineY(0))
+        sleep(0.1)
+        # Drag out, the transition should be gone.
+        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.9), self.getTimelineY(0))
+        sleep(0.1)
+        # Drag in again, this should create a transition.
+        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.25), self.getTimelineY(0))
+        sleep(0.1)
+        dogtail.rawinput.release(self.getTimelineX(0.5), self.getTimelineY(0))
+        sleep(0.1)
 
-        dogtail.rawinput.press(tpos[0] + 500 * adj, tpos[1] + 50)
-        #Drag in, drag out, drag in and release
-        dogtail.rawinput.relativeMotion(-200 * adj, 10)
-        sleep(1)
-        dogtail.rawinput.relativeMotion(300 * adj, -10)
-        sleep(1)
-        dogtail.rawinput.absoluteMotion(tpos[0] + 300 * adj, tpos[1] + 50)
-        sleep(1)
-        dogtail.rawinput.release(tpos[0] + 300 * adj, tpos[1] + 50)
-        sleep(1)
-        dogtail.rawinput.click(tpos[0] + 250 * adj, tpos[1] + 50)
-        #Check if we selected transition
-        sleep(0.5)
+        # Click the transition, make sure it's selected.
+        dogtail.rawinput.click(self.getTimelineX(0.5 - 0.125), self.getTimelineY(0))
+        sleep(0.1)
         iconlist = self.transitions.child(roleName="layered pane")
         self.assertTrue(iconlist.sensitive)
         iconlist.children[-2].select()
