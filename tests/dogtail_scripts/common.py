@@ -3,18 +3,100 @@
 
 import os
 import re
+import time
+
+import unittest
+
 from dogtail.predicate import GenericPredicate
 from dogtail.tree import SearchError
-from test_base import BaseDogTail
 import dogtail.rawinput
-from time import sleep
 from pyatspi import Registry as registry
 from pyatspi import KEY_PRESS, KEY_RELEASE
 
 from pitivi.utils import ui
 
 
-class HelpFunc(BaseDogTail):
+# These are the timecodes we expect for "tears_of_steel.webm", depending on
+# if we insert it once in a blank timeline or twice in a blank timeline.
+DURATION_OF_ONE_CLIP = "00:01.999"
+DURATION_OF_TWO_CLIPS = "00:03.999"
+
+
+class PitiviTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # Force the locale/language to English.
+        # Otherwise we won't be able to grab the right widgets.
+        os.environ["LC_ALL"] = 'C'
+        # Try to speed up UI interaction a little.
+        # Do not change "typingDelay" from its default (0.075 secs);
+        # Setting it too low makes dogtail type characters in random order!
+        from dogtail.config import config
+        config.load({'actionDelay': 0.1,
+                     'runTimeout': 1,
+                     'searchCutoffCount': 5,
+                     'defaultDelay': 0.1})
+        from dogtail.utils import run
+        from dogtail.tree import root
+        # Setting appName is critically important here.
+        # Otherwise it will try to look for "bin/pitivi" through AT-SPI and fail,
+        # making the tests take ages to start up.
+        self.pid = run('bin/pitivi', dumb=False, appName="pitivi")
+        # Apparently, if we start inspecting "too fast"... we slow down startup.
+        # With GNOME 3.6, startup would be delayed to the point where the "Esc"
+        # keypress to dismiss the welcome dialog would happen too soon.
+        time.sleep(1)
+
+        self.pitivi = root.application('pitivi')
+        timer_start = time.time()
+        # This is a performance hack to very quickly get the widgets we want,
+        # by using their known position instead of searching.
+        # Reuse those variables throughout your scripts for efficient access.
+        # FIXME: this will probably break with detached tabs.
+        mainwindow = self.pitivi.children[0].children[0].children[0]  # this is a vbox
+        assert mainwindow.name == 'contents'
+        mainwindow_upper, timeline_area = mainwindow.children
+        assert mainwindow_upper.name == 'upper half'
+        assert timeline_area.name == 'timeline area'
+        primary_tabs = mainwindow_upper.children[0].child(name="primary tabs", recursive=False)
+        secondary_tabs = mainwindow_upper.children[0].child(name="secondary tabs", recursive=False)
+        # These are the "shortcut" variables you can use for better perfs:
+        self.menubar = self.pitivi.children[0].child(name='headerbar', recursive=False)
+        self.medialibrary = primary_tabs.children[0]
+        self.effectslibrary = primary_tabs.children[1]
+        self.clipproperties = secondary_tabs.children[0]
+        self.transitions = secondary_tabs.children[1]
+        self.titles = secondary_tabs.children[2]
+        self.viewer = mainwindow_upper.child(name="viewer", recursive=False)
+        self.zoom_best_fit_button = timeline_area.child(name="Zoom", recursive=True)
+        self.timeline = timeline_area.child(name="timeline canvas", recursive=False)
+        self.timeline_toolbar = timeline_area.child(name="timeline toolbar", recursive=False)
+        # Used to speed up helper_functions in particular:
+        self.import_button = self.medialibrary.child(name="media_import_button")
+        self.insert_button = self.medialibrary.child(name="media_insert_button")
+        start_time = time.time() - timer_start
+        if start_time > 0.1:
+            # When we were simply searching the toplevel for the menu bar,
+            # startup time was 0.0043 seconds. Anything significantly longer
+            # means there are optimizations to be done, avoid recursive searches
+            print("\nWARNING: setUp in test_base took", start_time, "seconds, that's too slow.\n")
+        try:
+            self.unlink
+        except AttributeError:
+            self.unlink = []
+
+    def tearDown(self, clean=True, kill=True):
+        if kill:
+            os.system("kill -9 %i" % self.pid)
+        else:
+            import dogtail.rawinput
+            dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
+        if clean:
+            for filename in self.unlink:
+                try:
+                    os.unlink(filename)
+                except:
+                    None
 
     def saveProject(self, path=None, saveAs=True):
         if saveAs:
@@ -24,7 +106,7 @@ class HelpFunc(BaseDogTail):
             text_field = save_dialog.child(roleName="text")
             text_field.text = path
             dogtail.rawinput.pressKey("Enter")
-            sleep(0.15)
+            time.sleep(0.15)
             # Save to the list of items to cleanup afterwards
             self.unlink.append(path)
         else:
@@ -56,7 +138,7 @@ class HelpFunc(BaseDogTail):
 
         The "decision" parameter must be either "discard", "cancel" or "save".
         """
-        sleep(1)
+        time.sleep(1)
         try:
             dialog = self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False, retry=False)
         except SearchError:
@@ -108,9 +190,9 @@ class HelpFunc(BaseDogTail):
     def insert_clip(self, icon, n=1):
         icon.select()
         for i in range(n):
-            sleep(0.3)
+            time.sleep(0.3)
             self.insert_button.click()
-        sleep(n / 2.0)  # Inserting clips takes time!
+        time.sleep(n / 2.0)  # Inserting clips takes time!
         icon.deselect()
         self.zoom_best_fit_button.click()
 
@@ -134,7 +216,7 @@ class HelpFunc(BaseDogTail):
         filepath += "samples/" + filename
         import_dialog.child(roleName='text').text = filepath
         dogtail.rawinput.pressKey("Enter")  # Don't search for the Add button
-        sleep(0.6)
+        time.sleep(0.6)
 
         # Check if the item is now visible in the media library.
         for i in range(5):
@@ -150,7 +232,7 @@ class HelpFunc(BaseDogTail):
             for icon in icons:
                 if icon.text == filename:
                     return icon
-            sleep(0.5)
+            time.sleep(0.5)
 
         # Failure to find an icon might be because it is hidden due to a search
         current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
@@ -181,7 +263,7 @@ class HelpFunc(BaseDogTail):
         file_list = import_dialog.child(name="Files", roleName="table")
         first = True
         for f in files:
-            sleep(0.5)
+            time.sleep(0.5)
             file_list.child(name=f).click()
             if first:
                 registry.generateKeyboardEvent(ctrl_code, None, KEY_PRESS)
@@ -209,7 +291,7 @@ class HelpFunc(BaseDogTail):
                         files.remove(f)
             if len(files) == 0:
                 break
-            sleep(0.5)
+            time.sleep(0.5)
         return samples
 
     def improved_drag(self, from_coords, to_coords, middle=[], absolute=True, moveAround=True):
@@ -287,7 +369,7 @@ class HelpFunc(BaseDogTail):
     @staticmethod
     def wait_for_node_hidden(widget, timeout=10):
         while widget.showing and timeout > 0:
-            sleep(1)
+            time.sleep(1)
             timeout -= 1
         return not widget.showing
 
@@ -303,7 +385,7 @@ class HelpFunc(BaseDogTail):
         exists = False
         while (time_elapsed <= timeout) and not exists:
             time_elapsed += 1
-            sleep(1)
+            time.sleep(1)
             exists = os.path.isfile(path) and os.path.getsize(path) > 0
         return exists
 
@@ -313,7 +395,7 @@ class HelpFunc(BaseDogTail):
         new_timestamp = False
         while (time_elapsed <= timeout) and new_timestamp == timestamp:
             time_elapsed += 2
-            sleep(2)
+            time.sleep(2)
             new_timestamp = os.path.getmtime(path)
         return new_timestamp != timestamp
 

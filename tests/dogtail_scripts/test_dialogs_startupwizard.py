@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 from time import time, sleep
 
 
-class DialogsStartupWizardTest(HelpFunc):
+class DialogsStartupWizardTest(PitiviTestCase):
     def test_welcome(self):
         filename = "auto_pitivi_test_project-%i.xges" % time()
         filename_full_path = "/tmp/" + filename

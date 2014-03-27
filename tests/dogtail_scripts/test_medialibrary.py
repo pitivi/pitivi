@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 from time import sleep
 
 
-class MediaLibraryTest(HelpFunc):
+class MediaLibraryTest(PitiviTestCase):
 
     def test_medialibrary(self):
         # Some commonly-used widgets in this test:

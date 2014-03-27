@@ -1,11 +1,11 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 from dogtail.predicate import GenericPredicate
 import dogtail.rawinput
 from time import sleep
 
 
-class ClipTransformationTest(HelpFunc):
+class ClipTransformationTest(PitiviTestCase):
     def test_transformation_options(self):
         # Load a sample file, insert it twice in the timeline and wait for
         # the insertion animation to be complete before we start clicking

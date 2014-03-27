@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 from dogtail.tree import SearchError
 import dogtail.rawinput
 
 
-class DialogsPreferencesTest(HelpFunc):
+class DialogsPreferencesTest(PitiviTestCase):
 
     def test_pref_dialog(self):
         dogtail.rawinput.pressKey("Esc")

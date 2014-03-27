@@ -1,15 +1,14 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+
+from common import PitiviTestCase, DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 from dogtail.predicate import IsATextEntryNamed, GenericPredicate
 from dogtail.tree import SearchError
 import dogtail.rawinput
 from time import time, sleep
 import os
 
-from test_base import DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 
-
-class ProjectPropertiesTest(HelpFunc):
+class ProjectPropertiesTest(PitiviTestCase):
 
     def test_cancelling_load_with_no_fallback(self):
         """

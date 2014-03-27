@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 from dogtail.tree import SearchError
 from dogtail.predicate import GenericPredicate, IsATextEntryNamed
 
 
-class DialogsClipMediaPropsTest(HelpFunc):
+class DialogsClipMediaPropsTest(PitiviTestCase):
     def test_clip_props_dialog(self):
         sample = self.import_media("flat_colour1_640x480.png")
         sample.click()

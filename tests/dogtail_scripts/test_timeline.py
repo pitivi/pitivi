@@ -1,16 +1,14 @@
 #!/usr/bin/env python2
 
-from helper_functions import HelpFunc
+from common import PitiviTestCase, DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 from dogtail.tree import SearchError
 import dogtail.rawinput
 from time import sleep
 from pyatspi import Registry as registry
 from pyatspi import KEY_PRESS, KEY_RELEASE
 
-from test_base import DURATION_OF_ONE_CLIP, DURATION_OF_TWO_CLIPS
 
-
-class TimelineTest(HelpFunc):
+class TimelineTest(PitiviTestCase):
     def setUp(self):
         super(TimelineTest, self).setUp()
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")

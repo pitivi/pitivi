@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
-from helper_functions import HelpFunc
+from common import PitiviTestCase
 import dogtail.rawinput
 
 
 # FIXME: cleanup the weird use of variable names for tabs here
-class EffectLibraryTest(HelpFunc):
+class EffectLibraryTest(PitiviTestCase):
     def test_effect_library(self):
         self.import_media()
         tab = self.effectslibrary
