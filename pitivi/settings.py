@@ -23,6 +23,7 @@ import os
 from configparser import SafeConfigParser, ParsingError
 
 from gi.repository import GLib
+
 from pitivi.utils.signal import Signallable
 
 
@@ -59,29 +60,10 @@ def get_env_by_type(type_, var):
     return None
 
 
-def get_env_default(var, default):
-    value = os.getenv(var)
-    if value:
-        return value
-    return default
-
-
 def get_dir(path, autocreate=True):
     if autocreate and not os.path.exists(path):
         os.makedirs(path)
     return path
-
-
-def get_dirs(glob):
-    return [d for d in glob.split(os.path.pathsep) if os.path.exists(d)]
-
-
-def get_env_dir(var, default, unused_autocreate=True):
-    return get_dir(get_env_default(var, default))
-
-
-def get_env_dirs(var, default):
-    return get_dirs(get_env_default(var, default))
 
 
 def xdg_config_home(autocreate=True):
@@ -104,7 +86,6 @@ class ConfigError(Exception):
 
 
 class Notification(object):
-
     """A descriptor to help with the implementation of signals"""
 
     def __init__(self, attrname):
@@ -121,10 +102,12 @@ class Notification(object):
 
 class GlobalSettings(Signallable):
     """
-    Global Pitivi settings.
+    Pitivi app settings.
 
-    The settings object loads settings from three different sources: the
-    global configuration, the local configuration file, and the environment.
+    The settings object loads settings from different sources, currently:
+    - the local configuration file,
+    - environment variables.
+
     Modules declare which settings they wish to access by calling the
     addConfigOption() class method during initialization.
 
@@ -140,16 +123,13 @@ class GlobalSettings(Signallable):
     def __init__(self, **unused_kwargs):
         Signallable.__init__(self)
         self._config = SafeConfigParser()
-        self._readSettingsFromGlobalConfiguration()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
 
-    def _readSettingsFromGlobalConfiguration(self):
-        # ideally, this should read settings from GConf for ex
-        pass
-
     def _readSettingsFromConfigurationFile(self):
-        # This reads the configuration from the user configuration file
+        """
+        Read the configuration from the user configuration file.
+        """
         try:
             conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
             self._config.read(conf_file_path)
@@ -203,10 +183,16 @@ class GlobalSettings(Signallable):
                 setattr(cls, section + option, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        for (section, attrname, typ, key, env, value) in self.iterAllOptions():
+        """
+        Override options values using their registered environment variables.
+        """
+        for section, attrname, typ, key, env, value in self.iterAllOptions():
+            if not env:
+                # This option does not have an environment variable name.
+                continue
             var = get_env_by_type(typ, env)
             if var is not None:
-                setattr(self, attrname, value)
+                setattr(self, attrname, var)
 
     def _writeSettingsToConfigurationFile(self):
         conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
@@ -239,7 +225,7 @@ class GlobalSettings(Signallable):
         Iterate over all registered options
 
         @return: an iterator which yields a tuple of (attrname, type, key,
-        environment, value for each option)
+        environment, value) for each option.
         """
         for section, options in list(self.options.items()):
             for attrname, (typ, key, environment) in list(options.items()):
