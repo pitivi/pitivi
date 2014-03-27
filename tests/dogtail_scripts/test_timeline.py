@@ -15,6 +15,7 @@ class TimelineTest(HelpFunc):
         super(TimelineTest, self).setUp()
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         self.goToStart_button = self.viewer.child(name="goToStart_button")
+        self.timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
 
     def insertTwoClipsAndSeekToEnd(self):
         # Just a small helper method to facilitate timeline setup
@@ -31,19 +32,14 @@ class TimelineTest(HelpFunc):
 
     def test_drag_clip(self):
         sample = self.import_media()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertIsNotNone(timecode_widget)
-
         self.improved_drag(self.center(sample), self.center(self.timeline))
         self.goToEnd_button.click()
-        self.assertNotEqual(timecode_widget.text, "00:00.000")
+        self.assertNotEqual(self.timecode_widget.text, "00:00.000")
 
     def test_multiple_drag(self):
         sample = self.import_media()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
         timeline = self.timeline
-        self.assertIsNotNone(timecode_widget)
-        oldseek = timecode_widget.text
+        oldseek = self.timecode_widget.text
         # Provide three sets of coordinates (on three layers) at the end of the
         # timeline, where we will drag clips to. Here we don't have to worry
         # about the width of layer controls widget for our calculations.
@@ -73,14 +69,13 @@ class TimelineTest(HelpFunc):
                 # Wait and try again.
                 sleep(0.5)
                 self.goToEnd_button.click()
-            seek = timecode_widget.text
+            seek = self.timecode_widget.text
             self.assertNotEqual(oldseek, seek)
             oldseek = seek
 
     def test_split(self):
         self.insertTwoClipsAndSeekToEnd()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         dogtail.rawinput.click(self.getTimelineX(0.75), self.getTimelineY(0))
         self.timeline_toolbar.child(name="Split", roleName="push button").click()
@@ -88,7 +83,7 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.click(self.getTimelineX(0.75 - 0.125), self.getTimelineY(0))
         self.timeline_toolbar.child(name="Delete", roleName="push button").click()
         self.goToEnd_button.click()
-        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         # Delete also the second half of the split clip.
         dogtail.rawinput.click(self.getTimelineX(0.75 + 0.125), self.getTimelineY(0))
@@ -97,12 +92,11 @@ class TimelineTest(HelpFunc):
         self.goToEnd_button.click()
         # Allow the UI to update
         sleep(0.1)
-        self.assertEqual(timecode_widget.text, DURATION_OF_ONE_CLIP)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_ONE_CLIP)
 
     def test_multiple_split(self):
         self.insertTwoClipsAndSeekToEnd()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
         pos = (0.05, 0.48, 0.17, 0.24, 0.35, 0.61, 0.41, 0.51)
         for k in pos:
             for p in pos:
@@ -118,8 +112,7 @@ class TimelineTest(HelpFunc):
 
     def test_transition(self):
         self.insertTwoClipsAndSeekToEnd()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         sleep(0.1)
         dogtail.rawinput.press(self.getTimelineX(0.75), self.getTimelineY(0))
@@ -177,20 +170,19 @@ class TimelineTest(HelpFunc):
 
     def test_ripple_roll(self):
         self.insertTwoClipsAndSeekToEnd()
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
-        self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+        self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         def ripple_roll(from_percent, to_percent):
             self.ripple_roll(from_percent, to_percent)
             self.goToEnd_button.click()
             sleep(0.1)
-            self.assertGreater(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+            self.assertGreater(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
             self.goToStart_button.click()
             sleep(0.1)
             self.ripple_roll(to_percent, from_percent)
             self.goToEnd_button.click()
             sleep(0.1)
-            self.assertEqual(timecode_widget.text, DURATION_OF_TWO_CLIPS)
+            self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
             self.goToStart_button.click()
 
         ripple_roll(from_percent=0.25, to_percent=0.75)
@@ -212,14 +204,13 @@ class TimelineTest(HelpFunc):
             "flat_colour1_640x480.png",
             "flat_colour3_320x180.png",
             "flat_colour5_1600x1200.jpg"])
-        timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
 
         for image_sample in images:
             self.insert_clip(videos[0])
             self.insert_clip(image_sample)
         self.goToEnd_button.click()
         sleep(0.1)
-        self.assertEqual(timecode_widget.text, "00:14.999")
+        self.assertEqual(self.timecode_widget.text, "00:14.999")
 
         image_percent = 1.0 / 15
         video_percent = 2.0 / 15
@@ -236,4 +227,4 @@ class TimelineTest(HelpFunc):
         dogtail.rawinput.click(self.getTimelineX(image_percent / 4), self.getTimelineY(0))
         self.goToEnd_button.click()
         sleep(0.1)
-        self.assertEqual(timecode_widget.text, "00:12.999")
+        self.assertEqual(self.timecode_widget.text, "00:12.999")
