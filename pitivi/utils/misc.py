@@ -398,7 +398,12 @@ def show_user_manual(page=None):
     Optional: for contextual help, a page ID can be specified.
     """
     time_now = int(time.time())
-    for uri in (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE):
+    if "APPDIR" in os.environ:
+        uris = (APPMANUALURL_ONLINE,)
+    else:
+        uris = (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE)
+
+    for uri in uris:
         if page is not None:
             uri += "#" + page
         try:
