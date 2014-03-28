@@ -44,6 +44,7 @@ HELP_FILES = \
     selectunusedfiles.page \
     splitting.page \
     sysreq.page \
+    transitions.page \
     trimming.page \
     usingclips.page \
     usingeffects.page \
