@@ -33,5 +33,28 @@
         <p>Crossfades are achieved using <app>Pitivi</app>'s video mixing features, which use keyframes to control the opacity of clips. This means that if you set opacity keyframes for a clip, they will be taken into account for the crossfade.</p>
       </note>
     </section>
+    <section>
+      <title>Fade-ins and fade-outs</title>
+      <p>You can create fade-in and fade-out transitions in single clips by using keyframes controlling the clip's opacity. Keyframes and opacity are explained elsewhere in this manual. For more information on keyframes, see <link xref="keyframecurves">Keyframe curves</link>. To understand opacity, see <link xref="layers">Understanding layers</link>. The following images illustrate how to fade a clip to black:</p>
+        <figure>
+        <title>Default opacity keyframe curve</title>
+        <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"></media>
+        <desc>The default curve is flat indicating the same opacity at any position within the clip.</desc>
+        </figure>
+        <figure>
+        <title>Adding a new keyframe</title>
+        <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"></media>
+        <desc>Create a new keyframe by double-clicking the curve in a position where you want to start the fade-out.</desc>
+        </figure>
+        <figure>
+        <title>Moving the keyframe</title>
+        <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"></media>
+        <desc>Click and drag the last keyframe downwards.</desc>
+        </figure>
+        <p>To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe in a position where the fade-in should end and the first keyframe dragged down) at the beginning of the clip.</p>
+     <note style="tip">
+        <p>Fades and crossfading as described here can be applied to both audio and video clips.</p>
+    </note>
+    </section>
 
 </page>
