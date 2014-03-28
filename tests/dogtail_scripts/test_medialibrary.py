@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+
 from common import PitiviTestCase
 from time import sleep
 
@@ -10,7 +11,6 @@ class MediaLibraryTest(PitiviTestCase):
         search = self.medialibrary.child(name="media_search_entry", roleName="text")
         unused_media_button = search.child(name="starred-symbolic", roleName="icon")
 
-        # FIXME: this test would fail in listview mode - for now we just force iconview mode.
         self.force_medialibrary_iconview_mode()
 
         samples = []

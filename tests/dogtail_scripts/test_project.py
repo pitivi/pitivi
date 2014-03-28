@@ -158,7 +158,6 @@ class ProjectPropertiesTest(PitiviTestCase):
         self.assertIn("37:20", childtext, "Display aspect ratio was not saved")
 
     def test_backup(self):
-        # FIXME: this test would fail in listview mode - for now we just force iconview mode.
         self.force_medialibrary_iconview_mode()
 
         # Import a clip into an empty project and save the project

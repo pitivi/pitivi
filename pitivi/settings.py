@@ -67,18 +67,30 @@ def get_dir(path, autocreate=True):
 
 
 def xdg_config_home(autocreate=True):
-    """Get the directory for storing the user's pitivi configuration"""
-    return get_dir(os.path.join(GLib.get_user_config_dir(), "pitivi"), autocreate)
+    """
+    Get the directory for storing the user's pitivi configuration
+    """
+    default = os.path.join(GLib.get_user_config_dir(), "pitivi")
+    path = os.getenv("PITIVI_USER_CONFIG_DIR", default)
+    return get_dir(path, autocreate)
 
 
 def xdg_data_home(autocreate=True):
-    """Get the directory for storing the user's data: presets, plugins, etc."""
-    return get_dir(os.path.join(GLib.get_user_data_dir(), "pitivi"), autocreate)
+    """
+    Get the directory for storing the user's data: presets, plugins, etc.
+    """
+    default = os.path.join(GLib.get_user_data_dir(), "pitivi")
+    path = os.getenv("PITIVI_USER_DATA_DIR", default)
+    return get_dir(path, autocreate)
 
 
 def xdg_cache_home(autocreate=True):
-    """Get the Pitivi cache directory"""
-    return get_dir(os.path.join(GLib.get_user_cache_dir(), "pitivi"), autocreate)
+    """
+    Get the Pitivi cache directory
+    """
+    default = os.path.join(GLib.get_user_cache_dir(), "pitivi")
+    path = os.getenv("PITIVI_USER_CACHE_DIR", default)
+    return get_dir(path, autocreate)
 
 
 class ConfigError(Exception):

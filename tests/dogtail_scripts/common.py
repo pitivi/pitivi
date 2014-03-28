@@ -3,6 +3,8 @@
 
 import os
 import re
+import shutil
+import tempfile
 import time
 
 import unittest
@@ -36,6 +38,13 @@ class PitiviTestCase(unittest.TestCase):
                      'runTimeout': 1,
                      'searchCutoffCount': 5,
                      'defaultDelay': 0.1})
+        # Specify custom xdg user dirs to not be influenced by the settings
+        # chosen by the current user.
+        if not hasattr(self, "user_dir"):
+            self.user_dir = tempfile.mkdtemp()
+            os.environ["PITIVI_USER_CONFIG_DIR"] = os.path.pathsep.join([self.user_dir, "config"])
+            os.environ["PITIVI_USER_DATA_DIR"] = os.path.pathsep.join([self.user_dir, "data"])
+            os.environ["PITIVI_USER_CACHE_DIR"] = os.path.pathsep.join([self.user_dir, "cache"])
         from dogtail.utils import run
         from dogtail.tree import root
         # Setting appName is critically important here.
@@ -52,7 +61,6 @@ class PitiviTestCase(unittest.TestCase):
         # This is a performance hack to very quickly get the widgets we want,
         # by using their known position instead of searching.
         # Reuse those variables throughout your scripts for efficient access.
-        # FIXME: this will probably break with detached tabs.
         mainwindow = self.pitivi.children[0].children[0].children[0]  # this is a vbox
         assert mainwindow.name == 'contents'
         mainwindow_upper, timeline_area = mainwindow.children
@@ -92,11 +100,17 @@ class PitiviTestCase(unittest.TestCase):
             import dogtail.rawinput
             dogtail.rawinput.keyCombo("<Control>q")  # Quit the app
         if clean:
+            try:
+                shutil.rmtree(self.user_dir)
+            except OSError:
+                # No biggie.
+                pass
             for filename in self.unlink:
                 try:
                     os.unlink(filename)
-                except:
-                    None
+                except OSError:
+                    # No biggie.
+                    pass
 
     def saveProject(self, path=None, saveAs=True):
         if saveAs:
