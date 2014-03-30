@@ -19,9 +19,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Class handling the midle pane
-"""
 import os
 
 from gi.repository import Gtk
@@ -69,37 +66,41 @@ def compare_type(track, effect_type):
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
     """
     Widget for configuring the selected clip.
+
+    @type app: L{Pitivi}
     """
 
-    def __init__(self, instance, uiman):
+    def __init__(self, app):
         Gtk.ScrolledWindow.__init__(self)
         Loggable.__init__(self)
-        self.app = instance
-        self.settings = instance.settings
+        self.app = app
+        self.settings = app.settings
         self._project = None
 
-        self.infobar_box = Gtk.VBox()
-        effects_properties_manager = EffectsPropertiesManager(instance)
-        self.effect_expander = EffectProperties(instance, effects_properties_manager, self)
-        self.effect_expander.set_vexpand(False)
-        # Transformation boxed DISABLED
-        #self.transformation_expander = TransformationProperties(instance, instance.action_log)
-        #self.transformation_expander.set_vexpand(False)
+        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+        viewport = Gtk.Viewport()
+        viewport.show()
+        self.add(viewport)
 
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
-        vbox.pack_start(self.infobar_box, False, True, 0)
-        # Transformation boxed DISABLED
-        #vbox.pack_start(self.transformation_expander, False, True, 0)
-        vbox.pack_start(self.effect_expander, True, True, 0)
-
-        viewport = Gtk.Viewport()
-        viewport.add(vbox)
-        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.add(viewport)
-        viewport.show()
         vbox.show()
+        viewport.add(vbox)
+
+        self.infobar_box = Gtk.VBox()
         self.infobar_box.show()
+        vbox.pack_start(self.infobar_box, False, True, 0)
+
+        # Transformation boxed DISABLED
+        #self.transformation_expander = TransformationProperties(instance, instance.action_log)
+        #self.transformation_expander.set_vexpand(False)
+        #vbox.pack_start(self.transformation_expander, False, True, 0)
+
+        effects_properties_manager = EffectsPropertiesManager(app)
+        self.effect_expander = EffectProperties(app, effects_properties_manager, self)
+        self.effect_expander.set_vexpand(False)
+        vbox.pack_start(self.effect_expander, True, True, 0)
 
     def _setProject(self, project):
         self._project = project

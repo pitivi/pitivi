@@ -572,12 +572,14 @@ class InteractivePangoBuffer(PangoBuffer):
 class TitleEditor(Loggable):
     """
     Widget for configuring the selected title.
+
+    @type app: L{Pitivi}
     """
 
-    def __init__(self, instance, unused_uimap):
+    def __init__(self, app):
         Loggable.__init__(self)
         Signallable.__init__(self)
-        self.app = instance
+        self.app = app
         self.bt = {}
         self.settings = {}
         self.source = None

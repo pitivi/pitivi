@@ -43,14 +43,16 @@ from pitivi.utils.ui import SPACING, PADDING
 class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
     """
     Widget for configuring the selected transition.
+
+    @type app: L{Pitivi}
     """
 
-    def __init__(self, instance, unused_uiman):
+    def __init__(self, app):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
         Signallable.__init__(self)
 
-        self.app = instance
+        self.app = app
         self.element = None
         self._pixdir = os.path.join(get_pixmap_dir(), "transitions")
         icon_theme = Gtk.IconTheme.get_default()

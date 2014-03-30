@@ -270,9 +270,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         # Second set of tabs
         self.context_tabs = BaseTabs(self.app)
-        self.clipconfig = ClipProperties(self.app, self.uimanager)
-        self.trans_list = TransitionsListWidget(self.app, self.uimanager)
-        self.title_editor = TitleEditor(self.app, self.uimanager)
+        self.clipconfig = ClipProperties(self.app)
+        self.trans_list = TransitionsListWidget(self.app)
+        self.title_editor = TitleEditor(self.app)
         self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip")))
         self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transition")))
         self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title")))
