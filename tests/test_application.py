@@ -71,3 +71,15 @@ class TestPitivi(TestCase):
         app._versionInfoReceivedCb(MockGioFile(), "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION, None)
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())
+
+        app = application.Pitivi()
+        app.emit("startup")
+        app._versionInfoReceivedCb(MockGioFile(), "0.91=current", None)
+        self.assertTrue(app.isLatest())
+        self.assertEqual("0.91", app.getLatest())
+
+        app = application.Pitivi()
+        app.emit("startup")
+        app._versionInfoReceivedCb(MockGioFile(), "0.100000000=current", None)
+        self.assertFalse(app.isLatest())
+        self.assertEqual("0.100000000", app.getLatest())
