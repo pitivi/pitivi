@@ -23,9 +23,7 @@ HELP_FILES = \
     about.page \
     cheatsheet.page \
     codecscontainers.page \
-    crossfading.page \
     effects.page \
-    fadeinfadeout.page \
     gstreamer.page \
     importingmpegts.page \
     importing.page \
@@ -36,7 +34,6 @@ HELP_FILES = \
     mainwindow.page \
     medialibrary.page \
     movearoundtimeline.page \
-    othertransitions.page \
     presets.page \
     rendering.page \
     savescreenshot.page \
