@@ -34,6 +34,24 @@
       </note>
     </section>
     <section>
+      <title>Other types of transitions</title>
+      <p>Assuming that you have two overlapping clips in your timeline, you can achieve other types of transitions by following these steps:</p>
+      <steps>
+          <item><p>Select the overlapping region by clicking on it.</p></item>
+          <item><p>Select the <gui>Transition</gui> tab in the middle pane.</p></item>
+          <item><p>Select one of the offered transitions.</p></item>
+      </steps>
+      <p>The transitions can be further adjusted with the following options from the bottom of the <gui>Transition</gui> tab:</p>
+      <list>
+          <item><p><em>Normal mode</em> will apply the transition in a linear fashion over the whole overlapping region. When in normal mode, you can adjust the degree of sharpness/smoothenss of the transition.</p></item>
+          <item><p><em>Loop</em> mode will apply the transition in a circular manner. When in loop mode, you can adjust the speed with which the transition will repeat itself.</p></item>
+          <item><p>In both modes, you can apply the transition in <em>reverse direction</em> by ticking the corresponding checkbox.</p></item>
+      </list>
+      <note style="tip">
+          <p>Each transition has its name and description. They are displayed when you hover the cursor over the transition icon. You can also filter the transitions by typing into the search entry at the top of the <gui>Transition</gui> tab. This will show only transitions whose name or description match your search terms.</p>
+      </note>
+    </section>
+    <section>
       <title>Fade-ins and fade-outs</title>
       <p>You can create fade-in and fade-out transitions in single clips by using keyframes controlling the clip's opacity. Keyframes and opacity are explained elsewhere in this manual. For more information on keyframes, see <link xref="keyframecurves">Keyframe curves</link>. To understand opacity, see <link xref="layers">Understanding layers</link>. The following images illustrate how to fade a clip to black:</p>
         <figure>
