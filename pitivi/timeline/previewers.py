@@ -844,7 +844,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             samples = numpy.array(self.peaks[0])
 
         self.samples = samples.tolist()
-        f = open(self.wavefile, 'w')
+        f = open(self.wavefile, 'wb')
         pickle.dump(self.samples, f)
 
     def _startRendering(self):
