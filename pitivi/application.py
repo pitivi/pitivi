@@ -2,6 +2,8 @@
 #
 #       pitivi/application.py
 #
+# Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2014 <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -47,6 +49,7 @@ class Pitivi(Gtk.Application, Loggable):
 
     @ivar gui: The main window of the app.
     @type gui: L{PitiviMainWindow}
+    @ivar project_manager: The project manager object used in the application
     @type project_manager: L{ProjectManager}
     @ivar settings: Application-wide settings.
     @type settings: L{GlobalSettings}.
@@ -76,11 +79,11 @@ class Pitivi(Gtk.Application, Loggable):
 
         self._version_information = {}
 
-        self.connect("startup", self.startupCb)
-        self.connect("activate", self.activateCb)
+        self.connect("startup", self._startupCb)
+        self.connect("activate", self._activateCb)
         self.connect("open", self.openCb)
 
-    def startupCb(self, unused_app):
+    def _startupCb(self, unused_app):
         # Init logging as early as possible so we can log startup code
         enable_color = not os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
         # Let's show a human-readable Pitivi debug output by default, and only
@@ -125,7 +128,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.add_action(self.quit_action)
         self.add_accelerator("<Control>q", "app.quit", None)
 
-    def activateCb(self, unused_app):
+    def _activateCb(self, unused_app):
         if self.gui:
             # The app is already started and the window already created.
             # Present the already existing window.
