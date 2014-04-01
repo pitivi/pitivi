@@ -324,14 +324,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         return 1
 
     def getAssetForUri(self, uri):
-        # Sanitization
-        uri = [c for c in uri if c != '\n' and c != '\r']
         for path in self.modelFilter:
             asset = path[COL_ASSET]
             info = asset.get_info()
             asset_uri = info.get_uri()
             if asset_uri == uri:
+                self.debug("Found asset: %s for uri: %s" % (asset, uri))
                 return asset
+
+        self.warning("Did not find any asser for uri: %s" % (uri))
 
     def _setup_view_for_drag_and_drop(self, view, target_entries):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
