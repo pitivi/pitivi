@@ -30,7 +30,11 @@ import pickle
 import sqlite3
 
 # Our C module optimizing waveforms rendering
-import renderer
+try:
+    from . import renderer
+except ImportError:
+    # Running uninstalled?
+    import renderer
 
 from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.signal import Signallable
