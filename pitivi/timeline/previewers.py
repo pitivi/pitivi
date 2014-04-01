@@ -869,7 +869,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
                 if self.peaks is None:
                     self.peaks = []
                     for channel in p:
-                        self.peaks.append([0] * self.nSamples)
+                        self.peaks.append([0] * int(self.nSamples))
 
                 pos = int(st / 10000000)
                 if pos >= len(self.peaks[0]):
