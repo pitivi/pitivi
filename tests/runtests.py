@@ -60,8 +60,9 @@ def setup():
 
     try:
         import mock
-    except ImportError as e:
-        raise Exception("Python mock library missing! www.voidspace.org.uk/python/mock", e)
+    except ImportError:
+        print("\n\nPython mock library missing! www.voidspace.org.uk/python/mock\n\n", file=sys.stderr)
+        raise
 
 
 if __name__ == "__main__":
