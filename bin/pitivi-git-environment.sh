@@ -117,7 +117,7 @@ else
   done
 
   # GStreamer plugins bad libraries
-  for path in basecamerabinsrc codecparsers interfaces
+  for path in basecamerabinsrc codecparsers uridownloader egl gl insertbin interfaces mpegts
   do
     LD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
     DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
