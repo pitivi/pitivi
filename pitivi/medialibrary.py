@@ -1026,7 +1026,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         directories = []
         filenames = []
 
-        uris = selection.get_data().split("\r\n")
+        uris = selection.get_uris()
         # Filter out the empty uris.
         uris = [x for x in uris if x]
         for raw_uri in uris:
