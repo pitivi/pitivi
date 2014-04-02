@@ -21,7 +21,7 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
-from gi.repository import GObject, GES
+from gi.repository import GObject
 
 from pitivi.undo.undo import UndoableAction
 from pitivi.effects import PROPS_TO_IGNORE
@@ -54,42 +54,24 @@ class EffectGstElementPropertyChangeTracker:
         self.action_log = action_log
         self.pipeline = None
 
-    def addEffectElement(self, gst_element):
-        properties = {}
-
-        if gst_element in self._tracked_effects:
+    def addEffectElement(self, effect):
+        if effect in self._tracked_effects:
             return
 
-        for prop in GObject.list_properties(gst_element):
-            gst_element.connect('notify::' + prop.name,
-                                self._propertyChangedCb,
-                                gst_element)
-            if prop.flags & GObject.PARAM_READABLE:
-                properties[prop.name] = gst_element.get_property(prop.name)
-        self._tracked_effects[gst_element] = properties
+        properties = {}
 
-    def getPropChangedFromTrackObj(self, effect):
-        prop_changed = []
+        effect.connect('deep-notify', self._propertyChangedCb)
 
-        for undo_stack in self.action_log.undo_stacks:
-            for done_prop_change in undo_stack.done_actions:
-                if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is effect.getElement():
-                        prop_changed.append(done_prop_change)
+        for prop in effect.list_children_properties():
+            properties[prop.name] = effect.get_child_property(prop.name)[1]
 
-        for redo_stack in self.action_log.redo_stacks:
-            for done_prop_change in redo_stack.done_actions:
-                if isinstance(done_prop_change, EffectPropertyChanged):
-                    if done_prop_change.gst_element is effect.getElement():
-                        prop_changed.append(done_prop_change)
+        self._tracked_effects[effect] = properties
 
-        return prop_changed
-
-    def _propertyChangedCb(self, gst_element, pspec, unused):
-        old_value = self._tracked_effects[gst_element][pspec.name]
-        new_value = gst_element.get_property(pspec.name)
+    def _propertyChangedCb(self, effect, gst_element, pspec):
+        old_value = self._tracked_effects[effect][pspec.name]
+        new_value = effect.get_child_property(pspec.name)[1]
         action = EffectPropertyChanged(gst_element, pspec.name, old_value, new_value)
-        self._tracked_effects[gst_element][pspec.name] = new_value
+        self._tracked_effects[effect][pspec.name] = new_value
         self.action_log.push(action)
 
 

@@ -287,7 +287,7 @@ class TimelineLogObserver(object):
         #for prop, interpolator in track_element.getInterpolators().itervalues():
             #self._connectToInterpolator(interpolator)
         if isinstance(track_element, GES.BaseEffect):
-            self.effect_properties_tracker.addEffectElement(track_element.getElement())
+            self.effect_properties_tracker.addEffectElement(track_element)
 
     def _disconnectFromTrackElement(self, track_element):
         pass

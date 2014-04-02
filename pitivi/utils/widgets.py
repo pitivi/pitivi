@@ -695,7 +695,6 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             # The "reset to default" button associated with this property
             if default_btn:
                 widget.propName = prop.name.split("-")[0]
-                name = prop.name
 
                 if self.isControllable:
                     # If this element is controlled, the value means nothing anymore.
@@ -707,15 +706,15 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 self.buttons[button] = widget
 
-            self.element.connect('notify::' + prop.name, self._propertyChangedCb, widget)
-
             y += 1
 
+        self.element.connect('deep-notify', self._propertyChangedCb)
         self.pack_start(table, expand=True, fill=True, padding=0)
         self.show_all()
 
-    def _propertyChangedCb(self, unused_element, pspec, widget):
-        widget.setWidgetValue(self.element.get_property(pspec.name))
+    def _propertyChangedCb(self, effect, gst_element, pspec):
+        widget = self.properties[pspec]
+        widget.setWidgetValue(self.element.get_child_property(pspec.name)[1])
 
     def _getKeyframeToggleButton(self, prop):
         button = Gtk.ToggleButton()

@@ -43,7 +43,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
-from gi.repository import GObject
 from gi.repository import GdkPixbuf
 
 from gettext import gettext as _
