@@ -86,12 +86,10 @@ class RoundedRectangle(Clutter.Actor):
         if self._border_color:
             # draw the rectangle for the border which is the same size as the
             # object
-            Cogl.path_round_rectangle(0, 0, self.props.width, self.props.height,
-                                      self._arc, self._step)
-            Cogl.path_round_rectangle(self._border_width, self._border_width,
-                                      self.props.width - self._border_width,
-                                      self.props.height - self._border_width,
-                                      self._arc, self._step)
+            Cogl.path_rectangle(0, 0, self.props.width, self.props.height)
+            Cogl.path_rectangle(self._border_width, self._border_width,
+                                self.props.width - self._border_width,
+                                self.props.height - self._border_width)
             Cogl.path_set_fill_rule(Cogl.PathFillRule.EVEN_ODD)
             Cogl.path_close()
 
@@ -102,10 +100,9 @@ class RoundedRectangle(Clutter.Actor):
         if self._color:
             # draw the content with is the same size minus the width of the border
             # finish the clip
-            Cogl.path_round_rectangle(self._border_width, self._border_width,
-                                      self.props.width - self._border_width,
-                                      self.props.height - self._border_width,
-                                      self._arc, self._step)
+            Cogl.path_rectangle(self._border_width, self._border_width,
+                                self.props.width - self._border_width,
+                                self.props.height - self._border_width)
             Cogl.path_close()
 
             # set the color of the filled area
