@@ -19,43 +19,32 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from gi.repository import GES
 from pitivi.utils.signal import Signallable
 from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
 from pitivi.undo.effect import EffectAdded, EffectRemoved
-from pitivi.undo.effects import EffectGstElementPropertyChangeTracker
+from pitivi.undo.effect import EffectGstElementPropertyChangeTracker
 
 
 class ClipPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
-    property_names = ["start", "duration", "in-point",
-            "media-duration", "priority", "selected"]
-
-    _disabled = False
+    property_names = ["start", "duration", "in-point", "priority"]
 
     def connectToObject(self, obj):
         PropertyChangeTracker.connectToObject(self, obj)
         self.timeline = obj.timeline
-        self.timeline.connect("disable-updates", self._timelineDisableUpdatesCb)
+        self.timeline.connect("commited", self._timelineCommitedCb)
 
     def disconnectFromObject(self, obj):
-        return
-        self.timeline.disconnect_by_func(self._timelineDisableUpdatesCb)
+        self.timeline.disconnect_by_func(self._timelineCommitedCb)
         PropertyChangeTracker.disconnectFromObject(self, obj)
 
-    def _timelineDisableUpdatesCb(self, timeline, disabled):
-        if self._disabled and not disabled:
-            self._disabled = disabled
-            properties = self._takeCurrentSnapshot(self.obj)
-            for property_name, property_value in properties.items():
-                old_value = self.properties[property_name]
-                if old_value != property_value:
-                    self._propertyChangedCb(self.obj, property_value, property_name)
-        else:
-            self._disabled = disabled
-
-    def _propertyChangedCb(self, clip, value, property_name):
-        if not self._disabled:
-            PropertyChangeTracker._propertyChangedCb(self, clip, value, property_name)
+    def _timelineCommitedCb(self, timeline):
+        properties = self._takeCurrentSnapshot(self.obj)
+        for property_name, property_value in properties.items():
+            old_value = self.properties[property_name]
+            if old_value != property_value:
+                self._propertyChangedCb(self.obj, property_value, property_name)
 
 
 class KeyframeChangeTracker(Signallable):
@@ -109,49 +98,41 @@ class ClipPropertyChanged(UndoableAction):
         self.new_value = new_value
 
     def do(self):
-        setattr(self.clip, self.property_name.replace("-", "_"), self.new_value)
+        self.clip.set_property(self.property_name.replace("-", "_"), self.new_value)
         self._done()
 
     def undo(self):
-        setattr(self.clip, self.property_name.replace("-", "_"), self.old_value)
+        self.clip.set_property(self.property_name.replace("-", "_"), self.old_value)
         self._undone()
 
 
 class ClipAdded(UndoableAction):
-    def __init__(self, timeline, clip):
-        self.timeline = timeline
+    def __init__(self, layer, clip):
+        self.layer = layer
         self.clip = clip
-        self.tracks = dict((track_element, track_element.get_track())
-                for track_element in clip.get_children(False))
 
     def do(self):
-        for track_element, track in self.tracks.items():
-            track.addTrackElement(track_element)
-
-        self.timeline.addClip(self.clip)
+        self.layer.add_clip(self.clip)
+        self.layer.get_timeline().commit()
         self._done()
 
     def undo(self):
-        self.timeline.removeClip(self.clip, deep=True)
+        self.layer.remove_clip(self.clip)
         self._undone()
 
 
 class ClipRemoved(UndoableAction):
-    def __init__(self, timeline, clip):
-        self.timeline = timeline
+    def __init__(self, layer, clip):
+        self.layer = layer
         self.clip = clip
-        self.tracks = dict((track_element, track_element.get_track())
-                for track_element in clip.get_children(False))
 
     def do(self):
-        self.timeline.removeClip(self.clip, deep=True)
+        self.layer.remove_clip(self.clip)
         self._done()
 
     def undo(self):
-        for track_element, track in self.tracks.items():
-            track.addTrackElement(track_element)
-
-        self.timeline.addClip(self.clip)
+        self.layer.add_clip(self.clip)
+        self.layer.get_timeline().commit()
         self._undone()
 
 
@@ -254,29 +235,39 @@ class TimelineLogObserver(object):
         for layer in timeline.get_layers():
             for clip in layer.get_clips():
                 self._connectToClip(clip)
-                for track_element in clip.track_elements:
+                for track_element in clip.get_children(True):
                     self._connectToTrackElement(track_element)
 
     def stopObserving(self, timeline):
         self._disconnectFromTimeline(timeline)
-        for clip in timeline.clips:
-            self._disconnectFromClip(clip)
-            for track_element in clip.track_elements:
-                self._disconnectFromTrackElement(track_element)
+        for layer in timeline.layers:
+            for clip in layer.get_clips():
+                self._disconnectFromClip(clip)
+                for track_element in clip.get_children(True):
+                    self._disconnectFromTrackElement(track_element)
 
     def _connectToTimeline(self, timeline):
         for layer in timeline.get_layers():
             layer.connect("clip-added", self._clipAddedCb)
             layer.connect("clip-removed", self._clipRemovedCb)
 
+        timeline.connect("layer-added", self._layerAddedCb)
+        timeline.connect("layer-removed", self._layerRemovedCb)
+
     def _disconnectFromTimeline(self, timeline):
-        timeline.disconnect_by_func(self._clipAddedCb)
-        timeline.disconnect_by_func(self._clipRemovedCb)
+        try:
+            timeline.disconnect_by_func(self._clipAddedCb)
+            timeline.disconnect_by_func(self._clipRemovedCb)
+        except TypeError:
+            # Was not connected to any layer yet
+            pass
 
     def _connectToClip(self, clip):
         tracker = ClipPropertyChangeTracker()
         tracker.connectToObject(clip)
         for property_name in tracker.property_names:
+            setattr(tracker, "last-%s" % property_name,
+                    clip.get_property(property_name))
             tracker.connect("notify::" + property_name,
                     self._clipPropertyChangedCb, property_name)
         self.clip_property_trackers[clip] = tracker
@@ -299,8 +290,9 @@ class TimelineLogObserver(object):
             self.effect_properties_tracker.addEffectElement(track_element.getElement())
 
     def _disconnectFromTrackElement(self, track_element):
-        for prop, interpolator in track_element.getInterpolators().values():
-            self._disconnectFromInterpolator(interpolator)
+        pass
+        #for prop, interpolator in track_element.getInterpolators().values():
+        #    self._disconnectFromInterpolator(interpolator)
 
     def _connectToInterpolator(self, interpolator):
         interpolator.connect("keyframe-added", self._interpolatorKeyframeAddedCb)
@@ -315,34 +307,29 @@ class TimelineLogObserver(object):
         tracker.disconnectFromObject(interpolator)
         tracker.disconnect_by_func(self._interpolatorKeyframeMovedCb)
 
-    def _clipAddedCb(self, timeline, clip):
+    def _clipAddedCb(self, layer, clip):
         self._connectToClip(clip)
-        action = self.ClipAddedAction(timeline, clip)
+        action = self.ClipAddedAction(layer, clip)
         self.log.push(action)
 
-    def _clipRemovedCb(self, timeline, clip):
+    def _clipRemovedCb(self, layer, clip):
         self._disconnectFromClip(clip)
-        action = self.ClipRemovedAction(timeline, clip)
+        action = self.ClipRemovedAction(layer, clip)
         self.log.push(action)
 
     def _clipPropertyChangedCb(self, tracker, clip,
             old_value, new_value, property_name):
-        action = self.timelinePropertyChangedAction(clip,
-                property_name, old_value, new_value)
+        new_value = clip.get_property(property_name)
+        action = self.timelinePropertyChangedAction(clip, property_name,
+                 getattr(tracker, "last-%s" % property_name), new_value)
+        setattr(tracker, "last-%s" % property_name, new_value)
         self.log.push(action)
 
     def _clipTrackElementAddedCb(self, clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             action = self.effectAddAction(clip, track_element,
                                           self.effect_properties_tracker)
-            # We use the action instead of the track element
-            # because the track_element changes when redoing
-            track_element.connect("active-changed",
-                                 self._trackElementActiveChangedCb, action)
             self.log.push(action)
-            element = track_element.getElement()
-            if element:
-                self.effect_properties_tracker.addEffectElement(element)
         else:
             self._connectToTrackElement(track_element)
 
@@ -375,3 +362,11 @@ class TimelineLogObserver(object):
         action = self.interpolatorKeyframeChangedAction(track_element,
                 keyframe, old_snapshot, new_snapshot)
         self.log.push(action)
+
+    def _layerAddedCb(self, timeline, layer):
+        layer.connect("clip-added", self._clipAddedCb)
+        layer.connect("clip-removed", self._clipRemovedCb)
+
+    def _layerRemovedCb(self, timeline, layer):
+        layer.disconnect_by_func(self._layerAddedCb)
+        layer.disconnect_by_func(self._layerRemovedCb)

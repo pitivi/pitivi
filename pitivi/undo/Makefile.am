@@ -4,8 +4,7 @@ undo_PYTHON =    \
 	__init__.py  \
 	undo.py      \
 	timeline.py  \
-	effect.py    \
-	medialibrary.py
+	effect.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

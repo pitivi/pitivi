@@ -35,6 +35,7 @@ from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
 from pitivi.project import ProjectManager, ProjectLogObserver
 from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
+from pitivi.undo.timeline import TimelineLogObserver
 from pitivi.dialogs.startupwizard import StartUpWizard
 
 from pitivi.utils.misc import quote_uri
@@ -104,6 +105,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("cleaned", self._actionLogCleaned)
         self.debug_action_log_observer = DebugActionLogObserver()
         self.debug_action_log_observer.startObserving(self.action_log)
+        self.timeline_log_observer = TimelineLogObserver(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
 
         self.project_manager.connect("new-project-loaded", self._newProjectLoaded)
@@ -182,10 +184,12 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _newProjectLoaded(self, unused_project_manager, project, unused_fully_loaded):
         self.action_log.clean()
+        self.timeline_log_observer.startObserving(project.timeline)
         self.project_log_observer.startObserving(project)
 
     def _projectClosed(self, unused_project_manager, project):
         self.project_log_observer.stopObserving(project)
+        self.timeline_log_observer.stopObserving(project.timeline)
 
     def _checkVersion(self):
         """
@@ -273,4 +277,6 @@ class Pitivi(Gtk.Application, Loggable):
 
         dirty = action_log.dirty()
         self.project_manager.current_project.setModificationState(dirty)
-        self.gui.showProjectStatus()
+        # In the tests we do not want to create any gui
+        if self.gui is not None:
+            self.gui.showProjectStatus()

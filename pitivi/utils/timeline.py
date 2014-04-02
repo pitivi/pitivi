@@ -44,23 +44,6 @@ class TimelineError(Exception):
     pass
 
 
-class ClipEdited(UndoableAction):
-    def __init__(self, focus, old_priority, new_priority, mode, edge, old_position, new_position):
-        self.focus = focus
-        self.old_priority = old_priority
-        self.old_position = old_position
-        self.new_priority = new_priority
-        self.new_position = new_position
-        self.mode = mode
-        self.edge = edge
-
-    def do(self):
-        self.focus.edit([], self.new_priority, self.mode, self.edge, int(self.new_position))
-
-    def undo(self):
-        self.focus.edit([], self.old_priority, self.mode, self.edge, int(self.old_position))
-
-
 class Selected(Signallable):
     """
     A simple class that let us emit a selected-changed signal
@@ -251,14 +234,8 @@ class EditingContext(Signallable):
         self.action_log.begin("move-clip")
 
     def finish(self):
-        """Clean up timeline for normal editing"""
-        if self.new_position is not None and self.new_priority is not None:
-            # The mouse cursor did move.
-            action = ClipEdited(self.focus, self.old_priority, self.new_priority, self.mode, self.edge,
-                                self.old_position, self.new_position)
-            self.action_log.push(action)
-            self.action_log.commit()
-            self.timeline.commit()
+        self.action_log.commit()
+        self.timeline.commit()
         self.emit("clip-trim-finished")
 
     def setMode(self, mode):

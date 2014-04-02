@@ -21,7 +21,7 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 
-from gi.repository import GObject
+from gi.repository import GObject, GES
 
 from pitivi.undo.undo import UndoableAction
 from pitivi.effects import PROPS_TO_IGNORE
@@ -101,97 +101,66 @@ class EffectAdded(UndoableAction):
     # doing again. We have to keep all EffectPropertyChanged object that refers
     # to the Effect when undoing so we reset theirs gst_element when
     # doing it again. The way of doing it is the same with EffectRemoved
-    def __init__(self, clip, track_element, properties_watcher):
+    def __init__(self, clip, effect, properties_watcher):
         self.clip = clip
-        self.track_element = track_element
-        self.factory = track_element.factory
+        self.effect = effect
+        self.asset = effect.get_asset()
         self.effect_props = []
         self.gnl_obj_props = []
         self._properties_watcher = properties_watcher
         self._props_changed = []
 
     def do(self):
-        timeline = self.clip.timeline
-        clip_track_element = timeline.addEffectFactoryOnObject(self.factory,
-                                            clips=[self.clip])
-
-        self.track_element = clip_track_element[0][1]
-        element = self.track_element.getElement()
+        self.effect = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.effect_props:
-            element.set_property(prop_name, prop_value)
-        for prop_name, prop_value in self.gnl_obj_props:
-            self.track_element.gnl_object.set_property(prop_name, prop_value)
-        for prop_changed in self._props_changed:
-            prop_changed.gst_element = self.track_element.getElement()
+            self.effect.set_child_property(prop_name, prop_value)
+        self.clip.get_layer().get_timeline().commit()
         self._props_changed = []
         self._done()
 
     def undo(self):
-        element = self.track_element.getElement()
-        props = GObject.list_properties(element)
-        self.effect_props = [(prop.name, element.get_property(prop.name))
+        props = self.effect.list_children_properties()
+        self.effect_props = [(prop.name, self.effect.get_child_property(prop.name)[1])
                           for prop in props
                           if prop.flags & GObject.PARAM_WRITABLE
                           and prop.name not in PROPS_TO_IGNORE]
-        gnl_props = GObject.list_properties(self.track_element.gnl_object)
-        gnl_obj = self.track_element.gnl_object
-        self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
-                          for prop in gnl_props
-                          if prop.flags & GObject.PARAM_WRITABLE]
-
-        self.clip.removeTrackElement(self.track_element)
-        self.track_element.track.removeTrackElement(self.track_element)
+        self.clip.remove(self.effect)
         self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackObj(self.track_element)
-        del self.track_element
-        self.track_element = None
+            self._properties_watcher.getPropChangedFromTrackObj(self.effect)
+        del self.effect
+        self.effect = None
         self._undone()
 
 
 class EffectRemoved(UndoableAction):
-    def __init__(self, clip, track_element, properties_watcher):
-        self.track_element = track_element
+    def __init__(self, clip, effect, properties_watcher):
+        self.effect = effect
         self.clip = clip
-        self.factory = track_element.factory
+        self.asset = effect.get_asset()
         self.effect_props = []
         self.gnl_obj_props = []
         self._properties_watcher = properties_watcher
         self._props_changed = []
 
     def do(self):
-        element = self.track_element.getElement()
-        props = GObject.list_properties(element)
-        self.effect_props = [(prop.name, element.get_property(prop.name))
+        props = self.effect.list_children_properties()
+        self.effect_props = [(prop.name, self.effect.get_child_property(prop.name)[1])
                           for prop in props
                           if prop.flags & GObject.PARAM_WRITABLE
                           and prop.name not in PROPS_TO_IGNORE]
 
-        gnl_props = GObject.list_properties(self.track_element.gnl_object)
-        gnl_obj = self.track_element.gnl_object
-        self.gnl_obj_props = [(prop.name, gnl_obj.get_property(prop.name))
-                          for prop in gnl_props
-                          if prop.flags & GObject.PARAM_WRITABLE]
+        self.clip.remove(self.effect)
 
-        self.clip.removeTrackElement(self.track_element)
-        self.track_element.track.removeTrackElement(self.track_element)
         self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackObj(self.track_element)
-        del self.track_element
-        self.track_element = None
+            self._properties_watcher.getPropChangedFromTrackObj(self.effect)
+        del self.effect
+        self.effect = None
         self._done()
 
     def undo(self):
-        timeline = self.clip.timeline
-        clip_track_element = timeline.addEffectFactoryOnObject(self.factory,
-                                            clips=[self.clip])
-
-        self.track_element = clip_track_element[0][1]
-        element = self.track_element.getElement()
+        self.effect = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.effect_props:
-            element.set_property(prop_name, prop_value)
-        for prop_name, prop_value in self.gnl_obj_props:
-            self.track_element.gnl_object.set_property(prop_name, prop_value)
-        for prop_changed in self._props_changed:
-            prop_changed.gst_element = self.track_element.getElement()
+            self.effect.set_child_property(prop_name, prop_value)
+        self.clip.get_layer().get_timeline().commit()
         self._props_changed = []
         self._undone()

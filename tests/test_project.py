@@ -27,8 +27,19 @@ from unittest import TestCase
 from gi.repository import GES
 from gi.repository import GLib
 
+from pitivi.application import Pitivi
 from pitivi.project import Project, ProjectManager
 from pitivi.utils.misc import uri_is_reachable
+
+
+def _createRealProject(name=None):
+    app = Pitivi()
+    app.emit("startup")
+    app.project_manager.newBlankProject()
+    if name:
+        app.project_manager.current_project.name = name
+
+    return app.project_manager.current_project
 
 
 class MockProject(object):
@@ -311,7 +322,7 @@ class TestProjectLoading(TestCase):
             mainloop.quit()
 
         # Create a blank project and save it.
-        project = Project("noname")
+        project = _createRealProject(name="noname")
         result = [False]
         project.connect("loaded", loaded, self.mainloop, result)
 
@@ -326,7 +337,7 @@ class TestProjectLoading(TestCase):
         try:
             project.save(project.timeline, uri, None, overwrite=True)
 
-            project2 = Project(uri=uri)
+            project2 = _createRealProject()
             self.assertTrue(project2.createTimeline())
             result = [False]
             project2.connect("loaded", loaded, self.mainloop, result)
@@ -357,7 +368,7 @@ class TestProjectLoading(TestCase):
             mainloop.quit()
 
         # Create a blank project and save it.
-        project = Project("noname")
+        project = _createRealProject()
         result = [False, False, False]
         uris = ["file://%s/samples/tears_of_steel.webm" % os.path.dirname(os.path.abspath(__file__))]
         project.connect("loaded", loaded, self.mainloop, result, uris)
@@ -375,7 +386,7 @@ class TestExportSettings(TestCase):
     """Test the project.MultimediaSettings class."""
 
     def setUp(self):
-        self.project = Project()
+        self.project = _createRealProject()
 
     def testMasterAttributes(self):
         self._testMasterAttribute('muxer', dependant_attr='containersettings')
