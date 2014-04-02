@@ -20,7 +20,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from common import TestCase
+from tests import common
 
 from pitivi import application
 from pitivi import configure
@@ -31,7 +31,7 @@ class MockGioFile(object):
         return (True, result)
 
 
-class TestPitivi(TestCase):
+class TestPitivi(common.TestCase):
 
     def testBasic(self):
         app = application.Pitivi()

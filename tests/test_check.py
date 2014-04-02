@@ -20,7 +20,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from common import TestCase
+from tests import common
 
 from pitivi import check
 
@@ -32,7 +32,7 @@ class FakeDependency(check.Dependency):
         return self.import_result
 
 
-class TestDependency(TestCase):
+class TestDependency(common.TestCase):
 
     def testBoolEvaluation(self):
         dependency = FakeDependency(modulename="module1", version_required_string=None)
