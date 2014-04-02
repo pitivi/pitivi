@@ -19,16 +19,16 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import collections
 import errno
 import sys
 import re
 import os
 import fnmatch
+import threading
 import time
 import types
 import traceback
-import _thread
-import collections
 
 
 # environment variables controlling levels for each category
@@ -635,7 +635,8 @@ def stderrHandler(level, object, category, file, line, message):
         # level   pid     object   cat      time
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
         safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
-                   getFormattedLevelName(level), os.getpid(), _thread.get_ident(),
+                   getFormattedLevelName(level), os.getpid(),
+                   threading.current_thread().ident,
                    o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
                    message, where)
     sys.stderr.flush()
