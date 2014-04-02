@@ -33,12 +33,12 @@ from datetime import datetime
 
 import weakref
 
-from gi.repository import Clutter, Gtk, GtkClutter, Cogl, GES, Gdk, Gst, GstController
+from gi.repository import Clutter, Gtk, GtkClutter, GES, Gdk, Gst, GstController
 from pitivi.utils.timeline import Zoomable, EditingContext, SELECT, UNSELECT, SELECT_ADD, Selected
 from .previewers import AudioPreviewer, VideoPreviewer
 
 import pitivi.configure as configure
-from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH, create_cogl_color
+from pitivi.utils.ui import EXPANDED_SIZE, SPACING, KEYFRAME_SIZE, CONTROL_WIDTH
 
 # Colors for keyframes and clips (RGBA)
 KEYFRAME_LINE_COLOR = (237, 212, 0, 255)  # "Tango" yellow
@@ -46,88 +46,15 @@ KEYFRAME_NORMAL_COLOR = Clutter.Color.new(0, 0, 0, 200)
 KEYFRAME_SELECTED_COLOR = Clutter.Color.new(200, 200, 200, 200)
 CLIP_SELECTED_OVERLAY_COLOR = Clutter.Color.new(60, 60, 60, 100)
 GHOST_CLIP_COLOR = Clutter.Color.new(255, 255, 255, 50)
-TRANSITION_COLOR = create_cogl_color(35, 85, 125, 125)  # light blue
+TRANSITION_COLOR = Clutter.Color.new(35, 85, 125, 125)  # light blue
 
-BORDER_NORMAL_COLOR = create_cogl_color(100, 100, 100, 255)
-BORDER_SELECTED_COLOR = create_cogl_color(200, 200, 10, 255)
+BORDER_NORMAL_COLOR = Clutter.Color.new(100, 100, 100, 255)
+BORDER_SELECTED_COLOR = Clutter.Color.new(200, 200, 10, 255)
 
 NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
 DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
 DRAG_LEFT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE)
 DRAG_RIGHT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
-
-
-class RoundedRectangle(Clutter.Actor):
-    """
-    Custom actor used to draw a rectangle that can have rounded corners
-    """
-    __gtype_name__ = 'RoundedRectangle'
-
-    def __init__(self, width, height, arc, step,
-                 color=None, border_color=None, border_width=0):
-        """
-        Creates a new rounded rectangle
-        """
-        Clutter.Actor.__init__(self)
-
-        self.props.width = width
-        self.props.height = height
-
-        self._arc = arc
-        self._step = step
-        self._border_width = border_width
-        self._color = color
-        self._border_color = border_color
-
-    def do_paint(self):
-        # Set a rectangle for the clipping
-        Cogl.clip_push_rectangle(0, 0, self.props.width, self.props.height)
-
-        if self._border_color:
-            # draw the rectangle for the border which is the same size as the
-            # object
-            Cogl.path_rectangle(0, 0, self.props.width, self.props.height)
-            Cogl.path_rectangle(self._border_width, self._border_width,
-                                self.props.width - self._border_width,
-                                self.props.height - self._border_width)
-            Cogl.path_set_fill_rule(Cogl.PathFillRule.EVEN_ODD)
-            Cogl.path_close()
-
-            # set color to border color
-            Cogl.set_source_color(self._border_color)
-            Cogl.path_fill()
-
-        if self._color:
-            # draw the content with is the same size minus the width of the border
-            # finish the clip
-            Cogl.path_rectangle(self._border_width, self._border_width,
-                                self.props.width - self._border_width,
-                                self.props.height - self._border_width)
-            Cogl.path_close()
-
-            # set the color of the filled area
-            Cogl.set_source_color(self._color)
-            Cogl.path_fill()
-
-        Cogl.clip_pop()
-
-    def get_color(self):
-        return self._color
-
-    def set_color(self, color):
-        self._color = color
-        self.queue_redraw()
-
-    def get_border_width(self):
-        return self._border_width
-
-    def set_border_width(self, width):
-        self._border_width = width
-        self.queue_redraw()
-
-    def set_border_color(self, color):
-        self._border_color = color
-        self.queue_redraw()
 
 
 class Ghostclip(Clutter.Actor):
@@ -343,7 +270,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         size = self.bElement.get_duration()
 
         self.background = self._createBackground()
-        self.background.set_position(0, 0)
+        self.background.set_position(1, 1)
         self.add_child(self.background)
 
         self.preview = self._createPreview()
@@ -351,6 +278,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
         self.border = self._createBorder()
         self.add_child(self.border)
+
+        self.set_child_below_sibling(self.border, self.background)
 
         self.marquee = self._createMarquee()
         self.add_child(self.marquee)
@@ -386,13 +315,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
                 self.rightHandle.set_easing_duration(600)
 
         self.marquee.set_size(width, height)
-        self.background.props.width = width
-        self.background.props.height = height
+        self.background.props.width = width - 2
+        self.background.props.height = height - 2
         self.border.props.width = width
         self.border.props.height = height
         self.props.width = width
         self.props.height = height
-        self.preview.set_size(width, height)
+        self.preview.set_size(width - 2, height - 2)
         if self.rightHandle:
             self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
 
@@ -576,10 +505,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
         pass
 
     def _createBorder(self):
-        border = RoundedRectangle(0, 0, 0, 0)
+        border = Clutter.Actor()
         border.bElement = self.bElement
-        border.set_border_color(BORDER_NORMAL_COLOR)
-        border.set_border_width(1)
+        border.set_background_color(BORDER_NORMAL_COLOR)
         border.set_position(0, 0)
         return border
 
@@ -660,7 +588,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.hideKeyframes()
         self.marquee.props.visible = isSelected
         color = BORDER_SELECTED_COLOR if isSelected else BORDER_NORMAL_COLOR
-        self.border.set_border_color(color)
+        self.border.set_background_color(color)
 
 
 class Gradient(Clutter.Actor):
@@ -1145,10 +1073,14 @@ class TransitionElement(TimelineElement):
         self.set_reactive(True)
 
     def _createBackground(self):
-        background = RoundedRectangle(0, 0, 0, 0)
-        background.set_color(TRANSITION_COLOR)
-        background.set_border_width(1)
+        background = Clutter.Actor()
+        background.set_background_color(TRANSITION_COLOR)
         return background
+
+    def _createBorder(self):
+        border = Clutter.Actor()
+        border.set_background_color(Clutter.Color.new(0, 0, 0, 0))
+        return border
 
     def _selectedChangedCb(self, selected, isSelected):
         TimelineElement._selectedChangedCb(self, selected, isSelected)
