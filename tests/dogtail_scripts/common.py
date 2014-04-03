@@ -15,13 +15,17 @@ import dogtail.rawinput
 from pyatspi import Registry as registry
 from pyatspi import KEY_PRESS, KEY_RELEASE
 
-from pitivi.utils import ui
-
 
 # These are the timecodes we expect for "tears_of_steel.webm", depending on
 # if we insert it once in a blank timeline or twice in a blank timeline.
 DURATION_OF_ONE_CLIP = "00:01.999"
 DURATION_OF_TWO_CLIPS = "00:03.999"
+
+# Constants from pitivi.ui
+# TODO: Use directly the constants from pitivi.ui when these UI tests are ported to Python3.
+CONTROL_WIDTH = 250
+EXPANDED_SIZE = 65
+SPACING = 10
 
 
 class PitiviTestCase(unittest.TestCase):
@@ -416,8 +420,8 @@ class PitiviTestCase(unittest.TestCase):
     def getTimelineX(self, percent):
         assert percent >= 0
         assert percent <= 1
-        perceived_width = self.timeline.size[0] - ui.CONTROL_WIDTH
-        return self.timeline.position[0] + ui.CONTROL_WIDTH + percent * perceived_width
+        perceived_width = self.timeline.size[0] - CONTROL_WIDTH
+        return self.timeline.position[0] + CONTROL_WIDTH + percent * perceived_width
 
     def getTimelineY(self, layer, above=False):
         """
@@ -427,9 +431,9 @@ class PitiviTestCase(unittest.TestCase):
         @param above: Whether instead middle of the space above.
         """
         assert layer >= 0
-        perceived_top = layer * (ui.EXPANDED_SIZE + ui.SPACING)
+        perceived_top = layer * (EXPANDED_SIZE + SPACING)
         if above:
-            perceived_top += ui.SPACING / 2
+            perceived_top += SPACING / 2
         else:
-            perceived_top += ui.SPACING + ui.EXPANDED_SIZE / 2
+            perceived_top += SPACING + EXPANDED_SIZE / 2
         return self.timeline.position[1] + perceived_top
