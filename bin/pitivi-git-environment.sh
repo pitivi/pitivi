@@ -35,7 +35,8 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 # Everything below this line shouldn't be edited!
 #
 
-export PYTHON=python3
+export PITIVI_PYTHON=python3
+export PYTHON=${PITIVI_PYTHON}
 
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
   echo "Using a local build of glib"
@@ -294,7 +295,7 @@ if [ "$ready_to_run" != "1" ]; then
         fi
         cd $m
         git fetch origin  # In case you haven't got the latest release tags...
-        # Take into account whether the user want stable releases or "master"
+        # Take into account whether the user wants stable releases or "master"
         if [ $m == "glib" ]; then
             # Silly hack for the fact that glib changes the "mkinstalldirs" file
             # when compiling, which prevents git pull --rebase from working
@@ -314,6 +315,8 @@ if [ "$ready_to_run" != "1" ]; then
                     exit 1
                 fi
             fi
+            # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=679438
+            export PYTHON=$(which python2)
         elif [ $m == "pygobject" ]; then
             git checkout $PYGOBJECT_RELEASE_TAG
             if [ $PYGOBJECT_RELEASE_TAG == "master" ]; then
@@ -354,6 +357,8 @@ if [ "$ready_to_run" != "1" ]; then
                 exit 1
             fi
         fi
+
+        export PYTHON=${PITIVI_PYTHON}
     done
 
 
