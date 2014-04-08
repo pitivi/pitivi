@@ -113,8 +113,8 @@ def _initialize_modules():
     try:
         initialize_modules()
     except Exception as e:
-        print("Failed to initialize modules: ", e)
-
+        print("Failed to initialize modules")
+        raise
 
 def _check_requirements():
     from pitivi.check import check_requirements
