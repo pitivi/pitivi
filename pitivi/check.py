@@ -141,7 +141,10 @@ class GstPluginDependency(Dependency):
     Gst is importable.
     """
     def _try_importing_component(self):
-        from gi.repository import Gst
+        try:
+            from gi.repository import Gst
+        except ImportError:
+            return None
         Gst.init(None)
 
         registry = Gst.Registry.get()
