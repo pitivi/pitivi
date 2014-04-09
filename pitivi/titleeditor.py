@@ -776,7 +776,8 @@ class TitleEditor(Loggable):
         self._deactivate()
         assert isinstance(source, GES.TextOverlay) or \
             isinstance(source, GES.TitleSource)
-        self.source = source
+        # TODO: Remove ".get_parent()" when bug 727880 is fixed.
+        self.source = source.get_parent()
         self._updateFromSource()
         self._activate()
 
