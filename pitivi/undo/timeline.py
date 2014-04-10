@@ -235,8 +235,6 @@ class TimelineLogObserver(object):
         for layer in timeline.get_layers():
             for clip in layer.get_clips():
                 self._connectToClip(clip)
-                for track_element in clip.get_children(True):
-                    self._connectToTrackElement(track_element)
 
     def stopObserving(self, timeline):
         self._disconnectFromTimeline(timeline)
@@ -274,8 +272,8 @@ class TimelineLogObserver(object):
 
         clip.connect("child-added", self._clipTrackElementAddedCb)
         clip.connect("child-removed", self._clipTrackElementRemovedCb)
-        for element in clip.get_children(False):
-            self._connectToTrackElement(element)
+        for track_element in clip.get_children(True):
+            self._connectToTrackElement(track_element)
 
     def _disconnectFromClip(self, clip):
         tracker = self.clip_property_trackers.pop(clip)

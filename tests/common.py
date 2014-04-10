@@ -75,6 +75,11 @@ class TestCase(unittest.TestCase):
         self._result = result
         unittest.TestCase.run(self, result)
 
+    @staticmethod
+    def getSampleUri(sample):
+        dir = os.path.dirname(os.path.abspath(__file__))
+        return "file://%s/samples/%s" % (dir, sample)
+
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
