@@ -58,6 +58,9 @@ def setup():
     from pitivi.check import initialize_modules
     initialize_modules()
 
+    from pitivi.utils import loggable as log
+    log.init('PITIVI_DEBUG')
+
     try:
         import mock
     except ImportError:
@@ -74,8 +77,6 @@ if __name__ == "__main__":
     if 'VERBOSE' in os.environ:
         descriptions = 2
         verbosity = 2
-    from pitivi.utils import loggable as log
-    log.init('PITIVI_DEBUG')
 
     suite = _tests_suite()
     if not list(suite):
