@@ -871,7 +871,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # This can happen if the file was moved or deleted by an application
         # that does not manage Freedesktop thumbnails. The user is in luck!
         # This is based on medialibrary's addDiscovererInfo method.
-        thumbnail_hash = md5(uri).hexdigest()
+        thumbnail_hash = md5(uri.encode()).hexdigest()
         thumb_dir = os.path.expanduser("~/.thumbnails/normal/")
         thumb_path_normal = thumb_dir + thumbnail_hash + ".png"
         if os.path.exists(thumb_path_normal):
