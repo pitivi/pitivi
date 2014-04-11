@@ -171,7 +171,6 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
         # Variables related to thumbnailing
         self.wishlist = []
-        self._callback_id = None
         self._thumb_cb_id = None
         self._allAnimated = False
         self._running = False
@@ -198,11 +197,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         self.becomeControlled()
 
     # Internal API
-
     def _update(self, unused_msg_source=None):
-        if self._callback_id:
-            GLib.source_remove(self._callback_id)
-
         if self.thumb_width:
             self._addVisibleThumbnails()
             if self.wishlist:
