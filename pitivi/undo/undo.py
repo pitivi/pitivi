@@ -46,7 +46,6 @@ class UndoableAction(Signallable):
     __signals__ = {
         "done": [],
         "undone": [],
-        "undone": [],
     }
 
     def do(self):
