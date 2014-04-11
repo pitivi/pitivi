@@ -34,7 +34,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
 from pitivi.mainwindow import PitiviMainWindow
 from pitivi.project import ProjectManager, ProjectLogObserver
-from pitivi.undo.undo import UndoableActionLog, DebugActionLogObserver
+from pitivi.undo.undo import UndoableActionLog
 from pitivi.undo.timeline import TimelineLogObserver
 from pitivi.dialogs.startupwizard import StartUpWizard
 
@@ -71,8 +71,9 @@ class Pitivi(Gtk.Application, Loggable):
         self.effects = None
         self.system = None
         self.project_manager = ProjectManager(self)
+
         self.action_log = None
-        self.debug_action_log_observer = None
+        self.timeline_log_observer = None
         self.project_log_observer = None
 
         self.gui = None
@@ -103,8 +104,6 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("undo", self._actionLogUndo)
         self.action_log.connect("redo", self._actionLogRedo)
         self.action_log.connect("cleaned", self._actionLogCleaned)
-        self.debug_action_log_observer = DebugActionLogObserver()
-        self.debug_action_log_observer.startObserving(self.action_log)
         self.timeline_log_observer = TimelineLogObserver(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
 

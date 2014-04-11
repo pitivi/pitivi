@@ -132,18 +132,21 @@ class UndoableActionLog(Signallable, Loggable):
         self._checkpoint = self._takeSnapshot()
 
     def begin(self, action_group_name):
-        self.debug("Begining %s", action_group_name)
+        self.debug("Beginning %s", action_group_name)
         if self.running:
+            self.debug("Abort because already running")
             return
 
         stack = UndoableActionStack(action_group_name)
         nested = self._stackIsNested(stack)
         self.stacks.append(stack)
+        self.debug("begin action group %s, nested %s", stack.action_group_name, nested)
         self.emit("begin", stack, nested)
 
     def push(self, action):
         self.debug("Pushing %s", action)
         if self.running:
+            self.debug("Abort because already running")
             return
 
         try:
@@ -152,21 +155,27 @@ class UndoableActionLog(Signallable, Loggable):
             return
 
         stack.push(action)
+        self.debug("push action %s in action group %s", action, stack.action_group_name)
         self.emit("push", stack, action)
 
     def rollback(self):
+        self.debug("Rolling back")
         if self.running:
+            self.debug("Abort because already running")
             return
 
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
         nested = self._stackIsNested(stack)
+        self.debug("rollback action group %s, nested %s", stack.action_group_name, nested)
         self.emit("rollback", stack, nested)
         stack.undo()
 
     def commit(self):
+        self.debug("Committing")
         if self.running:
+            self.debug("Abort because already running")
             return
 
         stack = self._getTopmostStack(pop=True)
@@ -181,7 +190,7 @@ class UndoableActionLog(Signallable, Loggable):
         if self.redo_stacks:
             self.redo_stacks = []
 
-        self.debug("%s pushed", stack)
+        self.debug("commit action group %s nested %s", stack.action_group_name, nested)
         self.emit("commit", stack, nested)
 
     def undo(self):
@@ -245,43 +254,6 @@ class UndoableActionLog(Signallable, Loggable):
 
     def _stackIsNested(self, unused_stack):
         return bool(len(self.stacks))
-
-
-class DebugActionLogObserver(Loggable):
-    """
-    Allows getting more debug output from the UndoableActionLog than the default
-    """
-    # FIXME: this looks overengineered at first glance. This is used in only one
-    # place in the codebase (in application.py). Why not just put the debug
-    # directly in UndoableActionLog if we really need them anyway?
-    def startObserving(self, log):
-        self._connectToActionLog(log)
-
-    def stopObserving(self, log):
-        self._disconnectFromActionLog(log)
-
-    def _connectToActionLog(self, log):
-        log.connect("begin", self._actionLogBeginCb)
-        log.connect("commit", self._actionLogCommitCb)
-        log.connect("rollback", self._actionLogRollbackCb)
-        log.connect("push", self._actionLogPushCb)
-
-    def _disconnectFromActionLog(self, log):
-        for method in (self._actionLogBeginCb, self._actionLogCommitCb,
-                self._actionLogrollbackCb, self._actionLogPushCb):
-            log.disconnect_by_func(method)
-
-    def _actionLogBeginCb(self, unused_log, stack, nested):
-        self.debug("begin action %s nested %s", stack.action_group_name, nested)
-
-    def _actionLogCommitCb(self, unused_log, stack, nested):
-        self.debug("commit action %s nested %s", stack.action_group_name, nested)
-
-    def _actionLogRollbackCb(self, unused_log, stack, nested):
-        self.debug("rollback action %s nested %s", stack.action_group_name, nested)
-
-    def _actionLogPushCb(self, unused_log, stack, action):
-        self.debug("push %s in %s", action, stack.action_group_name)
 
 
 class PropertyChangeTracker(Signallable):
