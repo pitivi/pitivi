@@ -444,7 +444,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
         self.updateTitle()
 
-## Missing Plugin Support
+# Missing Plugin Support
 
     def _installPlugins(self, details, missingPluginsCallback):
         context = InstallPluginsContext()
@@ -454,7 +454,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                 missingPluginsCallback)
         return res
 
-## UI Callbacks
+# UI Callbacks
 
     def _configureCb(self, unused_widget, event):
         """
@@ -502,7 +502,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         to remove all instances of that clip."""
         self.timeline_ui.purgeObject(asset.get_id())
 
-## Toolbar/Menu actions callback
+# Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action, unused_param):
         if self.app.project_manager.newBlankProject() is not False:
@@ -652,7 +652,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
         self.prefsdialog.run()
 
-## Project management callbacks
+# Project management callbacks
 
     def _projectManagerNewProjectLoadedCb(self, project_manager, unused_project, unused_fully_loaded):
         """
@@ -665,8 +665,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.project_manager.current_project.pipeline.activatePositionListener()
         self._setProject()
 
-        #FIXME GES we should re-enable this when possible
-        #self._syncDoUndo(self.app.action_log)
+        # FIXME GES we should re-enable this when possible
+        # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
         if self._missingUriOnLoading:
@@ -704,8 +704,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
         # FIXME GES: Reimplement Undo/Redo
-        #self.app.action_log.checkpoint()
-        #self._syncDoUndo(self.app.action_log)
+        # self.app.action_log.checkpoint()
+        # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
         self.save_action.set_enabled(False)
@@ -882,7 +882,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         # TODO: display the filesize to help the user identify the file
         if asset.get_duration() == Gst.CLOCK_TIME_NONE:
-            ## The file is probably an image, not video or audio.
+            # The file is probably an image, not video or audio.
             text = _('The following file has moved: "<b>%s</b>"'
                      '\nPlease specify its new location:'
                      % info_name(asset))
@@ -959,12 +959,12 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         return new_uri
 
     def _connectToProject(self, project):
-        #FIXME GES we should re-enable this when possible
-        #medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
+        # FIXME GES we should re-enable this when possible
+        # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
 
-## Pitivi current project callbacks
+# Pitivi current project callbacks
 
     def _setProject(self):
         """
@@ -986,8 +986,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self._renderingSettingsChangedCb(self.app.project_manager.current_project)
         if self.timeline_ui:
             self.clipconfig.project = self.app.project_manager.current_project
-            #FIXME GES port undo/redo
-            #self.app.timelineLogObserver.pipeline = self.app.project_manager.current_project.pipeline
+            # FIXME GES port undo/redo
+            # self.app.timelineLogObserver.pipeline = self.app.project_manager.current_project.pipeline
 
         # When creating a blank project, medialibrary will eventually trigger
         # this _setProject method, but there's no project URI yet.
@@ -1016,7 +1016,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.debug("Timeline duration changed to %s", duration)
         self.render_button.set_sensitive(duration > 0)
 
-## other
+# other
     def _showExportDialog(self, project):
         self.log("Export requested")
         chooser = Gtk.FileChooserDialog(title=_("Export To..."),
