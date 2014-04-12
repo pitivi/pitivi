@@ -20,57 +20,34 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-# set of utility functions
-
-from gettext import gettext as _
-from gi.repository import GLib
-from gi.repository import GObject
-from gi.repository import Gst
-from gi.repository import Gtk
-from urllib.parse import unquote
-from urllib.parse import urlsplit, urlparse
 import bisect
 import hashlib
 import os
-import struct
-import sys
 import threading
 import time
+from urllib.parse import urlparse, unquote, urlsplit
+
+from gi.repository import GLib
+from gi.repository import Gst
+from gi.repository import Gtk
+
+from gettext import gettext as _
 
 import pitivi.utils.loggable as log
 from pitivi.utils.threads import Thread
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
-try:
-    import cProfile
-except ImportError:
-    pass
 
-
-UNKNOWN_DURATION = 2 ** 63 - 1
-
-native_endianness = struct.pack('=I', 0x34333231)
-
-big_to_cairo_alpha_mask = struct.unpack(b'=i', b'\xFF\x00\x00\x00')[0]
-big_to_cairo_red_mask = struct.unpack(b'=i', b'\x00\xFF\x00\x00')[0]
-big_to_cairo_green_mask = struct.unpack(b'=i', b'\x00\x00\xFF\x00')[0]
-big_to_cairo_blue_mask = struct.unpack(b'=i', b'\x00\x00\x00\xFF')[0]
-
-
-def between(a, b, c):
-    return (a <= b) and (b <= c)
-
-
-def format_ns(time):
-    if time is None:
+def format_ns(timestamp):
+    if timestamp is None:
         return None
-    if time == Gst.CLOCK_TIME_NONE:
+    if timestamp == Gst.CLOCK_TIME_NONE:
         return "CLOCK_TIME_NONE"
 
-    return str(time / (Gst.SECOND * 60 * 60)) + ':' + \
-        str((time / (Gst.SECOND * 60)) % 60) + ':' + \
-        str((time / Gst.SECOND) % 60) + ':' + \
-        str(time % Gst.SECOND)
+    return str(timestamp / (Gst.SECOND * 60 * 60)) + ':' + \
+        str((timestamp / (Gst.SECOND * 60)) % 60) + ':' + \
+        str((timestamp / Gst.SECOND) % 60) + ':' + \
+        str(timestamp % Gst.SECOND)
 
 
 def call_false(function, *args, **kwargs):
@@ -87,23 +64,12 @@ def call_false(function, *args, **kwargs):
     return False
 
 
-def bin_contains(bin, element):
-    """ Returns True if the bin contains the given element, the search is recursive """
-    if not isinstance(bin, Gst.Bin):
-        return False
-    if not isinstance(element, Gst.Element):
-        return False
-    for elt in bin:
-        if element is elt:
-            return True
-        if isinstance(elt, Gst.Bin) and bin_contains(elt, element):
-            return True
-    return False
+# ------------------------------ URI helpers --------------------------------
 
-
-#------------------------------ URI helpers   --------------------------------#
 def isWritable(path):
-    """Check if the file/path is writable"""
+    """
+    Return whether the file/path is writable.
+    """
     if os.path.isdir(path):
         # The given path is an existing directory.
         # To properly check if it is writable, you need to use os.access.
@@ -118,7 +84,8 @@ def isWritable(path):
 
 
 def uri_is_valid(uri):
-    """Checks if the given uri is a valid uri (of type file://)
+    """
+    Checks if the given uri is a valid uri (of type file://)
 
     Will also check if the size is valid (> 0).
 
@@ -131,12 +98,12 @@ def uri_is_valid(uri):
 
 
 def uri_is_reachable(uri):
-    """ Check whether the given uri is reachable by GStreamer.
+    """
+    Check whether the given uri is reachable by GStreamer.
 
     @param uri: The location to check
     @type uri: C{str}
-    @return: C{True} if the uri is reachable.
-    @rtype: C{bool}
+    @return: Whether the uri is reachable.
     """
     if not uri_is_valid(uri):
         raise NotImplementedError(
@@ -144,10 +111,6 @@ def uri_is_reachable(uri):
             # on a local filesystem
             _("%s doesn't yet handle non-local projects") % APPNAME)
     return os.path.isfile(Gst.uri_get_location(uri))
-
-
-def get_filesystem_encoding():
-    return sys.getfilesystemencoding() or "utf-8"
 
 
 def path_from_uri(raw_uri):
@@ -223,129 +186,6 @@ def hash_file(uri):
     return sha256.hexdigest()
 
 
-#------------------------------ Gst helpers   --------------------------------#
-def get_controllable_properties(element):
-    """
-    Returns a list of controllable properties for the given
-    element (and child if it's a container).
-
-    The list is made of tuples containing:
-    * The GstObject
-    * The GParamspec
-    """
-    log.debug("utils", "element %r, %d", element, isinstance(element, Gst.Bin))
-    res = []
-    if isinstance(element, Gst.Bin):
-        for child in element.elements():
-            res.extend(get_controllable_properties(child))
-    else:
-        for prop in GObject.list_properties(element):
-            if prop.flags & Gst.PARAM_CONTROLLABLE:
-                log.debug("utils", "adding property %r", prop)
-                res.append((element, prop))
-    return res
-
-
-def linkDynamic(element, target):
-
-    def pad_added(unused_bin, pad, target):
-        compatpad = target.get_compatible_pad(pad)
-        if compatpad:
-            pad.link_full(compatpad, Gst.PAD_LINK_CHECK_NOTHING)
-    element.connect("pad-added", pad_added, target)
-
-
-def element_make_many(*args):
-    return tuple((Gst.ElementFactory.make(arg) for arg in args))
-
-
-def pipeline(graph):
-    E = iter(graph.items())
-    V = iter(graph.keys())
-    p = Gst.Pipeline()
-    p.add(*V)
-    for u, v in E:
-        if v:
-            try:
-                u.link(v)
-            except Gst.LinkError:
-                linkDynamic(u, v)
-    return p
-
-
-def filter_(caps):
-    f = Gst.ElementFactory.make("capsfilter")
-    f.props.caps = Gst.caps_from_string(caps)
-    return f
-
-
-#-------------------------- Sorting helpers   --------------------------------#
-def start_insort_left(a, x, lo=0, hi=None):
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if a[mid].start < x.start:
-            lo = mid + 1
-        else:
-            hi = mid
-    a.insert(lo, x)
-
-
-def start_insort_right(a, x, lo=0, hi=None):
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if x.start < a[mid].start:
-            hi = mid
-        else:
-            lo = mid + 1
-    a.insert(lo, x)
-
-
-def start_bisect_left(a, x, lo=0, hi=None):
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if a[mid].start < x.start:
-            lo = mid + 1
-        else:
-            hi = mid
-    return lo
-
-
-class Infinity(object):
-    def __cmp__(self, other):
-        if isinstance(other, Infinity):
-            return 0
-
-        return 1
-
-infinity = Infinity()
-
-
-def profile(func, profiler_filename="result.prof"):
-    counter = 1
-    output_filename = profiler_filename
-    while os.path.exists(output_filename):
-        output_filename = profiler_filename + str(counter)
-        counter += 1
-
-    def _wrapper(*unused_args, **kwargs):
-        local_func = func
-        cProfile.runctx("result = local_func(*args, **kwargs)", globals(), locals(),
-                        filename=output_filename)
-        return locals()["result"]
-
-    return _wrapper
-
-
-def formatPercent(value):
-    return "%3d%%" % (value * 100)
-
-
 def quantize(input, interval):
     return (input // interval) * interval
 
@@ -370,26 +210,6 @@ def binary_search(elements, value):
             closest_index = index
             closest_distance = distance
     return closest_index
-
-
-def argmax(func, seq):
-    """return the element of seq that gives max(map(func, seq))"""
-    def compare(a1, b1):
-        if a1[0] > b1[0]:
-            return a1
-        return b1
-    # using a generator expression here should save memory
-    objs = ((func(val), val) for val in seq)
-    return reduce(compare, objs)[1]
-
-
-def same(seq):
-    i = iter(seq)
-    first = next(i)
-    for item in i:
-        if first != item:
-            return None
-    return first
 
 
 def show_user_manual(page=None):

@@ -33,7 +33,29 @@ from collections import deque
 #from pitivi.elements.singledecodebin import SingleDecodeBin
 #from pitivi.elements.extractionsink import ExtractionSink
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import pipeline
+
+
+def linkDynamic(element, target):
+
+    def pad_added(unused_bin, pad, target):
+        compatpad = target.get_compatible_pad(pad)
+        if compatpad:
+            pad.link_full(compatpad, Gst.PAD_LINK_CHECK_NOTHING)
+    element.connect("pad-added", pad_added, target)
+
+
+def pipeline(graph):
+    E = iter(graph.items())
+    V = iter(graph.keys())
+    p = Gst.Pipeline()
+    p.add(*V)
+    for u, v in E:
+        if v:
+            try:
+                u.link(v)
+            except Gst.LinkError:
+                linkDynamic(u, v)
+    return p
 
 
 class Extractee:
