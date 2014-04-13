@@ -22,7 +22,6 @@
 
 import os
 import sys
-import string
 import locale
 import gettext
 
@@ -63,22 +62,24 @@ def _add_pitivi_path():
     dir = os.path.dirname(os.path.abspath(__file__))
     if _in_devel():
         root = os.path.split(dir)[0]
-        sys.path.insert(0, os.path.join(root, "pitivi", "coptimizations",
-                    ".libs"))
+        sys.path.append(os.path.join(root, "pitivi", "coptimizations", ".libs"))
         localedir = os.path.join(os.path.split(dir)[0], 'locale')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
         localedir = os.path.join(DATADIR, "locale")
 
     if not root in sys.path:
-        sys.path.insert(0, root)
+        sys.path.append(root)
 
     # prepend any directories found at configure time if they're not
     # already in the path. (if they are already in the path, the user
     # chose to have it that way, so we leave their order)
     for path in CONFIGURED_PYTHONPATH.split(':'):
+        if not path:
+            continue
+        path = os.path.abspath(path)
         if path not in sys.path:
-            sys.path.insert(0, path)
+            sys.path.append(path)
 
     # Added for i18n
     try:
