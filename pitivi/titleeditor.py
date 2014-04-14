@@ -427,11 +427,13 @@ class PangoBuffer(Gtk.TextBuffer):
         return Gdk.Color(pc.red, pc.green, pc.blue)
 
     def color_to_hex(self, color):
+        """
+        @type color: L{Gdk.Color}
+        """
         hexstring = ""
         for col in 'red', 'green', 'blue':
-            hexfrag = hex(getattr(color, col) / (16 * 16)).split("x")[1]
-            if len(hexfrag) < 2:
-                hexfrag = "0" + hexfrag
+            channel = int(getattr(color, col))
+            hexfrag = "%02x" % (channel / 256)
             hexstring += hexfrag
         return hexstring
 
