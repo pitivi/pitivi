@@ -618,6 +618,7 @@ class TitleEditor(Loggable):
         buttons = ["bold", "italic", "font", "font_fore_color", "background_color"]
         for button in buttons:
             self.bt[button] = builder.get_object(button)
+        self.background_color_button = builder.get_object("back_color")
 
         settings = ["valignment", "halignment", "xpos", "ypos"]
         for setting in settings:
@@ -709,30 +710,31 @@ class TitleEditor(Loggable):
         self._disconnect_signals()
 
     def _updateFromSource(self):
-        if self.source is not None:
-            source_text = self.source.get_text()
-            self.log("Title text set to %s", source_text)
-            if source_text is None:
-                # FIXME: sometimes we get a TextOverlay/TitleSource
-                # without a valid text property. This should not happen.
-                source_text = ""
-                self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
-            self.pangobuffer.set_text(source_text)
-            self.textbuffer.set_text(source_text)
-            self.settings['xpos'].set_value(self.source.get_xpos())
-            self.settings['ypos'].set_value(self.source.get_ypos())
-            self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
-            self.settings['halignment'].set_active_id(self.source.get_halignment().value_name)
-            if hasattr(self.source, "get_background_color"):
-                self.bt["background_color"].set_visible(True)
-                color = self.source.get_background_color()
-                color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
-                                 color / 256 ** 1 % 256 / 255.,
-                                 color / 256 ** 0 % 256 / 255.,
-                                 color / 256 ** 3 % 256 / 255.)
-                #self.bt["background_color"].set_rgba(color)
-            else:
-                self.bt["background_color"].set_visible(False)
+        if not self.source:
+            # Nothing to update from.
+            return
+
+        source_text = self.source.get_text()
+        if source_text is None:
+            # FIXME: sometimes we get a TextOverlay/TitleSource
+            # without a valid text property. This should not happen.
+            source_text = ""
+            self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
+        self.log("Title text set to %s", source_text)
+        self.pangobuffer.set_text(source_text)
+        self.textbuffer.set_text(source_text)
+
+        self.settings['xpos'].set_value(self.source.get_xpos())
+        self.settings['ypos'].set_value(self.source.get_ypos())
+        self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
+        self.settings['halignment'].set_active_id(self.source.get_halignment().value_name)
+
+        color = self.source.get_background_color()
+        color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
+                         color / 256 ** 1 % 256 / 255.,
+                         color / 256 ** 0 % 256 / 255.,
+                         color / 256 ** 3 % 256 / 255.)
+        self.background_color_button.set_rgba(color)
 
     def _updateSourceText(self, unused_updated_obj):
         if self.source is not None:
