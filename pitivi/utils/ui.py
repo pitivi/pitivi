@@ -117,6 +117,7 @@ MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 
 # ---------------------- ARGB color helper-------------------------------------#
+
 def pack_color_32(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 32bit RGBA value."""
     red = red >> 8
@@ -158,35 +159,6 @@ def unpack_color_64(value):
     blue = (value >> 16) & 0xFFFF
     alpha = value & 0xFFFF
     return red, green, blue, alpha
-
-
-def unpack_cairo_pattern(value):
-    """Transforms the specified RGBA value into a SolidPattern object."""
-    red, green, blue, alpha = unpack_color(value)
-    return cairo.SolidPattern(
-        red / 65535.0,
-        green / 65535.0,
-        blue / 65535.0,
-        alpha / 65535.0)
-
-
-def unpack_cairo_gradient(value):
-    """Creates a LinearGradient object out of the specified RGBA value."""
-    red, green, blue, alpha = unpack_color(value)
-    gradient = cairo.LinearGradient(0, 0, 0, 50)
-    gradient.add_color_stop_rgba(
-        1.0,
-        red / 65535.0,
-        green / 65535.0,
-        blue / 65535.0,
-        alpha / 65535.0)
-    gradient.add_color_stop_rgba(
-        0,
-        (red / 65535.0) * 1.5,
-        (green / 65535.0) * 1.5,
-        (blue / 65535.0) * 1.5,
-        alpha / 65535.0)
-    return gradient
 
 
 def hex_to_rgb(value):
