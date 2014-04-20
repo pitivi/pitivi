@@ -118,6 +118,22 @@ MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 # ---------------------- ARGB color helper-------------------------------------#
 
+def argb_to_gdk_rgba(color_int):
+    return Gdk.RGBA(color_int / 256 ** 2 % 256 / 255.,
+                    color_int / 256 ** 1 % 256 / 255.,
+                    color_int / 256 ** 0 % 256 / 255.,
+                    color_int / 256 ** 3 % 256 / 255.)
+
+
+def gdk_rgba_to_argb(color):
+    color_int = 0
+    color_int += int(color.alpha * 255) * 256 ** 3
+    color_int += int(color.red * 255) * 256 ** 2
+    color_int += int(color.green * 255) * 256 ** 1
+    color_int += int(color.blue * 255) * 256 ** 0
+    return color_int
+
+
 def pack_color_32(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 32bit RGBA value."""
     red = red >> 8

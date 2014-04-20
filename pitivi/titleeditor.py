@@ -29,546 +29,13 @@ from gi.repository import Gst
 from gi.repository import GLib
 
 from gettext import gettext as _
-from xml.sax import saxutils
 
-from .utils.timeline import SELECT
-from pitivi.configure import get_ui_dir, get_pixmap_dir
+from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Seeker
-
-
-# FIXME Fix Pango so we do NOT need that dirty reimplementation
-# Pango.AttrList
-class AttrIterator():
-    def __init__(self, attributes=[]):
-        self.attributes = attributes
-        self.attribute_stack = []
-        self.start_index = 0
-        self.end_index = 0
-        if not next(self):
-            self.end_index = 2 ** 32 - 1
-
-    def __next__(self):
-        if len(self.attributes) == 0 and len(self.attribute_stack) == 0:
-            return False
-        self.start_index = self.end_index
-        self.end_index = 2 ** 32 - 1
-
-        to_remove = []
-        for attr in self.attribute_stack:
-            if attr.end_index == self.start_index:
-                to_remove.append(attr)
-            else:
-                self.end_index = min(self.end_index, attr.end_index)
-
-        while len(to_remove) > 0:
-            attr = to_remove[0]
-            self.attribute_stack.remove(to_remove[0])
-            try:
-                to_remove.remove(attr)
-            except:
-                pass
-
-        while len(self.attributes) != 0 and self.attributes[0].start_index == self.start_index:
-            if self.attributes[0].end_index > self.start_index:
-                self.attribute_stack.append(self.attributes[0])
-                self.end_index = min(self.end_index, self.attributes[0].end_index)
-            self.attributes = self.attributes[1:]
-        if len(self.attributes) > 0:
-            self.end_index = min(self.end_index, self.attributes[0].start_index)
-        return True
-
-    def range(self):
-        return (self.start_index, self.end_index)
-
-    def get_font(self):
-        tmp_list1 = self.attribute_stack
-        fontdesc = Pango.FontDescription()
-        for attr in self.attribute_stack:
-            if attr.klass.type == Pango.AttrType.FONT_DESC:
-                tmp_list1.remove(attr)
-                attr.__class__ = Pango.AttrFontDesc
-                fontdesc = attr.desc
-        return (fontdesc, None, self.attribute_stack)
-
-
-def get_iterator(self):
-    tmplist = []
-
-    def fil(val, unused_data):
-        tmplist.append(val)
-        return False
-
-    self.filter(fil, None)
-    return AttrIterator(tmplist)
-
-
-setattr(Pango.AttrList, 'get_iterator', get_iterator)
-
-
-class AttrFamily(Pango.Attribute):
-    pass
-
-Pango.AttrFamily = AttrFamily
-
-
-class AttrStyle(Pango.Attribute):
-    pass
-
-
-Pango.AttrStyle = AttrStyle
-
-
-class AttrVariant(Pango.Attribute):
-    pass
-
-
-Pango.AttrVariant = AttrVariant
-
-
-class AttrWeight(Pango.Attribute):
-    pass
-
-
-Pango.AttrWeight = AttrWeight
-
-
-class AttrVariant(Pango.Attribute):
-    pass
-
-
-Pango.AttrVariant = AttrVariant
-
-
-class AttrStretch(Pango.Attribute):
-    pass
-
-
-Pango.AttrStretch = AttrStretch
-
-
-class PangoBuffer(Gtk.TextBuffer):
-    desc_to_attr_table = {
-        'family': [Pango.AttrFamily, ""],
-        'size': [Pango.AttrSize, 14 * 1024],
-        'style': [Pango.AttrStyle, Pango.Style.NORMAL],
-        'variant': [Pango.AttrVariant, Pango.Variant.NORMAL],
-        'weight': [Pango.AttrWeight, Pango.Weight.NORMAL],
-        'stretch': [Pango.AttrStretch, Pango.Stretch.NORMAL]}
-    # pango ATTR TYPE :(pango attr property / tag property)
-    pango_translation_properties = {
-        Pango.AttrType.SIZE: 'size',
-        Pango.AttrType.WEIGHT: 'weight',
-        Pango.AttrType.UNDERLINE: 'underline',
-        Pango.AttrType.STRETCH: 'stretch',
-        Pango.AttrType.VARIANT: 'variant',
-        Pango.AttrType.STYLE: 'style',
-        Pango.AttrType.SCALE: 'scale',
-        Pango.AttrType.FAMILY: 'family',
-        Pango.AttrType.STRIKETHROUGH: 'strikethrough',
-        Pango.AttrType.RISE: 'rise'}
-    pango_type_table = {
-        Pango.AttrType.SIZE: Pango.AttrInt,
-        Pango.AttrType.WEIGHT: Pango.AttrInt,
-        Pango.AttrType.UNDERLINE: Pango.AttrInt,
-        Pango.AttrType.STRETCH: Pango.AttrInt,
-        Pango.AttrType.VARIANT: Pango.AttrInt,
-        Pango.AttrType.STYLE: Pango.AttrInt,
-        Pango.AttrType.SCALE: Pango.AttrFloat,
-        Pango.AttrType.FAMILY: Pango.AttrString,
-        Pango.AttrType.FONT_DESC: Pango.AttrFontDesc,
-        Pango.AttrType.STRIKETHROUGH: Pango.AttrInt,
-        Pango.AttrType.BACKGROUND: Pango.AttrColor,
-        Pango.AttrType.FOREGROUND: Pango.AttrColor,
-        Pango.AttrType.RISE: Pango.AttrInt}
-
-    attval_to_markup = {
-        'underline': {Pango.Underline.SINGLE: 'single',
-                      Pango.Underline.DOUBLE: 'double',
-                      Pango.Underline.LOW: 'low',
-                      Pango.Underline.NONE: 'none'
-                      },
-        'stretch': {Pango.Stretch.ULTRA_EXPANDED: 'ultraexpanded',
-                    Pango.Stretch.EXPANDED: 'expanded',
-                    Pango.Stretch.EXTRA_EXPANDED: 'extraexpanded',
-                    Pango.Stretch.EXTRA_CONDENSED: 'extracondensed',
-                    Pango.Stretch.ULTRA_CONDENSED: 'ultracondensed',
-                    Pango.Stretch.CONDENSED: 'condensed',
-                    Pango.Stretch.NORMAL: 'normal',
-                    },
-        'variant': {Pango.Variant.NORMAL: 'normal',
-                    Pango.Variant.SMALL_CAPS: 'smallcaps',
-                    },
-        'style': {Pango.Style.NORMAL: 'normal',
-                  Pango.Style.OBLIQUE: 'oblique',
-                  Pango.Style.ITALIC: 'italic',
-                  },
-        'stikethrough': {1: 'true',
-                         True: 'true',
-                         0: 'false',
-                         False: 'false'
-                         }}
-
-    def __init__(self):
-        self.tagdict = {}
-        self.tags = {}
-        Gtk.TextBuffer.__init__(self)
-
-    def set_text(self, txt):
-        Gtk.TextBuffer.set_text(self, "")
-        suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, '\x00')
-        if not suc:
-            oldtxt = txt
-            txt = saxutils.escape(txt)
-            self.warn("Marked text is not correct. Escape %s to %s", oldtxt, txt)
-            suc, self.parsed, self.txt, self.separator = Pango.parse_markup(txt, -1, '\x00')
-        self.attrIter = self.parsed.get_iterator()
-        self.add_iter_to_buffer()
-        while next(self.attrIter):
-            self.add_iter_to_buffer()
-
-    def add_iter_to_buffer(self):
-        it_range = self.attrIter.range()
-        font, lang, attrs = self.attrIter.get_font()
-        tags = self.get_tags_from_attrs(font, lang, attrs)
-        text = self.txt[it_range[0]:it_range[1]]
-        if tags:
-            self.insert_with_tags(self.get_end_iter(), text, *tags)
-        else:
-            self.insert_with_tags(self.get_end_iter(), text, *tags)
-
-    def get_tags_from_attrs(self, font, lang, attrs):
-        tags = []
-        if font:
-            fontattrs = self.fontdesc_to_attrs(font)
-            fontdesc = font.to_string()
-            if fontattrs:
-                attrs.extend(fontattrs)
-        if lang:
-            if not lang in self.tags:
-                tag = self.create_tag()
-                tag.set_property('language', lang)
-                self.tags[lang] = tag
-            tags.append(self.tags[lang])
-        if attrs:
-            for a in attrs:
-                #FIXME remove on pango fix
-                type_ = a.klass.type
-                klass = a.klass
-                start_index = a.start_index
-                end_index = a.end_index
-                a.__class__ = self.pango_type_table[type_]
-                a.type = type_
-                a.start_index = start_index
-                a.end_index = end_index
-                a.klass = klass
-                if a.type == Pango.AttrType.FOREGROUND:
-                    gdkcolor = self.pango_color_to_gdk(a.color)
-                    key = 'foreground%s' % self.color_to_hex(gdkcolor)
-                    if not key in self.tags:
-                        self.tags[key] = self.create_tag()
-                        self.tags[key].set_property('foreground-gdk', gdkcolor)
-                        self.tagdict[self.tags[key]] = {}
-                        self.tagdict[self.tags[key]]['foreground'] = "#%s" % self.color_to_hex(gdkcolor)
-                    tags.append(self.tags[key])
-                if a.type == Pango.AttrType.BACKGROUND:
-                    gdkcolor = self.pango_color_to_gdk(a.color)
-                    key = 'background%s' % self.color_to_hex(gdkcolor)
-                    if not key in self.tags:
-                        self.tags[key] = self.create_tag()
-                        self.tags[key].set_property('background-gdk', gdkcolor)
-                        self.tagdict[self.tags[key]] = {}
-                        self.tagdict[self.tags[key]]['background'] = "#%s" % self.color_to_hex(gdkcolor)
-                    tags.append(self.tags[key])
-                if a.type in self.pango_translation_properties:
-                    prop = self.pango_translation_properties[a.type]
-                    val = getattr(a, 'value')
-                    #tag.set_property(prop, val)
-                    mval = val
-                    if prop in self.attval_to_markup:
-                        if val in self.attval_to_markup[prop]:
-                            mval = self.attval_to_markup[prop][val]
-                    key = "%s%s" % (prop, val)
-                    if not key in self.tags:
-                        self.tags[key] = self.create_tag()
-                        self.tags[key].set_property(prop, val)
-                        self.tagdict[self.tags[key]] = {}
-                        self.tagdict[self.tags[key]][prop] = mval
-                    tags.append(self.tags[key])
-        return tags
-
-    def get_tags(self):
-        tagdict = {}
-        for pos in range(self.get_char_count()):
-            iter = self.get_iter_at_offset(pos)
-            for tag in iter.get_tags():
-                if tag in tagdict:
-                    if tagdict[tag][-1][1] == pos - 1:
-                        tagdict[tag][-1] = (tagdict[tag][-1][0], pos)
-                    else:
-                        tagdict[tag].append((pos, pos))
-                else:
-                    tagdict[tag] = [(pos, pos)]
-        return tagdict
-
-    def split(self, interval, split_interval):
-        #We want as less intervals as posible
-        # interval represented []
-        # split interval represented {}
-        if interval == split_interval:
-            return [interval]
-        if interval[1] < split_interval[0] or split_interval[1] < interval[0]:
-            return [interval]
-
-        if interval[0] == split_interval[0]:
-            if interval[1] < split_interval[1]:
-                return [interval]
-            else:
-                return [(interval[0], split_interval[1]),
-                        (split_interval[1] + 1, interval[1])]
-
-        if interval[0] < split_interval[0]:
-            if interval[1] == split_interval[1]:
-                return [(interval[0], split_interval[0] - 1),
-                     (split_interval[0], interval[1])]
-            elif interval[1] < split_interval[1]:
-                return [(interval[0], split_interval[0] - 1),
-                     (split_interval[0], interval[1])]
-            else:  # interval[1] > split_interval[1]
-                return [(interval[0], split_interval[0] - 1),
-                     (split_interval[0], split_interval[1]),
-                     (split_interval[1] + 1, interval[1])]
-
-        if interval[0] > split_interval[0]:
-            if interval[1] == split_interval[1]:
-                return [interval]
-            elif interval[1] < split_interval[1]:
-                return [interval]
-            else:  # interval[1] > split_interval[1]
-                return [(interval[0], split_interval[1]),
-                        (split_interval[1] + 1, interval[1])]
-
-    def split_overlap(self, tagdict):
-        intervals = []
-        for k, v in list(tagdict.items()):
-            #Split by exiting intervals
-            tmpint = v
-            for i in intervals:
-                iterint = tmpint
-                tmpint = []
-                for st, e in iterint:
-                    tmpint.extend(self.split((st, e), i))
-            tagdict[k] = tmpint
-            #Add new intervals
-            intervals.extend(tmpint)
-        return tagdict
-
-    def get_text(self, start=None, end=None, unused_include_hidden_chars=True):
-        tagdict = self.get_tags()
-        if not start:
-            start = self.get_start_iter()
-        if not end:
-            end = self.get_end_iter()
-        txt = str(Gtk.TextBuffer.get_text(self, start, end, True))
-        #Important step, split that no tags overlap
-        tagdict = self.split_overlap(tagdict)
-        cuts = {}
-        for k, v in list(tagdict.items()):
-            stag, etag = self.tag_to_markup(k)
-            for st, e in v:
-                if st in cuts:
-                    #add start tags second
-                    cuts[st].append(stag)
-                else:
-                    cuts[st] = [stag]
-                if e + 1 in cuts:
-                    #add end tags first
-                    cuts[e + 1] = [etag] + cuts[e + 1]
-                else:
-                    cuts[e + 1] = [etag]
-        last_pos = 0
-        outbuff = ""
-        cut_indices = list(cuts.keys())
-        cut_indices.sort()
-        soffset = start.get_offset()
-        eoffset = end.get_offset()
-        cut_indices = [i for i in cut_indices if eoffset >= i >= soffset]
-        for c in cut_indices:
-            if not last_pos == c:
-                outbuff += saxutils.escape(txt[last_pos:c])
-                last_pos = c
-            for tag in cuts[c]:
-                outbuff += tag
-        outbuff += saxutils.escape(txt[last_pos:])
-        return outbuff
-
-    def tag_to_markup(self, tag):
-        stag = "<span"
-        for k, v in list(self.tagdict[tag].items()):
-            #family in gtk, face in pango mark language
-            if k == "family":
-                k = "face"
-            stag += ' %s="%s"' % (k, v)
-        stag += ">"
-        return stag, "</span>"
-
-    def fontdesc_to_attrs(self, font):
-        nicks = font.get_set_fields().value_nicks
-        attrs = []
-        for n in nicks:
-            if n in self.desc_to_attr_table:
-                Attr, norm = self.desc_to_attr_table[n]
-                # create an attribute with our current value
-                attrs.append(Attr(getattr(font, 'get_%s' % n)()))
-        return attrs
-
-    def pango_color_to_gdk(self, pc):
-        return Gdk.Color(pc.red, pc.green, pc.blue)
-
-    def color_to_hex(self, color):
-        """
-        @type color: L{Gdk.Color}
-        """
-        hexstring = ""
-        for col in 'red', 'green', 'blue':
-            channel = int(getattr(color, col))
-            hexfrag = "%02x" % (channel / 256)
-            hexstring += hexfrag
-        return hexstring
-
-    def apply_font_and_attrs(self, font, attrs):
-        tags = self.get_tags_from_attrs(font, None, attrs)
-        for t in tags:
-            self.apply_tag_to_selection(t)
-
-    def remove_font_and_attrs(self, font, attrs):
-        tags = self.get_tags_from_attrs(font, None, attrs)
-        for t in tags:
-            self.remove_tag_from_selection(t)
-
-    def get_selection(self):
-        bounds = self.get_selection_bounds()
-        if not bounds:
-            iter = self.get_iter_at_mark(self.insert_mark)
-            if iter.inside_word():
-                start_pos = iter.get_offset()
-                iter.forward_word_end()
-                word_end = iter.get_offset()
-                iter.backward_word_start()
-                word_start = iter.get_offset()
-                iter.set_offset(start_pos)
-                bounds = (self.get_iter_at_offset(word_start),
-                          self.get_iter_at_offset(word_end + 1))
-            else:
-                bounds = (iter, self.get_iter_at_offset(iter.get_offset() + 1))
-        return bounds
-
-    def apply_tag_to_selection(self, tag):
-        selection = self.get_selection()
-        if selection:
-            self.apply_tag(tag, *selection)
-        self.emit("changed")
-
-    def remove_tag_from_selection(self, tag):
-        selection = self.get_selection()
-        if selection:
-            self.remove_tag(tag, *selection)
-        self.emit("changed")
-
-    def remove_all_tags(self):
-        selection = self.get_selection()
-        if selection:
-            for t in list(self.tags.values()):
-                self.remove_tag(t, *selection)
-
-
-class InteractivePangoBuffer(PangoBuffer):
-    def __init__(self, normal_button=None, toggle_widget_alist=[]):
-        """
-        An interactive interface to allow marking up a Gtk.TextBuffer.
-        txt is initial text, with markup.  buf is the Gtk.TextBuffer
-        normal_button is a widget whose clicked signal will make us normal
-        toggle_widget_alist is a list that looks like this:
-            [(widget,(font, attr)), (widget2, (font, attr))]
-         """
-        PangoBuffer.__init__(self)
-        if normal_button:
-            normal_button.connect('clicked', lambda *args: self.remove_all_tags())
-        self.tag_widgets = {}
-        self.internal_toggle = False
-        self.insert_mark = self.get_insert()
-        self.connect('mark-set', self._mark_set_cb)
-        self.connect('changed', self._changed_cb)
-        for w, tup in toggle_widget_alist:
-            self.setup_widget(w, *tup)
-
-    def set_text(self, txt):
-        self.disconnect_by_func(self._changed_cb)
-        self.disconnect_by_func(self._mark_set_cb)
-        PangoBuffer.set_text(self, txt)
-        self.connect('changed', self._changed_cb)
-        self.connect('mark-set', self._mark_set_cb)
-
-    def setup_widget_from_pango(self, widg, markupstring):
-        """setup widget from a pango markup string"""
-        #font = Pango.FontDescription(fontstring)
-        suc, a, t, s = Pango.parse_markup(markupstring, -1, '\x00')
-        ai = a.get_iterator()
-        font, lang, attrs = ai.get_font()
-
-        return self.setup_widget(widg, font, attrs)
-
-    def setup_widget(self, widg, font, attr):
-        tags = self.get_tags_from_attrs(font, None, attr)
-        self.tag_widgets[tuple(tags)] = widg
-        return widg.connect('toggled', self._toggle, tags)
-
-    def _toggle(self, widget, tags):
-        if self.internal_toggle:
-            return
-        if widget.get_active():
-            for t in tags:
-                self.apply_tag_to_selection(t)
-        else:
-            for t in tags:
-                self.remove_tag_from_selection(t)
-
-    def _mark_set_cb(self, buffer, iter, mark, *params):
-        # Every time the cursor moves, update our widgets that reflect
-        # the state of the text.
-        if hasattr(self, '_in_mark_set') and self._in_mark_set:
-            return
-        self._in_mark_set = True
-        if mark.get_name() == 'insert':
-            for tags, widg in list(self.tag_widgets.items()):
-                active = True
-                for t in tags:
-                    if not iter.has_tag(t):
-                        active = False
-                self.internal_toggle = True
-                widg.set_active(active)
-                self.internal_toggle = False
-        if hasattr(self, 'last_mark'):
-            self.move_mark(self.last_mark, iter)
-        else:
-            self.last_mark = self.create_mark('last', iter, left_gravity=True)
-        self._in_mark_set = False
-
-    def _changed_cb(self, tb):
-        if not hasattr(self, 'last_mark'):
-            return
-        # If our insertion point has a mark, we want to apply the tag
-        # each time the user types...
-        old_itr = self.get_iter_at_mark(self.last_mark)
-        insert_itr = self.get_iter_at_mark(self.insert_mark)
-        if old_itr != insert_itr:
-            # Use the state of our widgets to determine what
-            # properties to apply...
-            for tags, w in list(self.tag_widgets.items()):
-                if w.get_active():
-                    for t in tags:
-                        self.apply_tag(t, old_itr, insert_itr)
+from pitivi.utils.signal import Signallable
+from pitivi.utils.timeline import SELECT
+from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
 
 class TitleEditor(Loggable):
@@ -582,26 +49,15 @@ class TitleEditor(Loggable):
         Loggable.__init__(self)
         Signallable.__init__(self)
         self.app = app
-        self.bt = {}
         self.settings = {}
         self.source = None
         self.seeker = Seeker()
 
-        #Drag attributes
+        # Drag attributes
         self._drag_events = []
         self._signals_connected = False
 
         self._createUI()
-        self.textbuffer = Gtk.TextBuffer()
-        self.pangobuffer = InteractivePangoBuffer()
-        self.textarea.set_buffer(self.pangobuffer)
-
-        self.textbuffer.connect("changed", self._updateSourceText)
-        self.pangobuffer.connect("changed", self._updateSourceText)
-
-        #Connect buttons
-        self.pangobuffer.setup_widget_from_pango(self.bt["bold"], "<b>bold</b>")
-        self.pangobuffer.setup_widget_from_pango(self.bt["italic"], "<i>italic</i>")
 
     def _createUI(self):
         builder = Gtk.Builder()
@@ -611,13 +67,15 @@ class TitleEditor(Loggable):
         self.infobar = builder.get_object("infobar")
         self.editing_box = builder.get_object("editing_box")
         self.textarea = builder.get_object("textview")
-        self.markup_button = builder.get_object("markupToggle")
         toolbar = builder.get_object("toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
-        buttons = ["bold", "italic", "font", "font_fore_color", "background_color"]
-        for button in buttons:
-            self.bt[button] = builder.get_object(button)
+        self.textbuffer = Gtk.TextBuffer()
+        self.textarea.set_buffer(self.textbuffer)
+        self.textbuffer.connect("changed", self._updateSourceText)
+
+        self.font_button = builder.get_object("fontbutton1")
+        self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
 
         settings = ["valignment", "halignment", "xpos", "ypos"]
@@ -639,57 +97,23 @@ class TitleEditor(Loggable):
         self._deactivate()
 
     def _backgroundColorButtonCb(self, widget):
-        self.textarea.modify_base(self.textarea.get_state(), widget.get_color())
-        color = widget.get_rgba()
-        color_int = 0
-        color_int += int(color.red * 255) * 256 ** 2
-        color_int += int(color.green * 255) * 256 ** 1
-        color_int += int(color.blue * 255) * 256 ** 0
-        color_int += int(color.alpha * 255) * 256 ** 3
-        self.debug("Setting title background color to %s", hex(color_int))
-        self.source.set_background(color_int)
+        color = gdk_rgba_to_argb(widget.get_rgba())
+        self.debug("Setting title background color to %x", color)
+        self.source.set_background(color)
         self.seeker.flush()
 
     def _frontTextColorButtonCb(self, widget):
-        suc, a, t, s = Pango.parse_markup("<span color='" + widget.get_color().to_string() + "'>color</span>", -1, '\x00')
-        ai = a.get_iterator()
-        font, lang, attrs = ai.get_font()
-        tags = self.pangobuffer.get_tags_from_attrs(None, None, attrs)
-        self.pangobuffer.apply_tag_to_selection(tags[0])
+        color = gdk_rgba_to_argb(widget.get_rgba())
+        self.debug("Setting title foreground color to %x", color)
+        # TODO: Use set_text_color when we work with TitleSources instead of TitleClips
+        self.source.set_color(color)
+        self.seeker.flush()
 
     def _fontButtonCb(self, widget):
-        font_desc = widget.get_font_name().split(" ")
-        font_face = " ".join(font_desc[:-1])
-        font_size = str(int(float(font_desc[-1]) * 1024))
-        text = "<span face='" + font_face + "'><span size='" + font_size + "'>text</span></span>"
-        suc, a, t, s = Pango.parse_markup(text, -1, '\x00')
-        ai = a.get_iterator()
-        font, lang, attrs = ai.get_font()
-        tags = self.pangobuffer.get_tags_from_attrs(font, None, attrs)
-        for tag in tags:
-            self.pangobuffer.apply_tag_to_selection(tag)
-
-    def _markupToggleCb(self, markup_button):
-        # FIXME: either make this feature rock-solid or replace it by a
-        # Clear markup" button. Currently it is possible for the user to create
-        # invalid markup (causing errors) or to get our textbuffer confused
-        self.textbuffer.disconnect_by_func(self._updateSourceText)
-        self.pangobuffer.disconnect_by_func(self._updateSourceText)
-        if markup_button.get_active():
-            self.textbuffer.set_text(self.pangobuffer.get_text())
-            self.textarea.set_buffer(self.textbuffer)
-            for name in self.bt:
-                self.bt[name].set_sensitive(False)
-        else:
-            txt = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
-                                           self.textbuffer.get_end_iter(), True)
-            self.pangobuffer.set_text(txt)
-            self.textarea.set_buffer(self.pangobuffer)
-            for name in self.bt:
-                self.bt[name].set_sensitive(True)
-
-        self.textbuffer.connect("changed", self._updateSourceText)
-        self.pangobuffer.connect("changed", self._updateSourceText)
+        font_desc = widget.get_font_desc().to_string()
+        self.debug("Setting font desc to %s", font_desc)
+        self.source.set_font_desc(font_desc)
+        self.seeker.flush()
 
     def _activate(self):
         """
@@ -721,7 +145,6 @@ class TitleEditor(Loggable):
             source_text = ""
             self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
         self.log("Title text set to %s", source_text)
-        self.pangobuffer.set_text(source_text)
         self.textbuffer.set_text(source_text)
 
         self.settings['xpos'].set_value(self.source.get_xpos())
@@ -729,31 +152,35 @@ class TitleEditor(Loggable):
         self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
         self.settings['halignment'].set_active_id(self.source.get_halignment().value_name)
 
-        color = self.source.get_background_color()
-        color = Gdk.RGBA(color / 256 ** 2 % 256 / 255.,
-                         color / 256 ** 1 % 256 / 255.,
-                         color / 256 ** 0 % 256 / 255.,
-                         color / 256 ** 3 % 256 / 255.)
+        font_desc = Pango.FontDescription.from_string(self.source.get_font_desc())
+        self.font_button.set_font_desc(font_desc)
+
+        color = argb_to_gdk_rgba(self.source.get_text_color())
+        self.foreground_color_button.set_rgba(color)
+
+        color = argb_to_gdk_rgba(self.source.get_background_color())
         self.background_color_button.set_rgba(color)
 
     def _updateSourceText(self, unused_updated_obj):
-        if self.source is not None:
-            if self.markup_button.get_active():
-                text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
-                                                self.textbuffer.get_end_iter(),
-                                                True)
-            else:
-                text = self.pangobuffer.get_text()
-            self.log("Source text updated to %s", text)
-            self.source.set_text(text)
-            self.seeker.flush()
+        if not self.source:
+            # Nothing to update.
+            return
+
+        text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
+                                        self.textbuffer.get_end_iter(),
+                                        True)
+        self.log("Source text updated to %s", text)
+        self.source.set_text(text)
+        self.seeker.flush()
 
     def _updateSource(self, updated_obj):
         """
         Handle changes in one of the advanced property widgets at the bottom
         """
-        if self.source is None:
+        if not self.source:
+            # Nothing to update.
             return
+
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
@@ -789,12 +216,6 @@ class TitleEditor(Loggable):
     def unset_source(self):
         self.source = None
         self._deactivate()
-        # TODO: reset not only text
-        self.markup_button.set_active(False)
-        self.pangobuffer.set_text("")
-        self.textbuffer.set_text("")
-        # Set the right buffer
-        self._markupToggleCb(self.markup_button)
 
     def _createCb(self, unused_button):
         """
@@ -826,19 +247,19 @@ class TitleEditor(Loggable):
     def drag_press_event(self, unused_widget, event):
         if event.button == 1:
             self._drag_events = [(event.x, event.y)]
-            #Update drag by drag event change, but not too often
+            # Update drag by drag event change, but not too often
             self.timeout = GLib.timeout_add(100, self.drag_update_event)
-            #If drag goes out for 0.3 second, and do not come back, consider drag end
+            # If drag goes out for 0.3 second, and do not come back, consider drag end
             self._drag_updated = True
             self.timeout = GLib.timeout_add(1000, self.drag_possible_end_event)
 
     def drag_possible_end_event(self):
         if self._drag_updated:
-            #Updated during last timeout, wait more
+            # Updated during last timeout, wait more
             self._drag_updated = False
             return True
         else:
-            #Not updated - posibly out of bounds, stop drag
+            # Not updated - posibly out of bounds, stop drag
             self.log("Drag timeout")
             self._drag_events = []
             return False
