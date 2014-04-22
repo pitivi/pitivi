@@ -33,7 +33,6 @@ from gettext import gettext as _
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import Seeker
-from pitivi.utils.signal import Signallable
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
@@ -51,7 +50,6 @@ class TitleEditor(Loggable):
 
     def __init__(self, app):
         Loggable.__init__(self)
-        Signallable.__init__(self)
         self.app = app
         self.settings = {}
         self.source = None

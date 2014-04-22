@@ -23,25 +23,28 @@
 Dialog box listing files which had errors, and the reasons.
 """
 
-from gi.repository import Gtk
 import os
+from urllib.parse import unquote
+
+from gi.repository import GObject
+from gi.repository import Gtk
 from gi.repository import Pango
 
 from gettext import gettext as _
 
-from urllib.parse import unquote
 from pitivi.configure import get_ui_dir
-from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 
 
-class FileListErrorDialog(Signallable, Loggable):
+class FileListErrorDialog(GObject.Object, Loggable):
     """ Dialog box for showing errors in a list of files """
-    __signals__ = {
-        'close': None,
-        'response': ["something"]}
+
+    __gsignals__ = {
+        'close': (GObject.SIGNAL_RUN_LAST, None, ()),
+        'response': (GObject.SIGNAL_RUN_LAST, None, (object,))}
 
     def __init__(self, title, headline):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),

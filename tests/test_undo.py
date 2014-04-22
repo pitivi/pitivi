@@ -28,6 +28,9 @@ from pitivi.undo.undo import UndoError, UndoWrongStateError, UndoableAction, \
 class DummyUndoableAction(UndoableAction):
     done_ = True
 
+    def __init__(self):
+        UndoableAction.__init__(self)
+
     def do(self):
         self.done_ = True
         self._done()
@@ -392,6 +395,7 @@ class TestUndoableActionLog(TestCase):
 
         class Action(UndoableAction):
             def __init__(self, n):
+                UndoableAction.__init__(self)
                 self.n = n
 
             def do(self):

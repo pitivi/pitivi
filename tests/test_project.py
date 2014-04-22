@@ -28,18 +28,17 @@ from gi.repository import GES
 from gi.repository import GLib
 
 from pitivi.application import Pitivi
-from pitivi.project import Project, ProjectManager
+from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
 
 
 def _createRealProject(name=None):
     app = Pitivi()
-    app.emit("startup")
-    app.project_manager.newBlankProject()
+    project_manager = ProjectManager(app)
+    project_manager.newBlankProject()
     if name:
-        app.project_manager.current_project.name = name
-
-    return app.project_manager.current_project
+        project_manager.current_project.name = name
+    return project_manager.current_project
 
 
 class MockProject(object):
@@ -385,9 +384,6 @@ class TestProjectLoading(TestCase):
 class TestExportSettings(TestCase):
     """Test the project.MultimediaSettings class."""
 
-    def setUp(self):
-        self.project = _createRealProject()
-
     def testMasterAttributes(self):
         self._testMasterAttribute('muxer', dependant_attr='containersettings')
         self._testMasterAttribute('vencoder', dependant_attr='vcodecsettings')
@@ -395,33 +391,35 @@ class TestExportSettings(TestCase):
 
     def _testMasterAttribute(self, attr, dependant_attr):
         """Test changing the specified attr has effect on its dependant attr."""
+        project = _createRealProject()
+
         attr_value1 = "%s_value1" % attr
         attr_value2 = "%s_value2" % attr
 
-        setattr(self.project, attr, attr_value1)
-        setattr(self.project, dependant_attr, {})
-        getattr(self.project, dependant_attr)["key1"] = "v1"
+        setattr(project, attr, attr_value1)
+        setattr(project, dependant_attr, {})
+        getattr(project, dependant_attr)["key1"] = "v1"
 
-        setattr(self.project, attr, attr_value2)
-        setattr(self.project, dependant_attr, {})
-        getattr(self.project, dependant_attr)["key2"] = "v2"
+        setattr(project, attr, attr_value2)
+        setattr(project, dependant_attr, {})
+        getattr(project, dependant_attr)["key2"] = "v2"
 
-        setattr(self.project, attr, attr_value1)
-        self.assertTrue("key1" in getattr(self.project, dependant_attr))
-        self.assertFalse("key2" in getattr(self.project, dependant_attr))
-        self.assertEqual("v1", getattr(self.project, dependant_attr)["key1"])
-        setattr(self.project, dependant_attr, {})
+        setattr(project, attr, attr_value1)
+        self.assertTrue("key1" in getattr(project, dependant_attr))
+        self.assertFalse("key2" in getattr(project, dependant_attr))
+        self.assertEqual("v1", getattr(project, dependant_attr)["key1"])
+        setattr(project, dependant_attr, {})
 
-        setattr(self.project, attr, attr_value2)
-        self.assertFalse("key1" in getattr(self.project, dependant_attr))
-        self.assertTrue("key2" in getattr(self.project, dependant_attr))
-        self.assertEqual("v2", getattr(self.project, dependant_attr)["key2"])
-        setattr(self.project, dependant_attr, {})
+        setattr(project, attr, attr_value2)
+        self.assertFalse("key1" in getattr(project, dependant_attr))
+        self.assertTrue("key2" in getattr(project, dependant_attr))
+        self.assertEqual("v2", getattr(project, dependant_attr)["key2"])
+        setattr(project, dependant_attr, {})
 
-        setattr(self.project, attr, attr_value1)
-        self.assertFalse("key1" in getattr(self.project, dependant_attr))
-        self.assertFalse("key2" in getattr(self.project, dependant_attr))
+        setattr(project, attr, attr_value1)
+        self.assertFalse("key1" in getattr(project, dependant_attr))
+        self.assertFalse("key2" in getattr(project, dependant_attr))
 
-        setattr(self.project, attr, attr_value2)
-        self.assertFalse("key1" in getattr(self.project, dependant_attr))
-        self.assertFalse("key2" in getattr(self.project, dependant_attr))
+        setattr(project, attr, attr_value2)
+        self.assertFalse("key1" in getattr(project, dependant_attr))
+        self.assertFalse("key2" in getattr(project, dependant_attr))

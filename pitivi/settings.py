@@ -23,8 +23,7 @@ import os
 from configparser import SafeConfigParser, ParsingError
 
 from gi.repository import GLib
-
-from pitivi.utils.signal import Signallable
+from gi.repository import GObject
 
 
 def get_bool_env(var):
@@ -102,7 +101,11 @@ class Notification(object):
 
     def __init__(self, attrname):
         self.attrname = "_" + attrname
-        self.signame = attrname + "Changed"
+        self.signame = self.signalName(attrname)
+
+    @staticmethod
+    def signalName(attrname):
+        return attrname + "Changed"
 
     def __get__(self, instance, unused):
         return getattr(instance, self.attrname)
@@ -112,7 +115,7 @@ class Notification(object):
         instance.emit(self.signame)
 
 
-class GlobalSettings(Signallable):
+class GlobalSettings(GObject.Object):
     """
     Pitivi app settings.
 
@@ -130,10 +133,11 @@ class GlobalSettings(Signallable):
     options = {}
     environment = set()
     defaults = {}
-    __signals__ = {}
+
+    __gsignals__ = {}
 
     def __init__(self, **unused_kwargs):
-        Signallable.__init__(self)
+        GObject.Object.__init__(self)
         self._config = SafeConfigParser()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
@@ -278,7 +282,7 @@ class GlobalSettings(Signallable):
         signals when modified (default is False).
         @type notify: C{boolean}
         """
-        if section and not section in cls.options:
+        if section and section not in cls.options:
             raise ConfigError("You must add the section \"%s\" first." % section)
         if key and not section:
             raise ConfigError("You must specify a section for key \"%s\"" % key)
@@ -295,9 +299,14 @@ class GlobalSettings(Signallable):
         if not type_:
             type_ = type(default)
         if notify:
-            setattr(cls, attrname, Notification(attrname))
+            notification = Notification(attrname)
+            setattr(cls, attrname, notification)
             setattr(cls, "_" + attrname, default)
-            cls.__signals__[attrname + 'Changed'] = []
+            GObject.signal_new(notification.signame,
+                               cls,
+                               GObject.SIGNAL_RUN_LAST,
+                               None,
+                               ())
         else:
             setattr(cls, attrname, default)
         if section and key:
@@ -316,3 +325,8 @@ class GlobalSettings(Signallable):
         if section in cls.options:
             raise ConfigError("Duplicate Section \"%s\"." % section)
         cls.options[section] = {}
+
+    @classmethod
+    def notifiesConfigOption(cls, attrname):
+        signal_name = Notification.signalName(attrname)
+        GObject.signal_lookup(signal_name, cls)

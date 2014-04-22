@@ -24,6 +24,7 @@ from pitivi.undo.undo import UndoableAction
 
 class MediaLibrarySourceAddedAction(UndoableAction):
     def __init__(self, medialibrary, source):
+        UndoableAction.__init__(self)
         self.medialibrary = medialibrary
         self.source = source
 
@@ -38,6 +39,7 @@ class MediaLibrarySourceAddedAction(UndoableAction):
 
 class MediaLibrarySourceRemovedAction(UndoableAction):
     def __init__(self, medialibrary, uri, source):
+        UndoableAction.__init__(self)
         self.medialibrary = medialibrary
         self.uri = uri
         self.source = source

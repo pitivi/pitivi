@@ -57,7 +57,7 @@ class Pitivi(Gtk.Application, Loggable):
     """
 
     __gsignals__ = {
-        'version-info-received': (GObject.SIGNAL_RUN_LAST, None, (object,))
+        "version-info-received": (GObject.SIGNAL_RUN_LAST, None, (object,))
     }
 
     def __init__(self):
@@ -72,7 +72,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.system = None
         self.project_manager = ProjectManager(self)
 
-        self.action_log = None
+        self.action_log = UndoableActionLog()
         self.timeline_log_observer = None
         self.project_log_observer = None
 
@@ -99,7 +99,6 @@ class Pitivi(Gtk.Application, Loggable):
         self.effects = EffectsHandler()
         self.system = getSystem()
 
-        self.action_log = UndoableActionLog()
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("undo", self._actionLogUndo)
         self.action_log.connect("redo", self._actionLogRedo)

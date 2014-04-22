@@ -43,7 +43,6 @@ from pitivi.configure import get_ui_dir
 from pitivi.utils.misc import quote_uri, path_from_uri, isWritable
 from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
 from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -64,6 +63,7 @@ DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
 class AssetRemovedAction(UndoableAction):
     def __init__(self, project, asset):
+        UndoableAction.__init__(self)
         self.project = project
         self.asset = asset
 
@@ -76,6 +76,7 @@ class AssetRemovedAction(UndoableAction):
 
 class AssetAddedAction(UndoableAction):
     def __init__(self, project, asset):
+        UndoableAction.__init__(self)
         self.project = project
         self.asset = asset
 
@@ -89,6 +90,7 @@ class AssetAddedAction(UndoableAction):
 class ProjectSettingsChanged(UndoableAction):
 
     def __init__(self, project, old, new):
+        UndoableAction.__init__(self)
         self.project = project
         self.oldsettings = old
         self.newsettings = new
@@ -105,6 +107,7 @@ class ProjectSettingsChanged(UndoableAction):
 class ProjectLogObserver(UndoableAction):
 
     def __init__(self, log):
+        UndoableAction.__init__(self)
         self.log = log
 
     def startObserving(self, project):
@@ -141,30 +144,28 @@ class ProjectLogObserver(UndoableAction):
         self.log.push(action)
 
 
-class ProjectManager(Signallable, Loggable):
+class ProjectManager(GObject.Object, Loggable):
     """
     @type app: L{Pitivi}
     @type current_project: L{Project}
     @param disable_save: Whether saving is disabled to enforce using save-as.
     """
 
-    __signals__ = {
-        "new-project-loading": ["uri"],
-        "new-project-created": ["project"],
-        "new-project-failed": ["uri", "exception"],
-        "new-project-loaded": ["project", "fully_ready"],
-        "save-project-failed": ["uri", "exception"],
-        "project-saved": ["project", "uri"],
-        "closing-project": ["project"],
-        "project-closed": ["project"],
-        "missing-uri": ["formatter", "uri", "factory"],
-        "reverting-to-saved": ["project"],
+    __gsignals__ = {
+        "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (str,)),
+        "new-project-created": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
+        "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "save-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
+        "project-saved": (GObject.SIGNAL_RUN_LAST, None, (object, str)),
+        "closing-project": (GObject.SIGNAL_RUN_LAST, bool, (object,)),
+        "project-closed": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "missing-uri": (GObject.SIGNAL_RUN_LAST, str, (object, str, object)),
+        "reverting-to-saved": (GObject.SIGNAL_RUN_LAST, bool, (object,)),
     }
 
-    _instance = None
-
     def __init__(self, app):
-        Signallable.__init__(self)
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.app = app
         self.current_project = None
@@ -533,7 +534,7 @@ class ProjectManager(Signallable, Loggable):
         name, ext = os.path.splitext(uri)
         return name + ext + "~"
 
-    def _missingURICb(self, project, error, asset, unused_what=None):
+    def _missingURICb(self, project, error, asset):
         return self.emit("missing-uri", project, error, asset)
 
     def _projectLoadedCb(self, unused_project, unused_timeline):
@@ -848,7 +849,7 @@ class Project(Loggable, GES.Project):
     @render_scale.setter
     def render_scale(self, value):
         if value:
-            return self.set_meta("render-scale", value)
+            self.set_meta("render-scale", value)
 
     # ------------------------------------------ #
     # GES.Project virtual methods implementation #

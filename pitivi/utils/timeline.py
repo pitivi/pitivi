@@ -21,11 +21,8 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import GES
-from gi.repository import Gdk
+from gi.repository import GObject
 from gi.repository import Gst
-
-from pitivi.undo.undo import UndoableAction
-from pitivi.utils.signal import Signallable
 
 
 # Selection modes
@@ -39,12 +36,13 @@ SELECT_ADD = 2
 
 #------------------------------------------------------------------------------#
 #                          Timeline Object management helper                   #
+
 class TimelineError(Exception):
     """Base Exception for errors happening in L{Timeline}s or L{Clip}s"""
     pass
 
 
-class Selected(Signallable):
+class Selected(GObject.Object):
     """
     A simple class that let us emit a selected-changed signal
     when needed, and that can be check directly to know if the
@@ -54,10 +52,12 @@ class Selected(Signallable):
     utils.timeline's "Selection" class.
     """
 
-    __signals__ = {
-        "selected-changed": []}
+    __gsignals__ = {
+        "selected-changed": (GObject.SIGNAL_RUN_LAST, None, (bool,)),
+    }
 
     def __init__(self):
+        GObject.Object.__init__(self)
         self._selected = False
 
     def __bool__(self):
@@ -77,7 +77,7 @@ class Selected(Signallable):
     selected = property(getSelected, setSelected)
 
 
-class Selection(Signallable):
+class Selection(GObject.Object):
     """
     A collection of L{GES.Clip}.
 
@@ -88,10 +88,12 @@ class Selection(Signallable):
     @type selected: C{list}
     """
 
-    __signals__ = {
-        "selection-changed": []}
+    __gsignals__ = {
+        "selection-changed": (GObject.SIGNAL_RUN_LAST, None, ()),
+    }
 
     def __init__(self):
+        GObject.Object.__init__(self)
         self.selected = set()
 
     def setToObj(self, obj, mode):
@@ -187,16 +189,17 @@ class Selection(Signallable):
 
 #-----------------------------------------------------------------------------#
 #                       Timeline edition modes helper                         #
-class EditingContext(Signallable):
+
+class EditingContext(GObject.Object):
     """
         Encapsulates interactive editing.
 
         This is the main class for interactive edition.
     """
 
-    __signals__ = {
-        "clip-trim": ["uri", "position"],
-        "clip-trim-finished": [],
+    __gsignals__ = {
+        "clip-trim": (GObject.SIGNAL_RUN_LAST, None, (GES.Clip, int)),
+        "clip-trim-finished": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self, focus, timeline, mode, edge, unused_settings, action_log):
@@ -222,8 +225,7 @@ class EditingContext(Signallable):
 
         @returns: An instance of L{pitivi.utils.timeline.EditingContext}
         """
-        Signallable.__init__(self)
-
+        GObject.Object.__init__(self)
         if isinstance(focus, GES.TrackElement):
             self.focus = focus.get_parent()
         else:

@@ -147,9 +147,9 @@ class StartUpWizard(object):
         @type project_manager: L{ProjectManager}
         """
         if fully_loaded:
-            project_manager.disconnect_by_function(self._projectFailedCb)
-            project_manager.disconnect_by_function(self._projectLoadedCb)
-            project_manager.disconnect_by_function(self._projectLoadingCb)
+            project_manager.disconnect_by_func(self._projectFailedCb)
+            project_manager.disconnect_by_func(self._projectLoadedCb)
+            project_manager.disconnect_by_func(self._projectLoadingCb)
 
     def _projectLoadingCb(self, unused_project_manager, unused_project):
         """Handle the start of a project load operation."""

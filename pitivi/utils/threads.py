@@ -18,12 +18,11 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Threading support
-"""
 
 import threading
-from pitivi.utils.signal import Signallable
+
+from gi.repository import GObject
+
 from pitivi.utils.loggable import Loggable
 
 #
@@ -32,15 +31,17 @@ from pitivi.utils.loggable import Loggable
 #
 
 
-class Thread(threading.Thread, Signallable, Loggable):
+class Thread(threading.Thread, GObject.Object, Loggable):
     """
     Event-powered thread
     """
 
-    __signals__ = {
-        "done": None}
+    __gsignals__ = {
+        "done": (GObject.SIGNAL_RUN_LAST, None, ()),
+    }
 
     def __init__(self):
+        GObject.Object.__init__(self)
         threading.Thread.__init__(self)
         Loggable.__init__(self)
 
@@ -91,7 +92,7 @@ class ThreadMaster(Loggable):
         """ Stop all running Thread(s) controlled by this master """
         self.log("stopping all threads")
         joinedthreads = 0
-        while(joinedthreads < len(self.threads)):
+        while joinedthreads < len(self.threads):
             for thread in self.threads:
                 self.log("Trying to stop thread %r", thread)
                 try:

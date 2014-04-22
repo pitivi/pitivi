@@ -20,7 +20,8 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import GES
-from pitivi.utils.signal import Signallable
+from gi.repository import GObject
+
 from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
 from pitivi.undo.effect import EffectAdded, EffectRemoved
 from pitivi.undo.effect import EffectGstElementPropertyChangeTracker
@@ -29,6 +30,9 @@ from pitivi.undo.effect import EffectGstElementPropertyChangeTracker
 class ClipPropertyChangeTracker(PropertyChangeTracker):
     # no out-point
     property_names = ["start", "duration", "in-point", "priority"]
+
+    def __init__(self):
+        PropertyChangeTracker.__init__(self)
 
     def connectToObject(self, obj):
         PropertyChangeTracker.connectToObject(self, obj)
@@ -47,9 +51,10 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
                 self._propertyChangedCb(self.obj, property_value, property_name)
 
 
-class KeyframeChangeTracker(Signallable):
-    __signals__ = {
-        "keyframe-moved": ["keyframe"]
+class KeyframeChangeTracker(GObject.Object):
+
+    __gsignals__ = {
+        "keyframe-moved": (GObject.SIGNAL_RUN_LAST, None, (object, object, object, object)),
     }
 
     def __init__(self):
@@ -91,7 +96,9 @@ class KeyframeChangeTracker(Signallable):
 
 
 class ClipPropertyChanged(UndoableAction):
+
     def __init__(self, clip, property_name, old_value, new_value):
+        UndoableAction.__init__(self)
         self.clip = clip
         self.property_name = property_name
         self.old_value = old_value
@@ -107,7 +114,9 @@ class ClipPropertyChanged(UndoableAction):
 
 
 class ClipAdded(UndoableAction):
+
     def __init__(self, layer, clip):
+        UndoableAction.__init__(self)
         self.layer = layer
         self.clip = clip
 
@@ -122,7 +131,9 @@ class ClipAdded(UndoableAction):
 
 
 class ClipRemoved(UndoableAction):
+
     def __init__(self, layer, clip):
+        UndoableAction.__init__(self)
         self.layer = layer
         self.clip = clip
 
@@ -137,7 +148,9 @@ class ClipRemoved(UndoableAction):
 
 
 class InterpolatorKeyframeAdded(UndoableAction):
+
     def __init__(self, track_element, keyframe):
+        UndoableAction.__init__(self)
         self.track_element = track_element
         self.keyframe = keyframe
 
@@ -151,7 +164,9 @@ class InterpolatorKeyframeAdded(UndoableAction):
 
 
 class InterpolatorKeyframeRemoved(UndoableAction):
+
     def __init__(self, track_element, keyframe):
+        UndoableAction.__init__(self)
         self.track_element = track_element
         self.keyframe = keyframe
 
@@ -166,7 +181,9 @@ class InterpolatorKeyframeRemoved(UndoableAction):
 
 
 class InterpolatorKeyframeChanged(UndoableAction):
+
     def __init__(self, track_element, keyframe, old_snapshot, new_snapshot):
+        UndoableAction.__init__(self)
         self.track_element = track_element
         self.keyframe = keyframe
         self.old_snapshot = old_snapshot
@@ -188,7 +205,9 @@ class InterpolatorKeyframeChanged(UndoableAction):
 
 
 class ActivePropertyChanged(UndoableAction):
+
     def __init__(self, effect_action, active):
+        UndoableAction.__init__(self)
         self.effect_action = effect_action
         self.active = not active
 
@@ -264,10 +283,10 @@ class TimelineLogObserver(object):
         tracker = ClipPropertyChangeTracker()
         tracker.connectToObject(clip)
         for property_name in tracker.property_names:
-            setattr(tracker, "last-%s" % property_name,
-                    clip.get_property(property_name))
-            tracker.connect("notify::" + property_name,
-                    self._clipPropertyChangedCb, property_name)
+            attr_name = "last-%s" % property_name
+            last_value = clip.get_property(property_name)
+            setattr(tracker, attr_name, last_value)
+        tracker.connect("monitored-property-changed", self._clipPropertyChangedCb)
         self.clip_property_trackers[clip] = tracker
 
         clip.connect("child-added", self._clipTrackElementAddedCb)
@@ -316,11 +335,13 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _clipPropertyChangedCb(self, tracker, clip,
-            old_value, new_value, property_name):
+            property_name, old_value, new_value):
+        attr_name = "last-%s" % property_name
         new_value = clip.get_property(property_name)
+        old_value = getattr(tracker, attr_name)
         action = self.timelinePropertyChangedAction(clip, property_name,
-                 getattr(tracker, "last-%s" % property_name), new_value)
-        setattr(tracker, "last-%s" % property_name, new_value)
+                 old_value, new_value)
+        setattr(tracker, attr_name, new_value)
         self.log.push(action)
 
     def _clipTrackElementAddedCb(self, clip, track_element):

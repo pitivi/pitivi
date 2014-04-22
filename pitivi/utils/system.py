@@ -23,22 +23,24 @@ import multiprocessing
 import os
 import resource
 
+from gi.repository import GObject
+
 from pitivi.check import NOTIFY_SOFT_DEPENDENCY
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
 
 
-class System(Signallable, Loggable):
-    """A base class for all *Systems
-    implementing methods available in other parts of Pitivi
+class System(GObject.Object, Loggable):
+    """
+    A base class for systems in which Pitivi runs.
     """
 
-    __signals__ = {
-        'update-power-inhibition': []
+    __gsignals__ = {
+        'update-power-inhibition': (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.log("new object " + str(self))
         self._reset()

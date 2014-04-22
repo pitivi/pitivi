@@ -20,10 +20,11 @@
 # Boston, MA 02110-1301, USA.
 
 """
-Base classes for the undo/redo feature implementation
+Base classes for undo/redo.
 """
 
-from pitivi.utils.signal import Signallable
+from gi.repository import GObject
+
 from pitivi.utils.loggable import Loggable
 
 
@@ -37,16 +38,20 @@ class UndoWrongStateError(UndoError):
     pass
 
 
-class UndoableAction(Signallable):
+class UndoableAction(GObject.Object):
     """
-    This class represents an action that can be undone.
+    An action that can be undone.
     In other words, when your object's state changes, create an UndoableAction
     to allow reverting the change if needed later on.
     """
-    __signals__ = {
-        "done": [],
-        "undone": [],
+
+    __gsignals__ = {
+        "done": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "undone": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
+
+    def __init__(self):
+        GObject.Object.__init__(self)
 
     def do(self):
         raise NotImplementedError()
@@ -69,13 +74,13 @@ class UndoableActionStack(UndoableAction):
     """
     Simply a stack of UndoableAction objects.
     """
-    __signals__ = {
-        "done": [],
-        "undone": [],
-        "cleaned": [],
+
+    __gsignals__ = {
+        "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self, action_group_name):
+        UndoableAction.__init__(self)
         self.action_group_name = action_group_name
         self.done_actions = []
         self.undone_actions = []
@@ -107,22 +112,23 @@ class UndoableActionStack(UndoableAction):
         self.emit("cleaned")
 
 
-class UndoableActionLog(Signallable, Loggable):
+class UndoableActionLog(GObject.Object, Loggable):
     """
     This is the "master" class that handles all the undo/redo system. There is
     only one instance of it in Pitivi: application.py's "action_log" property.
     """
-    __signals__ = {
-        "begin": ["stack", "nested"],
-        "push": ["stack", "action"],
-        "rollback": ["stack", "nested"],
-        "commit": ["stack", "nested"],
-        "undo": ["stack"],
-        "redo": ["stack"],
-        "cleaned": [],
+    __gsignals__ = {
+        "begin": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
+        "rollback": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "commit": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "undo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "redo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
 
         self.undo_stacks = []
@@ -256,28 +262,36 @@ class UndoableActionLog(Signallable, Loggable):
         return bool(len(self.stacks))
 
 
-class PropertyChangeTracker(Signallable):
+class PropertyChangeTracker(GObject.Object):
     """
     BaseClass to track a class property, Used for undo/redo
     """
-    __signals__ = {}
+
+    __gsignals__ = {
+        "monitored-property-changed": (GObject.SIGNAL_RUN_LAST, None, (object, str, object, object)),
+    }
+
+    # The properties monitored by this class
+    property_names = []
 
     def __init__(self):
+        GObject.Object.__init__(self)
         self.properties = {}
         self.obj = None
 
     def connectToObject(self, obj):
         self.obj = obj
         self.properties = self._takeCurrentSnapshot(obj)
+        # Connect to obj to keep track when the monitored properties
+        # are changed.
         for property_name in self.property_names:
-            signal_name = "notify::" + property_name
-            self.__signals__[signal_name] = []
-            obj.connect(signal_name,
-                    self._propertyChangedCb, property_name)
+            signal_name = "notify::%s" % property_name
+            obj.connect(signal_name, self._propertyChangedCb, property_name)
 
-    def _takeCurrentSnapshot(self, obj):
+    @classmethod
+    def _takeCurrentSnapshot(cls, obj):
         properties = {}
-        for property_name in self.property_names:
+        for property_name in cls.property_names:
             properties[property_name] = obj.get_property(property_name.replace("-", "_"))
 
         return properties
@@ -286,7 +300,7 @@ class PropertyChangeTracker(Signallable):
         self.obj = None
         obj.disconnect_by_func(self._propertyChangedCb)
 
-    def _propertyChangedCb(self, object, value, property_name):
+    def _propertyChangedCb(self, object, property_value, property_name):
         old_value = self.properties[property_name]
-        self.properties[property_name] = value
-        self.emit("notify::" + property_name, object, old_value, value)
+        self.properties[property_name] = property_value
+        self.emit("monitored-property-changed", object, property_name, old_value, property_value)

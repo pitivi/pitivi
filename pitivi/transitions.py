@@ -22,8 +22,9 @@
 
 import os
 
-from gi.repository import GLib
 from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 
@@ -31,8 +32,8 @@ from gettext import gettext as _
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
-from pitivi.utils.ui import SPACING, PADDING
+from pitivi.utils.ui import SPACING
+
 
 (COL_TRANSITION_ASSET,
  COL_NAME_TEXT,
@@ -40,7 +41,7 @@ from pitivi.utils.ui import SPACING, PADDING
  COL_ICON) = list(range(4))
 
 
-class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
+class TransitionsListWidget(Gtk.VBox, Loggable):
     """
     Widget for configuring the selected transition.
 
@@ -50,7 +51,6 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
     def __init__(self, app):
         Gtk.VBox.__init__(self)
         Loggable.__init__(self)
-        Signallable.__init__(self)
 
         self.app = app
         self.element = None
@@ -358,4 +358,3 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         text = self.searchEntry.get_text().lower()
         return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
             text in model.get_value(iter, COL_NAME_TEXT).lower()
-        return False

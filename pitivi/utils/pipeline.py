@@ -24,34 +24,44 @@
 """
 High-level pipelines
 """
-
 import platform
 
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.signal import Signallable
-from pitivi.utils.misc import format_ns
 
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GES
 
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import format_ns
+
+
 MAX_RECOVERIES = 5
+
+PIPELINE_SIGNALS = {
+    "state-change": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_INT,)),
+    "position": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_UINT64,)),
+    "duration-changed": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_UINT64,)),
+    "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
+    "error": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, GObject.TYPE_STRING)),
+}
 
 
 class PipelineError(Exception):
     pass
 
 
-class Seeker(Signallable, Loggable):
+class Seeker(GObject.Object, Loggable):
     """
     The Seeker is a singleton helper class to do various seeking
     operations in the pipeline.
     """
+
     _instance = None
-    __signals__ = {
-        'seek': ['position', 'format'],
-        'seek-relative': ['time'],
+
+    __gsignals__ = {
+        "seek": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_UINT64, object)),
+        "seek-relative": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_INT64,)),
     }
 
     def __new__(cls, *args, **kwargs):
@@ -67,7 +77,7 @@ class Seeker(Signallable, Loggable):
         """
         @param timeout (optional): the amount of miliseconds for a seek attempt
         """
-        Signallable.__init__(self)
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
 
         self.timeout = timeout
@@ -117,8 +127,10 @@ class Seeker(Signallable, Loggable):
 
             self._time = None
         elif self.position is not None and self.format is not None:
-            position, self.position = self.position, None
-            format, self.format = self.format, None
+            position = max(0, self.position)
+            self.position = None
+            format = self.format
+            self.format = None
             try:
                 self.emit('seek', position, format)
             except PipelineError as e:
@@ -135,7 +147,7 @@ class Seeker(Signallable, Loggable):
         return False
 
 
-class SimplePipeline(Signallable, Loggable):
+class SimplePipeline(GObject.Object, Loggable):
     """
     The Pipeline is only responsible for:
      - State changes
@@ -150,17 +162,11 @@ class SimplePipeline(Signallable, Loggable):
      - C{error} : An error happened.
     """
 
-    __signals__ = {
-        "state-change": ["state"],
-        "position": ["position"],
-        "duration-changed": ["duration"],
-        "eos": [],
-        "error": ["message", "details"]
-    }
+    __gsignals__ = PIPELINE_SIGNALS
 
     def __init__(self, pipeline):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
-        Signallable.__init__(self)
 
         self._pipeline = pipeline
         self._bus = self._pipeline.get_bus()
@@ -206,7 +212,8 @@ class SimplePipeline(Signallable, Loggable):
         self.pause()
         try:
             self.seekRelative(0)
-        except PipelineError:
+        except PipelineError as e:
+            self.warning("Could not flush because: %s", e)
             pass
 
     def setState(self, state):
@@ -255,8 +262,8 @@ class SimplePipeline(Signallable, Loggable):
         # during the playback.
         try:
             position = self.getPosition()
-        except PipelineError:
-            # Getting the position failed
+        except PipelineError as e:
+            self.warning("Getting the position failed: %s", e)
             return
         if position != Gst.CLOCK_TIME_NONE and position >= 0:
             self.emit("position", position)
@@ -344,12 +351,14 @@ class SimplePipeline(Signallable, Loggable):
 
     def _positionListenerCb(self):
         try:
-            cur = self.getPosition()
-            if cur != Gst.CLOCK_TIME_NONE:
-                self.emit('position', cur)
-                self.lastPosition = cur
-        except PipelineError:
-            pass
+            try:
+                position = self.getPosition()
+            except PipelineError as e:
+                self.warning("Could not get position because: %s", e)
+            else:
+                if position != Gst.CLOCK_TIME_NONE:
+                    self.emit('position', position)
+                    self.lastPosition = position
         finally:
             return True
 
@@ -435,7 +444,8 @@ class SimplePipeline(Signallable, Loggable):
                     # trigger duration-changed
                     try:
                         self.getDuration()
-                    except PipelineError:
+                    except PipelineError as e:
+                        self.warning("Could not get duration because: %s", e)
                         # no sinks??
                         pass
                     if self.pendingRecovery:
@@ -484,8 +494,8 @@ class SimplePipeline(Signallable, Loggable):
     def _queryDurationAsync(self, *unused_args, **unused_kwargs):
         try:
             self.getDuration()
-        except:
-            self.log("Duration failed... but we don't care")
+        except Exception as e:
+            self.warning("Could not get duration because: %s", e)
         return False
 
     def _handleErrorMessage(self, error, detail, source):
@@ -533,25 +543,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
     """
     Helper to handle GES.Pipeline through the SimplePipeline API
     and handle the Seeker properly
-
-    Signals:
-     - C{state-changed} : The state of the pipeline changed.
-     - C{position} : The current position of the pipeline changed.
-     - C{eos} : The Pipeline has finished playing.
-     - C{error} : An error happened.
     """
 
-    __gsignals__ = {
-        "state-change": (GObject.SignalFlags.RUN_LAST, None,
-                        (GObject.TYPE_INT,)),
-        "position": (GObject.SignalFlags.RUN_LAST, None,
-                        (GObject.TYPE_UINT64,)),
-        "duration-changed": (GObject.SignalFlags.RUN_LAST, None,
-                        (GObject.TYPE_UINT64,)),
-        "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
-        "error": (GObject.SignalFlags.RUN_LAST, None,
-                (GObject.TYPE_STRING, GObject.TYPE_STRING))
-    }
+    __gsignals__ = PIPELINE_SIGNALS
 
     def __init__(self, pipeline=None):
         GES.Pipeline.__init__(self)
@@ -608,11 +602,5 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                     new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
-    def _seekCb(self, unused_ruler, position, unused_format):
-        """
-        The app's main seek method used when the user seeks manually.
-
-        We clamp the seeker position so that it cannot go past 0 or the
-        end of the timeline.
-        """
+    def _seekCb(self, unused_seeker, position, unused_format):
         self.simple_seek(position)

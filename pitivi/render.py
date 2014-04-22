@@ -28,10 +28,11 @@ import os
 import subprocess
 import time
 
-from gi.repository import GLib
-from gi.repository import Gtk
-from gi.repository import Gst
 from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import Gtk
 
 from gettext import gettext as _
 
@@ -41,7 +42,6 @@ from pitivi.check import PYCANBERRA_SOFT_DEPENDENCY
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.signal import Signallable
 from pitivi.utils.ui import model, frame_rates, audio_rates,\
     audio_channels, get_combo_value, set_combo_value, beautify_ETA
 from pitivi.utils.widgets import GstElementSettingsDialog
@@ -220,14 +220,18 @@ def factorylist(factories):
     return model(columns, data)
 
 
-#--------------------------------- Public classes -----------------------------#
-class RenderingProgressDialog(Signallable):
-    __signals__ = {
-        "pause": [],
-        "cancel": [],
+# --------------------------------- Public classes -----------------------------#
+
+class RenderingProgressDialog(GObject.Object):
+
+    __gsignals__ = {
+        "pause": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "cancel": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self, app, parent):
+        GObject.Object.__init__(self)
+
         self.app = app
         self.main_render_dialog = parent
         self.builder = Gtk.Builder()

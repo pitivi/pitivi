@@ -21,13 +21,20 @@
 # Boston, MA 02110-1301, USA.
 
 from datetime import datetime, timedelta
-from gi.repository import Clutter, Gst, GLib, GdkPixbuf, Cogl, GES
 from random import randrange
 import cairo
 import numpy
 import os
 import pickle
 import sqlite3
+
+from gi.repository import Clutter
+from gi.repository import Cogl
+from gi.repository import GES
+from gi.repository import GObject
+from gi.repository import GLib
+from gi.repository import GdkPixbuf
+from gi.repository import Gst
 
 # Our C module optimizing waveforms rendering
 try:
@@ -37,7 +44,6 @@ except ImportError:
     import renderer
 
 from pitivi.settings import get_dir, xdg_cache_home
-from pitivi.utils.signal import Signallable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, format_ns
 from pitivi.utils.system import CPUUsageTracker
@@ -55,6 +61,12 @@ THUMB_MARGIN_PX = 3
 WAVEFORM_UPDATE_INTERVAL = timedelta(microseconds=500000)
 MARGIN = 500  # For the waveforms, ensures we always have a little extra surface when scrolling while playing.
 
+PREVIEW_GENERATOR_SIGNALS = {
+    "done": (GObject.SIGNAL_RUN_LAST, None, ()),
+    "error": (GObject.SIGNAL_RUN_LAST, None, ()),
+}
+
+
 """
 Convention throughout this file:
 Every GES element which name could be mistaken with a UI element
@@ -67,10 +79,9 @@ class PreviewGeneratorManager():
     Manage the execution of PreviewGenerators
     """
     def __init__(self):
-        self._cpipeline = {
-            GES.TrackType.AUDIO: None,
-            GES.TrackType.VIDEO: None
-        }
+        # The current PreviewGenerator per GES.TrackType.
+        self._cpipeline = {}
+        # The queue of PreviewGenerators.
         self._pipelines = {
             GES.TrackType.AUDIO: [],
             GES.TrackType.VIDEO: []
@@ -79,32 +90,33 @@ class PreviewGeneratorManager():
     def addPipeline(self, pipeline):
         track_type = pipeline.track_type
 
+        current_pipeline = self._cpipeline.get(track_type)
         if pipeline in self._pipelines[track_type] or \
-                pipeline is self._cpipeline[track_type]:
+                pipeline is current_pipeline:
+            # Already in the queue or already processing.
             return
 
-        if not self._pipelines[track_type] and self._cpipeline[track_type] is None:
+        if not self._pipelines[track_type] and current_pipeline is None:
             self._setPipeline(pipeline)
         else:
             self._pipelines[track_type].insert(0, pipeline)
 
     def _setPipeline(self, pipeline):
         self._cpipeline[pipeline.track_type] = pipeline
-        PreviewGenerator.connect(pipeline, "done", self._nextPipeline)
+        pipeline.connect("done", self._nextPipeline)
         pipeline.startGeneration()
 
     def _nextPipeline(self, controlled):
         track_type = controlled.track_type
-        if self._cpipeline[track_type]:
-            PreviewGenerator.disconnect_by_function(self._cpipeline[track_type],
-                                                    self._nextPipeline)
-            self._cpipeline[track_type] = None
+        pipeline = self._cpipeline.pop(track_type, None)
+        if pipeline:
+            pipeline.disconnect_by_func(self._nextPipeline)
 
         if self._pipelines[track_type]:
             self._setPipeline(self._pipelines[track_type].pop())
 
 
-class PreviewGenerator(Signallable):
+class PreviewGenerator(object):
     """
     Interface to be implemented by classes that generate previews
     It is need to implement it so PreviewGeneratorManager can manage
@@ -115,16 +127,10 @@ class PreviewGenerator(Signallable):
     # all the generators.
     __manager = PreviewGeneratorManager()
 
-    __signals__ = {
-        "done": [],
-        "error": [],
-    }
-
     def __init__(self, track_type):
         """
         @param track_type : GES.TrackType.*
         """
-        Signallable.__init__(self)
         self.track_type = track_type
 
     def startGeneration(self):
@@ -141,16 +147,21 @@ class PreviewGenerator(Signallable):
 
 
 class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
+
+    # We could define them in PreviewGenerator, but then for some reason they
+    # are ignored.
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
     def __init__(self, bElement, timeline):
         """
         @param bElement : the backend GES.TrackElement
         @param track : the track to which the bElement belongs
         @param timeline : the containing graphic timeline.
         """
-        Zoomable.__init__(self)
         Clutter.ScrollActor.__init__(self)
-        Loggable.__init__(self)
         PreviewGenerator.__init__(self, GES.TrackType.VIDEO)
+        Zoomable.__init__(self)
+        Loggable.__init__(self)
 
         # Variables related to the timeline objects
         self.timeline = timeline
@@ -523,7 +534,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             self.pipeline.set_state(Gst.State.NULL)
             self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
             self.pipeline = None
-        PreviewGenerator.emit(self, "done")
+        self.emit("done")
 
     def cleanup(self):
         self.stopGeneration()
@@ -537,7 +548,6 @@ class Thumbnail(Clutter.Actor):
         self.props.content = image
         self.width = width
         self.height = height
-        #self.set_background_color(Clutter.Color.new(0, 100, 150, 100))
         self.set_opacity(0)
         self.set_size(self.width, self.height)
         self.has_pixel_data = False
@@ -619,7 +629,7 @@ class ThumbnailCache(Loggable):
             self.warning("JPEG compression failed")
             return
         blob = sqlite3.Binary(jpeg)
-        #Replace if the key already existed
+        # Replace if a row with the same time already exists.
         self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
 
@@ -725,11 +735,15 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     """
     Audio previewer based on the results from the "level" gstreamer element.
     """
+
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
     def __init__(self, bElement, timeline):
         Clutter.Actor.__init__(self)
+        PreviewGenerator.__init__(self, GES.TrackType.AUDIO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
-        PreviewGenerator.__init__(self, GES.TrackType.AUDIO)
+
         self.pipeline = None
         self.discovered = False
         self.bElement = bElement
@@ -967,7 +981,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             self.pipeline.set_state(Gst.State.NULL)
             self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
-        PreviewGenerator.emit(self, "done")
+        self.emit("done")
 
     def cleanup(self):
         self.stopGeneration()

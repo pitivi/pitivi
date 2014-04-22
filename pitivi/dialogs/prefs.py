@@ -369,7 +369,7 @@ class PreferencesDialog(object):
         value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
             self.original_values[attrname] = value
-            if attrname + "Changed" not in GlobalSettings.get_signals():
+            if not GlobalSettings.notifiesConfigOption(attrname):
                 self.restart_warning.show()
             self.revert_button.set_sensitive(True)
 

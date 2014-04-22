@@ -29,6 +29,7 @@ from pitivi.effects import PROPS_TO_IGNORE
 
 class EffectPropertyChanged(UndoableAction):
     def __init__(self, effect, property_name, old_value, new_value):
+        UndoableAction.__init__(self)
         self.effect = effect
         self.property_name = property_name
         self.old_value = old_value
@@ -89,6 +90,7 @@ class EffectAdded(UndoableAction):
     # to the Effect when undoing so we reset theirs effect when
     # doing it again. The way of doing it is the same with EffectRemoved
     def __init__(self, clip, effect, properties_watcher):
+        UndoableAction.__init__(self)
         self.clip = clip
         self.effect = effect
         self.asset = effect.get_asset()
@@ -121,6 +123,7 @@ class EffectAdded(UndoableAction):
 
 class EffectRemoved(UndoableAction):
     def __init__(self, clip, effect, properties_watcher):
+        UndoableAction.__init__(self)
         self.effect = effect
         self.clip = clip
         self.asset = effect.get_asset()

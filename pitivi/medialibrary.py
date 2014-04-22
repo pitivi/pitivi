@@ -50,7 +50,6 @@ from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
-from pitivi.utils.signal import SignalGroup
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
 from pitivi.utils.ui import beautify_info, info_name, SPACING
@@ -251,7 +250,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
-        self.project_signals = SignalGroup()
         project_manager = self.app.project_manager
         project_manager.connect("new-project-created", self._newProjectCreatedCb)
         project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
@@ -396,21 +394,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         return icon
 
     def _connectToProject(self, project):
-        """Connect signal handlers to a project.
-
-        This first disconnects any handlers connected to an old project.
-        If project is None, this just disconnects any connected handlers.
         """
-        self.project_signals.connect(project, "asset-added", None,
-                self._assetAddedCb)
-        self.project_signals.connect(project, "asset-removed", None,
-                self._assetRemovedCb)
-        self.project_signals.connect(project, "error-loading-asset",
-                 None, self._errorCreatingAssetCb)
-        self.project_signals.connect(project, "done-importing", None,
-                self._sourcesStoppedImportingCb)
-        self.project_signals.connect(project, "start-importing", None,
-                self._sourcesStartedImportingCb)
+        Connect signal handlers to a project.
+        """
+        project.connect("asset-added", self._assetAddedCb)
+        project.connect("asset-removed", self._assetRemovedCb)
+        project.connect("error-loading-asset", self._errorCreatingAssetCb)
+        project.connect("done-importing", self._sourcesStoppedImportingCb)
+        project.connect("start-importing", self._sourcesStartedImportingCb)
 
         # The start-importing signal would have already been emited at that
         # time, make sure to catch if it is the case
@@ -1008,7 +999,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
         self.storemodel.clear()
-        self.project_signals.disconnectAll()
         self._project = None
 
     def _addUris(self, uris):
