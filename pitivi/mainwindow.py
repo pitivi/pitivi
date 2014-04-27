@@ -661,23 +661,24 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
 # Project management callbacks
 
-    def _projectManagerNewProjectLoadedCb(self, project_manager, unused_project, unused_fully_loaded):
+    def _projectManagerNewProjectLoadedCb(self, project_manager, project, unused_fully_loaded):
         """
         @type project_manager: L{ProjectManager}
+        @type project: L{Project}
         """
         self.log("A new project is loaded")
-        self._connectToProject(self.app.project_manager.current_project)
-        self.app.project_manager.current_project.timeline.connect("notify::duration",
+        self._connectToProject(project)
+        project.timeline.connect("notify::duration",
                 self._timelineDurationChangedCb)
-        self.app.project_manager.current_project.pipeline.activatePositionListener()
-        self._setProject()
+        project.pipeline.activatePositionListener()
+        self._setProject(project)
 
         # FIXME GES we should re-enable this when possible
         # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
         if self._missingUriOnLoading:
-            self.app.project_manager.current_project.setModificationState(True)
+            project.setModificationState(True)
             self.save_action.set_enabled(True)
             self._missingUriOnLoading = False
 
@@ -686,7 +687,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             # redirects to it if needed, so we still want it to be enabled:
             self.save_action.set_enabled(True)
 
-        if self.app.project_manager.current_project.timeline.props.duration != 0:
+        if project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
     def _projectManagerNewProjectLoadingCb(self, unused_project_manager, uri):
@@ -971,33 +972,34 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
 # Pitivi current project callbacks
 
-    def _setProject(self):
+    def _setProject(self, project):
         """
         Disconnect and reconnect callbacks to the new current project
+
+        @type project: L{Project}
         """
-        if not self.app.project_manager.current_project:
+        if not project:
             self.warning("Current project instance does not exist")
             return False
         try:
-            self.app.project_manager.current_project.disconnect_by_func(self._renderingSettingsChangedCb)
+            project.disconnect_by_func(self._renderingSettingsChangedCb)
         except TypeError:
             # When loading the first project, the signal has never been
             # connected before.
             pass
-        self.app.project_manager.current_project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
+        project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
 
-        self.viewer.setPipeline(self.app.project_manager.current_project.pipeline)
-        self.app.timeline_log_observer.setPipeline(self.app.project_manager.current_project.pipeline)
-        self._renderingSettingsChangedCb(self.app.project_manager.current_project)
-        if self.timeline_ui:
-            self.clipconfig.project = self.app.project_manager.current_project
-            # FIXME GES port undo/redo
-            # self.app.timelineLogObserver.pipeline = self.app.project_manager.current_project.pipeline
+        self.viewer.setPipeline(project.pipeline)
+        self.app.timeline_log_observer.setPipeline(project.pipeline)
+        self._renderingSettingsChangedCb(project)
+        self.clipconfig.project = project
+        # FIXME GES port undo/redo
+        # self.app.timelineLogObserver.pipeline = project.pipeline
 
         # When creating a blank project, medialibrary will eventually trigger
         # this _setProject method, but there's no project URI yet.
-        if self.app.project_manager.current_project.uri:
-            folder_path = os.path.dirname(path_from_uri(self.app.project_manager.current_project.uri))
+        if project.uri:
+            folder_path = os.path.dirname(path_from_uri(project.uri))
             self.settings.lastProjectFolder = folder_path
 
     def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
