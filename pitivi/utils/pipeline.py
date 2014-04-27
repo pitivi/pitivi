@@ -60,7 +60,7 @@ class Seeker(GObject.Object, Loggable):
     _instance = None
 
     __gsignals__ = {
-        "seek": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_UINT64, object)),
+        "seek": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_UINT64,)),
         "seek-relative": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_INT64,)),
     }
 
@@ -83,12 +83,10 @@ class Seeker(GObject.Object, Loggable):
         self.timeout = timeout
         self.pending_seek_id = None
         self.position = None
-        self.format = None
         self._time = None
         self.pending_position = None
 
-    def seek(self, position, format=Gst.Format.TIME, on_idle=False):
-        self.format = format
+    def seek(self, position, on_idle=False):
         self.position = position
 
         if self.pending_seek_id is None:
@@ -126,16 +124,14 @@ class Seeker(GObject.Object, Loggable):
                 return False
 
             self._time = None
-        elif self.position is not None and self.format is not None:
+        elif self.position is not None:
             position = max(0, self.position)
             self.position = None
-            format = self.format
-            self.format = None
             try:
-                self.emit('seek', position, format)
+                self.emit('seek', position)
             except PipelineError as e:
-                self.error("Error while seeking to position:%s format: %r, reason: %s",
-                          format_ns(position), format, e)
+                self.error("Error while seeking to position: %s, reason: %s",
+                           format_ns(position), e)
                 # if an exception happened while seeking, properly
                 # reset ourselves
                 return False
@@ -280,43 +276,37 @@ class SimplePipeline(GObject.Object, Loggable):
         else:
             self.play()
 
-    # { Position and Seeking methods
+    # Position and Seeking methods
 
-    def getPosition(self, format=Gst.Format.TIME):
+    def getPosition(self):
         """
         Get the current position of the L{Pipeline}.
 
-        @param format: The format to return the current position in
-        @type format: C{Gst.Format}
         @return: The current position or Gst.CLOCK_TIME_NONE
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
         try:
-            res, cur = self._pipeline.query_position(format)
+            res, cur = self._pipeline.query_position(Gst.Format.TIME)
         except Exception as e:
             self.handleException(e)
             raise PipelineError("Couldn't get position")
 
         if not res:
-            raise PipelineError("Couldn't get position")
+            raise PipelineError("Position not available")
 
         self.log("Got position %s", format_ns(cur))
         return cur
 
-    def getDuration(self, format=Gst.Format.TIME):
+    def getDuration(self):
         """
         Get the duration of the C{Pipeline}.
         """
-        self.log("format %r", format)
-
-        dur = self._getDuration(format)
+        dur = self._getDuration()
         self.log("Got duration %s", format_ns(dur))
         if self._duration != dur:
             self.emit("duration-changed", dur)
-
         self._duration = dur
-
         return dur
 
     def activatePositionListener(self, interval=500):
@@ -378,31 +368,25 @@ class SimplePipeline(GObject.Object, Loggable):
         self._waiting_for_async_done = False
         return False
 
-    def simple_seek(self, position, format=Gst.Format.TIME):
+    def simple_seek(self, position):
         """
         Seeks in the L{Pipeline} to the given position.
 
         @param position: Position to seek to
         @type position: L{long}
-        @param format: The C{Format} of the seek position
-        @type format: C{Gst.Format}
         @raise PipelineError: If seek failed
         """
         if self._waiting_for_async_done is True:
-            self._next_seek = (position, format)
+            self._next_seek = position
             self.info("Setting next seek to %s", self._next_seek)
             return
 
-        if format == Gst.Format.TIME:
-            self.debug("position: %s", format_ns(position))
-        else:
-            self.debug("position: %d, format: %d", position, format)
+        self.debug("position: %s", format_ns(position))
 
         # clamp between [0, duration]
-        if format == Gst.Format.TIME:
-            position = max(0, min(position, self.getDuration()) - 1)
+        position = max(0, min(position, self.getDuration()) - 1)
 
-        res = self._pipeline.seek(1.0, format, Gst.SeekFlags.FLUSH,
+        res = self._pipeline.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH,
                                   Gst.SeekType.SET, position,
                                   Gst.SeekType.NONE, -1)
         self._waiting_for_async_done = True
@@ -426,7 +410,6 @@ class SimplePipeline(GObject.Object, Loggable):
         seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
-    # }
     # Private methods
 
     def _busMessageCb(self, unused_bus, message):
@@ -473,7 +456,7 @@ class SimplePipeline(GObject.Object, Loggable):
             self._attempted_recoveries = 0
             self._waiting_for_async_done = False
             if self._next_seek is not None:
-                self.simple_seek(self._next_seek[0], self._next_seek[1])
+                self.simple_seek(self._next_seek)
                 self._next_seek = None
             if self._timeout_async_id:
                 GLib.source_remove(self._timeout_async_id)
@@ -502,9 +485,9 @@ class SimplePipeline(GObject.Object, Loggable):
         self.error("error from %s: %s (%s)" % (source, error, detail))
         self.emit('error', error.message, detail)
 
-    def _getDuration(self, format=Gst.Format.TIME):
+    def _getDuration(self):
         try:
-            res, dur = self._pipeline.query_duration(format)
+            res, dur = self._pipeline.query_duration(Gst.Format.TIME)
         except Exception as e:
             self.handleException(e)
             raise PipelineError("Couldn't get duration: %s" % e)
@@ -556,7 +539,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
 
-    def _getDuration(self, format=Gst.Format.TIME):
+    def _getDuration(self):
         return self._timeline.get_duration()
 
     def set_timeline(self, timeline):
@@ -602,5 +585,11 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                     new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
-    def _seekCb(self, unused_seeker, position, unused_format):
+    def _seekCb(self, unused_seeker, position):
+        """
+        The app's main seek method used when the user seeks manually.
+
+        We clamp the seeker position so that it cannot go past 0 or the
+        end of the timeline.
+        """
         self.simple_seek(position)
