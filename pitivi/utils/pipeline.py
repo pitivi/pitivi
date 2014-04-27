@@ -406,9 +406,8 @@ class SimplePipeline(GObject.Object, Loggable):
         self.debug("seeking successful")
         self.emit('position', position)
 
-    def seekRelative(self, time):
-        seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
-        self.simple_seek(seekvalue)
+    def seekRelative(self, time_delta):
+        self.simple_seek(self.getPosition() + time_delta)
 
     # Private methods
 
@@ -561,8 +560,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._seeker.disconnect_by_func(self._seekCb)
         SimplePipeline.release(self)
 
-    def _seekRelativeCb(self, unused_seeker, time):
-        self.seekRelative(time)
+    def _seekRelativeCb(self, unused_seeker, time_delta):
+        self.seekRelative(time_delta)
 
     def stepFrame(self, framerate, frames_offset):
         """
