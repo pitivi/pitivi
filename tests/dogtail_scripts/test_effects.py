@@ -1,10 +1,13 @@
 #!/usr/bin/env python2
-from common import PitiviTestCase
+
 import dogtail.rawinput
+
+from common import PitiviTestCase
 
 
 # FIXME: cleanup the weird use of variable names for tabs here
 class EffectLibraryTest(PitiviTestCase):
+
     def test_effect_library(self):
         self.import_media()
         tab = self.effectslibrary
@@ -31,7 +34,7 @@ class EffectLibraryTest(PitiviTestCase):
         # rows matching "Equa", we need to add one child (1 header + 3 rows).
         self.assertEqual(len(tab.child(roleName="table").children), 4)
 
-    def help_test_effect_drag(self):
+    def test_change_effect_settings(self):
         self.force_medialibrary_iconview_mode()
 
         sample = self.import_media()
@@ -54,27 +57,25 @@ class EffectLibraryTest(PitiviTestCase):
 
         icon = self.search_by_regex("^Agingtv", tab, roleName="table cell")
 
-        #Drag video effect on the clip
+        # Drag video effect on the clip
         self.improved_drag(self.center(icon), clippos)
         self.assertEqual(len(clip_effects_table.children), 6)
-        #Drag video effect to the table
+        # Drag video effect to the table
         icon = self.search_by_regex("^3Dflippo", tab, roleName="table cell")
         self.improved_drag(self.center(icon), self.center(clip_effects_table))
         self.assertEqual(len(clip_effects_table.children), 9)
 
-        #Drag audio effect on the clip
+        # Drag audio effect on the clip
         tab.child(name="effects library audio togglebutton").click()
         effect = self.search_by_regex("^Amplifier", tab, roleName="table cell")
         self.improved_drag(self.center(effect), clippos)
         self.assertEqual(len(clip_effects_table.children), 12)
 
-        #Drag audio effect on the table
+        # Drag audio effect on the table
         effect = self.search_by_regex("^Audiokaraoke", tab, roleName="table cell")
         self.improved_drag(self.center(effect), self.center(clip_effects_table))
         self.assertEqual(len(clip_effects_table.children), 15)
 
-    def test_change_effect_settings(self):
-        self.help_test_effect_drag()
         self.clipproperties.child(roleName="table").child(name="audioamplify").click()
         fx_expander = self.clipproperties.child(name="Effects", roleName="toggle button")
         fx_expander.child(name="Normal clipping (default)", roleName="combo box")
