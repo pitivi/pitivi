@@ -68,27 +68,35 @@ class PitiviTestCase(unittest.TestCase):
         mainwindow = self.pitivi.children[0]
         self.assertEqual('main window', mainwindow.name)
         headerbar, box = mainwindow.children
+
+        # Headerbar
+        self.main_menu_button = headerbar.children[5]
+        self.assertEqual("main menu button", self.main_menu_button.name)
+
+        # Content below the headerbar.
         contents = box.children[0]
         self.assertEqual('contents', contents.name)
         upper_half, timeline_area = contents.children
         self.assertEqual('upper half', upper_half.name)
         self.assertEqual('timeline area', timeline_area.name)
+
+        # Tabs
         primary_tabs = upper_half.children[0].child(name="primary tabs", recursive=False)
         secondary_tabs = upper_half.children[0].child(name="secondary tabs", recursive=False)
-        # These are the "shortcut" variables you can use for better perfs:
-        self.menubar = self.pitivi.children[0].child(name='headerbar', recursive=False)
         self.medialibrary = primary_tabs.children[0]
         self.effectslibrary = primary_tabs.children[1]
         self.clipproperties = secondary_tabs.children[0]
         self.transitions = secondary_tabs.children[1]
         self.titles = secondary_tabs.children[2]
         self.viewer = upper_half.child(name="viewer", recursive=False)
+        self.import_button = self.medialibrary.child(name="media_import_button")
+        self.insert_button = self.medialibrary.child(name="media_insert_button")
+
+        # Timeline area
         self.zoom_best_fit_button = timeline_area.child(name="Zoom", recursive=True)
         self.timeline = timeline_area.child(name="timeline canvas", recursive=False)
         self.timeline_toolbar = timeline_area.child(name="timeline toolbar", recursive=False)
-        # Used to speed up helper_functions in particular:
-        self.import_button = self.medialibrary.child(name="media_import_button")
-        self.insert_button = self.medialibrary.child(name="media_insert_button")
+
         start_time = time.time() - timer_start
         if start_time > 0.1:
             # When we were simply searching the toplevel for the menu bar,

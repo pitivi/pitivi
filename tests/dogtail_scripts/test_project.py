@@ -61,7 +61,7 @@ class ProjectPropertiesTest(PitiviTestCase):
         self.assertIn("1280", spintext)
         self.assertIn("720", spintext)
 
-        #Test frame rate combinations, link button
+        # Test frame rate combinations, link button
         frameCombo = video.child(name="23.976 fps", roleName="combo box")
         frameText = childtext["24M"]
         frameCombo.click()
@@ -124,13 +124,14 @@ class ProjectPropertiesTest(PitiviTestCase):
         self.unlink.append(settings_test_project_file)
         self.saveProject(settings_test_project_file)
         self.assertTrue(self.wait_for_file(settings_test_project_file))
+
         # Really quit to be sure the stuff was correctly serialized
         self.tearDown(clean=False, kill=False)
         self.setUp()
         self.loadProject(settings_test_project_file)
         sleep(1)  # Give enough time for GES to load the project
-        self.pitivi.menu("Edit").click()
-        self.pitivi.menuItem("Project Settings").click()
+        self.main_menu_button.click()
+        self.main_menu_button.menuItem("Project Settings").click()
         # Since we shut down the whole app, we must reset our shortcut variables:
         dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
         video = dialog.tab("Video")
@@ -152,10 +153,11 @@ class ProjectPropertiesTest(PitiviTestCase):
             childtext[child.text] = child
         # You'd expect a PAR of 333:320 and DAR of 37:20... but we changed the
         # resolution (500x1000) right before saving, so the PAR changed to 37:10
-        self.assertIn("37:10", childtext, "Pixel aspect ratio was not saved")
+        self.assertIn("37:10", childtext, "Pixel aspect ratio was not saved: %s" % childtext)
         # However, the DAR is expected to be unaffected by the image resolution:
-        self.assertEqual(displayCombo.combovalue, "Cinema (1.85)")
-        self.assertIn("37:20", childtext, "Display aspect ratio was not saved")
+        displayCombo = video.child(name="Cinema (1.85)", roleName="combo box")
+        self.assertEqual(displayCombo.combovalue, "Cinema (1.85)", "Display aspect ratio was not saved (combobox)")
+        self.assertIn("37:20", childtext, "Display aspect ratio was not saved (text): %s" % childtext)
 
     def test_backup(self):
         self.force_medialibrary_iconview_mode()
@@ -241,7 +243,7 @@ class ProjectPropertiesTest(PitiviTestCase):
         # The backup file must not have changed or vanished:
         self.assertEqual(timestamp, os.path.getmtime(backup_path))
 
-        #Look if backup updated, even it is newer than saved project
+        # Look if backup updated, even it is newer than saved project
         sample = self.import_media("flat_colour2_640x480.png")
         self.assertTrue(self.wait_for_update(backup_path, timestamp))
 

@@ -43,9 +43,9 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         dialog.child(name="Channels:").click()
         dialog.child(name="Apply to project").click()
 
-        #Check if correctly applied
-        self.menubar.menu("Edit").click()
-        self.menubar.menuItem("Project Settings").click()
+        # Check if correctly applied
+        self.main_menu_button.click()
+        self.main_menu_button.menuItem("Project Settings").click()
         dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
 
         children = dialog.findChildren(IsATextEntryNamed(""))

@@ -8,8 +8,8 @@ class DialogsPreferencesTest(PitiviTestCase):
 
     def test_pref_dialog(self):
         dogtail.rawinput.pressKey("Esc")
-        self.menubar.menu("Edit").click()
-        self.menubar.menuItem("Preferences").click()
+        self.main_menu_button.click()
+        self.main_menu_button.menuItem("Preferences").click()
         dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
         dialog.child("Reset to Factory Settings", roleName="push button").click()
 
@@ -24,11 +24,12 @@ class DialogsPreferencesTest(PitiviTestCase):
 
         # Close the preferences, restart the app...
         dialog.button("Close").click()
-        self.tearDown(kill=False)  # Pitivi only saves prefs on a normal exit
+        # Pitivi only saves prefs on a normal exit.
+        self.tearDown(clean=False, kill=False)
         self.setUp()
         dogtail.rawinput.pressKey("Esc")
-        self.menubar.menu("Edit").click()
-        self.menubar.menuItem("Preferences").click()
+        self.main_menu_button.click()
+        self.main_menu_button.menuItem("Preferences").click()
         dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
 
         # Check if the previous values were correctly saved
