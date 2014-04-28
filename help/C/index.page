@@ -40,12 +40,8 @@
     <title>Basic Editing with the Timeline</title>
   </section>
 
-  <section id="effects" style="2column">
-    <title>Special Effects</title>
-  </section>
-
-  <section id="transitions" style="2column">
-    <title>Transitions</title>
+  <section id="effectstransitions" style="2column">
+    <title>Effects and Transitions</title>
   </section>
 
   <section id="rendering" style="2column">

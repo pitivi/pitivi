@@ -4,7 +4,7 @@
       id="transitions">
 
   <info>
-    <link type="guide" xref="index#transitions"/>
+    <link type="guide" xref="index#effectstransitions"/>
     <revision pkgversion="0.93" version="0.1" date="2014-03-28" status="draft"/>
     <credit type="author">
       <name>Tomáš Karger</name>

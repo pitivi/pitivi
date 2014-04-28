@@ -4,7 +4,7 @@
       id="usingeffects">
 
   <info>
-    <link type="guide" xref="index#effects"/>
+    <link type="guide" xref="index#effectstransitions"/>
     <revision pkgversion="0.93" version="0.1" date="2014-03-25" status="draft"/>
     <credit type="author">
       <name>Tomáš Karger</name>

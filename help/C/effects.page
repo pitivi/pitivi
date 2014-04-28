@@ -4,7 +4,7 @@
       id="effects">
 
   <info>
-    <link type="guide" xref="index#effects"/>
+    <link type="guide" xref="index#effectstransitions"/>
     <link type="seealso" xref="gstreamer"/>
     <revision pkgversion="0.92" version="0.2" date="2014-03-07" status="incomplete"/>
     <credit type="author">
