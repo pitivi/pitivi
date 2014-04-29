@@ -214,7 +214,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         The full hierarchy is also visible with accessibility tools like "sniff"
         """
-        self.set_title("%s" % APPNAME)
         self.set_icon_name("pitivi")
         vbox = Gtk.VBox(homogeneous=False)
         self.add(vbox)
@@ -331,6 +330,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         # Focus the timeline by default!
         self.timeline_ui.grab_focus()
+        self.updateTitle()
 
     def switchContextTab(self, bElement):
         """
@@ -1145,15 +1145,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         return ret
 
     def updateTitle(self):
-        name = touched = ""
-        if self.app.project_manager.current_project:
-            if self.app.project_manager.current_project.name:
-                name = self.app.project_manager.current_project.name
+        project = self.app.project_manager.current_project
+        if project:
+            if project.name:
+                name = project.name
             else:
                 name = _("Untitled")
-            if self.app.project_manager.current_project.hasUnsavedModifications():
-                touched = "*"
-        title = "%s%s — %s" % (touched, name, APPNAME)
+            unsaved_mark = ""
+            if project.hasUnsavedModifications():
+                unsaved_mark = "*"
+            title = "%s%s — %s" % (unsaved_mark, name, APPNAME)
+        else:
+            title = APPNAME
         self._headerbar.set_title(title)
         self.set_title(title)
 
