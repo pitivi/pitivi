@@ -556,7 +556,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
     # Interface (Zoomable)
 
     def zoomChanged(self):
-        self.update(True)
+        self.update(False)
         if self.isSelected:
             self.updateKeyframes()
 

@@ -374,14 +374,9 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         self.lastPosition = position
 
     def _updatePlayHead(self):
-        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.playhead.save_easing_state()
-            self.playhead.set_easing_duration(600)
         height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self._movePlayhead(self.lastPosition)
-        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.playhead.restore_easing_state()
 
     def _movePlayhead(self, position):
         self.playhead.props.x = self.nsToPixel(position)
@@ -425,7 +420,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
         self.elements.append(element)
 
-        self._setElementX(element)
+        self._setElementX(element, ease=True)
         self._setElementY(element)
 
         self.insert_child_above(element, marker)
@@ -452,7 +447,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
                 return element
         return None
 
-    def _setElementX(self, element, ease=True):
+    def _setElementX(self, element, ease=False):
         if ease:
             element.save_easing_state()
             element.set_easing_duration(600)
@@ -623,20 +618,16 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
     def _elementStartChangedCb(self, unused_bElement, unused_start, element):
         self._updateSize()
         self.allowSeek = False
-
-        if element.isDragged:
-            self._setElementX(element, ease=False)
-        else:
-            self._setElementX(element)
+        self._setElementX(element)
 
     def _elementDurationChangedCb(self, unused_bElement, unused_duration, element):
         self._updateSize()
         self.allowSeek = False
-        element.update(False)
+        element.update(ease=False)
 
     def _elementInPointChangedCb(self, unused_bElement, unused_inpoint, element):
         self.allowSeek = False
-        self._setElementX(element, ease=False)
+        self._setElementX(element)
 
     def _layerPriorityChangedCb(self, unused_layer, unused_priority):
         self._redraw()
