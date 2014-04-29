@@ -67,14 +67,13 @@ class PitiviTestCase(unittest.TestCase):
         # Reuse those variables throughout your scripts for efficient access.
         mainwindow = self.pitivi.children[0]
         self.assertEqual('main window', mainwindow.name)
-        headerbar, box = mainwindow.children
+        headerbar, contents = mainwindow.children
 
         # Headerbar
         self.main_menu_button = headerbar.children[5]
         self.assertEqual("main menu button", self.main_menu_button.name)
 
         # Content below the headerbar.
-        contents = box.children[0]
         self.assertEqual('contents', contents.name)
         upper_half, timeline_area = contents.children
         self.assertEqual('upper half', upper_half.name)

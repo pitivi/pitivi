@@ -201,7 +201,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _createUi(self):
         """
-        Create the graphical interface with the following hierarchy in a vbox:
+        Create the graphical interface with the following hierarchy:
         -- self.vpaned
         ---- self.mainhpaned (upper half)
         ------ self.secondaryhpaned (upper-left)
@@ -212,12 +212,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         In the window titlebar, there is also a HeaderBar widget.
 
-        The full hierarchy is also visible with accessibility tools like "sniff"
+        The full hierarchy is visible with accessibility tools like "sniff".
         """
         self.set_icon_name("pitivi")
-        vbox = Gtk.VBox(homogeneous=False)
-        self.add(vbox)
-        vbox.show()
 
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self._headerbar = Gtk.HeaderBar()
@@ -246,7 +243,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.secondhpaned = Gtk.HPaned()  # Separates the two sets of tabs
         self.vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
-        vbox.pack_start(self.vpaned, True, True, 0)
+        self.add(self.vpaned)
         self.vpaned.show()
         self.secondhpaned.show()
         self.mainhpaned.show()
