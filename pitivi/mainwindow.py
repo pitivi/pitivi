@@ -33,7 +33,7 @@ from gi.repository import GdkPixbuf
 from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository.GstPbutils import InstallPluginsContext, install_plugins_async
+from gi.repository import GstPbutils
 
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
@@ -434,16 +434,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if self.app.project_manager.current_project.uri:
             self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
         self.updateTitle()
-
-# Missing Plugin Support
-
-    def _installPlugins(self, details, missingPluginsCallback):
-        context = InstallPluginsContext()
-        context.set_xid(self.window.xid)
-
-        res = install_plugins_async(details, context,
-                missingPluginsCallback)
-        return res
 
 # UI Callbacks
 
@@ -904,8 +894,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         filter_ = Gtk.FileFilter()
         # Translators: this is a format filter in a filechooser. Ex: "AVI files"
         filter_.set_name(_("%s files" % extension))
-        filter_.add_pattern("*" + extension.lower())
-        filter_.add_pattern("*" + extension.upper())
+        filter_.add_pattern("*%s" % extension.lower())
+        filter_.add_pattern("*%s" % extension.upper())
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
         default.add_pattern("*")
@@ -956,6 +946,21 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
 
+# Missing Plugins Support
+
+    def _sourceListMissingPluginsCb(self, unused_project, unused_uri, unused_factory,
+            details, unused_descriptions, missingPluginsCallback):
+        res = self._installPlugins(details, missingPluginsCallback)
+        return res
+
+    def _installPlugins(self, details, missingPluginsCallback):
+        context = GstPbutils.InstallPluginsContext()
+        context.set_xid(self.window.xid)
+
+        res = GstPbutils.install_plugins_async(details, context,
+                missingPluginsCallback)
+        return res
+
 # Pitivi current project callbacks
 
     def _setProject(self, project):
@@ -995,11 +1000,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.viewer.setDisplayAspectRatio(project.getDAR())
         self.viewer.timecode_entry.setFramerate(project.videorate)
 
-    def _sourceListMissingPluginsCb(self, unused_project, unused_uri, unused_factory,
-            details, unused_descriptions, missingPluginsCallback):
-        res = self._installPlugins(details, missingPluginsCallback)
-        return res
-
     def _timelineDurationChangedCb(self, timeline, unused_duration):
         """
         When a clip is inserted into a blank timeline, enable the render button.
@@ -1010,6 +1010,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.render_button.set_sensitive(duration > 0)
 
 # other
+
     def _showExportDialog(self, project):
         self.log("Export requested")
         chooser = Gtk.FileChooserDialog(title=_("Export To..."),
