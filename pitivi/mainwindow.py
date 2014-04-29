@@ -116,38 +116,6 @@ GlobalSettings.addConfigOption('timelineAutoRipple',
     default=False)
 
 
-# FIXME PyGi to get stock_add working
-Gtk.stock_add = lambda items: None
-
-
-def create_stock_icons():
-    """ Creates the pitivi-only stock icons """
-    Gtk.stock_add([
-        ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
-        ('pitivi-keyframe', _('Keyframe'), 0, 0, 'pitivi'),
-        ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
-        # Translators: This is an action, the title of a button
-        ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
-        ('pitivi-align', _('Align'), 0, 0, 'pitivi'),
-        ('pitivi-gapless', _('Gapless mode'), 0, 0, 'pitivi'),
-    ])
-    pixmaps = {
-        "pitivi-split": "pitivi-split-24.svg",
-        "pitivi-keyframe": "pitivi-keyframe-24.svg",
-        "pitivi-ungroup": "pitivi-ungroup-24.svg",
-        "pitivi-group": "pitivi-group-24.svg",
-        "pitivi-align": "pitivi-align-24.svg",
-        "pitivi-gapless": "pitivi-gapless-24.svg",
-    }
-    factory = Gtk.IconFactory()
-    pmdir = get_pixmap_dir()
-    for stockid, path in pixmaps.items():
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pmdir, path))
-        iconset = Gtk.IconSet.new_from_pixbuf(pixbuf)
-        factory.add(stockid, iconset)
-        factory.add_default()
-
-
 class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     """
     Pitivi's main window.
@@ -168,7 +136,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Creating MainWindow")
         self.settings = app.settings
         self.prefsdialog = None
-        create_stock_icons()
+        self.createStockIcons()
 
         self.uimanager = Gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
@@ -187,6 +155,27 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         pm.connect("reverting-to-saved", self._projectManagerRevertingToSavedCb)
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
+
+    @staticmethod
+    def createStockIcons():
+        """
+        Create the icons used by some buttons.
+        """
+        pixmaps = {
+            "pitivi-split": "pitivi-split-24.svg",
+            "pitivi-keyframe": "pitivi-keyframe-24.svg",
+            "pitivi-ungroup": "pitivi-ungroup-24.svg",
+            "pitivi-group": "pitivi-group-24.svg",
+            "pitivi-align": "pitivi-align-24.svg",
+            "pitivi-gapless": "pitivi-gapless-24.svg",
+        }
+        factory = Gtk.IconFactory()
+        pmdir = get_pixmap_dir()
+        for stockid, path in pixmaps.items():
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pmdir, path))
+            iconset = Gtk.IconSet.new_from_pixbuf(pixbuf)
+            factory.add(stockid, iconset)
+            factory.add_default()
 
     def showRenderDialog(self, project):
         """
