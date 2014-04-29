@@ -748,7 +748,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         model = self.treeview.get_model()
         paths = self.getSelectedPaths()
-        if paths is None or paths < 1:
+        if not paths:
             return
         # use row references so we don't have to care if a path has been removed
         rows = []
