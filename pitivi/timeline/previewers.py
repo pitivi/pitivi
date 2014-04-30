@@ -808,7 +808,6 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             self.log('Checking if the waveform for "%s" needs to be redrawn' % self._uri)
             if self.lastUpdate is None or datetime.now() - self.lastUpdate > WAVEFORM_UPDATE_INTERVAL:
                 # Last update was long ago or never.
-                self.lastUpdate = datetime.now()
                 self._compute_geometry()
             else:
                 if self._callback_id:
@@ -817,6 +816,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
 
     def _compute_geometry(self):
         self.log("Computing the clip's geometry for waveforms")
+        self.lastUpdate = datetime.now()
         width_px = self.nsToPixel(self.bElement.props.duration)
         if width_px <= 0:
             return
