@@ -815,6 +815,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
                 self._callback_id = GLib.timeout_add(500, self._compute_geometry)
 
     def _compute_geometry(self):
+        self._callback_id = 0
         self.log("Computing the clip's geometry for waveforms")
         self.lastUpdate = datetime.now()
         width_px = self.nsToPixel(self.bElement.props.duration)
