@@ -756,7 +756,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self.set_content(self.canvas)
         self.width = 0
         self._num_failures = 0
-        self.lastUpdate = datetime.now()
+        self.lastUpdate = None
 
         self.current_geometry = (-1, -1)
 
@@ -811,7 +811,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _maybeUpdate(self):
         if self.discovered:
             self.log('Checking if the waveform for "%s" needs to be redrawn' % self._uri)
-            if datetime.now() - self.lastUpdate > WAVEFORM_UPDATE_INTERVAL:
+            if self.lastUpdate is None or datetime.now() - self.lastUpdate > WAVEFORM_UPDATE_INTERVAL:
+                # Last update was long ago or never.
                 self.lastUpdate = datetime.now()
                 self._compute_geometry()
             else:
