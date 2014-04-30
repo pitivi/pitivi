@@ -319,8 +319,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
-        if self._effect_config_ui:
-            self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
+        self._removeEffectConfigurationWidget()
         self.effects_properties_manager.cleanCache(effect)
         effect.get_parent().remove(effect)
         self._updateTreeview()
@@ -333,16 +332,13 @@ class EffectProperties(Gtk.Expander, Loggable):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
-                    # Actually add the effect
-                    self.app.action_log.begin("add effect")
-                    effect = GES.Effect.new(bin_description=bin_desc)
-                    clip.add(effect)
-                    self.updateAll()
-                    self.app.project_manager.current_project.timeline.commit()
-                    self.app.action_log.commit()
-                    self.app.project_manager.current_project.pipeline.flushSeek()
-
-                    break
+                effect = GES.Effect.new(bin_description=bin_desc)
+                clip.add(effect)
+                self.updateAll()
+                self.app.project_manager.current_project.timeline.commit()
+                self.app.action_log.commit()
+                self.app.project_manager.current_project.pipeline.flushSeek()
+                break
 
     def addEffectToCurrentSelection(self, bin_desc):
         if self.clips:
@@ -396,7 +392,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                 self._updateTreeview()
                 self._updateEffectConfigUi()
             else:
-                self._hideEffectConfig()
+                self._removeEffectConfigurationWidget()
                 self.storemodel.clear()
                 self._infobar.show()
             self._vcontent.show()
@@ -442,33 +438,33 @@ class EffectProperties(Gtk.Expander, Loggable):
             if self._config_ui_h_pos is None:
                 self._config_ui_h_pos = self.app.gui.settings.mainWindowHeight // 3
 
-        if self.selection.get_selected()[1]:
-            effect = self.storemodel.get_value(self.selection.get_selected()[1],
-                                               COL_TRACK_EFFECT)
-
-            for widget in self._vcontent.get_children():
-                if type(widget) in [Gtk.ScrolledWindow, GstElementSettingsWidget]:
-                    self._vcontent.remove(widget)
-
-            element = effect
-            ui = self.effects_properties_manager.getEffectConfigurationUI(element)
-
-            if self._effect_config_ui:
-                self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
-
-            self._effect_config_ui = ui
-            if self._effect_config_ui:
-                self._vcontent.pack2(self._effect_config_ui, resize=False, shrink=False)
-                self._vcontent.set_position(int(self._config_ui_h_pos))
-                self._effect_config_ui.show_all()
-            self.selected_on_treeview = effect
+        tree_iter = self.selection.get_selected()[1]
+        if tree_iter:
+            effect = self.storemodel.get_value(tree_iter, COL_TRACK_EFFECT)
+            self._showEffectConfigurationWidget(effect)
         else:
-            self._hideEffectConfig()
+            self._removeEffectConfigurationWidget()
 
-    def _hideEffectConfig(self):
-        if self._effect_config_ui:
-            self._effect_config_ui.hide()
-            self._effect_config_ui = None
+    def _removeEffectConfigurationWidget(self):
+        if not self._effect_config_ui:
+            # Nothing to remove.
+            return
+
+        viewport = self._effect_config_ui.get_children()[0]
+        element_settings_widget = viewport.get_children()[0]
+        element_settings_widget.resetKeyframeToggleButtons()
+
+        self._vcontent.remove(self._effect_config_ui)
+        self._effect_config_ui = None
+
+    def _showEffectConfigurationWidget(self, effect):
+        self._removeEffectConfigurationWidget()
+        self._effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(effect)
+        if not self._effect_config_ui:
+            return
+        self._vcontent.pack2(self._effect_config_ui, resize=False, shrink=False)
+        self._vcontent.set_position(int(self._config_ui_h_pos))
+        self._effect_config_ui.show_all()
 
 
 class TransformationProperties(Gtk.Expander):
