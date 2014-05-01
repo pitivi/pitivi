@@ -23,6 +23,8 @@
 Base classes for undo/redo.
 """
 
+import weakref
+
 from gi.repository import GObject
 
 from pitivi.utils.loggable import Loggable
@@ -62,6 +64,9 @@ class UndoableAction(GObject.Object):
     def clean(self):
         # Meant to be overridden by UndoableActionStack?
         pass
+
+    def serializeLastAction(self):
+        raise NotImplementedError()
 
     def _done(self):
         self.emit("done")
@@ -127,10 +132,11 @@ class UndoableActionLog(GObject.Object, Loggable):
         "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
-    def __init__(self):
+    def __init__(self, app=None):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
+        self.app = weakref.proxy(app)
         self.undo_stacks = []
         self.redo_stacks = []
         self.stacks = []
@@ -151,6 +157,14 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     def push(self, action):
         self.debug("Pushing %s", action)
+
+        try:
+            st = action.serializeLastAction()
+            if self.app is not None:
+                self.app.write_action(st)
+        except NotImplementedError:
+            self.warning("No serialization method for that action")
+
         if self.running:
             self.debug("Abort because already running")
             return

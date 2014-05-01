@@ -73,6 +73,13 @@ class AssetRemovedAction(UndoableAction):
     def do(self):
         self.project.remove_asset(self.asset)
 
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("remove-asset")
+        st.set_value("id", self.asset.get_info().get_uri())
+        type_string = GObject.type_name(self.asset.get_extractable_type())
+        st.set_value("type", type_string)
+        return st
+
 
 class AssetAddedAction(UndoableAction):
     def __init__(self, project, asset):
@@ -85,6 +92,13 @@ class AssetAddedAction(UndoableAction):
 
     def do(self):
         self.project.add_asset(self.asset)
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("add-asset")
+        st.set_value("id", self.asset.get_info().get_uri())
+        type_string = GObject.type_name(self.asset.get_extractable_type())
+        st.set_value("type", type_string)
+        return st
 
 
 class ProjectSettingsChanged(UndoableAction):
@@ -933,7 +947,7 @@ class Project(Loggable, GES.Project):
             self.timeline.props.auto_transition = True
         self._calculateNbLoadingAssets()
 
-        self.pipeline = Pipeline()
+        self.pipeline = Pipeline(self.app)
         try:
             self.pipeline.set_timeline(self.timeline)
         except PipelineError as e:

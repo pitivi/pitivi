@@ -19,6 +19,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
 
@@ -129,6 +130,17 @@ class ClipAdded(UndoableAction):
         self.layer.remove_clip(self.clip)
         self._undone()
 
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("add-clip")
+        st.set_value("name", self.clip.get_name())
+        st.set_value("layer-priority", self.layer.props.priority)
+        st.set_value("asset-id", self.clip.get_asset().get_id())
+        st.set_value("type", GObject.type_name(self.clip))
+        st.set_value("start", float(self.clip.props.start / Gst.SECOND))
+        st.set_value("inpoint", float(self.clip.props.in_point / Gst.SECOND))
+        st.set_value("duration", float(self.clip.props.duration / Gst.SECOND))
+        return st
+
 
 class ClipRemoved(UndoableAction):
 
@@ -146,6 +158,11 @@ class ClipRemoved(UndoableAction):
         self.layer.get_timeline().commit()
         self._undone()
 
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("remove-clip")
+        st.set_value("name", self.clip.get_name())
+        return st
+
 
 class LayerAdded(UndoableAction):
     def __init__(self, timeline, layer):
@@ -158,6 +175,11 @@ class LayerAdded(UndoableAction):
     def undo(self):
         self.timeline.remove_layer(self.layer)
 
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("add-layer")
+        st.set_value("priority", self.layer.props.priority)
+        return st
+
 
 class LayerRemoved(UndoableAction):
     def __init__(self, timeline, layer):
@@ -169,6 +191,11 @@ class LayerRemoved(UndoableAction):
 
     def undo(self):
         self.timeline.add_layer(self.layer)
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("remove-layer")
+        st.set_value("priority", self.layer.props.priority)
+        return st
 
 
 class InterpolatorKeyframeAdded(UndoableAction):
