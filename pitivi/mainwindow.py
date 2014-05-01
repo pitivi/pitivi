@@ -138,7 +138,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.prefsdialog = None
         self.createStockIcons()
 
+        self.connect("destroy", self._destroyedCb)
+
         self.uimanager = Gtk.UIManager()
+        self.builder_handler_ids = []
+        self.builder = Gtk.Builder()
         self.add_accel_group(self.uimanager.get_accel_group())
 
         self._createUi()
@@ -192,6 +196,32 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.disableKeyboardAndMouseEvents()
         dialog.window.show()
 
+    def _destroyedCb(self, unused_self):
+        self.render_button.disconnect_by_func(self._renderCb)
+        pm = self.app.project_manager
+        pm.disconnect_by_func(self._projectManagerNewProjectLoadingCb)
+        pm.disconnect_by_func(self._projectManagerNewProjectLoadedCb)
+        pm.disconnect_by_func(self._projectManagerNewProjectFailedCb)
+        pm.disconnect_by_func(self._projectManagerSaveProjectFailedCb)
+        pm.disconnect_by_func(self._projectManagerProjectSavedCb)
+        pm.disconnect_by_func(self._projectManagerClosingProjectCb)
+        pm.disconnect_by_func(self._projectManagerRevertingToSavedCb)
+        pm.disconnect_by_func(self._projectManagerProjectClosedCb)
+        pm.disconnect_by_func(self._projectManagerMissingUriCb)
+        self.save_action.disconnect_by_func(self._saveProjectCb)
+        self.new_project_action.disconnect_by_func(self._newProjectMenuCb)
+        self.open_project_action.disconnect_by_func(self._openProjectCb)
+        self.save_as_action.disconnect_by_func(self._saveProjectAsCb)
+        self.help_action.disconnect_by_func(self._userManualCb)
+        self.menu_button_action.disconnect_by_func(self._menuCb)
+        self.disconnect_by_func(self._destroyedCb)
+        self.disconnect_by_func(self._configureCb)
+        for gobject, id_ in self.builder_handler_ids:
+            gobject.disconnect(id_)
+        self.builder_handler_ids = None
+        self.vpaned.remove(self.timeline_ui)
+        self.timeline_ui.destroy()
+
     def _renderDialogDestroyCb(self, unused_dialog):
         self.set_sensitive(True)
         self.timeline_ui.enableKeyboardAndMouseEvents()
@@ -219,17 +249,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self._headerbar = Gtk.HeaderBar()
         self._create_headerbar_buttons()
-        builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
-        builder.connect_signals(self)
-        self._menubutton = builder.get_object("menubutton")
+        self.builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
+
+        # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=729263
+        self.builder.connect_signals_full(self._builderConnectCb, self)
+
+        self._menubutton = self.builder.get_object("menubutton")
 
         if Gtk.get_major_version() == 3 and Gtk.get_minor_version() < 13:
             open_menu_image = builder.get_object("open_menu_image")
             open_menu_image.set_property("icon_name", "emblem-system-symbolic")
-
         self._menubutton_items = {}
-        for widget in builder.get_object("menu").get_children():
+        for widget in self.builder.get_object("menu").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
 
         self._headerbar.pack_end(self._menubutton)
@@ -434,12 +465,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.add_action(self.help_action)
         self.app.add_accelerator("F1", "win.help", None)
 
-        def menuCb(unused_action, unused_param):
-            self._menubutton.set_active(not self._menubutton.get_active())
-
-        menu_button_action = Gio.SimpleAction.new("menu_button", None)
-        menu_button_action.connect("activate", menuCb)
-        self.add_action(menu_button_action)
+        self.menu_button_action = Gio.SimpleAction.new("menu_button", None)
+        self.menu_button_action.connect("activate", self._menuCb)
+        self.add_action(self.menu_button_action)
         self.app.add_accelerator("F10", "win.menu_button", None)
 
     def showProjectStatus(self):
@@ -497,6 +525,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         to remove all instances of that clip."""
         self.timeline_ui.purgeObject(asset.get_id())
 
+    def _builderConnectCb(self, builder, gobject, signal_name, handler_name,
+            connect_object, flags, user_data):
+        id_ = gobject.connect(signal_name, getattr(self, handler_name))
+        self.builder_handler_ids.append((gobject, id_))
+
 # Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action, unused_param):
@@ -539,6 +572,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         from pitivi.project import ProjectSettingsDialog
         ProjectSettingsDialog(self, self.app.project_manager.current_project).window.run()
         self.updateTitle()
+
+    def _menuCb(self, unused_action, unused_param):
+        self._menubutton.set_active(not self._menubutton.get_active())
 
     def _userManualCb(self, unused_action, unused_param):
         show_user_manual()
@@ -799,12 +835,15 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         before the filechooser to pick the new project to load appears...
         We can then expect another project to be loaded soon afterwards.
         """
+
         # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:
             project.pipeline.deactivatePositionListener()
 
         self.info("Project closed - clearing the media library and timeline")
         self.medialibrary.storemodel.clear()
+        self._disconnectFromProject(self.app.project_manager.current_project)
+        self.app.project_manager.current_project.timeline.disconnect_by_func(self._timelineDurationChangedCb)
         self.timeline_ui.setProject(None)
         self.clipconfig.timeline = None
         self.render_button.set_sensitive(False)
@@ -959,6 +998,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
+        project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
 
 # Missing Plugins Support
 
@@ -1006,6 +1046,13 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if project.uri:
             folder_path = os.path.dirname(path_from_uri(project.uri))
             self.settings.lastProjectFolder = folder_path
+
+    def _disconnectFromProject(self, project):
+        project.disconnect_by_func(self._mediaLibrarySourceRemovedCb)
+        project.disconnect_by_func(self._projectChangedCb)
+        project.disconnect_by_func(self._renderingSettingsChangedCb)
+
+# Pitivi current project callbacks
 
     def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
         """
