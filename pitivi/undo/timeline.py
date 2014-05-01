@@ -272,12 +272,12 @@ class TimelineLogObserver(object):
         timeline.connect("layer-removed", self._layerRemovedCb)
 
     def _disconnectFromTimeline(self, timeline):
-        try:
-            timeline.disconnect_by_func(self._clipAddedCb)
-            timeline.disconnect_by_func(self._clipRemovedCb)
-        except TypeError:
-            # Was not connected to any layer yet
-            pass
+        for layer in timeline.get_layers():
+            layer.disconnect_by_func(self._clipAddedCb)
+            layer.disconnect_by_func(self._clipRemovedCb)
+
+        timeline.disconnect_by_func(self._layerAddedCb)
+        timeline.disconnect_by_func(self._layerRemovedCb)
 
     def _connectToClip(self, clip):
         tracker = ClipPropertyChangeTracker()
