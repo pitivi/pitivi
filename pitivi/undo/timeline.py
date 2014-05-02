@@ -224,10 +224,6 @@ class ActivePropertyChanged(UndoableAction):
 
 class TimelineLogObserver(object):
     timelinePropertyChangedAction = ClipPropertyChanged
-    ClipAddedAction = ClipAdded
-    ClipRemovedAction = ClipRemoved
-    effectAddAction = EffectAdded
-    effectRemovedAction = EffectRemoved
     interpolatorKeyframeAddedAction = InterpolatorKeyframeAdded
     interpolatorKeyframeRemovedAction = InterpolatorKeyframeRemoved
     interpolatorKeyframeChangedAction = InterpolatorKeyframeChanged
@@ -326,12 +322,12 @@ class TimelineLogObserver(object):
 
     def _clipAddedCb(self, layer, clip):
         self._connectToClip(clip)
-        action = self.ClipAddedAction(layer, clip)
+        action = ClipAdded(layer, clip)
         self.log.push(action)
 
     def _clipRemovedCb(self, layer, clip):
         self._disconnectFromClip(clip)
-        action = self.ClipRemovedAction(layer, clip)
+        action = ClipRemoved(layer, clip)
         self.log.push(action)
 
     def _clipPropertyChangedCb(self, tracker, clip,
@@ -347,16 +343,16 @@ class TimelineLogObserver(object):
     def _clipTrackElementAddedCb(self, clip, track_element):
         self._connectToTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = self.effectAddAction(clip, track_element,
-                                          self.effect_properties_tracker)
+            action = EffectAdded(clip, track_element,
+                                 self.effect_properties_tracker)
             self.log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
         self._disconnectFromTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = self.effectRemovedAction(clip,
-                                              track_element,
-                                              self.effect_properties_tracker)
+            action = EffectRemoved(clip,
+                                   track_element,
+                                   self.effect_properties_tracker)
             self.log.push(action)
 
     def _interpolatorKeyframeAddedCb(self, track_element, keyframe):
