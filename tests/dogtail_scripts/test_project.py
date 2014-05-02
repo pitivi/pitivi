@@ -206,8 +206,8 @@ class ProjectPropertiesTest(PitiviTestCase):
         welcome_dialog = self.pitivi.child(name="Welcome", roleName="frame", recursive=False)
         welcome_dialog.child(name=filename).doubleClick()
         sample = self.import_media("flat_colour1_640x480.png")
-        # Go figure why, this one takes much longer (~27 secs) to appear:
-        self.assertTrue(self.wait_for_file(backup_path, timeout=35), "Backup not created")
+        # Go figure why, this one takes much longer (30+ seconds) to appear:
+        self.assertTrue(self.wait_for_file(backup_path, timeout=45), "Backup not created")
         self.tearDown(clean=False, kill=True)
         sleep(0.5)
 
