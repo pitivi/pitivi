@@ -771,7 +771,7 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
         filename = hash_file(Gst.uri_get_location(self._uri)) + ".wave"
         cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
-        filename = cache_dir + "/" + filename
+        filename = os.path.join(cache_dir, filename)
 
         if os.path.exists(filename):
             self.samples = pickle.load(open(filename, "rb"))
