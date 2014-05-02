@@ -385,5 +385,5 @@ class TimelineLogObserver(object):
         layer.connect("clip-removed", self._clipRemovedCb)
 
     def _layerRemovedCb(self, timeline, layer):
-        layer.disconnect_by_func(self._layerAddedCb)
-        layer.disconnect_by_func(self._layerRemovedCb)
+        layer.disconnect_by_func(self._clipAddedCb)
+        layer.disconnect_by_func(self._clipRemovedCb)
