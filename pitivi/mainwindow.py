@@ -64,7 +64,7 @@ GlobalSettings.addConfigOption('mainWindowMainHPanePosition',
 GlobalSettings.addConfigOption('mainWindowVPanePosition',
     section="main-window",
     key="vpane-position",
-    default=200)
+    type_=int)
 GlobalSettings.addConfigOption('mainWindowX',
     section="main-window",
     key="X", default=0, type_=int)
@@ -304,21 +304,19 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.viewer.get_accessible().set_name("viewer")
         self.timeline_ui.get_accessible().set_name("timeline area")
 
-        # Restore settings (or set defaults) for position and visibility
-        if self.settings.mainWindowHPanePosition:
-            self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
-        if self.settings.mainWindowMainHPanePosition:
-            self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
-        if self.settings.mainWindowVPanePosition:
-            self.vpaned.set_position(self.settings.mainWindowVPanePosition)
+        # Restore settings for position and visibility.
+        if self.settings.mainWindowHPanePosition is None:
+            self._setDefaultPositions()
         width = self.settings.mainWindowWidth
         height = self.settings.mainWindowHeight
-        # Maximize by default; if the user chose a custom size, resize & move
         if height == -1 and width == -1:
             self.maximize()
         else:
             self.set_default_size(width, height)
             self.move(self.settings.mainWindowX, self.settings.mainWindowY)
+        self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
+        self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
+        self.vpaned.set_position(self.settings.mainWindowVPanePosition)
 
         # Connect the main window's signals at the end, to avoid messing around
         # with the restoration of settings above.
@@ -328,6 +326,22 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # Focus the timeline by default!
         self.timeline_ui.grab_focus()
         self.updateTitle()
+
+    def _setDefaultPositions(self):
+        window_width = self.get_size()[0]
+        if self.settings.mainWindowHPanePosition is None:
+            self.settings.mainWindowHPanePosition = window_width / 3
+        if self.settings.mainWindowMainHPanePosition is None:
+            self.settings.mainWindowMainHPanePosition = 2 * window_width / 3
+        if self.settings.mainWindowVPanePosition is None:
+            screen_width = float(self.get_screen().get_width())
+            screen_height = float(self.get_screen().get_height())
+            if screen_width / screen_height < 0.75:
+                # Tall screen, give some more vertical space the the tabs.
+                value = self.vpaned.size_request().height / 3
+            else:
+                value = self.vpaned.size_request().height / 2
+            self.settings.mainWindowVPanePosition = value
 
     def switchContextTab(self, bElement):
         """
