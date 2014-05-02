@@ -452,9 +452,17 @@ class ViewerContainer(Gtk.VBox, Loggable):
         This is meant to be called by mainwindow.
         """
         if int(state) == int(Gst.State.PLAYING):
+            st = Gst.Structure.new_empty("play")
+            st.set_value("playback_time", float(self.pipeline.getPosition())
+                / Gst.SECOND)
+            self.app.write_action(st)
             self.playpause_button.setPause()
             self.system.inhibitScreensaver(self.INHIBIT_REASON)
         elif int(state) == int(Gst.State.PAUSED):
+            st = Gst.Structure.new_empty("pause")
+            st.set_value("playback_time", float(self.pipeline.getPosition()) /
+                Gst.SECOND)
+            self.app.write_action(st)
             self.playpause_button.setPlay()
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         else:
