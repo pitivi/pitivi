@@ -147,6 +147,30 @@ class ClipRemoved(UndoableAction):
         self._undone()
 
 
+class LayerAdded(UndoableAction):
+    def __init__(self, timeline, layer):
+        self.timeline = timeline
+        self.layer = layer
+
+    def do(self):
+        self.timeline.add_layer(self.layer)
+
+    def undo(self):
+        self.timeline.remove_layer(self.layer)
+
+
+class LayerRemoved(UndoableAction):
+    def __init__(self, timeline, layer):
+        self.timeline = timeline
+        self.layer = layer
+
+    def do(self):
+        self.timeline.remove_layer(self.layer)
+
+    def undo(self):
+        self.timeline.add_layer(self.layer)
+
+
 class InterpolatorKeyframeAdded(UndoableAction):
 
     def __init__(self, track_element, keyframe):
@@ -379,7 +403,11 @@ class TimelineLogObserver(object):
     def _layerAddedCb(self, timeline, layer):
         layer.connect("clip-added", self._clipAddedCb)
         layer.connect("clip-removed", self._clipRemovedCb)
+        action = LayerAdded(timeline, layer)
+        self.log.push(action)
 
     def _layerRemovedCb(self, timeline, layer):
         layer.disconnect_by_func(self._clipAddedCb)
         layer.disconnect_by_func(self._clipRemovedCb)
+        action = LayerRemoved(timeline, layer)
+        self.log.push(action)
