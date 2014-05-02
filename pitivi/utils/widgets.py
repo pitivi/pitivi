@@ -48,8 +48,6 @@ from pitivi.utils.ui import beautify_length, \
 from pitivi.utils.timeline import Zoomable
 
 
-ZOOM_FIT = _("Zoom Fit")
-
 ZOOM_SLIDER_PADDING = SPACING * 4 / 5
 
 
@@ -979,7 +977,7 @@ class BaseTabs(Gtk.Notebook):
                                       resize=True, shrink=False)
 
 
-class ZoomBox(Gtk.HBox, Zoomable):
+class ZoomBox(Gtk.Grid, Zoomable):
     """
     Container holding the widgets for zooming.
 
@@ -987,22 +985,23 @@ class ZoomBox(Gtk.HBox, Zoomable):
     """
 
     def __init__(self, timeline):
-        Gtk.HBox.__init__(self)
+        Gtk.Grid.__init__(self)
         Zoomable.__init__(self)
 
         self.timeline = timeline
 
         zoom_fit_btn = Gtk.Button()
         zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
-        zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
-        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-fit-best", Gtk.IconSize.BUTTON)
-        zoom_fit_btn_hbox = Gtk.HBox()
-        zoom_fit_btn_hbox.pack_start(zoom_fit_icon, expand=False, fill=True, padding=0)
-        zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), expand=False, fill=True, padding=0)
-        zoom_fit_btn.add(zoom_fit_btn_hbox)
+        zoom_fit_btn.set_tooltip_text(_("Zoom Fit"))
+        zoom_fit_btn_grid = Gtk.Grid()
+        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-best-fit", Gtk.IconSize.BUTTON)
+        zoom_fit_btn_grid.add(zoom_fit_icon)
+        zoom_fit_btn_label = Gtk.Label(label=_("Zoom"))
+        zoom_fit_btn_grid.add(zoom_fit_btn_label)
+        zoom_fit_btn_grid.set_column_spacing(SPACING / 2)
+        zoom_fit_btn.add(zoom_fit_btn_grid)
         zoom_fit_btn.connect("clicked", self._zoomFitCb)
-
-        self.pack_start(zoom_fit_btn, expand=False, fill=True, padding=0)
+        self.attach(zoom_fit_btn, 0, 0, 1, 1)
 
         # zooming slider
         self._zoomAdjustment = Gtk.Adjustment()
@@ -1018,8 +1017,14 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoomslider.connect("query-tooltip", self._sliderTooltipCb)
         zoomslider.set_has_tooltip(True)
         zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
-        self.pack_start(zoomslider, expand=True, fill=True, padding=ZOOM_SLIDER_PADDING)
+        zoomslider.set_hexpand(True)
+        self.attach(zoomslider, 1, 0, 1, 1)
 
+        # Empty label so we have some spacing at the right of the zoomslider
+        self.attach(Gtk.Label(label=""), 2, 0, 1, 1)
+
+        self.set_hexpand(False)
+        self.set_column_spacing(ZOOM_SLIDER_PADDING)
         self.set_size_request(CONTROL_WIDTH, -1)
         self.show_all()
 
