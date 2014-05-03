@@ -375,14 +375,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.updateAll()
 
     def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
-        is_row, x, y, model, path, iter_ = view.get_tooltip_context(x, y, keyboard_mode)
-
+        is_row, x, y, model, path, tree_iter = view.get_tooltip_context(x, y, keyboard_mode)
         if not is_row:
             return False
 
-        # FIXME GObject Introspection, make sure forth is the path
-        # view.set_tooltip_row(tooltip, path)
-
+        view.set_tooltip_row(tooltip, path)
+        tooltip.set_text(self.storemodel.get_value(tree_iter, COL_DESC_TEXT))
         return True
 
     def updateAll(self):
