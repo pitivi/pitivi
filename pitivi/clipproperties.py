@@ -278,7 +278,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _selectionChangedCb(self, selection,):
         for clip in self.clips:
-            clip.disconnect_by_func(self._TrackElementAddedCb)
+            clip.disconnect_by_func(self._trackElementAddedCb)
             clip.disconnect_by_func(self._trackElementRemovedCb)
 
         self.selected_effects = selection.getSelectedEffects()
@@ -286,7 +286,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         if selection.selected:
             self.clips = list(selection.selected)
             for clip in self.clips:
-                clip.connect("child-added", self._TrackElementAddedCb)
+                clip.connect("child-added", self._trackElementAddedCb)
                 clip.connect("child-removed", self._trackElementRemovedCb)
             self.show()
         else:
@@ -294,7 +294,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.hide()
         self.updateAll()
 
-    def _TrackElementAddedCb(self, unused_clip, track_element):
+    def _trackElementAddedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             selec = self.timeline.selection.getSelectedEffects()
             self.selected_effects = selec
