@@ -28,6 +28,7 @@
      
      <p>By using keyframe curves, you can change property values of clips over time. This can be used to change opacity or volume just as well as control effect variables at any point in the clip's duration.</p>
      <figure>
+     <title>Keyframe curve</title>
       <media type="image" src="figures/keyframecurves.png" mime="image/png" style="right"></media>
      </figure>
      <p>A terminological note:</p>

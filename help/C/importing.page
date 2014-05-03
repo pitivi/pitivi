@@ -47,7 +47,6 @@
          <p>The following file chooser dialog window will appear:</p>
          <figure>
           <title>Filechooser dialog</title>
-          <desc>Filechooser dialog</desc>
           <media type="image" src="figures/filechooser.png" mime="image/png" style="right"></media>
          </figure>
          <p>Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
