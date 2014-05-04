@@ -30,6 +30,7 @@ from tests import common
 from pitivi.undo.timeline import TimelineLogObserver, \
     ClipAdded, ClipRemoved, \
     ClipPropertyChanged, EffectAdded
+from pitivi.undo.effect import EffectPropertyChanged
 from pitivi.undo.undo import UndoableActionLog
 
 
@@ -170,7 +171,7 @@ class TestTimelineUndo(TestCase):
         clip1 = GES.TitleClip()
         self.layer.add_clip(clip1)
 
-        effect1 = GES.Effect.new("videoconvert ! agingtv ! videoconvert")
+        effect1 = GES.Effect.new("agingtv")
         self.action_log.begin("add effect")
         clip1.add(effect1)
         self.action_log.commit()
@@ -193,6 +194,84 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(1, len([effect for effect in
                                  clip1.get_children(True)
                                  if isinstance(effect, GES.Effect)]))
+
+    def testRemoveEffectFromClip(self):
+        stacks = []
+        self.action_log.connect("commit", TestTimelineUndo.commitCb, stacks)
+
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        effect1 = GES.Effect.new("agingtv")
+        self.action_log.begin("add effect")
+        clip1.add(effect1)
+        self.action_log.commit()
+
+        self.assertEqual(1, len(stacks))
+        stack = stacks[0]
+        self.assertEqual(1, len(stack.done_actions), stack.done_actions)
+        action = stack.done_actions[0]
+        self.assertTrue(isinstance(action, EffectAdded))
+
+        self.assertTrue(effect1 in clip1.get_children(True))
+        self.assertEqual(1, len([effect for effect in
+                                 clip1.get_children(True)
+                                 if isinstance(effect, GES.Effect)]))
+
+        self.action_log.begin("remove effect")
+        clip1.remove(effect1)
+        self.action_log.commit()
+
+        self.assertEqual(0, len([effect for effect in
+                                 clip1.get_children(True)
+                                 if isinstance(effect, GES.Effect)]))
+
+        self.action_log.undo()
+        self.assertEqual(1, len([effect for effect in
+                                 clip1.get_children(True)
+                                 if isinstance(effect, GES.Effect)]))
+
+        self.action_log.redo()
+        self.assertEqual(0, len([effect for effect in
+                                 clip1.get_children(True)
+                                 if isinstance(effect, GES.Effect)]))
+
+    def testChangeEffectProperty(self):
+        stacks = []
+        self.action_log.connect("commit", TestTimelineUndo.commitCb, stacks)
+
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        effect1 = GES.Effect.new("agingtv")
+        self.action_log.begin("add effect")
+        clip1.add(effect1)
+        self.action_log.commit()
+
+        self.assertEqual(1, len(stacks))
+        stack = stacks[0]
+        self.assertEqual(1, len(stack.done_actions), stack.done_actions)
+        action = stack.done_actions[0]
+        self.assertTrue(isinstance(action, EffectAdded))
+
+        self.assertTrue(effect1 in clip1.get_children(True))
+        self.assertEqual(1, len([effect for effect in
+                                 clip1.get_children(True)
+                                 if isinstance(effect, GES.Effect)]))
+
+        self.action_log.begin("change child property")
+        effect1.set_child_property("scratch-lines", 0)
+        self.action_log.commit()
+
+        self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
+        self.action_log.undo()
+        self.assertEqual(effect1.get_child_property("scratch-lines")[1], 7)
+        self.action_log.redo()
+        self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
+        self.action_log.undo()
+        self.assertTrue(effect1 in clip1.get_children(True))
+        self.action_log.undo()
+        self.assertFalse(effect1 in clip1.get_children(True))
 
     def testClipPropertyChange(self):
         stacks = []
