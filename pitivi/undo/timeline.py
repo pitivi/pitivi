@@ -282,14 +282,14 @@ class TimelineLogObserver(object):
 
     def _connectToTrackElement(self, track_element):
         # FIXME: keyframes are disabled:
-        #for prop, interpolator in track_element.getInterpolators().itervalues():
-            #self._connectToInterpolator(interpolator)
+        # for prop, interpolator in track_element.getInterpolators().itervalues():
+            # self._connectToInterpolator(interpolator)
         if isinstance(track_element, GES.BaseEffect):
             self.effect_properties_tracker.addEffectElement(track_element)
 
     def _disconnectFromTrackElement(self, track_element):
         pass
-        #for prop, interpolator in track_element.getInterpolators().values():
+        # for prop, interpolator in track_element.getInterpolators().values():
         #    self._disconnectFromInterpolator(interpolator)
 
     def _connectToInterpolator(self, interpolator):
@@ -324,21 +324,19 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _clipTrackElementAddedCb(self, clip, track_element):
+        self._connectToTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
             action = self.effectAddAction(clip, track_element,
                                           self.effect_properties_tracker)
             self.log.push(action)
-        else:
-            self._connectToTrackElement(track_element)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
+        self._disconnectFromTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
             action = self.effectRemovedAction(clip,
                                               track_element,
                                               self.effect_properties_tracker)
             self.log.push(action)
-        else:
-            self._disconnectFromTrackElement(track_element)
 
     def _interpolatorKeyframeAddedCb(self, track_element, keyframe):
         action = self.interpolatorKeyframeAddedAction(track_element, keyframe)
