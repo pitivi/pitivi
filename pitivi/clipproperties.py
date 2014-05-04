@@ -140,14 +140,11 @@ class EffectProperties(Gtk.Expander, Loggable):
     """
     Widget for viewing and configuring effects
 
-    @type instance: C{Pitivi}
+    @type app: C{Pitivi}
     @type effects_properties_manager: C{EffectsPropertiesManager}
     """
-    # Note: This should be inherited from Gtk.Expander when we get other things
-    # to put in ClipProperties, that is why this is done this way
 
     def __init__(self, app, effects_properties_manager, clip_properties):
-        # Set up the expander widget that will contain everything:
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
         self.set_label(_("Effects"))
@@ -195,7 +192,6 @@ class EffectProperties(Gtk.Expander, Loggable):
                             _("Active"), activatedcell, active=COL_ACTIVATED)
 
         typecol = Gtk.TreeViewColumn(_("Type"))
-        typecol.set_sort_column_id(COL_TYPE)
         typecol.set_spacing(SPACING)
         typecol.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         typecell = Gtk.CellRendererText()
@@ -206,7 +202,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.append_column(typecol)
 
         namecol = Gtk.TreeViewColumn(_("Effect name"))
-        namecol.set_sort_column_id(COL_NAME_TEXT)
         namecol.set_spacing(SPACING)
         namecell = Gtk.CellRendererText()
         namecell.props.xpad = PADDING
