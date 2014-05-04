@@ -28,18 +28,18 @@ from pitivi.effects import PROPS_TO_IGNORE
 
 
 class EffectPropertyChanged(UndoableAction):
-    def __init__(self, gst_element, property_name, old_value, new_value):
-        self.gst_element = gst_element
+    def __init__(self, effect, property_name, old_value, new_value):
+        self.effect = effect
         self.property_name = property_name
         self.old_value = old_value
         self.new_value = new_value
 
     def do(self):
-        self.gst_element.set_property(self.property_name, self.new_value)
+        self.effect.set_child_property(self.property_name, self.new_value)
         self._done()
 
     def undo(self):
-        self.gst_element.set_property(self.property_name, self.old_value)
+        self.effect.set_child_property(self.property_name, self.old_value)
         self._undone()
 
 
@@ -65,13 +65,18 @@ class EffectGstElementPropertyChangeTracker:
         for prop in effect.list_children_properties():
             properties[prop.name] = effect.get_child_property(prop.name)[1]
 
+        print ("Connected to %s" % effect)
         self._tracked_effects[effect] = properties
 
-    def _propertyChangedCb(self, effect, gst_element, pspec):
+    def getPropChangedFromEffect(self, effect):
+        return self._tracked_effects[effect]
+
+    def _propertyChangedCb(self, effect, unused_gstelement, pspec):
         old_value = self._tracked_effects[effect][pspec.name]
         new_value = effect.get_child_property(pspec.name)[1]
-        action = EffectPropertyChanged(gst_element, pspec.name, old_value, new_value)
+        action = EffectPropertyChanged(effect, pspec.name, old_value, new_value)
         self._tracked_effects[effect][pspec.name] = new_value
+        print ("_propertyChangedCb Action log: %s", self.action_log)
         self.action_log.push(action)
 
 
@@ -81,7 +86,7 @@ class EffectAdded(UndoableAction):
     # freezes everything). So what we are doing is  to free the Effect,
     # keep its settings here when undoing, and instanciate a new one when
     # doing again. We have to keep all EffectPropertyChanged object that refers
-    # to the Effect when undoing so we reset theirs gst_element when
+    # to the Effect when undoing so we reset theirs effect when
     # doing it again. The way of doing it is the same with EffectRemoved
     def __init__(self, clip, effect, properties_watcher):
         self.clip = clip
@@ -108,7 +113,7 @@ class EffectAdded(UndoableAction):
                           and prop.name not in PROPS_TO_IGNORE]
         self.clip.remove(self.effect)
         self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackObj(self.effect)
+            self._properties_watcher.getPropChangedFromEffect(self.effect)
         del self.effect
         self.effect = None
         self._undone()
@@ -134,7 +139,7 @@ class EffectRemoved(UndoableAction):
         self.clip.remove(self.effect)
 
         self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackObj(self.effect)
+            self._properties_watcher.getPropChangedFromEffect(self.effect)
         del self.effect
         self.effect = None
         self._done()
