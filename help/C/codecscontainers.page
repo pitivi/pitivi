@@ -26,6 +26,6 @@
     <p><em>Codecs</em> are ways of "coding" and "decoding" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is close to be a form of art in itself.</p>
     <figure>
         <title>The relationship between containers and codecs</title>
-        <media type="image" mime="image/jpg" src="figures/codecscontainers.jpg"/>
+        <media type="image" mime="image/jpg" src="figures/codecscontainers.jpg" width="780"/>
     </figure>
 </page>

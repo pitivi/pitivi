@@ -29,7 +29,7 @@
       <figure>
        <title><app>Pitivi</app> main window</title>
        <desc>The main window, as the name implies, is the window containing the main components of the <app>Pitivi</app> user interface, namely: the menu bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</desc>
-        <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right">
+        <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right" width="780">
         </media>
       </figure>
 

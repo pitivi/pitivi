@@ -41,7 +41,7 @@
        <figure>
         <title>Before</title>
         <desc>Relative position of two adjacent clips before ripple editing</desc>
-        <media type="image" src="figures/ripple-before.png" mime="image/png" style="right"></media>
+        <media type="image" src="figures/ripple-before.png" mime="image/png" style="right" width="780"></media>
        </figure>
        <figure>
         <title>After</title>
@@ -72,12 +72,12 @@
        <figure>
         <title>Before</title>
         <desc>Relative position of two adjacent clips before roll editing</desc>
-        <media type="image" src="figures/roll-before.png" mime="image/png" style="right"></media>
+        <media type="image" src="figures/roll-before.png" mime="image/png" style="right" width="780"></media>
        </figure>
        <figure>
         <title>After</title>
         <desc>Relative position of two adjacent clips after roll editing</desc>
-        <media type="image" src="figures/roll-after.png" mime="image/png" style="right"></media>
+        <media type="image" src="figures/roll-after.png" mime="image/png" style="right" width="780"></media>
        </figure>
        <note>
         <p>Roll editing affects all adjacent clips, regardless of whether or not they are on the same layer.</p>
