@@ -6,7 +6,6 @@
   <info>
     <link type="topic" xref="index"/>
     <link type="seealso" xref="movearoundtimeline"/>
-    <link type="seealso" xref="trimming"/>
     <revision pkgversion="0.16" version="0.1" date="2012-09-03" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>

@@ -5,6 +5,8 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
+    <link type="seealso" xref="codecscontainers"/>
+    <link type="seealso" xref="rendering"/>
     <revision pkgversion="0.93" version="0.1" date="2014-05-06" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>

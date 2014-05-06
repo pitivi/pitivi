@@ -5,6 +5,8 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
+    <link type="seealso" xref="usingeffects"/>
+    <link type="seealso" xref="transitions"/>
     <revision pkgversion="0.92" version="0.2" date="2014-03-13" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
