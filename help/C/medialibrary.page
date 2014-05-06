@@ -43,6 +43,18 @@
          <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
        </section>
        <section>
+        <title>Selecting unused clips</title>
+        <p>You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select clips that are present in the media library but not in the timeline. There are various reasons to do this:</p>
+        <list>
+          <item><p>Improving performance when loading the project</p></item>
+          <item><p>Simplifying your editing workflow</p></item>
+          <item><p>Check which clips you may have forgot to use in your movie</p></item>
+          <item><p>Backup or share your project more easily</p></item>
+        </list>
+        <p>To identify which clips are not being used in your project, use the <gui>Select clips that have not been used in the project</gui> button at the left side of the search bar. Unused clips will then be selected in the media library.</p>
+        <note><p>If there are no unused clips in your project, nothing will be selected in the media library.</p></note>
+       </section>
+       <section>
         <title>Other actions</title>
          <p>There are three further actions you can perform with clips. Each is represented by a button in the upper right part of the <gui>Media Library</gui>:</p>
          <list type="numbered">

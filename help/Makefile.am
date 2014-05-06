@@ -38,7 +38,6 @@ HELP_FILES = \
     rendering.page \
     savescreenshot.page \
     selectiongrouping.page \
-    selectunusedfiles.page \
     splitting.page \
     sysreq.page \
     transitions.page \
