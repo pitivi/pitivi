@@ -66,7 +66,6 @@ class EffectGstElementPropertyChangeTracker:
         for prop in effect.list_children_properties():
             properties[prop.name] = effect.get_child_property(prop.name)[1]
 
-        print ("Connected to %s" % effect)
         self._tracked_effects[effect] = properties
 
     def getPropChangedFromEffect(self, effect):
@@ -77,7 +76,6 @@ class EffectGstElementPropertyChangeTracker:
         new_value = effect.get_child_property(pspec.name)[1]
         action = EffectPropertyChanged(effect, pspec.name, old_value, new_value)
         self._tracked_effects[effect][pspec.name] = new_value
-        print ("_propertyChangedCb Action log: %s", self.action_log)
         self.action_log.push(action)
 
 
