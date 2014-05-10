@@ -94,6 +94,7 @@ class TransitionsListWidget(Signallable, Gtk.VBox, Loggable):
         self._borderTypeChangedCb()
 
         self.infobar = Gtk.InfoBar()
+        self.infobar.props.message_type = Gtk.MessageType.OTHER
         txtlabel = Gtk.Label()
         txtlabel.set_line_wrap(True)
         txtlabel.set_text(

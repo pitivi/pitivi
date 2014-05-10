@@ -119,6 +119,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
         infobar = Gtk.InfoBar()
+        infobar.props.message_type = Gtk.MessageType.OTHER
         infobar.get_content_area().add(label)
         self.infobar_box.pack_start(infobar, False, False, 0)
         return infobar

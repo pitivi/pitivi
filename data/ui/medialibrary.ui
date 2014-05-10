@@ -240,6 +240,7 @@
     <property name="visible">True</property>
     <property name="app_paintable">True</property>
     <property name="can_focus">False</property>
+    <property name="message_type">other</property>
     <child internal-child="content_area">
       <object class="GtkBox" id="infobar-content_area1">
         <property name="can_focus">False</property>
