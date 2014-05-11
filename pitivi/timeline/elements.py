@@ -315,13 +315,13 @@ class TimelineElement(Clutter.Actor, Zoomable):
                 self.rightHandle.set_easing_duration(600)
 
         self.marquee.set_size(width, height)
-        self.background.props.width = width - 2
-        self.background.props.height = height - 2
+        self.background.props.width = max(width - 2, 1)
+        self.background.props.height = max(height - 2, 1)
         self.border.props.width = width
         self.border.props.height = height
         self.props.width = width
         self.props.height = height
-        self.preview.set_size(width - 2, height - 2)
+        self.preview.set_size(max(width - 2, 1), max(height - 2, 1))
         if self.rightHandle:
             self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
 
