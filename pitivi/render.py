@@ -25,6 +25,7 @@ Rendering-related utilities and classes
 """
 
 import os
+import subprocess
 import time
 
 from gi.repository import GLib
@@ -292,7 +293,7 @@ class RenderingProgressDialog(Signallable):
         self.main_render_dialog.window.show()
 
     def _playRenderedFileButtonClickedCb(self, unused_button):
-        os.system('xdg-open "%s"' % self.main_render_dialog.outfile)
+        subprocess.Popen(["xdg-open", self.main_render_dialog.outfile])
 
 
 class RenderDialog(Loggable):
