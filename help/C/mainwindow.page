@@ -109,13 +109,17 @@
 
     <section>
      <title>Previewer</title>
-      <p>The previewer displays</p>
+      <p>The previewer displays:</p>
       <list>
        <item><p>The video frame at the current position of the playhead.</p></item>
        <item><p>Your project's video when playing back.</p></item>
        <item><p>A <em>live preview</em> when trimming a clip's beginning/end point.</p>
        </item>
       </list>
+      <note style="tip">
+      <title>Detaching the previewer into a separate window</title>
+          <p>You can detach the previewer into a separate window by clicking the <gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From the separate window, you can play the preview in fullscreen. This will also allow other parts of the main window to take up the space the previewer occupied. You can attach the previewer back by closing the separate window.</p>
+      </note>
     </section>
 
     <section>
