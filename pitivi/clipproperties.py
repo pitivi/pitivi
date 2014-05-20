@@ -42,9 +42,10 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
 
 (COL_ACTIVATED,
  COL_TYPE,
+ COL_BIN_DESCRIPTION_TEXT,
  COL_NAME_TEXT,
  COL_DESC_TEXT,
- COL_TRACK_EFFECT) = list(range(5))
+ COL_TRACK_EFFECT) = list(range(6))
 
 
 class ClipPropertiesError(Exception):
@@ -178,7 +179,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                                            Gtk.PolicyType.AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
 
-        self.storemodel = Gtk.ListStore(bool, str, str, str, object)
+        self.storemodel = Gtk.ListStore(bool, str, str, str, str, object)
         self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("has_tooltip", True)
@@ -375,7 +376,9 @@ class EffectProperties(Gtk.Expander, Loggable):
             return False
 
         view.set_tooltip_row(tooltip, path)
-        tooltip.set_text(self.storemodel.get_value(tree_iter, COL_DESC_TEXT))
+        description = self.storemodel.get_value(tree_iter, COL_DESC_TEXT)
+        bin_description = self.storemodel.get_value(tree_iter, COL_BIN_DESCRIPTION_TEXT)
+        tooltip.set_text("%s\n%s" % (bin_description, description))
         return True
 
     def updateAll(self):
@@ -397,21 +400,22 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         obj = self.clips[0]
         for effect in obj.get_top_effects():
-            if effect.props.bin_description not in HIDDEN_EFFECTS:
-                asset = self.app.effects.getFactoryFromName(
-                    effect.props.bin_description)
-                to_append = [effect.props.active]
-                track_type = effect.get_track_type()
-                if track_type == GES.TrackType.AUDIO:
-                    to_append.append("Audio")
-                elif track_type == GES.TrackType.VIDEO:
-                    to_append.append("Video")
-
-                to_append.append(effect.props.bin_description)
-                to_append.append(asset.description)
-                to_append.append(effect)
-
-                self.storemodel.append(to_append)
+            if effect.props.bin_description in HIDDEN_EFFECTS:
+                continue
+            asset = self.app.effects.getFactoryFromName(
+                effect.props.bin_description)
+            to_append = [effect.props.active]
+            track_type = effect.get_track_type()
+            if track_type == GES.TrackType.AUDIO:
+                to_append.append("Audio")
+            elif track_type == GES.TrackType.VIDEO:
+                to_append.append("Video")
+            to_append.append(effect.props.bin_description)
+            effect_factory = self.app.effects.getFactoryFromName(effect.props.bin_description)
+            to_append.append(effect_factory.human_name)
+            to_append.append(asset.description)
+            to_append.append(effect)
+            self.storemodel.append(to_append)
 
     def _setEffectDragable(self):
         self.show()

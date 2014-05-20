@@ -28,7 +28,7 @@ from gi.repository import GdkX11
 from gi.repository import Gio
 from gi.repository import Gtk
 
-from pitivi.effects import EffectsHandler
+from pitivi.effects import EffectsManager
 from pitivi.configure import VERSION, RELEASES_URL
 from pitivi.settings import GlobalSettings
 from pitivi.utils.threads import ThreadMaster
@@ -48,6 +48,7 @@ class Pitivi(Gtk.Application, Loggable):
     """
     Pitivi's application.
 
+    @type effects: L{EffectsManager}
     @ivar gui: The main window of the app.
     @type gui: L{PitiviMainWindow}
     @ivar project_manager: The project manager object used in the application
@@ -96,7 +97,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.info('starting up')
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
-        self.effects = EffectsHandler()
+        self.effects = EffectsManager()
         self.system = getSystem()
 
         self.action_log.connect("commit", self._actionLogCommit)

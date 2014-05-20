@@ -70,33 +70,25 @@ BLACKLISTED_PLUGINS = ["ldaspa"]
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
-class Effect():
+class EffectFactory():
     """
     Factories that applies an effect on a stream
     """
-    def __init__(self, effect, media_type, categories=[_("Uncategorized")],
+    def __init__(self, effect_name, media_type, categories=[_("Uncategorized")],
                 human_name="", description="", icon=None):
-        self.effectname = effect
+        self.effec_tname = effect_name
         self.media_type = media_type
         self.categories = categories
         self.description = description
         self.human_name = human_name
         self._icon = icon
 
-    def getHumanName(self):
-        return self.human_name
 
-    def getDescription(self):
-        return self.description
-
-    def getCategories(self):
-        return self.categories
-
-
-class EffectsHandler(object):
+class EffectsManager(object):
     """
-    Handles all the effects
+    Groups effects.
     """
+
     def __init__(self):
         object.__init__(self)
         self._pixdir = os.path.join(get_pixmap_dir(), "effects")
@@ -182,8 +174,8 @@ class EffectsHandler(object):
         go trough the list of element factories and
         add them to the correct list filtering if necessary
         """
-        factlist = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
-        for element_factory in factlist:
+        factories = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
+        for element_factory in factories:
             klass = element_factory.get_klass()
             name = element_factory.get_name()
 
@@ -202,10 +194,11 @@ class EffectsHandler(object):
                     HIDDEN_EFFECTS.append(name)
                     continue
 
-                effect = Effect(name, media_type,
-                               self._getEffectCategories(name),
-                               self._getEffectName(element_factory),
-                               self._getEffectDescripton(element_factory))
+                effect = EffectFactory(name,
+                                       media_type,
+                                       categories=self._getEffectCategories(name),
+                                       human_name=self._getEffectName(element_factory),
+                                       description=self._getEffectDescripton(element_factory))
                 self._addEffectToDic(name, effect)
 
     def getAllAudioEffects(self):
@@ -225,9 +218,9 @@ class EffectsHandler(object):
 
     def getFactoryFromName(self, name):
         """
-        @param name: Factory name.
+        @param name: The bin_description of the effect.
         @type name: C{str}
-        @return: The l{Effect} corresponding to the name or None
+        @return: The l{EffectFactory} corresponding to the name or None
         """
         return self._effect_factories_dict.get(name)
 
@@ -324,14 +317,6 @@ class EffectsHandler(object):
         return ret
 
     audio_categories = property(getAudioCategories)
-
-    def getAllCategories(self):
-        """
-        @return: All effect categories names C{str}
-        """
-        effects_categories = []
-        return effects_categories.extended(self.video_categories).extended(
-            self.audio_categories)
 
     def getEffectIcon(self, effect_name):
         effect_name = effect_name + ".png"
@@ -470,11 +455,13 @@ class EffectListWidget(Gtk.VBox, Loggable):
         for element in elements:
             name = element.get_name()
             if name not in HIDDEN_EFFECTS:
-                effect = self.app.effects.getFactoryFromName(name)
-                self.storemodel.append([effect.getHumanName(),
-                                        effect.getDescription(), effectType,
-                                        effect.getCategories(),
-                                        effect, name,
+                effect_factory = self.app.effects.getFactoryFromName(name)
+                self.storemodel.append([effect_factory.human_name,
+                                        effect_factory.description,
+                                        effectType,
+                                        effect_factory.categories,
+                                        effect_factory,
+                                        name,
                                         self.app.effects.getEffectIcon(name)])
         self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
