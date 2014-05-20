@@ -345,17 +345,17 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Which means, it has the corresponding media_type
             self.addEffectToClip(clip, bin_desc)
 
-    def _dragDropCb(self, *unused_arguments):
-        self.info("An item has been dropped onto the clip properties' effects list")
-        self.addEffectToCurrentSelection(self.app.gui.effectlist.getSelectedItems())
+    def _dragMotionCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
+        self.debug("Something is being dragged in the clip properties' effects list")
+        self.drag_highlight()
 
-    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+    def _dragLeaveCb(self, unused_tree_view, unused_drag_context, unused_timestamp):
         self.info("The item being dragged has left the clip properties' effects list")
         self.drag_unhighlight()
 
-    def _dragMotionCb(self, unused, context, x, y, timestamp):
-        self.debug("Something is being dragged in the clip properties' effects list")
-        self.drag_highlight()
+    def _dragDropCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
+        self.info("An item has been dropped onto the clip properties' effects list")
+        self.addEffectToCurrentSelection(self.app.gui.effectlist.getSelectedItems())
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         iter = self.storemodel.get_iter(path)
