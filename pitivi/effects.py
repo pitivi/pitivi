@@ -476,7 +476,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
                                         effect.getCategories(),
                                         effect, name,
                                         self.app.effects.getEffectIcon(name)])
-                self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
+        self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def populate_categories_widget(self):
         self.categoriesWidget.get_model().clear()
