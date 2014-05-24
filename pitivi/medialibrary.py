@@ -858,9 +858,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         return False
 
-    def _nothingUnderMouse(self, view, event):
-        return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
-
     def _viewGetFirstSelected(self):
         paths = self.getSelectedPaths()
         return paths[0]

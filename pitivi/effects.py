@@ -50,7 +50,6 @@ from gettext import gettext as _
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
-import pitivi.utils.ui as dnd
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING, TYPE_PITIVI_EFFECT
 
@@ -582,14 +581,6 @@ class EffectListWidget(Gtk.VBox, Loggable):
         else:
             return False
 
-    def _nothingUnderMouse(self, view, event):
-        return not bool(view.get_path_at_pos(int(event.x), int(event.y)))
-
-    def _getTargetEntries(self):
-        if self._effectType == VIDEO_EFFECT:
-            return [dnd.VIDEO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]
-        else:
-            return [dnd.AUDIO_EFFECT_TARGET_ENTRY, dnd.EFFECT_TARGET_ENTRY]
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 

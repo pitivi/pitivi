@@ -73,22 +73,13 @@ TYPE_URI_LIST = 25
 # FileSourceFactory (or subclasses)
 TYPE_PITIVI_FILESOURCE = 26
 
-# What objects do these correspond to ???
 TYPE_PITIVI_EFFECT = 27
-TYPE_PITIVI_AUDIO_EFFECT = 28
-TYPE_PITIVI_VIDEO_EFFECT = 29
-TYPE_PITIVI_AUDIO_TRANSITION = 30
-TYPE_PITIVI_VIDEO_TRANSITION = 31
 TYPE_PITIVI_LAYER_CONTROL = 32
 
 FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.OTHER_APP, TYPE_TEXT_PLAIN)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, TYPE_URI_LIST)
 FILESOURCE_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
 EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, TYPE_PITIVI_EFFECT)
-AUDIO_EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/audio-effect", 0, TYPE_PITIVI_AUDIO_EFFECT)
-VIDEO_EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-effect", 0, TYPE_PITIVI_VIDEO_EFFECT)
-AUDIO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/audio-transition", 0, TYPE_PITIVI_AUDIO_TRANSITION)
-VIDEO_TRANSITION_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/video-transition", 0, TYPE_PITIVI_VIDEO_TRANSITION)
 LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
 
 
