@@ -36,6 +36,9 @@
     <section>
         <title>Undoing and reverting changes</title>
         <p>To undo a change, simply click on the <gui>Undo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>.</p>
+        <note style="tip">
+            <p>To redo changes that were undone, click on the <gui>Redo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>.</p>
+        </note>
     </section>
 
     <section>

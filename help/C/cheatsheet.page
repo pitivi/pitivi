@@ -28,7 +28,7 @@
           <item><p><keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project</p></item>
           <item><p><keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application</p></item>
           <item><p><keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo</p></item>
-          <item><p><keyseq><key>Ctrl</key><key>Y</key></keyseq>: Redo</p></item>
+          <item><p><keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>: Redo</p></item>
           <item><p><key>F11</key>: Toggle fullscreen mode</p></item>
           <item><p><key>F1</key>: Show the user manual</p></item>
         </list>
