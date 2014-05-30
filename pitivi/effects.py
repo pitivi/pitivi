@@ -36,7 +36,6 @@ Effects global handling
 """
 import re
 import os
-import time
 
 from gi.repository import GLib
 from gi.repository import Gst
@@ -51,7 +50,7 @@ from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING, TYPE_PITIVI_EFFECT
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY, SPACING
 
 from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
@@ -75,7 +74,7 @@ class EffectFactory():
     """
     def __init__(self, effect_name, media_type, categories=[_("Uncategorized")],
                 human_name="", description="", icon=None):
-        self.effec_tname = effect_name
+        self.effect_name = effect_name
         self.media_type = media_type
         self.categories = categories
         self.description = description
@@ -407,17 +406,11 @@ class EffectListWidget(Gtk.VBox, Loggable):
         self.view.append_column(icon_col)
         self.view.append_column(text_col)
 
-        self.view.drag_source_set(0, [], Gdk.DragAction.COPY)
-        self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [("pitivi/effect", 0, TYPE_PITIVI_EFFECT)], Gdk.DragAction.COPY)
-        #self.view.drag_source_set_target_list([("pitivi/effect", 0, TYPE_PITIVI_EFFECT)])
-        self.view.drag_source_set_target_list([])
-        self.view.drag_source_add_uri_targets()
-        self.view.drag_source_add_text_targets()
+        # Make the treeview a drag source which provides effects.
+        self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
 
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
-        self.view.connect("drag-begin", self._dndDragBeginCb)
-        self.view.connect("drag-end", self._dndDragEndCb)
         self.view.connect("drag-data-get", self._dndDragDataGetCb)
 
         scrollwin = Gtk.ScrolledWindow()
@@ -479,24 +472,10 @@ class EffectListWidget(Gtk.VBox, Loggable):
 
         self.categoriesWidget.set_active(0)
 
-    def _dndDragBeginCb(self, unused_view, context):
-        self.info("Drag operation begun")
-        model, paths = self.view.get_selection().get_selected_rows()
-
-        if not paths:
-            context.drag_abort(int(time.time()))
-            return
-
-        path = paths[0]
-        pixbuf = model.get_value(model.get_iter(path), COL_ICON)
-        if pixbuf:
-            Gtk.drag_set_icon_pixbuf(context, pixbuf, 0, 0)
-
-    def _dndDragEndCb(self, unused_view, unused_context):
-        self.info("Drag operation ended")
-
-    def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
-        data.set_uris([self.getSelectedItems()])
+    def _dndDragDataGetCb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
+        factory_name = bytes(self.getSelectedEffectFactoryName(), "UTF-8")
+        selection_data.set(drag_context.list_targets()[0], 0, factory_name)
+        return True
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
@@ -508,7 +487,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         return False
 
     def _enterPressEventCb(self, unused_view, unused_event=None):
-        factory_name = self.getSelectedItems()
+        factory_name = self.getSelectedEffectFactoryName()
         if factory_name is not None:
             self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
 
@@ -518,7 +497,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         if event.button == 3:
             chain_up = False
         elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            factory_name = self.getSelectedItems()
+            factory_name = self.getSelectedEffectFactoryName()
             if factory_name is not None:
                 self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
         else:
@@ -527,17 +506,16 @@ class EffectListWidget(Gtk.VBox, Loggable):
         if chain_up:
             self._draggedItems = None
         else:
-            self._draggedItems = self.getSelectedItems()
+            self._draggedItems = self.getSelectedEffectFactoryName()
 
         Gtk.TreeView.do_button_press_event(view, event)
         return True
 
-    def getSelectedItems(self):
+    def getSelectedEffectFactoryName(self):
         if self._draggedItems:
             return self._draggedItems
         model, rows = self.view.get_selection().get_selected_rows()
         path = self.modelFilter.convert_path_to_child_path(rows[0])
-
         return self.storemodel[path][COL_ELEMENT_NAME]
 
     def _toggleViewTypeCb(self, widget):

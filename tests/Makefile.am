@@ -5,6 +5,7 @@
 tests =	\
 	test_application.py \
 	test_check.py \
+	test_clipproperties.py \
 	test_common.py \
 	test_log.py \
 	test_mainwindow.py \
