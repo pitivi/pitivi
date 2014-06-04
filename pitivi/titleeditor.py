@@ -38,6 +38,10 @@ from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
 
+FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
+BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+
+
 class TitleEditor(Loggable):
     """
     Widget for configuring the selected title.
@@ -224,6 +228,8 @@ class TitleEditor(Loggable):
         clip = GES.TitleClip()
         clip.set_text("")
         clip.set_duration(int(Gst.SECOND * 5))
+        clip.set_color(FOREGROUND_DEFAULT_COLOR)
+        clip.set_background(BACKGROUND_DEFAULT_COLOR)
         # TODO: insert on the current layer at the playhead position.
         # If no space is available, create a new layer to insert to on top.
         self.app.gui.timeline_ui.insertEnd([clip])
