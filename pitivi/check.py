@@ -189,7 +189,7 @@ GNOMEDESKTOP_SOFT_DEPENDENCY = GIDependency("GnomeDesktop", None,
 NOTIFY_SOFT_DEPENDENCY = GIDependency("Notify", None,
                                       _("enables visual notifications when rendering is complete"))
 LIBAV_SOFT_DEPENDENCY = GstPluginDependency("libav", None,
-                                            _("additional multimedia codecs through the Libav library"))
+                                            _("additional multimedia codecs through the GStreamer Libav library"))
 
 SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
                      GNOMEDESKTOP_SOFT_DEPENDENCY,
