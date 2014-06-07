@@ -52,9 +52,7 @@ from pitivi.utils.ui import beautify_length
 from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.ui as dnd
-from pitivi.utils.ui import beautify_info, info_name, SPACING
-
-from pitivi.utils.ui import TYPE_PITIVI_FILESOURCE
+from pitivi.utils.ui import beautify_info, info_name, FILESOURCE_TARGET_ENTRY, SPACING
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
@@ -262,8 +260,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self._setup_view_for_drag_and_drop(self.treeview, [("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)])
-        self._setup_view_for_drag_and_drop(self.iconview, [Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)])
+        self._setup_view_for_drag_and_drop(self.treeview, [FILESOURCE_TARGET_ENTRY])
+        self._setup_view_for_drag_and_drop(self.iconview, [FILESOURCE_TARGET_ENTRY])
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems

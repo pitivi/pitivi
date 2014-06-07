@@ -67,20 +67,11 @@ PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
 LAYER_CREATION_BLOCK_TIME = 0.2
 
 # Drag and drop
-TYPE_TEXT_PLAIN = 24
-TYPE_URI_LIST = 25
-
-# FileSourceFactory (or subclasses)
-TYPE_PITIVI_FILESOURCE = 26
-
-TYPE_PITIVI_EFFECT = 27
-TYPE_PITIVI_LAYER_CONTROL = 32
-
-FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.OTHER_APP, TYPE_TEXT_PLAIN)
-URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, TYPE_URI_LIST)
-FILESOURCE_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/file-source", 0, TYPE_PITIVI_FILESOURCE)
-EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, TYPE_PITIVI_EFFECT)
-LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE_PITIVI_LAYER_CONTROL)
+FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
+URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)
+FILESOURCE_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/file-source", 0, 0)
+EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, 0)
+LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, 0)
 
 
 def _get_settings(schema):

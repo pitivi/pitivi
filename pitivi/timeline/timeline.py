@@ -32,7 +32,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH
+from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH, URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
 from .ruler import ScaleRuler
@@ -65,8 +65,6 @@ PreferencesDialog.addNumericPreference('imageClipLength',
     label=_("Image clip duration"),
     description=_("Default clip length (in miliseconds) of images when inserting on the timeline."),
     lower=1)
-
-TARGET_TYPE_URI_LIST = 80
 
 # Colors
 TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
@@ -912,9 +910,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return True
 
     def _setUpDragAndDrop(self):
-        dnd_list = [Gtk.TargetEntry.new('text/uri-list', Gtk.TargetFlags.OTHER_APP, TARGET_TYPE_URI_LIST)]
-
-        self.drag_dest_set(0, dnd_list, Gdk.DragAction.COPY)
+        self.drag_dest_set(0, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         self.drag_dest_add_uri_targets()
 
         self.connect('drag-motion', self._dragMotionCb)
