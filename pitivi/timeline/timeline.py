@@ -22,24 +22,30 @@
 
 import os
 
-from gi.repository import GtkClutter
+from gettext import gettext as _
 
-from gi.repository import Gst, GES, GObject, Clutter, Gtk, GLib, Gdk
+from gi.repository import Clutter
+from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import Gst
+from gi.repository import Gtk
+from gi.repository import GtkClutter
 
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.controls import ControlContainer
+from pitivi.timeline.elements import URISourceElement, TransitionElement, Ghostclip
+from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH, URI_TARGET_ENTRY
+from pitivi.utils.ui import alter_style_class, EFFECT_TARGET_ENTRY, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
-from .ruler import ScaleRuler
-from gettext import gettext as _
-from pitivi.utils.pipeline import PipelineError
-from .elements import URISourceElement, TransitionElement, Ghostclip
-from .controls import ControlContainer
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
     section="user-interface",
@@ -910,7 +916,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return True
 
     def _setUpDragAndDrop(self):
-        self.drag_dest_set(0, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
+        # To be able to receive effects dragged on clips.
+        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        # To be able to receive assets dragged from the media library.
         self.drag_dest_add_uri_targets()
 
         self.connect('drag-motion', self._dragMotionCb)
@@ -1417,22 +1425,42 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # drag and drop
 
-    def _dragDataReceivedCb(self, widget, context, unused_x, unused_y, data, unused_info, time):
+    def _dragMotionCb(self, widget, context, x, y, timestamp):
+        target = widget.drag_dest_find_target(context, None)
         if not self.dropDataReady:
-            if data.get_length() > 0:
-                if not self.dropOccured:
-                    self.timeline.resetGhostClips()
-                self.dropData = data.get_uris()
-                self.dropDataReady = True
-
-        if self.dropOccured:
-            self.dropOccured = False
-            Gtk.drag_finish(context, True, False, time)
-            self._dragLeaveCb(widget, context, time)
+            # We don't know yet the details of what's being dragged.
+            # Ask for the details.
+            widget.drag_get_data(context, target, timestamp)
+            Gdk.drag_status(context, 0, timestamp)
         else:
-            self.isDraggedClip = True
+            if self.isDraggedClip:
+                # From the media library
+                x, y = self.transposeXY(x, y)
+                if not self.timeline.ghostClips:
+                    for uri in self.dropData:
+                        asset = self.app.gui.medialibrary.getAssetForUri(uri)
+                        if asset is None:
+                            self.isDraggedClip = False
+                            break
+                        self.timeline.addGhostClip(asset, x, y)
+                self.timeline.updateGhostClips(x, y)
 
-    def _dragDropCb(self, widget, context, x, y, time):
+            Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
+            if not self.dropHighlight:
+                widget.drag_highlight()
+                self.dropHighlight = True
+        return True
+
+    def _dragLeaveCb(self, widget, unused_context, unused_timestamp):
+        if self.dropHighlight:
+            widget.drag_unhighlight()
+            self.dropHighlight = False
+        # Cleanup because the user might have moved the mouse cursor outside
+        # and abandon this widget.
+        self.dropDataReady = False
+        self.timeline.removeGhostClips()
+
+    def _dragDropCb(self, widget, context, x, y, timestamp):
         # Same as in insertEnd: this value changes during insertion, snapshot it
         zoom_was_fitted = self.zoomed_fitted
 
@@ -1440,7 +1468,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         y -= self.ruler.get_allocation().height
         if target.name() == "text/uri-list":
             self.dropOccured = True
-            widget.drag_get_data(context, target, time)
+            widget.drag_get_data(context, target, timestamp)
             if self.isDraggedClip:
                 self.timeline.convertGhostClips()
                 self.timeline.resetGhostClips()
@@ -1452,49 +1480,34 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     # disorientation & clarifies to users where the clip starts
                     margin = min(x, 50)
                     self.scrollToPixel(x - margin)
-            else:
-                actor = self.stage.get_actor_at_pos(Clutter.PickMode.ALL, x, y)
-                try:
-                    bElement = actor.bElement
-                    self.app.gui.clipconfig.effect_expander.addEffectToClip(bElement.get_parent(), self.dropData[0])
-                except AttributeError:
-                    return False
-            return True
-        else:
-            return False
-
-    def _dragMotionCb(self, widget, context, x, y, time):
-        target = widget.drag_dest_find_target(context, None)
-        if target.name() not in ["text/uri-list", "pitivi/effect"]:
-            return False
-        if not self.dropDataReady:
-            widget.drag_get_data(context, target, time)
-            Gdk.drag_status(context, 0, time)
-        else:
-            x, y = self.transposeXY(x, y)
-
-            # dragged from the media library
-            if not self.timeline.ghostClips and self.isDraggedClip:
-                for uri in self.dropData:
-                    asset = self.app.gui.medialibrary.getAssetForUri(uri)
-                    if asset is None:
-                        self.isDraggedClip = False
-                        break
-                    self.timeline.addGhostClip(asset, x, y)
-
-            if self.isDraggedClip:
-                self.timeline.updateGhostClips(x, y)
-
-            Gdk.drag_status(context, Gdk.DragAction.COPY, time)
-            if not self.dropHighlight:
-                widget.drag_highlight()
-                self.dropHighlight = True
+        elif target.name() == "pitivi/effect":
+            actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, x, y)
+            bElement = actor.bElement
+            clip = bElement.get_parent()
+            factory_name = self.dropData
+            self.app.gui.clipconfig.effect_expander.addEffectToClip(clip, factory_name)
         return True
 
-    def _dragLeaveCb(self, widget, unused_context, unused_time):
-        self.dropDataReady = False
-        if self.dropHighlight:
-            widget.drag_unhighlight()
-            self.dropHighlight = False
+    def _dragDataReceivedCb(self, widget, drag_context, unused_x, unused_y, selection_data, unused_info, timestamp):
+        dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
+        print (dragging_effect)
+        if not self.dropDataReady:
+            if dragging_effect:
+                # Dragging an effect from the Effect Library.
+                factory_name = str(selection_data.get_data(), "UTF-8")
+                self.dropData = factory_name
+                self.dropDataReady = True
+            elif selection_data.get_length() > 0:
+                # Dragging assets from the Media Library.
+                if not self.dropOccured:
+                    self.timeline.resetGhostClips()
+                self.dropData = selection_data.get_uris()
+                self.dropDataReady = True
 
-        self.timeline.removeGhostClips()
+        if self.dropOccured:
+            # The data was requested by the drop handler.
+            self.dropOccured = False
+            drag_context.finish(True, False, timestamp)
+        else:
+            # The data was requested by the move handler.
+            self.isDraggedClip = not dragging_effect
