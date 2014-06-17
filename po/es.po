@@ -14,16 +14,16 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-04-02 16:27+0000\n"
-"PO-Revision-Date: 2014-03-19 17:45+0100\n"
+"POT-Creation-Date: 2014-04-15 12:32+0000\n"
+"PO-Revision-Date: 2014-06-17 19:14+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Gtranslator 2.91.5\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid ""
@@ -212,23 +212,21 @@ msgid "Properties for <element>"
 msgstr "Propiedades para <element>"
 
 #: ../data/ui/mainmenubutton.ui.h:1
-#, fuzzy
 #| msgid "New Project"
 msgid "New project"
 msgstr "Proyecto nuevo"
 
 #: ../data/ui/mainmenubutton.ui.h:2
-#, fuzzy
 #| msgid "Loading project..."
 msgid "Open project..."
-msgstr "Cargando proyecto…"
+msgstr "Abrir proyecto…"
 
 #: ../data/ui/mainmenubutton.ui.h:3
 msgid "Save the current project under a new name or a different location"
-msgstr ""
+msgstr "Guardar el proyecto actual con un nombre nuevo en otra ubicación"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1064
-#: ../pitivi/mainwindow.py:1121
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1066
+#: ../pitivi/mainwindow.py:1123
 msgid "Save As..."
 msgstr "Guardar como…"
 
@@ -237,14 +235,13 @@ msgid "Reload the current project"
 msgstr "Recargar el proyecto actual"
 
 #: ../data/ui/mainmenubutton.ui.h:6
-#, fuzzy
 #| msgid "Revert to saved project version?"
 msgid "Revert to saved version"
-msgstr "¿Revertir a una versión guardad del proyecto?"
+msgstr "Revertir a una versión guardad"
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
-msgstr ""
+msgstr "Exportar el proyecto actual y todos sus medios a un archivador .tar"
 
 #: ../data/ui/mainmenubutton.ui.h:8
 msgid "Export as Archive..."
@@ -276,7 +273,7 @@ msgstr "Manual del usuario"
 
 #: ../data/ui/mainmenubutton.ui.h:15
 msgid "About"
-msgstr ""
+msgstr "Acerca de"
 
 #: ../data/ui/medialibrary.ui.h:1
 msgid "Add media files to your project"
@@ -359,7 +356,7 @@ msgstr ""
 "Revertir toda la configuración a los valores anteriores (antes de que "
 "abriera el diálogo de preferencias)"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:480
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:473
 msgid "Standard (4:3)"
 msgstr "Estándar (4:3)"
 
@@ -416,7 +413,7 @@ msgstr "Tasa de fotogramas:"
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
 #: ../data/ui/projectsettings.ui.h:18 ../data/ui/renderingdialog.ui.h:31
-#: ../pitivi/effects.py:282
+#: ../pitivi/effects.py:281
 msgid "Video"
 msgstr "Vídeo"
 
@@ -472,7 +469,7 @@ msgstr "AAC"
 msgid "6 channels (5.1)"
 msgstr "6 canales (5.1)"
 
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:383
+#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:385
 msgid "Render"
 msgstr "Renderizar"
 
@@ -728,47 +725,47 @@ msgstr ""
 msgid "Transformation"
 msgstr "Transformación"
 
-#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:264
+#: ../pitivi/effects.py:77 ../pitivi/effects.py:171 ../pitivi/effects.py:263
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
-#: ../pitivi/effects.py:104 ../pitivi/effects.py:106
+#: ../pitivi/effects.py:103 ../pitivi/effects.py:105
 msgid "All effects"
 msgstr "Todos los efectos"
 
-#: ../pitivi/effects.py:107
+#: ../pitivi/effects.py:106
 msgid "Colors"
 msgstr "Colores"
 
-#: ../pitivi/effects.py:124
+#: ../pitivi/effects.py:123
 msgid "Compositing"
 msgstr "Composición"
 
-#: ../pitivi/effects.py:131
+#: ../pitivi/effects.py:130
 msgid "Noise & blur"
 msgstr "Ruido y desenfoque"
 
-#: ../pitivi/effects.py:137
+#: ../pitivi/effects.py:136
 msgid "Analysis"
 msgstr "Análisis"
 
-#: ../pitivi/effects.py:145
+#: ../pitivi/effects.py:144
 msgid "Geometry"
 msgstr "Geometría"
 
-#: ../pitivi/effects.py:156
+#: ../pitivi/effects.py:155
 msgid "Fancy"
 msgstr "Fantasía"
 
-#: ../pitivi/effects.py:168
+#: ../pitivi/effects.py:167
 msgid "Time"
 msgstr "Duración"
 
-#: ../pitivi/effects.py:283
+#: ../pitivi/effects.py:282
 msgid "Audio |audio"
 msgstr "Sonido |sonido"
 
-#: ../pitivi/effects.py:284
+#: ../pitivi/effects.py:283
 msgid "effect"
 msgstr "efecto"
 
@@ -817,46 +814,46 @@ msgstr "Transición"
 msgid "Title"
 msgstr "Título"
 
-#: ../pitivi/mainwindow.py:365
+#: ../pitivi/mainwindow.py:367
 msgid "Undo"
 msgstr "Deshacer"
 
-#: ../pitivi/mainwindow.py:370
+#: ../pitivi/mainwindow.py:372
 msgid "Redo"
 msgstr "Rehacer"
 
-#: ../pitivi/mainwindow.py:377
+#: ../pitivi/mainwindow.py:379
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
-#: ../pitivi/mainwindow.py:384
+#: ../pitivi/mainwindow.py:386
 msgid "Export your project as a finished movie"
 msgstr "Exportar su proyecto como película terminada"
 
-#: ../pitivi/mainwindow.py:558
+#: ../pitivi/mainwindow.py:560
 msgid "Development version"
 msgstr "Versión de desarrollo"
 
-#: ../pitivi/mainwindow.py:560
+#: ../pitivi/mainwindow.py:562
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Versión %(cur_ver)s — %(new_ver)s disponible"
 
-#: ../pitivi/mainwindow.py:564
+#: ../pitivi/mainwindow.py:566
 #, python-format
 msgid "Version %s"
 msgstr "Versión %s"
 
-#: ../pitivi/mainwindow.py:572
+#: ../pitivi/mainwindow.py:574
 msgid "Current maintainers:"
 msgstr "Mantenedores actuales:"
 
-#: ../pitivi/mainwindow.py:577
+#: ../pitivi/mainwindow.py:579
 msgid "Past maintainers:"
 msgstr "Mantenedores anteriores:"
 
 #. Translators: this paragraph is to be translated, the list of contributors is shown dynamically as a clickable link below it
-#: ../pitivi/mainwindow.py:583
+#: ../pitivi/mainwindow.py:585
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -875,7 +872,7 @@ msgstr ""
 "Por respeto a nuestro colaboradores, indicamos que en lugar de:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:590
+#: ../pitivi/mainwindow.py:592
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
@@ -884,61 +881,61 @@ msgstr ""
 "La lista de colaboradores en Ohloh %s\n"
 "O puede ejecutar: git shortlog -s -n"
 
-#: ../pitivi/mainwindow.py:594
+#: ../pitivi/mainwindow.py:596
 msgid "translator-credits"
 msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2011"
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:612
+#: ../pitivi/mainwindow.py:614
 msgid "Open File..."
 msgstr "Abrir archivo…"
 
-#: ../pitivi/mainwindow.py:628
+#: ../pitivi/mainwindow.py:630
 msgid "All supported formats"
 msgstr "Todos los formatos soportados"
 
-#: ../pitivi/mainwindow.py:694
+#: ../pitivi/mainwindow.py:696
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "No se pudo guardar el proyecto «%s»"
 
-#: ../pitivi/mainwindow.py:731
+#: ../pitivi/mainwindow.py:733
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: ../pitivi/mainwindow.py:747
+#: ../pitivi/mainwindow.py:749
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: ../pitivi/mainwindow.py:759
+#: ../pitivi/mainwindow.py:761
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Si no guarda se perderán sus cambios desde el último %s."
 
-#: ../pitivi/mainwindow.py:763
+#: ../pitivi/mainwindow.py:765
 msgid "If you don't save, your changes will be lost."
 msgstr "Si no guarda sus cambios se perderán"
 
-#: ../pitivi/mainwindow.py:822
+#: ../pitivi/mainwindow.py:824
 msgid "Revert to saved project version?"
 msgstr "¿Revertir a una versión guardad del proyecto?"
 
-#: ../pitivi/mainwindow.py:827
+#: ../pitivi/mainwindow.py:829
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Esto recargará el proyecto actual. Se perderán todos los cambios sin guardar."
 
-#: ../pitivi/mainwindow.py:842
+#: ../pitivi/mainwindow.py:844
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "No se pudo cargar el proyecto «%s»"
 
-#: ../pitivi/mainwindow.py:854
+#: ../pitivi/mainwindow.py:856
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido…"
 
-#. # The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:884
+#. The file is probably an image, not video or audio.
+#: ../pitivi/mainwindow.py:886
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -947,7 +944,7 @@ msgstr ""
 "El siguiente archivo se ha movido: «<b>%s</b>»\n"
 "Especifique su nueva ubicación:"
 
-#: ../pitivi/mainwindow.py:889
+#: ../pitivi/mainwindow.py:891
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
@@ -957,16 +954,16 @@ msgstr ""
 "Especifique su nueva ubicación:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: ../pitivi/mainwindow.py:912
+#: ../pitivi/mainwindow.py:914
 #, python-format
 msgid "%s files"
 msgstr "Archivos %s"
 
-#: ../pitivi/mainwindow.py:916 ../pitivi/medialibrary.py:490
+#: ../pitivi/mainwindow.py:918 ../pitivi/medialibrary.py:490
 msgid "All files"
 msgstr "Todos los archivos"
 
-#: ../pitivi/mainwindow.py:940
+#: ../pitivi/mainwindow.py:942
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -977,33 +974,33 @@ msgstr ""
 "\n"
 "Actualmente, Pitivi no soporta proyectos parciales."
 
-#: ../pitivi/mainwindow.py:1020
+#: ../pitivi/mainwindow.py:1022
 msgid "Export To..."
 msgstr "Exportar a…"
 
-#: ../pitivi/mainwindow.py:1033 ../pitivi/mainwindow.py:1077
-#: ../pitivi/mainwindow.py:1127 ../pitivi/mainwindow.py:1154
+#: ../pitivi/mainwindow.py:1035 ../pitivi/mainwindow.py:1079
+#: ../pitivi/mainwindow.py:1129 ../pitivi/mainwindow.py:1156
 #: ../pitivi/render.py:348
 msgid "Untitled"
 msgstr "Sin título"
 
-#: ../pitivi/mainwindow.py:1038
+#: ../pitivi/mainwindow.py:1040
 msgid "Tar archive"
 msgstr "Archivador tar"
 
-#: ../pitivi/mainwindow.py:1042 ../pitivi/mainwindow.py:1083
+#: ../pitivi/mainwindow.py:1044 ../pitivi/mainwindow.py:1085
 msgid "Detect automatically"
 msgstr "Detectar automáticamente"
 
-#: ../pitivi/mainwindow.py:1129
+#: ../pitivi/mainwindow.py:1131
 msgid "PNG image"
 msgstr "Imagen PNG"
 
-#: ../pitivi/mainwindow.py:1130
+#: ../pitivi/mainwindow.py:1132
 msgid "JPEG image"
 msgstr "Imagen JPEG"
 
-#: ../pitivi/mainwindow.py:1176
+#: ../pitivi/mainwindow.py:1178
 msgid "Preview"
 msgstr "Previsualizar"
 
@@ -1230,31 +1227,31 @@ msgstr "Renderizado completo"
 msgid "\"%s\" has finished rendering."
 msgstr "«%s» ha terminado el renderizado."
 
-#: ../pitivi/titleeditor.py:625 ../pitivi/titleeditor.py:632
+#: ../pitivi/titleeditor.py:624 ../pitivi/titleeditor.py:631
 msgid "Custom"
 msgstr "Personalizado"
 
-#: ../pitivi/titleeditor.py:626
+#: ../pitivi/titleeditor.py:625
 msgid "Top"
 msgstr "Arriba"
 
-#: ../pitivi/titleeditor.py:627 ../pitivi/titleeditor.py:634
+#: ../pitivi/titleeditor.py:626 ../pitivi/titleeditor.py:633
 msgid "Center"
 msgstr "Centrado"
 
-#: ../pitivi/titleeditor.py:628
+#: ../pitivi/titleeditor.py:627
 msgid "Bottom"
 msgstr "Abajo"
 
-#: ../pitivi/titleeditor.py:629
+#: ../pitivi/titleeditor.py:628
 msgid "Baseline"
 msgstr "Línea base"
 
-#: ../pitivi/titleeditor.py:633
+#: ../pitivi/titleeditor.py:632
 msgid "Left"
 msgstr "Izquierda"
 
-#: ../pitivi/titleeditor.py:635
+#: ../pitivi/titleeditor.py:634
 msgid "Right"
 msgstr "Derecha"
 
@@ -1538,7 +1535,7 @@ msgstr "Problema: "
 msgid "Extra information:"
 msgstr "Información extra: "
 
-#: ../pitivi/dialogs/prefs.py:280 ../pitivi/utils/widgets.py:733
+#: ../pitivi/dialogs/prefs.py:280 ../pitivi/utils/widgets.py:732
 msgid "Reset to default value"
 msgstr "Restablecer al valor predeterminado"
 
@@ -1558,48 +1555,48 @@ msgstr "Pitivi %s está disponible."
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
 
-#: ../pitivi/utils/ui.py:263
+#: ../pitivi/utils/ui.py:256
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Audio:</b> %d canales a %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: ../pitivi/utils/ui.py:273
+#: ../pitivi/utils/ui.py:266
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgstr "<b>Vídeo:</b> %d×%d <i>píxeles</i> at %.3f <i>fps</i>"
 
-#: ../pitivi/utils/ui.py:280
+#: ../pitivi/utils/ui.py:273
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Imagen:</b> %d x %d <i>píxeles</i>"
 
-#: ../pitivi/utils/ui.py:327 ../pitivi/utils/ui.py:355
-#: ../pitivi/utils/ui.py:379
+#: ../pitivi/utils/ui.py:320 ../pitivi/utils/ui.py:348
+#: ../pitivi/utils/ui.py:372
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: ../pitivi/utils/ui.py:330 ../pitivi/utils/ui.py:358
-#: ../pitivi/utils/ui.py:382
+#: ../pitivi/utils/ui.py:323 ../pitivi/utils/ui.py:351
+#: ../pitivi/utils/ui.py:375
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: ../pitivi/utils/ui.py:333 ../pitivi/utils/ui.py:361
-#: ../pitivi/utils/ui.py:385
+#: ../pitivi/utils/ui.py:326 ../pitivi/utils/ui.py:354
+#: ../pitivi/utils/ui.py:378
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d segundo"
 msgstr[1] "%d segundos"
 
-#: ../pitivi/utils/ui.py:353
+#: ../pitivi/utils/ui.py:346
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -1607,118 +1604,118 @@ msgstr[0] "%d día"
 msgstr[1] "%d días"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:437 ../pitivi/utils/ui.py:438
-#: ../pitivi/utils/ui.py:439 ../pitivi/utils/ui.py:441
-#: ../pitivi/utils/ui.py:442 ../pitivi/utils/ui.py:444
-#: ../pitivi/utils/ui.py:445 ../pitivi/utils/ui.py:447
-#: ../pitivi/utils/ui.py:448
+#: ../pitivi/utils/ui.py:430 ../pitivi/utils/ui.py:431
+#: ../pitivi/utils/ui.py:432 ../pitivi/utils/ui.py:434
+#: ../pitivi/utils/ui.py:435 ../pitivi/utils/ui.py:437
+#: ../pitivi/utils/ui.py:438 ../pitivi/utils/ui.py:440
+#: ../pitivi/utils/ui.py:441
 #, python-format
 msgid "%d fps"
 msgstr "%d fps"
 
-#: ../pitivi/utils/ui.py:440
+#: ../pitivi/utils/ui.py:433
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f fps"
 
-#: ../pitivi/utils/ui.py:443 ../pitivi/utils/ui.py:446
+#: ../pitivi/utils/ui.py:436 ../pitivi/utils/ui.py:439
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f fps"
 
-#: ../pitivi/utils/ui.py:452 ../pitivi/utils/ui.py:453
-#: ../pitivi/utils/ui.py:454 ../pitivi/utils/ui.py:456
-#: ../pitivi/utils/ui.py:457
+#: ../pitivi/utils/ui.py:445 ../pitivi/utils/ui.py:446
+#: ../pitivi/utils/ui.py:447 ../pitivi/utils/ui.py:449
+#: ../pitivi/utils/ui.py:450
 #, python-format
 msgid "%d kHz"
 msgstr "%d kHz"
 
-#: ../pitivi/utils/ui.py:455
+#: ../pitivi/utils/ui.py:448
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
-#: ../pitivi/utils/ui.py:460
+#: ../pitivi/utils/ui.py:453
 msgid "6 Channels (5.1)"
 msgstr "6 canales (5.1)"
 
-#: ../pitivi/utils/ui.py:461
+#: ../pitivi/utils/ui.py:454
 msgid "4 Channels (4.0)"
 msgstr "4 canales (4.0)"
 
-#: ../pitivi/utils/ui.py:462
+#: ../pitivi/utils/ui.py:455
 msgid "Stereo"
 msgstr "Estéreo"
 
-#: ../pitivi/utils/ui.py:463
+#: ../pitivi/utils/ui.py:456
 msgid "Mono"
 msgstr "Mono"
 
-#: ../pitivi/utils/ui.py:468
+#: ../pitivi/utils/ui.py:461
 msgid "Square"
 msgstr "Cuadrado"
 
-#: ../pitivi/utils/ui.py:469
+#: ../pitivi/utils/ui.py:462
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:470
+#: ../pitivi/utils/ui.py:463
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:471
+#: ../pitivi/utils/ui.py:464
 msgid "480p Wide"
 msgstr "480p ancha"
 
-#: ../pitivi/utils/ui.py:472
+#: ../pitivi/utils/ui.py:465
 msgid "480i Wide"
 msgstr "480i ancha"
 
-#: ../pitivi/utils/ui.py:473
+#: ../pitivi/utils/ui.py:466
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:474
+#: ../pitivi/utils/ui.py:467
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:475
+#: ../pitivi/utils/ui.py:468
 msgid "576p Wide"
 msgstr "576p ancha"
 
-#: ../pitivi/utils/ui.py:476
+#: ../pitivi/utils/ui.py:469
 msgid "576i Wide"
 msgstr "576i ancha"
 
-#: ../pitivi/utils/ui.py:481
+#: ../pitivi/utils/ui.py:474
 msgid "DV (15:11)"
 msgstr "DV (15:11)"
 
-#: ../pitivi/utils/ui.py:482
+#: ../pitivi/utils/ui.py:475
 msgid "DV Widescreen (16:9)"
 msgstr "DV pantalla ancha (16:9)"
 
-#: ../pitivi/utils/ui.py:483
+#: ../pitivi/utils/ui.py:476
 msgid "Cinema (1.37)"
 msgstr "Cine (1.37)"
 
-#: ../pitivi/utils/ui.py:484
+#: ../pitivi/utils/ui.py:477
 msgid "Cinema (1.66)"
 msgstr "Cine (1.66)"
 
-#: ../pitivi/utils/ui.py:485
+#: ../pitivi/utils/ui.py:478
 msgid "Cinema (1.85)"
 msgstr "Cine (1.85)"
 
-#: ../pitivi/utils/ui.py:486
+#: ../pitivi/utils/ui.py:479
 msgid "Anamorphic (2.35)"
 msgstr "Anamórphico (2.35)"
 
-#: ../pitivi/utils/ui.py:487
+#: ../pitivi/utils/ui.py:480
 msgid "Anamorphic (2.39)"
 msgstr "Anamórphico (2.39)"
 
-#: ../pitivi/utils/ui.py:488
+#: ../pitivi/utils/ui.py:481
 msgid "Anamorphic (2.4)"
 msgstr "Anamórphico (2.4)"
 
@@ -1731,28 +1728,28 @@ msgid "No properties."
 msgstr "No hay propiedades."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:724
+#: ../pitivi/utils/widgets.py:723
 msgid "Show keyframes for this value"
 msgstr "Mostrar marcos clave para este valor"
 
 #. set title and frame label
-#: ../pitivi/utils/widgets.py:886
+#: ../pitivi/utils/widgets.py:885
 #, python-format
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
-#: ../pitivi/utils/widgets.py:1002
+#: ../pitivi/utils/widgets.py:1001
 msgid "Zoom"
 msgstr "Ampliación"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1059
+#: ../pitivi/utils/widgets.py:1058
 #, python-format
 msgid "%s displayed"
 msgstr "Mostrados %s"
 
 #. Translators: This is a tooltip
-#: ../pitivi/utils/widgets.py:1062
+#: ../pitivi/utils/widgets.py:1061
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Mostrados %d nanosegundos, porque podemos"
