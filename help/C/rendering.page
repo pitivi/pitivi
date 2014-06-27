@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#rendering"/>
-    <revision pkgversion="0.92" version="0.1" date="2014-01-27" status="incomplete"/>
+    <revision pkgversion="0.93" version="0.1" date="2014-06-27" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -32,6 +32,7 @@
       <item><p>Adjust the various encoding settings, if needed, to use settings different from the project settings.</p></item>
       <item><p>Click the <gui>Render</gui> button.</p></item>
      </steps>
+     <p>While rendering, you can pause the process by clicking the <gui>Pause</gui> button and unpause it by clicking it again. You can also stop rendering either by clicking the <gui>Cancel</gui> button or by pressing <key>Esc</key>. If you stop the rendering process, the already rendered part of the video will be saved into the destined folder and <app>Pitivi</app> will offer you the <gui>Rendering dialog</gui> again.</p>
      <note style="tip">
       <p>If your computer is set to suspend or hibernate automatically, <app>Pitivi</app> will automatically inhibit the power saving features during the render process.</p>
      </note>
