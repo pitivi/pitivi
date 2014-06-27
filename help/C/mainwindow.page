@@ -7,7 +7,7 @@
     <link type="guide" xref="index#intro"/>
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="movearoundtimeline"/>
-    <revision pkgversion="0.93" version="0.3" date="2014-04-12" status="complete"/>
+    <revision pkgversion="0.93" version="0.3" date="2014-06-27" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -112,6 +112,9 @@
       <note style="tip">
       <title>Detaching the previewer into a separate window</title>
           <p>You can detach the previewer into a separate window by clicking the <gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From the separate window, you can play the preview in fullscreen. This will also allow other parts of the main window to take up the space the previewer occupied. You can attach the previewer back by closing the separate window.</p>
+      </note>
+      <note>
+          <p><app>Pitivi</app> inhibits screensaver while playing video preview.</p>
       </note>
     </section>
 
