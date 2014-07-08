@@ -9,23 +9,24 @@
 # Alexandre Prokoudine <alexandre.prokoudine@gmail.com>, 2009.
 # Yuri Kozlov <yuray@komyakino.ru>, 2010.
 # Stas Solovey <whats_up@tut.by>, 2011, 2012.
-# Yuri Myasoedov <omerta13@yandex.ru>, 2012.
+# Yuri Myasoedov <ymyasoedov@yandex.ru>, 2012, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-15 00:50+0400\n"
-"PO-Revision-Date: 2014-04-15 02:16+0300\n"
-"Last-Translator: Александр Прокудин <alexandre.prokoudine@gmail.com>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2014-04-14 22:18+0000\n"
+"PO-Revision-Date: 2014-07-08 22:51+0400\n"
+"Last-Translator: Yuri Myasoedov <ymyasoedov@yandex.ru>\n"
 "Language-Team: русский <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.5.4\n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid ""
@@ -205,7 +206,7 @@ msgstr "Свойства <element>"
 
 #: ../data/ui/mainmenubutton.ui.h:1
 msgid "New project"
-msgstr ""
+msgstr "Создать проект"
 
 #: ../data/ui/mainmenubutton.ui.h:2
 msgid "Open project..."
@@ -213,7 +214,7 @@ msgstr "Открыть проект..."
 
 #: ../data/ui/mainmenubutton.ui.h:3
 msgid "Save the current project under a new name or a different location"
-msgstr ""
+msgstr "Сохранить текущий проект под новым названием или в другом месте"
 
 #: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1066
 #: ../pitivi/mainwindow.py:1123
@@ -230,15 +231,16 @@ msgstr "Вернуться к сохранённой версии проекта
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
-msgstr ""
+msgstr "Экспортировать текущий проект и все его медиафайлы в tar-архив"
 
 #: ../data/ui/mainmenubutton.ui.h:8
 msgid "Export as Archive..."
 msgstr "Экспортировать как архив…"
 
 #: ../data/ui/mainmenubutton.ui.h:9
+#, fuzzy
 msgid "Export the frame at the current playhead position as an image file."
-msgstr ""
+msgstr "Экспортировать кадр "
 
 #: ../data/ui/mainmenubutton.ui.h:10
 msgid "Export current frame..."
@@ -310,13 +312,12 @@ msgid "Close this message"
 msgstr "Закрыть это сообщение"
 
 #: ../data/ui/medialibrary.ui.h:13
-#, fuzzy
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
 msgstr ""
 "Добавить медиафайлы в проект путём перетаскивания файлов и папок или с "
-"помощью кнопки «Импортировать файлы…»"
+"помощью кнопки «Импортировать»."
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Section"
@@ -343,6 +344,8 @@ msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
 msgstr ""
+"Вернуть все значения параметров в предыдущие значения (перед открытием "
+"диалогового окна настроек)"
 
 #: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:473
 msgid "Standard (4:3)"
@@ -639,16 +642,15 @@ msgstr "Дополнительное позиционирование"
 #: ../pitivi/check.py:100
 #, python-format
 msgid "- %s not found on the system"
-msgstr ""
+msgstr "— %s не найден в системе"
 
 #. Translators: %s is a Python module name or another os component
 #: ../pitivi/check.py:103
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
-msgstr ""
+msgstr "— %s версии %s установлен, но Pitivi требуется версия не ниже %s"
 
 #: ../pitivi/check.py:184
-#, fuzzy
 msgid "enables sound notifications when rendering is complete"
 msgstr "включает звуковые уведомления о завершении отрисовки"
 
@@ -657,7 +659,6 @@ msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr ""
 
 #: ../pitivi/check.py:188
-#, fuzzy
 msgid "enables visual notifications when rendering is complete"
 msgstr "включает визуальные уведомления о завершении отрисовки"
 
@@ -667,12 +668,12 @@ msgstr "дополнительные мультимедийные кодеки �
 
 #: ../pitivi/check.py:222
 msgid "ERROR - The following hard dependencies are unmet:"
-msgstr ""
+msgstr "ОШИБКА — не удовлетворены следующие обязательные зависимости:"
 
 #: ../pitivi/check.py:231
 #, fuzzy
 msgid "Missing soft dependency:"
-msgstr "Отсутствующие зависимости"
+msgstr "Отсутствующая необязательная зависимость:"
 
 #: ../pitivi/check.py:238
 #, fuzzy
@@ -693,7 +694,7 @@ msgstr "Убрать эффект"
 
 #: ../pitivi/clipproperties.py:195
 msgid "Active"
-msgstr "Включен"
+msgstr "Включён"
 
 #: ../pitivi/clipproperties.py:197
 msgid "Type"
@@ -833,11 +834,11 @@ msgstr "Версия %s"
 
 #: ../pitivi/mainwindow.py:574
 msgid "Current maintainers:"
-msgstr ""
+msgstr "Текущие мейнтейнеры:"
 
 #: ../pitivi/mainwindow.py:579
 msgid "Past maintainers:"
-msgstr ""
+msgstr "Предыдущие мейнтейнеры:"
 
 #. Translators: this paragraph is to be translated, the list of contributors is shown dynamically as a clickable link below it
 #: ../pitivi/mainwindow.py:585
@@ -905,9 +906,10 @@ msgid "Revert to saved project version?"
 msgstr "Вернуться к сохранённой версии проекта?"
 
 #: ../pitivi/mainwindow.py:829
-#, fuzzy
 msgid "This will reload the current project. All unsaved changes will be lost."
-msgstr "Все несохранённые изменения будут потеряны."
+msgstr ""
+"Это приведёт к перезагрузке текущего проекта. Все несохранённые изменения "
+"будут потеряны."
 
 #: ../pitivi/mainwindow.py:844
 #, python-format
@@ -1101,7 +1103,7 @@ msgstr ""
 
 #: ../pitivi/project.py:319
 msgid "You do not have permissions to write to this folder."
-msgstr ""
+msgstr "Недостаточно прав для записи в эту папку."
 
 #. write project file to temporary file
 #: ../pitivi/project.py:353
@@ -1114,8 +1116,9 @@ msgid "New Project"
 msgstr "Новый проект"
 
 #: ../pitivi/project.py:605
+#, fuzzy
 msgid "Pitivi encoding profile"
-msgstr ""
+msgstr "Профиль энкодера Pitivi"
 
 #: ../pitivi/project.py:1402 ../pitivi/render.py:535
 #, python-format
@@ -1176,7 +1179,7 @@ msgstr "%d МБ"
 
 #: ../pitivi/render.py:790
 msgid "Sorry, something didn’t work right."
-msgstr ""
+msgstr "Извините, что-то работает неправильно."
 
 #: ../pitivi/render.py:791
 msgid ""
@@ -1196,7 +1199,7 @@ msgstr "Сборка файла завершена"
 #: ../pitivi/render.py:973
 #, python-format
 msgid "\"%s\" has finished rendering."
-msgstr ""
+msgstr "«%s» завершил отрисовку."
 
 #: ../pitivi/titleeditor.py:624 ../pitivi/titleeditor.py:631
 msgid "Custom"
@@ -1331,6 +1334,8 @@ msgid ""
 "<b>Enable or disable this layer</b>\n"
 "Disabled layers will not play nor render."
 msgstr ""
+"<b>Включить или выключить этот слой</b>\n"
+"Отключённые слои не воспроизводятся и не отрисовываются."
 
 #: ../pitivi/timeline/layer.py:128
 msgid "_Delete layer"
@@ -1690,7 +1695,7 @@ msgstr "Нет свойств."
 #. Avoid the ugly selection outline
 #: ../pitivi/utils/widgets.py:723
 msgid "Show keyframes for this value"
-msgstr ""
+msgstr "Показывать ключевые кадры для этого значения"
 
 #. set title and frame label
 #: ../pitivi/utils/widgets.py:885
@@ -1713,83 +1718,3 @@ msgstr ""
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr ""
-
-#~ msgid "Sample depth:"
-#~ msgstr "Разрядность:"
-
-#~ msgid "<b><big>Rendering movie</big></b>"
-#~ msgstr "<b><big>Обработка видеоролика</big></b>"
-
-#~ msgid "Unknown Mib"
-#~ msgstr "Неизвестный размер"
-
-#~ msgid "Unknown"
-#~ msgstr "Неизвестно"
-
-#~| msgid "Encoding first pass"
-#~ msgid "Rendering first pass"
-#~ msgstr "Первый проход кодирования"
-
-#~| msgid "<b>Frames per second:</b>"
-#~ msgid "Frames per second:"
-#~ msgstr "Кадров в секунду:"
-
-#~| msgid "<b>Phase:</b>"
-#~ msgid "Phase:"
-#~ msgstr "Фаза:"
-
-#~ msgid ""
-#~ "There is already a %s instance, please inform the developers by filing a "
-#~ "bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-#~ msgstr ""
-#~ "Экземпляр %s уже существует, проинформируйте разработчиков об ошибке, "
-#~ "заполнив отчёт на http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-
-#~| msgid ""
-#~| "\n"
-#~| "    %prog [PROJECT_FILE]               # Start the video editor.\n"
-#~| "    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
-#~| "project.\n"
-#~| "    %prog PROJECT_FILE -r OUTPUT_FILE  # Render a project.\n"
-#~| "    %prog PROJECT_FILE -p              # Preview a project."
-#~ msgid ""
-#~ "\n"
-#~ "    %prog [PROJECT_FILE]               # Start the video editor.\n"
-#~ "    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
-#~ "project."
-#~ msgstr ""
-#~ "\n"
-#~ "    %prog [ФАЙЛ_ПРОЕКТА]               # Запустить видеоредактор.\n"
-#~ "    %prog -i [-a] [МЕДИАФАЙЛ1 …]     # Запустить редактор и создать "
-#~ "проект.\n"
-#~ "    %prog ФАЙЛ_ПРОЕКТА -r ФАЙЛ_ВЫВОДА  # Обработать проект.\n"
-#~ "    %prog ФАЙЛ_ПРОЕКТА -p              # Предварительный просмотр проекта."
-
-#~ msgid "Import each MEDIA_FILE into a new project."
-#~ msgstr "Импортировать каждый МЕДИАФАЙЛ в новый проект."
-
-#~ msgid "Add each imported MEDIA_FILE to the timeline."
-#~ msgstr "Добавить каждый МЕДИАФАЙЛ в конец шкалы времени."
-
-#~ msgid "Run Pitivi in the Python Debugger."
-#~ msgstr "Запустить Pitivi в отладчике Python."
-
-#~ msgid "-a requires -i"
-#~ msgstr "-a требует -i"
-
-#~ msgid "Cannot open more than one PROJECT_FILE"
-#~ msgstr "Невозможно открыть более одного ФАЙЛА_ПРОЕКТА"
-
-#~| msgid "Enables the autoalign feature"
-#~ msgid "enables the autoalign feature"
-#~ msgstr "включает функцию автоматического выравнивания"
-
-#, fuzzy
-#~ msgid "additional video effects, clip transformation feature"
-#~ msgstr "дополнительные видеоэффекты,"
-
-#~ msgid "Noise"
-#~ msgstr "Шум"
-
-#~ msgid "Blur"
-#~ msgstr "Размывание"
