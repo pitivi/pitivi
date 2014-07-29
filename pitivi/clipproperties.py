@@ -259,16 +259,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         return self._timeline
 
     def _setTimeline(self, timeline):
+        if self.connected:
+            self._timeline.selection.disconnect_by_func(self._selectionChangedCb)
+        self._timeline = timeline
         if timeline:
-            self._timeline = timeline
             self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
-            self.connected = True
-        else:
-            if self.connected:
-                self._timeline.selection.disconnect_by_func(self._selectionChangedCb)
-
-            self.connected = False
-            self._timeline = None
+        self.connected = bool(timeline)
 
     timeline = property(_getTimeline, _setTimeline)
 
