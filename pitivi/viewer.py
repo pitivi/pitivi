@@ -810,6 +810,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
         self.drawing_area = Gtk.DrawingArea()
         self.drawing_area.set_double_buffered(False)
+        self.drawing_area.connect("draw", self._drawCb, None)
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
         if realizedCb:
@@ -831,6 +832,10 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # FIXME PyGi Styling with Gtk3
         # for state in range(Gtk.StateType.INSENSITIVE + 1):
         # self.modify_bg(state, self.style.black)
+
+    def _drawCb(self, unused, unused1, unused2):
+        if self.sink:
+            self.sink.expose()
 
     def setDisplayAspectRatio(self, ratio):
         self.set_property("ratio", float(ratio))
