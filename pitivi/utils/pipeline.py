@@ -176,17 +176,11 @@ class SimplePipeline(Signallable, Loggable):
 
         # Create a cluttersink element used for display. Subclasses must connect
         # it to self._pipeline themselves
-        self._clutter_sink = Gst.ElementFactory.make("cluttersink", None)
+        self._opengl_sink = Gst.ElementFactory.make("glimagesink", None)
         if isinstance(pipeline, GES.Pipeline):
-            self._pipeline.preview_set_video_sink(self._clutter_sink)
+            self._pipeline.preview_set_video_sink(self._opengl_sink)
         else:
-            self._pipeline.set_property("video_sink", self._clutter_sink)
-
-    def connectWithViewer(self, viewer):
-        """
-        Connect the specified ViewerWidget so this pipeline can be displayed.
-        """
-        self._clutter_sink.props.texture = viewer.texture
+            self._pipeline.set_property("video_sink", self._opengl_sink)
 
     def release(self):
         """
@@ -276,7 +270,7 @@ class SimplePipeline(Signallable, Loggable):
         else:
             self.play()
 
-    #{ Position and Seeking methods
+    # { Position and Seeking methods
 
     def getPosition(self, format=Gst.Format.TIME):
         """
@@ -420,8 +414,8 @@ class SimplePipeline(Signallable, Loggable):
         seekvalue = max(0, min(self.getPosition() + time, self.getDuration()))
         self.simple_seek(seekvalue)
 
-    #}
-    ## Private methods
+    # }
+    # Private methods
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:
