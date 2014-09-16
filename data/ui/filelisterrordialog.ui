@@ -24,7 +24,7 @@
               <object class="GtkImage" id="image1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="stock">gtk-dialog-warning</property>
+                <property name="icon-name">dialog-warning</property>
                 <property name="icon-size">6</property>
               </object>
               <packing>

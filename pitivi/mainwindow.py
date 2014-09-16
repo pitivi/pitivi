@@ -614,8 +614,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         chooser = Gtk.FileChooserDialog(title=_("Open File..."),
             transient_for=self,
             action=Gtk.FileChooserAction.OPEN)
-        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+        chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                            _("Open"), Gtk.ResponseType.OK)
         chooser.set_select_multiple(False)
         # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
@@ -1020,10 +1020,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _showExportDialog(self, project):
         self.log("Export requested")
         chooser = Gtk.FileChooserDialog(title=_("Export To..."),
-            transient_for=self,
-            action=Gtk.FileChooserAction.SAVE)
-        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+                                        transient_for=self,
+                                        action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                            _("Save"), Gtk.ResponseType.OK)
+        chooser.set_default_response(Gtk.ResponseType.OK)
 
         chooser.set_select_multiple(False)
         chooser.props.do_overwrite_confirmation = True
@@ -1066,9 +1067,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
             transient_for=self,
             action=Gtk.FileChooserAction.SAVE)
-        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
-
+        chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                            _("Save"), Gtk.ResponseType.OK)
+        chooser.set_default_response(Gtk.ResponseType.OK)
         asset = GES.Formatter.get_default()
         filt = Gtk.FileFilter()
         filt.set_name(asset.get_meta(GES.META_DESCRIPTION))
@@ -1121,15 +1122,15 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         returns none otherwise.
         """
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-            transient_for=self, action=Gtk.FileChooserAction.SAVE)
-        chooser.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
-        chooser.set_icon_name("pitivi")
+                                        transient_for=self, action=Gtk.FileChooserAction.SAVE)
+        chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                            _("Save"), Gtk.ResponseType.OK)
+        chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled"))
         chooser.props.do_overwrite_confirmation = True
         formats = {_("PNG image"): ["image/png", ("png",)],
-                _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
+                   _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
         for format in formats:
             filt = Gtk.FileFilter()
             filt.set_name(format)

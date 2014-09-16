@@ -995,7 +995,7 @@ class ZoomBox(Gtk.HBox, Zoomable):
         zoom_fit_btn = Gtk.Button()
         zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
         zoom_fit_btn.set_tooltip_text(ZOOM_FIT)
-        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-best-fit", Gtk.IconSize.BUTTON)
+        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-fit-best", Gtk.IconSize.BUTTON)
         zoom_fit_btn_hbox = Gtk.HBox()
         zoom_fit_btn_hbox.pack_start(zoom_fit_icon, expand=False, fill=True, padding=0)
         zoom_fit_btn_hbox.pack_start(Gtk.Label(label=_("Zoom")), expand=False, fill=True, padding=0)

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="3.4"/>
+  <object class="GtkImage" id="clear_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-revert</property>
+  </object>
+  <object class="GtkImage" id="close_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">window-close</property>
+  </object>
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
@@ -20,12 +30,13 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="reset">
-                <property name="label">gtk-clear</property>
+                <property name="label" translatable="yes">Clear</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
+                <property name="image">clear_icon</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="_resetValuesClickedCb" swapped="no"/>
               </object>
               <packing>
@@ -36,13 +47,14 @@
             </child>
             <child>
               <object class="GtkButton" id="okbutton1">
-                <property name="label">gtk-close</property>
+                <property name="label" translatable="yes">Close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">False</property>
                 <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
+                <property name="image">close_icon</property>
+                <property name="always_show_image">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
