@@ -190,7 +190,7 @@
                     <property name="use_action_appearance">False</property>
                     <property name="use_alpha">True</property>
                     <property name="title" translatable="yes">Pick a background color</property>
-                    <property name="color">#ffffffffffff</property>
+                    <property name="rgba">rgb(255,255,255)</property>
                     <signal name="color-set" handler="_backgroundColorButtonCb" swapped="no"/>
                   </object>
                 </child>

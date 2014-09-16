@@ -181,7 +181,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect("button-release-event", self._treeViewButtonReleaseEventCb)
         self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
-        self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         tsel = self.treeview.get_selection()

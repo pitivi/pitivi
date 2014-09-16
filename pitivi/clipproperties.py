@@ -184,7 +184,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.storemodel = Gtk.ListStore(bool, str, str, str, object)
         self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview_scrollwin.add(self.treeview)
-        self.treeview.set_property("rules_hint", True)
         self.treeview.set_property("has_tooltip", True)
         self.treeview.set_headers_clickable(False)
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
