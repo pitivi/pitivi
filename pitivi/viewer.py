@@ -191,9 +191,11 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
         # Buttons/Controls
         bbox = Gtk.HBox()
-        boxalign = Gtk.Alignment(xalign=0.5, yalign=0.5, xscale=0.0, yscale=0.0)
-        boxalign.add(bbox)
-        self.pack_start(boxalign, False, True, SPACING)
+
+        bbox.set_property("valign", Gtk.Align.CENTER)
+        bbox.set_property("halign", Gtk.Align.CENTER)
+
+        self.pack_start(bbox, False, True, SPACING)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -266,7 +268,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.internal.set_size_request(width, height)
 
         self.buttons = bbox
-        self.buttons_container = boxalign
+        self.buttons_container = bbox
         self.show_all()
         self.external_vbox.show_all()
 
