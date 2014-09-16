@@ -10,8 +10,9 @@
     <property name="type_hint">dialog</property>
     <property name="deletable">False</property>
     <child>
-      <object class="GtkVBox" id="vbox1">
+      <object class="GtkBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkLabel" id="label5">
             <property name="visible">True</property>

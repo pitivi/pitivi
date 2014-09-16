@@ -126,11 +126,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="hbox1">
+          <object class="GtkBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="orientation">horizontal</property>
             <child>
-              <object class="GtkVBox" id="vbox4">
+              <object class="GtkBox" id="vbox4">
+                <property name="orientation">vertical</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -288,12 +290,13 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
-                  <object class="GtkVBox" id="vbox1">
+                  <object class="GtkBox" id="vbox1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
                     <property name="border_width">12</property>
                     <property name="spacing">12</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkTable" id="table2">
                         <property name="visible">True</property>
@@ -484,7 +487,8 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkVBox" id="vbox2">
+                  <object class="GtkBox" id="vbox2">
+                    <property name="orientation">vertical</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
@@ -499,10 +503,11 @@
                         <property name="column_spacing">6</property>
                         <property name="row_spacing">6</property>
                         <child>
-                          <object class="GtkHBox" id="hbox5">
+                          <object class="GtkBox" id="hbox5">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
+                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkComboBox" id="video_encoder_combo">
                                 <property name="visible">True</property>
@@ -583,10 +588,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox3">
+                          <object class="GtkBox" id="hbox3">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
+                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkSpinButton" id="scale_spinbutton">
                                 <property name="visible">True</property>
@@ -717,12 +723,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkVBox" id="vbox3">
+                  <object class="GtkBox" id="vbox3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
                     <property name="border_width">12</property>
                     <property name="spacing">6</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkTable" id="table4">
                         <property name="visible">True</property>
@@ -826,10 +833,11 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkHBox" id="hbox4">
+                          <object class="GtkBox" id="hbox4">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
+                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkComboBox" id="audio_encoder_combo">
                                 <property name="visible">True</property>

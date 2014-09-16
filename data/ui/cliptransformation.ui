@@ -54,12 +54,14 @@
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
-  <object class="GtkVBox" id="transform_box">
+  <object class="GtkBox" id="transform_box">
+    <property name="orientation">vertical</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="spacing">12</property>
     <child>
-      <object class="GtkHButtonBox" id="buttonbox1">
+      <object class="GtkButtonBox" id="buttonbox1">
+        <property name="orientation">horizontal</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">6</property>
@@ -100,7 +102,8 @@
             <property name="can_focus">False</property>
             <property name="left_padding">12</property>
             <child>
-              <object class="GtkHScale" id="zoom_scale">
+              <object class="GtkScale" id="zoom_scale">
+                <property name="orientation">horizontal</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="adjustment">zoom_adjustment</property>
@@ -139,7 +142,8 @@
             <property name="can_focus">False</property>
             <property name="left_padding">12</property>
             <child>
-              <object class="GtkHBox" id="box3">
+              <object class="GtkBox" id="box3">
+                <property name="orientation">horizontal</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">6</property>
@@ -232,7 +236,8 @@
             <property name="can_focus">False</property>
             <property name="left_padding">12</property>
             <child>
-              <object class="GtkHBox" id="box2">
+              <object class="GtkBox" id="box2">
+                <property name="orientation">horizontal</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="spacing">6</property>

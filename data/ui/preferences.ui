@@ -14,7 +14,8 @@
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
-          <object class="GtkHPaned" id="paned1">
+          <object class="GtkPaned" id="paned1">
+            <property name="orientation">horizontal</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
@@ -67,7 +68,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkVBox" id="box1">
+                      <object class="GtkBox" id="box1">
+                        <property name="orientation">vertical</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
