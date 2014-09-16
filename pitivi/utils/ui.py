@@ -379,7 +379,7 @@ def beautify_ETA(length):
     return ", ".join(parts)
 
 
-#--------------------- Gtk widget helpers ------------------------------------#
+# -------------------- Gtk widget helpers ----------------------------------- #
 def model(columns, data):
     ret = Gtk.ListStore(*columns)
     for datum in data:
@@ -423,7 +423,7 @@ def alter_style_class(style_class, target_widget, css_style):
     style_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-#------------------------ encoding datas ----------------------------------------#
+# ----------------------- encoding datas --------------------------------------- #
 # FIXME This should into a special file
 frame_rates = model((str, object), (
     # Translators: fps is for frames per second

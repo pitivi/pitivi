@@ -1128,7 +1128,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self.bTimeline:
             self.app.action_log.begin("delete clip")
 
-            #FIXME GES port: Handle unlocked TrackElement-s
+            # FIXME GES port: Handle unlocked TrackElement-s
             for clip in self.timeline.selection:
                 layer = clip.get_layer()
                 layer.remove_clip(clip)

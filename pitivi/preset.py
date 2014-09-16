@@ -205,7 +205,7 @@ class PresetManager(object):
         if preset is None:
             self.cur_preset = None
             return
-        elif not preset in self.presets:
+        elif preset not in self.presets:
             return
         values = self.presets[preset]
         self.cur_preset = preset

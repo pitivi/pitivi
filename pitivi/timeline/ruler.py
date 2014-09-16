@@ -137,7 +137,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             GLib.source_remove(self.callback_id_scroll)
         self.callback_id_scroll = GLib.timeout_add(100, self._maybeUpdate)
 
-## Zoomable interface override
+# Zoomable interface override
 
     def _maybeUpdate(self):
         self.queue_draw()
@@ -150,7 +150,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             GLib.source_remove(self.callback_id)
         self.callback_id = GLib.timeout_add(100, self._maybeUpdate)
 
-## timeline position changed method
+# Timeline position changed method
 
     def setPipeline(self, pipeline):
         pipeline.connect('position', self.timelinePositionCb)
@@ -159,7 +159,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.position = position
         self.queue_draw()
 
-## Gtk.Widget overrides
+# Gtk.Widget overrides
     def configureEventCb(self, widget, unused_event, unused_data=None):
         width = widget.get_allocated_width()
         height = widget.get_allocated_height()
@@ -244,7 +244,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.scales = (float(2 / rate), float(5 / rate), float(10 / rate)) + SCALES
 
-## Drawing methods
+# Drawing methods
 
     def drawBackground(self, context):
         style = self.get_style_context()

@@ -632,9 +632,9 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
-            props = [prop for prop in self.element.list_children_properties() if not prop.name in self.ignore]
+            props = [prop for prop in self.element.list_children_properties() if prop.name not in self.ignore]
         else:
-            props = [prop for prop in GObject.list_properties(self.element) if not prop.name in self.ignore]
+            props = [prop for prop in GObject.list_properties(self.element) if prop.name not in self.ignore]
         if not props:
             table = Gtk.Table(n_rows=1, n_columns=1)
             widget = Gtk.Label(label=_("No properties."))

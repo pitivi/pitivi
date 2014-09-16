@@ -93,9 +93,9 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         vbox.pack_start(self.infobar_box, False, True, 0)
 
         # Transformation boxed DISABLED
-        #self.transformation_expander = TransformationProperties(instance, instance.action_log)
-        #self.transformation_expander.set_vexpand(False)
-        #vbox.pack_start(self.transformation_expander, False, True, 0)
+        # self.transformation_expander = TransformationProperties(instance, instance.action_log)
+        # self.transformation_expander.set_vexpand(False)
+        # vbox.pack_start(self.transformation_expander, False, True, 0)
 
         effects_properties_manager = EffectsPropertiesManager(app)
         self.effect_expander = EffectProperties(app, effects_properties_manager, self)
@@ -108,7 +108,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
             self.effect_expander._connectTimelineSelection(self.app.gui.timeline_ui.timeline)
             # Transformation boxed DISABLED
             # if self.transformation_expander:
-                # self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
+            #     self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
 
     def _getProject(self):
         return self._project
@@ -334,7 +334,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
-                    #Actually add the effect
+                    # Actually add the effect
                     self.app.action_log.begin("add effect")
                     effect = GES.Effect.new(bin_description=bin_desc)
                     clip.add(effect)
@@ -386,7 +386,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             return False
 
         # FIXME GObject Introspection, make sure forth is the path
-        #view.set_tooltip_row(tooltip, path)
+        # view.set_tooltip_row(tooltip, path)
 
         return True
 
@@ -409,7 +409,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         obj = self.clips[0]
         for effect in obj.get_top_effects():
-            if not effect.props.bin_description in HIDDEN_EFFECTS:
+            if effect.props.bin_description not in HIDDEN_EFFECTS:
                 asset = self.app.effects.getFactoryFromName(
                     effect.props.bin_description)
                 to_append = [effect.props.active]

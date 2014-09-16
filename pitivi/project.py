@@ -59,7 +59,7 @@ DEFAULT_MUXER = "oggmux"
 DEFAULT_VIDEO_ENCODER = "theoraenc"
 DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
-#------------------ Backend classes ------------------------------------------#
+# ------------------ Backend classes ---------------------------------------- #
 
 
 class AssetRemovedAction(UndoableAction):
@@ -649,9 +649,9 @@ class Project(Loggable, GES.Project):
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
 
-    #-----------------#
+    # --------------- #
     # Our properties  #
-    #-----------------#
+    # --------------- #
 
     # Project specific properties
     @property
@@ -849,9 +849,9 @@ class Project(Loggable, GES.Project):
         if value:
             return self.set_meta("render-scale", value)
 
-    #--------------------------------------------#
+    # ------------------------------------------ #
     # GES.Project virtual methods implementation #
-    #--------------------------------------------#
+    # ------------------------------------------ #
 
     def _handle_asset_loaded(self, asset=None, unused_asset_id=None):
         if asset and not GObject.type_is_a(asset.get_extractable_type(), GES.UriClip):
@@ -883,7 +883,7 @@ class Project(Loggable, GES.Project):
         """ vmethod, get called on "loaded" """
         self.loaded = True
         self._ensureTracks()
-        #self._ensureLayer()
+        # self._ensureLayer()
 
         encoders = CachedEncoderList()
         # The project just loaded, we need to check the new
@@ -913,9 +913,9 @@ class Project(Loggable, GES.Project):
                 else:
                     self.warning("We do not handle profile: %s" % profile)
 
-    #--------------------------------------------#
+    # ------------------------------------------ #
     #               Our API                      #
-    #--------------------------------------------#
+    # ------------------------------------------ #
 
     def createTimeline(self):
         """
@@ -1061,9 +1061,9 @@ class Project(Loggable, GES.Project):
     def acodecsettings(self, value):
         self._acodecsettings_cache[self.aencoder] = value
 
-    #--------------------------------------------#
+    # ------------------------------------------ #
     #               Private methods              #
-    #--------------------------------------------#
+    # ------------------------------------------ #
 
     def _ensureTracks(self):
         if self.timeline is None:
@@ -1131,7 +1131,7 @@ class Project(Loggable, GES.Project):
         self.nb_remaining_file_to_import = nb_remaining_file_to_import
 
 
-#----------------------- UI classes ------------------------------------------#
+# ---------------------- UI classes ----------------------------------------- #
 class ProjectSettingsDialog():
 
     def __init__(self, parent_window, project):

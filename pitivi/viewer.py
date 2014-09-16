@@ -282,14 +282,14 @@ class ViewerContainer(Gtk.VBox, Loggable):
         nanoseconds = self.timecode_entry.getWidgetValue()
         self.seeker.seek(nanoseconds)
 
-    ## active Timeline calllbacks
+    # Active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
         if duration == 0:
             self._setUiActive(False)
         else:
             self._setUiActive(True)
 
-    ## Control Gtk.Button callbacks
+    # Control Gtk.Button callbacks
 
     def setZoom(self, zoom):
         """
@@ -331,7 +331,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.seeker.seek(end)
         self.app.gui.focusTimeline()
 
-    ## public methods for controlling playback
+    # Public methods for controlling playback
 
     def undock(self, *unused_widget):
         if not self.docked:
@@ -614,12 +614,12 @@ class TransformationBox():
         self.last_y = event.y
 
     def init_points(self):
-        #corner boxes
+        # Corner boxes
         self.points[TOP_LEFT] = Point(self.left, self.top, self.settings)
         self.points[TOP_RIGHT] = Point(self.right, self.top, self.settings)
         self.points[BOTTOM_LEFT] = Point(self.left, self.bottom, self.settings)
         self.points[BOTTOM_RIGHT] = Point(self.right, self.bottom, self.settings)
-        #edge boxes
+        # Edge boxes
         self.points[TOP] = Point(self.center.x, self.top, self.settings)
         self.points[BOTTOM] = Point(self.center.x, self.bottom, self.settings)
         self.points[LEFT] = Point(self.left, self.center.y, self.settings)
@@ -628,12 +628,12 @@ class TransformationBox():
     def update_points(self):
         self._update_measure()
 
-        #corner boxes
+        # Corner boxes
         self.points[TOP_LEFT].set_position(self.left, self.top)
         self.points[TOP_RIGHT].set_position(self.right, self.top)
         self.points[BOTTOM_LEFT].set_position(self.left, self.bottom)
         self.points[BOTTOM_RIGHT].set_position(self.right, self.bottom)
-        #edge boxes
+        # Edge boxes
         self.points[TOP].set_position(self.center.x, self.top)
         self.points[BOTTOM].set_position(self.center.x, self.bottom)
         self.points[LEFT].set_position(self.left, self.center.y)
@@ -825,8 +825,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.pipeline = None
         self.transformation_properties = None
         # FIXME PyGi Styling with Gtk3
-        #for state in range(Gtk.StateType.INSENSITIVE + 1):
-            #self.modify_bg(state, self.style.black)
+        # for state in range(Gtk.StateType.INSENSITIVE + 1):
+        #    self.modify_bg(state, self.style.black)
 
     def setDisplayAspectRatio(self, ratio):
         self.set_property("ratio", float(ratio))

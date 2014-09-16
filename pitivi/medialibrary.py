@@ -711,7 +711,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 # Can happen if the user removed the asset in the meanwhile.
                 self.log("%s needed a thumbnail, but vanished from storemodel", uri)
 
-    ## Error Dialog Box callbacks
+    # Error Dialog Box callbacks
 
     def _errorDialogBoxCloseCb(self, dialog):
         dialog.destroy()
@@ -719,7 +719,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     def _errorDialogBoxResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
-    ## Import Sources Dialog Box callbacks
+    # Import Sources Dialog Box callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response):
         self.debug("response: %r", response)
@@ -798,7 +798,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 else:
                     self.iconview.unselect_path(row.path)
 
-    ## UI callbacks
+    # UI callbacks
 
     def _removeClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
@@ -993,7 +993,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                     iconview.select_path(current_cursor_pos)
 
     def _newProjectCreatedCb(self, unused_app, project):
-        if not self._project is project:
+        if self._project is not project:
             self._project = project
             self._resetErrorList()
             self.storemodel.clear()
@@ -1001,7 +1001,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_app, project, unused_fully_ready):
-        if not self._project is project:
+        if self._project is not project:
             self._project = project
             self.storemodel.clear()
             self._connectToProject(project)
@@ -1021,7 +1021,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.warning("Adding uris to project, but the project has changed in the meantime")
         return False
 
-    ## Drag and Drop
+    # Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
         self.debug("targettype: %d, selection.data: %r", targettype, selection.get_data())
@@ -1053,7 +1053,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if filenames:
             self.app.project_manager.current_project.addUris(filenames)
 
-    #used with TreeView and IconView
+    # Used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
         paths = self.getSelectedPaths()
         uris = [self.modelFilter[path][COL_URI] for path in paths]
