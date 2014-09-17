@@ -456,11 +456,11 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         close_after.set_active(self.app.settings.closeImportDialog)
 
         self._importDialog = Gtk.FileChooserDialog(title=dialogtitle, transient_for=None,
-                                           action=chooser_action)
+                                                   action=chooser_action)
 
-        self._importDialog.add_buttons(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE,
-                                       Gtk.STOCK_ADD, Gtk.ResponseType.OK)
         self._importDialog.set_icon_name("pitivi")
+        self._importDialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                                       _("Add"), Gtk.ResponseType.OK)
         self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(Gtk.ResponseType.OK)
         self._importDialog.set_select_multiple(True)
@@ -468,7 +468,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_transient_for(self.app.gui)
         self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
-        self._importDialog.connect('close', self._dialogBoxCloseCb)
         previewer = PreviewWidget(self.app.settings)
         self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
@@ -737,10 +736,6 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             dialogbox.destroy()
             self._importDialog = None
 
-    def _dialogBoxCloseCb(self, unused_dialogbox):
-        self.debug("closing")
-        self._importDialog = None
-
     def _removeSources(self):
         """
         Determine which clips are selected in the icon or list view,
@@ -817,6 +812,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         path = paths[0]
         asset = self.storemodel[path][COL_ASSET]
         dialog = ClipMediaPropsDialog(self.app.project_manager.current_project, asset)
+        dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
 
     def _warningInfoBarDismissedCb(self, unused_button):
@@ -839,8 +835,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         error_dialogbox = FileListErrorDialog(*msgs)
         error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
         error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
+
         for uri, reason, extra in self._errors:
             error_dialogbox.addFailedFile(uri, reason, extra)
+        error_dialogbox.window.set_transient_for(self.app.gui)
         error_dialogbox.window.show()
         # Reset the error list, since the user has read them.
         self._resetErrorList()

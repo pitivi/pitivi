@@ -602,6 +602,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         abt.set_icon_name("pitivi")
         abt.set_logo_icon_name("pitivi")
         abt.connect("response", self._aboutResponseCb)
+        abt.set_transient_for(self)
         abt.show()
 
     def openProject(self):
@@ -616,6 +617,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             action=Gtk.FileChooserAction.OPEN)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Open"), Gtk.ResponseType.OK)
+        chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_select_multiple(False)
         # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
@@ -724,21 +726,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             return True
 
         if project.uri and not project_manager.disable_save:
-            save = Gtk.STOCK_SAVE
+            save = _("Save")
         else:
-            save = Gtk.STOCK_SAVE_AS
+            save = _("Save as...")
 
-        dialog = Gtk.Dialog(title="",
-                            transient_for=self, modal=True)
+        dialog = Gtk.Dialog(title="", transient_for=self, modal=True)
         dialog.add_buttons(_("Close without saving"), Gtk.ResponseType.REJECT,
-                Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                save, Gtk.ResponseType.YES)
+                           _("Cancel"), Gtk.ResponseType.CANCEL,
+                           save, Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
         # seems we really have to do it once more so it doesn't show "pitivi"...
-        dialog.set_title("")
         dialog.set_resizable(False)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        dialog.set_transient_for(self)
         dialog.get_accessible().set_name("unsaved changes dialog")
 
         primary = Gtk.Label()
@@ -854,14 +853,15 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         uri = asset.get_id()
         new_uri = None
         dialog = Gtk.Dialog(title=_("Locate missing file..."),
-            transient_for=self,
-            modal=True)
+                            transient_for=self,
+                            modal=True)
 
-        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
+        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                           _("Open"), Gtk.ResponseType.OK)
         dialog.set_border_width(SPACING * 2)
         dialog.get_content_area().set_spacing(SPACING)
         dialog.set_transient_for(self)
+        dialog.set_default_response(Gtk.ResponseType.OK)
 
         # This box will contain the label and optionally a thumbnail
         hbox = Gtk.HBox()
