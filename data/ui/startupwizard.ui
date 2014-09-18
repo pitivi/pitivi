@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.4 -->
-  <object class="GtkImage" id="new_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon-name">document-new</property>
-  </object>
+  <requires lib="gtk+" version="3.12"/>
   <object class="GtkImage" id="help_icon">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon-name">help-contents</property>
+    <property name="icon_name">help-contents</property>
+  </object>
+  <object class="GtkImage" id="new_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">document-new</property>
   </object>
   <object class="GtkImage" id="open_icon">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon-name">document-open</property>
+    <property name="icon_name">document-open</property>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -24,8 +25,8 @@
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="skip_taskbar_hint">True</property>
-    <signal name="key-press-event" handler="_keyPressCb" swapped="no"/>
     <signal name="delete-event" handler="_deleteCb" swapped="no"/>
+    <signal name="key-press-event" handler="_keyPressCb" swapped="no"/>
     <child>
       <object class="GtkBox" id="topvbox">
         <property name="visible">True</property>
@@ -37,12 +38,11 @@
             <property name="can_focus">False</property>
             <property name="border_width">10</property>
             <property name="spacing">12</property>
-            <property name="orientation">horizontal</property>
             <child>
               <object class="GtkBox" id="vbox2">
-                <property name="orientation">vertical</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="label1">
@@ -63,7 +63,6 @@
                     <property name="height_request">215</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
                     <property name="limit">10</property>
                     <property name="show_not_found">False</property>
                     <property name="show_tips">True</property>
@@ -87,10 +86,10 @@
               <object class="GtkButtonBox" id="vbuttonbox2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <property name="homogeneous">True</property>
                 <property name="layout_style">start</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkButton" id="new_button">
                     <property name="label" translatable="yes">New</property>

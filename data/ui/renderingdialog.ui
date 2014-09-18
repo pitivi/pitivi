@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.1 -->
 <interface>
-  <!-- interface-requires gtk+ 3.4 -->
-  <object class="GtkImage" id="close_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon-name">window-close</property>
-  </object>
-  <object class="GtkImage" id="help_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon-name">help-contents</property>
-  </object>
+  <requires lib="gtk+" version="3.12"/>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="lower">1</property>
     <property name="upper">100</property>
     <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
+  </object>
+  <object class="GtkImage" id="close_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">window-close</property>
+  </object>
+  <object class="GtkImage" id="help_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">help-contents</property>
   </object>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -98,9 +99,9 @@
             <child>
               <object class="GtkButton" id="closebutton">
                 <property name="label" translatable="yes">Close</property>
-                 <property name="visible">True</property>
-                 <property name="can_focus">True</property>
-                 <property name="receives_default">True</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
                 <property name="image">close_icon</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="_closeButtonClickedCb" swapped="no"/>
@@ -140,12 +141,11 @@
           <object class="GtkBox" id="hbox1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">horizontal</property>
             <child>
               <object class="GtkBox" id="vbox4">
-                <property name="orientation">vertical</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkLabel" id="label11">
                     <property name="visible">True</property>
@@ -168,6 +168,21 @@
                     <property name="app_paintable">True</property>
                     <property name="can_focus">False</property>
                     <property name="message_type">error</property>
+                    <child internal-child="action_area">
+                      <object class="GtkButtonBox" id="infobar-action_area3">
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="layout_style">center</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                     <child internal-child="content_area">
                       <object class="GtkBox" id="infobar-content_area3">
                         <property name="can_focus">False</property>
@@ -187,21 +202,6 @@
                         <property name="expand">True</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child internal-child="action_area">
-                      <object class="GtkButtonBox" id="infobar-action_area3">
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <property name="layout_style">center</property>
-                        <child>
-                          <placeholder/>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -306,31 +306,30 @@
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
                     <property name="border_width">12</property>
-                    <property name="spacing">12</property>
                     <property name="orientation">vertical</property>
+                    <property name="spacing">12</property>
                     <child>
-                      <object class="GtkTable" id="table2">
+                      <object class="GtkGrid" id="table2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_rows">3</property>
-                        <property name="n_columns">2</property>
-                        <property name="column_spacing">6</property>
                         <property name="row_spacing">6</property>
+                        <property name="column_spacing">6</property>
                         <child>
                           <object class="GtkFileChooserButton" id="filebutton">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="hexpand">True</property>
                             <property name="action">select-folder</property>
+                            <signal name="current-folder-changed" handler="_checkForExistingFile" swapped="no"/>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="filebutton-atkobject">
                                 <property name="AtkObject::accessible-name" translatable="yes">Folder</property>
                               </object>
                             </child>
-                            <signal name="current-folder-changed" handler="_checkForExistingFile" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
@@ -341,9 +340,8 @@
                             <property name="label" translatable="yes">Container format:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -357,7 +355,8 @@
                             </accessibility>
                           </object>
                           <packing>
-                            <property name="x_options">GTK_FILL</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
@@ -371,9 +370,8 @@
                             </accessibility>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -381,18 +379,16 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="activates_default">True</property>
+                            <signal name="changed" handler="_checkForExistingFile" swapped="no"/>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="fileentry-atkobject">
                                 <property name="AtkObject::accessible-name" translatable="yes">File name</property>
                               </object>
                             </child>
-                            <signal name="changed" handler="_checkForExistingFile" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -406,17 +402,17 @@
                                 <property name="can_focus">False</property>
                                 <property name="model">model1</property>
                                 <property name="active">0</property>
-                                <child internal-child="accessible">
-                                  <object class="AtkObject" id="muxercombobox-atkobject">
-                                    <property name="AtkObject::accessible-name" translatable="yes">Container format</property>
-                                  </object>
-                                </child>
                                 <signal name="changed" handler="_muxerComboChangedCb" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="renderer1"/>
                                   <attributes>
                                     <attribute name="text">0</attribute>
                                   </attributes>
+                                </child>
+                                <child internal-child="accessible">
+                                  <object class="AtkObject" id="muxercombobox-atkobject">
+                                    <property name="AtkObject::accessible-name" translatable="yes">Container format</property>
+                                  </object>
                                 </child>
                               </object>
                               <packing>
@@ -444,9 +440,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
                           </packing>
                         </child>
                       </object>
@@ -499,26 +493,23 @@
                 </child>
                 <child>
                   <object class="GtkBox" id="vbox2">
-                    <property name="orientation">vertical</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
                     <property name="border_width">12</property>
+                    <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkTable" id="table3">
+                      <object class="GtkGrid" id="table3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_rows">4</property>
-                        <property name="n_columns">2</property>
-                        <property name="column_spacing">6</property>
                         <property name="row_spacing">6</property>
+                        <property name="column_spacing">6</property>
                         <child>
                           <object class="GtkBox" id="hbox5">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
-                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkComboBox" id="video_encoder_combo">
                                 <property name="visible">True</property>
@@ -555,9 +546,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
                           </packing>
                         </child>
                         <child>
@@ -568,9 +557,8 @@
                             <property name="label" translatable="yes">Codec:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -578,11 +566,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="model">model3</property>
-                            <child internal-child="accessible">
-                              <object class="AtkObject" id="frame_rate_combo-atkobject">
-                                <property name="AtkObject::accessible-name" translatable="yes">Framerate</property>
-                              </object>
-                            </child>
                             <signal name="changed" handler="_frameRateComboChangedCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer3"/>
@@ -590,12 +573,15 @@
                                 <attribute name="text">0</attribute>
                               </attributes>
                             </child>
+                            <child internal-child="accessible">
+                              <object class="AtkObject" id="frame_rate_combo-atkobject">
+                                <property name="AtkObject::accessible-name" translatable="yes">Framerate</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -603,7 +589,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
-                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkSpinButton" id="scale_spinbutton">
                                 <property name="visible">True</property>
@@ -614,12 +599,12 @@
                                 <property name="adjustment">adjustment1</property>
                                 <property name="digits">1</property>
                                 <property name="numeric">True</property>
+                                <signal name="value-changed" handler="_scaleSpinbuttonChangedCb" swapped="no"/>
                                 <child internal-child="accessible">
                                   <object class="AtkObject" id="scale_spinbutton-atkobject">
                                     <property name="AtkObject::accessible-name" translatable="yes">Scale</property>
                                   </object>
                                 </child>
-                                <signal name="value-changed" handler="_scaleSpinbuttonChangedCb" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -663,9 +648,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -676,9 +659,8 @@
                             <property name="label" translatable="yes">Frame rate:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -689,9 +671,8 @@
                             <property name="label" translatable="yes">Scale:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -706,9 +687,12 @@
                             <signal name="toggled" handler="_videoOutputCheckbuttonToggledCb" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="right_attach">2</property>
-                            <property name="y_options">GTK_FILL</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -739,16 +723,14 @@
                     <property name="can_focus">False</property>
                     <property name="valign">start</property>
                     <property name="border_width">12</property>
-                    <property name="spacing">6</property>
                     <property name="orientation">vertical</property>
+                    <property name="spacing">6</property>
                     <child>
-                      <object class="GtkTable" id="table4">
+                      <object class="GtkGrid" id="table4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_rows">4</property>
-                        <property name="n_columns">2</property>
-                        <property name="column_spacing">6</property>
                         <property name="row_spacing">6</property>
+                        <property name="column_spacing">6</property>
                         <child>
                           <object class="GtkComboBox" id="channels_combo">
                             <property name="visible">True</property>
@@ -764,9 +746,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -777,9 +757,8 @@
                             <property name="label" translatable="yes">Channels:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -790,9 +769,8 @@
                             <property name="label" translatable="yes">Sample rate:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -809,9 +787,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -826,8 +802,8 @@
                             <signal name="toggled" handler="_audioOutputCheckbuttonToggledCb" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="right_attach">2</property>
-                            <property name="y_options">GTK_FILL</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
@@ -838,9 +814,8 @@
                             <property name="label" translatable="yes">Codec:</property>
                           </object>
                           <packing>
+                            <property name="left_attach">0</property>
                             <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -848,7 +823,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="spacing">6</property>
-                            <property name="orientation">horizontal</property>
                             <child>
                               <object class="GtkComboBox" id="audio_encoder_combo">
                                 <property name="visible">True</property>
@@ -885,10 +859,11 @@
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
                             <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
                           </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
