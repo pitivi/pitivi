@@ -2,30 +2,27 @@
 # Copyright (C) 2010, 2011, 2012, 2013, 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the pitivi package.
 #
-# Attila Hammer <hammera at pickup dot hu>, 2010.
+# Attila Hammer <hammera at pickup dot hu>, 2010, 2014.
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2011, 2012, 2014.
 # Marton Kun-Szabo <kunszabomarton at hotmail dot com>, 2010.
-# Balázs Úr <urbalazs at gmail dot com>, 2013.
+# Balázs Úr <urbalazs at gmail dot com>, 2013, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-12-29 19:21+0000\n"
-"PO-Revision-Date: 2014-02-04 13:53+0100\n"
-"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
+"POT-Creation-Date: 2014-04-02 16:27+0000\n"
+"PO-Revision-Date: 2014-09-21 17:54+0200\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <openscope at googlegroups dot com>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.4\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
-#| msgid ""
-#| "A video editor that aims to appeal to hobbyists and professionals alike, "
-#| "with a strong focus on usability, efficiency and quality"
 msgid ""
 "Pitivi is a video editor that aims to appeal to hobbyists and professionals "
 "alike, with a strong focus on efficiency, quality and usability. It "
@@ -46,10 +43,10 @@ msgid ""
 "more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
 "Nem kizárólagos szerkesztési munkamenettel, a képkockasebesség-független és "
-"lejátszófej-központú idővonallal a Pitivi lehetővé teszi a jelenetek gyors és "
-"pontos vágását, felosztását és áttekintését. A Pitivi szerkesztési funkciói "
-"lehetővé teszik, hogy több időt töltsön a történetmeséléssel, és kevesebbet a "
-"klipek „tologatásával”."
+"lejátszófej-központú idővonallal a Pitivi lehetővé teszi a jelenetek gyors "
+"és pontos vágását, felosztását és áttekintését. A Pitivi szerkesztési "
+"funkciói lehetővé teszik, hogy több időt töltsön a történetmeséléssel, és "
+"kevesebbet a klipek „tologatásával”."
 
 #: ../data/pitivi.appdata.xml.in.h:3
 msgid "Some other features include:"
@@ -87,7 +84,6 @@ msgstr ""
 "köszönhetően."
 
 #: ../data/pitivi.desktop.in.in.h:1
-#| msgid "Pitivi Video Editor"
 msgid "Video Editor"
 msgstr "Videoszerkesztő"
 
@@ -103,7 +99,7 @@ msgstr "Automatikus igazítás kezdése"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Automatikus igazítás elvégzése</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1014
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1017
 msgid "Estimating..."
 msgstr "Becslés…"
 
@@ -127,25 +123,26 @@ msgstr "Méret (képpont):"
 msgid "Frame rate:"
 msgstr "Képkockasebesség:"
 
-#: ../data/ui/clipmediaprops.ui.h:6
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: ../data/ui/clipmediaprops.ui.h:7
 msgid "Pixel aspect ratio:"
 msgstr "Képpontméretarány:"
 
-#: ../data/ui/clipmediaprops.ui.h:7
+#: ../data/ui/clipmediaprops.ui.h:8
 msgid "Video:"
 msgstr "Videó:"
 
-#: ../data/ui/clipmediaprops.ui.h:8 ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:21
 #: ../data/ui/renderingdialog.ui.h:32
 msgid "Channels:"
 msgstr "Csatornák:"
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:20
+#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:22
 #: ../data/ui/renderingdialog.ui.h:33
 msgid "Sample rate:"
 msgstr "Mintavételezési gyakoriság:"
 
-#: ../data/ui/clipmediaprops.ui.h:10
+#: ../data/ui/clipmediaprops.ui.h:11
 msgid "Audio:"
 msgstr "Hang:"
 
@@ -213,6 +210,72 @@ msgstr "Keresés törlése"
 msgid "Properties for <element>"
 msgstr "A(z) <element> tulajdonságai"
 
+#: ../data/ui/mainmenubutton.ui.h:1
+#| msgid "New Project"
+msgid "New project"
+msgstr "Új projekt"
+
+#: ../data/ui/mainmenubutton.ui.h:2
+#| msgid "Loading project..."
+msgid "Open project..."
+msgstr "Projekt megnyitása…"
+
+#: ../data/ui/mainmenubutton.ui.h:3
+msgid "Save the current project under a new name or a different location"
+msgstr "A jelenlegi projekt mentése új néven vagy egy másik helyre"
+
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1064
+#: ../pitivi/mainwindow.py:1121
+msgid "Save As..."
+msgstr "Mentés másként…"
+
+#: ../data/ui/mainmenubutton.ui.h:5
+msgid "Reload the current project"
+msgstr "Jelenlegi projekt újratöltése"
+
+#: ../data/ui/mainmenubutton.ui.h:6
+#| msgid "Revert to saved project version?"
+msgid "Revert to saved version"
+msgstr "Visszatérés az elmentett verzióhoz"
+
+#: ../data/ui/mainmenubutton.ui.h:7
+msgid "Export the current project and all its media in a .tar archive"
+msgstr ""
+"A jelenlegi projekt és minden médiájának exportálása egy .tar archívumba"
+
+#: ../data/ui/mainmenubutton.ui.h:8
+msgid "Export as Archive..."
+msgstr "Exportálás archívumként…"
+
+#: ../data/ui/mainmenubutton.ui.h:9
+msgid "Export the frame at the current playhead position as an image file."
+msgstr ""
+"A jelenlegi lejátszófej-pozíciónál lévő képkocka exportálása képfájlként."
+
+#: ../data/ui/mainmenubutton.ui.h:10
+msgid "Export current frame..."
+msgstr "Jelenlegi képkocka exportálása…"
+
+#: ../data/ui/mainmenubutton.ui.h:11
+msgid "Edit the project settings"
+msgstr "A projekt beállításainak szerkesztése"
+
+#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:4
+msgid "Project Settings"
+msgstr "Projektbeállítások"
+
+#: ../data/ui/mainmenubutton.ui.h:13 ../data/ui/preferences.ui.h:1
+msgid "Preferences"
+msgstr "Beállítások"
+
+#: ../data/ui/mainmenubutton.ui.h:14
+msgid "User Manual"
+msgstr "Felhasználói kézikönyv"
+
+#: ../data/ui/mainmenubutton.ui.h:15
+msgid "About"
+msgstr "Névjegy"
+
 #: ../data/ui/medialibrary.ui.h:1
 msgid "Add media files to your project"
 msgstr "Médiafájlok hozzáadása projektjéhez"
@@ -225,7 +288,7 @@ msgstr "Importálás"
 msgid "Remove selected clips from the project"
 msgstr "_Kijelölt klip eltávolítása a projektből"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:279
+#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:276
 msgid "_Remove from Project"
 msgstr "_Eltávolítás a projektből"
 
@@ -237,7 +300,7 @@ msgstr "Klip tulajdonságai…"
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "A kijelölt klipek beszúrása az idővonal végére"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:282
+#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:279
 msgid "Insert at _End of Timeline"
 msgstr "Beszúrás az idővonal _végére"
 
@@ -255,7 +318,6 @@ msgid "Show all clips"
 msgstr "Minden klip megjelenítése"
 
 #: ../data/ui/medialibrary.ui.h:12
-#| msgid "Close without saving"
 msgid "Close this message"
 msgstr "Üzenet bezárása"
 
@@ -266,10 +328,6 @@ msgid ""
 msgstr ""
 "Vegyen fel médiafájlokat projektjébe fájlok és mappák idehúzásával, vagy az "
 "„Importálás” gomb használatával."
-
-#: ../data/ui/preferences.ui.h:1
-msgid "Preferences"
-msgstr "Beállítások"
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Section"
@@ -299,7 +357,7 @@ msgstr ""
 "Minden beállítás visszaállítása a korábbi (a Beállítások ablak megnyitása "
 "előtti) értékére"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:444
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:480
 msgid "Standard (4:3)"
 msgstr "Standard (4:3)"
 
@@ -310,10 +368,6 @@ msgstr "Standard PAL"
 #: ../data/ui/projectsettings.ui.h:3
 msgid "25 FPS"
 msgstr "25 FPS"
-
-#: ../data/ui/projectsettings.ui.h:4 ../pitivi/mainwindow.py:266
-msgid "Project Settings"
-msgstr "Projektbeállítások"
 
 #: ../data/ui/projectsettings.ui.h:5
 msgid "Video Preset"
@@ -335,58 +389,60 @@ msgstr "Változtatások mentése a jelenleg kiválasztott előbeállításba"
 msgid "Aspect Ratio:"
 msgstr "Méretarány:"
 
-#: ../data/ui/projectsettings.ui.h:11
+#. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
+#: ../data/ui/projectsettings.ui.h:12
 msgid "Display aspect ratio"
 msgstr "Kijelző-méretarány"
 
-#: ../data/ui/projectsettings.ui.h:12
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Pixel aspect ratio"
 msgstr "Képpontméretarány"
 
-#: ../data/ui/projectsettings.ui.h:13
+#: ../data/ui/projectsettings.ui.h:15
 msgid "x"
 msgstr "x"
 
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:16
 msgid "Link"
 msgstr "Összekapcsolás"
 
-#: ../data/ui/projectsettings.ui.h:15
+#: ../data/ui/projectsettings.ui.h:17
 msgid "Frame Rate:"
 msgstr "Képkockasebesség:"
 
 #. TODO check if it is the good way to make it translatable
 #. And to filter actually!
-#: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:31
-#: ../pitivi/effects.py:283
+#: ../data/ui/projectsettings.ui.h:18 ../data/ui/renderingdialog.ui.h:31
+#: ../pitivi/effects.py:282
 msgid "Video"
 msgstr "Videó"
 
-#: ../data/ui/projectsettings.ui.h:17
+#: ../data/ui/projectsettings.ui.h:19
 msgid "Audio Preset"
 msgstr "Előre beállított hang"
 
-#: ../data/ui/projectsettings.ui.h:18
+#: ../data/ui/projectsettings.ui.h:20
 msgid "Format"
 msgstr "Formátum"
 
-#: ../data/ui/projectsettings.ui.h:21 ../data/ui/renderingdialog.ui.h:35
+#: ../data/ui/projectsettings.ui.h:23 ../data/ui/renderingdialog.ui.h:35
 msgid "Audio"
 msgstr "Hang"
 
-#: ../data/ui/projectsettings.ui.h:22
+#: ../data/ui/projectsettings.ui.h:24
 msgid "Author:"
 msgstr "Szerző:"
 
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:25
 msgid "Year:"
 msgstr "Év:"
 
-#: ../data/ui/projectsettings.ui.h:24
+#: ../data/ui/projectsettings.ui.h:26
 msgid "Project title:"
 msgstr "Projekt címe:"
 
-#: ../data/ui/projectsettings.ui.h:25
+#: ../data/ui/projectsettings.ui.h:27
 msgid "Info"
 msgstr "Információk"
 
@@ -414,7 +470,7 @@ msgstr "AAC"
 msgid "6 channels (5.1)"
 msgstr "6 csatorna (5.1)"
 
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:138
+#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:383
 msgid "Render"
 msgstr "Renderelés"
 
@@ -541,10 +597,9 @@ msgid "Missing dependencies..."
 msgstr "Hiányzó függőségek…"
 
 #: ../data/ui/titleeditor.ui.h:1
-msgid "No title clip selected. Select a clip to edit or create a new one."
-msgstr ""
-"Nincs kiválasztva címklip. Válasszon egy klipet a szerkesztéshez vagy hozzon "
-"létre újat."
+#| msgid "No title clip selected. Select a clip to edit or create a new one."
+msgid "Select a title clip to edit or create a new one."
+msgstr "Válasszon egy címklipet a szerkesztéshez, vagy hozzon létre egy újat."
 
 #: ../data/ui/titleeditor.ui.h:2
 msgid "Create and insert"
@@ -595,84 +650,75 @@ msgstr "Függőleges igazítás:"
 msgid "Advanced positioning"
 msgstr "Speciális elhelyezés"
 
-#: ../pitivi/application.py:123
+#. Translators: %s is a Python module name or another os component
+#: ../pitivi/check.py:100
 #, python-format
-msgid ""
-"There is already a %s instance, please inform the developers by filing a bug "
-"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
-msgstr ""
-"Egy %s folyamat már fut, értesítse a fejlesztőket hibajelentés küldésével a "
-"következő címen: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+msgid "- %s not found on the system"
+msgstr "- %s nem található az Ön rendszerén"
 
-#: ../pitivi/application.py:407
-msgid ""
-"\n"
-"    %prog [PROJECT_FILE]               # Start the video editor.\n"
-"    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
-"project."
-msgstr ""
-"\n"
-"    %prog [PROJEKT_FÁJL]               # A videoszerkesztő indítása.\n"
-"    %prog -i [-a] [MÉDIA_FÁJL1 ...]    # A szerkesztő indítása és projekt\n"
-"                                         létrehozása."
+#. Translators: %s is a Python module name or another os component
+#: ../pitivi/check.py:103
+#, python-format
+msgid "- %s version %s is installed but Pitivi requires at least version %s"
+msgstr "- %s %s verzió van telepítve, de a Pitivi legalább %s verziót igényel"
 
-#: ../pitivi/application.py:413
-msgid "Import each MEDIA_FILE into a new project."
-msgstr "Minden MÉDIA_FÁJL importálása új projektbe."
-
-#: ../pitivi/application.py:416
-msgid "Add each imported MEDIA_FILE to the timeline."
-msgstr "Minden importált MÉDIA_FÁJL hozzáadása az idővonalhoz."
-
-#: ../pitivi/application.py:419
-msgid "Run Pitivi in the Python Debugger."
-msgstr "A Pitivi futtatása a Python hibakeresőjében."
-
-#: ../pitivi/application.py:424
-msgid "-a requires -i"
-msgstr "A -a megköveteli a -i kapcsolót"
-
-#: ../pitivi/application.py:432
-msgid "Cannot open more than one PROJECT_FILE"
-msgstr "Nem nyitható meg egynél több PROJEKT_FÁJL"
-
-#: ../pitivi/check.py:237
+#: ../pitivi/check.py:184
 msgid "enables sound notifications when rendering is complete"
 msgstr "engedélyezi a hangos értesítéseket, amikor a renderelés kész"
 
-#: ../pitivi/check.py:240
+#: ../pitivi/check.py:186
+msgid "file thumbnails provided by GNOME's thumbnailers"
+msgstr "a GNOME bélyegképkészítője által nyújtott fájl bélyegképek"
+
+#: ../pitivi/check.py:188
 msgid "enables visual notifications when rendering is complete"
 msgstr "engedélyezi a vizuális értesítéseket, amikor a renderelés kész"
 
-#: ../pitivi/check.py:243
+#: ../pitivi/check.py:190
 msgid "additional multimedia codecs through the Libav library"
 msgstr "további multimédiás kodekek a Libav programkönyvtárból"
 
-#: ../pitivi/check.py:251
-msgid "additional video effects, clip transformation feature"
-msgstr "további videoeffektusok, kliptransformációs szolgáltatás"
+#: ../pitivi/check.py:222
+msgid "ERROR - The following hard dependencies are unmet:"
+msgstr "HIBA - A következő szigorú függőségek nincsenek kielégítve:"
 
-#: ../pitivi/clipproperties.py:149
+#: ../pitivi/check.py:231
+#| msgid "Missing Dependencies"
+msgid "Missing soft dependency:"
+msgstr "Hiányzó gyenge függőség:"
+
+#: ../pitivi/check.py:238
+#| msgid ""
+#| "Make sure you have at least one valid audio output sink available "
+#| "(alsasink or osssink)."
+msgid ""
+"Could not create audio output sink. Make sure you have a valid one "
+"(pulsesink, alsasink or osssink)."
+msgstr ""
+"Nem sikerült a hangkimenet süllyesztő létrehozása. Győződjön meg arról, hogy "
+"rendelkezik-e egy érvényessel (pulsesink, alsasink vagy osssink)."
+
+#: ../pitivi/clipproperties.py:152
 msgid "Effects"
 msgstr "Effektusok"
 
-#: ../pitivi/clipproperties.py:170
+#: ../pitivi/clipproperties.py:173
 msgid "Remove effect"
 msgstr "Effektus eltávolítása"
 
-#: ../pitivi/clipproperties.py:192
+#: ../pitivi/clipproperties.py:195
 msgid "Active"
 msgstr "Aktív"
 
-#: ../pitivi/clipproperties.py:194
+#: ../pitivi/clipproperties.py:197
 msgid "Type"
 msgstr "Típus"
 
-#: ../pitivi/clipproperties.py:205
+#: ../pitivi/clipproperties.py:208
 msgid "Effect name"
 msgstr "Effektus neve"
 
-#: ../pitivi/clipproperties.py:222
+#: ../pitivi/clipproperties.py:225
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Az idővonalon válasszon ki egy klipet a hozzá tartozó effektusok "
@@ -682,7 +728,7 @@ msgstr ""
 msgid "Transformation"
 msgstr "Átalakítás"
 
-#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:265
+#: ../pitivi/effects.py:78 ../pitivi/effects.py:172 ../pitivi/effects.py:264
 msgid "Uncategorized"
 msgstr "Kategorizálatlan"
 
@@ -718,197 +764,104 @@ msgstr "Szép"
 msgid "Time"
 msgstr "Idő"
 
-#: ../pitivi/effects.py:284
+#: ../pitivi/effects.py:283
 msgid "Audio |audio"
 msgstr "Hang"
 
-#: ../pitivi/effects.py:285
+#: ../pitivi/effects.py:284
 msgid "effect"
 msgstr "effektus"
 
-#: ../pitivi/mainwindow.py:139 ../pitivi/timeline/timeline.py:1010
+#: ../pitivi/mainwindow.py:126 ../pitivi/timeline/timeline.py:1016
 msgid "Split"
 msgstr "Felosztás"
 
-#: ../pitivi/mainwindow.py:140
+#: ../pitivi/mainwindow.py:127
 msgid "Keyframe"
 msgstr "Kulcsképkocka"
 
-#: ../pitivi/mainwindow.py:141 ../pitivi/timeline/timeline.py:995
+#: ../pitivi/mainwindow.py:128 ../pitivi/timeline/timeline.py:1001
 msgid "Ungroup"
 msgstr "Csoport szétbontása"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/mainwindow.py:143 ../pitivi/timeline/timeline.py:999
+#: ../pitivi/mainwindow.py:130 ../pitivi/timeline/timeline.py:1005
 msgid "Group"
 msgstr "Csoportosítás"
 
-#: ../pitivi/mainwindow.py:144 ../pitivi/timeline/timeline.py:1002
+#: ../pitivi/mainwindow.py:131 ../pitivi/timeline/timeline.py:1008
 msgid "Align"
 msgstr "Igazítás"
 
-#: ../pitivi/mainwindow.py:145
+#: ../pitivi/mainwindow.py:132
 msgid "Gapless mode"
 msgstr "Rés nélküli mód"
 
-#: ../pitivi/mainwindow.py:249
-msgid "Create a new project"
-msgstr "Új projekt létrehozása"
-
-#: ../pitivi/mainwindow.py:251
-msgid "_Open..."
-msgstr "_Megnyitás…"
-
-#: ../pitivi/mainwindow.py:252
-msgid "Open an existing project"
-msgstr "Létező projekt megnyitása"
-
-#: ../pitivi/mainwindow.py:255 ../pitivi/mainwindow.py:258
-msgid "Save the current project"
-msgstr "Projekt mentése"
-
-#: ../pitivi/mainwindow.py:257
-msgid "Save _As..."
-msgstr "Men_tés másként…"
-
-#: ../pitivi/mainwindow.py:261
-msgid "Reload the current project"
-msgstr "Jelenlegi projekt újratöltése"
-
-#: ../pitivi/mainwindow.py:263
-msgid "Export as Archive..."
-msgstr "Exportálás archívumként…"
-
-#: ../pitivi/mainwindow.py:264
-msgid "Export the current project"
-msgstr "Jelenlegi projekt exportálása"
-
-#: ../pitivi/mainwindow.py:267
-msgid "Edit the project settings"
-msgstr "A projekt beállításainak szerkesztése"
-
-#: ../pitivi/mainwindow.py:269
-msgid "_Render..."
-msgstr "_Renderelés…"
-
-#: ../pitivi/mainwindow.py:270
-msgid "Export your project as a finished movie"
-msgstr "Exportálja projektjét befejezett filmként"
-
-#: ../pitivi/mainwindow.py:273
-msgid "Undo the last operation"
-msgstr "Az utolsó művelet visszavonása"
-
-#: ../pitivi/mainwindow.py:276
-msgid "Redo the last operation that was undone"
-msgstr "Az utoljára visszavont művelet ismételt végrehajtása"
-
-#: ../pitivi/mainwindow.py:281
-msgid "Remove layer"
-msgstr "Réteg eltávolítása"
-
-#: ../pitivi/mainwindow.py:282
-msgid "Remove the selected layer from the project"
-msgstr "A kijelölt réteg eltávolítása a projektből"
-
-#: ../pitivi/mainwindow.py:287
-#, python-format
-msgid "Information about %s"
-msgstr "Információ erről: %s"
-
-#: ../pitivi/mainwindow.py:289
-msgid "User Manual"
-msgstr "Felhasználói kézikönyv"
-
-#. Set up the toplevel menu items for translation
-#: ../pitivi/mainwindow.py:293
-msgid "_Project"
-msgstr "_Projekt"
-
-#: ../pitivi/mainwindow.py:294
-msgid "_Edit"
-msgstr "S_zerkesztés"
-
-#: ../pitivi/mainwindow.py:295
-msgid "_View"
-msgstr "_Nézet"
-
-#: ../pitivi/mainwindow.py:296
-msgid "_Library"
-msgstr "_Médiagyűjtemény"
-
-#: ../pitivi/mainwindow.py:297
-msgid "_Timeline"
-msgstr "Idő_vonal"
-
-#: ../pitivi/mainwindow.py:298
-msgid "Previe_w"
-msgstr "Elő_nézet"
-
-#: ../pitivi/mainwindow.py:299
-msgid "_Help"
-msgstr "_Súgó"
-
-#: ../pitivi/mainwindow.py:304
-msgid "View the main window on the whole screen"
-msgstr "A főablak megjelenítése a teljes képernyőn"
-
-#: ../pitivi/mainwindow.py:309 ../pitivi/viewer.py:405
-msgid "Undock Viewer"
-msgstr "Megjelenítő leválasztása"
-
-#: ../pitivi/mainwindow.py:310
-msgid "Put the viewer in a separate window"
-msgstr "A megjelenítő külön ablakba helyezése"
-
-#: ../pitivi/mainwindow.py:399
+#: ../pitivi/mainwindow.py:265
 msgid "Media Library"
 msgstr "Médiagyűjtemény"
 
-#: ../pitivi/mainwindow.py:400
+#: ../pitivi/mainwindow.py:266
 msgid "Effect Library"
 msgstr "Effektusgyűjtemény"
 
-#: ../pitivi/mainwindow.py:410
-msgid "Clip configuration"
-msgstr "Klip beállításai"
+#: ../pitivi/mainwindow.py:276
+#| msgid "Clip font"
+msgid "Clip"
+msgstr "Klip"
 
-#: ../pitivi/mainwindow.py:411
-msgid "Transitions"
-msgstr "Átmenetek"
+#: ../pitivi/mainwindow.py:277
+#| msgid "Transitions"
+msgid "Transition"
+msgstr "Átmenet"
 
-#: ../pitivi/mainwindow.py:412
-msgid "Title editor"
-msgstr "Címszerkesztő"
+#: ../pitivi/mainwindow.py:278
+#| msgid "Untitled"
+msgid "Title"
+msgstr "Cím"
 
-#: ../pitivi/mainwindow.py:441
-msgid ""
-"Toggle gapless mode\n"
-"When enabled, adjacent clips automatically move to fill gaps."
-msgstr ""
-"Rés nélküli mód be/ki\n"
-"Ha be van kapcsolva, a szomszédos klipek automatikusan összezárnak hogy "
-"kitöltsék a réseket."
+#: ../pitivi/mainwindow.py:365
+#| msgid "_Undo"
+msgid "Undo"
+msgstr "Visszavonás"
 
-#: ../pitivi/mainwindow.py:700
+#: ../pitivi/mainwindow.py:370
+#| msgid "_Redo"
+msgid "Redo"
+msgstr "Újra"
+
+#: ../pitivi/mainwindow.py:377
+msgid "Save"
+msgstr "Mentés"
+
+#: ../pitivi/mainwindow.py:384
+msgid "Export your project as a finished movie"
+msgstr "Exportálja projektjét befejezett filmként"
+
+#: ../pitivi/mainwindow.py:558
 msgid "Development version"
 msgstr "Fejlesztői verzió"
 
-#: ../pitivi/mainwindow.py:708 ../pitivi/dialogs/startupwizard.py:163
+#: ../pitivi/mainwindow.py:560
 #, python-format
-msgid "Pitivi %s is available."
-msgstr "Elérhető a Pitivi %s."
+msgid "Version %(cur_ver)s — %(new_ver)s is available"
+msgstr "Jelenlegi verzió: %(cur_ver)s — új verzió érhető el: %(new_ver)s"
 
-#: ../pitivi/mainwindow.py:715
+#: ../pitivi/mainwindow.py:564
+#, python-format
+msgid "Version %s"
+msgstr "%s verzió"
+
+#: ../pitivi/mainwindow.py:572
 msgid "Current maintainers:"
 msgstr "Jelenlegi karbantartók:"
 
-#: ../pitivi/mainwindow.py:720
+#: ../pitivi/mainwindow.py:577
 msgid "Past maintainers:"
 msgstr "Korábbi karbantartók:"
 
 #. Translators: this paragraph is to be translated, the list of contributors is shown dynamically as a clickable link below it
-#: ../pitivi/mainwindow.py:726
+#: ../pitivi/mainwindow.py:583
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -927,17 +880,17 @@ msgstr ""
 "Közreműködőink iránti tiszteletből inkább ide irányítjuk:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:733
+#: ../pitivi/mainwindow.py:590
 #, python-format
-#| msgid "The list of contributors on Ohloh %s\n"
 msgid ""
 "The list of contributors on Ohloh %s\n"
 "Or you can run: git shortlog -s -n"
 msgstr ""
-"A közreműködők listája az Ohloh oldalon: %s\n\n"
+"A közreműködők listája az Ohloh oldalon: %s\n"
+"\n"
 "Vagy futtathatja: git shortlog -s -n"
 
-#: ../pitivi/mainwindow.py:737
+#: ../pitivi/mainwindow.py:594
 msgid "translator-credits"
 msgstr ""
 "Hammer Attila <hammera at pickup dot hu>, 2010.\n"
@@ -945,57 +898,57 @@ msgstr ""
 "Kun-Szabó Márton <kunszabomarton at hotmail dot com>, 2010."
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:755
+#: ../pitivi/mainwindow.py:612
 msgid "Open File..."
 msgstr "Fájl megnyitása…"
 
-#: ../pitivi/mainwindow.py:771
+#: ../pitivi/mainwindow.py:628
 msgid "All supported formats"
 msgstr "Minden támogatott formátum"
 
-#: ../pitivi/mainwindow.py:853
+#: ../pitivi/mainwindow.py:694
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nem menthető a(z) „%s” projekt"
 
-#: ../pitivi/mainwindow.py:886
+#: ../pitivi/mainwindow.py:731
 msgid "Close without saving"
 msgstr "Bezárás mentés nélkül"
 
-#: ../pitivi/mainwindow.py:902
+#: ../pitivi/mainwindow.py:747
 msgid "Save changes to the current project before closing?"
 msgstr "Bezárás előtt menti az aktuális projekt változtatásait?"
 
-#: ../pitivi/mainwindow.py:914
+#: ../pitivi/mainwindow.py:759
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Ha nem ment, akkor az utolsó %s változtatásai elvesznek."
 
-#: ../pitivi/mainwindow.py:918
+#: ../pitivi/mainwindow.py:763
 msgid "If you don't save, your changes will be lost."
 msgstr "Ha nem ment, akkor változtatásai elvesznek."
 
-#: ../pitivi/mainwindow.py:976
+#: ../pitivi/mainwindow.py:822
 msgid "Revert to saved project version?"
 msgstr "Visszatérés az elmentett projekt verzióhoz?"
 
-#: ../pitivi/mainwindow.py:981
+#: ../pitivi/mainwindow.py:827
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Ez újra fogja tölteni a jelenlegi projektet. Az összes nem mentett változás "
 "elvész."
 
-#: ../pitivi/mainwindow.py:996
+#: ../pitivi/mainwindow.py:842
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nem tölthető be a(z) „%s” projekt"
 
-#: ../pitivi/mainwindow.py:1008
+#: ../pitivi/mainwindow.py:854
 msgid "Locate missing file..."
 msgstr "Hiányzó fájl megkeresése…"
 
 #. # The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:1038
+#: ../pitivi/mainwindow.py:884
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -1004,7 +957,7 @@ msgstr ""
 "A következő fájl áthelyezésre került: „<b>%s</b>”\n"
 "Adja meg az új helyét:"
 
-#: ../pitivi/mainwindow.py:1043
+#: ../pitivi/mainwindow.py:889
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
@@ -1014,16 +967,16 @@ msgstr ""
 "Adja meg az új helyét:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI files"
-#: ../pitivi/mainwindow.py:1066
+#: ../pitivi/mainwindow.py:912
 #, python-format
 msgid "%s files"
 msgstr "%s fájlok"
 
-#: ../pitivi/mainwindow.py:1070 ../pitivi/medialibrary.py:482
+#: ../pitivi/mainwindow.py:916 ../pitivi/medialibrary.py:490
 msgid "All files"
 msgstr "Minden fájl"
 
-#: ../pitivi/mainwindow.py:1094
+#: ../pitivi/mainwindow.py:940
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1034,124 +987,125 @@ msgstr ""
 "\n"
 "A Pitivi jelenleg nem támogatja a részleges projekteket."
 
-#: ../pitivi/mainwindow.py:1204
+#: ../pitivi/mainwindow.py:1020
 msgid "Export To..."
 msgstr "Exportálás ide…"
 
-#: ../pitivi/mainwindow.py:1217 ../pitivi/mainwindow.py:1264
-#: ../pitivi/mainwindow.py:1347 ../pitivi/render.py:350
-#: ../pitivi/timeline/timeline.py:1306
+#: ../pitivi/mainwindow.py:1033 ../pitivi/mainwindow.py:1077
+#: ../pitivi/mainwindow.py:1127 ../pitivi/mainwindow.py:1154
+#: ../pitivi/render.py:348
 msgid "Untitled"
 msgstr "Névtelen"
 
-#: ../pitivi/mainwindow.py:1222
+#: ../pitivi/mainwindow.py:1038
 msgid "Tar archive"
 msgstr "Tar archívum"
 
-#: ../pitivi/mainwindow.py:1226 ../pitivi/mainwindow.py:1237
-#: ../pitivi/mainwindow.py:1270 ../pitivi/mainwindow.py:1282
+#: ../pitivi/mainwindow.py:1042 ../pitivi/mainwindow.py:1083
 msgid "Detect automatically"
 msgstr "Automatikus detektálás"
 
-#: ../pitivi/mainwindow.py:1251 ../pitivi/timeline/timeline.py:1300
-msgid "Save As..."
-msgstr "Mentés másként…"
+#: ../pitivi/mainwindow.py:1129
+msgid "PNG image"
+msgstr "PNG-kép"
 
-#: ../pitivi/mainwindow.py:1299
-msgid "Preview - click outside to close"
-msgstr "Előnézet – kattintson kívülre a bezáráshoz"
+#: ../pitivi/mainwindow.py:1130
+msgid "JPEG image"
+msgstr "JPEG-kép"
 
-#: ../pitivi/mediafilespreviewer.py:137
+#: ../pitivi/mainwindow.py:1176
+msgid "Preview"
+msgstr "Előnézet"
+
+#: ../pitivi/mediafilespreviewer.py:160
 msgid "Pitivi can not preview this file."
 msgstr "A Pitivi nem képes megjeleníteni ezt a fájlt."
 
-#: ../pitivi/mediafilespreviewer.py:138
+#: ../pitivi/mediafilespreviewer.py:161
 msgid "More info"
 msgstr "Több infó"
 
-#: ../pitivi/mediafilespreviewer.py:233
+#: ../pitivi/mediafilespreviewer.py:256
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Felbontás</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:235 ../pitivi/mediafilespreviewer.py:250
+#: ../pitivi/mediafilespreviewer.py:257 ../pitivi/mediafilespreviewer.py:273
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Hossz:</b> %s"
 
-#: ../pitivi/mediafilespreviewer.py:419 ../pitivi/medialibrary.py:772
+#: ../pitivi/mediafilespreviewer.py:442 ../pitivi/medialibrary.py:837
 msgid "Error while analyzing a file"
 msgstr "Hiba a fájl elemzésekor"
 
-#: ../pitivi/medialibrary.py:195
+#: ../pitivi/medialibrary.py:191
 msgid "Icon"
 msgstr "Ikon"
 
-#: ../pitivi/medialibrary.py:204
+#: ../pitivi/medialibrary.py:200
 msgid "Information"
 msgstr "Információk"
 
-#: ../pitivi/medialibrary.py:215
+#: ../pitivi/medialibrary.py:211
 msgid "Duration"
 msgstr "Hossz"
 
-#: ../pitivi/medialibrary.py:445
+#: ../pitivi/medialibrary.py:453
 msgid "Select One or More Files"
 msgstr "Válasszon ki legalább egy fájlt"
 
-#: ../pitivi/medialibrary.py:447
+#: ../pitivi/medialibrary.py:455
 msgid "Close after importing files"
 msgstr "Bezárás a fájlok importálásának befejeződésekor"
 
-#: ../pitivi/medialibrary.py:471
+#: ../pitivi/medialibrary.py:479
 msgid "Supported file formats"
 msgstr "Támogatott fájlformátumok"
 
 #. Also allow showing known but not reliable demuxers
-#: ../pitivi/medialibrary.py:477
+#: ../pitivi/medialibrary.py:485
 msgid "All known file formats"
 msgstr "Minden támogatott fájlformátum"
 
-#: ../pitivi/medialibrary.py:499
+#: ../pitivi/medialibrary.py:507
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "%(current_clip)d. klip importálása, összesen %(total)d"
 
-#: ../pitivi/medialibrary.py:638
-#| msgid "View error"
+#: ../pitivi/medialibrary.py:673
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Hiba megjelenítése"
 msgstr[1] "Hibák megjelenítése"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: ../pitivi/medialibrary.py:640
+#: ../pitivi/medialibrary.py:675
 #, python-brace-format
-#| msgid "An error occurred while importing."
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Hiba történt az importálás közben."
 msgstr[1] "{0:d} hiba történt az importálás közben."
 
-#: ../pitivi/medialibrary.py:769
+#: ../pitivi/medialibrary.py:834
 msgid "Error while analyzing files"
 msgstr "Hiba a fájlok elemzése közben"
 
-#: ../pitivi/medialibrary.py:770
+#: ../pitivi/medialibrary.py:835
 msgid "The following files can not be used with Pitivi."
 msgstr "A Pitivi nem tudja használni a következő fájlokat."
 
-#: ../pitivi/medialibrary.py:773
+#: ../pitivi/medialibrary.py:838
 msgid "The following file can not be used with Pitivi."
 msgstr "A Pitivi nem tudja használni a következő fájlt."
 
-#: ../pitivi/preset.py:94 ../pitivi/preset.py:219 ../pitivi/preset.py:224
-#: ../pitivi/preset.py:266 ../pitivi/preset.py:283 ../pitivi/project.py:1321
-#: ../pitivi/project.py:1326 ../pitivi/render.py:407
+#: ../pitivi/preset.py:94 ../pitivi/preset.py:216 ../pitivi/preset.py:221
+#: ../pitivi/preset.py:263 ../pitivi/preset.py:280 ../pitivi/project.py:1381
+#: ../pitivi/project.py:1386 ../pitivi/render.py:405
 msgid "No preset"
 msgstr "Nincs előbeállítás"
 
-#: ../pitivi/project.py:177
+#: ../pitivi/project.py:220
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1161,15 +1115,15 @@ msgstr ""
 "médiafájlt próbált hozzáadni a projektjéhez, akkor használja inkább az "
 "„Importálás” gombot."
 
-#: ../pitivi/project.py:191
+#: ../pitivi/project.py:233
 msgid "Ignore backup"
 msgstr "Biztonsági mentés mellőzése"
 
-#: ../pitivi/project.py:192
+#: ../pitivi/project.py:234
 msgid "Restore from backup"
 msgstr "Helyreállítás mentésből"
 
-#: ../pitivi/project.py:207
+#: ../pitivi/project.py:249
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1182,39 +1136,39 @@ msgstr ""
 "\n"
 "Szeretné inkább ezt betölteni?"
 
-#: ../pitivi/project.py:277
+#: ../pitivi/project.py:319
 msgid "You do not have permissions to write to this folder."
 msgstr "Nincs jogosultsága ebbe a mappába írni."
 
 #. write project file to temporary file
-#: ../pitivi/project.py:311
+#: ../pitivi/project.py:353
 msgid "project"
 msgstr "projekt"
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:420
+#: ../pitivi/project.py:462
 msgid "New Project"
 msgstr "Új projekt"
 
-#: ../pitivi/project.py:561
+#: ../pitivi/project.py:605
 msgid "Pitivi encoding profile"
 msgstr "Pitivi kódolás profil"
 
-#: ../pitivi/project.py:1342 ../pitivi/render.py:537
+#: ../pitivi/project.py:1402 ../pitivi/render.py:535
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "A(z) „%s” már létezik."
 
-#: ../pitivi/project.py:1415 ../pitivi/render.py:578
+#: ../pitivi/project.py:1475 ../pitivi/render.py:576
 msgid "New preset"
 msgstr "Új előbeállítás"
 
-#: ../pitivi/project.py:1418 ../pitivi/render.py:581
+#: ../pitivi/project.py:1478 ../pitivi/render.py:579
 #, python-format
 msgid "New preset %d"
 msgstr "Új beállítás %d"
 
-#: ../pitivi/render.py:260
+#: ../pitivi/render.py:258
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Renderelés — %d%% kész"
@@ -1225,20 +1179,20 @@ msgstr "Renderelés — %d%% kész"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: ../pitivi/render.py:269
+#: ../pitivi/render.py:267
 #, python-format
 msgid "About %s left"
 msgstr "Körülbelül %s van hátra"
 
-#: ../pitivi/render.py:308
+#: ../pitivi/render.py:306
 msgid "Currently rendering"
 msgstr "Jelenleg renderelés alatt"
 
-#: ../pitivi/render.py:707
+#: ../pitivi/render.py:705
 msgid "A file name is required."
 msgstr "Fájlnév szükséges."
 
-#: ../pitivi/render.py:709
+#: ../pitivi/render.py:707
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1246,89 +1200,89 @@ msgstr ""
 "Ez a fájl már létezik.\n"
 "Ha nem szeretné felülírni, akkor válasszon másik fájlnevet vagy mappát."
 
-#: ../pitivi/render.py:737
+#: ../pitivi/render.py:735
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:742
+#: ../pitivi/render.py:740
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:792
+#: ../pitivi/render.py:790
 msgid "Sorry, something didn’t work right."
 msgstr "Elnézést, valami nem működött rendesen."
 
-#: ../pitivi/render.py:793
+#: ../pitivi/render.py:791
 msgid ""
 "An error occured while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. See the details below "
 "for some basic information that may help identify the problem."
 msgstr ""
-"Hiba történt a projekt renderelésekor. Nézze meg hibaelhárítási útmutatónkat, "
-"vagy küldjön egy hibajelentést. Az alábbi alapvető információk segíthetnek a "
-"probléma azonosításában."
+"Hiba történt a projekt renderelésekor. Nézze meg hibaelhárítási "
+"útmutatónkat, vagy küldjön egy hibajelentést. Az alábbi alapvető információk "
+"segíthetnek a probléma azonosításában."
 
-#: ../pitivi/render.py:804
+#: ../pitivi/render.py:802
 msgid "Details"
 msgstr "Részletek"
 
-#: ../pitivi/render.py:964 ../pitivi/render.py:965 ../pitivi/render.py:969
+#: ../pitivi/render.py:969 ../pitivi/render.py:970 ../pitivi/render.py:974
 msgid "Render complete"
 msgstr "Renderelés kész"
 
-#: ../pitivi/render.py:968
+#: ../pitivi/render.py:973
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s” befejezte a renderelést."
 
-#: ../pitivi/titleeditor.py:619 ../pitivi/titleeditor.py:626
+#: ../pitivi/titleeditor.py:625 ../pitivi/titleeditor.py:632
 msgid "Custom"
 msgstr "Egyéni"
 
-#: ../pitivi/titleeditor.py:620
+#: ../pitivi/titleeditor.py:626
 msgid "Top"
 msgstr "Fent"
 
-#: ../pitivi/titleeditor.py:621 ../pitivi/titleeditor.py:628
+#: ../pitivi/titleeditor.py:627 ../pitivi/titleeditor.py:634
 msgid "Center"
 msgstr "Középen"
 
-#: ../pitivi/titleeditor.py:622
+#: ../pitivi/titleeditor.py:628
 msgid "Bottom"
 msgstr "Lent"
 
-#: ../pitivi/titleeditor.py:623
+#: ../pitivi/titleeditor.py:629
 msgid "Baseline"
 msgstr "Alapvonal"
 
-#: ../pitivi/titleeditor.py:627
+#: ../pitivi/titleeditor.py:633
 msgid "Left"
 msgstr "Balra"
 
-#: ../pitivi/titleeditor.py:629
+#: ../pitivi/titleeditor.py:635
 msgid "Right"
 msgstr "Jobbra"
 
-#: ../pitivi/transitions.py:65
+#: ../pitivi/transitions.py:70
 msgid "Search..."
 msgstr "Keresés…"
 
-#: ../pitivi/transitions.py:71
+#: ../pitivi/transitions.py:76
 msgid "Normal"
 msgstr "Normál"
 
-#: ../pitivi/transitions.py:72
+#: ../pitivi/transitions.py:77
 msgid "Loop"
 msgstr "Végtelenítés"
 
-#: ../pitivi/transitions.py:82
+#: ../pitivi/transitions.py:87
 msgid "Reverse direction"
 msgstr "Fordított irány"
 
-#: ../pitivi/transitions.py:96
+#: ../pitivi/transitions.py:100
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
@@ -1337,47 +1291,47 @@ msgstr ""
 "rétegen. Kattintson az átmenetre az idővonalon az átmenet típusának "
 "megváltoztatásához."
 
-#: ../pitivi/transitions.py:185
+#: ../pitivi/transitions.py:189
 msgid "Slow"
 msgstr "Lassú"
 
-#: ../pitivi/transitions.py:186
+#: ../pitivi/transitions.py:190
 msgid "Fast"
 msgstr "Gyors"
 
-#: ../pitivi/transitions.py:187
+#: ../pitivi/transitions.py:191
 msgid "Epileptic"
 msgstr "Epilepsziás"
 
-#: ../pitivi/transitions.py:191
+#: ../pitivi/transitions.py:195
 msgid "Sharp"
 msgstr "Éles"
 
-#: ../pitivi/transitions.py:192
+#: ../pitivi/transitions.py:196
 msgid "Smooth"
 msgstr "Sima"
 
-#: ../pitivi/viewer.py:87
+#: ../pitivi/viewer.py:79
 msgid "Currently playing"
 msgstr "Most játszott"
 
-#: ../pitivi/viewer.py:219
+#: ../pitivi/viewer.py:201
 msgid "Go to the beginning of the timeline"
 msgstr "Az idővonal elejére"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer.py:208
 msgid "Go back one second"
 msgstr "Egy másodperccel vissza"
 
-#: ../pitivi/viewer.py:238
+#: ../pitivi/viewer.py:220
 msgid "Go forward one second"
 msgstr "Egy másodperccel előre"
 
-#: ../pitivi/viewer.py:245
+#: ../pitivi/viewer.py:227
 msgid "Go to the end of the timeline"
 msgstr "Az idővonal végére"
 
-#: ../pitivi/viewer.py:252
+#: ../pitivi/viewer.py:233
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1385,23 +1339,27 @@ msgstr ""
 "Adjon meg egy időkódot vagy képkocka számot és\n"
 "nyomja meg az „Enter” gombot a pozícióra ugráshoz"
 
-#: ../pitivi/viewer.py:375
-msgid "Dock Viewer"
-msgstr "Megjelenítő dokkolása"
+#: ../pitivi/viewer.py:240
+msgid ""
+"Detach the viewer\n"
+"You can re-attach it by closing the newly created window."
+msgstr ""
+"A megjelenítő leválasztva\n"
+"Az újonnan létrehozott ablak bezárásával újra csatolhatja."
 
-#: ../pitivi/viewer.py:385 ../pitivi/viewer.py:433
+#: ../pitivi/viewer.py:352 ../pitivi/viewer.py:391
 msgid "Show this window in fullscreen"
 msgstr "Az ablak megjelenítése teljes méretben"
 
-#: ../pitivi/viewer.py:430
+#: ../pitivi/viewer.py:388
 msgid "Exit fullscreen mode"
 msgstr "Kilépés a teljes képernyős módból"
 
-#: ../pitivi/viewer.py:1033
+#: ../pitivi/viewer.py:1009
 msgid "Play"
 msgstr "Lejátszás"
 
-#: ../pitivi/viewer.py:1040
+#: ../pitivi/viewer.py:1016
 msgid "Pause"
 msgstr "Szünet"
 
@@ -1473,20 +1431,20 @@ msgstr "Poz.:"
 msgid "Change audio panning"
 msgstr "Hangpozíció módosítása"
 
-#: ../pitivi/timeline/ruler.py:197
+#: ../pitivi/timeline/ruler.py:218
 #, python-format
 msgid "Frame #%d"
 msgstr "%d. képkocka"
 
-#: ../pitivi/timeline/timeline.py:55 ../pitivi/timeline/timeline.py:68
+#: ../pitivi/timeline/timeline.py:51 ../pitivi/timeline/timeline.py:64
 msgid "Behavior"
 msgstr "Viselkedés"
 
-#: ../pitivi/timeline/timeline.py:56
+#: ../pitivi/timeline/timeline.py:52
 msgid "Snap distance"
 msgstr "Illesztési távolság"
 
-#: ../pitivi/timeline/timeline.py:57
+#: ../pitivi/timeline/timeline.py:53
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1494,11 +1452,11 @@ msgstr ""
 "Küszöbszint (képpontban), amelynél két klip össze lesz illesztve húzáskor "
 "vagy vágáskor."
 
-#: ../pitivi/timeline/timeline.py:69
+#: ../pitivi/timeline/timeline.py:65
 msgid "Image clip duration"
 msgstr "Képbevágás hossza"
 
-#: ../pitivi/timeline/timeline.py:70
+#: ../pitivi/timeline/timeline.py:66
 msgid ""
 "Default clip length (in miliseconds) of images when inserting on the "
 "timeline."
@@ -1506,85 +1464,73 @@ msgstr ""
 "Képbevágás alapértelmezett hossza ezredmásodpercben az idővonalra való "
 "beszúráskor."
 
-#. tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:76
-msgid "Delete Selected"
-msgstr "Kijelölt törlése"
+#: ../pitivi/timeline/timeline.py:885
+msgid ""
+"Toggle gapless mode\n"
+"When enabled, adjacent clips automatically move to fill gaps."
+msgstr ""
+"Rés nélküli mód be/ki\n"
+"Ha be van kapcsolva, a szomszédos klipek automatikusan összezárnak hogy "
+"kitöltsék a réseket."
 
-#: ../pitivi/timeline/timeline.py:77
-msgid "Split clip at playhead position"
-msgstr "Klip szétvágása a lejátszófej pozíciójánál"
-
-#: ../pitivi/timeline/timeline.py:78
-msgid "Add a keyframe"
-msgstr "Kulcsképkocka hozzáadása"
-
-#: ../pitivi/timeline/timeline.py:79
-msgid "Move to the previous keyframe"
-msgstr "Az előző kulcsképkockára"
-
-#: ../pitivi/timeline/timeline.py:80
-msgid "Move to the next keyframe"
-msgstr "A következő kulcsképkockára"
-
-#: ../pitivi/timeline/timeline.py:81
+#. TODO: use GAction + GActionGroup (Gio.SimpleAction + Gio.SimpleActionGroup)
+#. Action list items can vary in size (1-6 items). The first one is the
+#. name, and it is the only mandatory option. All the other options are
+#. optional, and if omitted will default to None.
+#.
+#. name (required), stock ID, translatable label,
+#. keyboard shortcut, translatable tooltip, callback function
+#: ../pitivi/timeline/timeline.py:973
 msgid "Zoom In"
 msgstr "Nagyítás"
 
-#: ../pitivi/timeline/timeline.py:82
+#: ../pitivi/timeline/timeline.py:974
 msgid "Zoom Out"
 msgstr "Kicsinyítés"
 
-#: ../pitivi/timeline/timeline.py:83 ../pitivi/utils/widgets.py:48
+#: ../pitivi/timeline/timeline.py:975 ../pitivi/utils/widgets.py:51
 msgid "Zoom Fit"
 msgstr "Ablakhoz"
 
-#: ../pitivi/timeline/timeline.py:84
+#: ../pitivi/timeline/timeline.py:999
+msgid "Delete Selected"
+msgstr "Kijelölt törlése"
+
+#: ../pitivi/timeline/timeline.py:1002
 msgid "Ungroup clips"
 msgstr "Klipcsoport bontása"
 
-#: ../pitivi/timeline/timeline.py:85
+#: ../pitivi/timeline/timeline.py:1006
 msgid "Group clips"
 msgstr "Klipek csoportosítása"
 
-#: ../pitivi/timeline/timeline.py:86
+#: ../pitivi/timeline/timeline.py:1009
 msgid "Align clips based on their soundtracks"
 msgstr "Klipek igazítása zenei sávjuk alapján"
 
-#: ../pitivi/timeline/timeline.py:976
-msgid "Export current frame..."
-msgstr "Jelenlegi képkocka exportálása…"
-
-#: ../pitivi/timeline/timeline.py:977
-msgid "Export the frame at the current playhead position as an image file."
-msgstr ""
-"A jelenlegi lejátszófej-pozíciónál lévő képkocka exportálása képfájlként."
-
-#: ../pitivi/timeline/timeline.py:1008
+#: ../pitivi/timeline/timeline.py:1014
 msgid "Start Playback"
 msgstr "Lejátszás elkezdése"
 
-#: ../pitivi/timeline/timeline.py:1013
+#: ../pitivi/timeline/timeline.py:1017
+msgid "Split clip at playhead position"
+msgstr "Klip szétvágása a lejátszófej pozíciójánál"
+
+#: ../pitivi/timeline/timeline.py:1019
 msgid "Add a Keyframe"
 msgstr "Kulcsképkocka hozzáadása"
 
-#: ../pitivi/timeline/timeline.py:1016
-msgid "_Previous Keyframe"
-msgstr "_Előző kulcsképkocka"
+#: ../pitivi/timeline/timeline.py:1020
+msgid "Add a keyframe"
+msgstr "Kulcsképkocka hozzáadása"
 
-#: ../pitivi/timeline/timeline.py:1019
-msgid "_Next Keyframe"
-msgstr "_Következő kulcsképkocka"
+#. Translators: a label showing an invalid framerate value
+#: ../pitivi/dialogs/clipmediaprops.py:105
+#, python-format
+msgid "invalid (%s fps)"
+msgstr "érvénytelen (%s fps)"
 
-#: ../pitivi/timeline/timeline.py:1308
-msgid "PNG image"
-msgstr "PNG-kép"
-
-#: ../pitivi/timeline/timeline.py:1309
-msgid "JPEG image"
-msgstr "JPEG-kép"
-
-#: ../pitivi/dialogs/clipmediaprops.py:82
+#: ../pitivi/dialogs/clipmediaprops.py:127
 msgid "Image:"
 msgstr "Kép:"
 
@@ -1592,71 +1538,76 @@ msgstr "Kép:"
 msgid "Unknown reason"
 msgstr "Ismeretlen ok"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:87
+#: ../pitivi/dialogs/filelisterrordialog.py:88
 msgid "Problem:"
 msgstr "Probléma:"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:94
+#: ../pitivi/dialogs/filelisterrordialog.py:95
 msgid "Extra information:"
 msgstr "További információk:"
 
-#: ../pitivi/dialogs/prefs.py:279 ../pitivi/utils/widgets.py:822
+#: ../pitivi/dialogs/prefs.py:280 ../pitivi/utils/widgets.py:733
 msgid "Reset to default value"
 msgstr "Visszaállítás alapértelmezett értékre"
 
-#: ../pitivi/dialogs/startupwizard.py:59
+#: ../pitivi/dialogs/startupwizard.py:69
 msgid "Projects"
 msgstr "Projektek"
 
+#: ../pitivi/dialogs/startupwizard.py:176
+#, python-format
+msgid "Pitivi %s is available."
+msgstr "Elérhető a Pitivi %s."
+
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils/misc.py:155
+#: ../pitivi/utils/misc.py:145
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "A(z) %s még nem kezeli a nem helyileg tárolt projekteket"
 
-#: ../pitivi/utils/ui.py:212
+#: ../pitivi/utils/ui.py:263
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Hang:</b> %d csatorna, %d <i>Hz</i> (%d <i>bit</i>)"
 msgstr[1] "<b>Hang:</b> %d csatorna, %d <i>Hz</i> (%d <i>bit</i>)"
 
-#: ../pitivi/utils/ui.py:222
+#: ../pitivi/utils/ui.py:273
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgstr "<b>Videó:</b> %d×%d <i>képpont</i>, %.3f<i>fps</i>"
 
-#: ../pitivi/utils/ui.py:229
+#: ../pitivi/utils/ui.py:280
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Kép:</b> %d×%d <i>képpont</i>"
 
-#: ../pitivi/utils/ui.py:276 ../pitivi/utils/ui.py:304
-#: ../pitivi/utils/ui.py:328
+#: ../pitivi/utils/ui.py:327 ../pitivi/utils/ui.py:355
+#: ../pitivi/utils/ui.py:379
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d óra"
 msgstr[1] "%d óra"
 
-#: ../pitivi/utils/ui.py:279 ../pitivi/utils/ui.py:307
-#: ../pitivi/utils/ui.py:331
+#: ../pitivi/utils/ui.py:330 ../pitivi/utils/ui.py:358
+#: ../pitivi/utils/ui.py:382
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d perc"
 msgstr[1] "%d perc"
 
-#: ../pitivi/utils/ui.py:282 ../pitivi/utils/ui.py:310
-#: ../pitivi/utils/ui.py:334
+#: ../pitivi/utils/ui.py:333 ../pitivi/utils/ui.py:361
+#: ../pitivi/utils/ui.py:385
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d másodperc"
 msgstr[1] "%d másodperc"
 
-#: ../pitivi/utils/ui.py:302
+#: ../pitivi/utils/ui.py:353
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -1664,147 +1615,285 @@ msgstr[0] "%d nap"
 msgstr[1] "%d nap"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:401 ../pitivi/utils/ui.py:402
-#: ../pitivi/utils/ui.py:403 ../pitivi/utils/ui.py:405
-#: ../pitivi/utils/ui.py:406 ../pitivi/utils/ui.py:408
-#: ../pitivi/utils/ui.py:409 ../pitivi/utils/ui.py:411
-#: ../pitivi/utils/ui.py:412
+#: ../pitivi/utils/ui.py:437 ../pitivi/utils/ui.py:438
+#: ../pitivi/utils/ui.py:439 ../pitivi/utils/ui.py:441
+#: ../pitivi/utils/ui.py:442 ../pitivi/utils/ui.py:444
+#: ../pitivi/utils/ui.py:445 ../pitivi/utils/ui.py:447
+#: ../pitivi/utils/ui.py:448
 #, python-format
 msgid "%d fps"
 msgstr "%d fps"
 
-#: ../pitivi/utils/ui.py:404
+#: ../pitivi/utils/ui.py:440
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f fps"
 
-#: ../pitivi/utils/ui.py:407 ../pitivi/utils/ui.py:410
+#: ../pitivi/utils/ui.py:443 ../pitivi/utils/ui.py:446
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f fps"
 
-#: ../pitivi/utils/ui.py:416 ../pitivi/utils/ui.py:417
-#: ../pitivi/utils/ui.py:418 ../pitivi/utils/ui.py:420
-#: ../pitivi/utils/ui.py:421
+#: ../pitivi/utils/ui.py:452 ../pitivi/utils/ui.py:453
+#: ../pitivi/utils/ui.py:454 ../pitivi/utils/ui.py:456
+#: ../pitivi/utils/ui.py:457
 #, python-format
 msgid "%d kHz"
 msgstr "%d kHz"
 
-#: ../pitivi/utils/ui.py:419
+#: ../pitivi/utils/ui.py:455
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
-#: ../pitivi/utils/ui.py:424
+#: ../pitivi/utils/ui.py:460
 msgid "6 Channels (5.1)"
 msgstr "6 csatorna (5.1)"
 
-#: ../pitivi/utils/ui.py:425
+#: ../pitivi/utils/ui.py:461
 msgid "4 Channels (4.0)"
 msgstr "4 csatorna (4.0)"
 
-#: ../pitivi/utils/ui.py:426
+#: ../pitivi/utils/ui.py:462
 msgid "Stereo"
 msgstr "Sztereó"
 
-#: ../pitivi/utils/ui.py:427
+#: ../pitivi/utils/ui.py:463
 msgid "Mono"
 msgstr "Mono"
 
-#: ../pitivi/utils/ui.py:432
+#: ../pitivi/utils/ui.py:468
 msgid "Square"
 msgstr "Négyzet"
 
-#: ../pitivi/utils/ui.py:433
+#: ../pitivi/utils/ui.py:469
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:434
+#: ../pitivi/utils/ui.py:470
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:435
+#: ../pitivi/utils/ui.py:471
 msgid "480p Wide"
 msgstr "480p széles"
 
-#: ../pitivi/utils/ui.py:436
+#: ../pitivi/utils/ui.py:472
 msgid "480i Wide"
 msgstr "480i széles"
 
-#: ../pitivi/utils/ui.py:437
+#: ../pitivi/utils/ui.py:473
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:438
+#: ../pitivi/utils/ui.py:474
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:439
+#: ../pitivi/utils/ui.py:475
 msgid "576p Wide"
 msgstr "576p széles"
 
-#: ../pitivi/utils/ui.py:440
+#: ../pitivi/utils/ui.py:476
 msgid "576i Wide"
 msgstr "576i széles"
 
-#: ../pitivi/utils/ui.py:445
+#: ../pitivi/utils/ui.py:481
 msgid "DV (15:11)"
 msgstr "DV (15:11)"
 
-#: ../pitivi/utils/ui.py:446
+#: ../pitivi/utils/ui.py:482
 msgid "DV Widescreen (16:9)"
 msgstr "DV szélesvásznú (16:9)"
 
-#: ../pitivi/utils/ui.py:447
+#: ../pitivi/utils/ui.py:483
 msgid "Cinema (1.37)"
 msgstr "Mozi (1.37)"
 
-#: ../pitivi/utils/ui.py:448
+#: ../pitivi/utils/ui.py:484
 msgid "Cinema (1.66)"
 msgstr "Mozi (1.66)"
 
-#: ../pitivi/utils/ui.py:449
+#: ../pitivi/utils/ui.py:485
 msgid "Cinema (1.85)"
 msgstr "Mozi (1.85)"
 
-#: ../pitivi/utils/ui.py:450
+#: ../pitivi/utils/ui.py:486
 msgid "Anamorphic (2.35)"
 msgstr "Anamorfikus (2.35)"
 
-#: ../pitivi/utils/ui.py:451
+#: ../pitivi/utils/ui.py:487
 msgid "Anamorphic (2.39)"
 msgstr "Anamorfikus (2.39)"
 
-#: ../pitivi/utils/ui.py:452
+#: ../pitivi/utils/ui.py:488
 msgid "Anamorphic (2.4)"
 msgstr "Anamorfikus (2.4)"
 
-#: ../pitivi/utils/widgets.py:83
+#: ../pitivi/utils/widgets.py:84
 msgid "Implement Me"
 msgstr "Implementáljon"
 
-#: ../pitivi/utils/widgets.py:729
+#: ../pitivi/utils/widgets.py:640
 msgid "No properties."
 msgstr "Nincsenek tulajdonságok."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:813
+#: ../pitivi/utils/widgets.py:724
 msgid "Show keyframes for this value"
 msgstr "Az érték kulcsképkockáinak megjelenítése"
 
 #. set title and frame label
-#: ../pitivi/utils/widgets.py:941
+#: ../pitivi/utils/widgets.py:886
 #, python-format
 msgid "Properties for %s"
 msgstr "A(z) %s tulajdonságai"
 
-#: ../pitivi/utils/widgets.py:1054
+#: ../pitivi/utils/widgets.py:1002
 msgid "Zoom"
 msgstr "Nagyítás"
 
-#: ../pitivi/utils/widgets.py:1068
-msgid "Zoom Timeline"
-msgstr "Idővonal nagyítása"
+#. Translators: %s represents a duration, for example "10 minutes"
+#: ../pitivi/utils/widgets.py:1059
+#, python-format
+msgid "%s displayed"
+msgstr "%s megjelenítve"
+
+#. Translators: This is a tooltip
+#: ../pitivi/utils/widgets.py:1062
+#, python-format
+msgid "%d nanoseconds displayed, because we can"
+msgstr "%d nanomásodperc megjelenítve, mert képesek vagyunk rá"
+
+#~ msgid ""
+#~ "There is already a %s instance, please inform the developers by filing a "
+#~ "bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+#~ msgstr ""
+#~ "Egy %s folyamat már fut, értesítse a fejlesztőket hibajelentés küldésével "
+#~ "a következő címen: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+
+#~ msgid ""
+#~ "\n"
+#~ "    %prog [PROJECT_FILE]               # Start the video editor.\n"
+#~ "    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
+#~ "project."
+#~ msgstr ""
+#~ "\n"
+#~ "    %prog [PROJEKT_FÁJL]               # A videoszerkesztő indítása.\n"
+#~ "    %prog -i [-a] [MÉDIA_FÁJL1 ...]    # A szerkesztő indítása és "
+#~ "projekt\n"
+#~ "                                         létrehozása."
+
+#~ msgid "Import each MEDIA_FILE into a new project."
+#~ msgstr "Minden MÉDIA_FÁJL importálása új projektbe."
+
+#~ msgid "Add each imported MEDIA_FILE to the timeline."
+#~ msgstr "Minden importált MÉDIA_FÁJL hozzáadása az idővonalhoz."
+
+#~ msgid "Run Pitivi in the Python Debugger."
+#~ msgstr "A Pitivi futtatása a Python hibakeresőjében."
+
+#~ msgid "-a requires -i"
+#~ msgstr "A -a megköveteli a -i kapcsolót"
+
+#~ msgid "Cannot open more than one PROJECT_FILE"
+#~ msgstr "Nem nyitható meg egynél több PROJEKT_FÁJL"
+
+#~ msgid "additional video effects, clip transformation feature"
+#~ msgstr "további videoeffektusok, kliptransformációs szolgáltatás"
+
+#~ msgid "Create a new project"
+#~ msgstr "Új projekt létrehozása"
+
+#~ msgid "_Open..."
+#~ msgstr "_Megnyitás…"
+
+#~ msgid "Open an existing project"
+#~ msgstr "Létező projekt megnyitása"
+
+#~ msgid "Save the current project"
+#~ msgstr "Projekt mentése"
+
+#~ msgid "Save _As..."
+#~ msgstr "Men_tés másként…"
+
+#~ msgid "Export the current project"
+#~ msgstr "Jelenlegi projekt exportálása"
+
+#~ msgid "_Render..."
+#~ msgstr "_Renderelés…"
+
+#~ msgid "Undo the last operation"
+#~ msgstr "Az utolsó művelet visszavonása"
+
+#~ msgid "Redo the last operation that was undone"
+#~ msgstr "Az utoljára visszavont művelet ismételt végrehajtása"
+
+#~ msgid "Remove layer"
+#~ msgstr "Réteg eltávolítása"
+
+#~ msgid "Remove the selected layer from the project"
+#~ msgstr "A kijelölt réteg eltávolítása a projektből"
+
+#~ msgid "Information about %s"
+#~ msgstr "Információ erről: %s"
+
+#~ msgid "_Project"
+#~ msgstr "_Projekt"
+
+#~ msgid "_Edit"
+#~ msgstr "S_zerkesztés"
+
+#~ msgid "_View"
+#~ msgstr "_Nézet"
+
+#~ msgid "_Library"
+#~ msgstr "_Médiagyűjtemény"
+
+#~ msgid "_Timeline"
+#~ msgstr "Idő_vonal"
+
+#~ msgid "Previe_w"
+#~ msgstr "Elő_nézet"
+
+#~ msgid "_Help"
+#~ msgstr "_Súgó"
+
+#~ msgid "View the main window on the whole screen"
+#~ msgstr "A főablak megjelenítése a teljes képernyőn"
+
+#~ msgid "Undock Viewer"
+#~ msgstr "Megjelenítő leválasztása"
+
+#~ msgid "Put the viewer in a separate window"
+#~ msgstr "A megjelenítő külön ablakba helyezése"
+
+#~ msgid "Clip configuration"
+#~ msgstr "Klip beállításai"
+
+#~ msgid "Title editor"
+#~ msgstr "Címszerkesztő"
+
+#~ msgid "Preview - click outside to close"
+#~ msgstr "Előnézet – kattintson kívülre a bezáráshoz"
+
+#~ msgid "Dock Viewer"
+#~ msgstr "Megjelenítő dokkolása"
+
+#~ msgid "Move to the previous keyframe"
+#~ msgstr "Az előző kulcsképkockára"
+
+#~ msgid "Move to the next keyframe"
+#~ msgstr "A következő kulcsképkockára"
+
+#~ msgid "_Previous Keyframe"
+#~ msgstr "_Előző kulcsképkocka"
+
+#~ msgid "_Next Keyframe"
+#~ msgstr "_Következő kulcsképkocka"
+
+#~ msgid "Zoom Timeline"
+#~ msgstr "Idővonal nagyítása"
 
 #~ msgid "Contributors:\n"
 #~ msgstr "Közreműködők:\n"
@@ -1953,9 +2042,6 @@ msgstr "Idővonal nagyítása"
 #~ msgid "Selected clips will be tinted with this color."
 #~ msgstr "A kijelölt klipek ezzel a színnel lesznek árnyalva."
 
-#~ msgid "Clip font"
-#~ msgstr "Klip betűkészlete"
-
 #~ msgid "The font to use for clip titles"
 #~ msgstr "A klipek címéhez használandó betűkészlet"
 
@@ -2015,13 +2101,6 @@ msgstr "Idővonal nagyítása"
 
 #~ msgid "Could not initiate the audio output plugins"
 #~ msgstr "Nem lehet előkészíteni a hangkimeneti bővítményeket"
-
-#~ msgid ""
-#~ "Make sure you have at least one valid audio output sink available "
-#~ "(alsasink or osssink)."
-#~ msgstr ""
-#~ "Győződjön meg róla, hogy rendelkezik legalább egy érvényes elérhető "
-#~ "hangkimeneti bővítménnyel (alsasink vagy osssink)."
 
 #~ msgid "Could not import the cairo Python bindings"
 #~ msgstr "Nem lehet importálni a cairo Python kötéseket"
@@ -2149,9 +2228,6 @@ msgstr "Idővonal nagyítása"
 
 #~ msgid "<b>Frame Rate</b>"
 #~ msgstr "<b>Képkockasebesség</b>"
-
-#~ msgid "Loading project..."
-#~ msgstr "Projekt betöltése…"
 
 #~ msgid "Project loaded."
 #~ msgstr "Projekt betöltve."
@@ -2315,12 +2391,6 @@ msgstr "Idővonal nagyítása"
 
 #~ msgid "Loop over selected area"
 #~ msgstr "A kijelölt terület végtelenítése"
-
-#~ msgid "_Undo"
-#~ msgstr "_Visszavonás"
-
-#~ msgid "_Redo"
-#~ msgstr "Új_ra"
 
 #~ msgid "_Preferences"
 #~ msgstr "_Beállítások"
@@ -2515,9 +2585,6 @@ msgstr "Idővonal nagyítása"
 
 #~ msgid "Port"
 #~ msgstr "Port"
-
-#~ msgid "Preview"
-#~ msgstr "Előnézet"
 
 #~ msgid "Preview Stream from URI"
 #~ msgstr "Műsor előnézete URI-címről"
