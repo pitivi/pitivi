@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.18.1 -->
 <interface>
-  <requires lib="gtk+" version="3.12"/>
+  <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="position_x_adj">
     <property name="upper">1</property>
     <property name="value">0.5</property>
@@ -141,7 +141,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="font">Cantarell 12</property>
+                    <property name="font">Sans 12</property>
                     <property name="preview_text"/>
                     <property name="show_preview_entry">False</property>
                     <property name="title" translatable="yes">Choose a font</property>
