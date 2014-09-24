@@ -238,6 +238,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
         builder.connect_signals(self)
         self._menubutton = builder.get_object("menubutton")
+
+        if Gtk.get_major_version() == 3 and Gtk.get_minor_version() < 13:
+            open_menu_image = builder.get_object("open_menu_image")
+            open_menu_image.set_property("icon_name", "emblem-system-symbolic")
+
         self._menubutton_items = {}
         for widget in builder.get_object("menu").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
