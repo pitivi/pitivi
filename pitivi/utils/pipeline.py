@@ -24,6 +24,9 @@
 """
 High-level pipelines
 """
+
+import platform
+
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.signal import Signallable
 from pitivi.utils.misc import format_ns
@@ -516,6 +519,14 @@ class AssetPipeline(SimplePipeline):
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)
+
+    def connectWithViewer(self, widget):
+        if platform.system() == 'Windows':
+            handle = widget.drawing_area.get_window().get_handle()
+        else:
+            handle = widget.drawing_area.get_window().get_xid()
+
+        self._opengl_sink.set_window_handle(handle)
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):

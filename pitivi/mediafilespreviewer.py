@@ -89,13 +89,13 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         self.discoverer = GstPbutils.Discoverer.new(Gst.SECOND)
 
-        #playbin for play pics
+        # playbin for play pics
         self.player = AssetPipeline(clip=None, name="preview-player")
         self.player.connect('eos', self._pipelineEosCb)
         self.player.connect('error', self._pipelineErrorCb)
         self.player._bus.connect('message::tag', self._tag_found_cb)
 
-        #some global variables for preview handling
+        # some global variables for preview handling
         self.is_playing = False
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
@@ -125,7 +125,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.play_button.connect("clicked", self._on_start_stop_clicked_cb)
         self.bbox.pack_start(self.play_button, False, False, 0)
 
-        #Scale for position handling
+        # Scale for position handling
         self.pos_adj = Gtk.Adjustment()
         self.seeker = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.pos_adj)
         self.seeker.connect('button-press-event', self._on_seeker_press_cb)
@@ -246,7 +246,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.setDisplayAspectRatio(float(video_width) / video_height)
                 self.preview_video.show()
-                self.player.connectWithViewer(self.preview_video)
                 self.bbox.show()
                 self.play_button.show()
                 self.seeker.show()
