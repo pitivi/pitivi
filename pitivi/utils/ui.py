@@ -95,7 +95,11 @@ LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, TYPE
 def _get_settings(schema):
     if schema not in Gio.Settings.list_schemas():
         return None
-    return Gio.Settings(schema_id=schema)
+    try:
+        return Gio.Settings(schema_id=schema)
+    except TypeError:
+        # Gtk 3.10
+        return Gio.Settings(schema=schema)
 
 
 def _get_font(font_spec, default):
