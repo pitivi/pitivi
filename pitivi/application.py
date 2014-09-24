@@ -201,7 +201,9 @@ class Pitivi(Gtk.Application, Loggable):
     def _versionInfoReceivedCb(self, giofile, result, user_data):
         try:
             raw = giofile.load_contents_finish(result)[1]
-            raw = raw.decode().split("\n")
+            if not isinstance(raw, str):
+                raw = raw.decode()
+            raw = raw.split("\n")
             # Split line at '=' if the line is not empty or a comment line
             data = [element.split("=") for element in raw
                     if element and not element.startswith("#")]

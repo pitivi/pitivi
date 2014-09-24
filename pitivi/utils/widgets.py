@@ -486,7 +486,7 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
         self.dialog = Gtk.FileChooserDialog(action=action)
         self.dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
-        Gtk.FileChooserButton.__init__(self, self.dialog)
+        Gtk.FileChooserButton.__init__(self, dialog=self.dialog)
         self.dialog.connect("response", self._responseCb)
         self.uri = ""
 
