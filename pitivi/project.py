@@ -709,9 +709,10 @@ class Project(Loggable, GES.Project):
     def set_video_restriction_value(self, name, value):
         if self.video_profile.get_restriction()[0][name] != value and value:
             restriction = self.video_profile.get_restriction().copy_nth(0)
-            restriction[0][name] = value
+            restriction.set_value(name, value)
             self.video_profile.set_restriction(restriction)
             return True
+
         return False
 
     def set_audio_restriction_value(self, name, value):
@@ -1086,13 +1087,13 @@ class Project(Loggable, GES.Project):
             self.timeline.append_layer()
 
     def _ensureVideoRestrictions(self):
-        if not self.videowidth:
+        if self.videowidth is None:
             self.videowidth = 720
-        if not self.videoheight:
+        if self.videoheight is None:
             self.videoheight = 576
-        if not self.videorate:
+        if self.videorate is None:
             self.videorate = Gst.Fraction(25, 1)
-        if not self.videopar:
+        if self.videopar is None:
             self.videopar = Gst.Fraction(1, 1)
 
     def _ensureAudioRestrictions(self):
