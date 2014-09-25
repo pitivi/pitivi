@@ -273,13 +273,13 @@ class EditingContext(GObject.Object):
 
         res = self.focus.edit(
             [], priority, self.mode, self.edge, int(position))
-        st = Gst.Structure.new_empty("edit-container")
-        st["container-name"] = self.focus.get_name()
-        st["position"] = float(position / Gst.SECOND)
-        st["edit-mode"] = self.mode.value_nick
-        st["edge"] = self.edge.value_nick
-        st["new-layer-priority"] = int(priority)
-        self.action_log.app.write_action(st)
+        self.action_log.app.write_action("edit-container", {
+            "container-name": self.focus.get_name(),
+            "position": float(position / Gst.SECOND),
+            "edit-mode": self.mode.value_nick,
+            "edge": self.edge.value_nick,
+            "new-layer-priority": int(priority)})
+
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
                 self.emit("clip-trim", self.focus, self.focus.props.in_point)

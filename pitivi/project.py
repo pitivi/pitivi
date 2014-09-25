@@ -963,7 +963,7 @@ class Project(Loggable, GES.Project):
         Our override of the GES.Timeline.commit method, letting us
         scenarialize the action in the scenarios.
         """
-        self.app.write_action(Gst.Structure.new_empty("commit"))
+        self.app.write_action("commit")
         GES.Timeline.commit(self.timeline)
 
     def createTimeline(self):
@@ -997,10 +997,9 @@ class Project(Loggable, GES.Project):
         for track in self.timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(caps)
-        st = Gst.Structure.new_empty("set-track-restriction-caps")
-        st["caps"] = caps.to_string()
-        st["track-type"] = GES.TrackType.VIDEO.value_nicks[0]
-        self.app.write_action(st)
+        self.app.write_action("set-track-restriction-caps", {
+            "caps": caps.to_string(),
+            "track-type": GES.TrackType.VIDEO.value_nicks[0]})
 
         self.pipeline.flushSeek()
 

@@ -1264,10 +1264,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clip = element.get_parent()
                 clip.get_layer().splitting_object = True
 
-                st = Gst.Structure.new_empty("split-clip")
-                st["clip-name"] = clip.get_name()
-                st["position"] = float(position / Gst.SECOND)
-                self.app.write_action(st)
+                self.app.write_action("split-clip", {
+                    "clip-name": clip.get_name(),
+                    "position": float(position / Gst.SECOND)})
 
                 clip.split(position)
                 clip.get_layer().splitting_object = False

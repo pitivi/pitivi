@@ -22,6 +22,7 @@
 
 import os
 
+from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
@@ -171,7 +172,11 @@ class TransitionsListWidget(Gtk.VBox, Loggable):
         else:
             self.props_widgets.set_sensitive(True)
 
-        self.element.get_parent().set_asset(transition_asset)
+        clip_asset = self.element.get_parent()
+        clip_asset.set_asset(transition_asset)
+        self.app.write_action("element-set-asset", {
+            "asset-id": transition_asset.get_id(),
+            "element-name": clip_asset.get_name()})
         self.app.project_manager.current_project.seeker.flush(True)
 
         return True

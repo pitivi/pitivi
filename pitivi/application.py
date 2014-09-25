@@ -98,13 +98,21 @@ class Pitivi(Gtk.Application, Loggable):
         self.connect("activate", self._activateCb)
         self.connect("open", self.openCb)
 
-    def write_action(self, structure):
+    def write_action(self, action, properties={}):
         if self._first_action:
             self.log_file.write(
                 "description, seek=true, handles-states=true\n")
             self._first_action = False
 
-        self.log_file.write(structure.to_string() + "\n")
+        if not isinstance(action, Gst.Structure):
+            structure = Gst.Structure.new_empty(action)
+
+            for key, value in properties.items():
+                structure[key] = value
+
+            action = structure
+
+        self.log_file.write(action.to_string() + "\n")
         self.log_file.flush()
 
     def _startupCb(self, unused_app):
