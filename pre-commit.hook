@@ -40,7 +40,10 @@ def main():
         if pep8_errors:
             output_message = "Your code is not fully pep8 compliant and contains"\
                 " the following coding style issues:\n\n" + pep8_errors +\
-                "\n\nThanks for correcting them before commiting"
+                "\n"\
+                "We encourage you to use\n\n        $autopep8 -i file/with/pep8/error.py\n\n"\
+                "\n"\
+                "Thanks for correcting them before commiting!\n"
     except OSError:
         output_message = "You should install the pep8 style checker to be able"\
            " to commit in this repo.\nIt allows us to garantee that "\
