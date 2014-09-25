@@ -39,7 +39,7 @@ from pitivi.utils.misc import format_ns
 MAX_RECOVERIES = 5
 
 PIPELINE_SIGNALS = {
-    "state-change": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_INT,)),
+    "state-change": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_INT, GObject.TYPE_INT)),
     "position": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_UINT64,)),
     "duration-changed": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_UINT64,)),
     "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -437,7 +437,7 @@ class SimplePipeline(GObject.Object, Loggable):
                     self._listenToPosition(False)
 
                 if emit_state_change:
-                    self.emit('state-change', new)
+                    self.emit('state-change', new, prev)
 
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
@@ -526,9 +526,11 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
     __gsignals__ = PIPELINE_SIGNALS
 
-    def __init__(self, pipeline=None):
+    def __init__(self, app, pipeline=None):
         GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self)
+
+        self.app = app
 
         self._timeline = None
         self._seeker = Seeker()
@@ -589,3 +591,15 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         end of the timeline.
         """
         self.simple_seek(position)
+
+    def simple_seek(self, position):
+        st = Gst.Structure.new_empty("seek")
+
+        if self.getState() == Gst.State.PLAYING:
+            st.set_value("playback_time", float(self.getPosition()) / Gst.SECOND)
+
+        st.set_value("start", float(position / Gst.SECOND))
+        st.set_value("flags", "accurate+flush")
+        self.app.write_action(st)
+
+        SimplePipeline.simple_seek(self, position)

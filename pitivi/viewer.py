@@ -444,7 +444,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.setPipeline(self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
             self.debug("Back to the project's pipeline")
 
-    def _pipelineStateChangedCb(self, unused_pipeline, state):
+    def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
         """
         When playback starts/stops, update the viewer widget,
         play/pause button and (un)inhibit the screensaver.
@@ -453,16 +453,17 @@ class ViewerContainer(Gtk.VBox, Loggable):
         """
         if int(state) == int(Gst.State.PLAYING):
             st = Gst.Structure.new_empty("play")
-            st.set_value("playback_time", float(self.pipeline.getPosition())
-                / Gst.SECOND)
             self.app.write_action(st)
             self.playpause_button.setPause()
             self.system.inhibitScreensaver(self.INHIBIT_REASON)
         elif int(state) == int(Gst.State.PAUSED):
-            st = Gst.Structure.new_empty("pause")
-            st.set_value("playback_time", float(self.pipeline.getPosition()) /
-                Gst.SECOND)
-            self.app.write_action(st)
+            if old_state != int(Gst.State.PAUSED):
+                st = Gst.Structure.new_empty("pause")
+                if old_state == int(Gst.State.PLAYING):
+                    st.set_value("playback_time", float(self.pipeline.getPosition()) /
+                        Gst.SECOND)
+                self.app.write_action(st)
+
             self.playpause_button.setPlay()
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         else:
