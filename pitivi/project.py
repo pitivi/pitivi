@@ -997,6 +997,11 @@ class Project(Loggable, GES.Project):
         for track in self.timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(caps)
+        st = Gst.Structure.new_empty("set-track-restriction-caps")
+        st["caps"] = caps.to_string()
+        st["track-type"] = GES.TrackType.VIDEO.value_nicks[0]
+        self.app.write_action(st)
+
         self.pipeline.flushSeek()
 
     def addUris(self, uris):
