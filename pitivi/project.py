@@ -934,6 +934,13 @@ class Project(Loggable, GES.Project):
     # ------------------------------------------ #
     #               Our API                      #
     # ------------------------------------------ #
+    def _commit(self):
+        """
+        Our override of the GES.Timeline.commit method, letting us
+        scenarialize the action in the scenarios.
+        """
+        self.app.write_action(Gst.Structure.new_empty("commit"))
+        GES.Timeline.commit(self.timeline)
 
     def createTimeline(self):
         """
@@ -941,6 +948,7 @@ class Project(Loggable, GES.Project):
         """
         # In this extract call the project is loaded from the file.
         self.timeline = self.extract()
+        self.timeline.commit = self._commit
         if self.timeline is None:
             return False
         if not self.timeline.get_layers():
