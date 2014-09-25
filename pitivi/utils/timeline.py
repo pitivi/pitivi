@@ -34,15 +34,16 @@ UNSELECT = 1
 SELECT_ADD = 2
 
 
-#------------------------------------------------------------------------------#
-#                          Timeline Object management helper                   #
+# -------- Timeline Object management helper ---------#
 
 class TimelineError(Exception):
+
     """Base Exception for errors happening in L{Timeline}s or L{Clip}s"""
     pass
 
 
 class Selected(GObject.Object):
+
     """
     A simple class that let us emit a selected-changed signal
     when needed, and that can be check directly to know if the
@@ -78,6 +79,7 @@ class Selected(GObject.Object):
 
 
 class Selection(GObject.Object):
+
     """
     A collection of L{GES.Clip}.
 
@@ -120,7 +122,8 @@ class Selection(GObject.Object):
         """
         selection = set()
         for obj in objs:
-            # FIXME GES break, handle the fact that we have unlinked objects in GES
+            # FIXME GES break, handle the fact that we have unlinked objects in
+            # GES
             if isinstance(obj, GES.TrackElement):
                 selection.add(obj.get_parent())
             else:
@@ -187,10 +190,11 @@ class Selection(GObject.Object):
         return iter(self.selected)
 
 
-#-----------------------------------------------------------------------------#
-#                       Timeline edition modes helper                         #
+# -----------------------------------------------------------------------------#
+# Timeline edition modes helper                         #
 
 class EditingContext(GObject.Object):
+
     """
         Encapsulates interactive editing.
 
@@ -267,7 +271,15 @@ class EditingContext(GObject.Object):
         self.new_position = position
         self.new_priority = priority
 
-        res = self.focus.edit([], priority, self.mode, self.edge, int(position))
+        res = self.focus.edit(
+            [], priority, self.mode, self.edge, int(position))
+        st = Gst.Structure.new_empty("edit-container")
+        st["container-name"] = self.focus.get_name()
+        st["position"] = float(position / Gst.SECOND)
+        st["edit-mode"] = self.mode.value_nick
+        st["edge"] = self.edge.value_nick
+        st["new-layer-priority"] = int(priority)
+        self.action_log.app.write_action(st)
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
                 self.emit("clip-trim", self.focus, self.focus.props.in_point)
@@ -275,10 +287,11 @@ class EditingContext(GObject.Object):
                 self.emit("clip-trim", self.focus, self.focus.props.duration)
 
 
-#-------------------------- Interfaces ----------------------------------------#
+# -------------------------- Interfaces ----------------------------------------#
 
 
 class Zoomable(object):
+
     """
     Interface for managing tranformation between timeline timestamps and UI
     pixels.
@@ -358,7 +371,7 @@ class Zoomable(object):
     @classmethod
     def computeZoomRatio(cls, x):
         return ((((float(x) / cls.zoom_steps) ** 3) * cls.zoom_range) +
-            cls.min_zoom)
+                cls.min_zoom)
 
     @classmethod
     def computeZoomLevel(cls, ratio):
@@ -387,7 +400,7 @@ class Zoomable(object):
         set zoom ratio
         """
         # Here, a long time ago (206f3a05), a pissed programmer said:
-        ## DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!!!!!
+        # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
         return int((float(duration) / Gst.SECOND) * cls.zoomratio)
