@@ -22,10 +22,12 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import time
 
 from gi.repository import GObject
 from gi.repository import Gio
 from gi.repository import Gtk
+from gi.repository import Gst
 
 from pitivi.effects import EffectsManager
 from pitivi.configure import VERSION, RELEASES_URL
@@ -41,7 +43,6 @@ from pitivi.utils.misc import quote_uri, path_from_uri
 from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
 import pitivi.utils.loggable as log
-from datetime import datetime
 
 
 class Pitivi(Gtk.Application, Loggable):
@@ -77,9 +78,13 @@ class Pitivi(Gtk.Application, Loggable):
         self.timeline_log_observer = None
         self.project_log_observer = None
 
-        cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
-        uri = os.path.join(cache_dir, str(datetime.now()) + ".scenario")
-        uri = quote_uri(uri)
+        if 'PITIVI_SCENARIO_FILE' in os.environ:
+            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
+        else:
+            cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
+            uri = os.path.join(cache_dir, str(time.strftime("%Y%m%d-%H%M%S")) + ".scenario")
+            uri = quote_uri(uri)
+        self._first_action = True
         self.log_file = open(path_from_uri(uri), "w")
 
         self.gui = None
@@ -92,7 +97,11 @@ class Pitivi(Gtk.Application, Loggable):
         self.connect("open", self.openCb)
 
     def write_action(self, structure):
-        self.log_file.write(structure.to_string() + "\r\n")
+        if self._first_action:
+            self.log_file.write("description, seek=true, handles-states=true\n")
+            self._first_action = False
+
+        self.log_file.write(structure.to_string() + "\n")
         self.log_file.flush()
 
     def _startupCb(self, unused_app):
