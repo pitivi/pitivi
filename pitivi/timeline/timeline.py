@@ -1262,7 +1262,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             end = start + element.get_duration()
             if start < position and end > position:
                 clip = element.get_parent()
+                clip.get_layer().splitting_object = True
+
+                st = Gst.Structure.new_empty("split-clip")
+                st["clip-name"] = clip.get_name()
+                st["position"] = float(position / Gst.SECOND)
+                self.app.write_action(st)
+
                 clip.split(position)
+                clip.get_layer().splitting_object = False
 
     def _keyframeCb(self, unused_action):
         """

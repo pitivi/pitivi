@@ -135,6 +135,10 @@ class ClipAdded(UndoableAction):
         self._undone()
 
     def serializeLastAction(self):
+        if hasattr(self.layer, "splitting_object") and \
+                self.layer.splitting_object is True:
+            return None
+
         st = Gst.Structure.new_empty("add-clip")
         st.set_value("name", self.clip.get_name())
         st.set_value("layer-priority", self.layer.props.priority)

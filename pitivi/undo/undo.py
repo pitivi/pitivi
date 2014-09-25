@@ -166,7 +166,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
         try:
             st = action.serializeLastAction()
-            if self.app is not None:
+            if self.app is not None and st is not None:
                 self.app.write_action(st)
         except NotImplementedError:
             self.warning("No serialization method for that action")
