@@ -31,16 +31,19 @@ from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):
+
     """ Any exception related to the undo/redo feature."""
     pass
 
 
 class UndoWrongStateError(UndoError):
+
     """ Exception related to the current state of the undo/redo stack. """
     pass
 
 
 class UndoableAction(GObject.Object):
+
     """
     An action that can be undone.
     In other words, when your object's state changes, create an UndoableAction
@@ -76,6 +79,7 @@ class UndoableAction(GObject.Object):
 
 
 class UndoableActionStack(UndoableAction):
+
     """
     Simply a stack of UndoableAction objects.
     """
@@ -118,6 +122,7 @@ class UndoableActionStack(UndoableAction):
 
 
 class UndoableActionLog(GObject.Object, Loggable):
+
     """
     This is the "master" class that handles all the undo/redo system. There is
     only one instance of it in Pitivi: application.py's "action_log" property.
@@ -152,7 +157,8 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = UndoableActionStack(action_group_name)
         nested = self._stackIsNested(stack)
         self.stacks.append(stack)
-        self.debug("begin action group %s, nested %s", stack.action_group_name, nested)
+        self.debug("begin action group %s, nested %s",
+                   stack.action_group_name, nested)
         self.emit("begin", stack, nested)
 
     def push(self, action):
@@ -175,7 +181,8 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
 
         stack.push(action)
-        self.debug("push action %s in action group %s", action, stack.action_group_name)
+        self.debug("push action %s in action group %s",
+                   action, stack.action_group_name)
         self.emit("push", stack, action)
 
     def rollback(self):
@@ -188,7 +195,8 @@ class UndoableActionLog(GObject.Object, Loggable):
         if stack is None:
             return
         nested = self._stackIsNested(stack)
-        self.debug("rollback action group %s, nested %s", stack.action_group_name, nested)
+        self.debug("rollback action group %s, nested %s",
+                   stack.action_group_name, nested)
         self.emit("rollback", stack, nested)
         stack.undo()
 
@@ -210,7 +218,8 @@ class UndoableActionLog(GObject.Object, Loggable):
         if self.redo_stacks:
             self.redo_stacks = []
 
-        self.debug("commit action group %s nested %s", stack.action_group_name, nested)
+        self.debug("commit action group %s nested %s",
+                   stack.action_group_name, nested)
         self.emit("commit", stack, nested)
 
     def undo(self):
@@ -277,6 +286,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
 
 class PropertyChangeTracker(GObject.Object):
+
     """
     BaseClass to track a class property, Used for undo/redo
     """
@@ -306,7 +316,8 @@ class PropertyChangeTracker(GObject.Object):
     def _takeCurrentSnapshot(cls, obj):
         properties = {}
         for property_name in cls.property_names:
-            properties[property_name] = obj.get_property(property_name.replace("-", "_"))
+            properties[property_name] = obj.get_property(
+                property_name.replace("-", "_"))
 
         return properties
 
@@ -317,4 +328,5 @@ class PropertyChangeTracker(GObject.Object):
     def _propertyChangedCb(self, object, property_value, property_name):
         old_value = self.properties[property_name]
         self.properties[property_name] = property_value
-        self.emit("monitored-property-changed", object, property_name, old_value, property_value)
+        self.emit("monitored-property-changed", object,
+                  property_name, old_value, property_value)

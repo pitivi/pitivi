@@ -29,6 +29,7 @@ from pitivi.utils.ui import EXPANDED_SIZE, SPACING, CONTROL_WIDTH
 
 
 class ControlActor(GtkClutter.Actor):
+
     def __init__(self, container, widget, layer, is_audio):
         GtkClutter.Actor.__init__(self)
 
@@ -104,7 +105,8 @@ class ControlContainer(Clutter.ScrollActor):
     def _setTrackControlPosition(self, control):
         y = control.layer.get_priority() * (EXPANDED_SIZE + SPACING) + SPACING
         if control.is_audio:
-            y += len(self.timeline.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING)
+            y += len(self.timeline.bTimeline.get_layers()) * \
+                (EXPANDED_SIZE + SPACING)
 
         control.set_position(0, y)
 
@@ -124,7 +126,8 @@ class ControlContainer(Clutter.ScrollActor):
         movedLayer = control.layer
         priority = movedLayer.get_priority()
 
-        movedLayer.props.priority = 999  # Don't put 1000 layers or this breaks !
+        # Don't put 1000 layers or this breaks !
+        movedLayer.props.priority = 999
 
         if priority > target:
             for layer in self.timeline.bTimeline.get_layers():
@@ -172,5 +175,6 @@ class ControlContainer(Clutter.ScrollActor):
                 self.remove_child(control)
                 self.trackControls.remove(control.widget)
 
-        self.controlActors = [elem for elem in self.controlActors if elem.layer != layer]
+        self.controlActors = [
+            elem for elem in self.controlActors if elem.layer != layer]
         self._reorderLayerActors()

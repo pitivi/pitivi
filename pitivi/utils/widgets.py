@@ -55,6 +55,7 @@ class DynamicWidget(object):
 
     """An interface which provides a uniform way to get, set, and observe
     widget properties"""
+
     def __init__(self, default):
         self.default = default
 
@@ -76,6 +77,7 @@ class DynamicWidget(object):
 
 
 class DefaultWidget(Gtk.Label):
+
     """When all hope fails...."""
 
     def __init__(self, *unused, **unused_kwargs):
@@ -83,6 +85,7 @@ class DefaultWidget(Gtk.Label):
 
 
 class TextWidget(Gtk.HBox, DynamicWidget):
+
     """
     A Gtk.Entry which emits a "value-changed" signal only when its input is
     valid (matches the provided regex). If the input is invalid, a warning
@@ -209,7 +212,8 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self.lower = lower
         self._type = None
         if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
-            self.slider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, self.adjustment)
+            self.slider = Gtk.Scale.new(
+                Gtk.Orientation.HORIZONTAL, self.adjustment)
             self.pack_start(self.slider, expand=True, fill=True, padding=0)
             self.slider.show()
             self.slider.props.draw_value = False
@@ -228,7 +232,8 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, fill=True, expand=not hasattr(self, 'slider'), padding=0)
+        self.pack_end(self.spinner, fill=True,
+                      expand=not hasattr(self, 'slider'), padding=0)
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
@@ -263,6 +268,7 @@ class NumericWidget(Gtk.HBox, DynamicWidget):
 
 
 class TimeWidget(TextWidget, DynamicWidget):
+
     """
     A widget that contains a time in nanoseconds. Accepts timecode formats
     or a frame number (integer).
@@ -270,7 +276,8 @@ class TimeWidget(TextWidget, DynamicWidget):
     # The "frame number" match rule is ^([0-9]+)$ (with a + to require 1 digit)
     # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
     # Combining the two, we get:
-    VALID_REGEX = re.compile("^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+    VALID_REGEX = re.compile(
+        "^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
 
     __gtype_name__ = 'TimeWidget'
 
@@ -477,14 +484,15 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
 
     __gsignals__ = {
         "value-changed": (GObject.SignalFlags.RUN_LAST,
-            None,
-            ()),
+                          None,
+                          ()),
     }
 
     def __init__(self, action=Gtk.FileChooserAction.OPEN, default=None):
         DynamicWidget.__init__(self, default)
         self.dialog = Gtk.FileChooserDialog(action=action)
-        self.dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
+        self.dialog.add_buttons(
+            Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         Gtk.FileChooserButton.__init__(self, dialog=self.dialog)
         self.dialog.connect("response", self._responseCb)
@@ -531,7 +539,7 @@ class ColorWidget(Gtk.ColorButton, DynamicWidget):
             color = value
         else:
             raise TypeError("%r is not something we can convert to a color" %
-                value)
+                            value)
         self.set_color(color)
         self.set_alpha(alpha)
 
@@ -565,6 +573,7 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
 
 
 class GstElementSettingsWidget(Gtk.VBox, Loggable):
+
     """
     Widget to view/modify properties of a Gst.Element
     """
@@ -630,9 +639,11 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
-            props = [prop for prop in self.element.list_children_properties() if prop.name not in self.ignore]
+            props = [
+                prop for prop in self.element.list_children_properties() if prop.name not in self.ignore]
         else:
-            props = [prop for prop in GObject.list_properties(self.element) if prop.name not in self.ignore]
+            props = [prop for prop in GObject.list_properties(
+                self.element) if prop.name not in self.ignore]
         if not props:
             table = Gtk.Table(n_rows=1, n_columns=1)
             widget = Gtk.Label(label=_("No properties."))
@@ -656,14 +667,15 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             # We do not know how to work with GObjects, so blacklist
             # them to avoid noise in the UI
             if (not prop.flags & GObject.PARAM_WRITABLE or
-              not prop.flags & GObject.PARAM_READABLE or
-              GObject.type_is_a(prop.value_type, GObject.Object)):
+               not prop.flags & GObject.PARAM_READABLE or
+               GObject.type_is_a(prop.value_type, GObject.Object)):
                 continue
 
             if is_effect:
                 result, prop_value = self.element.get_child_property(prop.name)
                 if result is False:
-                    self.debug("Could not get value for property: %s", prop.name)
+                    self.debug(
+                        "Could not get value for property: %s", prop.name)
             else:
                 if use_element_props:
                     prop_value = self.element.get_property(prop.name)
@@ -673,17 +685,21 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
             widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
-                table.attach(widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(
+                    widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
             else:
                 label = Gtk.Label(label=prop.nick + ":")
                 label.set_alignment(0.0, 0.5)
-                table.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                table.attach(widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(
+                    label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(
+                    widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
 
             if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget) and self.isControllable:
                 button = self._getKeyframeToggleButton(prop)
                 self.keyframeToggleButtons[button] = widget
-                table.attach(button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(
+                    button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
@@ -695,13 +711,15 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 widget.propName = prop.name.split("-")[0]
 
                 if self.isControllable:
-                    # If this element is controlled, the value means nothing anymore.
+                    # If this element is controlled, the value means nothing
+                    # anymore.
                     binding = self.element.get_control_binding(prop.name)
                     if binding:
                         widget.set_sensitive(False)
                         self.bindings[widget] = binding
                 button = self._getResetToDefaultValueButton(prop, widget)
-                table.attach(button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+                table.attach(
+                    button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
                 self.buttons[button] = widget
 
             y += 1
@@ -811,7 +829,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 minimum = prop.minimum
             if hasattr(prop, "maximum"):
                 maximum = prop.maximum
-            widget = NumericWidget(default=prop.default_value, upper=maximum, lower=minimum)
+            widget = NumericWidget(
+                default=prop.default_value, upper=maximum, lower=minimum)
         elif type_name == "gboolean":
             widget = ToggleWidget(default=prop.default_value)
         elif type_name == "GEnum":
@@ -820,7 +839,8 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 choices.append([val.value_name, int(val)])
             widget = ChoiceWidget(choices, default=prop.default_value)
         elif type_name == "GstFraction":
-            widget = FractionWidget(None, presets=["0:1"], default=prop.default_value)
+            widget = FractionWidget(
+                None, presets=["0:1"], default=prop.default_value)
         else:
             # TODO: implement widgets for: GBoxed, GFlags
             self.fixme("Unsupported property type: %s", type_name)
@@ -835,6 +855,7 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
 
 
 class GstElementSettingsDialog(Loggable):
+
     """
     Dialog window for viewing/modifying properties of a Gst.Element
     """
@@ -844,7 +865,8 @@ class GstElementSettingsDialog(Loggable):
         self.debug("factory: %s, properties: %s", elementfactory, properties)
 
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(), "elementsettingsdialog.ui"))
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "elementsettingsdialog.ui"))
         self.builder.connect_signals(self)
         self.ok_btn = self.builder.get_object("okbutton1")
 
@@ -855,7 +877,8 @@ class GstElementSettingsDialog(Loggable):
         self.factory = elementfactory
         self.element = self.factory.create("elementsettings")
         if not self.element:
-            self.warning("Couldn't create element from factory %s", self.factory)
+            self.warning(
+                "Couldn't create element from factory %s", self.factory)
         self.properties = properties
         self._fillWindow()
 
@@ -864,10 +887,12 @@ class GstElementSettingsDialog(Loggable):
         contents_height = self.elementsettings.size_request().height
         maximum_contents_height = max(500, 0.7 * screen_height)
         if contents_height < maximum_contents_height:
-            # The height of the content is small enough, disable the scrollbars.
+            # The height of the content is small enough, disable the
+            # scrollbars.
             default_height = -1
             scrolledwindow = self.builder.get_object("scrolledwindow1")
-            scrolledwindow.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
+            scrolledwindow.set_policy(
+                Gtk.PolicyType.NEVER, Gtk.PolicyType.NEVER)
             scrolledwindow.set_shadow_type(Gtk.ShadowType.NONE)
         else:
             # If we need to scroll, set a reasonable height for the window.
@@ -880,7 +905,8 @@ class GstElementSettingsDialog(Loggable):
 
     def _fillWindow(self):
         # set title and frame label
-        self.window.set_title(_("Properties for %s") % self.factory.get_longname())
+        self.window.set_title(
+            _("Properties for %s") % self.factory.get_longname())
         self.elementsettings.setElement(self.element, self.properties)
 
     def getSettings(self):
@@ -896,6 +922,7 @@ class GstElementSettingsDialog(Loggable):
 
 
 class BaseTabs(Gtk.Notebook):
+
     def __init__(self, app, hide_hpaned=False):
         """ initialize """
         Gtk.Notebook.__init__(self)
@@ -925,7 +952,7 @@ class BaseTabs(Gtk.Notebook):
         label.props.xalign = 0.0
 
     def _detachedComponentWindowDestroyCb(self, window, child,
-            original_position, label):
+                                          original_position, label):
         notebook = window.get_child()
         position = notebook.child_get_property(child, "position")
         notebook.remove_page(position)
@@ -946,7 +973,7 @@ class BaseTabs(Gtk.Notebook):
         window.set_title(label)
         window.set_default_size(600, 400)
         window.connect("destroy", self._detachedComponentWindowDestroyCb,
-                child, original_position, label)
+                       child, original_position, label)
         notebook = Gtk.Notebook()
         notebook.props.show_tabs = False
         window.add(notebook)
@@ -978,6 +1005,7 @@ class BaseTabs(Gtk.Notebook):
 
 
 class ZoomBox(Gtk.Grid, Zoomable):
+
     """
     Container holding the widgets for zooming.
 
@@ -994,7 +1022,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoom_fit_btn.set_relief(Gtk.ReliefStyle.NONE)
         zoom_fit_btn.set_tooltip_text(_("Zoom Fit"))
         zoom_fit_btn_grid = Gtk.Grid()
-        zoom_fit_icon = Gtk.Image.new_from_icon_name("zoom-best-fit", Gtk.IconSize.BUTTON)
+        zoom_fit_icon = Gtk.Image.new_from_icon_name(
+            "zoom-best-fit", Gtk.IconSize.BUTTON)
         zoom_fit_btn_grid.add(zoom_fit_icon)
         zoom_fit_btn_label = Gtk.Label(label=_("Zoom"))
         zoom_fit_btn_grid.add(zoom_fit_btn_label)
@@ -1007,7 +1036,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
         self._zoomAdjustment = Gtk.Adjustment()
         self._zoomAdjustment.props.lower = 0
         self._zoomAdjustment.props.upper = Zoomable.zoom_steps
-        zoomslider = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
+        zoomslider = Gtk.Scale.new(
+            Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
         # Setting _zoomAdjustment's value must be done after we create the
         # zoom slider, otherwise the slider remains at the leftmost position.
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
@@ -1016,7 +1046,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoomslider.connect("value-changed", self._zoomAdjustmentChangedCb)
         zoomslider.connect("query-tooltip", self._sliderTooltipCb)
         zoomslider.set_has_tooltip(True)
-        zoomslider.set_size_request(100, 0)  # At least 100px wide for precision
+        # At least 100px wide for precision
+        zoomslider.set_size_request(100, 0)
         zoomslider.set_hexpand(True)
         self.attach(zoomslider, 1, 0, 1, 1)
 
@@ -1056,7 +1087,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
             self._zoomAdjustment.set_value(zoomLevel)
 
     def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
-        # We assume the width of the ruler is exactly the width of the timeline.
+        # We assume the width of the ruler is exactly the width of the
+        # timeline.
         width_px = self.timeline.ruler.get_allocated_width()
         timeline_width_ns = Zoomable.pixelToNs(width_px)
         if timeline_width_ns >= Gst.SECOND:
@@ -1064,6 +1096,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
             tip = _("%s displayed") % beautify_length(timeline_width_ns)
         else:
             # Translators: This is a tooltip
-            tip = _("%d nanoseconds displayed, because we can") % timeline_width_ns
+            tip = _(
+                "%d nanoseconds displayed, because we can") % timeline_width_ns
         tooltip.set_text(tip)
         return True

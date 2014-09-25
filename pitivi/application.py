@@ -46,6 +46,7 @@ import pitivi.utils.loggable as log
 
 
 class Pitivi(Gtk.Application, Loggable):
+
     """
     Pitivi's application.
 
@@ -82,7 +83,8 @@ class Pitivi(Gtk.Application, Loggable):
             uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
         else:
             cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
-            uri = os.path.join(cache_dir, str(time.strftime("%Y%m%d-%H%M%S")) + ".scenario")
+            uri = os.path.join(
+                cache_dir, str(time.strftime("%Y%m%d-%H%M%S")) + ".scenario")
             uri = quote_uri(uri)
         self._first_action = True
         self.log_file = open(path_from_uri(uri), "w")
@@ -98,7 +100,8 @@ class Pitivi(Gtk.Application, Loggable):
 
     def write_action(self, structure):
         if self._first_action:
-            self.log_file.write("description, seek=true, handles-states=true\n")
+            self.log_file.write(
+                "description, seek=true, handles-states=true\n")
             self._first_action = False
 
         self.log_file.write(structure.to_string() + "\n")
@@ -106,7 +109,8 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _startupCb(self, unused_app):
         # Init logging as early as possible so we can log startup code
-        enable_color = not os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
+        enable_color = not os.environ.get(
+            'PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
         # Let's show a human-readable Pitivi debug output by default, and only
         # show a crazy unreadable mess when surrounded by gst debug statements.
         enable_crack_output = "GST_DEBUG" in os.environ
@@ -125,7 +129,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.timeline_log_observer = TimelineLogObserver(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
 
-        self.project_manager.connect("new-project-loaded", self._newProjectLoaded)
+        self.project_manager.connect(
+            "new-project-loaded", self._newProjectLoaded)
         self.project_manager.connect("project-closed", self._projectClosed)
 
         self._createActions()
@@ -179,7 +184,8 @@ class Pitivi(Gtk.Application, Loggable):
         assert giofiles
         self.createMainWindow()
         if len(giofiles) > 1:
-            self.warning("Can open only one project file at a time. Ignoring the rest!")
+            self.warning(
+                "Can open only one project file at a time. Ignoring the rest!")
         project_file = giofiles[0]
         self.project_manager.loadProject(quote_uri(project_file.get_uri()))
         return True
@@ -194,7 +200,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.debug("shutting down")
         # Refuse to close if we are not done with the current project.
         if not self.project_manager.closeRunningProject():
-            self.warning("Not closing since running project doesn't want to close")
+            self.warning(
+                "Not closing since running project doesn't want to close")
             return False
         if self.welcome_wizard:
             self.welcome_wizard.hide()
@@ -245,12 +252,15 @@ class Pitivi(Gtk.Application, Loggable):
                     self.info("Latest software version is %s", current_version)
 
             VERSION_split = [int(i) for i in VERSION.split(".")]
-            current_version_split = [int(i) for i in current_version.split(".")]
+            current_version_split = [int(i)
+                                     for i in current_version.split(".")]
             if VERSION_split > current_version_split:
                 status = "CURRENT"
-                self.info("Running version %s, which is newer than the latest known version. Considering it as the latest current version.", VERSION)
+                self.info(
+                    "Running version %s, which is newer than the latest known version. Considering it as the latest current version.", VERSION)
             elif status is "UNSUPPORTED":
-                self.warning("Using an outdated version of Pitivi (%s)", VERSION)
+                self.warning(
+                    "Using an outdated version of Pitivi (%s)", VERSION)
 
             self._version_information["current"] = current_version
             self._version_information["status"] = status

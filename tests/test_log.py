@@ -261,7 +261,7 @@ class TestLogNames(unittest.TestCase):
 
     def testGetLevelNames(self):
         self.assertEqual(['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG'],
-            log.getLevelNames())
+                         log.getLevelNames())
 
     def testGetLevelCode(self):
         self.assertEqual(1, log.getLevelInt('ERROR'))

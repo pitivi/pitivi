@@ -4,6 +4,7 @@ from time import time, sleep
 
 
 class DialogsStartupWizardTest(PitiviTestCase):
+
     def test_welcome(self):
         filename = "auto_pitivi_test_project-%i.xges" % time()
         filename_full_path = "/tmp/" + filename

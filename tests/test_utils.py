@@ -33,6 +33,7 @@ hour = minute * 60
 
 
 class TestBeautifyLength(TestCase):
+
     def testBeautifySeconds(self):
         self.assertEqual(beautify_length(second), "1 second")
         self.assertEqual(beautify_length(second * 2), "2 seconds")
@@ -47,14 +48,15 @@ class TestBeautifyLength(TestCase):
 
     def testBeautifyMinutesAndSeconds(self):
         self.assertEqual(beautify_length(minute + second),
-                "1 minute, 1 second")
+                         "1 minute, 1 second")
 
     def testBeautifyHoursAndMinutes(self):
         self.assertEqual(beautify_length(hour + minute + second),
-                "1 hour, 1 minute")
+                         "1 hour, 1 minute")
 
 
 class TestDependencyChecks(TestCase):
+
     def testDependencies(self):
         gi_dep = GstDependency("Gst", "1.0.0")
         gi_dep.check()

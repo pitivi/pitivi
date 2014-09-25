@@ -60,19 +60,19 @@ SHOW_ICONVIEW = 2
 
 GlobalSettings.addConfigSection('clip-library')
 GlobalSettings.addConfigOption('lastImportFolder',
-    section='clip-library',
-    key='last-folder',
-    environment='PITIVI_IMPORT_FOLDER',
-    default=os.path.expanduser("~"))
+                               section='clip-library',
+                               key='last-folder',
+                               environment='PITIVI_IMPORT_FOLDER',
+                               default=os.path.expanduser("~"))
 GlobalSettings.addConfigOption('closeImportDialog',
-    section='clip-library',
-    key='close-import-dialog-after-import',
-    default=True)
+                               section='clip-library',
+                               key='close-import-dialog-after-import',
+                               default=True)
 GlobalSettings.addConfigOption('lastClipView',
-    section='clip-library',
-    key='last-clip-view',
-    type_=int,
-    default=SHOW_ICONVIEW)
+                               section='clip-library',
+                               key='last-clip-view',
+                               type_=int,
+                               default=SHOW_ICONVIEW)
 
 STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
@@ -98,7 +98,8 @@ ui = '''
 # http://en.wikipedia.org/wiki/Comparison_of_container_formats and
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
 # ...and looking at the contents of /usr/share/mime
-SUPPORTED_FILE_FORMATS = {"video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
+SUPPORTED_FILE_FORMATS = {
+    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
     "application": ("mxf",),
     # Don't forget audio formats
     "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
@@ -109,11 +110,12 @@ OTHER_KNOWN_FORMATS = ("video/mp2t",)
 
 
 class MediaLibraryWidget(Gtk.VBox, Loggable):
+
     """ Widget for listing sources """
 
     __gsignals__ = {
         'play': (GObject.SignalFlags.RUN_LAST, None,
-                (GObject.TYPE_PYOBJECT,))}
+                 (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, app, uiman):
         Gtk.VBox.__init__(self)
@@ -147,21 +149,26 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
         # Store
         self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
-        self.storemodel.set_sort_func(COL_URI, MediaLibraryWidget.compare_basename)
+        self.storemodel.set_sort_func(
+            COL_URI, MediaLibraryWidget.compare_basename)
         # Prefer to sort the media library elements by URI
         # rather than show them randomly.
         self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
 
         # Scrolled Windows
         self.treeview_scrollwin = Gtk.ScrolledWindow()
-        self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.treeview_scrollwin.set_policy(
+            Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        self.treeview_scrollwin.get_accessible().set_name("media_listview_scrollwindow")
+        self.treeview_scrollwin.get_accessible().set_name(
+            "media_listview_scrollwindow")
 
         self.iconview_scrollwin = Gtk.ScrolledWindow()
-        self.iconview_scrollwin.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        self.iconview_scrollwin.set_policy(
+            Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.iconview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        self.iconview_scrollwin.get_accessible().set_name("media_iconview_scrollwindow")
+        self.iconview_scrollwin.get_accessible().set_name(
+            "media_iconview_scrollwindow")
 
         # import sources dialogbox
         self._importDialog = None
@@ -169,14 +176,17 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Filtering model for the search box.
         # Use this instead of using self.storemodel directly
         self.modelFilter = self.storemodel.filter_new()
-        self.modelFilter.set_visible_func(self._setRowVisible, data=searchEntry)
+        self.modelFilter.set_visible_func(
+            self._setRowVisible, data=searchEntry)
 
         # TreeView
         # Displays icon, name, type, length
         self.treeview = Gtk.TreeView(model=self.modelFilter)
         self.treeview_scrollwin.add(self.treeview)
-        self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
-        self.treeview.connect("button-release-event", self._treeViewButtonReleaseEventCb)
+        self.treeview.connect(
+            "button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.connect(
+            "button-release-event", self._treeViewButtonReleaseEventCb)
         self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
         self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
@@ -215,10 +225,13 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # IconView
         self.iconview = Gtk.IconView(model=self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
-        self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
-        self.iconview.connect("button-release-event", self._iconViewButtonReleaseEventCb)
+        self.iconview.connect(
+            "button-press-event", self._iconViewButtonPressEventCb)
+        self.iconview.connect(
+            "button-release-event", self._iconViewButtonReleaseEventCb)
         self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
-        self.iconview.connect("selection-changed", self._viewSelectionChangedCb)
+        self.iconview.connect(
+            "selection-changed", self._viewSelectionChangedCb)
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
@@ -249,7 +262,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         project_manager = self.app.project_manager
-        project_manager.connect("new-project-created", self._newProjectCreatedCb)
+        project_manager.connect(
+            "new-project-created", self._newProjectCreatedCb)
         project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
         project_manager.connect("new-project-failed", self._newProjectFailedCb)
 
@@ -260,8 +274,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self._setup_view_for_drag_and_drop(self.treeview, [FILESOURCE_TARGET_ENTRY])
-        self._setup_view_for_drag_and_drop(self.iconview, [FILESOURCE_TARGET_ENTRY])
+        self._setup_view_for_drag_and_drop(
+            self.treeview, [FILESOURCE_TARGET_ENTRY])
+        self._setup_view_for_drag_and_drop(
+            self.iconview, [FILESOURCE_TARGET_ENTRY])
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -269,10 +285,10 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Keyboard shortcuts for some items in the gtkbuilder file
         selection_actions = (
             ("RemoveSources", Gtk.STOCK_DELETE, _("_Remove from Project"),
-            "<Control>Delete", None, self._removeSourcesCb),
+             "<Control>Delete", None, self._removeSourcesCb),
 
             ("InsertEnd", Gtk.STOCK_COPY, _("Insert at _End of Timeline"),
-            "Insert", None, self._insertEndCb),
+             "Insert", None, self._insertEndCb),
         )
         self.selection_actions = Gtk.ActionGroup(name="medialibraryselection")
         self.selection_actions.add_actions(selection_actions)
@@ -333,7 +349,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _setup_view_for_drag_and_drop(self, view, target_entries):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
-        view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
+        view.enable_model_drag_source(
+            Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
         view.drag_source_set_target_list([])
         view.drag_source_add_uri_targets()
         view.drag_source_add_text_targets()
@@ -386,7 +403,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             # empty except clause is bad but load_icon raises Gio.Error.
             # Right, *gio*.
             if alternate:
-                icon = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pixdir, alternate))
+                icon = GdkPixbuf.Pixbuf.new_from_file(
+                    os.path.join(pixdir, alternate))
             else:
                 icon = icontheme.load_icon("dialog-question", size, 0)
         return icon
@@ -443,8 +461,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         close_after = Gtk.CheckButton(label=_("Close after importing files"))
         close_after.set_active(self.app.settings.closeImportDialog)
 
-        self._importDialog = Gtk.FileChooserDialog(title=dialogtitle, transient_for=None,
-                                                   action=chooser_action)
+        self._importDialog = Gtk.FileChooserDialog(
+            title=dialogtitle, transient_for=None, action=chooser_action)
 
         self._importDialog.set_icon_name("pitivi")
         self._importDialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
@@ -454,12 +472,14 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(True)
         self._importDialog.set_transient_for(self.app.gui)
-        self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
+        self._importDialog.set_current_folder(
+            self.app.settings.lastImportFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
         previewer = PreviewWidget(self.app.settings)
         self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
-        self._importDialog.connect('update-preview', previewer.add_preview_request)
+        self._importDialog.connect(
+            'update-preview', previewer.add_preview_request)
         # Filter for the "known good" formats by default
         filt_supported = Gtk.FileFilter()
         filt_known = Gtk.FileFilter()
@@ -489,7 +509,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # the actual # of the clip we're processing), but there is no offset
         # in the progressbar itself (to reflect the process being incomplete).
         current_clip_iter = self.app.project_manager.current_project.nb_imported_files
-        total_clips = self.app.project_manager.current_project.nb_remaining_file_to_import + current_clip_iter
+        total_clips = self.app.project_manager.current_project.nb_remaining_file_to_import + \
+            current_clip_iter
 
         progressbar_text = (_("Importing clip %(current_clip)d of %(total)d") %
             {"current_clip": current_clip_iter + 1,
@@ -498,7 +519,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if current_clip_iter == 0:
             self._progressbar.set_fraction(0.0)
         elif total_clips != 0:
-            self._progressbar.set_fraction(current_clip_iter / float(total_clips))
+            self._progressbar.set_fraction(
+                current_clip_iter / float(total_clips))
 
     def _getThumbnailInDir(self, dir, hash):
         """
@@ -512,7 +534,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         path_128 = dir + "normal/" + hash + ".png"
         interpolation = GdkPixbuf.InterpType.BILINEAR
 
-        # First, try the 128 version since that's the native resolution we want:
+        # First, try the 128 version since that's the native resolution we
+        # want:
         try:
             thumb_128 = GdkPixbuf.Pixbuf.new_from_file(path_128)
             w, h = thumb_128.get_width(), thumb_128.get_height()
@@ -537,8 +560,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # seems to be the proper/reliable way in a GNOME context
         asset_file = Gio.file_new_for_uri(uri)
         info = asset_file.query_info(attributes="standard::*",
-                                    flags=Gio.FileQueryInfoFlags.NONE,
-                                    cancellable=None)
+                                     flags=Gio.FileQueryInfoFlags.NONE,
+                                     cancellable=None)
         mime = Gio.content_type_get_mime_type(info.get_content_type())
         mtime = os.path.getmtime(path_from_uri(uri))
         if not self.thumbnailer.can_thumbnail(uri, mime, mtime):
@@ -549,18 +572,21 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             self.debug("Thumbnailer failed thumbnailing %s", uri)
             return None
         self.thumbnailer.save_thumbnail(pixbuf_128, uri, mtime)
-        pixbuf_64 = pixbuf_128.scale_simple(64, 64, GdkPixbuf.InterpType.BILINEAR)
+        pixbuf_64 = pixbuf_128.scale_simple(
+            64, 64, GdkPixbuf.InterpType.BILINEAR)
         return pixbuf_128, pixbuf_64
 
     def _addAsset(self, asset):
-        # 128 is the normal size for thumbnails, but for *icons* it looks insane
+        # 128 is the normal size for thumbnails, but for *icons* it looks
+        # insane
         LARGE_SIZE = 96
         info = asset.get_info()
 
         # The code below tries to read existing thumbnails from the freedesktop
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
-        video_streams = [i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]
+        video_streams = [
+            i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]
         if len(video_streams) > 0:
             # From the freedesktop spec: "if the environment variable
             # $XDG_CACHE_HOME is set and not blank then the directory
@@ -571,24 +597,30 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
-                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+                thumb_64, thumb_128 = self._getThumbnailInDir(
+                    thumb_dir, thumbnail_hash)
             except KeyError:
                 thumb_64, thumb_128 = (None, None)
             if thumb_64 is None:
                 thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
-                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+                thumb_64, thumb_128 = self._getThumbnailInDir(
+                    thumb_dir, thumbnail_hash)
             if thumb_64 is None:
                 thumb_dir = os.path.expanduser("~/.thumbnails/")
-                thumb_64, thumb_128 = self._getThumbnailInDir(thumb_dir, thumbnail_hash)
+                thumb_64, thumb_128 = self._getThumbnailInDir(
+                    thumb_dir, thumbnail_hash)
             if thumb_64 is None:
                 if asset.is_image():
                     thumb_64 = self._getIcon("image-x-generic")
-                    thumb_128 = self._getIcon("image-x-generic", None, LARGE_SIZE)
+                    thumb_128 = self._getIcon(
+                        "image-x-generic", None, LARGE_SIZE)
                 else:
                     thumb_64 = self._getIcon("video-x-generic")
-                    thumb_128 = self._getIcon("video-x-generic", None, LARGE_SIZE)
+                    thumb_128 = self._getIcon(
+                        "video-x-generic", None, LARGE_SIZE)
                 # TODO ideally gst discoverer should create missing thumbnails.
-                self.log("Missing a thumbnail for %s, queuing", path_from_uri(quoted_uri))
+                self.log(
+                    "Missing a thumbnail for %s, queuing", path_from_uri(quoted_uri))
                 self._missing_thumbs.append(quoted_uri)
         else:
             thumb_64 = self._getIcon("audio-x-generic")
@@ -620,7 +652,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
     # medialibrary callbacks
 
     def _assetAddedCb(self, unused_project, asset,
-            unused_current_clip_iter=None, unused_total_clips=None):
+                      unused_current_clip_iter=None, unused_total_clips=None):
         """ a file was added to the medialibrary """
         if isinstance(asset, GES.UriClipAsset):
             self._updateProgressbar()
@@ -652,7 +684,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._progressbar.show()
 
     def _sourcesStoppedImportingCb(self, unused_project):
-        self.debug("Importing took %.3f seconds", time.time() - self.import_start_time)
+        self.debug("Importing took %.3f seconds",
+                   time.time() - self.import_start_time)
         self.flush_pending_rows()
         self._progressbar.hide()
         if self._errors:
@@ -674,7 +707,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._missing_thumbs = []
         if missing_thumbs:
             self.info("Generating missing thumbnails: %d", len(missing_thumbs))
-            self._thumbs_process = threading.Thread(target=MediaLibraryWidget._generateThumbnailsThread, args=(self, missing_thumbs))
+            self._thumbs_process = threading.Thread(
+                target=MediaLibraryWidget._generateThumbnailsThread, args=(self, missing_thumbs))
             self._thumbs_process.start()
 
     def _generateThumbnailsThread(self, missing_thumbs):
@@ -696,7 +730,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                     break
             if not found:
                 # Can happen if the user removed the asset in the meanwhile.
-                self.log("%s needed a thumbnail, but vanished from storemodel", uri)
+                self.log(
+                    "%s needed a thumbnail, but vanished from storemodel", uri)
 
     # Error Dialog Box callbacks
 
@@ -733,7 +768,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         paths = self.getSelectedPaths()
         if not paths:
             return
-        # use row references so we don't have to care if a path has been removed
+        # use row references so we don't have to care if a path has been
+        # removed
         rows = []
         for path in paths:
             row = Gtk.TreeRowReference.new(model, path)
@@ -758,7 +794,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        assets = self.app.project_manager.current_project.list_assets(GES.UriClip)
+        assets = self.app.project_manager.current_project.list_assets(
+            GES.UriClip)
         unused_sources_uris = []
 
         model = self.treeview.get_model()
@@ -799,7 +836,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         # Only use the first item.
         path = paths[0]
         asset = self.storemodel[path][COL_ASSET]
-        dialog = ClipMediaPropsDialog(self.app.project_manager.current_project, asset)
+        dialog = ClipMediaPropsDialog(
+            self.app.project_manager.current_project, asset)
         dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
 
@@ -852,7 +890,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 selection = view.get_selected_items()
                 return view.path_is_selected(path) and len(selection)
         else:
-            raise RuntimeError("Unknown media library view type: %s" % type(view))
+            raise RuntimeError(
+                "Unknown media library view type: %s" % type(view))
 
         return False
 
@@ -866,7 +905,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _viewGetPathAtPos(self, event):
         if self.clip_view == SHOW_TREEVIEW:
-            pathinfo = self.treeview.get_path_at_pos(int(event.x), int(event.y))
+            pathinfo = self.treeview.get_path_at_pos(
+                int(event.x), int(event.y))
             return pathinfo[0]
         elif self.clip_view == SHOW_ICONVIEW:
             return self.iconview.get_path_at_pos(int(event.x), int(event.y))
@@ -917,7 +957,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     def _treeViewButtonReleaseEventCb(self, unused_treeview, event):
         ts = self.treeview.get_selection()
-        state = event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
+        state = event.get_state() & (
+            Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
         path = self.treeview.get_path_at_pos(event.x, event.y)
 
         if not state and not self.dragged:
@@ -959,7 +1000,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             for path in self._draggedPaths:
                 self.iconview.select_path(path)
 
-        self.iconview_cursor_pos = self.iconview.get_path_at_pos(event.x, event.y)
+        self.iconview_cursor_pos = self.iconview.get_path_at_pos(
+            event.x, event.y)
 
         return True
 
@@ -968,7 +1010,8 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
         modifier_active = control_mask or shift_mask
         if not modifier_active and self.iconview_cursor_pos:
-            current_cursor_pos = self.iconview.get_path_at_pos(event.x, event.y)
+            current_cursor_pos = self.iconview.get_path_at_pos(
+                event.x, event.y)
 
             if current_cursor_pos == self.iconview_cursor_pos:
                 if iconview.path_is_selected(current_cursor_pos):
@@ -1000,13 +1043,15 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         if self.app.project_manager.current_project:
             self.app.project_manager.current_project.addUris(uris)
         else:
-            self.warning("Adding uris to project, but the project has changed in the meantime")
+            self.warning(
+                "Adding uris to project, but the project has changed in the meantime")
         return False
 
     # Drag and Drop
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targettype, unused_time):
-        self.debug("targettype: %d, selection.data: %r", targettype, selection.get_data())
+        self.debug("targettype: %d, selection.data: %r",
+                   targettype, selection.get_data())
 
         directories = []
         filenames = []
@@ -1027,10 +1072,12 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                 else:
                     self.warning("Unusable file: %s, %s", raw_uri, path)
             else:
-                self.fixme("Importing remote files is not implemented: %s", raw_uri)
+                self.fixme(
+                    "Importing remote files is not implemented: %s", raw_uri)
 
         if directories:
-            # Recursively import from folders that were dragged into the library
+            # Recursively import from folders that were dragged into the
+            # library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
         if filenames:
             self.app.project_manager.current_project.addUris(filenames)
@@ -1078,7 +1125,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             return [self.modelFilter[path][COL_URI]
                     for path in self._draggedPaths]
         return [self.modelFilter[path][COL_URI]
-            for path in self.getSelectedPaths()]
+                for path in self.getSelectedPaths()]
 
     def getSelectedAssets(self):
         """ Returns a list of selected items URIs """
@@ -1086,4 +1133,4 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
             return [self.modelFilter[path][COL_ASSET]
                     for path in self._draggedPaths]
         return [self.modelFilter[path][COL_ASSET]
-            for path in self.getSelectedPaths()]
+                for path in self.getSelectedPaths()]

@@ -30,8 +30,8 @@ Code derived from ui/previewer.py.
 
 from gi.repository import Gst
 from collections import deque
-#from pitivi.elements.singledecodebin import SingleDecodeBin
-#from pitivi.elements.extractionsink import ExtractionSink
+# from pitivi.elements.singledecodebin import SingleDecodeBin
+# from pitivi.elements.extractionsink import ExtractionSink
 from pitivi.utils.loggable import Loggable
 
 
@@ -216,10 +216,10 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         self.debug("processing segment with timestamp=%i and duration=%i",
                    timestamp, duration)
         res = self.audioPipeline.seek(1.0,
-            Gst.Format.TIME,
-            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-            Gst.SeekType.SET, timestamp,
-            Gst.SeekType.SET, timestamp + duration)
+                                      Gst.Format.TIME,
+                                      Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                                      Gst.SeekType.SET, timestamp,
+                                      Gst.SeekType.SET, timestamp + duration)
         if not res:
             self.warning("seek failed %s", timestamp)
         self.audioPipeline.set_state(Gst.State.PLAYING)

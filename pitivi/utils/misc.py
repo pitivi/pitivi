@@ -147,6 +147,7 @@ def quote_uri(uri):
 
 
 class PathWalker(Thread):
+
     """
     Thread for recursively searching in a list of directories
     """
@@ -169,7 +170,7 @@ class PathWalker(Thread):
                 uris = []
                 for afile in files:
                     uris.append(quote_uri("file://%s" %
-                            os.path.join(path, afile)))
+                                          os.path.join(path, afile)))
                 if uris:
                     GLib.idle_add(self.callback, uris)
 

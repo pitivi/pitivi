@@ -31,6 +31,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class System(GObject.Object, Loggable):
+
     """
     A base class for systems in which Pitivi runs.
     """
@@ -49,7 +50,7 @@ class System(GObject.Object, Loggable):
         self._screensaver_keys = []
         self._sleep_keys = []
 
-    # Generic functions
+    # generic functions
     def _inhibit(self, list_, key):
         assert key is not None
         assert isinstance(key, str)
@@ -80,7 +81,7 @@ class System(GObject.Object, Loggable):
 
         return False
 
-    # Screensaver
+    # screensaver
     def inhibitScreensaver(self, key):
         """increase screensaver inhibitor count
         @arg key: C{str} a unique translated string, giving the reason for
@@ -166,6 +167,7 @@ class System(GObject.Object, Loggable):
 
 
 class FreedesktopOrgSystem(System):
+
     """provides messaging capabilites for desktops that implement fd.o specs"""
 
     def __init__(self):
@@ -175,7 +177,7 @@ class FreedesktopOrgSystem(System):
             Notify.init(APPNAME)
 
     def desktopMessage(self, title, message, icon="pitivi"):
-        # Call super method for consistent logging
+        # call super method for consistent logging
         System.desktopMessage(self, title, message, icon)
 
         if "Notify" not in missing_soft_deps:
@@ -185,8 +187,10 @@ class FreedesktopOrgSystem(System):
                 notification.show()
             except RuntimeError as e:
                 # This can happen if the system is not properly configured.
-                # See for example https://bugzilla.gnome.org/show_bug.cgi?id=719627.
-                self.error("desktopMessage: Failed displaying notification: %s", e.message)
+                # See for example
+                # https://bugzilla.gnome.org/show_bug.cgi?id=719627.
+                self.error(
+                    "desktopMessage: Failed displaying notification: %s", e.message)
                 return None
             return notification
         return None
@@ -204,14 +208,16 @@ COOKIE_SLEEP = 2
 
 
 class GnomeSystem(FreedesktopOrgSystem):
+
     def __init__(self):
         FreedesktopOrgSystem.__init__(self)
         self.bus = dbus.Bus(dbus.Bus.TYPE_SESSION)
 
+        # connect to gnome sessionmanager
         self.sessionmanager = self.bus.get_object('org.gnome.SessionManager',
-            '/org/gnome/SessionManager')
+                                                  '/org/gnome/SessionManager')
         self.session_iface = dbus.Interface(self.sessionmanager,
-            'org.gnome.SessionManager')
+                                            'org.gnome.SessionManager')
         self.cookie = None
         self.cookie_type = COOKIE_NONE
 
@@ -224,19 +230,19 @@ class GnomeSystem(FreedesktopOrgSystem):
         return True
 
     def _updatePowerInhibitionCb(self, unused_system):
-        # There are two states we want the program to be in, with regards to
-        # power saving: the screen saver is inhibited while playing, and we
-        # inhibit sleep/powersaving when processing data. Things are done the
-        # way they are here because the viewer typically shows the output
+        # there are two states we want the program to be in, with regards to
+        # power saving, the screen saver is inhibited when the viewer is watched.
+        # or we inhibit sleep/powersaving when we are processing data
+        # we do things the way we do here because the viewer shows the the output
         # of the render pipeline
         self.log("updating power inhibitors")
         toplevel_id = 0
 
-        # Inhibit power saving if we are rendering, maybe downloading a video
+        # inhibit power saving if we are rendering, maybe downloading a video
         if self.sleepIsInhibited():
             if self.cookie_type != COOKIE_SLEEP:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
-                    self.getSleepInhibitors(), INHIBIT_SUSPEND | INHIBIT_LOGOUT)
+                                                        self.getSleepInhibitors(), INHIBIT_SUSPEND | INHIBIT_LOGOUT)
                 if self.cookie is not None:
                     self.session_iface.Uninhibit(self.cookie)
                 self.cookie = new_cookie
@@ -244,11 +250,11 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("sleep inhibited")
             else:
                 self.debug("sleep already inhibited")
-        # Inhibit screensaver if we are just watching the viewer
+        # inhibit screensaver if we are just watching the viewer
         elif self.screensaverIsInhibited():
             if self.cookie_type != COOKIE_SCREENSAVER:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
-                    self.getScreensaverInhibitors(), INHIBIT_SESSION_IDLE)
+                                                        self.getScreensaverInhibitors(), INHIBIT_SESSION_IDLE)
                 if self.cookie is not None:
                     self.session_iface.Uninhibit(self.cookie)
                 self.cookie = new_cookie
@@ -256,7 +262,7 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("screensaver inhibited")
             else:
                 self.debug("screensaver already inhibited")
-        # Unblock everything otherwise
+        # unblock everything otherwise
         else:
             if self.cookie != COOKIE_NONE:
                 self.session_iface.Uninhibit(self.cookie)
@@ -269,7 +275,7 @@ class GnomeSystem(FreedesktopOrgSystem):
 
 system_ = None
 
-# Attempts to identify the System, import dependencies and overide system_
+# attempts to identify the System, import dependencies and overide system_
 if os.name == 'posix':
     if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
         try:
@@ -298,12 +304,15 @@ def getSystem():
 
 
 class CPUUsageTracker(object):
+
     def __init__(self):
         self.reset()
 
     def usage(self):
-        delta_time = (datetime.datetime.now() - self.last_moment).total_seconds()
-        delta_usage = resource.getrusage(resource.RUSAGE_SELF).ru_utime - self.last_usage.ru_utime
+        delta_time = (datetime.datetime.now()
+                      - self.last_moment).total_seconds()
+        delta_usage = resource.getrusage(
+            resource.RUSAGE_SELF).ru_utime - self.last_usage.ru_utime
         usage = float(delta_usage) / delta_time * 100
         return usage / multiprocessing.cpu_count()
 

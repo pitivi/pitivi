@@ -32,6 +32,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class Thread(threading.Thread, GObject.Object, Loggable):
+
     """
     Event-powered thread
     """
@@ -65,6 +66,7 @@ class Thread(threading.Thread, GObject.Object, Loggable):
 
 
 class ThreadMaster(Loggable):
+
     """
     Controls all the threads existing in Pitivi.
     """

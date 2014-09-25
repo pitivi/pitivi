@@ -49,7 +49,8 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
         for property_name, property_value in properties.items():
             old_value = self.properties[property_name]
             if old_value != property_value:
-                self._propertyChangedCb(self.obj, property_value, property_name)
+                self._propertyChangedCb(
+                    self.obj, property_value, property_name)
 
 
 class KeyframeChangeTracker(GObject.Object):
@@ -90,7 +91,8 @@ class KeyframeChangeTracker(GObject.Object):
         old_snapshot = self.keyframes[keyframe]
         new_snapshot = self._getKeyframeSnapshot(keyframe)
         self.keyframes[keyframe] = new_snapshot
-        self.emit("keyframe-moved", interpolator, keyframe, old_snapshot, new_snapshot)
+        self.emit("keyframe-moved", interpolator,
+                  keyframe, old_snapshot, new_snapshot)
 
     def _getKeyframeSnapshot(self, keyframe):
         return (keyframe.mode, keyframe.time, keyframe.value)
@@ -106,11 +108,13 @@ class ClipPropertyChanged(UndoableAction):
         self.new_value = new_value
 
     def do(self):
-        self.clip.set_property(self.property_name.replace("-", "_"), self.new_value)
+        self.clip.set_property(
+            self.property_name.replace("-", "_"), self.new_value)
         self._done()
 
     def undo(self):
-        self.clip.set_property(self.property_name.replace("-", "_"), self.old_value)
+        self.clip.set_property(
+            self.property_name.replace("-", "_"), self.old_value)
         self._undone()
 
 
@@ -165,6 +169,7 @@ class ClipRemoved(UndoableAction):
 
 
 class LayerAdded(UndoableAction):
+
     def __init__(self, timeline, layer):
         self.timeline = timeline
         self.layer = layer
@@ -182,6 +187,7 @@ class LayerAdded(UndoableAction):
 
 
 class LayerRemoved(UndoableAction):
+
     def __init__(self, timeline, layer):
         self.timeline = timeline
         self.layer = layer
@@ -227,7 +233,7 @@ class InterpolatorKeyframeRemoved(UndoableAction):
 
     def undo(self):
         self.track_element.newKeyframe(self.keyframe.time,
-                self.keyframe.value, self.keyframe.mode)
+                                       self.keyframe.value, self.keyframe.mode)
         self._done()
 
 
@@ -284,7 +290,8 @@ class TimelineLogObserver(object):
         self.log = log
         self.clip_property_trackers = {}
         self.interpolator_keyframe_trackers = {}
-        self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(log)
+        self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(
+            log)
         self._pipeline = None
 
     def setPipeline(self, pipeline):
@@ -333,7 +340,8 @@ class TimelineLogObserver(object):
             attr_name = "last-%s" % property_name
             last_value = clip.get_property(property_name)
             setattr(tracker, attr_name, last_value)
-        tracker.connect("monitored-property-changed", self._clipPropertyChangedCb)
+        tracker.connect(
+            "monitored-property-changed", self._clipPropertyChangedCb)
         self.clip_property_trackers[clip] = tracker
 
         clip.connect("child-added", self._clipTrackElementAddedCb)
@@ -359,8 +367,10 @@ class TimelineLogObserver(object):
         #    self._disconnectFromInterpolator(interpolator)
 
     def _connectToInterpolator(self, interpolator):
-        interpolator.connect("keyframe-added", self._interpolatorKeyframeAddedCb)
-        interpolator.connect("keyframe-removed", self._interpolatorKeyframeRemovedCb)
+        interpolator.connect(
+            "keyframe-added", self._interpolatorKeyframeAddedCb)
+        interpolator.connect(
+            "keyframe-removed", self._interpolatorKeyframeRemovedCb)
         tracker = KeyframeChangeTracker()
         tracker.connectToObject(interpolator)
         tracker.connect("keyframe-moved", self._interpolatorKeyframeMovedCb)
@@ -382,12 +392,12 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _clipPropertyChangedCb(self, tracker, clip,
-            property_name, old_value, new_value):
+                               property_name, old_value, new_value):
         attr_name = "last-%s" % property_name
         new_value = clip.get_property(property_name)
         old_value = getattr(tracker, attr_name)
         action = self.timelinePropertyChangedAction(clip, property_name,
-                 old_value, new_value)
+                                                    old_value, new_value)
         setattr(tracker, attr_name, new_value)
         self.log.push(action)
 
@@ -411,7 +421,8 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _interpolatorKeyframeRemovedCb(self, track_element, keyframe, old_value=None):
-        action = self.interpolatorKeyframeRemovedAction(track_element, keyframe)
+        action = self.interpolatorKeyframeRemovedAction(
+            track_element, keyframe)
         self.log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
@@ -422,9 +433,9 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _interpolatorKeyframeMovedCb(self, tracker, track_element,
-            keyframe, old_snapshot, new_snapshot):
+                                     keyframe, old_snapshot, new_snapshot):
         action = self.interpolatorKeyframeChangedAction(track_element,
-                keyframe, old_snapshot, new_snapshot)
+                                                        keyframe, old_snapshot, new_snapshot)
         self.log.push(action)
 
     def _layerAddedCb(self, timeline, layer):

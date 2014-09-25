@@ -9,11 +9,13 @@ from pyatspi import KEY_PRESS, KEY_RELEASE
 
 
 class TimelineTest(PitiviTestCase):
+
     def setUp(self):
         super(TimelineTest, self).setUp()
         self.goToEnd_button = self.viewer.child(name="goToEnd_button")
         self.goToStart_button = self.viewer.child(name="goToStart_button")
-        self.timecode_widget = self.viewer.child(name="timecode_entry").child(roleName="text")
+        self.timecode_widget = self.viewer.child(
+            name="timecode_entry").child(roleName="text")
 
     def insertTwoClipsAndSeekToEnd(self):
         # Just a small helper method to facilitate timeline setup
@@ -51,8 +53,10 @@ class TimelineTest(PitiviTestCase):
         for i in range(20):
             if i % 4 == 0:
                 # Drag to center, next layer, out, and then back in
-                middle = [self.center(timeline), endpos[(i + 1) % 2], self.center(sample)]
-                self.improved_drag(self.center(sample), endpos[i % 3], middle=middle)
+                middle = [self.center(timeline), endpos[
+                    (i + 1) % 2], self.center(sample)]
+                self.improved_drag(
+                    self.center(sample), endpos[i % 3], middle=middle)
             else:
                 # Simple drag
                 self.improved_drag(self.center(sample), endpos[i % 3])
@@ -77,15 +81,19 @@ class TimelineTest(PitiviTestCase):
         self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         dogtail.rawinput.click(self.getTimelineX(0.75), self.getTimelineY(0))
-        self.timeline_toolbar.child(name="Split", roleName="push button").click()
+        self.timeline_toolbar.child(
+            name="Split", roleName="push button").click()
         # Delete the first half of the split clip.
-        dogtail.rawinput.click(self.getTimelineX(0.75 - 0.125), self.getTimelineY(0))
-        self.timeline_toolbar.child(name="Delete", roleName="push button").click()
+        dogtail.rawinput.click(
+            self.getTimelineX(0.75 - 0.125), self.getTimelineY(0))
+        self.timeline_toolbar.child(
+            name="Delete", roleName="push button").click()
         self.goToEnd_button.click()
         self.assertEqual(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
 
         # Delete also the second half of the split clip.
-        dogtail.rawinput.click(self.getTimelineX(0.75 + 0.125), self.getTimelineY(0))
+        dogtail.rawinput.click(
+            self.getTimelineX(0.75 + 0.125), self.getTimelineY(0))
         dogtail.rawinput.pressKey("Del")
 
         self.goToEnd_button.click()
@@ -98,7 +106,8 @@ class TimelineTest(PitiviTestCase):
         pos = (0.05, 0.48, 0.17, 0.24, 0.35, 0.61, 0.41, 0.51)
         for k in pos:
             for p in pos:
-                dogtail.rawinput.click(self.getTimelineX(p + k / 10), self.getTimelineY(0))
+                dogtail.rawinput.click(
+                    self.getTimelineX(p + k / 10), self.getTimelineY(0))
                 # Allow the UI to update
                 sleep(0.1)
                 # Split
@@ -115,19 +124,23 @@ class TimelineTest(PitiviTestCase):
         sleep(0.1)
         dogtail.rawinput.press(self.getTimelineX(0.75), self.getTimelineY(0))
         # Drag in, this should create a transition.
-        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.5), self.getTimelineY(0))
+        dogtail.rawinput.absoluteMotion(
+            self.getTimelineX(0.5), self.getTimelineY(0))
         sleep(0.1)
         # Drag out, the transition should be gone.
-        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.9), self.getTimelineY(0))
+        dogtail.rawinput.absoluteMotion(
+            self.getTimelineX(0.9), self.getTimelineY(0))
         sleep(0.1)
         # Drag in again, this should create a transition.
-        dogtail.rawinput.absoluteMotion(self.getTimelineX(0.25), self.getTimelineY(0))
+        dogtail.rawinput.absoluteMotion(
+            self.getTimelineX(0.25), self.getTimelineY(0))
         sleep(0.1)
         dogtail.rawinput.release(self.getTimelineX(0.5), self.getTimelineY(0))
         sleep(0.1)
 
         # Click the transition, make sure it's selected.
-        dogtail.rawinput.click(self.getTimelineX(0.5 - 0.125), self.getTimelineY(0))
+        dogtail.rawinput.click(
+            self.getTimelineX(0.5 - 0.125), self.getTimelineY(0))
         sleep(0.1)
         iconlist = self.transitions.child(roleName="layered pane")
         self.assertTrue(iconlist.sensitive)
@@ -150,20 +163,26 @@ class TimelineTest(PitiviTestCase):
                 maxx = middle
             else:
                 minx = middle
-        #+5 due to handle size
+        # +5 due to handle size
         return maxx - timeline.position[0] + 5
 
     def ripple_roll(self, from_percent, to_percent):
-        dogtail.rawinput.click(self.getTimelineX(from_percent), self.getTimelineY(0))
+        dogtail.rawinput.click(
+            self.getTimelineX(from_percent), self.getTimelineY(0))
         sleep(0.1)
-        registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_PRESS)
+        registry.generateKeyboardEvent(
+            dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_PRESS)
         try:
-            dogtail.rawinput.press(self.getTimelineX(from_percent), self.getTimelineY(0))
-            dogtail.rawinput.absoluteMotion(self.getTimelineX(to_percent), self.getTimelineY(0))
+            dogtail.rawinput.press(
+                self.getTimelineX(from_percent), self.getTimelineY(0))
+            dogtail.rawinput.absoluteMotion(
+                self.getTimelineX(to_percent), self.getTimelineY(0))
             sleep(0.1)
-            dogtail.rawinput.release(self.getTimelineX(to_percent), self.getTimelineY(0))
+            dogtail.rawinput.release(
+                self.getTimelineX(to_percent), self.getTimelineY(0))
         finally:
-            registry.generateKeyboardEvent(dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
+            registry.generateKeyboardEvent(
+                dogtail.rawinput.keyNameToKeyCode("Shift_L"), None, KEY_RELEASE)
         sleep(0.1)
 
     def test_ripple_roll(self):
@@ -174,7 +193,8 @@ class TimelineTest(PitiviTestCase):
             self.ripple_roll(from_percent, to_percent)
             self.goToEnd_button.click()
             sleep(0.1)
-            self.assertGreater(self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
+            self.assertGreater(
+                self.timecode_widget.text, DURATION_OF_TWO_CLIPS)
             self.goToStart_button.click()
             sleep(0.1)
             self.ripple_roll(to_percent, from_percent)
@@ -189,8 +209,10 @@ class TimelineTest(PitiviTestCase):
         self.effectslibrary.click()
         self.clipproperties.click()
         table = self.clipproperties.child(roleName="table")
-        effect_from_library = self.search_by_text("Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
-        self.improved_drag(self.center(effect_from_library), self.center(table))
+        effect_from_library = self.search_by_text(
+            "Agingtv", self.effectslibrary, roleName="table cell", exactMatchOnly=False)
+        self.improved_drag(
+            self.center(effect_from_library), self.center(table))
         sleep(1.1)
         ripple_roll(from_percent=0.25, to_percent=0.75)
 
@@ -214,7 +236,8 @@ class TimelineTest(PitiviTestCase):
         video_percent = 2.0 / 15
 
         # Delete the first clip to make some space.
-        dogtail.rawinput.click(self.getTimelineX(image_percent / 4), self.getTimelineY(0))
+        dogtail.rawinput.click(
+            self.getTimelineX(image_percent / 4), self.getTimelineY(0))
         dogtail.rawinput.pressKey("Del")
         sleep(0.1)
 
@@ -222,7 +245,8 @@ class TimelineTest(PitiviTestCase):
         self.ripple_roll(video_percent + image_percent / 4, 0)
         # Without this the next call does not work because
         # the last riple_roll is a bit off because of the 0.
-        dogtail.rawinput.click(self.getTimelineX(image_percent / 4), self.getTimelineY(0))
+        dogtail.rawinput.click(
+            self.getTimelineX(image_percent / 4), self.getTimelineY(0))
         self.goToEnd_button.click()
         sleep(0.1)
         self.assertEqual(self.timecode_widget.text, "00:12.999")

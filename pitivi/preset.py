@@ -35,11 +35,13 @@ from pitivi.utils import system
 
 
 class DuplicatePresetNameException(Exception):
+
     """Raised when an operation would result in a duplicated preset name."""
     pass
 
 
 class PresetManager(object):
+
     """Abstract class for storing a list of presets.
 
     Subclasses must provide a filename attribute.
@@ -232,7 +234,8 @@ class PresetManager(object):
 
     def removePreset(self, name):
         try:
-            os.remove(self.presets[name]["filepath"])  # Deletes json file if exists
+            # Deletes json file if exists
+            os.remove(self.presets[name]["filepath"])
         except KeyError:
             # Trying to remove a preset that has not actually been saved
             return
@@ -382,8 +385,8 @@ class RenderPresetManager(PresetManager):
 
         cached_encs = CachedEncoderList()
         if (acodec not in [fact.get_name() for fact in cached_encs.aencoders]
-        or vcodec not in [fact.get_name() for fact in cached_encs.vencoders]
-        or container not in [fact.get_name() for fact in cached_encs.muxers]):
+           or vcodec not in [fact.get_name() for fact in cached_encs.vencoders]
+           or container not in [fact.get_name() for fact in cached_encs.muxers]):
             return
 
         try:

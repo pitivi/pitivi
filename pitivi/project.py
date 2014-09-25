@@ -62,6 +62,7 @@ DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
 
 class AssetRemovedAction(UndoableAction):
+
     def __init__(self, project, asset):
         UndoableAction.__init__(self)
         self.project = project
@@ -82,6 +83,7 @@ class AssetRemovedAction(UndoableAction):
 
 
 class AssetAddedAction(UndoableAction):
+
     def __init__(self, project, asset):
         UndoableAction.__init__(self)
         self.project = project
@@ -159,6 +161,7 @@ class ProjectLogObserver(UndoableAction):
 
 
 class ProjectManager(GObject.Object, Loggable):
+
     """
     @type app: L{Pitivi}
     @type current_project: L{Project}
@@ -203,7 +206,8 @@ class ProjectManager(GObject.Object, Loggable):
         use_backup = False
         try:
             time_diff = os.path.getmtime(backup_path) - os.path.getmtime(path)
-            self.debug('Backup file is %d secs newer: %s', time_diff, backup_path)
+            self.debug(
+                'Backup file is %d secs newer: %s', time_diff, backup_path)
         except OSError:
             self.debug('Backup file does not exist: %s', backup_path)
         except UnicodeEncodeError:
@@ -230,13 +234,14 @@ class ProjectManager(GObject.Object, Loggable):
 
         if self.current_project.createTimeline():
             self.emit("new-project-created", self.current_project)
-            self.current_project.connect("project-changed", self._projectChangedCb)
+            self.current_project.connect(
+                "project-changed", self._projectChangedCb)
             return True
         else:
             self.emit("new-project-failed", uri,
                       _('This might be due to a bug or an unsupported project file format. '
-                      'If you were trying to add a media file to your project, '
-                      'use the "Import" button instead.'))
+                        'If you were trying to add a media file to your project, '
+                        'use the "Import" button instead.'))
             self.newBlankProject(ignore_unsaved_changes=True)
             return False
 
@@ -250,7 +255,8 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.add_buttons(_("Ignore backup"), Gtk.ResponseType.REJECT,
                            _("Restore from backup"), Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
-        # seems we really have to do it once more so it doesn't show "pitivi"...
+        # seems we really have to do it once more so it doesn't show
+        # "pitivi"...
         dialog.set_title("")
         dialog.set_icon_name("pitivi")
         dialog.set_transient_for(self.app.gui)
@@ -274,7 +280,8 @@ class ProjectManager(GObject.Object, Loggable):
         vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = Gtk.Image.new_from_icon_name("dialog-question", Gtk.IconSize.DIALOG)
+        image = Gtk.Image.new_from_icon_name(
+            "dialog-question", Gtk.IconSize.DIALOG)
         hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
@@ -309,7 +316,8 @@ class ProjectManager(GObject.Object, Loggable):
         GES will default to GES.XmlFormatter.
         """
         if self.disable_save is True and (backup is True or uri is None):
-            self.log("Read-only mode is enforced and no new URI was specified, ignoring save request")
+            self.log(
+                "Read-only mode is enforced and no new URI was specified, ignoring save request")
             return False
 
         if backup:
@@ -340,7 +348,9 @@ class ProjectManager(GObject.Object, Loggable):
             # "overwrite" is always True: our GTK filechooser save dialogs are
             # set to always ask the user on our behalf about overwriting, so
             # if saveProject is actually called, that means overwriting is OK.
-            saved = self.current_project.save(self.current_project.timeline, uri, formatter_type, overwrite=True)
+            saved = self.current_project.save(
+                self.current_project.timeline, uri,
+                formatter_type, overwrite=True)
         except Exception as e:
             saved = False
             self.emit("save-project-failed", uri, e)
@@ -397,7 +407,8 @@ class ProjectManager(GObject.Object, Loggable):
                 # add all sources
                 for source in sources:
                     path = path_from_uri(source.get_id())
-                    tar.add(path, os.path.join(top, os.path.relpath(path, common)))
+                    tar.add(
+                        path, os.path.join(top, os.path.relpath(path, common)))
                 tar.close()
         # This catches errors with tarring; the GUI already shows errors while
         # saving projects (ex: permissions), so probably no GUI needed here.
@@ -407,8 +418,10 @@ class ProjectManager(GObject.Object, Loggable):
             self.error(e)
             tar_file = path_from_uri(uri)
             if os.path.isfile(tar_file):
-                renamed = os.path.splitext(tar_file)[0] + " (CORRUPT)" + "." + project_extension + "_tar"
-                self.warning('An error occurred, will save the tarball as "%s"' % renamed)
+                renamed = os.path.splitext(tar_file)[
+                    0] + " (CORRUPT)" + "." + project_extension + "_tar"
+                self.warning(
+                    'An error occurred, will save the tarball as "%s"' % renamed)
                 os.rename(tar_file, renamed)
         else:
             everything_ok = True
@@ -437,12 +450,14 @@ class ProjectManager(GObject.Object, Loggable):
         """ close the current project """
 
         if self.current_project is None:
-            self.warning("Trying to close a project that was already closed/didn't exist")
+            self.warning(
+                "Trying to close a project that was already closed/didn't exist")
             return True
 
         self.info("closing running project %s", self.current_project.uri)
         if not self.emit("closing-project", self.current_project):
-            self.warning("Could not close project - this could be because there were unsaved changes and the user cancelled when prompted about them")
+            self.warning(
+                "Could not close project - this could be because there were unsaved changes and the user cancelled when prompted about them")
             return False
 
         self.emit("project-closed", self.current_project)
@@ -452,7 +467,8 @@ class ProjectManager(GObject.Object, Loggable):
         try:
             self.current_project.disconnect_by_function(self._projectChangedCb)
         except Exception:
-            self.debug("Tried disconnecting signals, but they were not connected")
+            self.debug(
+                "Tried disconnecting signals, but they were not connected")
         self._cleanBackup(self.current_project.uri)
         self.current_project.release()
         self.current_project = None
@@ -517,7 +533,8 @@ class ProjectManager(GObject.Object, Loggable):
 
         if self._backup_lock == 0:
             self._backup_lock = 10
-            GLib.timeout_add_seconds(self._backup_lock, self._saveBackupCb, project, uri)
+            GLib.timeout_add_seconds(
+                self._backup_lock, self._saveBackupCb, project, uri)
         else:
             if self._backup_lock < 60:
                 self._backup_lock += 5
@@ -560,6 +577,7 @@ class ProjectManager(GObject.Object, Loggable):
 
 
 class Project(Loggable, GES.Project):
+
     """
     The base class for Pitivi projects
 
@@ -620,24 +638,24 @@ class Project(Loggable, GES.Project):
         container_profile = \
             GstPbutils.EncodingContainerProfile.new("pitivi-profile",
                                                     _("Pitivi encoding profile"),
-                                                    Gst.Caps("application/ogg"),
+                                                    Gst.Caps(
+                                                        "application/ogg"),
                                                     None)
 
-        # Create video profile (We use the same default seetings as the project settings)
-        video_profile = GstPbutils.EncodingVideoProfile.new(Gst.Caps("video/x-theora"),
-                                                            None,
-                                                            Gst.Caps("video/x-raw"),
-                                                            0)
+        # Create video profile (We use the same default seetings as the project
+        # settings)
+        video_profile = GstPbutils.EncodingVideoProfile.new(
+            Gst.Caps("video/x-theora"), None, Gst.Caps("video/x-raw"), 0)
 
-        # Create audio profile (We use the same default seetings as the project settings)
-        audio_profile = GstPbutils.EncodingAudioProfile.new(Gst.Caps("audio/x-vorbis"),
-                                                            None,
-                                                            Gst.Caps("audio/x-raw"),
-                                                            0)
+        # Create audio profile (We use the same default seetings as the project
+        # settings)
+        audio_profile = GstPbutils.EncodingAudioProfile.new(
+            Gst.Caps("audio/x-vorbis"), None, Gst.Caps("audio/x-raw"), 0)
         container_profile.add_profile(video_profile)
         container_profile.add_profile(audio_profile)
         # Keep a reference to those profiles
-        # FIXME We should handle the case we have more than 1 audio and 1 video profiles
+        # FIXME We should handle the case we have more than 1 audio and 1 video
+        # profiles
         self.container_profile = container_profile
         self.audio_profile = audio_profile
         self.video_profile = video_profile
@@ -774,7 +792,8 @@ class Project(Loggable, GES.Project):
     @videopar.setter
     def videopar(self, value):
         if self.set_video_restriction_value("pixel-aspect-ratio", value):
-            self._emitChange("rendering-settings-changed", "pixel-aspect-ratio", value)
+            self._emitChange(
+                "rendering-settings-changed", "pixel-aspect-ratio", value)
 
     @property
     def audiochannels(self):
@@ -878,7 +897,7 @@ class Project(Loggable, GES.Project):
         self.nb_imported_files += 1
         assets = self.get_loading_assets()
         self.nb_remaining_file_to_import = len([asset for asset in assets if
-                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
+                                                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
         if self.nb_remaining_file_to_import == 0:
             self.nb_imported_files = 0
             # We do not take into account asset comming from project
@@ -911,28 +930,33 @@ class Project(Loggable, GES.Project):
             # The encoding profile might have been reset from the
             # Project file, we just take it as our
             self.container_profile = container_profile
-            self.muxer = self._getElementFactoryName(encoders.muxers, container_profile)
+            self.muxer = self._getElementFactoryName(
+                encoders.muxers, container_profile)
             if self.muxer is None:
                 self.muxer = DEFAULT_MUXER
             for profile in container_profile.get_profiles():
                 if isinstance(profile, GstPbutils.EncodingVideoProfile):
                     self.video_profile = profile
                     if self.video_profile.get_restriction() is None:
-                        self.video_profile.set_restriction(Gst.Caps("video/x-raw"))
+                        self.video_profile.set_restriction(
+                            Gst.Caps("video/x-raw"))
                     self._ensureVideoRestrictions()
 
-                    self.vencoder = self._getElementFactoryName(encoders.vencoders, profile)
+                    self.vencoder = self._getElementFactoryName(
+                        encoders.vencoders, profile)
                 elif isinstance(profile, GstPbutils.EncodingAudioProfile):
                     self.audio_profile = profile
                     if self.audio_profile.get_restriction() is None:
-                        self.audio_profile.set_restriction(Gst.Caps("audio/x-raw"))
+                        self.audio_profile.set_restriction(
+                            Gst.Caps("audio/x-raw"))
                     self._ensureAudioRestrictions()
-                    self.aencoder = self._getElementFactoryName(encoders.aencoders, profile)
+                    self.aencoder = self._getElementFactoryName(
+                        encoders.aencoders, profile)
                 else:
                     self.warning("We do not handle profile: %s" % profile)
 
     # ------------------------------------------ #
-    #               Our API                      #
+    # Our API                      #
     # ------------------------------------------ #
     def _commit(self):
         """
@@ -1088,7 +1112,7 @@ class Project(Loggable, GES.Project):
         self._acodecsettings_cache[self.aencoder] = value
 
     # ------------------------------------------ #
-    #               Private methods              #
+    # Private methods              #
     # ------------------------------------------ #
 
     def _ensureTracks(self):
@@ -1139,7 +1163,8 @@ class Project(Loggable, GES.Project):
             return profile.get_preset_name()
 
         factories = Gst.ElementFactory.list_filter(elements,
-                                                   Gst.Caps(profile.get_format()),
+                                                   Gst.Caps(
+                                                       profile.get_format()),
                                                    Gst.PadDirection.SRC,
                                                    False)
         if factories:
@@ -1149,7 +1174,7 @@ class Project(Loggable, GES.Project):
 
     def _calculateNbLoadingAssets(self):
         nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
-                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
+                                           GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
         if self.nb_remaining_file_to_import == 0 and nb_remaining_file_to_import:
             self.nb_remaining_file_to_import = nb_remaining_file_to_import
             self._emitChange("start-importing")
@@ -1174,7 +1199,8 @@ class ProjectSettingsDialog():
         Initialize the static parts of the UI and set up various shortcuts
         """
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(), "projectsettings.ui"))
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "projectsettings.ui"))
         self.builder.connect_signals(self)
 
         getObj = self.builder.get_object
@@ -1208,8 +1234,10 @@ class ProjectSettingsDialog():
         # Set the shading style in the contextual toolbars below presets
         video_presets_toolbar = getObj("video_presets_toolbar")
         audio_presets_toolbar = getObj("audio_presets_toolbar")
-        video_presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        audio_presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        video_presets_toolbar.get_style_context().add_class(
+            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        audio_presets_toolbar.get_style_context().add_class(
+            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
     def _setupUiConstraints(self):
         """
@@ -1274,7 +1302,8 @@ class ProjectSettingsDialog():
                         edge_func=self.updateWidth)
 
         # keep framereate text field and combo in sync
-        self.wg.addBiEdge(self.frame_rate_combo, self.frame_rate_fraction_widget)
+        self.wg.addBiEdge(
+            self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # keep dar text field and combo in sync
         self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
@@ -1334,16 +1363,21 @@ class ProjectSettingsDialog():
 
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
-        self.bindSpinbutton(self.video_presets, "height", self.height_spinbutton)
-        self.bindFractionWidget(self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
+        self.bindSpinbutton(
+            self.video_presets, "height", self.height_spinbutton)
+        self.bindFractionWidget(
+            self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
         self.bindPar(self.video_presets)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bindCombo(self.audio_presets, "channels", self.channels_combo)
-        self.bindCombo(self.audio_presets, "sample-rate", self.sample_rate_combo)
+        self.bindCombo(
+            self.audio_presets, "sample-rate", self.sample_rate_combo)
 
-        self.wg.addEdge(self.par_fraction_widget, self.save_video_preset_button)
-        self.wg.addEdge(self.frame_rate_fraction_widget, self.save_video_preset_button)
+        self.wg.addEdge(
+            self.par_fraction_widget, self.save_video_preset_button)
+        self.wg.addEdge(
+            self.frame_rate_fraction_widget, self.save_video_preset_button)
         self.wg.addEdge(self.width_spinbutton, self.save_video_preset_button)
         self.wg.addEdge(self.height_spinbutton, self.save_video_preset_button)
 
@@ -1357,7 +1391,8 @@ class ProjectSettingsDialog():
             self.select_par_radiobutton.props.active = True
             self.par_fraction_widget.setWidgetValue(value)
 
-        mgr.bindWidget("par", updatePar, self.par_fraction_widget.getWidgetValue)
+        mgr.bindWidget(
+            "par", updatePar, self.par_fraction_widget.getWidgetValue)
 
     def bindFractionWidget(self, mgr, name, widget):
         mgr.bindWidget(name, widget.setWidgetValue, widget.getWidgetValue)
@@ -1390,9 +1425,11 @@ class ProjectSettingsDialog():
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
-        model.connect("row-inserted", self._newPresetCb, column, renderer, treeview)
+        model.connect(
+            "row-inserted", self._newPresetCb, column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
+        renderer.connect(
+            "editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb, mgr,
                                          update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
@@ -1548,8 +1585,10 @@ class ProjectSettingsDialog():
         self.remove_audio_preset_button.set_sensitive(can_remove)
 
     def _updateVideoPresetButtons(self):
-        self.save_video_preset_button.set_sensitive(self.video_presets.isSaveButtonSensitive())
-        self.remove_video_preset_button.set_sensitive(self.video_presets.isRemoveButtonSensitive())
+        self.save_video_preset_button.set_sensitive(
+            self.video_presets.isSaveButtonSensitive())
+        self.remove_video_preset_button.set_sensitive(
+            self.video_presets.isRemoveButtonSensitive())
 
     def _updateAudioSaveButton(self, unused_in, button):
         button.set_sensitive(self.audio_presets.isSaveButtonSensitive())
@@ -1582,16 +1621,20 @@ class ProjectSettingsDialog():
         self.par_fraction_widget.setWidgetValue(dar * (1 / sar))
 
     def updateDarFromCombo(self):
-        self.dar_fraction_widget.setWidgetValue(get_combo_value(self.dar_combo))
+        self.dar_fraction_widget.setWidgetValue(
+            get_combo_value(self.dar_combo))
 
     def updateDarFromFractionWidget(self):
-        set_combo_value(self.dar_combo, self.dar_fraction_widget.getWidgetValue())
+        set_combo_value(
+            self.dar_combo, self.dar_fraction_widget.getWidgetValue())
 
     def updateParFromCombo(self):
-        self.par_fraction_widget.setWidgetValue(get_combo_value(self.par_combo))
+        self.par_fraction_widget.setWidgetValue(
+            get_combo_value(self.par_combo))
 
     def updateParFromFractionWidget(self):
-        set_combo_value(self.par_combo, self.par_fraction_widget.getWidgetValue())
+        set_combo_value(
+            self.par_combo, self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):
 
@@ -1626,7 +1669,8 @@ class ProjectSettingsDialog():
         self.project.videowidth = int(self.width_spinbutton.get_value())
         self.project.videoheight = int(self.height_spinbutton.get_value())
         self.project.videopar = self.par_fraction_widget.getWidgetValue()
-        self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue()
+        self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue(
+        )
 
         self.project.audiochannels = get_combo_value(self.channels_combo)
         self.project.audiorate = get_combo_value(self.sample_rate_combo)

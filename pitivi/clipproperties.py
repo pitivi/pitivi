@@ -49,6 +49,7 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
 
 
 class ClipPropertiesError(Exception):
+
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
 
@@ -56,15 +57,16 @@ class ClipPropertiesError(Exception):
 def compare_type(track, effect_type):
 
     if (track.get_property("track_type") == GES.TrackType.AUDIO
-    and effect_type == AUDIO_EFFECT):
+       and effect_type == AUDIO_EFFECT):
         return True
     elif (track.get_property("track_type") == GES.TrackType.VIDEO
-    and effect_type == VIDEO_EFFECT):
+          and effect_type == VIDEO_EFFECT):
         return True
     return False
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
+
     """
     Widget for configuring the selected clip.
 
@@ -99,14 +101,16 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         # vbox.pack_start(self.transformation_expander, False, True, 0)
 
         effects_properties_manager = EffectsPropertiesManager(app)
-        self.effect_expander = EffectProperties(app, effects_properties_manager, self)
+        self.effect_expander = EffectProperties(
+            app, effects_properties_manager, self)
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, True, True, 0)
 
     def _setProject(self, project):
         self._project = project
         if project:
-            self.effect_expander._connectTimelineSelection(self.app.gui.timeline_ui.timeline)
+            self.effect_expander._connectTimelineSelection(
+                self.app.gui.timeline_ui.timeline)
             # Transformation boxed DISABLED
             # if self.transformation_expander:
             #     self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
@@ -138,6 +142,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
 
 class EffectProperties(Gtk.Expander, Loggable):
+
     """
     Widget for viewing and configuring effects
 
@@ -165,7 +170,8 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # The toolbar that will go between the list of effects and properties
         self._toolbar = Gtk.Toolbar()
-        self._toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        self._toolbar.get_style_context().add_class(
+            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
         removeEffectButton = Gtk.ToolButton()
         removeEffectButton.set_icon_name("list-remove-symbolic")
@@ -173,7 +179,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         removeEffectButton.set_is_important(True)
         self._toolbar.insert(removeEffectButton, 0)
 
-        # Treeview to display a list of effects (checkbox, effect type and name)
+        # Treeview to display a list of effects (checkbox, effect type and
+        # name)
         self.treeview_scrollwin = Gtk.ScrolledWindow()
         self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER,
                                            Gtk.PolicyType.AUTOMATIC)
@@ -203,7 +210,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         activatedcell.props.xpad = PADDING
         activatedcell.connect("toggled", self._effectActiveToggleCb)
         activatedcol = self.treeview.insert_column_with_attributes(-1,
-                            _("Active"), activatedcell, active=COL_ACTIVATED)
+                                                                   _("Active"), activatedcell, active=COL_ACTIVATED)
 
         typecol = Gtk.TreeViewColumn(_("Type"))
         typecol.set_spacing(SPACING)
@@ -242,7 +249,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._vcontent = Gtk.VPaned()
         self._table = Gtk.Table(n_rows=3, n_columns=1, homogeneous=False)
         self._table.attach(self.treeview_scrollwin, 0, 1, 0, 1)
-        self._table.attach(self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
+        self._table.attach(
+            self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
         self._vcontent.pack1(self._table, resize=True, shrink=False)
         self.add(self._vcontent)
         self._vcontent.show()
@@ -259,7 +267,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self._vcontent.connect("notify", self._vcontentNotifyCb)
         removeEffectButton.connect("clicked", self._removeEffectCb)
-        self.app.project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
+        self.app.project_manager.connect(
+            "new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
         self.connected = False
 
@@ -278,10 +287,12 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _setTimeline(self, timeline):
         if self.connected:
-            self._timeline.selection.disconnect_by_func(self._selectionChangedCb)
+            self._timeline.selection.disconnect_by_func(
+                self._selectionChangedCb)
         self._timeline = timeline
         if timeline:
-            self._timeline.selection.connect("selection-changed", self._selectionChangedCb)
+            self._timeline.selection.connect(
+                "selection-changed", self._selectionChangedCb)
         self.connected = bool(timeline)
 
     timeline = property(_getTimeline, _setTimeline)
@@ -338,7 +349,8 @@ class EffectProperties(Gtk.Expander, Loggable):
     def addEffectToClip(self, clip, factory_name, priority=None):
         """Adds the specified effect if it can be applied to the clip."""
         model = self.treeview.get_model()
-        media_type = self.app.effects.getFactoryFromName(factory_name).media_type
+        media_type = self.app.effects.getFactoryFromName(
+            factory_name).media_type
         for track_element in clip.get_children(False):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
@@ -364,11 +376,13 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.addEffectToClip(clip, factory_name)
 
     def _dragMotionCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
-        self.debug("Something is being dragged in the clip properties' effects list")
+        self.debug(
+            "Something is being dragged in the clip properties' effects list")
         self.drag_highlight()
 
     def _dragLeaveCb(self, unused_tree_view, unused_drag_context, unused_timestamp):
-        self.info("The item being dragged has left the clip properties' effects list")
+        self.info(
+            "The item being dragged has left the clip properties' effects list")
         self.drag_unhighlight()
 
     def _dragDataReceivedCb(self, treeview, drag_context, x, y, selection_data, unused_info, timestamp):
@@ -402,7 +416,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             if dest_row:
                 drop_path, drop_pos = dest_row
                 drop_index = drop_path.get_indices()[0]
-                drop_index = self.calculateEffectPriority(source_index, drop_index, drop_pos)
+                drop_index = self.calculateEffectPriority(
+                    source_index, drop_index, drop_pos)
             else:
                 # This should happen when dragging after the last row.
                 drop_index = len(model) - 1
@@ -455,13 +470,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.updateAll()
 
     def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
-        is_row, x, y, model, path, tree_iter = view.get_tooltip_context(x, y, keyboard_mode)
+        is_row, x, y, model, path, tree_iter = view.get_tooltip_context(
+            x, y, keyboard_mode)
         if not is_row:
             return False
 
         view.set_tooltip_row(tooltip, path)
         description = self.storemodel.get_value(tree_iter, COL_DESC_TEXT)
-        bin_description = self.storemodel.get_value(tree_iter, COL_BIN_DESCRIPTION_TEXT)
+        bin_description = self.storemodel.get_value(
+            tree_iter, COL_BIN_DESCRIPTION_TEXT)
         tooltip.set_text("%s\n%s" % (bin_description, description))
         return True
 
@@ -495,7 +512,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             elif track_type == GES.TrackType.VIDEO:
                 to_append.append("Video")
             to_append.append(effect.props.bin_description)
-            effect_factory = self.app.effects.getFactoryFromName(effect.props.bin_description)
+            effect_factory = self.app.effects.getFactoryFromName(
+                effect.props.bin_description)
             to_append.append(effect_factory.human_name)
             to_append.append(asset.description)
             to_append.append(effect)
@@ -540,15 +558,18 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _showEffectConfigurationWidget(self, effect):
         self._removeEffectConfigurationWidget()
-        self._effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(effect)
+        self._effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(
+            effect)
         if not self._effect_config_ui:
             return
-        self._vcontent.pack2(self._effect_config_ui, resize=False, shrink=False)
+        self._vcontent.pack2(
+            self._effect_config_ui, resize=False, shrink=False)
         self._vcontent.set_position(int(self._config_ui_h_pos))
         self._effect_config_ui.show_all()
 
 
 class TransformationProperties(Gtk.Expander):
+
     """
     Widget for viewing and configuring speed
     """
@@ -671,7 +692,8 @@ class TransformationProperties(Gtk.Expander):
         if not effect:
             effect = GES.Effect.new(bin_description=name)
             self._selected_clip.add(effect)
-            tracks = self.app.project_manager.current_project.timeline.get_tracks()
+            tracks = self.app.project_manager.current_project.timeline.get_tracks(
+            )
             effect = self._findEffect(name)
             # disable the effect on default
             a = self.effect.get_gnlobject()
@@ -692,7 +714,8 @@ class TransformationProperties(Gtk.Expander):
 
             self.show()
             if self.get_expanded():
-                self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
+                self.effect = self._findOrCreateEffect(
+                    "frei0r-filter-scale0tilt")
                 self._updateSpinButtons()
         else:
             if self._selected_clip:
@@ -715,6 +738,7 @@ class TransformationProperties(Gtk.Expander):
     def _setTimeline(self, timeline):
         self._timeline = timeline
         if timeline:
-            self._timeline.selection.connect('selection-changed', self._selectionChangedCb)
+            self._timeline.selection.connect(
+                'selection-changed', self._selectionChangedCb)
 
     timeline = property(_getTimeline, _setTimeline)

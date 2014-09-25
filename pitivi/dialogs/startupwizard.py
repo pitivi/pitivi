@@ -34,6 +34,7 @@ from pitivi.utils.misc import show_user_manual
 
 
 class StartUpWizard(object):
+
     """A Wizard displaying recent projects.
 
     Allows the user to:
@@ -57,7 +58,8 @@ class StartUpWizard(object):
     def __init__(self, app):
         self.app = app
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(), "startupwizard.ui"))
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "startupwizard.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("window1")
@@ -69,7 +71,8 @@ class StartUpWizard(object):
         _filter.set_name(_("Projects"))
 
         for asset in GES.list_assets(GES.Formatter):
-            _filter.add_pattern('*.' + asset.get_meta(GES.META_FORMATTER_EXTENSION))
+            _filter.add_pattern(
+                '*.' + asset.get_meta(GES.META_FORMATTER_EXTENSION))
 
         self.recent_chooser.add_filter(_filter)
 
@@ -89,7 +92,8 @@ class StartUpWizard(object):
         if self.app.getLatest():
             self._appVersionInfoReceivedCb(self.app, None)
         else:
-            self.app.connect("version-info-received", self._appVersionInfoReceivedCb)
+            self.app.connect(
+                "version-info-received", self._appVersionInfoReceivedCb)
 
     def _newProjectCb(self, unused_button):
         """Handle a click on the New (Project) button."""
@@ -136,7 +140,7 @@ class StartUpWizard(object):
         self.window.hide()
 
     def _projectFailedCb(self, unused_project_manager, unused_uri,
-            unused_exception):
+                         unused_exception):
         """Handle the failure of a project open operation."""
         self.show()
 

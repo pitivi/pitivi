@@ -22,7 +22,8 @@ DURATION_OF_ONE_CLIP = "00:01.999"
 DURATION_OF_TWO_CLIPS = "00:03.999"
 
 # Constants from pitivi.ui
-# TODO: Use directly the constants from pitivi.ui when these UI tests are ported to Python3.
+# TODO: Use directly the constants from pitivi.ui when these UI tests are
+# ported to Python3.
 CONTROL_WIDTH = 250
 EXPANDED_SIZE = 65
 SPACING = 10
@@ -46,9 +47,12 @@ class PitiviTestCase(unittest.TestCase):
         # chosen by the current user.
         if not hasattr(self, "user_dir"):
             self.user_dir = tempfile.mkdtemp()
-            os.environ["PITIVI_USER_CONFIG_DIR"] = os.path.pathsep.join([self.user_dir, "config"])
-            os.environ["PITIVI_USER_DATA_DIR"] = os.path.pathsep.join([self.user_dir, "data"])
-            os.environ["PITIVI_USER_CACHE_DIR"] = os.path.pathsep.join([self.user_dir, "cache"])
+            os.environ["PITIVI_USER_CONFIG_DIR"] = os.path.pathsep.join(
+                [self.user_dir, "config"])
+            os.environ["PITIVI_USER_DATA_DIR"] = os.path.pathsep.join(
+                [self.user_dir, "data"])
+            os.environ["PITIVI_USER_CACHE_DIR"] = os.path.pathsep.join(
+                [self.user_dir, "cache"])
         from dogtail.utils import run
         from dogtail.tree import root
         # Setting appName is critically important here.
@@ -80,28 +84,37 @@ class PitiviTestCase(unittest.TestCase):
         self.assertEqual('timeline area', timeline_area.name)
 
         # Tabs
-        primary_tabs = upper_half.children[0].child(name="primary tabs", recursive=False)
-        secondary_tabs = upper_half.children[0].child(name="secondary tabs", recursive=False)
+        primary_tabs = upper_half.children[0].child(
+            name="primary tabs", recursive=False)
+        secondary_tabs = upper_half.children[0].child(
+            name="secondary tabs", recursive=False)
         self.medialibrary = primary_tabs.children[0]
         self.effectslibrary = primary_tabs.children[1]
         self.clipproperties = secondary_tabs.children[0]
         self.transitions = secondary_tabs.children[1]
         self.titles = secondary_tabs.children[2]
         self.viewer = upper_half.child(name="viewer", recursive=False)
-        self.import_button = self.medialibrary.child(name="media_import_button")
-        self.insert_button = self.medialibrary.child(name="media_insert_button")
+        self.import_button = self.medialibrary.child(
+            name="media_import_button")
+        self.insert_button = self.medialibrary.child(
+            name="media_insert_button")
 
         # Timeline area
-        self.zoom_best_fit_button = timeline_area.child(name="Zoom", recursive=True)
-        self.timeline = timeline_area.child(name="timeline canvas", recursive=False)
-        self.timeline_toolbar = timeline_area.child(name="timeline toolbar", recursive=False)
+        self.zoom_best_fit_button = timeline_area.child(
+            name="Zoom", recursive=True)
+        self.timeline = timeline_area.child(
+            name="timeline canvas", recursive=False)
+        self.timeline_toolbar = timeline_area.child(
+            name="timeline toolbar", recursive=False)
 
         start_time = time.time() - timer_start
         if start_time > 0.1:
             # When we were simply searching the toplevel for the menu bar,
             # startup time was 0.0043 seconds. Anything significantly longer
-            # means there are optimizations to be done, avoid recursive searches
-            print("\nWARNING: setUp in test_base took", start_time, "seconds, that's too slow.\n")
+            # means there are optimizations to be done, avoid recursive
+            # searches
+            print("\nWARNING: setUp in test_base took",
+                  start_time, "seconds, that's too slow.\n")
         try:
             self.unlink
         except AttributeError:
@@ -130,7 +143,8 @@ class PitiviTestCase(unittest.TestCase):
         if saveAs:
             self.assertIsNotNone(path)
             dogtail.rawinput.keyCombo("<Control><Shift>s")  # Save project as
-            save_dialog = self.pitivi.child(name="Save As...", roleName='file chooser', recursive=False)
+            save_dialog = self.pitivi.child(
+                name="Save As...", roleName='file chooser', recursive=False)
             text_field = save_dialog.child(roleName="text")
             text_field.text = path
             time.sleep(0.2)
@@ -147,12 +161,15 @@ class PitiviTestCase(unittest.TestCase):
         dogtail.rawinput.keyCombo("<Control>o")  # Open project
         # If an "unsaved changes" prompt is expected to show up, deal with it:
         if unsaved_changes is not None:
-            result = self._check_unsaved_changes_dialog(decision=unsaved_changes)
+            result = self._check_unsaved_changes_dialog(
+                decision=unsaved_changes)
             if result is False:  # The user clicked "Cancel" (no decision)
                 return
 
-        load = self.pitivi.child(name="Open File...", roleName="file chooser", recursive=False)
-        path_toggle = load.child(name="Type a file name", roleName="toggle button")
+        load = self.pitivi.child(
+            name="Open File...", roleName="file chooser", recursive=False)
+        path_toggle = load.child(
+            name="Type a file name", roleName="toggle button")
         if not path_toggle.checked:
             path_toggle.click()
 
@@ -170,21 +187,26 @@ class PitiviTestCase(unittest.TestCase):
         """
         time.sleep(1)
         try:
-            dialog = self.pitivi.child(name="unsaved changes dialog", roleName="dialog", recursive=False, retry=False)
+            dialog = self.pitivi.child(
+                name="unsaved changes dialog", roleName="dialog", recursive=False, retry=False)
         except SearchError:
-            self.fail('The "unsaved changes" dialog/prompt was expected but did not appear')
+            self.fail(
+                'The "unsaved changes" dialog/prompt was expected but did not appear')
 
         if decision is "discard":
-            dialog.child(name="Close without saving", roleName="push button").click()
+            dialog.child(
+                name="Close without saving", roleName="push button").click()
             return True
         elif decision is "cancel":
             dialog.child(name="Cancel", roleName="push button").click()
-            return False  # Prevent us from expecting the file chooser in loadProject
+            # Prevent us from expecting the file chooser in loadProject
+            return False
         elif decision is "save":
             dialog.child(name="Save", roleName="push button").click()
             return True
         else:
-            self.fail("You didn't provide a valid answer for the unsaved changes dialog!")
+            self.fail(
+                "You didn't provide a valid answer for the unsaved changes dialog!")
 
     def search_by_text(self, text, parent, name=None, roleName=None, exactMatchOnly=True):
         """
@@ -192,7 +214,8 @@ class PitiviTestCase(unittest.TestCase):
         If you want to search for a widget "containing" the text, set the
         "exactMatchOnly" parameter to False (it will also be case-insensitive).
         """
-        children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
+        children = parent.findChildren(
+            GenericPredicate(roleName=roleName, name=name))
         for child in children:
             if hasattr(child, "text"):
                 # This is cute and all, but we're not just searching inside
@@ -211,7 +234,8 @@ class PitiviTestCase(unittest.TestCase):
         """
         Search a parent widget for childs containing the given regular expression
         """
-        children = parent.findChildren(GenericPredicate(roleName=roleName, name=name))
+        children = parent.findChildren(
+            GenericPredicate(roleName=roleName, name=name))
         r = re.compile(regex, regex_flags)
         for child in children:
             if child.text is not None and r.match(child.text):
@@ -238,7 +262,8 @@ class PitiviTestCase(unittest.TestCase):
         import_dialog = self.pitivi.child(name="Select One or More Files",
                                           roleName="file chooser", recursive=False)
 
-        path_toggle = import_dialog.child(name="Type a file name", roleName="toggle button")
+        path_toggle = import_dialog.child(
+            name="Type a file name", roleName="toggle button")
         if not path_toggle.checked:
             path_toggle.click()
 
@@ -254,7 +279,8 @@ class PitiviTestCase(unittest.TestCase):
             # The time it takes for the icon to appear is unpredictable,
             # therefore we try up to 5 times to look for it
             try:
-                icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+                icons = self.medialibrary.findChildren(
+                    GenericPredicate(roleName="icon"))
             except TypeError:
                 # If no icon can be seen due to restrictive search results,
                 # don't try to loop over "icons" (which will be a None type).
@@ -266,7 +292,8 @@ class PitiviTestCase(unittest.TestCase):
             time.sleep(0.5)
 
         # Failure to find an icon might be because it is hidden due to a search
-        current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
+        current_search_text = self.medialibrary.child(
+            name="media_search_entry", roleName="text").text.lower()
         self.assertNotEqual(current_search_text, "")
         self.assertNotIn(filename.lower(), current_search_text)
         return None
@@ -278,11 +305,13 @@ class PitiviTestCase(unittest.TestCase):
         import_dialog = self.pitivi.child(name="Select One or More Files",
                                           roleName="file chooser", recursive=False)
 
-        path_toggle = import_dialog.child(name="Type a file name", roleName="toggle button")
+        path_toggle = import_dialog.child(
+            name="Type a file name", roleName="toggle button")
         if not path_toggle.checked:
             path_toggle.click()
 
-        dir_path = os.path.realpath(__file__).split("dogtail_scripts/")[0] + "samples/"
+        dir_path = os.path.realpath(__file__).split(
+            "dogtail_scripts/")[0] + "samples/"
         import_dialog.child(roleName='text').text = dir_path
         time.sleep(0.2)
         dogtail.rawinput.pressKey("Enter")
@@ -303,7 +332,8 @@ class PitiviTestCase(unittest.TestCase):
         registry.generateKeyboardEvent(ctrl_code, None, KEY_RELEASE)
         import_dialog.button('Add').click()
 
-        current_search_text = self.medialibrary.child(name="media_search_entry", roleName="text").text.lower()
+        current_search_text = self.medialibrary.child(
+            name="media_search_entry", roleName="text").text.lower()
         if current_search_text != "":
             # Failure to find some icons might be because of search filtering.
             # The following avoids searching for files that can't be found.
@@ -315,7 +345,8 @@ class PitiviTestCase(unittest.TestCase):
         for i in range(5):
             # The time it takes for icons to appear is unpredictable,
             # therefore we try up to 5 times to look for them
-            icons = self.medialibrary.findChildren(GenericPredicate(roleName="icon"))
+            icons = self.medialibrary.findChildren(
+                GenericPredicate(roleName="icon"))
             for icon in icons:
                 for f in files:
                     if icon.text == f:
@@ -391,7 +422,8 @@ class PitiviTestCase(unittest.TestCase):
             # Ensure the welcome dialog is closed.
             dogtail.rawinput.pressKey("Esc")
             # Make sure the list view is hidden.
-            self.medialibrary.child(name="media_listview_button", roleName="panel").click()
+            self.medialibrary.child(
+                name="media_listview_button", roleName="panel").click()
             self.wait_for_node_hidden(listview, timeout=2)
 
     @staticmethod

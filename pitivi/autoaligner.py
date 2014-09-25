@@ -213,12 +213,13 @@ def affinealign(reference, targets, max_drift=0.02):
     for t in targets:
         t -= numpy.mean(t)
         ft = numpy.fft.rfft(t, L2)
-        #fxcorr is the FFT'd cross-correlation with the reference blocks
+        # fxcorr is the FFT'd cross-correlation with the reference blocks
         fxcorr_blocks = numpy.zeros((L2 / 2 + 1, num_blocks),
                                     dtype=numpy.complex)
         for i in range(num_blocks):
             fxcorr_blocks[:, i] = ft * freference_blocks[:, i]
-            fxcorr_blocks[:, i] /= numpy.sqrt(numpy.sum(fxcorr_blocks[:, i] ** 2))
+            fxcorr_blocks[:, i] /= numpy.sqrt(
+                numpy.sum(fxcorr_blocks[:, i] ** 2))
         del ft
         # At this point xcorr_blocks would show a distinct bright line, nearly
         # orthogonal to time, indicating where each of these blocks found their
@@ -253,16 +254,17 @@ def affinealign(reference, targets, max_drift=0.02):
         halfautocorr[-1:2, -1:2] = 0  # NEEDS TUNING
         # Normalize each column (appears to be necessary)
         for i in range(2 * num_blocks):
-            halfautocorr[:, i] /= numpy.sqrt(numpy.sum(halfautocorr[:, i] ** 2))
-        #from matplotlib.pyplot import imshow,show
-        #imshow(halfautocorr,interpolation='nearest',aspect='auto');show()
+            halfautocorr[:, i] /= numpy.sqrt(
+                numpy.sum(halfautocorr[:, i] ** 2))
+        # from matplotlib.pyplot import imshow,show
+        # imshow(halfautocorr,interpolation='nearest',aspect='auto');show()
         drift = _findslope(halfautocorr) / bspace
         del halfautocorr
 
-        #inverse transform and shift everything into alignment
+        # inverse transform and shift everything into alignment
         xcorr_blocks = numpy.fft.irfft(fxcorr_blocks, None, 0)
         del fxcorr_blocks
-        #TODO: see if phase ramps are worthwhile here
+        # TODO: see if phase ramps are worthwhile here
         for i in range(num_blocks):
             blockcenter = i * bspace + bsize / 2
             shift = int(blockcenter * drift)
@@ -275,16 +277,16 @@ def affinealign(reference, targets, max_drift=0.02):
                 xcorr_blocks[-shift:, i] = xcorr_blocks[:shift, i].copy()
                 xcorr_blocks[:-shift, i] = temp
 
-        #from matplotlib.pyplot import imshow,show
-        #imshow(xcorr_blocks,interpolation='nearest',aspect='auto');show()
+        # from matplotlib.pyplot import imshow,show
+        # imshow(xcorr_blocks,interpolation='nearest',aspect='auto');show()
 
         # xcorr is the drift-compensated cross-correlation
         xcorr = numpy.sum(xcorr_blocks, axis=1)
         del xcorr_blocks
 
         offset = numpy.argmax(xcorr)
-        #from matplotlib.pyplot import plot,show
-        #plot(xcorr);show()
+        # from matplotlib.pyplot import plot,show
+        # plot(xcorr);show()
         del xcorr
         if offset >= len(t):
             offset -= L2
@@ -576,13 +578,15 @@ class AutoAligner(Loggable):
             for clip, audiotrack in pairs:
                 # blocksize is the number of samples per block
                 blocksize = audiotrack.stream.rate // self.BLOCKRATE
-                extractee = EnvelopeExtractee(blocksize, self._envelopeCb, clip)
+                extractee = EnvelopeExtractee(
+                    blocksize, self._envelopeCb, clip)
                 # numsamples is the total number of samples in the track,
                 # which is used by progress_aggregator to determine
                 # the percent completion.
                 numsamples = ((audiotrack.duration / Gst.SECOND) *
                               audiotrack.stream.rate)
-                extractee.addWatcher(progress_aggregator.getPortionCB(numsamples))
+                extractee.addWatcher(
+                    progress_aggregator.getPortionCB(numsamples))
                 self._extraction_stack.append((audiotrack, extractee))
             # After we return, start the extraction cycle.
             # This GLib.idle_add call should not be necessary;
@@ -647,13 +651,15 @@ class AutoAligner(Loggable):
 
 
 class AlignmentProgressDialog:
+
     """ Dialog indicating the progress of the auto-alignment process.
         Code derived from L{RenderingProgressDialog}, but greatly simplified
         (read-only, no buttons)."""
 
     def __init__(self, app):
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "alignmentprogress.ui"))
+        self.builder.add_from_file(
+            os.path.join(configure.get_ui_dir(), "alignmentprogress.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("align-progress")

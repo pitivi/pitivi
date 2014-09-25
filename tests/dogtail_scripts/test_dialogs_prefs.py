@@ -10,8 +10,10 @@ class DialogsPreferencesTest(PitiviTestCase):
         dogtail.rawinput.pressKey("Esc")
         self.main_menu_button.click()
         self.main_menu_button.menuItem("Preferences").click()
-        dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
-        dialog.child("Reset to Factory Settings", roleName="push button").click()
+        dialog = self.pitivi.child(
+            name="Preferences", roleName="dialog", recursive=False)
+        dialog.child(
+            "Reset to Factory Settings", roleName="push button").click()
 
         # Set the thumbnail gap setting (or whatever the first spinbutton is)
         foo = dialog.child(roleName="spin button")
@@ -30,7 +32,8 @@ class DialogsPreferencesTest(PitiviTestCase):
         dogtail.rawinput.pressKey("Esc")
         self.main_menu_button.click()
         self.main_menu_button.menuItem("Preferences").click()
-        dialog = self.pitivi.child(name="Preferences", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(
+            name="Preferences", roleName="dialog", recursive=False)
 
         # Check if the previous values were correctly saved
         self.assertEqual(dialog.child(roleName="spin button").text, "12")
@@ -43,8 +46,11 @@ class DialogsPreferencesTest(PitiviTestCase):
         # Otherwise the Revert button will not be made sensitive
         foo.typeText("888\n")
         dialog.child("Revert", roleName="push button").click()
-        self.assertEqual(dialog.child(roleName="spin button").text, "12", "Spacing setting was not reverted")
+        self.assertEqual(dialog.child(roleName="spin button")
+                         .text, "12", "Spacing setting was not reverted")
 
         # Check resetting to factory settings
-        dialog.child("Reset to Factory Settings", roleName="push button").click()
-        self.assertEqual(dialog.child(roleName="spin button").text, "5", "Resetting to factory defaults failed")
+        dialog.child(
+            "Reset to Factory Settings", roleName="push button").click()
+        self.assertEqual(dialog.child(roleName="spin button")
+                         .text, "5", "Resetting to factory defaults failed")

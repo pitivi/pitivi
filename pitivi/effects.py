@@ -132,8 +132,8 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
                        "navigationtest", "videoanalyse"]
 
-#FIXME Check if this is still true with GES
-#We should unblacklist it when #650985 is solved
+# FIXME Check if this is still true with GES
+# We should unblacklist it when #650985 is solved
 BLACKLISTED_PLUGINS = ["ldaspa"]
 
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
@@ -154,6 +154,7 @@ class EffectFactory(object):
 
 
 class EffectsManager(object):
+
     """
     Groups effects.
     """
@@ -177,7 +178,7 @@ class EffectsManager(object):
             name = element_factory.get_name()
 
             if ("Effect" in klass and name not in BLACKLISTED_EFFECTS
-            and not [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
+               and not [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
                 media_type = None
 
                 if "Audio" in klass:
@@ -193,8 +194,10 @@ class EffectsManager(object):
 
                 effect = EffectFactory(name,
                                        media_type,
-                                       categories=self._getEffectCategories(name),
-                                       human_name=self._getEffectName(element_factory),
+                                       categories=self._getEffectCategories(
+                                           name),
+                                       human_name=self._getEffectName(
+                                           element_factory),
                                        description=self._getEffectDescripton(element_factory))
                 self._addEffectToDic(name, effect)
 
@@ -300,7 +303,7 @@ class EffectsManager(object):
         return icon
 
 
-#----------------------- UI classes to manage effects -------------------------#
+# ----------------------- UI classes to manage effects -------------------------#
 HIDDEN_EFFECTS = ["frei0r-filter-scale0tilt"]
 
 GlobalSettings.addConfigSection('effect-library')
@@ -315,6 +318,7 @@ GlobalSettings.addConfigSection('effect-library')
 
 
 class EffectListWidget(Gtk.VBox, Loggable):
+
     """ Widget for listing effects """
 
     def __init__(self, instance, unused_uiman):
@@ -337,7 +341,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
         self.searchEntry = builder.get_object("search_entry")
 
         # Store
-        self.storemodel = Gtk.ListStore(str, str, int, object, object, str, GdkPixbuf.Pixbuf)
+        self.storemodel = Gtk.ListStore(
+            str, str, int, object, object, str, GdkPixbuf.Pixbuf)
 
         self.view = Gtk.TreeView(model=self.storemodel)
         self.view.props.headers_visible = False
@@ -366,13 +371,15 @@ class EffectListWidget(Gtk.VBox, Loggable):
         text_cell.props.xpad = 6
         text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         text_col.pack_start(text_cell, True)
-        text_col.set_cell_data_func(text_cell, self.view_description_cell_data_func, None)
+        text_col.set_cell_data_func(
+            text_cell, self.view_description_cell_data_func, None)
 
         self.view.append_column(icon_col)
         self.view.append_column(text_col)
 
         # Make the treeview a drag source which provides effects.
-        self.view.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        self.view.enable_model_drag_source(
+            Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
 
         self.view.connect("button-press-event", self._buttonPressEventCb)
         self.view.connect("select-cursor-row", self._enterPressEventCb)
@@ -420,7 +427,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
                                         effect_factory,
                                         name,
                                         self.app.effects.getEffectIcon(name)])
-        self.storemodel.set_sort_column_id(COL_NAME_TEXT, Gtk.SortType.ASCENDING)
+        self.storemodel.set_sort_column_id(
+            COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def populate_categories_widget(self):
         self.categoriesWidget.get_model().clear()
@@ -454,7 +462,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
     def _enterPressEventCb(self, unused_view, unused_event=None):
         factory_name = self.getSelectedEffectFactoryName()
         if factory_name is not None:
-            self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
+            self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(
+                factory_name)
 
     def _buttonPressEventCb(self, view, event):
         chain_up = True
@@ -464,7 +473,8 @@ class EffectListWidget(Gtk.VBox, Loggable):
         elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
             factory_name = self.getSelectedEffectFactoryName()
             if factory_name is not None:
-                self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(factory_name)
+                self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(
+                    factory_name)
         else:
             chain_up = not self._rowUnderMouseSelected(view, event)
 
@@ -529,9 +539,11 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 
 
 class EffectsPropertiesManager:
+
     """
     @type app: L{Pitivi}
     """
+
     def __init__(self, app):
         self.cache_dict = {}
         self._current_effect_setting_ui = None
@@ -549,11 +561,11 @@ class EffectsPropertiesManager:
             # Here we should handle special effects configuration UI
             effect_settings_widget = GstElementSettingsWidget()
             effect_settings_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
-                    default_btn=True, use_element_props=True)
+                                              default_btn=True, use_element_props=True)
             scrolled_window = Gtk.ScrolledWindow()
             scrolled_window.add_with_viewport(effect_settings_widget)
             scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC,
-                    Gtk.PolicyType.AUTOMATIC)
+                                       Gtk.PolicyType.AUTOMATIC)
             self.cache_dict[effect] = scrolled_window
             self._connectAllWidgetCallbacks(effect_settings_widget, effect)
             self._postConfiguration(effect, effect_settings_widget)
@@ -561,7 +573,8 @@ class EffectsPropertiesManager:
         self._current_effect_setting_ui = self._getUiToSetEffect(effect)
         element = self._current_effect_setting_ui.element
         for prop in element.list_children_properties():
-            self._current_element_values[prop.name] = element.get_child_property(prop.name)
+            self._current_element_values[
+                prop.name] = element.get_child_property(prop.name)
 
         return self.cache_dict[effect]
 
@@ -580,7 +593,8 @@ class EffectsPropertiesManager:
     def _getUiToSetEffect(self, effect):
         """ Permit to get the widget to set the effect and not its container """
         if type(self.cache_dict[effect]) is Gtk.ScrolledWindow:
-            effect_set_ui = self.cache_dict[effect].get_children()[0].get_children()[0]
+            effect_set_ui = self.cache_dict[
+                effect].get_children()[0].get_children()[0]
         else:
             effect_set_ui = self.cache_dict[effect]
         return effect_set_ui
@@ -595,13 +609,14 @@ class EffectsPropertiesManager:
     def _onValueChangedCb(self, unused_widget, dynamic, prop):
         value = dynamic.getWidgetValue()
 
-        #FIXME Workaround in order to make aspectratiocrop working
+        # FIXME Workaround in order to make aspectratiocrop working
         if isinstance(value, Gst.Fraction):
             value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")
-            self._current_effect_setting_ui.element.set_child_property(prop.name, value)
+            self._current_effect_setting_ui.element.set_child_property(
+                prop.name, value)
             self.action_log.commit()
 
             self.app.project_manager.current_project.pipeline.flushSeek()

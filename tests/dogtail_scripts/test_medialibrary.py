@@ -8,8 +8,10 @@ class MediaLibraryTest(PitiviTestCase):
 
     def test_medialibrary(self):
         # Some commonly-used widgets in this test:
-        search = self.medialibrary.child(name="media_search_entry", roleName="text")
-        unused_media_button = search.child(name="starred-symbolic", roleName="icon")
+        search = self.medialibrary.child(
+            name="media_search_entry", roleName="text")
+        unused_media_button = search.child(
+            name="starred-symbolic", roleName="icon")
 
         self.force_medialibrary_iconview_mode()
 
@@ -43,11 +45,14 @@ class MediaLibraryTest(PitiviTestCase):
         search.text = ""
         search.typeText("colour")
         self.assertEqual(len(iconview.children), 3)
-        self.import_media()  # Not appending to Samples, because it will be None
-        # The default clip that gets imported does not have "colour" in its name
+        # Not appending to Samples, because it will be None
+        self.import_media()
+        # The default clip that gets imported does not have "colour" in its
+        # name
         self.assertEqual(len(iconview.children), 3)
         # However, these ones should show up immediately in the iconview:
-        samples.append(self.import_media_multiple(["flat_colour4_1600x1200.jpg", "flat_colour5_1600x1200.jpg"]))
+        samples.append(self.import_media_multiple(
+            ["flat_colour4_1600x1200.jpg", "flat_colour5_1600x1200.jpg"]))
         self.assertEqual(len(iconview.children), 5)
         search.text = ""
         self.assertEqual(len(iconview.children), 6)

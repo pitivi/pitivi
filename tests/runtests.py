@@ -40,7 +40,8 @@ def get_build_dir():
         # Probably running make distcheck. The path to the test files
         # is different than the build path, so we must use the current
         # dir which is build_path/tests.
-        build_dir = os.path.join(os.path.abspath(os.path.curdir), os.path.pardir)
+        build_dir = os.path.join(
+            os.path.abspath(os.path.curdir), os.path.pardir)
     return os.path.abspath(build_dir)
 
 
@@ -84,7 +85,7 @@ if __name__ == "__main__":
 
     # Run the tests.
     testRunner = unittest.TextTestRunner(descriptions=descriptions,
-        verbosity=verbosity)
+                                         verbosity=verbosity)
     result = testRunner.run(suite)
     if result.failures or result.errors:
         sys.exit(1)

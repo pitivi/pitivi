@@ -48,39 +48,40 @@ import platform
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
-    key="docked",
-    default=True)
+                               key="docked",
+                               default=True)
 GlobalSettings.addConfigOption("viewerWidth", section="viewer",
-    key="width",
-    default=320)
+                               key="width",
+                               default=320)
 GlobalSettings.addConfigOption("viewerHeight", section="viewer",
-    key="height",
-    default=240)
+                               key="height",
+                               default=240)
 GlobalSettings.addConfigOption("viewerX", section="viewer",
-    key="x-pos",
-    default=0)
+                               key="x-pos",
+                               default=0)
 GlobalSettings.addConfigOption("viewerY", section="viewer",
-    key="y-pos",
-    default=0)
+                               key="y-pos",
+                               default=0)
 GlobalSettings.addConfigOption("pointSize", section="viewer",
-    key="point-size",
-    default=25)
+                               key="point-size",
+                               default=25)
 GlobalSettings.addConfigOption("clickedPointColor", section="viewer",
-    key="clicked-point-color",
-    default='ffa854')
+                               key="clicked-point-color",
+                               default='ffa854')
 GlobalSettings.addConfigOption("pointColor", section="viewer",
-    key="point-color",
-    default='49a0e0')
+                               key="point-color",
+                               default='49a0e0')
 
 
 class ViewerContainer(Gtk.VBox, Loggable):
+
     """
     A wiget holding a viewer and the controls.
     """
     __gtype_name__ = 'ViewerContainer'
     __gsignals__ = {
         "activate-playback-controls": (GObject.SignalFlags.RUN_LAST,
-            None, (GObject.TYPE_BOOLEAN,)),
+                                       None, (GObject.TYPE_BOOLEAN,)),
     }
 
     INHIBIT_REASON = _("Currently playing")
@@ -99,7 +100,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.docked = True
         self.seeker = Seeker()
 
-        # Only used for restoring the pipeline position after a live clip trim preview:
+        # Only used for restoring the pipeline position after a live clip trim
+        # preview:
         self._oldTimelinePos = None
 
         self._haveUI = False
@@ -185,7 +187,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
     def _createUi(self):
         """ Creates the Viewer GUI """
         # Drawing area
-        self.internal = ViewerWidget(self.app.settings, realizedCb=self._videoRealizedCb)
+        self.internal = ViewerWidget(
+            self.app.settings, realizedCb=self._videoRealizedCb)
         # Transformation boxed DISABLED
         # self.internal.init_transformation_events()
         self.pack_start(self.internal, True, True, 0)
@@ -194,10 +197,13 @@ class ViewerContainer(Gtk.VBox, Loggable):
         vbox = Gtk.VBox()
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(self.app.settings, realizedCb=self._videoRealizedCb)
+        self.external = ViewerWidget(
+            self.app.settings, realizedCb=self._videoRealizedCb)
         vbox.pack_start(self.external, True, True, 0)
-        self.external_window.connect("delete-event", self._externalWindowDeleteCb)
-        self.external_window.connect("configure-event", self._externalWindowConfigureCb)
+        self.external_window.connect(
+            "delete-event", self._externalWindowDeleteCb)
+        self.external_window.connect(
+            "configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
 
         # Buttons/Controls
@@ -211,7 +217,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
         self.goToStart_button.connect("clicked", self._goToStartCb)
-        self.goToStart_button.set_tooltip_text(_("Go to the beginning of the timeline"))
+        self.goToStart_button.set_tooltip_text(
+            _("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
         bbox.pack_start(self.goToStart_button, False, True, 0)
 
@@ -237,20 +244,23 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.goToEnd_button = Gtk.ToolButton()
         self.goToEnd_button.set_icon_name("media-skip-forward")
         self.goToEnd_button.connect("clicked", self._goToEndCb)
-        self.goToEnd_button.set_tooltip_text(_("Go to the end of the timeline"))
+        self.goToEnd_button.set_tooltip_text(
+            _("Go to the end of the timeline"))
         self.goToEnd_button.set_sensitive(False)
         bbox.pack_start(self.goToEnd_button, False, True, 0)
 
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue(0)
-        self.timecode_entry.set_tooltip_text(_('Enter a timecode or frame number\nand press "Enter" to go to that position'))
+        self.timecode_entry.set_tooltip_text(
+            _('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
 
         self.undock_button = Gtk.ToolButton()
         self.undock_button.set_icon_name("view-restore")
         self.undock_button.connect("clicked", self.undock)
-        self.undock_button.set_tooltip_text(_("Detach the viewer\nYou can re-attach it by closing the newly created window."))
+        self.undock_button.set_tooltip_text(
+            _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
         bbox.pack_start(self.undock_button, False, True, 0)
 
         self._haveUI = True
@@ -361,8 +371,10 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.undock_button.hide()
         self.fullscreen_button = Gtk.ToggleToolButton()
         self.fullscreen_button.set_icon_name("view-fullscreen")
-        self.fullscreen_button.set_tooltip_text(_("Show this window in fullscreen"))
-        self.buttons.pack_end(self.fullscreen_button, expand=False, fill=False, padding=6)
+        self.fullscreen_button.set_tooltip_text(
+            _("Show this window in fullscreen"))
+        self.buttons.pack_end(
+            self.fullscreen_button, expand=False, fill=False, padding=6)
         self.fullscreen_button.show()
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
 
@@ -370,7 +382,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self._switch_output_window()
         self.hide()
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
-        self.external_window.resize(self.settings.viewerWidth, self.settings.viewerHeight)
+        self.external_window.resize(
+            self.settings.viewerWidth, self.settings.viewerHeight)
 
     def dock(self):
         if self.docked:
@@ -416,14 +429,15 @@ class ViewerContainer(Gtk.VBox, Loggable):
         While a clip is being trimmed, show a live preview of it.
         """
         if isinstance(tl_obj, GES.TitleClip) or tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
-            self.log("%s is an image or has no URI, so not previewing trim" % tl_obj)
+            self.log(
+                "%s is an image or has no URI, so not previewing trim" % tl_obj)
             return False
 
         clip_uri = tl_obj.props.uri
         cur_time = time()
         if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
-                clip_uri, format_ns(position))
+                       clip_uri, format_ns(position))
             self._oldTimelinePos = self.pipeline.getPosition()
             self.setPipeline(AssetPipeline(tl_obj))
             self._lastClipTrimTime = cur_time
@@ -441,7 +455,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
             self.pipeline.setState(Gst.State.NULL)
             # Using pipeline.getPosition() here does not work because for some
             # reason it's a bit off, that's why we need self._oldTimelinePos.
-            self.setPipeline(self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
+            self.setPipeline(
+                self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
             self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
@@ -461,7 +476,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
                 st = Gst.Structure.new_empty("pause")
                 if old_state == int(Gst.State.PLAYING):
                     st.set_value("playback_time", float(self.pipeline.getPosition()) /
-                        Gst.SECOND)
+                                 Gst.SECOND)
                 self.app.write_action(st)
 
             self.playpause_button.setPlay()
@@ -491,6 +506,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
 
 class Point():
+
     """
     Draw a point, used as a handle for the transformation box
     """
@@ -523,25 +539,25 @@ class Point():
 
     def draw(self, cr):
         linear = cairo.LinearGradient(self.x, self.y - self.radius,
-                                    self.x, self.y + self.radius)
+                                      self.x, self.y + self.radius)
         linear.add_color_stop_rgba(0.00, .6, .6, .6, 1)
         linear.add_color_stop_rgba(0.50, .4, .4, .4, .1)
         linear.add_color_stop_rgba(0.60, .4, .4, .4, .1)
         linear.add_color_stop_rgba(1.00, .6, .6, .6, 1)
 
         radial = cairo.RadialGradient(self.x + self.radius / 2,
-                                    self.y - self.radius / 2, 1,
-                                    self.x, self.y,
-                                    self.radius)
+                                      self.y - self.radius / 2, 1,
+                                      self.x, self.y,
+                                      self.radius)
         if self.clicked:
             radial.add_color_stop_rgb(0, *self.clickedColor)
         else:
             radial.add_color_stop_rgb(0, *self.color)
         radial.add_color_stop_rgb(1, 0.1, 0.1, 0.1)
         radial_glow = cairo.RadialGradient(self.x, self.y,
-                                        self.radius * .9,
-                                        self.x, self.y,
-                                        self.radius * 1.2)
+                                           self.radius * .9,
+                                           self.x, self.y,
+                                           self.radius * 1.2)
         radial_glow.add_color_stop_rgba(0, 0.9, 0.9, 0.9, 1)
         radial_glow.add_color_stop_rgba(1, 0.9, 0.9, 0.9, 0)
 
@@ -568,6 +584,7 @@ class Point():
 
 
 class TransformationBox():
+
     """
     Box for transforming the video on the ViewerWidget
     """
@@ -610,8 +627,10 @@ class TransformationBox():
     def update_from_effect(self, effect):
         self.scale_x = effect.get_property("scale-x")
         self.scale_y = effect.get_property("scale-y")
-        self.center_factor.x = 2 * (effect.get_property("tilt-x") - 0.5) + self.scale_x
-        self.center_factor.y = 2 * (effect.get_property("tilt-y") - 0.5) + self.scale_y
+        self.center_factor.x = 2 * \
+            (effect.get_property("tilt-x") - 0.5) + self.scale_x
+        self.center_factor.y = 2 * \
+            (effect.get_property("tilt-y") - 0.5) + self.scale_y
         self.left_factor = self.center_factor.x - self.scale_x
         self.right_factor = self.center_factor.x + self.scale_x
         self.top_factor = self.center_factor.y - self.scale_y
@@ -642,7 +661,8 @@ class TransformationBox():
         self.points[TOP_LEFT] = Point(self.left, self.top, self.settings)
         self.points[TOP_RIGHT] = Point(self.right, self.top, self.settings)
         self.points[BOTTOM_LEFT] = Point(self.left, self.bottom, self.settings)
-        self.points[BOTTOM_RIGHT] = Point(self.right, self.bottom, self.settings)
+        self.points[BOTTOM_RIGHT] = Point(
+            self.right, self.bottom, self.settings)
         # Edge boxes
         self.points[TOP] = Point(self.center.x, self.top, self.settings)
         self.points[BOTTOM] = Point(self.center.x, self.bottom, self.settings)
@@ -682,7 +702,8 @@ class TransformationBox():
         self.update_points()
         # main box
         cr.set_source_rgba(0.5, 0.5, 0.5, 0.7)
-        cr.rectangle(self.left, self.top, self.right - self.left, self.bottom - self.top)
+        cr.rectangle(
+            self.left, self.top, self.right - self.left, self.bottom - self.top)
         cr.stroke()
 
         for point in list(self.points.values()):
@@ -780,7 +801,8 @@ class TransformationBox():
         self.right = area.x + area.width
         self.top = area.y
         self.bottom = area.y + area.height
-        self.center = Point((self.left + self.right) / 2, (self.top + self.bottom) / 2, self.settings)
+        self.center = Point((self.left + self.right) / 2, (
+            self.top + self.bottom) / 2, self.settings)
         self.init_points()
         self._update_measure()
 
@@ -795,8 +817,10 @@ class TransformationBox():
         if self.transformation_properties:
             self.transformation_properties.disconnectSpinButtonsFromFlush()
             values = self.transformation_properties.spin_buttons
-            values["tilt_x"].set_value((self.center_factor.x - self.scale_x) / 2.0 + 0.5)
-            values["tilt_y"].set_value((self.center_factor.y - self.scale_y) / 2.0 + 0.5)
+            values["tilt_x"].set_value(
+                (self.center_factor.x - self.scale_x) / 2.0 + 0.5)
+            values["tilt_y"].set_value(
+                (self.center_factor.y - self.scale_y) / 2.0 + 0.5)
 
             values["scale_x"].set_value(self.scale_x)
             values["scale_y"].set_value(self.scale_y)
@@ -804,6 +828,7 @@ class TransformationBox():
 
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):
+
     """
     Widget for displaying a GStreamer video sink.
 
@@ -916,12 +941,14 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
             # crop away 1 pixel border to avoid artefacts on the pixbuf
 
             self.pixbuf = Gdk.pixbuf_get_from_window(self.get_window(),
-                self.box.area.x + 1, self.box.area.y + 1,
-                self.box.area.width - 2, self.box.area.height - 2)
+                                                     self.box.area.x +
+                                                     1, self.box.area.y + 1,
+                                                     self.box.area.width - 2, self.box.area.height - 2)
         else:
             self.pixbuf = Gdk.pixbuf_get_from_window(self.get_window(),
-                0, 0,
-                self.get_window().get_width(),
+                                                     0, 0,
+                                                     self.get_window(
+            ).get_width(),
                 self.get_window().get_height())
 
         self.stored = True
@@ -972,7 +999,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
             self.renderbox()
 
     def _update_gradient(self):
-        self.gradient_background = cairo.LinearGradient(0, 0, 0, self.area.height)
+        self.gradient_background = cairo.LinearGradient(
+            0, 0, 0, self.area.height)
         self.gradient_background.add_color_stop_rgb(0.00, .1, .1, .1)
         self.gradient_background.add_color_stop_rgb(0.50, .2, .2, .2)
         self.gradient_background.add_color_stop_rgb(1.00, .5, .5, .5)
@@ -995,7 +1023,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
             # translate when zoomed out
             if self.pixbuf:
                 if self.box.area.width != self.pixbuf.get_width():
-                    scale = float(self.box.area.width) / float(self.pixbuf.get_width())
+                    scale = float(self.box.area.width) / float(
+                        self.pixbuf.get_width())
                     cr.save()
                     cr.scale(scale, scale)
                 cr.set_source_pixbuf(self.pixbuf, 0, 0)
@@ -1010,6 +1039,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
 
 class PlayPauseButton(Gtk.Button, Loggable):
+
     """
     Double state Gtk.Button which displays play/pause
     """
@@ -1036,13 +1066,15 @@ class PlayPauseButton(Gtk.Button, Loggable):
     def setPlay(self):
         self.log("Displaying the play image")
         self.playing = True
-        self.set_image(Gtk.Image.new_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON))
+        self.set_image(Gtk.Image.new_from_icon_name(
+            "media-playback-start", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Play"))
         self.playing = False
 
     def setPause(self):
         self.log("Displaying the pause image")
         self.playing = False
-        self.set_image(Gtk.Image.new_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON))
+        self.set_image(Gtk.Image.new_from_icon_name(
+            "media-playback-pause", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True

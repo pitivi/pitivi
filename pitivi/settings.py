@@ -99,6 +99,7 @@ class ConfigError(Exception):
 
 
 class Notification(object):
+
     """A descriptor to help with the implementation of signals"""
 
     def __init__(self, attrname):
@@ -118,6 +119,7 @@ class Notification(object):
 
 
 class GlobalSettings(GObject.Object):
+
     """
     Pitivi app settings.
 
@@ -289,19 +291,21 @@ class GlobalSettings(GObject.Object):
         @type notify: C{boolean}
         """
         if section and section not in cls.options:
-            raise ConfigError("You must add the section \"%s\" first." % section)
+            raise ConfigError(
+                "You must add the section \"%s\" first." % section)
         if key and not section:
-            raise ConfigError("You must specify a section for key \"%s\"" % key)
+            raise ConfigError(
+                "You must specify a section for key \"%s\"" % key)
         if section and key in cls.options[section]:
             raise ConfigError("Option \"%s\" is already in use.")
         if hasattr(cls, attrname):
             raise ConfigError("Settings attribute \"%s\" is already in use.")
         if environment and environment in cls.environment:
             raise ConfigError("Settings environment varaible \"%s\" is"
-                "already in use.")
+                              "already in use.")
         if not type_ and default is None:
             raise ConfigError("Settings attribute \"%s\" has must have a"
-                " type or a default." % attrname)
+                              " type or a default." % attrname)
         if not type_:
             type_ = type(default)
         if notify:

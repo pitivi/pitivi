@@ -48,6 +48,7 @@ from pitivi.utils.widgets import GstElementSettingsDialog
 
 
 class CachedEncoderList(object):
+
     """
     Registry of avalaible Muxer/Audio encoder/Video Encoder. And
     avalaible combinations of those.
@@ -72,8 +73,10 @@ class CachedEncoderList(object):
         Otherwise, create one.
         """
         if not cls._instance:
-            cls._instance = super(CachedEncoderList, cls).__new__(cls, *args, **kwargs)
-            Gst.Registry.get().connect("feature-added", cls._instance._registryFeatureAddedCb)
+            cls._instance = super(
+                CachedEncoderList, cls).__new__(cls, *args, **kwargs)
+            Gst.Registry.get().connect(
+                "feature-added", cls._instance._registryFeatureAddedCb)
             cls._instance._buildEncoders()
             cls._instance._buildCombinations()
         return cls._instance
@@ -81,8 +84,9 @@ class CachedEncoderList(object):
     def _buildEncoders(self):
         self.aencoders = []
         self.vencoders = []
-        self.muxers = Gst.ElementFactory.list_get_elements(Gst.ELEMENT_FACTORY_TYPE_MUXER,
-                                                           Gst.Rank.SECONDARY)
+        self.muxers = Gst.ElementFactory.list_get_elements(
+            Gst.ELEMENT_FACTORY_TYPE_MUXER,
+            Gst.Rank.SECONDARY)
 
         for fact in Gst.ElementFactory.list_get_elements(
                 Gst.ELEMENT_FACTORY_TYPE_ENCODER, Gst.Rank.SECONDARY):
@@ -103,8 +107,10 @@ class CachedEncoderList(object):
             # only include muxers with audio and video
 
             if aencs and vencs:
-                self.audio_combination[mux] = sorted(aencs, key=lambda x: - x.get_rank())
-                self.video_combination[mux] = sorted(vencs, key=lambda x: - x.get_rank())
+                self.audio_combination[mux] = sorted(
+                    aencs, key=lambda x: - x.get_rank())
+                self.video_combination[mux] = sorted(
+                    vencs, key=lambda x: - x.get_rank())
             else:
                 useless_muxers.add(muxer)
 
@@ -116,7 +122,7 @@ class CachedEncoderList(object):
         res = []
         if muxsinkcaps == []:
             muxsinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates()
-                 if x.direction == Gst.PadDirection.SINK]
+                           if x.direction == Gst.PadDirection.SINK]
         for encoder in encoders:
             for tpl in encoder.get_static_pad_templates():
                 if tpl.direction == Gst.PadDirection.SRC:
@@ -161,9 +167,9 @@ def beautify_factoryname(factory):
     # only replace lowercase versions of "format", "video", "audio"
     # otherwise they might be part of a trademark name
     words_to_remove = ["Muxer", "muxer", "Encoder", "encoder",
-                    "format", "video", "audio", "instead",
-                    # Incorrect naming for Sorenson Spark:
-                    "Flash Video (FLV) /", ]
+                       "format", "video", "audio", "instead",
+                       # Incorrect naming for Sorenson Spark:
+                       "Flash Video (FLV) /", ]
     words_to_replace = [["version ", "v"], ["Microsoft", "MS"], ]
     name = factory.get_longname()
     for word in words_to_remove:
@@ -235,24 +241,29 @@ class RenderingProgressDialog(GObject.Object):
         self.app = app
         self.main_render_dialog = parent
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingprogress.ui"))
+        self.builder.add_from_file(
+            os.path.join(configure.get_ui_dir(), "renderingprogress.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("render-progress")
         self.table1 = self.builder.get_object("table1")
         self.progressbar = self.builder.get_object("progressbar")
         self.play_pause_button = self.builder.get_object("play_pause_button")
-        self.play_rendered_file_button = self.builder.get_object("play_rendered_file_button")
+        self.play_rendered_file_button = self.builder.get_object(
+            "play_rendered_file_button")
         self.close_button = self.builder.get_object("close_button")
         self.cancel_button = self.builder.get_object("cancel_button")
-        self._filesize_est_label = self.builder.get_object("estimated_filesize_label")
-        self._filesize_est_value_label = self.builder.get_object("estimated_filesize_value_label")
+        self._filesize_est_label = self.builder.get_object(
+            "estimated_filesize_label")
+        self._filesize_est_value_label = self.builder.get_object(
+            "estimated_filesize_value_label")
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app.gui)
 
         # UI widgets
-        self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
+        self.window.set_icon_from_file(
+            configure.get_pixmap_dir() + "/pitivi-render-16.png")
 
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
@@ -260,7 +271,8 @@ class RenderingProgressDialog(GObject.Object):
 
     def updatePosition(self, fraction):
         self.progressbar.set_fraction(fraction)
-        self.window.set_title(_("Rendering — %d%% complete") % int(100 * fraction))
+        self.window.set_title(
+            _("Rendering — %d%% complete") % int(100 * fraction))
 
     def updateProgressbarETA(self, time_estimation):
         # Translators: this string indicates the estimated time
@@ -301,6 +313,7 @@ class RenderingProgressDialog(GObject.Object):
 
 
 class RenderDialog(Loggable):
+
     """Render dialog box.
 
     @ivar preferred_aencoder: The last audio encoder selected by the user.
@@ -365,13 +378,15 @@ class RenderDialog(Loggable):
         self._displayRenderSettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
-        self.project.connect("rendering-settings-changed", self._settingsChanged)
+        self.project.connect(
+            "rendering-settings-changed", self._settingsChanged)
 
         # Monitor changes
 
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo, signal="changed")
-        self.wg.addVertex(self.save_render_preset_button, update_func=self._updateRenderSaveButton)
+        self.wg.addVertex(
+            self.save_render_preset_button, update_func=self._updateRenderSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.muxercombobox, signal="changed")
@@ -386,21 +401,26 @@ class RenderDialog(Loggable):
             self._updateRenderPresetButtons)
 
         self.wg.addEdge(self.frame_rate_combo, self.save_render_preset_button)
-        self.wg.addEdge(self.audio_encoder_combo, self.save_render_preset_button)
-        self.wg.addEdge(self.video_encoder_combo, self.save_render_preset_button)
+        self.wg.addEdge(
+            self.audio_encoder_combo, self.save_render_preset_button)
+        self.wg.addEdge(
+            self.video_encoder_combo, self.save_render_preset_button)
         self.wg.addEdge(self.muxercombobox, self.save_render_preset_button)
         self.wg.addEdge(self.channels_combo, self.save_render_preset_button)
         self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
 
-        self._infobarForPresetManager = {self.render_presets: self.render_preset_infobar}
+        self._infobarForPresetManager = {
+            self.render_presets: self.render_preset_infobar}
 
         # Bind widgets to RenderPresetsManager
         self.bindCombo(self.render_presets, "channels", self.channels_combo)
-        self.bindCombo(self.render_presets, "sample-rate", self.sample_rate_combo)
+        self.bindCombo(
+            self.render_presets, "sample-rate", self.sample_rate_combo)
         self.bindCombo(self.render_presets, "acodec", self.audio_encoder_combo)
         self.bindCombo(self.render_presets, "vcodec", self.video_encoder_combo)
         self.bindCombo(self.render_presets, "container", self.muxercombobox)
-        self.bindCombo(self.render_presets, "frame-rate", self.frame_rate_combo)
+        self.bindCombo(
+            self.render_presets, "frame-rate", self.frame_rate_combo)
         self.bindHeight(self.render_presets)
         self.bindWidth(self.render_presets)
 
@@ -422,33 +442,33 @@ class RenderDialog(Loggable):
     def bindCombo(self, mgr, name, widget):
         if name == "container":
             mgr.bindWidget(name,
-                lambda x: self.muxer_setter(widget, x),
-                lambda: get_combo_value(widget).get_name())
+                           lambda x: self.muxer_setter(widget, x),
+                           lambda: get_combo_value(widget).get_name())
 
         elif name == "acodec":
             mgr.bindWidget(name,
-                lambda x: self.acodec_setter(widget, x),
-                lambda: get_combo_value(widget).get_name())
+                           lambda x: self.acodec_setter(widget, x),
+                           lambda: get_combo_value(widget).get_name())
 
         elif name == "vcodec":
             mgr.bindWidget(name,
-                lambda x: self.vcodec_setter(widget, x),
-                lambda: get_combo_value(widget).get_name())
+                           lambda x: self.vcodec_setter(widget, x),
+                           lambda: get_combo_value(widget).get_name())
 
         elif name == "sample-rate":
             mgr.bindWidget(name,
-                lambda x: self.sample_rate_setter(widget, x),
-                lambda: get_combo_value(widget))
+                           lambda x: self.sample_rate_setter(widget, x),
+                           lambda: get_combo_value(widget))
 
         elif name == "channels":
             mgr.bindWidget(name,
-                lambda x: self.channels_setter(widget, x),
-                lambda: get_combo_value(widget))
+                           lambda x: self.channels_setter(widget, x),
+                           lambda: get_combo_value(widget))
 
         elif name == "frame-rate":
             mgr.bindWidget(name,
-                lambda x: self.framerate_setter(widget, x),
-                lambda: get_combo_value(widget))
+                           lambda x: self.framerate_setter(widget, x),
+                           lambda: get_combo_value(widget))
 
     def muxer_setter(self, widget, value):
         set_combo_value(widget, Gst.ElementFactory.find(value))
@@ -490,13 +510,13 @@ class RenderDialog(Loggable):
 
     def bindHeight(self, mgr):
         mgr.bindWidget("height",
-                    lambda x: setattr(self.project, "videoheight", x),
-                    lambda: 0)
+                       lambda x: setattr(self.project, "videoheight", x),
+                       lambda: 0)
 
     def bindWidth(self, mgr):
         mgr.bindWidget("width",
-                    lambda x: setattr(self.project, "videowidth", x),
-                    lambda: 0)
+                       lambda x: setattr(self.project, "videowidth", x),
+                       lambda: 0)
 
     def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
         """Set up the specified treeview to display the specified presets.
@@ -516,11 +536,13 @@ class RenderDialog(Loggable):
         treeview.props.headers_visible = False
         model = mgr.getModel()
         treeview.set_model(model)
-        model.connect("row-inserted", self._newPresetCb, column, renderer, treeview)
+        model.connect(
+            "row-inserted", self._newPresetCb, column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect("editing-started", self._presetNameEditingStartedCb, mgr)
+        renderer.connect(
+            "editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
-                                        mgr, update_buttons_func)
+                                         mgr, update_buttons_func)
         treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
@@ -594,7 +616,7 @@ class RenderDialog(Loggable):
             "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
             "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                            int(get_combo_value(self.frame_rate_combo).denom)),
+                                       int(get_combo_value(self.frame_rate_combo).denom)),
             "height": 0,
             "width": 0})
 
@@ -633,16 +655,21 @@ class RenderDialog(Loggable):
 
     def _createUi(self):
         builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
+        builder.add_from_file(
+            os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
         builder.connect_signals(self)
 
         self.window = builder.get_object("render-dialog")
         self.selected_only_button = builder.get_object("selected_only_button")
-        self.video_output_checkbutton = builder.get_object("video_output_checkbutton")
-        self.audio_output_checkbutton = builder.get_object("audio_output_checkbutton")
+        self.video_output_checkbutton = builder.get_object(
+            "video_output_checkbutton")
+        self.audio_output_checkbutton = builder.get_object(
+            "audio_output_checkbutton")
         self.render_button = builder.get_object("render_button")
-        self.video_settings_button = builder.get_object("video_settings_button")
-        self.audio_settings_button = builder.get_object("audio_settings_button")
+        self.video_settings_button = builder.get_object(
+            "video_settings_button")
+        self.audio_settings_button = builder.get_object(
+            "audio_settings_button")
         self.frame_rate_combo = builder.get_object("frame_rate_combo")
         self.scale_spinbutton = builder.get_object("scale_spinbutton")
         self.channels_combo = builder.get_object("channels_combo")
@@ -653,10 +680,14 @@ class RenderDialog(Loggable):
         self.filebutton = builder.get_object("filebutton")
         self.fileentry = builder.get_object("fileentry")
         self.resolution_label = builder.get_object("resolution_label")
-        self.render_preset_treeview = builder.get_object("render_preset_treeview")
-        self.save_render_preset_button = builder.get_object("save_render_preset_button")
-        self.remove_render_preset_button = builder.get_object("remove_render_preset_button")
-        self.render_preset_infobar = builder.get_object("render-preset-infobar")
+        self.render_preset_treeview = builder.get_object(
+            "render_preset_treeview")
+        self.save_render_preset_button = builder.get_object(
+            "save_render_preset_button")
+        self.remove_render_preset_button = builder.get_object(
+            "remove_render_preset_button")
+        self.render_preset_infobar = builder.get_object(
+            "render-preset-infobar")
 
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)
@@ -664,7 +695,8 @@ class RenderDialog(Loggable):
 
         # Set the shading style in the toolbar below presets
         presets_toolbar = builder.get_object("render_presets_toolbar")
-        presets_toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        presets_toolbar.get_style_context().add_class(
+            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
     def _settingsChanged(self, unused_project, unused_key, unused_value):
         self.updateResolution()
@@ -694,7 +726,7 @@ class RenderDialog(Loggable):
         # Muxer settings
         # note: this will trigger an update of the codec comboboxes
         set_combo_value(self.muxercombobox,
-            Gst.ElementFactory.find(self.project.muxer))
+                        Gst.ElementFactory.find(self.project.muxer))
 
     def _checkForExistingFile(self, *unused_args):
         """
@@ -732,7 +764,8 @@ class RenderDialog(Loggable):
 
         current_filesize = os.stat(path_from_uri(self.outfile)).st_size
         length = self.app.project_manager.current_project.timeline.props.duration
-        estimated_size = float(current_filesize * float(length) / self.current_position)
+        estimated_size = float(
+            current_filesize * float(length) / self.current_position)
         # Now let's make it human-readable (instead of octets).
         # If it's in the giga range (10⁹) instead of mega (10⁶), use 2 decimals
         if estimated_size > 10e8:
@@ -756,14 +789,18 @@ class RenderDialog(Loggable):
     def updateAvailableEncoders(self):
         """Update the encoder comboboxes to show the available encoders."""
         encoders = CachedEncoderList()
-        vencoder_model = factorylist(encoders.video_combination[self.project.muxer])
+        vencoder_model = factorylist(
+            encoders.video_combination[self.project.muxer])
         self.video_encoder_combo.set_model(vencoder_model)
 
-        aencoder_model = factorylist(encoders.audio_combination[self.project.muxer])
+        aencoder_model = factorylist(
+            encoders.audio_combination[self.project.muxer])
         self.audio_encoder_combo.set_model(aencoder_model)
 
-        self._updateEncoderCombo(self.video_encoder_combo, self.preferred_vencoder)
-        self._updateEncoderCombo(self.audio_encoder_combo, self.preferred_aencoder)
+        self._updateEncoderCombo(
+            self.video_encoder_combo, self.preferred_vencoder)
+        self._updateEncoderCombo(
+            self.audio_encoder_combo, self.preferred_aencoder)
 
     def _updateEncoderCombo(self, encoder_combo, preferred_encoder):
         """Select the specified encoder for the specified encoder combo."""
@@ -788,19 +825,20 @@ class RenderDialog(Loggable):
         """
         properties = getattr(self.project, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                            parent_window=self.window, isControllable=False)
-        self.dialog.ok_btn.connect("clicked", self._okButtonClickedCb, settings_attr)
+                                               parent_window=self.window, isControllable=False)
+        self.dialog.ok_btn.connect(
+            "clicked", self._okButtonClickedCb, settings_attr)
 
     def _showRenderErrorDialog(self, error, details):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = _("An error occured while trying to render your "
-            "project. You might want to check our troubleshooting guide or "
-            "file a bug report. See the details below for some basic "
-            "information that may help identify the problem.")
+                              "project. You might want to check our troubleshooting guide or "
+                              "file a bug report. See the details below for some basic "
+                              "information that may help identify the problem.")
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
-            message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
-            text=primary_message)
+                                   message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
+                                   text=primary_message)
         dialog.set_property("secondary-text", secondary_message)
 
         expander = Gtk.Expander()
@@ -820,7 +858,8 @@ class RenderDialog(Loggable):
         # FIXME: https://github.com/pitivi/gst-editing-services/issues/23
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
-        self._gstSigId[encodebin] = encodebin.connect("element-added", self._elementAddedCb)
+        self._gstSigId[encodebin] = encodebin.connect(
+            "element-added", self._elementAddedCb)
         self._pipeline.set_state(Gst.State.PLAYING)
         self._is_rendering = True
         self._time_started = time.time()
@@ -841,12 +880,15 @@ class RenderDialog(Loggable):
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
 
     def _pauseRender(self, unused_progress):
-        self._rendering_is_paused = self.progress.play_pause_button.get_active()
+        self._rendering_is_paused = self.progress.play_pause_button.get_active(
+        )
         if self._rendering_is_paused:
             self._last_timestamp_when_pausing = time.time()
         else:
-            self._time_spent_paused += time.time() - self._last_timestamp_when_pausing
-            self.debug("Resuming render after %d seconds in pause", self._time_spent_paused)
+            self._time_spent_paused += time.time(
+            ) - self._last_timestamp_when_pausing
+            self.debug(
+                "Resuming render after %d seconds in pause", self._time_spent_paused)
         self.app.project_manager.current_project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
@@ -860,7 +902,8 @@ class RenderDialog(Loggable):
             obj.disconnect(id)
         self._gstSigId = {}
         try:
-            self.app.project_manager.current_project.pipeline.disconnect_by_func(self._updatePositionCb)
+            self.app.project_manager.current_project.pipeline.disconnect_by_func(
+                self._updatePositionCb)
         except TypeError:
             # The render was successful, so this was already disconnected
             pass
@@ -891,7 +934,8 @@ class RenderDialog(Loggable):
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)
-        self.window.hide()  # Hide the rendering settings dialog while rendering
+        # Hide the rendering settings dialog while rendering
+        self.window.hide()
 
         encoder_string = self.project.vencoder
         try:
@@ -906,12 +950,14 @@ class RenderDialog(Loggable):
                     caps = Gst.Caps.from_string(struct.get_caps().to_string())
                     fixed = caps.fixate()
                     fmt = fixed.get_structure(0).get_value("format")
-                    self.project.video_profile.get_restriction()[0]["format"] = fmt
+                    self.project.video_profile.get_restriction()[
+                        0]["format"] = fmt
                     self._factory_formats[encoder_string] = fmt
                     break
 
         self.project.set_rendering(True)
-        self._pipeline.set_render_settings(self.outfile, self.project.container_profile)
+        self._pipeline.set_render_settings(
+            self.outfile, self.project.container_profile)
         self.startAction()
         self.progress.window.show()
         self.progress.connect("cancel", self._cancelRender)
@@ -919,10 +965,12 @@ class RenderDialog(Loggable):
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
-        self.app.project_manager.current_project.pipeline.connect("position", self._updatePositionCb)
+        self.app.project_manager.current_project.pipeline.connect(
+            "position", self._updatePositionCb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
-        self.app.settings.lastExportFolder = self.filebutton.get_current_folder()
+        self.app.settings.lastExportFolder = self.filebutton.get_current_folder(
+        )
         self.app.settings.storeSettings()
 
     def _closeButtonClickedCb(self, unused_button):
@@ -936,14 +984,16 @@ class RenderDialog(Loggable):
     def _containerContextHelpClickedCb(self, unused_button):
         show_user_manual("codecscontainers")
 
-    # -- Periodic (timer) callbacks --
+    # Periodic (timer) callbacks
     def _updateTimeEstimateCb(self):
         if self._rendering_is_paused:
             return True  # Do nothing until we resume rendering
         elif self._is_rendering:
-            timediff = time.time() - self._time_started - self._time_spent_paused
+            timediff = time.time() - \
+                self._time_started - self._time_spent_paused
             length = self.app.project_manager.current_project.timeline.props.duration
-            totaltime = (timediff * float(length) / float(self.current_position)) - timediff
+            totaltime = (timediff * float(length) /
+                         float(self.current_position)) - timediff
             time_estimate = beautify_ETA(int(totaltime * Gst.SECOND))
             if time_estimate:
                 self.progress.updateProgressbarETA(time_estimate)
@@ -966,7 +1016,7 @@ class RenderDialog(Loggable):
             self._filesizeEstimateTimer = None
             return False  # Stop the timer
 
-    # -- GStreamer callbacks --
+    # GStreamer callbacks
     def _busMessageCb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
@@ -975,8 +1025,10 @@ class RenderDialog(Loggable):
             self.progress.window.set_title(_("Render complete"))
             self.progress.setFilesizeEstimate(None)
             if not self.progress.window.is_active():
-                notification = _('"%s" has finished rendering.' % self.fileentry.get_text())
-                self.notification = self.app.system.desktopMessage(_("Render complete"), notification, "pitivi")
+                notification = _(
+                    '"%s" has finished rendering.' % self.fileentry.get_text())
+                self.notification = self.app.system.desktopMessage(
+                    _("Render complete"), notification, "pitivi")
             self._maybePlayFinishedSound()
             self.progress.play_rendered_file_button.show()
             self.progress.close_button.show()
@@ -996,7 +1048,8 @@ class RenderDialog(Loggable):
                 state_really_changed = pending == Gst.State.VOID_PENDING
                 if state_really_changed:
                     if state == Gst.State.PLAYING:
-                        self.debug("Rendering started/resumed, inhibiting sleep")
+                        self.debug(
+                            "Rendering started/resumed, inhibiting sleep")
                         self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
                     else:
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
@@ -1021,11 +1074,13 @@ class RenderDialog(Loggable):
             if timediff < 6:
                 self.progress.progressbar.set_text(_("Estimating..."))
             else:
-                self._timeEstimateTimer = GLib.timeout_add_seconds(3, self._updateTimeEstimateCb)
+                self._timeEstimateTimer = GLib.timeout_add_seconds(
+                    3, self._updateTimeEstimateCb)
 
         # Filesize is trickier and needs more time to be meaningful:
         if not self._filesizeEstimateTimer and (fraction > 0.33 or timediff > 180):
-            self._filesizeEstimateTimer = GLib.timeout_add_seconds(5, self._updateFilesizeEstimateCb)
+            self._filesizeEstimateTimer = GLib.timeout_add_seconds(
+                5, self._updateFilesizeEstimateCb)
 
     def _elementAddedCb(self, unused_bin, element):
         """
@@ -1043,7 +1098,7 @@ class RenderDialog(Loggable):
             element.set_property(propname, value)
             self.debug("Setting %s to %s", propname, value)
 
-    # -- Settings changed callbacks --
+    # Settings changed callbacks
     def _scaleSpinbuttonChangedCb(self, unused_button):
         render_scale = self.scale_spinbutton.get_value()
         self.project.render_scale = render_scale

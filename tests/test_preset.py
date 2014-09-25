@@ -95,11 +95,12 @@ class TestPresetBasics(TestCase):
     def testAddPreset(self):
         self.manager.addPreset('preseT onE', {'name1': '1A'})
         self.assertRaises(DuplicatePresetNameException,
-                self.manager.addPreset, 'Preset One', {'name1': '2A'})
+                          self.manager.addPreset, 'Preset One', {'name1': '2A'})
 
     def testAddDuplicatePreset(self):
         self.manager.addPreset('x', {})
-        self.assertRaises(DuplicatePresetNameException, self.manager.addPreset, 'x', {})
+        self.assertRaises(
+            DuplicatePresetNameException, self.manager.addPreset, 'x', {})
 
     def testAddPresetWithNonAsciiName(self):
         unicode_name = "ソリッド・スネーク"
@@ -115,10 +116,10 @@ class TestPresetBasics(TestCase):
 
         # Renaming 'Preset One' to 'Preset TWO'.
         self.assertRaises(DuplicatePresetNameException,
-                self.manager.renamePreset, '0', 'Preset TWO')
+                          self.manager.renamePreset, '0', 'Preset TWO')
         # Renaming 'Preset One' to 'Preset two'.
         self.assertRaises(DuplicatePresetNameException,
-                self.manager.renamePreset, '0', 'Preset two')
+                          self.manager.renamePreset, '0', 'Preset two')
 
 
 class TestAudioPresetsIO(TestCase):
@@ -138,34 +139,36 @@ class TestAudioPresetsIO(TestCase):
 
     def testSaveAndLoad(self):
         self.manager.addPreset("Vegeta",
-            {"channels": 6000,
-            "sample-rate": 44100})
+                               {"channels": 6000,
+                                "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(1, countUserPresets(self.manager))
 
         self.manager.addPreset("Nappa",
-            {"channels": 4000,
-            "sample-rate": 44100})
+                               {"channels": 4000,
+                                "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets(self.manager))
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        total_presets = countDefaultPresets(self.manager) + countUserPresets(self.manager)
+        total_presets = countDefaultPresets(
+            self.manager) + countUserPresets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
     def testNonAsciiFilenamesSaveAndLoad(self):
         non_ascii_preset_name = "Solid Snake (ソリッド・スネーク) \\#!\"'$%?&*"
         self.manager.addPreset(non_ascii_preset_name,
-            {"channels": 2,
-            "sample-rate": 44100})
+                               {"channels": 2,
+                                "sample-rate": 44100})
         snake = self.manager.presets[non_ascii_preset_name]
         self.assertEqual(2, len(snake))
         self.manager.saveAll()
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEqual(1 + countDefaultPresets(other_manager), len(other_manager.presets))
+        self.assertEqual(1 + countDefaultPresets(
+            other_manager), len(other_manager.presets))
         snaaaake = other_manager.presets[non_ascii_preset_name]
         self.assertEqual(snake, snaaaake)
 
@@ -173,14 +176,15 @@ class TestAudioPresetsIO(TestCase):
         # This would be an invalid file name as is.
         preset_name = " / % "
         self.manager.addPreset(preset_name,
-            {"channels": 2,
-            "sample-rate": 44100})
+                               {"channels": 2,
+                                "sample-rate": 44100})
         values = self.manager.presets[preset_name]
         self.assertEqual(2, len(values))
         self.manager.saveAll()
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEqual(1 + countDefaultPresets(other_manager), len(other_manager.presets))
+        self.assertEqual(1 + countDefaultPresets(
+            other_manager), len(other_manager.presets))
         other_values = other_manager.presets[preset_name]
         self.assertEqual(values, other_values)

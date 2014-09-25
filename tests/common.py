@@ -62,7 +62,7 @@ class TestCase(unittest.TestCase):
         # don't barf gc info all over the console if we have already failed a
         # test case
         if (self._num_failures < len(getattr(self._result, 'failures', []))
-        or self._num_errors < len(getattr(self._result, 'failures', []))):
+           or self._num_errors < len(getattr(self._result, 'failures', []))):
             return
         if detect_leaks:
             self.gccollect()
@@ -82,6 +82,7 @@ class TestCase(unittest.TestCase):
 
 
 class SignalMonitor(object):
+
     def __init__(self, obj, *signals):
         self.signals = signals
         self.connectToObj(obj)

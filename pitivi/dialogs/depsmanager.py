@@ -30,6 +30,7 @@ from pitivi.check import missing_soft_deps
 
 
 class DepsManager(object):
+
     """Display a dialog listing missing soft dependencies.
     The sane way to query and install is by using PackageKit's InstallResource()
     """
@@ -37,7 +38,8 @@ class DepsManager(object):
     def __init__(self, app, parent_window=None):
         self.app = app
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(os.path.join(get_ui_dir(), "depsmanager.ui"))
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "depsmanager.ui"))
         self.builder.connect_signals(self)
         self.window = self.builder.get_object("window1")
         self.window.set_modal(True)
@@ -92,7 +94,8 @@ class DepsManager(object):
         """
         label_contents = ""
         for depname, dep in missing_soft_deps.items():
-            label_contents += "• %s (%s)\n" % (dep.modulename, dep.additional_message)
+            label_contents += "• %s (%s)\n" % (
+                dep.modulename, dep.additional_message)
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):

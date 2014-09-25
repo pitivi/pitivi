@@ -26,9 +26,11 @@ from pitivi.settings import GlobalSettings
 
 
 class BaseTabs(Gtk.Notebook):
+
     """
     @type app: Pitivi
     """
+
     def __init__(self, app):
         Gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
@@ -48,7 +50,8 @@ class BaseTabs(Gtk.Notebook):
         docked = getattr(self.settings, child_name + "docked")
         if docked is False:
             self.createWindow(child, created_by_signal=False)
-        # Wait till the tab or floating window is ready before showing contents:
+        # Wait till the tab or floating window is ready before showing
+        # contents:
         child.show()
 
     def _set_child_properties(self, child, label):
@@ -58,7 +61,7 @@ class BaseTabs(Gtk.Notebook):
         label.props.xalign = 0.0
 
     def _detachedComponentWindowDestroyCb(self, window, child,
-            original_position, child_name):
+                                          original_position, child_name):
         notebook = window.get_child()
         position = notebook.page_num(child)
         notebook.remove_page(position)
@@ -104,9 +107,12 @@ class BaseTabs(Gtk.Notebook):
         window.add(notebook)
         window.show_all()
         window.move(x, y)
-        window.connect("configure-event", self._detachedComponentWindowConfiguredCb, child_name)
-        window.connect("destroy", self._detachedComponentWindowDestroyCb, child,
-                original_position, child_name)
+        window.connect(
+            "configure-event", self._detachedComponentWindowConfiguredCb,
+            child_name)
+        window.connect(
+            "destroy", self._detachedComponentWindowDestroyCb, child,
+            original_position, child_name)
 
         if not created_by_signal:
             # Delete the tab from the original notebook (since it was not
@@ -137,24 +143,24 @@ class BaseTabs(Gtk.Notebook):
         """
         GlobalSettings.addConfigSection(child_name)
         GlobalSettings.addConfigOption(child_name + "docked",
-            section=child_name,
-            key="docked",
-            default=True)
+                                       section=child_name,
+                                       key="docked",
+                                       default=True)
         GlobalSettings.addConfigOption(child_name + "width",
-            section=child_name,
-            key="width",
-            default=320)
+                                       section=child_name,
+                                       key="width",
+                                       default=320)
         GlobalSettings.addConfigOption(child_name + "height",
-            section=child_name,
-            key="height",
-            default=400)
+                                       section=child_name,
+                                       key="height",
+                                       default=400)
         GlobalSettings.addConfigOption(child_name + "x",
-            section=child_name,
-            key="x",
-            default=0)
+                                       section=child_name,
+                                       key="x",
+                                       default=0)
         GlobalSettings.addConfigOption(child_name + "y",
-            section=child_name,
-            key="y",
-            default=0)
+                                       section=child_name,
+                                       key="y",
+                                       default=0)
 
         GlobalSettings.readSettingSectionFromFile(self.settings, child_name)

@@ -33,6 +33,7 @@ from pitivi.utils.ui import LAYER_CONTROL_TARGET_ENTRY
 
 # TODO GTK3 port to GtkGrid
 class BaseLayerControl(Gtk.VBox, Loggable):
+
     """
     Base Layer control classes
     """
@@ -51,10 +52,12 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         context = self.get_style_context()
 
         # get the default color for the current theme
-        self.UNSELECTED_COLOR = context.get_background_color(Gtk.StateFlags.NORMAL)
+        self.UNSELECTED_COLOR = context.get_background_color(
+            Gtk.StateFlags.NORMAL)
         # use base instead of bg colors so that we get the lighter color
         # that is used for list items in TreeView.
-        self.SELECTED_COLOR = context.get_background_color(Gtk.StateFlags.SELECTED)
+        self.SELECTED_COLOR = context.get_background_color(
+            Gtk.StateFlags.SELECTED)
 
         table = Gtk.Table(n_rows=2, n_columns=2)
         table.set_border_width(2)
@@ -82,8 +85,10 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
         # Name entry
         self.name_entry = Gtk.Entry()
-        self.name_entry.set_tooltip_text(_("Set a personalized name for this layer"))
-        self.name_entry.set_property("primary-icon-name", icon_mapping[layer_type])
+        self.name_entry.set_tooltip_text(
+            _("Set a personalized name for this layer"))
+        self.name_entry.set_property(
+            "primary-icon-name", icon_mapping[layer_type])
         self.name_entry.connect("button_press_event", self._buttonPressCb)
 #        self.name_entry.drag_dest_unset()
         self.name_entry.set_sensitive(False)
@@ -91,10 +96,11 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         # 'Solo' toggle button
         self.solo_button = Gtk.ToggleButton()
         self.solo_button.set_tooltip_markup(_("<b>Solo mode</b>\n"
-                        "Other non-soloed layers will be disabled as long as "
-                        "this is enabled."))
+                                              "Other non-soloed layers will be disabled as long as "
+                                              "this is enabled."))
         solo_image = Gtk.Image()
-        solo_image.set_from_icon_name("avatar-default-symbolic", Gtk.IconSize.MENU)
+        solo_image.set_from_icon_name(
+            "avatar-default-symbolic", Gtk.IconSize.MENU)
         self.solo_button.add(solo_image)
         self.solo_button.connect("toggled", self._soloToggledCb)
         self.solo_button.set_relief(Gtk.ReliefStyle.NONE)
@@ -106,7 +112,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         visible_option.set_active(True)
         visible_option.set_sensitive(False)
         visible_option.set_tooltip_markup(_("<b>Enable or disable this layer</b>\n"
-                                    "Disabled layers will not play nor render."))
+                                            "Disabled layers will not play nor render."))
 
         # Upper bar
         upper = Gtk.HBox()
@@ -133,7 +139,8 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         self.layer_down.connect("activate", self._moveLayerCb, 1)
         self.layer_first = Gtk.MenuItem.new_with_label(_("Move layer to top"))
         self.layer_first.connect("activate", self._moveLayerCb, -2)
-        self.layer_last = Gtk.MenuItem.new_with_label(_("Move layer to bottom"))
+        self.layer_last = Gtk.MenuItem.new_with_label(
+            _("Move layer to bottom"))
         self.layer_last.connect("activate", self._moveLayerCb, 2)
 
         self.popup.append(self.layer_first)
@@ -197,11 +204,15 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         Called when the selection state changes
         """
         if self.selected:
-            self.eventbox.override_background_color(Gtk.StateType.NORMAL, self.SELECTED_COLOR)
-            self.name_entry.override_background_color(Gtk.StateType.NORMAL, self.SELECTED_COLOR)
+            self.eventbox.override_background_color(
+                Gtk.StateType.NORMAL, self.SELECTED_COLOR)
+            self.name_entry.override_background_color(
+                Gtk.StateType.NORMAL, self.SELECTED_COLOR)
         else:
-            self.eventbox.override_background_color(Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
-            self.name_entry.override_background_color(Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
+            self.eventbox.override_background_color(
+                Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
+            self.name_entry.override_background_color(
+                Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
 
         # continue GTK signal propagation
         return True
@@ -267,12 +278,15 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         Used for visual drag'n'drop feedback
         """
         if highlighted:
-            self.sep.override_background_color(Gtk.StateType.NORMAL, self.SELECTED_COLOR)
+            self.sep.override_background_color(
+                Gtk.StateType.NORMAL, self.SELECTED_COLOR)
         else:
-            self.sep.override_background_color(Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
+            self.sep.override_background_color(
+                Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
 
 
 class VideoLayerControl(BaseLayerControl):
+
     """
     Layer control class for video layers
     """
@@ -280,13 +294,16 @@ class VideoLayerControl(BaseLayerControl):
     __gtype_name__ = 'VideoLayerControl'
 
     def __init__(self, control_container, layer, app):
-        BaseLayerControl.__init__(self, control_container, layer, GES.TrackType.VIDEO, app)
+        BaseLayerControl.__init__(
+            self, control_container, layer, GES.TrackType.VIDEO, app)
 
         opacity = Gtk.Label(label=_("Opacity:"))
 
         # Opacity scale
-        opacity_adjust = Gtk.Adjustment(value=100, upper=100, step_increment=5, page_increment=10)
-        opacity_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=opacity_adjust)
+        opacity_adjust = Gtk.Adjustment(
+            value=100, upper=100, step_increment=5, page_increment=10)
+        opacity_scale = Gtk.Scale.new(
+            Gtk.Orientation.HORIZONTAL, adjustment=opacity_adjust)
         opacity_scale.set_value_pos(Gtk.PositionType.LEFT)
         opacity_scale.set_digits(0)
         opacity_scale.set_tooltip_text(_("Change video opacity"))
@@ -297,6 +314,7 @@ class VideoLayerControl(BaseLayerControl):
 
 
 class AudioLayerControl(BaseLayerControl):
+
     """
     Layer control class for audio layers
     """
@@ -304,15 +322,18 @@ class AudioLayerControl(BaseLayerControl):
     __gtype_name__ = 'AudioLayerControl'
 
     def __init__(self, control_container, layer, app):
-        BaseLayerControl.__init__(self, control_container, layer, GES.TrackType.AUDIO, app)
+        BaseLayerControl.__init__(
+            self, control_container, layer, GES.TrackType.AUDIO, app)
 
         volume = Gtk.Label(label=_("Vol:"))
         volume_button = Gtk.VolumeButton(size=Gtk.IconSize.MENU)
 
         panning = Gtk.Label(label=_("Pan:"))
         # Volume scale
-        panning_adjust = Gtk.Adjustment(value=0, lower=-100, upper=100, step_increment=5, page_increment=10)
-        panning_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, adjustment=panning_adjust)
+        panning_adjust = Gtk.Adjustment(
+            value=0, lower=-100, upper=100, step_increment=5, page_increment=10)
+        panning_scale = Gtk.Scale.new(
+            Gtk.Orientation.HORIZONTAL, adjustment=panning_adjust)
         panning_scale.set_value_pos(Gtk.PositionType.LEFT)
         panning_scale.set_digits(0)
         panning_scale.set_tooltip_text(_("Change audio panning"))
@@ -325,6 +346,7 @@ class AudioLayerControl(BaseLayerControl):
 
 
 class TwoStateButton(Gtk.Button):
+
     """
     Button with two states and according labels/images
     """
@@ -354,6 +376,7 @@ class TwoStateButton(Gtk.Button):
 
 
 class SpacedSeparator(Gtk.EventBox):
+
     """
     A Separator with vertical spacing
 

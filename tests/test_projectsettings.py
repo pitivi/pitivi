@@ -34,11 +34,13 @@ class TestProjectSettingsDialog(TestCase):
         self.assertEqual('New preset', name)
 
         preset_manager.addPreset(name, {})
-        new_preset1 = ProjectSettingsDialog._getUniquePresetName(preset_manager)
+        new_preset1 = ProjectSettingsDialog._getUniquePresetName(
+            preset_manager)
         self.assertEqual('New preset 1', new_preset1)
 
         # Intentionally add 'New preset 2' before 'New preset 1'.
         preset_manager.addPreset('New preset 2', {})
         preset_manager.addPreset('New preset 1', {})
-        new_preset3 = ProjectSettingsDialog._getUniquePresetName(preset_manager)
+        new_preset3 = ProjectSettingsDialog._getUniquePresetName(
+            preset_manager)
         self.assertEqual('New preset 3', new_preset3)

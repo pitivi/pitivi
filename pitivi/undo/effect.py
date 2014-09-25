@@ -28,6 +28,7 @@ from pitivi.effects import PROPS_TO_IGNORE
 
 
 class EffectPropertyChanged(UndoableAction):
+
     def __init__(self, effect, property_name, old_value, new_value):
         UndoableAction.__init__(self)
         self.effect = effect
@@ -47,9 +48,11 @@ class EffectPropertyChanged(UndoableAction):
 # FIXME We should refactor pitivi.undo.PropertyChangeTracker so we can use it as
 # a baseclass here!
 class EffectGstElementPropertyChangeTracker:
+
     """
     Track effect configuration changes in its list of control effects
     """
+
     def __init__(self, action_log):
         self._tracked_effects = {}
         self.action_log = action_log
@@ -74,7 +77,8 @@ class EffectGstElementPropertyChangeTracker:
     def _propertyChangedCb(self, effect, unused_gstelement, pspec):
         old_value = self._tracked_effects[effect][pspec.name]
         new_value = effect.get_child_property(pspec.name)[1]
-        action = EffectPropertyChanged(effect, pspec.name, old_value, new_value)
+        action = EffectPropertyChanged(
+            effect, pspec.name, old_value, new_value)
         self._tracked_effects[effect][pspec.name] = new_value
         self.action_log.push(action)
 
@@ -87,6 +91,7 @@ class EffectAdded(UndoableAction):
     # doing again. We have to keep all EffectPropertyChanged object that refers
     # to the Effect when undoing so we reset theirs effect when
     # doing it again. The way of doing it is the same with EffectRemoved
+
     def __init__(self, clip, effect, properties_watcher):
         UndoableAction.__init__(self)
         self.clip = clip
@@ -108,9 +113,9 @@ class EffectAdded(UndoableAction):
     def undo(self):
         props = self.effect.list_children_properties()
         self.effect_props = [(prop.name, self.effect.get_child_property(prop.name)[1])
-                          for prop in props
-                          if prop.flags & GObject.PARAM_WRITABLE
-                          and prop.name not in PROPS_TO_IGNORE]
+                             for prop in props
+                             if prop.flags & GObject.PARAM_WRITABLE
+                             and prop.name not in PROPS_TO_IGNORE]
         self.clip.remove(self.effect)
         self._props_changed =\
             self._properties_watcher.getPropChangedFromEffect(self.effect)
@@ -120,6 +125,7 @@ class EffectAdded(UndoableAction):
 
 
 class EffectRemoved(UndoableAction):
+
     def __init__(self, clip, effect, properties_watcher):
         UndoableAction.__init__(self)
         self.effect = effect
@@ -133,9 +139,9 @@ class EffectRemoved(UndoableAction):
     def do(self):
         props = self.effect.list_children_properties()
         self.effect_props = [(prop.name, self.effect.get_child_property(prop.name)[1])
-                          for prop in props
-                          if prop.flags & GObject.PARAM_WRITABLE
-                          and prop.name not in PROPS_TO_IGNORE]
+                             for prop in props
+                             if prop.flags & GObject.PARAM_WRITABLE
+                             and prop.name not in PROPS_TO_IGNORE]
 
         self.clip.remove(self.effect)
 

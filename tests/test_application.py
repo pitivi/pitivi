@@ -27,6 +27,7 @@ from pitivi import configure
 
 
 class MockGioFile(object):
+
     def load_contents_finish(self, result):
         return (True, result)
 
@@ -45,13 +46,15 @@ class TestPitivi(common.TestCase):
 
         app = application.Pitivi()
         app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "%s=CURRENT" % configure.VERSION, None)
+        app._versionInfoReceivedCb(
+            MockGioFile(), "%s=CURRENT" % configure.VERSION, None)
         self.assertTrue(app.isLatest())
         self.assertEqual(configure.VERSION, app.getLatest())
 
         app = application.Pitivi()
         app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "%s=current\n0=supported" % configure.VERSION, None)
+        app._versionInfoReceivedCb(
+            MockGioFile(), "%s=current\n0=supported" % configure.VERSION, None)
         self.assertTrue(app.isLatest())
         self.assertEqual(configure.VERSION, app.getLatest())
 
@@ -63,7 +66,8 @@ class TestPitivi(common.TestCase):
 
         app = application.Pitivi()
         app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION, None)
+        app._versionInfoReceivedCb(
+            MockGioFile(), "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION, None)
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())
 

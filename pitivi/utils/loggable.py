@@ -72,6 +72,7 @@ _LEVEL_NAMES = ['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG']
 
 
 class TerminalController:
+
     """
     A class that can be used to portably generate formatted output to
     a terminal.
@@ -200,7 +201,8 @@ class TerminalController:
         if set_bg_ansi:
             for i, color in zip(list(range(len(self._ANSICOLORS))),
                                 self._ANSICOLORS):
-                setattr(self, 'BG_' + color, curses.tparm(set_bg_ansi, i) or b'')
+                setattr(
+                    self, 'BG_' + color, curses.tparm(set_bg_ansi, i) or b'')
 
     def _tigetstr(self, cap_name):
         # String capabilities can include "delays" of the form "$<2>".
@@ -225,12 +227,13 @@ class TerminalController:
         else:
             return getattr(self, s[2:-1])
 
-#######################################################################
+#
 # Example use case: progress bar
-#######################################################################
+#
 
 
 class ProgressBar:
+
     """
     A 3-line progress bar, which looks like::
 
@@ -358,7 +361,7 @@ def getCategoryLevel(category):
     if it wasn't registered yet.
     """
     global _categories
-    if not category in _categories:
+    if category not in _categories:
         registerCategory(category)
     return _categories[category]
 
@@ -626,19 +629,20 @@ def stderrHandler(level, object, category, file, line, message):
     # show a bazillion of debug details that are not relevant to Pitivi.
     if not _enableCrackOutput:
         safeprintf(sys.stderr, '%s %-8s %-17s %-2s %s %s\n',
-               getFormattedLevelName(level), time.strftime("%H:%M:%S"),
-               category, "", message, where)
+                   getFormattedLevelName(level), time.strftime("%H:%M:%S"),
+                   category, "", message, where)
     else:
         o = ""
         if object:
             o = '"' + object + '"'
         # level   pid     object   cat      time
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
-        safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
-                   getFormattedLevelName(level), os.getpid(),
-                   threading.current_thread().ident,
-                   o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
-                   message, where)
+        safeprintf(
+            sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
+            getFormattedLevelName(level), os.getpid(),
+            threading.current_thread().ident,
+            o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
+            message, where)
     sys.stderr.flush()
 
 
@@ -655,18 +659,18 @@ def _preformatLevels(enableColorOutput):
         if type(t.BOLD) == bytes:
             formatter = lambda level: ''.join(
                 (t.BOLD.decode(), getattr(t, COLORS[level]).decode(),
-                logLevelName(level), t.NORMAL.decode()))
+                 logLevelName(level), t.NORMAL.decode()))
         else:
             formatter = lambda level: ''.join(
                 (t.BOLD, getattr(t, COLORS[level]),
-                logLevelName(level), t.NORMAL))
+                 logLevelName(level), t.NORMAL))
     else:
         formatter = lambda level: logLevelName(level)
 
     for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
         _FORMATTED_LEVELS.append(formatter(level))
 
-### "public" useful API
+# "public" useful API
 
 # setup functions
 
@@ -848,7 +852,7 @@ def getExceptionMessage(exception, frame=-1, filename=None):
     stack = traceback.extract_tb(sys.exc_info()[2])
     if filename:
         stack = [f for f in stack if f[0].find(filename) > -1]
-    #import code; code.interact(local=locals())
+    # import code; code.interact(local=locals())
     (filename, line, func, text) = stack[frame]
     filename = scrubFilename(filename)
     exc = exception.__class__.__name__
@@ -923,6 +927,7 @@ def outputToFiles(stdout=None, stderr=None):
 
 
 class BaseLoggable(object):
+
     """
     Base class for objects that want to be able to log messages with
     different level of severity.  The levels are, in order from least
@@ -954,37 +959,43 @@ class BaseLoggable(object):
         """Log an error.  By default this will also raise an exception."""
         if _canShortcutLogging(self.logCategory, ERROR):
             return
-        errorObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        errorObject(self.logObjectName(),
+                    self.logCategory, *self.logFunction(*args))
 
     def warning(self, *args):
         """Log a warning.  Used for non-fatal problems."""
         if _canShortcutLogging(self.logCategory, WARN):
             return
-        warningObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        warningObject(
+            self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def fixme(self, *args):
         """Log a fixme.  Used for FIXMEs ."""
         if _canShortcutLogging(self.logCategory, FIXME):
             return
-        fixmeObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        fixmeObject(self.logObjectName(),
+                    self.logCategory, *self.logFunction(*args))
 
     def info(self, *args):
         """Log an informational message.  Used for normal operation."""
         if _canShortcutLogging(self.logCategory, INFO):
             return
-        infoObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        infoObject(self.logObjectName(),
+                   self.logCategory, *self.logFunction(*args))
 
     def debug(self, *args):
         """Log a debug message.  Used for debugging."""
         if _canShortcutLogging(self.logCategory, DEBUG):
             return
-        debugObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        debugObject(self.logObjectName(),
+                    self.logCategory, *self.logFunction(*args))
 
     def log(self, *args):
         """Log a log message.  Used for debugging recurring events."""
         if _canShortcutLogging(self.logCategory, LOG):
             return
-        logObject(self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        logObject(self.logObjectName(),
+                  self.logCategory, *self.logFunction(*args))
 
     def doLog(self, level, where, format, *args, **kwargs):
         """
@@ -1008,7 +1019,7 @@ class BaseLoggable(object):
             return {}
         args = self.logFunction(*args)
         return doLog(level, self.logObjectName(), self.logCategory,
-                  format, args, where=where, **kwargs)
+                     format, args, where=where, **kwargs)
 
     def logFunction(self, *args):
         """Overridable log function.  Default just returns passed message."""
@@ -1028,6 +1039,7 @@ class BaseLoggable(object):
 
 
 class Loggable(BaseLoggable):
+
     def __init__(self, logCategory=None):
         if logCategory:
             self.logCategory = logCategory
@@ -1044,4 +1056,4 @@ class Loggable(BaseLoggable):
         if _canShortcutLogging(self.logCategory, ERROR):
             return
         doLog(ERROR, self.logObjectName(), self.logCategory,
-            format, self.logFunction(*args), where=-2)
+              format, self.logFunction(*args), where=-2)

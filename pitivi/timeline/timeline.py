@@ -48,29 +48,30 @@ from pitivi.utils.widgets import ZoomBox
 
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
-    section="user-interface",
-    key="edge-snap-deadband",
-    default=5,
-    notify=True)
+                               section="user-interface",
+                               key="edge-snap-deadband",
+                               default=5,
+                               notify=True)
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
-    section=_("Behavior"),
-    label=_("Snap distance"),
-    description=_("Threshold (in pixels) at which two clips will snap together "
-        "when dragging or trimming."),
-    lower=0)
+                                       section=_("Behavior"),
+                                       label=_("Snap distance"),
+                                       description=_("Threshold (in pixels) at which two clips will snap together "
+                                                     "when dragging or trimming."),
+                                       lower=0)
 
 GlobalSettings.addConfigOption('imageClipLength',
-    section="user-interface",
-    key="image-clip-length",
-    default=1000,
-    notify=True)
+                               section="user-interface",
+                               key="image-clip-length",
+                               default=1000,
+                               notify=True)
 
 PreferencesDialog.addNumericPreference('imageClipLength',
-    section=_("Behavior"),
-    label=_("Image clip duration"),
-    description=_("Default clip length (in miliseconds) of images when inserting on the timeline."),
-    lower=1)
+                                       section=_("Behavior"),
+                                       label=_("Image clip duration"),
+                                       description=_(
+                                           "Default clip length (in miliseconds) of images when inserting on the timeline."),
+                                       lower=1)
 
 # Colors
 TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
@@ -86,6 +87,7 @@ is prefixed with a little b, example : bTimeline
 
 
 class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
+
     """
     The timeline view showing the clips.
     """
@@ -116,7 +118,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         # The first marker added as a child is the furthest and
         # the latest added marker is the closest to the viewer.
 
-        # All the audio, video, image, title clips are placed above this marker.
+        # All the audio, video, image, title clips are placed above this
+        # marker.
         self._clips_marker = Clutter.Actor()
         self.add_child(self._clips_marker)
         # All the transition clips are placed above this marker.
@@ -252,7 +255,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
                 layer = self._getLayerForGhostClip(ghostclip)
 
             if ghostclip.asset.is_image():
-                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+                clip_duration = self._settings.imageClipLength * \
+                    Gst.SECOND / 1000.0
             else:
                 clip_duration = ghostclip.asset.get_duration()
 
@@ -354,7 +358,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         ghostclip.setNbrLayers(len(self.bTimeline.get_layers()))
 
         if asset.is_image():
-            clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+            clip_duration = self._settings.imageClipLength * \
+                Gst.SECOND / 1000.0
         else:
             clip_duration = asset.get_duration()
 
@@ -378,7 +383,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         self.lastPosition = position
 
     def _updatePlayHead(self):
-        height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
+        height = len(self.bTimeline.get_layers()) * \
+            (EXPANDED_SIZE + SPACING) * 2
         self.playhead.set_size(PLAYHEAD_WIDTH, height)
         self._movePlayhead(self.lastPosition)
 
@@ -418,9 +424,12 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
             return
 
         bElement.connect("notify::start", self._elementStartChangedCb, element)
-        bElement.connect("notify::duration", self._elementDurationChangedCb, element)
-        bElement.connect("notify::in-point", self._elementInPointChangedCb, element)
-        bElement.connect("notify::priority", self._elementPriorityChangedCb, element)
+        bElement.connect(
+            "notify::duration", self._elementDurationChangedCb, element)
+        bElement.connect(
+            "notify::in-point", self._elementInPointChangedCb, element)
+        bElement.connect(
+            "notify::priority", self._elementPriorityChangedCb, element)
 
         self.elements.append(element)
 
@@ -467,7 +476,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         y = 0
         if track_type == GES.TrackType.AUDIO:
             y = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING)
-        y += bElement.get_parent().get_layer().get_priority() * (EXPANDED_SIZE + SPACING) + SPACING
+        y += bElement.get_parent().get_layer().get_priority() * \
+            (EXPANDED_SIZE + SPACING) + SPACING
 
         element.save_easing_state()
         element.props.y = y
@@ -476,11 +486,14 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
     def _updateSize(self, ghostclip=None):
         self.save_easing_state()
         self.set_easing_duration(0)
-        self.props.width = self.nsToPixel(self.bTimeline.get_duration()) + CONTROL_WIDTH
+        self.props.width = self.nsToPixel(
+            self.bTimeline.get_duration()) + CONTROL_WIDTH
         if ghostclip is not None:
-            ghostEnd = ghostclip.props.x + ghostclip.props.width + CONTROL_WIDTH
+            ghostEnd = ghostclip.props.x + \
+                ghostclip.props.width + CONTROL_WIDTH
             self.props.width = max(ghostEnd, self.props.width)
-        self.props.height = (len(self.bTimeline.get_layers()) + 1) * (EXPANDED_SIZE + SPACING) * 2 + SPACING
+        self.props.height = (len(self.bTimeline.get_layers()) + 1) * \
+            (EXPANDED_SIZE + SPACING) * 2 + SPACING
         self.restore_easing_state()
         self._container.vadj.props.upper = self.props.height
         self._container.updateHScrollAdjustments()
@@ -581,7 +594,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
         if position == 0:
             self._snapEndedCb()
         else:
-            height = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING) * 2
+            height = len(self.bTimeline.get_layers()) * \
+                (EXPANDED_SIZE + SPACING) * 2
             self._snap_indicator.props.height = height
             self._snap_indicator.props.x = Zoomable.nsToPixel(position)
             self._snap_indicator.props.visible = True
@@ -602,7 +616,8 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
     def _trackAddedCb(self, unused_timeline, track):
         self._connectTrack(track)
-        self._container.app.project_manager.current_project.update_restriction_caps()
+        self._container.app.project_manager.current_project.update_restriction_caps(
+        )
 
     def _trackRemovedCb(self, unused_timeline, track):
         self._disconnectTrack(track)
@@ -638,9 +653,11 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
+
     """
     Container for zoom box, ruler, timeline, scrollbars and toolbar.
     """
+
     def __init__(self, gui, instance, ui_manager):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
@@ -660,7 +677,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project = None
         self.bTimeline = None
 
-        self.ui_manager.add_ui_from_file(os.path.join(get_ui_dir(), "timelinecontainer.xml"))
+        self.ui_manager.add_ui_from_file(
+            os.path.join(get_ui_dir(), "timelinecontainer.xml"))
         self._createActions()
         self._createUi()
 
@@ -689,14 +707,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
-        # the value of self.zoomed_fitted as clips get progressively inserted...
+        # the value of self.zoomed_fitted as clips get progressively
+        # inserted...
         zoom_was_fitted = self.zoomed_fitted
 
         for asset in assets:
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
             elif asset.is_image():
-                clip_duration = self._settings.imageClipLength * Gst.SECOND / 1000.0
+                clip_duration = self._settings.imageClipLength * \
+                    Gst.SECOND / 1000.0
             else:
                 clip_duration = asset.get_duration()
 
@@ -710,7 +730,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if zoom_was_fitted:
             self._setBestZoomRatio()
         else:
-            self.scrollToPixel(Zoomable.nsToPixel(self.bTimeline.props.duration))
+            self.scrollToPixel(
+                Zoomable.nsToPixel(self.bTimeline.props.duration))
 
         self.app.action_log.commit()
         self.bTimeline.commit()
@@ -730,8 +751,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._projectmanager = projectmanager
 
         if projectmanager is not None:
-            projectmanager.connect("new-project-created", self._projectCreatedCb)
-            projectmanager.connect("new-project-loaded", self._projectChangedCb)
+            projectmanager.connect(
+                "new-project-created", self._projectCreatedCb)
+            projectmanager.connect(
+                "new-project-loaded", self._projectChangedCb)
 
     def updateHScrollAdjustments(self):
         """
@@ -743,7 +766,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         else:
             contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
 
-        end_padding = CONTROL_WIDTH * 2  # Provide some space for clip insertion at the end
+        # Provide some space for clip insertion at the end
+        end_padding = CONTROL_WIDTH * 2
 
         self.hadj.props.lower = 0
         self.hadj.props.upper = contents_size + end_padding
@@ -785,7 +809,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.bTimeline = None
 
         self.timeline.setProject(self._project)
-        self.timeline.selection.connect("selection-changed", self._selectionChangedCb)
+        self.timeline.selection.connect(
+            "selection-changed", self._selectionChangedCb)
 
     def getEditionMode(self, isAHandle=False):
         if self._shiftMask or self._autoripple_active:
@@ -833,8 +858,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.stage.add_child(self.timeline)
 
         self.timeline.connect("button-press-event", self._timelineClickedCb)
-        self.timeline.connect("button-release-event", self._timelineClickReleasedCb)
-        # FIXME: Connect to the stage of the embed instead, see https://bugzilla.gnome.org/show_bug.cgi?id=697522
+        self.timeline.connect(
+            "button-release-event", self._timelineClickReleasedCb)
+        # FIXME: Connect to the stage of the embed instead, see
+        # https://bugzilla.gnome.org/show_bug.cgi?id=697522
         self.embed.connect("scroll-event", self._scrollEventCb)
 
         self.connect("key-press-event", self._keyPressEventCb)
@@ -869,16 +896,21 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         toolbar.set_style(Gtk.ToolbarStyle.ICONS)
         toolbar.get_accessible().set_name("timeline toolbar")
 
-        alter_style_class(".%s" % Gtk.STYLE_CLASS_INLINE_TOOLBAR, toolbar, "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
-        alter_style_class(".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._vscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
-        alter_style_class(".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._hscrollbar, "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(".%s" % Gtk.STYLE_CLASS_INLINE_TOOLBAR, toolbar,
+                          "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
+        alter_style_class(
+            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._vscrollbar,
+            "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
+        alter_style_class(
+            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._hscrollbar,
+            "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
         # you can't insert them as normal "actions", so we create them here:
         gapless_mode_button = Gtk.ToggleToolButton()
         gapless_mode_button.set_stock_id("pitivi-gapless")
         gapless_mode_button.set_tooltip_markup(_("Toggle gapless mode\n"
-            "When enabled, adjacent clips automatically move to fill gaps."))
+                                                 "When enabled, adjacent clips automatically move to fill gaps."))
         toolbar.add(gapless_mode_button)
         # Restore the state of the timeline's "gapless" mode:
         self._autoripple_active = self._settings.timelineAutoRipple
@@ -957,7 +989,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Sets up the GtkActions. This allows managing the sensitivity of widgets
         to the mouse and keyboard shortcuts.
         """
-        # TODO: use GAction + GActionGroup (Gio.SimpleAction + Gio.SimpleActionGroup)
+        # TODO: use GAction + GActionGroup (Gio.SimpleAction +
+        # Gio.SimpleActionGroup)
 
         # Action list items can vary in size (1-6 items). The first one is the
         # name, and it is the only mandatory option. All the other options are
@@ -970,49 +1003,49 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         zoom_fit_tooltip = _("Zoom Fit")
         actions = (
             ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>plus", zoom_in_tooltip, self._zoomInCb),
+             "<Control>plus", zoom_in_tooltip, self._zoomInCb),
 
             ("ZoomOut", Gtk.STOCK_ZOOM_OUT, None,
-            "<Control>minus", zoom_out_tooltip, self._zoomOutCb),
+             "<Control>minus", zoom_out_tooltip, self._zoomOutCb),
 
             ("ZoomFit", Gtk.STOCK_ZOOM_FIT, None,
-            "<Control>0", zoom_fit_tooltip, self._zoomFitCb),
+             "<Control>0", zoom_fit_tooltip, self._zoomFitCb),
 
             # Alternate keyboard shortcuts to the actions above
             ("ControlEqualAccel", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>equal", zoom_in_tooltip, self._zoomInCb),
+             "<Control>equal", zoom_in_tooltip, self._zoomInCb),
 
             ("ControlKPAddAccel", Gtk.STOCK_ZOOM_IN, None,
-            "<Control>KP_Add", zoom_in_tooltip, self._zoomInCb),
+             "<Control>KP_Add", zoom_in_tooltip, self._zoomInCb),
 
             ("ControlKPSubtractAccel", Gtk.STOCK_ZOOM_OUT, None,
-            "<Control>KP_Subtract", zoom_out_tooltip, self._zoomOutCb),
+             "<Control>KP_Subtract", zoom_out_tooltip, self._zoomOutCb),
         )
 
         selection_actions = (
             ("DeleteObj", Gtk.STOCK_DELETE, None,
-            "Delete", _("Delete Selected"), self._deleteSelected),
+             "Delete", _("Delete Selected"), self._deleteSelected),
 
             ("UngroupObj", "pitivi-ungroup", _("Ungroup"),
-            "<Shift><Control>G", _("Ungroup clips"), self._ungroupSelected),
+             "<Shift><Control>G", _("Ungroup clips"), self._ungroupSelected),
 
             # Translators: This is an action, the title of a button
             ("GroupObj", "pitivi-group", _("Group"),
-            "<Control>G", _("Group clips"), self._groupSelected),
+             "<Control>G", _("Group clips"), self._groupSelected),
 
             ("AlignObj", "pitivi-align", _("Align"),
-            "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
+             "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
         )
 
         playhead_actions = (
             ("PlayPause", Gtk.STOCK_MEDIA_PLAY, None,
-            "space", _("Start Playback"), self._playPauseCb),
+             "space", _("Start Playback"), self._playPauseCb),
 
             ("Split", "pitivi-split", _("Split"),
-            "S", _("Split clip at playhead position"), self._splitCb),
+             "S", _("Split clip at playhead position"), self._splitCb),
 
             ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
-            "K", _("Add a keyframe"), self._keyframeCb),
+             "K", _("Add a keyframe"), self._keyframeCb),
         )
 
         actiongroup = Gtk.ActionGroup(name="timelinepermanent")
@@ -1052,7 +1085,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # last second of the timeline will be in view.
         timeline_duration = duration + Gst.SECOND - 1
         timeline_duration_s = int(timeline_duration / Gst.SECOND)
-        self.debug("Adjusting zoom for a timeline duration of %s secs", timeline_duration_s)
+        self.debug(
+            "Adjusting zoom for a timeline duration of %s secs", timeline_duration_s)
 
         ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
@@ -1061,11 +1095,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if not allow_zoom_in:
                 # For example when the user zoomed out and is adding clips
                 # to the timeline, zooming in would be confusing.
-                self.log("Zoom not changed because the entire timeline is already visible")
+                self.log(
+                    "Zoom not changed because the entire timeline is already visible")
                 return
 
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
+        self.bTimeline.set_snapping_distance(
+            Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         # Only do this at the very end, after updating the other widgets.
         self.log("Setting 'zoomed_fitted' to True")
@@ -1074,26 +1110,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def scroll_left(self):
         # This method can be a callback for our events, or called by ruler.py
         self._hscrollbar.set_value(self._hscrollbar.get_value() -
-            self.hadj.props.page_size ** (2.0 / 3.0))
+                                   self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_right(self):
         # This method can be a callback for our events, or called by ruler.py
         self._hscrollbar.set_value(self._hscrollbar.get_value() +
-            self.hadj.props.page_size ** (2.0 / 3.0))
+                                   self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_up(self):
         self._vscrollbar.set_value(self._vscrollbar.get_value() -
-            self.vadj.props.page_size ** (2.0 / 3.0))
+                                   self.vadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_down(self):
         self._vscrollbar.set_value(self._vscrollbar.get_value() +
-            self.vadj.props.page_size ** (2.0 / 3.0))
+                                   self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _scrollToPixel(self, x):
         if x > self.hadj.props.upper:
-            self.warning("Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?" % (x, self.hadj.props.upper))
+            self.warning(
+                "Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?" %
+                (x, self.hadj.props.upper))
         elif x < self.hadj.props.lower:
-            self.warning("Position %s is smaller than the hscrollbar's lower bound (%s)" % (x, self.hadj.props.lower))
+            self.warning(
+                "Position %s is smaller than the hscrollbar's lower bound (%s)" %
+                (x, self.hadj.props.lower))
 
         if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.timeline.save_easing_state()
@@ -1179,7 +1219,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _alignSelected(self, unused_action):
         if not self.bTimeline:
-            self.error("Trying to use the autoalign feature with an empty timeline")
+            self.error(
+                "Trying to use the autoalign feature with an empty timeline")
             return
 
         progress_dialog = AlignmentProgressDialog(self.app)
@@ -1261,7 +1302,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def zoomChanged(self):
         if self.bTimeline:
             # zoomChanged might be called various times before the UI is ready
-            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
+            self.bTimeline.set_snapping_distance(
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         self.updateHScrollAdjustments()
 
@@ -1275,7 +1317,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         elif event.keyval == Gdk.KEY_Control_L:
             self._controlMask = True
 
-        # Now the second (independent) part: framestepping and seeking shortcuts
+        # Now the second (independent) part: framestepping and seeking
+        # shortcuts
         if event.keyval == Gdk.KEY_Left:
             if self._shiftMask:
                 self._seeker.seekRelative(0 - Gst.SECOND)
@@ -1307,7 +1350,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _timelineClickReleasedCb(self, unused_timeline, event):
         if self.app and self.timeline.allowSeek is True:
-            position = self.pixelToNs(event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
+            position = self.pixelToNs(
+                event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
             self._seeker.seek(position)
 
         self.timeline.allowSeek = True
@@ -1333,7 +1377,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _snapDistanceChangedCb(self, unused_settings):
         if self.bTimeline:
-            self.bTimeline.set_snapping_distance(Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
+            self.bTimeline.set_snapping_distance(
+                Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectChangedCb(self, unused_app, project, unused_fully_loaded):
         """
@@ -1357,7 +1402,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self._project:
             self._project.disconnect_by_func(self._renderingSettingsChangedCb)
             try:
-                self.timeline._pipeline.disconnect_by_func(self.timeline.positionCb)
+                self.timeline._pipeline.disconnect_by_func(
+                    self.timeline.positionCb)
             except AttributeError:
                 pass
             except TypeError:
@@ -1461,7 +1507,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.removeGhostClips()
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        # Same as in insertEnd: this value changes during insertion, snapshot it
+        # Same as in insertEnd: this value changes during insertion, snapshot
+        # it
         zoom_was_fitted = self.zoomed_fitted
 
         target = widget.drag_dest_find_target(context, None)
@@ -1483,11 +1530,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     margin = min(x, 50)
                     self.scrollToPixel(x - margin)
         elif target.name() == "pitivi/effect":
-            actor = self.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, x, y)
+            actor = self.stage.get_actor_at_pos(
+                Clutter.PickMode.REACTIVE, x, y)
             bElement = actor.bElement
             clip = bElement.get_parent()
             factory_name = self.dropData
-            self.app.gui.clipconfig.effect_expander.addEffectToClip(clip, factory_name)
+            self.app.gui.clipconfig.effect_expander.addEffectToClip(
+                clip, factory_name)
         return True
 
     def _dragDataReceivedCb(self, widget, drag_context, unused_x, unused_y, selection_data, unused_info, timestamp):

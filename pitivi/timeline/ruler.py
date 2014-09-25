@@ -57,6 +57,7 @@ SMALL_FONT_SIZE = 11
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
+
     """
     Widget for displaying the ruler.
 
@@ -70,7 +71,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         "motion-notify-event": "override",
         "scroll-event": "override",
         "seek": (GObject.SignalFlags.RUN_LAST, None,
-                [GObject.TYPE_UINT64])
+                 [GObject.TYPE_UINT64])
     }
 
     def __init__(self, timeline, hadj):
@@ -85,13 +86,14 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect("focus-out-event", self._focusOutCb)
 
         self.timeline = timeline
-        self._background_color = timeline.get_style_context().lookup_color('theme_bg_color')[1]
+        self._background_color = timeline.get_style_context().lookup_color(
+            'theme_bg_color')[1]
         self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
-            Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
-            Gdk.EventMask.SCROLL_MASK)
+                        Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
+                        Gdk.EventMask.SCROLL_MASK)
 
         self.pixbuf = None
 
@@ -230,10 +232,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         else:
             # No modifier key held down, just scroll
             if (event.scroll.direction == Gdk.ScrollDirection.UP
-            or event.scroll.direction == Gdk.ScrollDirection.LEFT):
+               or event.scroll.direction == Gdk.ScrollDirection.LEFT):
                 self.timeline.scroll_left()
             elif (event.scroll.direction == Gdk.ScrollDirection.DOWN
-            or event.scroll.direction == Gdk.ScrollDirection.RIGHT):
+                  or event.scroll.direction == Gdk.ScrollDirection.RIGHT):
                 self.timeline.scroll_right()
 
     def setProjectFrameRate(self, rate):
@@ -242,7 +244,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         """
         self.frame_rate = rate
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
-        self.scales = (float(2 / rate), float(5 / rate), float(10 / rate)) + SCALES
+        self.scales = (float(2 / rate), float(
+            5 / rate), float(10 / rate)) + SCALES
 
 # Drawing methods
 
@@ -255,8 +258,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.fill()
         offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
         if offset > 0:
-            set_cairo_color(context, style.get_background_color(Gtk.StateFlags.ACTIVE))
-            context.rectangle(0, 0, int(offset), context.get_target().get_height())
+            set_cairo_color(
+                context, style.get_background_color(Gtk.StateFlags.ACTIVE))
+            context.rectangle(
+                0, 0, int(offset), context.get_target().get_height())
             context.fill()
 
     def drawRuler(self, context):
@@ -276,7 +281,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             spacing = scale * zoom
             if spacing >= textwidth * 1.5:
                 return spacing, scale
-        raise Exception("Failed to find an interval size for textwidth:%s, zoomratio:%s" % (textwidth, Zoomable.zoomratio))
+        raise Exception(
+            "Failed to find an interval size for textwidth:%s, zoomratio:%s" %
+            (textwidth, Zoomable.zoomratio))
 
     def drawTicks(self, context, offset, spacing):
         for count_per_interval, height_ratio in TICK_TYPES:
@@ -370,13 +377,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         states = [style.get_background_color(Gtk.StateFlags.ACTIVE),
                   style.get_background_color(Gtk.StateFlags.SELECTED)]
 
-        frame_num = int(self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
+        frame_num = int(
+            self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
         paintpos = self.pixbuf_offset - offset
         max_pos = context.get_target().get_width() + self.pixbuf_offset
         while paintpos < max_pos:
-            paintpos = self.nsToPixel(1 / float(self.frame_rate) * Gst.SECOND * frame_num)
+            paintpos = self.nsToPixel(
+                1 / float(self.frame_rate) * Gst.SECOND * frame_num)
             set_cairo_color(context, states[(frame_num + 1) % 2])
-            context.rectangle(0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
+            context.rectangle(
+                0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
             context.fill()
             frame_num += 1
 

@@ -59,7 +59,9 @@ THUMBNAILS_CPU_USAGE = 20
 
 THUMB_MARGIN_PX = 3
 WAVEFORM_UPDATE_INTERVAL = timedelta(microseconds=500000)
-MARGIN = 500  # For the waveforms, ensures we always have a little extra surface when scrolling while playing.
+# For the waveforms, ensures we always have a little extra surface when
+# scrolling while playing.
+MARGIN = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -75,9 +77,11 @@ is prefixed with a little b, example : bTimeline
 
 
 class PreviewGeneratorManager():
+
     """
     Manage the execution of PreviewGenerators
     """
+
     def __init__(self):
         # The current PreviewGenerator per GES.TrackType.
         self._cpipeline = {}
@@ -117,6 +121,7 @@ class PreviewGeneratorManager():
 
 
 class PreviewGenerator(object):
+
     """
     Interface to be implemented by classes that generate previews
     It is need to implement it so PreviewGeneratorManager can manage
@@ -166,7 +171,8 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         # Variables related to the timeline objects
         self.timeline = timeline
         self.bElement = bElement
-        self.uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
+        # Guard against malformed URIs
+        self.uri = quote_uri(bElement.props.uri)
         self.duration = bElement.props.duration
 
         # Variables related to thumbnailing
@@ -260,15 +266,21 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
         usage_percent = self.cpu_usage_tracker.usage()
         if usage_percent < THUMBNAILS_CPU_USAGE:
             self.interval *= 0.9
-            self.log('Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
+            self.log(
+                'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"' %
+                (self.interval, filename_from_uri(self.uri)))
         else:
             self.interval *= 1.1
-            self.log('Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' % (self.interval, filename_from_uri(self.uri)))
+            self.log(
+                'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' %
+                (self.interval, filename_from_uri(self.uri)))
         self.cpu_usage_tracker.reset()
-        self._thumb_cb_id = GLib.timeout_add(self.interval, self._create_next_thumb)
+        self._thumb_cb_id = GLib.timeout_add(
+            self.interval, self._create_next_thumb)
 
     def _startThumbnailingWhenIdle(self):
-        self.debug('Waiting for UI to become idle for: %s', filename_from_uri(self.uri))
+        self.debug(
+            'Waiting for UI to become idle for: %s', filename_from_uri(self.uri))
         GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
@@ -277,7 +289,8 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             # removed from the timeline after the PreviewGeneratorManager
             # started this job.
             return
-        self.debug('Now generating thumbnails for: %s', filename_from_uri(self.uri))
+        self.debug(
+            'Now generating thumbnails for: %s', filename_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of: %s", self.uri)
@@ -336,10 +349,12 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
             return False  # Stop the timer
 
     def _get_thumb_duration(self):
-        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
+        thumb_duration_tmp = Zoomable.pixelToNs(
+            self.thumb_width + THUMB_MARGIN_PX)
         # quantize thumb length to thumb_period
         thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
-        # make sure that the thumb duration after the quantization isn't smaller than before
+        # make sure that the thumb duration after the quantization isn't
+        # smaller than before
         if thumb_duration < thumb_duration_tmp:
             thumb_duration += self.thumb_period
         # make sure that we don't show thumbnails more often than thumb_period
@@ -360,13 +375,15 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
         for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            thumb.set_position(Zoomable.nsToPixel(current_time), THUMB_MARGIN_PX)
+            thumb.set_position(
+                Zoomable.nsToPixel(current_time), THUMB_MARGIN_PX)
             self.add_child(thumb)
             self.thumbs[current_time] = thumb
             if current_time in self.thumb_cache:
                 gdkpixbuf = self.thumb_cache[current_time]
                 if self._allAnimated or current_time not in old_thumbs:
-                    self.thumbs[current_time].set_from_gdkpixbuf_animated(gdkpixbuf)
+                    self.thumbs[
+                        current_time].set_from_gdkpixbuf_animated(gdkpixbuf)
                 else:
                     self.thumbs[current_time].set_from_gdkpixbuf(gdkpixbuf)
             else:
@@ -537,6 +554,7 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
 
 class Thumbnail(Clutter.Actor):
+
     def __init__(self, width, height):
         Clutter.Actor.__init__(self)
         image = Clutter.Image.new()
@@ -619,7 +637,8 @@ class ThumbnailCache(Loggable):
         return pixbuf
 
     def __setitem__(self, key, value):
-        success, jpeg = value.save_to_bufferv("jpeg", ["quality", None], ["90"])
+        success, jpeg = value.save_to_bufferv(
+            "jpeg", ["quality", None], ["90"])
         if not success:
             self.warning("JPEG compression failed")
             return
@@ -629,18 +648,21 @@ class ThumbnailCache(Loggable):
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
 
     def commit(self):
-        self.debug('Saving thumbnail cache file to disk for: %s', self._filename)
+        self.debug(
+            'Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
         self.log("Saved thumbnail cache file: %s" % self._filehash)
 
 
 class PipelineCpuAdapter(Loggable):
+
     """
     This pipeline manager will modulate the rate of the provided pipeline.
     It is the responsibility of the caller to set the sync of the sink to True,
     disable QOS and provide a pipeline with a rate of 1.0.
     Doing otherwise would be cheating. Cheating is bad.
     """
+
     def __init__(self, pipeline):
         Loggable.__init__(self)
         self.pipeline = pipeline
@@ -679,12 +701,14 @@ class PipelineCpuAdapter(Loggable):
                 if not self.ready:
                     self.ready = True
                     self.pipeline.set_state(Gst.State.READY)
-                    res, self.lastPos = self.pipeline.query_position(Gst.Format.TIME)
+                    res, self.lastPos = self.pipeline.query_position(
+                        Gst.Format.TIME)
                 return True
 
             if self.rate > 0.0:
                 self.rate *= 0.9
-                self.log('Pipeline rate slowed down (-10%%) to %.3f' % self.rate)
+                self.log(
+                    'Pipeline rate slowed down (-10%%) to %.3f' % self.rate)
         else:
             self.rate *= 1.1
             self.log('Pipeline rate sped up (+10%%) to %.3f' % self.rate)
@@ -692,8 +716,10 @@ class PipelineCpuAdapter(Loggable):
         if not self.ready:
             res, position = self.pipeline.query_position(Gst.Format.TIME)
         else:
-            if self.rate > 0.5:  # This to avoid going back and forth from READY to PAUSED
-                self.pipeline.set_state(Gst.State.PAUSED)  # The message handler will unset ready and seek correctly.
+            # This to avoid going back and forth from READY to PAUSED
+            if self.rate > 0.5:
+                # The message handler will unset ready and seek correctly.
+                self.pipeline.set_state(Gst.State.PAUSED)
             return True
 
         self.pipeline.set_state(Gst.State.PAUSED)
@@ -727,6 +753,7 @@ class PipelineCpuAdapter(Loggable):
 
 
 class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
+
     """
     Audio previewer based on the results from the "level" gstreamer element.
     """
@@ -742,11 +769,13 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self.pipeline = None
         self.discovered = False
         self.bElement = bElement
-        self._uri = quote_uri(bElement.props.uri)  # Guard against malformed URIs
+        # Guard against malformed URIs
+        self._uri = quote_uri(bElement.props.uri)
         self.timeline = timeline
         self.actors = []
 
-        self.set_content_scaling_filters(Clutter.ScalingFilter.NEAREST, Clutter.ScalingFilter.NEAREST)
+        self.set_content_scaling_filters(
+            Clutter.ScalingFilter.NEAREST, Clutter.ScalingFilter.NEAREST)
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
         self.width = 0
@@ -764,7 +793,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         self._callback_id = 0
 
     def startLevelsDiscoveryWhenIdle(self):
-        self.debug('Waiting for UI to become idle for: %s', filename_from_uri(self._uri))
+        self.debug('Waiting for UI to become idle for: %s',
+                   filename_from_uri(self._uri))
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
@@ -781,9 +811,11 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
             self._launchPipeline()
 
     def _launchPipeline(self):
-        self.debug('Now generating waveforms for: %s', filename_from_uri(self._uri))
+        self.debug(
+            'Now generating waveforms for: %s', filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri + " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
+        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri +
+                                         " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
         self._wavelevel = self.pipeline.get_by_name("wavelevel")
@@ -792,7 +824,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
-        self.nSamples = self.bElement.get_parent().get_asset().get_duration() / 10000000
+        self.nSamples = self.bElement.get_parent(
+        ).get_asset().get_duration() / 10000000
         bus.connect("message", self._busMessageCb)
         self.becomeControlled()
 
@@ -805,14 +838,16 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
 
     def _maybeUpdate(self):
         if self.discovered:
-            self.log('Checking if the waveform for "%s" needs to be redrawn' % self._uri)
+            self.log('Checking if the waveform for "%s" needs to be redrawn' %
+                     self._uri)
             if self.lastUpdate is None or datetime.now() - self.lastUpdate > WAVEFORM_UPDATE_INTERVAL:
                 # Last update was long ago or never.
                 self._compute_geometry()
             else:
                 if self._callback_id:
                     GLib.source_remove(self._callback_id)
-                self._callback_id = GLib.timeout_add(500, self._compute_geometry)
+                self._callback_id = GLib.timeout_add(
+                    500, self._compute_geometry)
 
     def _compute_geometry(self):
         self._callback_id = 0
@@ -821,25 +856,31 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         width_px = self.nsToPixel(self.bElement.props.duration)
         if width_px <= 0:
             return
-        start = self.timeline.get_scroll_point().x - self.nsToPixel(self.bElement.props.start)
+        start = self.timeline.get_scroll_point().x - self.nsToPixel(
+            self.bElement.props.start)
         start = max(0, start)
         # Take into account the timeline width, to avoid building
         # huge clips when the timeline is zoomed in a lot.
-        timeline_width = self.timeline._container.get_allocation().width - CONTROL_WIDTH
+        timeline_width = self.timeline._container.get_allocation(
+        ).width - CONTROL_WIDTH
         end = min(width_px,
                   self.timeline.get_scroll_point().x + timeline_width + MARGIN)
         self.width = int(end - start)
-        if self.width < 0:  # We've been called at a moment where size was updated but not scroll_point.
+        # We've been called at a moment where size was updated but not
+        # scroll_point.
+        if self.width < 0:
             return
 
         # We need to take duration and inpoint into account.
         asset_duration = self.bElement.get_parent().get_asset().get_duration()
         if self.bElement.props.duration:
-            nbSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.duration))
+            nbSamples = self.nbSamples / \
+                (float(asset_duration) / float(self.bElement.props.duration))
         else:
             nbSamples = self.nbSamples
         if self.bElement.props.in_point:
-            startOffsetSamples = self.nbSamples / (float(asset_duration) / float(self.bElement.props.in_point))
+            startOffsetSamples = self.nbSamples / \
+                (float(asset_duration) / float(self.bElement.props.in_point))
         else:
             startOffsetSamples = 0
 
@@ -854,7 +895,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
     def _prepareSamples(self):
         # Let's go mono.
         if len(self.peaks) > 1:
-            samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
+            samples = (
+                numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
         else:
             samples = numpy.array(self.peaks[0])
 
@@ -955,7 +997,8 @@ class AudioPreviewer(Clutter.Actor, PreviewGenerator, Zoomable, Loggable):
         if self.surface:
             self.surface.finish()
 
-        self.surface = renderer.fill_surface(self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
+        self.surface = renderer.fill_surface(
+            self.samples[self.start:self.end], int(self.width), int(EXPANDED_SIZE))
 
         context.set_operator(cairo.OPERATOR_OVER)
         context.set_source_surface(self.surface, 0, 0)

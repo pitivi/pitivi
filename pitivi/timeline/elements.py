@@ -58,12 +58,14 @@ DRAG_RIGHT_HANDLEBAR_CURSOR = Gdk.Cursor.new(Gdk.CursorType.RIGHT_SIDE)
 
 
 class Ghostclip(Clutter.Actor):
+
     """
     The concept of a ghostclip is to represent future actions without
     actually moving GESClips. They are created when the user wants
     to change a clip of layer, and when the user does a drag and drop
     from the media library.
     """
+
     def __init__(self, track_type, bElement=None):
         Clutter.Actor.__init__(self)
         self.track_type = track_type
@@ -112,7 +114,8 @@ class Ghostclip(Clutter.Actor):
             # We would be moving to an existing layer.
             elif self.priority < self.nbrLayers:
                 self.set_size(self.props.width, EXPANDED_SIZE)
-                self.props.y = self.priority * (EXPANDED_SIZE + SPACING) + SPACING
+                self.props.y = self.priority * \
+                    (EXPANDED_SIZE + SPACING) + SPACING
                 if self.track_type == GES.TrackType.AUDIO:
                     self.props.y += self.nbrLayers * (EXPANDED_SIZE + SPACING)
                 self.props.visible = True
@@ -126,6 +129,7 @@ class Ghostclip(Clutter.Actor):
 
 
 class TrimHandle(Clutter.Texture):
+
     def __init__(self, timelineElement, isLeft):
         Clutter.Texture.__init__(self)
 
@@ -133,7 +137,8 @@ class TrimHandle(Clutter.Texture):
         self.timelineElement = weakref.proxy(timelineElement)
         self.dragAction = Clutter.DragAction()
 
-        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
+        self.set_from_file(
+            os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
         self.set_size(-1, EXPANDED_SIZE)
         self.hide()
         self.set_reactive(True)
@@ -155,7 +160,7 @@ class TrimHandle(Clutter.Texture):
         self.timelineElement.disconnect_by_func(self._elementEnterEventCb)
         self.timelineElement.disconnect_by_func(self._elementLeaveEventCb)
 
-    #Callbacks
+    # Callbacks
 
     def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
@@ -163,24 +168,30 @@ class TrimHandle(Clutter.Texture):
             elem.set_reactive(False)
         self.set_reactive(True)
 
-        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
+        self.set_from_file(
+            os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
         if self.isLeft:
-            self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_LEFT_HANDLEBAR_CURSOR)
+            self.timelineElement.timeline._container.embed.get_window().set_cursor(
+                DRAG_LEFT_HANDLEBAR_CURSOR)
         else:
-            self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_RIGHT_HANDLEBAR_CURSOR)
+            self.timelineElement.timeline._container.embed.get_window().set_cursor(
+                DRAG_RIGHT_HANDLEBAR_CURSOR)
 
     def _leaveEventCb(self, unused_actor, event):
         self.timelineElement.set_reactive(True)
         children = self.timelineElement.get_children()
 
-        other_actor = self.timelineElement.timeline._container.stage.get_actor_at_pos(Clutter.PickMode.ALL, event.x, event.y)
+        other_actor = self.timelineElement.timeline._container.stage.get_actor_at_pos(
+            Clutter.PickMode.ALL, event.x, event.y)
         if other_actor not in children:
             self.timelineElement.hideHandles()
 
         for elem in children:
             elem.set_reactive(True)
-        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
+        self.set_from_file(
+            os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            NORMAL_CURSOR)
 
     def _elementEnterEventCb(self, unused_actor, unused_event):
         self.show()
@@ -196,7 +207,8 @@ class TrimHandle(Clutter.Texture):
 
         if self.isLeft:
             edge = GES.Edge.EDGE_START
-            self._dragBeginStart = self.timelineElement.bElement.get_parent().get_start()
+            self._dragBeginStart = self.timelineElement.bElement.get_parent(
+            ).get_start()
         else:
             edge = GES.Edge.EDGE_END
             self._dragBeginStart = self.timelineElement.bElement.get_parent().get_duration() + \
@@ -218,8 +230,10 @@ class TrimHandle(Clutter.Texture):
         delta_x = coords[0] - self.dragBeginStartX
         new_start = self._dragBeginStart + Zoomable.pixelToNs(delta_x)
 
-        self._context.setMode(self.timelineElement.timeline._container.getEditionMode(isAHandle=True))
-        self._context.editTo(new_start, self.timelineElement.bElement.get_parent().get_layer().get_priority())
+        self._context.setMode(
+            self.timelineElement.timeline._container.getEditionMode(isAHandle=True))
+        self._context.editTo(
+            new_start, self.timelineElement.bElement.get_parent().get_layer().get_priority())
         return False
 
     def _dragEndCb(self, unused_action, unused_actor, unused_event_x, unused_event_y, unused_modifiers):
@@ -230,19 +244,24 @@ class TrimHandle(Clutter.Texture):
         for elem in self.timelineElement.get_children():
             elem.set_reactive(True)
 
-        self.set_from_file(os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
+        self.set_from_file(
+            os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            NORMAL_CURSOR)
 
     def clipTrimCb(self, unused_TrimStartContext, tl_obj, position):
         # While a clip is being trimmed, ask the viewer to preview it
-        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreview(tl_obj, position)
+        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreview(
+            tl_obj, position)
 
     def clipTrimFinishedCb(self, unused_TrimStartContext):
         # When a clip has finished trimming, tell the viewer to reset itself
-        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreviewFinished()
+        self.timelineElement.timeline._container.app.gui.viewer.clipTrimPreviewFinished(
+        )
 
 
 class TimelineElement(Clutter.Actor, Zoomable):
+
     """
     @ivar bElement: the backend element.
     @type bElement: GES.TrackElement
@@ -323,7 +342,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.props.height = height
         self.preview.set_size(max(width - 2, 1), max(height - 2, 1))
         if self.rightHandle:
-            self.rightHandle.set_position(width - self.rightHandle.props.width, 0)
+            self.rightHandle.set_position(
+                width - self.rightHandle.props.width, 0)
 
         if ease:
             self.background.restore_easing_state()
@@ -339,7 +359,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
     def removeKeyframe(self, kf):
         self.source.unset(kf.value.timestamp)
-        self.keyframes = sorted(self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
+        self.keyframes = sorted(
+            self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
         self.updateKeyframes()
 
     def showKeyframes(self, element, propname, isDefault=False):
@@ -378,7 +399,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.drawLines()
 
     def setKeyframePosition(self, keyframe, value):
-        x = self.nsToPixel(value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
+        x = self.nsToPixel(
+            value.timestamp - self.bElement.props.in_point) - KEYFRAME_SIZE / 2
         y = EXPANDED_SIZE - (value.value * EXPANDED_SIZE) - KEYFRAME_SIZE / 2
         keyframe.set_position(x, y)
 
@@ -407,9 +429,11 @@ class TimelineElement(Clutter.Actor, Zoomable):
         values = self.source.get_all()
         if len(values) < 2 and self.bElement.props.duration > 0:
             self.source.unset_all()
-            val = float(self.prop.default_value) / (self.prop.maximum - self.prop.minimum)
+            val = float(self.prop.default_value) / \
+                (self.prop.maximum - self.prop.minimum)
             self.source.set(self.bElement.props.in_point, val)
-            self.source.set(self.bElement.props.duration + self.bElement.props.in_point, val)
+            self.source.set(
+                self.bElement.props.duration + self.bElement.props.in_point, val)
 
         for keyframe in self.keyframes:
             self.remove_child(keyframe)
@@ -486,7 +510,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.lines.append(line)
             self.insert_child_above(line, self._linesMarker)
 
-        adj = self.nsToPixel(keyframe.value.timestamp - lastKeyframe.value.timestamp)
+        adj = self.nsToPixel(
+            keyframe.value.timestamp - lastKeyframe.value.timestamp)
         opp = (lastKeyframe.value.value - keyframe.value.value) * EXPANDED_SIZE
         hyp = math.sqrt(adj ** 2 + opp ** 2)
         if hyp < 1:
@@ -497,8 +522,10 @@ class TimelineElement(Clutter.Actor, Zoomable):
         line.props.width = hyp
         line.props.height = KEYFRAME_SIZE
         line.props.rotation_angle_z = math.degrees(math.asin(sinX))
-        line.props.x = self.nsToPixel(lastKeyframe.value.timestamp - self.bElement.props.in_point)
-        line.props.y = EXPANDED_SIZE - (EXPANDED_SIZE * lastKeyframe.value.value) - KEYFRAME_SIZE / 2
+        line.props.x = self.nsToPixel(
+            lastKeyframe.value.timestamp - self.bElement.props.in_point)
+        line.props.y = EXPANDED_SIZE - \
+            (EXPANDED_SIZE * lastKeyframe.value.value) - KEYFRAME_SIZE / 2
         line.canvas.invalidate()
 
     def _createGhostclip(self):
@@ -524,7 +551,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
             return previewer
         if isinstance(self.bElement, GES.VideoUriSource):
             return VideoPreviewer(self.bElement, self.timeline)
-        # TODO: GES.AudioTransition, GES.VideoTransition, GES.ImageSource, GES.TitleSource
+        # TODO: GES.AudioTransition, GES.VideoTransition, GES.ImageSource,
+        # GES.TitleSource
         return Clutter.Actor()
 
     def _createMarquee(self):
@@ -540,7 +568,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.dragAction.connect("drag-progress", self._dragProgressCb)
         self.dragAction.connect("drag-begin", self._dragBeginCb)
         self.dragAction.connect("drag-end", self._dragEndCb)
-        self.bElement.selected.connect("selected-changed", self._selectedChangedCb)
+        self.bElement.selected.connect(
+            "selected-changed", self._selectedChangedCb)
         self.bElement.connect("notify::duration", self._durationChangedCb)
         self.bElement.connect("notify::in-point", self._inpointChangedCb)
         # We gotta go low-level cause Clutter.ClickAction["clicked"]
@@ -592,6 +621,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
 
 
 class Gradient(Clutter.Actor):
+
     def __init__(self, rb, gb, bb, re, ge, be):
         """
         Creates a rectangle with a gradient. The first three parameters
@@ -618,9 +648,11 @@ class Gradient(Clutter.Actor):
 
 
 class Line(Clutter.Actor):
+
     """
     A cairo line used for keyframe curves.
     """
+
     def __init__(self, timelineElement, keyframe, lastKeyframe):
         Clutter.Actor.__init__(self)
         self.timelineElement = weakref.proxy(timelineElement)
@@ -658,7 +690,8 @@ class Line(Clutter.Actor):
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
 
-        # The "height budget" to draw line components = the tallest component...
+        # The "height budget" to draw line components = the tallest
+        # component...
         _max_height = KEYFRAME_SIZE
 
         # While normally all three lines would have an equal height,
@@ -686,14 +719,16 @@ class Line(Clutter.Actor):
         cr.stroke()
 
     def transposeXY(self, x, y):
-        x -= self.timelineElement.props.x + CONTROL_WIDTH - self.timelineElement.timeline._scroll_point.x
+        x -= self.timelineElement.props.x + CONTROL_WIDTH - \
+            self.timelineElement.timeline._scroll_point.x
         x += Zoomable.nsToPixel(self.timelineElement.bElement.props.in_point)
         y -= self.timelineElement.props.y
         return x, y
 
     def _ungrab(self):
         self.timelineElement.set_reactive(True)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            NORMAL_CURSOR)
 
     def _clickedCb(self, unused_actor, event):
         if self.gotDragged:
@@ -716,7 +751,8 @@ class Line(Clutter.Actor):
 
     def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            DRAG_CURSOR)
 
     def _leaveEventCb(self, unused_actor, unused_event):
         self._ungrab()
@@ -750,6 +786,7 @@ class Line(Clutter.Actor):
 
 
 class KeyframeMenu(GtkClutter.Actor):
+
     def __init__(self, keyframe):
         GtkClutter.Actor.__init__(self)
         self.keyframe = keyframe
@@ -778,6 +815,7 @@ class KeyframeMenu(GtkClutter.Actor):
 
 
 class Keyframe(Clutter.Actor):
+
     """
     @ivar has_changeable_time: if False, it means this is an edge keyframe.
     @type has_changeable_time: bool
@@ -810,13 +848,15 @@ class Keyframe(Clutter.Actor):
 
     def createMenu(self):
         self.menu = KeyframeMenu(self)
-        self.timelineElement.timeline._container.stage.connect("button-press-event", self._stageClickedCb)
+        self.timelineElement.timeline._container.stage.connect(
+            "button-press-event", self._stageClickedCb)
         self.timelineElement.timeline.add_child(self.menu)
 
     def _unselect(self):
         self.timelineElement.set_reactive(True)
         self.set_background_color(KEYFRAME_NORMAL_COLOR)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(NORMAL_CURSOR)
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            NORMAL_CURSOR)
 
     def remove(self):
         # Can't remove edge keyframes !
@@ -828,7 +868,8 @@ class Keyframe(Clutter.Actor):
         self.timelineElement.removeKeyframe(self)
 
     def _stageClickedCb(self, stage, event):
-        actor = stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, event.x, event.y)
+        actor = stage.get_actor_at_pos(
+            Clutter.PickMode.REACTIVE, event.x, event.y)
         if actor != self.menu:
             self.menu.hide()
 
@@ -843,7 +884,8 @@ class Keyframe(Clutter.Actor):
     def _enterEventCb(self, unused_actor, unused_event):
         self.timelineElement.set_reactive(False)
         self.set_background_color(KEYFRAME_SELECTED_COLOR)
-        self.timelineElement.timeline._container.embed.get_window().set_cursor(DRAG_CURSOR)
+        self.timelineElement.timeline._container.embed.get_window().set_cursor(
+            DRAG_CURSOR)
 
     def _leaveEventCb(self, unused_actor, unused_event):
         self._unselect()
@@ -862,7 +904,8 @@ class Keyframe(Clutter.Actor):
     def endDrag(self):
         if not self.dragProgressed and not self.line:
             timeline = self.timelineElement.timeline
-            self.menu.set_position(self.timelineElement.props.x + self.props.x + 10, self.timelineElement.props.y + self.props.y + 10)
+            self.menu.set_position(
+                self.timelineElement.props.x + self.props.x + 10, self.timelineElement.props.y + self.props.y + 10)
             self.menu.show()
 
         self.line = None
@@ -872,7 +915,8 @@ class Keyframe(Clutter.Actor):
         newValue = self.valueStart - (delta_y / EXPANDED_SIZE)
 
         # Don't overlap first and last keyframes.
-        newTs = min(max(newTs, self.inpoint + 1), self.duration + self.inpoint - 1)
+        newTs = min(max(newTs, self.inpoint + 1),
+                    self.duration + self.inpoint - 1)
 
         newValue = min(max(newValue, 0.0), 1.0)
 
@@ -888,12 +932,15 @@ class Keyframe(Clutter.Actor):
 
             self.timelineElement.setKeyframePosition(self, self.value)
             # Resort the keyframes list each time. Should be cheap as there should never be too much keyframes,
-            # if optimization is needed, check if resorting is needed, should not be in 99 % of the cases.
-            self.timelineElement.keyframes = sorted(self.timelineElement.keyframes, key=lambda keyframe: keyframe.value.timestamp)
+            # if optimization is needed, check if resorting is needed, should
+            # not be in 99 % of the cases.
+            self.timelineElement.keyframes = sorted(
+                self.timelineElement.keyframes, key=lambda keyframe: keyframe.value.timestamp)
             self.timelineElement.drawLines(self.line)
             # This will update the viewer. nifty.
             if not self.line:
-                self.timelineElement.timeline._container.seekInPosition(newTs + self.start)
+                self.timelineElement.timeline._container.seekInPosition(
+                    newTs + self.start)
 
     def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
         self.dragProgressed = False
@@ -914,6 +961,7 @@ class Keyframe(Clutter.Actor):
 
 
 class URISourceElement(TimelineElement):
+
     def __init__(self, bElement, timeline):
         TimelineElement.__init__(self, bElement, timeline)
         self.gotDragged = False
@@ -953,19 +1001,22 @@ class URISourceElement(TimelineElement):
 
     # Callbacks
     def _clickedCb(self, unused_action, unused_actor):
-        #TODO : Let's be more specific, masks etc ..
+        # TODO : Let's be more specific, masks etc ..
         mode = SELECT
         if self.timeline._container._controlMask:
             if not self.bElement.selected:
                 mode = SELECT_ADD
-                self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+                self.timeline.current_group.add(
+                    self.bElement.get_toplevel_parent())
             else:
-                self.timeline.current_group.remove(self.bElement.get_toplevel_parent())
+                self.timeline.current_group.remove(
+                    self.bElement.get_toplevel_parent())
                 mode = UNSELECT
         elif not self.bElement.selected:
             GES.Container.ungroup(self.timeline.current_group, False)
             self.timeline.current_group = GES.Group()
-            self.timeline.current_group.add(self.bElement.get_toplevel_parent())
+            self.timeline.current_group.add(
+                self.bElement.get_toplevel_parent())
             self.timeline._container.gui.switchContextTab(self.bElement)
 
         children = self.bElement.get_toplevel_parent().get_children(True)
@@ -982,7 +1033,8 @@ class URISourceElement(TimelineElement):
         self.gotDragged = False
         mode = self.timeline._container.getEditionMode()
 
-        # This can't change during a drag, so we can safely compute it now for drag events.
+        # This can't change during a drag, so we can safely compute it now for
+        # drag events.
         nbrLayers = len(self.timeline.bTimeline.get_layers())
         self.brother = self.timeline.findBrother(self.bElement)
         self._dragBeginStart = self.bElement.get_start()
@@ -1020,16 +1072,20 @@ class URISourceElement(TimelineElement):
         priority = self._getLayerForY(y)
         new_start = self._dragBeginStart + self.pixelToNs(delta_x)
 
-        self.ghostclip.props.x = max(0, self.nsToPixel(self._dragBeginStart) + delta_x)
+        self.ghostclip.props.x = max(
+            0, self.nsToPixel(self._dragBeginStart) + delta_x)
         self.ghostclip.update(priority, y, False)
         if self.brother:
-            self.brother.ghostclip.props.x = max(0, self.nsToPixel(self._dragBeginStart) + delta_x)
+            self.brother.ghostclip.props.x = max(
+                0, self.nsToPixel(self._dragBeginStart) + delta_x)
             self.brother.ghostclip.update(priority, y, True)
 
         if not self.ghostclip.props.visible:
-            self._context.editTo(new_start, self.bElement.get_parent().get_layer().get_priority())
+            self._context.editTo(
+                new_start, self.bElement.get_parent().get_layer().get_priority())
         else:
-            self._context.editTo(self._dragBeginStart, self.bElement.get_parent().get_layer().get_priority())
+            self._context.editTo(
+                self._dragBeginStart, self.bElement.get_parent().get_layer().get_priority())
 
         self.timeline._updateSize(self.ghostclip)
         return False
@@ -1038,7 +1094,8 @@ class URISourceElement(TimelineElement):
         coords = self.dragAction.get_motion_coords()
         delta_x = coords[0] - self.dragBeginStartX
         new_start = self._dragBeginStart + self.pixelToNs(delta_x)
-        priority = self._getLayerForY(coords[1] + self.timeline._container.point.y)
+        priority = self._getLayerForY(
+            coords[1] + self.timeline._container.point.y)
         priority = min(priority, len(self.timeline.bTimeline.get_layers()))
         priority = max(0, priority)
 
@@ -1067,6 +1124,7 @@ class URISourceElement(TimelineElement):
 
 
 class TransitionElement(TimelineElement):
+
     def __init__(self, bElement, timeline):
         TimelineElement.__init__(self, bElement, timeline)
         self.isDragged = True

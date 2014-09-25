@@ -58,6 +58,7 @@ class MockProject(object):
 
 
 class ProjectManagerListener(object):
+
     def __init__(self, manager):
         self.manager = manager
         self.connectToProjectManager(self.manager)
@@ -68,8 +69,8 @@ class ProjectManagerListener(object):
 
     def connectToProjectManager(self, manager):
         for signal in ("new-project-loading", "new-project-loaded",
-                "new-project-created", "new-project-failed", "missing-uri",
-                "closing-project", "project-closed"):
+                       "new-project-created", "new-project-failed", "missing-uri",
+                       "closing-project", "project-closed"):
             self.manager.connect(signal, self._recordSignal, signal)
 
     def _recordSignal(self, *args):
@@ -81,6 +82,7 @@ class ProjectManagerListener(object):
 
 
 class TestProjectManager(TestCase):
+
     def setUp(self):
         self.manager = ProjectManager(None)
         self.listener = ProjectManagerListener(self.manager)
@@ -147,7 +149,8 @@ class TestProjectManager(TestCase):
         self.mainloop = GLib.MainLoop()
 
         result = [False]
-        self.manager.connect("missing-uri", missingUriCb, self.mainloop, result)
+        self.manager.connect(
+            "missing-uri", missingUriCb, self.mainloop, result)
 
         # Load a project with a missing asset.
         unused, xges_path = tempfile.mkstemp()
@@ -297,11 +300,13 @@ class TestProjectManager(TestCase):
         backup_uri = self.manager._makeBackupURI(uri)
 
         # Save the backup
-        self.assertTrue(self.manager.saveProject(self.manager.current_project, backup=True))
+        self.assertTrue(self.manager.saveProject(
+            self.manager.current_project, backup=True))
         self.assertTrue(uri_is_reachable(backup_uri))
 
         self.manager.closeRunningProject()
-        self.assertFalse(uri_is_reachable(backup_uri), "Backup file not deleted when project closed")
+        self.assertFalse(uri_is_reachable(backup_uri),
+                         "Backup file not deleted when project closed")
 
 
 class TestProjectLoading(TestCase):
@@ -328,7 +333,8 @@ class TestProjectLoading(TestCase):
         self.assertTrue(project.createTimeline())
         GLib.timeout_add_seconds(5, quit, self.mainloop)
         self.mainloop.run()
-        self.assertTrue(result[0], "Blank project creation failed to trigger signal: loaded")
+        self.assertTrue(
+            result[0], "Blank project creation failed to trigger signal: loaded")
 
         # Load the blank project and make sure "loaded" is triggered.
         unused, xges_path = tempfile.mkstemp()
@@ -342,7 +348,8 @@ class TestProjectLoading(TestCase):
             project2.connect("loaded", loaded, self.mainloop, result)
             GLib.timeout_add_seconds(5, quit, self.mainloop)
             self.mainloop.run()
-            self.assertTrue(result[0], "Blank project loading failed to trigger signal: loaded")
+            self.assertTrue(
+                result[0], "Blank project loading failed to trigger signal: loaded")
         finally:
             os.remove(xges_path)
 
@@ -369,19 +376,23 @@ class TestProjectLoading(TestCase):
         # Create a blank project and save it.
         project = _createRealProject()
         result = [False, False, False]
-        uris = ["file://%s/samples/tears_of_steel.webm" % os.path.dirname(os.path.abspath(__file__))]
+        uris = ["file://%s/samples/tears_of_steel.webm" %
+                os.path.dirname(os.path.abspath(__file__))]
         project.connect("loaded", loaded, self.mainloop, result, uris)
         project.connect("done-importing", added, self.mainloop, result, uris)
 
         self.assertTrue(project.createTimeline())
         GLib.timeout_add_seconds(5, quit, self.mainloop)
         self.mainloop.run()
-        self.assertTrue(result[0], "Project creation failed to trigger signal: loaded")
-        self.assertTrue(result[1], "Asset add failed to trigger signal: done-importing")
+        self.assertTrue(
+            result[0], "Project creation failed to trigger signal: loaded")
+        self.assertTrue(
+            result[1], "Asset add failed to trigger signal: done-importing")
         self.assertTrue(result[2], "Asset re-adding failed")
 
 
 class TestExportSettings(TestCase):
+
     """Test the project.MultimediaSettings class."""
 
     def testMasterAttributes(self):

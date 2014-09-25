@@ -35,7 +35,8 @@ class FakeDependency(check.Dependency):
 class TestDependency(common.TestCase):
 
     def testBoolEvaluation(self):
-        dependency = FakeDependency(modulename="module1", version_required_string=None)
+        dependency = FakeDependency(
+            modulename="module1", version_required_string=None)
         self.assertFalse(dependency)
         self.assertFalse(dependency.satisfied)
 

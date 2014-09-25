@@ -42,7 +42,9 @@ class TestMainWindow(TestCase):
                 (0, GES.AudioUriSource()),
                 (1, GES.AudioTransition())]:
             self.mainwindow.switchContextTab(bElement)
-            self.assertEqual(expected_tab, self.mainwindow.context_tabs.get_current_page())
+            self.assertEqual(
+                expected_tab, self.mainwindow.context_tabs.get_current_page())
             # Make sure the tab does not change when using an invalid argument.
             self.mainwindow.switchContextTab("invalid")
-            self.assertEqual(expected_tab, self.mainwindow.context_tabs.get_current_page())
+            self.assertEqual(
+                expected_tab, self.mainwindow.context_tabs.get_current_page())

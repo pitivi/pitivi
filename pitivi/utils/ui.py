@@ -173,7 +173,8 @@ def set_cairo_color(context, color):
         # Cairo's set_source_rgb function expects values from 0.0 to 1.0
         cairo_color = [max(0, min(1, x / 255.0)) for x in color]
     else:
-        raise Exception("Unexpected color parameter: %s, %s" % (type(color), color))
+        raise Exception("Unexpected color parameter: %s, %s" %
+                        (type(color), color))
     context.set_source_rgb(*cairo_color)
 
 
@@ -207,7 +208,7 @@ def beautify_info(info):
             nice_streams_txts.append(beautified_string)
 
     return ("<b>" + path_from_uri(info.get_uri()) + "</b>\n" +
-        "\n".join(nice_streams_txts))
+            "\n".join(nice_streams_txts))
 
 
 def info_name(info):
@@ -227,11 +228,12 @@ def info_name(info):
 
 def beautify_stream(stream):
     if type(stream) is DiscovererAudioInfo:
-        templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
-                "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
-                stream.get_channels())
+        templ = ngettext(
+            "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
+            "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
+            stream.get_channels())
         templ = templ % (stream.get_channels(), stream.get_sample_rate(),
-            stream.get_depth())
+                         stream.get_depth())
         return templ
 
     elif type(stream) is DiscovererVideoInfo:
@@ -240,9 +242,10 @@ def beautify_stream(stream):
             templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
             try:
                 templ = templ % (par * stream.get_width(), stream.get_height(),
-                    float(stream.get_framerate_num()) / stream.get_framerate_denom())
+                                 float(stream.get_framerate_num()) / stream.get_framerate_denom())
             except ZeroDivisionError:
-                templ = templ % (par * stream.get_width(), stream.get_height(), 0)
+                templ = templ % (
+                    par * stream.get_width(), stream.get_height(), 0)
         else:
             templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
             templ = templ % (par * stream.get_width(), stream.get_height())
@@ -394,7 +397,8 @@ def alter_style_class(style_class, target_widget, css_style):
     toolbar_css = "%s { %s }" % (style_class, css_style)
     css_provider.load_from_data(toolbar_css.encode('UTF-8'))
     style_context = target_widget.get_style_context()
-    style_context.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    style_context.add_provider(
+        css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
 # ----------------------- encoding datas --------------------------------------- #

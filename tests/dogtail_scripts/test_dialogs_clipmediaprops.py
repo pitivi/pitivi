@@ -5,6 +5,7 @@ from dogtail.predicate import GenericPredicate, IsATextEntryNamed
 
 
 class DialogsClipMediaPropsTest(PitiviTestCase):
+
     def test_clip_props_dialog(self):
         sample = self.import_media("flat_colour1_640x480.png")
         sample.click()
@@ -12,13 +13,14 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         media_props_button.click()
 
         # Now check that a dialog shows up with the clip's properties:
-        dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(
+            name="Clip Properties", roleName="dialog", recursive=False)
         labels = {"640", "480"}
         real_labels = set([])
         for label in dialog.findChildren(GenericPredicate(roleName="label")):
             real_labels.add(label.text)
         self.assertEqual(len(labels.difference(real_labels)), 0,
-            "Info seems incorrect\n\tExpected: %s \n\tObtained: %s" % (labels, real_labels))
+                         "Info seems incorrect\n\tExpected: %s \n\tObtained: %s" % (labels, real_labels))
         self.assertFalse(dialog.child(name="Audio:", roleName="panel").showing)
         dialog.child(name="Cancel").click()
         sample.deselect()
@@ -29,15 +31,16 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         media_props_button.click()
 
         # Check again for the presence of the dialog and its contents
-        dialog = self.pitivi.child(name="Clip Properties", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(
+            name="Clip Properties", roleName="dialog", recursive=False)
         # These are the properties of "tears_of_steel.webm":
         labels = {"Video:", "960", "400", "25 fps", "Square",
-                "Audio:", "Mono", "44.1 kHz"}
+                  "Audio:", "Mono", "44.1 kHz"}
         real_labels = set([])
         for label in dialog.findChildren(GenericPredicate(roleName="label")):
             real_labels.add(label.text)
         self.assertEqual(len(labels.difference(real_labels)), 0,
-            "Info seems incorrect.\n\tExpected: %s \n\tObtained: %s" % (labels, real_labels))
+                         "Info seems incorrect.\n\tExpected: %s \n\tObtained: %s" % (labels, real_labels))
 
         # Uncheck the "mono" channels, so the project should stay stereo
         dialog.child(name="Channels:").click()
@@ -46,7 +49,8 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         # Check if correctly applied
         self.main_menu_button.click()
         self.main_menu_button.menuItem("Project Settings").click()
-        dialog = self.pitivi.child(name="Project Settings", roleName="dialog", recursive=False)
+        dialog = self.pitivi.child(
+            name="Project Settings", roleName="dialog", recursive=False)
 
         children = dialog.findChildren(IsATextEntryNamed(""))
         childtext = {}
@@ -55,7 +59,8 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         # Framerates and aspect ratio:
         self.assertIn("25:1", childtext)
         self.assertIn("1:1", childtext)
-        children = dialog.findChildren(GenericPredicate(roleName="spin button"))
+        children = dialog.findChildren(
+            GenericPredicate(roleName="spin button"))
         spintext = {}
         for child in children:
             spintext[child.text] = child
@@ -67,4 +72,5 @@ class DialogsClipMediaPropsTest(PitiviTestCase):
         try:
             dialog.child(name="Stereo", roleName="combo box")
         except SearchError:
-            self.fail('"Mono" clip property was applied to project settings. Expected the "Stereo" setting to be preserved.')
+            self.fail(
+                '"Mono" clip property was applied to project settings. Expected the "Stereo" setting to be preserved.')

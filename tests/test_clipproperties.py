@@ -28,21 +28,35 @@ class EffectPropertiesTest(unittest.TestCase):
 
     def testCalculateEffectPriority(self):
         # Dragging 1 onto itself and nearby.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 0, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 1, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(1, 2, Gtk.TreeViewDropPosition.BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 0, Gtk.TreeViewDropPosition.AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 1, Gtk.TreeViewDropPosition.BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 1, Gtk.TreeViewDropPosition.AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            1, 2, Gtk.TreeViewDropPosition.BEFORE))
 
         # Dragging 0 and 3 between rows 1 and 2.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(0, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(0, 2, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(2, EffectProperties.calculateEffectPriority(3, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(2, EffectProperties.calculateEffectPriority(3, 2, Gtk.TreeViewDropPosition.BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            0, 1, Gtk.TreeViewDropPosition.AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            0, 2, Gtk.TreeViewDropPosition.BEFORE))
+        self.assertEqual(2, EffectProperties.calculateEffectPriority(
+            3, 1, Gtk.TreeViewDropPosition.AFTER))
+        self.assertEqual(2, EffectProperties.calculateEffectPriority(
+            3, 2, Gtk.TreeViewDropPosition.BEFORE))
 
         # Dragging 0 and 2 onto 1.
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(0, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(0, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(2, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculateEffectPriority(2, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            0, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            0, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            2, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
+        self.assertEqual(1, EffectProperties.calculateEffectPriority(
+            2, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))

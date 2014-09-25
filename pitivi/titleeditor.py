@@ -42,6 +42,7 @@ BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 
 
 class TitleEditor(Loggable):
+
     """
     Widget for configuring the selected title.
 
@@ -85,16 +86,16 @@ class TitleEditor(Loggable):
             self.settings[setting] = builder.get_object(setting)
 
         for n, en in list({_("Custom"): "position",
-                _("Top"): "top",
-                _("Center"): "center",
-                _("Bottom"): "bottom",
-                _("Baseline"): "baseline"}.items()):
+                           _("Top"): "top",
+                           _("Center"): "center",
+                           _("Bottom"): "bottom",
+                           _("Baseline"): "baseline"}.items()):
             self.settings["valignment"].append(en, n)
 
         for n, en in list({_("Custom"): "position",
-                _("Left"): "left",
-                _("Center"): "center",
-                _("Right"): "right"}.items()):
+                           _("Left"): "left",
+                           _("Center"): "center",
+                           _("Right"): "right"}.items()):
             self.settings["halignment"].append(en, n)
         self._deactivate()
 
@@ -107,7 +108,8 @@ class TitleEditor(Loggable):
     def _frontTextColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title foreground color to %x", color)
-        # TODO: Use set_text_color when we work with TitleSources instead of TitleClips
+        # TODO: Use set_text_color when we work with TitleSources instead of
+        # TitleClips
         self.source.set_color(color)
         self.seeker.flush()
 
@@ -145,16 +147,20 @@ class TitleEditor(Loggable):
             # FIXME: sometimes we get a TextOverlay/TitleSource
             # without a valid text property. This should not happen.
             source_text = ""
-            self.warning('Source did not have a text property, setting it to "" to avoid pango choking up on None')
+            self.warning(
+                'Source did not have a text property, setting it to "" to avoid pango choking up on None')
         self.log("Title text set to %s", source_text)
         self.textbuffer.set_text(source_text)
 
         self.settings['xpos'].set_value(self.source.get_xpos())
         self.settings['ypos'].set_value(self.source.get_ypos())
-        self.settings['valignment'].set_active_id(self.source.get_valignment().value_name)
-        self.settings['halignment'].set_active_id(self.source.get_halignment().value_name)
+        self.settings['valignment'].set_active_id(
+            self.source.get_valignment().value_name)
+        self.settings['halignment'].set_active_id(
+            self.source.get_halignment().value_name)
 
-        font_desc = Pango.FontDescription.from_string(self.source.get_font_desc())
+        font_desc = Pango.FontDescription.from_string(
+            self.source.get_font_desc())
         self.font_button.set_font_desc(font_desc)
 
         color = argb_to_gdk_rgba(self.source.get_text_color())
@@ -186,11 +192,15 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    self.source.set_valignment(getattr(GES.TextVAlign, obj.get_active_id().upper()))
-                    self.settings["ypos"].set_visible(obj.get_active_id() == "position")
+                    self.source.set_valignment(
+                        getattr(GES.TextVAlign, obj.get_active_id().upper()))
+                    self.settings["ypos"].set_visible(
+                        obj.get_active_id() == "position")
                 elif name == "halignment":
-                    self.source.set_halignment(getattr(GES.TextHAlign, obj.get_active_id().upper()))
-                    self.settings["xpos"].set_visible(obj.get_active_id() == "position")
+                    self.source.set_halignment(
+                        getattr(GES.TextHAlign, obj.get_active_id().upper()))
+                    self.settings["xpos"].set_visible(
+                        obj.get_active_id() == "position")
                 elif name == "xpos":
                     self.settings["halignment"].set_active_id("position")
                     self.source.set_xpos(obj.get_value())
@@ -235,9 +245,12 @@ class TitleEditor(Loggable):
 
     def _connect_signals(self):
         if not self._signals_connected:
-            self.app.gui.viewer.target.connect("motion-notify-event", self.drag_notify_event)
-            self.app.gui.viewer.target.connect("button-press-event", self.drag_press_event)
-            self.app.gui.viewer.target.connect("button-release-event", self.drag_release_event)
+            self.app.gui.viewer.target.connect(
+                "motion-notify-event", self.drag_notify_event)
+            self.app.gui.viewer.target.connect(
+                "button-press-event", self.drag_press_event)
+            self.app.gui.viewer.target.connect(
+                "button-release-event", self.drag_release_event)
             self._signals_connected = True
 
     def _disconnect_signals(self):
@@ -253,7 +266,8 @@ class TitleEditor(Loggable):
             self._drag_events = [(event.x, event.y)]
             # Update drag by drag event change, but not too often
             self.timeout = GLib.timeout_add(100, self.drag_update_event)
-            # If drag goes out for 0.3 second, and do not come back, consider drag end
+            # If drag goes out for 0.3 second, and do not come back, consider
+            # drag end
             self._drag_updated = True
             self.timeout = GLib.timeout_add(1000, self.drag_possible_end_event)
 

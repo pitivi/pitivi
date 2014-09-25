@@ -54,79 +54,82 @@ from pitivi.viewer import ViewerContainer
 
 GlobalSettings.addConfigSection("main-window")
 GlobalSettings.addConfigOption('mainWindowHPanePosition',
-    section="main-window",
-    key="hpane-position",
-    type_=int)
+                               section="main-window",
+                               key="hpane-position",
+                               type_=int)
 GlobalSettings.addConfigOption('mainWindowMainHPanePosition',
-    section="main-window",
-    key="main-hpane-position",
-    type_=int)
+                               section="main-window",
+                               key="main-hpane-position",
+                               type_=int)
 GlobalSettings.addConfigOption('mainWindowVPanePosition',
-    section="main-window",
-    key="vpane-position",
-    type_=int)
+                               section="main-window",
+                               key="vpane-position",
+                               type_=int)
 GlobalSettings.addConfigOption('mainWindowX',
-    section="main-window",
-    key="X", default=0, type_=int)
+                               section="main-window",
+                               key="X", default=0, type_=int)
 GlobalSettings.addConfigOption('mainWindowY',
-    section="main-window",
-    key="Y", default=0, type_=int)
+                               section="main-window",
+                               key="Y", default=0, type_=int)
 GlobalSettings.addConfigOption('mainWindowWidth',
-    section="main-window",
-    key="width", default=-1, type_=int)
+                               section="main-window",
+                               key="width", default=-1, type_=int)
 GlobalSettings.addConfigOption('mainWindowHeight',
-    section="main-window",
-    key="height", default=-1, type_=int)
+                               section="main-window",
+                               key="height", default=-1, type_=int)
 GlobalSettings.addConfigOption('lastProjectFolder',
-    section="main-window",
-    key="last-folder",
-    environment="PITIVI_PROJECT_FOLDER",
-    default=os.path.expanduser("~"))
+                               section="main-window",
+                               key="last-folder",
+                               environment="PITIVI_PROJECT_FOLDER",
+                               default=os.path.expanduser("~"))
 GlobalSettings.addConfigSection('export')
 GlobalSettings.addConfigOption('lastExportFolder',
-                            section='export',
-                            key="last-export-folder",
-                            environment="PITIVI_EXPORT_FOLDER",
-                            default=os.path.expanduser("~"))
+                               section='export',
+                               key="last-export-folder",
+                               environment="PITIVI_EXPORT_FOLDER",
+                               default=os.path.expanduser("~"))
 GlobalSettings.addConfigOption('elementSettingsDialogWidth',
-    section='export',
-    key='element-settings-dialog-width',
-    default=620)
+                               section='export',
+                               key='element-settings-dialog-width',
+                               default=620)
 GlobalSettings.addConfigOption('elementSettingsDialogHeight',
-    section='export',
-    key='element-settings-dialog-height',
-    default=460)
+                               section='export',
+                               key='element-settings-dialog-height',
+                               default=460)
 GlobalSettings.addConfigSection("effect-configuration")
 GlobalSettings.addConfigOption('effectVPanedPosition',
-    section='effect-configuration',
-    key='effect-vpaned-position',
-    type_=int)
+                               section='effect-configuration',
+                               key='effect-vpaned-position',
+                               type_=int)
 GlobalSettings.addConfigSection("version")
 GlobalSettings.addConfigOption('displayCounter',
-    section='version',
-    key='info-displayed-counter',
-    default=0)
+                               section='version',
+                               key='info-displayed-counter',
+                               default=0)
 GlobalSettings.addConfigOption('lastCurrentVersion',
-    section='version',
-    key='last-current-version',
-    default='')
+                               section='version',
+                               key='last-current-version',
+                               default='')
 GlobalSettings.addConfigOption('timelineAutoRipple',
-    section='user-interface',
-    key='timeline-autoripple',
-    default=False)
+                               section='user-interface',
+                               key='timeline-autoripple',
+                               default=False)
 
 
 class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
+
     """
     Pitivi's main window.
 
     @cvar app: The application object
     @type app: L{Pitivi}
     """
+
     def __init__(self, app):
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
-        # Pulseaudio "role" (http://0pointer.de/blog/projects/tagging-audio.htm)
+        # Pulseaudio "role"
+        # (http://0pointer.de/blog/projects/tagging-audio.htm)
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
@@ -150,13 +153,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self._missingUriOnLoading = False
 
         pm = self.app.project_manager
-        pm.connect("new-project-loading", self._projectManagerNewProjectLoadingCb)
-        pm.connect("new-project-loaded", self._projectManagerNewProjectLoadedCb)
-        pm.connect("new-project-failed", self._projectManagerNewProjectFailedCb)
-        pm.connect("save-project-failed", self._projectManagerSaveProjectFailedCb)
+        pm.connect("new-project-loading",
+                   self._projectManagerNewProjectLoadingCb)
+        pm.connect("new-project-loaded",
+                   self._projectManagerNewProjectLoadedCb)
+        pm.connect("new-project-failed",
+                   self._projectManagerNewProjectFailedCb)
+        pm.connect("save-project-failed",
+                   self._projectManagerSaveProjectFailedCb)
         pm.connect("project-saved", self._projectManagerProjectSavedCb)
         pm.connect("closing-project", self._projectManagerClosingProjectCb)
-        pm.connect("reverting-to-saved", self._projectManagerRevertingToSavedCb)
+        pm.connect("reverting-to-saved",
+                   self._projectManagerRevertingToSavedCb)
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
@@ -249,7 +257,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self._headerbar = Gtk.HeaderBar()
         self._create_headerbar_buttons()
-        self.builder.add_from_file(os.path.join(get_ui_dir(), "mainmenubutton.ui"))
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "mainmenubutton.ui"))
 
         # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=729263
         self.builder.connect_signals_full(self._builderConnectCb, self)
@@ -283,8 +292,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.main_tabs = BaseTabs(self.app)
         self.medialibrary = MediaLibraryWidget(self.app, self.uimanager)
         self.effectlist = EffectListWidget(self.app, self.uimanager)
-        self.main_tabs.append_page(self.medialibrary, Gtk.Label(label=_("Media Library")))
-        self.main_tabs.append_page(self.effectlist, Gtk.Label(label=_("Effect Library")))
+        self.main_tabs.append_page(
+            self.medialibrary, Gtk.Label(label=_("Media Library")))
+        self.main_tabs.append_page(
+            self.effectlist, Gtk.Label(label=_("Effect Library")))
         self.medialibrary.connect('play', self._mediaLibraryPlayCb)
         self.medialibrary.show()
         self.effectlist.show()
@@ -294,10 +305,14 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.clipconfig = ClipProperties(self.app)
         self.trans_list = TransitionsListWidget(self.app)
         self.title_editor = TitleEditor(self.app)
-        self.context_tabs.append_page(self.clipconfig, Gtk.Label(label=_("Clip")))
-        self.context_tabs.append_page(self.trans_list, Gtk.Label(label=_("Transition")))
-        self.context_tabs.append_page(self.title_editor.widget, Gtk.Label(label=_("Title")))
-        self.context_tabs.connect("switch-page", self.title_editor.tabSwitchedCb)
+        self.context_tabs.append_page(
+            self.clipconfig, Gtk.Label(label=_("Clip")))
+        self.context_tabs.append_page(
+            self.trans_list, Gtk.Label(label=_("Transition")))
+        self.context_tabs.append_page(
+            self.title_editor.widget, Gtk.Label(label=_("Title")))
+        self.context_tabs.connect(
+            "switch-page", self.title_editor.tabSwitchedCb)
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
@@ -317,7 +332,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.setProjectManager(self.app.project_manager)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
-        self.timeline_ui.timeline.selection.connect("selection-changed", self.title_editor.selectionChangedCb)
+        self.timeline_ui.timeline.selection.connect(
+            "selection-changed", self.title_editor.selectionChangedCb)
 
         # Enable our shortcuts for HeaderBar buttons and menu items:
         self._set_keyboard_shortcuts()
@@ -398,28 +414,33 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.grab_focus()
 
     def _create_headerbar_buttons(self):
-        self.undo_button = Gtk.Button.new_from_icon_name("edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.undo_button = Gtk.Button.new_from_icon_name(
+            "edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.undo_button.set_always_show_image(True)
         self.undo_button.set_label(_("Undo"))
         self.undo_button.set_action_name("app.undo")
 
-        self.redo_button = Gtk.Button.new_from_icon_name("edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+        self.redo_button = Gtk.Button.new_from_icon_name(
+            "edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.redo_button.set_always_show_image(True)
         self.redo_button.set_label(_("Redo"))
         self.redo_button.set_action_name("app.redo")
 
         separator = Gtk.Separator()
 
-        self.save_button = Gtk.Button.new_from_icon_name("document-save", Gtk.IconSize.LARGE_TOOLBAR)
+        self.save_button = Gtk.Button.new_from_icon_name(
+            "document-save", Gtk.IconSize.LARGE_TOOLBAR)
         self.save_button.set_always_show_image(True)
         self.save_button.set_label(_("Save"))
 
-        render_icon = Gtk.Image.new_from_file(os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
+        render_icon = Gtk.Image.new_from_file(
+            os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
         self.render_button = Gtk.Button()
         self.render_button.set_image(render_icon)
         self.render_button.set_always_show_image(True)
         self.render_button.set_label(_("Render"))
-        self.render_button.set_tooltip_text(_("Export your project as a finished movie"))
+        self.render_button.set_tooltip_text(
+            _("Export your project as a finished movie"))
         self.render_button.set_sensitive(False)  # The only one we have to set.
         self.render_button.connect("clicked", self._renderCb)
 
@@ -471,7 +492,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.add_accelerator("F10", "win.menu_button", None)
 
     def showProjectStatus(self):
-        dirty = self.app.project_manager.current_project.hasUnsavedModifications()
+        dirty = self.app.project_manager.current_project.hasUnsavedModifications(
+        )
         self.save_action.set_enabled(dirty)
         if self.app.project_manager.current_project.uri:
             self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
@@ -498,8 +520,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         return False
 
     def _saveWindowSettings(self):
-        self.settings.mainWindowHPanePosition = self.secondhpaned.get_position()
-        self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position()
+        self.settings.mainWindowHPanePosition = self.secondhpaned.get_position(
+        )
+        self.settings.mainWindowMainHPanePosition = self.mainhpaned.get_position(
+        )
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
 
     def _mediaLibraryPlayCb(self, unused_medialibrary, asset):
@@ -526,7 +550,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.purgeObject(asset.get_id())
 
     def _builderConnectCb(self, builder, gobject, signal_name, handler_name,
-            connect_object, flags, user_data):
+                          connect_object, flags, user_data):
         id_ = gobject.connect(signal_name, getattr(self, handler_name))
         self.builder_handler_ids.append((gobject, id_))
 
@@ -559,7 +583,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         uri = self._showExportDialog(self.app.project_manager.current_project)
         result = None
         if uri:
-            result = self.app.project_manager.exportProject(self.app.project_manager.current_project, uri)
+            result = self.app.project_manager.exportProject(
+                self.app.project_manager.current_project, uri)
 
         if not result:
             self.log("Project couldn't be exported")
@@ -570,7 +595,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
     def showProjectSettingsDialog(self):
         from pitivi.project import ProjectSettingsDialog
-        ProjectSettingsDialog(self, self.app.project_manager.current_project).window.run()
+        ProjectSettingsDialog(
+            self, self.app.project_manager.current_project).window.run()
         self.updateTitle()
 
     def _menuCb(self, unused_action, unused_param):
@@ -612,16 +638,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu>",
                    "",
-                   # Translators: this paragraph is to be translated, the list of contributors is shown dynamically as a clickable link below it
+                   # Translators: this paragraph is to be translated, the list
+                   # of contributors is shown dynamically as a clickable link
+                   # below it
                    _("Contributors:\n" +
-                   "A handwritten list here would...\n" +
-                   "• be too long,\n" +
-                   "• be frequently outdated,\n" +
-                   "• not show their relative merit.\n\n" +
-                   "Out of respect for our contributors, we point you instead to:\n"),
+                     "A handwritten list here would...\n" +
+                     "• be too long,\n" +
+                     "• be frequently outdated,\n" +
+                     "• not show their relative merit.\n\n" +
+                     "Out of respect for our contributors, we point you instead to:\n"),
                    # Translators: keep the %s at the end of the 1st line
                    _("The list of contributors on Ohloh %s\n" +
-                   "Or you can run: git shortlog -s -n")
+                     "Or you can run: git shortlog -s -n")
                    % "http://ohloh.net/p/pitivi/contributors", ]
         abt.set_authors(authors)
         translators = _("translator-credits")
@@ -644,20 +672,23 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             return  # The user has not made a decision, don't do anything
 
         chooser = Gtk.FileChooserDialog(title=_("Open File..."),
-            transient_for=self,
-            action=Gtk.FileChooserAction.OPEN)
+                                        transient_for=self,
+                                        action=Gtk.FileChooserAction.OPEN)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Open"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)
         chooser.set_select_multiple(False)
-        # TODO: Remove this set_current_folder call when GTK bug 683999 is fixed
+        # TODO: Remove this set_current_folder call when GTK bug 683999 is
+        # fixed
         chooser.set_current_folder(self.settings.lastProjectFolder)
         formatter_assets = GES.list_assets(GES.Formatter)
-        formatter_assets.sort(key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
+        formatter_assets.sort(
+            key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
         for format_ in formatter_assets:
             filt = Gtk.FileFilter()
             filt.set_name(format_.get_meta(GES.META_DESCRIPTION))
-            filt.add_pattern("*%s" % format_.get_meta(GES.META_FORMATTER_EXTENSION))
+            filt.add_pattern("*%s" %
+                             format_.get_meta(GES.META_FORMATTER_EXTENSION))
             chooser.add_filter(filt)
         default = Gtk.FileFilter()
         default.set_name(_("All supported formats"))
@@ -668,7 +699,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if response == Gtk.ResponseType.OK:
             self.app.project_manager.loadProject(chooser.get_uri())
         else:
-            self.info("User cancelled loading a new project, but no other project is currently active. Resetting")
+            self.info(
+                "User cancelled loading a new project, but no other project is currently active. Resetting")
             self.app.project_manager.newBlankProject()
         chooser.destroy()
         return True
@@ -695,7 +727,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("A new project is loaded")
         self._connectToProject(project)
         project.timeline.connect("notify::duration",
-                self._timelineDurationChangedCb)
+                                 self._timelineDurationChangedCb)
         project.pipeline.activatePositionListener()
         self._setProject(project)
 
@@ -724,10 +756,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _projectManagerSaveProjectFailedCb(self, unused_project_manager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(transient_for=self,
-            modal=True,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=_('Unable to save project "%s"') % project_filename)
+                                   modal=True,
+                                   message_type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.OK,
+                                   text=_('Unable to save project "%s"') % project_filename)
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
@@ -767,7 +799,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                            _("Cancel"), Gtk.ResponseType.CANCEL,
                            save, Gtk.ResponseType.YES)
         # Even though we set the title to an empty string when creating dialog,
-        # seems we really have to do it once more so it doesn't show "pitivi"...
+        # seems we really have to do it once more so it doesn't show
+        # "pitivi"...
         dialog.set_resizable(False)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
         dialog.get_accessible().set_name("unsaved changes dialog")
@@ -787,14 +820,15 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         if project.uri:
             path = unquote(project.uri).split("file://")[1]
-            last_saved = max(os.path.getmtime(path), project_manager.time_loaded)
+            last_saved = max(
+                os.path.getmtime(path), project_manager.time_loaded)
             time_delta = time() - last_saved
             secondary.props.label = _("If you don't save, "
-                "the changes from the last %s will be lost."
-                % beautify_time_delta(time_delta))
+                                      "the changes from the last %s will be lost."
+                                      % beautify_time_delta(time_delta))
         else:
             secondary.props.label = _("If you don't save, "
-                                    "your changes will be lost.")
+                                      "your changes will be lost.")
 
         # put the text in a vbox
         vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
@@ -802,7 +836,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         vbox.pack_start(secondary, True, True, 0)
 
         # make the [[image] text] hbox
-        image = Gtk.Image.new_from_icon_name("dialog-question", Gtk.IconSize.DIALOG)
+        image = Gtk.Image.new_from_icon_name(
+            "dialog-question", Gtk.IconSize.DIALOG)
         hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
@@ -843,7 +878,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.info("Project closed - clearing the media library and timeline")
         self.medialibrary.storemodel.clear()
         self._disconnectFromProject(self.app.project_manager.current_project)
-        self.app.project_manager.current_project.timeline.disconnect_by_func(self._timelineDurationChangedCb)
+        self.app.project_manager.current_project.timeline.disconnect_by_func(
+            self._timelineDurationChangedCb)
         self.timeline_ui.setProject(None)
         self.clipconfig.timeline = None
         self.render_button.set_sensitive(False)
@@ -852,15 +888,15 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
         if self.app.project_manager.current_project.hasUnsavedModifications():
             dialog = Gtk.MessageDialog(transient_for=self,
-                    modal=True,
-                    message_type=Gtk.MessageType.WARNING,
-                    buttons=Gtk.ButtonsType.NONE,
-                    text=_("Revert to saved project version?"))
+                                       modal=True,
+                                       message_type=Gtk.MessageType.WARNING,
+                                       buttons=Gtk.ButtonsType.NONE,
+                                       text=_("Revert to saved project version?"))
             dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.NO,
-                    Gtk.STOCK_REVERT_TO_SAVED, Gtk.ResponseType.YES)
+                               Gtk.STOCK_REVERT_TO_SAVED, Gtk.ResponseType.YES)
             dialog.set_resizable(False)
             dialog.set_property("secondary-text",
-                    _("This will reload the current project. All unsaved changes will be lost."))
+                                _("This will reload the current project. All unsaved changes will be lost."))
             dialog.set_default_response(Gtk.ResponseType.NO)
             dialog.set_transient_for(self)
             response = dialog.run()
@@ -882,7 +918,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.run()
         dialog.destroy()
 
-    def _projectManagerMissingUriCb(self, unused_project_manager, unused_project,
+    def _projectManagerMissingUriCb(
+        self, unused_project_manager, unused_project,
             unused_error, asset):
         self._missingUriOnLoading = True
         uri = asset.get_id()
@@ -945,7 +982,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # add it inside the filter string.
         unused_filename, extension = os.path.splitext(uri)
         filter_ = Gtk.FileFilter()
-        # Translators: this is a format filter in a filechooser. Ex: "AVI files"
+        # Translators: this is a format filter in a filechooser. Ex: "AVI
+        # files"
         filter_.set_name(_("%s files" % extension))
         filter_.add_pattern("*%s" % extension.lower())
         filter_.add_pattern("*%s" % extension.upper())
@@ -965,7 +1003,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            self.app.project_manager.current_project.setModificationState(False)
+            self.app.project_manager.current_project.setModificationState(
+                False)
         else:
             # Even if the user clicks Cancel, the discoverer keeps trying to
             # import the rest of the clips...
@@ -975,20 +1014,24 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             # TODO: bugs #661059, 609136
             attempted_uri = self.app.project_manager.current_project.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                    'Pitivi does not currently support partial projects.'
-                    % info_name(asset))
+                       'Pitivi does not currently support partial projects.'
+                       % info_name(asset))
             # Put an end to the async signals spamming us with dialogs:
-            self.app.project_manager.disconnect_by_func(self._projectManagerMissingUriCb)
+            self.app.project_manager.disconnect_by_func(
+                self._projectManagerMissingUriCb)
             # Don't overlap the file chooser with our error dialog
-            # The chooser will be destroyed further below, so let's hide it now.
+            # The chooser will be destroyed further below, so let's hide it
+            # now.
             dialog.hide()
             # Reset projectManager and disconnect all the signals:
-            self.app.project_manager.newBlankProject(ignore_unsaved_changes=True)
+            self.app.project_manager.newBlankProject(
+                ignore_unsaved_changes=True)
             # Force the project load to fail:
             # This will show an error using _projectManagerNewProjectFailedCb
             # You have to do this *after* successfully creating a blank project,
             # or the startupwizard will still be connected to that signal too.
-            self.app.project_manager.emit("new-project-failed", attempted_uri, reason)
+            self.app.project_manager.emit(
+                "new-project-failed", attempted_uri, reason)
 
         dialog.destroy()
         return new_uri
@@ -998,11 +1041,13 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
-        project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
+        project.connect(
+            "rendering-settings-changed", self._renderingSettingsChangedCb)
 
 # Missing Plugins Support
 
-    def _sourceListMissingPluginsCb(self, unused_project, unused_uri, unused_factory,
+    def _sourceListMissingPluginsCb(
+        self, unused_project, unused_uri, unused_factory,
             details, unused_descriptions, missingPluginsCallback):
         res = self._installPlugins(details, missingPluginsCallback)
         return res
@@ -1012,7 +1057,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         context.set_xid(self.window.xid)
 
         res = GstPbutils.install_plugins_async(details, context,
-                missingPluginsCallback)
+                                               missingPluginsCallback)
         return res
 
 # Pitivi current project callbacks
@@ -1032,7 +1077,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             # When loading the first project, the signal has never been
             # connected before.
             pass
-        project.connect("rendering-settings-changed", self._renderingSettingsChangedCb)
+        project.connect(
+            "rendering-settings-changed", self._renderingSettingsChangedCb)
 
         self.viewer.setPipeline(project.pipeline)
         self.app.timeline_log_observer.setPipeline(project.pipeline)
@@ -1088,9 +1134,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         asset_extension = asset.get_meta(GES.META_FORMATTER_EXTENSION)
 
         if not project.name:
-            chooser.set_current_name(_("Untitled") + "." + asset_extension + "_tar")
+            chooser.set_current_name(
+                _("Untitled") + "." + asset_extension + "_tar")
         else:
-            chooser.set_current_name(project.name + "." + asset_extension + "_tar")
+            chooser.set_current_name(
+                project.name + "." + asset_extension + "_tar")
 
         filt = Gtk.FileFilter()
         filt.set_name(_("Tar archive"))
@@ -1120,8 +1168,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Save URI requested")
 
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-            transient_for=self,
-            action=Gtk.FileChooserAction.SAVE)
+                                        transient_for=self,
+                                        action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)
@@ -1133,7 +1181,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled") + "." +
-                asset.get_meta(GES.META_FORMATTER_EXTENSION))
+                                 asset.get_meta(GES.META_FORMATTER_EXTENSION))
         chooser.set_current_folder(self.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
 
@@ -1166,7 +1214,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         foo = self._showSaveScreenshotDialog()
         if foo:
             path, mime = foo[0], foo[1]
-            self.app.project_manager.current_project.pipeline.save_thumbnail(-1, -1, mime, path)
+            self.app.project_manager.current_project.pipeline.save_thumbnail(
+                -1, -1, mime, path)
 
     def _showSaveScreenshotDialog(self):
         """
@@ -1196,7 +1245,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             chosen_format = formats.get(chooser.get_filter().get_name())
             chosen_ext = chosen_format[1][0]
             chosen_mime = chosen_format[0]
-            uri = os.path.join(chooser.get_current_folder(), chooser.get_filename())
+            uri = os.path.join(
+                chooser.get_current_folder(), chooser.get_filename())
             ret = [uri + "." + chosen_ext, chosen_mime]
         else:
             ret = None
@@ -1221,6 +1271,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
 
 class PreviewAssetWindow(Gtk.Window):
+
     """
     Window for previewing a video or audio asset.
 
@@ -1258,7 +1309,8 @@ class PreviewAssetWindow(Gtk.Window):
         self.show()
 
         self._previewer.play()
-        # Hack so that we really really force the "utility" window to be focused
+        # Hack so that we really really force the "utility" window to be
+        # focused
         self.present()
 
     def _calculatePreviewWindowSize(self):

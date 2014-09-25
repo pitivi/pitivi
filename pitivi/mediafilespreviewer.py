@@ -43,17 +43,17 @@ PREVIEW_HEIGHT = 100
 
 GlobalSettings.addConfigSection('filechooser-preview')
 GlobalSettings.addConfigOption('FCEnablePreview',
-    section='filechooser-preview',
-    key='do-preview-on-clip-import',
-    default=True)
+                               section='filechooser-preview',
+                               key='do-preview-on-clip-import',
+                               default=True)
 GlobalSettings.addConfigOption('FCpreviewWidth',
-    section='filechooser-preview',
-    key='video-preview-width',
-    default=PREVIEW_WIDTH)
+                               section='filechooser-preview',
+                               key='video-preview-width',
+                               default=PREVIEW_WIDTH)
 GlobalSettings.addConfigOption('FCpreviewHeight',
-    section='filechooser-preview',
-    key='video-preview-height',
-    default=PREVIEW_HEIGHT)
+                               section='filechooser-preview',
+                               key='video-preview-height',
+                               default=PREVIEW_HEIGHT)
 
 acceptable_tags = [
     Gst.TAG_ALBUM_ARTIST,
@@ -69,6 +69,7 @@ acceptable_tags = [
 
 
 class PreviewWidget(Gtk.Grid, Loggable):
+
     """
     Widget for displaying a GStreamer sink with playback controls.
 
@@ -116,7 +117,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # An image for images and audio
         self.preview_image = Gtk.Image()
-        self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
+        self.preview_image.set_size_request(
+            self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
         self.preview_image.show()
         self.attach(self.preview_image, 0, 1, 1, 1)
 
@@ -223,13 +225,16 @@ class PreviewWidget(Gtk.Grid, Loggable):
             if video.is_image():
                 self.current_preview_type = 'image'
                 self.preview_video.hide()
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file(Gst.uri_get_location(uri))
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(
+                    Gst.uri_get_location(uri))
                 pixbuf_w = pixbuf.get_width()
                 pixbuf_h = pixbuf.get_height()
                 w, h = self.__get_best_size(pixbuf_w, pixbuf_h)
-                pixbuf = pixbuf.scale_simple(w, h, GdkPixbuf.InterpType.NEAREST)
+                pixbuf = pixbuf.scale_simple(
+                    w, h, GdkPixbuf.InterpType.NEAREST)
                 self.preview_image.set_from_pixbuf(pixbuf)
-                self.preview_image.set_size_request(self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
+                self.preview_image.set_size_request(
+                    self.settings.FCpreviewWidth, self.settings.FCpreviewHeight)
                 self.preview_image.show()
                 self.bbox.show()
                 self.play_button.hide()
@@ -242,11 +247,13 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.player.setClipUri(self.current_selected_uri)
                 self.player.setState(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
-                video_width = (video.get_par_num() / video.get_par_denom()) * video.get_width()
+                video_width = (
+                    video.get_par_num() / video.get_par_denom()) * video.get_width()
                 video_height = video.get_height()
                 w, h = self.__get_best_size(video_width, video_height)
                 self.preview_video.set_size_request(w, h)
-                self.preview_video.setDisplayAspectRatio(float(video_width) / video_height)
+                self.preview_video.setDisplayAspectRatio(
+                    float(video_width) / video_height)
                 self.preview_video.show()
                 self.bbox.show()
                 self.play_button.show()
@@ -254,7 +261,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.b_zoom_in.show()
                 self.b_zoom_out.show()
                 self.description = "\n".join([
-                    _("<b>Resolution</b>: %d×%d") % (video_width, video_height),
+                    _("<b>Resolution</b>: %d×%d") % (
+                        video_width, video_height),
                     _("<b>Duration</b>: %s") % pretty_duration])
         else:
             self.current_preview_type = 'audio'
@@ -266,7 +274,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
             audio = audio[0]
             self.pos_adj.props.upper = duration
-            self.preview_image.set_from_icon_name("audio-x-generic", Gtk.IconSize.DIALOG)
+            self.preview_image.set_from_icon_name(
+                "audio-x-generic", Gtk.IconSize.DIALOG)
             self.preview_image.show()
             self.preview_image.set_size_request(PREVIEW_WIDTH, PREVIEW_HEIGHT)
             self.description = "\n".join([
@@ -393,8 +402,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 h *= 0.8
                 if (w, h) < self.original_dims:
                     (w, h) = self.original_dims
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(Gst.uri_get_location(self.current_selected_uri))
-            pixbuf = pixbuf.scale_simple(int(w), int(h), GdkPixbuf.InterpType.BILINEAR)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(
+                Gst.uri_get_location(self.current_selected_uri))
+            pixbuf = pixbuf.scale_simple(
+                int(w), int(h), GdkPixbuf.InterpType.BILINEAR)
 
             w = max(w, self.settings.FCpreviewWidth)
             h = max(h, self.settings.FCpreviewHeight)
@@ -428,17 +439,18 @@ class PreviewWidget(Gtk.Grid, Loggable):
         keys.sort()
         text = self.description + "\n\n"
         for key in keys:
-            text = text + "<b>" + key.capitalize() + "</b>: " + self.tags[key] + "\n"
+            text = text + "<b>" + \
+                key.capitalize() + "</b>: " + self.tags[key] + "\n"
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked_cb(self, unused_button):
         mess = self.preview_cache_errors.get(self.current_selected_uri, None)
         if mess is not None:
             dialog = Gtk.MessageDialog(transient_for=None,
-                modal=True,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.OK,
-                text=str(mess))
+                                       modal=True,
+                                       message_type=Gtk.MessageType.WARNING,
+                                       buttons=Gtk.ButtonsType.OK,
+                                       text=str(mess))
             dialog.set_icon_name("pitivi")
             dialog.set_title(_("Error while analyzing a file"))
             dialog.run()

@@ -31,6 +31,7 @@ from pitivi.utils.ui import frame_rates, audio_rates, \
 
 
 class ClipMediaPropsDialog(object):
+
     """
     Displays the properties of an asset, and allows applying them to a project.
 
@@ -53,7 +54,8 @@ class ClipMediaPropsDialog(object):
         self.dialog = builder.get_object("Import Settings")
         # Checkbuttons (with their own labels) in the first table column:
         self.size_checkbutton = builder.get_object("size_checkbutton")
-        self.framerate_checkbutton = builder.get_object("framerate_checkbutton")
+        self.framerate_checkbutton = builder.get_object(
+            "framerate_checkbutton")
         self.PAR_checkbutton = builder.get_object("PAR_checkbutton")
         self.channels_checkbutton = builder.get_object("channels_checkbutton")
         self.samplerate_checkbutton = builder.get_object("samplerate_checkbtn")
@@ -109,7 +111,8 @@ class ClipMediaPropsDialog(object):
                     # Translators: a label showing an invalid framerate value
                     self.frame_rate.set_text(_("invalid (%s fps)" % foo))
                     self.framerate_checkbutton.set_active(False)
-                    # For consistency, insensitize the checkbox AND value labels
+                    # For consistency, insensitize the checkbox AND value
+                    # labels
                     self.framerate_checkbutton.set_sensitive(False)
                     self.frame_rate.set_sensitive(False)
 

@@ -41,6 +41,7 @@ class DummyUndoableAction(UndoableAction):
 
 
 class TestUndoableAction(TestCase):
+
     def testSimpleSignals(self):
         """
         Test signal emission from _done() and _undone().
@@ -62,6 +63,7 @@ class TestUndoableAction(TestCase):
 
 
 class TestUndoableActionStack(TestCase):
+
     def testDoUndoEmpty(self):
         """
         Undo an empty stack.
@@ -93,6 +95,7 @@ class TestUndoableActionStack(TestCase):
         state["done"] = 2
 
         class Action(UndoableAction):
+
             def do(self):
                 state["actions"] += 1
                 self._done()
@@ -129,6 +132,7 @@ class TestUndoableActionStack(TestCase):
         state["actions"] = 2
 
         class Action(UndoableAction):
+
             def undo(self):
                 state["actions"] -= 1
                 if state["actions"] == 1:
@@ -152,6 +156,7 @@ class TestUndoableActionStack(TestCase):
 
 
 class TestUndoableActionLog(TestCase):
+
     def setUp(self):
         self.log = UndoableActionLog()
         self._connectToUndoableActionLog(self.log)
@@ -167,7 +172,7 @@ class TestUndoableActionLog(TestCase):
 
     def _connectToUndoableActionLog(self, log):
         for signalName in ("begin", "push", "rollback", "commit",
-                    "undo", "redo"):
+                           "undo", "redo"):
             log.connect(signalName, self._undoActionLogSignalCb, signalName)
 
     def _disconnectFromUndoableActionLog(self, log):
@@ -394,6 +399,7 @@ class TestUndoableActionLog(TestCase):
         call_sequence = []
 
         class Action(UndoableAction):
+
             def __init__(self, n):
                 UndoableAction.__init__(self)
                 self.n = n

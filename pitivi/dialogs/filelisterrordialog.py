@@ -37,6 +37,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class FileListErrorDialog(GObject.Object, Loggable):
+
     """ Dialog box for showing errors in a list of files """
 
     __gsignals__ = {
@@ -48,7 +49,7 @@ class FileListErrorDialog(GObject.Object, Loggable):
         Loggable.__init__(self)
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
-            "filelisterrordialog.ui"))
+                                                "filelisterrordialog.ui"))
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("filelisterrordialog")
@@ -95,7 +96,8 @@ class FileListErrorDialog(GObject.Object, Loggable):
 
         if extra:
             end = textbuffer.get_end_iter()
-            textbuffer.insert_with_tags(end, _("Extra information:") + " ", boldtag)
+            textbuffer.insert_with_tags(
+                end, _("Extra information:") + " ", boldtag)
 
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)
@@ -115,7 +117,7 @@ class FileListErrorDialog(GObject.Object, Loggable):
         """Destroy internal window"""
         self.window.destroy()
 
-    ## Callbacks from glade
+    # Callbacks from glade
 
     def _closeCb(self, unused_dialog):
         """Emit the close signal"""

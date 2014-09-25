@@ -52,6 +52,7 @@ class PipelineError(Exception):
 
 
 class Seeker(GObject.Object, Loggable):
+
     """
     The Seeker is a singleton helper class to do various seeking
     operations in the pipeline.
@@ -91,7 +92,8 @@ class Seeker(GObject.Object, Loggable):
 
         if self.pending_seek_id is None:
             if on_idle:
-                self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb)
+                self.pending_seek_id = self._scheduleSeek(
+                    self.timeout, self._seekTimeoutCb)
             else:
                 self._seekTimeoutCb()
         else:
@@ -101,7 +103,8 @@ class Seeker(GObject.Object, Loggable):
         if self.pending_seek_id is None:
             self._time = int(time)
             if on_idle:
-                self.pending_seek_id = self._scheduleSeek(self.timeout, self._seekTimeoutCb, relative=True)
+                self.pending_seek_id = self._scheduleSeek(
+                    self.timeout, self._seekTimeoutCb, relative=True)
             else:
                 self._seekTimeoutCb(relative=True)
 
@@ -144,6 +147,7 @@ class Seeker(GObject.Object, Loggable):
 
 
 class SimplePipeline(GObject.Object, Loggable):
+
     """
     The Pipeline is only responsible for:
      - State changes
@@ -224,7 +228,8 @@ class SimplePipeline(GObject.Object, Loggable):
         if res == Gst.StateChangeReturn.FAILURE:
             # reset to NULL
             self._pipeline.set_state(Gst.State.NULL)
-            raise PipelineError("Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
+            raise PipelineError(
+                "Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
 
     def getState(self):
         """
@@ -236,8 +241,10 @@ class SimplePipeline(GObject.Object, Loggable):
         @return: The current state.
         @rtype: C{State}
         """
-        change, state, pending = self._pipeline.get_state(timeout=0)  # No timeout
-        self.debug("change: %r, state: %r, pending: %r", change, state, pending)
+        # No timeout
+        change, state, pending = self._pipeline.get_state(timeout=0)
+        self.debug(
+            "change: %r, state: %r, pending: %r", change, state, pending)
         return state
 
     def play(self):
@@ -357,7 +364,8 @@ class SimplePipeline(GObject.Object, Loggable):
         # i.e. it does NOT check for current state
         if listen:
             if self._listening and self._listeningSigId == 0:
-                self._listeningSigId = GLib.timeout_add(self._listeningInterval,
+                self._listeningSigId = GLib.timeout_add(
+                    self._listeningInterval,
                     self._positionListenerCb)
         elif self._listeningSigId != 0:
             GLib.source_remove(self._listeningSigId)
@@ -416,7 +424,8 @@ class SimplePipeline(GObject.Object, Loggable):
             prev, new, pending = message.parse_state_changed()
 
             if message.src == self._pipeline:
-                self.debug("Pipeline change state prev: %r, new: %r, pending: %r", prev, new, pending)
+                self.debug(
+                    "Pipeline change state prev: %r, new: %r, pending: %r", prev, new, pending)
 
                 emit_state_change = pending == Gst.State.VOID_PENDING
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
@@ -430,7 +439,8 @@ class SimplePipeline(GObject.Object, Loggable):
                     if self.pendingRecovery:
                         self.simple_seek(self.lastPosition)
                         self.pendingRecovery = False
-                        self.info("Seeked back to the last position after pipeline recovery")
+                        self.info(
+                            "Seeked back to the last position after pipeline recovery")
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
@@ -462,7 +472,8 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def _recover(self):
         if self._attempted_recoveries > MAX_RECOVERIES:
-            self.warning("Pipeline error detected multiple times in a row, not resetting anymore")
+            self.warning(
+                "Pipeline error detected multiple times in a row, not resetting anymore")
             return
         self.warning("Pipeline error detected during playback, resetting")
         self.pendingRecovery = True
@@ -494,6 +505,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
 
 class AssetPipeline(SimplePipeline):
+
     """
     Pipeline for playing a single clip.
     """
@@ -519,6 +531,7 @@ class AssetPipeline(SimplePipeline):
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
+
     """
     Helper to handle GES.Pipeline through the SimplePipeline API
     and handle the Seeker properly
@@ -570,17 +583,19 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         try:
             position = self.getPosition()
         except PipelineError:
-            self.warning("Couldn't get position (you're framestepping too quickly), ignoring this request")
+            self.warning(
+                "Couldn't get position (you're framestepping too quickly), ignoring this request")
             return
 
-        cur_frame = int(round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
+        cur_frame = int(
+            round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
         new_pos = int(new_frame * Gst.SECOND * framerate.denom / framerate.num)
         Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s",
-                    cur_frame,
-                    new_frame,
-                    framerate.num / framerate.denom,
-                    new_pos / float(Gst.SECOND))
+                      cur_frame,
+                      new_frame,
+                      framerate.num / framerate.denom,
+                      new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
     def _seekCb(self, unused_seeker, position):
@@ -596,7 +611,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         st = Gst.Structure.new_empty("seek")
 
         if self.getState() == Gst.State.PLAYING:
-            st.set_value("playback_time", float(self.getPosition()) / Gst.SECOND)
+            st.set_value("playback_time", float(
+                self.getPosition()) / Gst.SECOND)
 
         st.set_value("start", float(position / Gst.SECOND))
         st.set_value("flags", "accurate+flush")

@@ -36,17 +36,18 @@ from gettext import gettext as _
 GlobalSettings.addConfigSection("user-interface")
 
 GlobalSettings.addConfigOption('prefsDialogWidth',
-    section="user-interface",
-    key="prefs-dialog-width",
-    default=600)
+                               section="user-interface",
+                               key="prefs-dialog-width",
+                               default=600)
 
 GlobalSettings.addConfigOption('prefsDialogHeight',
-    section="user-interface",
-    key="prefs-dialog-height",
-    default=400)
+                               section="user-interface",
+                               key="prefs-dialog-height",
+                               default=400)
 
 
 class PreferencesDialog(object):
+
     """
     This dialog displays preferences for pitivi.
     """
@@ -85,11 +86,11 @@ class PreferencesDialog(object):
         """Run the internal dialog"""
         self.dialog.run()
 
-## Public API
+# Public API
 
     @classmethod
     def addPreference(cls, attrname, label, description, section=None,
-                    widget_class=None, **args):
+                      widget_class=None, **args):
         """
         Add a user preference. The preferences dialog will try
         to guess the appropriate widget to use based on the type of the
@@ -108,7 +109,7 @@ class PreferencesDialog(object):
         """
         if not section:
             section = "General"
-        if not section in cls.prefs:
+        if section not in cls.prefs:
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
 
@@ -128,11 +129,11 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.PathWidget)
+                          ptvWidgets.PathWidget)
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
-                            upper=None, lower=None):
+                             upper=None, lower=None):
         """
         Add an auto-generated user preference that will show up as either a
         Gtk.SpinButton or an horizontal Gtk.Scale, depending whether both the
@@ -152,7 +153,7 @@ class PreferencesDialog(object):
         @type lower: C{number}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.NumericWidget, upper=upper, lower=lower)
+                          ptvWidgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
     def addTextPreference(cls, attrname, label, description, section=None, matches=None):
@@ -171,7 +172,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.TextWidget, matches=matches)
+                          ptvWidgets.TextWidget, matches=matches)
 
     @classmethod
     def addChoicePreference(cls, attrname, label, description, choices, section=None):
@@ -192,7 +193,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.ChoiceWidget, choices=choices)
+                          ptvWidgets.ChoiceWidget, choices=choices)
 
     @classmethod
     def addTogglePreference(cls, attrname, label, description, section=None):
@@ -210,7 +211,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.ToggleWidget)
+                          ptvWidgets.ToggleWidget)
 
     @classmethod
     def addColorPreference(cls, attrname, label, description, section=None, value_type=int):
@@ -230,7 +231,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.ColorWidget, value_type=value_type)
+                          ptvWidgets.ColorWidget, value_type=value_type)
 
     @classmethod
     def addFontPreference(cls, attrname, label, description, section=None):
@@ -248,9 +249,9 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-            ptvWidgets.FontWidget)
+                          ptvWidgets.FontWidget)
 
-## Implementation
+# Implementation
     def __fillContents(self):
         for section in sorted(self.prefs):
             options = self.prefs[section]
@@ -266,7 +267,8 @@ class PreferencesDialog(object):
                 label, description, widget_class, args = options[attrname]
                 widget = widget_class(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
-                widget.connectValueChanged(self._valueChanged, widget, attrname)
+                widget.connectValueChanged(
+                    self._valueChanged, widget, attrname)
                 self.widgets[attrname] = widget
                 if isinstance(widget, ptvWidgets.ToggleWidget):
                     # Don't add a semicolon for checkbuttons
@@ -274,7 +276,8 @@ class PreferencesDialog(object):
                 else:
                     label_widget = Gtk.Label(label=_(label) + ":")
                 icon = Gtk.Image()
-                icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
+                icon.set_from_icon_name(
+                    "edit-clear-all-symbolic", Gtk.IconSize.MENU)
                 revert = Gtk.Button()
                 revert.add(icon)
                 revert.set_tooltip_text(_("Reset to default value"))
@@ -295,13 +298,16 @@ class PreferencesDialog(object):
                     # Avoid the separating the label from the checkbox
                     widget.set_label(label.get_text())
                     widgets.attach(widget, 0, 2, y, y + 1, yoptions=0)
-                    widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                    widgets.attach(
+                        revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                 else:
                     label.set_alignment(1.0, 0.5)
                     label.set_tooltip_text(description)
-                    widgets.attach(label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0)
+                    widgets.attach(
+                        label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0)
                     widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
-                    widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                    widgets.attach(
+                        revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                     label.show()
                 widget.set_tooltip_text(description)
                 widget.show()
@@ -324,7 +330,7 @@ class PreferencesDialog(object):
 
     def _clearHistory(self):
         # Disable missing docstring
-        #pylint: disable=C0111
+        # pylint: disable=C0111
         self.original_values = {}
         self.revert_button.set_sensitive(False)
 
@@ -359,13 +365,13 @@ class PreferencesDialog(object):
 
     def _acceptButtonCb(self, unused_button):
         # Disable missing docstring
-        #pylint: disable=C0111
+        # pylint: disable=C0111
         self._clearHistory()
         self.dialog.hide()
 
     def _valueChanged(self, unused_fake_widget, real_widget, attrname):
         # Disable missing docstring
-        #pylint: disable=C0111
+        # pylint: disable=C0111
         value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
             self.original_values[attrname] = value
@@ -379,18 +385,19 @@ class PreferencesDialog(object):
         setattr(self.settings, attrname, value)
 
         # adjust controls as appropriate
-        self.resets[attrname].set_sensitive(not self.settings.isDefault(attrname))
+        self.resets[attrname].set_sensitive(
+            not self.settings.isDefault(attrname))
         self.factory_settings.set_sensitive(True)
 
     def _configureCb(self, unused_widget, event):
         # Disable missing docstring
-        #pylint: disable=C0111
+        # pylint: disable=C0111
         self.settings.prefsDialogWidth = event.width
         self.settings.prefsDialogHeight = event.height
 
     def _canReset(self):
         # Disable missing docstring
-        #pylint: disable=C0111
+        # pylint: disable=C0111
         for section in self.prefs.values():
             for attrname in section:
                 if not self.settings.isDefault(attrname):

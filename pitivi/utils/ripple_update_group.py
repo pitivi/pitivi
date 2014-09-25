@@ -21,6 +21,7 @@
 
 
 class RippleUpdateGroup(object):
+
     """Allows for event-driven spreadsheet-like ripple updates without
     infinite loops.
 
@@ -75,7 +76,7 @@ class RippleUpdateGroup(object):
         self.ignore_new_signals = False
 
     def addVertex(self, widget, signal=None, update_func=None,
-            update_func_args=()):
+                  update_func_args=()):
         """Add a widget to the list of vertexes.
 
         @param widget: The vertex to be added.

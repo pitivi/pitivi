@@ -35,6 +35,7 @@ from pitivi.undo.undo import UndoableActionLog
 
 
 class TimelineLogObserverSpy(TimelineLogObserver):
+
     def _connectToTimeline(self, timeline):
         TimelineLogObserver._connectToTimeline(self, timeline)
         timeline.connected = True
