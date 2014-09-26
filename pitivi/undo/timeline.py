@@ -354,6 +354,9 @@ class TimelineLogObserver(object):
             self._connectToTrackElement(track_element)
 
     def _disconnectFromClip(self, clip):
+        if isinstance(clip, GES.TransitionClip):
+            return
+
         tracker = self.clip_property_trackers.pop(clip)
         tracker.disconnectFromObject(clip)
         tracker.disconnect_by_func(self._clipPropertyChangedCb)
@@ -386,11 +389,15 @@ class TimelineLogObserver(object):
         tracker.disconnect_by_func(self._interpolatorKeyframeMovedCb)
 
     def _clipAddedCb(self, layer, clip):
+        if isinstance(clip, GES.TransitionClip):
+            return
         self._connectToClip(clip)
         action = ClipAdded(layer, clip)
         self.log.push(action)
 
     def _clipRemovedCb(self, layer, clip):
+        if isinstance(clip, GES.TransitionClip):
+            return
         self._disconnectFromClip(clip)
         action = ClipRemoved(layer, clip)
         self.log.push(action)
