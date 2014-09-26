@@ -343,6 +343,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._removeEffectConfigurationWidget()
         self.effects_properties_manager.cleanCache(effect)
         effect.get_parent().remove(effect)
+        self.app.project_manager.current_project.timeline.commit()
         self.app.action_log.commit()
         self._updateTreeview()
 
@@ -363,7 +364,6 @@ class EffectProperties(Gtk.Expander, Loggable):
                     clip.set_top_effect_priority(effect, priority)
                 self.app.project_manager.current_project.timeline.commit()
                 self.app.action_log.commit()
-                self.app.project_manager.current_project.pipeline.flushSeek()
                 self.updateAll()
                 break
 
