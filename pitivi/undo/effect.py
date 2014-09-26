@@ -22,6 +22,7 @@
 # any later version.
 
 from gi.repository import GObject
+from gi.repository import Gst
 
 from pitivi.undo.undo import UndoableAction
 from pitivi.effects import PROPS_TO_IGNORE
@@ -43,6 +44,14 @@ class EffectPropertyChanged(UndoableAction):
     def undo(self):
         self.effect.set_child_property(self.property_name, self.old_value)
         self._undone()
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("set-child-property")
+        st['element-name'] = self.effect.get_name()
+        st['property'] = self.property_name
+        st['value'] = self.new_value
+
+        return st
 
 
 # FIXME We should refactor pitivi.undo.PropertyChangeTracker so we can use it as
@@ -123,6 +132,14 @@ class EffectAdded(UndoableAction):
         self.effect = None
         self._undone()
 
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("container-add-child")
+        st["container-name"] = self.clip.get_name()
+        st["asset-id"] = self.effect.get_id()
+        st["child-type"] = GObject.type_name(self.effect.get_asset().get_extractable_type())
+
+        return st
+
 
 class EffectRemoved(UndoableAction):
 
@@ -158,3 +175,10 @@ class EffectRemoved(UndoableAction):
         self.clip.get_layer().get_timeline().commit()
         self._props_changed = []
         self._undone()
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("container-remove-child")
+        st["container-name"] = self.clip.get_name()
+        st["child-name"] = self.effect.get_name()
+
+        return st
