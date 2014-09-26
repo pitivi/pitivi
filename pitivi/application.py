@@ -24,6 +24,8 @@
 import os
 import time
 
+from datetime import datetime
+
 from gi.repository import GObject
 from gi.repository import Gio
 from gi.repository import Gtk
@@ -78,6 +80,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log = UndoableActionLog(self)
         self.timeline_log_observer = None
         self.project_log_observer = None
+        self._last_action_time = Gst.util_get_timestamp()
 
         if 'PITIVI_SCENARIO_FILE' in os.environ:
             uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
@@ -103,6 +106,14 @@ class Pitivi(Gtk.Application, Loggable):
             self.log_file.write(
                 "description, seek=true, handles-states=true\n")
             self._first_action = False
+
+        now = Gst.util_get_timestamp()
+        if now - self._last_action_time > 0.05 * Gst.SECOND:
+            # We need to make sure that the waiting time was more than 50 ms.
+            st = Gst.Structure.new_empty("wait")
+            st["duration"] = float((now - self._last_action_time) / Gst.SECOND)
+            self.log_file.write(st.to_string() + "\n")
+            self._last_action_time = now
 
         if not isinstance(action, Gst.Structure):
             structure = Gst.Structure.new_empty(action)
@@ -217,6 +228,7 @@ class Pitivi(Gtk.Application, Loggable):
             self.gui.destroy()
         self.threads.stopAllThreads()
         self.settings.storeSettings()
+        self.write_action("stop")
         self.log_file.close()
         self.quit()
         return True
