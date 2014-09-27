@@ -24,8 +24,8 @@ from gi.repository import GES
 from gi.repository import GObject
 
 from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
-from pitivi.undo.effect import EffectAdded, EffectRemoved
-from pitivi.undo.effect import EffectGstElementPropertyChangeTracker
+from pitivi.undo.effect import TrackElementAdded, TrackElementRemoved
+from pitivi.undo.effect import TrackElementChildPropertyTracker
 
 
 class ClipPropertyChangeTracker(PropertyChangeTracker):
@@ -294,13 +294,12 @@ class TimelineLogObserver(object):
         self.log = log
         self.clip_property_trackers = {}
         self.interpolator_keyframe_trackers = {}
-        self.effect_properties_tracker = EffectGstElementPropertyChangeTracker(
-            log)
+        self.children_props_tracker = TrackElementChildPropertyTracker(log)
         self._pipeline = None
 
     def setPipeline(self, pipeline):
         self._pipeline = pipeline
-        self.effect_properties_tracker.pipeline = pipeline
+        self.children_props_tracker.pipeline = pipeline
 
     def getPipeline(self):
         return self._pipeline
@@ -366,7 +365,7 @@ class TimelineLogObserver(object):
         # for prop, interpolator in track_element.getInterpolators().itervalues():
             # self._connectToInterpolator(interpolator)
         if isinstance(track_element, GES.BaseEffect):
-            self.effect_properties_tracker.addEffectElement(track_element)
+            self.children_props_tracker.addTrackElement(track_element)
 
     def _disconnectFromTrackElement(self, track_element):
         pass
@@ -415,16 +414,15 @@ class TimelineLogObserver(object):
     def _clipTrackElementAddedCb(self, clip, track_element):
         self._connectToTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = EffectAdded(clip, track_element,
-                                 self.effect_properties_tracker)
+            action = TrackElementAdded(clip, track_element,
+                                       self.children_props_tracker)
             self.log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
         self._disconnectFromTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = EffectRemoved(clip,
-                                   track_element,
-                                   self.effect_properties_tracker)
+            action = TrackElementRemoved(clip, track_element,
+                                         self.children_props_tracker)
             self.log.push(action)
 
     def _interpolatorKeyframeAddedCb(self, track_element, keyframe):
@@ -432,8 +430,7 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _interpolatorKeyframeRemovedCb(self, track_element, keyframe, old_value=None):
-        action = self.interpolatorKeyframeRemovedAction(
-            track_element, keyframe)
+        action = self.interpolatorKeyframeRemovedAction(track_element, keyframe)
         self.log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
