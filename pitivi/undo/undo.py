@@ -141,7 +141,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
-        self.app = weakref.proxy(app)
+        if app is not None:
+            self.app = weakref.proxy(app)
+        else:
+            self.app = None
         self.undo_stacks = []
         self.redo_stacks = []
         self.stacks = []
@@ -165,9 +168,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.debug("Pushing %s", action)
 
         try:
-            st = action.serializeLastAction()
-            if self.app is not None and st is not None:
-                self.app.write_action(st)
+            if action is not None:
+                st = action.serializeLastAction()
+                if self.app is not None and st is not None:
+                    self.app.write_action(st)
         except NotImplementedError:
             self.warning("No serialization method for that action")
 

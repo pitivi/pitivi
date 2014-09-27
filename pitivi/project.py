@@ -972,9 +972,10 @@ class Project(Loggable, GES.Project):
         """
         # In this extract call the project is loaded from the file.
         self.timeline = self.extract()
-        self.timeline.commit = self._commit
         if self.timeline is None:
             return False
+
+        self.timeline.commit = self._commit
         if not self.timeline.get_layers():
             self.timeline.props.auto_transition = True
         self._calculateNbLoadingAssets()

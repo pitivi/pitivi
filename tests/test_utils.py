@@ -89,11 +89,3 @@ class TestDependencyChecks(TestCase):
         classic_dep = ClassicDependency("numpy", None)
         classic_dep.check()
         self.assertTrue(classic_dep.satisfied)
-
-        gst_plugin_dep = GstPluginDependency("gnonlin", "1.1.90")
-        gst_plugin_dep.check()
-        self.assertTrue(gst_plugin_dep.satisfied)
-
-        gst_plugin_dep = GstPluginDependency("gnonlin", "9.9.9")
-        gst_plugin_dep.check()
-        self.assertFalse(gst_plugin_dep.satisfied)
