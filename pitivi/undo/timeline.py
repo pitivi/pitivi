@@ -50,7 +50,11 @@ class TrackElementPropertyChanged(UndoableAction):
         st = Gst.Structure.new_empty("set-child-property")
         st['element-name'] = self.track_element.get_name()
         st['property'] = self.property_name
-        st['value'] = self.new_value
+        value = self.new_value
+        if isinstance(self.new_value, GObject.GFlags) or\
+                isinstance(self.new_value, GObject.GEnum):
+            value = int(self.new_value)
+        st['value'] = value
 
         return st
 
@@ -526,6 +530,8 @@ class TimelineLogObserver(object):
         # for prop, interpolator in track_element.getInterpolators().itervalues():
             # self._connectToInterpolator(interpolator)
         if isinstance(track_element, GES.BaseEffect):
+            self.children_props_tracker.addTrackElement(track_element)
+        elif isinstance(track_element, GES.TitleSource):
             self.children_props_tracker.addTrackElement(track_element)
 
     def _disconnectFromTrackElement(self, track_element):

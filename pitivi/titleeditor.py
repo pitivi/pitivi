@@ -52,6 +52,7 @@ class TitleEditor(Loggable):
     def __init__(self, app):
         Loggable.__init__(self)
         self.app = app
+        self.action_log = app.action_log
         self.settings = {}
         self.source = None
         self.seeker = Seeker()
@@ -59,6 +60,8 @@ class TitleEditor(Loggable):
         # Drag attributes
         self._drag_events = []
         self._signals_connected = False
+        self._setting_props = False
+        self._children_props_handler = None
 
         self._createUI()
 
@@ -75,7 +78,7 @@ class TitleEditor(Loggable):
 
         self.textbuffer = Gtk.TextBuffer()
         self.textarea.set_buffer(self.textbuffer)
-        self.textbuffer.connect("changed", self._updateSourceText)
+        self.textbuffer.connect("changed", self._textChangedCb)
 
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
@@ -99,25 +102,29 @@ class TitleEditor(Loggable):
             self.settings["halignment"].append(en, n)
         self._deactivate()
 
+    def _setChildProperty(self, name, value):
+        self.action_log.begin("Title %s change" % name)
+        self._setting_props = True
+        self.source.set_child_property(name, value)
+        self._setting_props = False
+        self.action_log.commit()
+
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title background color to %x", color)
-        self.source.set_background(color)
-        self.seeker.flush()
+        self._setChildProperty("foreground-color", color)
 
     def _frontTextColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
         self.debug("Setting title foreground color to %x", color)
         # TODO: Use set_text_color when we work with TitleSources instead of
         # TitleClips
-        self.source.set_color(color)
-        self.seeker.flush()
+        self._setChildProperty("color", color)
 
     def _fontButtonCb(self, widget):
         font_desc = widget.get_font_desc().to_string()
         self.debug("Setting font desc to %s", font_desc)
-        self.source.set_font_desc(font_desc)
-        self.seeker.flush()
+        self._setChildProperty("font-desc", font_desc)
 
     def _activate(self):
         """
@@ -137,13 +144,15 @@ class TitleEditor(Loggable):
         self.editing_box.hide()
         self._disconnect_signals()
 
-    def _updateFromSource(self):
-        if not self.source:
-            # Nothing to update from.
-            return
+    def _setWidgetText(self):
+        res, source_text = self.source.get_child_property("text")
+        text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
+                                        self.textbuffer.get_end_iter(),
+                                        True)
+        if text == source_text:
+            return False
 
-        source_text = self.source.get_text()
-        if source_text is None:
+        if res is False:
             # FIXME: sometimes we get a TextOverlay/TitleSource
             # without a valid text property. This should not happen.
             source_text = ""
@@ -152,24 +161,32 @@ class TitleEditor(Loggable):
         self.log("Title text set to %s", source_text)
         self.textbuffer.set_text(source_text)
 
-        self.settings['xpos'].set_value(self.source.get_xpos())
-        self.settings['ypos'].set_value(self.source.get_ypos())
+        return True
+
+    def _updateFromSource(self):
+        if not self.source:
+            # Nothing to update from.
+            return
+
+        self._setWidgetText()
+        self.settings['xpos'].set_value(self.source.get_child_property("xpos")[1])
+        self.settings['ypos'].set_value(self.source.get_child_property("ypos")[1])
         self.settings['valignment'].set_active_id(
-            self.source.get_valignment().value_name)
+            self.source.get_child_property("valignment")[1].value_name)
         self.settings['halignment'].set_active_id(
-            self.source.get_halignment().value_name)
+            self.source.get_child_property("halignment")[1].value_name)
 
         font_desc = Pango.FontDescription.from_string(
-            self.source.get_font_desc())
+            self.source.get_child_property("font-desc")[1])
         self.font_button.set_font_desc(font_desc)
 
-        color = argb_to_gdk_rgba(self.source.get_text_color())
+        color = argb_to_gdk_rgba(self.source.get_child_property("color")[1])
         self.foreground_color_button.set_rgba(color)
 
-        color = argb_to_gdk_rgba(self.source.get_background_color())
+        color = argb_to_gdk_rgba(self.source.get_child_property("foreground-color")[1])
         self.background_color_button.set_rgba(color)
 
-    def _updateSourceText(self, unused_updated_obj):
+    def _textChangedCb(self, unused_updated_obj):
         if not self.source:
             # Nothing to update.
             return
@@ -178,8 +195,7 @@ class TitleEditor(Loggable):
                                         self.textbuffer.get_end_iter(),
                                         True)
         self.log("Source text updated to %s", text)
-        self.source.set_text(text)
-        self.seeker.flush()
+        self._setChildProperty("text", text)
 
     def _updateSource(self, updated_obj):
         """
@@ -192,22 +208,17 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    self.source.set_valignment(
-                        getattr(GES.TextVAlign, obj.get_active_id().upper()))
-                    self.settings["ypos"].set_visible(
-                        obj.get_active_id() == "position")
+                    value = getattr(GES.TextVAlign, obj.get_active_id().upper())
+                    visible = obj.get_active_id() == "position"
+                    self.settings["ypos"].set_visible(visible)
                 elif name == "halignment":
-                    self.source.set_halignment(
-                        getattr(GES.TextHAlign, obj.get_active_id().upper()))
-                    self.settings["xpos"].set_visible(
-                        obj.get_active_id() == "position")
-                elif name == "xpos":
-                    self.settings["halignment"].set_active_id("position")
-                    self.source.set_xpos(obj.get_value())
-                elif name == "ypos":
-                    self.settings["valignment"].set_active_id("position")
-                    self.source.set_ypos(obj.get_value())
-                self.seeker.flush()
+                    value = getattr(GES.TextHAlign, obj.get_active_id().upper())
+                    visible = obj.get_active_id() == "position"
+                    self.settings["xpos"].set_visible(visible)
+                else:
+                    value = obj.get_value()
+
+                self._setChildProperty(name, value)
                 return
 
     def set_source(self, source):
@@ -220,14 +231,13 @@ class TitleEditor(Loggable):
         self._deactivate()
         assert isinstance(source, GES.TextOverlay) or \
             isinstance(source, GES.TitleSource)
-        # TODO: Remove ".get_parent()" when bug 727880 is fixed.
-        self.source = source.get_parent()
+        self.source = source
         self._updateFromSource()
         self._activate()
 
     def unset_source(self):
-        self.source = None
         self._deactivate()
+        self.source = None
 
     def _createCb(self, unused_button):
         """
@@ -236,14 +246,68 @@ class TitleEditor(Loggable):
         clip = GES.TitleClip()
         clip.set_text("")
         clip.set_duration(int(Gst.SECOND * 5))
-        clip.set_color(FOREGROUND_DEFAULT_COLOR)
-        clip.set_background(BACKGROUND_DEFAULT_COLOR)
         # TODO: insert on the current layer at the playhead position.
         # If no space is available, create a new layer to insert to on top.
         self.app.gui.timeline_ui.insertEnd([clip])
         self.app.gui.timeline_ui.timeline.selection.setToObj(clip, SELECT)
 
+        clip.set_color(FOREGROUND_DEFAULT_COLOR)
+        clip.set_background(BACKGROUND_DEFAULT_COLOR)
+
+    def _propertyChangedCb(self, source, unused_gstelement, pspec):
+        if self._setting_props:
+            self.seeker.flush()
+            return
+
+        flush = False
+        if pspec.name == "text":
+            if self._setWidgetText() is True:
+                flush = True
+        elif pspec.name in ["xpos", "ypos"]:
+            value = self.source.get_child_property(pspec.name)[1]
+            if self.settings[pspec.name].get_value() == value:
+                return
+
+            flush = True
+            self.settings[pspec.name].set_value(value)
+        elif pspec.name in ["valignment", "halignment"]:
+            value = self.source.get_child_property(pspec.name)[1].value_name
+            if self.settings[pspec.name].get_active_id() == value:
+                return
+
+            flush = True
+            self.settings[pspec.name].set_active_id(value)
+        elif pspec.name == "font-desc":
+            value = self.source.get_child_property("font-desc")[1]
+            if self.font_button.get_font_desc() == value:
+                return
+
+            flush = True
+            font_desc = Pango.FontDescription.from_string(value)
+            self.font_button.set_font_desc(font_desc)
+        elif pspec.name == "color":
+            color = argb_to_gdk_rgba(self.source.get_child_property("color")[1])
+            if color == self.foreground_color_button.get_rgba():
+                return
+
+            flush = True
+            self.foreground_color_button.set_rgba(color)
+        elif pspec.name == "foreground-color":
+            color = argb_to_gdk_rgba(self.source.get_child_property("foreground-color")[1])
+
+            if color == self.background_color_button.get_rgba():
+                return
+
+            flush = True
+            self.background_color_button.set_rgba(color)
+
+        if flush is True:
+            self.seeker.flush()
+
     def _connect_signals(self):
+        if self.source and not self._children_props_handler:
+            self._children_props_handler = self.source.connect('deep-notify',
+                                                               self._propertyChangedCb)
         if not self._signals_connected:
             self.app.gui.viewer.target.connect(
                 "motion-notify-event", self.drag_notify_event)
@@ -254,6 +318,10 @@ class TitleEditor(Loggable):
             self._signals_connected = True
 
     def _disconnect_signals(self):
+        if self._children_props_handler is not None:
+            self.source.disconnect(self._children_props_handler)
+            self._children_props_handler = None
+
         if not self._signals_connected:
             return
         self.app.gui.viewer.target.disconnect_by_func(self.drag_notify_event)
@@ -295,7 +363,6 @@ class TitleEditor(Loggable):
             newypos = self.settings["ypos"].get_value() + ydiff
             self.settings["xpos"].set_value(newxpos)
             self.settings["ypos"].set_value(newypos)
-            self.seeker.flush()
             return True
         else:
             return False
@@ -318,7 +385,10 @@ class TitleEditor(Loggable):
 
     def selectionChangedCb(self, selection):
         selected_clip = selection.getSingleClip(GES.TitleClip)
-        source = selected_clip and selected_clip.get_children(False)[0]
+        source = None
+        if selected_clip:
+            source = selected_clip.get_children(False)[0]
+
         if source:
             self.set_source(source)
         else:
