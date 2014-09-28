@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
-  <object class="GtkImage" id="help_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">help-contents</property>
-  </object>
-  <object class="GtkImage" id="new_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-new</property>
-  </object>
-  <object class="GtkImage" id="open_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">document-open</property>
-  </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Welcome</property>
@@ -95,9 +80,9 @@
                     <property name="label" translatable="yes">New</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="can_default">True</property>
+                    <property name="has_default">True</property>
                     <property name="receives_default">True</property>
-                    <property name="image">new_icon</property>
-                    <property name="always_show_image">True</property>
                     <signal name="clicked" handler="_newProjectCb" swapped="no"/>
                   </object>
                   <packing>
@@ -112,8 +97,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="image">open_icon</property>
-                    <property name="always_show_image">True</property>
                     <signal name="clicked" handler="_onBrowseButtonClickedCb" swapped="no"/>
                   </object>
                   <packing>
@@ -128,8 +111,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="image">help_icon</property>
-                    <property name="always_show_image">True</property>
                     <signal name="clicked" handler="_userManualCb" swapped="no"/>
                   </object>
                   <packing>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -22,11 +22,6 @@
     <property name="value">1900</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-  </object>
-  <object class="GtkImage" id="cancel_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">gtk-cancel</property>
   </object>
   <object class="GtkListStore" id="model1">
     <columns>
@@ -61,11 +56,6 @@
       </row>
     </data>
   </object>
-  <object class="GtkImage" id="ok_icon">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">gtk-ok</property>
-  </object>
   <object class="GtkDialog" id="project-settings-dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -90,8 +80,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">cancel_icon</property>
-                <property name="always_show_image">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -105,8 +93,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">ok_icon</property>
-                <property name="always_show_image">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -333,6 +319,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="halign">start</property>
+                        <property name="xalign">0.5</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
                         <signal name="toggled" handler="_selectDarRadiobuttonToggledCb" swapped="no"/>
@@ -383,6 +370,7 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
                         <property name="halign">start</property>
+                        <property name="xalign">0.5</property>
                         <property name="draw_indicator">True</property>
                         <property name="group">select_dar_radiobutton</property>
                       </object>
@@ -455,6 +443,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="halign">start</property>
+                            <property name="xalign">0.5</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="_constrainSarButtonToggledCb" swapped="no"/>
                           </object>
