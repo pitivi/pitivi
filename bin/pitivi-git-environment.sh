@@ -15,7 +15,7 @@ MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 # Change this variable to 'master' if you prefer to work with the master branch.
 # When using "master", this script will automatically "pull --rebase" modules.
 # For now, we are using master until we depend on a released version.
-DEFAULT_GST_VERSION="1.2"
+DEFAULT_GST_VERSION="1.4"
 GST_RELEASE_TAG=${GST_RELEASE_TAG:-$DEFAULT_GST_VERSION}
 GST_MIN_VERSION=${GST_MIN_VERSION:-$DEFAULT_GST_VERSION}
 
