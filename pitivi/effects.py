@@ -139,18 +139,18 @@ BLACKLISTED_PLUGINS = ["ldaspa"]
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
-class EffectFactory():
+class EffectFactory(object):
     """
     Factories that applies an effect on a stream
     """
-    def __init__(self, effect_name, media_type, categories=[_("Uncategorized")],
-                human_name="", description="", icon=None):
+    def __init__(self, effect_name, media_type, categories,
+                human_name, description):
+        object.__init__(self)
         self.effect_name = effect_name
         self.media_type = media_type
         self.categories = categories
         self.description = description
         self.human_name = human_name
-        self._icon = icon
 
 
 class EffectsManager(object):
