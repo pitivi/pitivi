@@ -89,8 +89,7 @@ class TimelineTest(PitiviTestCase):
         dogtail.rawinput.pressKey("Del")
 
         self.goToEnd_button.click()
-        # Allow the UI to update
-        sleep(0.1)
+        sleep(0.5)
         self.assertEqual(self.timecode_widget.text, DURATION_OF_ONE_CLIP)
 
     def test_multiple_split(self):
