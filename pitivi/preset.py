@@ -283,9 +283,7 @@ class PresetManager(object):
             # default_path is the system-wide directory where the default
             # presets are installed; they are not expected to be editable.
             return False
-        else:
-            return True
-        return False
+        return True
 
     def _saveSection(self, fout, section):
         """Save the specified section into the specified file.
