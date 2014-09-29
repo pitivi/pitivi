@@ -161,8 +161,6 @@ class EffectsManager(object):
     def __init__(self):
         object.__init__(self)
         self._pixdir = os.path.join(get_pixmap_dir(), "effects")
-        self._audio_categories = set([])
-        self._video_categories = set([])
         self.video_effects = []
         self.audio_effects = []
         self._effect_factories_dict = {}
@@ -266,15 +264,7 @@ class EffectsManager(object):
         """
         Get all video effect categories names.
         """
-        if not self._video_categories:
-            for category in VIDEO_EFFECTS_CATEGORIES:
-                self._video_categories.add(category[0])
-        ret = list(self._video_categories)
-        ret.sort()
-        ret.insert(0, _("All effects"))
-        if VIDEO_EFFECTS_CATEGORIES:
-            ret.append(_("Uncategorized"))
-        return ret
+        return EffectsManager._getCategoriesNames(VIDEO_EFFECTS_CATEGORIES)
 
     video_categories = property(getVideoCategories)
 
@@ -282,17 +272,19 @@ class EffectsManager(object):
         """
         Get all audio effect categories names.
         """
-        if not self._audio_categories:
-            for category in AUDIO_EFFECTS_CATEGORIES:
-                self._audio_categories.add(category[0])
-        ret = list(self._audio_categories)
-        ret.sort()
-        ret.insert(0, _("All effects"))
-        if AUDIO_EFFECTS_CATEGORIES:
-            ret.append(_("Uncategorized"))
-        return ret
+        return EffectsManager._getCategoriesNames(AUDIO_EFFECTS_CATEGORIES)
 
     audio_categories = property(getAudioCategories)
+
+    @staticmethod
+    def _getCategoriesNames(categories):
+        ret = [category_name for category_name, unused_effects in categories]
+        ret.sort()
+        ret.insert(0, _("All effects"))
+        if categories:
+            # Add Uncategorized only if there are other categories defined.
+            ret.append(_("Uncategorized"))
+        return ret
 
     def getEffectIcon(self, effect_name):
         icon = None
