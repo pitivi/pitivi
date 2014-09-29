@@ -267,13 +267,10 @@ class EffectsManager(object):
         @type element_factory: L{Gst.ElementFactory}
         @return: A human readable name C{str} for the effect
         """
-        #TODO check if it is the good way to make it translatable
-        #And to filter actually!
         video = _("Video")
-        audio = _("Audio |audio")
+        audio = _("Audio")
         effect = _("effect")
-        pipe = " |"
-        uselessWords = re.compile(video + pipe + audio + pipe + effect)
+        uselessWords = re.compile(" |".join([video, audio, audio.lower(), effect]))
         return uselessWords.sub("", element_factory.get_longname()).title()
 
     def getVideoCategories(self, aware=True):
