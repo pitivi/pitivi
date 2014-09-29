@@ -797,8 +797,11 @@
                   <object class="GtkSpinButton" id="year_spinbutton">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="halign">start</property>
+                    <property name="max_length">4</property>
                     <property name="invisible_char">●</property>
                     <property name="adjustment">adjustment3</property>
+                    <property name="numeric">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -809,6 +812,7 @@
                   <object class="GtkEntry" id="author_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hexpand">True</property>
                     <property name="invisible_char">●</property>
                   </object>
                   <packing>
@@ -820,6 +824,7 @@
                   <object class="GtkEntry" id="title_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="hexpand">True</property>
                     <property name="invisible_char">●</property>
                   </object>
                   <packing>
