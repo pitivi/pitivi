@@ -239,16 +239,14 @@ class EffectsManager(object):
         categories = []
 
         for category in self._audio_categories_effects:
-            for name in category[1]:
-                if name == effect_name:
-                    categories.append(category[0])
-                    self._audio_categories.add(category[0])
+            if effect_name in category[1]:
+                categories.append(category[0])
+                self._audio_categories.add(category[0])
 
         for category in self._video_categories_effects:
-            for name in category[1]:
-                if name == effect_name:
-                    categories.append(category[0])
-                    self._video_categories.add(category[0])
+            if effect_name in category[1]:
+                categories.append(category[0])
+                self._video_categories.add(category[0])
 
         if not categories:
             uncategorized = _("Uncategorized")
