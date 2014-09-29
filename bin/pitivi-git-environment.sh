@@ -493,9 +493,14 @@ if [ $ready_to_run == 1 ]; then
       if [ -z "$*" ];
       then
         cd $PITIVI/pitivi
-        cp ~/.bashrc /tmp/ptvCustomPS1
-        echo "export PS1=[ptv]\ \$PS1" >> /tmp/ptvCustomPS1
-        bash --rcfile /tmp/ptvCustomPS1
+        if [ $SHELL != "/bin/bash" ];
+        then
+          PITIVI_ENV="[ptv]" $SHELL
+        else
+          cp ~/.bashrc /tmp/ptvCustomPS1
+          echo "export PS1=[ptv]\ \$PS1" >> /tmp/ptvCustomPS1
+          /bin/bash --rcfile /tmp/ptvCustomPS1
+        fi
       else
         /bin/bash -c "$*"
       fi
