@@ -76,7 +76,7 @@ class EffectLibraryTest(PitiviTestCase):
         self.improved_drag(self.center(effect), self.center(clip_effects_table))
         self.assertEqual(len(clip_effects_table.children), 15)
 
-        self.clipproperties.child(roleName="table").child(name="audioamplify").click()
+        self.clipproperties.child(roleName="table").child(name="Amplifier").click()
         fx_expander = self.clipproperties.child(name="Effects", roleName="toggle button")
         fx_expander.child(name="Normal clipping (default)", roleName="combo box")
         fx_expander.child(roleName="spin button").text = "2"
