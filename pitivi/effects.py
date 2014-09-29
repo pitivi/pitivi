@@ -55,8 +55,79 @@ from pitivi.utils.ui import EFFECT_TARGET_ENTRY, SPACING
 from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 
-#------------- Helper to handle effect in the backend ---------------------------#
 (VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))
+
+AUDIO_EFFECTS_CATEGORIES = ((_("All effects"), ("")),)
+
+VIDEO_EFFECTS_CATEGORIES = (
+    (_("All effects"), ("")),
+    (_("Colors"), (
+        # Mostly "serious" stuff that relates to correction/adjustments
+        # Fancier stuff goes into the "fancy" category
+        "cogcolorspace", "videobalance", "chromahold", "gamma",
+        "coloreffects", "exclusion", "burn", "dodge", "videomedian",
+        "frei0r-filter-color-distance", "frei0r-filter-threshold0r",
+        "frei0r-filter-contrast0r", "frei0r-filter-saturat0r",
+        "frei0r-filter-white-balance", "frei0r-filter-brightness",
+        "frei0r-filter-gamma", "frei0r-filter-invert0r",
+        "frei0r-filter-hueshift0r", "frei0r-filter-equaliz0r",
+        "frei0r-filter-bw0r", "frei0r-filter-glow",
+        "frei0r-filter-twolay0r", "frei0r-filter-3-point-color-balance",
+        "frei0r-filter-coloradj-rgb", "frei0r-filter-curves",
+        "frei0r-filter-levels", "frei0r-filter-primaries",
+        "frei0r-filter-sop-sat", "frei0r-filter-threelay0r",
+        "frei0r-filter-tint0r",
+    )),
+    (_("Compositing"), (
+        "alpha", "alphacolor", "gdkpixbufoverlay",
+        "frei0r-filter-transparency", "frei0r-filter-mask0mate",
+        "frei0r-filter-alpha0ps", "frei0r-filter-alphagrad",
+        "frei0r-filter-alphaspot", "frei0r-filter-bluescreen0r",
+        "frei0r-filter-select0r",
+    )),
+    (_("Noise & blur"), (
+        "gaussianblur", "diffuse", "dilate", "marble", "smooth",
+        "frei0r-filter-hqdn3d", "frei0r-filter-squareblur",
+        "frei0r-filter-sharpness", "frei0r-filter-edgeglow",
+        "frei0r-filter-facebl0r",
+    )),
+    (_("Analysis"), (
+        "videoanalyse", "videodetect", "videomark", "revtv",
+        "navigationtest", "frei0r-filter-rgb-parade",
+        "frei0r-filter-r", "frei0r-filter-g", "frei0r-filter-b",
+        "frei0r-filter-vectorscope", "frei0r-filter-luminance",
+        "frei0r-filter-opencvfacedetect", "frei0r-filter-pr0be",
+        "frei0r-filter-pr0file",
+    )),
+    (_("Geometry"), (
+        "cogscale", "aspectratiocrop", "cogdownsample", "videoscale",
+        "videocrop", "videoflip", "videobox", "gdkpixbufscale",
+        "kaleidoscope", "mirror", "pinch", "sphere", "square", "fisheye",
+        "stretch", "twirl", "waterriple", "rotate", "bulge", "circle",
+        "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
+        "frei0r-filter-lens-correction", "frei0r-filter-defish0r",
+        "frei0r-filter-perspective", "frei0r-filter-c0rners",
+        "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
+        "frei0r-filter-flippo", "frei0r-filter-3dflippo",
+    )),
+    (_("Fancy"), (
+        "rippletv", "streaktv", "radioactv", "optv", "solarize",
+        "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
+        "agingtv", "edgetv", "bulge", "circle", "fisheye", "tunnel",
+        "kaleidoscope", "mirror", "pinch", "sphere", "square",
+        "stretch", "twirl", "waterripple", "glfiltersobel", "chromium",
+        "frei0r-filter-sobel", "frei0r-filter-cartoon",
+        "frei0r-filter-water", "frei0r-filter-nosync0r",
+        "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
+        "frei0r-filter-distort0r", "frei0r-filter-light-graffiti",
+        "frei0r-filter-tehroxx0r", "frei0r-filter-vertigo",
+    )),
+    (_("Time"), (
+        "videorate", "frei0r-filter-delay0r", "frei0r-filter-baltan",
+        "frei0r-filter-nervous",
+    )),
+    (_("Uncategorized"), ("",))
+)
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
@@ -65,6 +136,7 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
 #FIXME Check if this is still true with GES
 #We should unblacklist it when #650985 is solved
 BLACKLISTED_PLUGINS = ["ldaspa"]
+
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
@@ -90,76 +162,6 @@ class EffectsManager(object):
     def __init__(self):
         object.__init__(self)
         self._pixdir = os.path.join(get_pixmap_dir(), "effects")
-        self._audio_categories_effects = ((_("All effects"), ("")),)
-        self._video_categories_effects = (
-            (_("All effects"), ("")),
-            (_("Colors"), (
-                # Mostly "serious" stuff that relates to correction/adjustments
-                # Fancier stuff goes into the "fancy" category
-                "cogcolorspace", "videobalance", "chromahold", "gamma",
-                "coloreffects", "exclusion", "burn", "dodge", "videomedian",
-                "frei0r-filter-color-distance", "frei0r-filter-threshold0r",
-                "frei0r-filter-contrast0r", "frei0r-filter-saturat0r",
-                "frei0r-filter-white-balance", "frei0r-filter-brightness",
-                "frei0r-filter-gamma", "frei0r-filter-invert0r",
-                "frei0r-filter-hueshift0r", "frei0r-filter-equaliz0r",
-                "frei0r-filter-bw0r", "frei0r-filter-glow",
-                "frei0r-filter-twolay0r", "frei0r-filter-3-point-color-balance",
-                "frei0r-filter-coloradj-rgb", "frei0r-filter-curves",
-                "frei0r-filter-levels", "frei0r-filter-primaries",
-                "frei0r-filter-sop-sat", "frei0r-filter-threelay0r",
-                "frei0r-filter-tint0r",
-            )),
-            (_("Compositing"), (
-                "alpha", "alphacolor", "gdkpixbufoverlay",
-                "frei0r-filter-transparency", "frei0r-filter-mask0mate",
-                "frei0r-filter-alpha0ps", "frei0r-filter-alphagrad",
-                "frei0r-filter-alphaspot", "frei0r-filter-bluescreen0r",
-                "frei0r-filter-select0r",
-            )),
-            (_("Noise & blur"), (
-                "gaussianblur", "diffuse", "dilate", "marble", "smooth",
-                "frei0r-filter-hqdn3d", "frei0r-filter-squareblur",
-                "frei0r-filter-sharpness", "frei0r-filter-edgeglow",
-                "frei0r-filter-facebl0r",
-            )),
-            (_("Analysis"), (
-                "videoanalyse", "videodetect", "videomark", "revtv",
-                "navigationtest", "frei0r-filter-rgb-parade",
-                "frei0r-filter-r", "frei0r-filter-g", "frei0r-filter-b",
-                "frei0r-filter-vectorscope", "frei0r-filter-luminance",
-                "frei0r-filter-opencvfacedetect", "frei0r-filter-pr0be",
-                "frei0r-filter-pr0file",
-            )),
-            (_("Geometry"), (
-                "cogscale", "aspectratiocrop", "cogdownsample", "videoscale",
-                "videocrop", "videoflip", "videobox", "gdkpixbufscale",
-                "kaleidoscope", "mirror", "pinch", "sphere", "square", "fisheye",
-                "stretch", "twirl", "waterriple", "rotate", "bulge", "circle",
-                "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
-                "frei0r-filter-lens-correction", "frei0r-filter-defish0r",
-                "frei0r-filter-perspective", "frei0r-filter-c0rners",
-                "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
-                "frei0r-filter-flippo", "frei0r-filter-3dflippo",
-            )),
-            (_("Fancy"), (
-                "rippletv", "streaktv", "radioactv", "optv", "solarize",
-                "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
-                "agingtv", "edgetv", "bulge", "circle", "fisheye", "tunnel",
-                "kaleidoscope", "mirror", "pinch", "sphere", "square",
-                "stretch", "twirl", "waterripple", "glfiltersobel", "chromium",
-                "frei0r-filter-sobel", "frei0r-filter-cartoon",
-                "frei0r-filter-water", "frei0r-filter-nosync0r",
-                "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
-                "frei0r-filter-distort0r", "frei0r-filter-light-graffiti",
-                "frei0r-filter-tehroxx0r", "frei0r-filter-vertigo",
-            )),
-            (_("Time"), (
-                "videorate", "frei0r-filter-delay0r", "frei0r-filter-baltan",
-                "frei0r-filter-nervous",
-            )),
-            (_("Uncategorized"), ("",))
-        )
         self._audio_categories = set([])
         self._video_categories = set([])
         self.video_effects = []
@@ -238,12 +240,12 @@ class EffectsManager(object):
         """
         categories = []
 
-        for category in self._audio_categories_effects:
+        for category in AUDIO_EFFECTS_CATEGORIES:
             if effect_name in category[1]:
                 categories.append(category[0])
                 self._audio_categories.add(category[0])
 
-        for category in self._video_categories_effects:
+        for category in VIDEO_EFFECTS_CATEGORIES:
             if effect_name in category[1]:
                 categories.append(category[0])
                 self._video_categories.add(category[0])
@@ -254,8 +256,8 @@ class EffectsManager(object):
             self._video_categories.add(uncategorized)
             self._audio_categories.add(uncategorized)
 
-        categories.insert(0, self._video_categories_effects[0][0])
-        categories.insert(0, self._audio_categories_effects[0][0])
+        categories.insert(0, VIDEO_EFFECTS_CATEGORIES[0][0])
+        categories.insert(0, AUDIO_EFFECTS_CATEGORIES[0][0])
 
         return categories
 
@@ -281,13 +283,11 @@ class EffectsManager(object):
             just return all categories
         """
         if not self._video_categories or not aware:
-            for category in self._video_categories_effects[1:]:
+            for category in VIDEO_EFFECTS_CATEGORIES[1:]:
                 self._video_categories.add(category[0])
-
         ret = list(self._video_categories)
         ret.sort()
-        ret.insert(0, self._video_categories_effects[0][0])
-
+        ret.insert(0, VIDEO_EFFECTS_CATEGORIES[0][0])
         return ret
 
     video_categories = property(getVideoCategories)
@@ -300,13 +300,11 @@ class EffectsManager(object):
         @return: All audio effect categories names C{str}
         """
         if not self._audio_categories or not aware:
-            for category in self._audio_categories_effects[1:]:
+            for category in AUDIO_EFFECTS_CATEGORIES[1:]:
                 self._audio_categories.add(category[0])
-
         ret = list(self._audio_categories)
         ret.sort()
-        ret.insert(0, self._audio_categories_effects[0][0])
-
+        ret.insert(0, AUDIO_EFFECTS_CATEGORIES[0][0])
         return ret
 
     audio_categories = property(getAudioCategories)
