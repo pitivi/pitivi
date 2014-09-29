@@ -34,8 +34,9 @@ Effects global handling
      that are too cumbersome to use as such
   _ Complex Audio/Video Effects
 """
-import re
+
 import os
+import re
 
 from gi.repository import GLib
 from gi.repository import Gst
@@ -57,10 +58,9 @@ from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 (VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))
 
-AUDIO_EFFECTS_CATEGORIES = ((_("All effects"), ("")),)
+AUDIO_EFFECTS_CATEGORIES = ()
 
 VIDEO_EFFECTS_CATEGORIES = (
-    (_("All effects"), ("")),
     (_("Colors"), (
         # Mostly "serious" stuff that relates to correction/adjustments
         # Fancier stuff goes into the "fancy" category
@@ -126,7 +126,6 @@ VIDEO_EFFECTS_CATEGORIES = (
         "videorate", "frei0r-filter-delay0r", "frei0r-filter-baltan",
         "frei0r-filter-nervous",
     )),
-    (_("Uncategorized"), ("",))
 )
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
@@ -239,22 +238,16 @@ class EffectsManager(object):
         @return: A C{list} of name C{str} of categories corresponding the effect
         """
         categories = []
-
-        for category in AUDIO_EFFECTS_CATEGORIES:
-            if effect_name in category[1]:
-                categories.append(category[0])
-
-        for category in VIDEO_EFFECTS_CATEGORIES:
-            if effect_name in category[1]:
-                categories.append(category[0])
-
+        for category_name, effects in AUDIO_EFFECTS_CATEGORIES:
+            if effect_name in effects:
+                categories.append(category_name)
+        for category_name, effects in VIDEO_EFFECTS_CATEGORIES:
+            if effect_name in effects:
+                categories.append(category_name)
         if not categories:
             uncategorized = _("Uncategorized")
             categories.append(uncategorized)
-
-        categories.insert(0, VIDEO_EFFECTS_CATEGORIES[0][0])
-        categories.insert(0, AUDIO_EFFECTS_CATEGORIES[0][0])
-
+        categories.insert(0, _("All effects"))
         return categories
 
     def _getEffectName(self, element_factory):
@@ -279,11 +272,13 @@ class EffectsManager(object):
             just return all categories
         """
         if not self._video_categories or not aware:
-            for category in VIDEO_EFFECTS_CATEGORIES[1:]:
+            for category in VIDEO_EFFECTS_CATEGORIES:
                 self._video_categories.add(category[0])
         ret = list(self._video_categories)
         ret.sort()
-        ret.insert(0, VIDEO_EFFECTS_CATEGORIES[0][0])
+        ret.insert(0, _("All effects"))
+        if VIDEO_EFFECTS_CATEGORIES:
+            ret.append(_("Uncategorized"))
         return ret
 
     video_categories = property(getVideoCategories)
@@ -296,11 +291,13 @@ class EffectsManager(object):
         @return: All audio effect categories names C{str}
         """
         if not self._audio_categories or not aware:
-            for category in AUDIO_EFFECTS_CATEGORIES[1:]:
+            for category in AUDIO_EFFECTS_CATEGORIES:
                 self._audio_categories.add(category[0])
         ret = list(self._audio_categories)
         ret.sort()
-        ret.insert(0, AUDIO_EFFECTS_CATEGORIES[0][0])
+        ret.insert(0, _("All effects"))
+        if AUDIO_EFFECTS_CATEGORIES:
+            ret.append(_("Uncategorized"))
         return ret
 
     audio_categories = property(getAudioCategories)
