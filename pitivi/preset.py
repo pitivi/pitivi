@@ -104,15 +104,8 @@ class PresetManager(object):
             file_name = self.system.getUniqueFilename(preset_name + ".json")
             file_path = os.path.join(self.user_path, file_name)
             self.presets[preset_name]["filepath"] = file_path
-        try:
-            with open(file_path, "w") as fout:
-                self._saveSection(fout, preset_name)
-        except IOError:
-            # FIXME: this can happen in two cases: a permissions error,
-            # or an invalid filename (ex: gibberish). In the latter case
-            # we should log an error message or show an infobar, and
-            # the test suite should verify this
-            pass
+        with open(file_path, "w") as fout:
+            self._saveSection(fout, preset_name)
 
     def _convertSectionNameToPresetName(self, section):
         # A section name for a ConfigParser can have any name except "default"!
