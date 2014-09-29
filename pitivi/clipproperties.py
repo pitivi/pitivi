@@ -20,7 +20,6 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-import pickle
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -183,9 +182,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
         # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
         class EffectsListStore(Gtk.ListStore, Gtk.TreeDragSource):
+            def __init__(self, *args):
+                Gtk.ListStore.__init__(self, *args)
+                # Simply set the source index on the storemodrel directly
+                # to avoid issues with the selection_data API
+                # FIXME: Work around https://bugzilla.gnome.org/show_bug.cgi?id=737587
+                self.source_index = None
+
             def do_drag_data_get(self, path, selection_data):
-                data = pickle.dumps(path.get_indices())
-                selection_data.set(Gdk.Atom.intern("pitivi/effect", False), 0, data)
+                self.source_index = path.get_indices()[0]
 
         self.storemodel = EffectsListStore(bool, str, str, str, str, object)
         self.treeview = Gtk.TreeView(model=self.storemodel)
@@ -390,8 +395,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
             # An effect dragged from the same treeview to change its position.
             # Source
-            source_indices = pickle.loads(selection_data.get_data())
-            source_index = source_indices[0]
+            source_index = self.storemodel.source_index
+            self.storemodel.source_index = None
             # Target
             dest_row = treeview.get_dest_row_at_pos(x, y)
             if dest_row:
