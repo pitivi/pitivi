@@ -317,21 +317,16 @@ class EffectsManager(object):
     audio_categories = property(getAudioCategories)
 
     def getEffectIcon(self, effect_name):
-        effect_name = effect_name + ".png"
         icon = None
         try:
             # We can afford to scale the images here, the impact is negligible
             icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
-                os.path.join(self._pixdir, effect_name),
+                os.path.join(self._pixdir, effect_name + ".png"),
                 ICON_WIDTH, ICON_WIDTH)
         # An empty except clause is bad, but "gi._glib.GError" is not helpful.
         except:
-            try:
-                icon = GdkPixbuf.Pixbuf.new_from_file(
-                    os.path.join(self._pixdir, "defaultthumbnail.svg"))
-            except:
-                return None
-
+            icon = GdkPixbuf.Pixbuf.new_from_file(
+                os.path.join(self._pixdir, "defaultthumbnail.svg"))
         return icon
 
 
