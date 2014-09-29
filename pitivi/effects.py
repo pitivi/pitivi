@@ -238,17 +238,17 @@ class EffectsManager(object):
         """
         categories = []
 
-        for categorie in self._audio_categories_effects:
-            for name in categorie[1]:
+        for category in self._audio_categories_effects:
+            for name in category[1]:
                 if name == effect_name:
-                    categories.append(categorie[0])
-                    self._audio_categories.append(categorie[0])
+                    categories.append(category[0])
+                    self._audio_categories.append(category[0])
 
-        for categorie in self._video_categories_effects:
-            for name in categorie[1]:
+        for category in self._video_categories_effects:
+            for name in category[1]:
                 if name == effect_name:
-                    categories.append(categorie[0])
-                    self._video_categories.add(categorie[0])
+                    categories.append(category[0])
+                    self._video_categories.add(category[0])
 
         if not categories:
             uncategorized = _("Uncategorized")
@@ -283,8 +283,8 @@ class EffectsManager(object):
             just return all categories
         """
         if not self._video_categories or not aware:
-            for categorie in self._video_categories_effects[1:]:
-                self._video_categories.add(categorie[0])
+            for category in self._video_categories_effects[1:]:
+                self._video_categories.add(category[0])
 
         ret = list(self._video_categories)
         ret.sort()
@@ -302,8 +302,8 @@ class EffectsManager(object):
         @return: All audio effect categories names C{str}
         """
         if not self._audio_categories or not aware:
-            for categorie in self._audio_categories_effects[1:]:
-                self._audio_categories.add(categorie[0])
+            for category in self._audio_categories_effects[1:]:
+                self._audio_categories.add(category[0])
 
         ret = list(self._audio_categories)
         ret.sort()
