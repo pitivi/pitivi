@@ -262,16 +262,11 @@ class EffectsManager(object):
         uselessWords = re.compile(" |".join([video, audio, audio.lower(), effect]))
         return uselessWords.sub("", element_factory.get_longname()).title()
 
-    def getVideoCategories(self, aware=True):
+    def getVideoCategories(self):
         """
-        @param aware: C{True} if you want it to return only categories on which
-            there are effects on the system, else C{False}
-        @type aware: C{bool}
-        @return: All video effect categories names C{str} that are available
-            on the system if it has been filled earlier, if it hasen't it will
-            just return all categories
+        Get all video effect categories names.
         """
-        if not self._video_categories or not aware:
+        if not self._video_categories:
             for category in VIDEO_EFFECTS_CATEGORIES:
                 self._video_categories.add(category[0])
         ret = list(self._video_categories)
@@ -283,14 +278,11 @@ class EffectsManager(object):
 
     video_categories = property(getVideoCategories)
 
-    def getAudioCategories(self, aware=True):
+    def getAudioCategories(self):
         """
-        @param aware: C{True} if you want it to return only categories on
-            which there are effects on the system, else C{False}
-        @type aware: C{bool}
-        @return: All audio effect categories names C{str}
+        Get all audio effect categories names.
         """
-        if not self._audio_categories or not aware:
+        if not self._audio_categories:
             for category in AUDIO_EFFECTS_CATEGORIES:
                 self._audio_categories.add(category[0])
         ret = list(self._audio_categories)
