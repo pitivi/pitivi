@@ -32,6 +32,7 @@ class TimelineTest(PitiviTestCase):
         sample = self.import_media()
         self.improved_drag(self.center(sample), self.center(self.timeline))
         self.goToEnd_button.click()
+        sleep(0.5)
         self.assertNotEqual(self.timecode_widget.text, "00:00.000")
 
     def test_multiple_drag(self):
