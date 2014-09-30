@@ -286,6 +286,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.keyframedElement = None
         self.rightHandle = None
         self.isSelected = False
+        self.updating_keyframes = False
         size = self.bElement.get_duration()
 
         self.background = self._createBackground()
@@ -316,6 +317,24 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self._createMixingKeyframes()
 
         self._connectToEvents()
+
+    def _valueChanged(self, source, value):
+        if self.updating_keyframes is True:
+            return
+
+        self.updateKeyframes()
+
+    def _valueAddedCb(self, source, value):
+        if self.updating_keyframes is True:
+            return
+
+        self.updateKeyframes()
+
+    def _valueRemovedCb(self, source, value):
+        if self.updating_keyframes is True:
+            return
+
+        self.updateKeyframes()
 
     # Public API
 
@@ -354,14 +373,22 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.restore_easing_state()
 
     def addKeyframe(self, value, timestamp):
+        self.timeline._container.app.action_log.begin("Add KeyFrame")
+        self.updating_keyframes = True
         self.source.set(timestamp, value)
         self.updateKeyframes()
+        self.timeline._container.app.action_log.commit()
+        self.updating_keyframes = False
 
     def removeKeyframe(self, kf):
+        self.timeline._container.app.action_log.begin("Remove KeyFrame")
+        self.updating_keyframes = True
         self.source.unset(kf.value.timestamp)
         self.keyframes = sorted(
             self.keyframes, key=lambda keyframe: keyframe.value.timestamp)
         self.updateKeyframes()
+        self.timeline._container.app.action_log.commit()
+        self.updating_keyframes = False
 
     def showKeyframes(self, element, propname, isDefault=False):
         binding = element.get_control_binding(propname.name)
@@ -377,6 +404,9 @@ class TimelineElement(Clutter.Actor, Zoomable):
         self.prop = propname
         self.keyframedElement = element
         self.source = self.binding.props.control_source
+        self.source.connect("value-added", self._valueAddedCb)
+        self.source.connect("value-removed", self._valueRemovedCb)
+        self.source.connect("value-changed", self._valueChanged)
 
         if isDefault:
             self.default_prop = propname
@@ -426,6 +456,8 @@ class TimelineElement(Clutter.Actor, Zoomable):
         if not self.source:
             return
 
+        updating = self.updating_keyframes
+        self.updating_keyframes = True
         values = self.source.get_all()
         if len(values) < 2 and self.bElement.props.duration > 0:
             self.source.unset_all()
@@ -447,6 +479,7 @@ class TimelineElement(Clutter.Actor, Zoomable):
             self.keyframes.append(keyframe)
 
         self.drawLines()
+        self.updating_keyframes = updating
 
     def cleanup(self):
         Zoomable.__del__(self)
@@ -761,6 +794,8 @@ class Line(Clutter.Actor):
         pass
 
     def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
+        self.timelineElement.timeline._container.app.action_log.begin(
+            "Dragging keyframe line")
         self.dragBeginStartX = event_x
         self.dragBeginStartY = event_y
         self.origY = self.props.y
@@ -783,6 +818,7 @@ class Line(Clutter.Actor):
         self.nextKeyframe.endDrag()
         if self.timelineElement.timeline.getActorUnderPointer() != self:
             self._ungrab()
+        self.timelineElement.timeline._container.app.action_log.commit()
 
 
 class KeyframeMenu(GtkClutter.Actor):
@@ -923,6 +959,8 @@ class Keyframe(Clutter.Actor):
         if not self.has_changeable_time:
             newTs = self.lastTs
 
+        updating = self.timelineElement.updating_keyframes
+        self.timelineElement.updating_keyframes = True
         self.timelineElement.source.unset(self.lastTs)
         if (self.timelineElement.source.set(newTs, newValue)):
             self.value = Gst.TimedValue()
@@ -942,7 +980,11 @@ class Keyframe(Clutter.Actor):
                 self.timelineElement.timeline._container.seekInPosition(
                     newTs + self.start)
 
+        self.timelineElement.updating_keyframes = updating
+
     def _dragBeginCb(self, unused_action, unused_actor, event_x, event_y, unused_modifiers):
+        self.timelineElement.timeline._container.app.action_log.begin(
+            "Dragging keyframe")
         self.dragProgressed = False
         self.startDrag(event_x, event_y)
 
@@ -958,6 +1000,7 @@ class Keyframe(Clutter.Actor):
         self.endDrag()
         if self.timelineElement.timeline.getActorUnderPointer() != self:
             self._unselect()
+        self.timelineElement.timeline._container.app.action_log.commit()
 
 
 class URISourceElement(TimelineElement):
