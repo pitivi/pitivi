@@ -1472,6 +1472,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if self.isDraggedClip:
                 self.timeline.convertGhostClips()
                 self.timeline.resetGhostClips()
+                self.dropData = None
+                self.dropDataReady = False
                 if zoom_was_fitted:
                     self._setBestZoomRatio()
                 else:
@@ -1490,7 +1492,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _dragDataReceivedCb(self, widget, drag_context, unused_x, unused_y, selection_data, unused_info, timestamp):
         dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
-        print (dragging_effect)
         if not self.dropDataReady:
             if dragging_effect:
                 # Dragging an effect from the Effect Library.
