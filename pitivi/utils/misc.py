@@ -70,17 +70,20 @@ def isWritable(path):
     """
     Return whether the file/path is writable.
     """
-    if os.path.isdir(path):
-        # The given path is an existing directory.
-        # To properly check if it is writable, you need to use os.access.
-        return os.access(path, os.W_OK)
-    else:
-        # The given path is supposed to be a file.
-        # Avoid using open(path, "w"), as it might corrupt existing files.
-        # And yet, even if the parent directory is actually writable,
-        # open(path, "rw") will IOError if the file doesn't already exist.
-        # Therefore, simply check the directory permissions instead:
-        return os.access(os.path.dirname(path), os.W_OK)
+    try:
+        if os.path.isdir(path):
+            # The given path is an existing directory.
+            # To properly check if it is writable, you need to use os.access.
+            return os.access(path, os.W_OK)
+        else:
+            # The given path is supposed to be a file.
+            # Avoid using open(path, "w"), as it might corrupt existing files.
+            # And yet, even if the parent directory is actually writable,
+            # open(path, "rw") will IOError if the file doesn't already exist.
+            # Therefore, simply check the directory permissions instead:
+            return os.access(os.path.dirname(path), os.W_OK)
+    except UnicodeDecodeError:
+        unicode_error_dialog()
 
 
 def uri_is_valid(uri):
@@ -234,3 +237,19 @@ def show_user_manual(page=None):
             continue
     log.warning("utils", "Failed loading URIs")
     # TODO: Show an error message to the user.
+
+
+def unicode_error_dialog():
+    message = _("The system's locale that you are using is not UTF-8 capable. "
+                "Unicode support is required for Python3 software like Pitivi. "
+                "Please correct your system settings; if you try to use Pitivi "
+                "with a broken locale, weird bugs will happen.")
+    dialog = Gtk.MessageDialog(transient_for=None,
+                               modal=True,
+                               message_type=Gtk.MessageType.ERROR,
+                               buttons=Gtk.ButtonsType.OK,
+                               text=message)
+    dialog.set_icon_name("pitivi")
+    dialog.set_title(_("Error while decoding a string"))
+    dialog.run()
+    dialog.destroy()

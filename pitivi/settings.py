@@ -25,6 +25,8 @@ from configparser import SafeConfigParser, ParsingError
 from gi.repository import GLib
 from gi.repository import GObject
 
+from pitivi.utils.misc import unicode_error_dialog
+
 
 def get_bool_env(var):
     value = os.getenv(var)
@@ -146,9 +148,13 @@ class GlobalSettings(GObject.Object):
         """
         Read the configuration from the user configuration file.
         """
+
         try:
             conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
             self._config.read(conf_file_path)
+        except UnicodeDecodeError:
+            unicode_error_dialog()
+            return
         except ParsingError:
             return
 

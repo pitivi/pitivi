@@ -40,7 +40,7 @@ from pwd import getpwuid
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
-from pitivi.utils.misc import quote_uri, path_from_uri, isWritable
+from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
 from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import Pipeline
@@ -192,6 +192,8 @@ class ProjectManager(GObject.Object, Loggable):
             self.debug('Backup file is %d secs newer: %s', time_diff, backup_path)
         except OSError:
             self.debug('Backup file does not exist: %s', backup_path)
+        except UnicodeEncodeError:
+            unicode_error_dialog()
         else:
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
