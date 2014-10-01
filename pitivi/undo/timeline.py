@@ -377,12 +377,14 @@ class LayerRemoved(UndoableAction):
 
 class ControlSourceValueAdded(UndoableAction):
 
-    def __init__(self, control_source, keyframe,
+    def __init__(self, track_element,
+                 control_source, keyframe,
                  property_name):
         UndoableAction.__init__(self)
         self.control_source = control_source
         self.keyframe = keyframe
         self.property_name = property_name
+        self.track_element = track_element
 
     def do(self):
         self.control_source.set(self.keyframe.timestamp,
@@ -392,15 +394,25 @@ class ControlSourceValueAdded(UndoableAction):
     def undo(self):
         self.control_source.unset(self.keyframe.timestamp)
         self._undone()
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("add-keyframe")
+        st.set_value("element-name", self.track_element.get_name())
+        st.set_value("property-name", self.property_name)
+        st.set_value("timestamp", float(self.keyframe.timestamp / Gst.SECOND))
+        st.set_value("value", self.keyframe.value)
+        return st
 
 
 class ControlSourceValueRemoved(UndoableAction):
 
-    def __init__(self, control_source, keyframe, property_name):
+    def __init__(self, track_element,
+                 control_source, keyframe, property_name):
         UndoableAction.__init__(self)
         self.control_source = control_source
         self.keyframe = keyframe
         self.property_name = property_name
+        self.track_element = track_element
 
     def do(self):
         self.control_source.unset(self.keyframe.timestamp)
@@ -410,6 +422,14 @@ class ControlSourceValueRemoved(UndoableAction):
         self.control_source.set(self.keyframe.timestamp,
                                 self.keyframe.value)
         self._done()
+
+    def serializeLastAction(self):
+        st = Gst.Structure.new_empty("remove-keyframe")
+        st.set_value("element-name", self.track_element.get_name())
+        st.set_value("property-name", self.property_name)
+        st.set_value("timestamp", float(self.keyframe.timestamp / Gst.SECOND))
+        st.set_value("value", self.keyframe.value)
+        return st
 
 
 class ControlSourceKeyframeChanged(UndoableAction):
@@ -562,6 +582,15 @@ class TimelineLogObserver(object):
         tracker.connect("keyframe-moved", self._controlSourceKeyFrameMovedCb)
         self.control_source_keyframe_trackers[control_source] = tracker
 
+        if self.log.app:
+            self.log.app.write_action("set-control-source",
+                                      {"element-name": track_element.get_name(),
+                                       "property-name": binding.props.name,
+                                       "binding-type": "direct",
+                                       "source-type": "interpolation",
+                                       "interpolation-mode": "linear"
+                                       })
+
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source
         control_source.disconnect_by_func(self._controlSourceKeyFrameAddedCb)
@@ -610,13 +639,15 @@ class TimelineLogObserver(object):
             self.log.push(action)
 
     def _controlSourceKeyFrameAddedCb(self, source, keyframe, track_element,
-                                     property_name):
-        action = ControlSourceValueAdded(source, keyframe, property_name)
+                                      property_name):
+        action = ControlSourceValueAdded(track_element,
+                                         source, keyframe, property_name)
         self.log.push(action)
 
     def _controlSourceKeyFrameRemovedCb(self, source, keyframe, track_element,
                                         property_name):
-        action = ControlSourceValueRemoved(source, keyframe, property_name)
+        action = ControlSourceValueRemoved(track_element,
+                                           source, keyframe, property_name)
         self.log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
@@ -627,7 +658,7 @@ class TimelineLogObserver(object):
         self.log.push(action)
 
     def _controlSourceKeyFrameMovedCb(self, tracker, track_element,
-                                     keyframe, old_snapshot, new_snapshot):
+                                      keyframe, old_snapshot, new_snapshot):
         action = ControlSourceKeyframeChanged(track_element, keyframe,
                                               old_snapshot, new_snapshot)
         self.log.push(action)
