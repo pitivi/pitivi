@@ -1382,22 +1382,22 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._setBestZoomRatio(allow_zoom_in=True)
 
     def _scrollEventCb(self, unused_embed, event):
-        deltas = event.get_scroll_deltas()
+        unused_res, delta_x, delta_y = event.get_scroll_deltas()
         if event.state & Gdk.ModifierType.CONTROL_MASK:
-            if deltas[2] < 0:
+            if delta_y < 0:
                 Zoomable.zoomIn()
-            elif deltas[2] > 0:
+            elif delta_y > 0:
                 Zoomable.zoomOut()
             self._scrollToPlayhead()
         elif event.state & Gdk.ModifierType.SHIFT_MASK:
-            if deltas[2] > 0:
+            if delta_y > 0:
                 self.scroll_down()
-            elif deltas[2] < 0:
+            elif delta_y < 0:
                 self.scroll_up()
         else:
-            if deltas[2] > 0:
+            if delta_y > 0:
                 self.scroll_right()
-            elif deltas[2] < 0:
+            elif delta_y < 0:
                 self.scroll_left()
         self.scrolled += 1
 
