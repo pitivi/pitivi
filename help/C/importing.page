@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.92" version="0.3" date="2013-12-19" status="complete"/>
+    <revision pkgversion="0.94" version="0.4" date="2014-10-01" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -26,23 +26,13 @@
 
     <title>Getting media</title>
 
-     <p>At the time of this writing, the only supported method is importing files from your hard drive. As such, you cannot use <app>Pitivi</app> to capture directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
-      <note>
-       <p>We would welcome good quality patches to implement the following:</p>
-       <list>
-        <item><p>Capture from a DV or HDV camcorder using an IEEE 1394 connection.</p></item>
-        <item><p>Capture from a webcam.</p></item>
-        <item><p>Dumping a network/Internet stream.</p></item>
-        <item><p>Importing from DVD.</p></item>
-        <item><p>Importing from an audio CD.</p></item>
-        <item><p>Downloading from content providers such as <link href="http://www.jamendo.com">Jamendo</link>, <link href="http://www.magnatune.com/">Magnatune</link>, <link href="http://creativecommons.org/">CreativeCommons</link>, etc.</p>
-        </item>
-       </list>
-      </note>
+    <p>Pitivi allows importing media files from your computer's hard drive.</p>
+    <note>
+        <p>Due to our limited resources and the rapid evolution of filmmaking hardware in the past few years, and to ensure <app>Pitivi</app> remains robust and simple to use, we do not attempt to support every possible hardware device out there. As a result, you currently cannot use <app>Pitivi</app> to capture directly from a camcorder; specialized applications are better suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
+    </note>
 
       <section>
-       <title>Importing files</title>
-        <title>Using the file chooser</title>
+       <title>Importing files using the file chooser</title>
          <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import</gui></guiseq> button, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>.</p>
          <p>The following file chooser dialog window will appear:</p>
          <figure>
@@ -52,7 +42,7 @@
          <p>Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
        </section>
        <section>
-        <title>Using drag and drop</title>
+        <title>Importing files using drag and drop</title>
          <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>.</p>
          <p>This feature can be used to:</p>
          <list>
