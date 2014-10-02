@@ -6,7 +6,6 @@ HELP_MEDIA = \
     figures/fadestep1.png \
     figures/fadestep2.png \
     figures/fadestep3.png \
-    figures/hovering.png \
     figures/keyframecurves.png \
     figures/layers.png \
     figures/logo.png \

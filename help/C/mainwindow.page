@@ -47,9 +47,6 @@
     <title>Hovering for more information</title>
     <p>Hovering the mouse cursor over an element in the main window usually reveals an information tooltip regarding its function.</p>
     </note>
-    <figure>
-    <media type="image" src="figures/hovering.png" mime="image/png" style="right"></media>
-    </figure>
 
     <section>
      <title>Header bar</title>
