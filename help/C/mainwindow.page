@@ -53,9 +53,9 @@
 
     <section>
      <title>Header bar</title>
-      <p>The header bar is a place where basic functions such as <gui>Undo</gui>, <gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly accessed. It also contains the <gui>App menu</gui> where you can find further functions such as <gui>New project</gui>, <gui>Open project</gui>, <gui>Project settings</gui> or <gui>Preferences</gui>.</p>
+      <p>The header bar is a place where basic functions such as <gui>Undo</gui>, <gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly accessed. It also contains the main <gui>menu button</gui> where you can find further functions such as <gui>New project</gui>, <gui>Open project</gui>, <gui>Project settings</gui> or <gui>Preferences</gui>.</p>
       <note style="tip">
-          <p>The <gui>App menu</gui> can be opened by pressing <key>F10</key>.</p>
+          <p>The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</key>.</p>
       </note>
     </section>
 
