@@ -26,12 +26,18 @@
 
     <title>The main window</title>
 
-      <figure>
-       <title><app>Pitivi</app> main window</title>
-       <desc>The main window, as the name implies, is the window containing the main components of the <app>Pitivi</app> user interface, namely: the header bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</desc>
-        <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right" width="780">
-        </media>
-      </figure>
+    <p>The main window, as the name implies, is the window containing the main components of the <app>Pitivi</app> user interface, namely: the header bar, the toolbars, the timeline and various customizable components (media library, previewer, effects library, transitions library, etc.).</p>
+    <media type="image" src="figures/mainwindow.jpg" mime="image/jpg" style="right" width="780" />
+    <p>In the figure above, the following areas can be observed:</p>
+    <list type="numbered">
+        <item><p>Header bar and main toolbar buttons</p></item>
+        <item><p>Main menu button</p></item>
+        <item><p>Primary tabs: media library and effects library</p></item>
+        <item><p>Contextual tabs: clip properties, transitions, titles</p></item>
+        <item><p>Viewer</p></item>
+        <item><p>Ruler</p></item>
+        <item><p>Timeline</p></item>
+    </list>
 
     <note style="tip">
     <title>Resizing components of the main window</title>
