@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-28 20:18+0200\n"
-"PO-Revision-Date: 2014-09-28 20:20+0200\n"
+"POT-Creation-Date: 2014-10-05 17:55+0200\n"
+"PO-Revision-Date: 2014-10-05 17:57+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -212,13 +212,12 @@ msgid "Properties for <element>"
 msgstr "Właściwości dla <elementu>"
 
 #: ../data/ui/elementsettingsdialog.ui.h:2
-msgid "Clear"
-msgstr "Wyczyść"
+msgid "Reset all"
+msgstr "Przywróć wszystko"
 
-#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/preferences.ui.h:6
-#: ../data/ui/renderingdialog.ui.h:8 ../data/ui/renderingprogress.ui.h:5
-msgid "Close"
-msgstr "Zamknij"
+#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:6
+msgid "OK"
+msgstr "OK"
 
 #: ../data/ui/mainmenubutton.ui.h:1
 msgid "New project"
@@ -336,18 +335,27 @@ msgstr ""
 "używając przycisku \"Zaimportuj\"."
 
 #: ../data/ui/preferences.ui.h:2
+msgid "Section"
+msgstr "Sekcja"
+
+#: ../data/ui/preferences.ui.h:3
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr ""
+"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
+
+#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Przywróć ustawienia fabryczne"
 
-#: ../data/ui/preferences.ui.h:3
+#: ../data/ui/preferences.ui.h:5
 msgid "Reset all settings to their default values"
 msgstr "Przywraca wszystkie ustawienia do ich domyślnych wartości"
 
-#: ../data/ui/preferences.ui.h:4
+#: ../data/ui/preferences.ui.h:6
 msgid "Revert"
 msgstr "Przywróć"
 
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:7
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
@@ -355,14 +363,10 @@ msgstr ""
 "Przywraca wszystkie ustawienia do poprzednich wartości (sprzed otwarcia okna "
 "preferencji)"
 
-#: ../data/ui/preferences.ui.h:7
-msgid "Section"
-msgstr "Sekcja"
-
-#: ../data/ui/preferences.ui.h:8
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr ""
-"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
+#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/renderingprogress.ui.h:6
+msgid "Close"
+msgstr "Zamknij"
 
 #: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:447
 msgid "Standard (4:3)"
@@ -376,17 +380,13 @@ msgstr "Standardowe PAL"
 msgid "25 FPS"
 msgstr "25 FPS"
 
-#: ../data/ui/projectsettings.ui.h:5 ../data/ui/renderingprogress.ui.h:3
+#: ../data/ui/projectsettings.ui.h:5 ../data/ui/renderingprogress.ui.h:4
 #: ../pitivi/mainwindow.py:613 ../pitivi/mainwindow.py:731
 #: ../pitivi/mainwindow.py:855 ../pitivi/mainwindow.py:1033
 #: ../pitivi/mainwindow.py:1078 ../pitivi/mainwindow.py:1134
 #: ../pitivi/medialibrary.py:450
 msgid "Cancel"
 msgstr "Anuluj"
-
-#: ../data/ui/projectsettings.ui.h:6
-msgid "OK"
-msgstr "OK"
 
 #: ../data/ui/projectsettings.ui.h:7
 msgid "Video Preset"
@@ -430,10 +430,8 @@ msgstr "Połącz"
 msgid "Frame Rate:"
 msgstr "Liczba klatek na sekundę:"
 
-#. TODO check if it is the good way to make it translatable
-#. And to filter actually!
 #: ../data/ui/projectsettings.ui.h:20 ../data/ui/renderingdialog.ui.h:33
-#: ../pitivi/effects.py:272
+#: ../pitivi/effects.py:257
 msgid "Video"
 msgstr "Wideo"
 
@@ -446,6 +444,7 @@ msgid "Format"
 msgstr "Format"
 
 #: ../data/ui/projectsettings.ui.h:25 ../data/ui/renderingdialog.ui.h:37
+#: ../pitivi/effects.py:258
 msgid "Audio"
 msgstr "Dźwięk"
 
@@ -581,15 +580,7 @@ msgstr "Włączenie dźwięku"
 msgid "Rendering"
 msgstr "Renderowanie"
 
-#: ../data/ui/renderingprogress.ui.h:2 ../pitivi/viewer.py:1025
-msgid "Pause"
-msgstr "Wstrzymaj"
-
-#: ../data/ui/renderingprogress.ui.h:4 ../pitivi/viewer.py:1018
-msgid "Play"
-msgstr "Odtwórz"
-
-#: ../data/ui/renderingprogress.ui.h:6
+#: ../data/ui/renderingprogress.ui.h:2
 msgid ""
 "<small>This process may take a long time depending on the selected codecs, "
 "the image resolution, your computer's processing power, applied effects and "
@@ -598,6 +589,14 @@ msgstr ""
 "<small>Ten proces może zająć dużo czasu, w zależności od wybranych kodeków, "
 "rozdzielczości obrazu, mocy obliczeniowej komputera, zastosowanych efektów i "
 "czasu trwania filmu.</small>"
+
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1025
+msgid "Pause"
+msgstr "Wstrzymaj"
+
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1018
+msgid "Play"
+msgstr "Odtwórz"
 
 #: ../data/ui/renderingprogress.ui.h:7
 msgid "Initializing..."
@@ -632,8 +631,8 @@ msgid "Missing dependencies..."
 msgstr "Brakujące zależności..."
 
 #: ../data/ui/titleeditor.ui.h:1
-msgid "Create and insert"
-msgstr "Utwórz i wstaw"
+msgid "Create"
+msgstr "Utwórz"
 
 #: ../data/ui/titleeditor.ui.h:2
 msgid "Select a title clip to edit or create a new one."
@@ -719,76 +718,73 @@ msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
 
-#: ../pitivi/clipproperties.py:152
+#: ../pitivi/clipproperties.py:151
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:173
+#: ../pitivi/clipproperties.py:172
 msgid "Remove effect"
 msgstr "Usuń efekt"
 
-#: ../pitivi/clipproperties.py:201
+#: ../pitivi/clipproperties.py:206
 msgid "Active"
 msgstr "Aktywny"
 
-#: ../pitivi/clipproperties.py:203
+#: ../pitivi/clipproperties.py:208
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:213
+#: ../pitivi/clipproperties.py:218
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:234
+#: ../pitivi/clipproperties.py:239
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
 
-#: ../pitivi/clipproperties.py:561
+#: ../pitivi/clipproperties.py:566
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: ../pitivi/effects.py:75 ../pitivi/effects.py:161 ../pitivi/effects.py:254
-msgid "Uncategorized"
-msgstr "Bez kategorii"
-
-#: ../pitivi/effects.py:93 ../pitivi/effects.py:95
-msgid "All effects"
-msgstr "Wszystkie efekty"
-
-#: ../pitivi/effects.py:96
+#: ../pitivi/effects.py:64
 msgid "Colors"
 msgstr "Kolory"
 
-#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:81
 msgid "Compositing"
 msgstr "Składanie"
 
-#: ../pitivi/effects.py:120
+#: ../pitivi/effects.py:88
 msgid "Noise & blur"
 msgstr "Szum i rozmycie"
 
-#: ../pitivi/effects.py:126
+#: ../pitivi/effects.py:94
 msgid "Analysis"
 msgstr "Analiza"
 
-#: ../pitivi/effects.py:134
+#: ../pitivi/effects.py:102
 msgid "Geometry"
 msgstr "Geometria"
 
-#: ../pitivi/effects.py:145
+#: ../pitivi/effects.py:113
 msgid "Fancy"
 msgstr "Dekoracje"
 
-#: ../pitivi/effects.py:157
+#: ../pitivi/effects.py:125
 msgid "Time"
 msgstr "Czas"
 
-#: ../pitivi/effects.py:273
-msgid "Audio |audio"
-msgstr "Dźwięk"
+#. Add Uncategorized only if there are other categories defined.
+#: ../pitivi/effects.py:246 ../pitivi/effects.py:286
+msgid "Uncategorized"
+msgstr "Bez kategorii"
 
-#: ../pitivi/effects.py:274
+#: ../pitivi/effects.py:248 ../pitivi/effects.py:283
+msgid "All effects"
+msgstr "Wszystkie efekty"
+
+#: ../pitivi/effects.py:259
 msgid "effect"
 msgstr "efekt"
 
@@ -1108,8 +1104,8 @@ msgstr "Następujące pliki nie mogą być używane w programie Pitivi."
 msgid "The following file can not be used with Pitivi."
 msgstr "Następujący plik nie może być używane w programie Pitivi."
 
-#: ../pitivi/preset.py:94 ../pitivi/preset.py:216 ../pitivi/preset.py:221
-#: ../pitivi/preset.py:263 ../pitivi/preset.py:280 ../pitivi/project.py:1377
+#: ../pitivi/preset.py:94 ../pitivi/preset.py:209 ../pitivi/preset.py:214
+#: ../pitivi/preset.py:256 ../pitivi/preset.py:273 ../pitivi/project.py:1377
 #: ../pitivi/project.py:1382 ../pitivi/render.py:410
 msgid "No preset"
 msgstr "Brak ustawienia"
