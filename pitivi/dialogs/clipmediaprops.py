@@ -99,6 +99,11 @@ class ClipMediaPropsDialog(object):
                         get_value_from_model(frame_rates,
                             Gst.Fraction(framerate_num, framerate_denom)
                         ))
+                    if (framerate_num / framerate_denom) > 500:
+                        # Sometimes you have "broken" 1000fps clips (WebM files
+                        # from YouTube, for example), but it could also be a
+                        # real framerate, so just uncheck instead of disabling:
+                        self.framerate_checkbutton.set_active(False)
                 else:
                     foo = str(framerate_num) + "/" + str(framerate_denom)
                     # Translators: a label showing an invalid framerate value
