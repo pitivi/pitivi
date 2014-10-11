@@ -642,8 +642,8 @@ msgid "enables visual notifications when rendering is complete"
 msgstr "uključuje vidna obaveštenja kada se završi iscrtavanje"
 
 #: ../pitivi/check.py:190
-msgid "additional multimedia codecs through the Libav library"
-msgstr "dodatni multimedijski kodeci kroz Libav biblioteku"
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "dodatni multimedijski kodeci kroz GStreamer Libav biblioteku"
 
 #: ../pitivi/check.py:222
 msgid "ERROR - The following hard dependencies are unmet:"

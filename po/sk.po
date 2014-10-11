@@ -737,8 +737,8 @@ msgstr "povolí vizuálne upozornenia po skončení vykresľovania"
 
 # soft dependencies
 #: ../pitivi/check.py:193
-msgid "additional multimedia codecs through the Libav library"
-msgstr "prídavné multimediálne kodeky z knižnice Libav"
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "prídavné multimediálne kodeky z knižnice GStreamer Libav"
 
 #: ../pitivi/check.py:225
 msgid "ERROR - The following hard dependencies are unmet:"

@@ -636,8 +636,8 @@ msgid "enables visual notifications when rendering is complete"
 msgstr "вмикає візуальне сповіщення щодо завершення обробки"
 
 #: ../pitivi/check.py:235
-msgid "additional multimedia codecs through the Libav library"
-msgstr "додаткові мультимедійні кодеки з бібліотеки Libav"
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "додаткові мультимедійні кодеки з бібліотеки GStreamer Libav"
 
 #: ../pitivi/check.py:243
 msgid "additional video effects, clip transformation feature"

@@ -684,7 +684,7 @@ msgstr ""
 #: ../pitivi/check.py:190
 #, fuzzy
 #| msgid "Additional multimedia codecs through the FFmpeg library"
-msgid "additional multimedia codecs through the Libav library"
+msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "Lisämultimediakoodekkeja FFmpeg-kirjastosta"
 
 #: ../pitivi/check.py:222

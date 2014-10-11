@@ -593,8 +593,8 @@ msgstr "Automaatjoonduse lubamine"
 msgid "Additional video effects"
 msgstr "Lisavideoefektid"
 
-msgid "Additional multimedia codecs through the Libav library"
-msgstr "Lisamultimeediakoodekid Libav teegi kaudu"
+msgid "Additional multimedia codecs through the GStreamer Libav library"
+msgstr "Lisamultimeediakoodekid GStreamer Libav teegi kaudu"
 
 msgid "Could not initialize GStreamer Editing Services"
 msgstr "GStreamer Editing Services't ei olnud võimalik lähtestada"

@@ -684,8 +684,8 @@ msgid "enables visual notifications when rendering is complete"
 msgstr "aktiviert visuelle Benachrichtigungen, sobald das Erstellen fertig ist"
 
 #: ../pitivi/check.py:193
-msgid "additional multimedia codecs through the Libav library"
-msgstr "Zusätzliche Multimedia-Codecs der Libav-Bibliothek"
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "Zusätzliche Multimedia-Codecs der GStreamer Libav-Bibliothek"
 
 #: ../pitivi/check.py:225
 msgid "ERROR - The following hard dependencies are unmet:"

@@ -633,8 +633,8 @@ msgstr "aktivēt vizuālos paziņojumus, kad ir pabeigta renderēšana"
 
 #: ../pitivi/check.py:242
 #| msgid "Additional multimedia codecs through the FFmpeg library"
-msgid "additional multimedia codecs through the Libav library"
-msgstr "papildu multimediju kodeki, izmantojot Libav bibliotēku"
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "papildu multimediju kodeki, izmantojot GStreamer Libav bibliotēku"
 
 #: ../pitivi/check.py:250
 msgid "additional video effects, clip transformation feature"
