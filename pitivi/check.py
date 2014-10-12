@@ -176,7 +176,7 @@ class CairoDependency(ClassicDependency):
 HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
                      GtkOrClutterDependency("Clutter", "1.12.0"),
                      GtkOrClutterDependency("ClutterGst", "2.0.0"),
-                     GstDependency("Gst", "1.4.3"),
+                     GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.2.0.0"),
                      GtkOrClutterDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
