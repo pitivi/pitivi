@@ -189,22 +189,11 @@ class ProjectManager(GObject.Object, Loggable):
         self.disable_save = False
         self._backup_lock = 0
 
-    def loadProject(self, uri):
-        """
-        Load the given URI as a project. If a backup file exists, ask if it
-        should be loaded instead, and if so, force the user to use "Save as"
-        afterwards.
-        """
-        if self.current_project is not None and not self.closeRunningProject():
-            return False
-
-        self.emit("new-project-loading", uri)
-
-        # We really want a path for os.path to work
-        path = path_from_uri(uri)
+    def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
         use_backup = False
         try:
+            path = path_from_uri(uri)
             time_diff = os.path.getmtime(backup_path) - os.path.getmtime(path)
             self.debug(
                 'Backup file is %d secs newer: %s', time_diff, backup_path)
@@ -216,18 +205,34 @@ class ProjectManager(GObject.Object, Loggable):
             if time_diff > 0:
                 use_backup = self._restoreFromBackupDialog(time_diff)
 
-        if use_backup:
-            uri = self._makeBackupURI(uri)
+                if use_backup:
+                    uri = self._makeBackupURI(uri)
             self.debug('Loading project from backup: %s', uri)
 
-        # Load the project:
-        self.current_project = Project(self.app, uri=uri)
         # For backup files and legacy formats, force the user to use "Save as"
         if use_backup or path.endswith(".xptv"):
             self.debug("Enforcing read-only mode")
             self.disable_save = True
         else:
             self.disable_save = False
+
+        return uri
+
+    def loadProject(self, uri):
+        """
+        Load the given URI as a project. If a backup file exists, ask if it
+        should be loaded instead, and if so, force the user to use "Save as"
+        afterwards.
+        """
+        if self.current_project is not None and not self.closeRunningProject():
+            return False
+
+        self.emit("new-project-loading", uri)
+
+        uri = self._tryUsingBackupFile(uri)
+
+        # Load the project:
+        self.current_project = Project(self.app, uri=uri)
 
         self.current_project.connect("missing-uri", self._missingURICb)
         self.current_project.connect("loaded", self._projectLoadedCb)
