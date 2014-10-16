@@ -175,7 +175,6 @@ class CairoDependency(ClassicDependency):
 
 HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
                      GtkOrClutterDependency("Clutter", "1.12.0"),
-                     GtkOrClutterDependency("ClutterGst", "2.0.0"),
                      GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.2.0.0"),
                      GtkOrClutterDependency("Gtk", "3.10.0"),
@@ -256,8 +255,6 @@ def initialize_modules():
     Gdk.init([])
     from gi.repository import GtkClutter
     GtkClutter.init([])
-    from gi.repository import ClutterGst
-    ClutterGst.init([])
 
     import gi
     if not gi.version_info >= (3, 11):
