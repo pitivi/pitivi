@@ -265,8 +265,3 @@ def initialize_modules():
     Gst.init(None)
     from gi.repository import GES
     GES.init()
-
-    # This is required because of:
-    # https://bugzilla.gnome.org/show_bug.cgi?id=656314
-    from gi.repository import GdkX11
-    GdkX11  # noop
