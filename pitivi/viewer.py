@@ -23,6 +23,11 @@ from gi.repository import Clutter
 from gi.repository import Gtk
 from gi.repository import GtkClutter
 from gi.repository import Gdk
+try:
+    from gi.repository import GdkX11
+except ImportError:
+
+    pass
 from gi.repository import Gst
 from gi.repository import GObject
 from gi.repository import GES
