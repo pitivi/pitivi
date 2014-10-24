@@ -192,7 +192,7 @@ HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
 
 ges_1_5 = GstDependency("GES", "1.5.0.0")
 ges_1_5.check()
-if not ges_15.satisfied:
+if not ges_1_5.satisfied:
     HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
 
 PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
