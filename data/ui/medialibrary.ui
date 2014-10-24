@@ -133,7 +133,7 @@
             <property name="primary_icon_tooltip_text" translatable="yes" comments="This is used as a toolbar button tooltip. Here, &quot;select&quot; means &quot;find&quot; rather than &quot;choose&quot;. It is not the user who selects, but rather the user requesting the application to select the relevant items.">Select clips that have not been used in the project</property>
             <property name="secondary_icon_tooltip_text" translatable="yes">Show all clips</property>
             <property name="secondary_icon_tooltip_markup" translatable="yes">Show all clips</property>
-            <property name="placeholder_text">Search...</property>
+            <property name="placeholder_text" translatable="yes">Search...</property>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
             <signal name="icon-release" handler="_searchEntryIconClickedCb" swapped="no"/>
             <child internal-child="accessible">

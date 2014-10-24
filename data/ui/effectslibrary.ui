@@ -83,7 +83,7 @@
             <property name="secondary_icon_name">edit-clear-symbolic</property>
             <property name="secondary_icon_tooltip_text" translatable="yes">Clear the current search</property>
             <property name="secondary_icon_tooltip_markup" translatable="yes">Clear the current search</property>
-            <property name="placeholder_text">Search...</property>
+            <property name="placeholder_text" translatable="yes">Search...</property>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
             <signal name="icon-release" handler="_searchEntryIconClickedCb" swapped="no"/>
             <child internal-child="accessible">
