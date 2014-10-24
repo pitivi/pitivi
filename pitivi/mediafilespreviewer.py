@@ -107,7 +107,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # Gui elements:
         # Drawing area for video output
-        self.preview_video = ViewerWidget(realizedCb=self._on_preview_video_realize_cb)
+        self.preview_video = ViewerWidget(
+            realizedCb=self._on_preview_video_realize_cb)
+        self.preview_video.sink = self.player.video_sink
         self.preview_video.props.hexpand = minimal
         self.preview_video.props.vexpand = minimal
         self.attach(self.preview_video, 0, 0, 1, 1)

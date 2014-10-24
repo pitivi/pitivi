@@ -181,11 +181,11 @@ class SimplePipeline(GObject.Object, Loggable):
 
         # Create a cluttersink element used for display. Subclasses must connect
         # it to self._pipeline themselves
-        self._opengl_sink = Gst.ElementFactory.make("glimagesink", None)
+        self.video_sink = Gst.ElementFactory.make("glimagesink", None)
         if isinstance(pipeline, GES.Pipeline):
-            self._pipeline.preview_set_video_sink(self._opengl_sink)
+            self._pipeline.preview_set_video_sink(self.video_sink)
         else:
-            self._pipeline.set_property("video_sink", self._opengl_sink)
+            self._pipeline.set_property("video_sink", self.video_sink)
 
     def release(self):
         """
@@ -515,7 +515,7 @@ class AssetPipeline(SimplePipeline):
         else:
             handle = widget.drawing_area.get_window().get_xid()
 
-        self._opengl_sink.set_window_handle(handle)
+        self.video_sink.set_window_handle(handle)
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):

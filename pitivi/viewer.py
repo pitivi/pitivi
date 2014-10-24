@@ -137,7 +137,9 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        self.sink = pipeline._opengl_sink
+        self.sink = pipeline.video_sink
+        self.internal.sink = self.sink
+        self.external.sink = self.sink
 
         self._switch_output_window()
         self._setUiActive()
