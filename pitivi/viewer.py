@@ -836,15 +836,25 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.pixbuf = None
         self.pipeline = None
         self.transformation_properties = None
+        self._setting_ratio = False
+
         # FIXME PyGi Styling with Gtk3
         # for state in range(Gtk.StateType.INSENSITIVE + 1):
         # self.modify_bg(state, self.style.black)
 
     def _drawCb(self, unused, unused1, unused2):
-        if self.sink:
+        if self._setting_ratio:
+            # During caps renogotiation resulting from
+            # the change of the rendering setting/aspect ratio
+            # changes, we could end up with the viewer displaying
+            # broken frames, avoid calling the videosink.expose()
+            # in that case (https://bugzilla.gnome.org/show_bug.cgi?id=739145)
+            self._setting_ratio = False
+        elif self.sink:
             self.sink.expose()
 
     def setDisplayAspectRatio(self, ratio):
+        self._setting_ratio = True
         self.set_property("ratio", float(ratio))
 
     def init_transformation_events(self):
