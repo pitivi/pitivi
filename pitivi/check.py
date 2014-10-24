@@ -38,6 +38,14 @@ from gettext import gettext as _
 missing_soft_deps = {}
 
 
+def _version_to_string(version):
+    return ".".join([str(x) for x in version])
+
+
+def _string_to_list(version):
+    return [int(x) for x in version.split(".")]
+
+
 class Dependency(object):
     """
     This abstract class represents a module or component requirement.
@@ -173,14 +181,19 @@ class CairoDependency(ClassicDependency):
         return _string_to_list(module.cairo_version_string())
 
 
-HARD_DEPENDENCIES = (CairoDependency("1.10.0"),
+HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
                      GtkOrClutterDependency("Clutter", "1.12.0"),
                      GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.4.0.0"),
                      GtkOrClutterDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
                      GIDependency("Gio", None),
-                     GstPluginDependency("gnonlin", "1.4.0"))
+                     ]
+
+ges_1_5 = GstDependency("GES", "1.5.0.0")
+ges_1_5.check()
+if not ges_15.satisfied:
+    HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
 
 PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
                                                _("enables sound notifications when rendering is complete"))
@@ -205,14 +218,6 @@ def _check_audiosinks():
     if not sink:
         return False
     return True
-
-
-def _version_to_string(version):
-    return ".".join([str(x) for x in version])
-
-
-def _string_to_list(version):
-    return [int(x) for x in version.split(".")]
 
 
 def check_requirements():
