@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-05 17:55+0200\n"
-"PO-Revision-Date: 2014-10-05 17:57+0200\n"
+"POT-Creation-Date: 2014-10-25 19:14+0200\n"
+"PO-Revision-Date: 2014-10-25 19:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -207,6 +207,11 @@ msgstr "Wyświetla efekty dźwiękowe"
 msgid "Clear the current search"
 msgstr "Czyści bieżące wyszukiwanie"
 
+#: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
+#: ../pitivi/transitions.py:70
+msgid "Search..."
+msgstr "Wyszukiwanie..."
+
 #: ../data/ui/elementsettingsdialog.ui.h:1
 msgid "Properties for <element>"
 msgstr "Właściwości dla <elementu>"
@@ -322,11 +327,11 @@ msgstr "Wyszukuje klipy, które nie zostały użyte w projekcie"
 msgid "Show all clips"
 msgstr "Wyświetla wszystkie klipy"
 
-#: ../data/ui/medialibrary.ui.h:12
+#: ../data/ui/medialibrary.ui.h:13
 msgid "Close this message"
 msgstr "Zamyka ten komunikat"
 
-#: ../data/ui/medialibrary.ui.h:13
+#: ../data/ui/medialibrary.ui.h:14
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
@@ -590,11 +595,11 @@ msgstr ""
 "rozdzielczości obrazu, mocy obliczeniowej komputera, zastosowanych efektów i "
 "czasu trwania filmu.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1025
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1042
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1018
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1035
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -672,45 +677,45 @@ msgid "Advanced positioning"
 msgstr "Zaawansowane pozycjonowanie"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:100
+#: ../pitivi/check.py:108
 #, python-format
 msgid "- %s not found on the system"
 msgstr "- nie odnaleziono %s w systemie"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:103
+#: ../pitivi/check.py:111
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr ""
 "- %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
 "wersji %s"
 
-#: ../pitivi/check.py:187
+#: ../pitivi/check.py:199
 msgid "enables sound notifications when rendering is complete"
 msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
 
-#: ../pitivi/check.py:189
+#: ../pitivi/check.py:201
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr ""
 "miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
 
-#: ../pitivi/check.py:191
+#: ../pitivi/check.py:203
 msgid "enables visual notifications when rendering is complete"
 msgstr "włącza powiadomienia po ukończeniu renderowania"
 
-#: ../pitivi/check.py:193
+#: ../pitivi/check.py:205
 msgid "additional multimedia codecs through the GStreamer Libav library"
-msgstr "dodatkowe kodeki multimedialne przez bibliotekę libav"
+msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
 
-#: ../pitivi/check.py:225
+#: ../pitivi/check.py:229
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "BŁĄD - brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:234
+#: ../pitivi/check.py:238
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:241
+#: ../pitivi/check.py:245
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -1016,25 +1021,25 @@ msgstr "Obraz JPEG"
 msgid "Preview"
 msgstr "Podgląd"
 
-#: ../pitivi/mediafilespreviewer.py:160
+#: ../pitivi/mediafilespreviewer.py:162
 msgid "Pitivi can not preview this file."
 msgstr "Program Pitivi nie może wyświetlić podglądu tego pliku."
 
-#: ../pitivi/mediafilespreviewer.py:161
+#: ../pitivi/mediafilespreviewer.py:163
 msgid "More info"
 msgstr "Więcej informacji"
 
-#: ../pitivi/mediafilespreviewer.py:255
+#: ../pitivi/mediafilespreviewer.py:257
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Rozdzielczość</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:256 ../pitivi/mediafilespreviewer.py:272
+#: ../pitivi/mediafilespreviewer.py:258 ../pitivi/mediafilespreviewer.py:274
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Czas trwania</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:441 ../pitivi/medialibrary.py:821
+#: ../pitivi/mediafilespreviewer.py:443 ../pitivi/medialibrary.py:821
 msgid "Error while analyzing a file"
 msgstr "Wystąpił błąd podczas analizowania pliku"
 
@@ -1105,12 +1110,12 @@ msgid "The following file can not be used with Pitivi."
 msgstr "Następujący plik nie może być używane w programie Pitivi."
 
 #: ../pitivi/preset.py:94 ../pitivi/preset.py:209 ../pitivi/preset.py:214
-#: ../pitivi/preset.py:256 ../pitivi/preset.py:273 ../pitivi/project.py:1377
-#: ../pitivi/project.py:1382 ../pitivi/render.py:410
+#: ../pitivi/preset.py:256 ../pitivi/preset.py:273 ../pitivi/project.py:1379
+#: ../pitivi/project.py:1384 ../pitivi/render.py:410
 msgid "No preset"
 msgstr "Brak ustawienia"
 
-#: ../pitivi/project.py:221
+#: ../pitivi/project.py:223
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1120,15 +1125,15 @@ msgstr ""
 "próbowano dodać plik multimedialny do projektu, to należy zamiast tego użyć "
 "przycisku \"Zaimportuj\"."
 
-#: ../pitivi/project.py:234
+#: ../pitivi/project.py:236
 msgid "Ignore backup"
 msgstr "Zignoruj kopię zapasową"
 
-#: ../pitivi/project.py:235
+#: ../pitivi/project.py:237
 msgid "Restore from backup"
 msgstr "Przywróć z kopii zapasowej"
 
-#: ../pitivi/project.py:250
+#: ../pitivi/project.py:252
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1141,34 +1146,34 @@ msgstr ""
 "\n"
 "Wczytać kopię zapasową?"
 
-#: ../pitivi/project.py:320
+#: ../pitivi/project.py:322
 msgid "You do not have permissions to write to this folder."
 msgstr "Brak uprawnień do zapisu w tym katalogu."
 
 #. write project file to temporary file
-#: ../pitivi/project.py:354
+#: ../pitivi/project.py:356
 msgid "project"
 msgstr "projekt"
 
 #. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:463
+#: ../pitivi/project.py:465
 msgid "New Project"
 msgstr "Nowy projekt"
 
-#: ../pitivi/project.py:606
+#: ../pitivi/project.py:608
 msgid "Pitivi encoding profile"
 msgstr "Profil kodowania Pitivi"
 
-#: ../pitivi/project.py:1398 ../pitivi/render.py:540
+#: ../pitivi/project.py:1400 ../pitivi/render.py:540
 #, python-format
 msgid "\"%s\" already exists."
 msgstr "\"%s\" już istnieje."
 
-#: ../pitivi/project.py:1471 ../pitivi/render.py:581
+#: ../pitivi/project.py:1473 ../pitivi/render.py:581
 msgid "New preset"
 msgstr "Nowe ustawienie"
 
-#: ../pitivi/project.py:1474 ../pitivi/render.py:584
+#: ../pitivi/project.py:1476 ../pitivi/render.py:584
 #, python-format
 msgid "New preset %d"
 msgstr "Nowe ustawienie %d"
@@ -1273,10 +1278,6 @@ msgstr "Lewo"
 msgid "Right"
 msgstr "Prawo"
 
-#: ../pitivi/transitions.py:70
-msgid "Search..."
-msgstr "Wyszukiwanie..."
-
 #: ../pitivi/transitions.py:76
 msgid "Normal"
 msgstr "Zwykłe"
@@ -1317,27 +1318,27 @@ msgstr "Nagłe"
 msgid "Smooth"
 msgstr "Gładkie"
 
-#: ../pitivi/viewer.py:81
+#: ../pitivi/viewer.py:86
 msgid "Currently playing"
 msgstr "Obecnie odtwarzane"
 
-#: ../pitivi/viewer.py:207
+#: ../pitivi/viewer.py:214
 msgid "Go to the beginning of the timeline"
 msgstr "Przechodzi na początek osi czasu"
 
-#: ../pitivi/viewer.py:214
+#: ../pitivi/viewer.py:221
 msgid "Go back one second"
 msgstr "Przechodzi do tyłu o jedną sekundę"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer.py:233
 msgid "Go forward one second"
 msgstr "Przechodzi naprzód o jedną sekundę"
 
-#: ../pitivi/viewer.py:233
+#: ../pitivi/viewer.py:240
 msgid "Go to the end of the timeline"
 msgstr "Przechodzi na koniec osi czasu"
 
-#: ../pitivi/viewer.py:239
+#: ../pitivi/viewer.py:246
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1345,7 +1346,7 @@ msgstr ""
 "Proszę wprowadzić kod czasowy lub numer klatki\n"
 "i nacisnąć klawisz \"Enter\", aby przejść do tego położenia"
 
-#: ../pitivi/viewer.py:246
+#: ../pitivi/viewer.py:253
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1353,11 +1354,11 @@ msgstr ""
 "Odłącza przeglądarkę\n"
 "Można ją ponownie podłączyć zamykając nowo utworzone okno."
 
-#: ../pitivi/viewer.py:358 ../pitivi/viewer.py:397
+#: ../pitivi/viewer.py:365 ../pitivi/viewer.py:404
 msgid "Show this window in fullscreen"
 msgstr "Wyświetlanie tego okno na pełnym ekranie"
 
-#: ../pitivi/viewer.py:394
+#: ../pitivi/viewer.py:401
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
@@ -1540,12 +1541,12 @@ msgid "Add a keyframe"
 msgstr "Dodaje klatkę kluczową"
 
 #. Translators: a label showing an invalid framerate value
-#: ../pitivi/dialogs/clipmediaprops.py:105
+#: ../pitivi/dialogs/clipmediaprops.py:110
 #, python-format
 msgid "invalid (%s fps)"
 msgstr "nieprawidłowe (%s FPS)"
 
-#: ../pitivi/dialogs/clipmediaprops.py:127
+#: ../pitivi/dialogs/clipmediaprops.py:132
 msgid "Image:"
 msgstr "Obraz:"
 
@@ -1576,10 +1577,26 @@ msgstr "Pitivi %s jest dostępny."
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils/misc.py:112
+#: ../pitivi/utils/misc.py:115
 #, python-format
 msgid "%s doesn't yet handle non-local projects"
 msgstr "%s nie obsługuje jeszcze nielokalnych projektów"
+
+#: ../pitivi/utils/misc.py:243
+msgid ""
+"The system's locale that you are using is not UTF-8 capable. Unicode support "
+"is required for Python3 software like Pitivi. Please correct your system "
+"settings; if you try to use Pitivi with a broken locale, weird bugs will "
+"happen."
+msgstr ""
+"Używana lokalizacja systemu nie obsługuje UTF-8. Obsługa unikodu jest "
+"wymagana dla oprogramowania Python 3, takiego jak Pitivi. Proszę poprawić "
+"ustawienia systemu. Używanie programu Pitivi z uszkodzoną lokalizacją może "
+"spowodować dziwne błędy."
+
+#: ../pitivi/utils/misc.py:253
+msgid "Error while decoding a string"
+msgstr "Błąd podczas dekodowania ciągu"
 
 #: ../pitivi/utils/ui.py:230
 #, python-format
@@ -1777,13 +1794,13 @@ msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1063
+#: ../pitivi/utils/widgets.py:1064
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
 #. Translators: This is a tooltip
-#: ../pitivi/utils/widgets.py:1066
+#: ../pitivi/utils/widgets.py:1067
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone nanosekundy: %d"
