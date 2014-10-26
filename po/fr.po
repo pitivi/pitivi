@@ -1380,19 +1380,19 @@ msgstr "En cours de lecture"
 
 #: ../pitivi/viewer.py:218
 msgid "Go to the beginning of the timeline"
-msgstr "Va au début de la piste de montage"
+msgstr "Aller au début de la piste de montage"
 
 #: ../pitivi/viewer.py:224
 msgid "Go back one second"
-msgstr "Recule d'une seconde"
+msgstr "Reculer d'une seconde"
 
 #: ../pitivi/viewer.py:235
 msgid "Go forward one second"
-msgstr "Avance d'une seconde"
+msgstr "Avancer d'une seconde"
 
 #: ../pitivi/viewer.py:241
 msgid "Go to the end of the timeline"
-msgstr "Va à la fin de la piste de montage"
+msgstr "Aller à la fin de la piste de montage"
 
 #: ../pitivi/viewer.py:248
 msgid ""
@@ -1408,19 +1408,19 @@ msgstr "Attacher le lecteur"
 
 #: ../pitivi/viewer.py:380 ../pitivi/viewer.py:428
 msgid "Show this window in fullscreen"
-msgstr "Affiche cette fenêtre en plein écran"
+msgstr "Afficher cette fenêtre en plein écran"
 
 #: ../pitivi/viewer.py:425
 msgid "Exit fullscreen mode"
-msgstr "Quitte le mode plein écran"
+msgstr "Quitter le mode plein écran"
 
 #: ../pitivi/viewer.py:1029
 msgid "Play"
-msgstr "Lit"
+msgstr "Lire"
 
 #: ../pitivi/viewer.py:1037
 msgid "Pause"
-msgstr "Met en pause"
+msgstr "Mettre en pause"
 
 #: ../pitivi/timeline/layer.py:85
 msgid "Set a personalized name for this layer"
