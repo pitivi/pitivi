@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-10-22 16:32+0000\n"
+"POT-Creation-Date: 2014-10-27 08:41+0000\n"
 "PO-Revision-Date: 2014-10-27 08:43+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
@@ -204,6 +204,11 @@ msgstr "Zobrazit zvukové efekty"
 msgid "Clear the current search"
 msgstr "Vynulovat současné hledání"
 
+#: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
+#: ../pitivi/transitions.py:70
+msgid "Search..."
+msgstr "Hledat…"
+
 #: ../data/ui/elementsettingsdialog.ui.h:1
 msgid "Properties for <element>"
 msgstr "Vlastnosti pro <element>"
@@ -318,11 +323,11 @@ msgstr "Vybrat klipy, které zatím nejsou v projektu použity"
 msgid "Show all clips"
 msgstr "Zobrazit všechny klipy"
 
-#: ../data/ui/medialibrary.ui.h:12
+#: ../data/ui/medialibrary.ui.h:13
 msgid "Close this message"
 msgstr "Zavřít tuto zprávu"
 
-#: ../data/ui/medialibrary.ui.h:13
+#: ../data/ui/medialibrary.ui.h:14
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
@@ -585,11 +590,11 @@ msgstr ""
 "rozlišení obrazu, výkonu vašeho počítače, použitých efektech a délce vašeho "
 "filmu.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1025
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1042
 msgid "Pause"
 msgstr "Pozastavit"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1018
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1035
 msgid "Play"
 msgstr "Přehrát"
 
@@ -666,43 +671,43 @@ msgid "Advanced positioning"
 msgstr "Pokročilé umisťování"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:100
+#: ../pitivi/check.py:108
 #, python-format
 msgid "- %s not found on the system"
 msgstr "– modul %s nebyl nalezen v systému"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:103
+#: ../pitivi/check.py:111
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr ""
 "– je nainstalován modul %s verze %s, ale PiTiVi vyžaduje minimálně verzi %s"
 
-#: ../pitivi/check.py:186
+#: ../pitivi/check.py:199
 msgid "enables sound notifications when rendering is complete"
 msgstr "zapne zvukové upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:188
+#: ../pitivi/check.py:201
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr "náhledy souborů poskytnuté vytvářením náhledů v GNOME"
 
-#: ../pitivi/check.py:190
+#: ../pitivi/check.py:203
 msgid "enables visual notifications when rendering is complete"
 msgstr "zapne vizuální upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:192
+#: ../pitivi/check.py:205
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatečné multimediální kodeky z knihovny GStreamer Libav"
 
-#: ../pitivi/check.py:224
+#: ../pitivi/check.py:229
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "CHYBA – Následující tvrdé závislosti nejsou splněny:"
 
-#: ../pitivi/check.py:233
+#: ../pitivi/check.py:238
 msgid "Missing soft dependency:"
 msgstr "Chybějící měkká závislost:"
 
-#: ../pitivi/check.py:240
+#: ../pitivi/check.py:245
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -1001,25 +1006,25 @@ msgstr "Obrázek JPEG"
 msgid "Preview"
 msgstr "Náhled"
 
-#: ../pitivi/mediafilespreviewer.py:160
+#: ../pitivi/mediafilespreviewer.py:162
 msgid "Pitivi can not preview this file."
 msgstr "Pitivi nemůže vytvořit náhled tohoto souboru."
 
-#: ../pitivi/mediafilespreviewer.py:161
+#: ../pitivi/mediafilespreviewer.py:163
 msgid "More info"
 msgstr "Více informací"
 
-#: ../pitivi/mediafilespreviewer.py:255
+#: ../pitivi/mediafilespreviewer.py:257
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Rozlišení</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:256 ../pitivi/mediafilespreviewer.py:272
+#: ../pitivi/mediafilespreviewer.py:258 ../pitivi/mediafilespreviewer.py:274
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Délka:</b> %s"
 
-#: ../pitivi/mediafilespreviewer.py:441 ../pitivi/medialibrary.py:821
+#: ../pitivi/mediafilespreviewer.py:443 ../pitivi/medialibrary.py:821
 msgid "Error while analyzing a file"
 msgstr "Nastala chyba při analyzování souborů"
 
@@ -1257,10 +1262,6 @@ msgstr "Vlevo"
 msgid "Right"
 msgstr "Vpravo"
 
-#: ../pitivi/transitions.py:70
-msgid "Search..."
-msgstr "Hledat…"
-
 #: ../pitivi/transitions.py:76
 msgid "Normal"
 msgstr "Normální"
@@ -1301,27 +1302,27 @@ msgstr "Ostrý"
 msgid "Smooth"
 msgstr "Plynulý"
 
-#: ../pitivi/viewer.py:81
+#: ../pitivi/viewer.py:86
 msgid "Currently playing"
 msgstr "Právě se přehrává"
 
-#: ../pitivi/viewer.py:207
+#: ../pitivi/viewer.py:214
 msgid "Go to the beginning of the timeline"
 msgstr "Přejít na začátek časové osy"
 
-#: ../pitivi/viewer.py:214
+#: ../pitivi/viewer.py:221
 msgid "Go back one second"
 msgstr "Přejít o sekundu zpátky"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer.py:233
 msgid "Go forward one second"
 msgstr "Přejít o sekundu vpřed"
 
-#: ../pitivi/viewer.py:233
+#: ../pitivi/viewer.py:240
 msgid "Go to the end of the timeline"
 msgstr "Přejit na konec časové osy"
 
-#: ../pitivi/viewer.py:239
+#: ../pitivi/viewer.py:246
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1329,7 +1330,7 @@ msgstr ""
 "Zadejte časový údaj nebo číslo snímku\n"
 "a po zmáčknutí „Enter“ přejdete na onu pozici"
 
-#: ../pitivi/viewer.py:246
+#: ../pitivi/viewer.py:253
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1337,11 +1338,11 @@ msgstr ""
 "Odpojit prohlížeč\n"
 "Znovu jej připojit můžete zavřením nově vytvořeného okna."
 
-#: ../pitivi/viewer.py:358 ../pitivi/viewer.py:397
+#: ../pitivi/viewer.py:365 ../pitivi/viewer.py:404
 msgid "Show this window in fullscreen"
 msgstr "Zobrazit toto okno na celé obrazovce"
 
-#: ../pitivi/viewer.py:394
+#: ../pitivi/viewer.py:401
 msgid "Exit fullscreen mode"
 msgstr "Ukončit režim celé obrazovky"
 
@@ -1577,10 +1578,8 @@ msgstr ""
 "podivné chyby."
 
 #: ../pitivi/utils/misc.py:253
-#, fuzzy
-#| msgid "Error while analyzing a file"
 msgid "Error while decoding a string"
-msgstr "Nastala chyba při analyzování souborů"
+msgstr "Nastala chyba při dekódování souborů"
 
 #: ../pitivi/utils/ui.py:230
 #, python-format
