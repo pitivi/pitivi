@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2014-08-24 02:04+0000\n"
-"PO-Revision-Date: 2014-09-09 21:15+0200\n"
+"POT-Creation-Date: 2014-10-07 21:02+0000\n"
+"PO-Revision-Date: 2014-10-27 18:36+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
-"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
+"Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -206,7 +206,8 @@ msgstr ""
 "projektu"
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:47 C/mainwindow.page:69
+#. (itstool) path: item/p
+#: C/cheatsheet.page:47 C/mainwindow.page:39 C/mainwindow.page:72
 msgid "Timeline"
 msgstr "Časová osa"
 
@@ -704,18 +705,6 @@ msgstr ""
 msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
 msgstr "ffmpeg -i váš_klip.MTS -vcodec copy -acodec copy -sn pokus.mp4"
 
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/importing.page:50
-msgctxt "_"
-msgid ""
-"external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
-msgstr ""
-"external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
-
 #. (itstool) path: info/desc
 #: C/importing.page:19
 msgid "Importing files into your project as clips."
@@ -728,73 +717,45 @@ msgstr "Získávání médií"
 
 #. (itstool) path: page/p
 #: C/importing.page:29
-msgid ""
-"At the time of this writing, the only supported method is importing files "
-"from your hard drive. As such, you cannot use <app>Pitivi</app> to capture "
-"directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 "
-"connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
-"footage."
+msgid "Pitivi allows importing media files from your computer's hard drive."
 msgstr ""
-"V době psaní této příručky je jediným podporovaným způsobem import souborů z "
-"pevného disku. Proto není v <app>Pitivi</app> možné přímo zachytávat video z "
-"kamery. Pro videokamery DV/HDV používající připojení IEEE 1394 (FireWire) "
-"můžete použít aplikace <app>Kino</app> nebo <app>dvgrab</app>."
+"Pitivi umožňuje importovat multimediální soubory z pevného disku vašeho "
+"počítače."
 
 #. (itstool) path: note/p
 #: C/importing.page:31
-msgid "We would welcome good quality patches to implement the following:"
-msgstr "Uvítali bychom kvalitní příspěvky k implementaci následujícího:"
-
-#. (itstool) path: item/p
-#: C/importing.page:33
-msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
-msgstr "Snímání přes kamery DV a HDV připojení pomocí IEEE 1394."
-
-#. (itstool) path: item/p
-#: C/importing.page:34
-msgid "Capture from a webcam."
-msgstr "Snímání přes webové kamery."
-
-#. (itstool) path: item/p
-#: C/importing.page:35
-msgid "Dumping a network/Internet stream."
-msgstr "Zachytávání vysílání ze sítě/Internetu."
-
-#. (itstool) path: item/p
-#: C/importing.page:36
-msgid "Importing from DVD."
-msgstr "Import z DVD."
-
-#. (itstool) path: item/p
-#: C/importing.page:37
-msgid "Importing from an audio CD."
-msgstr "Import ze zvukových CD."
-
-#. (itstool) path: item/p
-#: C/importing.page:38
+#| msgid ""
+#| "At the time of this writing, the only supported method is importing files "
+#| "from your hard drive. As such, you cannot use <app>Pitivi</app> to "
+#| "capture directly from a camcorder. For DV/HDV camcorders using an IEEE "
+#| "1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to "
+#| "capture footage."
 msgid ""
-"Downloading from content providers such as <link href=\"http://www.jamendo."
-"com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
-"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
-"etc."
+"Due to our limited resources and the rapid evolution of filmmaking hardware "
+"in the past few years, and to ensure <app>Pitivi</app> remains robust and "
+"simple to use, we do not attempt to support every possible hardware device "
+"out there. As a result, you currently cannot use <app>Pitivi</app> to "
+"capture directly from a camcorder; specialized applications are better "
+"suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 "
+"connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
+"footage."
 msgstr ""
-"Stahování od poskytovatelů obsahu, jako jsou <link href=\"http://www.jamendo."
-"com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
-"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
-"apod."
+"Z důvodu omezených zdrojů a rychlého vývoje hardwaru pro tvorbu filmů v "
+"několika posledních letech a kvůli zachování robustnosti a snadné "
+"použitelnosti <app>Pitivi</app>, nezkoušíme podporovat naprosto všechna "
+"možná hardwarová zařízení. Výsledkem je, že v současnosti nemůžete použít "
+"<app>Pitivi</app> k zachytávání videa přímo z kamery. Pro tyto účely jsou "
+"vhodné specializované aplikace. Pro videokamery DV/HDV používající připojení "
+"IEEE 1394 (FireWire) můžete použít aplikace <app>Kino</app> nebo "
+"<app>dvgrab</app>."
 
 #. (itstool) path: section/title
-#: C/importing.page:44
-msgid "Importing files"
-msgstr "Importování souborů"
-
-#. (itstool) path: section/title
-#: C/importing.page:45
-msgid "Using the file chooser"
-msgstr "Pomocí výběru souborů"
+#: C/importing.page:35
+msgid "Importing files using the file chooser"
+msgstr "Import souborů pomocí výběru souborů"
 
 #. (itstool) path: section/p
-#: C/importing.page:46
+#: C/importing.page:36
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
@@ -808,31 +769,21 @@ msgstr ""
 "key><key>i</key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/importing.page:47
-msgid "The following file chooser dialog window will appear:"
-msgstr "Objeví se následující dialogové okno pro výběr souboru:"
-
-#. (itstool) path: figure/title
-#: C/importing.page:49
-msgid "Filechooser dialog"
-msgstr "Dialogové okno pro výběr souboru"
-
-#. (itstool) path: section/p
-#: C/importing.page:52
+#: C/importing.page:37
 msgid ""
-"Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
-"same time."
+"A file chooser dialog window will appear. You can press <key>Ctrl</key> or "
+"<key>Shift</key> to select multiple files at the same time."
 msgstr ""
-"Se zmáčknutou klávesou <key>Ctrl</key> nebo <key>Shift</key> můžete vybrat "
-"více souborů naráz."
+"Objeví se dialogové okno pro výběr souborů. Se zmáčknutou klávesou "
+"<key>Ctrl</key> nebo <key>Shift</key> můžete vybrat více souborů naráz."
 
 #. (itstool) path: section/title
-#: C/importing.page:55
-msgid "Using drag and drop"
-msgstr "Metodou „táni a pusť“"
+#: C/importing.page:40
+msgid "Importing files using drag and drop"
+msgstr "Import souborů pomocí „táhni a upusť“"
 
 #. (itstool) path: section/p
-#: C/importing.page:56
+#: C/importing.page:41
 msgid ""
 "The concept of drag and drop is a well-established method of bridging the "
 "gap between software applications. Simply select the files you want to "
@@ -846,12 +797,12 @@ msgstr ""
 "<gui>Knihovny médií</gui> v <app>Pitivi</app>."
 
 #. (itstool) path: section/p
-#: C/importing.page:57
+#: C/importing.page:42
 msgid "This feature can be used to:"
 msgstr "Tuto funkčnost můžete využít k:"
 
 #. (itstool) path: item/p
-#: C/importing.page:60
+#: C/importing.page:45
 msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
@@ -860,7 +811,7 @@ msgstr ""
 "(jako je <app>Rhythmbox</app> nebo <app>Totem</app>)."
 
 #. (itstool) path: item/p
-#: C/importing.page:63
+#: C/importing.page:48
 msgid ""
 "Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
@@ -871,12 +822,12 @@ msgstr ""
 "dialogového okna pro výběr souboru."
 
 #. (itstool) path: item/p
-#: C/importing.page:66
+#: C/importing.page:51
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr "Importu kombinace více souborů a složek naráz."
 
 #. (itstool) path: item/p
-#: C/importing.page:69
+#: C/importing.page:54
 msgid ""
 "Leverage the searching capability of another application (such as <app>GNOME "
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
@@ -1017,8 +968,8 @@ msgid ""
 "<em>Keyframes</em> are the points that are used to determine the property "
 "value at a given point in time."
 msgstr ""
-"<em>Klíčové snímky</em> jsou body, ve kterých je určena hodnota "
-"nějaké vlastnosti pro daný časový bod."
+"<em>Klíčové snímky</em> jsou body, ve kterých je určena hodnota nějaké "
+"vlastnosti pro daný časový bod."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:39
@@ -1387,31 +1338,19 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:32
+#: C/mainwindow.page:30
 msgctxt "_"
 msgid ""
-"external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
 msgstr ""
-"external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
 
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:45
-msgctxt "_"
-msgid ""
-"external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
-msgstr ""
-"external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
-
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:61
+#: C/mainwindow.page:64
 msgctxt "_"
 msgid "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 msgstr ""
@@ -1427,13 +1366,8 @@ msgstr "Objevte části hlavního okna."
 msgid "The main window"
 msgstr "Hlavní okno"
 
-#. (itstool) path: figure/title
-#: C/mainwindow.page:30
-msgid "<app>Pitivi</app> main window"
-msgstr "Hlavní okno aplikace <app>Pitivi</app>"
-
-#. (itstool) path: figure/desc
-#: C/mainwindow.page:31
+#. (itstool) path: page/p
+#: C/mainwindow.page:29
 msgid ""
 "The main window, as the name implies, is the window containing the main "
 "components of the <app>Pitivi</app> user interface, namely: the header bar, "
@@ -1445,13 +1379,49 @@ msgstr ""
 "lištu, nástrojovou lištu, časovou osu a různé přizpůsobitelné komponenty "
 "(knihovnu médií, náhled, knihovnu efektů, knihovnu přechodů, atd.)."
 
-#. (itstool) path: note/title
+#. (itstool) path: page/p
+#: C/mainwindow.page:31
+msgid "In the figure above, the following areas can be observed:"
+msgstr "Na obrázku výše si můžete všimnout následujících částí:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:33
+msgid "Header bar and main toolbar buttons"
+msgstr "Hlavičková lišta a tlačítka hlavní lišty"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:34
+msgid "Main menu button"
+msgstr "Tlačítko hlavní nabídky"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:35
+msgid "Primary tabs: media library and effects library"
+msgstr "Hlavní karty: knihovna multimédií a knihovna efektů"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:36
+msgid "Contextual tabs: clip properties, transitions, titles"
+msgstr "Kontextové karty: vlastnosti klipů, přechodů, titulků"
+
+#. (itstool) path: item/p
 #: C/mainwindow.page:37
+msgid "Viewer"
+msgstr "Prohlížeč"
+
+#. (itstool) path: item/p
+#. (itstool) path: section/title
+#: C/mainwindow.page:38 C/mainwindow.page:60
+msgid "Ruler"
+msgstr "Pravítko"
+
+#. (itstool) path: note/title
+#: C/mainwindow.page:43
 msgid "Resizing components of the main window"
 msgstr "Změna velikosti částí hlavního okna"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:38
+#: C/mainwindow.page:44
 msgid ""
 "In the spaces between components, there are handles indicated by five light "
 "dots. You can proportionally resize pairs of components by clicking and "
@@ -1462,12 +1432,12 @@ msgstr ""
 "kliknete a táhnete jej na požadované místo."
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:41
+#: C/mainwindow.page:47
 msgid "Hovering for more information"
 msgstr "Získání dalších informací"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:42
+#: C/mainwindow.page:48
 msgid ""
 "Hovering the mouse cursor over an element in the main window usually reveals "
 "an information tooltip regarding its function."
@@ -1476,37 +1446,37 @@ msgstr ""
 "vysvětlivka informující o jeho funkci."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:49
+#: C/mainwindow.page:52
 msgid "Header bar"
 msgstr "Hlavičková lišta"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:50
+#: C/mainwindow.page:53
 msgid ""
 "The header bar is a place where basic functions such as <gui>Undo</gui>, "
 "<gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly "
-"accessed. It also contains the <gui>App menu</gui> where you can find "
-"further functions such as <gui>New project</gui>, <gui>Open project</gui>, "
-"<gui>Project settings</gui> or <gui>Preferences</gui>."
+"accessed. It also contains the main <gui>menu button</gui> where you can "
+"find further functions such as <gui>New project</gui>, <gui>Open project</"
+"gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
 "Hlavičková lišta je místo, na kterém máte přímý přístup k základním funkcím, "
 "jako je <gui>Zpět</gui>, <gui>Znovu</gui>, <gui>Uložit</gui> nebo "
-"<gui>Vykreslit</gui>. Rovněž obsahuje <gui>aplikační nabídku</gui>, ve které "
-"můžete najít další funkce, jako je <gui>Nový projekt</gui>, <gui>Otevřít "
-"projekt</gui>, <gui>Nastavení projektu</gui> nebo <gui>Předvolby</gui>."
+"<gui>Vykreslit</gui>. Rovněž obsahuje <gui>tlačítko hlavní nabídky</gui>, ve "
+"které můžete najít další funkce, jako je <gui>Nový projekt</gui>, "
+"<gui>Otevřít projekt</gui>, <gui>Nastavení projektu</gui> nebo "
+"<gui>Předvolby</gui>."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:52
-msgid "The <gui>App menu</gui> can be opened by pressing <key>F10</key>."
-msgstr "<gui>Nabídku aplikace</gui> můžete otevřít zmáčknutím <key>F10</key>."
-
-#. (itstool) path: section/title
-#: C/mainwindow.page:57
-msgid "Ruler"
-msgstr "Pravítko"
+#: C/mainwindow.page:55
+msgid ""
+"The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</"
+"key>."
+msgstr ""
+"Obsah <gui>nabídky pod tlačítkem</gui> můžete otevřít zmáčknutím <key>F10</"
+"key>."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:58
+#: C/mainwindow.page:61
 msgid ""
 "The ruler plays a crucial role in your interaction with the timeline. First, "
 "it represents a time scale providing time measurements (in seconds) for "
@@ -1527,12 +1497,12 @@ msgstr ""
 "pro více podrobností."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:59
+#: C/mainwindow.page:62
 msgid "The current playhead position is indicated by a red vertical line:"
 msgstr "Aktuální pozice přehrávání je označena červenou svislou čarou:"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:64
+#: C/mainwindow.page:67
 msgid ""
 "When zoomed in, frames are visually represented as alternating light and "
 "dark areas in the bottom part of the ruler. Hovering the mouse cursor over "
@@ -1547,7 +1517,7 @@ msgstr ""
 "rychlosti projektu."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:70
+#: C/mainwindow.page:73
 msgid ""
 "The timeline is the core user interface component that you will use for "
 "editing. Vertically, it is divided into layers that can be filled with audio "
@@ -1563,7 +1533,7 @@ msgstr ""
 "mají vliv jen ve vodorovném (chronologickém) směru osy."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:71
+#: C/mainwindow.page:74
 msgid ""
 "See the <link xref=\"layers\">Understanding layers</link> and <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
@@ -1574,12 +1544,12 @@ msgstr ""
 "jak pracovat s časovou osou."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:75
+#: C/mainwindow.page:78
 msgid "Timeline toolbar"
 msgstr "Nástrojová lišta časové osy"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:76
+#: C/mainwindow.page:79
 msgid ""
 "The timeline toolbar is located at the right edge of the timeline. It "
 "contains basic actions for editing in timeline:"
@@ -1588,37 +1558,37 @@ msgstr ""
 "základní činnosti pro úpravy na časové ose:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:78
+#: C/mainwindow.page:81
 msgid "Split clip at playhead position"
 msgstr "Rozdělení klipu v místě pozice přehrávání"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:79
+#: C/mainwindow.page:82
 msgid "Delete selected"
 msgstr "Mazání výběru"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:80
+#: C/mainwindow.page:83
 msgid "Group clips"
 msgstr "Seskupování klipů"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:81
+#: C/mainwindow.page:84
 msgid "Ungroup clips"
 msgstr "Rušení seskupení klipů"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:82
+#: C/mainwindow.page:85
 msgid "Align clips based on their soundtracks"
 msgstr "Zarovnávání klipů na základě jejich zvukové stopy"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:83
+#: C/mainwindow.page:86
 msgid "Toggle gapless mode"
 msgstr "Přepínání bezešvého režimu"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:86
+#: C/mainwindow.page:89
 msgid ""
 "Note that most of the actions become available only once a clip is selected. "
 "When there is no subject for the action to be performed on, it remains "
@@ -1629,12 +1599,12 @@ msgstr ""
 "značí, že je nedostupná)."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:91
+#: C/mainwindow.page:94
 msgid "Playback toolbar"
 msgstr "Lišta přehrávání"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:92
+#: C/mainwindow.page:95
 msgid ""
 "This toolbar, located below the previewer, contains buttons controlling the "
 "playback of the timeline. Options provided by the toolbar are the following:"
@@ -1643,32 +1613,32 @@ msgstr ""
 "přehrávání časové osy. Najdete na ní následující volby:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:94
+#: C/mainwindow.page:97
 msgid "Play/Pause"
 msgstr "Přehrát/Pozastavit"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:95
+#: C/mainwindow.page:98
 msgid "Go forward one second"
 msgstr "Přejít o sekundu vpřed"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:96
+#: C/mainwindow.page:99
 msgid "Go back one second"
 msgstr "Přejít o sekundu zpátky"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:97
+#: C/mainwindow.page:100
 msgid "Go to the end of the timeline"
 msgstr "Přejít na konec časové osy"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:98
+#: C/mainwindow.page:101
 msgid "Go to the beginning of the timeline"
 msgstr "Přejít na začátek časové osy"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:100
+#: C/mainwindow.page:103
 msgid ""
 "For more information on how to move on the timeline, see the <em>Moving the "
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
@@ -1679,37 +1649,37 @@ msgstr ""
 "<link xref=\"movearoundtimeline\">Posun po časové ose</link>."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:104
+#: C/mainwindow.page:107
 msgid "Previewer"
 msgstr "Náhled"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:105
+#: C/mainwindow.page:108
 msgid "The previewer displays:"
 msgstr "Náhled zobrazuje:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:107
+#: C/mainwindow.page:110
 msgid "The video frame at the current position of the playhead."
 msgstr "Snímek videa na aktuální pozici přehrávání."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:108
+#: C/mainwindow.page:111
 msgid "Your project's video when playing back."
 msgstr "Video vašeho projektu, když jej přehráváte."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:109
+#: C/mainwindow.page:112
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr "<em>Živý náhled</em> při stříhání počátečního/koncového bodu klipu."
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:113
+#: C/mainwindow.page:116
 msgid "Detaching the previewer into a separate window"
 msgstr "Odpojení náhledu do odděleného okna"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:114
+#: C/mainwindow.page:117
 msgid ""
 "You can detach the previewer into a separate window by clicking the "
 "<gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From "
@@ -1724,19 +1694,19 @@ msgstr ""
 "tím, že oddělené okno zavřete."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:117
+#: C/mainwindow.page:120
 msgid "<app>Pitivi</app> inhibits screensaver while playing video preview."
 msgstr ""
 "Během přehrávání náhledu videa blokuje <app>Pitivi</app> spuštění šetřiče "
 "obrazovky."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:122
+#: C/mainwindow.page:125
 msgid "Left pane"
 msgstr "Levý panel"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:123
+#: C/mainwindow.page:126
 msgid ""
 "The left pane contains media and effect libraries. You can switch between "
 "them by selecting the appropriate tab. The <gui>Media library</gui> displays "
@@ -1751,7 +1721,7 @@ msgstr ""
 "použitelných u klipů."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:125
+#: C/mainwindow.page:128
 msgid ""
 "You can search the libraries by using the text box in the header of each "
 "library."
@@ -1760,12 +1730,12 @@ msgstr ""
 "knihoven."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:130
+#: C/mainwindow.page:133
 msgid "Middle pane"
 msgstr "Prostřední panel"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:131
+#: C/mainwindow.page:134
 msgid ""
 "The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</"
 "gui> and <gui>Title editor</gui>. You can switch between them by selecting "
@@ -3971,3 +3941,58 @@ msgstr ""
 "Můžete použít poměry, kterou jsou nabízeny v rozbalovacích seznamech nebo "
 "zadat vlastní do textových polí pod nimi (používejte syntax „4:3“ nebo "
 "„1,3333“, ale desetinná verze je méně přesná)."
+
+#~ msgctxt "_"
+#~ msgid ""
+#~ "external ref='figures/filechooser.png' "
+#~ "md5='7c99958f9d766b874c3994fd56870259'"
+#~ msgstr ""
+#~ "external ref='figures/filechooser.png' "
+#~ "md5='7c99958f9d766b874c3994fd56870259'"
+
+#~ msgid "We would welcome good quality patches to implement the following:"
+#~ msgstr "Uvítali bychom kvalitní příspěvky k implementaci následujícího:"
+
+#~ msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
+#~ msgstr "Snímání přes kamery DV a HDV připojení pomocí IEEE 1394."
+
+#~ msgid "Capture from a webcam."
+#~ msgstr "Snímání přes webové kamery."
+
+#~ msgid "Dumping a network/Internet stream."
+#~ msgstr "Zachytávání vysílání ze sítě/Internetu."
+
+#~ msgid "Importing from DVD."
+#~ msgstr "Import z DVD."
+
+#~ msgid "Importing from an audio CD."
+#~ msgstr "Import ze zvukových CD."
+
+#~ msgid ""
+#~ "Downloading from content providers such as <link href=\"http://www."
+#~ "jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
+#~ "\">Magnatune</link>, <link href=\"http://creativecommons.org/"
+#~ "\">CreativeCommons</link>, etc."
+#~ msgstr ""
+#~ "Stahování od poskytovatelů obsahu, jako jsou <link href=\"http://www."
+#~ "jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
+#~ "\">Magnatune</link>, <link href=\"http://creativecommons.org/"
+#~ "\">CreativeCommons</link>, apod."
+
+#~ msgid "Importing files"
+#~ msgstr "Importování souborů"
+
+#~ msgid "The following file chooser dialog window will appear:"
+#~ msgstr "Objeví se následující dialogové okno pro výběr souboru:"
+
+#~ msgid "Filechooser dialog"
+#~ msgstr "Dialogové okno pro výběr souboru"
+
+#~ msgctxt "_"
+#~ msgid ""
+#~ "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
+#~ msgstr ""
+#~ "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
+
+#~ msgid "<app>Pitivi</app> main window"
+#~ msgstr "Hlavní okno aplikace <app>Pitivi</app>"
