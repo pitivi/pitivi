@@ -811,7 +811,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     def __init__(self, settings=None, realizedCb=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
-        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=1.0,
+        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
