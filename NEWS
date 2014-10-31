@@ -1,3 +1,27 @@
+2014 November 2nd - Pitivi 0.94
+
+  Second beta and 4th release of the new version of Pitivi based on GES.
+  All the improvements from 0.91, 0.92 and 0.93, plus:
+
+  * The main toolbar and menubar have been replaced by a headerbar and menubutton, saving a significant amount of precious vertical space and using the horizontal space better.
+  * The viewer has been ported to use a GStreamer GL video output sink instead of the Clutter sink. This solves crashes when running Pitivi outside of GNOME Shell and is expected to be a more future-proof solution.
+  * We dropped our use of CoGL APIs, namely path_round_rectangle which caused crashes on various Linux distributions shipping a broken version of CoGL
+  * Pitivi has been ported to Python 3
+  * Text wrapping in the rendering progress dialog and title editor has been fixed
+  * Effects can now be reordered within a clip's properties
+  * The default positioning of UI components (when starting from a fresh install) has been improved to be balanced properly
+  * Undocked window components do not shift position on startup anymore
+  * Docked window components do not shift position on startup anymore, when the window is not maximized.
+  * The title editor's UI has been simplified, and now supports decimal font sizes
+  * Educational infobars throughout the UI have been tweaked to make their colors less intrusive
+  * The user manual is now up to date with the state of the new Pitivi series
+  * Port deprecated GTK+ widgets to new ones
+  * Timeline UI animations have been tweaked
+  * Code refactoring and cleanup all over the place
+  * Various build and packaging fixes
+  * Various fixes to the test suite
+  * Various other bugs have been corrected
+
 2014 March 20th - Pitivi 0.93
 
   First beta and 3rd release of the new version of Pitivi based on GES.
