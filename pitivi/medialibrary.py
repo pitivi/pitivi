@@ -491,7 +491,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         current_clip_iter = self.app.project_manager.current_project.nb_imported_files
         total_clips = self.app.project_manager.current_project.nb_remaining_file_to_import + current_clip_iter
 
-        progressbar_text = _("Importing clip %(current_clip)d of %(total)d" %
+        progressbar_text = (_("Importing clip %(current_clip)d of %(total)d") %
             {"current_clip": current_clip_iter + 1,
             "total": total_clips})
         self._progressbar.set_text(progressbar_text)
