@@ -1057,7 +1057,7 @@ class URISourceElement(TimelineElement):
                 mode = UNSELECT
         elif not self.bElement.selected:
             GES.Container.ungroup(self.timeline.current_group, False)
-            self.timeline.current_group = GES.Group()
+            self.timeline.createSelectionGroup()
             self.timeline.current_group.add(
                 self.bElement.get_toplevel_parent())
             self.timeline._container.gui.switchContextTab(self.bElement)
