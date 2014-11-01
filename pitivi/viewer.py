@@ -179,7 +179,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     def _videoRealizedCb(self, unused_drawing_area, viewer):
         if viewer == self.target:
-            self.log("Viewer widget realized: %s", viewer)
+            self.log("Widget realized: %s", viewer)
             self._switch_output_window()
 
     def _createUi(self):
@@ -357,7 +357,6 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.remove(self.buttons_container)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        self.external_window.show()
 
         self.undock_button.hide()
         self.fullscreen_button = Gtk.ToggleToolButton()
@@ -367,9 +366,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.fullscreen_button.show()
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
 
-        # if we are playing, switch output immediately
-        if self.pipeline:
-            self._switch_output_window()
+        self.external_window.show()
+        self._switch_output_window()
         self.hide()
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
         self.external_window.resize(self.settings.viewerWidth, self.settings.viewerHeight)
@@ -386,9 +384,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.external_vbox.remove(self.buttons_container)
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
-        # if we are playing, switch output immediately
-        if self.pipeline:
-            self._switch_output_window()
+        self._switch_output_window()
         self.external_window.hide()
 
     def _toggleFullscreen(self, widget):
@@ -466,7 +462,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.internal._currentStateCb(self.pipeline, state)
 
     def _switch_output_window(self):
-        # Don't do anything if we don't have a pipeline
+        # Bail out if we don't have a playable pipeline (it happens!)
         if self.pipeline is None:
             return
 
