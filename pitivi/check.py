@@ -29,6 +29,8 @@ The checks here are supposed to take a negligible amount of time (< 0.2 seconds)
 and not impact startup. Module imports have no impact (they get imported later
 by the app anyway). For more complex checks, you can measure (with time.time()),
 when called from application.py instead of bin/pitivi, if it has an impact.
+
+Package maintainers should look at the bottom section of this file.
 """
 
 import sys
@@ -181,35 +183,6 @@ class CairoDependency(ClassicDependency):
         return _string_to_list(module.cairo_version_string())
 
 
-HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
-                     GtkOrClutterDependency("Clutter", "1.12.0"),
-                     GstDependency("Gst", "1.4.0"),
-                     GstDependency("GES", "1.4.0.0"),
-                     GtkOrClutterDependency("Gtk", "3.10.0"),
-                     ClassicDependency("numpy", None),
-                     GIDependency("Gio", None),
-                     ]
-
-ges_1_5 = GstDependency("GES", "1.5.0.0")
-ges_1_5.check()
-if not ges_1_5.satisfied:
-    HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
-
-PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
-                                               _("enables sound notifications when rendering is complete"))
-GNOMEDESKTOP_SOFT_DEPENDENCY = GIDependency("GnomeDesktop", None,
-                                            _("file thumbnails provided by GNOME's thumbnailers"))
-NOTIFY_SOFT_DEPENDENCY = GIDependency("Notify", None,
-                                      _("enables visual notifications when rendering is complete"))
-LIBAV_SOFT_DEPENDENCY = GstPluginDependency("libav", None,
-                                            _("additional multimedia codecs through the GStreamer Libav library"))
-
-SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
-                     GNOMEDESKTOP_SOFT_DEPENDENCY,
-                     NOTIFY_SOFT_DEPENDENCY,
-                     LIBAV_SOFT_DEPENDENCY)
-
-
 def _check_audiosinks():
     from gi.repository import Gst
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
@@ -283,3 +256,48 @@ def initialize_modules():
     Gst.init(None)
     from gi.repository import GES
     GES.init()
+
+
+"""
+--------------------------------------------------------------------------------
+Package maintainers, this is where you can see the list of requirements.
+
+Those are either:
+- Classic Python modules
+- Dynamic Python bindings through GObject introspection ("GIDependency")
+- Something else. For example, there are various GStreamer plugins/elements
+  for which there is no clear detection method other than trying to instantiate;
+  there are special snowflakes like gst-python that are GI bindings "overrides"
+  for which there is no way to detect the version either.
+
+Some of our dependencies have version numbers requirements; for those without
+a specific version requirement, they have the "None" value.
+"""
+HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
+                     GtkOrClutterDependency("Clutter", "1.12.0"),
+                     GstDependency("Gst", "1.4.0"),
+                     GstDependency("GES", "1.4.0.0"),
+                     GtkOrClutterDependency("Gtk", "3.10.0"),
+                     ClassicDependency("numpy", None),
+                     GIDependency("Gio", None),
+                     ]
+
+# This one is a special case: eventually gnonlin will be dropped
+ges_1_5 = GstDependency("GES", "1.5.0.0")
+ges_1_5.check()
+if not ges_1_5.satisfied:
+    HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
+
+PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
+                                               _("enables sound notifications when rendering is complete"))
+GNOMEDESKTOP_SOFT_DEPENDENCY = GIDependency("GnomeDesktop", None,
+                                            _("file thumbnails provided by GNOME's thumbnailers"))
+NOTIFY_SOFT_DEPENDENCY = GIDependency("Notify", None,
+                                      _("enables visual notifications when rendering is complete"))
+LIBAV_SOFT_DEPENDENCY = GstPluginDependency("libav", None,
+                                            _("additional multimedia codecs through the GStreamer Libav library"))
+
+SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
+                     GNOMEDESKTOP_SOFT_DEPENDENCY,
+                     NOTIFY_SOFT_DEPENDENCY,
+                     LIBAV_SOFT_DEPENDENCY)
