@@ -876,9 +876,9 @@ class RenderDialog(Loggable):
         canberra = pycanberra.Canberra()
         canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
 
-    #------------------- Callbacks ------------------------------------------#
+    # ------------------- Callbacks ------------------------------------------ #
 
-    #-- UI callbacks
+    # -- UI callbacks
     def _okButtonClickedCb(self, unused_button, settings_attr):
         setattr(self.project, settings_attr, self.dialog.getSettings())
         self.dialog.window.destroy()
@@ -936,7 +936,7 @@ class RenderDialog(Loggable):
     def _containerContextHelpClickedCb(self, unused_button):
         show_user_manual("codecscontainers")
 
-    #-- Periodic (timer) callbacks
+    # -- Periodic (timer) callbacks --
     def _updateTimeEstimateCb(self):
         if self._rendering_is_paused:
             return True  # Do nothing until we resume rendering
@@ -966,7 +966,7 @@ class RenderDialog(Loggable):
             self._filesizeEstimateTimer = None
             return False  # Stop the timer
 
-    #-- GStreamer callbacks
+    # -- GStreamer callbacks --
     def _busMessageCb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
@@ -1043,7 +1043,7 @@ class RenderDialog(Loggable):
             element.set_property(propname, value)
             self.debug("Setting %s to %s", propname, value)
 
-    #-- Settings changed callbacks
+    # -- Settings changed callbacks --
     def _scaleSpinbuttonChangedCb(self, unused_button):
         render_scale = self.scale_spinbutton.get_value()
         self.project.render_scale = render_scale

@@ -49,11 +49,11 @@ class System(GObject.Object, Loggable):
         self._screensaver_keys = []
         self._sleep_keys = []
 
-    #generic functions
+    # Generic functions
     def _inhibit(self, list_, key):
         assert key is not None
         assert isinstance(key, str)
-        if not key in list_:
+        if key not in list_:
             list_.append(key)
             self.log("emitting 'update-power-inhibition'")
             self.emit('update-power-inhibition')
@@ -80,7 +80,7 @@ class System(GObject.Object, Loggable):
 
         return False
 
-    #screensaver
+    # Screensaver
     def inhibitScreensaver(self, key):
         """increase screensaver inhibitor count
         @arg key: C{str} a unique translated string, giving the reason for
@@ -111,7 +111,7 @@ class System(GObject.Object, Loggable):
     def screensaverIsBlockable(self):
         return False
 
-    # sleep
+    # Sleep
     def inhibitSleep(self, key):
         """increase sleep inhibitor count
         @arg key: C{str} a unique translated string, giving the reason for
@@ -142,7 +142,7 @@ class System(GObject.Object, Loggable):
     def sleepIsBlockable(self):
         return False
 
-    # other
+    # Other
     def uninhibitAll(self):
         self._reset()
         self.emit('update-power-inhibition')
@@ -175,7 +175,7 @@ class FreedesktopOrgSystem(System):
             Notify.init(APPNAME)
 
     def desktopMessage(self, title, message, icon="pitivi"):
-        #call super method for consistent logging
+        # Call super method for consistent logging
         System.desktopMessage(self, title, message, icon)
 
         if NOTIFY_SOFT_DEPENDENCY:
@@ -192,7 +192,7 @@ class FreedesktopOrgSystem(System):
         return None
 
 
-#org.gnome.SessionManager flags
+# org.gnome.SessionManager flags
 INHIBIT_LOGOUT = 1
 INHIBIT_USER_SWITCHING = 2
 INHIBIT_SUSPEND = 4
@@ -208,7 +208,6 @@ class GnomeSystem(FreedesktopOrgSystem):
         FreedesktopOrgSystem.__init__(self)
         self.bus = dbus.Bus(dbus.Bus.TYPE_SESSION)
 
-        #connect to gnome sessionmanager
         self.sessionmanager = self.bus.get_object('org.gnome.SessionManager',
             '/org/gnome/SessionManager')
         self.session_iface = dbus.Interface(self.sessionmanager,
@@ -225,15 +224,15 @@ class GnomeSystem(FreedesktopOrgSystem):
         return True
 
     def _updatePowerInhibitionCb(self, unused_system):
-        #there are two states we want the program to be in, with regards to
-        #power saving, the screen saver is inhibited when the viewer is watched.
-        #or we inhibit sleep/powersaving when we are processing data
-        #we do things the way we do here because the viewer shows the the output
-        #of the render pipeline
+        # There are two states we want the program to be in, with regards to
+        # power saving: the screen saver is inhibited while playing, and we
+        # inhibit sleep/powersaving when processing data. Things are done the
+        # way they are here because the viewer typically shows the output
+        # of the render pipeline
         self.log("updating power inhibitors")
         toplevel_id = 0
 
-        #inhibit power saving if we are rendering, maybe downloading a video
+        # Inhibit power saving if we are rendering, maybe downloading a video
         if self.sleepIsInhibited():
             if self.cookie_type != COOKIE_SLEEP:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
@@ -245,7 +244,7 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("sleep inhibited")
             else:
                 self.debug("sleep already inhibited")
-        #inhibit screensaver if we are just watching the viewer
+        # Inhibit screensaver if we are just watching the viewer
         elif self.screensaverIsInhibited():
             if self.cookie_type != COOKIE_SCREENSAVER:
                 new_cookie = self.session_iface.Inhibit(APPNAME, toplevel_id,
@@ -257,7 +256,7 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("screensaver inhibited")
             else:
                 self.debug("screensaver already inhibited")
-        #unblock everything otherwise
+        # Unblock everything otherwise
         else:
             if self.cookie != COOKIE_NONE:
                 self.session_iface.Uninhibit(self.cookie)
@@ -270,7 +269,7 @@ class GnomeSystem(FreedesktopOrgSystem):
 
 system_ = None
 
-#attempts to identify the System, import dependencies and overide system_
+# Attempts to identify the System, import dependencies and overide system_
 if os.name == 'posix':
     if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
         try:
