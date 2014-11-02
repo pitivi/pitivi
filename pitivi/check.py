@@ -212,11 +212,19 @@ SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
 
 def _check_audiosinks():
     from gi.repository import Gst
-
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
     if not sink:
         return False
+    return True
+
+
+def _check_gst_python():
+    from gi.repository import Gst
+    try:
+        Gst.Fraction(9001, 1)  # It's over NINE THOUSANDS!
+    except TypeError:
+        return False  # What, nine thousands?! There's no way that can be right
     return True
 
 
@@ -239,6 +247,11 @@ def check_requirements():
             print(dependency)
 
     if not hard_dependencies_satisfied:
+        return False
+
+    if not _check_gst_python():
+        print((_("ERROR — Could not create a Gst.Fraction — "
+              "this means gst-python is not installed correctly.")))
         return False
 
     if not _check_audiosinks():
