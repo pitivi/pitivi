@@ -42,7 +42,7 @@ from urllib.parse import urlparse
 from hashlib import md5
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
-from pitivi.check import GNOMEDESKTOP_SOFT_DEPENDENCY
+from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -297,7 +297,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
 
     @staticmethod
     def _getThumbnailer():
-        if not GNOMEDESKTOP_SOFT_DEPENDENCY:
+        if "GnomeDesktop" in missing_soft_deps:
             return None
         from gi.repository import GnomeDesktop
         # We need to instanciate the thumbnail factory on the main thread...

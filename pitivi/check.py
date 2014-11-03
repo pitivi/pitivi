@@ -288,16 +288,10 @@ ges_1_5.check()
 if not ges_1_5.satisfied:
     HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
 
-PYCANBERRA_SOFT_DEPENDENCY = ClassicDependency("pycanberra", None,
-                                               _("enables sound notifications when rendering is complete"))
-GNOMEDESKTOP_SOFT_DEPENDENCY = GIDependency("GnomeDesktop", None,
-                                            _("file thumbnails provided by GNOME's thumbnailers"))
-NOTIFY_SOFT_DEPENDENCY = GIDependency("Notify", None,
-                                      _("enables visual notifications when rendering is complete"))
-LIBAV_SOFT_DEPENDENCY = GstPluginDependency("libav", None,
-                                            _("additional multimedia codecs through the GStreamer Libav library"))
-
-SOFT_DEPENDENCIES = (PYCANBERRA_SOFT_DEPENDENCY,
-                     GNOMEDESKTOP_SOFT_DEPENDENCY,
-                     NOTIFY_SOFT_DEPENDENCY,
-                     LIBAV_SOFT_DEPENDENCY)
+SOFT_DEPENDENCIES = \
+    (
+        ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
+        GIDependency("GnomeDesktop", None, _("file thumbnails provided by GNOME's thumbnailers")),
+        GIDependency("Notify", None, _("enables visual notifications when rendering is complete")),
+        GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
+    )

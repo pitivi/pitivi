@@ -38,7 +38,7 @@ from gettext import gettext as _
 
 from pitivi import configure
 
-from pitivi.check import PYCANBERRA_SOFT_DEPENDENCY
+from pitivi.check import missing_soft_deps
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -870,7 +870,7 @@ class RenderDialog(Loggable):
 
     @staticmethod
     def _maybePlayFinishedSound():
-        if not PYCANBERRA_SOFT_DEPENDENCY:
+        if "pycanberra" in missing_soft_deps:
             return
         import pycanberra
         canberra = pycanberra.Canberra()

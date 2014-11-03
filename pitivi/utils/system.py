@@ -25,7 +25,7 @@ import resource
 
 from gi.repository import GObject
 
-from pitivi.check import NOTIFY_SOFT_DEPENDENCY
+from pitivi.check import missing_soft_deps
 from pitivi.configure import APPNAME
 from pitivi.utils.loggable import Loggable
 
@@ -170,7 +170,7 @@ class FreedesktopOrgSystem(System):
 
     def __init__(self):
         System.__init__(self)
-        if NOTIFY_SOFT_DEPENDENCY:
+        if "Notify" not in missing_soft_deps:
             from gi.repository import Notify
             Notify.init(APPNAME)
 
@@ -178,7 +178,7 @@ class FreedesktopOrgSystem(System):
         # Call super method for consistent logging
         System.desktopMessage(self, title, message, icon)
 
-        if NOTIFY_SOFT_DEPENDENCY:
+        if "Notify" not in missing_soft_deps:
             from gi.repository import Notify
             notification = Notify.Notification.new(title, message, icon=icon)
             try:
