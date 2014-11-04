@@ -53,6 +53,13 @@ from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
 from pitivi.render import CachedEncoderList
 
+try:
+    from gi.repository import GstValidate
+    GstValidate.init()
+    has_validate = GES.validate_register_action_types()
+except ImportError:
+    has_validate = False
+
 
 DEFAULT_MUXER = "oggmux"
 DEFAULT_VIDEO_ENCODER = "theoraenc"
@@ -218,6 +225,14 @@ class ProjectManager(GObject.Object, Loggable):
 
         return uri
 
+    def _isValidateScenario(self, uri):
+        if uri.endswith(".scenario") and has_validate is True:
+            # Let's just normally fail if we do not have Validate
+            # installed on the system
+            return True
+
+        return False
+
     def loadProject(self, uri):
         """
         Load the given URI as a project. If a backup file exists, ask if it
@@ -229,10 +244,16 @@ class ProjectManager(GObject.Object, Loggable):
 
         self.emit("new-project-loading", uri)
 
-        uri = self._tryUsingBackupFile(uri)
+        is_validate_scenario = self._isValidateScenario(uri)
+        if not is_validate_scenario:
+            uri = self._tryUsingBackupFile(uri)
+            scenario = None
+        else:
+            scenario = path_from_uri(uri)
+            uri = None
 
         # Load the project:
-        self.current_project = Project(self.app, uri=uri)
+        self.current_project = Project(self.app, uri=uri, scenario=scenario)
 
         self.current_project.connect("missing-uri", self._missingURICb)
         self.current_project.connect("loaded", self._projectLoadedCb)
@@ -241,6 +262,9 @@ class ProjectManager(GObject.Object, Loggable):
             self.emit("new-project-created", self.current_project)
             self.current_project.connect(
                 "project-changed", self._projectChangedCb)
+
+            if is_validate_scenario:
+                self.current_project.setupValidateScenario()
             return True
         else:
             self.emit("new-project-failed", uri,
@@ -612,7 +636,7 @@ class Project(Loggable, GES.Project):
                                         GObject.TYPE_PYOBJECT,))
     }
 
-    def __init__(self, app, name="", uri=None, **unused_kwargs):
+    def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
         """
         @param name: the name of the project
         @param uri: the uri of the project
@@ -624,8 +648,12 @@ class Project(Loggable, GES.Project):
         self.timeline = None
         self.seeker = Seeker()
         self.uri = uri
+        self.scenario = scenario
         self.loaded = False
         self.app = app
+
+        # GstValidate
+        self._scenario = None
 
         # Follow imports
         self._dirty = False
@@ -688,6 +716,14 @@ class Project(Loggable, GES.Project):
         # A (aencoder -> acodecsettings) map.
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
+
+    def setupValidateScenario(self):
+        self.info("Setting up validate scenario")
+        self.runner = GstValidate.Runner.new()
+        self.monitor = GstValidate.Monitor.factory_create(
+            self.pipeline, self.runner, None)
+        self._scenario = GstValidate.Scenario.factory_create(
+            self.runner, self.pipeline, self.scenario)
 
     # --------------- #
     # Our properties  #
@@ -923,10 +959,13 @@ class Project(Loggable, GES.Project):
 
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
-        self.loaded = True
+
         self._ensureTracks()
         # self._ensureLayer()
+        if self.scenario is not None:
+            return
 
+        self.loaded = True
         encoders = CachedEncoderList()
         # The project just loaded, we need to check the new
         # encoding profiles and make use of it now.

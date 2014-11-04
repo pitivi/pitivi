@@ -130,6 +130,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self._draggedPaths = None
         self.dragged = False
         self.clip_view = self.app.settings.lastClipView
+        self.import_start_time = time.time()
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
