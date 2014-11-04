@@ -374,6 +374,9 @@ class SimplePipeline(GObject.Object, Loggable):
     def _resetWaitingForAsyncDone(self):
         self.warning("we didn't get async done, this is a bug")
         self._waiting_for_async_done = False
+
+        # Source is being removed
+        self._timeout_async_id = 0
         return False
 
     def simple_seek(self, position):
