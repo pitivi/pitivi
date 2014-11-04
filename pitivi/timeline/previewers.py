@@ -302,6 +302,10 @@ class VideoPreviewer(Clutter.ScrollActor, PreviewGenerator, Zoomable, Loggable):
 
         self._checkCPU()
 
+        if self.bElement.props.in_point != 0:
+            position = Clutter.Point()
+            position.x = Zoomable.nsToPixel(self.bElement.props.in_point)
+            self.scroll_to_point(position)
         self._addVisibleThumbnails()
         # Save periodically to avoid the common situation where the user exits
         # the app before a long clip has been fully thumbnailed.
