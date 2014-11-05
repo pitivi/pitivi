@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-25 19:14+0200\n"
-"PO-Revision-Date: 2014-10-25 19:15+0200\n"
+"POT-Creation-Date: 2014-11-05 13:52+0100\n"
+"PO-Revision-Date: 2014-11-05 13:53+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -595,11 +595,11 @@ msgstr ""
 "rozdzielczości obrazu, mocy obliczeniowej komputera, zastosowanych efektów i "
 "czasu trwania filmu.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1042
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1038
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1035
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1031
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -677,51 +677,59 @@ msgid "Advanced positioning"
 msgstr "Zaawansowane pozycjonowanie"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:108
+#: ../pitivi/check.py:110
 #, python-format
 msgid "- %s not found on the system"
 msgstr "- nie odnaleziono %s w systemie"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:111
+#: ../pitivi/check.py:113
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr ""
 "- %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
 "wersji %s"
 
-#: ../pitivi/check.py:199
-msgid "enables sound notifications when rendering is complete"
-msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
-
-#: ../pitivi/check.py:201
-msgid "file thumbnails provided by GNOME's thumbnailers"
-msgstr ""
-"miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
-
-#: ../pitivi/check.py:203
-msgid "enables visual notifications when rendering is complete"
-msgstr "włącza powiadomienia po ukończeniu renderowania"
-
-#: ../pitivi/check.py:205
-msgid "additional multimedia codecs through the GStreamer Libav library"
-msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
-
-#: ../pitivi/check.py:229
+#: ../pitivi/check.py:210
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "BŁĄD - brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:238
+#: ../pitivi/check.py:219
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:245
+#: ../pitivi/check.py:226
+msgid ""
+"ERROR — Could not create a Gst.Fraction — this means gst-python is not "
+"installed correctly."
+msgstr ""
+"BŁĄD — nie można utworzyć Gst.Fraction — oznacza to, że gst-python nie jest "
+"poprawnie zainstalowane."
+
+#: ../pitivi/check.py:231
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
 msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
+
+#: ../pitivi/check.py:293
+msgid "enables sound notifications when rendering is complete"
+msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
+
+#: ../pitivi/check.py:294
+msgid "file thumbnails provided by GNOME's thumbnailers"
+msgstr ""
+"miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
+
+#: ../pitivi/check.py:295
+msgid "enables visual notifications when rendering is complete"
+msgstr "włącza powiadomienia po ukończeniu renderowania"
+
+#: ../pitivi/check.py:296
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
 
 #: ../pitivi/clipproperties.py:151
 msgid "Effects"
@@ -1354,11 +1362,11 @@ msgstr ""
 "Odłącza przeglądarkę\n"
 "Można ją ponownie podłączyć zamykając nowo utworzone okno."
 
-#: ../pitivi/viewer.py:365 ../pitivi/viewer.py:404
+#: ../pitivi/viewer.py:364 ../pitivi/viewer.py:400
 msgid "Show this window in fullscreen"
 msgstr "Wyświetlanie tego okno na pełnym ekranie"
 
-#: ../pitivi/viewer.py:401
+#: ../pitivi/viewer.py:397
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
