@@ -829,26 +829,20 @@ class RenderDialog(Loggable):
         self.dialog.ok_btn.connect(
             "clicked", self._okButtonClickedCb, settings_attr)
 
-    def _showRenderErrorDialog(self, error, details):
+    def _showRenderErrorDialog(self, error, unused_details):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = _("An error occured while trying to render your "
-                              "project. You might want to check our troubleshooting guide or "
-                              "file a bug report. See the details below for some basic "
-                              "information that may help identify the problem.")
+                              "project. You might want to check our "
+                              "troubleshooting guide or file a bug report. "
+                              "The GStreamer error was:") \
+                            + "\n\n<i>" + error + "</i>"
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
                                    message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
                                    text=primary_message)
         dialog.set_property("secondary-text", secondary_message)
-
-        expander = Gtk.Expander()
-        expander.set_label(_("Details"))
-        details_label = Gtk.Label(label=str(error) + "\n\n" + str(details))
-        details_label.set_line_wrap(True)
-        details_label.set_selectable(True)
-        expander.add(details_label)
-        dialog.get_message_area().add(expander)
-        dialog.show_all()  # Ensure the expander and its children show up
+        dialog.set_property("secondary-use-markup", True)
+        dialog.show_all()
         dialog.run()
         dialog.destroy()
 
