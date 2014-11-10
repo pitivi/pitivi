@@ -76,6 +76,18 @@ class TrackElementChildPropertyTracker:
         if track_element in self._tracked_track_elements:
             return
 
+        if track_element.get_track() is None:
+            track_element.connect(
+                "notify::track", self._trackElementTrackSetCb)
+            return
+
+        self._discoverChildProperties(track_element)
+
+    def _trackElementTrackSetCb(self, track_element, unused):
+        self._discoverChildProperties(track_element)
+        track_element.disconnect_by_func(self._trackElementTrackSetCb)
+
+    def _discoverChildProperties(self, track_element):
         properties = {}
 
         track_element.connect('deep-notify', self._propertyChangedCb)
