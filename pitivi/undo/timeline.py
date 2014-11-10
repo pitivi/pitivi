@@ -311,6 +311,7 @@ class ClipAdded(UndoableAction):
 
     def undo(self):
         self.layer.remove_clip(self.clip)
+        self.layer.get_timeline().commit()
         self._undone()
 
     def serializeLastAction(self):
@@ -338,6 +339,7 @@ class ClipRemoved(UndoableAction):
 
     def do(self):
         self.layer.remove_clip(self.clip)
+        self.layer.get_timeline().commit()
         self._done()
 
     def undo(self):

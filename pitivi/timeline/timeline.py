@@ -747,6 +747,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             for tlobj in layer.get_clips():
                 if asset_id == tlobj.get_id():
                     layer.remove_clip(tlobj)
+        self.bTimeline.commit()
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -1167,11 +1168,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self.bTimeline:
             self.app.action_log.begin("delete clip")
 
-            # FIXME GES port: Handle unlocked TrackElement-s
             for clip in self.timeline.selection:
                 layer = clip.get_layer()
                 layer.remove_clip(clip)
 
+            self.bTimeline.commit()
             self.app.action_log.commit()
 
     def _ungroupSelected(self, unused_action):
