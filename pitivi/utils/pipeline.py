@@ -407,7 +407,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = GLib.timeout_add(1000, self._resetWaitingForAsyncDone)
 
         if not res:
-            raise PipelineError("seek failed: %s" % position)
+            raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
         self.lastPosition = position
 
