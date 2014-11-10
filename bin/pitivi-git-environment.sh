@@ -140,6 +140,7 @@ else
   LD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$LD_LIBRARY_PATH
   DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
   GI_TYPELIB_PATH=$PITIVI/gst-devtools/validate/gst/validate/:$GI_TYPELIB_PATH
+  export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
 
 
 export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
