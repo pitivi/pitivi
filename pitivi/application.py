@@ -24,6 +24,14 @@
 import os
 import time
 
+from ctypes import cdll
+
+try:
+    x11 = cdll.LoadLibrary('libX11.so')
+    x11.XInitThreads()
+except OSError:
+    pass
+
 from gi.repository import GObject
 from gi.repository import Gio
 from gi.repository import Gtk
