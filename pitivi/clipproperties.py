@@ -688,6 +688,8 @@ class TransformationProperties(Gtk.Expander):
 
     def _selectionChangedCb(self, timeline):
         if self.timeline and len(self.timeline.selection.selected) > 0:
+            # choose last selected clip
+            # TODO: hide effects properties when multiple clips are selected
             for clip in self.timeline.selection.selected:
                 pass
 
@@ -701,6 +703,7 @@ class TransformationProperties(Gtk.Expander):
                     "frei0r-filter-scale0tilt")
                 self._updateSpinButtons()
         else:
+            # Deselect
             if self._selected_clip:
                 self._selected_clip = None
                 self.zoom_scale.set_value(1.0)
