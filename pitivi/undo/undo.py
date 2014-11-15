@@ -68,7 +68,7 @@ class UndoableAction(GObject.Object):
         # Meant to be overridden by UndoableActionStack?
         pass
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         raise NotImplementedError()
 
     def _done(self):
@@ -169,7 +169,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
         try:
             if action is not None:
-                st = action.serializeLastAction()
+                st = action.asScenarioAction()
                 if self.app is not None and st is not None:
                     self.app.write_action(st)
         except NotImplementedError:

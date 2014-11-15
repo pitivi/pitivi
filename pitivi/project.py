@@ -74,7 +74,7 @@ class AssetRemovedAction(UndoableAction):
     def do(self):
         self.project.remove_asset(self.asset)
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-asset")
         st.set_value("id", self.asset.get_id())
         type_string = GObject.type_name(self.asset.get_extractable_type())
@@ -95,7 +95,7 @@ class AssetAddedAction(UndoableAction):
     def do(self):
         self.project.add_asset(self.asset)
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-asset")
         st.set_value("id", self.asset.get_id())
         type_string = GObject.type_name(self.asset.get_extractable_type())

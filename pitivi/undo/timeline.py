@@ -46,7 +46,7 @@ class TrackElementPropertyChanged(UndoableAction):
             self.property_name, self.old_value)
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("set-child-property")
         st['element-name'] = self.track_element.get_name()
         st['property'] = self.property_name
@@ -151,7 +151,7 @@ class TrackElementAdded(UndoableAction):
         self.track_element = None
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-add-child")
         st["container-name"] = self.clip.get_name()
         st["asset-id"] = self.track_element.get_id()
@@ -197,7 +197,7 @@ class TrackElementRemoved(UndoableAction):
         self._props_changed = []
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-remove-child")
         st["container-name"] = self.clip.get_name()
         st["child-name"] = self.track_element.get_name()
@@ -314,7 +314,7 @@ class ClipAdded(UndoableAction):
         self.layer.get_timeline().commit()
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         if hasattr(self.layer, "splitting_object") and \
                 self.layer.splitting_object is True:
             return None
@@ -347,7 +347,7 @@ class ClipRemoved(UndoableAction):
         self.layer.get_timeline().commit()
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-clip")
         st.set_value("name", self.clip.get_name())
         return st
@@ -365,7 +365,7 @@ class LayerAdded(UndoableAction):
     def undo(self):
         self.timeline.remove_layer(self.layer)
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-layer")
         st.set_value("priority", self.layer.props.priority)
         return st
@@ -383,7 +383,7 @@ class LayerRemoved(UndoableAction):
     def undo(self):
         self.timeline.add_layer(self.layer)
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-layer")
         st.set_value("priority", self.layer.props.priority)
         return st
@@ -409,7 +409,7 @@ class ControlSourceValueAdded(UndoableAction):
         self.control_source.unset(self.keyframe.timestamp)
         self._undone()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-keyframe")
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
@@ -437,7 +437,7 @@ class ControlSourceValueRemoved(UndoableAction):
                                 self.keyframe.value)
         self._done()
 
-    def serializeLastAction(self):
+    def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-keyframe")
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
