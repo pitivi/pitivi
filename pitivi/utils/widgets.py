@@ -610,7 +610,12 @@ class GstElementSettingsWidget(Gtk.VBox, Loggable):
                 self._setKeyframeToggleButtonState(togglebutton, False)
 
         effect = self.element
-        for track_element in effect.get_parent().get_children(False):
+        parent = effect.get_parent()
+        if not parent:
+            self.log("Effect has no parent (it has been removed?)")
+            return
+
+        for track_element in parent.get_children(False):
             if hasattr(track_element, "ui_element"):
                 track_element.ui_element.hideKeyframes()
 
