@@ -23,6 +23,7 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
 
+from pitivi.utils.loggable import Loggable
 from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
 from pitivi.effects import PROPS_TO_IGNORE
 
@@ -487,7 +488,7 @@ class ActivePropertyChanged(UndoableAction):
         self._undone()
 
 
-class TimelineLogObserver(object):
+class TimelineLogObserver(Loggable):
     timelinePropertyChangedAction = ClipPropertyChanged
     activePropertyChangedAction = ActivePropertyChanged
 
@@ -497,6 +498,7 @@ class TimelineLogObserver(object):
         self.control_source_keyframe_trackers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(log)
         self._pipeline = None
+        Loggable.__init__(self)
 
     def setPipeline(self, pipeline):
         self._pipeline = pipeline
@@ -557,6 +559,8 @@ class TimelineLogObserver(object):
         if isinstance(clip, GES.TransitionClip):
             return
 
+        clip.disconnect_by_func(self._clipTrackElementAddedCb)
+        clip.disconnect_by_func(self._clipTrackElementRemovedCb)
         tracker = self.clip_property_trackers.pop(clip)
         tracker.disconnectFromObject(clip)
         tracker.disconnect_by_func(self._clipPropertyChangedCb)
@@ -646,6 +650,7 @@ class TimelineLogObserver(object):
             self.log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
+        self.debug("%s REMOVED from (%s)" % (track_element, clip))
         self._disconnectFromTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
             action = TrackElementRemoved(clip, track_element,
