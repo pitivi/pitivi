@@ -306,6 +306,7 @@ class ClipAdded(UndoableAction):
         self.clip = clip
 
     def do(self):
+        self.clip.set_name(None)
         self.layer.add_clip(self.clip)
         self.layer.get_timeline().commit()
         self._done()
@@ -344,6 +345,7 @@ class ClipRemoved(UndoableAction):
         self._done()
 
     def undo(self):
+        self.clip.set_name(None)
         self.layer.add_clip(self.clip)
         self.layer.get_timeline().commit()
         self._undone()
