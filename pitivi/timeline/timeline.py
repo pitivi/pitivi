@@ -936,6 +936,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                       # Some more.
                       EXPANDED_SIZE)
         self.set_size_request(-1, min_height)
+        self.set_margin_top(SPACING)
 
     def enableKeyboardAndMouseEvents(self):
         self.info("Unblocking timeline mouse and keyboard signals")
