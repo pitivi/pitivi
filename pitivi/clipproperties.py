@@ -35,10 +35,10 @@ from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import PADDING, SPACING
-from pitivi.utils.widgets import GstElementSettingsWidget
 
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
     EffectsPropertiesManager
+
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -49,24 +49,11 @@ from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
 
 
 class ClipPropertiesError(Exception):
-
     """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
 
 
-def compare_type(track, effect_type):
-
-    if (track.get_property("track_type") == GES.TrackType.AUDIO
-       and effect_type == AUDIO_EFFECT):
-        return True
-    elif (track.get_property("track_type") == GES.TrackType.VIDEO
-          and effect_type == VIDEO_EFFECT):
-        return True
-    return False
-
-
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
-
     """
     Widget for configuring the selected clip.
 
@@ -142,7 +129,6 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
 
 class EffectProperties(Gtk.Expander, Loggable):
-
     """
     Widget for viewing and configuring effects
 
@@ -569,10 +555,10 @@ class EffectProperties(Gtk.Expander, Loggable):
 
 
 class TransformationProperties(Gtk.Expander):
-
     """
     Widget for viewing and configuring speed
     """
+
     __signals__ = {
         'selection-changed': []}
 
