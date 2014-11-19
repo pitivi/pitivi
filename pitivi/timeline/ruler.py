@@ -36,6 +36,9 @@ from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
+
+HEIGHT = 25
+
 # A series of valid interval lengths in seconds.
 SCALES = (0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600)
 
@@ -111,7 +114,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
         self.callback_id_scroll = None
-        self.set_size_request(0, 25)
+        self.set_size_request(0, HEIGHT)
 
         style = self.get_style_context()
         color_normal = style.get_color(Gtk.StateFlags.NORMAL)
@@ -261,7 +264,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             set_cairo_color(
                 context, style.get_background_color(Gtk.StateFlags.ACTIVE))
             context.rectangle(
-                0, 0, int(offset), context.get_target().get_height())
+                0, 0, int(offset), height)
             context.fill()
 
     def drawRuler(self, context):
