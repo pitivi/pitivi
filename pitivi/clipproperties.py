@@ -78,12 +78,12 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.infobar_box = Gtk.Box()
         self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
         self.infobar_box.show()
-        vbox.pack_start(self.infobar_box, False, True, 0)
+        vbox.pack_start(self.infobar_box, False, False, 0)
 
         # Transformation boxed DISABLED
         # self.transformation_expander = TransformationProperties(instance, instance.action_log)
         # self.transformation_expander.set_vexpand(False)
-        # vbox.pack_start(self.transformation_expander, False, True, 0)
+        # vbox.pack_start(self.transformation_expander, False, False, 0)
 
         effects_properties_manager = EffectsPropertiesManager(app)
         self.effect_expander = EffectProperties(

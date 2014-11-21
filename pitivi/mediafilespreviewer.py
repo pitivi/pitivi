@@ -147,8 +147,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.b_zoom_out = Gtk.ToolButton()
         self.b_zoom_out.set_icon_name("zoom-out")
         self.b_zoom_out.connect("clicked", self._on_zoom_clicked_cb, -1)
-        self.bbox.pack_start(self.b_zoom_in, False, True, 0)
-        self.bbox.pack_start(self.b_zoom_out, False, True, 0)
+        self.bbox.pack_start(self.b_zoom_in, False, False, 0)
+        self.bbox.pack_start(self.b_zoom_out, False, False, 0)
         self.bbox.show_all()
         self.attach(self.bbox, 0, 2, 1, 1)
 

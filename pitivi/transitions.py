@@ -142,10 +142,10 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         # Speed-up startup by only checking available transitions on idle
         GLib.idle_add(self._loadAvailableTransitionsCb)
 
-        self.pack_start(self.infobar, False, True, 0)
-        self.pack_start(self.searchbar, False, True, 0)
+        self.pack_start(self.infobar, False, False, 0)
+        self.pack_start(self.searchbar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
-        self.pack_start(self.props_widgets, False, True, 0)
+        self.pack_start(self.props_widgets, False, False, 0)
 
         # Create the filterModel for searching
         self.modelFilter = self.storemodel.filter_new()

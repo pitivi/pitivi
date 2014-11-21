@@ -214,7 +214,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        self.pack_start(bbox, False, True, SPACING)
+        self.pack_start(bbox, False, False, SPACING)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -222,18 +222,18 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.goToStart_button.set_tooltip_text(
             _("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
-        bbox.pack_start(self.goToStart_button, False, True, 0)
+        bbox.pack_start(self.goToStart_button, False, False, 0)
 
         self.back_button = Gtk.ToolButton()
         self.back_button.set_icon_name("media-seek-backward")
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
-        bbox.pack_start(self.back_button, False, True, 0)
+        bbox.pack_start(self.back_button, False, False, 0)
 
         self.playpause_button = PlayPauseButton()
         self.playpause_button.connect("play", self._playButtonCb)
-        bbox.pack_start(self.playpause_button, False, True, 0)
+        bbox.pack_start(self.playpause_button, False, False, 0)
         self.playpause_button.set_sensitive(False)
 
         self.forward_button = Gtk.ToolButton()
@@ -241,7 +241,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
-        bbox.pack_start(self.forward_button, False, True, 0)
+        bbox.pack_start(self.forward_button, False, False, 0)
 
         self.goToEnd_button = Gtk.ToolButton()
         self.goToEnd_button.set_icon_name("media-skip-forward")
@@ -249,7 +249,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.goToEnd_button.set_tooltip_text(
             _("Go to the end of the timeline"))
         self.goToEnd_button.set_sensitive(False)
-        bbox.pack_start(self.goToEnd_button, False, True, 0)
+        bbox.pack_start(self.goToEnd_button, False, False, 0)
 
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue(0)
@@ -263,7 +263,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.connect("clicked", self.undock)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
-        bbox.pack_start(self.undock_button, False, True, 0)
+        bbox.pack_start(self.undock_button, False, False, 0)
 
         self._haveUI = True
 

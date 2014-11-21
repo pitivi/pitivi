@@ -848,7 +848,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             "dialog-question", Gtk.IconSize.DIALOG)
         hbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
         hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        hbox.pack_start(image, False, True, 0)
+        hbox.pack_start(image, False, False, 0)
         hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)
 

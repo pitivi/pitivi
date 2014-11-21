@@ -309,7 +309,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
-        self.pack_start(self._progressbar, False, True, 0)
+        self.pack_start(self._progressbar, False, False, 0)
 
         self.thumbnailer = MediaLibraryWidget._getThumbnailer()
 
