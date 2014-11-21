@@ -73,12 +73,14 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         viewport.show()
         self.add(viewport)
 
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box()
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.set_spacing(SPACING)
         vbox.show()
         viewport.add(vbox)
 
-        self.infobar_box = Gtk.VBox()
+        self.infobar_box = Gtk.Box()
+        self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
         self.infobar_box.show()
         vbox.pack_start(self.infobar_box, False, True, 0)
 

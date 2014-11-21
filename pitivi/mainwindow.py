@@ -838,7 +838,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                                       "your changes will be lost.")
 
         # put the text in a vbox
-        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
+        vbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.pack_start(primary, True, True, 0)
         vbox.pack_start(secondary, True, True, 0)
 

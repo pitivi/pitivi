@@ -159,7 +159,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.attach(self.l_tags, 0, 3, 1, 1)
 
         # Error handling
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box()
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.set_spacing(SPACING)
         self.l_error = Gtk.Label(label=_("Pitivi can not preview this file."))
         self.b_details = Gtk.Button.new_with_label(_("More info"))

@@ -826,7 +826,8 @@ class KeyframeMenu(GtkClutter.Actor):
     def __init__(self, keyframe):
         GtkClutter.Actor.__init__(self)
         self.keyframe = keyframe
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box()
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
 
         button = Gtk.Button()
         button.set_label("Remove")

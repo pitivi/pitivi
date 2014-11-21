@@ -73,7 +73,7 @@ GlobalSettings.addConfigOption("pointColor", section="viewer",
                                default='49a0e0')
 
 
-class ViewerContainer(Gtk.VBox, Loggable):
+class ViewerContainer(Gtk.Box, Loggable):
 
     """
     A wiget holding a viewer and the controls.
@@ -87,7 +87,7 @@ class ViewerContainer(Gtk.VBox, Loggable):
     INHIBIT_REASON = _("Currently playing")
 
     def __init__(self, app):
-        Gtk.VBox.__init__(self)
+        Gtk.Box.__init__(self)
         self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
@@ -186,6 +186,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
 
     def _createUi(self):
         """ Creates the Viewer GUI """
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+
         # Drawing area
         self.internal = ViewerWidget(
             self.app.settings, realizedCb=self._videoRealizedCb)
@@ -194,7 +196,8 @@ class ViewerContainer(Gtk.VBox, Loggable):
         self.pack_start(self.internal, True, True, 0)
 
         self.external_window = Gtk.Window()
-        vbox = Gtk.VBox()
+        vbox = Gtk.Box()
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
         self.external = ViewerWidget(

@@ -32,8 +32,7 @@ from pitivi.utils.ui import LAYER_CONTROL_TARGET_ENTRY
 
 
 # TODO GTK3 port to GtkGrid
-class BaseLayerControl(Gtk.VBox, Loggable):
-
+class BaseLayerControl(Gtk.Box, Loggable):
     """
     Base Layer control classes
     """
@@ -41,7 +40,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
     __gtype_name__ = 'LayerControl'
 
     def __init__(self, control_container, layer, layer_type, app):
-        Gtk.VBox.__init__(self, spacing=0)
+        Gtk.Box.__init__(self, spacing=0)
         Loggable.__init__(self)
 
         self._app = app
@@ -58,6 +57,8 @@ class BaseLayerControl(Gtk.VBox, Loggable):
         # that is used for list items in TreeView.
         self.SELECTED_COLOR = context.get_background_color(
             Gtk.StateFlags.SELECTED)
+
+        self.set_orientation(Gtk.Orientation.VERTICAL)
 
         table = Gtk.Table(n_rows=2, n_columns=2)
         table.set_border_width(2)
@@ -289,7 +290,6 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
 
 class VideoLayerControl(BaseLayerControl):
-
     """
     Layer control class for video layers
     """
@@ -317,7 +317,6 @@ class VideoLayerControl(BaseLayerControl):
 
 
 class AudioLayerControl(BaseLayerControl):
-
     """
     Layer control class for audio layers
     """
@@ -349,7 +348,6 @@ class AudioLayerControl(BaseLayerControl):
 
 
 class TwoStateButton(Gtk.Button):
-
     """
     Button with two states and according labels/images
     """
@@ -379,7 +377,6 @@ class TwoStateButton(Gtk.Button):
 
 
 class SpacedSeparator(Gtk.EventBox):
-
     """
     A Separator with vertical spacing
 
@@ -389,7 +386,8 @@ class SpacedSeparator(Gtk.EventBox):
     def __init__(self):
         Gtk.EventBox.__init__(self)
 
-        self.box = Gtk.VBox()
+        self.box = Gtk.Box()
+        self.box.set_orientation(Gtk.Orientation.VERTICAL)
         self.box.add(Gtk.HSeparator())
         self.box.set_border_width(6)
 

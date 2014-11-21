@@ -575,20 +575,21 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
         return self.get_font_name()
 
 
-class GstElementSettingsWidget(Gtk.VBox, Loggable):
+class GstElementSettingsWidget(Gtk.Box, Loggable):
 
     """
     Widget to view/modify properties of a Gst.Element
     """
 
     def __init__(self, isControllable=True):
-        Gtk.VBox.__init__(self)
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = None
         self.ignore = None
         self.properties = None
         self.buttons = {}
         self.isControllable = isControllable
+        self.set_orientation(Gtk.Orientation.VERTICAL)
 
     def resetKeyframeToggleButtons(self, widget=None):
         """

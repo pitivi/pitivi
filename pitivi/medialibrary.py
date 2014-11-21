@@ -109,7 +109,7 @@ SUPPORTED_FILE_FORMATS = {
 OTHER_KNOWN_FORMATS = ("video/mp2t",)
 
 
-class MediaLibraryWidget(Gtk.VBox, Loggable):
+class MediaLibraryWidget(Gtk.Box, Loggable):
 
     """ Widget for listing sources """
 
@@ -118,7 +118,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
                  (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, app, uiman):
-        Gtk.VBox.__init__(self)
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
         self.pending_rows = []
@@ -132,6 +132,7 @@ class MediaLibraryWidget(Gtk.VBox, Loggable):
         self.clip_view = self.app.settings.lastClipView
         self.import_start_time = time.time()
 
+        self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
         builder.connect_signals(self)

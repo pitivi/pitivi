@@ -368,7 +368,8 @@ class ProjectManager(GObject.Object, Loggable):
         primary.props.label = message
 
         # put the text in a vbox
-        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
+        vbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox

@@ -40,7 +40,7 @@ from pitivi.utils.ui import SPACING
  COL_ICON) = list(range(4))
 
 
-class TransitionsListWidget(Gtk.VBox, Loggable):
+class TransitionsListWidget(Gtk.Box, Loggable):
 
     """
     Widget for configuring the selected transition.
@@ -49,7 +49,7 @@ class TransitionsListWidget(Gtk.VBox, Loggable):
     """
 
     def __init__(self, app):
-        Gtk.VBox.__init__(self)
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
         self.app = app
@@ -57,6 +57,7 @@ class TransitionsListWidget(Gtk.VBox, Loggable):
         self._pixdir = os.path.join(get_pixmap_dir(), "transitions")
         icon_theme = Gtk.IconTheme.get_default()
         self._question_icon = icon_theme.load_icon("dialog-question", 48, 0)
+        self.set_orientation(Gtk.Orientation.VERTICAL)
 
         # Tooltip handling
         self._current_transition_name = None
@@ -72,7 +73,8 @@ class TransitionsListWidget(Gtk.VBox, Loggable):
         self.searchEntry.set_placeholder_text(_("Search..."))
         self.searchbar.pack_end(self.searchEntry, True, True, 0)
 
-        self.props_widgets = Gtk.VBox()
+        self.props_widgets = Gtk.Box()
+        self.props_widgets.set_orientation(Gtk.Orientation.VERTICAL)
         borderTable = Gtk.Table(n_rows=2, n_columns=3)
 
         self.border_mode_normal = Gtk.RadioButton(

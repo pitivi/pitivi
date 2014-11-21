@@ -317,12 +317,12 @@ GlobalSettings.addConfigSection('effect-library')
  COL_ICON) = list(range(7))
 
 
-class EffectListWidget(Gtk.VBox, Loggable):
+class EffectListWidget(Gtk.Box, Loggable):
 
     """ Widget for listing effects """
 
     def __init__(self, instance, unused_uiman):
-        Gtk.VBox.__init__(self)
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
         self.app = instance
@@ -330,6 +330,7 @@ class EffectListWidget(Gtk.VBox, Loggable):
         self._draggedItems = None
         self._effectType = VIDEO_EFFECT
 
+        self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "effectslibrary.ui"))
         builder.connect_signals(self)
