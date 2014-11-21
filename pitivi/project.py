@@ -375,7 +375,8 @@ class ProjectManager(GObject.Object, Loggable):
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_icon_name(
             "dialog-question", Gtk.IconSize.DIALOG)
-        hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
+        hbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
+        hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)

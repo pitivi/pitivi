@@ -210,11 +210,10 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.external_vbox = vbox
 
         # Buttons/Controls
-        bbox = Gtk.HBox()
-
+        bbox = Gtk.Box()
+        bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-
         self.pack_start(bbox, False, True, SPACING)
 
         self.goToStart_button = Gtk.ToolButton()

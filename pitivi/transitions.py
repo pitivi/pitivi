@@ -64,7 +64,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self._current_tooltip_icon = None
 
         # Searchbox
-        self.searchbar = Gtk.HBox()
+        self.searchbar = Gtk.Box()
+        self.searchbar.set_orientation(Gtk.Orientation.HORIZONTAL)
         # Prevents being flush against the notebook
         self.searchbar.set_border_width(3)
         self.searchEntry = Gtk.Entry()

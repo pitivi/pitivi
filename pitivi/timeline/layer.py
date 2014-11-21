@@ -116,13 +116,15 @@ class BaseLayerControl(Gtk.Box, Loggable):
                                             "Disabled layers will not play nor render."))
 
         # Upper bar
-        upper = Gtk.HBox()
+        upper = Gtk.Box()
+        upper.set_orientation(Gtk.Orientation.HORIZONTAL)
         upper.pack_start(self.name_entry, True, True, 0)
         upper.pack_start(self.solo_button, False, False, 0)
         upper.pack_start(visible_option, False, False, 0)
 
         # Lower bar
-        self.lower_hbox = Gtk.HBox()
+        self.lower_hbox = Gtk.Box()
+        self.lower_hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.lower_hbox.set_sensitive(False)
 
         table.attach(upper, 1, 2, 0, 1)

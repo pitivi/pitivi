@@ -123,7 +123,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.attach(self.preview_image, 0, 1, 1, 1)
 
         # Play button
-        self.bbox = Gtk.HBox()
+        self.bbox = Gtk.Box()
+        self.bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.play_button = Gtk.ToolButton()
         self.play_button.set_icon_name("media-playback-start")
         self.play_button.connect("clicked", self._on_start_stop_clicked_cb)

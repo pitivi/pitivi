@@ -87,7 +87,7 @@ class DefaultWidget(Gtk.Label):
         pass
 
 
-class TextWidget(Gtk.HBox, DynamicWidget):
+class TextWidget(Gtk.Box, DynamicWidget):
 
     """
     A Gtk.Entry which emits a "value-changed" signal only when its input is
@@ -113,9 +113,10 @@ class TextWidget(Gtk.HBox, DynamicWidget):
             # In the case of text widgets, a blank default is an empty string
             default = ""
 
-        Gtk.HBox.__init__(self)
+        Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
 
+        self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.set_border_width(0)
         self.set_spacing(0)
         if choices:
@@ -199,16 +200,17 @@ class TextWidget(Gtk.HBox, DynamicWidget):
         self.text.set_width_chars(width)
 
 
-class NumericWidget(Gtk.HBox, DynamicWidget):
+class NumericWidget(Gtk.Box, DynamicWidget):
 
     """An horizontal Gtk.Scale and a Gtk.SpinButton which share an adjustment.
     The SpinButton is always displayed, while the Scale only appears if both
     lower and upper bounds are defined"""
 
     def __init__(self, upper=None, lower=None, default=None):
-        Gtk.HBox.__init__(self)
+        Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
 
+        self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.spacing = SPACING
         self.adjustment = Gtk.Adjustment()
         self.upper = upper
@@ -436,17 +438,18 @@ class ToggleWidget(Gtk.CheckButton, DynamicWidget):
         return self.get_active()
 
 
-class ChoiceWidget(Gtk.HBox, DynamicWidget):
+class ChoiceWidget(Gtk.Box, DynamicWidget):
 
     """Abstractly, represents a choice between a list of named values. The
     association between value names and values is arbitrary. The current
     implementation uses a Gtk.ComboBoxText for simplicity."""
 
     def __init__(self, choices, default=None):
-        Gtk.HBox.__init__(self)
+        Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
         self.choices = None
         self.values = None
+        self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.contents = Gtk.ComboBoxText()
         self.pack_start(self.contents, expand=True, fill=True, padding=0)
         self.setChoices(choices)
