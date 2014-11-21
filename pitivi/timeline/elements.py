@@ -832,7 +832,7 @@ class KeyframeMenu(GtkClutter.Actor):
         button = Gtk.Button()
         button.set_label("Remove")
         button.connect("clicked", self._removeClickedCb)
-        vbox.pack_start(button, False, False, False)
+        vbox.pack_start(button, False, False, 0)
 
         self.get_widget().add(vbox)
         self.vbox = vbox
