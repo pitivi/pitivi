@@ -355,7 +355,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         self.view.set_model(self.modelFilter)
 
         icon_col = Gtk.TreeViewColumn()
-        icon_col.props.spacing = SPACING
+        icon_col.set_spacing(SPACING)
         icon_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         icon_col.props.fixed_width = ICON_WIDTH
         icon_cell = Gtk.CellRendererPixbuf()

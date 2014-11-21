@@ -168,8 +168,6 @@ class RandomAccessAudioExtractor(RandomAccessExtractor):
         self._ready = False
 
     def _pipelineInit(self, factory, sbin):
-        self.spacing = 0
-
         self.audioSink = ExtractionSink()
         self.audioSink.set_stopped_cb(self._finishSegment)
         # This audiorate element ensures that the extracted raw-data

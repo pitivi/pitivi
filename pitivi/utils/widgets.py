@@ -211,7 +211,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         DynamicWidget.__init__(self, default)
 
         self.set_orientation(Gtk.Orientation.HORIZONTAL)
-        self.spacing = SPACING
+        self.set_spacing(SPACING)
         self.adjustment = Gtk.Adjustment()
         self.upper = upper
         self.lower = lower
