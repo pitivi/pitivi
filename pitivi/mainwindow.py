@@ -923,9 +923,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.run()
         dialog.destroy()
 
-    def _projectManagerMissingUriCb(
-        self, unused_project_manager, unused_project,
-            unused_error, asset):
+    def _projectManagerMissingUriCb(self, unused_project_manager, project, unused_error, asset):
         self._missingUriOnLoading = True
         uri = asset.get_id()
         new_uri = None
@@ -1018,7 +1016,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             # this async operation, or the filechooser will keep showing up
             # and all sorts of weird things will happen.
             # TODO: bugs #661059, 609136
-            attempted_uri = self.app.project_manager.current_project.uri
+            attempted_uri = project.uri
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
                        'Pitivi does not currently support partial projects.'
                        % info_name(asset))
