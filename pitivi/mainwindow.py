@@ -566,16 +566,12 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _saveProjectCb(self, action, unused_param):
         if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
-            self._saveProjectAsCb(action, None)
+            self.saveProjectAs()
         else:
             self.app.project_manager.saveProject()
 
     def _saveProjectAsCb(self, unused_action, unused_param):
-        uri = self._showSaveAsDialog(self.app.project_manager.current_project)
-        if uri is not None:
-            return self.app.project_manager.saveProject(uri)
-
-        return False
+        self.saveProjectAs()
 
     def saveProject(self):
         self._saveProjectCb(None, None)
@@ -864,7 +860,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             if project.uri is not None and project_manager.disable_save is False:
                 res = self.app.project_manager.saveProject()
             else:
-                res = self._saveProjectAsCb(None)
+                res = self.saveProjectAs()
         elif response == Gtk.ResponseType.REJECT:
             res = True
         else:
@@ -1174,9 +1170,14 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         chooser.destroy()
         return ret
 
-    def _showSaveAsDialog(self, unused_project):
-        self.log("Save URI requested")
+    def saveProjectAs(self):
+        uri = self._showSaveAsDialog()
+        if uri is None:
+            return False
+        return self.app.project_manager.saveProject(uri)
 
+    def _showSaveAsDialog(self):
+        self.log("Save URI requested")
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
                                         transient_for=self,
                                         action=Gtk.FileChooserAction.SAVE)
