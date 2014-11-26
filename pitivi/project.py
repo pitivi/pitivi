@@ -233,6 +233,74 @@ class ProjectManager(GObject.Object, Loggable):
 
         return False
 
+    def _pipelineDied(self, pipeline):
+        """
+        Ask if we need to load the autosaved project backup or not.
+
+        @param time_diff: the difference, in seconds, between file mtimes.
+                          None means pitivi had a problem and we should ask the
+                          user if he wants us to retry loading his project
+        """
+        dialog = Gtk.Dialog(title="", transient_for=None)
+
+        dialog.add_buttons(_("Save project as"), Gtk.ResponseType.APPLY,
+                           _("Save project"), Gtk.ResponseType.OK,
+                           _("Close pitivi"), Gtk.ResponseType.CLOSE)
+        # Even though we set the title to an empty string when creating dialog,
+        # seems we really have to do it once more so it doesn't show
+        # "pitivi"...
+        dialog.set_title(_("Pitivi died"))
+        message = _("We detected the application had a serious problem.\n"
+                    "There is no other choice than saving your project and <b>restart\n"
+                    "the application</b> at this point.\n\n"
+                    "Note that a severe bug happened and we would be very happy\n"
+                    "to hear about that to make sure it get fixed.\n\n"
+                    "You are very welcome to follow our guide to report bugs:\n\n"
+                    "      "
+                    "<a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">"
+                    "How to report a bug</a>\n\n"
+                    "and we will make sure to get it fixed!")
+
+        dialog.set_icon_name("pitivi")
+        dialog.set_transient_for(self.app.gui)
+        dialog.set_modal(True)
+        dialog.get_accessible().set_name("pitivi died")
+        dialog.set_default_response(Gtk.ResponseType.YES)
+
+        primary = Gtk.Label()
+        primary.set_line_wrap(True)
+        primary.set_use_markup(True)
+        primary.set_alignment(0, 0.5)
+
+        primary.props.label = message
+
+        # put the text in a vbox
+        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
+        vbox.pack_start(primary, True, True, 0)
+
+        # make the [[image] text] hbox
+        image = Gtk.Image.new_from_icon_name("dialog-error", Gtk.IconSize.DIALOG)
+        hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
+        hbox.pack_start(image, False, True, 0)
+        hbox.pack_start(vbox, True, True, 0)
+        hbox.set_border_width(SPACING)
+
+        # stuff the hbox in the dialog
+        content_area = dialog.get_content_area()
+        content_area.pack_start(hbox, True, True, 0)
+        content_area.set_spacing(SPACING * 2)
+        hbox.show_all()
+
+        response = dialog.run()
+        dialog.destroy()
+
+        if response == Gtk.ResponseType.APPLY:
+            self.app.gui.saveProjectAsDialog()
+        elif response == Gtk.ResponseType.APPLY:
+            self.app.gui.saveProject()
+
+        self.app.shutdown()
+
     def loadProject(self, uri):
         """
         Load the given URI as a project. If a backup file exists, ask if it
@@ -262,6 +330,7 @@ class ProjectManager(GObject.Object, Loggable):
             self.emit("new-project-created", self.current_project)
             self.current_project.connect(
                 "project-changed", self._projectChangedCb)
+            self.current_project.pipeline.connect("died", self._pipelineDied)
 
             if is_validate_scenario:
                 self.current_project.setupValidateScenario()

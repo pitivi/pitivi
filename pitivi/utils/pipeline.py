@@ -42,6 +42,7 @@ PIPELINE_SIGNALS = {
     "duration-changed": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_UINT64,)),
     "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
     "error": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, GObject.TYPE_STRING)),
+    "died": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
 MAX_RECOVERIES = 3
@@ -495,6 +496,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def _recover(self):
         if self._attempted_recoveries > MAX_RECOVERIES:
+            self.emit("died")
             self.error(
                 "Pipeline error detected multiple times in a row, not resetting anymore")
             return
