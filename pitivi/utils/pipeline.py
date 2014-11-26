@@ -45,6 +45,7 @@ PIPELINE_SIGNALS = {
 }
 
 MAX_RECOVERIES = 3
+WATCHDOG_TIMEOUT = 3
 MAX_BRINGING_TO_PAUSED_DURATION = 5
 MAX_SET_STATE_DURATION = 1
 
@@ -396,7 +397,7 @@ class SimplePipeline(GObject.Object, Loggable):
             GLib.source_remove(self._timeout_async_id)
         self._timeout_async_id = 0
 
-    def _addWaitingForAsyncDoneTimeout(self, timeout=3):
+    def _addWaitingForAsyncDoneTimeout(self, timeout=WATCHDOG_TIMEOUT):
         self._removeWaitingForAsyncDoneTimeout()
 
         self._timeout_async_id = GLib.timeout_add_seconds(timeout,
@@ -575,6 +576,13 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
+        watchdog = Gst.ElementFactory.make("watchdog", None)
+        if watchdog:
+            watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
+            self.props.video_filter = watchdog
+            watchdog = Gst.ElementFactory.make("watchdog", None)
+            watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
+            self.props.audio_filter = watchdog
 
     def _getDuration(self):
         return self._timeline.get_duration()

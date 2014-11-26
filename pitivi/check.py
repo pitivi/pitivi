@@ -299,4 +299,7 @@ SOFT_DEPENDENCIES = \
         GIDependency("GnomeDesktop", None, _("file thumbnails provided by GNOME's thumbnailers")),
         GIDependency("Notify", None, _("enables visual notifications when rendering is complete")),
         GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
+        GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
+                                                     " Use to detect errors happening in GStreamer"
+                                                     " and recover from them")),
     )
