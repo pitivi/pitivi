@@ -290,6 +290,7 @@ HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
                      GtkOrClutterDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
                      GIDependency("Gio", None),
+                     GstPluginDependency("opengl", "1.4.0")
                      ]
 
 SOFT_DEPENDENCIES = \
