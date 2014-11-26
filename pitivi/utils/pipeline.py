@@ -389,6 +389,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def _asyncDoneNotReceivedCb(self):
         self.error("we didn't get async done, this is a bug")
+        self._recover()
         # Source is being removed
         self._removeWaitingForAsyncDoneTimeout()
         return False
