@@ -663,7 +663,10 @@ class ProjectManager(GObject.Object, Loggable):
         return name + ext + "~"
 
     def _missingURICb(self, project, error, asset):
-        return self.emit("missing-uri", project, error, asset)
+        new_uri = self.emit("missing-uri", project, error, asset)
+        if not new_uri:
+            project.at_least_one_asset_missing = True
+        return new_uri
 
     def _projectLoadedCb(self, unused_project, unused_timeline):
         self.debug("Project loaded %s", self.current_project.props.uri)
@@ -716,6 +719,7 @@ class Project(Loggable, GES.Project):
         self.uri = uri
         self.scenario = scenario
         self.loaded = False
+        self._at_least_one_asset_missing = False
         self.app = app
 
         # GstValidate
@@ -801,6 +805,15 @@ class Project(Loggable, GES.Project):
     # --------------- #
     # Our properties  #
     # --------------- #
+
+    @property
+    def at_least_one_asset_missing(self):
+        return self._at_least_one_asset_missing
+
+    @at_least_one_asset_missing.setter
+    def at_least_one_asset_missing(self, value):
+        self._at_least_one_asset_missing = value
+        self.setModificationState(True)
 
     # Project specific properties
     @property

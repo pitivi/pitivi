@@ -150,7 +150,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         self._createUi()
         self.recent_manager = Gtk.RecentManager()
-        self._missingUriOnLoading = False
 
         pm = self.app.project_manager
         pm.connect("new-project-loading",
@@ -738,11 +737,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
-        if self._missingUriOnLoading:
-            project.setModificationState(True)
-            self.save_action.set_enabled(True)
-            self._missingUriOnLoading = False
-
         if project_manager.disable_save is True:
             # Special case: we enforce "Save as", but the normal "Save" button
             # redirects to it if needed, so we still want it to be enabled:
@@ -924,7 +918,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.destroy()
 
     def _projectManagerMissingUriCb(self, unused_project_manager, project, unused_error, asset):
-        self._missingUriOnLoading = True
+        if project.at_least_one_asset_missing:
+            # One asset is already missing so no point in spamming the user
+            # with more file-missing dialogs, as we need all of them.
+            return None
+
         uri = asset.get_id()
         new_uri = None
         dialog = Gtk.Dialog(title=_("Locate missing file..."),
@@ -1010,32 +1008,18 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self.app.project_manager.current_project.setModificationState(
                 False)
         else:
-            # Even if the user clicks Cancel, the discoverer keeps trying to
-            # import the rest of the clips...
-            # However, since we don't yet have proxy editing, we need to break
-            # this async operation, or the filechooser will keep showing up
-            # and all sorts of weird things will happen.
-            # TODO: bugs #661059, 609136
-            attempted_uri = project.uri
+            dialog.hide()
+            # Reset the project manager and disconnect all the signals.
+            self.app.project_manager.newBlankProject(
+                ignore_unsaved_changes=True)
+            # Signal the project loading failure.
+            # You have to do this *after* successfully creating a blank project,
+            # or the startupwizard will still be connected to that signal too.
             reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
                        'Pitivi does not currently support partial projects.'
                        % info_name(asset))
-            # Put an end to the async signals spamming us with dialogs:
-            self.app.project_manager.disconnect_by_func(
-                self._projectManagerMissingUriCb)
-            # Don't overlap the file chooser with our error dialog
-            # The chooser will be destroyed further below, so let's hide it
-            # now.
-            dialog.hide()
-            # Reset projectManager and disconnect all the signals:
-            self.app.project_manager.newBlankProject(
-                ignore_unsaved_changes=True)
-            # Force the project load to fail:
-            # This will show an error using _projectManagerNewProjectFailedCb
-            # You have to do this *after* successfully creating a blank project,
-            # or the startupwizard will still be connected to that signal too.
             self.app.project_manager.emit(
-                "new-project-failed", attempted_uri, reason)
+                "new-project-failed", project.uri, reason)
 
         dialog.destroy()
         return new_uri
