@@ -168,6 +168,11 @@ class SimplePipeline(GObject.Object, Loggable):
 
     __gsignals__ = PIPELINE_SIGNALS
 
+    class RecoveryState(object):
+        NOT_RECOVERING = "not-recovering"
+        STARTED_RECOVERING = "started-recovering"
+        SEEKED_AFTER_RECOVERING = "seeked-after-recovering"
+
     def __init__(self, pipeline):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
@@ -180,8 +185,8 @@ class SimplePipeline(GObject.Object, Loggable):
         self._listeningInterval = 300  # default 300ms
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
-        self.lastPosition = int(0 * Gst.SECOND)
-        self.pendingRecovery = False
+        self._last_position = int(0 * Gst.SECOND)
+        self._recovery_state = self.RecoveryState.NOT_RECOVERING
         self._attempted_recoveries = 0
         self._waiting_for_async_done = False
         self._next_seek = None
@@ -371,7 +376,7 @@ class SimplePipeline(GObject.Object, Loggable):
             else:
                 if position != Gst.CLOCK_TIME_NONE:
                     self.emit('position', position)
-                    self.lastPosition = position
+                    self._last_position = position
         finally:
             return True
 
@@ -432,7 +437,7 @@ class SimplePipeline(GObject.Object, Loggable):
         if not res:
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
-        self.lastPosition = position
+        self._last_position = position
 
         self.debug("seeking successful")
         self.emit('position', position)
@@ -462,11 +467,18 @@ class SimplePipeline(GObject.Object, Loggable):
                         self.warning("Could not get duration because: %s", e)
                         # no sinks??
                         pass
-                    if self.pendingRecovery:
-                        self.simple_seek(self.lastPosition)
-                        self.pendingRecovery = False
-                        self.info(
-                            "Seeked back to the last position after pipeline recovery")
+
+                    if self._recovery_state == self.RecoveryState.STARTED_RECOVERING:
+                        if self._attempted_recoveries == MAX_RECOVERIES:
+                            self._recovery_state = self.RecoveryState.NOT_RECOVERING
+                            self._attempted_recoveries = 0
+                            self.error("Too many tries to seek back to right position"
+                                       "not trying again, and going back to 0 instead")
+                        else:
+                            self._recovery_state = self.RecoveryState.SEEKED_AFTER_RECOVERING
+                            self.simple_seek(self._last_position)
+                            self.info(
+                                "Seeked back to the last position after pipeline recovery")
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
@@ -486,7 +498,9 @@ class SimplePipeline(GObject.Object, Loggable):
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
-            self._attempted_recoveries = 0
+            if self._recovery_state == self.RecoveryState.SEEKED_AFTER_RECOVERING:
+                self._recovery_state = self.RecoveryState.NOT_RECOVERING
+                self._attempted_recoveries = 0
             self._waiting_for_async_done = False
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek)
@@ -506,7 +520,7 @@ class SimplePipeline(GObject.Object, Loggable):
                    " -- num tries: %d", self._attempted_recoveries)
 
         self.setState(Gst.State.NULL)
-        self.pendingRecovery = True
+        self._recovery_state = self.RecoveryState.STARTED_RECOVERING
         self.pause()
 
         self._attempted_recoveries += 1
