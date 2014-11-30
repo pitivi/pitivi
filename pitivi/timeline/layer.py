@@ -219,6 +219,7 @@ class BaseLayerControl(Gtk.VBox, Loggable):
 
     def _deleteLayerCb(self, unused_widget):
         self._control_container.timeline.bTimeline.remove_layer(self.layer)
+        self._control_container.timeline.bTimeline.get_asset().pipeline.commit_timeline()
 
     def _moveLayerCb(self, unused_widget, step):
         index = self.layer.get_priority()
