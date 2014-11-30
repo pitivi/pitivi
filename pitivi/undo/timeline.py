@@ -134,7 +134,7 @@ class TrackElementAdded(UndoableAction):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self.clip.get_layer().get_timeline().commit()
+        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._props_changed = []
         self._done()
 
@@ -194,7 +194,7 @@ class TrackElementRemoved(UndoableAction):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self.clip.get_layer().get_timeline().commit()
+        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._props_changed = []
         self._undone()
 
@@ -308,12 +308,12 @@ class ClipAdded(UndoableAction):
     def do(self):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
-        self.layer.get_timeline().commit()
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
         self._done()
 
     def undo(self):
         self.layer.remove_clip(self.clip)
-        self.layer.get_timeline().commit()
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
         self._undone()
 
     def asScenarioAction(self):
@@ -341,13 +341,13 @@ class ClipRemoved(UndoableAction):
 
     def do(self):
         self.layer.remove_clip(self.clip)
-        self.layer.get_timeline().commit()
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
         self._done()
 
     def undo(self):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
-        self.layer.get_timeline().commit()
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
         self._undone()
 
     def asScenarioAction(self):
@@ -367,6 +367,7 @@ class LayerAdded(UndoableAction):
 
     def undo(self):
         self.timeline.remove_layer(self.layer)
+        self.timeline.get_asset().pipeline.commit_timeline()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-layer")
@@ -382,6 +383,7 @@ class LayerRemoved(UndoableAction):
 
     def do(self):
         self.timeline.remove_layer(self.layer)
+        self.timeline.get_asset().pipeline.commit_timeline()
 
     def undo(self):
         self.timeline.add_layer(self.layer)
