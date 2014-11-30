@@ -22,10 +22,8 @@
 
 import os
 
-from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GLib
-from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 
@@ -282,6 +280,8 @@ class TransitionsListWidget(Gtk.VBox, Loggable):
         """
         Hide the infobar and show the transitions UI.
         """
+        if isinstance(element, GES.AudioTransition):
+            return
         self.element = element
         self.element.connect("notify::border", self._borderChangedCb)
         self.element.connect("notify::invert", self._invertChangedCb)
