@@ -1102,6 +1102,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 # to the timeline, zooming in would be confusing.
                 self.log(
                     "Zoom not changed because the entire timeline is already visible")
+
                 return
 
         Zoomable.setZoomLevel(nearest_zoom_level)
@@ -1405,6 +1406,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self._renderingSettingsChangedCb(self._project, None, None)
             self._setBestZoomRatio()
+            if self.bTimeline:
+                self.bTimeline.set_snapping_distance(
+                    Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectCreatedCb(self, unused_app, project):
         """
