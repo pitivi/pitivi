@@ -589,6 +589,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         self.app = app
 
+        self._was_empty = False
+        self._commit_wanted = False
+
         self._timeline = None
         self._seeker = Seeker()
         self._seeker.connect("seek", self._seekCb)
@@ -670,3 +673,35 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self.app.write_action(st)
 
         SimplePipeline.simple_seek(self, position)
+
+    def _busMessageCb(self, bus, message):
+        if message.type == Gst.MessageType.ASYNC_DONE and\
+                self._commit_wanted:
+            self.debug("Commiting now that ASYNC is DONE")
+            self._addWaitingForAsyncDoneTimeout()
+            self._timeline.commit()
+            self._commit_wanted = False
+        else:
+            super(Pipeline, self)._busMessageCb(bus, message)
+
+    def commit_timeline(self):
+        if self._waiting_for_async_done and not self._was_empty\
+                and not self._timeline.is_empty():
+            self._commit_wanted = True
+            self._was_empty = False
+            self.debug("commit wanted")
+        else:
+            self._addWaitingForAsyncDoneTimeout()
+            self._timeline.commit()
+            self.debug("Commiting right now")
+            if self._timeline.is_empty():
+                self._was_empty = True
+            else:
+                self._was_empty = False
+
+    def setState(self, state):
+        super(Pipeline, self).setState(state)
+        if state >= Gst.State.PAUSED and self._timeline.is_empty():
+            self.debug("No ASYNC_DONE will be emited on empty timelines")
+            self._was_empty = True
+            self._removeWaitingForAsyncDoneTimeout()

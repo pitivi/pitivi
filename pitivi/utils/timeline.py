@@ -252,7 +252,7 @@ class EditingContext(GObject.Object):
 
     def finish(self):
         self.action_log.commit()
-        self.timeline.commit()
+        self.timeline.get_asset().pipeline.commit_timeline()
         self.emit("clip-trim-finished")
 
     def setMode(self, mode):

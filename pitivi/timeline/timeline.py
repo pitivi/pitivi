@@ -213,7 +213,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
         layer = self.bTimeline.append_layer()
         layer.props.priority = ghostclip.priority
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
         self._container.controls._reorderLayerActors()
         return layer
 
@@ -272,7 +272,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
                             clip_duration,
                             ghostclip.asset.get_supported_formats())
             placement += clip_duration
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
 
     def _getLayerForGhostClip(self, ghostclip):
         """
@@ -293,7 +293,7 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
             for ghostclip in ghostCouple:
                 if ghostclip and ghostclip.get_parent():
                     self.remove_child(ghostclip)
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
 
     def getActorUnderPointer(self):
         return self.mouse.get_pointer_actor()
@@ -738,7 +738,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 Zoomable.nsToPixel(self.bTimeline.props.duration))
 
         self.app.action_log.commit()
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
 
     def purgeObject(self, asset_id):
         """Remove all instances of an asset from the timeline."""
@@ -747,7 +747,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             for tlobj in layer.get_clips():
                 if asset_id == tlobj.get_id():
                     layer.remove_clip(tlobj)
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
@@ -1173,7 +1173,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 layer = clip.get_layer()
                 layer.remove_clip(clip)
 
-            self.bTimeline.commit()
+            self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
 
     def _ungroupSelected(self, unused_action):
@@ -1193,12 +1193,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             for container in containers:
                 GES.Container.ungroup(container, False)
-                self.timeline.bTimeline.commit()
+                self._project.pipeline.commit_timeline()
 
             self.timeline.createSelectionGroup()
 
             self.app.action_log.commit()
-            self.bTimeline.commit()
+            self._project.pipeline.commit_timeline()
 
     def _groupSelected(self, unused_action):
         if self.bTimeline:
@@ -1219,7 +1219,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 group = GES.Container.group(list(containers))
             self.timeline.createSelectionGroup()
 
-            self.bTimeline.commit()
+            self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
 
     def _alignSelected(self, unused_action):
@@ -1234,7 +1234,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         def alignedCb():  # Called when alignment is complete
             self.app.action_log.commit()
-            self.bTimeline.commit()
+            self._project.pipeline.commit_timeline()
             progress_dialog.window.destroy()
 
         auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
@@ -1258,7 +1258,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             for track in self.bTimeline.get_tracks():
                 self._splitElements(track.get_elements())
 
-        self.bTimeline.commit()
+        self._project.pipeline.commit_timeline()
 
     def _splitElements(self, elements):
         position = self._project.pipeline.getPosition()

@@ -143,7 +143,7 @@ class ControlContainer(Clutter.ScrollActor):
         movedLayer.props.priority = target
 
         self._reorderLayerActors()
-        self.timeline.bTimeline.commit()
+        self.timeline.bTimeline.get_asset().pipeline.commit_timeline()
 
     def addTrackControl(self, layer, is_audio):
         if is_audio:
