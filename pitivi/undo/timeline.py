@@ -290,11 +290,13 @@ class ClipPropertyChanged(UndoableAction):
     def do(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.new_value)
+        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._done()
 
     def undo(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.old_value)
+        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._undone()
 
 
