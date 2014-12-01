@@ -218,7 +218,10 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus = None
 
     def flushSeek(self):
-        self.pause()
+        if self.getState() == Gst.State.PLAYING:
+            self.debug("Playing, no need to flush here!")
+            return
+
         try:
             self.seekRelative(0)
         except PipelineError as e:
