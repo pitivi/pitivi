@@ -12,10 +12,11 @@
 
 MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 
-# Change this variable to 'master' if you prefer to work with the master branch.
-# When using "master", this script will automatically "pull --rebase" modules.
-# For now, we are using master until we depend on a released version.
-DEFAULT_GST_VERSION="1.4"
+# Change DEFAULT_GST_VERSION to a number greater than the last known release
+# if you prefer to work with the "master" branch of everything.
+# In that case, the script will automatically "pull --rebase" modules.
+DEFAULT_GST_VERSION="1.6"
+
 GST_RELEASE_TAG=${GST_RELEASE_TAG:-$DEFAULT_GST_VERSION}
 GST_MIN_VERSION=${GST_MIN_VERSION:-$DEFAULT_GST_VERSION}
 
@@ -412,13 +413,6 @@ if [ "$ready_to_run" != "1" ]; then
         # Yep, another temporary workaround:
         if [ $m == "gst-editing-services" ]; then
             git checkout -- acinclude.m4
-        fi
-
-        if [ $GST_RELEASE_TAG == "master" ]; then
-            git pull --rebase
-            if [ $? -ne 0 ]; then
-                exit 1
-            fi
         fi
 
         if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
