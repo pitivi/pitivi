@@ -286,17 +286,11 @@ a specific version requirement, they have the "None" value.
 HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
                      GtkOrClutterDependency("Clutter", "1.12.0"),
                      GstDependency("Gst", "1.4.0"),
-                     GstDependency("GES", "1.4.0.0"),
+                     GstDependency("GES", "1.5.0.0"),
                      GtkOrClutterDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
                      GIDependency("Gio", None),
                      ]
-
-# This one is a special case: eventually gnonlin will be dropped
-ges_1_5 = GstDependency("GES", "1.5.0.0")
-ges_1_5.check()
-if not ges_1_5.satisfied:
-    HARD_DEPENDENCIES.append(GstPluginDependency("gnonlin", "1.4.0"))
 
 SOFT_DEPENDENCIES = \
     (

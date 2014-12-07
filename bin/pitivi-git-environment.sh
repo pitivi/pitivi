@@ -68,9 +68,9 @@ fi
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
 if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
-    MODULES="gnonlin gst-editing-services gst-python"
+    MODULES="gst-editing-services gst-python"
 else
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gnonlin gst-editing-services gst-python"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gst-editing-services gst-python"
 fi
 
 
@@ -202,9 +202,6 @@ export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PA
 export PATH=$PITIVI/gst-editing-services/tools:$PATH
 GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
 GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0
-
-# And GNonLin
-export GST_PLUGIN_PATH=$GST_PLUGIN_PATH:$PITIVI/gnonlin/gnl/.libs
 
 # And python
 PYTHONPATH=$PYTHONPATH:$MYPITIVI/gst-python:$MYPITIVI/gst-editing-services/bindings/python
