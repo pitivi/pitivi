@@ -53,7 +53,7 @@ class ClipPropertiesError(Exception):
     pass
 
 
-class ClipProperties(Gtk.ScrolledWindow, Loggable):
+class ClipProperties(Gtk.Box, Loggable):
     """
     Widget for configuring the selected clip.
 
@@ -61,24 +61,18 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
     """
 
     def __init__(self, app):
-        Gtk.ScrolledWindow.__init__(self)
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.app = app
         self.settings = app.settings
         self._project = None
 
-        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-
-        vbox = Gtk.Box()
-        vbox.set_orientation(Gtk.Orientation.VERTICAL)
-        vbox.set_spacing(SPACING)
-        vbox.show()
-        self.add(vbox)
+        self.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.infobar_box = Gtk.Box()
         self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
         self.infobar_box.show()
-        vbox.pack_start(self.infobar_box, False, False, 0)
+        self.pack_start(self.infobar_box, False, False, 0)
 
         # Transformation boxed DISABLED
         # self.transformation_expander = TransformationProperties(instance, instance.action_log)
@@ -89,7 +83,12 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.effect_expander = EffectProperties(
             app, effects_properties_manager, self)
         self.effect_expander.set_vexpand(False)
-        vbox.pack_start(self.effect_expander, True, True, 0)
+        viewport = Gtk.ScrolledWindow()
+        viewport.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        viewport.set_visible(True)
+        viewport.add(self.effect_expander)
+        self.pack_start(viewport, True, True, 0)
 
     def _setProject(self, project):
         self._project = project

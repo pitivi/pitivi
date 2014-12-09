@@ -90,228 +90,236 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="editing_box">
+      <object class="GtkViewport" id="viewport1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
+        <property name="shadow_type">etched-in</property>
         <child>
-          <object class="GtkToolbar" id="toolbar">
+          <object class="GtkBox" id="editing_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="show_arrow">False</property>
-            <property name="icon_size">1</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkToolItem" id="font">
-                <property name="use_action_appearance">False</property>
+              <object class="GtkToolbar" id="toolbar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="show_arrow">False</property>
+                <property name="icon_size">1</property>
                 <child>
-                  <object class="GtkFontButton" id="fontbutton1">
+                  <object class="GtkToolItem" id="font">
                     <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="preview_text"/>
-                    <property name="show_preview_entry">False</property>
-                    <property name="title" translatable="yes">Choose a font</property>
-                    <signal name="font-set" handler="_fontButtonCb" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolItem" id="font_fore_color">
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Text color</property>
-                <property name="tooltip_text" translatable="yes">Text color</property>
-                <child>
-                  <object class="GtkColorButton" id="fore_text_color">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_alpha">True</property>
-                    <property name="title" translatable="yes">Pick a text color</property>
-                    <signal name="color-set" handler="_frontTextColorButtonCb" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">False</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolItem" id="background_color">
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="has_tooltip">True</property>
-                <property name="tooltip_markup" translatable="yes">Background color</property>
-                <property name="tooltip_text" translatable="yes">Background color</property>
-                <child>
-                  <object class="GtkColorButton" id="back_color">
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_alpha">True</property>
-                    <property name="title" translatable="yes">Pick a background color</property>
-                    <property name="rgba">rgb(255,255,255)</property>
-                    <signal name="color-set" handler="_backgroundColorButtonCb" swapped="no"/>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">False</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkTextView" id="textview">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="margin_start">12</property>
-            <property name="margin_end">12</property>
-            <property name="margin_top">12</property>
-            <property name="margin_bottom">12</property>
-            <property name="wrap_mode">word</property>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkExpander" id="expander1">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <child>
-              <object class="GtkBox" id="box5">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkGrid" id="box4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_start">24</property>
-                    <property name="column_spacing">6</property>
                     <child>
-                      <object class="GtkLabel" id="label6">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Horizontal alignment:</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Vertical alignment:</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkComboBoxText" id="halignment">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <signal name="changed" handler="_updateSource" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkComboBoxText" id="valignment">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="active">1</property>
-                        <signal name="changed" handler="_updateSource" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSpinButton" id="xpos">
+                      <object class="GtkFontButton" id="fontbutton1">
+                        <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="invisible_char">•</property>
-                        <property name="adjustment">position_x_adj</property>
-                        <property name="digits">2</property>
-                        <property name="numeric">True</property>
-                        <signal name="value-changed" handler="_updateSource" swapped="no"/>
+                        <property name="receives_default">True</property>
+                        <property name="font">Sans 12</property>
+                        <property name="preview_text"/>
+                        <property name="show_preview_entry">False</property>
+                        <property name="title" translatable="yes">Choose a font</property>
+                        <signal name="font-set" handler="_fontButtonCb" swapped="no"/>
                       </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSpinButton" id="ypos">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">•</property>
-                        <property name="adjustment">position_y_adj</property>
-                        <property name="digits">2</property>
-                        <property name="numeric">True</property>
-                        <signal name="value-changed" handler="_updateSource" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">1</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolItem" id="font_fore_color">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Text color</property>
+                    <property name="tooltip_text" translatable="yes">Text color</property>
+                    <child>
+                      <object class="GtkColorButton" id="fore_text_color">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_alpha">True</property>
+                        <property name="title" translatable="yes">Pick a text color</property>
+                        <signal name="color-set" handler="_frontTextColorButtonCb" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolItem" id="background_color">
+                    <property name="use_action_appearance">False</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip_markup" translatable="yes">Background color</property>
+                    <property name="tooltip_text" translatable="yes">Background color</property>
+                    <child>
+                      <object class="GtkColorButton" id="back_color">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="use_alpha">True</property>
+                        <property name="title" translatable="yes">Pick a background color</property>
+                        <property name="rgba">rgb(255,255,255)</property>
+                        <signal name="color-set" handler="_backgroundColorButtonCb" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">False</property>
                   </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
-            <child type="label">
-              <object class="GtkLabel" id="label7">
+            <child>
+              <object class="GtkTextView" id="textview">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">Advanced positioning</property>
+                <property name="can_focus">True</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
+                <property name="margin_top">12</property>
+                <property name="margin_bottom">12</property>
+                <property name="wrap_mode">word</property>
               </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkExpander" id="expander1">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <object class="GtkBox" id="box5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkGrid" id="box4">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_start">24</property>
+                        <property name="column_spacing">6</property>
+                        <child>
+                          <object class="GtkLabel" id="label6">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Horizontal alignment:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Vertical alignment:</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBoxText" id="halignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <signal name="changed" handler="_updateSource" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBoxText" id="valignment">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="active">1</property>
+                            <signal name="changed" handler="_updateSource" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="xpos">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">•</property>
+                            <property name="adjustment">position_x_adj</property>
+                            <property name="digits">2</property>
+                            <property name="numeric">True</property>
+                            <signal name="value-changed" handler="_updateSource" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="ypos">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">•</property>
+                            <property name="adjustment">position_y_adj</property>
+                            <property name="digits">2</property>
+                            <property name="numeric">True</property>
+                            <signal name="value-changed" handler="_updateSource" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label7">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Advanced positioning</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
         </child>
       </object>
       <packing>
