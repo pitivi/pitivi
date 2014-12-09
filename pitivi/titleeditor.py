@@ -61,6 +61,7 @@ class TitleEditor(Loggable):
         self._drag_events = []
         self._signals_connected = False
         self._setting_props = False
+        self._setting_initial_props = False
         self._children_props_handler = None
 
         self._createUI()
@@ -246,15 +247,21 @@ class TitleEditor(Loggable):
         clip = GES.TitleClip()
         clip.set_text("")
         clip.set_duration(int(Gst.SECOND * 5))
+
         # TODO: insert on the current layer at the playhead position.
         # If no space is available, create a new layer to insert to on top.
         self.app.gui.timeline_ui.insertEnd([clip])
         self.app.gui.timeline_ui.timeline.selection.setToObj(clip, SELECT)
 
+        self._setting_initial_props = True
         clip.set_color(FOREGROUND_DEFAULT_COLOR)
         clip.set_background(BACKGROUND_DEFAULT_COLOR)
+        self._setting_initial_props = False
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
+        if self._setting_initial_props:
+            return
+
         if self._setting_props:
             self.seeker.flush()
             return
