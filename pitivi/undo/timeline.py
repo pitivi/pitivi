@@ -565,6 +565,9 @@ class TimelineLogObserver(Loggable):
         if isinstance(clip, GES.TransitionClip):
             return
 
+        for child in clip.get_children(True):
+            self._disconnectFromTrackElement(child)
+
         clip.disconnect_by_func(self._clipTrackElementAddedCb)
         clip.disconnect_by_func(self._clipTrackElementRemovedCb)
         tracker = self.clip_property_trackers.pop(clip)
@@ -617,12 +620,20 @@ class TimelineLogObserver(Loggable):
 
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source
-        control_source.disconnect_by_func(self._controlSourceKeyFrameAddedCb)
-        control_source.disconnect_by_func(self._controlSourceKeyFrameRemovedCb)
 
-        tracker = self.control_source_keyframe_trackers.pop(control_source)
-        tracker.disconnectFromObject(control_source)
-        tracker.disconnect_by_func(self._controlSourceKeyFrameMovedCb)
+        try:
+            control_source.disconnect_by_func(self._controlSourceKeyFrameAddedCb)
+            control_source.disconnect_by_func(self._controlSourceKeyFrameRemovedCb)
+        except TypeError:
+            pass
+
+        try:
+            tracker = self.control_source_keyframe_trackers.pop(control_source)
+            tracker.disconnectFromObject(control_source)
+            tracker.disconnect_by_func(self._controlSourceKeyFrameMovedCb)
+        except KeyError:
+            self.debug("Control source already disconnected: %s" % control_source)
+            pass
 
     def _clipAddedCb(self, layer, clip):
         if isinstance(clip, GES.TransitionClip):

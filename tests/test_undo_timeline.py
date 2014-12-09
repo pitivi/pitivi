@@ -31,6 +31,9 @@ from pitivi.undo.timeline import TimelineLogObserver, \
     ClipAdded, ClipRemoved, \
     ClipPropertyChanged, TrackElementAdded
 from pitivi.undo.undo import UndoableActionLog
+from pitivi.project import Project
+from pitivi.application import Pitivi
+from pitivi.utils.loggable import Loggable
 
 
 class TimelineLogObserverSpy(TimelineLogObserver):
@@ -103,7 +106,11 @@ class TestTimelineLogObserver(TestCase):
 class TestTimelineUndo(TestCase):
 
     def setUp(self):
-        self.timeline = GES.Timeline.new_audio_video()
+        app = Pitivi()
+        app._startupCb(app)
+        app.project_manager.newBlankProject()
+
+        self.timeline = app.project_manager.current_project.timeline
         self.layer = GES.Layer()
         self.timeline.add_layer(self.layer)
         self.action_log = UndoableActionLog()
@@ -130,7 +137,7 @@ class TestTimelineUndo(TestCase):
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
-        self.assertEqual(1, len(stack.done_actions))
+        self.assertEqual(3, len(stack.done_actions))
         action = stack.done_actions[0]
         self.assertTrue(isinstance(action, ClipAdded))
         self.assertTrue(clip1 in self.getTimelineClips())

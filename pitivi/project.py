@@ -596,6 +596,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
         project.createTimeline()
+        project._ensureTracks()
         self.current_project = project
         self.emit("new-project-created", project)
 
