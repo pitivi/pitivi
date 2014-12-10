@@ -40,6 +40,7 @@ from pwd import getpwuid
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
+from pitivi.utils.validate import has_validate
 from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
 from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
@@ -52,13 +53,6 @@ from pitivi.utils.ui import frame_rates, audio_rates,\
 from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
     VideoPresetManager
 from pitivi.render import CachedEncoderList
-
-try:
-    from gi.repository import GstValidate
-    GstValidate.init()
-    has_validate = GES.validate_register_action_types()
-except ImportError:
-    has_validate = False
 
 
 DEFAULT_MUXER = "oggmux"
@@ -788,6 +782,8 @@ class Project(Loggable, GES.Project):
         self._has_rendering_values = False
 
     def setupValidateScenario(self):
+        from gi.repository import GstValidate
+
         self.info("Setting up validate scenario")
         self.runner = GstValidate.Runner.new()
         self.monitor = GstValidate.Monitor.factory_create(

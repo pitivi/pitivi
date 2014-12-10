@@ -267,6 +267,9 @@ def initialize_modules():
     from gi.repository import GES
     GES.init()
 
+    from pitivi.utils import validate
+    validate.init()
+
 
 """
 --------------------------------------------------------------------------------

@@ -11,6 +11,7 @@ utils_PYTHON = 	\
 	threads.py      \
 	ripple_update_group.py	\
 	misc.py         \
+	validate.py     \
 	widgets.py
 
 clean-local:
