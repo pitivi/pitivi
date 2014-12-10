@@ -191,6 +191,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._waiting_for_async_done = False
         self._next_seek = None
         self._timeout_async_id = 0
+        self._force_position_listener = False
 
         # Create a cluttersink element used for display. Subclasses must connect
         # it to self._pipeline themselves
@@ -199,6 +200,9 @@ class SimplePipeline(GObject.Object, Loggable):
             self._pipeline.preview_set_video_sink(self.video_sink)
         else:
             self._pipeline.set_property("video_sink", self.video_sink)
+
+    def setForcePositionListener(self, force):
+        self._force_position_listener = force
 
     def release(self):
         """
@@ -357,7 +361,7 @@ class SimplePipeline(GObject.Object, Loggable):
             return True
         self._listening = True
         self._listeningInterval = interval
-        # if we're in paused or playing, switch it on
+        # if we're in playing, switch it on
         self._listenToPosition(self.getState() == Gst.State.PLAYING)
         return True
 
@@ -482,10 +486,11 @@ class SimplePipeline(GObject.Object, Loggable):
                             self.simple_seek(self._last_position)
                             self.info(
                                 "Seeked back to the last position after pipeline recovery")
+                    self._listenToPosition(self._force_position_listener)
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
                 elif prev == Gst.State.PLAYING and new == Gst.State.PAUSED:
-                    self._listenToPosition(False)
+                    self._listenToPosition(self._force_position_listener)
 
                 if emit_state_change:
                     self.emit('state-change', new, prev)

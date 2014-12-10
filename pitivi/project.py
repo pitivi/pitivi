@@ -781,6 +781,9 @@ class Project(Loggable, GES.Project):
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
 
+    def _scenarioDoneCb(self, scenario):
+        self.pipeline.setForcePositionListener(False)
+
     def setupValidateScenario(self):
         from gi.repository import GstValidate
 
@@ -790,6 +793,8 @@ class Project(Loggable, GES.Project):
             self.pipeline, self.runner, None)
         self._scenario = GstValidate.Scenario.factory_create(
             self.runner, self.pipeline, self.scenario)
+        self.pipeline.setForcePositionListener(True)
+        self._scenario.connect("done", self._scenarioDoneCb)
 
     # --------------- #
     # Our properties  #
