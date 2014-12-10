@@ -22,6 +22,7 @@
 
 import os
 import sys
+import signal
 import locale
 import gettext
 
@@ -123,6 +124,7 @@ def _check_requirements():
 def _run_pitivi():
     from pitivi import application
 
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     app = application.Pitivi()
     app.run(sys.argv)
 
