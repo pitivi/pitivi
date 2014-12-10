@@ -82,20 +82,13 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_log_observer = None
         self._last_action_time = Gst.util_get_timestamp()
 
-        if 'PITIVI_SCENARIO_FILE' in os.environ:
-            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
-        else:
-            cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
-            uri = os.path.join(
-                cache_dir, str(time.strftime("%Y%m%d-%H%M%S")) + ".scenario")
-            uri = quote_uri(uri)
-        self._first_action = True
-        self.log_file = open(path_from_uri(uri), "w")
-
         self.gui = None
         self.welcome_wizard = None
 
         self._version_information = {}
+
+        self._scenario_file = None
+        self._first_action = True
 
         self.connect("startup", self._startupCb)
         self.connect("activate", self._activateCb)
@@ -103,7 +96,7 @@ class Pitivi(Gtk.Application, Loggable):
 
     def write_action(self, action, properties={}):
         if self._first_action:
-            self.log_file.write(
+            self._scenario_file.write(
                 "description, seek=true, handles-states=true\n")
             self._first_action = False
 
@@ -112,7 +105,7 @@ class Pitivi(Gtk.Application, Loggable):
             # We need to make sure that the waiting time was more than 50 ms.
             st = Gst.Structure.new_empty("wait")
             st["duration"] = float((now - self._last_action_time) / Gst.SECOND)
-            self.log_file.write(st.to_string() + "\n")
+            self._scenario_file.write(st.to_string() + "\n")
             self._last_action_time = now
 
         if not isinstance(action, Gst.Structure):
@@ -123,8 +116,8 @@ class Pitivi(Gtk.Application, Loggable):
 
             action = structure
 
-        self.log_file.write(action.to_string() + "\n")
-        self.log_file.flush()
+        self._scenario_file.write(action.to_string() + "\n")
+        self._scenario_file.flush()
 
     def _startupCb(self, unused_app):
         # Init logging as early as possible so we can log startup code
@@ -148,6 +141,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.timeline_log_observer = TimelineLogObserver(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
 
+        self.project_manager.connect(
+            "new-project-loading", self._newProjectLoadingCb)
         self.project_manager.connect(
             "new-project-loaded", self._newProjectLoaded)
         self.project_manager.connect("project-closed", self._projectClosed)
@@ -228,19 +223,53 @@ class Pitivi(Gtk.Application, Loggable):
             self.gui.destroy()
         self.threads.stopAllThreads()
         self.settings.storeSettings()
-        self.write_action("stop")
-        self.log_file.close()
         self.quit()
         return True
 
+        self._first_action = True
+
+    def _setScenarioFile(self, uri):
+        if 'PITIVI_SCENARIO_FILE' in os.environ:
+            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
+        else:
+            cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
+            scenario_name = str(time.strftime("%Y%m%d-%H%M%S"))
+            project_path = None
+            if uri:
+                project_path = path_from_uri(uri)
+                scenario_name += os.path.splitext(project_path.replace(os.sep, "_"))[0]
+
+            uri = os.path.join(cache_dir, scenario_name + ".scenario")
+            uri = quote_uri(uri)
+
+        self._scenario_file = open(path_from_uri(uri), "w")
+
+        if project_path:
+            f = open(project_path)
+            content = f.read()
+            if not uri.endswith(".scenario"):
+                self.write_action("load-project",
+                                  {"serialized-content":
+                                   "%s" % content.replace("\n", "")})
+            f.close()
+
+    def _newProjectLoadingCb(self, unused_project_manager, uri):
+        self._setScenarioFile(uri)
+
     def _newProjectLoaded(self, unused_project_manager, project, unused_fully_loaded):
         self.action_log.clean()
+
         self.timeline_log_observer.startObserving(project.timeline)
         self.project_log_observer.startObserving(project)
 
     def _projectClosed(self, unused_project_manager, project):
         self.project_log_observer.stopObserving(project)
         self.timeline_log_observer.stopObserving(project.timeline)
+
+        if self._scenario_file:
+            self.write_action("stop")
+            self._scenario_file.close()
+            self._scenario_file = None
 
     def _checkVersion(self):
         """
