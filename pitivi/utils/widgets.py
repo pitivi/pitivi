@@ -83,6 +83,9 @@ class DefaultWidget(Gtk.Label):
     def __init__(self, *unused, **unused_kwargs):
         Gtk.Label.__init__(self, _("Implement Me"))
 
+    def setWidgetToDefault(self):
+        pass
+
 
 class TextWidget(Gtk.HBox, DynamicWidget):
 
