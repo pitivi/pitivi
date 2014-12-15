@@ -184,19 +184,19 @@ def extension_for_muxer(muxer):
     exts = {
         "asfmux": "asf",
         "avimux": "avi",
-        "ffmux_3g2": "3g2",
-        "ffmux_avm2": "avm2",
-        "ffmux_dvd": "vob",
-        "ffmux_flv": "flv",
-        "ffmux_ipod": "mp4",
-        "ffmux_mpeg": "mpeg",
-        "ffmux_mpegts": "mpeg",
-        "ffmux_psp": "mp4",
-        "ffmux_rm": "rm",
-        "ffmux_svcd": "mpeg",
-        "ffmux_swf": "swf",
-        "ffmux_vcd": "mpeg",
-        "ffmux_vob": "vob",
+        "avmux_3g2": "3g2",
+        "avmux_avm2": "avm2",
+        "avmux_dvd": "vob",
+        "avmux_flv": "flv",
+        "avmux_ipod": "mp4",
+        "avmux_mpeg": "mpeg",
+        "avmux_mpegts": "mpeg",
+        "avmux_psp": "mp4",
+        "avmux_rm": "rm",
+        "avmux_svcd": "mpeg",
+        "avmux_swf": "swf",
+        "avmux_vcd": "mpeg",
+        "avmux_vob": "vob",
         "flvmux": "flv",
         "gppmux": "3gp",
         "matroskamux": "mkv",
@@ -834,8 +834,7 @@ class RenderDialog(Loggable):
         secondary_message = _("An error occured while trying to render your "
                               "project. You might want to check our "
                               "troubleshooting guide or file a bug report. "
-                              "The GStreamer error was:") \
-                            + "\n\n<i>" + error + "</i>"
+                              "The GStreamer error was:") + "\n\n<i>" + error + "</i>"
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
                                    message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
