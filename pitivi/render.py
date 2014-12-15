@@ -853,6 +853,8 @@ class RenderDialog(Loggable):
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect(
             "element-added", self._elementAddedCb)
+        for element in encodebin.iterate_recurse():
+            self._elementAddedCb(encodebin, element)
         self._pipeline.set_state(Gst.State.PLAYING)
         self._is_rendering = True
         self._time_started = time.time()
