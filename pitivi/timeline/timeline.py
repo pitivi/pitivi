@@ -1442,8 +1442,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.log("Setting 'zoomed_fitted' to False")
         self.zoomed_fitted = False
 
-    def _zoomFitCb(self, unused, unused_2=None):
-        self._setBestZoomRatio(allow_zoom_in=True)
+    def _zoomFitCb(self, unused_action):
+        self.zoomFit()
 
     def _scrollEventCb(self, unused_embed, event):
         unused_res, delta_x, delta_y = event.get_scroll_deltas()
