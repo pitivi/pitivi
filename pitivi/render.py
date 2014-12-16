@@ -325,7 +325,7 @@ class RenderDialog(Loggable):
 
     _factory_formats = {}
 
-    def __init__(self, app, project, pipeline=None):
+    def __init__(self, app, project, timeline_ui):
 
         from pitivi.preset import RenderPresetManager
 
@@ -334,11 +334,8 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
-
-        if pipeline is not None:
-            self._pipeline = pipeline
-        else:
-            self._pipeline = self.project.pipeline
+        self.timeline_ui = timeline_ui
+        self._pipeline = self.project.pipeline
 
         self.outfile = None
         self.notification = None
@@ -950,6 +947,7 @@ class RenderDialog(Loggable):
                     self._factory_formats[encoder_string] = fmt
                     break
 
+        self.timeline_ui.zoomFit()
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
             self.outfile, self.project.container_profile)
