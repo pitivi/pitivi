@@ -266,11 +266,13 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
 
             if not placement:
                 placement = Zoomable.pixelToNs(ghostclip.props.x)
+            self._container.app.action_log.begin("add clip")
             layer.add_asset(ghostclip.asset,
                             placement,
                             0,
                             clip_duration,
                             ghostclip.asset.get_supported_formats())
+            self._container.app.action_log.commit()
             placement += clip_duration
         self._project.pipeline.commit_timeline()
 
