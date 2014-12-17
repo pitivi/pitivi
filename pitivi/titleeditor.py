@@ -38,7 +38,7 @@ from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
-BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+BACKGROUND_DEFAULT_COLOR = 0xFF000000  # Black
 
 
 class TitleEditor(Loggable):
@@ -245,7 +245,6 @@ class TitleEditor(Loggable):
         The user clicked the "Create and insert" button, initialize the UI
         """
         clip = GES.TitleClip()
-        clip.set_text("")
         clip.set_duration(int(Gst.SECOND * 5))
 
         # TODO: insert on the current layer at the playhead position.
@@ -254,9 +253,14 @@ class TitleEditor(Loggable):
         self.app.gui.timeline_ui.timeline.selection.setToObj(clip, SELECT)
 
         self._setting_initial_props = True
-        clip.set_color(FOREGROUND_DEFAULT_COLOR)
-        clip.set_background(BACKGROUND_DEFAULT_COLOR)
+        source = self.source = clip.get_children(False)[0]
+        assert(source.set_child_property("text", ""))
+        assert(source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR))
+        assert(source.set_child_property("color", FOREGROUND_DEFAULT_COLOR))
+        assert(source.set_child_property("font-desc", "Sans 10"))
         self._setting_initial_props = False
+
+        self._updateFromSource()
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_initial_props:
