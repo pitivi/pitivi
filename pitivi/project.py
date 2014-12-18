@@ -787,8 +787,13 @@ class Project(Loggable, GES.Project):
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
 
+        self.runner = None
+        self.monitor = None
+        self._scenario = None
+
     def _scenarioDoneCb(self, scenario):
-        self.pipeline.setForcePositionListener(False)
+        if self.pipeline is not None:
+            self.pipeline.setForcePositionListener(False)
 
     def setupValidateScenario(self):
         from gi.repository import GstValidate
@@ -1150,8 +1155,16 @@ class Project(Loggable, GES.Project):
         return self.list_assets(GES.UriClip)
 
     def release(self):
+        if self.runner:
+            self.runner.printf()
+
         if self.pipeline:
             self.pipeline.release()
+
+        if self.runner:
+            self.runner = None
+            self.monitor = None
+
         self.pipeline = None
         self.timeline = None
 

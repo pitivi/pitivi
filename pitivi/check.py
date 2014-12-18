@@ -177,7 +177,7 @@ class GstDependency(GIDependency):
         return list(module.version())
 
 
-class GtkOrClutterDependency(GIDependency):
+class GtkDependency(GIDependency):
 
     def _format_version(self, module):
         return [module.MAJOR_VERSION, module.MINOR_VERSION, module.MICRO_VERSION]
@@ -254,8 +254,6 @@ def initialize_modules():
     """
     from gi.repository import Gdk
     Gdk.init([])
-    from gi.repository import GtkClutter
-    GtkClutter.init([])
 
     import gi
     if not gi.version_info >= (3, 11):
@@ -287,13 +285,13 @@ Some of our dependencies have version numbers requirements; for those without
 a specific version requirement, they have the "None" value.
 """
 HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
-                     GtkOrClutterDependency("Clutter", "1.12.0"),
                      GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.5.0.0"),
-                     GtkOrClutterDependency("Gtk", "3.10.0"),
+                     GtkDependency("Gtk", "3.10.0"),
                      ClassicDependency("numpy", None),
                      GIDependency("Gio", None),
-                     GstPluginDependency("opengl", "1.4.0")
+                     GstPluginDependency("opengl", "1.4.0"),
+                     ClassicDependency("matplotlib", None),
                      ]
 
 SOFT_DEPENDENCIES = \

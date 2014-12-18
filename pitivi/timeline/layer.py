@@ -21,18 +21,19 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import Gtk
-from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import GObject
 
 from gettext import gettext as _
 
+from pitivi.timeline import elements
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import LAYER_CONTROL_TARGET_ENTRY
+from pitivi.utils import ui
+from pitivi.utils import timeline as timelineUtils
 
 
-# TODO GTK3 port to GtkGrid
 class BaseLayerControl(Gtk.Box, Loggable):
+
     """
     Base Layer control classes
     """
@@ -69,9 +70,6 @@ class BaseLayerControl(Gtk.Box, Loggable):
         self.eventbox.add(table)
         self.eventbox.connect("button_press_event", self._buttonPressCb)
         self.pack_start(self.eventbox, True, True, 0)
-
-        self.sep = SpacedSeparator()
-        self.pack_start(self.sep, True, True, 0)
 
         icon_mapping = {GES.TrackType.AUDIO: "audio-x-generic",
                         GES.TrackType.VIDEO: "video-x-generic"}
@@ -157,9 +155,6 @@ class BaseLayerControl(Gtk.Box, Loggable):
         self.popup.show_all()
 
         # Drag and drop
-#        self.drag_source_set(Gdk.ModifierType.BUTTON1_MASK,
-#                             [LAYER_CONTROL_TARGET_ENTRY],
-#                             Gdk.DragAction.MOVE)
 
     def getSelected(self):
         return self._selected
@@ -198,7 +193,7 @@ class BaseLayerControl(Gtk.Box, Loggable):
         """
         Look if user selected layer or wants popup menu
         """
-        self._control_container.selectLayerControl(self)
+        # FIXME!! self._control_container.selectLayerControl(self)
         if event.button == 3:
             self.popup.popup(None, None, None, None, event.button, event.time)
 
@@ -222,22 +217,24 @@ class BaseLayerControl(Gtk.Box, Loggable):
 
     def _deleteLayerCb(self, unused_widget):
         self._app.action_log.begin("delete layer")
-        self._control_container.timeline.bTimeline.remove_layer(self.layer)
-        self._control_container.timeline.bTimeline.get_asset().pipeline.commit_timeline()
+        bLayer = self.layer.bLayer
+        bTimeline = bLayer.get_timeline()
+        bTimeline.remove_layer(bLayer)
+        bTimeline.get_asset().pipeline.commit_timeline()
         self._app.action_log.commit()
 
     def _moveLayerCb(self, unused_widget, step):
-        index = self.layer.get_priority()
+        index = self.layer.bLayer.get_priority()
         if abs(step) == 1:
             index += step
         elif step == -2:
             index = 0
         else:
-            index = len(self.layer.get_timeline().get_layers()) - 1
+            index = len(self.layer.bLayer.get_timeline().get_layers()) - 1
             # if audio, set last position
 
         self._app.moveLayer(self, index)
-#        self._app.timeline._container.app.gui.timeline_ui.controls.moveControlWidget(self, index)
+        # self._app.timeline.parent.app.gui.timeline_ui.controls.moveControlWidget(self, index)
 
     def getHeight(self):
         return self.get_allocation().height
@@ -390,7 +387,227 @@ class SpacedSeparator(Gtk.EventBox):
 
         self.box = Gtk.Box()
         self.box.set_orientation(Gtk.Orientation.VERTICAL)
-        self.box.add(Gtk.HSeparator())
-        self.box.set_border_width(6)
-
         self.add(self.box)
+
+        self.get_style_context().add_class("SpacedSeparator")
+        self.box.get_style_context().add_class("SpacedSeparator")
+
+
+class LayerControls(Gtk.Bin, Loggable):
+
+    __gtype_name__ = 'PitiviLayerControls'
+
+    def __init__(self, bLayer, app):
+        super(LayerControls, self).__init__()
+        Loggable.__init__(self)
+
+        ebox = Gtk.EventBox()
+        self.add(ebox)
+        self._hbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        ebox.add(self._hbox)
+        self.bLayer = bLayer
+        self.app = app
+
+        sep = SpacedSeparator()
+        self._hbox.pack_start(sep, False, False, 5)
+
+        self.video_control = VideoLayerControl(None, self, self.app)
+        self.video_control.set_visible(True)
+        self.video_control.props.width_request = ui.CONTROL_WIDTH
+        self.video_control.props.height_request = ui.LAYER_HEIGHT / 2
+        self._hbox.add(self.video_control)
+
+        self.audio_control = AudioLayerControl(None, self, self.app)
+        self.audio_control.set_visible(True)
+        self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
+        self.audio_control.props.width_request = ui.CONTROL_WIDTH
+        self._hbox.add(self.audio_control)
+
+        self._hbox.props.vexpand = False
+        self._hbox.props.width_request = ui.CONTROL_WIDTH
+        self.props.width_request = ui.CONTROL_WIDTH
+
+        sep = SpacedSeparator()
+        self._hbox.pack_start(sep, False, False, 5)
+
+
+class LayerLayout(Gtk.Layout, Loggable):
+    """
+    A GtkLayout that exclusivly container Clips.
+    This allows us to properly handle the z order of
+    """
+    __gtype_name__ = "PitiviLayerLayout"
+
+    def __init__(self, timeline):
+        super(LayerLayout, self).__init__()
+        Loggable.__init__(self)
+
+        self._children = []
+        self._changed = False
+        self.timeline = timeline
+
+        self.props.hexpand = True
+        self.get_style_context().add_class("LayerLayout")
+
+    def do_add(self, widget):
+        self._children.append(widget)
+        self._children.sort(key=lambda clip: clip.z_order)
+        Gtk.Layout.do_add(self, widget)
+        self._changed = True
+
+        for child in self._children:
+            if isinstance(child, elements.TransitionClip):
+                window = child.get_window()
+                if window is not None:
+                    window.raise_()
+
+    def do_remove(self, widget):
+        self._children.remove(widget)
+        self._changed = True
+        Gtk.Layout.do_remove(self, widget)
+
+    def put(self, child, x, y):
+        self._children.append(child)
+        self._children.sort(key=lambda clip: clip.z_order)
+        Gtk.Layout.put(self, child, x, y)
+        self._changed = True
+
+    def do_draw(self, cr):
+        if self._changed:
+            self._children.sort(key=lambda clip: clip.z_order)
+            for child in self._children:
+
+                if isinstance(child, elements.TransitionClip):
+                    window = child.get_window()
+                    window.raise_()
+            self._changed = False
+
+        self.props.width = timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration) + 500
+        self.props.width_request = timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration) + 500
+
+        for child in self._children:
+            self.propagate_draw(child, cr)
+
+
+class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
+
+    __gtype_name__ = "PitiviLayer"
+
+    __gsignals__ = {
+        "remove-me": (GObject.SignalFlags.RUN_LAST, None, (),)
+    }
+
+    def __init__(self, bLayer, timeline):
+        super(Layer, self).__init__()
+        Loggable.__init__(self)
+
+        self.bLayer = bLayer
+        self.bLayer.ui = self
+        self.timeline = timeline
+        self.app = timeline.app
+
+        self.bLayer.connect("clip-added", self._clipAddedCb)
+        self.bLayer.connect("clip-removed", self._clipRemovedCb)
+
+        # FIXME Make the layer height user setable with 'Paned'
+        self.props.height_request = ui.LAYER_HEIGHT
+        self.props.valign = Gtk.Align.START
+
+        self._layout = LayerLayout(self.timeline)
+        self.add(self._layout)
+
+        self.media_types = GES.TrackType(0)
+        for clip in bLayer.get_clips():
+            self._addClip(clip)
+
+        self.before_sep = None
+        self.after_sep = None
+
+    def _checkMediaTypes(self, bClip=None):
+        self.media_types = GES.TrackType(0)
+        bClips = self.bLayer.get_clips()
+
+        """
+        FIXME: That produces segfault in GES/GSequence
+        if not bClips:
+            self.emit("remove-me")
+            return
+        """
+
+        for bClip in bClips:
+            for child in bClip.get_children(False):
+                self.media_types |= child.get_track().props.track_type
+                if self.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
+                    break
+
+        if not (self.media_types & GES.TrackType.AUDIO) and not (self.media_types & GES.TrackType.VIDEO):
+            self.media_types = GES.TrackType.AUDIO | GES.TrackType.VIDEO
+
+        height = 0
+        if self.media_types & GES.TrackType.AUDIO:
+            height += ui.LAYER_HEIGHT / 2
+            self.bLayer.control_ui.audio_control.show()
+        else:
+            self.bLayer.control_ui.audio_control.hide()
+
+        if self.media_types & GES.TrackType.VIDEO:
+            self.bLayer.control_ui.video_control.show()
+            height += ui.LAYER_HEIGHT / 2
+        else:
+            self.bLayer.control_ui.video_control.hide()
+
+        self.props.height_request = height
+        self.bLayer.control_ui.props.height_request = height
+
+    def move(self, child, x, y):
+        self._layout.move(child, x, y)
+
+    def _childAddedCb(self, bClip, child):
+        self._checkMediaTypes()
+
+    def _childRemovedCb(self, bClip, child):
+        self._checkMediaTypes()
+
+    def _clipAddedCb(self, layer, bClip):
+        self._addClip(bClip)
+
+    def _addClip(self, bClip):
+        ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement UI for type %s?" % bClip.__gtype__)
+            return
+
+        if not hasattr(bClip, "ui") or bClip.ui is None:
+            clip = ui_type(self, bClip)
+        else:
+            clip = bClip.ui
+
+        self._layout.put(clip, self.nsToPixel(bClip.props.start), 0)
+        self.show_all()
+        bClip.connect_after("child-added", self._childAddedCb)
+        bClip.connect_after("child-removed", self._childRemovedCb)
+        self._checkMediaTypes()
+
+    def _clipRemovedCb(self, bLayer, bClip):
+        self._removeClip(bClip)
+
+    def _removeClip(self, bClip):
+        ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
+        if ui_type is None:
+            self.error("Implement UI for type %s?" % bClip.__gtype__)
+            return
+
+        self._layout.remove(bClip.ui)
+        if self.timeline.draggingElement is None:
+            bClip.ui = None
+
+        bClip.disconnect_by_func(self._childAddedCb)
+        bClip.disconnect_by_func(self._childRemovedCb)
+        self._checkMediaTypes(bClip)
+
+    def updatePosition(self):
+        for bClip in self.bLayer.get_clips():
+            bClip.ui.updatePosition()
+
+    def do_draw(self, cr):
+        Gtk.Box.do_draw(self, cr)

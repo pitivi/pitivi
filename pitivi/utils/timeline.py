@@ -23,6 +23,10 @@
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import Gtk
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils import ui
 
 
 # Selection modes
@@ -78,7 +82,7 @@ class Selected(GObject.Object):
     selected = property(getSelected, setSelected)
 
 
-class Selection(GObject.Object):
+class Selection(GObject.Object, Loggable):
 
     """
     A collection of L{GES.Clip}.
@@ -96,6 +100,7 @@ class Selection(GObject.Object):
 
     def __init__(self):
         GObject.Object.__init__(self)
+        Loggable.__init__(self)
         self.selected = set()
 
     def setToObj(self, obj, mode):
@@ -142,9 +147,12 @@ class Selection(GObject.Object):
 
         for obj in old_selection - self.selected:
             for element in obj.get_children(False):
+                ui.unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
+
         for obj in self.selected - old_selection:
+            ui.set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
             for element in obj.get_children(False):
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = True
@@ -193,18 +201,13 @@ class Selection(GObject.Object):
 # -----------------------------------------------------------------------------#
 # Timeline edition modes helper                         #
 
-class EditingContext(GObject.Object):
+class EditingContext(GObject.Object, Loggable):
 
     """
         Encapsulates interactive editing.
 
         This is the main class for interactive edition.
     """
-
-    __gsignals__ = {
-        "clip-trim": (GObject.SIGNAL_RUN_LAST, None, (GES.Clip, int)),
-        "clip-trim-finished": (GObject.SIGNAL_RUN_LAST, None, ()),
-    }
 
     def __init__(self, focus, timeline, mode, edge, unused_settings, action_log):
         """
@@ -230,6 +233,7 @@ class EditingContext(GObject.Object):
         @returns: An instance of L{pitivi.utils.timeline.EditingContext}
         """
         GObject.Object.__init__(self)
+        Loggable.__init__(self)
         if isinstance(focus, GES.TrackElement):
             self.focus = focus.get_parent()
         else:
@@ -253,7 +257,7 @@ class EditingContext(GObject.Object):
     def finish(self):
         self.action_log.commit()
         self.timeline.get_asset().pipeline.commit_timeline()
-        self.emit("clip-trim-finished")
+        self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
 
     def setMode(self, mode):
         """Set the current editing mode.
@@ -271,8 +275,7 @@ class EditingContext(GObject.Object):
         self.new_position = position
         self.new_priority = priority
 
-        res = self.focus.edit(
-            [], priority, self.mode, self.edge, int(position))
+        res = self.focus.edit([], priority, self.mode, self.edge, int(position))
         self.action_log.app.write_action("edit-container", {
             "container-name": self.focus.get_name(),
             "position": float(position / Gst.SECOND),
@@ -282,9 +285,10 @@ class EditingContext(GObject.Object):
 
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
-                self.emit("clip-trim", self.focus, self.focus.props.in_point)
+                self.timeline.ui.app.gui.viewer.clipTrimPreview(self.focus, self.focus.props.in_point)
             elif self.edge == GES.Edge.EDGE_END:
-                self.emit("clip-trim", self.focus, self.focus.props.duration)
+                self.timeline.ui.app.gui.viewer.clipTrimPreview(self.focus,
+                                                                self.focus.props.duration + self.focus.props.in_point)
 
 
 # -------------------------- Interfaces ----------------------------------------#
@@ -404,6 +408,18 @@ class Zoomable(object):
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
         return int((float(duration) / Gst.SECOND) * cls.zoomratio)
+
+    @classmethod
+    def nsToPixelAccurate(cls, duration):
+        """
+        Returns the pixel equivalent of the given duration, according to the
+        set zoom ratio
+        """
+        # Here, a long time ago (206f3a05), a pissed programmer said:
+        # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
+        if duration == Gst.CLOCK_TIME_NONE:
+            return 0
+        return ((float(duration) / Gst.SECOND) * cls.zoomratio)
 
     @classmethod
     def _zoomChanged(cls):

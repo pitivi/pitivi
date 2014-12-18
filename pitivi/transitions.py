@@ -173,11 +173,10 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         else:
             self.props_widgets.set_sensitive(True)
 
-        clip_asset = self.element.get_parent()
-        clip_asset.set_asset(transition_asset)
+        self.element.set_asset(transition_asset)
         self.app.write_action("element-set-asset", {
             "asset-id": transition_asset.get_id(),
-            "element-name": clip_asset.get_name()})
+            "element-name": self.element.get_name()})
         self.app.project_manager.current_project.seeker.flush(True)
 
         return True
@@ -289,7 +288,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.element.connect("notify::border", self._borderChangedCb)
         self.element.connect("notify::invert", self._invertChangedCb)
         self.element.connect("notify::type", self._transitionTypeChangedCb)
-        transition_asset = element.get_parent().get_asset()
+        transition_asset = element.get_asset()
         if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:

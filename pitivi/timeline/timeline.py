@@ -24,28 +24,26 @@ import os
 
 from gettext import gettext as _
 
-from gi.repository import Clutter
 from gi.repository import GES
 from gi.repository import GLib
-from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository import GtkClutter
 
+from pitivi.utils import ui
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.controls import ControlContainer
-from pitivi.timeline.elements import URISourceElement, TransitionElement, Ghostclip
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.pipeline import PipelineError
-from pitivi.utils.timeline import Zoomable, Selection, SELECT, TimelineError
-from pitivi.utils.ui import alter_style_class, EFFECT_TARGET_ENTRY, EXPANDED_SIZE, SPACING, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, CONTROL_WIDTH
+from pitivi.utils.timeline import Zoomable, TimelineError
+from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
+from pitivi.timeline.elements import Clip
+from pitivi.utils import timeline as timelineUtils
+from pitivi.timeline.layer import SpacedSeparator, Layer, LayerControls
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
                                section="user-interface",
@@ -73,12 +71,6 @@ PreferencesDialog.addNumericPreference('imageClipLength',
                                            "Default clip length (in miliseconds) of images when inserting on the timeline."),
                                        lower=1)
 
-# Colors
-TIMELINE_BACKGROUND_COLOR = Clutter.Color.new(31, 30, 33, 255)
-SELECTION_MARQUEE_COLOR = Clutter.Color.new(100, 100, 100, 200)
-SNAPPING_INDICATOR_COLOR = Clutter.Color.new(50, 150, 200, 200)
-
-
 """
 Convention throughout this file:
 Every GES element which name could be mistaken with a UI element
@@ -86,61 +78,246 @@ is prefixed with a little b, example : bTimeline
 """
 
 
-class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
-
+class VerticalBar(Gtk.DrawingArea, Loggable):
     """
-    The timeline view showing the clips.
+    A simple vertical bar to be drawn on top of the timeline
     """
+    __gtype_name__ = "PitiviVerticalBar"
 
-    __gsignals__ = {
-        'scrolled': (GObject.SIGNAL_RUN_FIRST, None, ())
-    }
-
-    def __init__(self, container, settings):
-        Clutter.ScrollActor.__init__(self)
-        Zoomable.__init__(self)
+    def __init__(self, css_class):
+        super(VerticalBar, self).__init__()
         Loggable.__init__(self)
+        self.get_style_context().add_class(css_class)
+
+    def do_get_preferred_width(self):
+        self.debug("Getting prefered height")
+        return ui.PLAYHEAD_WIDTH, ui.PLAYHEAD_WIDTH
+
+    def do_get_preferred_height(self):
+        self.debug("Getting prefered height")
+        return self.get_parent().get_allocated_height(), self.get_parent().get_allocated_height()
+
+
+class Marquee(Gtk.Box, Loggable):
+    """
+    Marquee widget representing a selection area inside the timeline
+    it should be drawn on top of the timeline layout.
+
+    It provides an API that makes it easy to update its value directly
+    from Gdk.Event
+    """
+
+    __gtype_name__ = "PitiviMarquee"
+
+    def __init__(self, timeline):
+        """
+        @timeline: The #Timeline on which the marquee will
+                   be used
+        """
+        super(Marquee, self).__init__()
+        Loggable.__init__(self)
+
+        self._timeline = timeline
+        self.start_x = None
+        self.start_y = None
+        self.set_visible(False)
+
+        self.get_style_context().add_class("Marquee")
+
+    def hide(self):
+        self.start_x = None
+        self.start_y = None
+        self.props.height_request = -1
+        self.props.width_request = -1
+        self.set_visible(False)
+
+    def setStartPosition(self, event):
+        event_widget = self._timeline.get_event_widget(event)
+        x, y = event_widget.translate_coordinates(self._timeline, event.x, event.y)
+
+        self.start_x, self.start_y = self._timeline.adjustCoords(x=x, y=y)
+
+    def move(self, event):
+        event_widget = self._timeline.get_event_widget(event)
+
+        x, y = self._timeline.adjustCoords(coords=event_widget.translate_coordinates(self._timeline, event.x, event.y))
+
+        start_x = min(x, self.start_x)
+        start_y = min(y, self.start_y)
+
+        self.get_parent().move(self, start_x, start_y)
+        self.props.width_request = abs(self.start_x - x)
+        self.props.height_request = abs(self.start_y - y)
+        self.set_visible(True)
+
+    def findSelected(self):
+        x, y = self._timeline.layout.child_get(self, "x", "y")
+        res = []
+
+        w = self.props.width_request
+        for layer in self._timeline.bTimeline.get_layers():
+            intersects, unused_rect = Gdk.rectangle_intersect(layer.ui.get_allocation(), self.get_allocation())
+
+            if not intersects:
+                continue
+
+            for clip in layer.get_clips():
+                if self.contains(clip, x, w):
+                    toplevel = clip.get_toplevel_parent()
+                    if isinstance(toplevel, GES.Group) and toplevel != self._timeline.current_group:
+                        res.extend([c for c in clip.get_toplevel_parent().get_children(True)
+                                    if isinstance(c, GES.Clip)])
+                    else:
+                        res.append(clip)
+
+        self.debug("Selected clips: %s" % res)
+
+        return tuple(set(res))
+
+    def contains(self, clip, marquee_start, marquee_width):
+        if clip.ui is None:
+            return False
+
+        child_start = clip.ui.get_parent().child_get(clip.ui, "x")[0]
+        child_end = child_start + clip.ui.get_allocation().width
+
+        marquee_end = marquee_start + marquee_width
+
+        if child_start <= marquee_start <= child_end:
+            return True
+
+        if child_start <= marquee_end <= child_end:
+            return True
+
+        if marquee_start <= child_start and marquee_end >= child_end:
+            return True
+
+        return False
+
+
+class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
+    """
+    The main timeline Widget, it contains the representation of the GESTimeline
+    without any extra widgets.
+    """
+
+    __gtype_name__ = "PitiviTimeline"
+
+    def __init__(self, container, app):
+        super(Timeline, self).__init__()
+
+        timelineUtils.Zoomable.__init__(self)
+        Loggable.__init__(self)
+
+        self._main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.add(self._main_hbox)
+
+        self.layout = Gtk.Layout()
+        self.hadj = self.layout.get_hadjustment()
+        self.vadj = self.layout.get_vadjustment()
+
+        self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        # Stuff the layers controls in a viewport so it can be scrolled.
+        viewport = Gtk.Viewport(vadjustment=self.vadj)
+        viewport.add(self.__layers_controls_vbox)
+
+        # Make sure the viewport has no border or other decorations.
+        viewport_style = viewport.get_style_context()
+        for css_class in viewport_style.list_classes():
+            viewport_style.remove_class(css_class)
+        self._main_hbox.pack_start(viewport, False, False, 0)
+
+        self._main_hbox.pack_start(self.layout, False, True, 0)
+        self.get_style_context().add_class("Timeline")
+
+        self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.__layers_vbox.props.width_request = self.get_allocated_width()
+        self.__layers_vbox.props.height_request = self.get_allocated_height()
+        self.layout.put(self.__layers_vbox, 0, 0)
+
         self.bTimeline = None
+        self.__last_position = 0
+        self.selection = timelineUtils.Selection()
+
+        self._layers = []
+        self.parent = container
+        self.app = app
+        self.__snap_position = 0
         self._project = None
+
+        self.current_group = None
         self.createSelectionGroup()
 
-        self._container = container
-        self.allowSeek = True
-        self._settings = settings
-        self.elements = []
-        self.ghostClips = []
-        self.selection = Selection()
-        self._scroll_point = Clutter.Point()
-        self.lastPosition = 0  # Saved for redrawing when paused
-        self.mouse = self._peekMouse()
+        self.__playhead = VerticalBar("PlayHead")
+        self.__playhead.show()
+        self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
 
-        # The markers are used for placing clips at the right depth.
-        # The first marker added as a child is the furthest and
-        # the latest added marker is the closest to the viewer.
+        self.__snap_bar = VerticalBar("SnapBar")
+        self.layout.put(self.__snap_bar, 0, 0)
 
-        # All the audio, video, image, title clips are placed above this
-        # marker.
-        self._clips_marker = Clutter.Actor()
-        self.add_child(self._clips_marker)
-        # All the transition clips are placed above this marker.
-        self._transitions_marker = Clutter.Actor()
-        self.add_child(self._transitions_marker)
+        self.__allow_seek = True
 
-        # Add the playhead later so it appears on top of all the clips.
-        self.playhead = self._createPlayhead()
-        self.add_child(self.playhead)
+        self.__setupTimelineEdition()
+        self.__setUpDragAndDrop()
+        self.__setupSelectionMarquee()
 
-        self._snap_indicator = self._createSnapIndicator()
-        self.add_child(self._snap_indicator)
+        self.__button_pressed = False
 
-        # Add the drag and drop marquee so it appears on top of the playhead.
-        self.marquee = self._setUpDragAndDrop()
-        self.add_child(self.marquee)
-        self.drawMarquee = False
+        # Setup our Gtk.Widget properties
+        self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
+        self.connect("scroll-event", self.__scrollEventCb)
+        self.connect("button-press-event", self.__buttonPressEventCb)
+        self.connect("button-release-event", self.__buttonReleaseEventCb)
+        self.connect("motion-notify-event", self.__motionNotifyEventCb)
+        self.connect("drag-motion", self.__dragMotionCb)
+        self.connect("drag-leave", self.__dragLeaveCb)
+        self.connect("drag-drop", self.__dragDropCb)
+        self.connect("drag-data-received", self.__dragDataReceivedCb)
 
-    # Public API
+        self.props.expand = True
+        self.get_accessible().set_name("timeline canvas")
+        self.__fake_event_widget = None
+
+    def sendFakeEvent(self, event, event_widget):
+        # Member usefull for testsing
+        self.__fake_event_widget = event_widget
+
+        self.info("Faking %s" % event)
+        if event.type == Gdk.EventType.BUTTON_PRESS:
+            self.__buttonPressEventCb(self, event)
+        elif event.type == Gdk.EventType.BUTTON_RELEASE:
+            self.__buttonReleaseEventCb(self, event)
+        elif event.type == Gdk.EventType.MOTION_NOTIFY:
+            self.__motionNotifyEventCb(self, event)
+
+        self.__fake_event_widget = None
+
+    def get_event_widget(self, event):
+        if self.__fake_event_widget:
+            return self.__fake_event_widget
+
+        return Gtk.get_event_widget(event)
+
+    def __get_event_widget(self, event):
+        if self.__fake_event_widget:
+            return self.__fake_event_widget
+
+        return Gtk.get_event_widget(event)
+
+    @property
+    def allowSeek(self):
+        return self.__allow_seek
+
+    @allowSeek.setter
+    def allowSeek(self, value):
+        self.debug("Setting AllowSeek to %s" % value)
+        self.__allow_seek = value
 
     def createSelectionGroup(self):
+        if self.current_group:
+            GES.Container.ungroup(self.current_group, False)
+
         self.current_group = GES.Group()
         self.current_group.props.serialize = False
 
@@ -156,506 +333,606 @@ class TimelineStage(Clutter.ScrollActor, Zoomable, Loggable):
             bTimeline = None
 
         if self.bTimeline is not None:
-            self.bTimeline.disconnect_by_func(self._trackAddedCb)
-            self.bTimeline.disconnect_by_func(self._trackRemovedCb)
+            self.bTimeline.disconnect_by_func(self._durationChangedCb)
             self.bTimeline.disconnect_by_func(self._layerAddedCb)
             self.bTimeline.disconnect_by_func(self._layerRemovedCb)
             self.bTimeline.disconnect_by_func(self._snapCb)
             self.bTimeline.disconnect_by_func(self._snapEndedCb)
-            for track in self.bTimeline.get_tracks():
-                self._trackRemovedCb(self.bTimeline, track)
             for layer in self.bTimeline.get_layers():
                 self._layerRemovedCb(self.bTimeline, layer)
+
+            self.bTimeline.ui = None
 
         self.bTimeline = bTimeline
 
         if bTimeline is None:
             return
 
-        for track in bTimeline.get_tracks():
-            self._connectTrack(track)
         for layer in bTimeline.get_layers():
-            self._add_layer(layer)
+            self._addLayer(layer)
 
-        self.bTimeline.connect("track-added", self._trackAddedCb)
-        self.bTimeline.connect("track-removed", self._trackRemovedCb)
+        self.bTimeline.connect("notify::duration", self._durationChangedCb)
         self.bTimeline.connect("layer-added", self._layerAddedCb)
         self.bTimeline.connect("layer-removed", self._layerRemovedCb)
         self.bTimeline.connect("snapping-started", self._snapCb)
         self.bTimeline.connect("snapping-ended", self._snapEndedCb)
+        self.bTimeline.ui = self
 
-        self.zoomChanged()
+        self.queue_draw()
 
-    def findBrother(self, element):
-        """
-        Iterate over ui_elements to get the URI source with the same parent clip
-        @param element: the ui_element for which we want to find the sibling.
-        """
-        father = element.get_parent()
-        for elem in self.elements:
-            if elem.bElement.get_parent() == father and elem.bElement != element:
-                return elem
-        return None
+    def _durationChangedCb(self, bTimeline, pspec):
+        self.queue_draw()
 
-    def createLayerForGhostClip(self, ghostclip):
-        """
-        Creates a layer and moves subsequent layers down, if any.
+    def scrollToPlayhead(self,):
+        if self.__button_pressed or self.parent.ruler.pressed:
+            self.__button_pressed = False
+            return
 
-        @param ghostclip: the ghostclip that was dropped, needing a new layer.
-        @type ghostclip: L{Ghostclip}
-        @rtype: L{GES.Layer}
-        """
-        layers = self.bTimeline.get_layers()
-        if ghostclip.priority < len(layers):
-            for layer in layers:
-                if layer.get_priority() >= ghostclip.priority:
-                    layer.props.priority += 1
-
-        layer = self.bTimeline.append_layer()
-        layer.props.priority = ghostclip.priority
-        self._project.pipeline.commit_timeline()
-        self._container.controls._reorderLayerActors()
-        return layer
-
-    # Drag and drop from the medialibrary, handled by "ghost" (temporary) clips.
-    # We create those when drag data is received, reset them after conversion.
-    # This avoids bugs when dragging in and out of the timeline
-
-    def resetGhostClips(self):
-        self.ghostClips = []
-
-    def addGhostClip(self, asset, unused_x, unused_y):
-        ghostVideo = None
-        if asset.get_supported_formats() & GES.TrackType.VIDEO:
-            ghostVideo = self._createGhostclip(GES.TrackType.VIDEO, asset)
-        ghostAudio = None
-        if asset.get_supported_formats() & GES.TrackType.AUDIO:
-            ghostAudio = self._createGhostclip(GES.TrackType.AUDIO, asset)
-        self.ghostClips.append([ghostVideo, ghostAudio])
-
-    def updateGhostClips(self, x, y):
-        """
-        This is called for each drag-motion.
-        """
-        priority = int(y / (EXPANDED_SIZE + SPACING))
-        for ghostCouple in self.ghostClips:
-            for ghostclip in ghostCouple:
-                if ghostclip:
-                    ghostclip.update(priority, y, False)
-                    if x >= 0:
-                        ghostclip.props.x = x
-                        self._updateSize(ghostclip)
-
-    def convertGhostClips(self):
-        """
-        This is called at drag-drop
-        """
-        placement = 0
-        layer = None
-        for ghostVideo, ghostAudio in self.ghostClips:
-            ghostclip = ghostVideo or ghostAudio
-
-            if layer is None:
-                layer = self._getLayerForGhostClip(ghostclip)
-
-            if ghostclip.asset.is_image():
-                clip_duration = self._settings.imageClipLength * \
-                    Gst.SECOND / 1000.0
-            else:
-                clip_duration = ghostclip.asset.get_duration()
-
-            if not placement:
-                placement = Zoomable.pixelToNs(ghostclip.props.x)
-            self._container.app.action_log.begin("add clip")
-            layer.add_asset(ghostclip.asset,
-                            placement,
-                            0,
-                            clip_duration,
-                            ghostclip.asset.get_supported_formats())
-            self._container.app.action_log.commit()
-            placement += clip_duration
-        self._project.pipeline.commit_timeline()
-
-    def _getLayerForGhostClip(self, ghostclip):
-        """
-        Return the layer on which the specified ghostclip should be added.
-        """
-        if ghostclip.shouldCreateLayer:
-            return self.createLayerForGhostClip(ghostclip)
-        for layer in self.bTimeline.get_layers():
-            if layer.get_priority() == ghostclip.priority:
-                return layer
-        raise TimelineError()
-
-    def removeGhostClips(self):
-        """
-        This is called at drag-leave. We don't empty the list on purpose.
-        """
-        for ghostCouple in self.ghostClips:
-            for ghostclip in ghostCouple:
-                if ghostclip and ghostclip.get_parent():
-                    self.remove_child(ghostclip)
-        self._project.pipeline.commit_timeline()
-
-    def getActorUnderPointer(self):
-        return self.mouse.get_pointer_actor()
-
-    # Internal API
-
-    def _elementIsInLasso(self, element, x1, y1, x2, y2):
-        xE1 = element.props.x
-        xE2 = element.props.x + element.props.width
-        yE1 = element.props.y
-        yE2 = element.props.y + element.props.height
-
-        return self._segmentsOverlap((x1, x2), (xE1, xE2)) and self._segmentsOverlap((y1, y2), (yE1, yE2))
-
-    def _segmentsOverlap(self, a, b):
-        x = max(a[0], b[0])
-        y = min(a[1], b[1])
-        return x < y
-
-    def _translateToTimelineContext(self, event):
-        event.x -= CONTROL_WIDTH
-        event.x += self._scroll_point.x
-        event.y += self._scroll_point.y
-
-        delta_x = event.x - self.dragBeginStartX
-        delta_y = event.y - self.dragBeginStartY
-
-        newX = self.dragBeginStartX
-        newY = self.dragBeginStartY
-
-        # This is needed when you start to click and go left or up.
-
-        if delta_x < 0:
-            newX = event.x
-            delta_x = abs(delta_x)
-
-        if delta_y < 0:
-            newY = event.y
-            delta_y = abs(delta_y)
-
-        return newX, newY, delta_x, delta_y
-
-    def _setUpDragAndDrop(self):
-        self.set_reactive(True)
-
-        self._container.stage.connect("button-press-event", self._dragBeginCb)
-        self._container.stage.connect("motion-event", self._dragProgressCb)
-        self._container.stage.connect("button-release-event", self._dragEndCb)
-        self._container.gui.connect("button-release-event", self._dragEndCb)
-
-        marquee = Clutter.Actor()
-        marquee.set_background_color(SELECTION_MARQUEE_COLOR)
-        marquee.hide()
-        return marquee
-
-    @staticmethod
-    def _peekMouse():
-        manager = Clutter.DeviceManager.get_default()
-        for device in manager.peek_devices():
-            if device.props.device_type == Clutter.InputDeviceType.POINTER_DEVICE and device.props.enabled is True:
-                return device
-
-    def _createGhostclip(self, trackType, asset):
-        ghostclip = Ghostclip(trackType)
-        ghostclip.asset = asset
-        ghostclip.setNbrLayers(len(self.bTimeline.get_layers()))
-
-        if asset.is_image():
-            clip_duration = self._settings.imageClipLength * \
-                Gst.SECOND / 1000.0
-        else:
-            clip_duration = asset.get_duration()
-
-        ghostclip.setWidth(Zoomable.nsToPixel(clip_duration))
-        self.add_child(ghostclip)
-        return ghostclip
-
-    def _connectTrack(self, track):
-        for trackelement in track.get_elements():
-            self._trackElementAddedCb(track, trackelement)
-        track.connect("track-element-added", self._trackElementAddedCb)
-        track.connect("track-element-removed", self._trackElementRemovedCb)
-
-    def _disconnectTrack(self, track):
-        track.disconnect_by_func(self._trackElementAddedCb)
-        track.disconnect_by_func(self._trackElementRemovedCb)
+        self.hadj.set_value(self.nsToPixel(self.__last_position) -
+                            (self.layout.get_allocation().width / 2))
 
     def _positionCb(self, unused_pipeline, position):
-        self._movePlayhead(position)
-        self._container._scrollToPlayhead()
-        self.lastPosition = position
-
-    def _updatePlayHead(self):
-        height = len(self.bTimeline.get_layers()) * \
-            (EXPANDED_SIZE + SPACING) * 2
-        self.playhead.set_size(PLAYHEAD_WIDTH, height)
-        self._movePlayhead(self.lastPosition)
-
-    def _movePlayhead(self, position):
-        self.playhead.props.x = self.nsToPixel(position)
-
-    @staticmethod
-    def _createPlayhead():
-        playhead = Clutter.Actor()
-        playhead.set_background_color(PLAYHEAD_COLOR)
-        playhead.set_size(0, 0)
-        playhead.set_position(0, 0)
-        playhead.set_easing_duration(0)
-        return playhead
-
-    @staticmethod
-    def _createSnapIndicator():
-        indicator = Clutter.Actor()
-        indicator.set_background_color(SNAPPING_INDICATOR_COLOR)
-        indicator.props.visible = False
-        indicator.props.width = 3
-        indicator.props.y = 0
-        return indicator
-
-    def _addTimelineElement(self, track, bElement):
-        if isinstance(bElement, GES.Effect):
+        if self.__last_position == position:
             return
 
-        if isinstance(bElement, GES.Transition):
-            element = TransitionElement(bElement, self)
-            marker = self._transitions_marker
-        elif isinstance(bElement, GES.Source):
-            element = URISourceElement(bElement, self)
-            marker = self._clips_marker
-        else:
-            self.warning("Unknown element: %s", bElement)
-            return
-
-        bElement.connect("notify::start", self._elementStartChangedCb, element)
-        bElement.connect(
-            "notify::duration", self._elementDurationChangedCb, element)
-        bElement.connect(
-            "notify::in-point", self._elementInPointChangedCb, element)
-        bElement.connect(
-            "notify::priority", self._elementPriorityChangedCb, element)
-
-        self.elements.append(element)
-
-        self._setElementX(element, ease=True)
-        self._setElementY(element)
-
-        self.insert_child_above(element, marker)
-
-    def _removeTimelineElement(self, unused_track, bElement):
-        if isinstance(bElement, GES.Effect):
-            return
-        bElement.disconnect_by_func(self._elementStartChangedCb)
-        bElement.disconnect_by_func(self._elementDurationChangedCb)
-        bElement.disconnect_by_func(self._elementInPointChangedCb)
-        bElement.disconnect_by_func(self._elementPriorityChangedCb)
-
-        element = self._getElement(bElement)
-        if not element:
-            raise TimelineError("Missing element for: " + bElement)
-        element.cleanup()
-        self.elements.remove(element)
-        self.remove_child(element)
-        self.selection.setSelection(set([]), SELECT)
-
-    def _getElement(self, bElement):
-        for element in self.elements:
-            if element.bElement == bElement:
-                return element
-        return None
-
-    def _setElementX(self, element, ease=False):
-        if ease:
-            element.save_easing_state()
-            element.set_easing_duration(600)
-        element.props.x = self.nsToPixel(element.bElement.get_start())
-        if ease:
-            element.restore_easing_state()
-
-    # FIXME, change that when we have retractable layers
-    def _setElementY(self, element):
-        bElement = element.bElement
-        track_type = bElement.get_track_type()
-
-        y = 0
-        if track_type == GES.TrackType.AUDIO:
-            y = len(self.bTimeline.get_layers()) * (EXPANDED_SIZE + SPACING)
-        y += bElement.get_parent().get_layer().get_priority() * \
-            (EXPANDED_SIZE + SPACING) + SPACING
-
-        element.save_easing_state()
-        element.props.y = y
-        element.restore_easing_state()
-
-    def _updateSize(self, ghostclip=None):
-        self.save_easing_state()
-        self.set_easing_duration(0)
-        self.props.width = self.nsToPixel(
-            self.bTimeline.get_duration()) + CONTROL_WIDTH
-        if ghostclip is not None:
-            ghostEnd = ghostclip.props.x + \
-                ghostclip.props.width + CONTROL_WIDTH
-            self.props.width = max(ghostEnd, self.props.width)
-        self.props.height = (len(self.bTimeline.get_layers()) + 1) * \
-            (EXPANDED_SIZE + SPACING) * 2 + SPACING
-        self.restore_easing_state()
-        self._container.vadj.props.upper = self.props.height
-        self._container.updateHScrollAdjustments()
-
-    def _redraw(self):
-        self._updateSize()
-
-        self.save_easing_state()
-        for element in self.elements:
-            self._setElementX(element)
-            self._setElementY(element)
-        self.restore_easing_state()
-
-        self._updatePlayHead()
-
-    def _remove_layer(self, layer):
-        self._container.controls.removeLayerControl(layer)
-        self._redraw()
-
-    def _add_layer(self, layer):
-        self._redraw()
-        self._container.controls.addLayerControl(layer)
-
-    # Interface overrides
-
-    # Zoomable Override
-
-    def zoomChanged(self):
-        self._redraw()
-
-    # Clutter Override
-
-    # TODO: remove self._scroll_point and get_scroll_point as soon as the Clutter API
-    # offers a way to query a ScrollActor for its current scroll point
-    def scroll_to_point(self, point):
-        Clutter.ScrollActor.scroll_to_point(self, point)
-        self._scroll_point = point.copy()
-        self.emit("scrolled")
-
-    def get_scroll_point(self):
-        return self._scroll_point
-
-    # Callbacks
-
-    def _dragBeginCb(self, unused_actor, event):
-        self.drawMarquee = self.getActorUnderPointer() == self
-        if not self.drawMarquee:
-            return
-
-        if self.current_group:
-            GES.Container.ungroup(self.current_group, False)
-            self.createSelectionGroup()
-
-        self.dragBeginStartX = event.x - CONTROL_WIDTH + self._scroll_point.x
-        self.dragBeginStartY = event.y + self._scroll_point.y
-        self.marquee.set_size(0, 0)
-        self.marquee.set_position(event.x - CONTROL_WIDTH, event.y)
-        self.marquee.show()
-
-    def _dragProgressCb(self, unused_actor, event):
-        if not self.drawMarquee:
-            return False
-
-        x, y, width, height = self._translateToTimelineContext(event)
-
-        self.marquee.set_position(x, y)
-        self.marquee.set_size(width, height)
-
-        return False
-
-    def _dragEndCb(self, unused_actor, event):
-        if not self.drawMarquee:
-            return
-        self.drawMarquee = False
-
-        x, y, width, height = self._translateToTimelineContext(event)
-        elements = self._getElementsInRegion(x, y, width, height)
-        self.createSelectionGroup()
-        for element in elements:
-            self.current_group.add(element)
-        selection = [child for child in self.current_group.get_children(True)
-                     if isinstance(child, GES.Source)]
-        self.selection.setSelection(selection, SELECT)
-        self.marquee.hide()
-
-    def _getElementsInRegion(self, x, y, width, height):
-        elements = set()
-        for element in self.elements:
-            if self._elementIsInLasso(element, x, y, x + width, y + height):
-                elements.add(element.bElement.get_toplevel_parent())
-        return elements
+        self.__last_position = position
+        self.scrollToPlayhead()
+        self.layout.move(self.__playhead, max(0, self.nsToPixel(self.__last_position)), 0)
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
         """
         Display or hide a snapping indicator line
         """
-        if position == 0:
-            self._snapEndedCb()
-        else:
-            height = len(self.bTimeline.get_layers()) * \
-                (EXPANDED_SIZE + SPACING) * 2
-            self._snap_indicator.props.height = height
-            self._snap_indicator.props.x = Zoomable.nsToPixel(position)
-            self._snap_indicator.props.visible = True
+        self.layout.move(self.__snap_bar, self.nsToPixel(position), 0)
+        self.__snap_bar.show()
+        self.__snap_position = position
+        self.debug("-> Snap START!")
+
+    def hideSnapBar(self):
+        self.debug("-> Force hiding snap bar")
+        self.__snap_position = 0
+        self.__snap_bar.hide()
 
     def _snapEndedCb(self, *unused_args):
-        self._snap_indicator.props.visible = False
+        self.hideSnapBar()
 
-    def _layerAddedCb(self, unused_timeline, layer):
-        self._add_layer(layer)
+    # Gtk.Widget virtual methods implementation
+    def do_get_preferred_height(self):
+        natural_height = max(1, len(self._layers)) * (ui.LAYER_HEIGHT + 20)
+
+        return ui.LAYER_HEIGHT, natural_height
+
+    def do_draw(self, cr):
+        if self.bTimeline:
+            width = self._computeTheoricalWidth()
+            if self.draggingElement:
+                width = max(width, self.layout.props.width)
+
+            self.layout.set_size(width, len(self.bTimeline.get_layers()) * 200)
+
+        Gtk.EventBox.do_draw(self, cr)
+
+        self.__drawSnapIndicator(cr)
+        self.__drawPlayHead(cr)
+
+        self.layout.propagate_draw(self.__marquee, cr)
+
+    def __drawSnapIndicator(self, cr):
+        if self.__snap_position > 0:
+            self.__snap_bar.props.height_request = self.layout.props.height
+            self.__snap_bar.props.width_request = ui.SNAPBAR_WIDTH
+
+            self.layout.propagate_draw(self.__snap_bar, cr)
+        else:
+            self.__snap_bar.hide()
+
+    def __drawPlayHead(self, cr):
+        self.__playhead.props.height_request = self.layout.props.height
+        self.__playhead.props.width_request = ui.PLAYHEAD_WIDTH
+
+        self.layout.propagate_draw(self.__playhead, cr)
+
+    # ------------- #
+    # util methods  #
+    # ------------- #
+    def _computeTheoricalWidth(self):
+        if self.bTimeline is None:
+            return 100
+
+        return self.nsToPixel(self.bTimeline.props.duration)
+
+    def _getParentOfType(self, widget, _type):
+        """
+        Get a clip from a child widget, if the widget is a child of the clip
+        """
+        if isinstance(widget, _type):
+            return widget
+
+        parent = widget.get_parent()
+        while parent is not None and parent != self:
+            parent = parent.get_parent()
+
+            if isinstance(parent, _type):
+                return parent
+        return None
+
+    def adjustCoords(self, coords=None, x=None, y=None):
+        """
+        Adjust coordinates passed as parametter that are raw
+        coordinates from the whole timeline into sensible
+        coordinates inside the visible area of the timeline.
+        """
+        if coords:
+            x = coords[0]
+            y = coords[1]
+
+        if x is not None:
+            x += self.hadj.props.value
+            x -= ui.CONTROL_WIDTH
+
+        if y is not None:
+            y += self.vadj.props.value
+
+            if x is None:
+                return y
+        else:
+            return x
+
+        return x, y
+
+    # Gtk events management
+    def __scrollEventCb(self, unused_widget, event):
+        res, delta_x, delta_y = event.get_scroll_deltas()
+        if not res:
+            return False
+
+        event_widget = self.get_event_widget(event)
+        x, y = event_widget.translate_coordinates(self, event.x, event.y)
+        if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
+            if delta_y > 0:
+                self.parent.scroll_down()
+            elif delta_y < 0:
+                self.parent.scroll_up()
+        elif event.get_state() & Gdk.ModifierType.CONTROL_MASK:
+            if delta_y > 0:
+                timelineUtils.Zoomable.zoomOut()
+                self.queue_draw()
+            elif delta_y < 0:
+                timelineUtils.Zoomable.zoomIn()
+                self.queue_draw()
+        return False
+
+    def __buttonPressEventCb(self, unused_widget, event):
+        event_widget = self.get_event_widget(event)
+
+        self.debug("PRESSED %s" % event)
+        self.__button_pressed = True
+
+        res, button = event.get_button()
+        if res and button == 1:
+            self.draggingElement = self._getParentOfType(event_widget, Clip)
+            self.debug("Dragging element is %s" % self.draggingElement)
+            if self.draggingElement is not None:
+                self.__drag_start_x = event.x
+
+            else:
+                self.__marquee.setStartPosition(event)
+
+        return False
+
+    def __buttonReleaseEventCb(self, unused_widget, event):
+        if self.draggingElement:
+            self.dragEnd()
+        else:
+            self._selectUnderMarquee()
+
+        if self.allowSeek:
+            event_widget = self.get_event_widget(event)
+            x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+            x -= CONTROL_WIDTH
+            x += self.hadj.get_value()
+
+            position = self.pixelToNs(x)
+            self._project.seeker.seek(position)
+
+        self.allowSeek = True
+        self._snapEndedCb()
+
+        return False
+
+    def __motionNotifyEventCb(self, unused_widget, event):
+        if self.draggingElement:
+            state = event.get_state()
+
+            if isinstance(state, tuple):
+                state = state[1]
+
+            if not state & Gdk.ModifierType.BUTTON1_MASK:
+                self.dragEnd()
+                return False
+
+            self.__dragUpdate(self.get_event_widget(event), event.x, event.y)
+            self.got_dragged = True
+        elif self.__marquee.start_x:
+            self.__marquee.move(event)
+
+        return False
+
+    def _selectUnderMarquee(self):
+        if self.__marquee.props.width_request > 0:
+            clips = self.__marquee.findSelected()
+
+            if clips:
+                self.createSelectionGroup()
+
+                for clip in clips:
+                    self.current_group.add(clip.get_toplevel_parent())
+
+                self.selection.setSelection(clips, timelineUtils.SELECT)
+            else:
+                self.selection.setSelection([], timelineUtils.SELECT)
+        else:
+            only_transitions = not bool([selected for selected in self.selection.selected
+                                         if not isinstance(selected, GES.TransitionClip)])
+            if not only_transitions:
+                self.selection.setSelection([], timelineUtils.SELECT)
+
+        self.__marquee.hide()
+
+    def updatePosition(self):
+        for layer in self._layers:
+            layer.updatePosition()
+
+        self.queue_draw()
+
+    def __setupSelectionMarquee(self):
+        self.__marquee = Marquee(self)
+        self.layout.put(self.__marquee, 0, 0)
+
+    # drag and drop
+    def __setUpDragAndDrop(self):
+        self.got_dragged = False
+        self.dropHighlight = False
+        self.dropOccured = False
+        self.dropDataReady = False
+        self.dropData = None
+        self._createdClips = False
+        self.isDraggedClip = False
+        self._lastClipOnLeave = None
+
+        # To be able to receive effects dragged on clips.
+        self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        # To be able to receive assets dragged from the media library.
+        self.drag_dest_add_uri_targets()
+
+    def createClip(self, x, y):
+        if self.isDraggedClip and self._createdClips is False:
+
+            # From the media library
+            placement = 0
+            for uri in self.dropData:
+                asset = self.app.gui.medialibrary.getAssetForUri(uri)
+                if asset is None:
+                    break
+
+                if asset.is_image():
+                    clip_duration = self._settings.imageClipLength * \
+                        Gst.SECOND / 1000.0
+                else:
+                    clip_duration = asset.get_duration()
+
+                layer, on_sep = self.__getLayerAt(y)
+                if not placement:
+                    placement = self.pixelToNs(x)
+
+                self.app.action_log.begin("add clip")
+                bClip = layer.add_asset(asset,
+                                        placement,
+                                        0,
+                                        clip_duration,
+                                        asset.get_supported_formats())
+                self.app.action_log.commit()
+
+                self.draggingElement = bClip.ui
+                self._createdClips = True
+
+                return True
+
+        return False
+
+    def __dragMotionCb(self, unused_widget, context, x, y, timestamp):
+
+        target = self.drag_dest_find_target(context, None)
+        if not self.dropDataReady:
+            # We don't know yet the details of what's being dragged.
+            # Ask for the details.
+            self.drag_get_data(context, target, timestamp)
+            Gdk.drag_status(context, 0, timestamp)
+        else:
+            if not self.createClip(x, y):
+                self.__dragUpdate(self, x, y)
+
+            Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
+            if not self.dropHighlight:
+                self.drag_highlight()
+                self.dropHighlight = True
+        return True
+
+    def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
+        if self.draggingElement:
+            self._lastClipOnLeave = (self.draggingElement.bClip.get_layer(), self.draggingElement.bClip)
+            self.draggingElement.bClip.get_layer().remove_clip(self.draggingElement.bClip)
+            self._createdClips = False
+
+    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
+        # Same as in insertEnd: this value changes during insertion, snapshot
+        # it
+        zoom_was_fitted = self.parent.zoomed_fitted
+
+        target = self.drag_dest_find_target(context, None)
+        if target.name() == "text/uri-list":
+            self.debug("Got list of URIs")
+            if self._lastClipOnLeave:
+                self.dropData = None
+                self.dropDataReady = False
+
+                layer, clip = self._lastClipOnLeave
+                layer.add_clip(clip)
+
+                if zoom_was_fitted:
+                    self.parent._setBestZoomRatio()
+
+                self.dragEnd()
+        elif target.name() == "pitivi/effect":
+            self.fixme("TODO Implement effect support")
+
+        return True
+
+    def __dragDataReceivedCb(self, unused_widget,
+                             drag_context, unused_x,
+                             unused_y, selection_data, unused_info, timestamp):
+        dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
+        if not self.dropDataReady:
+            self._lastClipOnLeave = None
+            if dragging_effect:
+                # Dragging an effect from the Effect Library.
+                factory_name = str(selection_data.get_data(), "UTF-8")
+                self.dropData = factory_name
+                self.dropDataReady = True
+            elif selection_data.get_length() > 0:
+                # Dragging assets from the Media Library.
+                # if not self.dropOccured:
+                #    self.timeline.resetGhostClips()
+                self.dropData = selection_data.get_uris()
+                self.dropDataReady = True
+
+        if self.dropOccured:
+            # The data was requested by the drop handler.
+            self.dropOccured = False
+            drag_context.finish(True, False, timestamp)
+        else:
+            # The data was requested by the move handler.
+            self.isDraggedClip = not dragging_effect
+            self._createdClips = False
+            self.debug("Data received")
+
+    # Handle layers
+    def _layerAddedCb(self, timeline, bLayer):
+        self._addLayer(bLayer)
+
+    def _addLayer(self, bLayer):
+        layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        bLayer.control_ui = LayerControls(bLayer, self.app)
+        bLayer.ui = Layer(bLayer, self)
+
+        bLayer.ui.before_sep = SpacedSeparator()
+        layer_widget.pack_start(bLayer.ui.before_sep, False, False, 5)
+
+        self._layers.append(bLayer.ui)
+        layer_widget.pack_start(bLayer.ui, True, True, 0)
+
+        bLayer.ui.after_sep = SpacedSeparator()
+        layer_widget.pack_start(bLayer.ui.after_sep, False, False, 5)
+
+        self.__layers_vbox.pack_start(layer_widget, True, True, 0)
+        self.__layers_controls_vbox.pack_start(bLayer.control_ui, False, False, 0)
+
+        bLayer.ui.connect("remove-me", self._removeLayerCb)
+
+        self.show_all()
+
+    def _removeLayerCb(self, layer):
+        self.bTimeline.remove_layer(layer.bLayer)
+
+    def _removeLayer(self, bLayer):
+        self.info("Removing layer: %s" % bLayer.props.priority)
+        self.__layers_vbox.remove(bLayer.ui.get_parent())
+        self.__layers_controls_vbox.remove(bLayer.control_ui)
+
+        self._layers.remove(bLayer.ui)
+        bLayer.ui = None
+        bLayer.control_ui = None
+
+        self._layers.sort(key=lambda layer: layer.bLayer.props.priority)
+        i = 0
+        self.debug("Reseting layers priorities")
+        for layer in self._layers:
+            layer.bLayer.props.priority = i
+
+            self.__layers_vbox.child_set_property(layer.get_parent(),
+                                                  "position",
+                                                  layer.bLayer.props.priority)
+
+            self.__layers_controls_vbox.child_set_property(layer.bLayer.control_ui,
+                                                           "position",
+                                                           layer.bLayer.props.priority)
+
+            i += 1
 
     def _layerRemovedCb(self, unused_timeline, layer):
-        # FIXME : really remove layer ^^
-        for lyr in self.bTimeline.get_layers():
-            if lyr.props.priority > layer.props.priority:
-                lyr.props.priority -= 1
-        self._remove_layer(layer)
-        self._updatePlayHead()
+        self._removeLayer(layer)
 
-    def _trackAddedCb(self, unused_timeline, track):
-        self._connectTrack(track)
-        self._container.app.project_manager.current_project.update_restriction_caps(
-        )
+    # Interface Zoomable
+    def zoomChanged(self):
+        self.debug("Zoom changed")
+        self.updatePosition()
+        self.layout.move(self.__playhead, self.nsToPixel(self.__last_position), 0)
+        self.queue_draw()
 
-    def _trackRemovedCb(self, unused_timeline, track):
-        self._disconnectTrack(track)
-        for element in track.get_elements():
-            self._removeTimelineElement(track, element)
+    # Edition handling
+    def __setupTimelineEdition(self):
+        self.draggingElement = None
+        self.__editing_context = None
+        self.__got_dragged = False
+        self.__drag_start_x = 0
+        self.__on_separators = []
+        self._on_layer = None
 
-    def _trackElementAddedCb(self, track, bElement):
-        self._updateSize()
-        self._addTimelineElement(track, bElement)
+    def __getLayerAt(self, y, bLayer=None):
+        if y < 20 or not self.bTimeline.get_layers():
+            try:
+                bLayer = self.bTimeline.get_layers()[0]
+            except IndexError:
+                bLayer = self.bTimeline.append_layer()
 
-    def _trackElementRemovedCb(self, track, bElement):
-        self._removeTimelineElement(track, bElement)
+            self.debug("Returning very first layer")
+            return bLayer, [bLayer.ui.before_sep]
 
-    def _elementPriorityChangedCb(self, unused_bElement, unused_priority, element):
-        self._setElementY(element)
+        layers = self.bTimeline.get_layers()
+        rect = Gdk.Rectangle()
+        rect.x = 0
+        rect.y = y
+        rect.height = 1
+        rect.width = 1
+        for i in range(len(layers)):
+            layer = layers[i]
+            layer_alloc = layer.ui.get_allocation()
 
-    def _elementStartChangedCb(self, unused_bElement, unused_start, element):
-        self._updateSize()
-        self.allowSeek = False
-        self._setElementX(element)
+            if Gdk.rectangle_intersect(rect, layer_alloc)[0] is True:
+                return layer, []
 
-    def _elementDurationChangedCb(self, unused_bElement, unused_duration, element):
-        self._updateSize()
-        self.allowSeek = False
-        element.update(ease=False)
+            separators = [layer.ui.after_sep]
+            sep_rectangle = Gdk.Rectangle()
+            sep_rectangle.x = 0
+            sep_rectangle.y = layer_alloc.y + layer_alloc.height
+            try:
+                sep_rectangle.height = layers[i + 1].ui.get_allocation().y - \
+                    layer_alloc.y - layer_alloc.height
+                separators.append(layers[i + 1].ui.before_sep)
+            except IndexError:
+                sep_rectangle.height += ui.LAYER_HEIGHT
 
-    def _elementInPointChangedCb(self, unused_bElement, unused_inpoint, element):
-        self.allowSeek = False
-        self._setElementX(element)
+            if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
+                self.debug("Returning layer %s, separators: %s" % (layer, separators))
+                return layer, separators
 
-    def _layerPriorityChangedCb(self, unused_layer, unused_priority):
-        self._redraw()
+        self.debug("Returning very last layer")
+
+        return layers[-1], [layers[-1].ui.after_sep]
+
+    def __setHoverSeparators(self):
+        for sep in self.__on_separators:
+            ui.set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+
+    def __unsetHoverSeparators(self):
+        for sep in self.__on_separators:
+            ui.unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+
+    def __dragUpdate(self, event_widget, x, y):
+        if self.__got_dragged is False:
+            self.__got_dragged = True
+            self.allowSeek = False
+            self.__editing_context = timelineUtils.EditingContext(self.draggingElement.bClip,
+                                                                  self.bTimeline,
+                                                                  self.draggingElement.edit_mode,
+                                                                  self.draggingElement.dragging_edge,
+                                                                  None,
+                                                                  self.app.action_log)
+
+        x, y = event_widget.translate_coordinates(self, x, y)
+        x -= ui.CONTROL_WIDTH
+        x += self.hadj.get_value()
+        y += self.vadj.get_value()
+
+        mode = self.get_parent().getEditionMode(isAHandle=self.__editing_context.edge != GES.Edge.EDGE_NONE)
+        self.__editing_context.setMode(mode)
+
+        if self.__editing_context.edge is GES.Edge.EDGE_END:
+            position = self.pixelToNs(x)
+        else:
+            position = self.pixelToNs(x - self.__drag_start_x)
+
+        self.__unsetHoverSeparators()
+
+        self._on_layer, self.__on_separators = self.__getLayerAt(y,
+                                                                 self.draggingElement.bClip.get_layer())
+
+        priority = self._on_layer.props.priority
+        if self.__on_separators:
+            self.__setHoverSeparators()
+
+        self.__editing_context.editTo(position, priority)
+
+    def createLayer(self, priority):
+        self.info("Creating layer %s" % priority)
+        new_bLayer = GES.Layer.new()
+        new_bLayer.props.priority = priority
+        self.bTimeline.add_layer(new_bLayer)
+
+        bLayers = self.bTimeline.get_layers()
+        if priority < len(bLayers):
+            for bLayer in bLayers:
+                if bLayer == new_bLayer:
+                    continue
+
+                if bLayer.get_priority() >= priority:
+                    bLayer.props.priority += 1
+                    self.__layers_vbox.child_set_property(bLayer.ui.get_parent(),
+                                                          "position",
+                                                          bLayer.props.priority)
+
+                    self.__layers_controls_vbox.child_set_property(bLayer.control_ui,
+                                                                   "position",
+                                                                   bLayer.props.priority)
+
+        self.__layers_vbox.child_set_property(new_bLayer.ui.get_parent(),
+                                              "position",
+                                              new_bLayer.props.priority)
+
+        self.__layers_controls_vbox.child_set_property(new_bLayer.control_ui,
+                                                       "position",
+                                                       new_bLayer.props.priority)
+
+        return new_bLayer
+
+    def dragEnd(self):
+        if self.draggingElement is not None and self.__got_dragged:
+            self.debug("DONE dargging %s" % self.draggingElement)
+            self._snapEndedCb()
+
+            if self.__on_separators:
+                priority = self._on_layer.props.priority
+                if self.__on_separators[0] == self._on_layer.ui.after_sep:
+                    priority = self._on_layer.props.priority + 1
+
+                self.createLayer(max(0, priority))
+                self._onSeparatorStartTime = None
+                self.__editing_context.editTo(self.__editing_context.new_position, priority)
+            self.layout.props.width = self._computeTheoricalWidth()
+
+            self.__editing_context.finish()
+
+        self.draggingElement = None
+        self.__got_dragged = False
+        self.__editing_context = None
+        self.hideSnapBar()
+
+        self.__unsetHoverSeparators()
+        self.__on_separators = []
+
+        self.queue_draw()
 
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
@@ -671,8 +948,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         # Allows stealing focus from other GTK widgets, prevent accidents:
         self.props.can_focus = True
-        self.connect("focus-in-event", self._focusInCb)
-        self.connect("focus-out-event", self._focusOutCb)
 
         self.gui = gui
         self.ui_manager = ui_manager
@@ -687,12 +962,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             os.path.join(get_ui_dir(), "timelinecontainer.xml"))
         self._createActions()
         self._createUi()
-
-        self.dropHighlight = False
-        self.dropOccured = False
-        self.dropDataReady = False
-        self.dropData = None
-        self._setUpDragAndDrop()
 
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
@@ -763,36 +1032,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             projectmanager.connect(
                 "new-project-loaded", self._projectChangedCb)
 
-    def updateHScrollAdjustments(self):
-        """
-        Recalculate the horizontal scrollbar depending on the timeline duration.
-        """
-        timeline_ui_width = self.embed.get_allocation().width
-        if self.bTimeline is None:
-            contents_size = 0
-        else:
-            contents_size = Zoomable.nsToPixel(self.bTimeline.props.duration)
-
-        # Provide some space for clip insertion at the end
-        end_padding = CONTROL_WIDTH * 2
-
-        self.hadj.props.lower = 0
-        self.hadj.props.upper = contents_size + end_padding
-        self.hadj.props.page_size = timeline_ui_width
-        self.hadj.props.page_increment = contents_size * 0.9
-        self.hadj.props.step_increment = contents_size * 0.1
-
-        if contents_size <= timeline_ui_width:
-            # We're zoomed out completely, re-enable automatic zoom fitting
-            # when adding new clips.
-            self.log("Setting 'zoomed_fitted' to True")
-            self.zoomed_fitted = True
-        else:
-            self.log("Setting 'zoomed_fitted' to False")
-            self.zoomed_fitted = False
-
     def zoomFit(self):
-        self._hscrollbar.set_value(0)
+        # self._hscrollbar.set_value(0)
+        self.app.write_action("set-zoom-fit", {"not-mandatory-action-type": True})
+
         self._setBestZoomRatio(allow_zoom_in=True)
 
     def scrollToPixel(self, x):
@@ -801,10 +1044,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             GLib.idle_add(self._scrollToPixel, x)
         else:
             self._scrollToPixel(x)
-
-    def seekInPosition(self, position):
-        self.pressed = True
-        self._seeker.seek(position)
 
     def setProject(self, project):
         self._project = project
@@ -847,48 +1086,25 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Internal API
 
     def _createUi(self):
-        self.embed = GtkClutter.Embed()
-        self.embed.get_accessible().set_name("timeline canvas")  # for dogtail
-        self.stage = self.embed.get_stage()
-
-        self.timeline = TimelineStage(self, self._settings)
-        self.controls = ControlContainer(self.app, self.timeline)
         self.zoomBox = ZoomBox(self)
         self._shiftMask = False
         self._controlMask = False
 
-        self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
-        self.timeline.set_position(CONTROL_WIDTH, 0)
-        self.controls.set_position(0, 0)
+        # self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
+        # self.timeline.set_position(CONTROL_WIDTH, 0)
+        # self.controls.set_position(0, 0)
 
-        self.stage.add_child(self.controls)
-        self.stage.add_child(self.timeline)
-
-        self.timeline.connect("button-press-event", self._timelineClickedCb)
-        self.timeline.connect(
-            "button-release-event", self._timelineClickReleasedCb)
-        # FIXME: Connect to the stage of the embed instead, see
-        # https://bugzilla.gnome.org/show_bug.cgi?id=697522
-        self.embed.connect("scroll-event", self._scrollEventCb)
-
-        self.connect("key-press-event", self._keyPressEventCb)
-        self.connect("key-release-event", self._keyReleaseEventCb)
-
-        self.point = Clutter.Point()
-        self.point.x = 0
-        self.point.y = 0
+        # self.stage.add_child(self.controls)
+        # self.stage.add_child(self.timeline)
 
         self.scrolled = 0
 
         self.zoomed_fitted = True
-        self.pressed = False
 
-        self.hadj = Gtk.Adjustment()
-        self.vadj = Gtk.Adjustment()
-        self.hadj.connect("value-changed", self._updateScrollPosition)
-        self.vadj.connect("value-changed", self._updateScrollPosition)
-        self.vadj.props.lower = 0
-        self.vadj.props.page_size = 250
+        self.timeline = Timeline(self, self.app)
+        self.hadj = self.timeline.layout.get_hadjustment()
+        self.vadj = self.timeline.layout.get_vadjustment()
+
         self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
         self._hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
 
@@ -926,7 +1142,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.attach(self.zoomBox, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
-        self.attach(self.embed, 0, 1, 2, 1)
+        self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(self._vscrollbar, 2, 1, 1, 1)
         self.attach(self._hscrollbar, 1, 2, 1, 1)
         self.attach(toolbar, 3, 1, 1, 1)
@@ -944,27 +1160,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def disableKeyboardAndMouseEvents(self):
         """
-        A safety measure to prevent interacting with the Clutter timeline
-        during render (no, setting GtkClutterEmbed as insensitive won't work,
-        neither will using handler_block_by_func, nor connecting to the "event"
-        signals because they won't block the children and other widgets).
+        A safety measure to prevent interacting with the timeline
         """
         self.info("Blocking timeline mouse and keyboard signals")
-        self.stage.connect("captured-event", self._ignoreAllEventsCb)
+        self.timeline.connect("event", self._ignoreAllEventsCb)
 
     def _ignoreAllEventsCb(self, *unused_args):
         return True
-
-    def _setUpDragAndDrop(self):
-        # To be able to receive effects dragged on clips.
-        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
-        # To be able to receive assets dragged from the media library.
-        self.drag_dest_add_uri_targets()
-
-        self.connect('drag-motion', self._dragMotionCb)
-        self.connect('drag-data-received', self._dragDataReceivedCb)
-        self.connect('drag-drop', self._dragDropCb)
-        self.connect('drag-leave', self._dragLeaveCb)
 
     def _getLayers(self):
         """
@@ -1069,17 +1271,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.playhead_actions.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
 
-    def _updateScrollPosition(self, unused_adjustment):
-        self._scroll_pos_ns = Zoomable.pixelToNs(self.hadj.get_value())
-        point = Clutter.Point()
-        point.x = self.hadj.get_value()
-        point.y = self.vadj.get_value()
-        self.point = point
-
-        self.timeline.scroll_to_point(point)
-        point.x = 0
-        self.controls.scroll_to_point(point)
-
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """
         Set the zoom level so that the entire timeline is in view.
@@ -1145,28 +1336,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 (x, self.hadj.props.lower))
 
         if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.timeline.save_easing_state()
-            self.timeline.set_easing_duration(600)
+            self.error("FIXME What should be done here?")
 
         self._hscrollbar.set_value(x)
         if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.timeline.restore_easing_state()
+            self.error("FIXME What should be done here?")
+
+        self.timeline.updatePosition()
+        self.timeline.queue_draw()
         return False
 
-    def _scrollToPlayhead(self):
-        if self.ruler.pressed or self.pressed:
-            self.pressed = False
-            return
-        canvas_width = self.embed.get_allocation().width - CONTROL_WIDTH
-        try:
-            new_pos = Zoomable.nsToPixel(self._project.pipeline.getPosition())
-        except PipelineError as e:
-            self.info("Pipeline error: %s", e)
-            return
-        except AttributeError:  # Standalone, no pipeline.
-            return
-        playhead_pos_centered = new_pos - canvas_width / 2
-        self.scrollToPixel(max(0, playhead_pos_centered))
+    def scrollToPlayhead(self):
+        self.timeline.scrollToPlayhead()
 
     def _deleteSelected(self, unused_action):
         if self.bTimeline:
@@ -1174,6 +1355,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             for clip in self.timeline.selection:
                 layer = clip.get_layer()
+                if isinstance(clip, GES.TransitionClip):
+                    continue
                 layer.remove_clip(clip)
 
             self._project.pipeline.commit_timeline()
@@ -1195,7 +1378,32 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     containers.add(toplevel)
 
             for container in containers:
-                GES.Container.ungroup(container, False)
+                was_clip = isinstance(container, GES.Clip)
+                clips = GES.Container.ungroup(container, False)
+                if not was_clip:
+                    continue
+
+                new_layers = {}
+                for clip in clips:
+                    if isinstance(clip, GES.Clip):
+                        all_audio = True
+                        for child in clip.get_children(True):
+                            if child.get_track_type() != GES.TrackType.AUDIO:
+                                all_audio = False
+                                break
+
+                        if not all_audio:
+                            self.debug("Not all audio, not moving anything to a new layer")
+
+                            continue
+
+                        new_layer = new_layers.get(clip.get_layer().get_priority(), None)
+                        if not new_layer:
+                            new_layer = self.timeline.createLayer(clip.get_layer().get_priority() + 1)
+                            new_layers[clip.get_layer().get_priority()] = new_layer
+                        self.info("Moving audio audio clip %s to new layer %s" % (clip, new_layer))
+                        clip.move_to_layer(new_layer)
+
                 self._project.pipeline.commit_timeline()
 
             self.timeline.createSelectionGroup()
@@ -1219,7 +1427,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     containers.add(toplevel)
 
             if containers:
-                group = GES.Container.group(list(containers))
+                GES.Container.group(list(containers))
+
             self.timeline.createSelectionGroup()
 
             self._project.pipeline.commit_timeline()
@@ -1261,6 +1470,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             for track in self.bTimeline.get_tracks():
                 self._splitElements(track.get_elements())
 
+        self.timeline.hideSnapBar()
         self._project.pipeline.commit_timeline()
 
     def _splitElements(self, elements):
@@ -1288,7 +1498,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         for obj in selected:
             keyframe_exists = False
             position = self._project.pipeline.getPosition()
-            position_in_obj = (position - obj.start) + obj.in_point
+            position_in_obj = (position - obj.props.start) + obj.props.in_point
             interpolators = obj.getInterpolators()
             for value in interpolators:
                 interpolator = obj.getInterpolator(value)
@@ -1320,11 +1530,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.bTimeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
-        self.updateHScrollAdjustments()
+    # Gtk widget virtual methods
 
-    # Callbacks
-
-    def _keyPressEventCb(self, unused_widget, event):
+    def do_key_press_event(self, event):
         # This is used both for changing the selection modes and for affecting
         # the seek keyboard shortcuts further below
         if event.keyval == Gdk.KEY_Shift_L:
@@ -1345,33 +1553,25 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             else:
                 self._project.pipeline.stepFrame(self._framerate, 1)
 
-    def _keyReleaseEventCb(self, unused_widget, event):
+    def do_key_release_event(self, event):
         if event.keyval == Gdk.KEY_Shift_L:
             self._shiftMask = False
         elif event.keyval == Gdk.KEY_Control_L:
             self._controlMask = False
 
-    def _focusInCb(self, unused_widget, unused_arg):
+    def do_focus_in_event(self, unused_event):
         self.log("Timeline has grabbed focus")
         self.setActionsSensitivity(True)
 
-    def _focusOutCb(self, unused_widget, unused_arg):
+    def do_focus_out_event(self, unused_event):
         self.log("Timeline has lost focus")
         self.setActionsSensitivity(False)
 
-    def _timelineClickedCb(self, unused_timeline, unused_event):
+    def __buttonPressCb(self, unused_event):
         self.pressed = True
         self.grab_focus()  # Prevent other widgets from being confused
 
-    def _timelineClickReleasedCb(self, unused_timeline, event):
-        if self.app and self.timeline.allowSeek is True:
-            position = self.pixelToNs(
-                event.x - CONTROL_WIDTH + self.timeline._scroll_point.x)
-            self._seeker.seek(position)
-
-        self.timeline.allowSeek = True
-        self.timeline._snapEndedCb()
-
+    # Callbacks
     def _renderingSettingsChangedCb(self, project, item, value):
         """
         Called when any Project metadata changes, we filter out the one
@@ -1445,26 +1645,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _zoomFitCb(self, unused_action):
         self.zoomFit()
 
-    def _scrollEventCb(self, unused_embed, event):
-        unused_res, delta_x, delta_y = event.get_scroll_deltas()
-        if event.state & Gdk.ModifierType.CONTROL_MASK:
-            if delta_y < 0:
-                Zoomable.zoomIn()
-            elif delta_y > 0:
-                Zoomable.zoomOut()
-            self._scrollToPlayhead()
-        elif event.state & Gdk.ModifierType.SHIFT_MASK:
-            if delta_y > 0:
-                self.scroll_down()
-            elif delta_y < 0:
-                self.scroll_up()
-        else:
-            if delta_y > 0:
-                self.scroll_right()
-            elif delta_y < 0:
-                self.scroll_left()
-        self.scrolled += 1
-
     def _selectionChangedCb(self, selection):
         """
         The selected clips on the timeline canvas have changed with the
@@ -1486,96 +1666,3 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("Automatic ripple deactivated")
             self._autoripple_active = False
         self._settings.timelineAutoRipple = self._autoripple_active
-
-    # drag and drop
-
-    def _dragMotionCb(self, widget, context, x, y, timestamp):
-        target = widget.drag_dest_find_target(context, None)
-        if not self.dropDataReady:
-            # We don't know yet the details of what's being dragged.
-            # Ask for the details.
-            widget.drag_get_data(context, target, timestamp)
-            Gdk.drag_status(context, 0, timestamp)
-        else:
-            if self.isDraggedClip:
-                # From the media library
-                x, y = self.transposeXY(x, y)
-                if not self.timeline.ghostClips:
-                    for uri in self.dropData:
-                        asset = self.app.gui.medialibrary.getAssetForUri(uri)
-                        if asset is None:
-                            self.isDraggedClip = False
-                            break
-                        self.timeline.addGhostClip(asset, x, y)
-                self.timeline.updateGhostClips(x, y)
-
-            Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
-            if not self.dropHighlight:
-                widget.drag_highlight()
-                self.dropHighlight = True
-        return True
-
-    def _dragLeaveCb(self, widget, unused_context, unused_timestamp):
-        if self.dropHighlight:
-            widget.drag_unhighlight()
-            self.dropHighlight = False
-        # Cleanup because the user might have moved the mouse cursor outside
-        # and abandon this widget.
-        self.dropDataReady = False
-        self.timeline.removeGhostClips()
-
-    def _dragDropCb(self, widget, context, x, y, timestamp):
-        # Same as in insertEnd: this value changes during insertion, snapshot
-        # it
-        zoom_was_fitted = self.zoomed_fitted
-
-        target = widget.drag_dest_find_target(context, None)
-        y -= self.ruler.get_allocation().height
-        if target.name() == "text/uri-list":
-            self.dropOccured = True
-            widget.drag_get_data(context, target, timestamp)
-            if self.isDraggedClip:
-                self.timeline.convertGhostClips()
-                self.timeline.resetGhostClips()
-                self.dropData = None
-                self.dropDataReady = False
-                if zoom_was_fitted:
-                    self._setBestZoomRatio()
-                else:
-                    x, y = self.transposeXY(x, y)
-                    # Add a margin (up to 50px) on the left, this prevents
-                    # disorientation & clarifies to users where the clip starts
-                    margin = min(x, 50)
-                    self.scrollToPixel(x - margin)
-        elif target.name() == "pitivi/effect":
-            actor = self.stage.get_actor_at_pos(
-                Clutter.PickMode.REACTIVE, x, y)
-            bElement = actor.bElement
-            clip = bElement.get_parent()
-            factory_name = self.dropData
-            self.app.gui.clipconfig.effect_expander.addEffectToClip(
-                clip, factory_name)
-        return True
-
-    def _dragDataReceivedCb(self, widget, drag_context, unused_x, unused_y, selection_data, unused_info, timestamp):
-        dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
-        if not self.dropDataReady:
-            if dragging_effect:
-                # Dragging an effect from the Effect Library.
-                factory_name = str(selection_data.get_data(), "UTF-8")
-                self.dropData = factory_name
-                self.dropDataReady = True
-            elif selection_data.get_length() > 0:
-                # Dragging assets from the Media Library.
-                if not self.dropOccured:
-                    self.timeline.resetGhostClips()
-                self.dropData = selection_data.get_uris()
-                self.dropDataReady = True
-
-        if self.dropOccured:
-            # The data was requested by the drop handler.
-            self.dropOccured = False
-            drag_context.finish(True, False, timestamp)
-        else:
-            # The data was requested by the move handler.
-            self.isDraggedClip = not dragging_effect

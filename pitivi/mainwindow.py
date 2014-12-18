@@ -48,7 +48,7 @@ from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
-    beautify_length
+    beautify_length, TIMELINE_CSS
 from pitivi.viewer import ViewerContainer
 
 
@@ -144,6 +144,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.connect("destroy", self._destroyedCb)
 
         self.uimanager = Gtk.UIManager()
+        self.setupCss()
         self.builder_handler_ids = []
         self.builder = Gtk.Builder()
         self.add_accel_group(self.uimanager.get_accel_group())
@@ -166,6 +167,14 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                    self._projectManagerRevertingToSavedCb)
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
+
+    def setupCss(self):
+        self.css_provider = Gtk.CssProvider()
+        self.css_provider.load_from_data(TIMELINE_CSS.encode('UTF-8'))
+        screen = Gdk.Screen.get_default()
+        style_context = self.get_style_context()
+        style_context.add_provider_for_screen(screen, self.css_provider,
+                                              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     @staticmethod
     def createStockIcons():
@@ -627,6 +636,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         comments = ["",
                     "GES %s" % ".".join(map(str, GES.version())),
+                    "Gtk %s" % ".".join(map(str, (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION))),
                     "GStreamer %s" % ".".join(map(str, Gst.version()))]
         abt.set_comments("\n".join(comments))
 

@@ -233,7 +233,6 @@ class NumericWidget(Gtk.Box, DynamicWidget):
             upper = GObject.G_MAXDOUBLE
         if lower is None:
             lower = GObject.G_MINDOUBLE
-        range = upper - lower
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
@@ -1028,6 +1027,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
         Gtk.Grid.__init__(self)
         Zoomable.__init__(self)
 
+        self._manual_set = False
         self.timeline = timeline
 
         zoom_fit_btn = Gtk.Button()
@@ -1073,7 +1073,9 @@ class ZoomBox(Gtk.Grid, Zoomable):
 
     def _zoomAdjustmentChangedCb(self, adjustment):
         Zoomable.setZoomLevel(adjustment.get_value())
-        self.timeline._scrollToPlayhead()
+
+        if self._manual_set is False:
+            self.timeline.scrollToPlayhead()
 
     def _zoomFitCb(self, unused_button):
         self.timeline.zoomFit()
@@ -1096,7 +1098,9 @@ class ZoomBox(Gtk.Grid, Zoomable):
     def zoomChanged(self):
         zoomLevel = self.getCurrentZoomLevel()
         if int(self._zoomAdjustment.get_value()) != zoomLevel:
+            self._manual_set = True
             self._zoomAdjustment.set_value(zoomLevel)
+            self._manual_set = False
 
     def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
         # We assume the width of the ruler is exactly the width of the

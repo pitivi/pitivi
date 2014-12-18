@@ -183,7 +183,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
         self._listening = False  # for the position handler
-        self._listeningInterval = 300  # default 300ms
+        self._listeningInterval = 50  # default 300ms
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
         self._last_position = int(0 * Gst.SECOND)
@@ -343,7 +343,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._duration = dur
         return dur
 
-    def activatePositionListener(self, interval=500):
+    def activatePositionListener(self, interval=50):
         """
         Activate the position listener.
 
@@ -433,9 +433,9 @@ class SimplePipeline(GObject.Object, Loggable):
         self.debug("position: %s", format_ns(position))
 
         # clamp between [0, duration]
-        position = max(0, min(position, self.getDuration()) - 1)
+        position = max(0, min(position, self.getDuration()))
 
-        res = self._pipeline.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH,
+        res = self._pipeline.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
                                   Gst.SeekType.SET, position,
                                   Gst.SeekType.NONE, -1)
         self._addWaitingForAsyncDoneTimeout()
@@ -515,6 +515,14 @@ class SimplePipeline(GObject.Object, Loggable):
             self._removeWaitingForAsyncDoneTimeout()
         else:
             self.log("%s [%r]", message.type, message.src)
+
+    @property
+    def _waiting_for_async_done(self):
+        return self.__waiting_for_async_done
+
+    @_waiting_for_async_done.setter
+    def _waiting_for_async_done(self, value):
+        self.__waiting_for_async_done = value
 
     def _recover(self):
         if self._attempted_recoveries > MAX_RECOVERIES:

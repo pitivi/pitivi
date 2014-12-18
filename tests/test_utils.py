@@ -70,11 +70,11 @@ class TestDependencyChecks(TestCase):
         gi_dep.check()
         self.assertFalse(gi_dep.satisfied)
 
-        gi_dep = GtkOrClutterDependency("Gtk", "3.0.0")
+        gi_dep = GtkDependency("Gtk", "3.0.0")
         gi_dep.check()
         self.assertTrue(gi_dep.satisfied)
 
-        gi_dep = GtkOrClutterDependency("Gtk", "9.9.9")
+        gi_dep = GtkDependency("Gtk", "9.9.9")
         gi_dep.check()
         self.assertFalse(gi_dep.satisfied)
 

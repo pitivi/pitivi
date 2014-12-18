@@ -6,8 +6,7 @@ timeline_PYTHON =			\
 	ruler.py	\
 	timeline.py		\
 	elements.py \
-	previewers.py \
-	controls.py
+	previewers.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

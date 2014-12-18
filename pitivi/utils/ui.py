@@ -35,7 +35,6 @@ import urllib.error
 
 from gettext import ngettext, gettext as _
 
-from gi.repository import Clutter
 from gi.repository import GLib
 from gi.repository import GES
 from gi.repository import Gdk
@@ -47,21 +46,22 @@ from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
 
 from pitivi.utils.loggable import doLog, ERROR
 from pitivi.utils.misc import path_from_uri
+from pitivi.configure import get_pixmap_dir
 
 
 # Dimensions in pixels
 TRACK_SPACING = 8
 EXPANDED_SIZE = 65
-CONTROL_WIDTH = 250
+CONTROL_WIDTH = 300
 
 PADDING = 6
 SPACING = 10
 
 PLAYHEAD_WIDTH = 1
+SNAPBAR_WIDTH = 5
 CANVAS_SPACING = 21
 KEYFRAME_SIZE = 8
-
-PLAYHEAD_COLOR = Clutter.Color.new(200, 0, 0, 255)
+LAYER_HEIGHT = 130
 
 # Layer creation blocking time in s
 LAYER_CREATION_BLOCK_TIME = 0.2
@@ -97,8 +97,71 @@ NORMAL_FONT = _get_font("font-name", "Cantarell")
 DOCUMENT_FONT = _get_font("document-font-name", "Sans")
 MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
+TIMELINE_CSS = """
+    .AudioBackground {
+        background-color: #496c21;
+    }
 
+    .VideoBackground {
+        background-color: #2d2d2d;
+    }
+
+    .AudioBackground:selected {
+        background-color: #1b2e0e;
+    }
+
+    .VideoBackground:selected {
+        background-color: #0f0f0f;
+    }
+
+    .Trimbar {
+         background-image: url('%(trimbar_normal)s');
+    }
+
+    .Trimbar:first-child {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .Trimbar:last-child {
+        border-radius: 0 5px 5px 0;
+    }
+
+    .Trimbar:hover {
+         background-image: url('%(trimbar_focused)s');
+    }
+
+    .PlayHead {
+         background-color: red;
+    }
+
+    .Clip {
+    /* TODO */
+    }
+
+    .SnapBar {
+        background-color: rgb(127, 153, 204);
+    }
+
+    .TransitionClip {
+         background-color: rgba(127, 153, 204, 0.5);
+    }
+
+    .TransitionClip:selected {
+         background-color: rgba(127, 200, 204, 0.7);
+    }
+
+    .SpacedSeparator:hover {
+         background-color: rgba(127, 153, 204, 0.5);
+    }
+
+    .Marquee {
+         background-color: rgba(224, 224, 224, 0.7);
+    }
+
+""" % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
+        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
 # ---------------------- ARGB color helper-------------------------------------#
+
 
 def argb_to_gdk_rgba(color_int):
     return Gdk.RGBA(color_int / 256 ** 2 % 256 / 255.,
@@ -164,9 +227,6 @@ def hex_to_rgb(value):
 
 
 def set_cairo_color(context, color):
-    if type(color) is Clutter.Color:
-        color = (color.red, color.green, color.blue)
-
     if type(color) is Gdk.RGBA:
         cairo_color = (float(color.red), float(color.green), float(color.blue))
     elif type(color) is tuple:
@@ -399,6 +459,22 @@ def alter_style_class(style_class, target_widget, css_style):
     style_context = target_widget.get_style_context()
     style_context.add_provider(
         css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+
+def set_children_state_recurse(widget, state):
+    widget.set_state_flags(state, False)
+    for child in widget.get_children():
+        child.set_state_flags(state, False)
+        if isinstance(child, Gtk.Container):
+            set_children_state_recurse(child, state)
+
+
+def unset_children_state_recurse(widget, state):
+    widget.unset_state_flags(state)
+    for child in widget.get_children():
+        child.unset_state_flags(state)
+        if isinstance(child, Gtk.Container):
+            unset_children_state_recurse(child, state)
 
 
 # ----------------------- encoding datas --------------------------------------- #

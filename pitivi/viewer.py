@@ -19,9 +19,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from gi.repository import Clutter
 from gi.repository import Gtk
-from gi.repository import GtkClutter
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GObject
@@ -415,22 +413,22 @@ class ViewerContainer(Gtk.Box, Loggable):
         """
         self.timecode_entry.setWidgetValue(position, False)
 
-    def clipTrimPreview(self, tl_obj, position):
+    def clipTrimPreview(self, clip, position):
         """
         While a clip is being trimmed, show a live preview of it.
         """
-        if isinstance(tl_obj, GES.TitleClip) or tl_obj.props.is_image or not hasattr(tl_obj, "get_uri"):
+        if isinstance(clip, GES.TitleClip) or clip.props.is_image or not hasattr(clip, "get_uri"):
             self.log(
-                "%s is an image or has no URI, so not previewing trim" % tl_obj)
+                "%s is an image or has no URI, so not previewing trim" % clip)
             return False
 
-        clip_uri = tl_obj.props.uri
+        clip_uri = clip.props.uri
         cur_time = time()
         if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
                        clip_uri, format_ns(position))
             self._oldTimelinePos = self.pipeline.getPosition()
-            self.setPipeline(AssetPipeline(tl_obj))
+            self.setPipeline(AssetPipeline(clip))
             self._lastClipTrimTime = cur_time
 
         if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:

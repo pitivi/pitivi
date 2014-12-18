@@ -20,6 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import Gst
+from gi.repository import GstController
 from gi.repository import GES
 from gi.repository import GObject
 

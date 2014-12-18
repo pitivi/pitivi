@@ -34,7 +34,7 @@ from gettext import gettext as _
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_COLOR, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
+from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
 
 HEIGHT = 25
@@ -113,7 +113,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('draw', self.drawCb)
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
-        self.callback_id_scroll = None
         self.set_size_request(0, HEIGHT)
 
         style = self.get_style_context()
@@ -138,22 +137,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def _hadjValueChangedCb(self, unused_arg):
         self.pixbuf_offset = self.hadj.get_value()
-        if self.callback_id_scroll is not None:
-            GLib.source_remove(self.callback_id_scroll)
-        self.callback_id_scroll = GLib.timeout_add(100, self._maybeUpdate)
+        self.queue_draw()
 
 # Zoomable interface override
 
-    def _maybeUpdate(self):
-        self.queue_draw()
-        self.callback_id = None
-        self.callback_id_scroll = None
-        return False
-
     def zoomChanged(self):
-        if self.callback_id is not None:
-            GLib.source_remove(self.callback_id)
-        self.callback_id = GLib.timeout_add(100, self._maybeUpdate)
+        self.queue_draw()
 
 # Timeline position changed method
 
@@ -398,7 +387,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
         context.set_line_width(PLAYHEAD_WIDTH + 2)
-        set_cairo_color(context, PLAYHEAD_COLOR)
+        set_cairo_color(context, (255, 0, 0))
         context.move_to(xpos, 0)
         context.line_to(xpos, context.get_target().get_height())
         context.stroke()
