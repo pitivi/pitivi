@@ -64,6 +64,8 @@ else
   MODULES_CORE="${MODULES_CORE} pygobject"
 fi
 
+PYTHONPATH=$MYPITIVI/pitivi:$PYTHONPATH
+
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
