@@ -247,7 +247,7 @@ class Pitivi(Gtk.Application, Loggable):
         if project_path:
             f = open(project_path)
             content = f.read()
-            if not uri.endswith(".scenario"):
+            if not project_path.endswith(".scenario"):
                 self.write_action("load-project",
                                   {"serialized-content":
                                    "%s" % content.replace("\n", "")})
