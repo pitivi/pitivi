@@ -606,7 +606,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._seeker.connect("seek", self._seekCb)
         self._seeker.connect("seek-relative", self._seekRelativeCb)
 
-        if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", None):
+        if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
             if watchdog:
                 watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
