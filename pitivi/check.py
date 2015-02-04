@@ -131,9 +131,6 @@ class GIDependency(Dependency):
             module = None
         return module
 
-    def _format_version(self, module):
-        pass
-
 
 class ClassicDependency(Dependency):
 
@@ -144,9 +141,6 @@ class ClassicDependency(Dependency):
         except ImportError:
             module = None
         return module
-
-    def _format_version(self, module):
-        pass
 
 
 class GstPluginDependency(Dependency):
