@@ -59,7 +59,7 @@ class Dependency(object):
       explain the purpose of the missing component.
     """
 
-    def __init__(self, modulename, version_required_string, additional_message=None):
+    def __init__(self, modulename, version_required_string=None, additional_message=None):
         self.version_required_string = version_required_string
         self.modulename = modulename
         self.satisfied = False
@@ -282,10 +282,10 @@ HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
                      GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.5.0.0"),
                      GtkDependency("Gtk", "3.10.0"),
-                     ClassicDependency("numpy", None),
-                     GIDependency("Gio", None),
+                     ClassicDependency("numpy"),
+                     GIDependency("Gio"),
                      GstPluginDependency("opengl", "1.4.0"),
-                     ClassicDependency("matplotlib", None),
+                     ClassicDependency("matplotlib"),
                      ]
 
 SOFT_DEPENDENCIES = \
