@@ -653,7 +653,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         cur_frame = int(
             round(position * framerate.num / float(Gst.SECOND * framerate.denom), 2))
         new_frame = cur_frame + frames_offset
-        new_pos = int(new_frame * Gst.SECOND * framerate.denom / framerate.num)
+        new_pos = int(new_frame * Gst.SECOND * framerate.denom / framerate.num) + \
+            int((Gst.SECOND * framerate.denom / framerate.num) / 2)
         Loggable.info(self, "From frame %d to %d at %f fps, seek to %s s",
                       cur_frame,
                       new_frame,
