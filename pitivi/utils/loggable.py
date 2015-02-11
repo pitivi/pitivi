@@ -632,7 +632,7 @@ def printHandler(level, object, category, file, line, message):
     if not _enableCrackOutput:
         safeprintf(_outfile, '%s %-8s %-17s %-2s %s %s\n',
                    getFormattedLevelName(level), time.strftime("%H:%M:%S"),
-                   category, "", message, where)
+                   category, object, message, where)
     else:
         o = ""
         if object:
