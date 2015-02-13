@@ -228,9 +228,9 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _setScenarioFile(self, uri):
         if 'PITIVI_SCENARIO_FILE' in os.environ:
-            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
             if uri:
                 project_path = path_from_uri(uri)
+            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
         else:
             cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
             scenario_name = str(time.strftime("%Y%m%d-%H%M%S"))
