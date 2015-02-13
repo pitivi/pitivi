@@ -1073,6 +1073,9 @@ class ZoomBox(Gtk.Grid, Zoomable):
 
     def _zoomAdjustmentChangedCb(self, adjustment):
         Zoomable.setZoomLevel(adjustment.get_value())
+        self.timeline.app.write_action("set-zoom-level",
+                                       {"level": adjustment.get_value(),
+                                        "not-mandatory-action-type": True})
 
         if self._manual_set is False:
             self.timeline.scrollToPlayhead()

@@ -42,6 +42,7 @@ from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.utils.misc import quote_uri, path_from_uri
 from pitivi.utils.system import getSystem
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import Zoomable
 import pitivi.utils.loggable as log
 
 
@@ -88,6 +89,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._scenario_file = None
         self._first_action = True
 
+        Zoomable.app = self
         self.connect("startup", self._startupCb)
         self.connect("activate", self._activateCb)
         self.connect("open", self.openCb)
@@ -223,8 +225,6 @@ class Pitivi(Gtk.Application, Loggable):
         self.settings.storeSettings()
         self.quit()
         return True
-
-        self._first_action = True
 
     def _setScenarioFile(self, uri):
         if 'PITIVI_SCENARIO_FILE' in os.environ:

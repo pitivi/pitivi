@@ -38,8 +38,6 @@ from pitivi.utils.pipeline import AssetPipeline, Seeker
 from pitivi.utils.ui import SPACING, hex_to_rgb
 from pitivi.utils.widgets import TimeWidget
 
-import platform
-
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
                                key="docked",

@@ -42,7 +42,7 @@ class UndoWrongStateError(UndoError):
     pass
 
 
-class UndoableAction(GObject.Object):
+class UndoableAction(GObject.Object, Loggable):
 
     """
     An action that can be undone.
@@ -57,6 +57,7 @@ class UndoableAction(GObject.Object):
 
     def __init__(self):
         GObject.Object.__init__(self)
+        Loggable.__init__(self)
 
     def do(self):
         raise NotImplementedError()

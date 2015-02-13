@@ -40,7 +40,7 @@ from pwd import getpwuid
 from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
 
-from pitivi.utils.validate import has_validate
+from pitivi.utils.validate import has_validate, create_monitor
 from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
 from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
@@ -189,6 +189,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.current_project = None
         self.disable_save = False
         self._backup_lock = 0
+        self.exitcode = 0
 
     def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
@@ -317,7 +318,7 @@ class ProjectManager(GObject.Object, Loggable):
         # Load the project:
         self.current_project = Project(self.app, uri=uri, scenario=scenario)
 
-        self.current_project.connect("missing-uri", self._missingURICb)
+        self.current_project.connect_after("missing-uri", self._missingURICb)
         self.current_project.connect("loaded", self._projectLoadedCb)
 
         if self.current_project.createTimeline():
@@ -564,7 +565,7 @@ class ProjectManager(GObject.Object, Loggable):
             self.debug(
                 "Tried disconnecting signals, but they were not connected")
         self._cleanBackup(self.current_project.uri)
-        self.current_project.release()
+        self.exitcode = self.current_project.release()
         self.current_project = None
 
         return True
@@ -800,12 +801,14 @@ class Project(Loggable, GES.Project):
 
         self.info("Setting up validate scenario")
         self.runner = GstValidate.Runner.new()
+        create_monitor(self.runner, self.app.gui)
         self.monitor = GstValidate.Monitor.factory_create(
             self.pipeline, self.runner, None)
         self._scenario = GstValidate.Scenario.factory_create(
             self.runner, self.pipeline, self.scenario)
         self.pipeline.setForcePositionListener(True)
         self._scenario.connect("done", self._scenarioDoneCb)
+        self._scenario.props.execute_on_idle = True
 
     # --------------- #
     # Our properties  #
@@ -1028,8 +1031,9 @@ class Project(Loggable, GES.Project):
             return
         self.nb_imported_files += 1
         assets = self.get_loading_assets()
-        self.nb_remaining_file_to_import = len([asset for asset in assets if
-                                                GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
+        self.nb_remaining_file_to_import = len([tmpasset for tmpasset in assets if
+                                                GObject.type_is_a(tmpasset.get_extractable_type(),
+                                                                  GES.UriClip)])
         if self.nb_remaining_file_to_import == 0:
             self.nb_imported_files = 0
             # We do not take into account asset comming from project
@@ -1155,11 +1159,13 @@ class Project(Loggable, GES.Project):
         return self.list_assets(GES.UriClip)
 
     def release(self):
-        if self.runner:
-            self.runner.printf()
+        res = 0
 
         if self.pipeline:
             self.pipeline.release()
+
+        if self.runner:
+            res = self.runner.printf()
 
         if self.runner:
             self.runner = None
@@ -1167,6 +1173,8 @@ class Project(Loggable, GES.Project):
 
         self.pipeline = None
         self.timeline = None
+
+        return res
 
     def setModificationState(self, state):
         self._dirty = state

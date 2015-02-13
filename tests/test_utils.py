@@ -25,7 +25,7 @@ from unittest import TestCase
 
 from gi.repository import Gst
 from pitivi.utils.ui import beautify_length
-from pitivi.check import *
+from pitivi.check import *  # noqa
 
 second = Gst.SECOND
 minute = second * 60

@@ -170,7 +170,7 @@ class Marquee(Gtk.Box, Loggable):
                     else:
                         res.append(clip)
 
-        self.debug("Selected clips: %s" % res)
+        self.debug("Result is %s" % res)
 
         return tuple(set(res))
 
@@ -279,7 +279,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.get_accessible().set_name("timeline canvas")
         self.__fake_event_widget = None
 
-    def sendFakeEvent(self, event, event_widget):
+    def sendFakeEvent(self, event, event_widget=None):
         # Member usefull for testsing
         self.__fake_event_widget = event_widget
 
@@ -290,6 +290,8 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.__buttonReleaseEventCb(self, event)
         elif event.type == Gdk.EventType.MOTION_NOTIFY:
             self.__motionNotifyEventCb(self, event)
+        else:
+            self.parent.sendFakeEvent(event)
 
         self.__fake_event_widget = None
 
@@ -387,10 +389,8 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.layout.move(self.__snap_bar, self.nsToPixel(position), 0)
         self.__snap_bar.show()
         self.__snap_position = position
-        self.debug("-> Snap START!")
 
     def hideSnapBar(self):
-        self.debug("-> Force hiding snap bar")
         self.__snap_position = 0
         self.__snap_bar.hide()
 
@@ -784,13 +784,14 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     # Edition handling
     def __setupTimelineEdition(self):
         self.draggingElement = None
-        self.__editing_context = None
+        self.editing_context = None
         self.__got_dragged = False
         self.__drag_start_x = 0
         self.__on_separators = []
         self._on_layer = None
 
     def __getLayerAt(self, y, bLayer=None):
+        self.error("Y is %s" % y)
         if y < 20 or not self.bTimeline.get_layers():
             try:
                 bLayer = self.bTimeline.get_layers()[0]
@@ -844,22 +845,22 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if self.__got_dragged is False:
             self.__got_dragged = True
             self.allowSeek = False
-            self.__editing_context = timelineUtils.EditingContext(self.draggingElement.bClip,
-                                                                  self.bTimeline,
-                                                                  self.draggingElement.edit_mode,
-                                                                  self.draggingElement.dragging_edge,
-                                                                  None,
-                                                                  self.app.action_log)
+            self.editing_context = timelineUtils.EditingContext(self.draggingElement.bClip,
+                                                                self.bTimeline,
+                                                                self.draggingElement.edit_mode,
+                                                                self.draggingElement.dragging_edge,
+                                                                None,
+                                                                self.app.action_log)
 
         x, y = event_widget.translate_coordinates(self, x, y)
         x -= ui.CONTROL_WIDTH
         x += self.hadj.get_value()
         y += self.vadj.get_value()
 
-        mode = self.get_parent().getEditionMode(isAHandle=self.__editing_context.edge != GES.Edge.EDGE_NONE)
-        self.__editing_context.setMode(mode)
+        mode = self.get_parent().getEditionMode(isAHandle=self.editing_context.edge != GES.Edge.EDGE_NONE)
+        self.editing_context.setMode(mode)
 
-        if self.__editing_context.edge is GES.Edge.EDGE_END:
+        if self.editing_context.edge is GES.Edge.EDGE_END:
             position = self.pixelToNs(x)
         else:
             position = self.pixelToNs(x - self.__drag_start_x)
@@ -873,10 +874,10 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if self.__on_separators:
             self.__setHoverSeparators()
 
-        self.__editing_context.editTo(position, priority)
+        self.editing_context.editTo(position, priority)
 
     def createLayer(self, priority):
-        self.info("Creating layer %s" % priority)
+        self.error("Creating layer %s" % priority)
         new_bLayer = GES.Layer.new()
         new_bLayer.props.priority = priority
         self.bTimeline.add_layer(new_bLayer)
@@ -917,16 +918,17 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 if self.__on_separators[0] == self._on_layer.ui.after_sep:
                     priority = self._on_layer.props.priority + 1
 
+                self.error("On separator --> %s" % priority)
                 self.createLayer(max(0, priority))
                 self._onSeparatorStartTime = None
-                self.__editing_context.editTo(self.__editing_context.new_position, priority)
+                self.editing_context.editTo(self.editing_context.new_position, priority)
             self.layout.props.width = self._computeTheoricalWidth()
 
-            self.__editing_context.finish()
+            self.editing_context.finish()
 
         self.draggingElement = None
         self.__got_dragged = False
-        self.__editing_context = None
+        self.editing_context = None
         self.hideSnapBar()
 
         self.__unsetHoverSeparators()
@@ -1034,7 +1036,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def zoomFit(self):
         # self._hscrollbar.set_value(0)
-        self.app.write_action("set-zoom-fit", {"not-mandatory-action-type": True})
+        self.app.write_action("zoom-fit", {"not-mandatory-action-type": True})
 
         self._setBestZoomRatio(allow_zoom_in=True)
 
@@ -1531,6 +1533,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     # Gtk widget virtual methods
+
+    def sendFakeEvent(self, event):
+        self.info("Faking %s" % event)
+        if event.type == Gdk.EventType.KEY_PRESS:
+            self.do_key_press_event(event)
+        elif event.type == Gdk.EventType.KEY_RELEASE:
+            self.do_key_release_event(event)
 
     def do_key_press_event(self, event):
         # This is used both for changing the selection modes and for affecting

@@ -1,0 +1,17 @@
+description, seek=true, handles-states=true
+pause;
+add-asset, id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_red.mkv, type=(string)GESUriClip;
+add-asset, id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_blue.webm, type=(string)GESUriClip;
+add-layer, priority=(int)0;
+add-clip, name=(string)uriclip0, layer-priority=(int)0, asset-id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_blue.webm, type=(string)GESUriClip, start=(double)0, inpoint=(double)0, duration=(double)1.228;
+add-clip, name=(string)uriclip1, layer-priority=(int)0, asset-id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_red.mkv, type=(string)GESUriClip, start=(double)1.228, inpoint=(double)0, duration=(double)2;
+commit;
+zoom-fit, not-mandatory-action-type=(boolean)true;
+set-zoom-level, level=(double)69, not-mandatory-action-type=(boolean)true;
+seek, start=(double)0.62812454799999995, flags=(string)accurate+flush;
+split-clip, clip-name=(string)uriclip0, position=(double)0.62812454799999995;
+commit;
+seek, start=(double)2.0066820710000002, flags=(string)accurate+flush;
+split-clip, clip-name=(string)uriclip1, position=(double)2.0066820710000002;
+commit;
+stop, force=true;

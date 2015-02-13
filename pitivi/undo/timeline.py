@@ -323,6 +323,8 @@ class ClipAdded(UndoableAction):
         if hasattr(self.layer, "splitting_object") and \
                 self.layer.splitting_object is True:
             return None
+        elif self.layer.get_timeline().ui.editing_context is not None:
+            return None
 
         st = Gst.Structure.new_empty("add-clip")
         st.set_value("name", self.clip.get_name())
@@ -354,6 +356,9 @@ class ClipRemoved(UndoableAction):
         self._undone()
 
     def asScenarioAction(self):
+        if self.layer.get_timeline().ui.editing_context is not None:
+            return None
+
         st = Gst.Structure.new_empty("remove-clip")
         st.set_value("name", self.clip.get_name())
         return st
@@ -580,7 +585,8 @@ class TimelineLogObserver(Loggable):
 
     def _connectToTrackElement(self, track_element):
         for prop, binding in track_element.get_all_control_bindings().items():
-            self._connectToControlSource(track_element, binding)
+            self._connectToControlSource(track_element, binding,
+                                         existed=True)
         track_element.connect("control-binding-added",
                               self._controlBindingAddedCb)
         if isinstance(track_element, GES.BaseEffect):
@@ -592,7 +598,7 @@ class TimelineLogObserver(Loggable):
         for prop, binding in track_element.get_all_control_bindings().items():
             self._disconnectFromControlSource(binding)
 
-    def _connectToControlSource(self, track_element, binding):
+    def _connectToControlSource(self, track_element, binding, existed=False):
         control_source = binding.props.control_source
 
         control_source.connect("value-added",
@@ -610,7 +616,7 @@ class TimelineLogObserver(Loggable):
         tracker.connect("keyframe-moved", self._controlSourceKeyFrameMovedCb)
         self.control_source_keyframe_trackers[control_source] = tracker
 
-        if self.log.app:
+        if self.log.app and not existed:
             self.log.app.write_action("set-control-source",
                                       {"element-name": track_element.get_name(),
                                        "property-name": binding.props.name,

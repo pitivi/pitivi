@@ -263,7 +263,7 @@ def initialize_modules():
     from gi.repository import Gst
     Gst.init(None)
     from gi.repository import GES
-    GES.init()
+    res, sys.argv = GES.init_check(sys.argv)
 
     from pitivi.utils import validate
     validate.init()

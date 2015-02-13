@@ -1,0 +1,18 @@
+description, seek=true, handles-states=true
+pause;
+add-asset, id=(string)file:///home/someone/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_blue.webm, type=(string)GESUriClip;
+add-layer, priority=(int)0;
+add-clip, name=(string)uriclip0, layer-priority=(int)0, asset-id=(string)file:///home/someone/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_blue.webm, type=(string)GESUriClip, start=(double)0, inpoint=(double)0, duration=(double)2;
+commit;
+add-clip, name=(string)uriclip1, layer-priority=(int)0, asset-id=(string)file:///home/someone/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_blue.webm, type=(string)GESUriClip, start=(double)2, inpoint=(double)0, duration=(double)2;
+commit;
+zoom-fit, not-mandatory-action-type=(boolean)true;
+select-clips, clip-name=uriclip1;
+wait, duration=0.5
+select-clips, clip-name=uriclip0;
+wait, duration=0.5
+select-clips, clip-name=uriclip1, mode=ctrl;
+wait, duration=0.5
+select-clips, clip-name=uriclip1, mode=ctrl, selection="uriclip0";
+wait, duration=0.5
+stop, force=true;
