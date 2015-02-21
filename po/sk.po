@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N"
 "+L10N&component=general\n"
-"POT-Creation-Date: 2014-12-13 19:10+0000\n"
-"PO-Revision-Date: 2015-01-16 10:53+0100\n"
+"POT-Creation-Date: 2015-01-16 09:56+0000\n"
+"PO-Revision-Date: 2015-02-21 16:43+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
-"X-Generator: Poedit 1.7.3\n"
+"X-Generator: Poedit 1.7.4\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid ""
@@ -79,7 +79,7 @@ msgstr "Spúšťa sa automatické zarovnanie"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Vykonáva sa automatické zarovnanie</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1069
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1070
 msgid "Estimating..."
 msgstr "Odhaduje sa..."
 
@@ -698,6 +698,7 @@ msgstr "Chýbajúce softvérové závislosti:"
 #: ../pitivi/check.py:236
 msgid "ERROR — Could not create a Gst.Fraction — this means gst-python is not installed correctly."
 msgstr ""
+"CHYBA — Nepodarilo sa vytvoriť Gst.Fraction — to znamená, že gst-python nie je nainštalovaný správne."
 
 #: ../pitivi/check.py:241
 msgid ""
@@ -1348,11 +1349,11 @@ msgstr ""
 "príručky s popísanými riešeniami problémov, alebo vyplniť chybové hlásenie. S knižnicou GStreamer "
 "nastala táto chyba:"
 
-#: ../pitivi/render.py:1018 ../pitivi/render.py:1019 ../pitivi/render.py:1025
+#: ../pitivi/render.py:1019 ../pitivi/render.py:1020 ../pitivi/render.py:1026
 msgid "Render complete"
 msgstr "Vykresľovanie dokončené."
 
-#: ../pitivi/render.py:1023
+#: ../pitivi/render.py:1024
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ dokončil vykresľovanie."
@@ -1578,7 +1579,7 @@ msgstr "Dĺžka klipu s obrázkami"
 msgid "Default clip length (in miliseconds) of images when inserting on the timeline."
 msgstr "Predvolená dĺžka klipu s obrázkami (v milisekundách) pri vkladaní na časovú os"
 
-#: ../pitivi/timeline/timeline.py:917
+#: ../pitivi/timeline/timeline.py:919
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1595,78 +1596,78 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1006
+#: ../pitivi/timeline/timeline.py:1008
 msgid "Zoom In"
 msgstr "Priblíži priebeh klipu"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1007
+#: ../pitivi/timeline/timeline.py:1009
 msgid "Zoom Out"
 msgstr "Oddiali priebeh klipu"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1008 ../pitivi/utils/widgets.py:1028
+#: ../pitivi/timeline/timeline.py:1010 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Prispôsobí zobrazenie"
 
-#: ../pitivi/timeline/timeline.py:1032
+#: ../pitivi/timeline/timeline.py:1034
 msgid "Delete Selected"
 msgstr "Odstrániť označené položky"
 
 # stock_icon
-#: ../pitivi/timeline/timeline.py:1034
+#: ../pitivi/timeline/timeline.py:1036
 msgid "Ungroup"
 msgstr "Zrušiť zoskupenie"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1035
+#: ../pitivi/timeline/timeline.py:1037
 msgid "Ungroup clips"
 msgstr "Zruší zoskupenie klipov"
 
 # stock_icon
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1038
+#: ../pitivi/timeline/timeline.py:1040
 msgid "Group"
 msgstr "Zoskupiť"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1039
+#: ../pitivi/timeline/timeline.py:1041
 msgid "Group clips"
 msgstr "Zoskupí klipy"
 
 # stock_icon
-#: ../pitivi/timeline/timeline.py:1041
+#: ../pitivi/timeline/timeline.py:1043
 msgid "Align"
 msgstr "Zarovnať"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1042
+#: ../pitivi/timeline/timeline.py:1044
 msgid "Align clips based on their soundtracks"
 msgstr "Zarovná klipy podľa zvukových stôp"
 
 # action
-#: ../pitivi/timeline/timeline.py:1047
+#: ../pitivi/timeline/timeline.py:1049
 msgid "Start Playback"
 msgstr "Spustiť prehrávanie"
 
 # stock_icon
 # playhead_action
-#: ../pitivi/timeline/timeline.py:1049
+#: ../pitivi/timeline/timeline.py:1051
 msgid "Split"
 msgstr "Rozdeliť"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1050
+#: ../pitivi/timeline/timeline.py:1052
 msgid "Split clip at playhead position"
 msgstr "Rozdeliť klip na pozícii prehrávacieho kurzora"
 
 # playhead_action
-#: ../pitivi/timeline/timeline.py:1052
+#: ../pitivi/timeline/timeline.py:1054
 msgid "Add a Keyframe"
 msgstr "Pridať kľúčovú snímku"
 
 # tooltip text for toolbar
-#: ../pitivi/timeline/timeline.py:1053
+#: ../pitivi/timeline/timeline.py:1055
 msgid "Add a keyframe"
 msgstr "Pridá kľúčovú snímku"
 
@@ -1695,7 +1696,7 @@ msgid "Extra information:"
 msgstr "Ďalšie informácie:"
 
 # button
-#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:753
+#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:756
 msgid "Reset to default value"
 msgstr "Obnoviť predvolenú hodnotu"
 
@@ -1917,33 +1918,33 @@ msgid "Implement Me"
 msgstr "Implementuj ma"
 
 # label
-#: ../pitivi/utils/widgets.py:654
+#: ../pitivi/utils/widgets.py:657
 msgid "No properties."
 msgstr "Žiadne vlastnosti."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:744
+#: ../pitivi/utils/widgets.py:747
 msgid "Show keyframes for this value"
 msgstr "Zobraziť kľúčové snímky pre túto hodnotu"
 
 # window title
-#: ../pitivi/utils/widgets.py:914
+#: ../pitivi/utils/widgets.py:917
 #, python-format
 msgid "Properties for %s"
 msgstr "Vlastnosti pre %s"
 
 # zoom fit button
-#: ../pitivi/utils/widgets.py:1033
+#: ../pitivi/utils/widgets.py:1036
 msgid "Zoom"
 msgstr "Lupa"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1101
+#: ../pitivi/utils/widgets.py:1104
 #, python-format
 msgid "%s displayed"
 msgstr "Zobrazené %s"
 
-#: ../pitivi/utils/widgets.py:1105
+#: ../pitivi/utils/widgets.py:1108
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Zobrazené %d nanosekúnd, pretože je to možné"
