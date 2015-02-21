@@ -55,3 +55,9 @@ po/pitivi.pot
 
 # Generated when running the project
 *.pyc
+
+# libpitivi
+pitivi/libpitivi/.deps/*
+pitivi/libpitivi/.libs/*
+*.gir
+*.typelib

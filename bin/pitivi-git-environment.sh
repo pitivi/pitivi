@@ -65,6 +65,8 @@ else
 fi
 
 PYTHONPATH=$MYPITIVI/pitivi:$PYTHONPATH
+GI_TYPELIB_PATH=$MYPITIVI/pitivi/pitivi/libpitivi:$GI_TYPELIB_PATH
+LD_LIBRARY_PATH=$MYPITIVI/pitivi/pitivi/libpitivi/.libs:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the

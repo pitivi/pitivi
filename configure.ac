@@ -1,3 +1,8 @@
+m4_define([gi_req_version], [1.31.1])
+m4_define([glib_req_version], [2.30.0])
+m4_define([gstreamer_req_version], [1.4.0])
+m4_define([gtk_req_version], [3.10.0])
+
 AC_PREREQ(2.52)
 
 dnl Note for packagers: see pitivi/check.py for the dependencies
@@ -75,6 +80,31 @@ AC_SUBST(CONFIGURED_GI_TYPELIB_PATH)
 
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
 
+dnl === GObject introspection =================================================
+
+GOBJECT_INTROSPECTION_CHECK([gi_req_version])
+
+PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= gtk_req_version],
+                        [HAVE_GTK=yes],
+                        [HAVE_GTK=no])
+
+AS_IF([test "x$HAVE_GTK" = xno],
+      [AC_MSG_ERROR([GTK+ >= $gtk_req_version is required])])
+
+PKG_CHECK_MODULES(GTK_X11, gtk+-x11-3.0 >= gtk_req_version, HAVE_GTK_X11=yes, HAVE_GTK_X11=no)
+PKG_CHECK_MODULES(GTK_QUARTZ, gtk+-quartz-3.0 >= gtk_req_version, HAVE_GTK_QUARTZ=yes, HAVE_GTK_QUARTZ=no)
+AM_CONDITIONAL(HAVE_GTK_X11, test "x$HAVE_GTK_X11" = "xyes")
+AM_CONDITIONAL(HAVE_GTK_QUARTZ, test "x$HAVE_GTK_QUARTZ" = "xyes")
+
+PKG_CHECK_MODULES(GSTREAMER, [gstreamer-1.0 >= gstreamer_req_version gstreamer-video-1.0 >= gstreamer_req_version],
+                  [HAVE_GSTREAMER=yes],
+                  [HAVE_GSTREAMER=no])
+AC_SUBST(GTK_LIBS)
+
+
+AS_IF([test "x$HAVE_GSTREAMER" = xno],
+      [AC_MSG_ERROR([GStreamer >= $gstreamer_req_version is required])])
+
 PKG_CHECK_MODULES([cairo], [cairo])
 PKG_CHECK_MODULES([py3cairo], [py3cairo])
 
@@ -94,6 +124,12 @@ if test x$BUILD_HELP = xyes; then
   YELP_HELP_INIT
 fi
 
+PITIVI_CFLAGS="$GTK_CFLAGS $GSTREAMER_CFLAGS $GSTREAMER_VIDEO_CFLAGS"
+PITIVI_LIBS="$LIBM $GTK_LIBS $GSTREAMER_LIBS $GSTREAMER_VIDEO_CFLAGS"
+
+AC_SUBST(PITIVI_CFLAGS)
+AC_SUBST(PITIVI_LIBS)
+
 dnl output stuff
 AC_OUTPUT(
 Makefile
@@ -107,6 +143,7 @@ pitivi/dialogs/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
 pitivi/timeline/Makefile
+pitivi/libpitivi/Makefile
 pitivi/coptimizations/Makefile
 po/Makefile.in
 tests/Makefile

@@ -194,8 +194,6 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = 0
         self._force_position_listener = False
 
-        # Create a cluttersink element used for display. Subclasses must connect
-        # it to self._pipeline themselves
         self.video_sink = Gst.ElementFactory.make("glimagesink", None)
         if isinstance(pipeline, GES.Pipeline):
             self._pipeline.preview_set_video_sink(self.video_sink)
@@ -573,14 +571,6 @@ class AssetPipeline(SimplePipeline):
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)
-
-    def connectWithViewer(self, widget):
-        if platform.system() == 'Windows':
-            handle = widget.drawing_area.get_window().get_handle()
-        else:
-            handle = widget.drawing_area.get_window().get_xid()
-
-        self.video_sink.set_window_handle(handle)
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):

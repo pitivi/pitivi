@@ -108,9 +108,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # Gui elements:
         # Drawing area for video output
-        self.preview_video = ViewerWidget(
-            realizedCb=self._on_preview_video_realize_cb)
-        self.preview_video.sink = self.player.video_sink
+        self.preview_video = ViewerWidget(sink=self.player.video_sink)
         self.preview_video.props.hexpand = minimal
         self.preview_video.props.vexpand = minimal
         self.attach(self.preview_video, 0, 0, 1, 1)
@@ -367,10 +365,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
             curr_pos = self.player.getPosition()
             self.pos_adj.set_value(int(curr_pos))
         return self.is_playing
-
-    def _on_preview_video_realize_cb(self, unused_drawing_area, unused_widget):
-        if self.current_preview_type == 'video':
-            self.player.connectWithViewer(self.preview_video)
 
     def _on_start_stop_clicked_cb(self, button):
         if self.is_playing:

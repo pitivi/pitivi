@@ -23,14 +23,10 @@ from gi.repository import Clutter
 from gi.repository import Gtk
 from gi.repository import GtkClutter
 from gi.repository import Gdk
-try:
-    from gi.repository import GdkX11
-except ImportError:
-
-    pass
 from gi.repository import Gst
 from gi.repository import GObject
 from gi.repository import GES
+from gi.repository import Pitivi
 import cairo
 
 from gettext import gettext as _
@@ -492,19 +488,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.pipeline is None:
             return
 
-        if self.target.get_realized():
-            self.debug("Connecting the pipeline to the viewer's texture")
-            if platform.system() == 'Windows':
-                xid = self.target.drawing_area.get_window().get_handle()
-            else:
-                xid = self.target.drawing_area.get_window().get_xid()
-
-            self.sink.set_window_handle(xid)
+        self.target.show()
+        if Pitivi.viewer_set_sink(self.target.drawing_area, self.sink):
             self.sink.expose()
-        else:
-            # Show the widget and wait for the realized callback
-            self.log("Target is not realized, showing the widget")
-            self.target.show()
 
 
 class Point():
@@ -840,14 +826,14 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, settings=None, realizedCb=None):
+    def __init__(self, settings=None, realizedCb=None, sink=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
-        self.drawing_area = Gtk.DrawingArea()
+        self.drawing_area = Pitivi.viewer_new(sink)
         self.drawing_area.set_double_buffered(False)
         self.drawing_area.connect("draw", self._drawCb, None)
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
@@ -864,7 +850,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.stored = False
         self.area = None
         self.zoom = 1.0
-        self.sink = None
+        self.sink = sink
         self.pixbuf = None
         self.pipeline = None
         self.transformation_properties = None
