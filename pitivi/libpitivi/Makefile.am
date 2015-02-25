@@ -55,7 +55,6 @@ CLEANFILES += $(nodist_typelib_DATA)
 
 %.typelib: %.gir $(INTROSPECTION_COMPILER)
 	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
-	--includedir='/home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/pitivi/libpitivi' \
 	--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-1.0` \
 	--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-video-1.0` \
 	--includedir=`$(PKG_CONFIG) --variable=girdir gtk+-3.0` \
