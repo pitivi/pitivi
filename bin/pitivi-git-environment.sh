@@ -196,7 +196,7 @@ $PITIVI/gstreamer/plugins\
   # in the system-configured man paths from man.config
   # this still doesn't make it work for the uninstalled case, since man goes
   # look for a man directory "nearby" instead of the directory I'm telling it to
-  export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$MANPATH
+  export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$PITIVI/gst-editing-services/docs/man/:$MANPATH
 
   export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data
 fi
