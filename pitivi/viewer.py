@@ -175,18 +175,12 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
 
-    def _videoRealizedCb(self, unused_drawing_area, viewer):
-        if viewer == self.target:
-            self.log("Widget realized: %s", viewer)
-            self._switch_output_window()
-
     def _createUi(self):
         """ Creates the Viewer GUI """
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
         # Drawing area
-        self.internal = ViewerWidget(
-            self.app.settings, realizedCb=self._videoRealizedCb)
+        self.internal = ViewerWidget(self.app.settings)
         # Transformation boxed DISABLED
         # self.internal.init_transformation_events()
         self.pack_start(self.internal, True, True, 0)
@@ -196,8 +190,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(
-            self.app.settings, realizedCb=self._videoRealizedCb)
+        self.external = ViewerWidget(self.app.settings)
         vbox.pack_start(self.external, True, True, 0)
         self.external_window.connect(
             "delete-event", self._externalWindowDeleteCb)
@@ -826,7 +819,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, settings=None, realizedCb=None, sink=None):
+    def __init__(self, settings=None, sink=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
@@ -838,8 +831,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.drawing_area.connect("draw", self._drawCb, None)
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
-        if realizedCb:
-            self.drawing_area.connect("realize", realizedCb, self)
         self.add(self.drawing_area)
 
         self.drawing_area.show()
