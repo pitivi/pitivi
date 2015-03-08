@@ -45,7 +45,7 @@ HELP_FILES = \
     welcomedialog.page \
     workwithprojects.page
 
-HELP_LINGUAS = cs de el es fr sl uk
+HELP_LINGUAS = cs de el es fr sl sv uk
 
 distdir-help-files: all
 
