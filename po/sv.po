@@ -3,20 +3,18 @@
 # Christian Rose <menthos@menthos.com>, 2006.
 # Daniel Nylander <po@danielnylander.se>, 2006-2012.
 # Josef Andersson <josef.andersson@fripost.org>, 2015.
-
 # Termer:
 # playhead:uppspelningshuvud
 # keyframe:nyckelbild
 # ripple edit: krusningsredigering /http://www.pitivi.org/manual/trimming.html
 # roll edit: Rullredigering."
 # scrub: snabbgranska?
-
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-02-09 11:37+0000\n"
+"POT-Creation-Date: 2015-02-25 21:11+0000\n"
 "PO-Revision-Date: 2015-02-05 09:04+0200\n"
 "Last-Translator: Josef Andersson <josef.andersson@fripost.org>\n"
 "Language-Team: Swedish\n"
@@ -593,11 +591,11 @@ msgstr ""
 "bildupplösningen, din dators beräkningskraft, tillämpade effekter och "
 "längden på din film.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1081
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1067
 msgid "Pause"
 msgstr "Pausa"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1073
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1059
 msgid "Play"
 msgstr "Spela upp"
 
@@ -711,7 +709,7 @@ msgstr ""
 
 #: ../pitivi/check.py:301
 msgid "enables sound notifications when rendering is complete"
-msgstr "aktiverar ljudnotifieringar när renderingen är avslutad"
+msgstr "aktiverar ljudaviseringar när renderingen är avslutad"
 
 #: ../pitivi/check.py:302
 msgid "file thumbnails provided by GNOME's thumbnailers"
@@ -719,7 +717,7 @@ msgstr "filminiatyrbilder från GNOMEs program för miniatyrbilder"
 
 #: ../pitivi/check.py:303
 msgid "enables visual notifications when rendering is complete"
-msgstr "aktiverar visuella notifieringar när renderingen är färdig"
+msgstr "aktiverar visuella aviseringar när renderingen är färdig"
 
 #: ../pitivi/check.py:304
 msgid "additional multimedia codecs through the GStreamer Libav library"
@@ -1033,25 +1031,25 @@ msgstr "JPEG-bild"
 msgid "Preview"
 msgstr "Förhandsvisa"
 
-#: ../pitivi/mediafilespreviewer.py:166
+#: ../pitivi/mediafilespreviewer.py:164
 msgid "Pitivi can not preview this file."
 msgstr "Pitivi kan inte förhandsvisa denna fil."
 
-#: ../pitivi/mediafilespreviewer.py:167
+#: ../pitivi/mediafilespreviewer.py:165
 msgid "More info"
 msgstr "Mer information"
 
-#: ../pitivi/mediafilespreviewer.py:266
+#: ../pitivi/mediafilespreviewer.py:264
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Upplösning</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:268 ../pitivi/mediafilespreviewer.py:285
+#: ../pitivi/mediafilespreviewer.py:266 ../pitivi/mediafilespreviewer.py:283
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Längd</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:457 ../pitivi/medialibrary.py:861
+#: ../pitivi/mediafilespreviewer.py:451 ../pitivi/medialibrary.py:861
 msgid "Error while analyzing a file"
 msgstr "Fel vid analysering av fil"
 
@@ -1372,27 +1370,27 @@ msgstr "Skarp"
 msgid "Smooth"
 msgstr "Mjuk"
 
-#: ../pitivi/viewer.py:87
+#: ../pitivi/viewer.py:83
 msgid "Currently playing"
 msgstr "Spelar just nu"
 
-#: ../pitivi/viewer.py:223
+#: ../pitivi/viewer.py:219
 msgid "Go to the beginning of the timeline"
 msgstr "Gå till början av tidslinjen"
 
-#: ../pitivi/viewer.py:230
+#: ../pitivi/viewer.py:226
 msgid "Go back one second"
 msgstr "Gå bakåt en sekund"
 
-#: ../pitivi/viewer.py:242
+#: ../pitivi/viewer.py:238
 msgid "Go forward one second"
 msgstr "Gå framåt en sekund"
 
-#: ../pitivi/viewer.py:250
+#: ../pitivi/viewer.py:246
 msgid "Go to the end of the timeline"
 msgstr "Gå till slutet av tidslinjen"
 
-#: ../pitivi/viewer.py:257
+#: ../pitivi/viewer.py:253
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1400,7 +1398,7 @@ msgstr ""
 "Ange en tidskod eller bildrutenummer\n"
 "och tryck ”Retur” för gå till den positionen"
 
-#: ../pitivi/viewer.py:265
+#: ../pitivi/viewer.py:261
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1408,11 +1406,11 @@ msgstr ""
 "Koppla från visaren\n"
 "Du kan återfästa den genom att stänga det nyligen skapade fönstret."
 
-#: ../pitivi/viewer.py:377 ../pitivi/viewer.py:415
+#: ../pitivi/viewer.py:373 ../pitivi/viewer.py:411
 msgid "Show this window in fullscreen"
 msgstr "Visa detta fönster i helskärm"
 
-#: ../pitivi/viewer.py:412
+#: ../pitivi/viewer.py:408
 msgid "Exit fullscreen mode"
 msgstr "Avsluta helskärmsläge"
 
