@@ -228,22 +228,14 @@ class ProjectManager(GObject.Object, Loggable):
 
         return False
 
-    def _pipelineDied(self, pipeline):
+    def _pipelineDied(self, unused_pipeline):
         """
-        Ask if we need to load the autosaved project backup or not.
-
-        @param time_diff: the difference, in seconds, between file mtimes.
-                          None means pitivi had a problem and we should ask the
-                          user if he wants us to retry loading his project
+        Show an error dialog telling the user that everything went kaboom.
         """
-        dialog = Gtk.Dialog(title="", transient_for=None)
-
-        dialog.add_buttons(_("Save as..."), Gtk.ResponseType.APPLY,
-                           _("Save"), Gtk.ResponseType.OK,
-                           _("Close Pitivi"), Gtk.ResponseType.CLOSE)
         # GTK does not allow an empty string as the dialog title, so we use the
         # same translatable one as render.py's pipeline error message dialog:
-        dialog.set_title(_("Sorry, something didn’t work right."))
+        dialog = Gtk.Dialog(title=_("Sorry, something didn’t work right."),
+                            transient_for=self.app.gui)
 
         message = _("Pitivi detected a serious backend problem and could not "
                     "recover from it, even after multiple tries. The only thing"
@@ -258,17 +250,19 @@ class ProjectManager(GObject.Object, Loggable):
                     "Before closing Pitivi, you can save changes to the "
                     "existing project file or as a separate project file.")
 
+        dialog.add_buttons(_("Save as..."), 1,
+                           _("Save"), 2,
+                           _("Close Pitivi"), Gtk.ResponseType.CLOSE)
+
+        dialog.set_default_response(1)  # Default to "Save as"
         dialog.set_icon_name("pitivi")
-        dialog.set_transient_for(self.app.gui)
         dialog.set_modal(True)
         dialog.get_accessible().set_name("pitivi died")
-        dialog.set_default_response(Gtk.ResponseType.YES)
 
         primary = Gtk.Label()
         primary.set_line_wrap(True)
         primary.set_use_markup(True)
         primary.set_alignment(0, 0.5)
-
         primary.props.label = message
 
         # put the text in a vbox
@@ -291,9 +285,9 @@ class ProjectManager(GObject.Object, Loggable):
         response = dialog.run()
         dialog.destroy()
 
-        if response == Gtk.ResponseType.APPLY:
+        if response == 1:
             self.app.gui.saveProjectAsDialog()
-        elif response == Gtk.ResponseType.APPLY:
+        elif response == 2:
             self.app.gui.saveProject()
 
         self.app.shutdown()
