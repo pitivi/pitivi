@@ -238,9 +238,9 @@ class ProjectManager(GObject.Object, Loggable):
         """
         dialog = Gtk.Dialog(title="", transient_for=None)
 
-        dialog.add_buttons(_("Save project as"), Gtk.ResponseType.APPLY,
-                           _("Save project"), Gtk.ResponseType.OK,
-                           _("Close pitivi"), Gtk.ResponseType.CLOSE)
+        dialog.add_buttons(_("Save as..."), Gtk.ResponseType.APPLY,
+                           _("Save"), Gtk.ResponseType.OK,
+                           _("Close Pitivi"), Gtk.ResponseType.CLOSE)
         # GTK does not allow an empty string as the dialog title, so we use the
         # same translatable one as render.py's pipeline error message dialog:
         dialog.set_title(_("Sorry, something didn’t work right."))
