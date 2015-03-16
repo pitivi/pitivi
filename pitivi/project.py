@@ -241,20 +241,22 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.add_buttons(_("Save project as"), Gtk.ResponseType.APPLY,
                            _("Save project"), Gtk.ResponseType.OK,
                            _("Close pitivi"), Gtk.ResponseType.CLOSE)
-        # Even though we set the title to an empty string when creating dialog,
-        # seems we really have to do it once more so it doesn't show
-        # "pitivi"...
-        dialog.set_title(_("Pitivi died"))
-        message = _("We detected the application had a serious problem.\n"
-                    "There is no other choice than saving your project and <b>restart\n"
-                    "the application</b> at this point.\n\n"
-                    "Note that a severe bug happened and we would be very happy\n"
-                    "to hear about that to make sure it get fixed.\n\n"
-                    "You are very welcome to follow our guide to report bugs:\n\n"
-                    "      "
+        # GTK does not allow an empty string as the dialog title, so we use the
+        # same translatable one as render.py's pipeline error message dialog:
+        dialog.set_title(_("Sorry, something didn’t work right."))
+
+        message = _("Pitivi detected a serious backend problem and could not "
+                    "recover from it, even after multiple tries. The only thing"
+                    "that can be done at this point is to <b>restart Pitivi</b>."
+                    "\n\n"
+                    "This is a rare and severe kind of bug. Please see our "
                     "<a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">"
-                    "How to report a bug</a>\n\n"
-                    "and we will make sure to get it fixed!")
+                    "bug reporting guide</a> and take the time to report it! "
+                    "We will be very happy to fix this bug and make sure it "
+                    "does not occur again in future versions."
+                    "\n\n"
+                    "Before closing Pitivi, you can save changes to the "
+                    "existing project file or as a separate project file.")
 
         dialog.set_icon_name("pitivi")
         dialog.set_transient_for(self.app.gui)
