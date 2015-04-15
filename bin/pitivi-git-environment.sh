@@ -300,20 +300,20 @@ if [ "$ready_to_run" != "1" ]; then
         cd $m
         git fetch origin  # In case you haven't got the latest release tags...
         # Take into account whether the user wants stable releases or "master"
-        if [ $m == "glib" ]; then
+        if [ $m = "glib" ]; then
             # Silly hack for the fact that glib changes the "mkinstalldirs" file
             # when compiling, which prevents git pull --rebase from working
             git checkout -- mkinstalldirs
             git checkout $GLIB_RELEASE_TAG
-            if [ $GLIB_RELEASE_TAG == "master" ]; then
+            if [ $GLIB_RELEASE_TAG = "master" ]; then
                 git pull --rebase
                 if [ $? -ne 0 ]; then
                     exit 1
                 fi
             fi
-        elif [ $m == "gobject-introspection" ]; then
+        elif [ $m = "gobject-introspection" ]; then
             git checkout $GOBJECT_INTROSPECTION_RELEASE_TAG
-            if [ $GOBJECT_INTROSPECTION_RELEASE_TAG == "master" ]; then
+            if [ $GOBJECT_INTROSPECTION_RELEASE_TAG = "master" ]; then
                 git pull --rebase
                 if [ $? -ne 0 ]; then
                     exit 1
@@ -321,9 +321,9 @@ if [ "$ready_to_run" != "1" ]; then
             fi
             # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=679438
             export PYTHON=$(which python2)
-        elif [ $m == "pygobject" ]; then
+        elif [ $m = "pygobject" ]; then
             git checkout $PYGOBJECT_RELEASE_TAG
-            if [ $PYGOBJECT_RELEASE_TAG == "master" ]; then
+            if [ $PYGOBJECT_RELEASE_TAG = "master" ]; then
                 git pull --rebase
                 if [ $? -ne 0 ]; then
                     exit 1
@@ -338,7 +338,7 @@ if [ "$ready_to_run" != "1" ]; then
 
 
         # Now compile that module
-        if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
+        if test ! -f ./configure || [ "$force_autogen" = "1" ]; then
             ./autogen.sh --prefix=$PITIVI/prefix --disable-gtk-doc --with-python=$PYTHON
             if [ $? -ne 0 ]; then
                 echo "Could not run autogen for $m ; result: $?"
@@ -383,7 +383,7 @@ if [ "$ready_to_run" != "1" ]; then
           fi
         fi
 
-        if [ $m == "gst-devtools" ]; then
+        if [ $m = "gst-devtools" ]; then
           cd $m/validate
         else
           cd $m
@@ -403,21 +403,21 @@ if [ "$ready_to_run" != "1" ]; then
         # Silly hack for the fact that the version-controlled po/ files are
         # changed during compilation of the "gstreamer" and "gst-plugins-base"
         # modules, which prevents git pull --rebase from working
-        if [ $m == "gstreamer" ] || [ $m == "gst-plugins-base" ]; then
+        if [ $m = "gstreamer" ] || [ $m = "gst-plugins-base" ]; then
             git checkout -- po
         fi
         # Another similar hack because gst-plugins-bad keeps changing
         # common/ and win32/common/:
-        if [ $m == "gst-plugins-bad" ]; then
+        if [ $m = "gst-plugins-bad" ]; then
             git checkout -- common
             git checkout -- win32
         fi
         # Yep, another temporary workaround:
-        if [ $m == "gst-editing-services" ]; then
+        if [ $m = "gst-editing-services" ]; then
             git checkout -- acinclude.m4
         fi
 
-        if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
+        if test ! -f ./configure || [ "$force_autogen" = "1" ]; then
             # Allow passing per-module arguments when running autogen.
             # For example, specify the following environment variable
             # to pass --disable-eglgles to gst-plugins-bad's autogen.sh:
@@ -450,7 +450,7 @@ if [ "$ready_to_run" != "1" ]; then
     fi
 
     cd pitivi
-    if test ! -f ./configure || [ "$force_autogen" == "1" ]; then
+    if test ! -f ./configure || [ "$force_autogen" = "1" ]; then
         ./autogen.sh
         if [ $? -ne 0 ]; then
             echo "Could not run autogen for Pitivi ; result: $?"
@@ -471,27 +471,17 @@ fi
 
 
 
-if [ $ready_to_run == 1 ]; then
-    # Change the looks of the prompt, to help us remember we're in a subshell.
-    # If the user has some custom git bash helpers, try preserving them.
+if [ "$ready_to_run" = "1" ]; then
+    # Change the looks of the prompt, to help us remember we're in the
+    # Pitivi dev environment.
 
-    function function_exists {
-        FUNCTION_NAME=$1
-        [ -z "$FUNCTION_NAME" ] && return 1
-        declare -F "$FUNCTION_NAME" > /dev/null 2>&1
-        return $?
-        }
-
-    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
-    then
+    if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
       echo "pitivi-git environment is being sourced"
       export PS1="[ptv] $PS1"
     else
-      if [ -z "$*" ];
-      then
+      if [ -z "$*" ]; then
         cd $PITIVI/pitivi
-        if [ $SHELL != "/bin/bash" ];
-        then
+        if [ $SHELL != "/bin/bash" ]; then
           PITIVI_ENV="[ptv]" $SHELL
         else
           cp ~/.bashrc /tmp/ptvCustomPS1
