@@ -50,6 +50,7 @@ _initialized = False
 _stdout = None
 _stderr = None
 _old_hup_handler = None
+_outfile = None
 
 
 # public log levels
@@ -609,7 +610,7 @@ def safeprintf(file, format, *args):
         # otherwise ignore it, there's nothing you can do
 
 
-def stderrHandler(level, object, category, file, line, message):
+def printHandler(level, object, category, file, line, message):
     """
     A log handler that writes to stderr.
     The output will be different depending the value of "_enableCrackOutput";
@@ -620,6 +621,7 @@ def stderrHandler(level, object, category, file, line, message):
     @type category: string
     @type message:  string
     """
+    global _outfile
 
     # Make the file path more compact for readability
     file = os.path.relpath(file)
@@ -628,7 +630,7 @@ def stderrHandler(level, object, category, file, line, message):
     # If GST_DEBUG is not set, we can assume only PITIVI_DEBUG is set, so don't
     # show a bazillion of debug details that are not relevant to Pitivi.
     if not _enableCrackOutput:
-        safeprintf(sys.stderr, '%s %-8s %-17s %-2s %s %s\n',
+        safeprintf(_outfile, '%s %-8s %-17s %-2s %s %s\n',
                    getFormattedLevelName(level), time.strftime("%H:%M:%S"),
                    category, "", message, where)
     else:
@@ -638,12 +640,12 @@ def stderrHandler(level, object, category, file, line, message):
         # level   pid     object   cat      time
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
         safeprintf(
-            sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
+            _outfile, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
             getFormattedLevelName(level), os.getpid(),
             threading.current_thread().ident,
             o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
             message, where)
-    sys.stderr.flush()
+    _outfile.flush()
 
 
 def logLevelName(level):
@@ -682,6 +684,7 @@ def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
     Needs to be called before starting the actual application.
     """
     global _initialized
+    global _outfile
     global _enableCrackOutput
     _enableCrackOutput = enableCrackOutput
 
@@ -696,7 +699,15 @@ def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
     if envVarName in os.environ:
         # install a log handler that uses the value of the environment var
         setDebug(os.environ[envVarName])
-    addLimitedLogHandler(stderrHandler)
+    filenameEnvVarName = envVarName + "_FILE"
+
+    if filenameEnvVarName in os.environ:
+        # install a log handler that uses the value of the environment var
+        _outfile = open(os.environ[filenameEnvVarName], "w+")
+    else:
+        _outfile = sys.stderr
+
+    addLimitedLogHandler(printHandler)
 
     _initialized = True
 
