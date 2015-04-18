@@ -260,7 +260,15 @@ def initialize_modules():
     res, sys.argv = GES.init_check(sys.argv)
 
     from pitivi.utils import validate
-    validate.init()
+    if validate.init() and "--inspect-action-type" in sys.argv:
+        try:
+            action_type = [sys.argv[1 + sys.argv.index("--inspect-action-type")]]
+        except IndexError:
+            action_type = []
+        if validate.GstValidate.print_action_types(action_type):
+            exit(0)
+        else:
+            exit(1)
 
 
 """

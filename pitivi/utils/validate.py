@@ -492,7 +492,6 @@ def init():
                                          remove_clip, None,
                                          "Remove clip",
                                          GstValidate.ActionTypeFlags.NONE)
-
         GstValidate.register_action_type("select-clips", "pitivi",
                                          select_clips, [Parametter("clip-name",
                                                                    "The name of the clip to select",
@@ -513,6 +512,7 @@ def init():
                                    "All sink should display their images in an embedded "
                                    "widget and thus not create a new window",
                                    GstValidate.ReportLevel.CRITICAL))
-
+        return True
     except ImportError:
         has_validate = False
+        return False
