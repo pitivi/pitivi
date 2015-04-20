@@ -146,7 +146,7 @@ else
   DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
   GI_TYPELIB_PATH=$PITIVI/gst-devtools/validate/gst/validate/:$GI_TYPELIB_PATH
   export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
-  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data:$GST_VALIDATE_SCENARIOS_PATH
+  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/:$GST_VALIDATE_SCENARIOS_PATH
   export GST_VALIDATE_PLUGIN_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/gst/plugins/
 
 export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
@@ -198,7 +198,7 @@ $PITIVI/gstreamer/plugins\
   # look for a man directory "nearby" instead of the directory I'm telling it to
   export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$PITIVI/gst-editing-services/docs/man/:$MANPATH
 
-  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data
+  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/
 fi
 
 # And anyway add GStreamer editing services library
