@@ -142,8 +142,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.emit("plot-changed")
 
     def __maybeCreateKeyframe(self, event):
-        result = self.__line.contains(event)
-        if result[0]:
+        line_contains = self.__line.contains(event)[0]
+        keyframe_existed = self.__keyframes.contains(event)[0]
+        if line_contains and not keyframe_existed:
             self.__source.set(event.xdata, event.ydata)
             self.__updatePlots()
 
@@ -167,9 +168,19 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def __mplButtonPressEventCb(self, event):
         result = self.__keyframes.contains(event)
         if result[0]:
-            self.__handling_motion = True
-            self.__offset = \
-                self.__keyframes.get_offsets()[result[1]['ind'][0]][0]
+            self.__offset = self.__keyframes.get_offsets()[
+                result[1]['ind'][0]][0]
+
+            # We won't remove edge keyframes
+            is_edge_keyframe = result[1]['ind'][0] == 0 or result[1]['ind'][0] == \
+                len(self.__keyframes.get_offsets()) - 1
+
+            if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS and not \
+                    is_edge_keyframe:
+                self.__source.unset(self.__offset)
+                self.__updatePlots()
+            else:
+                self.__handling_motion = True
 
     def __mplMotionEventCb(self, event):
         if not self.props.visible:
@@ -193,11 +204,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
             cursor)
 
     def __mplButtonReleaseEventCb(self, event):
+        if not self.__dragged and not self.__offset:
+            if event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE:
+                self.__maybeCreateKeyframe(event)
+
         self.__offset = None
         self.__handling_motion = False
-
-        if not self.__dragged:
-            self.__maybeCreateKeyframe(event)
         self.__dragged = False
 
 
