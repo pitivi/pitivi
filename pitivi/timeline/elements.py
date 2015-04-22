@@ -100,13 +100,13 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # The PathCollection as returned by scatter
         self.__keyframes = None
 
-        sizes = [100]
+        sizes = [50]
         colors = ['r']
 
-        self.__keyframes = self.__ax.scatter([], [], marker='o', s=sizes,
+        self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
                                              c=colors, zorder=2)
         self.__line = self.__ax.plot([], [],
-                                     linewidth=2.0, zorder=1)[0]
+                                     linewidth=1.0, zorder=1)[0]
         self.__updatePlots()
 
         # Drag and drop logic
