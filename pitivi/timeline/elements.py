@@ -113,6 +113,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__dragged = False
         self.__offset = None
         self.__handling_motion = False
+
+        self.connect("motion-notify-event", self.__gtkMotionEventCb)
         self.connect("event", self._eventCb)
 
         self.mpl_connect('button_press_event', self.__mplButtonPressEventCb)
@@ -146,15 +148,20 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__updatePlots()
 
     # Callbacks
+
+    def __gtkMotionEventCb(self, widget, event):
+        """
+        We need to do that here, because mpl's callbacks can't stop
+        signal propagation.
+        """
+        if self.__handling_motion:
+            return True
+        return False
+
     def _eventCb(self, element, event):
         if event.type == Gdk.EventType.LEAVE_NOTIFY:
             cursor = NORMAL_CURSOR
             self.__timeline.get_window().set_cursor(cursor)
-        elif event.type == Gdk.EventType.MOTION_NOTIFY:
-            # We need to do that here, because mpl's callbacks can't stop
-            # signal propagation.
-            if self.__handling_motion:
-                return True
         return False
 
     def __mplButtonPressEventCb(self, event):
