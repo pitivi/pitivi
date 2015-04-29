@@ -201,6 +201,8 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
 
+        self.set_name(element.get_name())
+
         self.timeline = timeline
         self._bElement = element
         self._bElement.selected = timelineUtils.Selected()
@@ -496,6 +498,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         super(Clip, self).__init__()
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
+
+        self.set_name(bClip.get_name())
 
         self.handles = []
         self.z_order = -1
