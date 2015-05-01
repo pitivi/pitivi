@@ -1576,9 +1576,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.log("Timeline has lost focus")
         self.setActionsSensitivity(False)
 
-    def __buttonPressCb(self, unused_event):
+    def do_button_press_event(self, event):
         self.pressed = True
         self.grab_focus()  # Prevent other widgets from being confused
+
+        return True
 
     # Callbacks
     def _renderingSettingsChangedCb(self, project, item, value):
