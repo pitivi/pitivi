@@ -92,7 +92,7 @@ if GstValidate:
                                               " that should not happen, (current windows: %s)"
                                               % windows)
                         break
-            except subprocess.CalledProcessError:
+            except (subprocess.CalledProcessError, FileNotFoundError):
                 pass
 
 
