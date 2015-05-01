@@ -47,28 +47,28 @@ PITIVI=$MYPITIVI
 PITIVI_PREFIX=$PITIVI/prefix
 
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
-  echo "Using a local build of glib"
-  MODULE_GLIB="glib"
+    echo "Using a local build of glib"
+    MODULE_GLIB="glib"
 else
-  echo "Using system-wide glib"
+    echo "Using system-wide glib"
 fi
 
 MODULES_CORE=""
 if ! pkg-config gobject-introspection-1.0 --atleast-version=$GOBJECT_INTROSPECTION_MINIMUM_VERSION; then
-  echo "Using a local build of gobject-introspection-1.0"
-  MODULES_CORE="${MODULE_GLIB} gobject-introspection"
+    echo "Using a local build of gobject-introspection-1.0"
+    MODULES_CORE="${MODULE_GLIB} gobject-introspection"
 else
-  echo "Using system-wide gobject-introspection-1.0"
+    echo "Using system-wide gobject-introspection-1.0"
 fi
 
 if $PYTHON -c "import gi; gi.check_version('${PYGOBJECT_RELEASE_TAG}')" &> /dev/null; then
-  echo "Using system-wide pygobject"
-  # Hack around PYTHONPATH ordering to support gi overrides
-  PYTHONPATH=$($PYTHON -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
+    echo "Using system-wide pygobject"
+    # Hack around PYTHONPATH ordering to support gi overrides
+    PYTHONPATH=$($PYTHON -c 'import gi; print(gi._overridesdir)')/../../:$PYTHONPATH
 else
-  echo "Using a local build of pygobject"
-  PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
-  MODULES_CORE="${MODULES_CORE} pygobject"
+    echo "Using a local build of pygobject"
+    PYTHONPATH=$MYPITIVI/pygobject:$PYTHONPATH
+    MODULES_CORE="${MODULES_CORE} pygobject"
 fi
 
 PYTHONPATH=$MYPITIVI/pitivi:$PYTHONPATH
@@ -103,52 +103,48 @@ export PKG_CONFIG_PATH="$PITIVI_PREFIX/lib/pkgconfig:$PITIVI/pygobject:$PKG_CONF
 
 
 if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
-  echo "Using system-wide GStreamer 1.0"
+    echo "Using system-wide GStreamer 1.0"
 else
-  echo "Using a local build of GStreamer 1.0"
-  # GStreamer ffmpeg libraries
-  for path in libavformat libavutil libavcodec libpostproc libavdevice
-  do
-     LD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$LD_LIBRARY_PATH
-     DYLD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$DYLD_LIBRARY_PATH
-  done
+    echo "Using a local build of GStreamer 1.0"
+    # GStreamer ffmpeg libraries
+    for path in libavformat libavutil libavcodec libpostproc libavdevice; do
+        LD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$LD_LIBRARY_PATH
+        DYLD_LIBRARY_PATH=$PITIVI/gst-ffmpeg/gst-libs/ext/ffmpeg/$path:$DYLD_LIBRARY_PATH
+    done
 
-  # GStreamer plugins base libraries
-  for path in app audio cdda fft interfaces pbutils netbuffer riff rtp rtsp sdp tag utils video
-  do
-    LD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
-    DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
-    GI_TYPELIB_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path:$GI_TYPELIB_PATH
-  done
+    # GStreamer plugins base libraries
+    for path in app audio cdda fft interfaces pbutils netbuffer riff rtp rtsp sdp tag utils video; do
+        LD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
+        DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+        GI_TYPELIB_PATH=$PITIVI/gst-plugins-base/gst-libs/gst/$path:$GI_TYPELIB_PATH
+    done
 
-  # GStreamer plugins bad libraries
-  for path in basecamerabinsrc codecparsers uridownloader egl gl insertbin interfaces mpegts
-  do
-    LD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
-    DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
-    GI_TYPELIB_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path:$GI_TYPELIB_PATH
-  done
+    # GStreamer plugins bad libraries
+    for path in basecamerabinsrc codecparsers uridownloader egl gl insertbin interfaces mpegts; do
+        LD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$LD_LIBRARY_PATH
+        DYLD_LIBRARY_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+        GI_TYPELIB_PATH=$PITIVI/gst-plugins-bad/gst-libs/gst/$path:$GI_TYPELIB_PATH
+    done
 
-  # GStreamer core libraries
-  for path in base net check controller
-  do
-    LD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$LD_LIBRARY_PATH
-    DYLD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
-    GI_TYPELIB_PATH=$PITIVI/gstreamer/libs/gst/$path:$GI_TYPELIB_PATH
-  done
+    # GStreamer core libraries
+    for path in base net check controller; do
+        LD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$LD_LIBRARY_PATH
+        DYLD_LIBRARY_PATH=$PITIVI/gstreamer/libs/gst/$path/.libs:$DYLD_LIBRARY_PATH
+        GI_TYPELIB_PATH=$PITIVI/gstreamer/libs/gst/$path:$GI_TYPELIB_PATH
+    done
 
-  LD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$LD_LIBRARY_PATH
-  DYLD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$DYLD_LIBRARY_PATH
-  GI_TYPELIB_PATH=$PITIVI/gstreamer/gst:$GI_TYPELIB_PATH
+    LD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$LD_LIBRARY_PATH
+    DYLD_LIBRARY_PATH=$PITIVI/gstreamer/gst/.libs:$DYLD_LIBRARY_PATH
+    GI_TYPELIB_PATH=$PITIVI/gstreamer/gst:$GI_TYPELIB_PATH
 
-  LD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$LD_LIBRARY_PATH
-  DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
-  GI_TYPELIB_PATH=$PITIVI/gst-devtools/validate/gst/validate/:$GI_TYPELIB_PATH
-  export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
-  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/:$GST_VALIDATE_SCENARIOS_PATH
-  export GST_VALIDATE_PLUGIN_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/gst/plugins/
+    LD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$LD_LIBRARY_PATH
+    DYLD_LIBRARY_PATH=$PITIVI/gst-devtools/validate/gst/validate/.libs:$DYLD_LIBRARY_PATH
+    GI_TYPELIB_PATH=$PITIVI/gst-devtools/validate/gst/validate/:$GI_TYPELIB_PATH
+    export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
+    export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/:$GST_VALIDATE_SCENARIOS_PATH
+    export GST_VALIDATE_PLUGIN_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/gst/plugins/
 
-export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
+    export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-base/pkgconfig\
 :$PITIVI/gst-plugins-good/pkgconfig\
 :$PITIVI/gst-plugins-ugly/pkgconfig\
@@ -158,7 +154,7 @@ export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-devtools/validate/pkgconfig\
 :${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
-export GST_PLUGIN_PATH="\
+    export GST_PLUGIN_PATH="\
 $PITIVI/gstreamer/plugins\
 :$PITIVI/gst-plugins-base/ext\
 :$PITIVI/gst-plugins-base/gst\
@@ -183,21 +179,21 @@ $PITIVI/gstreamer/plugins\
 :$PITIVI/libnice/gst\
 :${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
 
-  # don't use any system-installed plug-ins at all
-  export GST_PLUGIN_SYSTEM_PATH=
-  # set our registry somewhere else so we don't mess up the registry generated
-  # by an installed copy
-  export GST_REGISTRY=$PITIVI/gstreamer/registry.dat
-  # Point at the uninstalled plugin scanner
-  export GST_PLUGIN_SCANNER=$PITIVI/gstreamer/libs/gst/helpers/gst-plugin-scanner
+    # don't use any system-installed plug-ins at all
+    export GST_PLUGIN_SYSTEM_PATH=
+    # set our registry somewhere else so we don't mess up the registry generated
+    # by an installed copy
+    export GST_REGISTRY=$PITIVI/gstreamer/registry.dat
+    # Point at the uninstalled plugin scanner
+    export GST_PLUGIN_SCANNER=$PITIVI/gstreamer/libs/gst/helpers/gst-plugin-scanner
 
-  # once MANPATH is set, it needs at least an "empty"component to keep pulling
-  # in the system-configured man paths from man.config
-  # this still doesn't make it work for the uninstalled case, since man goes
-  # look for a man directory "nearby" instead of the directory I'm telling it to
-  export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$PITIVI/gst-editing-services/docs/man/:$MANPATH
+    # once MANPATH is set, it needs at least an "empty"component to keep pulling
+    # in the system-configured man paths from man.config
+    # this still doesn't make it work for the uninstalled case, since man goes
+    # look for a man directory "nearby" instead of the directory I'm telling it to
+    export MANPATH=$PITIVI/gstreamer/tools:$PITIVI_PREFIX/share/man:$PITIVI/gst-editing-services/docs/man/:$MANPATH
 
-  export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/
+    export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/
 fi
 
 # And anyway add GStreamer editing services library
@@ -226,38 +222,36 @@ ready_to_run=1
 force_autogen=1
 build=false
 
-for i in "$@"
-do
-case $i in
-  --build)
-  force_autogen=0
-  ready_to_run=0
-  shift
+for i in "$@"; do
+    case $i in
+        --build)
+        force_autogen=0
+        ready_to_run=0
+        shift
+        ;;
 
-  ;;
-  --force-autogen)
-  force_autogen=1
-  ready_to_run=0
-  shift
+        --force-autogen)
+        force_autogen=1
+        ready_to_run=0
+        shift
+        ;;
 
-  ;;
-  --devel)
-  MODULES="${MODULES} gst-devtools"
-  shift
+        --devel)
+        MODULES="${MODULES} gst-devtools"
+        shift
+        ;;
 
-  ;;
-  --help)
-  cat <<END
+        --help)
+        cat <<END
 
 --build            - Update and rebuild the needed libraries, if any.
 --force-autogen    - Run autogen before building stuff.
 --devel            - Also build gst-devtools.
 
 END
-  exit
-
-  ;;
-esac
+        exit
+        ;;
+    esac
 done
 
 
@@ -282,8 +276,7 @@ if test ! -d $PITIVI; then
 fi
 
 if [ "$ready_to_run" != "1" ]; then
-    for m in $MODULES_CORE
-    do
+    for m in $MODULES_CORE; do
         cd $PITIVI
         echo ""
         echo "Building $m"
@@ -367,8 +360,7 @@ if [ "$ready_to_run" != "1" ]; then
 
 
     # Build all the necessary gstreamer modules.
-    for m in $MODULES
-    do
+    for m in $MODULES; do
         cd $PITIVI
         echo
         echo "Building $m"
