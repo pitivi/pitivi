@@ -39,6 +39,13 @@ GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSP
 export PITIVI_PYTHON=python3
 export PYTHON=${PITIVI_PYTHON}
 
+# The root of the Pitivi dev environment.
+PITIVI=$MYPITIVI
+
+# Some built libraries might be installed here,
+# not the normal $MODULES though, see below.
+PITIVI_PREFIX=$PITIVI/prefix
+
 if ! pkg-config glib-2.0 --atleast-version=$GLIB_RELEASE_TAG; then
   echo "Using a local build of glib"
   MODULE_GLIB="glib"
@@ -68,6 +75,10 @@ PYTHONPATH=$MYPITIVI/pitivi:$PYTHONPATH
 GI_TYPELIB_PATH=$MYPITIVI/pitivi/pitivi/libpitivi:$GI_TYPELIB_PATH
 LD_LIBRARY_PATH=$MYPITIVI/pitivi/pitivi/libpitivi/.libs:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
+EXTRA_PATH="$PITIVI/pitivi/bin"
+EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-editing-services/tools"
+EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-editing-services/tests/tools"
+
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
 # system-wide install.
@@ -75,26 +86,14 @@ if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; t
     MODULES="gst-editing-services gst-python"
 else
     MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gst-editing-services gst-python"
+    EXTRA_PATH="$EXTRA_PATH:$PITIVI/gstreamer/tools"
+    EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-plugins-base/tools"
 fi
+EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-devtools/validate/tools"
+EXTRA_PATH="$EXTRA_PATH:$PITIVI_PREFIX/bin"
 
-
-
-# base path under which dirs are installed
-PITIVI=$MYPITIVI
-
-# base path under which dirs are installed
-PITIVI_PREFIX=$PITIVI/prefix
-
-# set up a bunch of paths
-export PATH="\
-$PITIVI/gst-editing-services/tools:\
-$PITIVI/gst-editing-services/tests/tools:\
-$PITIVI/pitivi/bin/:\
-$PITIVI/gstreamer/tools:\
-$PITIVI/gst-plugins-base/tools:\
-$PITIVI/gst-devtools/validate/tools:\
-$PITIVI_PREFIX/bin:\
-$PATH"
+# Make the built tools available.
+export PATH="$EXTRA_PATH:$PATH"
 
 # /some/path: makes the dynamic linker look in . too, so avoid this
 LD_LIBRARY_PATH=$PITIVI_PREFIX/lib:${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
@@ -476,20 +475,36 @@ if [ "$ready_to_run" = "1" ]; then
     # Pitivi dev environment.
 
     if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
-      echo "pitivi-git environment is being sourced"
-      export PS1="[ptv] $PS1"
+        echo "pitivi-git environment is being sourced"
+        export PS1="[ptv] $PS1"
     else
-      if [ -z "$*" ]; then
-        cd $PITIVI/pitivi
-        if [ $SHELL != "/bin/bash" ]; then
-          PITIVI_ENV="[ptv]" $SHELL
+        if [ -n "$*" ]; then
+            /bin/bash -c "$*"
         else
-          cp ~/.bashrc /tmp/ptvCustomPS1
-          echo "export PS1=[ptv]\ \$PS1" >> /tmp/ptvCustomPS1
-          /bin/bash --rcfile /tmp/ptvCustomPS1
+            function generate_path_and_completion_calls {
+                echo "export PATH=$EXTRA_PATH:\$PATH"
+                echo "source $MYPITIVI/gstreamer/data/completions/gst-launch-1.0"
+                echo "source $MYPITIVI/gstreamer/data/completions/gst-inspect-1.0"
+                echo "source $MYPITIVI/gst-editing-services/data/completions/ges-launch-1.0"
+            }
+
+            cd $PITIVI/pitivi
+            if [ $SHELL = "/bin/zsh" ]; then
+                export ZDOTDIR=$MYPITIVI/.zdotdir
+                mkdir -p $ZDOTDIR
+                cp ~/.zshrc $ZDOTDIR
+                echo "autoload -Uz bashcompinit; bashcompinit" >> $ZDOTDIR/.zshrc
+                generate_path_and_completion_calls >> $ZDOTDIR/.zshrc
+                zsh
+            elif [ $SHELL = "/bin/bash" ]; then
+                RCFILE=$MYPITIVI/.bashrc
+                cp ~/.bashrc $RCFILE
+                echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
+                generate_path_and_completion_calls >> $RCFILE
+                /bin/bash --rcfile $RCFILE
+            else
+                PITIVI_ENV="[ptv]" $SHELL
+            fi
         fi
-      else
-        /bin/bash -c "$*"
-      fi
     fi
 fi
