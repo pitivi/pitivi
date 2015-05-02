@@ -174,7 +174,14 @@ def _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_pr
     except KeyError:
         return
 
-    if next_action is None or next_action.type != "edit-container":
+    need_release = True
+    if next_action and next_action.type == "edit-container":
+        edge = get_edge(next_action.structure)
+
+        if edge == scenario.last_edge:
+            need_release = False
+
+    if next_action is None or need_release:
         scenario.dragging = False
         event = Gdk.EventButton.new(Gdk.EventType.BUTTON_RELEASE)
         event.button = 1
@@ -289,7 +296,11 @@ def editContainer(scenario, action):
                 alloc = layer.ui.get_allocation()
                 y = alloc.y + alloc.height + 10 - container_ui.translate_coordinates(timeline.ui, 0, 0)[1]
 
-    if not hasattr(scenario, "dragging") or scenario.dragging is False:
+    if not hasattr(scenario, "last_edge"):
+        scenario.last_edge = edge
+
+    if not hasattr(scenario, "dragging") or scenario.dragging is False \
+            or scenario.last_edge != edge:
         if isinstance(container, GES.SourceClip):
             if edge == GES.Edge.EDGE_START:
                 container.ui.leftHandle._eventCb(container.ui.leftHandle, Gdk.Event.new(Gdk.EventType.ENTER_NOTIFY))
@@ -315,6 +326,7 @@ def editContainer(scenario, action):
 
     _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_prio,
                            position, y)
+    scenario.last_edge = edge
 
     return 1
 
