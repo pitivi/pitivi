@@ -589,12 +589,10 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         pass
 
     def sendFakeEvent(self, event, event_widget):
-        follow_up = True
         if event.type == Gdk.EventType.BUTTON_RELEASE:
-            follow_up = self._clickedCb(event_widget, event)
+            self._clickedCb(event_widget, event)
 
-        if follow_up:
-            self.timeline.sendFakeEvent(event, event_widget)
+        self.timeline.sendFakeEvent(event, event_widget)
 
     def do_draw(self, cr):
         self.updatePosition()
