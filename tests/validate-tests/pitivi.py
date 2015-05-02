@@ -28,7 +28,8 @@ TEST_MANAGER = "pitivi"
 
 def setup_tests(test_manager, options):
     print("Setting up Pitivi default tests")
-    options.pitivi_scenario_paths = [os.path.abspath(os.path.join(os.path.dirname(__file__)))]
+    options.pitivi_scenario_paths = [os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))),
+                                                  "scenarios")]
     options.add_paths(os.path.abspath(os.path.join(os.path.dirname(__file__),
                       "..", "samples")))
     test_manager.register_defaults()
