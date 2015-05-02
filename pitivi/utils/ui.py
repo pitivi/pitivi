@@ -115,7 +115,8 @@ TIMELINE_CSS = """
     }
 
     .Trimbar {
-         background-image: url('%(trimbar_normal)s');
+        background-image: url('%(trimbar_normal)s');
+        opacity:0.7;
     }
 
     .Trimbar:first-child {
@@ -131,7 +132,7 @@ TIMELINE_CSS = """
     }
 
     .PlayHead {
-         background-color: red;
+        background-color: red;
     }
 
     .Clip {

@@ -481,6 +481,13 @@ class TrimHandle(Gtk.EventBox, Loggable):
         self.get_style_context().add_class("Trimbar")
         self.edge = edge
 
+        self.props.valign = Gtk.Align.FILL
+        self.props.width_request = 5
+        if edge == GES.Edge.EDGE_END:
+            self.props.halign = Gtk.Align.END
+        else:
+            self.props.halign = Gtk.Align.START
+
         self.connect("event", self._eventCb)
         self.connect("notify::window", self._windowSetCb)
 
@@ -710,18 +717,17 @@ class SourceClip(Clip):
         super(SourceClip, self).__init__(layer, bClip)
 
     def _setupWidget(self):
-        self._vbox = Gtk.Box()
-        self._vbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        self.add(self._vbox)
-
-        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
-        self._vbox.pack_start(self.leftHandle, False, False, 0)
+        overlay = Gtk.Overlay()
+        self.add(overlay)
 
         self._elements_container = Gtk.Paned.new(Gtk.Orientation.VERTICAL)
-        self._vbox.pack_start(self._elements_container, True, True, 0)
+        overlay.add_overlay(self._elements_container)
+
+        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
+        overlay.add_overlay(self.leftHandle)
 
         self.rightHandle = TrimHandle(self, GES.Edge.EDGE_END)
-        self._vbox.pack_end(self.rightHandle, False, False, 0)\
+        overlay.add_overlay(self.rightHandle)
 
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
