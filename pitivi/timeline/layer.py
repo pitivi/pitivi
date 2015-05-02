@@ -523,7 +523,11 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.before_sep = None
         self.after_sep = None
 
-    def _checkMediaTypes(self, bClip=None):
+    def checkMediaTypes(self, bClip=None):
+        if self.timeline.editing_context:
+            self.info("Not updating media types as"
+                      " we are editing the timeline")
+            return
         self.media_types = GES.TrackType(0)
         bClips = self.bLayer.get_clips()
 
@@ -563,10 +567,10 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._layout.move(child, x, y)
 
     def _childAddedCb(self, bClip, child):
-        self._checkMediaTypes()
+        self.checkMediaTypes()
 
     def _childRemovedCb(self, bClip, child):
-        self._checkMediaTypes()
+        self.checkMediaTypes()
 
     def _clipAddedCb(self, layer, bClip):
         self._addClip(bClip)
@@ -586,7 +590,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.show_all()
         bClip.connect_after("child-added", self._childAddedCb)
         bClip.connect_after("child-removed", self._childRemovedCb)
-        self._checkMediaTypes()
+        self.checkMediaTypes()
 
     def _clipRemovedCb(self, bLayer, bClip):
         self._removeClip(bClip)
@@ -603,7 +607,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         bClip.disconnect_by_func(self._childAddedCb)
         bClip.disconnect_by_func(self._childRemovedCb)
-        self._checkMediaTypes(bClip)
+        self.checkMediaTypes(bClip)
 
     def updatePosition(self):
         for bClip in self.bLayer.get_clips():

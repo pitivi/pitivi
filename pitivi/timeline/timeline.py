@@ -931,6 +931,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.editing_context = None
         self.hideSnapBar()
 
+        for layer in self.bTimeline.get_layers():
+            layer.ui.checkMediaTypes()
+
         self.__unsetHoverSeparators()
         self.__on_separators = []
 
