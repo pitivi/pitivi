@@ -1,0 +1,20 @@
+description, seek=true, handles-states=true
+wait, duration=(double)0.442458292;
+pause;
+add-asset, id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_red.mkv, type=(string)GESUriClip;
+add-layer, priority=(int)0;
+add-clip, name=(string)uriclip0, layer-priority=(int)0, asset-id=(string)file:///home/thiblahute/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/30fps_numeroted_frames_red.mkv, type=(string)GESUriClip, start=(double)0, inpoint=(double)0, duration=(double)2.5;
+commit;
+zoom-fit, optional-action-type=(boolean)true;
+wait, duration=(double)0.5;
+edit-container, container-name=(string)uriclip0, edit-mode=(string)edit_normal, new-layer-priority=(int)0, edge=(string)edge_none, position=(double)0.50;
+wait, duration=(double)1.0;
+commit;
+wait, duration=(double)1.0;
+zoom-fit, optional-action-type=(boolean)true;
+edit-container, container-name=(string)uriclip0, edit-mode=(string)edit_trim, new-layer-priority=(int)-1, edge=(string)edge_end, position=(double)2.0;
+commit;
+wait, duration=(double)1.0;
+seek, start=(double)1.90, flags=(string)accurate+flush;
+wait, duration=(double)1.0;
+stop, force=true;
