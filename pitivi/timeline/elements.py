@@ -720,7 +720,7 @@ class SourceClip(Clip):
         overlay = Gtk.Overlay()
         self.add(overlay)
 
-        self._elements_container = Gtk.Paned.new(Gtk.Orientation.VERTICAL)
+        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
         overlay.add_overlay(self._elements_container)
 
         self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
@@ -753,12 +753,12 @@ class UriClip(SourceClip):
             if child.get_track_type() == GES.TrackType.AUDIO:
                 self._audioSource = AudioUriSource(child, self.timeline)
                 child.ui = self._audioSource
-                self._elements_container.pack2(self._audioSource, True, False)
+                self._elements_container.pack_end(self._audioSource, True, False, 0)
                 self._audioSource.set_visible(True)
             elif child.get_track_type() == GES.TrackType.VIDEO:
                 self._videoSource = VideoUriSource(child, self.timeline)
                 child.ui = self._videoSource
-                self._elements_container.pack1(self._videoSource, True, False)
+                self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
         else:
             child.ui = None
@@ -772,7 +772,7 @@ class TitleClip(SourceClip):
             if child.get_track_type() == GES.TrackType.VIDEO:
                 self._videoSource = VideoSource(child, self.timeline)
                 child.ui = self._videoSource
-                self._elements_container.pack1(self._videoSource, True, False)
+                self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
         else:
             child.ui = None
