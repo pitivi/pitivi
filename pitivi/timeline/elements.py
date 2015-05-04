@@ -61,6 +61,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
     __gsignals__ = {
         # Signal our values changed, and a redraw will be needed
         "plot-changed": (GObject.SIGNAL_RUN_LAST, None, ()),
+        # Signal the keyframes or the curve are being hovered
+        "enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        # Signal the keyframes or the curve are not being hovered anymore
+        "leave": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self, timeline, source):
@@ -113,6 +117,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__dragged = False
         self.__offset = None
         self.__handling_motion = False
+
+        self.__hovered = False
 
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
         self.connect("event", self._eventCb)
@@ -199,6 +205,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
         result = self.__line.contains(event)
         if result[0]:
             cursor = DRAG_CURSOR
+            if not self.__hovered:
+                self.emit("enter")
+                self.__hovered = True
+        elif self.__hovered:
+            self.emit("leave")
+            self.__hovered = False
 
         self.__timeline.get_window().set_cursor(
             cursor)
