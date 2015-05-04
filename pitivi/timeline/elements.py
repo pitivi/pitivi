@@ -226,6 +226,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
 
 class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
+    __gsignals__ = {
+        # Signal the keyframes curve are being hovered
+        "curve-enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        # Signal the keyframes curve are not being hovered anymore
+        "curve-leave": (GObject.SIGNAL_RUN_LAST, None, ()),
+    }
 
     def __init__(self, element, timeline):
         super(TimelineElement, self).__init__()
@@ -286,6 +292,12 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__controlledProperty = prop
         self.__createControlBinding(effect)
 
+    def __curveEnterCb(self, unused_keyframe_curve):
+        self.emit("curve-enter")
+
+    def __curveLeaveCb(self, unused_keyframe_curve):
+        self.emit("curve-leave")
+
     # Private methods
     def __createKeyframeCurve(self, binding):
         source = binding.props.control_source
@@ -304,11 +316,15 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.__keyframeCurve:
             self.__keyframeCurve.disconnect_by_func(
                 self.__keyframePlotChangedCb)
+            self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
+            self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
             self.remove(self.__keyframeCurve)
 
         self.__keyframeCurve = KeyframeCurve(self.timeline, source)
         self.__keyframeCurve.connect("plot-changed",
                                      self.__keyframePlotChangedCb)
+        self.__keyframeCurve.connect("enter", self.__curveEnterCb)
+        self.__keyframeCurve.connect("leave", self.__curveLeaveCb)
         self.add(self.__keyframeCurve)
         self.__keyframeCurve.set_size_request(self.__width, self.__height)
         self.__keyframeCurve.props.visible = bool(self._bElement.selected)
@@ -556,6 +572,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         for child in self.bClip.get_children(False):
             self._childAdded(self.bClip, child)
+            self.__connectToChild(child)
 
         self._savePositionState()
         self._connectWidgetSignals()
@@ -669,15 +686,21 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.connect("button-release-event", self._clickedCb)
         self.connect("event", self._eventCb)
 
+    def __showHandles(self):
+        for handle in self.handles:
+            handle.show()
+
+    def __hideHandles(self):
+        for handle in self.handles:
+            handle.hide()
+
     def _eventCb(self, element, event):
         if event.type == Gdk.EventType.ENTER_NOTIFY:
             ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.show()
+            self.__showHandles()
         elif event.type == Gdk.EventType.LEAVE_NOTIFY:
             ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.hide()
+            self.__hideHandles()
 
         return False
 
@@ -700,16 +723,29 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if bLayer:
             self.layer = bLayer.ui
 
+    def __connectToChild(self, child):
+        child.ui.connect("curve-enter", self.__curveEnterCb)
+        child.ui.connect("curve-leave", self.__curveLeaveCb)
+
     def _childAdded(self, clip, child):
         child.selected = timelineUtils.Selected()
 
+    def __curveEnterCb(self, unused_keyframe_curve):
+        self.__hideHandles()
+
+    def __curveLeaveCb(self, unused_keyframe_curve):
+        self.__showHandles()
+
     def _childAddedCb(self, clip, child):
         self._childAdded(clip, child)
+        self.__connectToChild(child)
 
     def _childRemoved(self, clip, child):
         pass
 
     def _childRemovedCb(self, clip, child):
+        child.disconnect_by_func(self.__curveEnterCb)
+        child.disconnect_by_func(self.__curveLeaveCb)
         self._childRemoved(clip, child)
 
     def _connectGES(self):
