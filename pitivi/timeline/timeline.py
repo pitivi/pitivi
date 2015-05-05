@@ -791,7 +791,6 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._on_layer = None
 
     def __getLayerAt(self, y, bLayer=None):
-        self.error("Y is %s" % y)
         if y < 20 or not self.bTimeline.get_layers():
             try:
                 bLayer = self.bTimeline.get_layers()[0]
@@ -877,7 +876,6 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.editing_context.editTo(position, priority)
 
     def createLayer(self, priority):
-        self.error("Creating layer %s" % priority)
         new_bLayer = GES.Layer.new()
         new_bLayer.props.priority = priority
         self.bTimeline.add_layer(new_bLayer)
@@ -918,7 +916,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 if self.__on_separators[0] == self._on_layer.ui.after_sep:
                     priority = self._on_layer.props.priority + 1
 
-                self.error("On separator --> %s" % priority)
+                self.debug("On separator --> %s" % priority)
                 self.createLayer(max(0, priority))
                 self._onSeparatorStartTime = None
                 self.editing_context.editTo(self.editing_context.new_position, priority)

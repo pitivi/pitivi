@@ -695,14 +695,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             handle.hide()
 
     def _eventCb(self, element, event):
-        if event.type == Gdk.EventType.ENTER_NOTIFY:
-            if event.mode == Gdk.CrossingMode.NORMAL:
-                ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-                self.__showHandles()
-        elif event.type == Gdk.EventType.LEAVE_NOTIFY:
-            if event.mode == Gdk.CrossingMode.NORMAL:
-                ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-                self.__hideHandles()
+        if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+            ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            self.__showHandles()
+        elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+            ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            self.__hideHandles()
 
         return False
 
@@ -726,11 +724,13 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.layer = bLayer.ui
 
     def __connectToChild(self, child):
-        child.ui.connect("curve-enter", self.__curveEnterCb)
-        child.ui.connect("curve-leave", self.__curveLeaveCb)
+        if child.ui:
+            child.ui.connect("curve-enter", self.__curveEnterCb)
+            child.ui.connect("curve-leave", self.__curveLeaveCb)
 
     def _childAdded(self, clip, child):
         child.selected = timelineUtils.Selected()
+        child.ui = None
 
     def __curveEnterCb(self, unused_keyframe_curve):
         self.__hideHandles()
@@ -746,8 +746,9 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         pass
 
     def _childRemovedCb(self, clip, child):
-        child.disconnect_by_func(self.__curveEnterCb)
-        child.disconnect_by_func(self.__curveLeaveCb)
+        if child.ui:
+            child.ui.disconnect_by_func(self.__curveEnterCb)
+            child.ui.disconnect_by_func(self.__curveLeaveCb)
         self._childRemoved(clip, child)
 
     def _connectGES(self):
@@ -799,6 +800,8 @@ class UriClip(SourceClip):
         self.set_tooltip_markup(misc.filename_from_uri(bClip.get_uri()))
 
     def _childAdded(self, clip, child):
+        super(UriClip, self)._childAdded(clip, child)
+
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.AUDIO:
                 self._audioSource = AudioUriSource(child, self.timeline)
@@ -810,22 +813,20 @@ class UriClip(SourceClip):
                 child.ui = self._videoSource
                 self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
-        else:
-            child.ui = None
 
 
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
     def _childAdded(self, clip, child):
+        super(Title, self)._childAdded(clip, child)
+
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.VIDEO:
                 self._videoSource = VideoSource(child, self.timeline)
                 child.ui = self._videoSource
                 self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
-        else:
-            child.ui = None
 
 
 class TransitionClip(Clip):
@@ -850,10 +851,10 @@ class TransitionClip(Clip):
                                 str(bClip.props.vtype.value_nick))
 
     def _childAdded(self, clip, child):
-        child.selected = timelineUtils.Selected()
-
         if isinstance(child, GES.VideoTransition):
             self.z_order += 1
+
+        super(TransitionClip, self)._childAdded(clip, child)
 
     def do_draw(self, cr):
         Clip.do_draw(self, cr)
