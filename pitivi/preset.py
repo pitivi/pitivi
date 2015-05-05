@@ -305,7 +305,8 @@ class VideoPresetManager(PresetManager):
     user_path = os.path.join(xdg_data_home(), 'video_presets')
 
     def _loadSection(self, filepath):
-        parser = json.loads(open(filepath).read())
+        with open(filepath) as section:
+            parser = json.loads(section.read())
 
         name = parser["name"]
         width = parser["width"]
@@ -347,10 +348,10 @@ class AudioPresetManager(PresetManager):
     user_path = os.path.join(xdg_data_home(), 'audio_presets')
 
     def _loadSection(self, filepath):
-        parser = json.loads(open(filepath).read())
+        with open(filepath) as section:
+            parser = json.loads(section.read())
 
         name = parser["name"]
-
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
@@ -376,7 +377,8 @@ class RenderPresetManager(PresetManager):
     user_path = os.path.join(xdg_data_home(), 'render_presets')
 
     def _loadSection(self, filepath):
-        parser = json.loads(open(filepath).read())
+        with open(filepath) as section:
+            parser = json.loads(section.read())
 
         name = parser["name"]
         container = parser["container"]
@@ -384,9 +386,9 @@ class RenderPresetManager(PresetManager):
         vcodec = parser["vcodec"]
 
         cached_encs = CachedEncoderList()
-        if (acodec not in [fact.get_name() for fact in cached_encs.aencoders]
-           or vcodec not in [fact.get_name() for fact in cached_encs.vencoders]
-           or container not in [fact.get_name() for fact in cached_encs.muxers]):
+        if (acodec not in [fact.get_name() for fact in cached_encs.aencoders] or
+                vcodec not in [fact.get_name() for fact in cached_encs.vencoders] or
+                container not in [fact.get_name() for fact in cached_encs.muxers]):
             return
 
         try:

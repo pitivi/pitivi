@@ -740,7 +740,8 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         filename = os.path.join(cache_dir, filename)
 
         if os.path.exists(filename):
-            self.samples = pickle.load(open(filename, "rb"))
+            with open(filename, "rb") as samples:
+                self.samples = pickle.load(samples)
             self._startRendering()
         else:
             self.wavefile = filename
@@ -780,8 +781,8 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
             samples = numpy.array(self.peaks[0])
 
         self.samples = samples.tolist()
-        f = open(self.wavefile, 'wb')
-        pickle.dump(self.samples, f)
+        with open(self.wavefile, 'wb') as wavefile:
+            pickle.dump(self.samples, wavefile)
 
     def _startRendering(self):
         self.nbSamples = len(self.samples)
