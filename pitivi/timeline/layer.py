@@ -482,8 +482,10 @@ class LayerLayout(Gtk.Layout, Loggable):
                     window.raise_()
             self._changed = False
 
-        self.props.width = timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration) + 500
-        self.props.width_request = timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration) + 500
+        self.props.width = max(self.timeline.layout.get_allocation().width,
+                               timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration))
+        self.props.width_request = max(self.timeline.layout.get_allocation().width,
+                                       timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration))
 
         for child in self._children:
             self.propagate_draw(child, cr)
