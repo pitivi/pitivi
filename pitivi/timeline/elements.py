@@ -696,11 +696,13 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def _eventCb(self, element, event):
         if event.type == Gdk.EventType.ENTER_NOTIFY:
-            ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            self.__showHandles()
+            if event.mode == Gdk.CrossingMode.NORMAL:
+                ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+                self.__showHandles()
         elif event.type == Gdk.EventType.LEAVE_NOTIFY:
-            ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            self.__hideHandles()
+            if event.mode == Gdk.CrossingMode.NORMAL:
+                ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+                self.__hideHandles()
 
         return False
 
