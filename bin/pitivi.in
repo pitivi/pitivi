@@ -26,6 +26,14 @@ import signal
 import locale
 import gettext
 
+from ctypes import cdll
+try:
+    x11 = cdll.LoadLibrary('libX11.so')
+    x11.XInitThreads()
+except OSError:
+    pass
+
+
 if "APPDIR" in os.environ:
     basedir = os.environ["APPDIR"]
     CONFIGURED_PYTHONPATH = ""
