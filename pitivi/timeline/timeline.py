@@ -826,6 +826,8 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
             if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
                 self.debug("Returning layer %s, separators: %s" % (layer, separators))
+                if bLayer:
+                    return bLayer, separators
                 return layer, separators
 
         self.debug("Returning very last layer")
