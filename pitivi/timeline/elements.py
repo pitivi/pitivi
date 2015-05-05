@@ -437,9 +437,6 @@ class VideoSource(TimelineElement):
     def _getBackground(self):
         return VideoBackground()
 
-    def do_get_preferred_height(self):
-        return ui.LAYER_HEIGHT / 2, ui.LAYER_HEIGHT
-
 
 class VideoUriSource(VideoSource):
 
@@ -475,9 +472,6 @@ class AudioUriSource(TimelineElement):
     def __init__(self, element, timeline):
         super(AudioUriSource, self).__init__(element, timeline)
         self.get_style_context().add_class("AudioUriSource")
-
-    def do_get_preferred_height(self):
-        return ui.LAYER_HEIGHT / 2, ui.LAYER_HEIGHT
 
     def _getPreviewer(self):
         previewer = previewers.AudioPreviewer(self._bElement)
