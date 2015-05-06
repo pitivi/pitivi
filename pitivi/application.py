@@ -227,31 +227,29 @@ class Pitivi(Gtk.Application, Loggable):
         return True
 
     def _setScenarioFile(self, uri):
+        if uri:
+            project_path = path_from_uri(uri)
+        else:
+            # New project.
+            project_path = None
         if 'PITIVI_SCENARIO_FILE' in os.environ:
-            if uri:
-                project_path = path_from_uri(uri)
-            uri = quote_uri(os.environ['PITIVI_SCENARIO_FILE'])
+            scenario_path = os.environ['PITIVI_SCENARIO_FILE']
         else:
             cache_dir = get_dir(os.path.join(xdg_cache_home(), "scenarios"))
             scenario_name = str(time.strftime("%Y%m%d-%H%M%S"))
-            project_path = None
-            if uri:
-                project_path = path_from_uri(uri)
+            if project_path:
                 scenario_name += os.path.splitext(project_path.replace(os.sep, "_"))[0]
+            scenario_path = os.path.join(cache_dir, scenario_name + ".scenario")
 
-            uri = os.path.join(cache_dir, scenario_name + ".scenario")
-            uri = quote_uri(uri)
+        scenario_path = path_from_uri(quote_uri(scenario_path))
+        self._scenario_file = open(scenario_path, "w")
 
-        self._scenario_file = open(path_from_uri(uri), "w")
-
-        if project_path:
-            f = open(project_path)
-            content = f.read()
-            if not project_path.endswith(".scenario"):
+        if project_path and not project_path.endswith(".scenario"):
+            # It's an xges file probably.
+            with open(project_path) as project:
+                content = project.read().replace("\n", "")
                 self.write_action("load-project",
-                                  {"serialized-content":
-                                   "%s" % content.replace("\n", "")})
-            f.close()
+                                  {"serialized-content": content})
 
     def _newProjectLoadingCb(self, unused_project_manager, uri):
         self._setScenarioFile(uri)
