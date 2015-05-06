@@ -1095,13 +1095,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._shiftMask = False
         self._controlMask = False
 
-        # self.stage.set_background_color(TIMELINE_BACKGROUND_COLOR)
-        # self.timeline.set_position(CONTROL_WIDTH, 0)
-        # self.controls.set_position(0, 0)
-
-        # self.stage.add_child(self.controls)
-        # self.stage.add_child(self.timeline)
-
         self.scrolled = 0
 
         self.zoomed_fitted = True
@@ -1161,7 +1154,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def enableKeyboardAndMouseEvents(self):
         self.info("Unblocking timeline mouse and keyboard signals")
-        self.stage.disconnect_by_func(self._ignoreAllEventsCb)
+        self.timeline.disconnect_by_func(self._ignoreAllEventsCb)
 
     def disableKeyboardAndMouseEvents(self):
         """
