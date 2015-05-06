@@ -144,6 +144,8 @@ class GlobalSettings(GObject.Object, Loggable):
     def __init__(self, **unused_kwargs):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
+
+        self.conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
         self._config = SafeConfigParser()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
@@ -153,15 +155,14 @@ class GlobalSettings(GObject.Object, Loggable):
         Read the configuration from the user configuration file.
         """
 
-        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
         try:
-            self._config.read(conf_file_path)
+            self._config.read(self.conf_file_path)
         except UnicodeDecodeError as e:
-            self.error("Failed to read %s: %s", conf_file_path, e)
+            self.error("Failed to read %s: %s", self.conf_file_path, e)
             unicode_error_dialog()
             return
         except ParsingError as e:
-            self.error("Failed to parse %s: %s", conf_file_path, e)
+            self.error("Failed to parse %s: %s", self.conf_file_path, e)
             return
 
         for (section, attrname, typ, key, env, value) in self.iterAllOptions():
@@ -223,8 +224,6 @@ class GlobalSettings(GObject.Object, Loggable):
                 setattr(self, attrname, var)
 
     def _writeSettingsToConfigurationFile(self):
-        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
-
         for (section, attrname, typ, key, env_var, value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
@@ -234,10 +233,10 @@ class GlobalSettings(GObject.Object, Loggable):
                 else:
                     self._config.remove_option(section, key)
         try:
-            with open(conf_file_path, 'w') as file:
+            with open(self.conf_file_path, 'w') as file:
                 self._config.write(file)
         except (IOError, OSError) as e:
-            self.error("Failed to write to %s: %s", conf_file_path, e)
+            self.error("Failed to write to %s: %s", self.conf_file_path, e)
 
     def storeSettings(self):
         """
