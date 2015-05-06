@@ -230,11 +230,10 @@ class GlobalSettings(GObject.Object):
                 else:
                     self._config.remove_option(section, key)
         try:
-            file = open(conf_file_path, 'w')
-        except IOError as OSError:
+            with open(conf_file_path, 'w') as file:
+                self._config.write(file)
+        except (IOError, OSError):
             return
-        self._config.write(file)
-        file.close()
 
     def storeSettings(self):
         """
