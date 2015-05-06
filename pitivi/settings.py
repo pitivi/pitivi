@@ -25,6 +25,7 @@ from configparser import SafeConfigParser, ParsingError
 from gi.repository import GLib
 from gi.repository import GObject
 
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import unicode_error_dialog
 
 
@@ -118,7 +119,7 @@ class Notification(object):
         instance.emit(self.signame)
 
 
-class GlobalSettings(GObject.Object):
+class GlobalSettings(GObject.Object, Loggable):
 
     """
     Pitivi app settings.
@@ -142,6 +143,7 @@ class GlobalSettings(GObject.Object):
 
     def __init__(self, **unused_kwargs):
         GObject.Object.__init__(self)
+        Loggable.__init__(self)
         self._config = SafeConfigParser()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
@@ -151,13 +153,15 @@ class GlobalSettings(GObject.Object):
         Read the configuration from the user configuration file.
         """
 
+        conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
         try:
-            conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
             self._config.read(conf_file_path)
-        except UnicodeDecodeError:
+        except UnicodeDecodeError as e:
+            self.error("Failed to read %s: %s", conf_file_path, e)
             unicode_error_dialog()
             return
-        except ParsingError:
+        except ParsingError as e:
+            self.error("Failed to parse %s: %s", conf_file_path, e)
             return
 
         for (section, attrname, typ, key, env, value) in self.iterAllOptions():
@@ -232,8 +236,8 @@ class GlobalSettings(GObject.Object):
         try:
             with open(conf_file_path, 'w') as file:
                 self._config.write(file)
-        except (IOError, OSError):
-            return
+        except (IOError, OSError) as e:
+            self.error("Failed to write to %s: %s", conf_file_path, e)
 
     def storeSettings(self):
         """
@@ -246,9 +250,6 @@ class GlobalSettings(GObject.Object):
     def iterAllOptions(self):
         """
         Iterate over all registered options
-
-        @return: an iterator which yields a tuple of (attrname, type, key,
-        environment, value) for each option.
         """
         for section, options in list(self.options.items()):
             for attrname, (typ, key, environment) in list(options.items()):
