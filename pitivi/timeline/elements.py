@@ -366,7 +366,6 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             self.propagate_draw(self.__previewer, cr)
 
         if self.__keyframeCurve and self._bElement.selected:
-            self.__keyframeCurve.draw()
             self.propagate_draw(self.__keyframeCurve, cr)
 
     def do_show_all(self):
