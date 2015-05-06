@@ -288,7 +288,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.element.connect("notify::border", self._borderChangedCb)
         self.element.connect("notify::invert", self._invertChangedCb)
         self.element.connect("notify::type", self._transitionTypeChangedCb)
-        transition_asset = element.get_asset()
+        transition_asset = element.get_parent().get_asset()
         if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
         else:

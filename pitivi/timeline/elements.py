@@ -813,7 +813,7 @@ class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
     def _childAdded(self, clip, child):
-        super(Title, self)._childAdded(clip, child)
+        super(TitleClip, self)._childAdded(clip, child)
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.VIDEO:
@@ -828,16 +828,19 @@ class TransitionClip(Clip):
     __gtype_name__ = "PitiviTransitionClip"
 
     def __init__(self, layer, bClip):
-        super(TransitionClip, self).__init__(layer, bClip)
-        self.get_style_context().add_class("TransitionClip")
-        self.z_order = 0
+        self.__has_video = False
 
-        for child in bClip.get_children(True):
-            child.selected = timelineUtils.Selected()
+        super(TransitionClip, self).__init__(layer, bClip)
+
+        if self.__has_video:
+            self.z_order = 1
+        else:
+            self.z_order = 0
+            self.set_sensitive(False)
+
+        self.get_style_context().add_class("TransitionClip")
+
         self.bClip.connect("child-added", self._childAddedCb)
-        self.selected = False
-        self.connect("state-flags-changed", self._selectedChangedCb)
-        self.connect("button-press-event", self._pressEventCb)
 
         # In the case of TransitionClips, we are the only container
         self._elements_container = self
@@ -845,29 +848,23 @@ class TransitionClip(Clip):
                                 str(bClip.props.vtype.value_nick))
 
     def _childAdded(self, clip, child):
-        if isinstance(child, GES.VideoTransition):
-            self.z_order += 1
-
         super(TransitionClip, self)._childAdded(clip, child)
+
+        if isinstance(child, GES.VideoTransition):
+            self.__has_video = True
+            child.selected.connect("selected-changed", self._selectedChangedCb, child)
 
     def do_draw(self, cr):
         Clip.do_draw(self, cr)
 
-    def _selectedChangedCb(self, unused_widget, flags):
-        if not [c for c in self.bClip.get_children(True) if isinstance(c, GES.VideoTransition)]:
-            return
-
-        if flags & Gtk.StateFlags.SELECTED:
-            self.timeline.parent.app.gui.trans_list.activate(self.bClip)
+    def _selectedChangedCb(self, unused_child, selected, child):
+        if selected:
+            self.timeline.parent.app.gui.trans_list.activate(child)
             self.selected = True
-        elif self.selected:
+        else:
             self.selected = False
             self.timeline.parent.app.gui.trans_list.deactivate()
 
-    def _pressEventCb(self, unused_action, unused_widget):
-        selection = {self.bClip}
-        self.timeline.selection.setSelection(selection, timelineUtils.SELECT)
-        return True
 
 GES_TYPE_UI_TYPE = {
     GES.UriClip.__gtype__: UriClip,
