@@ -1631,6 +1631,7 @@ class ProjectSettingsDialog():
         else:
             preset = None
         mgr.restorePreset(preset)
+        self._updateSar()
         update_preset_buttons_func()
         self._hidePresetManagerError(mgr)
 
@@ -1660,7 +1661,7 @@ class ProjectSettingsDialog():
         infobar.hide()
 
     def constrained(self):
-        return self.constrain_sar_button.props.active
+        return self.constrain_sar_button.props.active and not self.video_presets.ignore_update_requests
 
     def _updateFraction(self, unused, fraction, combo):
         fraction.setWidgetValue(get_combo_value(combo))
@@ -1673,9 +1674,11 @@ class ProjectSettingsDialog():
         height = int(self.height_spinbutton.get_value())
         return Gst.Fraction(width, height)
 
-    def _constrainSarButtonToggledCb(self, button):
-        if button.props.active:
-            self.sar = self.getSAR()
+    def _constrainSarButtonToggledCb(self, unused_button):
+        self._updateSar()
+
+    def _updateSar(self):
+        self.sar = self.getSAR()
 
     def _selectDarRadiobuttonToggledCb(self, button):
         state = button.props.active
@@ -1768,7 +1771,7 @@ class ProjectSettingsDialog():
 
     def updateHeight(self):
         width = int(self.width_spinbutton.get_value())
-        self.height_spinbutton.set_value(width * (1 / self.sar))
+        self.height_spinbutton.set_value(width / self.sar)
 
     def updateDarFromPar(self):
         par = self.par_fraction_widget.getWidgetValue()
@@ -1778,7 +1781,7 @@ class ProjectSettingsDialog():
     def updateParFromDar(self):
         dar = self.dar_fraction_widget.getWidgetValue()
         sar = self.getSAR()
-        self.par_fraction_widget.setWidgetValue(dar * (1 / sar))
+        self.par_fraction_widget.setWidgetValue(dar / sar)
 
     def updateDarFromCombo(self):
         self.dar_fraction_widget.setWidgetValue(
@@ -1797,7 +1800,6 @@ class ProjectSettingsDialog():
             self.par_combo, self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):
-
         self.width_spinbutton.set_value(self.project.videowidth)
         self.height_spinbutton.set_value(self.project.videoheight)
 

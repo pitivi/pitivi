@@ -67,7 +67,7 @@ class PresetManager(object):
         self.ordered = Gtk.ListStore(str, object)
         self.cur_preset = None
         # Whether to ignore the updateValue calls.
-        self._ignore_update_requests = False
+        self.ignore_update_requests = False
         self.system = system.getSystem()
 
     def loadAll(self):
@@ -180,7 +180,7 @@ class PresetManager(object):
 
     def updateValue(self, name, value):
         """Update a value in the current preset, if any."""
-        if self._ignore_update_requests:
+        if self.ignore_update_requests:
             # This is caused by restorePreset, nothing to do.
             return
         if self.cur_preset:
@@ -196,20 +196,22 @@ class PresetManager(object):
         @param preset: The name of the preset to be selected.
         @type preset: str
         """
-        self._ignore_update_requests = True
         if preset is None:
             self.cur_preset = None
             return
-        elif preset not in self.presets:
+        if preset not in self.presets:
             return
-        values = self.presets[preset]
-        self.cur_preset = preset
-        for field, (setter, getter) in self.widget_map.items():
-            if values[field] != 0:
-                setter(values[field])
-            else:
-                setter(self.presets[_("No preset")][field])
-        self._ignore_update_requests = False
+        self.ignore_update_requests = True
+        try:
+            values = self.presets[preset]
+            self.cur_preset = preset
+            for field, (setter, getter) in self.widget_map.items():
+                if values[field] != 0:
+                    setter(values[field])
+                else:
+                    setter(self.presets[_("No preset")][field])
+        finally:
+            self.ignore_update_requests = False
 
     def saveCurrentPreset(self):
         """Update the current preset values from the widgets and save it."""
