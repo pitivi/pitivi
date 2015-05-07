@@ -1095,7 +1095,7 @@ class Project(Loggable, GES.Project):
                     self.warning("We do not handle profile: %s" % profile)
 
     # ------------------------------------------ #
-    # Our API                      #
+    # Our API                                    #
     # ------------------------------------------ #
     def _commit(self):
         """
@@ -1272,7 +1272,7 @@ class Project(Loggable, GES.Project):
         self._acodecsettings_cache[self.aencoder] = value
 
     # ------------------------------------------ #
-    # Private methods              #
+    # Private methods                            #
     # ------------------------------------------ #
 
     def _ensureTracks(self):
@@ -1404,25 +1404,25 @@ class ProjectSettingsDialog():
         Create dynamic widgets and
         set up the relationships between various widgets
         """
-        # add custom display aspect ratio widget
+        # Add custom DAR fraction widget.
         self.dar_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.dar_fraction_widget,
                                            0, 6, 1, 1)
         self.dar_fraction_widget.show()
 
-        # add custom pixel aspect ratio widget
+        # Add custom PAR fraction widget.
         self.par_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.par_fraction_widget,
                                            1, 6, 1, 1)
         self.par_fraction_widget.show()
 
-        # add custom framerate widget
+        # Add custom framerate fraction widget.
         self.frame_rate_fraction_widget = FractionWidget()
         self.video_properties_table.attach(self.frame_rate_fraction_widget,
                                            1, 2, 1, 1)
         self.frame_rate_fraction_widget.show()
 
-        # populate coboboxes with appropriate data
+        # Populate comboboxes.
         self.frame_rate_combo.set_model(frame_rates)
         self.dar_combo.set_model(display_aspect_ratios)
         self.par_combo.set_model(pixel_aspect_ratios)
@@ -1430,7 +1430,7 @@ class ProjectSettingsDialog():
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
 
-        # behavior
+        # Behavior.
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo,
                           signal="changed",
@@ -1453,39 +1453,38 @@ class ProjectSettingsDialog():
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
 
-        # constrain width and height IFF constrain_sar_button is active
+        # Constrain width and height IFF the Link checkbox is checked.
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
-                        predicate=self.constrained,
+                        predicate=self.widthHeightLinked,
                         edge_func=self.updateHeight)
         self.wg.addEdge(self.height_spinbutton, self.width_spinbutton,
-                        predicate=self.constrained,
+                        predicate=self.widthHeightLinked,
                         edge_func=self.updateWidth)
 
-        # keep framereate text field and combo in sync
+        # Keep the framerate combo and fraction widgets in sync.
         self.wg.addBiEdge(
             self.frame_rate_combo, self.frame_rate_fraction_widget)
 
-        # keep dar text field and combo in sync
+        # Keep the DAR combo and fraction widgets in sync.
         self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
                         edge_func=self.updateDarFromCombo)
         self.wg.addEdge(self.dar_fraction_widget, self.dar_combo,
                         edge_func=self.updateDarFromFractionWidget)
 
-        # keep par text field and combo in sync
+        # Keep the PAR combo and fraction widgets in sync.
         self.wg.addEdge(self.par_combo, self.par_fraction_widget,
                         edge_func=self.updateParFromCombo)
         self.wg.addEdge(self.par_fraction_widget, self.par_combo,
                         edge_func=self.updateParFromFractionWidget)
 
-        # constrain DAR and PAR values. because the combo boxes are already
-        # linked, we only have to link the fraction widgets together.
+        # Constrain the DAR and PAR by linking the fraction widgets together.
+        # The combos are already linked to their fraction widgets.
         self.wg.addEdge(self.par_fraction_widget, self.dar_fraction_widget,
                         edge_func=self.updateDarFromPar)
         self.wg.addEdge(self.dar_fraction_widget, self.par_fraction_widget,
                         edge_func=self.updateParFromDar)
 
-        # update PAR when width/height change and the DAR checkbutton is
-        # selected
+        # Update the PAR when the w or h change and the DAR radio is selected.
         self.wg.addEdge(self.width_spinbutton, self.par_fraction_widget,
                         predicate=self.darSelected,
                         edge_func=self.updateParFromDar)
@@ -1493,8 +1492,7 @@ class ProjectSettingsDialog():
                         predicate=self.darSelected,
                         edge_func=self.updateParFromDar)
 
-        # update DAR when width/height change and the PAR checkbutton is
-        # selected
+        # Update the DAR when the w or h change and the PAR radio is selected.
         self.wg.addEdge(self.width_spinbutton, self.dar_fraction_widget,
                         predicate=self.parSelected,
                         edge_func=self.updateDarFromPar)
@@ -1502,15 +1500,14 @@ class ProjectSettingsDialog():
                         predicate=self.parSelected,
                         edge_func=self.updateDarFromPar)
 
-        # presets
+        # Presets.
         self.audio_presets = AudioPresetManager()
         self.audio_presets.loadAll()
-        self.video_presets = VideoPresetManager()
-        self.video_presets.loadAll()
-
         self._fillPresetsTreeview(self.audio_preset_treeview,
                                   self.audio_presets,
                                   self._updateAudioPresetButtons)
+        self.video_presets = VideoPresetManager()
+        self.video_presets.loadAll()
         self._fillPresetsTreeview(self.video_preset_treeview,
                                   self.video_presets,
                                   self._updateVideoPresetButtons)
@@ -1660,7 +1657,7 @@ class ProjectSettingsDialog():
         infobar = self._infobarForPresetManager[mgr]
         infobar.hide()
 
-    def constrained(self):
+    def widthHeightLinked(self):
         return self.constrain_sar_button.props.active and not self.video_presets.ignore_update_requests
 
     def _updateFraction(self, unused, fraction, combo):
