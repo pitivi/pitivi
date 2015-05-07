@@ -1764,11 +1764,15 @@ class ProjectSettingsDialog():
 
     def updateWidth(self):
         height = int(self.height_spinbutton.get_value())
-        self.width_spinbutton.set_value(height * self.sar)
+        fraction = height * self.sar
+        width = int(fraction.num / fraction.denom)
+        self.width_spinbutton.set_value(width)
 
     def updateHeight(self):
         width = int(self.width_spinbutton.get_value())
-        self.height_spinbutton.set_value(width / self.sar)
+        fraction = width / self.sar
+        height = int(fraction.num / fraction.denom)
+        self.height_spinbutton.set_value(height)
 
     def updateDarFromPar(self):
         par = self.par_fraction_widget.getWidgetValue()
