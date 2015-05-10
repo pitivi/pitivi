@@ -487,6 +487,7 @@ if [ "$ready_to_run" = "1" ]; then
                 cp ~/.zshrc $ZDOTDIR
                 echo "autoload -Uz bashcompinit; bashcompinit" >> $ZDOTDIR/.zshrc
                 generate_path_and_completion_calls >> $ZDOTDIR/.zshrc
+                echo "PROMPT=[ptv]\ \$PROMPT" >> $ZDOTDIR/.zshrc
                 zsh
             elif [ $SHELL = "/bin/bash" ]; then
                 RCFILE=$MYPITIVI/.bashrc
