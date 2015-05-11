@@ -495,12 +495,25 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             elif delta_y < 0:
                 self.parent.scroll_up()
         elif event.get_state() & Gdk.ModifierType.CONTROL_MASK:
+            event_widget = self.get_event_widget(event)
+            x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+            x -= CONTROL_WIDTH
+            mouse_position = self.pixelToNs(x + self.hadj.get_value())
+
+            rescroll = False
             if delta_y > 0:
+                rescroll = True
                 timelineUtils.Zoomable.zoomOut()
                 self.queue_draw()
             elif delta_y < 0:
+                rescroll = True
                 timelineUtils.Zoomable.zoomIn()
                 self.queue_draw()
+
+            if rescroll:
+                diff = x - (self.layout.get_allocation().width / 2)
+                self.hadj.set_value(self.nsToPixel(mouse_position) - (self.layout.get_allocation().width / 2) - diff)
+
         return False
 
     def __buttonPressEventCb(self, unused_widget, event):
