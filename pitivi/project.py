@@ -594,6 +594,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.emit("new-project-created", project)
 
         project.connect("project-changed", self._projectChangedCb)
+        project.pipeline.connect("died", self._pipelineDied)
         project.setModificationState(False)
         self.emit("new-project-loaded", self.current_project, emission)
         self.time_loaded = time()
