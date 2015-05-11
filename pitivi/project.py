@@ -265,6 +265,10 @@ class ProjectManager(GObject.Object, Loggable):
         primary.set_alignment(0, 0.5)
         primary.props.label = message
 
+        # These 2 lines are needed for a decent dialog width, with wrapped text:
+        dialog.props.default_width = 700
+        primary.set_width_chars(50)
+
         # put the text in a vbox
         vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
         vbox.pack_start(primary, True, True, 0)
