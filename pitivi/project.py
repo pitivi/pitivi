@@ -1385,8 +1385,6 @@ class ProjectSettingsDialog():
 
         getObj = self.builder.get_object
         self.window = getObj("project-settings-dialog")
-        self.video_properties_table = getObj("video_properties_table")
-        self.video_properties_table = getObj("video_properties_table")
         self.frame_rate_combo = getObj("frame_rate_combo")
         self.dar_combo = getObj("dar_combo")
         self.par_combo = getObj("par_combo")
@@ -1424,22 +1422,19 @@ class ProjectSettingsDialog():
         Create dynamic widgets and
         set up the relationships between various widgets
         """
-        # Add custom DAR fraction widget.
+        # Add custom fraction widgets for DAR and PAR.
+        aspect_ratio_grid = self.builder.get_object("aspect_ratio_grid")
         self.dar_fraction_widget = FractionWidget()
-        self.video_properties_table.attach(self.dar_fraction_widget,
-                                           0, 6, 1, 1)
+        aspect_ratio_grid.attach(self.dar_fraction_widget, 0, 2, 1, 1)
         self.dar_fraction_widget.show()
-
-        # Add custom PAR fraction widget.
         self.par_fraction_widget = FractionWidget()
-        self.video_properties_table.attach(self.par_fraction_widget,
-                                           1, 6, 1, 1)
+        aspect_ratio_grid.attach(self.par_fraction_widget, 1, 2, 1, 1)
         self.par_fraction_widget.show()
 
         # Add custom framerate fraction widget.
+        frame_rate_box = self.builder.get_object("frame_rate_box")
         self.frame_rate_fraction_widget = FractionWidget()
-        self.video_properties_table.attach(self.frame_rate_fraction_widget,
-                                           1, 2, 1, 1)
+        frame_rate_box.pack_end(self.frame_rate_fraction_widget, True, True, 0)
         self.frame_rate_fraction_widget.show()
 
         # Populate comboboxes.
