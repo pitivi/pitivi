@@ -19,19 +19,23 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import json
 import os.path
 
 from gi.repository import Gst
 from gi.repository import Gtk
-import json
 
 from gettext import gettext as _
 
-from pitivi.render import CachedEncoderList
 from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
 from pitivi.utils import system
+
+
+# Presets created with this name by the app should have "volatile": True
+# so they cannot be saved.
+CUSTOM_PRESET_NAME = _("Custom")
 
 
 class DuplicatePresetNameException(Exception):
@@ -93,8 +97,7 @@ class PresetManager(object):
             self.savePreset(preset_name)
 
     def savePreset(self, preset_name):
-        if preset_name == _("No preset"):
-            return
+        assert preset_name != CUSTOM_PRESET_NAME
         if os.path.isfile(self.user_path):
             # We used to save presets as a single file instead of a directory
             os.remove(self.user_path)
@@ -206,18 +209,14 @@ class PresetManager(object):
             values = self.presets[preset]
             self.cur_preset = preset
             for field, (setter, getter) in self.widget_map.items():
-                if values[field] != 0:
-                    setter(values[field])
-                else:
-                    setter(self.presets[_("No preset")][field])
+                setter(values[field])
         finally:
             self.ignore_update_requests = False
 
     def saveCurrentPreset(self):
         """Update the current preset values from the widgets and save it."""
-        if self.cur_preset != _("No preset"):
-            self._updatePreset()
-            self.savePreset(self.cur_preset)
+        self._updatePreset()
+        self.savePreset(self.cur_preset)
 
     def _updatePreset(self):
         """Copy the values from the widgets to the preset."""
@@ -234,7 +233,9 @@ class PresetManager(object):
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.items()))
 
-    def removePreset(self, name):
+    def removePreset(self, name=None):
+        if name is None:
+            name = self.cur_preset
         try:
             # Deletes json file if exists
             os.remove(self.presets[name]["filepath"])
@@ -258,14 +259,16 @@ class PresetManager(object):
 
     def isSaveButtonSensitive(self):
         """Check if the Save button should be sensitive"""
-        if not self.cur_preset or self.cur_preset == _("No preset"):
+        if not self.cur_preset:
+            return False
+        if "volatile" in self.presets[self.cur_preset]:
             return False
         try:
             full_path = self.presets[self.cur_preset]["filepath"]
-            (dir, name) = os.path.split(full_path)
         except KeyError:
             # This is a newly created preset that has not yet been saved
             return True
+        (dir, name) = os.path.split(full_path)
         if dir == self.default_path or not isWritable(full_path):
             # default_path is the system-wide directory where the default
             # presets are installed; they are not expected to be editable.
@@ -275,7 +278,7 @@ class PresetManager(object):
 
     def isRemoveButtonSensitive(self):
         """Check if Remove buttons should be sensitive"""
-        if not self.cur_preset or self.cur_preset == _("No preset"):
+        if not self.cur_preset:
             return False
         try:
             full_path = self.presets[self.cur_preset]["filepath"]
@@ -387,6 +390,7 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
+        from pitivi.render import CachedEncoderList
         cached_encs = CachedEncoderList()
         if (acodec not in [fact.get_name() for fact in cached_encs.aencoders] or
                 vcodec not in [fact.get_name() for fact in cached_encs.vencoders] or

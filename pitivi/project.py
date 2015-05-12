@@ -27,6 +27,7 @@ Project related classes
 import os
 from gi.repository import GstPbutils
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import GLib
@@ -38,9 +39,8 @@ from datetime import datetime
 from gettext import gettext as _
 from pwd import getpwuid
 
-from pitivi.undo.undo import UndoableAction
 from pitivi.configure import get_ui_dir
-
+from pitivi.undo.undo import UndoableAction
 from pitivi.utils.validate import has_validate, create_monitor
 from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
 from pitivi.utils.pipeline import PipelineError, Seeker
@@ -1367,12 +1367,13 @@ class ProjectSettingsDialog():
 
     def __init__(self, parent_window, project):
         self.project = project
+        self.audio_presets = AudioPresetManager()
+        self.video_presets = VideoPresetManager()
+        self.preset_actions = {}
         self._createUi()
         self.window.set_transient_for(parent_window)
         self._setupUiConstraints()
         self.updateUI()
-        self.createAudioNoPreset(self.audio_presets)
-        self.createVideoNoPreset(self.video_presets)
 
     def _createUi(self):
         """
@@ -1394,13 +1395,9 @@ class ProjectSettingsDialog():
         self.author_entry = getObj("author_entry")
         self.width_spinbutton = getObj("width_spinbutton")
         self.height_spinbutton = getObj("height_spinbutton")
-        self.save_audio_preset_button = getObj("save_audio_preset_button")
-        self.save_video_preset_button = getObj("save_video_preset_button")
-        self.audio_preset_treeview = getObj("audio_preset_treeview")
-        self.video_preset_treeview = getObj("video_preset_treeview")
+        self.audio_presets_combo = getObj("audio_presets_combo")
+        self.video_presets_combo = getObj("video_presets_combo")
         self.select_par_radiobutton = getObj("select_par_radiobutton")
-        self.remove_audio_preset_button = getObj("remove_audio_preset_button")
-        self.remove_video_preset_button = getObj("remove_video_preset_button")
         self.constrain_sar_button = getObj("constrain_sar_button")
         self.select_dar_radiobutton = getObj("select_dar_radiobutton")
         self.video_preset_infobar = getObj("video-preset-infobar")
@@ -1409,13 +1406,16 @@ class ProjectSettingsDialog():
         self.author_entry = getObj("author_entry")
         self.year_spinbutton = getObj("year_spinbutton")
 
-        # Set the shading style in the contextual toolbars below presets
-        video_presets_toolbar = getObj("video_presets_toolbar")
-        audio_presets_toolbar = getObj("audio_presets_toolbar")
-        video_presets_toolbar.get_style_context().add_class(
-            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        audio_presets_toolbar.get_style_context().add_class(
-            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        self.video_preset_menubutton = getObj("video_preset_menubutton")
+        self._createPresetMenu(self.video_preset_menubutton,
+                               self._addVideoPresetCb,
+                               self.video_presets,
+                               self.video_presets_combo)
+        self.audio_preset_menubutton = getObj("audio_preset_menubutton")
+        self._createPresetMenu(self.audio_preset_menubutton,
+                               self._addAudioPresetCb,
+                               self.audio_presets,
+                               self.audio_presets_combo)
 
     def _setupUiConstraints(self):
         """
@@ -1461,10 +1461,10 @@ class ProjectSettingsDialog():
         self.wg.addVertex(self.par_fraction_widget, signal="value-changed")
         self.wg.addVertex(self.width_spinbutton, signal="value-changed")
         self.wg.addVertex(self.height_spinbutton, signal="value-changed")
-        self.wg.addVertex(self.save_audio_preset_button,
-                          update_func=self._updateAudioSaveButton)
-        self.wg.addVertex(self.save_video_preset_button,
-                          update_func=self._updateVideoSaveButton)
+        self.wg.addVertex(self.audio_preset_menubutton,
+                          update_func=self._updateAudioPresetMenuButton)
+        self.wg.addVertex(self.video_preset_menubutton,
+                          update_func=self._updateVideoPresetMenuButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
 
@@ -1516,16 +1516,12 @@ class ProjectSettingsDialog():
                         edge_func=self.updateDarFromPar)
 
         # Presets.
-        self.audio_presets = AudioPresetManager()
-        self.audio_presets.loadAll()
-        self._fillPresetsTreeview(self.audio_preset_treeview,
-                                  self.audio_presets,
-                                  self._updateAudioPresetButtons)
-        self.video_presets = VideoPresetManager()
-        self.video_presets.loadAll()
-        self._fillPresetsTreeview(self.video_preset_treeview,
-                                  self.video_presets,
-                                  self._updateVideoPresetButtons)
+        self._loadPresets(self.audio_presets,
+                          self.audio_presets_combo,
+                          self.audio_preset_menubutton)
+        self._loadPresets(self.video_presets,
+                          self.video_presets_combo,
+                          self.video_preset_menubutton)
 
         # A map which tells which infobar should be used when displaying
         # an error for a preset manager.
@@ -1547,14 +1543,14 @@ class ProjectSettingsDialog():
             self.audio_presets, "sample-rate", self.sample_rate_combo)
 
         self.wg.addEdge(
-            self.par_fraction_widget, self.save_video_preset_button)
+            self.par_fraction_widget, self.video_preset_menubutton)
         self.wg.addEdge(
-            self.frame_rate_fraction_widget, self.save_video_preset_button)
-        self.wg.addEdge(self.width_spinbutton, self.save_video_preset_button)
-        self.wg.addEdge(self.height_spinbutton, self.save_video_preset_button)
+            self.frame_rate_fraction_widget, self.video_preset_menubutton)
+        self.wg.addEdge(self.width_spinbutton, self.video_preset_menubutton)
+        self.wg.addEdge(self.height_spinbutton, self.video_preset_menubutton)
 
-        self.wg.addEdge(self.channels_combo, self.save_audio_preset_button)
-        self.wg.addEdge(self.sample_rate_combo, self.save_audio_preset_button)
+        self.wg.addEdge(self.channels_combo, self.audio_preset_menubutton)
+        self.wg.addEdge(self.sample_rate_combo, self.audio_preset_menubutton)
 
     def bindPar(self, mgr):
 
@@ -1579,76 +1575,80 @@ class ProjectSettingsDialog():
                        lambda x: widget.set_value(float(x)),
                        lambda: int(widget.get_value()))
 
-    def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
+    def _createPresetMenu(self, button, new_func, mgr, combo):
+        entry = combo.get_child()
+        style_context = entry.get_style_context()
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_data("GtkEntry.unsaved {font-style:italic;}".encode('UTF-8'))
+        style_context.add_provider(style_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+        action_group = Gio.SimpleActionGroup()
+        menu_model = Gio.Menu()
+        self.preset_actions[button] = {}
+
+        action = Gio.SimpleAction.new("new", None)
+        action.connect("activate", new_func)
+        action_group.insert(action)
+        menu_model.append(_("New"), "preset.%s" % action.get_name())
+        self.preset_actions[button][action.get_name()] = action
+
+        action = Gio.SimpleAction.new("remove", None)
+        action.connect("activate", self._removePresetCb, button, combo, mgr)
+        action_group.insert(action)
+        menu_model.append(_("Remove"), "preset.%s" % action.get_name())
+        self.preset_actions[button][action.get_name()] = action
+
+        action = Gio.SimpleAction.new("save", None)
+        action.connect("activate", self._savePresetCb, mgr, button, combo)
+        action_group.insert(action)
+        menu_model.append(_("Save"), "preset.%s" % action.get_name())
+        self.preset_actions[button][action.get_name()] = action
+
+        menu = Gtk.Menu.new_from_model(menu_model)
+        menu.insert_action_group("preset", action_group)
+        button.set_popup(menu)
+
+    def _updatePresetActions(self, button, combo, mgr):
+        entry = combo.get_child()
+        preset_name = entry.get_text()
+        can_save = mgr.cur_preset != preset_name or mgr.isSaveButtonSensitive()
+        self.preset_actions[button]["save"].set_enabled(can_save)
+        if can_save:
+            entry.get_style_context().add_class("unsaved")
+        else:
+            entry.get_style_context().remove_class("unsaved")
+
+        can_remove = mgr.isRemoveButtonSensitive()
+        self.preset_actions[button]["remove"].set_enabled(can_remove)
+
+    def _loadPresets(self, mgr, combo, button):
         """Set up the specified treeview to display the specified presets.
 
-        @param treeview: The treeview for displaying the presets.
-        @type treeview: TreeView
         @param mgr: The preset manager.
         @type mgr: PresetManager
-        @param update_buttons_func: A function which updates the buttons for
-        removing and saving a preset, enabling or disabling them accordingly.
-        @type update_buttons_func: function
+        @param combo: The combobox displaying the presets.
+        @type combo: Gtk.ComboBox
+        @param button: The menubutton associated with the combobox.
+        @type button: Gtk.MenuButton
         """
-        renderer = Gtk.CellRendererText()
-        renderer.props.editable = True
-        column = Gtk.TreeViewColumn("Preset", renderer, text=0)
-        treeview.append_column(column)
-        treeview.props.headers_visible = False
+        mgr.loadAll()
         model = mgr.getModel()
-        treeview.set_model(model)
-        model.connect(
-            "row-inserted", self._newPresetCb, column, renderer, treeview)
-        renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect(
-            "editing-started", self._presetNameEditingStartedCb, mgr)
-        treeview.get_selection().connect("changed", self._presetChangedCb, mgr,
-                                         update_buttons_func)
-        treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
+        combo.set_model(model)
+        combo.set_entry_text_column(0)
+        combo.connect("changed", self._presetChangedCb, mgr, button)
 
-    def createAudioNoPreset(self, mgr):
-        mgr.prependPreset(_("No preset"), {
-            "channels": self.project.audiochannels,
-            "sample-rate": self.project.audiorate})
-
-    def createVideoNoPreset(self, mgr):
-        mgr.prependPreset(_("No preset"), {
-            "par": self.project.videopar,
-            "frame-rate": self.project.videorate,
-            "height": self.project.videoheight,
-            "width": self.project.videowidth})
-
-    def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
-        """ Handle the addition of a preset to the model of the preset manager. """
-        treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
-        treeview.grab_focus()
-
-    def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
-        """Handle the renaming of a preset."""
-        try:
-            mgr.renamePreset(path, new_text)
-        except DuplicatePresetNameException:
-            error_markup = _('"%s" already exists.') % new_text
-            self._showPresetManagerError(mgr, error_markup)
-
-    def _presetNameEditingStartedCb(self, unused_renderer, unused_editable, unused_path, mgr):
-        """Handle the start of a preset renaming."""
-        self._hidePresetManagerError(mgr)
-
-    def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
+    def _presetChangedCb(self, combo, mgr, button):
         """Handle the selection of a preset."""
-        model, iter_ = selection.get_selected()
-        if iter_:
-            preset = model[iter_][0]
+        preset_name = combo.get_active_id()
+        if preset_name:
+            # The user selected a preset.
+            mgr.restorePreset(preset_name)
+            self._updateSar()
+            self._updatePresetActions(button, combo, mgr)
+            self._hidePresetManagerError(mgr)
         else:
-            preset = None
-        mgr.restorePreset(preset)
-        self._updateSar()
-        update_preset_buttons_func()
-        self._hidePresetManagerError(mgr)
-
-    def _treeviewDefocusedCb(self, unused_widget, unused_event, mgr):
-        self._hidePresetManagerError(mgr)
+            # The user is editing the preset name.
+            self._updatePresetActions(button, combo, mgr)
 
     def _showPresetManagerError(self, mgr, error_markup):
         """Show the specified error on the infobar associated with the manager.
@@ -1711,27 +1711,16 @@ class ProjectSettingsDialog():
             i += 1
         return preset_name
 
-    def _addAudioPresetButtonClickedCb(self, unused_button):
+    def _addAudioPresetCb(self, unused_action, unused_param):
         preset_name = self._getUniquePresetName(self.audio_presets)
         self.audio_presets.addPreset(preset_name, {
             "channels": get_combo_value(self.channels_combo),
             "sample-rate": get_combo_value(self.sample_rate_combo),
         })
-        self.audio_presets.restorePreset(preset_name)
-        self._updateAudioPresetButtons()
+        self.audio_presets_combo.set_active_id(preset_name)
+        self._updateAudioPresetMenu()
 
-    def _removeAudioPresetButtonClickedCb(self, unused_button):
-        selection = self.audio_preset_treeview.get_selection()
-        model, iter_ = selection.get_selected()
-        if iter_:
-            self.audio_presets.removePreset(model[iter_][0])
-
-    def _saveAudioPresetButtonClickedCb(self, unused_button):
-        self.audio_presets.saveCurrentPreset()
-        self.save_audio_preset_button.set_sensitive(False)
-        self.remove_audio_preset_button.set_sensitive(True)
-
-    def _addVideoPresetButtonClickedCb(self, unused_button):
+    def _addVideoPresetCb(self, unused_action, unused_param):
         preset_name = self._getUniquePresetName(self.video_presets)
         self.video_presets.addPreset(preset_name, {
             "width": int(self.width_spinbutton.get_value()),
@@ -1739,37 +1728,32 @@ class ProjectSettingsDialog():
             "frame-rate": self.frame_rate_fraction_widget.getWidgetValue(),
             "par": self.par_fraction_widget.getWidgetValue(),
         })
-        self.video_presets.restorePreset(preset_name)
-        self._updateVideoPresetButtons()
+        self.video_presets_combo.set_active_id(preset_name)
+        self._updateVideoPresetMenu()
 
-    def _removeVideoPresetButtonClickedCb(self, unused_button):
-        selection = self.video_preset_treeview.get_selection()
-        model, iter_ = selection.get_selected()
-        if iter_:
-            self.video_presets.removePreset(model[iter_][0])
+    def _removePresetCb(self, unused_action, unused_param, button, combo, mgr):
+        mgr.removePreset()
+        self._updatePresetActions(button, combo, mgr)
 
-    def _saveVideoPresetButtonClickedCb(self, unused_button):
-        self.video_presets.saveCurrentPreset()
-        self.save_video_preset_button.set_sensitive(False)
-        self.remove_video_preset_button.set_sensitive(True)
+    def _savePresetCb(self, unused_action, unused_param, mgr, button, combo):
+        mgr.saveCurrentPreset()
+        self._updatePresetActions(button, combo, mgr)
 
-    def _updateAudioPresetButtons(self):
-        can_save = self.audio_presets.isSaveButtonSensitive()
-        self.save_audio_preset_button.set_sensitive(can_save)
-        can_remove = self.audio_presets.isRemoveButtonSensitive()
-        self.remove_audio_preset_button.set_sensitive(can_remove)
+    def _updateAudioPresetMenuButton(self, unused_source, unused_target):
+        self._updateAudioPresetMenu()
 
-    def _updateVideoPresetButtons(self):
-        self.save_video_preset_button.set_sensitive(
-            self.video_presets.isSaveButtonSensitive())
-        self.remove_video_preset_button.set_sensitive(
-            self.video_presets.isRemoveButtonSensitive())
+    def _updateAudioPresetMenu(self):
+        button = self.audio_preset_menubutton
+        combo = self.audio_presets_combo
+        self._updatePresetActions(button, combo, self.audio_presets)
 
-    def _updateAudioSaveButton(self, unused_in, button):
-        button.set_sensitive(self.audio_presets.isSaveButtonSensitive())
+    def _updateVideoPresetMenuButton(self, unused_source, unused_target):
+        self._updateVideoPresetMenu()
 
-    def _updateVideoSaveButton(self, unused_in, button):
-        button.set_sensitive(self.video_presets.isSaveButtonSensitive())
+    def _updateVideoPresetMenu(self):
+        button = self.video_preset_menubutton
+        combo = self.video_presets_combo
+        self._updatePresetActions(button, combo, self.video_presets)
 
     def darSelected(self):
         return self.select_dar_radiobutton.props.active
@@ -1838,12 +1822,11 @@ class ProjectSettingsDialog():
             year = datetime.now().year
         self.year_spinbutton.get_adjustment().set_value(year)
 
-    def updateMetadata(self):
+    def updateProject(self):
         self.project.name = self.title_entry.get_text()
         self.project.author = self.author_entry.get_text()
         self.project.year = str(self.year_spinbutton.get_value_as_int())
 
-    def updateSettings(self):
         self.project.videowidth = int(self.width_spinbutton.get_value())
         self.project.videoheight = int(self.height_spinbutton.get_value())
         self.project.videopar = self.par_fraction_widget.getWidgetValue()
@@ -1854,7 +1837,7 @@ class ProjectSettingsDialog():
         self.project.audiorate = get_combo_value(self.sample_rate_combo)
 
     def _responseCb(self, unused_widget, response):
+        """Handle the dialog being closed."""
         if response == Gtk.ResponseType.OK:
-            self.updateSettings()
-            self.updateMetadata()
+            self.updateProject()
         self.window.destroy()

@@ -39,6 +39,7 @@ from gettext import gettext as _
 from pitivi import configure
 
 from pitivi.check import missing_soft_deps
+from pitivi.preset import CUSTOM_PRESET_NAME
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -421,10 +422,11 @@ class RenderDialog(Loggable):
         self.bindHeight(self.render_presets)
         self.bindWidth(self.render_presets)
 
-        self.createNoPreset(self.render_presets)
+        self.createVolatileCustomPreset(self.render_presets)
 
-    def createNoPreset(self, mgr):
-        mgr.prependPreset(_("No preset"), {
+    def createVolatileCustomPreset(self, mgr):
+        mgr.prependPreset(CUSTOM_PRESET_NAME, {
+            "volatile": True,
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),

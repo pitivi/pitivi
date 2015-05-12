@@ -162,11 +162,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
     def setupCss(self):
-        self.css_provider = Gtk.CssProvider()
-        self.css_provider.load_from_data(TIMELINE_CSS.encode('UTF-8'))
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(TIMELINE_CSS.encode('UTF-8'))
         screen = Gdk.Screen.get_default()
         style_context = self.get_style_context()
-        style_context.add_provider_for_screen(screen, self.css_provider,
+        style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     @staticmethod
