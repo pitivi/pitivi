@@ -428,12 +428,14 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.undo_button.set_always_show_image(True)
         self.undo_button.set_label(_("Undo"))
         self.undo_button.set_action_name("app.undo")
+        self.undo_button.set_use_underline(True)
 
         self.redo_button = Gtk.Button.new_from_icon_name(
             "edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
         self.redo_button.set_always_show_image(True)
         self.redo_button.set_label(_("Redo"))
         self.redo_button.set_action_name("app.redo")
+        self.redo_button.set_use_underline(True)
 
         separator = Gtk.Separator()
 
