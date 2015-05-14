@@ -840,6 +840,8 @@ class TransitionClip(Clip):
         super(TransitionClip, self)._childAdded(clip, child)
 
         if isinstance(child, GES.VideoTransition):
+            self.z_order = 1
+            self.set_sensitive(True)
             self.__has_video = True
             child.selected.connect("selected-changed", self._selectedChangedCb, child)
 
