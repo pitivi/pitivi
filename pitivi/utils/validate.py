@@ -189,12 +189,6 @@ def _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_pr
         event.y = y
         container.ui.sendFakeEvent(event, container.ui)
 
-        if isinstance(container, GES.SourceClip):
-            if edge == GES.Edge.EDGE_START:
-                container.ui.leftHandle._eventCb(container.ui.leftHandle, Gdk.Event.new(Gdk.EventType.LEAVE_NOTIFY))
-            if edge == GES.Edge.EDGE_END:
-                container.ui.rightHandle._eventCb(container.ui.rightHandle, Gdk.Event.new(Gdk.EventType.LEAVE_NOTIFY))
-
         if layer_prio > 0 and container.get_layer().get_priority() != layer_prio:
             scenario.report_simple(GLib.quark_from_string("scenario::execution-error"),
                                    "Resulting clip priority: %s"
@@ -301,15 +295,19 @@ def editContainer(scenario, action):
 
     if not hasattr(scenario, "dragging") or scenario.dragging is False \
             or scenario.last_edge != edge:
+        widget = container.ui
+        event_widget = container.ui
         if isinstance(container, GES.SourceClip):
             if edge == GES.Edge.EDGE_START:
-                container.ui.leftHandle._eventCb(container.ui.leftHandle, Gdk.Event.new(Gdk.EventType.ENTER_NOTIFY))
+                event_widget = container.ui.leftHandle
+                event = timeline
             elif edge == GES.Edge.EDGE_END:
-                container.ui.rightHandle._eventCb(container.ui.rightHandle, Gdk.Event.new(Gdk.EventType.ENTER_NOTIFY))
+                event_widget = container.ui.rightHandle
+                event = timeline
 
         scenario.dragging = True
         event = Event(Gdk.EventType.BUTTON_PRESS, button=1, y=y)
-        container.ui.sendFakeEvent(event, container.ui)
+        widget.sendFakeEvent(event, event_widget)
 
     event = Event(Gdk.EventType.MOTION_NOTIFY, button=1,
                   x=timelineUtils.Zoomable.nsToPixelAccurate(position) -
@@ -320,8 +318,8 @@ def editContainer(scenario, action):
     GstValidate.print_action(action, "Editing %s to %s in %s mode, edge: %s "
                              "with new layer prio: %d\n" % (action.structure["container-name"],
                                                             Gst.TIME_ARGS(position),
-                                                            timeline.ui.draggingElement.edit_mode,
-                                                            timeline.ui.draggingElement.dragging_edge,
+                                                            scenario.last_mode,
+                                                            edge,
                                                             layer_prio))
 
     _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_prio,

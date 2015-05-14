@@ -41,7 +41,7 @@ from pitivi.utils.timeline import Zoomable, TimelineError
 from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, CONTROL_WIDTH
 from pitivi.utils.widgets import ZoomBox
 
-from pitivi.timeline.elements import Clip
+from pitivi.timeline.elements import Clip, TrimHandle
 from pitivi.utils import timeline as timelineUtils
 from pitivi.timeline.layer import SpacedSeparator, Layer, LayerControls
 
@@ -526,6 +526,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if res and button == 1:
             self.draggingElement = self._getParentOfType(event_widget, Clip)
             self.debug("Dragging element is %s" % self.draggingElement)
+            if isinstance(event_widget, TrimHandle):
+                self.__clickedHandle = event_widget
+
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
 
@@ -797,6 +800,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     # Edition handling
     def __setupTimelineEdition(self):
         self.draggingElement = None
+        self.__clickedHandle = None
         self.editing_context = None
         self.__got_dragged = False
         self.__drag_start_x = 0
@@ -859,10 +863,17 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if self.__got_dragged is False:
             self.__got_dragged = True
             self.allowSeek = False
+            if self.__clickedHandle:
+                edit_mode = GES.EditMode.EDIT_TRIM
+                dragging_edge = self.__clickedHandle.edge
+            else:
+                edit_mode = GES.EditMode.EDIT_NORMAL
+                dragging_edge = GES.Edge.EDGE_NONE
+
             self.editing_context = timelineUtils.EditingContext(self.draggingElement.bClip,
                                                                 self.bTimeline,
-                                                                self.draggingElement.edit_mode,
-                                                                self.draggingElement.dragging_edge,
+                                                                edit_mode,
+                                                                dragging_edge,
                                                                 None,
                                                                 self.app.action_log)
 
@@ -940,6 +951,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.editing_context.finish()
 
         self.draggingElement = None
+        self.__clickedHandle = None
         self.__got_dragged = False
         self.editing_context = None
         self.hideSnapBar()

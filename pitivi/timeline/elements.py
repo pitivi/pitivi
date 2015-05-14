@@ -509,7 +509,6 @@ class TrimHandle(Gtk.EventBox, Loggable):
         else:
             self.props.halign = Gtk.Align.START
 
-        self.connect("event", self._eventCb)
         self.connect("notify::window", self._windowSetCb)
 
     def _windowSetCb(self, window, pspec):
@@ -517,16 +516,6 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     def do_show_all(self):
         self.info("DO not do anythin on .show_all")
-
-    def _eventCb(self, element, event):
-        if event.type == Gdk.EventType.ENTER_NOTIFY:
-            self.clip.edit_mode = GES.EditMode.EDIT_TRIM
-            self.clip.dragging_edge = self.edge
-        elif event.type == Gdk.EventType.LEAVE_NOTIFY:
-            self.clip.dragging_edge = GES.Edge.EDGE_NONE
-            self.clip.edit_mode = None
-
-        return False
 
     def do_get_preferred_width(self):
         return TrimHandle.DEFAULT_WIDTH, TrimHandle.DEFAULT_WIDTH
@@ -569,9 +558,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self._savePositionState()
         self._connectWidgetSignals()
-
-        self.edit_mode = None
-        self.dragging_edge = GES.Edge.EDGE_NONE
 
         self._connectGES()
         self.get_accessible().set_name(self.bClip.get_name())
