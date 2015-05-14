@@ -637,11 +637,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                     self.bClip.get_toplevel_parent())
                 mode = timelineUtils.UNSELECT
         elif not self.get_state_flags() & Gtk.StateFlags.SELECTED:
-            GES.Container.ungroup(self.timeline.current_group, False)
-            self.timeline.createSelectionGroup()
+            self.timeline.resetSelectionGroup()
             self.timeline.current_group.add(
                 self.bClip.get_toplevel_parent())
             self.timeline.parent.gui.switchContextTab(self.bClip)
+        else:
+            self.timeline.resetSelectionGroup()
 
         parent = self.bClip.get_parent()
         if parent == self.timeline.current_group or parent is None:

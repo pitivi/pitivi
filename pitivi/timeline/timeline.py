@@ -247,7 +247,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._project = None
 
         self.current_group = None
-        self.createSelectionGroup()
+        self.resetSelectionGroup()
 
         self.__playhead = VerticalBar("PlayHead")
         self.__playhead.show()
@@ -316,7 +316,8 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.debug("Setting AllowSeek to %s" % value)
         self.__allow_seek = value
 
-    def createSelectionGroup(self):
+    def resetSelectionGroup(self):
+        self.debug("Reset selection group")
         if self.current_group:
             GES.Container.ungroup(self.current_group, False)
 
@@ -576,12 +577,11 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return False
 
     def _selectUnderMarquee(self):
+        self.resetSelectionGroup()
         if self.__marquee.props.width_request > 0:
             clips = self.__marquee.findSelected()
 
             if clips:
-                self.createSelectionGroup()
-
                 for clip in clips:
                     self.current_group.add(clip.get_toplevel_parent())
 
@@ -1429,7 +1429,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
                 self._project.pipeline.commit_timeline()
 
-            self.timeline.createSelectionGroup()
+            self.timeline.resetSelectionGroup()
 
             self.app.action_log.commit()
             self._project.pipeline.commit_timeline()
@@ -1452,7 +1452,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if containers:
                 GES.Container.group(list(containers))
 
-            self.timeline.createSelectionGroup()
+            self.timeline.resetSelectionGroup()
 
             self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
