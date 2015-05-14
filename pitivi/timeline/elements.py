@@ -584,6 +584,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return parent.get_allocated_height(), parent.get_allocated_height()
 
     def _savePositionState(self):
+        self.__force_position_update = False
         self._current_x = self.nsToPixel(self.bClip.props.start)
         self._curent_width = self.nsToPixel(self.bClip.props.duration)
         parent = self.get_parent()
@@ -600,7 +601,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         width = self.nsToPixel(self.bClip.props.duration)
         parent_height = parent.get_allocated_height()
 
-        if x != self._current_x or \
+        if self.__force_position_update or \
+                x != self._current_x or \
                 width != self._curent_width \
                 or parent_height != self._current_parent_height or \
                 parent != self._current_parent:
@@ -732,6 +734,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__showHandles()
 
     def _childAddedCb(self, clip, child):
+        self.__force_position_update = True
         self._childAdded(clip, child)
         self.__connectToChild(child)
 
@@ -739,6 +742,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         pass
 
     def _childRemovedCb(self, clip, child):
+        self.__force_position_update = True
         if child.ui:
             child.ui.disconnect_by_func(self.__curveEnterCb)
             child.ui.disconnect_by_func(self.__curveLeaveCb)
