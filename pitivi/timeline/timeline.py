@@ -615,18 +615,22 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.dropData = None
         self._createdClips = False
         self.isDraggedClip = False
-        self._lastClipOnLeave = None
+        self.__last_clips_on_leave = None
 
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         # To be able to receive assets dragged from the media library.
         self.drag_dest_add_uri_targets()
 
-    def createClip(self, x, y):
+    def __createClips(self, x, y):
         if self.isDraggedClip and self._createdClips is False:
+            x = self.adjustCoords(x=x)
 
             # From the media library
             placement = 0
+            self.draggingElement = None
+            self.resetSelectionGroup()
+            self.selection.setSelection([], timelineUtils.SELECT)
             for uri in self.dropData:
                 asset = self.app.gui.medialibrary.getAssetForUri(uri)
                 if asset is None:
@@ -642,18 +646,25 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 if not placement:
                     placement = self.pixelToNs(x)
 
+                self.debug("Creating %s at %s" % (uri, Gst.TIME_ARGS(placement)))
+
                 self.app.action_log.begin("add clip")
                 bClip = layer.add_asset(asset,
                                         placement,
                                         0,
                                         clip_duration,
                                         asset.get_supported_formats())
+                placement += clip_duration
+                self.current_group.add(bClip.get_toplevel_parent())
+                self.selection.setSelection([], timelineUtils.SELECT_ADD)
                 self.app.action_log.commit()
 
-                self.draggingElement = bClip.ui
+                if not self.draggingElement:
+                    self.draggingElement = bClip.ui
+
                 self._createdClips = True
 
-                return True
+            return True
 
         return False
 
@@ -666,7 +677,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.drag_get_data(context, target, timestamp)
             Gdk.drag_status(context, 0, timestamp)
         else:
-            if not self.createClip(x, y):
+            if not self.__createClips(x, y):
                 self.__dragUpdate(self, x, y)
 
             Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
@@ -677,8 +688,17 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
         if self.draggingElement:
-            self._lastClipOnLeave = (self.draggingElement.bClip.get_layer(), self.draggingElement.bClip)
-            self.draggingElement.bClip.get_layer().remove_clip(self.draggingElement.bClip)
+            self.__last_clips_on_leave = [(clip.get_layer(), clip)
+                                          for clip in self.current_group.get_children(False)]
+            if self._createdClips:
+                clips = self.current_group.get_children(False)
+                self.resetSelectionGroup()
+                self.selection.setSelection([], timelineUtils.SELECT)
+                for clip in clips:
+                    clip.get_layer().remove_clip(clip)
+
+            self.draggingElement = None
+            self.__got_dragged = False
             self._createdClips = False
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
@@ -689,12 +709,12 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         target = self.drag_dest_find_target(context, None)
         if target.name() == "text/uri-list":
             self.debug("Got list of URIs")
-            if self._lastClipOnLeave:
+            if self.__last_clips_on_leave:
                 self.dropData = None
                 self.dropDataReady = False
 
-                layer, clip = self._lastClipOnLeave
-                layer.add_clip(clip)
+                for layer, clip in self.__last_clips_on_leave:
+                    layer.add_clip(clip)
 
                 if zoom_was_fitted:
                     self.parent._setBestZoomRatio()
@@ -710,7 +730,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                              unused_y, selection_data, unused_info, timestamp):
         dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
         if not self.dropDataReady:
-            self._lastClipOnLeave = None
+            self.__last_clips_on_leave = None
             if dragging_effect:
                 # Dragging an effect from the Effect Library.
                 factory_name = str(selection_data.get_data(), "UTF-8")
