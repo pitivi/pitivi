@@ -610,7 +610,6 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def __setUpDragAndDrop(self):
         self.got_dragged = False
         self.dropHighlight = False
-        self.dropOccured = False
         self.dropDataReady = False
         self.dropData = None
         self._createdClips = False
@@ -710,6 +709,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if target.name() == "text/uri-list":
             self.debug("Got list of URIs")
             if self.__last_clips_on_leave:
+                self._createdClips = False
                 self.dropData = None
                 self.dropDataReady = False
 
@@ -720,6 +720,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                     self.parent._setBestZoomRatio()
 
                 self.dragEnd()
+                context.finish(True, False, timestamp)
         elif target.name() == "pitivi/effect":
             self.fixme("TODO Implement effect support")
 
@@ -737,21 +738,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 self.dropData = factory_name
                 self.dropDataReady = True
             elif selection_data.get_length() > 0:
-                # Dragging assets from the Media Library.
-                # if not self.dropOccured:
-                #    self.timeline.resetGhostClips()
                 self.dropData = selection_data.get_uris()
                 self.dropDataReady = True
-
-        if self.dropOccured:
-            # The data was requested by the drop handler.
-            self.dropOccured = False
-            drag_context.finish(True, False, timestamp)
-        else:
-            # The data was requested by the move handler.
-            self.isDraggedClip = not dragging_effect
-            self._createdClips = False
-            self.debug("Data received")
+        self.isDraggedClip = not dragging_effect
 
     # Handle layers
     def _layerAddedCb(self, timeline, bLayer):
