@@ -525,6 +525,12 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.before_sep = None
         self.after_sep = None
 
+    def release(self):
+        for clip in self.bLayer.get_clips():
+            self._removeClip(clip)
+        self.bLayer.disconnect_by_func(self._clipAddedCb)
+        self.bLayer.disconnect_by_func(self._clipRemovedCb)
+
     def checkMediaTypes(self, bClip=None):
         if self.timeline.editing_context:
             self.info("Not updating media types as"
@@ -604,6 +610,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             return
 
         self._layout.remove(bClip.ui)
+        bClip.ui.layer = None
         if self.timeline.draggingElement is None:
             bClip.ui = None
 

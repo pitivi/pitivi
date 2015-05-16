@@ -777,6 +777,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__layers_controls_vbox.remove(bLayer.control_ui)
 
         self._layers.remove(bLayer.ui)
+        bLayer.ui.release()
         bLayer.ui = None
         bLayer.control_ui = None
 
