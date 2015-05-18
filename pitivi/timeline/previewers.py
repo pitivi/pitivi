@@ -147,6 +147,9 @@ class PreviewGenerator(object):
         """
         PreviewGenerator.__manager.addPipeline(self)
 
+    def setSelected(self, selected):
+        pass
+
 
 class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
@@ -484,6 +487,15 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         if new_duration > self.duration:
             self.duration = new_duration
             self._force_redraw()
+
+    def setSelected(self, selected):
+        if selected:
+            opacity = 0.5
+        else:
+            opacity = 1.0
+
+        for thumb in self.get_children():
+            thumb.props.opacity = opacity
 
     def startGeneration(self):
         self._setupPipeline()

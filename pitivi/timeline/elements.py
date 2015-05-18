@@ -380,6 +380,9 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.__keyframeCurve:
             self.__keyframeCurve.props.visible = selected
 
+        if self.__previewer:
+            self.__previewer.setSelected(selected)
+
     def __keyframePlotChangedCb(self, unused_curve):
         self.queue_draw()
 
