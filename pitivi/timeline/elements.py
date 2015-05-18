@@ -355,7 +355,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
     def do_get_preferred_width(self):
         wanted_width = max(
-            0, self.nsToPixel(self._bElement.props.duration) - TrimHandle.DEFAULT_WIDTH * 2)
+            0, self.nsToPixel(self._bElement.props.duration) - TrimHandle.SELECTED_WIDTH * 2)
 
         return wanted_width, wanted_width
 
@@ -495,7 +495,8 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     __gtype_name__ = "PitiviTrimHandle"
 
-    DEFAULT_WIDTH = 5
+    SELECTED_WIDTH = 5
+    DEFAULT_WIDTH = 1
 
     def __init__(self, clip, edge):
         Gtk.EventBox.__init__(self)
@@ -506,7 +507,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
         self.edge = edge
 
         self.props.valign = Gtk.Align.FILL
-        self.props.width_request = 5
+        self.props.width_request = TrimHandle.DEFAULT_WIDTH
         if edge == GES.Edge.EDGE_END:
             self.props.halign = Gtk.Align.END
         else:
@@ -516,12 +517,6 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     def _windowSetCb(self, window, pspec):
         self.props.window.set_cursor(CURSORS[self.edge])
-
-    def do_show_all(self):
-        self.info("DO not do anythin on .show_all")
-
-    def do_get_preferred_width(self):
-        return TrimHandle.DEFAULT_WIDTH, TrimHandle.DEFAULT_WIDTH
 
     def do_draw(self, cr):
         Gtk.EventBox.do_draw(self, cr)
@@ -682,10 +677,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _eventCb(self, element, event):
         if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            self.__showHandles()
+            for handle in self.handles:
+                handle.props.width_request = TrimHandle.SELECTED_WIDTH
         elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            self.__hideHandles()
+            for handle in self.handles:
+                handle.props.width_request = TrimHandle.DEFAULT_WIDTH
 
         return False
 

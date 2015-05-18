@@ -116,7 +116,7 @@ TIMELINE_CSS = """
 
     .Trimbar {
         background-image: url('%(trimbar_normal)s');
-        opacity:0.7;
+        opacity:0.5;
     }
 
     .Trimbar:first-child {
