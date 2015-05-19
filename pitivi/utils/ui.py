@@ -52,7 +52,7 @@ from pitivi.configure import get_pixmap_dir
 # Dimensions in pixels
 TRACK_SPACING = 8
 EXPANDED_SIZE = 65
-CONTROL_WIDTH = 300
+CONTROL_WIDTH = 240
 
 PADDING = 6
 SPACING = 10

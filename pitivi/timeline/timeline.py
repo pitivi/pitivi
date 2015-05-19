@@ -758,6 +758,17 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _layerAddedCb(self, timeline, bLayer):
         self._addLayer(bLayer)
 
+    def moveLayer(self, bLayer, index):
+        layers = self.bTimeline.get_layers()
+        layer = layers.pop(bLayer.get_priority())
+        layers.insert(index, layer)
+
+        i = 0
+        for layer in layers:
+            layer.set_priority(i)
+            i += 1
+        self.bTimeline.commit()
+
     def _addLayer(self, bLayer):
         layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -777,27 +788,23 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__layers_controls_vbox.pack_start(bLayer.control_ui, False, False, 0)
 
         bLayer.ui.connect("remove-me", self._removeLayerCb)
+        bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
 
         self.show_all()
 
     def _removeLayerCb(self, layer):
         self.bTimeline.remove_layer(layer.bLayer)
 
-    def _removeLayer(self, bLayer):
-        self.info("Removing layer: %s" % bLayer.props.priority)
-        self.__layers_vbox.remove(bLayer.ui.get_parent())
-        self.__layers_controls_vbox.remove(bLayer.control_ui)
+    def __layerPriorityChangedCb(self, bTimeline, pspec):
+        self.__resetLayersByPriority()
 
-        self._layers.remove(bLayer.ui)
-        bLayer.ui.release()
-        bLayer.ui = None
-        bLayer.control_ui = None
-
+    def __resetLayersByPriority(self, reset=False):
         self._layers.sort(key=lambda layer: layer.bLayer.props.priority)
         i = 0
         self.debug("Reseting layers priorities")
         for layer in self._layers:
-            layer.bLayer.props.priority = i
+            if reset:
+                layer.bLayer.props.priority = i
 
             self.__layers_vbox.child_set_property(layer.get_parent(),
                                                   "position",
@@ -808,6 +815,19 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                                                            layer.bLayer.props.priority)
 
             i += 1
+
+    def _removeLayer(self, bLayer):
+        self.info("Removing layer: %s" % bLayer.props.priority)
+        self.__layers_vbox.remove(bLayer.ui.get_parent())
+        self.__layers_controls_vbox.remove(bLayer.control_ui)
+        bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+
+        self._layers.remove(bLayer.ui)
+        bLayer.ui.release()
+        bLayer.ui = None
+        bLayer.control_ui = None
+
+        self.__resetLayersByPriority(True)
 
     def _layerRemovedCb(self, unused_timeline, layer):
         self._removeLayer(layer)
