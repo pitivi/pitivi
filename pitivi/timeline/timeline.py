@@ -636,7 +636,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                     break
 
                 if asset.is_image():
-                    clip_duration = self._settings.imageClipLength * \
+                    clip_duration = self.app.settings.imageClipLength * \
                         Gst.SECOND / 1000.0
                 else:
                     clip_duration = asset.get_duration()
@@ -1030,7 +1030,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if isinstance(asset, GES.TitleClip):
                 clip_duration = asset.get_duration()
             elif asset.is_image():
-                clip_duration = self._settings.imageClipLength * \
+                clip_duration = self.app.settings.imageClipLength * \
                     Gst.SECOND / 1000.0
             else:
                 clip_duration = asset.get_duration()
