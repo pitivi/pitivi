@@ -726,6 +726,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 self.dropDataReady = False
 
                 for layer, clip in self.__last_clips_on_leave:
+                    if self.__on_separators:
+                        layer = self.__getDroppedLayer()
+
                     layer.add_clip(clip)
 
                 if zoom_was_fitted:
@@ -974,19 +977,23 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         return new_bLayer
 
+    def __getDroppedLayer(self):
+        priority = self._on_layer.props.priority
+        if self.__on_separators[0] == self._on_layer.ui.after_sep:
+            priority = self._on_layer.props.priority + 1
+
+        self.debug("On separator --> %s" % priority)
+        self.createLayer(max(0, priority))
+
+        return self.bTimeline.get_layers()[priority]
+
     def dragEnd(self):
         if self.draggingElement is not None and self.__got_dragged:
-            self.debug("DONE dargging %s" % self.draggingElement)
+            self.debug("DONE dragging %s" % self.draggingElement)
             self._snapEndedCb()
 
             if self.__on_separators:
-                priority = self._on_layer.props.priority
-                if self.__on_separators[0] == self._on_layer.ui.after_sep:
-                    priority = self._on_layer.props.priority + 1
-
-                self.debug("On separator --> %s" % priority)
-                self.createLayer(max(0, priority))
-                self._onSeparatorStartTime = None
+                priority = self.__getDroppedLayer().get_priority()
                 self.editing_context.editTo(self.editing_context.new_position, priority)
             self.layout.props.width = self._computeTheoricalWidth()
 
