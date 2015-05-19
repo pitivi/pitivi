@@ -798,7 +798,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _removeLayerCb(self, layer):
         self.bTimeline.remove_layer(layer.bLayer)
 
-    def __layerPriorityChangedCb(self, bTimeline, pspec):
+    def __layerPriorityChangedCb(self, bLayer, pspec):
         self.__resetLayersByPriority()
 
     def __resetLayersByPriority(self, reset=False):

@@ -22,6 +22,7 @@
 
 from gi.repository import Gtk
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GObject
 
 from gettext import gettext as _
@@ -229,32 +230,11 @@ class LayerControls(Gtk.Bin, Loggable):
         sep = SpacedSeparator()
         self._vbox.pack_start(sep, False, False, 0)
 
-        # Popup Menu
-        popup = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
-        layer_delete = Gtk.Button.new_with_label(_("_Delete layer"))
-        layer_delete.connect("clicked", self._deleteLayerCb)
-
-        layer_up = Gtk.Button.new_with_label(_("Move layer up"))
-        layer_up.connect("clicked", self._moveLayerCb, -1)
-        layer_first = Gtk.Button.new_with_label(_("Move layer to top"))
-        layer_first.connect("clicked", self._moveLayerCb, -2)
-        layer_down = Gtk.Button.new_with_label(_("Move layer down"))
-        layer_down.connect("clicked", self._moveLayerCb, 1)
-        layer_last = Gtk.Button.new_with_label(_("Move layer to bottom"))
-        layer_last.connect("clicked", self._moveLayerCb, 2)
-
-        popup.add(layer_first)
-        popup.add(layer_up)
-        popup.add(layer_down)
-        popup.add(layer_last)
-        popup.add(layer_delete)
-        popup.show_all()
-        for menu_item in popup:
-            menu_item.set_use_underline(True)
-
         menubutton = Gtk.MenuButton.new()
-        popover = Gtk.Popover.new(menubutton)
-        popover.add(popup)
+        model, action_group = self.__createMenuModel()
+        popover = Gtk.Popover.new_from_model(menubutton, model)
+        popover.insert_action_group("layer", action_group)
+
         menubutton.set_popover(popover)
         menubutton.props.direction = Gtk.ArrowType.RIGHT
         self.connect("button-release-event", self._ignoreClicksCb)
@@ -280,7 +260,53 @@ class LayerControls(Gtk.Bin, Loggable):
         self.props.width_request = ui.CONTROL_WIDTH
         self.props.height_request = ui.LAYER_HEIGHT
 
-    def _deleteLayerCb(self, unused_widget):
+        self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
+        self.__layerPriorityChangedCb(self.bLayer, None)
+
+    def __del__(self):
+        self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+        super(LayerControls, self).__del__()
+
+    def __layerPriorityChangedCb(self, bLayer, pspec):
+        if bLayer.get_priority() == 0:
+            self.__move_layer_up_action.props.enabled = False
+            self.__move_layer_top_action.props.enabled = False
+        else:
+            self.__move_layer_up_action.props.enabled = True
+            self.__move_layer_top_action.props.enabled = True
+
+    def __createMenuModel(self):
+        action_group = Gio.SimpleActionGroup()
+        menu_model = Gio.Menu()
+
+        self.__move_layer_top_action = action = Gio.SimpleAction.new("move_layer_to_top", None)
+        action.connect("activate", self._moveLayerCb, -2)
+        action_group.insert(action)
+        menu_model.append(_("Move layer to top"), "layer.%s" % action.get_name().replace(" ", "."))
+
+        self.__move_layer_up_action = action = Gio.SimpleAction.new("move_layer_up", None)
+        action.connect("activate", self._moveLayerCb, -1)
+        action_group.insert(action)
+        menu_model.append(_("Move layer up"), "layer.%s" % action.get_name().replace(" ", "."))
+
+        action = Gio.SimpleAction.new("move_layer_down", None)
+        action.connect("activate", self._moveLayerCb, 1)
+        action_group.insert(action)
+        menu_model.append(_("Move layer down"), "layer.%s" % action.get_name().replace(" ", "."))
+
+        action = Gio.SimpleAction.new("move_layer_to_bottom", None)
+        action.connect("activate", self._moveLayerCb, 2)
+        action_group.insert(action)
+        menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
+
+        action = Gio.SimpleAction.new("delete_layer", None)
+        action.connect("activate", self._deleteLayerCb)
+        action_group.insert(action)
+        menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
+
+        return menu_model, action_group
+
+    def _deleteLayerCb(self, unused_action, unused_parametter):
         self.app.action_log.begin("delete layer")
         bLayer = self.bLayer
         bTimeline = bLayer.get_timeline()
@@ -292,7 +318,7 @@ class LayerControls(Gtk.Bin, Loggable):
         self.debug("Do not pass event %s to the timeline" % event)
         return True
 
-    def _moveLayerCb(self, unused_widget, step):
+    def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
         index = self.bLayer.get_priority()
         if abs(step) == 1:
             index += step
