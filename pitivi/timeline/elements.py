@@ -196,6 +196,14 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__dragged = True
             # Check that the mouse event still is in the figure boundaries
             if event.ydata is not None and event.xdata is not None:
+
+                # The user can not change the timestamp of the first
+                # and last keyframes.
+                values = self.__source.get_all()
+                if (values[0].timestamp == self.__offset or
+                        values[-1].timestamp == self.__offset):
+                    event.xdata = self.__offset
+
                 self.__source.unset(int(self.__offset))
                 self.__source.set(event.xdata, event.ydata)
                 self.__offset = event.xdata
