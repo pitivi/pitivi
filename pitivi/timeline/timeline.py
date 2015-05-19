@@ -486,7 +486,19 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def __scrollEventCb(self, unused_widget, event):
         res, delta_x, delta_y = event.get_scroll_deltas()
         if not res:
-            return False
+            res, direction = event.get_scroll_direction()
+            if not res:
+                self.error("Could not get scroll delta")
+                return False
+
+            if direction == Gdk.ScrollDirection.UP:
+                delta_y = -1.0
+            elif direction == Gdk.ScrollDirection.DOWN:
+                delta_y = 1.0
+            else:
+                self.error("Could not handle %s scroll event"
+                           % direction)
+                return False
 
         event_widget = self.get_event_widget(event)
         x, y = event_widget.translate_coordinates(self, event.x, event.y)
