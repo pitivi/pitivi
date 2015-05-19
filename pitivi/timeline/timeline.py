@@ -779,13 +779,13 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         bLayer.ui = Layer(bLayer, self)
 
         bLayer.ui.before_sep = SpacedSeparator()
-        layer_widget.pack_start(bLayer.ui.before_sep, False, False, 5)
+        layer_widget.pack_start(bLayer.ui.before_sep, False, False, 0)
 
         self._layers.append(bLayer.ui)
         layer_widget.pack_start(bLayer.ui, True, True, 0)
 
         bLayer.ui.after_sep = SpacedSeparator()
-        layer_widget.pack_start(bLayer.ui.after_sep, False, False, 5)
+        layer_widget.pack_start(bLayer.ui.after_sep, False, False, 0)
 
         self.__layers_vbox.pack_start(layer_widget, True, True, 0)
         self.__layers_controls_vbox.pack_start(bLayer.control_ui, False, False, 0)

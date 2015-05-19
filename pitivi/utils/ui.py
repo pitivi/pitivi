@@ -152,7 +152,8 @@ TIMELINE_CSS = """
     }
 
     .SpacedSeparator:hover {
-         background-color: rgba(127, 153, 204, 0.5);
+        background-color: rgba(127, 153, 204, 0.5);
+        opacity:0.5;
     }
 
     .Marquee {

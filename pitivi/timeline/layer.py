@@ -207,6 +207,7 @@ class SpacedSeparator(Gtk.EventBox):
 
         self.get_style_context().add_class("SpacedSeparator")
         self.box.get_style_context().add_class("SpacedSeparator")
+        self.props.height_request = ui.PADDING
 
 
 class LayerControls(Gtk.Bin, Loggable):
@@ -226,7 +227,7 @@ class LayerControls(Gtk.Bin, Loggable):
         self.app = app
 
         sep = SpacedSeparator()
-        self._vbox.pack_start(sep, False, False, 5)
+        self._vbox.pack_start(sep, False, False, 0)
 
         # Popup Menu
         popup = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
@@ -271,7 +272,7 @@ class LayerControls(Gtk.Bin, Loggable):
         self._vbox.add(self.audio_control)
 
         sep = SpacedSeparator()
-        self._vbox.pack_start(sep, False, False, 5)
+        self._vbox.pack_start(sep, False, False, 0)
 
         self._vbox.props.vexpand = False
         self.props.width_request = ui.CONTROL_WIDTH
