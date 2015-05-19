@@ -109,6 +109,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
                                              c=colors, zorder=2)
+
+        # matplotlib weirdness, simply here to avoid a warning ..
+        self.__keyframes.set_picker(True)
         self.__line = self.__ax.plot([], [],
                                      linewidth=1.0, zorder=1)[0]
         self.__updatePlots()
@@ -137,8 +140,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         for value in values:
             self.__line_xs.append(value.timestamp)
             self.__line_ys.append(value.value)
-            self.__ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
-            self.__ax.set_ylim(0.0, 1.0)
+
+        self.__ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
+        self.__ax.set_ylim(0.0, 1.0)
 
         arr = numpy.array((self.__line_xs, self.__line_ys))
         arr = arr.transpose()
