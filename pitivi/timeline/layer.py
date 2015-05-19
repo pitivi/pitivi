@@ -257,6 +257,8 @@ class LayerControls(Gtk.Bin, Loggable):
         popover.add(popup)
         menubutton.set_popover(popover)
         menubutton.props.direction = Gtk.ArrowType.RIGHT
+        self.connect("button-release-event", self._ignoreClicksCb)
+        self.connect("button-press-event", self._ignoreClicksCb)
         self._hbox.add(menubutton)
         self._hbox.add(self._vbox)
         popover.props.position = Gtk.PositionType.LEFT
@@ -285,6 +287,10 @@ class LayerControls(Gtk.Bin, Loggable):
         bTimeline.remove_layer(bLayer)
         bTimeline.get_asset().pipeline.commit_timeline()
         self.app.action_log.commit()
+
+    def _ignoreClicksCb(self, unused_widget, event):
+        self.debug("Do not pass event %s to the timeline" % event)
+        return True
 
     def _moveLayerCb(self, unused_widget, step):
         index = self.bLayer.get_priority()
