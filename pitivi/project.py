@@ -1634,6 +1634,7 @@ class ProjectSettingsDialog():
         mgr.loadAll()
         model = mgr.getModel()
         combo.set_model(model)
+        combo.set_id_column(0)
         combo.set_entry_text_column(0)
         combo.connect("changed", self._presetChangedCb, mgr, button)
 
@@ -1692,12 +1693,15 @@ class ProjectSettingsDialog():
     def _updateSar(self):
         self.sar = self.getSAR()
 
-    def _selectDarRadiobuttonToggledCb(self, button):
-        state = button.props.active
-        self.dar_fraction_widget.set_sensitive(state)
-        self.dar_combo.set_sensitive(state)
-        self.par_fraction_widget.set_sensitive(not state)
-        self.par_combo.set_sensitive(not state)
+    def _selectDarRadiobuttonToggledCb(self, unused_button):
+        self._updateDarParSensitivity()
+
+    def _updateDarParSensitivity(self):
+        dar_is_selected = self.darSelected()
+        self.dar_fraction_widget.set_sensitive(dar_is_selected)
+        self.dar_combo.set_sensitive(dar_is_selected)
+        self.par_fraction_widget.set_sensitive(not dar_is_selected)
+        self.par_combo.set_sensitive(not dar_is_selected)
 
     @staticmethod
     def _getUniquePresetName(mgr):
@@ -1800,20 +1804,29 @@ class ProjectSettingsDialog():
             self.par_combo, self.par_fraction_widget.getWidgetValue())
 
     def updateUI(self):
+        # Video
         self.width_spinbutton.set_value(self.project.videowidth)
         self.height_spinbutton.set_value(self.project.videoheight)
-
-        # video
         self.frame_rate_fraction_widget.setWidgetValue(self.project.videorate)
         self.par_fraction_widget.setWidgetValue(self.project.videopar)
 
-        # audio
+        if self.project.videopar == Gst.Fraction(1, 1):
+            self.select_par_radiobutton.props.active = True
+        self._updateDarParSensitivity()
+
+        matching_video_preset = self.video_presets.matchingPreset(self.project)
+        if matching_video_preset:
+            self.video_presets_combo.set_active_id(matching_video_preset)
+
+        # Audio
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
 
-        self._selectDarRadiobuttonToggledCb(self.select_dar_radiobutton)
+        matching_audio_preset = self.audio_presets.matchingPreset(self.project)
+        if matching_audio_preset:
+            self.audio_presets_combo.set_active_id(matching_audio_preset)
 
-        # metadata
+        # Metadata
         self.title_entry.set_text(self.project.name)
         self.author_entry.set_text(self.project.author)
         if self.project.year:

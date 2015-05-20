@@ -303,6 +303,21 @@ class PresetManager(object):
         """
         raise NotImplementedError()
 
+    def _projectToPreset(self, project):
+        raise NotImplementedError()
+
+    def matchingPreset(self, project):
+        query = self._projectToPreset(project)
+        for name, preset in self.presets.items():
+            matches = True
+            for key, value in query.items():
+                if not value == preset.get(key):
+                    matches = False
+                    break
+            if matches:
+                return name
+        return None
+
 
 class VideoPresetManager(PresetManager):
 
@@ -346,6 +361,13 @@ class VideoPresetManager(PresetManager):
         }, indent=4)
         fout.write(data)
 
+    def _projectToPreset(self, project):
+        return {
+            "width": project.videowidth,
+            "height": project.videoheight,
+            "frame-rate": project.videorate,
+            "par": project.videopar}
+
 
 class AudioPresetManager(PresetManager):
 
@@ -374,6 +396,11 @@ class AudioPresetManager(PresetManager):
             "sample-rate": int(values["sample-rate"]),
         }, indent=4)
         fout.write(data)
+
+    def _projectToPreset(self, project):
+        return {
+            "channels": project.audiochannels,
+            "sample-rate": project.audiorate}
 
 
 class RenderPresetManager(PresetManager):
