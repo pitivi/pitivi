@@ -43,7 +43,10 @@ class FakePresetManager(PresetManager):
 
 
 def clearPresetManagerPaths(preset_manager):
-    shutil.rmtree(preset_manager.user_path)
+    try:
+        shutil.rmtree(preset_manager.user_path)
+    except FileNotFoundError:
+        pass
 
 
 def countJsonFilesIn(dir_path):
@@ -116,6 +119,11 @@ class TestPresetBasics(TestCase):
         # Renaming 'Preset One' to 'Preset two'.
         self.assertRaises(DuplicatePresetNameException,
                           self.manager.renamePreset, '0', 'Preset two')
+
+    def testLoadHandlesMissingDirectory(self):
+        self.manager.default_path = '/pitivi/non/existing/directory/1'
+        self.manager.user_path = '/pitivi/non/existing/directory/2'
+        self.manager.loadAll()
 
 
 class TestAudioPresetsIO(TestCase):

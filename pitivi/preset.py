@@ -31,6 +31,7 @@ from pitivi.settings import xdg_data_home
 from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
 from pitivi.utils import system
+from pitivi.utils.loggable import Loggable
 
 
 # Presets created with this name by the app should have "volatile": True
@@ -44,7 +45,7 @@ class DuplicatePresetNameException(Exception):
     pass
 
 
-class PresetManager(object):
+class PresetManager(Loggable):
 
     """Abstract class for storing a list of presets.
 
@@ -66,6 +67,8 @@ class PresetManager(object):
     """
 
     def __init__(self, default_path, user_path):
+        Loggable.__init__(self)
+
         self.default_path = default_path
         self.user_path = user_path
 
@@ -78,21 +81,19 @@ class PresetManager(object):
         self.system = system.getSystem()
 
     def loadAll(self):
-        filepaths = []
-        try:
-            for uri in os.listdir(self.default_path):
-                filepaths.append(os.path.join(self.default_path, uri))
-        except Exception:
-            pass
-        try:
-            for uri in os.listdir(self.user_path):
-                filepaths.append(os.path.join(self.user_path, uri))
-        except Exception:
-            pass
+        self._loadFromDir(self.default_path)
+        self._loadFromDir(self.user_path)
 
-        for filepath in filepaths:
+    def _loadFromDir(self, presets_dir):
+        try:
+            files = os.listdir(presets_dir)
+        except FileNotFoundError:
+            self.debug("Presets directory missing: %s", presets_dir)
+            return
+        for uri in files:
+            filepath = os.path.join(presets_dir, uri)
             if filepath.endswith("json"):
-                self._loadSection(os.path.join(self.default_path, filepath))
+                self._loadSection(filepath)
 
     def saveAll(self):
         """Write changes to disk for all presets"""
