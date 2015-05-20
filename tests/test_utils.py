@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # Pitivi video editor
 #
 #       test_utils.py
