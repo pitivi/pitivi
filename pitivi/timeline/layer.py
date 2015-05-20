@@ -20,6 +20,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GES
 from gi.repository import Gio
@@ -237,8 +238,6 @@ class LayerControls(Gtk.Bin, Loggable):
 
         menubutton.set_popover(popover)
         menubutton.props.direction = Gtk.ArrowType.RIGHT
-        self.connect("button-release-event", self._ignoreClicksCb)
-        self.connect("button-press-event", self._ignoreClicksCb)
         self._hbox.add(menubutton)
         self._hbox.add(self._vbox)
         popover.props.position = Gtk.PositionType.LEFT
@@ -262,6 +261,11 @@ class LayerControls(Gtk.Bin, Loggable):
 
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.__layerPriorityChangedCb(self.bLayer, None)
+
+        ebox.connect("notify::window", self._windowSetCb)
+
+    def _windowSetCb(self, window, pspec):
+        self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def __del__(self):
         self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
@@ -314,10 +318,6 @@ class LayerControls(Gtk.Bin, Loggable):
         bTimeline.get_asset().pipeline.commit_timeline()
         self.app.action_log.commit()
 
-    def _ignoreClicksCb(self, unused_widget, event):
-        self.debug("Do not pass event %s to the timeline" % event)
-        return True
-
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
         index = self.bLayer.get_priority()
         if abs(step) == 1:
@@ -328,6 +328,7 @@ class LayerControls(Gtk.Bin, Loggable):
             index = len(self.bLayer.get_timeline().get_layers()) - 1
             # if audio, set last position
         self.bLayer.get_timeline().ui.moveLayer(self.bLayer, index)
+        self.app.project_manager.current_project.pipeline.commit_timeline()
 
 
 class LayerLayout(Gtk.Layout, Loggable):

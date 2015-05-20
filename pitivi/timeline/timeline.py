@@ -262,6 +262,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__setUpDragAndDrop()
         self.__setupSelectionMarquee()
 
+        # Reorder layers
+        self.__moving_layer = None
+
         self.__button_pressed = False
 
         # Setup our Gtk.Widget properties
@@ -452,10 +455,10 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         parent = widget.get_parent()
         while parent is not None and parent != self:
-            parent = parent.get_parent()
-
             if isinstance(parent, _type):
                 return parent
+
+            parent = parent.get_parent()
         return None
 
     def adjustCoords(self, coords=None, x=None, y=None):
@@ -544,21 +547,34 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
-
             else:
-                self.__marquee.setStartPosition(event)
+                layer_controls = self._getParentOfType(event_widget, LayerControls)
+                if not layer_controls:
+                    self.__marquee.setStartPosition(event)
+                else:
+                    self.__moving_layer = layer_controls.bLayer
 
         return False
 
     def __buttonReleaseEventCb(self, unused_widget, event):
         if self.draggingElement:
             self.dragEnd()
+        elif self.__moving_layer:
+            self.__endMovingLayer()
+
+            return False
         else:
             self._selectUnderMarquee()
 
+        event_widget = self.get_event_widget(event)
+        if event_widget and self._getParentOfType(event_widget, LayerControls):
+            # Never seek when the LayerControls box has been clicked
+
+            return False
+
         if self.allowSeek:
             event_widget = self.get_event_widget(event)
-            x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+            x, unusedy = event_widget.translate_coordinates(self, event.x, event.y)
             x -= CONTROL_WIDTH
             x += self.hadj.get_value()
 
@@ -583,6 +599,21 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
             self.__dragUpdate(self.get_event_widget(event), event.x, event.y)
             self.got_dragged = True
+        elif self.__moving_layer:
+            event_widget = self.get_event_widget(event)
+            unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
+            priority = self.__moving_layer.get_priority()
+            layer, on_sep = self.__getLayerAt(y)
+
+            if on_sep:
+                if layer.ui.after_sep in on_sep:
+                    priority = layer.get_priority() + 1
+                else:
+                    priority = layer.get_priority() - 1
+            elif layer != self.__moving_layer:
+                priority = layer.get_priority()
+
+            self.moveLayer(self.__moving_layer, priority)
         elif self.__marquee.start_x:
             self.__marquee.move(event)
 
@@ -770,7 +801,6 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         for layer in layers:
             layer.set_priority(i)
             i += 1
-        self.bTimeline.commit()
 
     def _addLayer(self, bLayer):
         layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -1012,6 +1042,10 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__on_separators = []
 
         self.queue_draw()
+
+    def __endMovingLayer(self):
+        self._project.pipeline.commit_timeline()
+        self.__moving_layer = None
 
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
