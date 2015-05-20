@@ -1476,8 +1476,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                         self.info("Moving audio audio clip %s to new layer %s" % (clip, new_layer))
                         clip.move_to_layer(new_layer)
 
-                self._project.pipeline.commit_timeline()
-
             self.timeline.resetSelectionGroup()
 
             self.app.action_log.commit()
