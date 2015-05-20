@@ -131,8 +131,8 @@ class PresetManager(Loggable):
         else:
             return preset
 
-    def addPreset(self, name, values):
-        """Add a new preset.
+    def createPreset(self, name, values):
+        """Create a new preset.
 
         @param name: The name of the new preset.
         @type name: str
@@ -141,6 +141,22 @@ class PresetManager(Loggable):
         """
         if self.hasPreset(name):
             raise DuplicatePresetNameException(name)
+        self._addPreset(name, values)
+
+    def _addPreset(self, name, values):
+        """Add a new preset.
+
+        @param name: The name of the new preset.
+        @type name: str
+        @param values: The values of the new preset.
+        @type values: dict
+        """
+        if name in self.presets:
+            del self.presets[name]
+            for i, row in enumerate(self.ordered):
+                if row[0] == name:
+                    del self.ordered[i]
+                    break
         self.presets[name] = values
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
@@ -346,7 +362,7 @@ class VideoPresetManager(PresetManager):
         par_denom = parser["par-denom"]
         par = Gst.Fraction(par_num, par_denom)
 
-        self.addPreset(name, {
+        self._addPreset(name, {
             "width": width,
             "height": height,
             "frame-rate": framerate,
@@ -390,7 +406,7 @@ class AudioPresetManager(PresetManager):
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
-        self.addPreset(name, {
+        self._addPreset(name, {
             "channels": channels,
             "sample-rate": sample_rate,
             "filepath": filepath,
@@ -448,7 +464,7 @@ class RenderPresetManager(PresetManager):
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
-        self.addPreset(name, {
+        self._addPreset(name, {
             "container": container,
             "acodec": acodec,
             "vcodec": vcodec,

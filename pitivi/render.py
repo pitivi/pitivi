@@ -611,16 +611,19 @@ class RenderDialog(Loggable):
 
     def _addRenderPresetButtonClickedCb(self, unused_button):
         preset_name = self._getUniquePresetName(self.render_presets)
-        self.render_presets.addPreset(preset_name, {
+        framerate = Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
+                                 int(get_combo_value(self.frame_rate_combo).denom))
+        preset = {
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
             "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
             "container": get_combo_value(self.muxercombobox).get_name(),
-            "frame-rate": Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                                       int(get_combo_value(self.frame_rate_combo).denom)),
+            "frame-rate": framerate,
             "height": 0,
-            "width": 0})
+            "width": 0,
+        }
+        self.render_presets.createPreset(preset_name, preset)
 
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()

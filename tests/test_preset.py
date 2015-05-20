@@ -92,23 +92,23 @@ class TestPresetBasics(TestCase):
         self.assertEqual("defaulT_", self.sectionToPreset('defaulT__'))
 
     def testAddPreset(self):
-        self.manager.addPreset('preseT onE', {'name1': '1A'})
+        self.manager.createPreset('preseT onE', {'name1': '1A'})
         self.assertRaises(DuplicatePresetNameException,
-                          self.manager.addPreset, 'Preset One', {'name1': '2A'})
+                          self.manager.createPreset, 'Preset One', {'name1': '2A'})
 
     def testAddDuplicatePreset(self):
-        self.manager.addPreset('x', {})
+        self.manager.createPreset('x', {})
         self.assertRaises(
-            DuplicatePresetNameException, self.manager.addPreset, 'x', {})
+            DuplicatePresetNameException, self.manager.createPreset, 'x', {})
 
     def testAddPresetWithNonAsciiName(self):
         unicode_name = "ソリッド・スネーク"
-        self.manager.addPreset(unicode_name, {})
+        self.manager.createPreset(unicode_name, {})
         self.assertTrue(unicode_name in self.manager.getPresetNames())
 
     def testRenamePreset(self):
-        self.manager.addPreset('preseT onE', {'name1': '1A'})
-        self.manager.addPreset('Preset Two', {'name1': '2A'})
+        self.manager.createPreset('preseT onE', {'name1': '1A'})
+        self.manager.createPreset('Preset Two', {'name1': '2A'})
 
         # Renaming 'preseT onE' to 'Preset One'.
         self.manager.renamePreset('0', 'Preset One')
@@ -141,15 +141,15 @@ class TestAudioPresetsIO(TestCase):
         return other_manager
 
     def testSaveAndLoad(self):
-        self.manager.addPreset("Vegeta",
-                               {"channels": 6000,
-                                "sample-rate": 44100})
+        self.manager.createPreset("Vegeta",
+                                  {"channels": 6000,
+                                   "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(1, countUserPresets(self.manager))
 
-        self.manager.addPreset("Nappa",
-                               {"channels": 4000,
-                                "sample-rate": 44100})
+        self.manager.createPreset("Nappa",
+                                  {"channels": 4000,
+                                   "sample-rate": 44100})
         self.manager.saveAll()
         self.assertEqual(2, countUserPresets(self.manager))
 
@@ -161,9 +161,9 @@ class TestAudioPresetsIO(TestCase):
 
     def testNonAsciiFilenamesSaveAndLoad(self):
         non_ascii_preset_name = "Solid Snake (ソリッド・スネーク) \\#!\"'$%?&*"
-        self.manager.addPreset(non_ascii_preset_name,
-                               {"channels": 2,
-                                "sample-rate": 44100})
+        self.manager.createPreset(non_ascii_preset_name,
+                                  {"channels": 2,
+                                   "sample-rate": 44100})
         snake = self.manager.presets[non_ascii_preset_name]
         self.assertEqual(2, len(snake))
         self.manager.saveAll()
@@ -178,9 +178,9 @@ class TestAudioPresetsIO(TestCase):
     def testInvalidFilenamesSaveAndLoad(self):
         # This would be an invalid file name as is.
         preset_name = " / % "
-        self.manager.addPreset(preset_name,
-                               {"channels": 2,
-                                "sample-rate": 44100})
+        self.manager.createPreset(preset_name,
+                                  {"channels": 2,
+                                   "sample-rate": 44100})
         values = self.manager.presets[preset_name]
         self.assertEqual(2, len(values))
         self.manager.saveAll()
