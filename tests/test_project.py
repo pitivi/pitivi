@@ -26,6 +26,7 @@ from unittest import TestCase
 
 from gi.repository import GES
 from gi.repository import GLib
+from gi.repository import Gst
 
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
@@ -389,6 +390,27 @@ class TestProjectLoading(TestCase):
         self.assertTrue(
             result[1], "Asset add failed to trigger signal: done-importing")
         self.assertTrue(result[2], "Asset re-adding failed")
+
+
+class TestProjectChanging(TestCase):
+
+    def testAudio(self):
+        project = _createRealProject(name="noname")
+        project.audiochannels = 2
+        self.assertEqual(2, project.audiochannels)
+        project.audiorate = 44100
+        self.assertEqual(44100, project.audiorate)
+
+    def testVideo(self):
+        project = _createRealProject(name="noname")
+        project.videowidth = 1920
+        self.assertEqual(1920, project.videowidth)
+        project.videoheight = 1080
+        self.assertEqual(1080, project.videoheight)
+        project.videorate = Gst.Fraction(50, 7)
+        self.assertEqual(Gst.Fraction(50, 7), project.videorate)
+        project.videopar = Gst.Fraction(2, 7)
+        self.assertEqual(Gst.Fraction(2, 7), project.videopar)
 
 
 class TestExportSettings(TestCase):
