@@ -82,6 +82,9 @@ class PresetManager(Loggable):
 
     def loadAll(self):
         self._loadFromDir(self.default_path)
+        if os.path.isfile(self.user_path):
+            # We used to save presets as a single file instead of a directory
+            os.rename(self.user_path, "%s.old" % self.user_path)
         self._loadFromDir(self.user_path)
 
     def _loadFromDir(self, presets_dir):
@@ -102,9 +105,6 @@ class PresetManager(Loggable):
 
     def savePreset(self, preset_name):
         assert preset_name != CUSTOM_PRESET_NAME
-        if os.path.isfile(self.user_path):
-            # We used to save presets as a single file instead of a directory
-            os.remove(self.user_path)
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         try:
