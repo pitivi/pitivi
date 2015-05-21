@@ -13,7 +13,6 @@ tests =	\
 	test_prefs.py \
 	test_preset.py \
 	test_project.py \
-	test_projectsettings.py \
 	test_system.py \
 	test_timeline_timeline.py \
 	test_undo.py \

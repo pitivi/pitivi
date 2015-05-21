@@ -71,35 +71,10 @@ class TestPresetBasics(TestCase):
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
 
-    def testConvertPresetNameToSectionName(self):
-        self.presetToSection = self.manager._convertPresetNameToSectionName
-        self.assertEqual("my preset", self.presetToSection('my preset'))
-        self.assertEqual("my preset_", self.presetToSection('my preset_'))
-        self.assertEqual("default_x_", self.presetToSection('default_x_'))
-
-        # Test that default_* preset names get a _ character at the end.
-        self.assertEqual("Default_", self.presetToSection('Default'))
-        self.assertEqual("defaulT__", self.presetToSection('defaulT_'))
-
-    def testConvertSectionNameToPresetName(self):
-        self.sectionToPreset = self.manager._convertSectionNameToPresetName
-        self.assertEqual("my preset", self.sectionToPreset('my preset'))
-        self.assertEqual("my preset_", self.sectionToPreset('my preset_'))
-        self.assertEqual("default_x_", self.sectionToPreset('default_x_'))
-
-        # Test that default_+ section names lose the last character.
-        self.assertEqual("Default", self.sectionToPreset('Default_'))
-        self.assertEqual("defaulT_", self.sectionToPreset('defaulT__'))
-
     def testAddPreset(self):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
         self.assertRaises(DuplicatePresetNameException,
                           self.manager.createPreset, 'Preset One', {'name1': '2A'})
-
-    def testAddDuplicatePreset(self):
-        self.manager.createPreset('x', {})
-        self.assertRaises(
-            DuplicatePresetNameException, self.manager.createPreset, 'x', {})
 
     def testAddPresetWithNonAsciiName(self):
         unicode_name = "ソリッド・スネーク"
@@ -124,6 +99,20 @@ class TestPresetBasics(TestCase):
         self.manager.default_path = '/pitivi/non/existing/directory/1'
         self.manager.user_path = '/pitivi/non/existing/directory/2'
         self.manager.loadAll()
+
+    def testGetUniquePresetName(self):
+        name = self.manager.getNewPresetName()
+        self.assertEqual('New preset', name)
+
+        self.manager.createPreset(name, {})
+        new_preset1 = self.manager.getNewPresetName()
+        self.assertEqual('New preset 1', new_preset1)
+
+        # Intentionally add 'New preset 2' before 'New preset 1'.
+        self.manager.createPreset('New preset 2', {})
+        self.manager.createPreset('New preset 1', {})
+        new_preset3 = self.manager.getNewPresetName()
+        self.assertEqual('New preset 3', new_preset3)
 
 
 class TestAudioPresetsIO(TestCase):

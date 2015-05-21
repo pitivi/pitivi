@@ -34,11 +34,6 @@ from pitivi.utils import system
 from pitivi.utils.loggable import Loggable
 
 
-# Presets created with this name by the app should have "volatile": True
-# so they cannot be saved.
-CUSTOM_PRESET_NAME = _("Custom")
-
-
 class DuplicatePresetNameException(Exception):
 
     """Raised when an operation would result in a duplicated preset name."""
@@ -104,7 +99,6 @@ class PresetManager(Loggable):
             self.savePreset(preset_name)
 
     def savePreset(self, preset_name):
-        assert preset_name != CUSTOM_PRESET_NAME
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         try:
@@ -116,23 +110,36 @@ class PresetManager(Loggable):
         with open(file_path, "w") as fout:
             self._saveSection(fout, preset_name)
 
-    def _convertSectionNameToPresetName(self, section):
-        # A section name for a ConfigParser can have any name except "default"!
-        assert section != "default"
-        if section.rstrip("_").lower() == "default":
-            return section[:-1]
-        else:
-            return section
+    def getUniqueName(self, first=_("Custom"), second=_("Custom %d")):
+        name = first
+        i = 1
+        while self.hasPreset(name):
+            name = second % i
+            i += 1
+        return name
 
-    def _convertPresetNameToSectionName(self, preset):
-        if preset.rstrip("_").lower() == "default":
-            # We add an _ to allow the user to have a preset named "default".
-            return "%s_" % preset
-        else:
-            return preset
+    def getNewPresetName(self):
+        """Get a unique name for a new preset."""
+        return self.getUniqueName(_("New preset"), _("New preset %d"))
 
-    def createPreset(self, name, values):
+    def createPreset(self, name, values, volatile=False):
         """Create a new preset.
+
+        @param name: The name of the new preset, must be unique.
+        @type name: str
+        @param values: The values of the new preset.
+        @type values: dict
+        @param volatile: Whether the preset should not be saveable.
+        @type volatile: bool
+        """
+        if self.hasPreset(name):
+            raise DuplicatePresetNameException(name)
+        if volatile:
+            values["volatile"] = True
+        self._addPreset(name, values)
+
+    def _addPreset(self, name, values):
+        """Add a preset, overwriting the preset with the same name if it exists.
 
         @param name: The name of the new preset.
         @type name: str
@@ -140,21 +147,9 @@ class PresetManager(Loggable):
         @type values: dict
         """
         if self.hasPreset(name):
-            raise DuplicatePresetNameException(name)
-        self._addPreset(name, values)
-
-    def _addPreset(self, name, values):
-        """Add a new preset.
-
-        @param name: The name of the new preset.
-        @type name: str
-        @param values: The values of the new preset.
-        @type values: dict
-        """
-        if name in self.presets:
-            del self.presets[name]
             for i, row in enumerate(self.ordered):
                 if row[0] == name:
+                    del self.presets[row[1]["name"]]
                     del self.ordered[i]
                     break
         self.presets[name] = values
@@ -278,7 +273,7 @@ class PresetManager(Loggable):
         self.ordered.prepend((name, values))
 
     def isSaveButtonSensitive(self):
-        """Check if the Save button should be sensitive"""
+        """Whether the Save button should be enabled"""
         if not self.cur_preset:
             return False
         if "volatile" in self.presets[self.cur_preset]:
@@ -297,8 +292,10 @@ class PresetManager(Loggable):
             return self._isCurrentPresetChanged()
 
     def isRemoveButtonSensitive(self):
-        """Check if the Remove button should be sensitive"""
+        """Whether the Remove button should be enabled"""
         if not self.cur_preset:
+            return False
+        if "volatile" in self.presets[self.cur_preset]:
             return False
         try:
             full_path = self.presets[self.cur_preset]["filepath"]

@@ -39,7 +39,6 @@ from gettext import gettext as _
 from pitivi import configure
 
 from pitivi.check import missing_soft_deps
-from pitivi.preset import CUSTOM_PRESET_NAME
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -422,11 +421,10 @@ class RenderDialog(Loggable):
         self.bindHeight(self.render_presets)
         self.bindWidth(self.render_presets)
 
-        self.createVolatileCustomPreset(self.render_presets)
+        self.createVolatileCustomPreset()
 
-    def createVolatileCustomPreset(self, mgr):
-        mgr.prependPreset(CUSTOM_PRESET_NAME, {
-            "volatile": True,
+    def createVolatileCustomPreset(self):
+        preset = {
             "channels": int(get_combo_value(self.channels_combo)),
             "sample-rate": int(get_combo_value(self.sample_rate_combo)),
             "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
@@ -436,7 +434,9 @@ class RenderDialog(Loggable):
                 int(get_combo_value(self.frame_rate_combo).num),
                 int(get_combo_value(self.frame_rate_combo).denom)),
             "height": self.project.videoheight,
-            "width": self.project.videowidth})
+            "width": self.project.videowidth}
+        name = self.render_presets.getUniqueName()
+        self.render_presets.createPreset(name, preset, volatile=True)
 
     def bindCombo(self, mgr, name, widget):
         if name == "container":
@@ -597,20 +597,8 @@ class RenderDialog(Loggable):
     def _updateRenderSaveButton(self, unused_in, button):
         button.set_sensitive(self.render_presets.isSaveButtonSensitive())
 
-    @staticmethod
-    def _getUniquePresetName(mgr):
-        """Get a unique name for a new preset for the specified PresetManager.
-        """
-        existing_preset_names = list(mgr.getPresetNames())
-        preset_name = _("New preset")
-        i = 1
-        while preset_name in existing_preset_names:
-            preset_name = _("New preset %d") % i
-            i += 1
-        return preset_name
-
     def _addRenderPresetButtonClickedCb(self, unused_button):
-        preset_name = self._getUniquePresetName(self.render_presets)
+        preset_name = self.render_presets.getNewPresetName()
         framerate = Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
                                  int(get_combo_value(self.frame_rate_combo).denom))
         preset = {
@@ -624,7 +612,6 @@ class RenderDialog(Loggable):
             "width": 0,
         }
         self.render_presets.createPreset(preset_name, preset)
-
         self.render_presets.restorePreset(preset_name)
         self._updateRenderPresetButtons()
 

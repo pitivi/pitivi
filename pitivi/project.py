@@ -1703,20 +1703,8 @@ class ProjectSettingsDialog():
         self.par_fraction_widget.set_sensitive(not dar_is_selected)
         self.par_combo.set_sensitive(not dar_is_selected)
 
-    @staticmethod
-    def _getUniquePresetName(mgr):
-        """Get a unique name for a new preset for the specified PresetManager.
-        """
-        existing_preset_names = list(mgr.getPresetNames())
-        preset_name = _("New preset")
-        i = 1
-        while preset_name in existing_preset_names:
-            preset_name = _("New preset %d") % i
-            i += 1
-        return preset_name
-
     def _addAudioPresetCb(self, unused_action, unused_param):
-        preset_name = self._getUniquePresetName(self.audio_presets)
+        preset_name = self.audio_presets.getNewPresetName()
         preset = {
             "channels": get_combo_value(self.channels_combo),
             "sample-rate": get_combo_value(self.sample_rate_combo),
@@ -1726,7 +1714,7 @@ class ProjectSettingsDialog():
         self._updateAudioPresetMenu()
 
     def _addVideoPresetCb(self, unused_action, unused_param):
-        preset_name = self._getUniquePresetName(self.video_presets)
+        preset_name = self.video_presets.getNewPresetName()
         preset = {
             "width": int(self.width_spinbutton.get_value()),
             "height": int(self.height_spinbutton.get_value()),
