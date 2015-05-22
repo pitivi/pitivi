@@ -687,6 +687,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 layer, on_sep = self.__getLayerAt(y)
                 if not placement:
                     placement = self.pixelToNs(x)
+                placement = max(0, placement)
 
                 self.debug("Creating %s at %s" % (uri, Gst.TIME_ARGS(placement)))
 
@@ -700,6 +701,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 self.current_group.add(bClip.get_toplevel_parent())
                 self.selection.setSelection([], timelineUtils.SELECT_ADD)
                 self.app.action_log.commit()
+                self._project.pipeline.commit_timeline()
 
                 if not self.draggingElement:
                     self.draggingElement = bClip.ui
