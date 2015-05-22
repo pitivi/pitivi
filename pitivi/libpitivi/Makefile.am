@@ -22,8 +22,9 @@ lib_LTLIBRARIES = libpitivi-1.0.la
 
 INTROSPECTION_GIRS = Pitivi-1.0.gir
 
-introspection_source_h = $(source_h)
-introspection_source_c = $(source_c)
+introspection_source_h = $(patsubst %,$(srcdir)/%, $(source_h))
+introspection_source_c = $(patsubst %,$(srcdir)/%, $(source_c))
+
 Pitivi-1.0.gir: $(INTROSPECTION_SCANNER) libpitivi-1.0.la
 		$(INTROSPECTION_SCANNER) -v --namespace Pitivi \
 		--nsversion=1.0 \
