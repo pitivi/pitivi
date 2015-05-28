@@ -410,16 +410,38 @@ class RenderDialog(Loggable):
             self.render_presets: self.render_preset_infobar}
 
         # Bind widgets to RenderPresetsManager
-        self.bindCombo(self.render_presets, "channels", self.channels_combo)
-        self.bindCombo(
-            self.render_presets, "sample-rate", self.sample_rate_combo)
-        self.bindCombo(self.render_presets, "acodec", self.audio_encoder_combo)
-        self.bindCombo(self.render_presets, "vcodec", self.video_encoder_combo)
-        self.bindCombo(self.render_presets, "container", self.muxercombobox)
-        self.bindCombo(
-            self.render_presets, "frame-rate", self.frame_rate_combo)
-        self.bindHeight(self.render_presets)
-        self.bindWidth(self.render_presets)
+        self.render_presets.bindWidget(
+            "container",
+            lambda x: self.muxer_setter(self.muxercombobox, x),
+            lambda: get_combo_value(self.muxercombobox).get_name())
+        self.render_presets.bindWidget(
+            "acodec",
+            lambda x: self.acodec_setter(self.audio_encoder_combo, x),
+            lambda: get_combo_value(self.audio_encoder_combo).get_name())
+        self.render_presets.bindWidget(
+            "vcodec",
+            lambda x: self.vcodec_setter(self.video_encoder_combo, x),
+            lambda: get_combo_value(self.video_encoder_combo).get_name())
+        self.render_presets.bindWidget(
+            "sample-rate",
+            lambda x: self.sample_rate_setter(self.sample_rate_combo, x),
+            lambda: get_combo_value(self.sample_rate_combo))
+        self.render_presets.bindWidget(
+            "channels",
+            lambda x: self.channels_setter(self.channels_combo, x),
+            lambda: get_combo_value(self.channels_combo))
+        self.render_presets.bindWidget(
+            "frame-rate",
+            lambda x: self.framerate_setter(self.frame_rate_combo, x),
+            lambda: get_combo_value(self.frame_rate_combo))
+        self.render_presets.bindWidget(
+            "height",
+            lambda x: setattr(self.project, "videoheight", x),
+            lambda: 0)
+        self.render_presets.bindWidget(
+            "width",
+            lambda x: setattr(self.project, "videowidth", x),
+            lambda: 0)
 
         self.createVolatileCustomPreset()
 
@@ -437,37 +459,6 @@ class RenderDialog(Loggable):
             "width": self.project.videowidth}
         name = self.render_presets.getUniqueName()
         self.render_presets.createPreset(name, preset, volatile=True)
-
-    def bindCombo(self, mgr, name, widget):
-        if name == "container":
-            mgr.bindWidget(name,
-                           lambda x: self.muxer_setter(widget, x),
-                           lambda: get_combo_value(widget).get_name())
-
-        elif name == "acodec":
-            mgr.bindWidget(name,
-                           lambda x: self.acodec_setter(widget, x),
-                           lambda: get_combo_value(widget).get_name())
-
-        elif name == "vcodec":
-            mgr.bindWidget(name,
-                           lambda x: self.vcodec_setter(widget, x),
-                           lambda: get_combo_value(widget).get_name())
-
-        elif name == "sample-rate":
-            mgr.bindWidget(name,
-                           lambda x: self.sample_rate_setter(widget, x),
-                           lambda: get_combo_value(widget))
-
-        elif name == "channels":
-            mgr.bindWidget(name,
-                           lambda x: self.channels_setter(widget, x),
-                           lambda: get_combo_value(widget))
-
-        elif name == "frame-rate":
-            mgr.bindWidget(name,
-                           lambda x: self.framerate_setter(widget, x),
-                           lambda: get_combo_value(widget))
 
     def muxer_setter(self, widget, value):
         set_combo_value(widget, Gst.ElementFactory.find(value))
@@ -509,16 +500,6 @@ class RenderDialog(Loggable):
     def framerate_setter(self, widget, value):
         set_combo_value(widget, value)
         self.project.videorate = value
-
-    def bindHeight(self, mgr):
-        mgr.bindWidget("height",
-                       lambda x: setattr(self.project, "videoheight", x),
-                       lambda: 0)
-
-    def bindWidth(self, mgr):
-        mgr.bindWidget("width",
-                       lambda x: setattr(self.project, "videowidth", x),
-                       lambda: 0)
 
     def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
         """Set up the specified treeview to display the specified presets.
