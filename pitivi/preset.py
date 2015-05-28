@@ -40,6 +40,10 @@ class DuplicatePresetNameException(Exception):
     pass
 
 
+class DeserializeException(Exception):
+    pass
+
+
 class PresetManager(Loggable):
 
     """Abstract class for storing a list of presets.
@@ -91,7 +95,16 @@ class PresetManager(Loggable):
         for uri in files:
             filepath = os.path.join(presets_dir, uri)
             if filepath.endswith("json"):
-                self._loadSection(filepath)
+                with open(filepath) as section:
+                    parser = json.loads(section.read())
+                name = parser["name"]
+                try:
+                    preset = self._deserializePreset(parser)
+                except DeserializeException as e:
+                    self.error("Failed to load preset %s: %s", filepath, e)
+                    continue
+                preset["filepath"] = filepath
+                self._addPreset(name, preset)
 
     def saveAll(self):
         """Write changes to disk for all presets"""
@@ -337,11 +350,7 @@ class VideoPresetManager(PresetManager):
         user_path = os.path.join(xdg_data_home(), 'video_presets')
         PresetManager.__init__(self, default_path, user_path)
 
-    def _loadSection(self, filepath):
-        with open(filepath) as section:
-            parser = json.loads(section.read())
-
-        name = parser["name"]
+    def _deserializePreset(self, parser):
         width = parser["width"]
         height = parser["height"]
 
@@ -353,13 +362,12 @@ class VideoPresetManager(PresetManager):
         par_denom = parser["par-denom"]
         par = Gst.Fraction(par_num, par_denom)
 
-        self._addPreset(name, {
+        return {
             "width": width,
             "height": height,
             "frame-rate": framerate,
             "par": par,
-            "filepath": filepath,
-        })
+        }
 
     def _serializePreset(self, preset):
         return {
@@ -386,19 +394,14 @@ class AudioPresetManager(PresetManager):
         user_path = os.path.join(xdg_data_home(), 'audio_presets')
         PresetManager.__init__(self, default_path, user_path)
 
-    def _loadSection(self, filepath):
-        with open(filepath) as section:
-            parser = json.loads(section.read())
-
-        name = parser["name"]
+    def _deserializePreset(self, parser):
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
-        self._addPreset(name, {
+        return {
             "channels": channels,
             "sample-rate": sample_rate,
-            "filepath": filepath,
-        })
+        }
 
     def _serializePreset(self, preset):
         return {
@@ -419,21 +422,19 @@ class RenderPresetManager(PresetManager):
         user_path = os.path.join(xdg_data_home(), 'render_presets')
         PresetManager.__init__(self, default_path, user_path)
 
-    def _loadSection(self, filepath):
-        with open(filepath) as section:
-            parser = json.loads(section.read())
-
-        name = parser["name"]
+    def _deserializePreset(self, parser):
         container = parser["container"]
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
         from pitivi.render import CachedEncoderList
         cached_encs = CachedEncoderList()
-        if (acodec not in [fact.get_name() for fact in cached_encs.aencoders] or
-                vcodec not in [fact.get_name() for fact in cached_encs.vencoders] or
-                container not in [fact.get_name() for fact in cached_encs.muxers]):
-            return
+        if acodec not in [fact.get_name() for fact in cached_encs.aencoders]:
+            raise DeserializeException("Audio codec not available: %s" % acodec)
+        if vcodec not in [fact.get_name() for fact in cached_encs.vencoders]:
+            raise DeserializeException("Video codec not available: %s" % vcodec)
+        if container not in [fact.get_name() for fact in cached_encs.muxers]:
+            raise DeserializeException("Container not available: %s" % vcodec)
 
         try:
             width = parser["width"]
@@ -449,7 +450,7 @@ class RenderPresetManager(PresetManager):
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
-        self._addPreset(name, {
+        return {
             "container": container,
             "acodec": acodec,
             "vcodec": vcodec,
@@ -458,8 +459,7 @@ class RenderPresetManager(PresetManager):
             "frame-rate": framerate,
             "channels": channels,
             "sample-rate": sample_rate,
-            "filepath": filepath,
-        })
+        }
 
     def _serializePreset(self, preset):
         return {
