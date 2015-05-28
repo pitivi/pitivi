@@ -28,7 +28,6 @@ from gi.repository import Gtk
 from gettext import gettext as _
 
 from pitivi.settings import xdg_data_home
-from pitivi.utils.misc import isWritable
 from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
 from pitivi.utils import system
 from pitivi.utils.loggable import Loggable
@@ -80,13 +79,13 @@ class PresetManager(Loggable):
         self.system = system.getSystem()
 
     def loadAll(self):
-        self._loadFromDir(self.default_path)
+        self._loadFromDir(self.default_path, extra={"readonly": True})
         if os.path.isfile(self.user_path):
             # We used to save presets as a single file instead of a directory
             os.rename(self.user_path, "%s.old" % self.user_path)
         self._loadFromDir(self.user_path)
 
-    def _loadFromDir(self, presets_dir):
+    def _loadFromDir(self, presets_dir, extra={}):
         try:
             files = os.listdir(presets_dir)
         except FileNotFoundError:
@@ -98,12 +97,17 @@ class PresetManager(Loggable):
                 with open(filepath) as section:
                     parser = json.loads(section.read())
                 name = parser["name"]
+                if parser.get("removed"):
+                    self._forgetPreset(name)
+                    continue
                 try:
                     preset = self._deserializePreset(parser)
                 except DeserializeException as e:
                     self.error("Failed to load preset %s: %s", filepath, e)
                     continue
                 preset["filepath"] = filepath
+                for key, value in extra.items():
+                    preset[key] = value
                 self._addPreset(name, preset)
 
     def saveAll(self):
@@ -117,8 +121,7 @@ class PresetManager(Loggable):
         try:
             file_path = self.presets[preset_name]["filepath"]
         except KeyError:
-            file_name = self.system.getUniqueFilename(preset_name + ".json")
-            file_path = os.path.join(self.user_path, file_name)
+            file_path = self._buildFilePath(preset_name)
             self.presets[preset_name]["filepath"] = file_path
         with open(file_path, "w") as fout:
             values = self.presets[preset_name]
@@ -126,6 +129,10 @@ class PresetManager(Loggable):
             raw["name"] = preset_name
             serialized = json.dumps(raw, indent=4)
             fout.write(serialized)
+
+    def _buildFilePath(self, preset_name):
+        file_name = self.system.getUniqueFilename(preset_name + ".json")
+        return os.path.join(self.user_path, file_name)
 
     def getUniqueName(self, first=_("Custom"), second=_("Custom %d")):
         name = first
@@ -193,10 +200,13 @@ class PresetManager(Loggable):
         else:
             # We're renaming an unsaved preset, so just pop it from the list
             self.presets.pop(old_name)
-        new_filepath = os.path.join(self.user_path, new_name + ".json")
+        new_filepath = self._createUserPresetPath(new_name)
         self.presets[new_name]["filepath"] = new_filepath
         self.cur_preset = new_name
         self.saveCurrentPreset()
+
+    def _createUserPresetPath(self, preset_name):
+        return os.path.join(self.user_path, preset_name + ".json")
 
     def hasPreset(self, name):
         name = name.lower()
@@ -264,21 +274,29 @@ class PresetManager(Loggable):
     def removePreset(self, name=None):
         if name is None:
             name = self.cur_preset
-        try:
-            # Deletes json file if exists
-            os.remove(self.presets[name]["filepath"])
-        except KeyError:
-            # Trying to remove a preset that has not actually been saved
-            return
-        except Exception:
-            raise
+        preset = self.presets[name]
+        filepath = preset.get("filepath")
+        if filepath:
+            if "readonly" in preset:
+                self._markRemoved(name)
+            else:
+                os.remove(filepath)
+        if self.cur_preset == name:
+            self.cur_preset = None
+        self._forgetPreset(name)
+
+    def _forgetPreset(self, name):
         self.presets.pop(name)
         for i, row in enumerate(self.ordered):
             if row[0] == name:
                 del self.ordered[i]
                 break
-        if self.cur_preset == name:
-            self.cur_preset = None
+
+    def _markRemoved(self, name):
+        data = json.dumps({"name": name, "removed": True}, indent=4)
+        filepath = self._createUserPresetPath(name)
+        with open(filepath, "w") as fout:
+            fout.write(data)
 
     def prependPreset(self, name, values):
         self.presets[name] = values
@@ -291,35 +309,13 @@ class PresetManager(Loggable):
             return False
         if "volatile" in self.presets[self.cur_preset]:
             return False
-        try:
-            full_path = self.presets[self.cur_preset]["filepath"]
-        except KeyError:
-            # This is a newly created preset that has not yet been saved
-            return True
-        (dir, name) = os.path.split(full_path)
-        if dir == self.default_path or not isWritable(full_path):
-            # default_path is the system-wide directory where the default
-            # presets are installed; they are not expected to be editable.
-            return False
-        else:
-            return self._isCurrentPresetChanged()
+        return self._isCurrentPresetChanged()
 
     def isRemoveButtonSensitive(self):
         """Whether the Remove button should be enabled"""
         if not self.cur_preset:
             return False
         if "volatile" in self.presets[self.cur_preset]:
-            return False
-        try:
-            full_path = self.presets[self.cur_preset]["filepath"]
-            (dir, name) = os.path.split(full_path)
-        except KeyError:
-            # This is a newly created preset that has not yet been saved
-            # We cannot remove it since it does not exist
-            return False
-        if dir == self.default_path or not isWritable(full_path):
-            # default_path is the system-wide directory where the default
-            # presets are installed; they are not expected to be editable.
             return False
         return True
 

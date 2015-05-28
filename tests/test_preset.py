@@ -177,3 +177,45 @@ class TestAudioPresetsIO(TestCase):
             other_manager), len(other_manager.presets))
         other_values = other_manager.presets[preset_name]
         self.assertEqual(values, other_values)
+
+    def testRemovingSystemPresets(self):
+        self.manager.loadAll()
+        system_presets = list(self.manager.presets.keys())
+        for preset_name in system_presets:
+            self.manager.removePreset(preset_name)
+
+        # Check that the files have not been deleted or changed.
+        other_manager = AudioPresetManager()
+        other_manager.user_path = "/pitivi/non/existing/directory"
+        other_manager.loadAll()
+        for preset_name in system_presets:
+            self.assertTrue(other_manager.hasPreset(preset_name))
+
+        # Check that overwrite files have been created and
+        # they mark the system presets as deleted.
+        other_manager = self.createOtherManager()
+        other_manager.loadAll()
+        for preset_name in system_presets:
+            self.assertFalse(other_manager.hasPreset(preset_name))
+
+    def testRenamingSystemPresets(self):
+        self.manager.loadAll()
+        system_presets = list(self.manager.presets.keys())
+        new_name_template = "%s new"
+        for preset_name in system_presets:
+            new_name = new_name_template % preset_name
+            self.manager.renamePreset(preset_name, new_name)
+
+        # Check that the files have not been deleted or changed.
+        other_manager = AudioPresetManager()
+        other_manager.user_path = "/pitivi/non/existing/directory"
+        other_manager.loadAll()
+        for preset_name in system_presets:
+            self.assertTrue(other_manager.hasPreset(preset_name), preset_name)
+
+        other_manager = self.createOtherManager()
+        other_manager.loadAll()
+        for preset_name in system_presets:
+            self.assertFalse(other_manager.hasPreset(preset_name), preset_name)
+            new_name = new_name_template % preset_name
+            self.assertTrue(other_manager.hasPreset(new_name), new_name)
