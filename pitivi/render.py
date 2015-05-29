@@ -537,9 +537,9 @@ class RenderDialog(Loggable):
     def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
         """Handle the renaming of a preset."""
         from pitivi.preset import DuplicatePresetNameException
-
+        old_name = mgr.getModel()[path][0]
         try:
-            mgr.renamePreset(path, new_text)
+            mgr.renamePreset(old_name, new_text)
             self._updateRenderPresetButtons()
         except DuplicatePresetNameException:
             error_markup = _('"%s" already exists.') % new_text

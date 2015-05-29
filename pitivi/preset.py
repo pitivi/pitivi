@@ -173,22 +173,18 @@ class PresetManager(Loggable):
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
 
-    def renamePreset(self, path, new_name):
-        """Change the name of a preset.
-
-        @param path: The path in the model identifying the preset to be renamed.
-        @type path: str
-        @param new_name: The new name for the preset.
-        @type new_name: str
-        """
-        old_name = self.ordered[path][0]
+    def renamePreset(self, old_name, new_name):
+        """Change the name of a preset."""
         assert old_name in self.presets
         if old_name == new_name:
             # Nothing to do.
             return
         if old_name.lower() != new_name.lower() and self.hasPreset(new_name):
             raise DuplicatePresetNameException()
-        self.ordered[path][0] = new_name
+        for i, row in enumerate(self.ordered):
+            if row[0] == old_name:
+                row[0] = new_name
+                break
         self.presets[new_name] = self.presets[old_name]
         if "filepath" in self.presets[old_name]:
             # If the previous preset had already been saved,

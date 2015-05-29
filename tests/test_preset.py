@@ -85,15 +85,12 @@ class TestPresetBasics(TestCase):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
         self.manager.createPreset('Preset Two', {'name1': '2A'})
 
-        # Renaming 'preseT onE' to 'Preset One'.
-        self.manager.renamePreset('0', 'Preset One')
+        self.manager.renamePreset('preseT onE', 'Preset One')
 
-        # Renaming 'Preset One' to 'Preset TWO'.
         self.assertRaises(DuplicatePresetNameException,
-                          self.manager.renamePreset, '0', 'Preset TWO')
-        # Renaming 'Preset One' to 'Preset two'.
+                          self.manager.renamePreset, 'Preset One', 'Preset TWO')
         self.assertRaises(DuplicatePresetNameException,
-                          self.manager.renamePreset, '0', 'Preset two')
+                          self.manager.renamePreset, 'Preset One', 'Preset two')
 
     def testLoadHandlesMissingDirectory(self):
         self.manager.default_path = '/pitivi/non/existing/directory/1'
