@@ -28,7 +28,6 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-from pitivi.configure import get_audiopresets_dir
 from pitivi.preset import DuplicatePresetNameException, \
     PresetManager, \
     AudioPresetManager
@@ -36,13 +35,11 @@ from pitivi.preset import DuplicatePresetNameException, \
 
 class FakePresetManager(PresetManager):
 
+    def __init__(self, default_path):
+        PresetManager.__init__(self, default_path, tempfile.mkdtemp())
+
     def _saveSection(self, fout, section):
         pass
-
-
-def setPresetManagerPaths(preset_manager, default_path):
-    preset_manager.default_path = default_path
-    preset_manager.user_path = tempfile.mkdtemp()
 
 
 def clearPresetManagerPaths(preset_manager):
@@ -66,8 +63,7 @@ def countUserPresets(preset_manager):
 class TestPresetBasics(TestCase):
 
     def setUp(self):
-        self.manager = FakePresetManager()
-        setPresetManagerPaths(self.manager, None)
+        self.manager = FakePresetManager(None)
 
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
@@ -126,14 +122,13 @@ class TestAudioPresetsIO(TestCase):
 
     def setUp(self):
         self.manager = AudioPresetManager()
-        setPresetManagerPaths(self.manager, get_audiopresets_dir())
+        self.manager.user_path = tempfile.mkdtemp()
 
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
 
     def createOtherManager(self):
         other_manager = AudioPresetManager()
-        other_manager.default_path = self.manager.default_path
         other_manager.user_path = self.manager.user_path
         return other_manager
 

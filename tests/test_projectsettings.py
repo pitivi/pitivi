@@ -29,7 +29,7 @@ from pitivi.project import ProjectSettingsDialog
 class TestProjectSettingsDialog(TestCase):
 
     def testGetUniquePresetName(self):
-        preset_manager = PresetManager()
+        preset_manager = PresetManager(None, None)
         name = ProjectSettingsDialog._getUniquePresetName(preset_manager)
         self.assertEqual('New preset', name)
 

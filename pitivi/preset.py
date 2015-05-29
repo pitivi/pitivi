@@ -65,7 +65,10 @@ class PresetManager(object):
     @type widget_map: dict
     """
 
-    def __init__(self):
+    def __init__(self, default_path, user_path):
+        self.default_path = default_path
+        self.user_path = user_path
+
         self.presets = {}
         self.widget_map = {}
         self.ordered = Gtk.ListStore(str, object)
@@ -277,7 +280,7 @@ class PresetManager(object):
             return self._isCurrentPresetChanged()
 
     def isRemoveButtonSensitive(self):
-        """Check if Remove buttons should be sensitive"""
+        """Check if the Remove button should be sensitive"""
         if not self.cur_preset:
             return False
         try:
@@ -321,8 +324,10 @@ class PresetManager(object):
 
 class VideoPresetManager(PresetManager):
 
-    default_path = get_videopresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'video_presets')
+    def __init__(self):
+        default_path = get_videopresets_dir()
+        user_path = os.path.join(xdg_data_home(), 'video_presets')
+        PresetManager.__init__(self, default_path, user_path)
 
     def _loadSection(self, filepath):
         with open(filepath) as section:
@@ -371,8 +376,10 @@ class VideoPresetManager(PresetManager):
 
 class AudioPresetManager(PresetManager):
 
-    default_path = get_audiopresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'audio_presets')
+    def __init__(self):
+        default_path = get_audiopresets_dir()
+        user_path = os.path.join(xdg_data_home(), 'audio_presets')
+        PresetManager.__init__(self, default_path, user_path)
 
     def _loadSection(self, filepath):
         with open(filepath) as section:
@@ -405,8 +412,10 @@ class AudioPresetManager(PresetManager):
 
 class RenderPresetManager(PresetManager):
 
-    default_path = get_renderpresets_dir()
-    user_path = os.path.join(xdg_data_home(), 'render_presets')
+    def __init__(self):
+        default_path = get_renderpresets_dir()
+        user_path = os.path.join(xdg_data_home(), 'render_presets')
+        PresetManager.__init__(self, default_path, user_path)
 
     def _loadSection(self, filepath):
         with open(filepath) as section:
