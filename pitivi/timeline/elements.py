@@ -846,7 +846,7 @@ class TransitionClip(Clip):
 
         # In the case of TransitionClips, we are the only container
         self._elements_container = self
-        self.set_tooltip_markup("<span foreground='blue'>%s</span>" %
+        self.set_tooltip_markup("<span>%s</span>" %
                                 str(bClip.props.vtype.value_nick))
 
     def _childAdded(self, clip, child):
