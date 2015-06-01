@@ -1110,7 +1110,11 @@ class Project(Loggable, GES.Project):
         Load the project.
         """
         # In this extract call the project is loaded from the file.
-        self.timeline = self.extract()
+        try:
+            self.timeline = self.extract()
+        except GLib.Error:
+            self.timeline = None
+
         if self.timeline is None:
             return False
 
