@@ -831,7 +831,7 @@ class RenderDialog(Loggable):
         secondary_message = _("An error occured while trying to render your "
                               "project. You might want to check our "
                               "troubleshooting guide or file a bug report. "
-                              "The GStreamer error was:") + "\n\n<i>" + error + "</i>"
+                              "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
                                    message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
