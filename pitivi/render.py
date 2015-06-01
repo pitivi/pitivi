@@ -942,8 +942,7 @@ class RenderDialog(Loggable):
                     caps = Gst.Caps.from_string(struct.get_caps().to_string())
                     fixed = caps.fixate()
                     fmt = fixed.get_structure(0).get_value("format")
-                    self.project.video_profile.get_restriction()[
-                        0]["format"] = fmt
+                    self.project.set_video_restriction_value("format", fmt)
                     self._factory_formats[encoder_string] = fmt
                     break
 
