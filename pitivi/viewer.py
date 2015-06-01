@@ -415,7 +415,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         """
         While a clip is being trimmed, show a live preview of it.
         """
-        if isinstance(clip, GES.TitleClip) or clip.props.is_image or not hasattr(clip, "get_uri"):
+        if not hasattr(clip, "get_uri") or isinstance(clip, GES.TitleClip) or clip.props.is_image:
             self.log(
                 "%s is an image or has no URI, so not previewing trim" % clip)
             return False

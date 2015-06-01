@@ -585,7 +585,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self._saveProjectCb(None, None)
 
     def saveProjectAsDialog(self):
-        sellf._saveProjectAsCb(None, None)
+        self._saveProjectAsCb(None, None)
 
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.project_manager.revertToSavedProject()

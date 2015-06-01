@@ -845,7 +845,21 @@ class TransitionClip(Clip):
         self.bClip.connect("child-added", self._childAddedCb)
 
         # In the case of TransitionClips, we are the only container
-        self._elements_container = self
+        overlay = Gtk.Overlay()
+        self.add(overlay)
+
+        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
+        overlay.add_overlay(self._elements_container)
+
+        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
+        overlay.add_overlay(self.leftHandle)
+
+        self.rightHandle = TrimHandle(self, GES.Edge.EDGE_END)
+        overlay.add_overlay(self.rightHandle)
+
+        self.handles.append(self.leftHandle)
+        self.handles.append(self.rightHandle)
+
         self.set_tooltip_markup("<span>%s</span>" %
                                 str(bClip.props.vtype.value_nick))
 
