@@ -265,7 +265,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         # Reorder layers
         self.__moving_layer = None
 
-        self.__button_pressed = False
+        self.__disableCenterPlayhead = False
 
         # Setup our Gtk.Widget properties
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
@@ -370,9 +370,10 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.queue_draw()
 
     def scrollToPlayhead(self,):
-        if self.__button_pressed or self.parent.ruler.pressed:
-            self.__button_pressed = False
+        if self.__disableCenterPlayhead or self.parent.ruler.pressed:
+            self.__disableCenterPlayhead = False
             return
+        self.debug("Scrolling to playhead")
 
         self.hadj.set_value(self.nsToPixel(self.__last_position) -
                             (self.layout.get_allocation().width / 2))
@@ -517,6 +518,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             mouse_position = self.pixelToNs(x + self.hadj.get_value())
 
             rescroll = False
+            self.__disableCenterPlayhead = True
             if delta_y > 0:
                 rescroll = True
                 timelineUtils.Zoomable.zoomOut()
@@ -525,6 +527,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 rescroll = True
                 timelineUtils.Zoomable.zoomIn()
                 self.queue_draw()
+            self.__disableCenterPlayhead = False
 
             if rescroll:
                 diff = x - (self.layout.get_allocation().width / 2)
@@ -541,7 +544,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         event_widget = self.get_event_widget(event)
 
         self.debug("PRESSED %s" % event)
-        self.__button_pressed = True
+        self.__disableCenterPlayhead = True
 
         res, button = event.get_button()
         if res and button == 1:
@@ -877,6 +880,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.debug("Zoom changed")
         self.updatePosition()
         self.layout.move(self.__playhead, self.nsToPixel(self.__last_position), 0)
+        self.scrollToPlayhead()
         self.queue_draw()
 
     # Edition handling
