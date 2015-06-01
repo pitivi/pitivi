@@ -416,6 +416,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.props.valign = Gtk.Align.START
 
         self._layout = LayerLayout(self.timeline)
+        self._layout.connect("remove", self.__childWidgetRemovedCb)
         self.add(self._layout)
 
         self.media_types = GES.TrackType(0)
@@ -504,12 +505,18 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._removeClip(bClip)
 
     def _removeClip(self, bClip):
+        if not bClip.ui:
+            return
+
         ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
         if ui_type is None:
             self.error("Implement UI for type %s?" % bClip.__gtype__)
             return
 
         self._layout.remove(bClip.ui)
+
+    def __childWidgetRemovedCb(self, layout, clip):
+        bClip = clip.bClip
         bClip.ui.layer = None
         if self.timeline.draggingElement is None:
             bClip.ui = None
