@@ -31,9 +31,7 @@ from pitivi.undo.timeline import TimelineLogObserver, \
     ClipAdded, ClipRemoved, \
     ClipPropertyChanged, TrackElementAdded
 from pitivi.undo.undo import UndoableActionLog
-from pitivi.project import Project
 from pitivi.application import Pitivi
-from pitivi.utils.loggable import Loggable
 
 
 class TimelineLogObserverSpy(TimelineLogObserver):

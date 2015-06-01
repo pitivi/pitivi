@@ -20,7 +20,6 @@
 # Boston, MA 02110-1301, USA.
 
 from gi.repository import Gst
-from gi.repository import GstController
 from gi.repository import GES
 from gi.repository import GObject
 
@@ -143,8 +142,7 @@ class TrackElementAdded(UndoableAction):
         props = self.track_element.list_children_properties()
         self.track_element_props = [(prop.name, self.track_element.get_child_property(prop.name)[1])
                                     for prop in props
-                                    if prop.flags & GObject.PARAM_WRITABLE
-                                    and prop.name not in PROPS_TO_IGNORE]
+                                    if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
         self.clip.remove(self.track_element)
         self._props_changed =\
             self._properties_watcher.getPropChangedFromTrackElement(
@@ -179,8 +177,7 @@ class TrackElementRemoved(UndoableAction):
         props = self.track_element.list_children_properties()
         self.track_element_props = [(prop.name, self.track_element.get_child_property(prop.name)[1])
                                     for prop in props
-                                    if prop.flags & GObject.PARAM_WRITABLE
-                                    and prop.name not in PROPS_TO_IGNORE]
+                                    if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
 
         self.clip.remove(self.track_element)
 
@@ -320,10 +317,11 @@ class ClipAdded(UndoableAction):
         self._undone()
 
     def asScenarioAction(self):
+        timeline = self.layer.get_timeline()
         if hasattr(self.layer, "splitting_object") and \
                 self.layer.splitting_object is True:
             return None
-        elif self.layer.get_timeline().ui.editing_context is not None:
+        elif hasattr(timeline, "ui") and timeline.ui and timeline.ui.editing_context is not None:
             return None
 
         st = Gst.Structure.new_empty("add-clip")
@@ -356,7 +354,9 @@ class ClipRemoved(UndoableAction):
         self._undone()
 
     def asScenarioAction(self):
-        if self.layer.get_timeline().ui.editing_context is not None:
+        timeline = self.layer.get_timeline()
+        if hasattr(timeline, "ui") and timeline.ui\
+                and timeline.ui.editing_context is not None:
             return None
 
         st = Gst.Structure.new_empty("remove-clip")
