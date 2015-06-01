@@ -173,7 +173,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         else:
             self.props_widgets.set_sensitive(True)
 
-        self.element.set_asset(transition_asset)
+        self.element.get_parent().set_asset(transition_asset)
         self.app.write_action("element-set-asset", {
             "asset-id": transition_asset.get_id(),
             "element-name": self.element.get_name()})
