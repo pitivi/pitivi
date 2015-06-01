@@ -529,6 +529,11 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             if rescroll:
                 diff = x - (self.layout.get_allocation().width / 2)
                 self.hadj.set_value(self.nsToPixel(mouse_position) - (self.layout.get_allocation().width / 2) - diff)
+        else:
+            if delta_y > 0:
+                self.parent.scroll_right()
+            else:
+                self.parent.scroll_left()
 
         return False
 
