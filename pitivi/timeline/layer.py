@@ -519,6 +519,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         bClip = clip.bClip
         bClip.ui.layer = None
         if self.timeline.draggingElement is None:
+            bClip.ui.release()
             bClip.ui = None
 
         bClip.disconnect_by_func(self._childAddedCb)

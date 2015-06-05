@@ -680,6 +680,10 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.connect("button-release-event", self._clickedCb)
         self.connect("event", self._eventCb)
 
+    def release(self):
+        for child in self.bClip.get_children(True):
+            self.__disconnectFromChild(child)
+
     def __showHandles(self):
         for handle in self.handles:
             handle.show()
@@ -719,6 +723,11 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if bLayer:
             self.layer = bLayer.ui
 
+    def __disconnectFromChild(self, child):
+        if child.ui and hasattr(child.ui, "__clip_curve_enter_id") and child.ui.__clip_curve_enter_id:
+            child.ui.disconnect_by_func(child.ui.__clip_curve_enter_id)
+            child.ui.disconnect_by_func(child.ui.__clip_curve_leave_id)
+
     def __connectToChild(self, child):
         if child.ui:
             child.ui.connect("curve-enter", self.__curveEnterCb)
@@ -744,9 +753,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def _childRemovedCb(self, clip, child):
         self.__force_position_update = True
-        if child.ui:
-            child.ui.disconnect_by_func(self.__curveEnterCb)
-            child.ui.disconnect_by_func(self.__curveLeaveCb)
+        self.__disconnectFromChild(child)
         self._childRemoved(clip, child)
 
     def _connectGES(self):
