@@ -27,6 +27,8 @@ is prefixed with a little b, example : bTimeline
 """
 import os
 
+from gettext import gettext as _
+
 from gi.repository import GES
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -860,8 +862,15 @@ class TransitionClip(Clip):
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
 
-        self.set_tooltip_markup("<span>%s</span>" %
-                                str(bClip.props.vtype.value_nick))
+        self.set_tooltip_markup("%s" % str(bClip.props.vtype.value_nick))
+
+    def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
+        if self.__has_video:
+            self.set_tooltip_markup("%s" % str(self.bClip.props.vtype.value_nick))
+        else:
+            self.set_tooltip_markup(_("Audio crossfade"))
+
+        return Clip.do_query_tooltip(self, x, y, keyboard_mode, tooltip)
 
     def _childAdded(self, clip, child):
         super(TransitionClip, self)._childAdded(clip, child)
