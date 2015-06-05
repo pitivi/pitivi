@@ -1483,43 +1483,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self.bTimeline:
             self.app.action_log.begin("ungroup")
 
-            containers = set({})
-
             for obj in self.timeline.selection:
                 toplevel = obj.get_toplevel_parent()
                 if toplevel == self.timeline.current_group:
                     for child in toplevel.get_children(False):
-                        containers.add(child)
-                    toplevel.ungroup(False)
+                        child.ungroup(False)
                 else:
-                    containers.add(toplevel)
-
-            for container in containers:
-                was_clip = isinstance(container, GES.Clip)
-                clips = GES.Container.ungroup(container, False)
-                if not was_clip:
-                    continue
-
-                new_layers = {}
-                for clip in clips:
-                    if isinstance(clip, GES.Clip):
-                        all_audio = True
-                        for child in clip.get_children(True):
-                            if child.get_track_type() != GES.TrackType.AUDIO:
-                                all_audio = False
-                                break
-
-                        if not all_audio:
-                            self.debug("Not all audio, not moving anything to a new layer")
-
-                            continue
-
-                        new_layer = new_layers.get(clip.get_layer().get_priority(), None)
-                        if not new_layer:
-                            new_layer = self.timeline.createLayer(clip.get_layer().get_priority() + 1)
-                            new_layers[clip.get_layer().get_priority()] = new_layer
-                        self.info("Moving audio audio clip %s to new layer %s" % (clip, new_layer))
-                        clip.move_to_layer(new_layer)
+                    toplevel.ungroup(False)
 
             self.timeline.resetSelectionGroup()
 

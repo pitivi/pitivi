@@ -437,6 +437,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.info("Not updating media types as"
                       " we are editing the timeline")
             return
+        old_media_types = self.media_types
         self.media_types = GES.TrackType(0)
         bClips = self.bLayer.get_clips()
 
@@ -471,6 +472,9 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.props.height_request = height
         self.bLayer.control_ui.props.height_request = height
+
+        if old_media_types != self.media_types:
+            self.updatePosition()
 
     def move(self, child, x, y):
         self._layout.move(child, x, y)
@@ -528,7 +532,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def updatePosition(self):
         for bClip in self.bLayer.get_clips():
-            bClip.ui.updatePosition()
+            if hasattr(bClip, "ui"):
+                bClip.ui.updatePosition()
 
     def do_draw(self, cr):
         Gtk.Box.do_draw(self, cr)

@@ -574,16 +574,10 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._connectGES()
         self.get_accessible().set_name(self.bClip.get_name())
 
-    def do_get_preferred_width(self):
-        return self.nsToPixel(self.bClip.props.duration), self.nsToPixel(self.bClip.props.duration)
-
-    def do_get_preferred_height(self):
-        parent = self.get_parent()
-        return parent.get_allocated_height(), parent.get_allocated_height()
-
-    def _savePositionState(self):
+    def _savePositionState(self, y=0):
         self.__force_position_update = False
         self._current_x = self.nsToPixel(self.bClip.props.start)
+        self._current_y = y
         self._curent_width = self.nsToPixel(self.bClip.props.duration)
         parent = self.get_parent()
         if parent:
@@ -593,26 +587,48 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self._current_parent_height = 0
         self._current_parent = parent
 
+    def __computeHeightAndY(self):
+        parent = self.get_parent()
+        parent_height = parent.get_allocated_height()
+
+        y = 0
+        height = parent_height
+        has_video = self.bClip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
+        has_audio = self.bClip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
+        if not has_video or not has_audio:
+            if self.layer and self.layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
+                height = parent_height / 2
+                if not has_video:
+                    y = height
+
+        return height, y
+
     def updatePosition(self):
         parent = self.get_parent()
+
+        if not parent or not self.layer:
+            return
+
         x = self.nsToPixel(self.bClip.props.start)
         width = self.nsToPixel(self.bClip.props.duration)
         parent_height = parent.get_allocated_height()
 
+        height, y = self.__computeHeightAndY()
         if self.__force_position_update or \
                 x != self._current_x or \
+                y != self._current_y or \
                 width != self._curent_width \
                 or parent_height != self._current_parent_height or \
                 parent != self._current_parent:
 
-            self.layer.move(self, x, 0)
-            self.set_size_request(width, parent_height)
+            self.layer.move(self, x, y)
+            self.set_size_request(width, height)
 
             elements = self._elements_container.get_children()
             for child in elements:
-                child.setSize(width, parent_height / len(elements))
+                child.setSize(width, height / len(elements))
 
-            self._savePositionState()
+            self._savePositionState(y)
 
     def _setupWidget(self):
         pass
@@ -705,20 +721,13 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return False
 
     def _startChangedCb(self, unused_clip, unused_pspec):
-        if self.get_parent() is None:
-            # FIXME Check why that happens at all (looks like a GTK bug)
-            return
-
-        self.layer.move(self, self.nsToPixel(self.bClip.props.start), 0)
+        self.updatePosition()
 
     def _durationChangedCb(self, unused_clip, unused_pspec):
-        parent = self.get_parent()
-        if parent:
-            duration = self.nsToPixel(self.bClip.props.duration)
-            parent_height = parent.get_allocated_height()
-            self.set_size_request(duration, parent_height)
+        self.updatePosition()
 
     def _layerChangedCb(self, bClip, unused_pspec):
+        self.updatePosition()
         bLayer = bClip.props.layer
         if bLayer:
             self.layer = bLayer.ui
