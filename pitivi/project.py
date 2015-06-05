@@ -1055,6 +1055,7 @@ class Project(Loggable, GES.Project):
         """ vmethod, get called on "loaded" """
 
         self._ensureTracks()
+        self.timeline.props.auto_transition = True
         # self._ensureLayer()
         if self.scenario is not None:
             return
@@ -1118,8 +1119,6 @@ class Project(Loggable, GES.Project):
             return False
 
         self.timeline.commit = self._commit
-        if not self.timeline.get_layers():
-            self.timeline.props.auto_transition = True
         self._calculateNbLoadingAssets()
 
         self.pipeline = Pipeline(self.app)
