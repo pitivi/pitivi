@@ -1547,24 +1547,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
-        selected = self.timeline.selection.getSelectedTrackElements()
-
-        if selected:
-            self._splitElements(selected)
-        else:
-            for track in self.bTimeline.get_tracks():
-                self._splitElements(track.get_elements())
+        self._splitElements(self.timeline.selection.selected)
 
         self.timeline.hideSnapBar()
         self._project.pipeline.commit_timeline()
 
-    def _splitElements(self, elements):
+    def _splitElements(self, clips=None):
+        splitting_selection = clips is not None
+        if clips is None:
+            clips = []
+            for layer in self.timeline.bTimeline.get_layers():
+                clips.extend(layer.get_clips())
+
         position = self._project.pipeline.getPosition()
-        for element in elements:
-            start = element.get_start()
-            end = start + element.get_duration()
+        splitted = False
+        for clip in clips:
+            start = clip.get_start()
+            end = start + clip.get_duration()
             if start < position and end > position:
-                clip = element.get_parent()
                 clip.get_layer().splitting_object = True
 
                 self.app.write_action("split-clip", {
@@ -1573,6 +1573,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
                 clip.split(position)
                 clip.get_layer().splitting_object = False
+                splitted = True
+
+        if not splitted and splitting_selection:
+            self._splitElements()
 
     def _keyframeCb(self, unused_action):
         """
