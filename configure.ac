@@ -143,7 +143,6 @@ pitivi/dialogs/Makefile
 pitivi/undo/Makefile
 pitivi/utils/Makefile
 pitivi/timeline/Makefile
-pitivi/libpitivi/Makefile
 pitivi/coptimizations/Makefile
 po/Makefile.in
 tests/Makefile

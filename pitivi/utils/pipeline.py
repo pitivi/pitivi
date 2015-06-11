@@ -193,8 +193,13 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = 0
         self._force_position_listener = False
 
-        self.video_sink = Gst.ElementFactory.make("glimagesink", None)
-        if isinstance(pipeline, GES.Pipeline):
+        sink = Gst.ElementFactory.make("glsinkbin", None)
+        sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
+        self.setSink(sink)
+
+    def setSink(self, sink):
+        self.video_sink = sink
+        if isinstance(self._pipeline, GES.Pipeline):
             self._pipeline.preview_set_video_sink(self.video_sink)
         else:
             self._pipeline.set_property("video_sink", self.video_sink)

@@ -1,6 +1,5 @@
 SUBDIRS = \
 	coptimizations \
-	libpitivi \
 	dialogs \
 	utils \
 	timeline \

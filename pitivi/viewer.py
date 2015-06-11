@@ -24,7 +24,6 @@ from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GObject
 from gi.repository import GES
-from gi.repository import Pitivi
 import cairo
 
 from gettext import gettext as _
@@ -91,6 +90,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline = None
         self.docked = True
         self.seeker = Seeker()
+        self.target = None
 
         # Only used for restoring the pipeline position after a live clip trim
         # preview:
@@ -104,13 +104,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         if not self.settings.viewerDocked:
             self.undock()
 
-    @property
-    def target(self):
-        if self.docked:
-            return self.internal
-        else:
-            return self.external
-
     def setPipeline(self, pipeline, position=None):
         """
         Set the Viewer to the given Pipeline.
@@ -123,22 +116,53 @@ class ViewerContainer(Gtk.Box, Loggable):
         """
         self._disconnectFromPipeline()
 
+        if self.target:
+            parent = self.target.get_parent()
+            if parent:
+                parent.remove(self.target)
+
         self.debug("New pipeline: %r", pipeline)
         self.pipeline = pipeline
-        self.pipeline.pause()
-        self.seeker.seek(position)
+        if position:
+            self.seeker.seek(position)
 
         self.pipeline.connect("state-change", self._pipelineStateChangedCb)
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        self.sink = pipeline.video_sink
-        self.internal.sink = self.sink
-        self.external.sink = self.sink
-
         self.__owning_pipeline = False
-        self._switch_output_window()
+        self.__createNewViewer()
         self._setUiActive()
+
+        self.pipeline.pause()
+
+    def __createNewViewer(self):
+        self.sink = Gst.ElementFactory.make("glsinkbin", None)
+        self.sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
+        self.pipeline.setSink(self.sink)
+
+        self.target = ViewerWidget(self.sink, self.app.settings)
+
+        if self.docked:
+            self.pack_start(self.target, True, True, 0)
+            screen = Gdk.Screen.get_default()
+            height = screen.get_height()
+            if height >= 800:
+                # show the controls and force the aspect frame to have at least the same
+                # width (+110, which is a magic number to minimize dead padding).
+                req = self.buttons.size_request()
+                width = req.width
+                height = req.height
+                width += 110
+                height = int(width / self.target.props.ratio)
+                self.target.set_size_request(width, height)
+        else:
+            self.external_vbox.pack_start(self.target, False, False, 0)
+            self.target.props.expand = True
+            self.external_vbox.child_set(self.target, fill=True)
+
+        self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
+        self.target.show_all()
 
     def _disconnectFromPipeline(self):
         self.debug("Previous pipeline: %r", self.pipeline)
@@ -179,19 +203,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         """ Creates the Viewer GUI """
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
-        # Drawing area
-        self.internal = ViewerWidget(self.app.settings)
-        # Transformation boxed DISABLED
-        # self.internal.init_transformation_events()
-        self.pack_start(self.internal, True, True, 0)
-
         self.external_window = Gtk.Window()
         vbox = Gtk.Box()
         vbox.set_orientation(Gtk.Orientation.VERTICAL)
         vbox.set_spacing(SPACING)
         self.external_window.add(vbox)
-        self.external = ViewerWidget(self.app.settings)
-        vbox.pack_start(self.external, True, True, 0)
         self.external_window.connect(
             "delete-event", self._externalWindowDeleteCb)
         self.external_window.connect(
@@ -203,7 +219,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        self.pack_start(bbox, False, False, SPACING)
+        self.pack_end(bbox, False, False, SPACING)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -266,19 +282,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
 
-        screen = Gdk.Screen.get_default()
-        height = screen.get_height()
-        if height >= 800:
-            # show the controls and force the aspect frame to have at least the same
-            # width (+110, which is a magic number to minimize dead padding).
-            bbox.show_all()
-            req = bbox.size_request()
-            width = req.width
-            height = req.height
-            width += 110
-            height = int(width / self.internal.props.ratio)
-            self.internal.set_size_request(width, height)
-
         self.buttons = bbox
         self.buttons_container = bbox
         self.show_all()
@@ -286,8 +289,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def setDisplayAspectRatio(self, ratio):
         self.debug("Setting aspect ratio to %f [%r]", float(ratio), ratio)
-        self.internal.setDisplayAspectRatio(ratio)
-        self.external.setDisplayAspectRatio(ratio)
+        self.target.setDisplayAspectRatio(ratio)
 
     def _entryActivateCb(self, unused_entry):
         self._seekFromTimecodeWidget()
@@ -302,25 +304,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             self._setUiActive(False)
         else:
             self._setUiActive(True)
-
-    # Control Gtk.Button callbacks
-
-    def setZoom(self, zoom):
-        """
-        Zoom in or out of the transformation box canvas.
-        This is called by clipproperties.
-        """
-        if self.target.box:
-            maxSize = self.target.area
-            width = int(float(maxSize.width) * zoom)
-            height = int(float(maxSize.height) * zoom)
-            area = ((maxSize.width - width) / 2,
-                    (maxSize.height - height) / 2,
-                    width, height)
-            self.sink.set_render_rectangle(*area)
-            self.target.box.update_size(area)
-            self.target.zoom = zoom
-            self.target.renderbox()
 
     def _playButtonCb(self, unused_button, unused_playing):
         self.app.project_manager.current_project.pipeline.togglePlayback()
@@ -356,6 +339,12 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerDocked = False
 
         self.remove(self.buttons_container)
+        position = None
+        if self.pipeline:
+            position = self.pipeline.getPosition()
+            self.pipeline.setState(Gst.State.NULL)
+            self.remove(self.target)
+
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
 
@@ -370,26 +359,38 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
 
         self.external_window.show()
-        self._switch_output_window()
         self.hide()
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
         self.external_window.resize(
             self.settings.viewerWidth, self.settings.viewerHeight)
+        if self.pipeline:
+            self.pipeline.pause()
+            self.seeker.seek(position)
 
     def dock(self):
         if self.docked:
             self.warning("The viewer is already docked")
             return
+
         self.docked = True
         self.settings.viewerDocked = True
+
+        if self.pipeline:
+            position = self.pipeline.getPosition()
+            self.pipeline.setState(Gst.State.NULL)
+            self.external_vbox.remove(self.target)
+            self.__createNewViewer()
 
         self.undock_button.show()
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
-        self._switch_output_window()
+
         self.external_window.hide()
+        if position:
+            self.pipeline.pause()
+            self.seeker.seek(position)
 
     def _toggleFullscreen(self, widget):
         if widget.get_active():
@@ -450,6 +451,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             # reason it's a bit off, that's why we need self._oldTimelinePos.
             self.setPipeline(
                 self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
+            self._oldTimelinePos = None
             self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
@@ -476,16 +478,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
         else:
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
-        self.internal._currentStateCb(self.pipeline, state)
-
-    def _switch_output_window(self):
-        # Bail out if we don't have a playable pipeline (it happens!)
-        if self.pipeline is None:
-            return
-
-        self.target.show()
-        if Pitivi.viewer_set_sink(self.target.drawing_area, self.sink):
-            self.sink.expose()
 
 
 class Point():
@@ -821,16 +813,16 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, settings=None, sink=None):
+    def __init__(self, sink, settings=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
-        self.drawing_area = Pitivi.viewer_new(sink)
-        self.drawing_area.set_double_buffered(False)
-        self.drawing_area.connect("draw", self._drawCb, None)
+        # We only work with a gtkglsink inside a glsinkbin
+        self.drawing_area = sink.props.sink.props.widget
+
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
         self.add(self.drawing_area)
@@ -848,21 +840,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.pipeline = None
         self.transformation_properties = None
         self._setting_ratio = False
-
-        # FIXME PyGi Styling with Gtk3
-        # for state in range(Gtk.StateType.INSENSITIVE + 1):
-        # self.modify_bg(state, self.style.black)
-
-    def _drawCb(self, unused, unused1, unused2):
-        if self._setting_ratio:
-            # During caps renogotiation resulting from
-            # the change of the rendering setting/aspect ratio
-            # changes, we could end up with the viewer displaying
-            # broken frames, avoid calling the videosink.expose()
-            # in that case (https://bugzilla.gnome.org/show_bug.cgi?id=739145)
-            self._setting_ratio = False
-        elif self.sink:
-            self.sink.expose()
 
     def setDisplayAspectRatio(self, ratio):
         self._setting_ratio = True
