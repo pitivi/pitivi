@@ -34,6 +34,7 @@ pitivi/titleeditor.py
 pitivi/transitions.py
 pitivi/viewer.py
 
+pitivi/timeline/elements.py
 pitivi/timeline/layer.py
 pitivi/timeline/ruler.py
 pitivi/timeline/timeline.py
