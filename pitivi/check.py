@@ -204,8 +204,17 @@ def _check_gst_python():
     return True
 
 
+class GICheck(ClassicDependency):
+    def __init__(self, version_required_string):
+        ClassicDependency.__init__(self, "gi", version_required_string)
+
+    def _format_version(self, module):
+        return list(module.version_info)
+
+
 def check_requirements():
     hard_dependencies_satisfied = True
+
     for dependency in HARD_DEPENDENCIES:
         dependency.check()
         if not dependency.satisfied:
@@ -286,7 +295,8 @@ Those are either:
 Some of our dependencies have version numbers requirements; for those without
 a specific version requirement, they have the "None" value.
 """
-HARD_DEPENDENCIES = [CairoDependency("1.10.0"),
+HARD_DEPENDENCIES = [GICheck("3.14.0"),
+                     CairoDependency("1.10.0"),
                      GstDependency("Gst", "1.4.0"),
                      GstDependency("GES", "1.5.0.0"),
                      GtkDependency("Gtk", "3.10.0"),
