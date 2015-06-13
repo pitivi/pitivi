@@ -2,64 +2,29 @@
 <!-- Generated with glade 3.18.3 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
-  <object class="GtkAdjustment" id="crop_bottom_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="crop_left_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="crop_right_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="crop_top_adjustment">
-    <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
   <object class="GtkAdjustment" id="height_adjustment">
-    <property name="upper">100</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="position_x_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">2</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="position_y_adjustment">
-    <property name="lower">-1</property>
-    <property name="upper">2</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="rotation_adjustment">
-    <property name="lower">-999.99000000000001</property>
-    <property name="upper">999.99000000000001</property>
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="width_adjustment">
-    <property name="upper">100</property>
-    <property name="value">0.5</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
-  </object>
-  <object class="GtkAdjustment" id="zoom_adjustment">
-    <property name="lower">0.10000000000000001</property>
-    <property name="upper">1</property>
-    <property name="value">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="lower">-9999999999</property>
+    <property name="upper">9999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkBox" id="transform_box">
     <property name="visible">True</property>
@@ -96,45 +61,6 @@
       </packing>
     </child>
     <child>
-      <object class="GtkFrame" id="frame4">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label_xalign">0</property>
-        <property name="shadow_type">none</property>
-        <child>
-          <object class="GtkAlignment" id="alignment4">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="left_padding">12</property>
-            <child>
-              <object class="GtkScale" id="zoom_scale">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="adjustment">zoom_adjustment</property>
-                <property name="round_digits">1</property>
-                <property name="draw_value">False</property>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child type="label">
-          <object class="GtkLabel" id="label6">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Viewer Zoom</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">True</property>
-        <property name="fill">True</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkFrame" id="frame3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -167,8 +93,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">•</property>
+                    <property name="progress_pulse_step">1</property>
                     <property name="adjustment">position_x_adjustment</property>
-                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -194,8 +120,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">•</property>
+                    <property name="progress_pulse_step">1</property>
                     <property name="adjustment">position_y_adjustment</property>
-                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -258,8 +184,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">•</property>
+                    <property name="input_purpose">digits</property>
                     <property name="adjustment">width_adjustment</property>
-                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -286,7 +212,6 @@
                     <property name="can_focus">True</property>
                     <property name="invisible_char">•</property>
                     <property name="adjustment">height_adjustment</property>
-                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -316,124 +241,12 @@
         <property name="position">3</property>
       </packing>
     </child>
-    <child>
-      <object class="GtkFrame" id="frame2">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label_xalign">0</property>
-        <property name="shadow_type">none</property>
-        <child>
-          <object class="GtkAlignment" id="alignment2">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="xalign">0</property>
-            <property name="xscale">0</property>
-            <child>
-              <object class="GtkGrid" id="grid1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="row_spacing">3</property>
-                <property name="column_spacing">3</property>
-                <child>
-                  <object class="GtkSpinButton" id="crop_left_spinbtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">•</property>
-                    <property name="adjustment">crop_left_adjustment</property>
-                    <property name="digits">2</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="crop_top_spinbtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">•</property>
-                    <property name="adjustment">crop_top_adjustment</property>
-                    <property name="digits">2</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">2</property>
-                    <property name="top_attach">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="crop_bottom_spinbtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">•</property>
-                    <property name="adjustment">crop_bottom_adjustment</property>
-                    <property name="digits">2</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">2</property>
-                    <property name="top_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="crop_right_spinbtn">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">•</property>
-                    <property name="adjustment">crop_right_adjustment</property>
-                    <property name="digits">2</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child type="label">
-          <object class="GtkLabel" id="label2">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Crop</property>
-            <attributes>
-              <attribute name="weight" value="bold"/>
-            </attributes>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">True</property>
-        <property name="position">4</property>
-      </packing>
-    </child>
+  </object>
+  <object class="GtkAdjustment" id="zoom_adjustment">
+    <property name="lower">0.10000000000000001</property>
+    <property name="upper">1</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">0.10000000000000001</property>
   </object>
 </interface>

@@ -24,17 +24,15 @@ from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import GObject
 from gi.repository import GES
-import cairo
 
 from gettext import gettext as _
 from time import time
-from math import pi
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
 from pitivi.utils.pipeline import AssetPipeline, Seeker
-from pitivi.utils.ui import SPACING, hex_to_rgb
+from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 
 GlobalSettings.addConfigSection("viewer")
@@ -141,7 +139,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
         self.pipeline.setSink(self.sink)
 
-        self.target = ViewerWidget(self.sink, self.app.settings)
+        self.target = ViewerWidget(self.sink, self.app)
 
         if self.docked:
             self.pack_start(self.target, True, True, 0)
@@ -480,6 +478,109 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
 
 
+class TransformationBox(Gtk.EventBox, Loggable):
+    def __init__(self, app):
+        Gtk.EventBox.__init__(self)
+        Loggable.__init__(self)
+
+        self.app = app
+        self.__editSource = None
+        self.__startDraggingPosition = None
+        self.add_events(Gdk.EventMask.SCROLL_MASK)
+
+    def __setupEditSource(self):
+        if self.__editSource:
+            return
+        elif self.app.project_manager.current_project.pipeline.getState() != Gst.State.PAUSED:
+            return
+
+        try:
+            position = self.app.project_manager.current_project.pipeline.getPosition()
+        except:
+            return False
+
+        self.__editSource = None
+        for clip in self.app.project_manager.current_project.timeline.ui.selection.selected:
+            if clip.props.start <= position and position <= clip.props.start + clip.props.duration:
+                video_source = clip.find_track_elements(None, GES.TrackType.VIDEO, GES.VideoSource)
+                if video_source and self.__editSource:
+                    video_source = None
+                    break
+
+                try:
+                    self.__editSource = video_source[0]
+                except IndexError:
+                    continue
+
+    def do_event(self, event):
+        if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+            self.__setupEditSource()
+            if self.__editSource:
+                self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
+        elif event.type == Gdk.EventType.BUTTON_RELEASE:
+            self.__startDraggingPosition = None
+        elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+            self.get_window().set_cursor(None)
+            self.__startDraggingPosition = None
+            self.__editSource = None
+            self.__startEditSourcePosition = None
+        elif event.type == Gdk.EventType.BUTTON_PRESS:
+            self.__setupEditSource()
+            if self.__editSource:
+                res_x, current_x = self.__editSource.get_child_property("posx")
+                res_y, current_y = self.__editSource.get_child_property("posy")
+
+                if res_x and res_y:
+                    event_widget = Gtk.get_event_widget(event)
+                    x, y = event_widget.translate_coordinates(self, event.x, event.y)
+                    self.__startEditSourcePosition = (current_x, current_y)
+                    self.__startDraggingPosition = (x, y)
+        elif event.type == Gdk.EventType.MOTION_NOTIFY:
+            if self.__startDraggingPosition and self.__editSource:
+                event_widget = Gtk.get_event_widget(event)
+                x, y = event_widget.translate_coordinates(self, event.x, event.y)
+                self.__editSource.set_child_property("posx",
+                                                     self.__startEditSourcePosition[0] +
+                                                     (x - self.__startDraggingPosition[0]))
+
+                self.__editSource.set_child_property("posy", self.__startEditSourcePosition[1] +
+                                                     (y - self.__startDraggingPosition[1]))
+                self.app.project_manager.current_project.pipeline.commit_timeline()
+        elif event.type == Gdk.EventType.SCROLL:
+            if self.__editSource:
+                res, delta_x, delta_y = event.get_scroll_deltas()
+                if not res:
+                    res, direction = event.get_scroll_direction()
+                    if not res:
+                        self.error("Could not get scroll delta")
+                        return True
+
+                    if direction == Gdk.ScrollDirection.UP:
+                        delta_y = -1.0
+                    elif direction == Gdk.ScrollDirection.DOWN:
+                        delta_y = 1.0
+                    else:
+                        self.error("Could not handle %s scroll event" % direction)
+                        return True
+
+                delta_y = delta_y * -1.0
+                width = self.__editSource.get_child_property("width")[1]
+                height = self.__editSource.get_child_property("height")[1]
+                if event.get_state()[1] & Gdk.ModifierType.SHIFT_MASK:
+                    height += delta_y
+                elif event.get_state()[1] & Gdk.ModifierType.CONTROL_MASK:
+                    width += delta_y
+                else:
+                    width += delta_y
+                    height += delta_y
+
+                self.__editSource.set_child_property("width", width)
+                self.__editSource.set_child_property("height", height)
+                self.app.project_manager.current_project.pipeline.commit_timeline()
+
+        return True
+
+
 class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     """
@@ -491,24 +592,28 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     __gsignals__ = {}
 
-    def __init__(self, sink, settings=None):
+    def __init__(self, sink, app=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
+        self.__transformationBox = TransformationBox(app)
 
         # We only work with a gtkglsink inside a glsinkbin
         self.drawing_area = sink.props.sink.props.widget
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
-        self.add(self.drawing_area)
+        self.add(self.__transformationBox)
+        self.__transformationBox.add(self.drawing_area)
 
         self.drawing_area.show()
 
         self.seeker = Seeker()
-        self.settings = settings
+        if app:
+            self.settings = app.settings
+        self.app = app
         self.box = None
         self.stored = False
         self.area = None
@@ -518,6 +623,9 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.pipeline = None
         self.transformation_properties = None
         self._setting_ratio = False
+        self.__startDraggingPosition = None
+        self.__startEditSourcePosition = None
+        self.__editSource = None
 
     def setDisplayAspectRatio(self, ratio):
         self._setting_ratio = True

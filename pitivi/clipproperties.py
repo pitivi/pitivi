@@ -30,8 +30,6 @@ from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
 
-from pitivi.dialogs.depsmanager import DepsManager
-
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import PADDING, SPACING
@@ -74,10 +72,10 @@ class ClipProperties(Gtk.Box, Loggable):
         self.infobar_box.show()
         self.pack_start(self.infobar_box, False, False, 0)
 
-        # Transformation boxed DISABLED
-        # self.transformation_expander = TransformationProperties(instance, instance.action_log)
-        # self.transformation_expander.set_vexpand(False)
-        # vbox.pack_start(self.transformation_expander, False, False, 0)
+        self.transformation_expander = TransformationProperties(app, app.action_log)
+        self.transformation_expander.set_vexpand(False)
+        self.pack_start(self.transformation_expander, False, False, 0)
+        self.transformation_expander.show_all()
 
         effects_properties_manager = EffectsPropertiesManager(app)
         self.effect_expander = EffectProperties(
@@ -95,9 +93,8 @@ class ClipProperties(Gtk.Box, Loggable):
         if project:
             self.effect_expander._connectTimelineSelection(
                 self.app.gui.timeline_ui.timeline)
-            # Transformation boxed DISABLED
-            # if self.transformation_expander:
-            #     self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
+            if self.transformation_expander:
+                self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
 
     def _getProject(self):
         return self._project
@@ -192,8 +189,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         activatedcell = Gtk.CellRendererToggle()
         activatedcell.props.xpad = PADDING
         activatedcell.connect("toggled", self._effectActiveToggleCb)
-        activatedcol = self.treeview.insert_column_with_attributes(-1,
-                                                                   _("Active"), activatedcell, active=COL_ACTIVATED)
+        self.treeview.insert_column_with_attributes(-1,
+                                                    _("Active"), activatedcell, active=COL_ACTIVATED)
 
         typecol = Gtk.TreeViewColumn(_("Type"))
         typecol.set_spacing(SPACING)
@@ -551,7 +548,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._effect_config_ui.show_all()
 
 
-class TransformationProperties(Gtk.Expander):
+class TransformationProperties(Gtk.Expander, Loggable):
     """
     Widget for viewing and configuring speed
     """
@@ -561,9 +558,11 @@ class TransformationProperties(Gtk.Expander):
 
     def __init__(self, app, action_log):
         Gtk.Expander.__init__(self)
+        Loggable.__init__(self)
         self.action_log = action_log
         self.app = app
         self._timeline = None
+        self.source = None
         self._selected_clip = None
         self.spin_buttons = {}
         self.default_values = {}
@@ -580,59 +579,55 @@ class TransformationProperties(Gtk.Expander):
         self.hide()
 
     def _initButtons(self):
-        self.zoom_scale = self.builder.get_object("zoom_scale")
-        self.zoom_scale.connect("value-changed", self._zoomViewerCb)
         clear_button = self.builder.get_object("clear_button")
         clear_button.connect("clicked", self._defaultValuesCb)
 
-        self._getAndConnectToEffect("xpos_spinbtn", "tilt_x")
-        self._getAndConnectToEffect("ypos_spinbtn", "tilt_y")
+        self.__setupSpinButton("xpos_spinbtn", "posx")
+        self.__setupSpinButton("ypos_spinbtn", "posy")
 
-        self._getAndConnectToEffect("width_spinbtn", "scale_x")
-        self._getAndConnectToEffect("height_spinbtn", "scale_y")
-
-        self._getAndConnectToEffect("crop_left_spinbtn", "clip_left")
-        self._getAndConnectToEffect("crop_right_spinbtn", "clip_right")
-        self._getAndConnectToEffect("crop_top_spinbtn", "clip_top")
-        self._getAndConnectToEffect("crop_bottom_spinbtn", "clip_bottom")
-        self.connectSpinButtonsToFlush()
+        self.__setupSpinButton("width_spinbtn", "width")
+        self.__setupSpinButton("height_spinbtn", "height")
 
     def _zoomViewerCb(self, scale):
         self.app.gui.viewer.setZoom(scale.get_value())
 
     def _expandedCb(self, expander, params):
         if self._selected_clip:
-            self.effect = self._findOrCreateEffect("frei0r-filter-scale0tilt")
-            self._updateSpinButtons()
+            self.source = self._selected_clip.find_track_element(None,
+                                                                 GES.VideoSource)
+            self.__setSource()
             self.set_expanded(self.get_expanded())
-            self._updateBoxVisibility()
-            self.zoom_scale.set_value(1.0)
         else:
-            if self.get_expanded():
-                DepsManager(self.app)
             self.set_expanded(False)
 
     def _defaultValuesCb(self, widget):
-        self.disconnectSpinButtonsFromFlush()
         for name, spinbtn in list(self.spin_buttons.items()):
             spinbtn.set_value(self.default_values[name])
-        self.connectSpinButtonsToFlush()
-        # FIXME Why are we looking at the gnl object directly?
-        self.effect.gnl_object.props.active = False
 
-    def disconnectSpinButtonsFromFlush(self):
-        for spinbtn in list(self.spin_buttons.values()):
-            spinbtn.disconnect_by_func(self._flushPipeLineCb)
+    def __sourcePropertyChangedCb(self, source, element, param):
+        try:
+            spin = self.spin_buttons[param.name]
+        except KeyError:
+            return
 
-    def connectSpinButtonsToFlush(self):
-        for spinbtn in list(self.spin_buttons.values()):
-            spinbtn.connect("output", self._flushPipeLineCb)
+        res, value = self.source.get_child_property(param.name)
+        if spin.get_value() != value:
+            spin.set_value(value)
 
     def _updateSpinButtons(self):
         for name, spinbtn in list(self.spin_buttons.items()):
-            spinbtn.set_value(self.effect.get_property(name))
+            res, value = self.source.get_child_property(name)
+            assert(res)
+            if name == "width":
+                self.default_values[name] = self.app.project_manager.current_project.videowidth
+            elif name == "height":
+                self.default_values[name] = self.app.project_manager.current_project.videoheight
+            else:
+                self.default_values[name] = 0
+            spinbtn.set_value(value)
+            self.source.connect("deep-notify", self.__sourcePropertyChangedCb)
 
-    def _getAndConnectToEffect(self, widget_name, property_name):
+    def __setupSpinButton(self, widget_name, property_name):
         """
         Create a spinbutton widget and connect its signals to change property
         values. While focused, disable the timeline actions' sensitivity.
@@ -640,88 +635,60 @@ class TransformationProperties(Gtk.Expander):
         spinbtn = self.builder.get_object(widget_name)
         spinbtn.connect("output", self._onValueChangedCb, property_name)
         self.spin_buttons[property_name] = spinbtn
-        self.default_values[property_name] = spinbtn.get_value()
 
     def _onValueChangedCb(self, spinbtn, prop):
+        if not self.source:
+            return
+
         value = spinbtn.get_value()
 
-        # FIXME Why are we looking at the gnl object directly?
-        if value != self.default_values[prop] and not self.effect.get_gnlobject().props.active:
-            self.effect.get_gnlobject().props.active = True
-
-        if value != self.effect.get_property(prop):
+        res, cvalue = self.source.get_child_property(prop)
+        if value != cvalue:
             self.action_log.begin("Transformation property change")
-            self.effect.set_property(prop, value)
+            self.source.set_child_property(prop, value)
             self.action_log.commit()
-        box = self.app.gui.viewer.internal.box
+            self.app.project_manager.current_project.pipeline.commit_timeline()
 
-        # update box when values are changed in the spin boxes,
-        # so no point is selected
-        if box and box.clicked_point == 0:
-            box.update_from_effect(self.effect)
+    def __setSource(self):
+        if self.source:
+            try:
+                self.source.disconnect_by_func(self.__sourcePropertyChangedCb)
+            except TypeError:
+                pass
+        if self.get_expanded() and self._selected_clip:
+            self.source = self._selected_clip.find_track_element(None,
+                                                                 GES.VideoSource)
 
-    def _flushPipeLineCb(self, widget):
-        self.app.project_manager.current_project.pipeline.flushSeek()
-
-    def _findEffect(self, name):
-        for effect in self._selected_clip.get_children(False):
-            if isinstance(effect, GES.BaseEffect):
-                if name in effect.get_property("bin-description"):
-                    self.effect = effect
-                    return effect.get_element()
-
-    def _findOrCreateEffect(self, name):
-        effect = self._findEffect(name)
-        if not effect:
-            effect = GES.Effect.new(bin_description=name)
-            self._selected_clip.add(effect)
-            tracks = self.app.project_manager.current_project.timeline.get_tracks(
-            )
-            effect = self._findEffect(name)
-            # disable the effect on default
-            a = self.effect.get_gnlobject()
-            self.effect = list(list(a.elements())[0].elements())[1]
-            self.effect.get_gnlobject().props.active = False
-        self.app.gui.viewer.internal.set_transformation_properties(self)
-        effect.freeze_notify()
-        return self.effect
+            self._updateSpinButtons()
+        else:
+            self.source = None
 
     def _selectionChangedCb(self, timeline):
         if self.timeline and len(self.timeline.selection.selected) > 0:
             # choose last selected clip
-            # TODO: hide effects properties when multiple clips are selected
+            # TODO: hide source properties when multiple clips are selected
             for clip in self.timeline.selection.selected:
                 pass
 
             if clip != self._selected_clip:
                 self._selected_clip = clip
-                self.effect = None
 
             self.show()
-            if self.get_expanded():
-                self.effect = self._findOrCreateEffect(
-                    "frei0r-filter-scale0tilt")
-                self._updateSpinButtons()
+            self.__setSource()
         else:
             # Deselect
             if self._selected_clip:
                 self._selected_clip = None
-                self.zoom_scale.set_value(1.0)
                 self.app.project_manager.current_project.pipeline.flushSeek()
-            self.effect = None
+            self.__setSource()
             self.hide()
-        self._updateBoxVisibility()
-
-    def _updateBoxVisibility(self):
-        if self.get_expanded() and self._selected_clip:
-            self.app.gui.viewer.internal.show_box()
-        else:
-            self.app.gui.viewer.internal.hide_box()
 
     def _getTimeline(self):
         return self._timeline
 
     def _setTimeline(self, timeline):
+        if self.timeline:
+            self.timeline.selection.disconnect_by_func(self._selectionChangedCb)
         self._timeline = timeline
         if timeline:
             self._timeline.selection.connect(
