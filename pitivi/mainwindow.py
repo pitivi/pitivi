@@ -409,7 +409,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         """
         if isinstance(bElement, GES.TitleSource):
             page = 2
-        elif isinstance(bElement, GES.Source):
+        elif isinstance(bElement, GES.Source) or isinstance(bElement, GES.SourceClip):
             # This covers: VideoUriSource, ImageSource, AudioUriSource.
             page = 0
         elif isinstance(bElement, GES.Transition):

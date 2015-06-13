@@ -146,12 +146,14 @@ class Selection(GObject.Object, Loggable):
         self.selected = selection
 
         for obj in old_selection - self.selected:
+            obj.selected.selected = False
             for element in obj.get_children(False):
                 ui.unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
                 if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
                     element.selected.selected = False
 
         for obj in self.selected - old_selection:
+            obj.selected.selected = True
             if not hasattr(obj, "ui") or not obj.ui:
                 continue
             ui.set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)

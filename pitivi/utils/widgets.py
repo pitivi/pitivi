@@ -621,10 +621,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             self.log("Effect has no parent (it has been removed?)")
             return
 
-        for track_element in parent.get_children(False):
-            if hasattr(track_element, "ui_element"):
-                track_element.ui_element.hideKeyframes()
-
     def setElement(self, element, properties={}, ignore=['name'],
                    default_btn=False, use_element_props=False):
         """
