@@ -238,7 +238,7 @@ class ProjectManager(GObject.Object, Loggable):
                             transient_for=self.app.gui)
 
         message = _("Pitivi detected a serious backend problem and could not "
-                    "recover from it, even after multiple tries. The only thing"
+                    "recover from it, even after multiple tries. The only thing "
                     "that can be done at this point is to <b>restart Pitivi</b>."
                     "\n\n"
                     "This is a rare and severe kind of bug. Please see our "
