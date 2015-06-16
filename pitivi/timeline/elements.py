@@ -30,6 +30,7 @@ import os
 from gettext import gettext as _
 
 from gi.repository import GES
+from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
@@ -69,13 +70,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
         "leave": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
-    def __init__(self, timeline, source):
+    def __init__(self, timeline, binding):
         figure = Figure()
         FigureCanvas.__init__(self, figure)
         Loggable.__init__(self)
 
         self.__timeline = timeline
-        self.__source = source
+        self.__source = binding.props.control_source
+        self.__propertyName = binding.props.name
+        self.__resetTooltip()
 
         # Curve values, basically separating source.get_values() timestamps
         # and values.
@@ -194,6 +197,16 @@ class KeyframeCurve(FigureCanvas, Loggable):
             else:
                 self.__handling_motion = True
 
+    def __setTooltip(self, event):
+        if event.xdata:
+            self.set_tooltip_markup(_("Property: %s\nTimestamp: %s\nValue: %s")
+                                    % (self.__propertyName,
+                                       Gst.TIME_ARGS(event.xdata),
+                                       "{:.3f}".format(event.ydata)))
+
+    def __resetTooltip(self):
+        self.set_tooltip_markup(_("Setting property: %s") % str(self.__propertyName))
+
     def __mplMotionEventCb(self, event):
         if not self.props.visible:
             return
@@ -213,17 +226,20 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 self.__source.unset(int(self.__offset))
                 self.__source.set(event.xdata, event.ydata)
                 self.__offset = event.xdata
+                self.__setTooltip(event)
                 self.__updatePlots()
 
         cursor = NORMAL_CURSOR
         result = self.__line.contains(event)
         if result[0]:
             cursor = DRAG_CURSOR
+            self.__setTooltip(event)
             if not self.__hovered:
                 self.emit("enter")
                 self.__hovered = True
         elif self.__hovered:
             self.emit("leave")
+            self.__resetTooltip()
             self.__hovered = False
 
         self.__timeline.get_window().set_cursor(
@@ -334,7 +350,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
             self.remove(self.__keyframeCurve)
 
-        self.__keyframeCurve = KeyframeCurve(self.timeline, source)
+        self.__keyframeCurve = KeyframeCurve(self.timeline, binding)
         self.__keyframeCurve.connect("plot-changed",
                                      self.__keyframePlotChangedCb)
         self.__keyframeCurve.connect("enter", self.__curveEnterCb)
