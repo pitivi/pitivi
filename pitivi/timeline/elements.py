@@ -322,11 +322,26 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__controlledProperty = prop
         self.__createControlBinding(effect)
 
+    def hideKeyframes(self):
+        self.__removeKeyframes()
+        self.__controlledProperty = self._getDefaultMixingProperty()
+        if self.__controlledProperty:
+            self.__createControlBinding(self._bElement)
+
     def __curveEnterCb(self, unused_keyframe_curve):
         self.emit("curve-enter")
 
     def __curveLeaveCb(self, unused_keyframe_curve):
         self.emit("curve-leave")
+
+    def __removeKeyframes(self):
+        if self.__keyframeCurve:
+            self.__keyframeCurve.disconnect_by_func(
+                self.__keyframePlotChangedCb)
+            self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
+            self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
+            self.remove(self.__keyframeCurve)
+        self.__keyframeCurve = None
 
     # Private methods
     def __createKeyframeCurve(self, binding):
@@ -343,13 +358,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
                 self._bElement.props.duration + self._bElement.props.in_point,
                 val)
 
-        if self.__keyframeCurve:
-            self.__keyframeCurve.disconnect_by_func(
-                self.__keyframePlotChangedCb)
-            self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
-            self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
-            self.remove(self.__keyframeCurve)
-
+        self.__removeKeyframes()
         self.__keyframeCurve = KeyframeCurve(self.timeline, binding)
         self.__keyframeCurve.connect("plot-changed",
                                      self.__keyframePlotChangedCb)
@@ -369,6 +378,8 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
             if binding:
                 self.__createKeyframeCurve(binding)
+
+                return
 
             source = GstController.InterpolationControlSource()
             source.props.mode = GstController.InterpolationMode.LINEAR
