@@ -286,18 +286,6 @@ class SimplePipeline(GObject.Object, Loggable):
         """
         self.setState(Gst.State.PAUSED)
 
-        # When the pipeline has been paused we need to update the
-        # timeline/playhead position, as the 'position' signal
-        # is only emitted every 300ms and the playhead jumps
-        # during the playback.
-        try:
-            position = self.getPosition()
-        except PipelineError as e:
-            self.warning("Getting the position failed: %s", e)
-            return
-        if position != Gst.CLOCK_TIME_NONE and position >= 0:
-            self.emit("position", position)
-
     def stop(self):
         """
         Sets the L{Pipeline} to READY
@@ -509,12 +497,29 @@ class SimplePipeline(GObject.Object, Loggable):
                 self._recovery_state = self.RecoveryState.NOT_RECOVERING
                 self._attempted_recoveries = 0
             self._waiting_for_async_done = False
+            self.__emitPosition()
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek)
                 self._next_seek = None
             self._removeWaitingForAsyncDoneTimeout()
         else:
             self.log("%s [%r]", message.type, message.src)
+
+    def __emitPosition(self):
+        # When the pipeline has been paused we need to update the
+        # timeline/playhead position, as the 'position' signal
+        # is only emitted every 300ms and the playhead jumps
+        # during the playback.
+        try:
+            position = self.getPosition()
+        except PipelineError as e:
+            self.warning("Getting the position failed: %s", e)
+            return None
+
+        if position != Gst.CLOCK_TIME_NONE and position >= 0:
+            self.emit("position", position)
+
+        return position
 
     @property
     def _waiting_for_async_done(self):
