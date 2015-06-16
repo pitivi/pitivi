@@ -144,7 +144,7 @@ class EffectFactory(object):
     Factories that applies an effect on a stream
     """
     def __init__(self, effect_name, media_type, categories,
-                human_name, description):
+                 human_name, description):
         object.__init__(self)
         self.effect_name = effect_name
         self.media_type = media_type
@@ -177,8 +177,8 @@ class EffectsManager(object):
             klass = element_factory.get_klass()
             name = element_factory.get_name()
 
-            if ("Effect" in klass and name not in BLACKLISTED_EFFECTS
-               and not [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
+            if ("Effect" in klass and name not in BLACKLISTED_EFFECTS and not
+                    [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
                 media_type = None
 
                 if "Audio" in klass:

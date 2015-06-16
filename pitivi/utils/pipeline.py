@@ -25,7 +25,6 @@
 High-level pipelines
 """
 import os
-import platform
 
 
 from gi.repository import GLib

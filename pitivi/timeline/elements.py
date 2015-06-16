@@ -690,9 +690,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.timeline.selection.setSelection(selection, mode)
 
-        # if self.keyframedElement:
-        #    self.showKeyframes(self.keyframedElement, self.prop)
-
         return False
 
     def _connectWidgetSignals(self):
