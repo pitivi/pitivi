@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-14 20:10+0200\n"
-"PO-Revision-Date: 2015-06-14 20:11+0200\n"
+"POT-Creation-Date: 2015-06-21 14:19+0200\n"
+"PO-Revision-Date: 2015-06-21 14:20+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -1411,7 +1411,23 @@ msgstr "Wyświetlanie tego okno na pełnym ekranie"
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
-#: ../pitivi/timeline/elements.py:890
+#: ../pitivi/timeline/elements.py:202
+#, python-format
+msgid ""
+"Property: %s\n"
+"Timestamp: %s\n"
+"Value: %s"
+msgstr ""
+"Właściwość: %s\n"
+"Czas: %s\n"
+"Wartość: %s"
+
+#: ../pitivi/timeline/elements.py:208
+#, python-format
+msgid "Setting property: %s"
+msgstr "Ustawianie właściwości: %s"
+
+#: ../pitivi/timeline/elements.py:922
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
@@ -1497,7 +1513,7 @@ msgstr "Powiększenie"
 msgid "Zoom Out"
 msgstr "Pomniejszenie"
 
-#: ../pitivi/timeline/timeline.py:1330 ../pitivi/utils/widgets.py:1035
+#: ../pitivi/timeline/timeline.py:1330 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
@@ -1572,7 +1588,7 @@ msgstr "Problem:"
 msgid "Extra information:"
 msgstr "Informacje dodatkowe:"
 
-#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:759
+#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:755
 msgid "Reset to default value"
 msgstr "Przywróć domyślne wartości"
 
@@ -1784,31 +1800,31 @@ msgstr "Anamorficzne (2.4)"
 msgid "Implement Me"
 msgstr "Niezaimplementowane"
 
-#: ../pitivi/utils/widgets.py:660
+#: ../pitivi/utils/widgets.py:656
 msgid "No properties."
 msgstr "Brak właściwości."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:750
+#: ../pitivi/utils/widgets.py:746
 msgid "Show keyframes for this value"
 msgstr "Wyświetlanie klatek kluczowych dla tej wartości"
 
-#: ../pitivi/utils/widgets.py:920
+#: ../pitivi/utils/widgets.py:916
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla %s"
 
-#: ../pitivi/utils/widgets.py:1040
+#: ../pitivi/utils/widgets.py:1036
 msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1115
+#: ../pitivi/utils/widgets.py:1111
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
-#: ../pitivi/utils/widgets.py:1119
+#: ../pitivi/utils/widgets.py:1115
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone nanosekundy: %d"
