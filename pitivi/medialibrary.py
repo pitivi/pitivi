@@ -31,28 +31,27 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GdkPixbuf
+from gi.repository.GstPbutils import DiscovererVideoInfo
 
 import os
-import time
 import threading
+import time
 
-from urllib.parse import unquote
 from gettext import ngettext, gettext as _
-from urllib.parse import urlparse
 from hashlib import md5
-from gi.repository.GstPbutils import DiscovererVideoInfo
+from urllib.parse import unquote
+from urllib.parse import urlparse
 
 from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir, get_pixmap_dir
-from pitivi.settings import GlobalSettings
-from pitivi.mediafilespreviewer import PreviewWidget
-from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
-from pitivi.utils.ui import beautify_length
-from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
+from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
+from pitivi.mediafilespreviewer import PreviewWidget
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
-import pitivi.utils.ui as dnd
-from pitivi.utils.ui import beautify_info, info_name, FILESOURCE_TARGET_ENTRY, SPACING
+from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
+from pitivi.utils.ui import beautify_info, beautify_length, info_name, \
+    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, FILESOURCE_TARGET_ENTRY, SPACING
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
@@ -272,7 +271,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
-                           [dnd.URI_TARGET_ENTRY, dnd.FILE_TARGET_ENTRY],
+                           [URI_TARGET_ENTRY, FILE_TARGET_ENTRY],
                            Gdk.DragAction.COPY)
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
