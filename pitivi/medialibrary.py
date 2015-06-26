@@ -131,6 +131,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.dragged = False
         self.clip_view = self.app.settings.lastClipView
         self.import_start_time = time.time()
+        self._last_imported_uris = []
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -680,10 +681,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._errors.append(error)
             self._updateProgressbar()
 
-    def _sourcesStartedImportingCb(self, unused_project):
+    def _sourcesStartedImportingCb(self, project):
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
         self._progressbar.show()
+        if project.loaded:
+            # Some new files are being imported.
+            self._last_imported_uris += [asset.props.id for asset in project.get_loading_assets()]
 
     def _sourcesStoppedImportingCb(self, unused_project):
         self.debug("Importing took %.3f seconds",
@@ -712,6 +716,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._thumbs_process = threading.Thread(
                 target=MediaLibraryWidget._generateThumbnailsThread, args=(self, missing_thumbs))
             self._thumbs_process.start()
+
+        self._selectLastImportedUris()
+
+    def _selectLastImportedUris(self):
+        if not self._last_imported_uris:
+            return
+        self._selectSources(self._last_imported_uris)
+        self._last_imported_uris = []
 
     def _generateThumbnailsThread(self, missing_thumbs):
         for uri in missing_thumbs:
@@ -796,16 +808,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         """
         Select, in the media library, unused sources in the project.
         """
-        assets = self.app.project_manager.current_project.list_assets(
-            GES.UriClip)
+        project = self.app.project_manager.current_project
         unused_sources_uris = []
-
-        model = self.treeview.get_model()
-        selection = self.treeview.get_selection()
-        for asset in assets:
+        for asset in project.list_assets(GES.UriClip):
             if not self._sourceIsUsed(asset):
                 unused_sources_uris.append(asset.get_id())
+        self._selectSources(unused_sources_uris)
 
+    def _selectSources(self, sources_uris):
         # Hack around the fact that making selections (in a treeview/iconview)
         # deselects what was previously selected
         if self.clip_view == SHOW_TREEVIEW:
@@ -813,8 +823,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         elif self.clip_view == SHOW_ICONVIEW:
             self.iconview.select_all()
 
+        model = self.treeview.get_model()
+        selection = self.treeview.get_selection()
         for row in model:
-            if row[COL_URI] not in unused_sources_uris:
+            if row[COL_URI] not in sources_uris:
                 if self.clip_view == SHOW_TREEVIEW:
                     selection.unselect_iter(row.iter)
                 else:
@@ -1082,7 +1094,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             # library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
         if filenames:
-            self.app.project_manager.current_project.addUris(filenames)
+            self._last_imported_uris += filenames
+            project = self.app.project_manager.current_project
+            assets = project.assetsForUris(self._last_imported_uris)
+            if assets:
+                # All the files have already been added.
+                self._selectLastImportedUris()
+            else:
+                project.addUris(filenames)
 
     # Used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):

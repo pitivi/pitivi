@@ -694,8 +694,8 @@ class Project(Loggable, GES.Project):
 
     Signals:
      - C{project-changed}: Modifications were made to the project
-     - C{start-importing}: Started to import files in bash
-     - C{done-importing}: Done importing files in bash
+     - C{start-importing}: Started to import files
+     - C{done-importing}: Done importing files
     """
 
     __gsignals__ = {
@@ -1030,10 +1030,7 @@ class Project(Loggable, GES.Project):
             # Ignore for example the assets producing GES.TitleClips.
             return
         self.nb_imported_files += 1
-        assets = self.get_loading_assets()
-        self.nb_remaining_file_to_import = len([tmpasset for tmpasset in assets if
-                                                GObject.type_is_a(tmpasset.get_extractable_type(),
-                                                                  GES.UriClip)])
+        self.nb_remaining_file_to_import = self.__countRemainingFilesToImport()
         if self.nb_remaining_file_to_import == 0:
             self.nb_imported_files = 0
             # We do not take into account asset comming from project
@@ -1148,15 +1145,24 @@ class Project(Loggable, GES.Project):
 
     def addUris(self, uris):
         """
-        Add c{uris} to the source list.
+        Add c{uris} asynchronously.
 
-        The uris will be analyzed before being added.
+        The uris will be analyzed before being added, so only valid ones pass.
         """
         # Do not try to reload URIS that we already have loaded
         self.app.action_log.begin("Adding assets")
         for uri in uris:
             self.create_asset(quote_uri(uri), GES.UriClip)
         self._calculateNbLoadingAssets()
+
+    def assetsForUris(self, uris):
+        assets = []
+        for uri in uris:
+            asset = self.get_asset(uri, GES.UriClip)
+            if not asset:
+                return None
+            assets.append(asset)
+        return assets
 
     def listSources(self):
         return self.list_assets(GES.UriClip)
@@ -1332,13 +1338,17 @@ class Project(Loggable, GES.Project):
         return None
 
     def _calculateNbLoadingAssets(self):
-        nb_remaining_file_to_import = len([asset for asset in self.get_loading_assets() if
-                                           GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
+        nb_remaining_file_to_import = self.__countRemainingFilesToImport()
         if self.nb_remaining_file_to_import == 0 and nb_remaining_file_to_import:
             self.nb_remaining_file_to_import = nb_remaining_file_to_import
             self._emitChange("start-importing")
             return
         self.nb_remaining_file_to_import = nb_remaining_file_to_import
+
+    def __countRemainingFilesToImport(self):
+        assets = self.get_loading_assets()
+        return len([asset for asset in assets if
+                    GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
 
 
 # ---------------------- UI classes ----------------------------------------- #
