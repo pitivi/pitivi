@@ -30,21 +30,24 @@ from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.utils import ui
 from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.elements import Clip, TrimHandle
+from pitivi.timeline.layer import SpacedSeparator, Layer, LayerControls
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.timeline import Zoomable, TimelineError
-from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, CONTROL_WIDTH, \
+from pitivi.utils.timeline import EditingContext, Selection, \
+    TimelineError, Zoomable, \
+    SELECT, SELECT_ADD
+from pitivi.utils.ui import alter_style_class, \
+    set_children_state_recurse, unset_children_state_recurse, \
+    EXPANDED_SIZE, SPACING, CONTROL_WIDTH, \
+    PLAYHEAD_WIDTH, LAYER_HEIGHT, SNAPBAR_WIDTH, \
     EFFECT_TARGET_ENTRY, URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
-from pitivi.timeline.elements import Clip, TrimHandle
-from pitivi.utils import timeline as timelineUtils
-from pitivi.timeline.layer import SpacedSeparator, Layer, LayerControls
 
 GlobalSettings.addConfigOption('edgeSnapDeadband',
                                section="user-interface",
@@ -92,7 +95,7 @@ class VerticalBar(Gtk.DrawingArea, Loggable):
 
     def do_get_preferred_width(self):
         self.debug("Getting prefered height")
-        return ui.PLAYHEAD_WIDTH, ui.PLAYHEAD_WIDTH
+        return PLAYHEAD_WIDTH, PLAYHEAD_WIDTH
 
     def do_get_preferred_height(self):
         self.debug("Getting prefered height")
@@ -196,7 +199,7 @@ class Marquee(Gtk.Box, Loggable):
         return False
 
 
-class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
+class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """
     The main timeline Widget, it contains the representation of the GESTimeline
     without any extra widgets.
@@ -207,7 +210,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def __init__(self, container, app):
         super(Timeline, self).__init__()
 
-        timelineUtils.Zoomable.__init__(self)
+        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self._main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -239,7 +242,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.bTimeline = None
         self.__last_position = 0
-        self.selection = timelineUtils.Selection()
+        self.selection = Selection()
 
         self._layers = []
         self.parent = container
@@ -405,9 +408,9 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     # Gtk.Widget virtual methods implementation
     def do_get_preferred_height(self):
-        natural_height = max(1, len(self._layers)) * (ui.LAYER_HEIGHT + 20)
+        natural_height = max(1, len(self._layers)) * (LAYER_HEIGHT + 20)
 
-        return ui.LAYER_HEIGHT, natural_height
+        return LAYER_HEIGHT, natural_height
 
     def do_draw(self, cr):
         if self.bTimeline:
@@ -427,7 +430,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def __drawSnapIndicator(self, cr):
         if self.__snap_position > 0:
             self.__snap_bar.props.height_request = self.layout.props.height
-            self.__snap_bar.props.width_request = ui.SNAPBAR_WIDTH
+            self.__snap_bar.props.width_request = SNAPBAR_WIDTH
 
             self.layout.propagate_draw(self.__snap_bar, cr)
         else:
@@ -435,7 +438,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def __drawPlayHead(self, cr):
         self.__playhead.props.height_request = self.layout.props.height
-        self.__playhead.props.width_request = ui.PLAYHEAD_WIDTH
+        self.__playhead.props.width_request = PLAYHEAD_WIDTH
 
         self.layout.propagate_draw(self.__playhead, cr)
 
@@ -475,7 +478,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         if x is not None:
             x += self.hadj.props.value
-            x -= ui.CONTROL_WIDTH
+            x -= CONTROL_WIDTH
 
         if y is not None:
             y += self.vadj.props.value
@@ -522,11 +525,11 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.__disableCenterPlayhead = True
             if delta_y > 0:
                 rescroll = True
-                timelineUtils.Zoomable.zoomOut()
+                Zoomable.zoomOut()
                 self.queue_draw()
             elif delta_y < 0:
                 rescroll = True
-                timelineUtils.Zoomable.zoomIn()
+                Zoomable.zoomIn()
                 self.queue_draw()
             self.__disableCenterPlayhead = False
 
@@ -637,14 +640,14 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 for clip in clips:
                     self.current_group.add(clip.get_toplevel_parent())
 
-                self.selection.setSelection(clips, timelineUtils.SELECT)
+                self.selection.setSelection(clips, SELECT)
             else:
-                self.selection.setSelection([], timelineUtils.SELECT)
+                self.selection.setSelection([], SELECT)
         else:
             only_transitions = not bool([selected for selected in self.selection.selected
                                          if not isinstance(selected, GES.TransitionClip)])
             if not only_transitions:
-                self.selection.setSelection([], timelineUtils.SELECT)
+                self.selection.setSelection([], SELECT)
 
         self.__marquee.hide()
 
@@ -669,7 +672,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__last_clips_on_leave = None
 
         # To be able to receive effects dragged on clips.
-        self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         # To be able to receive assets dragged from the media library.
         self.drag_dest_add_uri_targets()
 
@@ -681,7 +684,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             placement = 0
             self.draggingElement = None
             self.resetSelectionGroup()
-            self.selection.setSelection([], timelineUtils.SELECT)
+            self.selection.setSelection([], SELECT)
             for uri in self.dropData:
                 asset = self.app.gui.medialibrary.getAssetForUri(uri)
                 if asset is None:
@@ -708,7 +711,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                                         asset.get_supported_formats())
                 placement += clip_duration
                 self.current_group.add(bClip.get_toplevel_parent())
-                self.selection.setSelection([], timelineUtils.SELECT_ADD)
+                self.selection.setSelection([], SELECT_ADD)
                 self.app.action_log.commit()
                 self._project.pipeline.commit_timeline()
 
@@ -745,7 +748,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             if self._createdClips:
                 clips = self.current_group.get_children(False)
                 self.resetSelectionGroup()
-                self.selection.setSelection([], timelineUtils.SELECT)
+                self.selection.setSelection([], SELECT)
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
 
@@ -928,7 +931,7 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                     layer_alloc.y - layer_alloc.height
                 separators.append(layers[i + 1].ui.before_sep)
             except IndexError:
-                sep_rectangle.height += ui.LAYER_HEIGHT
+                sep_rectangle.height += LAYER_HEIGHT
 
             if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
                 self.debug("Returning layer %s, separators: %s" % (layer, separators))
@@ -942,11 +945,11 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def __setHoverSeparators(self):
         for sep in self.__on_separators:
-            ui.set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+            set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
 
     def __unsetHoverSeparators(self):
         for sep in self.__on_separators:
-            ui.unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+            unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
 
     def __dragUpdate(self, event_widget, x, y):
         if self.__got_dragged is False:
@@ -959,15 +962,15 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                 edit_mode = GES.EditMode.EDIT_NORMAL
                 dragging_edge = GES.Edge.EDGE_NONE
 
-            self.editing_context = timelineUtils.EditingContext(self.draggingElement.bClip,
-                                                                self.bTimeline,
-                                                                edit_mode,
-                                                                dragging_edge,
-                                                                None,
-                                                                self.app.action_log)
+            self.editing_context = EditingContext(self.draggingElement.bClip,
+                                                  self.bTimeline,
+                                                  edit_mode,
+                                                  dragging_edge,
+                                                  None,
+                                                  self.app.action_log)
 
         x, y = event_widget.translate_coordinates(self, x, y)
-        x -= ui.CONTROL_WIDTH
+        x -= CONTROL_WIDTH
         x += self.hadj.get_value()
         y += self.vadj.get_value()
 
