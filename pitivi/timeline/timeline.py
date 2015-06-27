@@ -38,7 +38,8 @@ from pitivi.settings import GlobalSettings
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable, TimelineError
-from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, CONTROL_WIDTH
+from pitivi.utils.ui import alter_style_class, EXPANDED_SIZE, SPACING, CONTROL_WIDTH, \
+    EFFECT_TARGET_ENTRY, URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
 from pitivi.timeline.elements import Clip, TrimHandle
@@ -721,7 +722,6 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return False
 
     def __dragMotionCb(self, unused_widget, context, x, y, timestamp):
-
         target = self.drag_dest_find_target(context, None)
         if not self.dropDataReady:
             # We don't know yet the details of what's being dragged.
@@ -758,8 +758,8 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         # it
         zoom_was_fitted = self.parent.zoomed_fitted
 
-        target = self.drag_dest_find_target(context, None)
-        if target.name() == "text/uri-list":
+        target = self.drag_dest_find_target(context, None).name()
+        if target == URI_TARGET_ENTRY.target:
             self.debug("Got list of URIs")
             if self.__last_clips_on_leave:
                 self._createdClips = False
@@ -777,15 +777,18 @@ class Timeline(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
                 self.dragEnd()
                 context.finish(True, False, timestamp)
-        elif target.name() == "pitivi/effect":
+        elif target == EFFECT_TARGET_ENTRY.target:
             self.fixme("TODO Implement effect support")
+        else:
+            return False
 
         return True
 
     def __dragDataReceivedCb(self, unused_widget,
                              drag_context, unused_x,
                              unused_y, selection_data, unused_info, timestamp):
-        dragging_effect = selection_data.get_data_type().name() == "pitivi/effect"
+        data_type = selection_data.get_data_type().name()
+        dragging_effect = data_type == EFFECT_TARGET_ENTRY.target
         if not self.dropDataReady:
             self.__last_clips_on_leave = None
             if dragging_effect:
