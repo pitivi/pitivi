@@ -1360,8 +1360,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             ("GroupObj", "pitivi-group", _("Group"),
              "<Control>G", _("Group clips"), self._groupSelected),
 
-            ("AlignObj", "pitivi-align", _("Align"),
-             "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
+            # TODO: Fix the align feature.
+            # ("AlignObj", "pitivi-align", _("Align"),
+            #  "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
         )
 
         playhead_actions = (
