@@ -51,7 +51,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
 from pitivi.utils.ui import beautify_info, beautify_length, info_name, \
-    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, FILESOURCE_TARGET_ENTRY, SPACING
+    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, SPACING
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
@@ -276,10 +276,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.drag_dest_add_uri_targets()
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self._setup_view_for_drag_and_drop(
-            self.treeview, [FILESOURCE_TARGET_ENTRY])
-        self._setup_view_for_drag_and_drop(
-            self.iconview, [FILESOURCE_TARGET_ENTRY])
+        self._setupViewAsDragAndDropSource(self.treeview)
+        self._setupViewAsDragAndDropSource(self.iconview)
 
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
@@ -349,13 +347,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.warning("Did not find any asser for uri: %s" % (uri))
 
-    def _setup_view_for_drag_and_drop(self, view, target_entries):
+    def _setupViewAsDragAndDropSource(self, view):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
         view.enable_model_drag_source(
-            Gdk.ModifierType.BUTTON1_MASK, target_entries, Gdk.DragAction.COPY)
-        view.drag_source_set_target_list([])
+            Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         view.drag_source_add_uri_targets()
-        view.drag_source_add_text_targets()
         view.connect("drag-data-get", self._dndDragDataGetCb)
         view.connect("drag-begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
