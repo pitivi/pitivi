@@ -664,7 +664,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     # drag and drop
     def __setUpDragAndDrop(self):
         self.got_dragged = False
-        self.dropHighlight = False
         self.dropDataReady = False
         self.dropData = None
         self._createdClips = False
@@ -734,11 +733,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         else:
             if not self.__createClips(x, y):
                 self.__dragUpdate(self, x, y)
-
             Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
-            if not self.dropHighlight:
-                self.drag_highlight()
-                self.dropHighlight = True
         return True
 
     def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
