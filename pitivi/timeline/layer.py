@@ -19,6 +19,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import re
 
 from gi.repository import Gdk
 from gi.repository import Gtk
@@ -77,14 +78,31 @@ class BaseLayerControl(Gtk.Box, Loggable):
             _("Set a personalized name for this layer"))
         self.name_entry.set_property("secondary-icon-name", self._getIconName())
         self.name_entry.connect("key-press-event", self._keyPressCb)
-        if layer.bLayer.get_meta(self.__meta_name) is None:
-            self.layer.bLayer.set_meta(self.__meta_name, '%s %d'
-                                       % (self.__type_name, layer.bLayer.get_priority()))
-        self.name_entry.set_text(self.layer.bLayer.get_meta(self.__meta_name))
 
+        layer.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
+        self.__resetLayerName()
         table.attach(self.name_entry, 0, 2, 0, 2)
 
         self.show_all()
+
+    def __del__(self):
+        self.layer.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+
+    def __layerPriorityChangedCb(self, bLayer, pspec):
+        self.__resetLayerName()
+
+    def __nameIsDefault(self, name):
+        if name is None:
+            return False
+
+        return re.findall("%s [0-9]+$" % self.__type_name, name)
+
+    def __resetLayerName(self):
+        name = self.layer.bLayer.get_meta(self.__meta_name)
+        if name is None or self.__nameIsDefault(name):
+            name = '%s %d' % (self.__type_name, self.layer.bLayer.get_priority())
+            self.layer.bLayer.set_meta(self.__meta_name, name)
+        self.name_entry.set_text(name)
 
     def _getIconName(self):
         return None
