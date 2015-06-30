@@ -172,7 +172,6 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.bElement = bElement
         # Guard against malformed URIs
         self.uri = quote_uri(bElement.props.uri)
-        self.duration = bElement.props.duration
 
         # Variables related to thumbnailing
         self.wishlist = []
@@ -193,25 +192,15 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.interval = 500  # Every 0.5 second, reevaluate the situation
 
         # Connect signals and fire things up
-        self.timeline.hadj.connect("value-changed", self._scrollCb)
-        self.bElement.connect("notify::duration", self._durationChangedCb)
         self.bElement.connect("notify::in-point", self._inpointChangedCb)
-        self.bElement.connect("notify::start", self._startChangedCb)
 
         self.pipeline = None
-        self._needs_redraw = True
+        self.__last_rectangle = Gdk.Rectangle()
         self.becomeControlled()
 
         self.connect("notify::height-request", self._heightChangedCb)
 
     # Internal API
-    def _force_redraw(self, unused_msg_source=None):
-        self._needs_redraw = True
-        if self.wishlist:
-            self.becomeControlled()
-
-        return
-
     def _setupPipeline(self):
         """
         Create the pipeline.
@@ -301,9 +290,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of: %s", self.uri)
-            duration = self.duration
-        else:
-            self.duration = duration
+            duration = self.bElement.props.duration
 
         self.queue = list(range(0, duration, self.thumb_period))
 
@@ -437,14 +424,12 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         if time in self.queue:
             self.queue.remove(time)
         self.thumb_cache[time] = pixbuf
-        self._needs_redraw = True
         self.queue_draw()
 
     # Interface (Zoomable)
 
     def zoomChanged(self):
         self._remove_all_children()
-        self._force_redraw()
 
     # Callbacks
 
@@ -470,23 +455,9 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
     def _heightChangedCb(self, unused_widget, unused_value):
         self._remove_all_children()
-        self._force_redraw()
-
-    def _scrollCb(self, unused):
-        self._force_redraw()
-
-    def _startChangedCb(self, unused_bElement, unused_value):
-        self._force_redraw()
 
     def _inpointChangedCb(self, unused_bElement, unused_value):
         self.get_hadjustment().set_value(Zoomable.nsToPixel(self.bElement.props.in_point))
-        self._force_redraw()
-
-    def _durationChangedCb(self, unused_bElement, unused_value):
-        new_duration = max(self.duration, self.bElement.props.duration)
-        if new_duration > self.duration:
-            self.duration = new_duration
-            self._force_redraw()
 
     def setSelected(self, selected):
         if selected:
@@ -518,9 +489,12 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
     def do_draw(self, context):
         clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
-        if self._needs_redraw:
-            if self._addVisibleThumbnails(clipped_rect):
-                self._needs_redraw = False
+        if self.__last_rectangle.x != clipped_rect.x or \
+                self.__last_rectangle.y != clipped_rect.y or \
+                self.__last_rectangle.width != clipped_rect.width or \
+                self.__last_rectangle.height != clipped_rect.height:
+            self._addVisibleThumbnails(clipped_rect)
+            self.__last_rectangle = clipped_rect
 
         Gtk.Layout.do_draw(self, context)
 
@@ -729,7 +703,6 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self._uri = quote_uri(bElement.props.uri)
 
         self._num_failures = 0
-
         self.adapter = None
         self.surface = None
 
