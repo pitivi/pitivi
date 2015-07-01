@@ -1158,7 +1158,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def zoomFit(self):
         # self._hscrollbar.set_value(0)
-        self.app.write_action("zoom-fit", {"not-mandatory-action-type": True})
+        self.app.write_action("zoom-fit", {"optional-action-type": True})
 
         self._setBestZoomRatio(allow_zoom_in=True)
 

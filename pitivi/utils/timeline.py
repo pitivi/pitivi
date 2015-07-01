@@ -374,13 +374,13 @@ class Zoomable(object):
     def zoomIn(cls):
         cls.setZoomLevel(cls._cur_zoom + 1)
         cls.app.write_action("zoom-in",
-                             {"not-mandatory-action-type": True})
+                             {"optional-action-type": True})
 
     @classmethod
     def zoomOut(cls):
         cls.setZoomLevel(cls._cur_zoom - 1)
         cls.app.write_action("zoom-out",
-                             {"not-mandatory-action-type": True})
+                             {"optional-action-type": True})
 
     @classmethod
     def computeZoomRatio(cls, x):
