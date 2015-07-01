@@ -267,8 +267,9 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
                 'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' %
                 (self.interval, filename_from_uri(self.uri)))
         self.cpu_usage_tracker.reset()
-        self._thumb_cb_id = GLib.timeout_add(
-            self.interval, self._create_next_thumb)
+        self._thumb_cb_id = GLib.timeout_add(self.interval,
+                                             self._create_next_thumb,
+                                             priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailingWhenIdle(self):
         self.debug(

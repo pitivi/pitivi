@@ -309,8 +309,7 @@ class CPUUsageTracker(object):
         self.reset()
 
     def usage(self):
-        delta_time = (datetime.datetime.now()
-                      - self.last_moment).total_seconds()
+        delta_time = (datetime.datetime.now() - self.last_moment).total_seconds()
         delta_usage = resource.getrusage(
             resource.RUSAGE_SELF).ru_utime - self.last_usage.ru_utime
         usage = float(delta_usage) / delta_time * 100
