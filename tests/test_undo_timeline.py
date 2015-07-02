@@ -135,7 +135,7 @@ class TestTimelineUndo(TestCase):
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
-        self.assertEqual(3, len(stack.done_actions))
+        self.assertEqual(1, len(stack.done_actions))
         action = stack.done_actions[0]
         self.assertTrue(isinstance(action, ClipAdded))
         self.assertTrue(clip1 in self.getTimelineClips())
