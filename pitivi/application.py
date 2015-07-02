@@ -95,6 +95,9 @@ class Pitivi(Gtk.Application, Loggable):
         self.connect("open", self.openCb)
 
     def write_action(self, action, properties={}):
+        if self._scenario_file is None:
+            return
+
         if self._first_action:
             self._scenario_file.write(
                 "description, seek=true, handles-states=true\n")

@@ -191,6 +191,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.disable_save = False
         self._backup_lock = 0
         self.exitcode = 0
+        self.__missing_uris = False
 
     def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
@@ -306,6 +307,7 @@ class ProjectManager(GObject.Object, Loggable):
         if self.current_project is not None and not self.closeRunningProject():
             return False
 
+        self.__missing_uris = False
         self.emit("new-project-loading", uri)
 
         is_validate_scenario = self._isValidateScenario(uri)
@@ -585,6 +587,7 @@ class ProjectManager(GObject.Object, Loggable):
                 # The user has not made a decision, don't do anything
                 return False
 
+        self.__missing_uris = False
         if emission:
             self.emit("new-project-loading", None)
         # We don't have a URI here, None means we're loading a new project
@@ -667,14 +670,18 @@ class ProjectManager(GObject.Object, Loggable):
         return name + ext + "~"
 
     def _missingURICb(self, project, error, asset):
+        self.__missing_uris = True
         new_uri = self.emit("missing-uri", project, error, asset)
         if not new_uri:
             project.at_least_one_asset_missing = True
+        self.current_project.setModificationState(True)
         return new_uri
 
     def _projectLoadedCb(self, unused_project, unused_timeline):
         self.debug("Project loaded %s", self.current_project.props.uri)
         self.emit("new-project-loaded", self.current_project, True)
+        if self.__missing_uris:
+            self.current_project.setModificationState(True)
         self.time_loaded = time()
 
 
@@ -1139,9 +1146,11 @@ class Project(Loggable, GES.Project):
         for track in self.timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(caps)
-        self.app.write_action("set-track-restriction-caps", {
-            "caps": caps.to_string(),
-            "track-type": GES.TrackType.VIDEO.value_nicks[0]})
+
+        if self.app:
+            self.app.write_action("set-track-restriction-caps", {
+                "caps": caps.to_string(),
+                "track-type": GES.TrackType.VIDEO.value_nicks[0]})
 
         self.pipeline.flushSeek()
 
