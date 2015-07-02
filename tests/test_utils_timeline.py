@@ -22,6 +22,7 @@ from unittest import TestCase
 
 from gi.repository import GES
 
+from common import createTestClip
 from pitivi.utils.timeline import Selected, Selection, SELECT, SELECT_ADD, \
     UNSELECT
 
@@ -54,8 +55,8 @@ class TestSelection(TestCase):
 
     def testGetSingleClip(self):
         selection = Selection()
-        clip1 = GES.UriClip()
-        clip2 = GES.TitleClip()
+        clip1 = createTestClip(GES.UriClip)
+        clip2 = createTestClip(GES.TitleClip)
 
         # Selection empty.
         self.assertFalse(selection.getSingleClip(GES.TitleClip))

@@ -7,6 +7,8 @@ import os
 import gc
 import unittest
 
+from pitivi.utils.timeline import Selected
+
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
 
 
@@ -61,8 +63,8 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         # don't barf gc info all over the console if we have already failed a
         # test case
-        if (self._num_failures < len(getattr(self._result, 'failures', []))
-           or self._num_errors < len(getattr(self._result, 'failures', []))):
+        if (self._num_failures < len(getattr(self._result, 'failures', [])) or
+                self._num_errors < len(getattr(self._result, 'failures', []))):
             return
         if detect_leaks:
             self.gccollect()
@@ -112,3 +114,10 @@ class SignalMonitor(object):
         setattr(self, field, getattr(self, field, 0) + 1)
         field = self._getSignalCollectName(name)
         setattr(self, field, getattr(self, field, []) + [args[:-1]])
+
+
+def createTestClip(clip_type):
+    clip = clip_type()
+    clip.selected = Selected()
+
+    return clip
