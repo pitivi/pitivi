@@ -111,6 +111,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.preview_video = ViewerWidget(self.player.video_sink)
         self.preview_video.props.hexpand = minimal
         self.preview_video.props.vexpand = minimal
+        self.preview_video.show_all()
         self.attach(self.preview_video, 0, 0, 1, 1)
 
         # An image for images and audio

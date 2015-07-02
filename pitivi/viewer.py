@@ -489,6 +489,9 @@ class TransformationBox(Gtk.EventBox, Loggable):
         self.add_events(Gdk.EventMask.SCROLL_MASK)
 
     def __setupEditSource(self):
+        if not self.app:
+            return
+
         if self.__editSource:
             return
         elif self.app.project_manager.current_project.pipeline.getState() != Gst.State.PAUSED:
