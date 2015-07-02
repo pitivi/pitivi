@@ -3,6 +3,7 @@
 #       pitivi/project.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2013, 2014, 2015, Thibault Saunier <tsaunier@gnome.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -594,6 +595,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         project.createTimeline()
         project._ensureTracks()
+        project.update_restriction_caps()
         self.current_project = project
         self.emit("new-project-created", project)
 
