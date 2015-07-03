@@ -182,11 +182,11 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         # TODO: get this from the user settings
         self.thumb_period = int(0.5 * Gst.SECOND)
         self.thumb_height = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
-        self.thumb_width = None  # will be set by self._setupPipeline()
 
         # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
         self.thumb_cache = get_cache_for_uri(self.uri)
+        self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
 
         self.cpu_usage_tracker = CPUUsageTracker()
         self.interval = 500  # Every 0.5 second, reevaluate the situation
@@ -494,8 +494,10 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
                 self.__last_rectangle.y != clipped_rect.y or \
                 self.__last_rectangle.width != clipped_rect.width or \
                 self.__last_rectangle.height != clipped_rect.height:
-            self._addVisibleThumbnails(clipped_rect)
-            self.__last_rectangle = clipped_rect
+            if self._addVisibleThumbnails(clipped_rect):
+                self.__last_rectangle = clipped_rect
+            else:
+                self.__last_rectangle = Gdk.Rectangle()
 
         Gtk.Layout.do_draw(self, context)
 
@@ -540,6 +542,24 @@ class ThumbnailCache(Loggable):
                           (Time INTEGER NOT NULL PRIMARY KEY,\
                           Jpeg BLOB NOT NULL)")
 
+    def getImagesSize(self):
+        self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
+        row = self._cur.fetchone()
+        if not row:
+            return None, None
+
+        pixbuf = self.__getPixbufFromRow(row)
+        return pixbuf.get_width(), pixbuf.get_height()
+
+    def __getPixbufFromRow(self, row):
+        jpeg = row[1]
+        loader = GdkPixbuf.PixbufLoader.new()
+        # TODO: what do to if any of the following calls fails?
+        loader.write(jpeg)
+        loader.close()
+        pixbuf = loader.get_pixbuf()
+        return pixbuf
+
     def __contains__(self, key):
         # check if item is present in on disk cache
         self._cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
@@ -552,13 +572,7 @@ class ThumbnailCache(Loggable):
         row = self._cur.fetchone()
         if not row:
             raise KeyError(key)
-        jpeg = row[1]
-        loader = GdkPixbuf.PixbufLoader.new()
-        # TODO: what do to if any of the following calls fails?
-        loader.write(jpeg)
-        loader.close()
-        pixbuf = loader.get_pixbuf()
-        return pixbuf
+        return self.__getPixbufFromRow(row)
 
     def __setitem__(self, key, value):
         success, jpeg = value.save_to_bufferv(
