@@ -233,6 +233,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             viewport_style.remove_class(css_class)
         self._main_hbox.pack_start(viewport, False, False, 0)
 
+        self._main_hbox.pack_start(Gtk.Separator.new(Gtk.Orientation.VERTICAL), False, False, 0)
+
         self._main_hbox.pack_start(self.layout, False, True, 0)
         self.get_style_context().add_class("Timeline")
 

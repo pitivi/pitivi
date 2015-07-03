@@ -224,22 +224,28 @@ class LayerControls(Gtk.Bin, Loggable):
         self.add(ebox)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        ebox.add(self._hbox)
+        self._sepbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        ebox.add(self._sepbox)
         self.bLayer = bLayer
         self.app = app
 
-        sep = SpacedSeparator()
-        self._vbox.pack_start(sep, False, False, 0)
+        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
+        sep.props.height_request = ui.PADDING
+        self._sepbox.pack_start(sep, False, False, 0)
+
+        self._sepbox.pack_start(self._hbox, False, False, 0)
 
         menubutton = Gtk.MenuButton.new()
+        menubutton.props.valign = Gtk.Align.START
+        menubutton.props.margin_top = 3 * ui.PADDING
         model, action_group = self.__createMenuModel()
         popover = Gtk.Popover.new_from_model(menubutton, model)
         popover.insert_action_group("layer", action_group)
 
         menubutton.set_popover(popover)
         menubutton.props.direction = Gtk.ArrowType.RIGHT
-        self._hbox.add(menubutton)
         self._hbox.add(self._vbox)
+        self._hbox.pack_end(menubutton, False, False, ui.PADDING)
         popover.props.position = Gtk.PositionType.LEFT
 
         self.video_control = VideoLayerControl(None, self, self.app)
@@ -252,9 +258,6 @@ class LayerControls(Gtk.Bin, Loggable):
         self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
         self._vbox.add(self.audio_control)
 
-        sep = SpacedSeparator()
-        self._vbox.pack_start(sep, False, False, 0)
-
         self._vbox.props.vexpand = False
         self.props.width_request = ui.CONTROL_WIDTH
         self.props.height_request = ui.LAYER_HEIGHT
@@ -263,6 +266,10 @@ class LayerControls(Gtk.Bin, Loggable):
         self.__layerPriorityChangedCb(self.bLayer, None)
 
         ebox.connect("notify::window", self._windowSetCb)
+
+        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
+        sep.props.height_request = ui.PADDING
+        self._sepbox.pack_start(sep, False, False, 0)
 
     def _windowSetCb(self, window, pspec):
         self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
