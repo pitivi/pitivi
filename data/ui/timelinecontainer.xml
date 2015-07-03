@@ -6,7 +6,9 @@
       <toolitem action="DeleteObj" />
       <toolitem action="GroupObj" />
       <toolitem action="UngroupObj" />
-      <toolitem action="AlignObj" />
+      <toolitem action="Copy" />
+      <toolitem action="Paste" />
+      <!-- <toolitem action="AlignObj" /> -->
     </placeholder>
   </toolbar>
   <accelerator action="ZoomIn" />
@@ -19,7 +21,9 @@
   <accelerator action="DeleteObj" />
   <accelerator action="UngroupObj" />
   <accelerator action="GroupObj" />
-  <accelerator action="AlignObj" />
+  <accelerator action="Copy" />
+  <accelerator action="Paste" />
+  <!-- <accelerator action="AlignObj" /> -->
 
   <accelerator action="PlayPause" />
   <accelerator action="Split" />

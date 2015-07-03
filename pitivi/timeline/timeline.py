@@ -25,6 +25,7 @@ import os
 from gettext import gettext as _
 
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import Gdk
 from gi.repository import Gst
@@ -1360,6 +1361,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             ("GroupObj", "pitivi-group", _("Group"),
              "<Control>G", _("Group clips"), self._groupSelected),
 
+            ("Copy", "copy", _("Copy"),
+             "<Control>c", _("Copy clips"), self.__copyClipsCb),
+
+            ("Paste", "paste", _("Paste"),
+             "<Control>v", _("Paste clips"), self.__pasteClipsCb),
+
             # TODO: Fix the align feature.
             # ("AlignObj", "pitivi-align", _("Align"),
             #  "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
@@ -1388,6 +1395,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ui_manager.insert_action_group(self.selection_actions, -1)
         self.playhead_actions.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(self.playhead_actions, -1)
+
+        self.selection_actions.get_action("Copy").set_gicon(Gio.Icon.new_for_string("edit-copy"))
+        self.selection_actions.get_action("Paste").set_gicon(Gio.Icon.new_for_string("edit-paste"))
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """
@@ -1519,6 +1529,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
+
+    def __copyClipsCb(self, unused_action):
+        if self.timeline.current_group:
+            self.__copiedGroup = self.timeline.current_group.copy(True)
+
+    def __pasteClipsCb(self, unused_action):
+        if self.__copiedGroup:
+            save = self.__copiedGroup.copy(True)
+            position = self._project.pipeline.getPosition()
+            self.__copiedGroup.paste(position)
+            self.__copiedGroup = save
+            self._project.pipeline.commit_timeline()
 
     def _alignSelected(self, unused_action):
         if not self.bTimeline:
