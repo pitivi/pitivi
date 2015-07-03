@@ -1095,6 +1095,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._projectmanager = None
         self._project = None
         self.bTimeline = None
+        self.__copiedGroup = None
 
         self.ui_manager.add_ui_from_file(
             os.path.join(get_ui_dir(), "timelinecontainer.xml"))
