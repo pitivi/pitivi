@@ -96,7 +96,7 @@ class TestGnomeSystem(TestCase):
             # We can only test this on a Gnome system.
             return
 
-        if not self.system.session_iface.IsInhibited(
+        if self.system.session_iface.IsInhibited(
                 INHIBIT_LOGOUT | INHIBIT_USER_SWITCHING | INHIBIT_SUSPEND |
                 INHIBIT_SESSION_IDLE):
             # Other programs are inhibiting, cannot test.
