@@ -749,6 +749,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
+                self.app.action_log.commit()
 
             self.draggingElement = None
             self.__got_dragged = False
@@ -762,6 +763,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         target = self.drag_dest_find_target(context, None).name()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
+                self.app.action_log.begin("add clip")
                 self._createdClips = False
                 self.dropData = None
                 self.dropDataReady = False
