@@ -875,7 +875,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     # Interface Zoomable
     def zoomChanged(self):
-        self.debug("Zoom changed")
         self.updatePosition()
         self.layout.move(self.__playhead, self.nsToPixel(self.__last_position), 0)
         self.scrollToPlayhead()
@@ -1641,6 +1640,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             # zoomChanged might be called various times before the UI is ready
             self.bTimeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
+        self.zoomed_fitted = False
 
     # Gtk widget virtual methods
 
@@ -1755,13 +1755,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _zoomInCb(self, unused_action):
         Zoomable.zoomIn()
-        self.log("Setting 'zoomed_fitted' to False")
-        self.zoomed_fitted = False
 
     def _zoomOutCb(self, unused_action):
         Zoomable.zoomOut()
-        self.log("Setting 'zoomed_fitted' to False")
-        self.zoomed_fitted = False
 
     def _zoomFitCb(self, unused_action):
         self.zoomFit()
