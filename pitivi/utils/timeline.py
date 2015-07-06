@@ -172,6 +172,17 @@ class Selection(GObject.Object, Loggable):
 
         return set(objects)
 
+    def getSelectedTrackElementsAtPosition(self, position, element_type=GObject.Object,
+                                           track_type=GES.TrackType.UNKNOWN):
+        selected = []
+        for clip in self.selected:
+            if clip.props.start <= position and position <= clip.props.start + clip.props.duration:
+                elements = clip.find_track_elements(None, track_type, element_type)
+                if elements:
+                    selected.extend(elements)
+
+        return selected
+
     def getSelectedEffects(self):
         """
         Returns the list of L{GES.BaseEffect} contained in this selection.

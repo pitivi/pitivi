@@ -503,17 +503,12 @@ class TransformationBox(Gtk.EventBox, Loggable):
             return False
 
         self.__editSource = None
-        for clip in self.app.project_manager.current_project.timeline.ui.selection.selected:
-            if clip.props.start <= position and position <= clip.props.start + clip.props.duration:
-                video_source = clip.find_track_elements(None, GES.TrackType.VIDEO, GES.VideoSource)
-                if video_source and self.__editSource:
-                    video_source = None
-                    break
-
-                try:
-                    self.__editSource = video_source[0]
-                except IndexError:
-                    continue
+        selection = self.app.project_manager.current_project.timeline.ui.selection
+        selected_videoelements = selection.getSelectedTrackElementsAtPosition(position,
+                                                                              GES.VideoSource,
+                                                                              GES.TrackType.VIDEO)
+        if len(selected_videoelements) == 1:
+            self.__editSource = selected_videoelements[0]
 
     def do_event(self, event):
         if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:

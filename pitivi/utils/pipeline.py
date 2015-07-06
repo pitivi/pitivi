@@ -700,6 +700,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         SimplePipeline.simple_seek(self, position)
 
     def _busMessageCb(self, bus, message):
+        if message.type == Gst.MessageType.ASYNC_DONE:
+            self.commiting = False
         if message.type == Gst.MessageType.ASYNC_DONE and\
                 self._commit_wanted:
             self.debug("Commiting now that ASYNC is DONE")
