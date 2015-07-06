@@ -738,6 +738,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return True
 
     def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
+        self.__unsetHoverSeparators()
         if self.draggingElement:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.current_group.get_children(False)]
