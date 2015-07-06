@@ -747,6 +747,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.selection.setSelection([], SELECT)
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
+                self._project.pipeline.commit_timeline()
 
             self.draggingElement = None
             self.__got_dragged = False
@@ -772,7 +773,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 if zoom_was_fitted:
                     self.parent._setBestZoomRatio()
 
-                self.dragEnd()
+                self.dragEnd(True)
         elif target == EFFECT_TARGET_ENTRY.target:
             self.fixme("TODO Implement effect support")
         else:
@@ -1028,8 +1029,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return self.bTimeline.get_layers()[priority]
 
-    def dragEnd(self):
-        if self.draggingElement is not None and self.__got_dragged:
+    def dragEnd(self, force=False):
+        if (self.draggingElement is not None and self.__got_dragged) or force:
             self.debug("DONE dragging %s" % self.draggingElement)
             self._snapEndedCb()
 
