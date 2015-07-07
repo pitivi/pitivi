@@ -640,8 +640,13 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if not parent or not self.layer:
             return
 
-        x = self.nsToPixel(self.bClip.props.start)
-        width = self.nsToPixel(self.bClip.props.duration)
+        start = self.bClip.props.start
+        duration = self.bClip.props.duration
+        x = self.nsToPixel(start)
+        # The calculation of the width assumes that the start is always
+        # int(pixels_float). In that case, the rounding can add up and a pixel
+        # might be lost if we ignore the start of the clip.
+        width = self.nsToPixel(start + duration) - x
         parent_height = parent.get_allocated_height()
 
         height, y = self.__computeHeightAndY()
