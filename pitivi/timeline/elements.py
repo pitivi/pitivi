@@ -607,29 +607,16 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._videoSource = None
 
         self._setupWidget()
+        self.__force_position_update = True
 
         for child in self.bClip.get_children(False):
             self._childAdded(self.bClip, child)
             self.__connectToChild(child)
 
-        self._savePositionState()
         self._connectWidgetSignals()
 
         self._connectGES()
         self.get_accessible().set_name(self.bClip.get_name())
-
-    def _savePositionState(self, y=0):
-        self.__force_position_update = False
-        self._current_x = self.nsToPixel(self.bClip.props.start)
-        self._current_y = y
-        self._curent_width = self.nsToPixel(self.bClip.props.duration)
-        parent = self.get_parent()
-        if parent:
-            self._current_parent_height = self.get_parent(
-            ).get_allocated_height()
-        else:
-            self._current_parent_height = 0
-        self._current_parent = parent
 
     def __computeHeightAndY(self):
         parent = self.get_parent()
@@ -672,7 +659,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             for child in elements:
                 child.setSize(width, height / len(elements))
 
-            self._savePositionState(y)
+            self.__force_position_update = False
+            self._current_x = x
+            self._current_y = y
+            self._curent_width = width
+            self._current_parent_height = parent.get_allocated_height()
+            self._current_parent = parent
 
     def _setupWidget(self):
         pass
