@@ -666,11 +666,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.timeline.sendFakeEvent(event, event_widget)
 
-    def do_size_allocate(self, request):
-        self.updatePosition()
-        Gtk.EventBox.do_size_allocate(self, request)
-
     def do_draw(self, cr):
+        self.updatePosition()
         Gtk.EventBox.do_draw(self, cr)
 
     def _clickedCb(self, unused_action, unused_actor):
