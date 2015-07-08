@@ -854,11 +854,7 @@ class UriClip(SourceClip):
                 self._videoSource.set_visible(True)
 
     def _selectedChangedCb(self, unused_child, selected):
-        if selected:
-            self.timeline.parent.gui.switchContextTab(self.bClip)
-            self.selected = True
-        else:
-            self.selected = False
+        self.selected = selected
 
 
 class TitleClip(SourceClip):

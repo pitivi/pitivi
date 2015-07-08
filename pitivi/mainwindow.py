@@ -399,23 +399,22 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                 value = self.vpaned.size_request().height / 2
             self.settings.mainWindowVPanePosition = value
 
-    def switchContextTab(self, bElement):
+    def switchContextTab(self, bClip):
         """
         Switch the tab being displayed on the second set of tabs,
         depending on the context.
 
-        @param bElement: The timeline element which has been focused.
-        @type bElement: GES.TrackElement
+        @param bClip: The clip which has been focused.
+        @type bClip: GES.SourceClip
         """
-        if isinstance(bElement, GES.TitleSource):
+        if isinstance(bClip, GES.TitleClip):
             page = 2
-        elif isinstance(bElement, GES.Source) or isinstance(bElement, GES.SourceClip):
-            # This covers: VideoUriSource, ImageSource, AudioUriSource.
+        elif isinstance(bClip, GES.SourceClip):
             page = 0
-        elif isinstance(bElement, GES.Transition):
+        elif isinstance(bClip, GES.TransitionClip):
             page = 1
         else:
-            self.warning("Unknown element type: %s", bElement)
+            self.warning("Unknown clip type: %s", bClip)
             return
         self.context_tabs.set_current_page(page)
 
