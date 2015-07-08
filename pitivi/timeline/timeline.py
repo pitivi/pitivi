@@ -376,6 +376,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return
         self.debug("Scrolling to playhead")
 
+        self.__setLayoutSize()
         self.hadj.set_value(self.nsToPixel(self.__last_position) -
                             (self.layout.get_allocation().width / 2))
 
@@ -409,14 +410,21 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return LAYER_HEIGHT, natural_height
 
-    def do_draw(self, cr):
+    def __setLayoutSize(self):
         if self.bTimeline:
             width = self._computeTheoricalWidth()
             if self.draggingElement:
                 width = max(width, self.layout.props.width)
 
+            self.__layers_vbox.props.width_request = width
             self.layout.set_size(width, len(self.bTimeline.get_layers()) * 200)
 
+    def do_size_allocate(self, request):
+        self.__setLayoutSize()
+        Gtk.EventBox.do_size_allocate(self, request)
+
+    def do_draw(self, cr):
+        self.__setLayoutSize()
         Gtk.EventBox.do_draw(self, cr)
 
         self.__drawSnapIndicator(cr)
