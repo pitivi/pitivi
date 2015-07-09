@@ -442,6 +442,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             "document-save", Gtk.IconSize.LARGE_TOOLBAR)
         self.save_button.set_always_show_image(True)
         self.save_button.set_label(_("Save"))
+        self.save_button.set_focus_on_click(False)
 
         render_icon = Gtk.Image.new_from_file(
             os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
