@@ -266,6 +266,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         menubutton = Gtk.MenuButton.new()
         menubutton.props.valign = Gtk.Align.START
         menubutton.props.margin_top = 3 * ui.PADDING
+        menubutton.props.relief = Gtk.ReliefStyle.NONE
         menubutton.props.direction = Gtk.ArrowType.RIGHT
         menubutton.props.margin_end = ui.PADDING
         model, action_group = self.__createMenuModel()
