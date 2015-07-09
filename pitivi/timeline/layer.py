@@ -43,12 +43,11 @@ class BaseLayerControl(Gtk.Box, Loggable):
 
     __gtype_name__ = 'LayerControl'
 
-    def __init__(self, control_container, layer, app, type_name):
+    def __init__(self, layer, app, type_name):
         Gtk.Box.__init__(self, spacing=0)
         Loggable.__init__(self)
 
         self._app = app
-        self._control_container = control_container
         self.layer = layer
         self._selected = False
         self.__type_name = type_name
@@ -161,8 +160,8 @@ class VideoLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'VideoLayerControl'
 
-    def __init__(self, control_container, layer, app):
-        BaseLayerControl.__init__(self, control_container, layer, app, "video")
+    def __init__(self, layer, app):
+        BaseLayerControl.__init__(self, layer, app, "video")
 
     def _getIconName(self):
         return "video-x-generic"
@@ -175,8 +174,8 @@ class AudioLayerControl(BaseLayerControl):
 
     __gtype_name__ = 'AudioLayerControl'
 
-    def __init__(self, control_container, layer, app):
-        BaseLayerControl.__init__(self, control_container, layer, app, "audio")
+    def __init__(self, layer, app):
+        BaseLayerControl.__init__(self, layer, app, "audio")
 
     def _getIconName(self):
         return "audio-x-generic"
@@ -252,13 +251,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         sep.props.height_request = ui.PADDING
         content.attach(sep, 0, 0, 2, 1)
 
-        self.video_control = VideoLayerControl(None, self, self.app)
+        self.video_control = VideoLayerControl(self, self.app)
         self.video_control.set_visible(True)
         self.video_control.props.height_request = ui.LAYER_HEIGHT / 2
         self.video_control.props.hexpand = True
         content.attach(self.video_control, 0, 1, 1, 1)
 
-        self.audio_control = AudioLayerControl(None, self, self.app)
+        self.audio_control = AudioLayerControl(self, self.app)
         self.audio_control.set_visible(True)
         self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
         self.audio_control.props.hexpand = True
