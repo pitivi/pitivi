@@ -207,6 +207,30 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def __resetTooltip(self):
         self.set_tooltip_markup(_("Setting property: %s") % str(self.__propertyName))
 
+    def __computeKeyframeNewTimestamp(self, event):
+        # The user can not change the timestamp of the first
+        # and last keyframes.
+        values = self.__source.get_all()
+        if (values[0].timestamp == self.__offset or
+                values[-1].timestamp == self.__offset):
+            return self.__offset
+
+        if event.xdata != self.__offset:
+            try:
+                kf = next(kf for kf in values if kf.timestamp == int(self.__offset))
+            except StopIteration:
+                return event.xdata
+
+            i = values.index(kf)
+            if event.xdata > self.__offset:
+                if values[i + 1].timestamp < event.xdata:
+                    return max(0, values[i + 1].timestamp - 1)
+            else:
+                if i > 1 and values[i - 1].timestamp > event.xdata:
+                    return values[i - 1].timestamp + 1
+
+        return event.xdata
+
     def __mplMotionEventCb(self, event):
         if not self.props.visible:
             return
@@ -215,17 +239,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__dragged = True
             # Check that the mouse event still is in the figure boundaries
             if event.ydata is not None and event.xdata is not None:
-
-                # The user can not change the timestamp of the first
-                # and last keyframes.
-                values = self.__source.get_all()
-                if (values[0].timestamp == self.__offset or
-                        values[-1].timestamp == self.__offset):
-                    event.xdata = self.__offset
-
+                keyframe_ts = self.__computeKeyframeNewTimestamp(event)
                 self.__source.unset(int(self.__offset))
-                self.__source.set(event.xdata, event.ydata)
-                self.__offset = event.xdata
+                self.__source.set(keyframe_ts, event.ydata)
+                self.__offset = keyframe_ts
                 self.__setTooltip(event)
                 self.__updatePlots()
 
