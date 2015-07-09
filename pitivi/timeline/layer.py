@@ -238,56 +238,60 @@ class LayerControls(Gtk.EventBox, Loggable):
         Gtk.EventBox.__init__(self)
         Loggable.__init__(self)
 
-        self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self._hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        self._sepbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.add(self._sepbox)
         self.bLayer = bLayer
         self.app = app
 
+        self.props.width_request = ui.CONTROL_WIDTH
+        self.props.height_request = ui.LAYER_HEIGHT
+        self.props.hexpand = True
+
+        content = Gtk.Grid()
+        self.add(content)
+
         sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
         sep.props.height_request = ui.PADDING
-        self._sepbox.pack_start(sep, False, False, 0)
-
-        self._sepbox.pack_start(self._hbox, False, False, 0)
-
-        menubutton = Gtk.MenuButton.new()
-        menubutton.props.valign = Gtk.Align.START
-        menubutton.props.margin_top = 3 * ui.PADDING
-        model, action_group = self.__createMenuModel()
-        popover = Gtk.Popover.new_from_model(menubutton, model)
-        popover.insert_action_group("layer", action_group)
-
-        menubutton.set_popover(popover)
-        menubutton.props.direction = Gtk.ArrowType.RIGHT
-        self._hbox.add(self._vbox)
-        self._hbox.pack_end(menubutton, False, False, ui.PADDING)
-        popover.props.position = Gtk.PositionType.LEFT
+        content.attach(sep, 0, 0, 2, 1)
 
         self.video_control = VideoLayerControl(None, self, self.app)
         self.video_control.set_visible(True)
         self.video_control.props.height_request = ui.LAYER_HEIGHT / 2
-        self._vbox.add(self.video_control)
+        self.video_control.props.hexpand = True
+        content.attach(self.video_control, 0, 1, 1, 1)
 
         self.audio_control = AudioLayerControl(None, self, self.app)
         self.audio_control.set_visible(True)
         self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
-        self._vbox.add(self.audio_control)
+        self.audio_control.props.hexpand = True
+        content.attach(self.audio_control, 0, 2, 1, 1)
 
-        self._vbox.props.vexpand = False
-        self.props.width_request = ui.CONTROL_WIDTH
-        self.props.height_request = ui.LAYER_HEIGHT
+        menubutton = Gtk.MenuButton.new()
+        menubutton.props.valign = Gtk.Align.START
+        menubutton.props.margin_top = 3 * ui.PADDING
+        menubutton.props.direction = Gtk.ArrowType.RIGHT
+        menubutton.props.margin_end = ui.PADDING
+        model, action_group = self.__createMenuModel()
+        popover = Gtk.Popover.new_from_model(menubutton, model)
+        popover.insert_action_group("layer", action_group)
+        popover.props.position = Gtk.PositionType.LEFT
+        menubutton.set_popover(popover)
+        content.attach(menubutton, 1, 1, 1, 2)
+
+        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
+        sep.props.height_request = ui.PADDING
+        content.attach(sep, 0, 3, 2, 1)
+
+        sep = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+        sep.props.margin_top = ui.PADDING / 2
+        sep.props.margin_bottom = ui.PADDING / 2
+        content.attach(sep, 2, 0, 1, 4)
 
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.__layerPriorityChangedCb(self.bLayer, None)
 
-        self.connect("notify::window", self._windowSetCb)
+        # When the window property is set, specify the mouse cursor.
+        self.connect("notify::window", self.__windowSetCb)
 
-        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
-        sep.props.height_request = ui.PADDING
-        self._sepbox.pack_start(sep, False, False, 0)
-
-    def _windowSetCb(self, unused_window, unused_pspec):
+    def __windowSetCb(self, unused_window, unused_pspec):
         self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def __del__(self):
@@ -295,23 +299,22 @@ class LayerControls(Gtk.EventBox, Loggable):
         super(LayerControls, self).__del__()
 
     def __layerPriorityChangedCb(self, bLayer, pspec):
-        if bLayer.get_priority() == 0:
-            self.__move_layer_up_action.props.enabled = False
-            self.__move_layer_top_action.props.enabled = False
-        else:
-            self.__move_layer_up_action.props.enabled = True
-            self.__move_layer_top_action.props.enabled = True
+        first = bLayer.get_priority() == 0
+        self.__move_layer_up_action.props.enabled = not first
+        self.__move_layer_top_action.props.enabled = not first
 
     def __createMenuModel(self):
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
 
-        self.__move_layer_top_action = action = Gio.SimpleAction.new("move_layer_to_top", None)
+        self.__move_layer_top_action = Gio.SimpleAction.new("move_layer_to_top", None)
+        action = self.__move_layer_top_action
         action.connect("activate", self._moveLayerCb, -2)
         action_group.insert(action)
         menu_model.append(_("Move layer to top"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__move_layer_up_action = action = Gio.SimpleAction.new("move_layer_up", None)
+        self.__move_layer_up_action = Gio.SimpleAction.new("move_layer_up", None)
+        action = self.__move_layer_up_action
         action.connect("activate", self._moveLayerCb, -1)
         action_group.insert(action)
         menu_model.append(_("Move layer up"), "layer.%s" % action.get_name().replace(" ", "."))

@@ -222,6 +222,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.vadj = self.layout.get_vadjustment()
 
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.__layers_controls_vbox.props.hexpand = False
 
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
@@ -232,8 +233,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for css_class in viewport_style.list_classes():
             viewport_style.remove_class(css_class)
         self._main_hbox.pack_start(viewport, False, False, 0)
-
-        self._main_hbox.pack_start(Gtk.Separator.new(Gtk.Orientation.VERTICAL), False, False, 0)
 
         self._main_hbox.pack_start(self.layout, False, True, 0)
         self.get_style_context().add_class("Timeline")
