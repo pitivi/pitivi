@@ -230,20 +230,18 @@ class SpacedSeparator(Gtk.EventBox):
         self.props.height_request = ui.PADDING
 
 
-class LayerControls(Gtk.Bin, Loggable):
+class LayerControls(Gtk.EventBox, Loggable):
 
     __gtype_name__ = 'PitiviLayerControls'
 
     def __init__(self, bLayer, app):
-        super(LayerControls, self).__init__()
+        Gtk.EventBox.__init__(self)
         Loggable.__init__(self)
 
-        ebox = Gtk.EventBox()
-        self.add(ebox)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self._sepbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        ebox.add(self._sepbox)
+        self.add(self._sepbox)
         self.bLayer = bLayer
         self.app = app
 
@@ -283,13 +281,13 @@ class LayerControls(Gtk.Bin, Loggable):
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.__layerPriorityChangedCb(self.bLayer, None)
 
-        ebox.connect("notify::window", self._windowSetCb)
+        self.connect("notify::window", self._windowSetCb)
 
         sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
         sep.props.height_request = ui.PADDING
         self._sepbox.pack_start(sep, False, False, 0)
 
-    def _windowSetCb(self, window, pspec):
+    def _windowSetCb(self, unused_window, unused_pspec):
         self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def __del__(self):
