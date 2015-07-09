@@ -446,8 +446,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         for clip in bLayer.get_clips():
             self._addClip(clip)
 
-        self.before_sep = None
-        self.after_sep = None
+        self.before_sep = SpacedSeparator()
+        self.after_sep = SpacedSeparator()
 
     def release(self):
         for clip in self.bLayer.get_clips():

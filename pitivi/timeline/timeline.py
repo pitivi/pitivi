@@ -36,7 +36,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.elements import Clip, TrimHandle
-from pitivi.timeline.layer import SpacedSeparator, Layer, LayerControls
+from pitivi.timeline.layer import Layer, LayerControls
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import EditingContext, Selection, \
@@ -829,24 +829,21 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             i += 1
 
     def _addLayer(self, bLayer):
+        control = LayerControls(bLayer, self.app)
+        self.__layers_controls_vbox.pack_start(control, False, False, 0)
+        bLayer.control_ui = control
+
+        layer = Layer(bLayer, self)
+        bLayer.ui = layer
+        self._layers.append(layer)
+        layer.connect("remove-me", self._removeLayerCb)
+
         layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-
-        bLayer.control_ui = LayerControls(bLayer, self.app)
-        bLayer.ui = Layer(bLayer, self)
-
-        bLayer.ui.before_sep = SpacedSeparator()
-        layer_widget.pack_start(bLayer.ui.before_sep, False, False, 0)
-
-        self._layers.append(bLayer.ui)
-        layer_widget.pack_start(bLayer.ui, True, True, 0)
-
-        bLayer.ui.after_sep = SpacedSeparator()
-        layer_widget.pack_start(bLayer.ui.after_sep, False, False, 0)
-
+        layer_widget.pack_start(layer.before_sep, False, False, 0)
+        layer_widget.pack_start(layer, True, True, 0)
+        layer_widget.pack_start(layer.after_sep, False, False, 0)
         self.__layers_vbox.pack_start(layer_widget, True, True, 0)
-        self.__layers_controls_vbox.pack_start(bLayer.control_ui, False, False, 0)
 
-        bLayer.ui.connect("remove-me", self._removeLayerCb)
         bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
 
         self.show_all()
