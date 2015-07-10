@@ -306,12 +306,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return Gtk.get_event_widget(event)
 
-    def __get_event_widget(self, event):
-        if self.__fake_event_widget:
-            return self.__fake_event_widget
-
-        return Gtk.get_event_widget(event)
-
     @property
     def allowSeek(self):
         return self.__allow_seek
