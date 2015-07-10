@@ -33,17 +33,12 @@ class TestMainWindow(TestCase):
 
     def testSwitchContextTab(self):
         for expected_tab, bElement in [
-                (2, GES.TitleSource()),
-                (1, GES.VideoTransition()),
-                (0, GES.VideoUriSource()),
-                (1, GES.VideoTransition()),
-                (0, GES.ImageSource()),
-                (1, GES.AudioTransition()),
-                (0, GES.AudioUriSource()),
-                (1, GES.AudioTransition())]:
+                (2, GES.TitleClip()),
+                (0, GES.SourceClip()),
+                (1, GES.TransitionClip())]:
             self.mainwindow.switchContextTab(bElement)
             self.assertEqual(
-                expected_tab, self.mainwindow.context_tabs.get_current_page())
+                expected_tab, self.mainwindow.context_tabs.get_current_page(), bElement)
             # Make sure the tab does not change when using an invalid argument.
             self.mainwindow.switchContextTab("invalid")
             self.assertEqual(
