@@ -775,6 +775,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
                 self.app.action_log.begin("add clip")
+
+                created_layer = None
                 for layer, clip in self.__last_clips_on_leave:
                     if self.__on_separators and not created_layer:
                         created_layer = self.__getDroppedLayer()
@@ -908,18 +910,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return self.get_parent().getEditionMode(isAHandle=is_handle)
 
-    def __getSeparator(self, separators):
-        """
-        Get the separator taking into account
-        the current editing mode
-        """
+    def __layerGetSeps(self, bLayer, sep_name):
         if self.__getEditingMode() != GES.EditMode.EDIT_NORMAL:
             return []
 
         if self.current_group.props.height > 1:
             return []
 
-        return separators
+        return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
 
     def __getLayerAt(self, y, bLayer=None):
         separators = None
@@ -930,7 +928,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 bLayer = self.bTimeline.append_layer()
 
             self.debug("Returning very first layer")
-            return bLayer, self.__getSeparator([bLayer.ui.before_sep])
+            return bLayer, self.__layerGetSeps(bLayer, "before_sep")
 
         layers = self.bTimeline.get_layers()
         rect = Gdk.Rectangle()
@@ -945,27 +943,27 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if Gdk.rectangle_intersect(rect, layer_alloc)[0] is True:
                 return layer, []
 
-            separators = [layer.ui.after_sep]
+            separators = self.__layerGetSeps(layer, "after_sep")
             sep_rectangle = Gdk.Rectangle()
             sep_rectangle.x = 0
             sep_rectangle.y = layer_alloc.y + layer_alloc.height
             try:
                 sep_rectangle.height = layers[i + 1].ui.get_allocation().y - \
                     layer_alloc.y - layer_alloc.height
-                separators.append(layers[i + 1].ui.before_sep)
+                separators.extend(self.__layerGetSeps(layers[i + 1], "before_sep"))
             except IndexError:
                 sep_rectangle.height += LAYER_HEIGHT
 
             if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
                 self.debug("Returning layer %s, separators: %s" % (layer, separators))
                 if bLayer:
-                    return bLayer, self.__getSeparator(separators)
+                    return bLayer, separators
 
-                return layer, self.__getSeparator(separators)
+                return layer, separators
 
         self.debug("Returning very last layer")
 
-        return layers[-1], self.__getSeparator([layers[-1].ui.after_sep])
+        return layers[-1], self.__layerGetSeps(layers[-1], "after_sep")
 
     def __setHoverSeparators(self):
         for sep in self.__on_separators:

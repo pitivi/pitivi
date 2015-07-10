@@ -155,6 +155,17 @@ TIMELINE_CSS = """
         opacity:0.5;
     }
 
+    .SpacedSeparator {
+        background-color: rgba(0, 0, 0, 0.10);
+        border-bottom-color: rgba(0, 0, 0, 0.10);
+        border-left-color: rgba(0, 0, 0, 0.10);
+        border-right-color: rgba(0, 0, 0, 0.10);
+        border-top-color: rgba(0, 0, 0, 0.10);
+        color: rgba(0, 0, 0, 0.10);
+        outline-color: rgba(238, 238, 236, 0.29);
+        opacity:1;
+    }
+
     .Marquee {
          background-color: rgba(224, 224, 224, 0.7);
     }

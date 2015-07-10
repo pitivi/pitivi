@@ -217,16 +217,36 @@ class SpacedSeparator(Gtk.EventBox):
     Inherits from EventBox since we want to change background color
     """
 
-    def __init__(self):
+    def __init__(self, position):
         Gtk.EventBox.__init__(self)
 
         self.box = Gtk.Box()
         self.box.set_orientation(Gtk.Orientation.VERTICAL)
         self.add(self.box)
+        self.__position = position
 
         self.get_style_context().add_class("SpacedSeparator")
         self.box.get_style_context().add_class("SpacedSeparator")
-        self.props.height_request = ui.PADDING
+        self.props.height_request = 1
+        self.props.margin_bottom = 4
+        self.props.margin_top = 4
+
+    def do_state_flags_changed(self, old_flags):
+        HIGLIGHTED_PADDING = 3
+        total_height = ui.PADDING + HIGLIGHTED_PADDING
+        if not self.get_state_flags() & Gtk.StateFlags.PRELIGHT:
+            self.props.height_request = 1
+            self.props.margin_bottom = (total_height - 1) / 2
+            self.props.margin_top = (total_height - 1) / 2
+        else:
+            self.props.height_request = ui.PADDING
+            if self.__position == Gtk.PositionType.TOP:
+                self.props.margin_bottom = HIGLIGHTED_PADDING
+                self.props.margin_top = 0
+            else:
+                self.props.margin_bottom = 0
+                self.props.margin_top = HIGLIGHTED_PADDING
+        Gtk.EventBox.do_state_flags_changed(self, old_flags)
 
 
 class LayerControls(Gtk.EventBox, Loggable):
@@ -247,9 +267,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         content = Gtk.Grid()
         self.add(content)
 
-        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
-        sep.props.height_request = ui.PADDING
-        content.attach(sep, 0, 0, 2, 1)
+        self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
+        content.attach(self.before_sep, 0, 0, 2, 1)
 
         self.video_control = VideoLayerControl(self, self.app)
         self.video_control.set_visible(True)
@@ -276,9 +295,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         menubutton.set_popover(popover)
         content.attach(menubutton, 1, 1, 1, 2)
 
-        sep = Gtk.Separator.new(Gtk.Orientation.HORIZONTAL)
-        sep.props.height_request = ui.PADDING
-        content.attach(sep, 0, 3, 2, 1)
+        self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
+        content.attach(self.after_sep, 0, 3, 2, 1)
 
         sep = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
         sep.props.margin_top = ui.PADDING / 2
@@ -449,8 +467,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         for clip in bLayer.get_clips():
             self._addClip(clip)
 
-        self.before_sep = SpacedSeparator()
-        self.after_sep = SpacedSeparator()
+        self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
+        self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
 
     def release(self):
         for clip in self.bLayer.get_clips():
