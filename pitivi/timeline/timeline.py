@@ -670,6 +670,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.dropData = None
         self._createdClips = False
         self.isDraggedClip = False
+        # The list of (Layer, Clip) tuples dragged into the timeline.
         self.__last_clips_on_leave = None
 
         # To be able to receive effects dragged on clips.
@@ -766,15 +767,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # it
         zoom_was_fitted = self.parent.zoomed_fitted
         success = True
+        self.dropDataReady = False
+        self.dropData = None
+        self._createdClips = False
+
         target = self.drag_dest_find_target(context, None).name()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
                 self.app.action_log.begin("add clip")
-                self._createdClips = False
-                self.dropData = None
-                self.dropDataReady = False
-
-                created_layer = None
                 for layer, clip in self.__last_clips_on_leave:
                     if self.__on_separators and not created_layer:
                         created_layer = self.__getDroppedLayer()
