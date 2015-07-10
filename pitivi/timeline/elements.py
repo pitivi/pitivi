@@ -676,7 +676,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def sendFakeEvent(self, event, event_widget):
         if event.type == Gdk.EventType.BUTTON_RELEASE:
-            self._clickedCb(event_widget, event)
+            self.__buttonReleaseEventCb(event_widget, event)
 
         self.timeline.sendFakeEvent(event, event_widget)
 
@@ -684,14 +684,11 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.updatePosition()
         Gtk.EventBox.do_draw(self, cr)
 
-    def _clickedCb(self, unused_action, unused_actor):
+    def __buttonReleaseEventCb(self, unused_action, unused_actor):
         if self.timeline.got_dragged:
-            # If the timeline just got dragged and @self
-            # is the element initiating the mode,
-            # do not do anything when the button is
-            # released
+            # This means a drag & drop operation just finished and
+            # this button-release-event should be ignored.
             self.timeline.got_dragged = False
-
             return False
 
         # TODO : Let's be more specific, masks etc ..
@@ -731,7 +728,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return False
 
     def _connectWidgetSignals(self):
-        self.connect("button-release-event", self._clickedCb)
+        self.connect("button-release-event", self.__buttonReleaseEventCb)
         self.connect("event", self._eventCb)
 
     def release(self):

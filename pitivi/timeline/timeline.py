@@ -663,6 +663,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     # drag and drop
     def __setUpDragAndDrop(self):
+        # Set to True when a clip has been dragged because the first
+        # button-release-event on the clip should be ignored.
         self.got_dragged = False
         self.dropDataReady = False
         self.dropData = None
