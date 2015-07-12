@@ -762,16 +762,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__got_dragged = False
             self._createdClips = False
 
-    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
-        # Same as in insertEnd: this value changes during insertion, snapshot
-        # it
-        zoom_was_fitted = self.parent.zoomed_fitted
-        success = True
+    def cleanDropData(self):
         self.dropDataReady = False
         self.dropData = None
         self._createdClips = False
 
+    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
+        # Same as in insertEnd: this value changes during insertion, snapshot
+        # it
+        zoom_was_fitted = self.parent.zoomed_fitted
+
         target = self.drag_dest_find_target(context, None).name()
+        success = True
+        self.cleanDropData()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
                 self.app.action_log.begin("add clip")
@@ -786,12 +789,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
                 if zoom_was_fitted:
                     self.parent._setBestZoomRatio()
-
                 self.dragEnd(True)
-        elif target == EFFECT_TARGET_ENTRY.target:
-            self.fixme("TODO Implement effect support")
         else:
             success = False
+
         Gtk.drag_finish(context, success, False, timestamp)
         return success
 

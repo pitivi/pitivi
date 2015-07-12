@@ -618,6 +618,32 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._connectGES()
         self.get_accessible().set_name(self.bClip.get_name())
 
+        # To be able to receive effects dragged on clips.
+        self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+
+        self.connect("drag-drop", self.__dragDropCb)
+
+    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
+        success = False
+
+        target = self.drag_dest_find_target(context, None)
+        if not target:
+            return False
+
+        if target.name() == ui.EFFECT_TARGET_ENTRY.target:
+            self.info("Adding effect %s", self.timeline.dropData)
+            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.bClip,
+                                                                    self.timeline.dropData)
+            self.timeline.resetSelectionGroup()
+            self.timeline.selection.setSelection([self.bClip], timelineUtils.SELECT)
+            self.timeline.parent.gui.switchContextTab(self.bClip)
+            self.timeline.cleanDropData()
+            success = True
+
+        Gtk.drag_finish(context, success, True, timestamp)
+
+        return success
+
     def __computeHeightAndY(self):
         parent = self.get_parent()
         parent_height = parent.get_allocated_height()
