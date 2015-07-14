@@ -217,13 +217,14 @@ def check_requirements():
 
     for dependency in HARD_DEPENDENCIES:
         dependency.check()
-        if not dependency.satisfied:
-            if hard_dependencies_satisfied:
-                print(
-                    (_("ERROR - The following hard dependencies are unmet:")))
-                print("==================================================")
-            print(dependency)
+        if dependency.satisfied:
+            continue
+        if hard_dependencies_satisfied:
             hard_dependencies_satisfied = False
+            header = _("ERROR - The following hard dependencies are unmet:")
+            print(header)
+            print("=" * len(header))
+        print(dependency)
 
     for dependency in SOFT_DEPENDENCIES:
         dependency.check()
