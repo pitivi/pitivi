@@ -551,11 +551,6 @@ def errorObject(object, cat, format, *args):
     """
     doLog(ERROR, object, cat, format, args)
 
-    if args:
-        raise SystemExit(format % args)
-    else:
-        raise SystemExit(format)
-
 
 def warningObject(object, cat, format, *args):
     """
