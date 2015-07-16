@@ -425,7 +425,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
                        clip_uri, format_ns(position))
-            self._oldTimelinePos = self.pipeline.getPosition()
+            self._oldTimelinePos = self.pipeline.getPosition(True)
             self.pipeline.set_state(Gst.State.NULL)
             self.setPipeline(AssetPipeline(clip))
             self._lastClipTrimTime = cur_time

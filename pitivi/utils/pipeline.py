@@ -299,7 +299,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     # Position and Seeking methods
 
-    def getPosition(self):
+    def getPosition(self, blocks=False):
         """
         Get the current position of the L{Pipeline}.
 
@@ -307,6 +307,12 @@ class SimplePipeline(GObject.Object, Loggable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
+        maincontext = GLib.main_context_default()
+        if blocks and self._recovery_state == self.RecoveryState.NOT_RECOVERING:
+            while self._waiting_for_async_done and self._recovery_state == self.RecoveryState.NOT_RECOVERING:
+                self.info("Iterating mainloop waiting for the pipeline to be ready to be queried")
+                maincontext.iteration(True)
+
         try:
             res, cur = self._pipeline.query_position(Gst.Format.TIME)
         except Exception as e:
