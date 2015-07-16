@@ -382,8 +382,6 @@ class TitleEditor(Loggable):
         if len(self._drag_events) > 0 and event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
             self._drag_updated = True
             self._drag_events.append((event.x, event.y))
-            st = self._drag_events[0]
-            e = self._drag_events[-1]
 
     def drag_release_event(self, unused_widget, unused_event):
         self._drag_events = []
@@ -398,7 +396,10 @@ class TitleEditor(Loggable):
         selected_clip = selection.getSingleClip(GES.TitleClip)
         source = None
         if selected_clip:
-            source = selected_clip.get_children(False)[0]
+            for child in selected_clip.get_children(False):
+                if isinstance(child, GES.TitleSource):
+                    source = child
+                    break
 
         if source:
             self.set_source(source)
