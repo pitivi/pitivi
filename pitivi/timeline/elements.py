@@ -318,6 +318,10 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.__controlledProperty:
             self.__createControlBinding(self._bElement)
 
+    def release(self):
+        if self.__previewer:
+            self.__previewer.cleanup()
+
     # Public API
     def setSize(self, width, height):
         width = max(0, width)
@@ -794,9 +798,11 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.layer = bLayer.ui
 
     def __disconnectFromChild(self, child):
-        if child.ui and hasattr(child.ui, "__clip_curve_enter_id") and child.ui.__clip_curve_enter_id:
-            child.ui.disconnect_by_func(child.ui.__clip_curve_enter_id)
-            child.ui.disconnect_by_func(child.ui.__clip_curve_leave_id)
+        if child.ui:
+            if hasattr(child.ui, "__clip_curve_enter_id") and child.ui.__clip_curve_enter_id:
+                child.ui.disconnect_by_func(child.ui.__clip_curve_enter_id)
+                child.ui.disconnect_by_func(child.ui.__clip_curve_leave_id)
+            child.ui.release()
 
     def __connectToChild(self, child):
         if child.ui:

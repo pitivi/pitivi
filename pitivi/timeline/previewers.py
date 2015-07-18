@@ -917,5 +917,4 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
     def cleanup(self):
         self.stopGeneration()
-        self.timeline.disconnect_by_func(self._scrolledCb)
         Zoomable.__del__(self)

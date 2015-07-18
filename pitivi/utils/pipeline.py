@@ -216,7 +216,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
 
-        self._pipeline.setState(Gst.State.NULL)
+        self._pipeline.set_state(Gst.State.NULL)
         self._bus = None
 
     def flushSeek(self):

@@ -100,6 +100,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self._createUi()
 
+        self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
 
@@ -135,6 +136,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.internal.sink = self.sink
         self.external.sink = self.sink
 
+        self.__owning_pipeline = False
         self._switch_output_window()
         self._setUiActive()
 
@@ -148,6 +150,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
 
+        if self.__owning_pipeline:
+            self.pipeline.release()
         self.pipeline = None
 
     def _setUiActive(self, active=True):
@@ -428,6 +432,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self._oldTimelinePos = self.pipeline.getPosition(True)
             self.pipeline.set_state(Gst.State.NULL)
             self.setPipeline(AssetPipeline(clip))
+            self.__owning_pipeline = True
             self._lastClipTrimTime = cur_time
 
         if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:

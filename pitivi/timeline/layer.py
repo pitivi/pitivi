@@ -561,6 +561,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.error("Implement UI for type %s?" % bClip.__gtype__)
             return
 
+        bClip.ui.release()
         self._layout.remove(bClip.ui)
 
     def __childWidgetRemovedCb(self, layout, clip):

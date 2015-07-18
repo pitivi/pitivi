@@ -453,7 +453,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             dialog.destroy()
 
     def _destroy_cb(self, widget):
-        self.player.setState(Gst.State.NULL)
+        self.player.release()
         self.is_playing = False
 
     def __get_best_size(self, width_in, height_in):
