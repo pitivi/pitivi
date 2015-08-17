@@ -538,7 +538,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._welcome_infobar.hide()
 
     def _importSourcesCb(self, unused_action):
-        self._showImportSourcesDialog()
+        self.show_import_assets_dialog()
 
     def _removeAssetsCb(self, unused_action, unused_parameter):
         """Removes the selected assets from the project."""
@@ -657,7 +657,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return True
 
-    def _showImportSourcesDialog(self):
+    def show_import_assets_dialog(self):
         """Pops up the "Import Sources" dialog box."""
         dialog = Gtk.FileChooserDialog()
         dialog.set_title(_("Select One or More Files"))

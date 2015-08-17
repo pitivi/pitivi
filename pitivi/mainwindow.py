@@ -485,6 +485,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                                    _("Show the menu button content"),
                                    group="app")
 
+        import_asset_action = Gio.SimpleAction.new("import-asset", None)
+        import_asset_action.connect("activate", self.__import_asset_cb)
+        self.add_action(import_asset_action)
+        self.app.set_accels_for_action("win.import-asset", ["<Control>i"])
+        ShortcutsWindow.add_action("win.import-asset", _("Add media files to your project"))
+
+    def __import_asset_cb(self, unusdaction, unusedparam):
+        self.medialibrary.show_import_assets_dialog()
+
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
         dirty = project.hasUnsavedModifications()
