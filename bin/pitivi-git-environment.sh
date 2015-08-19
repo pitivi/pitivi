@@ -177,6 +177,7 @@ $PITIVI/gstreamer/plugins\
 :$PITIVI/farsight2/gst\
 :$PITIVI/farsight2/transmitters\
 :$PITIVI/libnice/gst\
+:$PITIVI/gst-editing-services/plugins/nle/\
 :${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
 
     # don't use any system-installed plug-ins at all
