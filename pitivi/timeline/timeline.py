@@ -752,6 +752,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.draggingElement:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.current_group.get_children(False)]
+            self.dropDataReady = False
             if self._createdClips:
                 clips = self.current_group.get_children(False)
                 self.resetSelectionGroup()
