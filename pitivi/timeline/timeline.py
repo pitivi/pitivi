@@ -908,7 +908,29 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__on_separators = []
         self._on_layer = None
 
+    def __getEditingMode(self):
+        if not self.editing_context:
+            is_handle = False
+        else:
+            is_handle = self.editing_context.edge != GES.Edge.EDGE_NONE
+
+        return self.get_parent().getEditionMode(isAHandle=is_handle)
+
+    def __getSeparator(self, separators):
+        """
+        Get the separator taking into account
+        the current editing mode
+        """
+        if self.__getEditingMode() != GES.EditMode.EDIT_NORMAL:
+            return []
+
+        if self.current_group.props.height > 1:
+            return []
+
+        return separators
+
     def __getLayerAt(self, y, bLayer=None):
+        separators = None
         if y < 20 or not self.bTimeline.get_layers():
             try:
                 bLayer = self.bTimeline.get_layers()[0]
@@ -916,7 +938,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 bLayer = self.bTimeline.append_layer()
 
             self.debug("Returning very first layer")
-            return bLayer, [bLayer.ui.before_sep]
+            return bLayer, self.__getSeparator([bLayer.ui.before_sep])
 
         layers = self.bTimeline.get_layers()
         rect = Gdk.Rectangle()
@@ -945,12 +967,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
                 self.debug("Returning layer %s, separators: %s" % (layer, separators))
                 if bLayer:
-                    return bLayer, separators
-                return layer, separators
+                    return bLayer, self.__getSeparator(separators)
+
+                return layer, self.__getSeparator(separators)
 
         self.debug("Returning very last layer")
 
-        return layers[-1], [layers[-1].ui.after_sep]
+        return layers[-1], self.__getSeparator([layers[-1].ui.after_sep])
 
     def __setHoverSeparators(self):
         for sep in self.__on_separators:
@@ -986,7 +1009,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         x += self.hadj.get_value()
         y += self.vadj.get_value()
 
-        mode = self.get_parent().getEditionMode(isAHandle=self.editing_context.edge != GES.Edge.EDGE_NONE)
+        mode = self.__getEditingMode()
         self.editing_context.setMode(mode)
 
         if self.editing_context.edge is GES.Edge.EDGE_END:
