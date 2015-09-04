@@ -779,9 +779,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dropData = None
                 self.dropDataReady = False
 
+                created_layer = None
                 for layer, clip in self.__last_clips_on_leave:
-                    if self.__on_separators:
-                        layer = self.__getDroppedLayer(True)
+                    if self.__on_separators and not created_layer:
+                        created_layer = self.__getDroppedLayer()
+                    if created_layer:
+                        layer = created_layer
                     layer.add_clip(clip)
 
                 if zoom_was_fitted:
@@ -1033,17 +1036,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return new_bLayer
 
-    def __getDroppedLayer(self, dropping):
+    def __getDroppedLayer(self):
+        """
+        Get the layer to which the clip should land, creating
+        layer as necessary.
+
+        If always_create_layer is True, a new layer with proper
+        priority will be created, otherwize it will try to retrieve
+        the layer at the priority and create only if it does not
+        exist
+        """
         priority = self._on_layer.props.priority
         if self.__on_separators[0] == self._on_layer.ui.after_sep:
             priority = self._on_layer.props.priority + 1
-
-        self.debug("On separator --> %s" % priority)
-        if dropping:
-            try:
-                return self.bTimeline.get_layers()[priority]
-            except IndexError:
-                pass
 
         self.createLayer(max(0, priority))
         return self.bTimeline.get_layers()[priority]
@@ -1052,9 +1057,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if (self.draggingElement is not None and self.__got_dragged) or dropping:
             self._snapEndedCb()
 
-            if self.__on_separators:
-                priority = self.__getDroppedLayer(dropping).get_priority()
-                self.editing_context.editTo(self.editing_context.new_position, priority)
+            if self.__on_separators and not dropping:
+                layer = self.__getDroppedLayer()
+                self.editing_context.editTo(self.editing_context.new_position,
+                                            layer.get_priority())
             self.layout.props.width = self._computeTheoricalWidth()
 
             self.editing_context.finish()
