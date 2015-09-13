@@ -21,6 +21,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import subprocess
 
 from time import time
 from urllib.parse import unquote
@@ -546,7 +547,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # to do a better job (sizing, zooming, metadata, editing, etc.)
         # than the user's favorite image viewer.
         if asset.is_image():
-            os.system('xdg-open "%s"' % path_from_uri(asset.get_id()))
+            subprocess.call(['xdg-open', str(path_from_uri(asset.get_id()))])
         else:
             preview_window = PreviewAssetWindow(asset, self)
             preview_window.preview()
