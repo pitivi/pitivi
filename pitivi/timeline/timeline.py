@@ -73,7 +73,7 @@ PreferencesDialog.addNumericPreference('imageClipLength',
                                        section=_("Behavior"),
                                        label=_("Image clip duration"),
                                        description=_(
-                                           "Default clip length (in miliseconds) of images when inserting on the timeline."),
+                                           "Default clip length (in milliseconds) of images when inserting on the timeline."),
                                        lower=1)
 
 """

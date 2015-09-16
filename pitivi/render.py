@@ -828,7 +828,7 @@ class RenderDialog(Loggable):
 
     def _showRenderErrorDialog(self, error, unused_details):
         primary_message = _("Sorry, something didn’t work right.")
-        secondary_message = _("An error occured while trying to render your "
+        secondary_message = _("An error occurred while trying to render your "
                               "project. You might want to check our "
                               "troubleshooting guide or file a bug report. "
                               "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
