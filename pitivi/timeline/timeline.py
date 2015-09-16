@@ -761,6 +761,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.draggingElement = None
             self.__got_dragged = False
             self._createdClips = False
+        else:
+            self.cleanDropData()
 
     def cleanDropData(self):
         self.dropDataReady = False
