@@ -335,15 +335,13 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = False
         self.settings.viewerDocked = False
-
         self.remove(self.buttons_container)
         position = None
         if self.pipeline:
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
-
-        self.__createNewViewer()
+            self.__createNewViewer()
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
         self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
 
