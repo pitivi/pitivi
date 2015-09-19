@@ -342,7 +342,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.remove(self.target)
             self.__createNewViewer()
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
-        self.external_window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
 
         self.undock_button.hide()
         self.fullscreen_button = Gtk.ToggleToolButton()
