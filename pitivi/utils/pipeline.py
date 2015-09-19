@@ -27,6 +27,7 @@ High-level pipelines
 import os
 
 
+from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
@@ -168,6 +169,8 @@ class SimplePipeline(GObject.Object, Loggable):
 
     __gsignals__ = PIPELINE_SIGNALS
 
+    use_glsink = None
+
     class RecoveryState(object):
         NOT_RECOVERING = "not-recovering"
         STARTED_RECOVERING = "started-recovering"
@@ -193,9 +196,42 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = 0
         self._force_position_listener = False
 
+        self.setSink(self.createSink())
+
+    def __canUseGlSink(self):
+        if SimplePipeline.use_glsink is not None:
+            return SimplePipeline.use_glsink
+
+        try:
+            if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
+                                 GObject.type_from_name("GdkBroadwayDisplay")):
+                SimplePipeline.use_glsink = False
+
+                return SimplePipeline.use_glsink
+        except RuntimeError:
+            # GdkBroadwayDisplay not available
+            pass
+
+        glsink = Gst.ElementFactory.make("gtkglsink", None)
+        if glsink:
+            if glsink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
+                SimplePipeline.use_glsink = True
+            else:
+                SimplePipeline.use_glsink = False
+            glsink.set_state(Gst.State.NULL)
+        else:
+            SimplePipeline.use_glsink = False
+
+        return SimplePipeline.use_glsink
+
+    def createSink(self):
+        if not self.__canUseGlSink():
+            self.info("Using gtksink")
+            return Gst.ElementFactory.make("gtksink", None)
+
         sink = Gst.ElementFactory.make("glsinkbin", None)
         sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
-        self.setSink(sink)
+        return sink
 
     def setSink(self, sink):
         self.video_sink = sink

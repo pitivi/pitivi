@@ -195,6 +195,15 @@ def _check_audiosinks():
     return True
 
 
+def _check_videosink():
+    from gi.repository import Gst
+    # Yes, this can still fail, if PulseAudio is non-responsive for example.
+    if not Gst.ElementFactory.make("gtkglsink", None):
+        if not Gst.ElementFactory.make("gtksink", None):
+            return False
+    return True
+
+
 def _check_gst_python():
     from gi.repository import Gst
     try:
@@ -244,6 +253,11 @@ def check_requirements():
     if not _check_audiosinks():
         print((_("Could not create audio output sink. "
                  "Make sure you have a valid one (pulsesink, alsasink or osssink).")))
+        return False
+
+    if not _check_videosink():
+        print((_("Could not create video output sink. "
+                 "Make sure you have a gtksink avalaible.")))
         return False
 
     return True

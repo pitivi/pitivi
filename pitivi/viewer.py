@@ -135,8 +135,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.pause()
 
     def __createNewViewer(self):
-        self.sink = Gst.ElementFactory.make("glsinkbin", None)
-        self.sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
+        self.sink = self.pipeline.createSink()
         self.pipeline.setSink(self.sink)
 
         self.target = ViewerWidget(self.sink, self.app)
@@ -598,7 +597,10 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.__transformationBox = TransformationBox(app)
 
         # We only work with a gtkglsink inside a glsinkbin
-        self.drawing_area = sink.props.sink.props.widget
+        try:
+            self.drawing_area = sink.props.sink.props.widget
+        except AttributeError:
+            self.drawing_area = sink.props.widget
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
