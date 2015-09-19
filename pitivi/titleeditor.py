@@ -29,6 +29,7 @@ from gi.repository import Gst
 from gi.repository import GLib
 
 from gettext import gettext as _
+from xml.sax.saxutils import escape, unescape
 
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
@@ -147,9 +148,11 @@ class TitleEditor(Loggable):
 
     def _setWidgetText(self):
         res, source_text = self.source.get_child_property("text")
-        text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
-                                        self.textbuffer.get_end_iter(),
-                                        True)
+        source_text = unescape(source_text)
+        text = unescape(self.textbuffer.get_text(
+            self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter(),
+            True))
+
         if text == source_text:
             return False
 
@@ -196,7 +199,7 @@ class TitleEditor(Loggable):
                                         self.textbuffer.get_end_iter(),
                                         True)
         self.log("Source text updated to %s", text)
-        self._setChildProperty("text", text)
+        self._setChildProperty("text", escape(unescape(text)))
 
     def _updateSource(self, updated_obj):
         """
