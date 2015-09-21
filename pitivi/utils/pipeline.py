@@ -35,6 +35,7 @@ from gi.repository import GES
 
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
+from pitivi.check import videosink_factory
 
 
 PIPELINE_SIGNALS = {
@@ -169,8 +170,6 @@ class SimplePipeline(GObject.Object, Loggable):
 
     __gsignals__ = PIPELINE_SIGNALS
 
-    use_glsink = None
-
     class RecoveryState(object):
         NOT_RECOVERING = "not-recovering"
         STARTED_RECOVERING = "started-recovering"
@@ -198,40 +197,15 @@ class SimplePipeline(GObject.Object, Loggable):
 
         self.setSink(self.createSink())
 
-    def __canUseGlSink(self):
-        if SimplePipeline.use_glsink is not None:
-            return SimplePipeline.use_glsink
-
-        try:
-            if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
-                                 GObject.type_from_name("GdkBroadwayDisplay")):
-                SimplePipeline.use_glsink = False
-
-                return SimplePipeline.use_glsink
-        except RuntimeError:
-            # GdkBroadwayDisplay not available
-            pass
-
-        glsink = Gst.ElementFactory.make("gtkglsink", None)
-        if glsink:
-            if glsink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
-                SimplePipeline.use_glsink = True
-            else:
-                SimplePipeline.use_glsink = False
-            glsink.set_state(Gst.State.NULL)
-        else:
-            SimplePipeline.use_glsink = False
-
-        return SimplePipeline.use_glsink
-
     def createSink(self):
-        if not self.__canUseGlSink():
+        sink = Gst.ElementFactory.make(videosink_factory.get_name(), None)
+        if videosink_factory.get_name() == "gtksink":
             self.info("Using gtksink")
-            return Gst.ElementFactory.make("gtksink", None)
+            return sink
 
-        sink = Gst.ElementFactory.make("glsinkbin", None)
-        sink.props.sink = Gst.ElementFactory.make("gtkglsink", None)
-        return sink
+        sinkbin = Gst.ElementFactory.make("glsinkbin", None)
+        sinkbin.props.sink = sink
+        return sinkbin
 
     def setSink(self, sink):
         self.video_sink = sink

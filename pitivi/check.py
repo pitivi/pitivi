@@ -38,6 +38,7 @@ import sys
 from gettext import gettext as _
 
 missing_soft_deps = {}
+videosink_factory = None
 
 
 def _version_to_string(version):
@@ -197,11 +198,38 @@ def _check_audiosinks():
 
 def _check_videosink():
     from gi.repository import Gst
+    from gi.repository import Gdk
+    from gi.repository import GObject
+
+    try:
+        if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
+                             GObject.type_from_name("GdkBroadwayDisplay")):
+            SimplePipeline.use_glsink = False
+
+            return SimplePipeline.use_glsink
+    except RuntimeError:
+        # GdkBroadwayDisplay not available
+        pass
+
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
-    if not Gst.ElementFactory.make("gtkglsink", None):
-        if not Gst.ElementFactory.make("gtksink", None):
+    sink = Gst.ElementFactory.make("gtkglsink", None)
+    if not sink:
+        sink = Gst.ElementFactory.make("gtksink", None)
+        if not sink:
             return False
-    return True
+
+    if sink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
+        global videosink_factory
+        videosink_factory = sink.get_factory()
+    else:
+        sink = Gst.ElementFactory.make("gtksink", None)
+        videosink_factory = sink.get_factory()
+
+    sink.set_state(Gst.State.NULL)
+
+    if videosink_factory:
+        return True
+    return False
 
 
 def _check_gst_python():
