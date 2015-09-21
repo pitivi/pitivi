@@ -569,13 +569,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def __buttonReleaseEventCb(self, unused_widget, event):
+        res, button = event.get_button()
         if self.draggingElement:
             self.dragEnd()
         elif self.__moving_layer:
             self.__endMovingLayer()
 
             return False
-        else:
+        elif button == 1:
             self._selectUnderMarquee()
 
         event_widget = self.get_event_widget(event)
