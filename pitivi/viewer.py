@@ -634,6 +634,16 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # so we need to flush the pipeline
         self.seeker.flush()
 
+    def do_get_preferred_width(self):
+        # Do not let a chance for Gtk to choose video natural size
+        # as we want to have full control
+        return -1, -1
+
+    def do_get_preferred_height(self):
+        # Do not let a chance for Gtk to choose video natural size
+        # as we want to have full control
+        return -1, -1
+
 
 class PlayPauseButton(Gtk.Button, Loggable):
     """
