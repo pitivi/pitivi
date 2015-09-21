@@ -107,6 +107,7 @@ AS_IF([test "x$HAVE_GSTREAMER" = xno],
 
 PKG_CHECK_MODULES([cairo], [cairo])
 PKG_CHECK_MODULES([py3cairo], [py3cairo])
+PKG_CHECK_MODULES([python3], [python3])
 
 AC_ARG_ENABLE(help,
   AS_HELP_STRING([--disable-help],[disable help]),
