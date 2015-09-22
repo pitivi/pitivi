@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-19 09:52+0200\n"
-"PO-Revision-Date: 2015-09-19 09:53+0200\n"
+"POT-Creation-Date: 2015-09-22 15:14+0200\n"
+"PO-Revision-Date: 2015-09-22 15:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -587,11 +587,11 @@ msgstr ""
 "rozdzielczości obrazu, mocy obliczeniowej komputera, zastosowanych efektów i "
 "czasu trwania filmu.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:674
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:685
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:666
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:677
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -682,15 +682,15 @@ msgstr ""
 "— %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
 "wersji %s"
 
-#: ../pitivi/check.py:224
+#: ../pitivi/check.py:233
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "BŁĄD — brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:233
+#: ../pitivi/check.py:242
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:240
+#: ../pitivi/check.py:249
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -698,7 +698,7 @@ msgstr ""
 "BŁĄD — nie można utworzyć Gst.Fraction — oznacza to, że gst-python nie jest "
 "poprawnie zainstalowane."
 
-#: ../pitivi/check.py:245
+#: ../pitivi/check.py:254
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -706,24 +706,31 @@ msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
 
-#: ../pitivi/check.py:312
+#: ../pitivi/check.py:259
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink avalaible."
+msgstr ""
+"Nie można utworzyć odpływu wyjścia obrazu. Proszę się upewnić, że odpływ "
+"gtksink jest dostępny."
+
+#: ../pitivi/check.py:326
 msgid "enables sound notifications when rendering is complete"
 msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
 
-#: ../pitivi/check.py:313
+#: ../pitivi/check.py:327
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr ""
 "miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
 
-#: ../pitivi/check.py:314
+#: ../pitivi/check.py:328
 msgid "enables visual notifications when rendering is complete"
 msgstr "włącza powiadomienia po ukończeniu renderowania"
 
-#: ../pitivi/check.py:315
+#: ../pitivi/check.py:329
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
 
-#: ../pitivi/check.py:316
+#: ../pitivi/check.py:330
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1291,31 +1298,31 @@ msgstr "Ukończono renderowanie"
 msgid "\"%s\" has finished rendering."
 msgstr "Ukończono renderowanie „%s”."
 
-#: ../pitivi/titleeditor.py:92 ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
 msgid "Custom"
 msgstr "Własne"
 
-#: ../pitivi/titleeditor.py:93
+#: ../pitivi/titleeditor.py:94
 msgid "Top"
 msgstr "Góra"
 
-#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:95 ../pitivi/titleeditor.py:102
 msgid "Center"
 msgstr "Środek"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:96
 msgid "Bottom"
 msgstr "Dół"
 
-#: ../pitivi/titleeditor.py:96
+#: ../pitivi/titleeditor.py:97
 msgid "Baseline"
 msgstr "Linia podstawowa"
 
-#: ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:101
 msgid "Left"
 msgstr "Lewo"
 
-#: ../pitivi/titleeditor.py:102
+#: ../pitivi/titleeditor.py:103
 msgid "Right"
 msgstr "Prawo"
 
@@ -1363,23 +1370,23 @@ msgstr "Gładkie"
 msgid "Currently playing"
 msgstr "Obecnie odtwarzane"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer.py:225
 msgid "Go to the beginning of the timeline"
 msgstr "Przechodzi na początek osi czasu"
 
-#: ../pitivi/viewer.py:233
+#: ../pitivi/viewer.py:232
 msgid "Go back one second"
 msgstr "Przechodzi do tyłu o jedną sekundę"
 
-#: ../pitivi/viewer.py:245
+#: ../pitivi/viewer.py:244
 msgid "Go forward one second"
 msgstr "Przechodzi naprzód o jedną sekundę"
 
-#: ../pitivi/viewer.py:253
+#: ../pitivi/viewer.py:252
 msgid "Go to the end of the timeline"
 msgstr "Przechodzi na koniec osi czasu"
 
-#: ../pitivi/viewer.py:260
+#: ../pitivi/viewer.py:259
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1387,7 +1394,7 @@ msgstr ""
 "Proszę wprowadzić kod czasowy lub numer klatki\n"
 "i nacisnąć klawisz „Enter”, aby przejść do tego położenia"
 
-#: ../pitivi/viewer.py:268
+#: ../pitivi/viewer.py:267
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1395,11 +1402,11 @@ msgstr ""
 "Odłącza przeglądarkę\n"
 "Można ją ponownie podłączyć zamykając nowo utworzone okno."
 
-#: ../pitivi/viewer.py:352 ../pitivi/viewer.py:402
+#: ../pitivi/viewer.py:350 ../pitivi/viewer.py:400
 msgid "Show this window in fullscreen"
 msgstr "Wyświetlanie tego okno na pełnym ekranie"
 
-#: ../pitivi/viewer.py:399
+#: ../pitivi/viewer.py:397
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
@@ -1480,7 +1487,7 @@ msgstr ""
 "Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
 "czasu."
 
-#: ../pitivi/timeline/timeline.py:1294
+#: ../pitivi/timeline/timeline.py:1295
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1497,72 +1504,72 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1370
+#: ../pitivi/timeline/timeline.py:1371
 msgid "Zoom In"
 msgstr "Powiększenie"
 
-#: ../pitivi/timeline/timeline.py:1371
+#: ../pitivi/timeline/timeline.py:1372
 msgid "Zoom Out"
 msgstr "Pomniejszenie"
 
-#: ../pitivi/timeline/timeline.py:1372 ../pitivi/utils/widgets.py:1031
+#: ../pitivi/timeline/timeline.py:1373 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/timeline/timeline.py:1396
+#: ../pitivi/timeline/timeline.py:1397
 msgid "Delete Selected"
 msgstr "Usuwa zaznaczone"
 
-#: ../pitivi/timeline/timeline.py:1398
+#: ../pitivi/timeline/timeline.py:1399
 msgid "Ungroup"
 msgstr "Rozgrupuj"
 
-#: ../pitivi/timeline/timeline.py:1399
+#: ../pitivi/timeline/timeline.py:1400
 msgid "Ungroup clips"
 msgstr "Rozgrupowuje klipy"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1402
+#: ../pitivi/timeline/timeline.py:1403
 msgid "Group"
 msgstr "Grupuj"
 
-#: ../pitivi/timeline/timeline.py:1403
+#: ../pitivi/timeline/timeline.py:1404
 msgid "Group clips"
 msgstr "Grupuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1405
+#: ../pitivi/timeline/timeline.py:1406
 msgid "Copy"
 msgstr "Skopiuj"
 
-#: ../pitivi/timeline/timeline.py:1406
+#: ../pitivi/timeline/timeline.py:1407
 msgid "Copy clips"
 msgstr "Kopiuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1408
+#: ../pitivi/timeline/timeline.py:1409
 msgid "Paste"
 msgstr "Wklej"
 
-#: ../pitivi/timeline/timeline.py:1409
+#: ../pitivi/timeline/timeline.py:1410
 msgid "Paste clips"
 msgstr "Wkleja klipy"
 
-#: ../pitivi/timeline/timeline.py:1418
+#: ../pitivi/timeline/timeline.py:1419
 msgid "Start Playback"
 msgstr "Rozpocznij odtwarzanie"
 
-#: ../pitivi/timeline/timeline.py:1420
+#: ../pitivi/timeline/timeline.py:1421
 msgid "Split"
 msgstr "Podziel"
 
-#: ../pitivi/timeline/timeline.py:1421
+#: ../pitivi/timeline/timeline.py:1422
 msgid "Split clip at playhead position"
 msgstr "Przecina klip w pozycji głowicy"
 
-#: ../pitivi/timeline/timeline.py:1423
+#: ../pitivi/timeline/timeline.py:1424
 msgid "Add a Keyframe"
 msgstr "Dodaj klatkę kluczową"
 
-#: ../pitivi/timeline/timeline.py:1424
+#: ../pitivi/timeline/timeline.py:1425
 msgid "Add a keyframe"
 msgstr "Dodaje klatkę kluczową"
 
