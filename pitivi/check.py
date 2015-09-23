@@ -33,6 +33,7 @@ when called from application.py instead of bin/pitivi, if it has an impact.
 Package maintainers should look at the bottom section of this file.
 """
 
+import os
 import sys
 
 from gettext import gettext as _
@@ -200,35 +201,33 @@ def _check_videosink():
     from gi.repository import Gst
     from gi.repository import Gdk
     from gi.repository import GObject
+    global videosink_factory
 
     try:
+        # If using GdkBroadwayDisplay make sure not to try to use gtkglsink
+        # as it would segfault right away.
         if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
                              GObject.type_from_name("GdkBroadwayDisplay")):
-            SimplePipeline.use_glsink = False
-
-            return SimplePipeline.use_glsink
+            videosink_factory = Gst.ElementFactory.find("gtkglsink")
+            return True
     except RuntimeError:
-        # GdkBroadwayDisplay not available
         pass
 
-    # Yes, this can still fail, if PulseAudio is non-responsive for example.
-    sink = Gst.ElementFactory.make("gtkglsink", None)
-    if not sink:
-        sink = Gst.ElementFactory.make("gtksink", None)
+    if "gtkglsink" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
+        sink = Gst.ElementFactory.make("gtkglsink", None)
         if not sink:
-            return False
-
-    if sink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
-        global videosink_factory
-        videosink_factory = sink.get_factory()
+            videosink_factory = sink.get_factory()
+        elif sink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
+            videosink_factory = sink.get_factory()
+            sink.set_state(Gst.State.NULL)
+        else:
+            videosink_factory = Gst.ElementFactory.find("gtksink")
     else:
-        sink = Gst.ElementFactory.make("gtksink", None)
-        videosink_factory = sink.get_factory()
-
-    sink.set_state(Gst.State.NULL)
+        videosink_factory = Gst.ElementFactory.find("gtksink")
 
     if videosink_factory:
         return True
+
     return False
 
 
