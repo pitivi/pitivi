@@ -1014,6 +1014,7 @@ class RenderDialog(Loggable):
         if message.type == Gst.MessageType.EOS:  # Render complete
             self.debug("got EOS message, render complete")
             self._shutDown()
+            self.progress.progressbar.set_fraction(1.0)
             self.progress.progressbar.set_text(_("Render complete"))
             self.progress.window.set_title(_("Render complete"))
             self.progress.setFilesizeEstimate(None)
