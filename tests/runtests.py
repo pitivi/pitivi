@@ -56,8 +56,9 @@ def setup():
     sys.path.append(libs_dir)
 
     # Make sure the modules are initialized correctly.
-    from pitivi.check import initialize_modules
-    initialize_modules()
+    from pitivi import check
+    check.initialize_modules()
+    assert(check.check_requirements())
 
     from pitivi.utils import loggable as log
     log.init('PITIVI_DEBUG')
