@@ -52,6 +52,7 @@ class BaseLayerControl(Gtk.Box, Loggable):
         self._selected = False
         self.__type_name = type_name
         self.__meta_name = type_name + "::name"
+        self.props.no_show_all = True
 
         context = self.get_style_context()
 
@@ -113,6 +114,11 @@ class BaseLayerControl(Gtk.Box, Loggable):
         if selected != self._selected:
             self._selected = selected
             self._selectionChangedCb()
+
+    def force_show_all(self):
+        self.props.no_show_all = False
+        self.show_all()
+        self.props.no_show_all = True
 
     selected = property(getSelected, setSelected, None, "Selection state")
 
@@ -271,13 +277,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         content.attach(self.before_sep, 0, 0, 2, 1)
 
         self.video_control = VideoLayerControl(self, self.app)
-        self.video_control.set_visible(True)
+        self.video_control.force_show_all()
         self.video_control.props.height_request = ui.LAYER_HEIGHT / 2
         self.video_control.props.hexpand = True
         content.attach(self.video_control, 0, 1, 1, 1)
 
         self.audio_control = AudioLayerControl(self, self.app)
-        self.audio_control.set_visible(True)
+        self.audio_control.force_show_all()
         self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
         self.audio_control.props.hexpand = True
         content.attach(self.audio_control, 0, 2, 1, 1)
@@ -504,12 +510,12 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         height = 0
         if self.media_types & GES.TrackType.AUDIO:
             height += ui.LAYER_HEIGHT / 2
-            self.bLayer.control_ui.audio_control.show()
+            self.bLayer.control_ui.audio_control.force_show_all()
         else:
             self.bLayer.control_ui.audio_control.hide()
 
         if self.media_types & GES.TrackType.VIDEO:
-            self.bLayer.control_ui.video_control.show()
+            self.bLayer.control_ui.video_control.force_show_all()
             height += ui.LAYER_HEIGHT / 2
         else:
             self.bLayer.control_ui.video_control.hide()

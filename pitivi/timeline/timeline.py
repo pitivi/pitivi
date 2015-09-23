@@ -1057,11 +1057,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         Get the layer to which the clip should land, creating
         layer as necessary.
-
-        If always_create_layer is True, a new layer with proper
-        priority will be created, otherwize it will try to retrieve
-        the layer at the priority and create only if it does not
-        exist
         """
         priority = self._on_layer.props.priority
         if self.__on_separators[0] == self._on_layer.ui.after_sep:
