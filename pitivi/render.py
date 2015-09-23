@@ -870,6 +870,7 @@ class RenderDialog(Loggable):
         self._pipeline.set_state(Gst.State.NULL)
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
+        self._pipeline.set_state(Gst.State.PAUSED)
 
     def _pauseRender(self, unused_progress):
         self._rendering_is_paused = self.progress.play_pause_button.get_active(
