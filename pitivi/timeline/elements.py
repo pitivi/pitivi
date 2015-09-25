@@ -124,7 +124,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # Drag and drop logic
         self.__dragged = False
         self.__offset = None
-        self.__handling_motion = False
+        self.handling_motion = False
 
         self.__hovered = False
 
@@ -170,7 +170,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         We need to do that here, because mpl's callbacks can't stop
         signal propagation.
         """
-        if self.__handling_motion:
+        if self.handling_motion:
             return True
         return False
 
@@ -195,7 +195,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 self.__source.unset(self.__offset)
                 self.__updatePlots()
             else:
-                self.__handling_motion = True
+                self.handling_motion = True
 
     def __setTooltip(self, event):
         if event.xdata:
@@ -268,7 +268,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 self.__maybeCreateKeyframe(event)
 
         self.__offset = None
-        self.__handling_motion = False
+        self.handling_motion = False
         self.__dragged = False
 
 
@@ -421,13 +421,27 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
         return wanted_width, wanted_width
 
+    def __showKeyframes(self):
+        if not self.__keyframeCurve:
+            return False
+
+        # We do not show keyframes while a clip is being moved on the timeline
+        if self.timeline.draggingElement and not self.__keyframeCurve.handling_motion:
+            return False
+
+        # We do not show keyframes when there are several clips selected
+        if len(self.timeline.selection) > 1:
+            return False
+
+        return self._bElement.selected
+
     def do_draw(self, cr):
         self.propagate_draw(self.__background, cr)
 
         if self.__previewer:
             self.propagate_draw(self.__previewer, cr)
 
-        if self.__keyframeCurve and self._bElement.selected and len(self.timeline.selection) == 1:
+        if self.__showKeyframes():
             self.propagate_draw(self.__keyframeCurve, cr)
 
     def do_show_all(self):
