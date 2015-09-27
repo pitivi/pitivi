@@ -695,6 +695,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self.simple_seek(position)
 
     def simple_seek(self, position):
+        if self._timeline.is_empty():
+            return
+
         st = Gst.Structure.new_empty("seek")
 
         if self.getState() == Gst.State.PLAYING:
