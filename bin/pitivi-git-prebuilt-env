@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+#
+# Copyright (c) 2015, Thibault Saunier tsaunier@gnome.org
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+
+import argparse
+import subprocess
+import os
+import sys
+import shutil
+import time
+import datetime
+import glob
+import platform
+import tempfile
+import tarfile
+
+bitness = platform.architecture()[0]
+arch = "x86" if bitness == "32bit" else "x86_64"
+
+def printf(message, end="\n", verbose=True):
+    if verbose:
+        print(message, end=end)
+    sys.stdout.flush()
+
+class Bundle:
+    def __init__(self, uri, extract_path, verbose):
+        self.bname = os.path.basename(uri)
+        self.verbose = verbose
+        try:
+            tstruct = time.strptime(self.bname.split("-pitivi-latest")[0], "%Y%m%d-%H%M%S")
+            self.datetime = datetime.datetime(*tstruct[:6])
+        except ValueError:
+            self.datetime = "Unknown"
+
+        self.uri = uri
+        self.tarball = None
+        self.extract_path = extract_path
+
+        self.__set_local_file()
+
+    def __repr__(self):
+        return "From %s -- %s" % (self.datetime.strftime("%d %B %Y - %H:%m"), self.bname)
+
+    def __set_local_file(self):
+        linked_files = self.linked_file = glob.glob(os.path.join(self.extract_path, "pitivi-[0-9].[0-9][0-9]-%s" % arch))
+        if linked_files:
+            assert(len(linked_files) == 1)
+            self.linked_file = linked_files[0]
+            self.md5 = self.linked_file + ".md5sum "
+
+            self.file = os.path.realpath(self.linked_file)
+        else:
+            self.file = None
+
+    def extract(self):
+        printf("Extracting bundle from %s..." % self.tarball.name, end="")
+        if self.file:
+            for file_name in (self.linked_file, self.md5, self.file):
+                try:
+                    os.remove(file_name)
+                except FileNotFoundError:
+                    pass
+
+        tarfile.open(self.tarball.name).extractall(path=self.extract_path)
+        self.__set_local_file()
+        printf(" done")
+
+        return bool(self.file)
+
+    def download(self):
+        printf("Downloading bundle... ", end="")
+        self.tarball = tempfile.NamedTemporaryFile(suffix="pitivi_bundle")
+        res = subprocess.call(["wget", self.uri, "-O", self.tarball.name,
+                               "" if self.verbose else "-q"]) == 0
+        printf("done")
+        return res
+
+    def extract_devroot(self, prefix):
+        printf("Setting up paths into the bundle...", end="")
+        iso = self.file + ".iso"
+
+        try:
+            os.rename(self.file, iso)
+        except FileExistsError:
+            pass
+
+        try:
+            shutil.rmtree(prefix)
+        except FileNotFoundError:
+            pass
+
+        try:
+            file_roller_cmd = ["file-roller", "--force", iso, "-e", prefix]
+            if self.verbose:
+                stderr = sys.stderr
+                stdout = sys.stdout
+            else:
+                stderr = stdout = open(os.devnull)
+
+            subprocess.call(file_roller_cmd, stderr=stderr, stdout=stdout)
+        except subprocess.CalledProcessError as e:
+            printf("Make sure you have 'file-roller' (a.k.a gnome archive) "
+                   "installed on the system (%s)" % e.message)
+            raise
+
+        srcpath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pitivi"))
+        for root, dir, files in os.walk(srcpath):
+            for f in files:
+                if f.endswith(".py"):
+                    pyfile = os.path.join(root, f)
+                    rpath = root.replace(srcpath, "")
+                    if rpath.startswith("/"):
+                        rpath = rpath[1:]
+                    link = os.path.join(prefix, "lib", "pitivi", "python", "pitivi", rpath, f)
+                    try:
+                        os.remove(link)
+                    except FileNotFoundError:
+                        pass
+
+                    printf("Linking %s -> %s" % (pyfile, link), verbose=self.verbose)
+                    os.symlink(pyfile, link)
+
+        printf(" done")
+        return True
+
+def enter_dev_environment(prefix):
+    printf("Entering development environment...")
+    os.system("APP_IMAGE_TEST=1 APPDIR=%s %s" % (prefix,
+                                                 os.path.join(prefix, "./AppRun")))
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-u", "--update", dest="update",
+                        action="store_true",
+                        default=False)
+    parser.add_argument("-v", "--verbose", dest="verbose",
+                        action="store_true",
+                        default=False)
+
+    arguments = parser.parse_args()
+    devpath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "prebuilt"))
+    prefix = os.path.join(devpath, "prefix")
+    bundle_path = os.path.join(devpath, "bundle")
+
+    bundle = Bundle("http://pitivi.ecchi.ca/bundles/daily/%ss/pitivi-latest-%s.tar.xz"
+                    % (bitness, arch), bundle_path, arguments.verbose)
+
+    if arguments.update or not os.path.exists(prefix):
+        if not bundle.download():
+            printf("Could not download bundle")
+            exit(1)
+        if not bundle.extract():
+            printf("Could not extract bundle")
+            exit(1)
+        if not bundle.extract_devroot(prefix):
+            printf("Could not extract ISO bundle")
+            exit(1)
+
+    enter_dev_environment(prefix)
