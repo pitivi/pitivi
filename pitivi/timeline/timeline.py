@@ -610,7 +610,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dragEnd()
                 return False
 
-            if self.__drag_start_x != event.x:
+            if self.got_dragged or self.__drag_start_x != event.x:
                 self.__dragUpdate(self.get_event_widget(event), event.x, event.y)
                 self.got_dragged = True
         elif self.__moving_layer:
