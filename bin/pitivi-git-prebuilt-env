@@ -86,10 +86,12 @@ class Bundle:
     def download(self):
         printf("Downloading bundle... ", end="")
         self.tarball = tempfile.NamedTemporaryFile(suffix="pitivi_bundle")
-        res = subprocess.call(["wget", self.uri, "-O", self.tarball.name,
-                               "" if self.verbose else "-q"]) == 0
-        printf("done")
-        return res
+        command = ["wget", self.uri, "-O", self.tarball.name]
+        if not self.verbose:
+            command.append("-q")
+        res = subprocess.call(command)
+        printf("done (%s)" % res)
+        return res == 0
 
     def extract_devroot(self, prefix):
         printf("Setting up paths into the bundle...", end="")
