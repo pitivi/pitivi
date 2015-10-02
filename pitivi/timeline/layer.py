@@ -264,6 +264,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         Loggable.__init__(self)
 
         self.bLayer = bLayer
+        self.bTimeline = self.bLayer.get_timeline()
         self.app = app
 
         self.props.width_request = ui.CONTROL_WIDTH
@@ -310,7 +311,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         content.attach(sep, 2, 0, 1, 4)
 
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
-        self.__layerPriorityChangedCb(self.bLayer, None)
+        self.bTimeline.connect("layer-added", self.__timelineLayerAddedCb)
+        self.bTimeline.connect("layer-removed", self.__timelineLayerRemovedCb)
+        self.__updateActions()
 
         # When the window property is set, specify the mouse cursor.
         self.connect("notify::window", self.__windowSetCb)
@@ -320,12 +323,26 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def __del__(self):
         self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+        self.bTimeline.disconnect_by_func(self.__timelineLayerAddedCb)
+        self.bTimeline.disconnect_by_func(self.__timelineLayerRemovedCb)
         super(LayerControls, self).__del__()
 
-    def __layerPriorityChangedCb(self, bLayer, pspec):
-        first = bLayer.get_priority() == 0
+    def __layerPriorityChangedCb(self, unused_bLayer, unused_pspec):
+        self.__updateActions()
+
+    def __timelineLayerAddedCb(self, unused_timeline, unused_bLayer):
+        self.__updateActions()
+
+    def __timelineLayerRemovedCb(self, unused_timeline, unused_bLayer):
+        self.__updateActions()
+
+    def __updateActions(self):
+        priority = self.bLayer.get_priority()
+        first = priority == 0
         self.__move_layer_up_action.props.enabled = not first
         self.__move_layer_top_action.props.enabled = not first
+        layers_count = len(self.bTimeline.get_layers())
+        self.__delete_layer_action.props.enabled = layers_count > 1
 
     def __createMenuModel(self):
         action_group = Gio.SimpleActionGroup()
@@ -353,7 +370,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.insert(action)
         menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        action = Gio.SimpleAction.new("delete_layer", None)
+        self.__delete_layer_action = Gio.SimpleAction.new("delete_layer", None)
+        action = self.__delete_layer_action
         action.connect("activate", self._deleteLayerCb)
         action_group.insert(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
