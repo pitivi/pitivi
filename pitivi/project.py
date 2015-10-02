@@ -1116,10 +1116,11 @@ class Project(Loggable, GES.Project):
         """
         Load the project.
         """
-        # In this extract call the project is loaded from the file.
         try:
+            # The project is loaded from the file in this call.
             self.timeline = self.extract()
-        except GLib.Error:
+        except GLib.Error as e:
+            self.warning("Failed to extract the timeline: %s", e)
             self.timeline = None
 
         if self.timeline is None:
@@ -1132,7 +1133,7 @@ class Project(Loggable, GES.Project):
         try:
             self.pipeline.set_timeline(self.timeline)
         except PipelineError as e:
-            self.warning("Failed to set the timeline to the pipeline: %s", e)
+            self.warning("Failed to set the pipeline's timeline: %s", e)
             return False
 
         return True
