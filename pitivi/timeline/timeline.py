@@ -617,18 +617,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
-            priority = self.__moving_layer.get_priority()
-            layer, on_sep = self.__getLayerAt(y)
-
-            if on_sep:
-                if layer.ui.after_sep in on_sep:
-                    priority = layer.get_priority() + 1
-                else:
-                    priority = layer.get_priority() - 1
-            elif layer != self.__moving_layer:
+            layer, unused_on_sep = self.__getLayerAt(y, prefer_bLayer=self.__moving_layer)
+            if layer != self.__moving_layer:
                 priority = layer.get_priority()
-
-            self.moveLayer(self.__moving_layer, priority)
+                self.moveLayer(self.__moving_layer, priority)
         elif self.__marquee.start_x:
             self.__marquee.move(event)
 
