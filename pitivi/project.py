@@ -1061,7 +1061,8 @@ class Project(Loggable, GES.Project):
 
         self._ensureTracks()
         self.timeline.props.auto_transition = True
-        # self._ensureLayer()
+        self._ensureLayer()
+
         if self.scenario is not None:
             return
 
