@@ -590,8 +590,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.__missing_uris = False
         if emission:
             self.emit("new-project-loading", None)
-        # We don't have a URI here, None means we're loading a new project
-        project = Project(self.app, _("New Project"))
+        project = Project(self.app, name=_("New Project"))
 
         # setting default values for project metadata
         project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
@@ -743,8 +742,7 @@ class Project(Loggable, GES.Project):
 
         # Project property default values
         self.register_meta(GES.MetaFlag.READWRITE, "name", name)
-        self.register_meta(GES.MetaFlag.READWRITE, "author",
-                           getpwuid(os.getuid()).pw_gecos.split(",")[0])
+        self.register_meta(GES.MetaFlag.READWRITE, "author", "")
 
         # Handle rendering setting
         self.set_meta("render-scale", 100.0)
