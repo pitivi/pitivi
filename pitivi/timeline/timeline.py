@@ -798,7 +798,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
                 if zoom_was_fitted:
                     self.parent._setBestZoomRatio()
-                self.dragEnd(True)
+                self.dragEnd()
         else:
             success = False
 
@@ -1052,8 +1052,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def __getDroppedLayer(self):
         """
-        Get the layer to which the clip should land, creating
-        layer as necessary.
+        Create the layer for a clip dropped on a separator.
         """
         priority = self._on_layer.props.priority
         if self.__on_separators[0] == self._on_layer.ui.after_sep:
@@ -1062,11 +1061,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.createLayer(max(0, priority))
         return self.bTimeline.get_layers()[priority]
 
-    def dragEnd(self, dropping=False):
-        if (self.draggingElement is not None and self.__got_dragged) or dropping:
+    def dragEnd(self):
+        if self.editing_context:
             self._snapEndedCb()
 
-            if self.__on_separators and not dropping:
+            if self.__on_separators and self.__got_dragged:
                 layer = self.__getDroppedLayer()
                 self.editing_context.editTo(self.editing_context.new_position,
                                             layer.get_priority())
