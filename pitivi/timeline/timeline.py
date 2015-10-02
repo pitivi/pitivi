@@ -787,10 +787,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if self.__last_clips_on_leave:
                 self.app.action_log.begin("add clip")
 
-                created_layer = None
+                if self.__on_separators:
+                    created_layer = self.__getDroppedLayer()
+                else:
+                    created_layer = None
                 for layer, clip in self.__last_clips_on_leave:
-                    if self.__on_separators and not created_layer:
-                        created_layer = self.__getDroppedLayer()
                     if created_layer:
                         layer = created_layer
                     layer.add_clip(clip)
