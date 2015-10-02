@@ -559,6 +559,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
+                self._on_layer = self.draggingElement.layer
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
                 if not layer_controls:
@@ -729,6 +730,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if not self.draggingElement:
                 self.draggingElement = bClip.ui
+                self._on_layer = layer
 
             self._createdClips = True
 
@@ -924,45 +926,47 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
 
-    def __getLayerAt(self, y, bLayer=None):
-        layers = self.bTimeline.get_layers()
+    def __getLayerAt(self, y, prefer_bLayer=None):
+        bLayers = self.bTimeline.get_layers()
         if y < 20:
+            # The cursor is at the top, above the first layer.
             self.debug("Returning very first layer")
-            layer = layers[0]
-            return layer, self.__layerGetSeps(layer, "before_sep")
+            bLayer = bLayers[0]
+            return bLayer, self.__layerGetSeps(bLayer, "before_sep")
 
-        separators = None
-        rect = Gdk.Rectangle()
-        rect.x = 0
-        rect.y = y
-        rect.height = 1
-        rect.width = 1
-        for i, layer in enumerate(layers):
-            layer_alloc = layer.ui.get_allocation()
-            if Gdk.rectangle_intersect(rect, layer_alloc)[0] is True:
-                return layer, []
+        # This means if an asset is dragged directly on a separator,
+        # it will prefer the layer below the separator, if any.
+        # Otherwise, it helps choosing a layer as close to prefer_bLayer
+        # as possible when having an option (y is between two layers).
+        prefer_after = True
 
-            separators = self.__layerGetSeps(layer, "after_sep")
-            sep_rectangle = Gdk.Rectangle()
-            sep_rectangle.x = 0
-            sep_rectangle.y = layer_alloc.y + layer_alloc.height
+        for i, bLayer in enumerate(bLayers):
+            layer_rect = bLayer.ui.get_allocation()
+            layer_y = layer_rect.y
+            layer_height = layer_rect.height
+            if layer_y <= y < layer_y + layer_height:
+                # The cursor is on a layer.
+                return bLayer, []
+
+            separators = self.__layerGetSeps(bLayer, "after_sep")
             try:
-                next_layer = layers[i + 1]
-                sep_rectangle.height = next_layer.ui.get_allocation().y - \
-                    layer_alloc.y - layer_alloc.height
-                separators.extend(self.__layerGetSeps(next_layer, "before_sep"))
+                next_bLayer = bLayers[i + 1]
             except IndexError:
-                sep_rectangle.height += LAYER_HEIGHT
+                # The cursor is below the last layer.
+                self.debug("Returning very last layer")
+                return bLayer, separators
 
-            if sep_rectangle.y <= rect.y <= sep_rectangle.y + sep_rectangle.height:
-                self.debug("Returning layer %s, separators: %s" % (layer, separators))
-                if bLayer:
-                    return bLayer, separators
+            if bLayer == prefer_bLayer:
+                # Choose a layer as close to prefer_bLayer as possible.
+                prefer_after = False
 
-                return layer, separators
-
-        self.debug("Returning very last layer")
-        return layers[-1], self.__layerGetSeps(layers[-1], "after_sep")
+            if layer_y + layer_height <= y < next_bLayer.ui.get_allocation().y:
+                # The cursor is between this layer and the one below.
+                separators.extend(self.__layerGetSeps(next_bLayer, "before_sep"))
+                if prefer_after:
+                    bLayer = next_bLayer
+                self.debug("Returning layer %s, separators: %s", bLayer, separators)
+                return bLayer, separators
 
     def __setHoverSeparators(self):
         for sep in self.__on_separators:
@@ -1007,14 +1011,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x - self.__drag_start_x)
 
         self.__unsetHoverSeparators()
-
         self._on_layer, self.__on_separators = self.__getLayerAt(y,
-                                                                 self.draggingElement.bClip.get_layer())
+                                                                 prefer_bLayer=self._on_layer)
+        self.__setHoverSeparators()
 
         priority = self._on_layer.props.priority
-        if self.__on_separators:
-            self.__setHoverSeparators()
-
         self.editing_context.editTo(position, priority)
 
     def createLayer(self, priority):
