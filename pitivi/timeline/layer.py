@@ -342,6 +342,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__move_layer_up_action.props.enabled = not first
         self.__move_layer_top_action.props.enabled = not first
         layers_count = len(self.bTimeline.get_layers())
+        last = priority == layers_count - 1
+        self.__move_layer_down_action.props.enabled = not last
+        self.__move_layer_bottom_action.props.enabled = not last
         self.__delete_layer_action.props.enabled = layers_count > 1
 
     def __createMenuModel(self):
@@ -360,12 +363,14 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.insert(action)
         menu_model.append(_("Move layer up"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        action = Gio.SimpleAction.new("move_layer_down", None)
+        self.__move_layer_down_action = Gio.SimpleAction.new("move_layer_down", None)
+        action = self.__move_layer_down_action
         action.connect("activate", self._moveLayerCb, 1)
         action_group.insert(action)
         menu_model.append(_("Move layer down"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        action = Gio.SimpleAction.new("move_layer_to_bottom", None)
+        self.__move_layer_bottom_action = Gio.SimpleAction.new("move_layer_to_bottom", None)
+        action = self.__move_layer_bottom_action
         action.connect("activate", self._moveLayerCb, 2)
         action_group.insert(action)
         menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
