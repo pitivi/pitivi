@@ -668,10 +668,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Set to True when a clip has been dragged because the first
         # button-release-event on the clip should be ignored.
         self.got_dragged = False
+        # Whether the drop data has been received. See self.dropData below.
         self.dropDataReady = False
+        # What's being dropped, for example asset URIs.
         self.dropData = None
+        # Whether clips have been created in the current drag & drop.
         self._createdClips = False
-        self.isDraggedClip = False
         # The list of (Layer, Clip) tuples dragged into the timeline.
         self.__last_clips_on_leave = None
 
@@ -686,7 +688,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("drag-data-received", self.__dragDataReceivedCb)
 
     def __createClips(self, x, y):
-        if not self.isDraggedClip or self._createdClips:
+        if self._createdClips:
             return False
 
         x = self.adjustCoords(x=x)
@@ -803,18 +805,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def __dragDataReceivedCb(self, unused_widget, unused_context, unused_x,
                              unused_y, selection_data, unused_info, timestamp):
         data_type = selection_data.get_data_type().name()
-        dragging_effect = data_type == EFFECT_TARGET_ENTRY.target
         if not self.dropDataReady:
             self.__last_clips_on_leave = None
-            if dragging_effect:
+            if data_type == URI_TARGET_ENTRY.target:
+                self.dropData = selection_data.get_uris()
+                self.dropDataReady = True
+            elif data_type == EFFECT_TARGET_ENTRY.target:
                 # Dragging an effect from the Effect Library.
                 factory_name = str(selection_data.get_data(), "UTF-8")
                 self.dropData = factory_name
                 self.dropDataReady = True
-            elif selection_data.get_length() > 0:
-                self.dropData = selection_data.get_uris()
-                self.dropDataReady = True
-        self.isDraggedClip = not dragging_effect
 
     # Handle layers
     def _layerAddedCb(self, timeline, bLayer):
