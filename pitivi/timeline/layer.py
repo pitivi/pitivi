@@ -268,7 +268,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app = app
 
         self.props.width_request = ui.CONTROL_WIDTH
-        self.props.height_request = ui.LAYER_HEIGHT
+        # Half the height because we display only the video strip when empty.
+        self.props.height_request = ui.LAYER_HEIGHT / 2
         self.props.hexpand = True
 
         content = Gtk.Grid()
@@ -284,7 +285,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         content.attach(self.video_control, 0, 1, 1, 1)
 
         self.audio_control = AudioLayerControl(self, self.app)
-        self.audio_control.force_show_all()
+        self.audio_control.hide()
         self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
         self.audio_control.props.hexpand = True
         content.attach(self.audio_control, 0, 2, 1, 1)
@@ -485,7 +486,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.bLayer.connect("clip-removed", self._clipRemovedCb)
 
         # FIXME Make the layer height user setable with 'Paned'
-        self.props.height_request = ui.LAYER_HEIGHT
+        self.props.height_request = ui.LAYER_HEIGHT / 2
         self.props.valign = Gtk.Align.START
 
         self._layout = LayerLayout(self.timeline)
@@ -528,7 +529,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                     break
 
         if not (self.media_types & GES.TrackType.AUDIO) and not (self.media_types & GES.TrackType.VIDEO):
-            self.media_types = GES.TrackType.AUDIO | GES.TrackType.VIDEO
+            # An empty layer only shows the video strip.
+            self.media_types = GES.TrackType.VIDEO
 
         height = 0
         if self.media_types & GES.TrackType.AUDIO:
