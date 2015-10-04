@@ -616,7 +616,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
-            layer, unused_on_sep = self.__getLayerAt(y, prefer_bLayer=self.__moving_layer)
+            layer, unused_on_sep = self.__getLayerAt(
+                y, prefer_bLayer=self.__moving_layer, past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
                 self.moveLayer(self.__moving_layer, priority)
@@ -819,10 +820,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer = layers.pop(bLayer.get_priority())
         layers.insert(index, layer)
 
-        i = 0
-        for layer in layers:
+        for i, layer in enumerate(layers):
             layer.set_priority(i)
-            i += 1
 
     def _addLayer(self, bLayer):
         control = LayerControls(bLayer, self.app)
@@ -852,9 +851,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def __resetLayersByPriority(self, reset=False):
         self._layers.sort(key=lambda layer: layer.bLayer.props.priority)
-        i = 0
         self.debug("Reseting layers priorities")
-        for layer in self._layers:
+        for i, layer in enumerate(self._layers):
             if reset:
                 layer.bLayer.props.priority = i
 
@@ -865,8 +863,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__layers_controls_vbox.child_set_property(layer.bLayer.control_ui,
                                                            "position",
                                                            layer.bLayer.props.priority)
-
-            i += 1
 
     def _removeLayer(self, bLayer):
         self.info("Removing layer: %s", bLayer.props.priority)
@@ -918,7 +914,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
 
-    def __getLayerAt(self, y, prefer_bLayer=None):
+    def __getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
         bLayers = self.bTimeline.get_layers()
         if y < 20:
             # The cursor is at the top, above the first layer.
@@ -932,12 +928,24 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # as possible when having an option (y is between two layers).
         prefer_after = True
 
+        if past_middle_when_adjacent:
+            index_preferred = prefer_bLayer.get_priority()
+            height_preferred = prefer_bLayer.ui.get_allocation().height
+
         for i, bLayer in enumerate(bLayers):
             layer_rect = bLayer.ui.get_allocation()
             layer_y = layer_rect.y
             layer_height = layer_rect.height
             if layer_y <= y < layer_y + layer_height:
-                # The cursor is on a layer.
+                # The cursor is exactly on bLayer.
+                if past_middle_when_adjacent:
+                    # Check if far enough from prefer_bLayer.
+                    delta = index_preferred - bLayer.get_priority()
+                    if (delta == 1 and y >= layer_y + height_preferred) or \
+                            (delta == -1 and y < layer_y + layer_height - height_preferred):
+                        # bLayer is adjacent to prefer_bLayer, but the cursor
+                        # is not far enough to warrant a change.
+                        return prefer_bLayer, []
                 return bLayer, []
 
             separators = self.__layerGetSeps(bLayer, "after_sep")

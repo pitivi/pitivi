@@ -15,6 +15,7 @@ tests =	\
 	test_project.py \
 	test_projectsettings.py \
 	test_system.py \
+	test_timeline_timeline.py \
 	test_undo.py \
 	test_undo_timeline.py \
 	test_utils.py \
