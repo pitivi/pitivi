@@ -558,7 +558,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
-                self._on_layer = self.draggingElement.layer
+                self._on_layer = self.draggingElement.layer.bLayer
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
                 if not layer_controls:
@@ -700,7 +700,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 clip_duration = asset.get_duration()
 
-            layer, unused_on_sep = self.__getLayerAt(y)
+            bLayer, unused_on_sep = self.__getLayerAt(y)
             if not placement:
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
@@ -708,11 +708,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
             self.app.action_log.begin("add clip")
-            bClip = layer.add_asset(asset,
-                                    placement,
-                                    0,
-                                    clip_duration,
-                                    asset.get_supported_formats())
+            bClip = bLayer.add_asset(asset,
+                                     placement,
+                                     0,
+                                     clip_duration,
+                                     asset.get_supported_formats())
             placement += clip_duration
             self.current_group.add(bClip.get_toplevel_parent())
             self.selection.setSelection([], SELECT_ADD)
@@ -721,7 +721,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if not self.draggingElement:
                 self.draggingElement = bClip.ui
-                self._on_layer = layer
+                self._on_layer = bLayer
 
             self._createdClips = True
 
