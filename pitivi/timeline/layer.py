@@ -19,6 +19,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+
 import re
 
 from gi.repository import Gdk
@@ -33,158 +34,6 @@ from pitivi.timeline import elements
 from pitivi.utils.loggable import Loggable
 from pitivi.utils import ui
 from pitivi.utils import timeline as timelineUtils
-
-
-class BaseLayerControl(Gtk.Box, Loggable):
-
-    """
-    Base Layer control classes
-    """
-
-    __gtype_name__ = 'LayerControl'
-
-    def __init__(self, layer, app, type_name):
-        Gtk.Box.__init__(self, spacing=0)
-        Loggable.__init__(self)
-
-        self._app = app
-        self.layer = layer
-        self._selected = False
-        self.__type_name = type_name
-        self.__meta_name = type_name + "::name"
-        self.props.no_show_all = True
-
-        context = self.get_style_context()
-
-        # get the default color for the current theme
-        self.UNSELECTED_COLOR = context.get_background_color(
-            Gtk.StateFlags.NORMAL)
-        # use base instead of bg colors so that we get the lighter color
-        # that is used for list items in TreeView.
-        self.SELECTED_COLOR = context.get_background_color(
-            Gtk.StateFlags.SELECTED)
-
-        self.set_orientation(Gtk.Orientation.VERTICAL)
-
-        table = Gtk.Table(n_rows=2, n_columns=2)
-        table.set_border_width(ui.PADDING)
-        table.set_row_spacings(3)
-        table.set_col_spacings(3)
-
-        self.pack_start(table, True, True, 0)
-
-        self.name_entry = Gtk.Entry()
-        self.name_entry.set_tooltip_text(
-            _("Set a personalized name for this layer"))
-        self.name_entry.set_property("secondary-icon-name", self._getIconName())
-        self.name_entry.connect("key-press-event", self._keyPressCb)
-
-        layer.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
-        self.__resetLayerName()
-        table.attach(self.name_entry, 0, 2, 0, 2)
-
-        self.show_all()
-
-    def __del__(self):
-        self.layer.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
-
-    def __layerPriorityChangedCb(self, bLayer, pspec):
-        self.__resetLayerName()
-
-    def __nameIsDefault(self, name):
-        if name is None:
-            return False
-
-        return re.findall("%s [0-9]+$" % self.__type_name, name)
-
-    def __resetLayerName(self):
-        name = self.layer.bLayer.get_meta(self.__meta_name)
-        if name is None or self.__nameIsDefault(name):
-            name = '%s %d' % (self.__type_name, self.layer.bLayer.get_priority())
-            self.layer.bLayer.set_meta(self.__meta_name, name)
-        self.name_entry.set_text(name)
-
-    def _getIconName(self):
-        return None
-
-    def getSelected(self):
-        return self._selected
-
-    def setSelected(self, selected):
-        if selected != self._selected:
-            self._selected = selected
-            self._selectionChangedCb()
-
-    def force_show_all(self):
-        self.props.no_show_all = False
-        self.show_all()
-        self.props.no_show_all = True
-
-    selected = property(getSelected, setSelected, None, "Selection state")
-
-    def _selectionChangedCb(self):
-        """
-        Called when the selection state changes
-        """
-        if self.selected:
-            self.name_entry.override_background_color(
-                Gtk.StateType.NORMAL, self.SELECTED_COLOR)
-        else:
-            self.name_entry.override_background_color(
-                Gtk.StateType.NORMAL, self.UNSELECTED_COLOR)
-
-        # continue GTK signal propagation
-        return True
-
-    def _keyPressCb(self, unused_widget, event):
-        self.layer.bLayer.set_meta(self.__meta_name, self.name_entry.get_text())
-        self._app.project_manager.current_project.setModificationState(True)
-
-    def getHeight(self):
-        return self.get_allocation().height
-
-    def getSeparatorHeight(self):
-        return self.sep.get_allocation().height
-
-    def getControlHeight(self):
-        return self.getHeight() - self.getSeparatorHeight()
-
-    def setSoloState(self, state):
-        self.solo_button.set_active(state)
-
-    def setSeparatorVisibility(self, visible):
-        if visible:
-            self.sep.show()
-        else:
-            self.sep.hide()
-
-
-class VideoLayerControl(BaseLayerControl):
-    """
-    Layer control class for video layers
-    """
-
-    __gtype_name__ = 'VideoLayerControl'
-
-    def __init__(self, layer, app):
-        BaseLayerControl.__init__(self, layer, app, "video")
-
-    def _getIconName(self):
-        return "video-x-generic"
-
-
-class AudioLayerControl(BaseLayerControl):
-    """
-    Layer control class for audio layers
-    """
-
-    __gtype_name__ = 'AudioLayerControl'
-
-    def __init__(self, layer, app):
-        BaseLayerControl.__init__(self, layer, app, "audio")
-
-    def _getIconName(self):
-        return "audio-x-generic"
 
 
 class TwoStateButton(Gtk.Button):
@@ -233,11 +82,13 @@ class SpacedSeparator(Gtk.EventBox):
 
         self.get_style_context().add_class("SpacedSeparator")
         self.box.get_style_context().add_class("SpacedSeparator")
-        self.props.height_request = 1
-        self.props.margin_bottom = 4
-        self.props.margin_top = 4
+        self._update()
 
     def do_state_flags_changed(self, old_flags):
+        self._update()
+        Gtk.EventBox.do_state_flags_changed(self, old_flags)
+
+    def _update(self):
         HIGLIGHTED_PADDING = 3
         total_height = ui.PADDING + HIGLIGHTED_PADDING
         if not self.get_state_flags() & Gtk.StateFlags.PRELIGHT:
@@ -252,7 +103,6 @@ class SpacedSeparator(Gtk.EventBox):
             else:
                 self.props.margin_bottom = 0
                 self.props.margin_top = HIGLIGHTED_PADDING
-        Gtk.EventBox.do_state_flags_changed(self, old_flags)
 
 
 class LayerControls(Gtk.EventBox, Loggable):
@@ -269,47 +119,58 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         self.props.width_request = ui.CONTROL_WIDTH
         # Half the height because we display only the video strip when empty.
-        self.props.height_request = ui.LAYER_HEIGHT / 2
+        self.props.height_request = ui.LAYER_HEIGHT / 2 + ui.PADDING * 3
         self.props.hexpand = True
+        self.props.valign = Gtk.Align.FILL
 
-        content = Gtk.Grid()
-        self.add(content)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.add(hbox)
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        hbox.pack_start(vbox, True, True, 0)
+
+        self.sep = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+        self.sep.props.margin_top = ui.PADDING / 2
+        self.sep.props.margin_bottom = ui.PADDING / 2
+        hbox.pack_start(self.sep, False, False, 0)
 
         self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
-        content.attach(self.before_sep, 0, 0, 2, 1)
+        self.before_sep.props.width_request = self.props.width_request - 1
+        self.before_sep.props.vexpand = False
+        vbox.pack_start(self.before_sep, False, False, 0)
 
-        self.video_control = VideoLayerControl(self, self.app)
-        self.video_control.force_show_all()
-        self.video_control.props.height_request = ui.LAYER_HEIGHT / 2
-        self.video_control.props.hexpand = True
-        content.attach(self.video_control, 0, 1, 1, 1)
+        name_row = Gtk.Box()
+        name_row.set_orientation(Gtk.Orientation.HORIZONTAL)
+        name_row.props.spacing = ui.PADDING
+        name_row.props.margin_left = ui.PADDING
+        name_row.props.margin_right = ui.PADDING
+        vbox.pack_start(name_row, False, False, 0)
 
-        self.audio_control = AudioLayerControl(self, self.app)
-        self.audio_control.hide()
-        self.audio_control.props.height_request = ui.LAYER_HEIGHT / 2
-        self.audio_control.props.hexpand = True
-        content.attach(self.audio_control, 0, 2, 1, 1)
+        self.name_entry = Gtk.Entry()
+        self.name_entry.get_style_context().add_class("LayerControlEntry")
+        self.name_entry.props.valign = Gtk.Align.CENTER
+        self.name_entry.connect("focus-out-event", self.__nameChangedCb)
+        self.__updateName()
+        name_row.pack_start(self.name_entry, True, True, 0)
 
-        menubutton = Gtk.MenuButton.new()
-        menubutton.props.valign = Gtk.Align.START
-        menubutton.props.margin_top = 3 * ui.PADDING
-        menubutton.props.relief = Gtk.ReliefStyle.NONE
-        menubutton.props.direction = Gtk.ArrowType.RIGHT
-        menubutton.props.margin_end = ui.PADDING
+        self.menubutton = Gtk.MenuButton.new()
+        self.menubutton.props.valign = Gtk.Align.CENTER
+        self.menubutton.props.relief = Gtk.ReliefStyle.NONE
         model, action_group = self.__createMenuModel()
-        popover = Gtk.Popover.new_from_model(menubutton, model)
+        popover = Gtk.Popover.new_from_model(self.menubutton, model)
         popover.insert_action_group("layer", action_group)
         popover.props.position = Gtk.PositionType.LEFT
-        menubutton.set_popover(popover)
-        content.attach(menubutton, 1, 1, 1, 2)
+        self.menubutton.set_popover(popover)
+        name_row.pack_start(self.menubutton, False, False, 0)
+
+        space = Gtk.Label()
+        space.props.vexpand = True
+        vbox.pack_start(space, False, False, 0)
 
         self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
-        content.attach(self.after_sep, 0, 3, 2, 1)
-
-        sep = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-        sep.props.margin_top = ui.PADDING / 2
-        sep.props.margin_bottom = ui.PADDING / 2
-        content.attach(sep, 2, 0, 1, 4)
+        self.after_sep.props.width_request = self.props.width_request - 1
+        self.after_sep.props.vexpand = False
+        vbox.pack_start(self.after_sep, False, False, 0)
 
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.bTimeline.connect("layer-added", self.__timelineLayerAddedCb)
@@ -323,13 +184,19 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def __del__(self):
+        self.name_entry.disconnect_by_func(self.__nameChangedCb)
         self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
         self.bTimeline.disconnect_by_func(self.__timelineLayerAddedCb)
         self.bTimeline.disconnect_by_func(self.__timelineLayerRemovedCb)
         super(LayerControls, self).__del__()
 
+    def __nameChangedCb(self, unused_widget, unused_event):
+        self.bLayer.ui.setName(self.name_entry.get_text())
+        self.app.project_manager.current_project.setModificationState(True)
+
     def __layerPriorityChangedCb(self, unused_bLayer, unused_pspec):
         self.__updateActions()
+        self.__updateName()
 
     def __timelineLayerAddedCb(self, unused_timeline, unused_bLayer):
         self.__updateActions()
@@ -347,6 +214,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
         self.__delete_layer_action.props.enabled = layers_count > 1
+
+    def __updateName(self):
+        self.name_entry.set_text(self.bLayer.ui.getName())
 
     def __createMenuModel(self):
         action_group = Gio.SimpleActionGroup()
@@ -386,10 +256,8 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def _deleteLayerCb(self, unused_action, unused_parametter):
         self.app.action_log.begin("delete layer")
-        bLayer = self.bLayer
-        bTimeline = bLayer.get_timeline()
-        bTimeline.remove_layer(bLayer)
-        bTimeline.get_asset().pipeline.commit_timeline()
+        self.bTimeline.remove_layer(self.bLayer)
+        self.bTimeline.get_asset().pipeline.commit_timeline()
         self.app.action_log.commit()
 
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
@@ -399,10 +267,21 @@ class LayerControls(Gtk.EventBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = len(self.bLayer.get_timeline().get_layers()) - 1
-            # if audio, set last position
-        self.bLayer.get_timeline().ui.moveLayer(self.bLayer, index)
+            index = len(self.bTimeline.get_layers()) - 1
+        self.bTimeline.ui.moveLayer(self.bLayer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
+
+    def update(self, media_types):
+        self.props.height_request = self.bLayer.ui.props.height_request + ui.PADDING * 3
+
+        if media_types & GES.TrackType.VIDEO:
+            icon = "video-x-generic"
+        else:
+            icon = "audio-x-generic"
+        image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+        self.menubutton.props.image = image
+
+        # TODO: Use media_types to determine which controls to show.
 
 
 class LayerLayout(Gtk.Layout, Loggable):
@@ -500,6 +379,29 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
         self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
 
+    def setName(self, name):
+        self.bLayer.set_meta("video::name", name)
+
+    def __nameIfSet(self):
+        name = self.bLayer.get_meta("video::name")
+        if not name:
+            name = self.bLayer.get_meta("audio::name")
+        return name
+
+    def __nameIfMeaningful(self):
+        name = self.__nameIfSet()
+        if name:
+            for pattern in ("video [0-9]+", "audio [0-9]+", "Layer [0-9]+"):
+                if re.match(pattern, name):
+                    return None
+        return name
+
+    def getName(self):
+        name = self.__nameIfMeaningful()
+        if not name:
+            name = _('Layer %d') % self.bLayer.get_priority()
+        return name
+
     def release(self):
         for clip in self.bLayer.get_clips():
             self._removeClip(clip)
@@ -514,18 +416,11 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         old_media_types = self.media_types
         self.media_types = GES.TrackType(0)
         bClips = self.bLayer.get_clips()
-
-        """
-        FIXME: That produces segfault in GES/GSequence
-        if not bClips:
-            self.emit("remove-me")
-            return
-        """
-
         for bClip in bClips:
             for child in bClip.get_children(False):
                 self.media_types |= child.get_track().props.track_type
-                if self.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
+                if self.media_types == GES.TrackType.AUDIO | GES.TrackType.VIDEO:
+                    # Cannot find more types than these.
                     break
 
         if not (self.media_types & GES.TrackType.AUDIO) and not (self.media_types & GES.TrackType.VIDEO):
@@ -535,18 +430,12 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         height = 0
         if self.media_types & GES.TrackType.AUDIO:
             height += ui.LAYER_HEIGHT / 2
-            self.bLayer.control_ui.audio_control.force_show_all()
-        else:
-            self.bLayer.control_ui.audio_control.hide()
-
         if self.media_types & GES.TrackType.VIDEO:
-            self.bLayer.control_ui.video_control.force_show_all()
             height += ui.LAYER_HEIGHT / 2
-        else:
-            self.bLayer.control_ui.video_control.hide()
 
         self.props.height_request = height
-        self.bLayer.control_ui.props.height_request = height
+        if hasattr(self.bLayer, "control_ui") and self.bLayer.control_ui:
+            self.bLayer.control_ui.update(self.media_types)
 
         if old_media_types != self.media_types:
             self.updatePosition()
@@ -566,7 +455,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _addClip(self, bClip):
         ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
         if ui_type is None:
-            self.error("Implement UI for type %s?" % bClip.__gtype__)
+            self.error("Implement UI for type %s?", bClip.__gtype__)
             return
 
         if not hasattr(bClip, "ui") or bClip.ui is None:
@@ -589,7 +478,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
         if ui_type is None:
-            self.error("Implement UI for type %s?" % bClip.__gtype__)
+            self.error("Implement UI for type %s?", bClip.__gtype__)
             return
 
         bClip.ui.release()

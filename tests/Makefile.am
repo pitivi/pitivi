@@ -14,6 +14,7 @@ tests =	\
 	test_preset.py \
 	test_project.py \
 	test_system.py \
+	test_timeline_layer.py \
 	test_timeline_timeline.py \
 	test_undo.py \
 	test_undo_timeline.py \

@@ -223,6 +223,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_controls_vbox.props.hexpand = False
+        self.__layers_controls_vbox.props.valign = Gtk.Align.START
 
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
@@ -829,14 +830,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._project.setModificationState(True)
 
     def _addLayer(self, bLayer):
-        control = LayerControls(bLayer, self.app)
-        self.__layers_controls_vbox.pack_start(control, False, False, 0)
-        bLayer.control_ui = control
-
         layer = Layer(bLayer, self)
         bLayer.ui = layer
         self._layers.append(layer)
         layer.connect("remove-me", self._removeLayerCb)
+
+        control = LayerControls(bLayer, self.app)
+        self.__layers_controls_vbox.pack_start(control, False, False, 0)
+        bLayer.control_ui = control
+        # Check the media types so the controls are set up properly.
+        layer.checkMediaTypes()
 
         layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         layer_widget.pack_start(layer.before_sep, False, False, 0)
