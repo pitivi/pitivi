@@ -823,6 +823,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for i, layer in enumerate(layers):
             layer.set_priority(i)
 
+        self._project.setModificationState(True)
+
     def _addLayer(self, bLayer):
         control = LayerControls(bLayer, self.app)
         self.__layers_controls_vbox.pack_start(control, False, False, 0)
