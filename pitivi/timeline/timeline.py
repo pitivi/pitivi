@@ -340,8 +340,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.bTimeline.disconnect_by_func(self._layerRemovedCb)
             self.bTimeline.disconnect_by_func(self._snapCb)
             self.bTimeline.disconnect_by_func(self._snapEndedCb)
-            for layer in self.bTimeline.get_layers():
-                self._layerRemovedCb(self.bTimeline, layer)
+            for bLayer in self.bTimeline.get_layers():
+                self._removeLayer(bLayer)
 
             self.bTimeline.ui = None
 
@@ -350,8 +350,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if bTimeline is None:
             return
 
-        for layer in bTimeline.get_layers():
-            self._addLayer(layer)
+        for bLayer in bTimeline.get_layers():
+            self._addLayer(bLayer)
 
         self.bTimeline.connect("notify::duration", self._durationChangedCb)
         self.bTimeline.connect("layer-added", self._layerAddedCb)
@@ -879,8 +879,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.__resetLayersByPriority(True)
 
-    def _layerRemovedCb(self, unused_timeline, layer):
-        self._removeLayer(layer)
+    def _layerRemovedCb(self, unused_bTimeline, bLayer):
+        self._removeLayer(bLayer)
 
     # Interface Zoomable
     def zoomChanged(self):
