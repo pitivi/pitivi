@@ -863,7 +863,6 @@ class RenderDialog(Loggable):
 
     def _shutDown(self):
         """Shutdown the gstreamer pipeline and disconnect from its signals."""
-        self.project.set_rendering(False)
         self._is_rendering = False
         self._rendering_is_paused = False
         self._time_spent_paused = 0
@@ -871,6 +870,7 @@ class RenderDialog(Loggable):
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
+        self.project.set_rendering(False)
 
     def _pauseRender(self, unused_progress):
         self._rendering_is_paused = self.progress.play_pause_button.get_active(

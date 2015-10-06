@@ -505,7 +505,7 @@ class SimplePipeline(GObject.Object, Loggable):
             self._handleErrorMessage(error, detail, message.src)
             Gst.debug_bin_to_dot_file_with_ts(self, Gst.DebugGraphDetails.ALL,
                                               "pitivi.error")
-            if not (self._pipeline.get_mode() & GES.PipelineFlags.RENDER):
+            if not self._pipeline.get_mode() & GES.PipelineFlags.RENDER:
                 self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
@@ -636,6 +636,10 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
                 self.props.audio_filter = watchdog
 
+    def set_mode(self, mode):
+        self._next_seek = None
+        return GES.Pipeline.set_mode(self, mode)
+
     def _getDuration(self):
         return self._timeline.get_duration()
 
@@ -697,6 +701,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
     def simple_seek(self, position):
         if self._timeline.is_empty():
             return
+
+        if self._pipeline.get_mode() & GES.PipelineFlags.RENDER:
+            raise PipelineError("Trying to seek while rendering")
 
         st = Gst.Structure.new_empty("seek")
 
