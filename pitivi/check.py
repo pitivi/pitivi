@@ -208,7 +208,7 @@ def _check_videosink():
         # as it would segfault right away.
         if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
                              GObject.type_from_name("GdkBroadwayDisplay")):
-            videosink_factory = Gst.ElementFactory.find("gtkglsink")
+            videosink_factory = Gst.ElementFactory.find("gtksink")
             return True
     except RuntimeError:
         pass

@@ -73,11 +73,14 @@ if GstValidate:
                     print("Wnck not present on the system,"
                           " not checking the sink does not open a new window")
                     pass
+                except AttributeError:
+                    print("Wnck can not be used on the system")
+                    pass
 
         def _windowOpenedCb(self, screen, window):
             global monitor
 
-            if window.get_name() == 'OpenGL renderer' and monitor:
+            if window.get_name() == 'renderer' and monitor:
                 monitor.report_simple(GLib.quark_from_string("pitivi::wrong-window-creation"),
                                       "New window created by the sink,"
                                       " that should not happen")
