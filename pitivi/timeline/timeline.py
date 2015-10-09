@@ -175,7 +175,7 @@ class Marquee(Gtk.Box, Loggable):
                     else:
                         res.append(clip)
 
-        self.debug("Result is %s" % res)
+        self.debug("Result is %s", res)
 
         return tuple(set(res))
 
@@ -288,7 +288,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Member usefull for testsing
         self.__fake_event_widget = event_widget
 
-        self.info("Faking %s" % event)
+        self.info("Faking %s", event)
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.__buttonPressEventCb(self, event)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
@@ -312,7 +312,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     @allowSeek.setter
     def allowSeek(self, value):
-        self.debug("Setting AllowSeek to %s" % value)
+        self.debug("Setting AllowSeek to %s", value)
         self.__allow_seek = value
 
     def resetSelectionGroup(self):
@@ -504,8 +504,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             elif direction == Gdk.ScrollDirection.DOWN:
                 delta_y = 1.0
             else:
-                self.error("Could not handle %s scroll event"
-                           % direction)
+                self.error("Could not handle %s scroll event", direction)
                 return False
 
         event_widget = self.get_event_widget(event)
@@ -547,13 +546,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def __buttonPressEventCb(self, unused_widget, event):
         event_widget = self.get_event_widget(event)
 
-        self.debug("PRESSED %s" % event)
+        self.debug("PRESSED %s", event)
         self.__disableCenterPlayhead = True
 
         res, button = event.get_button()
         if res and button == 1:
             self.draggingElement = self._getParentOfType(event_widget, Clip)
-            self.debug("Dragging element is %s" % self.draggingElement)
+            self.debug("Dragging element is %s", self.draggingElement)
             if isinstance(event_widget, TrimHandle):
                 self.__clickedHandle = event_widget
 
@@ -706,7 +705,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
 
-            self.debug("Creating %s at %s" % (asset.props.id, Gst.TIME_ARGS(placement)))
+            self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
             self.app.action_log.begin("add clip")
             bClip = layer.add_asset(asset,
@@ -870,7 +869,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             i += 1
 
     def _removeLayer(self, bLayer):
-        self.info("Removing layer: %s" % bLayer.props.priority)
+        self.info("Removing layer: %s", bLayer.props.priority)
         self.__layers_vbox.remove(bLayer.ui.get_parent())
         self.__layers_controls_vbox.remove(bLayer.control_ui)
         bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
@@ -1481,12 +1480,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _scrollToPixel(self, x):
         if x > self.hadj.props.upper:
             self.warning(
-                "Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?" %
-                (x, self.hadj.props.upper))
+                "Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?",
+                x, self.hadj.props.upper)
         elif x < self.hadj.props.lower:
             self.warning(
-                "Position %s is smaller than the hscrollbar's lower bound (%s)" %
-                (x, self.hadj.props.lower))
+                "Position %s is smaller than the hscrollbar's lower bound (%s)",
+                x, self.hadj.props.lower)
 
         if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
             self.error("FIXME What should be done here?")
@@ -1587,7 +1586,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             progress_meter = auto_aligner.start()
             progress_meter.addWatcher(progress_dialog.updatePosition)
         except Exception as e:
-            self.error("Could not start the autoaligner: %s" % e)
+            self.error("Could not start the autoaligner: %s", e)
             progress_dialog.window.destroy()
 
     def _splitCb(self, unused_action):
@@ -1671,7 +1670,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Gtk widget virtual methods
 
     def sendFakeEvent(self, event):
-        self.info("Faking %s" % event)
+        self.info("Faking %s", event)
         if event.type == Gdk.EventType.KEY_PRESS:
             self.do_key_press_event(event)
         elif event.type == Gdk.EventType.KEY_RELEASE:
