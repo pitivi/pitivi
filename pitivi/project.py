@@ -1621,6 +1621,9 @@ class ProjectSettingsDialog():
         can_remove = mgr.isRemoveButtonSensitive()
         self.preset_actions[button]["remove"].set_enabled(can_remove)
 
+        can_create_new = mgr.isNewButtonSensitive()
+        self.preset_actions[button]["new"].set_enabled(can_create_new)
+
     def _loadPresets(self, mgr, combo, button):
         """Set up the specified treeview to display the specified presets.
 

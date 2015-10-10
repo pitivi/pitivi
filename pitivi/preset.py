@@ -332,6 +332,10 @@ class PresetManager(Loggable):
             return False
         return True
 
+    def isNewButtonSensitive(self):
+        """Whether the New button should be enabled"""
+        return bool(self.cur_preset)
+
     def _projectToPreset(self, project):
         raise NotImplementedError()
 
