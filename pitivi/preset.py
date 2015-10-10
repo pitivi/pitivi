@@ -113,9 +113,9 @@ class PresetManager(Loggable):
     def saveAll(self):
         """Write changes to disk for all presets"""
         for preset_name, values in self.ordered:
-            self.savePreset(preset_name)
+            self._savePreset(preset_name)
 
-    def savePreset(self, preset_name):
+    def _savePreset(self, preset_name):
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         try:
@@ -260,7 +260,7 @@ class PresetManager(Loggable):
             self._renameCurrentPreset(new_name)
         values = self.presets[self.cur_preset]
         self._updatePresetValues(values)
-        self.savePreset(self.cur_preset)
+        self._savePreset(self.cur_preset)
 
     def _updatePresetValues(self, values):
         """Copy the values from the widgets to the specified values dict."""
