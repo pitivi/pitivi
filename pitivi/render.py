@@ -538,8 +538,9 @@ class RenderDialog(Loggable):
         """Handle the renaming of a preset."""
         from pitivi.preset import DuplicatePresetNameException
         old_name = mgr.getModel()[path][0]
+        assert old_name == mgr.cur_preset
         try:
-            mgr.renamePreset(old_name, new_text)
+            mgr.saveCurrentPreset(new_text)
             self._updateRenderPresetButtons()
         except DuplicatePresetNameException:
             error_markup = _('"%s" already exists.') % new_text
@@ -576,7 +577,7 @@ class RenderDialog(Loggable):
         infobar.hide()
 
     def _updateRenderSaveButton(self, unused_in, button):
-        button.set_sensitive(self.render_presets.isSaveButtonSensitive())
+        button.set_sensitive(self.render_presets.isSaveButtonSensitive(self.render_presets.cur_preset))
 
     def _addRenderPresetButtonClickedCb(self, unused_button):
         preset_name = self.render_presets.getNewPresetName()
@@ -602,7 +603,7 @@ class RenderDialog(Loggable):
         self.remove_render_preset_button.set_sensitive(True)
 
     def _updateRenderPresetButtons(self):
-        can_save = self.render_presets.isSaveButtonSensitive()
+        can_save = self.render_presets.isSaveButtonSensitive(self.render_presets.cur_preset)
         self.save_render_preset_button.set_sensitive(can_save)
         can_remove = self.render_presets.isRemoveButtonSensitive()
         self.remove_render_preset_button.set_sensitive(can_remove)

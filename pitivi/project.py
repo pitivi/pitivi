@@ -1611,7 +1611,7 @@ class ProjectSettingsDialog():
     def _updatePresetActions(self, button, combo, mgr):
         entry = combo.get_child()
         preset_name = entry.get_text()
-        can_save = mgr.cur_preset != preset_name or mgr.isSaveButtonSensitive()
+        can_save = mgr.isSaveButtonSensitive(preset_name)
         self.preset_actions[button]["save"].set_enabled(can_save)
         if can_save:
             entry.get_style_context().add_class("unsaved")
@@ -1730,7 +1730,11 @@ class ProjectSettingsDialog():
         self._updatePresetActions(button, combo, mgr)
 
     def _savePresetCb(self, unused_action, unused_param, mgr, button, combo):
-        mgr.saveCurrentPreset()
+        entry = combo.get_child()
+        preset_name = entry.get_text()
+        if not mgr.cur_preset:
+            mgr.createPreset(preset_name)
+        mgr.saveCurrentPreset(preset_name)
         self._updatePresetActions(button, combo, mgr)
 
     def _updateAudioPresetMenuButton(self, unused_source, unused_target):

@@ -85,12 +85,13 @@ class TestPresetBasics(TestCase):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
         self.manager.createPreset('Preset Two', {'name1': '2A'})
 
-        self.manager.renamePreset('preseT onE', 'Preset One')
+        self.manager.restorePreset('preseT onE')
+        self.manager.saveCurrentPreset('Preset One')
 
         self.assertRaises(DuplicatePresetNameException,
-                          self.manager.renamePreset, 'Preset One', 'Preset TWO')
+                          self.manager.saveCurrentPreset, 'Preset TWO')
         self.assertRaises(DuplicatePresetNameException,
-                          self.manager.renamePreset, 'Preset One', 'Preset two')
+                          self.manager.saveCurrentPreset, 'Preset two')
 
     def testLoadHandlesMissingDirectory(self):
         self.manager.default_path = '/pitivi/non/existing/directory/1'
@@ -203,8 +204,9 @@ class TestAudioPresetsIO(TestCase):
         system_presets = list(self.manager.presets.keys())
         new_name_template = "%s new"
         for preset_name in system_presets:
+            self.manager.restorePreset(preset_name)
             new_name = new_name_template % preset_name
-            self.manager.renamePreset(preset_name, new_name)
+            self.manager.saveCurrentPreset(new_name)
 
         # Check that the files have not been deleted or changed.
         other_manager = AudioPresetManager()

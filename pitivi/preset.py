@@ -55,7 +55,7 @@ class PresetManager(Loggable):
     @ivar cur_preset: The currently selected preset. Note that a preset has to
         be selected before it can be changed.
     @type cur_preset: str
-    @ivar ordered: A list holding (name -> preset_dict) tuples.
+    @ivar ordered: A list holding (name, preset_dict) tuples.
     @type ordered: Gtk.ListStore
     @ivar presets: A (name -> preset_dict) map.
     @type presets: dict
@@ -180,9 +180,9 @@ class PresetManager(Loggable):
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
 
-    def renamePreset(self, old_name, new_name):
-        """Change the name of a preset."""
-        assert old_name in self.presets
+    def _renameCurrentPreset(self, new_name):
+        """Change the name of the current preset."""
+        old_name = self.cur_preset
         if old_name == new_name:
             # Nothing to do.
             return
@@ -203,7 +203,6 @@ class PresetManager(Loggable):
         new_filepath = self._createUserPresetPath(new_name)
         self.presets[new_name]["filepath"] = new_filepath
         self.cur_preset = new_name
-        self.saveCurrentPreset()
 
     def _createUserPresetPath(self, preset_name):
         return os.path.join(self.user_path, preset_name + ".json")
@@ -251,8 +250,10 @@ class PresetManager(Loggable):
         finally:
             self.ignore_update_requests = False
 
-    def saveCurrentPreset(self):
+    def saveCurrentPreset(self, new_name=None):
         """Update the current preset values from the widgets and save it."""
+        if new_name:
+            self._renameCurrentPreset(new_name)
         self._updatePreset()
         self.savePreset(self.cur_preset)
 
@@ -262,11 +263,14 @@ class PresetManager(Loggable):
         for field, (setter, getter) in self.widget_map.items():
             values[field] = getter()
 
-    def _isCurrentPresetChanged(self):
+    def _isCurrentPresetChanged(self, name):
         """Return whether the widgets values differ from those of the preset."""
         if not self.cur_preset:
             # There is no preset selected, nothing to do.
             return False
+        if not name == self.cur_preset:
+            # The preset can be renamed by saving.
+            return True
         values = self.presets[self.cur_preset]
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.items()))
@@ -303,13 +307,22 @@ class PresetManager(Loggable):
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.prepend((name, values))
 
-    def isSaveButtonSensitive(self):
-        """Whether the Save button should be enabled"""
-        if not self.cur_preset:
-            return False
-        if "volatile" in self.presets[self.cur_preset]:
-            return False
-        return self._isCurrentPresetChanged()
+    def isSaveButtonSensitive(self, name):
+        """Whether the Save button should be enabled.
+
+        @param name: The new preset name.
+        @type name: str
+        """
+        if self.cur_preset:
+            if "volatile" in self.presets[self.cur_preset]:
+                return False
+            return self._isCurrentPresetChanged(name)
+
+        if name:
+            # Can be saved as new preset.
+            return True
+
+        return False
 
     def isRemoveButtonSensitive(self):
         """Whether the Remove button should be enabled"""
