@@ -1708,23 +1708,13 @@ class ProjectSettingsDialog():
 
     def _addAudioPresetCb(self, unused_action, unused_param):
         preset_name = self.audio_presets.getNewPresetName()
-        preset = {
-            "channels": get_combo_value(self.channels_combo),
-            "sample-rate": get_combo_value(self.sample_rate_combo),
-        }
-        self.audio_presets.createPreset(preset_name, preset)
+        self.audio_presets.createPreset(preset_name)
         self.audio_presets_combo.set_active_id(preset_name)
         self._updateAudioPresetMenu()
 
     def _addVideoPresetCb(self, unused_action, unused_param):
         preset_name = self.video_presets.getNewPresetName()
-        preset = {
-            "width": int(self.width_spinbutton.get_value()),
-            "height": int(self.height_spinbutton.get_value()),
-            "frame-rate": self.frame_rate_fraction_widget.getWidgetValue(),
-            "par": self.par_fraction_widget.getWidgetValue(),
-        }
-        self.video_presets.createPreset(preset_name, preset)
+        self.video_presets.createPreset(preset_name)
         self.video_presets_combo.set_active_id(preset_name)
         self._updateVideoPresetMenu()
 

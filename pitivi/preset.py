@@ -146,7 +146,7 @@ class PresetManager(Loggable):
         """Get a unique name for a new preset."""
         return self.getUniqueName(_("New preset"), _("New preset %d"))
 
-    def createPreset(self, name, values, volatile=False):
+    def createPreset(self, name, values=None, volatile=False):
         """Create a new preset.
 
         @param name: The name of the new preset, must be unique.
@@ -158,9 +158,13 @@ class PresetManager(Loggable):
         """
         if self.hasPreset(name):
             raise DuplicatePresetNameException(name)
+        if not values:
+            values = {}
+            self._updatePresetValues(values)
         if volatile:
             values["volatile"] = True
         self._addPreset(name, values)
+        self.cur_preset = name
 
     def _addPreset(self, name, values):
         """Add a preset, overwriting the preset with the same name if it exists.
@@ -254,12 +258,12 @@ class PresetManager(Loggable):
         """Update the current preset values from the widgets and save it."""
         if new_name:
             self._renameCurrentPreset(new_name)
-        self._updatePreset()
+        values = self.presets[self.cur_preset]
+        self._updatePresetValues(values)
         self.savePreset(self.cur_preset)
 
-    def _updatePreset(self):
-        """Copy the values from the widgets to the preset."""
-        values = self.presets[self.cur_preset]
+    def _updatePresetValues(self, values):
+        """Copy the values from the widgets to the specified values dict."""
         for field, (setter, getter) in self.widget_map.items():
             values[field] = getter()
 
