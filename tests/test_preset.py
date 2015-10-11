@@ -183,7 +183,8 @@ class TestAudioPresetsIO(TestCase):
         self.manager.loadAll()
         system_presets = list(self.manager.presets.keys())
         for preset_name in system_presets:
-            self.manager.removePreset(preset_name)
+            self.manager.restorePreset(preset_name)
+            self.manager.removeCurrentPreset()
 
         # Check that the files have not been deleted or changed.
         other_manager = AudioPresetManager()

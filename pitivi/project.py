@@ -1719,7 +1719,7 @@ class ProjectSettingsDialog():
         self._updateVideoPresetMenu()
 
     def _removePresetCb(self, unused_action, unused_param, button, combo, mgr):
-        mgr.removePreset()
+        mgr.removeCurrentPreset()
         self._updatePresetActions(button, combo, mgr)
 
     def _savePresetCb(self, unused_action, unused_param, mgr, button, combo):

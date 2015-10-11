@@ -200,7 +200,7 @@ class PresetManager(Loggable):
         if "filepath" in self.presets[old_name]:
             # If the previous preset had already been saved,
             # delete the file and pop it from the list
-            self.removePreset(old_name)
+            self.removeCurrentPreset()
         else:
             # We're renaming an unsaved preset, so just pop it from the list
             self.presets.pop(old_name)
@@ -279,9 +279,8 @@ class PresetManager(Loggable):
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.items()))
 
-    def removePreset(self, name=None):
-        if name is None:
-            name = self.cur_preset
+    def removeCurrentPreset(self):
+        name = self.cur_preset
         preset = self.presets[name]
         filepath = preset.get("filepath")
         if filepath:
@@ -289,8 +288,7 @@ class PresetManager(Loggable):
                 self._markRemoved(name)
             else:
                 os.remove(filepath)
-        if self.cur_preset == name:
-            self.cur_preset = None
+        self.cur_preset = None
         self._forgetPreset(name)
 
     def _forgetPreset(self, name):

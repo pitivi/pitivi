@@ -609,10 +609,7 @@ class RenderDialog(Loggable):
         self.remove_render_preset_button.set_sensitive(can_remove)
 
     def _removeRenderPresetButtonClickedCb(self, unused_button):
-        selection = self.render_preset_treeview.get_selection()
-        model, iter_ = selection.get_selected()
-        if iter_:
-            self.render_presets.removePreset(model[iter_][0])
+        self.render_presets.removeCurrentPreset()
 
     def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
         """Handle the selection of a preset."""
