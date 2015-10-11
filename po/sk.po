@@ -10,7 +10,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&keywords=I18N"
 "+L10N&component=general\n"
 "POT-Creation-Date: 2015-09-19 10:50+0000\n"
-"PO-Revision-Date: 2015-10-11 10:08+0200\n"
+"PO-Revision-Date: 2015-10-11 10:29+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -121,7 +121,7 @@ msgstr "Kanály:"
 
 #: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:24 ../data/ui/renderingdialog.ui.h:35
 msgid "Sample rate:"
-msgstr "Frekvencia vzoriek:"
+msgstr "Vzorkovacia frekvencia:"
 
 # track_name
 #: ../data/ui/clipmediaprops.ui.h:11
@@ -167,12 +167,12 @@ msgstr "Keď chcete povoliť dodatočné funkcie, nainštalujte nasledujúce bal
 # effectType
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
-msgstr "Zobraziť video efekty"
+msgstr "Zobrazí video efekty"
 
 # effectType
 #: ../data/ui/effectslibrary.ui.h:2
 msgid "Show audio effects"
-msgstr "Zobraziť zvukové efekty"
+msgstr "Zobrazí zvukové efekty"
 
 # action tooltip
 #: ../data/ui/effectslibrary.ui.h:3
@@ -279,7 +279,7 @@ msgstr "Importovať"
 # action
 #: ../data/ui/medialibrary.ui.h:3
 msgid "Remove selected clips from the project"
-msgstr "Odstrániť vybrané klipy z projektu"
+msgstr "Odstráni vybraté klipy z projektu"
 
 # action
 #: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:287
@@ -294,17 +294,16 @@ msgstr "Vlastnosti klipu..."
 # toolbutton tooltip
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
-msgstr "Vloží vybrané klipy na koniec časovej osi"
+msgstr "Vloží vybraté klipy na koniec časovej osi"
 
 # action
 #: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:290
 msgid "Insert at _End of Timeline"
 msgstr "Vložiť na _koniec časovej osi"
 
-# RadioMenuItem
 #: ../data/ui/medialibrary.ui.h:8
 msgid "Show clips as a detailed list"
-msgstr "Zobraziť klipy ako podrobný zoznam"
+msgstr "Zobrazí klipy ako podrobný zoznam"
 
 # action tooltip
 #. This is used as a toolbar button tooltip. Here, "select" means "find" rather than "choose". It is not the user who selects, but rather the user requesting the application to select the relevant items.
@@ -314,7 +313,7 @@ msgstr "Vyberie klipy, ktoré neboli v projekte použité"
 
 #: ../data/ui/medialibrary.ui.h:11
 msgid "Show all clips"
-msgstr "Zobraziť všetky klipy"
+msgstr "Zobrazí všetky klipy"
 
 # dialog
 #: ../data/ui/medialibrary.ui.h:13
@@ -387,12 +386,12 @@ msgstr "Vytvorí novú predvoľbu"
 
 #: ../data/ui/projectsettings.ui.h:9 ../data/ui/renderingdialog.ui.h:11
 msgid "Remove the selected preset"
-msgstr "Odstrániť vybranú predvoľbu"
+msgstr "Odstráni vybratú predvoľbu"
 
 # primary message
 #: ../data/ui/projectsettings.ui.h:10 ../data/ui/renderingdialog.ui.h:12
 msgid "Save changes to the currently selected preset"
-msgstr "Chcete uložiť zmeny v aktuálne vybranej predvoľbe?"
+msgstr "Chcete uložiť zmeny v aktuálne vybratej predvoľbe?"
 
 #: ../data/ui/projectsettings.ui.h:12
 msgid "Aspect Ratio:"
@@ -1418,22 +1417,22 @@ msgstr "Práve sa prehráva"
 # toolbutton tooltip
 #: ../pitivi/viewer.py:225
 msgid "Go to the beginning of the timeline"
-msgstr "Prejsť na začiatok časovej osi"
+msgstr "Prejde na začiatok časovej osi"
 
 # toolbutton tooltip
 #: ../pitivi/viewer.py:232
 msgid "Go back one second"
-msgstr "Vrátiť sa o jednu sekundu"
+msgstr "Prejde o jednu sekundu dozadu"
 
 # toolbutton tooltip
 #: ../pitivi/viewer.py:244
 msgid "Go forward one second"
-msgstr "Posunúť sa o jednu sekundu"
+msgstr "Prejde o jednu sekundu dopredu"
 
 # toolbutton tooltip
 #: ../pitivi/viewer.py:252
 msgid "Go to the end of the timeline"
-msgstr "Prejsť na koniec časovej osi"
+msgstr "Prejde na koniec časovej osi"
 
 #: ../pitivi/viewer.py:259
 msgid ""
@@ -1538,7 +1537,7 @@ msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
 msgstr ""
-"Prepnúť na režim bez medzier\n"
+"Prepne na režim bez medzier\n"
 "Keď je zapnutý, susediace klipy sa posunú kvôli zaplneniu medzier."
 
 # tooltip text for toolbar
@@ -1566,7 +1565,7 @@ msgstr "Prispôsobí zobrazenie"
 
 #: ../pitivi/timeline/timeline.py:1396
 msgid "Delete Selected"
-msgstr "Odstrániť označené položky"
+msgstr "Odstráni označené položky"
 
 # stock_icon
 #: ../pitivi/timeline/timeline.py:1398
@@ -1620,7 +1619,7 @@ msgstr "Rozdeliť"
 # tooltip text for toolbar
 #: ../pitivi/timeline/timeline.py:1421
 msgid "Split clip at playhead position"
-msgstr "Rozdeliť klip na pozícii prehrávacieho kurzora"
+msgstr "Rozdelí klip na pozícii prehrávacieho kurzora"
 
 # playhead_action
 #: ../pitivi/timeline/timeline.py:1423
