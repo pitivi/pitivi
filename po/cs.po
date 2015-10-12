@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-09-16 15:49+0000\n"
-"PO-Revision-Date: 2015-07-22 18:35+0200\n"
+"POT-Creation-Date: 2015-09-19 10:50+0000\n"
+"PO-Revision-Date: 2015-10-12 15:19+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -582,11 +582,11 @@ msgstr ""
 "rozlišení obrazu, výkonu vašeho počítače, použitých efektech a délce vašeho "
 "filmu.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:675
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:676
 msgid "Pause"
 msgstr "Pozastavit"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:667
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:668
 msgid "Play"
 msgstr "Přehrát"
 
@@ -675,15 +675,15 @@ msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr ""
 "– je nainstalován modul %s verze %s, ale PiTiVi vyžaduje minimálně verzi %s"
 
-#: ../pitivi/check.py:224
+#: ../pitivi/check.py:233
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "CHYBA – Následující tvrdé závislosti nejsou splněny:"
 
-#: ../pitivi/check.py:233
+#: ../pitivi/check.py:242
 msgid "Missing soft dependency:"
 msgstr "Chybějící měkká závislost:"
 
-#: ../pitivi/check.py:240
+#: ../pitivi/check.py:249
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -691,7 +691,7 @@ msgstr ""
 "CHYBA — Nelze vytvořit Gst.Fraction — to znamená, že není správně "
 "nainstalován gst-python."
 
-#: ../pitivi/check.py:245
+#: ../pitivi/check.py:254
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -699,23 +699,30 @@ msgstr ""
 "Nelze vytvořit cíl zvukového výstupu. Ujistěte se, že máte platný některý z "
 "následujících modulů: pulsesink, alsasink nebo osssink."
 
-#: ../pitivi/check.py:312
+#: ../pitivi/check.py:259
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink avalaible."
+msgstr ""
+"Nelze vytvořit cíl obrazového výstupu. Ujistěte se, že je dostupný modul "
+"gtksink."
+
+#: ../pitivi/check.py:326
 msgid "enables sound notifications when rendering is complete"
 msgstr "zapne zvukové upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:313
+#: ../pitivi/check.py:327
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr "náhledy souborů poskytnuté vytvářením náhledů v GNOME"
 
-#: ../pitivi/check.py:314
+#: ../pitivi/check.py:328
 msgid "enables visual notifications when rendering is complete"
 msgstr "zapne vizuální upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:315
+#: ../pitivi/check.py:329
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatečné multimediální kodeky z knihovny GStreamer Libav"
 
-#: ../pitivi/check.py:316
+#: ../pitivi/check.py:330
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1275,31 +1282,31 @@ msgstr "Vykreslování dokončeno"
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ má dokončeno vykreslování."
 
-#: ../pitivi/titleeditor.py:92 ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
 msgid "Custom"
 msgstr "Vlastní"
 
-#: ../pitivi/titleeditor.py:93
+#: ../pitivi/titleeditor.py:94
 msgid "Top"
 msgstr "Nahoru"
 
-#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:95 ../pitivi/titleeditor.py:102
 msgid "Center"
 msgstr "Na střed"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:96
 msgid "Bottom"
 msgstr "Dolů"
 
-#: ../pitivi/titleeditor.py:96
+#: ../pitivi/titleeditor.py:97
 msgid "Baseline"
 msgstr "Na základní osnovu"
 
-#: ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:101
 msgid "Left"
 msgstr "Vlevo"
 
-#: ../pitivi/titleeditor.py:102
+#: ../pitivi/titleeditor.py:103
 msgid "Right"
 msgstr "Vpravo"
 
@@ -1347,23 +1354,23 @@ msgstr "Plynulý"
 msgid "Currently playing"
 msgstr "Právě se přehrává"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer.py:225
 msgid "Go to the beginning of the timeline"
 msgstr "Přejít na začátek časové osy"
 
-#: ../pitivi/viewer.py:233
+#: ../pitivi/viewer.py:232
 msgid "Go back one second"
 msgstr "Přejít o sekundu zpátky"
 
-#: ../pitivi/viewer.py:245
+#: ../pitivi/viewer.py:244
 msgid "Go forward one second"
 msgstr "Přejít o sekundu vpřed"
 
-#: ../pitivi/viewer.py:253
+#: ../pitivi/viewer.py:252
 msgid "Go to the end of the timeline"
 msgstr "Přejit na konec časové osy"
 
-#: ../pitivi/viewer.py:260
+#: ../pitivi/viewer.py:259
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1371,7 +1378,7 @@ msgstr ""
 "Zadejte časový údaj nebo číslo snímku\n"
 "a po zmáčknutí „Enter“ přejdete na onu pozici"
 
-#: ../pitivi/viewer.py:268
+#: ../pitivi/viewer.py:267
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1379,11 +1386,11 @@ msgstr ""
 "Odpojit prohlížeč\n"
 "Znovu jej připojit můžete zavřením nově vytvořeného okna."
 
-#: ../pitivi/viewer.py:353 ../pitivi/viewer.py:403
+#: ../pitivi/viewer.py:351 ../pitivi/viewer.py:401
 msgid "Show this window in fullscreen"
 msgstr "Zobrazit toto okno na celé obrazovce"
 
-#: ../pitivi/viewer.py:400
+#: ../pitivi/viewer.py:398
 msgid "Exit fullscreen mode"
 msgstr "Ukončit režim celé obrazovky"
 
@@ -1463,7 +1470,7 @@ msgid ""
 msgstr ""
 "Výchozí délka klipu (v milisekundách) s obrázky po vložení na časovou osu."
 
-#: ../pitivi/timeline/timeline.py:1292
+#: ../pitivi/timeline/timeline.py:1294
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1479,72 +1486,72 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1368
+#: ../pitivi/timeline/timeline.py:1370
 msgid "Zoom In"
 msgstr "Přiblížit"
 
-#: ../pitivi/timeline/timeline.py:1369
+#: ../pitivi/timeline/timeline.py:1371
 msgid "Zoom Out"
 msgstr "Oddálit"
 
-#: ../pitivi/timeline/timeline.py:1370 ../pitivi/utils/widgets.py:1031
+#: ../pitivi/timeline/timeline.py:1372 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Přizpůsobit"
 
-#: ../pitivi/timeline/timeline.py:1394
+#: ../pitivi/timeline/timeline.py:1396
 msgid "Delete Selected"
 msgstr "Smazat vybrané"
 
-#: ../pitivi/timeline/timeline.py:1396
+#: ../pitivi/timeline/timeline.py:1398
 msgid "Ungroup"
 msgstr "Zrušit seskupení"
 
-#: ../pitivi/timeline/timeline.py:1397
+#: ../pitivi/timeline/timeline.py:1399
 msgid "Ungroup clips"
 msgstr "Zrušit seskupení klipů"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1400
+#: ../pitivi/timeline/timeline.py:1402
 msgid "Group"
 msgstr "Seskupit"
 
-#: ../pitivi/timeline/timeline.py:1401
+#: ../pitivi/timeline/timeline.py:1403
 msgid "Group clips"
 msgstr "Seskupit klipy"
 
-#: ../pitivi/timeline/timeline.py:1403
+#: ../pitivi/timeline/timeline.py:1405
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: ../pitivi/timeline/timeline.py:1404
+#: ../pitivi/timeline/timeline.py:1406
 msgid "Copy clips"
 msgstr "Kopírovat klipy"
 
-#: ../pitivi/timeline/timeline.py:1406
+#: ../pitivi/timeline/timeline.py:1408
 msgid "Paste"
 msgstr "Vložit"
 
-#: ../pitivi/timeline/timeline.py:1407
+#: ../pitivi/timeline/timeline.py:1409
 msgid "Paste clips"
 msgstr "Vložit klipy"
 
-#: ../pitivi/timeline/timeline.py:1416
+#: ../pitivi/timeline/timeline.py:1418
 msgid "Start Playback"
 msgstr "Spustit přehrávání"
 
-#: ../pitivi/timeline/timeline.py:1418
+#: ../pitivi/timeline/timeline.py:1420
 msgid "Split"
 msgstr "Rozdělit"
 
-#: ../pitivi/timeline/timeline.py:1419
+#: ../pitivi/timeline/timeline.py:1421
 msgid "Split clip at playhead position"
 msgstr "Rozdělit klip na pozici přehrávání"
 
-#: ../pitivi/timeline/timeline.py:1421
+#: ../pitivi/timeline/timeline.py:1423
 msgid "Add a Keyframe"
 msgstr "Přidat klíčový snímek"
 
-#: ../pitivi/timeline/timeline.py:1422
+#: ../pitivi/timeline/timeline.py:1424
 msgid "Add a keyframe"
 msgstr "Přidat klíčový snímek"
 
