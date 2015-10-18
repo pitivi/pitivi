@@ -1808,3 +1808,6 @@ msgstr "%s affichées"
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanosecondes affichées, parce que nous le pouvons"
 
+#: ../pitivi/dialogs/prefs.py:277
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s :"

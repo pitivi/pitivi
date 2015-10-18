@@ -270,11 +270,12 @@ class PreferencesDialog(object):
                 widget.connectValueChanged(
                     self._valueChanged, widget, attrname)
                 self.widgets[attrname] = widget
-                if isinstance(widget, ptvWidgets.ToggleWidget):
-                    # Don't add a semicolon for checkbuttons
-                    label_widget = Gtk.Label(label=_(label))
-                else:
-                    label_widget = Gtk.Label(label=_(label) + ":")
+                # Add a semicolon, except for checkbuttons.
+                if not isinstance(widget, ptvWidgets.ToggleWidget):
+                    # Translators: This adds a semicolon to an already
+                    # translated name of a preference.
+                    label = _("%(preference_label)s:") % {"preference_label": label}
+                label_widget = Gtk.Label(label=label)
                 icon = Gtk.Image()
                 icon.set_from_icon_name(
                     "edit-clear-all-symbolic", Gtk.IconSize.MENU)
