@@ -497,13 +497,16 @@ class RenderDialog(Loggable):
             self.preferred_vencoder = value
 
     def sample_rate_setter(self, widget, value):
-        self.project.audiorate = set_combo_value(widget, value)
+        set_combo_value(widget, value)
+        self.project.audiorate = value
 
     def channels_setter(self, widget, value):
-        self.project.audiochannels = set_combo_value(widget, value)
+        set_combo_value(widget, value)
+        self.project.audiochannels = value
 
     def framerate_setter(self, widget, value):
-        self.project.videorate = set_combo_value(widget, value)
+        set_combo_value(widget, value)
+        self.project.videorate = value
 
     def bindHeight(self, mgr):
         mgr.bindWidget("height",
