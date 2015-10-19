@@ -716,8 +716,8 @@ class Project(Loggable, GES.Project):
 
     def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
         """
-        @param name: the name of the project
-        @param uri: the uri of the project
+        @param name: The name of the project, if it's a new empty project.
+        @param uri: The URI of the project it will be loaded from.
         """
         Loggable.__init__(self)
         GES.Project.__init__(self, uri=uri, extractable_type=GES.Timeline)
@@ -767,9 +767,12 @@ class Project(Loggable, GES.Project):
         self.aencoder = DEFAULT_AUDIO_ENCODER
         self._ensureAudioRestrictions()
         self._ensureVideoRestrictions()
+        has_default_settings = not bool(uri) and not bool(scenario)
+        self._has_default_audio_settings = has_default_settings
+        self._has_default_video_settings = has_default_settings
 
         # FIXME That does not really belong to here and should be savable into
-        # The serilized file. For now, just let it be here.
+        # The serialized file. For now, just let it be here.
         # A (muxer -> containersettings) map.
         self._containersettings_cache = {}
         # A (vencoder -> vcodecsettings) map.
@@ -873,9 +876,11 @@ class Project(Loggable, GES.Project):
         return False
 
     def setVideoRestriction(self, name, value):
+        self._has_default_video_settings = False
         return Project._set_restriction(self.video_profile, name, value)
 
     def __setAudioRestriction(self, name, value):
+        self._has_default_audio_settings = False
         return Project._set_restriction(self.audio_profile, name, value)
 
     @property
@@ -1029,6 +1034,7 @@ class Project(Loggable, GES.Project):
         get calls
         """
         self._handle_asset_loaded(asset=asset)
+        self._maybeInitSettingsFromAsset(asset)
 
     def do_loading_error(self, unused_error, unused_asset_id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
@@ -1308,6 +1314,36 @@ class Project(Loggable, GES.Project):
             self.audiochannels = 2
         if not self.audiorate:
             self.audiorate = 44100
+
+    def _maybeInitSettingsFromAsset(self, asset):
+        """Update the project settings to match the specified asset."""
+        if not (self._has_default_video_settings or
+                self._has_default_audio_settings):
+            # Both audio and video settings have been set already by the user.
+            return
+        if not isinstance(asset, GES.UriClipAsset):
+            # We are only interested in actual files, not in titles, for example.
+            return
+        info = asset.get_info()
+        video_streams = info.get_video_streams()
+        if video_streams and self._has_default_video_settings:
+            video = video_streams[0]
+            if not video.is_image():
+                self.videowidth = video.get_width()
+                self.videoheight = video.get_height()
+                if video.get_framerate_num() > 0:
+                    # The asset has a non-variable framerate.
+                    self.videorate = Gst.Fraction(video.get_framerate_num(),
+                                                  video.get_framerate_denom())
+                self.videopar = Gst.Fraction(video.get_par_num(),
+                                             video.get_par_denom())
+                self._has_default_video_settings = False
+        audio_streams = info.get_audio_streams()
+        if audio_streams and self._has_default_audio_settings:
+            audio = audio_streams[0]
+            self.audiochannels = audio.get_channels()
+            self.audiorate = audio.get_sample_rate()
+            self._has_default_audio_settings = False
 
     def _emitChange(self, signal, key=None, value=None):
         if key and value:

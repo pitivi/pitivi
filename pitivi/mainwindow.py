@@ -585,8 +585,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 # Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action, unused_param):
-        if self.app.project_manager.newBlankProject() is not False:
-            self.showProjectSettingsDialog()
+        self.app.project_manager.newBlankProject()
 
     def _openProjectCb(self, unused_action, unused_param):
         self.openProject()

@@ -28,8 +28,10 @@ from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 
+from tests import common
+
 from pitivi.application import Pitivi
-from pitivi.project import ProjectManager
+from pitivi.project import ProjectManager, Project
 from pitivi.utils.misc import uri_is_reachable
 
 
@@ -37,9 +39,10 @@ def _createRealProject(name=None):
     app = Pitivi()
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
+    project = project_manager.current_project
     if name:
-        project_manager.current_project.name = name
-    return project_manager.current_project
+        project.name = name
+    return project
 
 
 class MockProject(object):
@@ -310,7 +313,7 @@ class TestProjectManager(TestCase):
                          "Backup file not deleted when project closed")
 
 
-class TestProjectLoading(TestCase):
+class TestProjectLoading(common.TestCase):
 
     def setUp(self):
         self.mainloop = GLib.MainLoop()
@@ -374,11 +377,10 @@ class TestProjectLoading(TestCase):
         def quit(mainloop):
             mainloop.quit()
 
-        # Create a blank project and save it.
+        # Create a blank project and add an asset.
         project = _createRealProject()
         result = [False, False, False]
-        uris = ["file://%s/samples/tears_of_steel.webm" %
-                os.path.dirname(os.path.abspath(__file__))]
+        uris = [self.getSampleUri("tears_of_steel.webm")]
         project.connect("loaded", loaded, self.mainloop, result, uris)
         project.connect("done-importing", added, self.mainloop, result, uris)
 
@@ -392,7 +394,13 @@ class TestProjectLoading(TestCase):
         self.assertTrue(result[2], "Asset re-adding failed")
 
 
-class TestProjectChanging(TestCase):
+class TestProjectSettings(common.TestCase):
+
+    def setUp(self):
+        self.mainloop = GLib.MainLoop()
+
+    def tearDown(self):
+        pass
 
     def testAudio(self):
         project = _createRealProject(name="noname")
@@ -411,6 +419,52 @@ class TestProjectChanging(TestCase):
         self.assertEqual(Gst.Fraction(50, 7), project.videorate)
         project.videopar = Gst.Fraction(2, 7)
         self.assertEqual(Gst.Fraction(2, 7), project.videopar)
+
+    def testInitialization(self):
+        def loaded(project, timeline, mainloop, uris):
+            project.addUris(uris)
+
+        def added(project, mainloop):
+            mainloop.quit()
+
+        def quit(mainloop):
+            mainloop.quit()
+
+        # Create a blank project and add some assets.
+        project = _createRealProject()
+        self.assertTrue(project._has_default_video_settings)
+        self.assertTrue(project._has_default_audio_settings)
+
+        uris = [self.getSampleUri("flat_colour1_640x480.png"),
+                self.getSampleUri("tears_of_steel.webm"),
+                self.getSampleUri("1sec_simpsons_trailer.mp4")]
+        project.connect("loaded", loaded, self.mainloop, uris)
+        project.connect("done-importing", added, self.mainloop)
+
+        self.assertTrue(project.createTimeline())
+        GLib.timeout_add_seconds(5, quit, self.mainloop)
+        self.mainloop.run()
+
+        assets = project.list_assets(GES.UriClip)
+        self.assertEqual(3, len(assets), assets)
+
+        self.assertFalse(project._has_default_video_settings)
+        self.assertFalse(project._has_default_audio_settings)
+
+        # The audio settings should match tears_of_steel.webm
+        self.assertEqual(1, project.audiochannels)
+        self.assertEqual(44100, project.audiorate)
+
+        # The video settings should match tears_of_steel.webm
+        self.assertEqual(960, project.videowidth)
+        self.assertEqual(400, project.videoheight)
+        self.assertEqual(Gst.Fraction(25, 1), project.videorate)
+        self.assertEqual(Gst.Fraction(1, 1), project.videopar)
+
+    def testLoad(self):
+        project = Project(uri="fake.xges", app=None)
+        self.assertFalse(project._has_default_video_settings)
+        self.assertFalse(project._has_default_audio_settings)
 
 
 class TestExportSettings(TestCase):

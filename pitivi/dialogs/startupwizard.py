@@ -104,7 +104,6 @@ class StartUpWizard(object):
         """Handle a click on the New (Project) button."""
         self.app.project_manager.newBlankProject()
         self.hide()
-        self.app.gui.showProjectSettingsDialog()
 
     def _loadCb(self, unused_recent_chooser):
         """
