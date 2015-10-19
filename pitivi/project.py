@@ -518,7 +518,7 @@ class ProjectManager(GObject.Object, Loggable):
                 renamed = os.path.splitext(tar_file)[
                     0] + " (CORRUPT)" + "." + project_extension + "_tar"
                 self.warning(
-                    'An error occurred, will save the tarball as "%s"' % renamed)
+                    'An error occurred, will save the tarball as "%s"', renamed)
                 os.rename(tar_file, renamed)
         else:
             everything_ok = True
@@ -726,15 +726,17 @@ class Project(Loggable, GES.Project):
         self.timeline = None
         self.seeker = Seeker()
         self.uri = uri
-        self.scenario = scenario
         self.loaded = False
         self._at_least_one_asset_missing = False
         self.app = app
 
         # GstValidate
+        self.scenario = scenario
+        self.runner = None
+        self.monitor = None
         self._scenario = None
 
-        # Follow imports
+        # For keeping track of assets importing.
         self._dirty = False
         self.nb_remaining_file_to_import = 0
         self.nb_imported_files = 0
@@ -743,41 +745,22 @@ class Project(Loggable, GES.Project):
         self.register_meta(GES.MetaFlag.READWRITE, "name", name)
         self.register_meta(GES.MetaFlag.READWRITE, "author", "")
 
-        # Handle rendering setting
+        # The rendering settings.
         self.set_meta("render-scale", 100.0)
 
-        container_profile = \
+        self.container_profile = \
             GstPbutils.EncodingContainerProfile.new("pitivi-profile",
                                                     _("Pitivi encoding profile"),
                                                     Gst.Caps(
                                                         "application/ogg"),
                                                     None)
-
-        # Create video profile (We use the same default seetings as the project
-        # settings)
-        video_profile = GstPbutils.EncodingVideoProfile.new(
+        self.video_profile = GstPbutils.EncodingVideoProfile.new(
             Gst.Caps("video/x-theora"), None, Gst.Caps("video/x-raw"), 0)
-
-        # Create audio profile (We use the same default seetings as the project
-        # settings)
-        audio_profile = GstPbutils.EncodingAudioProfile.new(
+        self.audio_profile = GstPbutils.EncodingAudioProfile.new(
             Gst.Caps("audio/x-vorbis"), None, Gst.Caps("audio/x-raw"), 0)
-        container_profile.add_profile(video_profile)
-        container_profile.add_profile(audio_profile)
-        # Keep a reference to those profiles
-        # FIXME We should handle the case we have more than 1 audio and 1 video
-        # profiles
-        self.container_profile = container_profile
-        self.audio_profile = audio_profile
-        self.video_profile = video_profile
-
-        # Add the profile to ourself
-        self.add_encoding_profile(container_profile)
-
-        # Now set the presets/ GstElement that will be used
-        # FIXME We might want to add the default Container/video decoder/audio encoder
-        # into the application settings, for now we just make sure to pick one with
-        # eighest probably the user has installed ie ogg+vorbis+theora
+        self.container_profile.add_profile(self.video_profile)
+        self.container_profile.add_profile(self.audio_profile)
+        self.add_encoding_profile(self.container_profile)
 
         self.muxer = DEFAULT_MUXER
         self.vencoder = DEFAULT_VIDEO_ENCODER
@@ -794,10 +777,6 @@ class Project(Loggable, GES.Project):
         # A (aencoder -> acodecsettings) map.
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
-
-        self.runner = None
-        self.monitor = None
-        self._scenario = None
 
     def _scenarioDoneCb(self, scenario):
         if self.pipeline is not None:
@@ -1031,7 +1010,7 @@ class Project(Loggable, GES.Project):
     # GES.Project virtual methods implementation #
     # ------------------------------------------ #
 
-    def _handle_asset_loaded(self, asset=None, unused_asset_id=None):
+    def _handle_asset_loaded(self, asset=None):
         if asset and not GObject.type_is_a(asset.get_extractable_type(), GES.UriClip):
             # Ignore for example the assets producing GES.TitleClips.
             return
@@ -1051,9 +1030,9 @@ class Project(Loggable, GES.Project):
         """
         self._handle_asset_loaded(asset=asset)
 
-    def do_loading_error(self, unused_error, asset_id, unused_type):
+    def do_loading_error(self, unused_error, unused_asset_id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
-        self._handle_asset_loaded(unused_asset_id=asset_id)
+        self._handle_asset_loaded()
 
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
@@ -1097,7 +1076,7 @@ class Project(Loggable, GES.Project):
                     self.aencoder = self._getElementFactoryName(
                         encoders.aencoders, profile)
                 else:
-                    self.warning("We do not handle profile: %s" % profile)
+                    self.warning("We do not handle profile: %s", profile)
 
     # ------------------------------------------ #
     # Our API                                    #
