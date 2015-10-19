@@ -124,9 +124,18 @@ class Dependency(object):
 
 
 class GIDependency(Dependency):
+    def __init__(self, modulename, apiversion, version_required_string=None, additional_message=None):
+        self.__api_version = apiversion
+        super(GIDependency, self).__init__(modulename, version_required_string, additional_message)
 
     def _try_importing_component(self):
         try:
+            import gi
+            try:
+                gi.require_version(self.modulename, self.__api_version)
+            except ValueError:
+                return None
+
             __import__("gi.repository." + self.modulename)
             module = sys.modules["gi.repository." + self.modulename]
         except ImportError:
@@ -290,6 +299,18 @@ def check_requirements():
     return True
 
 
+def require_version(modulename, version):
+    import gi
+
+    try:
+        gi.require_version(modulename, version)
+    except ValueError:
+        print((_("Could not import '%s'"
+                 "Make sure you have it avalaible."
+                 % modulename)))
+        exit(1)
+
+
 def initialize_modules():
     """
     Initialize the modules.
@@ -297,16 +318,28 @@ def initialize_modules():
     This has to be done in a specific order otherwise the app
     crashes on some systems.
     """
+    try:
+        import gi
+    except ImportError:
+        print((_("Could not import 'gi'"
+                 "Make sure you have pygobject avalaible.")))
+        exit(1)
+
+    require_version("Gtk", GTK_API_VERSION)
+    require_version("Gdk", GTK_API_VERSION)
     from gi.repository import Gdk
     Gdk.init([])
 
-    import gi
     if not gi.version_info >= (3, 11):
         from gi.repository import GObject
         GObject.threads_init()
 
+    require_version("Gst", GST_API_VERSION)
+    require_version("GstController", GST_API_VERSION)
     from gi.repository import Gst
     Gst.init(None)
+
+    require_version("GES", GST_API_VERSION)
     from gi.repository import GES
     res, sys.argv = GES.init_check(sys.argv)
 
@@ -337,13 +370,16 @@ Those are either:
 Some of our dependencies have version numbers requirements; for those without
 a specific version requirement, they have the "None" value.
 """
+GST_API_VERSION = "1.0"
+GTK_API_VERSION = "3.0"
+GLIB_API_VERSION = "2.0"
 HARD_DEPENDENCIES = [GICheck("3.14.0"),
                      CairoDependency("1.10.0"),
-                     GstDependency("Gst", "1.4.0"),
-                     GstDependency("GES", "1.5.0.0"),
-                     GtkDependency("Gtk", "3.10.0"),
+                     GstDependency("Gst", GST_API_VERSION, "1.4.0"),
+                     GstDependency("GES", GST_API_VERSION, "1.5.0.0"),
+                     GtkDependency("Gtk", GTK_API_VERSION, "3.10.0"),
                      ClassicDependency("numpy"),
-                     GIDependency("Gio"),
+                     GIDependency("Gio", "2.0"),
                      GstPluginDependency("opengl", "1.4.0"),
                      ClassicDependency("matplotlib"),
                      ]
@@ -351,8 +387,8 @@ HARD_DEPENDENCIES = [GICheck("3.14.0"),
 SOFT_DEPENDENCIES = \
     (
         ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
-        GIDependency("GnomeDesktop", None, _("file thumbnails provided by GNOME's thumbnailers")),
-        GIDependency("Notify", None, _("enables visual notifications when rendering is complete")),
+        GIDependency("GnomeDesktop", 1.0, None, _("file thumbnails provided by GNOME's thumbnailers")),
+        GIDependency("Notify", None, 1.0, _("enables visual notifications when rendering is complete")),
         GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
         GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
                                                      " Use to detect errors happening in GStreamer"

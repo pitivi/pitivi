@@ -58,11 +58,11 @@ class TestBeautifyLength(TestCase):
 class TestDependencyChecks(TestCase):
 
     def testDependencies(self):
-        gi_dep = GstDependency("Gst", "1.0.0")
+        gi_dep = GstDependency("Gst", "1.0", "1.0.0")
         gi_dep.check()
         self.assertTrue(gi_dep.satisfied)
 
-        gi_dep = GstDependency("Gst", "9.9.9")
+        gi_dep = GstDependency("Gst", "1.0", "9.9.9")
         gi_dep.check()
         self.assertFalse(gi_dep.satisfied)
 
@@ -70,11 +70,11 @@ class TestDependencyChecks(TestCase):
         gi_dep.check()
         self.assertFalse(gi_dep.satisfied)
 
-        gi_dep = GtkDependency("Gtk", "3.0.0")
+        gi_dep = GtkDependency("Gtk", "3.0", "3.0.0")
         gi_dep.check()
         self.assertTrue(gi_dep.satisfied)
 
-        gi_dep = GtkDependency("Gtk", "9.9.9")
+        gi_dep = GtkDependency("Gtk", "3.0", "9.9.9")
         gi_dep.check()
         self.assertFalse(gi_dep.satisfied)
 

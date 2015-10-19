@@ -21,6 +21,7 @@
 import locale
 import subprocess
 
+import gi
 from gi.repository import Gtk
 from gi.repository import Gst
 from gi.repository import GES
@@ -35,8 +36,11 @@ CAT = "validate"
 
 
 try:
+    gi.require_version("GstValidate", "1.0")
     from gi.repository import GstValidate
 except ImportError:
+    GstValidate = None
+except ValueError:
     GstValidate = None
 
 monitor = None

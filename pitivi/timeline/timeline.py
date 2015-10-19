@@ -161,7 +161,7 @@ class Marquee(Gtk.Box, Loggable):
 
         w = self.props.width_request
         for layer in self._timeline.bTimeline.get_layers():
-            intersects, unused_rect = Gdk.rectangle_intersect(layer.ui.get_allocation(), self.get_allocation())
+            intersects, unused_rect = layer.ui.get_allocation().intersect(self.get_allocation())
 
             if not intersects:
                 continue
