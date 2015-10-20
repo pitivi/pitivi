@@ -23,15 +23,17 @@
 Dialog box for user preferences.
 """
 
-from gi.repository import Gtk
 import os
 
-import pitivi.utils.widgets as ptvWidgets
+from gettext import gettext as _
+
+from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
+from pitivi.utils import widgets
 from pitivi.utils.ui import SPACING
-from gettext import gettext as _
+
 
 GlobalSettings.addConfigSection("user-interface")
 
@@ -49,13 +51,14 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 class PreferencesDialog(object):
 
     """
-    This dialog displays preferences for pitivi.
+    Preferences for how the app works.
     """
+
     prefs = {}
     original_values = {}
 
-    def __init__(self, instance):
-        self.settings = instance.settings
+    def __init__(self, app):
+        self.settings = app.settings
         self.widgets = {}
         self.resets = {}
         self._current = None
@@ -79,7 +82,7 @@ class PreferencesDialog(object):
         min_height = req.height
         width = max(min_width, self.settings.prefsDialogWidth)
         height = max(min_height, self.settings.prefsDialogHeight)
-        self.dialog.set_transient_for(instance.gui)
+        self.dialog.set_transient_for(app.gui)
         self.dialog.set_default_size(width, height)
 
     def run(self):
@@ -129,7 +132,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.PathWidget)
+                          widgets.PathWidget)
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
@@ -153,7 +156,7 @@ class PreferencesDialog(object):
         @type lower: C{number}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.NumericWidget, upper=upper, lower=lower)
+                          widgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
     def addTextPreference(cls, attrname, label, description, section=None, matches=None):
@@ -172,7 +175,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.TextWidget, matches=matches)
+                          widgets.TextWidget, matches=matches)
 
     @classmethod
     def addChoicePreference(cls, attrname, label, description, choices, section=None):
@@ -193,7 +196,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.ChoiceWidget, choices=choices)
+                          widgets.ChoiceWidget, choices=choices)
 
     @classmethod
     def addTogglePreference(cls, attrname, label, description, section=None):
@@ -211,7 +214,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.ToggleWidget)
+                          widgets.ToggleWidget)
 
     @classmethod
     def addColorPreference(cls, attrname, label, description, section=None, value_type=int):
@@ -231,7 +234,7 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.ColorWidget, value_type=value_type)
+                          widgets.ColorWidget, value_type=value_type)
 
     @classmethod
     def addFontPreference(cls, attrname, label, description, section=None):
@@ -249,18 +252,18 @@ class PreferencesDialog(object):
         @type section: C{str}
         """
         cls.addPreference(attrname, label, description, section,
-                          ptvWidgets.FontWidget)
+                          widgets.FontWidget)
 
 # Implementation
     def __fillContents(self):
         for section in sorted(self.prefs):
             options = self.prefs[section]
             self.model.append((_(section), section))
-            widgets = Gtk.Table()
-            widgets.set_border_width(SPACING)
-            widgets.props.column_spacing = SPACING
-            widgets.props.row_spacing = SPACING / 2
-            self.sections[section] = widgets
+            grid = Gtk.Grid()
+            grid.set_border_width(SPACING)
+            grid.props.column_spacing = SPACING
+            grid.props.row_spacing = SPACING / 2
+            self.sections[section] = grid
 
             prefs = {}
             for attrname in options:
@@ -268,10 +271,10 @@ class PreferencesDialog(object):
                 widget = widget_class(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(
-                    self._valueChanged, widget, attrname)
+                    self._valueChangedCb, widget, attrname)
                 self.widgets[attrname] = widget
                 # Add a semicolon, except for checkbuttons.
-                if not isinstance(widget, ptvWidgets.ToggleWidget):
+                if not isinstance(widget, widgets.ToggleWidget):
                     # Translators: This adds a semicolon to an already
                     # translated name of a preference.
                     label = _("%(preference_label)s:") % {"preference_label": label}
@@ -295,26 +298,23 @@ class PreferencesDialog(object):
 
             for y, unlocalized in enumerate(sorted(prefs)):
                 label, widget, description, revert = prefs[unlocalized]
-                if isinstance(widget, ptvWidgets.ToggleWidget):
+                if isinstance(widget, widgets.ToggleWidget):
                     # Avoid the separating the label from the checkbox
                     widget.set_label(label.get_text())
-                    widgets.attach(widget, 0, 2, y, y + 1, yoptions=0)
-                    widgets.attach(
-                        revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                    grid.attach(widget, 0, y, 2, 1)
+                    grid.attach(revert, 2, y, 1, 1)
                 else:
                     label.set_alignment(1.0, 0.5)
                     label.set_tooltip_text(description)
-                    widgets.attach(
-                        label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=0)
-                    widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
-                    widgets.attach(
-                        revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
+                    grid.attach(label, 0, y, 1, 1)
+                    grid.attach(widget, 1, y, 1, 1)
+                    grid.attach(revert, 2, y, 1, 1)
                     label.show()
                 widget.set_tooltip_text(description)
                 widget.show()
                 revert.show()
 
-            self.contents.pack_start(widgets, True, True, 0)
+            self.contents.pack_start(grid, False, False, 0)
 
         self.treeview.get_selection().select_path((0,))
         self.factory_settings.set_sensitive(self._canReset())
@@ -322,12 +322,12 @@ class PreferencesDialog(object):
     def _treeSelectionChangedCb(self, selection):
         """ Update current when selection changed"""
         model, _iter = selection.get_selected()
-        new = self.sections[model[_iter][1]]
-        if self._current != new:
+        section = self.sections[model[_iter][1]]
+        if self._current != section:
             if self._current:
                 self._current.hide()
-            new.show()
-            self._current = new
+            section.show()
+            self._current = section
 
     def _clearHistory(self):
         # Disable missing docstring
@@ -370,7 +370,7 @@ class PreferencesDialog(object):
         self._clearHistory()
         self.dialog.hide()
 
-    def _valueChanged(self, unused_fake_widget, real_widget, attrname):
+    def _valueChangedCb(self, unused_fake_widget, real_widget, attrname):
         # Disable missing docstring
         # pylint: disable=C0111
         value = getattr(self.settings, attrname)
