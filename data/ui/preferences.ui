@@ -6,13 +6,10 @@
     <columns>
       <!-- column-name column1 -->
       <column type="gchararray"/>
-      <!-- column-name column2 -->
-      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
     <property name="title" translatable="yes">Preferences</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>

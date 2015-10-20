@@ -99,6 +99,8 @@ class PreferencesDialog(object):
         to guess the appropriate widget to use based on the type of the
         option, but you can override this by specifying a custom class.
 
+        @param attrname: the id of the setting holding the preference
+        @type attrname: C{str}
         @param label: user-visible name for this option
         @type label: C{str}
         @param description: a user-visible description documenting this option
@@ -258,7 +260,7 @@ class PreferencesDialog(object):
     def __fillContents(self):
         for section in sorted(self.prefs):
             options = self.prefs[section]
-            self.model.append((_(section), section))
+            self.model.append((section,))
             grid = Gtk.Grid()
             grid.set_border_width(SPACING)
             grid.props.column_spacing = SPACING
@@ -322,7 +324,7 @@ class PreferencesDialog(object):
     def _treeSelectionChangedCb(self, selection):
         """ Update current when selection changed"""
         model, _iter = selection.get_selected()
-        section = self.sections[model[_iter][1]]
+        section = self.sections[model[_iter][0]]
         if self._current != section:
             if self._current:
                 self._current.hide()

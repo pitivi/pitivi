@@ -258,6 +258,9 @@ class GlobalSettings(GObject.Object, Loggable):
         return getattr(self, attrname) == self.defaults[attrname]
 
     def setDefault(self, attrname):
+        """
+        Reset the specified setting to its default value.
+        """
         setattr(self, attrname, self.defaults[attrname])
 
     @classmethod
