@@ -263,8 +263,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__snap_bar = VerticalBar("SnapBar")
         self.layout.put(self.__snap_bar, 0, 0)
 
-        self.__allow_seek = True
-
         self.__setupTimelineEdition()
         self.__setUpDragAndDrop()
         self.__setupSelectionMarquee()
@@ -306,15 +304,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return self.__fake_event_widget
 
         return Gtk.get_event_widget(event)
-
-    @property
-    def allowSeek(self):
-        return self.__allow_seek
-
-    @allowSeek.setter
-    def allowSeek(self, value):
-        self.debug("Setting AllowSeek to %s", value)
-        self.__allow_seek = value
 
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
@@ -570,6 +559,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def __buttonReleaseEventCb(self, unused_widget, event):
+        allow_seek = not self.__got_dragged
+
         res, button = event.get_button()
         if self.draggingElement:
             self.dragEnd()
@@ -586,7 +577,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             return False
 
-        if self.allowSeek:
+        if allow_seek:
             event_widget = self.get_event_widget(event)
             x, unusedy = event_widget.translate_coordinates(self, event.x, event.y)
             x -= CONTROL_WIDTH
@@ -595,7 +586,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x)
             self._project.seeker.seek(position)
 
-        self.allowSeek = True
         self._snapEndedCb()
 
         return False
@@ -990,7 +980,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         if self.__got_dragged is False:
             self.__got_dragged = True
-            self.allowSeek = False
             if self.__clickedHandle:
                 edit_mode = GES.EditMode.EDIT_TRIM
                 dragging_edge = self.__clickedHandle.edge
