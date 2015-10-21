@@ -108,8 +108,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__line = None
 
         # The PathCollection as returned by scatter
-        self.__keyframes = None
-
         sizes = [50]
         self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
                                              c=KEYFRAME_NODE_COLOR, zorder=2)
@@ -159,7 +157,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         line_contains = self.__line.contains(event)[0]
         keyframe_existed = self.__keyframes.contains(event)[0]
         if line_contains and not keyframe_existed:
-            self.__source.set(event.xdata, event.ydata)
+            res, value = self.__source.control_source_get_value(event.xdata)
+            assert res
+            self.__source.set(event.xdata, value)
             self.__updatePlots()
 
     # Callbacks
@@ -198,13 +198,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     def __setTooltip(self, event):
         if event.xdata:
+            res, value = self.__source.control_source_get_value(event.xdata)
+            assert res
             self.set_tooltip_markup(_("Property: %s\nTimestamp: %s\nValue: %s")
                                     % (self.__propertyName,
                                        Gst.TIME_ARGS(event.xdata),
-                                       "{:.3f}".format(event.ydata)))
+                                       "{:.3f}".format(value)))
 
     def __resetTooltip(self):
-        self.set_tooltip_markup(_("Setting property: %s") % str(self.__propertyName))
+        self.set_tooltip_markup(_("Setting property: %s") % self.__propertyName)
 
     def __computeKeyframeNewTimestamp(self, event):
         # The user can not change the timestamp of the first
