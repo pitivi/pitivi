@@ -95,11 +95,9 @@ class VerticalBar(Gtk.DrawingArea, Loggable):
         self.get_style_context().add_class(css_class)
 
     def do_get_preferred_width(self):
-        self.debug("Getting prefered height")
         return PLAYHEAD_WIDTH, PLAYHEAD_WIDTH
 
     def do_get_preferred_height(self):
-        self.debug("Getting prefered height")
         return self.get_parent().get_allocated_height(), self.get_parent().get_allocated_height()
 
 
@@ -214,13 +212,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        self._main_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        self.add(self._main_hbox)
+        self.parent = container
+        self.app = app
+        self._project = None
+        self.bTimeline = None
 
-        self.layout = Gtk.Layout()
-        self.hadj = self.layout.get_hadjustment()
-        self.vadj = self.layout.get_vadjustment()
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.add(hbox)
 
+        # Stuff the layers controls in a Viewport so it can be scrolled.
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_controls_vbox.props.hexpand = False
         self.__layers_controls_vbox.props.valign = Gtk.Align.START
@@ -228,60 +228,90 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
         viewport.add(self.__layers_controls_vbox)
-
         # Make sure the viewport has no border or other decorations.
         viewport_style = viewport.get_style_context()
         for css_class in viewport_style.list_classes():
             viewport_style.remove_class(css_class)
-        self._main_hbox.pack_start(viewport, False, False, 0)
+        hbox.pack_start(viewport, False, False, 0)
 
-        self._main_hbox.pack_start(self.layout, False, True, 0)
-        self.get_style_context().add_class("Timeline")
-
+        # Stuff the layers representation in a Layout so we can have other
+        # widgets there, see below.
+        self.layout = Gtk.Layout()
         self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_vbox.props.width_request = self.get_allocated_width()
         self.__layers_vbox.props.height_request = self.get_allocated_height()
         self.layout.put(self.__layers_vbox, 0, 0)
+        self.hadj = self.layout.get_hadjustment()
+        self.vadj = self.layout.get_vadjustment()
+        hbox.pack_start(self.layout, False, True, 0)
 
-        self.bTimeline = None
-        self.__last_position = 0
-        self.selection = Selection()
+        self.get_style_context().add_class("Timeline")
+        self.props.expand = True
+        self.get_accessible().set_name("timeline canvas")
+        self.__fake_event_widget = None
 
-        self._layers = []
-        self.parent = container
-        self.app = app
-        self.__snap_position = 0
-        self._project = None
-
-        self.current_group = None
-        self.resetSelectionGroup()
-
-        self.__playhead = VerticalBar("PlayHead")
-        self.__playhead.show()
-        self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
-
-        self.__snap_bar = VerticalBar("SnapBar")
-        self.layout.put(self.__snap_bar, 0, 0)
-
-        self.__setupTimelineEdition()
-        self.__setUpDragAndDrop()
-        self.__setupSelectionMarquee()
-
-        # Reorder layers
-        self.__moving_layer = None
-
-        self.__disableCenterPlayhead = False
-
-        # Setup our Gtk.Widget properties
-        self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
         self.connect("scroll-event", self.__scrollEventCb)
+
+        # A lot of operations go through these callbacks.
+        self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
         self.connect("button-press-event", self.__buttonPressEventCb)
         self.connect("button-release-event", self.__buttonReleaseEventCb)
         self.connect("motion-notify-event", self.__motionNotifyEventCb)
 
-        self.props.expand = True
-        self.get_accessible().set_name("timeline canvas")
-        self.__fake_event_widget = None
+        self._layers = []
+        # Whether the user is dragging a layer.
+        self.__moving_layer = None
+
+        self.__last_position = 0
+        self.__playhead = VerticalBar("PlayHead")
+        self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
+        self.__disableCenterPlayhead = False
+
+        self.__snap_position = 0
+        self.__snap_bar = VerticalBar("SnapBar")
+        self.__snap_bar.props.no_show_all = True
+        self.layout.put(self.__snap_bar, 0, 0)
+
+        # Clip selection.
+        self.selection = Selection()
+        self.current_group = None
+        self.resetSelectionGroup()
+        self.__marquee = Marquee(self)
+        self.layout.put(self.__marquee, 0, 0)
+
+        # Clip editing.
+        self.draggingElement = None
+        self.__clickedHandle = None
+        self.editing_context = None
+        # Whether draggingElement really got dragged.
+        self.__got_dragged = False
+        self.__drag_start_x = 0
+        self.__on_separators = []
+        self._on_layer = None
+
+        # Drag & dropping assets from outside.
+
+        # Set to True when a clip has been dragged because the first
+        # button-release-event on the clip should be ignored.
+        self.got_dragged = False
+        # Whether the drop data has been received. See self.dropData below.
+        self.dropDataReady = False
+        # What's being dropped, for example asset URIs.
+        self.dropData = None
+        # Whether clips have been created in the current drag & drop.
+        self._createdClips = False
+        # The list of (Layer, Clip) tuples dragged into the timeline.
+        self.__last_clips_on_leave = None
+
+        # To be able to receive effects dragged on clips.
+        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        # To be able to receive assets dragged from the media library.
+        self.drag_dest_add_uri_targets()
+
+        self.connect("drag-motion", self.__dragMotionCb)
+        self.connect("drag-leave", self.__dragLeaveCb)
+        self.connect("drag-drop", self.__dragDropCb)
+        self.connect("drag-data-received", self.__dragDataReceivedCb)
 
     def sendFakeEvent(self, event, event_widget=None):
         # Member usefull for testsing
@@ -646,34 +676,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.queue_draw()
 
-    def __setupSelectionMarquee(self):
-        self.__marquee = Marquee(self)
-        self.layout.put(self.__marquee, 0, 0)
-
-    # drag and drop
-    def __setUpDragAndDrop(self):
-        # Set to True when a clip has been dragged because the first
-        # button-release-event on the clip should be ignored.
-        self.got_dragged = False
-        # Whether the drop data has been received. See self.dropData below.
-        self.dropDataReady = False
-        # What's being dropped, for example asset URIs.
-        self.dropData = None
-        # Whether clips have been created in the current drag & drop.
-        self._createdClips = False
-        # The list of (Layer, Clip) tuples dragged into the timeline.
-        self.__last_clips_on_leave = None
-
-        # To be able to receive effects dragged on clips.
-        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
-        # To be able to receive assets dragged from the media library.
-        self.drag_dest_add_uri_targets()
-
-        self.connect("drag-motion", self.__dragMotionCb)
-        self.connect("drag-leave", self.__dragLeaveCb)
-        self.connect("drag-drop", self.__dragDropCb)
-        self.connect("drag-data-received", self.__dragDataReceivedCb)
-
     def __createClips(self, x, y):
         if self._createdClips:
             return False
@@ -884,16 +886,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.move(self.__playhead, self.nsToPixel(self.__last_position), 0)
         self.scrollToPlayhead()
         self.queue_draw()
-
-    # Edition handling
-    def __setupTimelineEdition(self):
-        self.draggingElement = None
-        self.__clickedHandle = None
-        self.editing_context = None
-        self.__got_dragged = False
-        self.__drag_start_x = 0
-        self.__on_separators = []
-        self._on_layer = None
 
     def __getEditingMode(self):
         if not self.editing_context:
@@ -1120,8 +1112,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
 
-        self.show_all()
-
     # Public API
 
     def insertAssets(self, assets, position=None):
@@ -1323,6 +1313,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                       EXPANDED_SIZE)
         self.set_size_request(-1, min_height)
         self.set_margin_top(SPACING)
+
+        self.show_all()
 
     def enableKeyboardAndMouseEvents(self):
         self.info("Unblocking timeline mouse and keyboard signals")
