@@ -76,6 +76,18 @@ PreferencesDialog.addNumericPreference('imageClipLength',
                                            "Default clip length (in milliseconds) of images when inserting on the timeline."),
                                        lower=1)
 
+GlobalSettings.addConfigOption('leftClickAlsoSeeks',
+                               section="user-interface",
+                               key="left-click-to-select",
+                               default=True,
+                               notify=True)
+
+PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
+                                      section=_("Behavior"),
+                                      label=_("Left click also seeks"),
+                                      description=_(
+                                          "Whether left-clicking also seeks besides selecting and editing clips."))
+
 """
 Convention throughout this file:
 Every GES element which name could be mistaken with a UI element
@@ -220,6 +232,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
+        # Stuff the layers representation in a Layout so we can have other
+        # widgets there, see below.
+        self.layout = Gtk.Layout()
+        self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.__layers_vbox.props.width_request = self.get_allocated_width()
+        self.__layers_vbox.props.height_request = self.get_allocated_height()
+        self.layout.put(self.__layers_vbox, 0, 0)
+        self.hadj = self.layout.get_hadjustment()
+        self.vadj = self.layout.get_vadjustment()
+        hbox.pack_end(self.layout, False, True, 0)
+
         # Stuff the layers controls in a Viewport so it can be scrolled.
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_controls_vbox.props.hexpand = False
@@ -233,17 +256,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for css_class in viewport_style.list_classes():
             viewport_style.remove_class(css_class)
         hbox.pack_start(viewport, False, False, 0)
-
-        # Stuff the layers representation in a Layout so we can have other
-        # widgets there, see below.
-        self.layout = Gtk.Layout()
-        self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.__layers_vbox.props.width_request = self.get_allocated_width()
-        self.__layers_vbox.props.height_request = self.get_allocated_height()
-        self.layout.put(self.__layers_vbox, 0, 0)
-        self.hadj = self.layout.get_hadjustment()
-        self.vadj = self.layout.get_vadjustment()
-        hbox.pack_start(self.layout, False, True, 0)
 
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
@@ -266,6 +278,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__playhead = VerticalBar("PlayHead")
         self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
         self.__disableCenterPlayhead = False
+        self._scrubbing = False
 
         self.__snap_position = 0
         self.__snap_bar = VerticalBar("SnapBar")
@@ -586,6 +599,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 else:
                     self.__marquee.setStartPosition(event)
 
+        self._scrubbing = res and button == 3
+        if self._scrubbing:
+            self._seek(event)
+            clip = self._getParentOfType(event_widget, Clip)
+            if clip:
+                clip.shrinkTrimHandles()
+
         return False
 
     def __buttonReleaseEventCb(self, unused_widget, event):
@@ -596,25 +616,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.dragEnd()
         elif self.__moving_layer:
             self.__endMovingLayer()
-
             return False
-        elif button == 1:
+        elif res and button == 1:
             self._selectUnderMarquee()
 
-        event_widget = self.get_event_widget(event)
-        if event_widget and self._getParentOfType(event_widget, LayerControls):
-            # Never seek when the LayerControls box has been clicked
+        self._scrubbing = False
 
-            return False
-
-        if allow_seek:
-            event_widget = self.get_event_widget(event)
-            x, unusedy = event_widget.translate_coordinates(self, event.x, event.y)
-            x -= CONTROL_WIDTH
-            x += self.hadj.get_value()
-
-            position = self.pixelToNs(x)
-            self._project.seeker.seek(position)
+        if allow_seek and res and (button == 1 and self.app.settings.leftClickAlsoSeeks):
+            self._seek(event)
 
         self._snapEndedCb()
 
@@ -647,8 +656,18 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.moveLayer(self.__moving_layer, priority)
         elif self.__marquee.start_x:
             self.__marquee.move(event)
+        elif self._scrubbing:
+            self._seek(event)
 
         return False
+
+    def _seek(self, event):
+        event_widget = self.get_event_widget(event)
+        x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+        x -= CONTROL_WIDTH
+        x += self.hadj.get_value()
+        position = max(0, self.pixelToNs(x))
+        self._project.seeker.seek(position)
 
     def _selectUnderMarquee(self):
         self.resetSelectionGroup()

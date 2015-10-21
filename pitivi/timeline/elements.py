@@ -592,11 +592,6 @@ class TrimHandle(Gtk.EventBox, Loggable):
         else:
             self.props.halign = Gtk.Align.START
 
-        self.connect("notify::window", self._windowSetCb)
-
-    def _windowSetCb(self, window, pspec):
-        self.props.window.set_cursor(CURSORS[self.edge])
-
     def do_draw(self, cr):
         Gtk.EventBox.do_draw(self, cr)
         if TrimHandle.PIXBUF is None:
@@ -606,9 +601,13 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     def enlarge(self):
         self.props.width_request = TrimHandle.SELECTED_WIDTH
+        if self.props.window:
+            self.props.window.set_cursor(CURSORS[self.edge])
 
     def shrink(self):
         self.props.width_request = TrimHandle.DEFAULT_WIDTH
+        if self.props.window:
+            self.props.window.set_cursor(NORMAL_CURSOR)
 
 
 class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
@@ -754,6 +753,10 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
 
+    def shrinkTrimHandles(self):
+        for handle in self.handles:
+            handle.shrink()
+
     def sendFakeEvent(self, event, event_widget):
         if event.type == Gdk.EventType.BUTTON_RELEASE:
             self.__buttonReleaseEventCb(event_widget, event)
@@ -764,11 +767,16 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.updatePosition()
         Gtk.EventBox.do_draw(self, cr)
 
-    def __buttonReleaseEventCb(self, unused_action, unused_actor):
+    def __buttonReleaseEventCb(self, unused_widget, event):
         if self.timeline.got_dragged:
             # This means a drag & drop operation just finished and
             # this button-release-event should be ignored.
             self.timeline.got_dragged = False
+            return False
+
+        res, button = event.get_button()
+        if res and button == 3:
+            # We are supposed to only seek.
             return False
 
         # TODO : Let's be more specific, masks etc ..
@@ -820,11 +828,14 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             handle.hide()
 
     def _eventCb(self, element, event):
-        if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+        if (event.type == Gdk.EventType.ENTER_NOTIFY and
+                event.mode == Gdk.CrossingMode.NORMAL and
+                not self.timeline._scrubbing):
             ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.enlarge()
-        elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
+        elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
+                event.mode == Gdk.CrossingMode.NORMAL):
             ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.shrink()
