@@ -415,12 +415,6 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
     def do_set_property(self, property_id, value, pspec):
         Gtk.Layout.do_set_property(self, property_id, value, pspec)
 
-    def do_get_preferred_width(self):
-        wanted_width = max(
-            0, self.nsToPixel(self._bElement.props.duration) - TrimHandle.SELECTED_WIDTH * 2)
-
-        return wanted_width, wanted_width
-
     def __showKeyframes(self):
         if not self.__keyframeCurve:
             return False
@@ -584,7 +578,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
         self.edge = edge
 
         self.props.valign = Gtk.Align.FILL
-        self.props.width_request = TrimHandle.DEFAULT_WIDTH
+        self.shrink()
         if edge == GES.Edge.EDGE_END:
             self.props.halign = Gtk.Align.END
         else:
@@ -601,6 +595,12 @@ class TrimHandle(Gtk.EventBox, Loggable):
             TrimHandle.PIXBUF = GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
         Gdk.cairo_set_source_pixbuf(cr, TrimHandle.PIXBUF, 10, 10)
+
+    def enlarge(self):
+        self.props.width_request = TrimHandle.SELECTED_WIDTH
+
+    def shrink(self):
+        self.props.width_request = TrimHandle.DEFAULT_WIDTH
 
 
 class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
@@ -799,11 +799,11 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
-                handle.props.width_request = TrimHandle.SELECTED_WIDTH
+                handle.enlarge()
         elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
-                handle.props.width_request = TrimHandle.DEFAULT_WIDTH
+                handle.shrink()
 
         return False
 
