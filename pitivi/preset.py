@@ -22,8 +22,10 @@
 import json
 import os.path
 
+from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
+from gi.repository import GObject
 
 from gettext import gettext as _
 
@@ -37,7 +39,7 @@ class DeserializeException(Exception):
     pass
 
 
-class PresetManager(Loggable):
+class PresetManager(GObject.Object, Loggable):
 
     """Abstract class for storing a list of presets.
 
@@ -58,7 +60,12 @@ class PresetManager(Loggable):
     @type widget_map: dict
     """
 
+    __gsignals__ = {
+        "preset-loaded": (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
+
     def __init__(self, default_path, user_path):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
 
         self.default_path = default_path
@@ -71,6 +78,91 @@ class PresetManager(Loggable):
         # Whether to ignore the updateValue calls.
         self.ignore_update_requests = False
         self.system = system.getSystem()
+
+    def setupUi(self, combo, button):
+        self.combo = combo
+        self.button = button
+
+        combo.set_model(self.ordered)
+        combo.set_id_column(0)
+        combo.set_entry_text_column(0)
+        combo.connect("changed", self._presetChangedCb)
+
+        entry = combo.get_child()
+        style_context = entry.get_style_context()
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_data("GtkEntry.unsaved {font-style:italic;}".encode('UTF-8'))
+        style_context.add_provider(style_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+
+        action_group = Gio.SimpleActionGroup()
+        menu_model = Gio.Menu()
+        preset_actions = {}
+
+        action = Gio.SimpleAction.new("new", None)
+        action.connect("activate", self._addPresetCb)
+        action_group.insert(action)
+        menu_model.append(_("New"), "preset.%s" % action.get_name())
+        self.action_new = action
+
+        action = Gio.SimpleAction.new("remove", None)
+        action.connect("activate", self._removePresetCb)
+        action_group.insert(action)
+        menu_model.append(_("Remove"), "preset.%s" % action.get_name())
+        self.action_remove = action
+
+        action = Gio.SimpleAction.new("save", None)
+        action.connect("activate", self._savePresetCb)
+        action_group.insert(action)
+        menu_model.append(_("Save"), "preset.%s" % action.get_name())
+        self.action_save = action
+
+        menu = Gtk.Menu.new_from_model(menu_model)
+        menu.insert_action_group("preset", action_group)
+        button.set_popup(menu)
+
+    def _presetChangedCb(self, combo):
+        """Handle the selection of a preset."""
+        # Check whether the user selected a preset or editing the preset name.
+        preset_name = combo.get_active_id()
+        if preset_name:
+            # The user selected a preset.
+            self.restorePreset(preset_name)
+            self.emit("preset-loaded")
+        self.updateMenuActions()
+
+    def _addPresetCb(self, unused_action, unused_param):
+        preset_name = self.getNewPresetName()
+        self.createPreset(preset_name)
+        self.combo.set_active_id(preset_name)
+        self.updateMenuActions()
+
+    def _removePresetCb(self, unused_action, unused_param):
+        self.removeCurrentPreset()
+        self.updateMenuActions()
+
+    def _savePresetCb(self, unused_action, unused_param):
+        entry = self.combo.get_child()
+        preset_name = entry.get_text()
+        if not self.cur_preset:
+            self.createPreset(preset_name)
+        self.saveCurrentPreset(preset_name)
+        self.updateMenuActions()
+
+    def updateMenuActions(self):
+        entry = self.combo.get_child()
+        preset_name = entry.get_text()
+        can_save = self.isSaveButtonSensitive(preset_name)
+        self.action_save.set_enabled(can_save)
+        if can_save:
+            entry.get_style_context().add_class("unsaved")
+        else:
+            entry.get_style_context().remove_class("unsaved")
+
+        can_remove = self.isRemoveButtonSensitive()
+        self.action_remove.set_enabled(can_remove)
+
+        can_create_new = self.isNewButtonSensitive()
+        self.action_new.set_enabled(can_create_new)
 
     def loadAll(self):
         self._loadFromDir(self.default_path, extra={"readonly": True})
@@ -128,33 +220,26 @@ class PresetManager(Loggable):
         file_name = self.system.getUniqueFilename(preset_name + ".json")
         return os.path.join(self.user_path, file_name)
 
-    def getUniqueName(self, first=_("Custom"), second=_("Custom %d")):
-        name = first
+    def getNewPresetName(self):
+        """Get a unique name for a new preset."""
+        name = _("New preset")
         i = 1
         while self.hasPreset(name):
-            name = second % i
+            name = _("New preset %d") % i
             i += 1
         return name
 
-    def getNewPresetName(self):
-        """Get a unique name for a new preset."""
-        return self.getUniqueName(_("New preset"), _("New preset %d"))
-
-    def createPreset(self, name, values=None, volatile=False):
+    def createPreset(self, name, values=None):
         """Create a preset, overwriting the preset with the same name if any.
 
         @param name: The name of the new preset.
         @type name: str
         @param values: The values of the new preset.
         @type values: dict
-        @param volatile: Whether the preset should not be saveable.
-        @type volatile: bool
         """
         if not values:
             values = {}
             self._updatePresetValues(values)
-        if volatile:
-            values["volatile"] = True
         self._addPreset(name, values)
         self.cur_preset = name
 
@@ -300,8 +385,6 @@ class PresetManager(Loggable):
         @type name: str
         """
         if self.cur_preset:
-            if "volatile" in self.presets[self.cur_preset]:
-                return False
             return self._isCurrentPresetChanged(name)
 
         if name:
@@ -313,8 +396,6 @@ class PresetManager(Loggable):
     def isRemoveButtonSensitive(self):
         """Whether the Remove button should be enabled"""
         if not self.cur_preset:
-            return False
-        if "volatile" in self.presets[self.cur_preset]:
             return False
         return True
 

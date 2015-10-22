@@ -352,6 +352,9 @@ class RenderDialog(Loggable):
         # {object: sigId}
         self._gstSigId = {}
 
+        self.render_presets = RenderPresetManager()
+        self.render_presets.loadAll()
+
         self._createUi()
 
         # Directory and Filename
@@ -379,29 +382,20 @@ class RenderDialog(Loggable):
 
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo, signal="changed")
-        self.wg.addVertex(
-            self.save_render_preset_button, update_func=self._updateRenderSaveButton)
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
         self.wg.addVertex(self.muxercombobox, signal="changed")
         self.wg.addVertex(self.audio_encoder_combo, signal="changed")
         self.wg.addVertex(self.video_encoder_combo, signal="changed")
-        self.render_presets = RenderPresetManager()
-        self.render_presets.loadAll()
+        self.wg.addVertex(self.preset_menubutton,
+                          update_func=self._updatePresetMenuButton)
 
-        self._fillPresetsTreeview(
-            self.render_preset_treeview,
-            self.render_presets,
-            self._updateRenderPresetButtons)
-
-        self.wg.addEdge(self.frame_rate_combo, self.save_render_preset_button)
-        self.wg.addEdge(
-            self.audio_encoder_combo, self.save_render_preset_button)
-        self.wg.addEdge(
-            self.video_encoder_combo, self.save_render_preset_button)
-        self.wg.addEdge(self.muxercombobox, self.save_render_preset_button)
-        self.wg.addEdge(self.channels_combo, self.save_render_preset_button)
-        self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
+        self.wg.addEdge(self.frame_rate_combo, self.preset_menubutton)
+        self.wg.addEdge(self.audio_encoder_combo, self.preset_menubutton)
+        self.wg.addEdge(self.video_encoder_combo, self.preset_menubutton)
+        self.wg.addEdge(self.muxercombobox, self.preset_menubutton)
+        self.wg.addEdge(self.channels_combo, self.preset_menubutton)
+        self.wg.addEdge(self.sample_rate_combo, self.preset_menubutton)
 
         # Bind widgets to RenderPresetsManager
         self.render_presets.bindWidget(
@@ -437,22 +431,8 @@ class RenderDialog(Loggable):
             lambda x: setattr(self.project, "videowidth", x),
             lambda: 0)
 
-        self.createVolatileCustomPreset()
-
-    def createVolatileCustomPreset(self):
-        preset = {
-            "channels": int(get_combo_value(self.channels_combo)),
-            "sample-rate": int(get_combo_value(self.sample_rate_combo)),
-            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
-            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
-            "container": get_combo_value(self.muxercombobox).get_name(),
-            "frame-rate": Gst.Fraction(
-                int(get_combo_value(self.frame_rate_combo).num),
-                int(get_combo_value(self.frame_rate_combo).denom)),
-            "height": self.project.videoheight,
-            "width": self.project.videowidth}
-        name = self.render_presets.getUniqueName()
-        self.render_presets.createPreset(name, preset, volatile=True)
+    def _updatePresetMenuButton(self, unused_source, unused_target):
+        self.render_presets.updateMenuActions()
 
     def muxer_setter(self, widget, value):
         set_combo_value(widget, Gst.ElementFactory.find(value))
@@ -495,90 +475,6 @@ class RenderDialog(Loggable):
         set_combo_value(widget, value)
         self.project.videorate = value
 
-    def _fillPresetsTreeview(self, treeview, mgr, update_buttons_func):
-        """Set up the specified treeview to display the specified presets.
-
-        @param treeview: The treeview for displaying the presets.
-        @type treeview: TreeView
-        @param mgr: The preset manager.
-        @type mgr: PresetManager
-        @param update_buttons_func: A function which updates the buttons for
-        removing and saving a preset, enabling or disabling them accordingly.
-        @type update_buttons_func: function
-        """
-        renderer = Gtk.CellRendererText()
-        renderer.props.editable = True
-        column = Gtk.TreeViewColumn("Preset", renderer, text=0)
-        treeview.append_column(column)
-        treeview.props.headers_visible = False
-        model = mgr.getModel()
-        treeview.set_model(model)
-        model.connect(
-            "row-inserted", self._newPresetCb, column, renderer, treeview)
-        renderer.connect("edited", self._presetNameEditedCb, mgr)
-        treeview.get_selection().connect("changed", self._presetChangedCb,
-                                         mgr, update_buttons_func)
-
-    def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
-        """Handle the addition of a preset to the model of the preset manager.
-        """
-        treeview.set_cursor_on_cell(path, column, renderer, start_editing=True)
-        treeview.grab_focus()
-
-    def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
-        """Handle the renaming of a preset."""
-        old_name = mgr.getModel()[path][0]
-        assert old_name == mgr.cur_preset
-        mgr.saveCurrentPreset(new_text)
-        self._updateRenderPresetButtons()
-
-    def _updateRenderSaveButton(self, unused_in, button):
-        button.set_sensitive(self.render_presets.isSaveButtonSensitive(self.render_presets.cur_preset))
-
-    def _addRenderPresetButtonClickedCb(self, unused_button):
-        preset_name = self.render_presets.getNewPresetName()
-        framerate = Gst.Fraction(int(get_combo_value(self.frame_rate_combo).num),
-                                 int(get_combo_value(self.frame_rate_combo).denom))
-        preset = {
-            "channels": int(get_combo_value(self.channels_combo)),
-            "sample-rate": int(get_combo_value(self.sample_rate_combo)),
-            "acodec": get_combo_value(self.audio_encoder_combo).get_name(),
-            "vcodec": get_combo_value(self.video_encoder_combo).get_name(),
-            "container": get_combo_value(self.muxercombobox).get_name(),
-            "frame-rate": framerate,
-            "height": 0,
-            "width": 0,
-        }
-        self.render_presets.createPreset(preset_name, preset)
-        self.render_presets.restorePreset(preset_name)
-        self._updateRenderPresetButtons()
-
-    def _saveRenderPresetButtonClickedCb(self, unused_button):
-        self.render_presets.saveCurrentPreset()
-        self.save_render_preset_button.set_sensitive(False)
-        self.remove_render_preset_button.set_sensitive(True)
-
-    def _updateRenderPresetButtons(self):
-        can_save = self.render_presets.isSaveButtonSensitive(self.render_presets.cur_preset)
-        self.save_render_preset_button.set_sensitive(can_save)
-        can_remove = self.render_presets.isRemoveButtonSensitive()
-        self.remove_render_preset_button.set_sensitive(can_remove)
-
-    def _removeRenderPresetButtonClickedCb(self, unused_button):
-        self.render_presets.removeCurrentPreset()
-
-    def _presetChangedCb(self, selection, mgr, update_preset_buttons_func):
-        """Handle the selection of a preset."""
-        model, iter_ = selection.get_selected()
-        if iter_:
-            self.selected_preset = model[iter_][0]
-        else:
-            self.selected_preset = None
-
-        mgr.restorePreset(self.selected_preset)
-        self._displaySettings()
-        update_preset_buttons_func()
-
     def _createUi(self):
         builder = Gtk.Builder()
         builder.add_from_file(
@@ -605,21 +501,14 @@ class RenderDialog(Loggable):
         self.filebutton = builder.get_object("filebutton")
         self.fileentry = builder.get_object("fileentry")
         self.resolution_label = builder.get_object("resolution_label")
-        self.render_preset_treeview = builder.get_object(
-            "render_preset_treeview")
-        self.save_render_preset_button = builder.get_object(
-            "save_render_preset_button")
-        self.remove_render_preset_button = builder.get_object(
-            "remove_render_preset_button")
+        self.presets_combo = builder.get_object("presets_combo")
+        self.preset_menubutton = builder.get_object("preset_menubutton")
+
+        self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
 
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)
         self.window.set_transient_for(self.app.gui)
-
-        # Set the shading style in the toolbar below presets
-        presets_toolbar = builder.get_object("render_presets_toolbar")
-        presets_toolbar.get_style_context().add_class(
-            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
     def _settingsChanged(self, unused_project, unused_key, unused_value):
         self.updateResolution()
@@ -1035,35 +924,24 @@ class RenderDialog(Loggable):
 
     def _audioOutputCheckbuttonToggledCb(self, unused_audio):
         active = self.audio_output_checkbutton.get_active()
-        if active:
-            self.channels_combo.set_sensitive(True)
-            self.sample_rate_combo.set_sensitive(True)
-            self.audio_encoder_combo.set_sensitive(True)
-            self.audio_settings_button.set_sensitive(True)
-            self.render_button.set_sensitive(True)
-        else:
-            self.channels_combo.set_sensitive(False)
-            self.sample_rate_combo.set_sensitive(False)
-            self.audio_encoder_combo.set_sensitive(False)
-            self.audio_settings_button.set_sensitive(False)
-            if not self.video_output_checkbutton.get_active():
-                self.render_button.set_sensitive(False)
+        self.channels_combo.set_sensitive(active)
+        self.sample_rate_combo.set_sensitive(active)
+        self.audio_encoder_combo.set_sensitive(active)
+        self.audio_settings_button.set_sensitive(active)
+        self.__updateRenderButtonSensitivity()
 
     def _videoOutputCheckbuttonToggledCb(self, unused_video):
         active = self.video_output_checkbutton.get_active()
-        if active:
-            self.scale_spinbutton.set_sensitive(True)
-            self.frame_rate_combo.set_sensitive(True)
-            self.video_encoder_combo.set_sensitive(True)
-            self.video_settings_button.set_sensitive(True)
-            self.render_button.set_sensitive(True)
-        else:
-            self.scale_spinbutton.set_sensitive(False)
-            self.frame_rate_combo.set_sensitive(False)
-            self.video_encoder_combo.set_sensitive(False)
-            self.video_settings_button.set_sensitive(False)
-            if not self.audio_output_checkbutton.get_active():
-                self.render_button.set_sensitive(False)
+        self.scale_spinbutton.set_sensitive(active)
+        self.frame_rate_combo.set_sensitive(active)
+        self.video_encoder_combo.set_sensitive(active)
+        self.video_settings_button.set_sensitive(active)
+        self.__updateRenderButtonSensitivity()
+
+    def __updateRenderButtonSensitivity(self):
+        video_enabled = self.video_output_checkbutton.get_active()
+        audio_enabled = self.audio_output_checkbutton.get_active()
+        self.render_button.set_sensitive(video_enabled or audio_enabled)
 
     def _frameRateComboChangedCb(self, combo):
         framerate = get_combo_value(combo)
