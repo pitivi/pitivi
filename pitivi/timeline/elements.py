@@ -730,6 +730,22 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _setupWidget(self):
         pass
 
+    def _addTrimHandles(self):
+        overlay = Gtk.Overlay()
+        self.add(overlay)
+
+        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
+        overlay.add_overlay(self._elements_container)
+
+        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
+        overlay.add_overlay(self.leftHandle)
+
+        self.rightHandle = TrimHandle(self, GES.Edge.EDGE_END)
+        overlay.add_overlay(self.rightHandle)
+
+        self.handles.append(self.leftHandle)
+        self.handles.append(self.rightHandle)
+
     def sendFakeEvent(self, event, event_widget):
         if event.type == Gdk.EventType.BUTTON_RELEASE:
             self.__buttonReleaseEventCb(event_widget, event)
@@ -862,20 +878,7 @@ class SourceClip(Clip):
         super(SourceClip, self).__init__(layer, bClip)
 
     def _setupWidget(self):
-        overlay = Gtk.Overlay()
-        self.add(overlay)
-
-        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
-        overlay.add_overlay(self._elements_container)
-
-        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
-        overlay.add_overlay(self.leftHandle)
-
-        self.rightHandle = TrimHandle(self, GES.Edge.EDGE_END)
-        overlay.add_overlay(self.rightHandle)
-
-        self.handles.append(self.leftHandle)
-        self.handles.append(self.rightHandle)
+        self._addTrimHandles()
 
         self.get_style_context().add_class("Clip")
 
@@ -947,20 +950,7 @@ class TransitionClip(Clip):
         self.bClip.connect("child-added", self._childAddedCb)
 
         # In the case of TransitionClips, we are the only container
-        overlay = Gtk.Overlay()
-        self.add(overlay)
-
-        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
-        overlay.add_overlay(self._elements_container)
-
-        self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
-        overlay.add_overlay(self.leftHandle)
-
-        self.rightHandle = TrimHandle(self, GES.Edge.EDGE_END)
-        overlay.add_overlay(self.rightHandle)
-
-        self.handles.append(self.leftHandle)
-        self.handles.append(self.rightHandle)
+        self._addTrimHandles()
 
         self.props.has_tooltip = True
 
