@@ -28,8 +28,7 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-from pitivi.preset import DuplicatePresetNameException, \
-    PresetManager, \
+from pitivi.preset import PresetManager, \
     AudioPresetManager
 
 
@@ -73,8 +72,8 @@ class TestPresetBasics(TestCase):
 
     def testAddPreset(self):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
-        self.assertRaises(DuplicatePresetNameException,
-                          self.manager.createPreset, 'Preset One', {'name1': '2A'})
+        self.manager.createPreset('Preset One', {'name1': '2A'})
+        self.assertEqual(2, len(self.manager.presets))
 
     def testAddPresetWithNonAsciiName(self):
         unicode_name = "ソリッド・スネーク"
@@ -84,14 +83,22 @@ class TestPresetBasics(TestCase):
     def testRenamePreset(self):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
         self.manager.createPreset('Preset Two', {'name1': '2A'})
+        self.assertEqual(2, len(self.manager.presets))
 
         self.manager.restorePreset('preseT onE')
         self.manager.saveCurrentPreset('Preset One')
+        self.assertEqual(2, len(self.manager.presets))
+        self.manager.saveCurrentPreset('Preset TWO')
+        self.assertEqual(2, len(self.manager.presets))
+        self.manager.saveCurrentPreset('Preset two')
+        self.assertEqual(2, len(self.manager.presets))
 
-        self.assertRaises(DuplicatePresetNameException,
-                          self.manager.saveCurrentPreset, 'Preset TWO')
-        self.assertRaises(DuplicatePresetNameException,
-                          self.manager.saveCurrentPreset, 'Preset two')
+        self.manager.saveCurrentPreset('Preset Two')
+        self.assertEqual(1, len(self.manager.presets))
+        self.manager.saveCurrentPreset('Preset Two')
+        self.assertEqual(1, len(self.manager.presets))
+        self.manager.saveCurrentPreset('preseT onE')
+        self.assertEqual(1, len(self.manager.presets))
 
     def testLoadHandlesMissingDirectory(self):
         self.manager.default_path = '/pitivi/non/existing/directory/1'

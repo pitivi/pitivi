@@ -406,9 +406,6 @@ class RenderDialog(Loggable):
         self.wg.addEdge(self.channels_combo, self.save_render_preset_button)
         self.wg.addEdge(self.sample_rate_combo, self.save_render_preset_button)
 
-        self._infobarForPresetManager = {
-            self.render_presets: self.render_preset_infobar}
-
         # Bind widgets to RenderPresetsManager
         self.render_presets.bindWidget(
             "container",
@@ -522,11 +519,8 @@ class RenderDialog(Loggable):
         model.connect(
             "row-inserted", self._newPresetCb, column, renderer, treeview)
         renderer.connect("edited", self._presetNameEditedCb, mgr)
-        renderer.connect(
-            "editing-started", self._presetNameEditingStartedCb, mgr)
         treeview.get_selection().connect("changed", self._presetChangedCb,
                                          mgr, update_buttons_func)
-        treeview.connect("focus-out-event", self._treeviewDefocusedCb, mgr)
 
     def _newPresetCb(self, unused_model, path, unused_iter_, column, renderer, treeview):
         """Handle the addition of a preset to the model of the preset manager.
@@ -536,45 +530,10 @@ class RenderDialog(Loggable):
 
     def _presetNameEditedCb(self, unused_renderer, path, new_text, mgr):
         """Handle the renaming of a preset."""
-        from pitivi.preset import DuplicatePresetNameException
         old_name = mgr.getModel()[path][0]
         assert old_name == mgr.cur_preset
-        try:
-            mgr.saveCurrentPreset(new_text)
-            self._updateRenderPresetButtons()
-        except DuplicatePresetNameException:
-            error_markup = _('"%s" already exists.') % new_text
-            self._showPresetManagerError(mgr, error_markup)
-
-    def _presetNameEditingStartedCb(self, unused_renderer, unused_editable, unused_path, mgr):
-        """Handle the start of a preset renaming."""
-        self._hidePresetManagerError(mgr)
-
-    def _treeviewDefocusedCb(self, unused_widget, unused_event, mgr):
-        """Handle the treeview loosing the focus."""
-        self._hidePresetManagerError(mgr)
-
-    def _showPresetManagerError(self, mgr, error_markup):
-        """Show the specified error on the infobar associated with the manager.
-
-        @param mgr: The preset manager for which to show the error.
-        @type mgr: PresetManager
-        """
-        infobar = self._infobarForPresetManager[mgr]
-        # The infobar must contain exactly one object in the content area:
-        # a label for displaying the error.
-        label = infobar.get_content_area().children()[0]
-        label.set_markup(error_markup)
-        infobar.show()
-
-    def _hidePresetManagerError(self, mgr):
-        """Hide the error infobar associated with the manager.
-
-        @param mgr: The preset manager for which to hide the error infobar.
-        @type mgr: PresetManager
-        """
-        infobar = self._infobarForPresetManager[mgr]
-        infobar.hide()
+        mgr.saveCurrentPreset(new_text)
+        self._updateRenderPresetButtons()
 
     def _updateRenderSaveButton(self, unused_in, button):
         button.set_sensitive(self.render_presets.isSaveButtonSensitive(self.render_presets.cur_preset))
@@ -622,7 +581,6 @@ class RenderDialog(Loggable):
         mgr.restorePreset(self.selected_preset)
         self._displaySettings()
         update_preset_buttons_func()
-        self._hidePresetManagerError(mgr)
 
     def _createUi(self):
         builder = Gtk.Builder()
@@ -657,8 +615,6 @@ class RenderDialog(Loggable):
             "save_render_preset_button")
         self.remove_render_preset_button = builder.get_object(
             "remove_render_preset_button")
-        self.render_preset_infobar = builder.get_object(
-            "render-preset-infobar")
 
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)

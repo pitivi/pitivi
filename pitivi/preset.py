@@ -33,12 +33,6 @@ from pitivi.utils import system
 from pitivi.utils.loggable import Loggable
 
 
-class DuplicatePresetNameException(Exception):
-
-    """Raised when an operation would result in a duplicated preset name."""
-    pass
-
-
 class DeserializeException(Exception):
     pass
 
@@ -147,17 +141,15 @@ class PresetManager(Loggable):
         return self.getUniqueName(_("New preset"), _("New preset %d"))
 
     def createPreset(self, name, values=None, volatile=False):
-        """Create a new preset.
+        """Create a preset, overwriting the preset with the same name if any.
 
-        @param name: The name of the new preset, must be unique.
+        @param name: The name of the new preset.
         @type name: str
         @param values: The values of the new preset.
         @type values: dict
         @param volatile: Whether the preset should not be saveable.
         @type volatile: bool
         """
-        if self.hasPreset(name):
-            raise DuplicatePresetNameException(name)
         if not values:
             values = {}
             self._updatePresetValues(values)
@@ -167,19 +159,7 @@ class PresetManager(Loggable):
         self.cur_preset = name
 
     def _addPreset(self, name, values):
-        """Add a preset, overwriting the preset with the same name if it exists.
-
-        @param name: The name of the new preset.
-        @type name: str
-        @param values: The values of the new preset.
-        @type values: dict
-        """
-        if self.hasPreset(name):
-            for i, row in enumerate(self.ordered):
-                if row[0] == name:
-                    del self.presets[row[1]["name"]]
-                    del self.ordered[i]
-                    break
+        self._forgetPreset(name)
         self.presets[name] = values
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
@@ -190,8 +170,8 @@ class PresetManager(Loggable):
         if old_name == new_name:
             # Nothing to do.
             return
-        if old_name.lower() != new_name.lower() and self.hasPreset(new_name):
-            raise DuplicatePresetNameException()
+        # If there is one already with this name, make way for this one.
+        self._forgetPreset(new_name)
         for i, row in enumerate(self.ordered):
             if row[0] == old_name:
                 row[0] = new_name
@@ -292,7 +272,11 @@ class PresetManager(Loggable):
         self._forgetPreset(name)
 
     def _forgetPreset(self, name):
-        self.presets.pop(name)
+        try:
+            self.presets.pop(name)
+        except KeyError:
+            # Nothing to forget.
+            return
         for i, row in enumerate(self.ordered):
             if row[0] == name:
                 del self.ordered[i]

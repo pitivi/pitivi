@@ -51,8 +51,7 @@ from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import frame_rates, audio_rates,\
     audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
     pixel_aspect_ratios, display_aspect_ratios, SPACING
-from pitivi.preset import AudioPresetManager, DuplicatePresetNameException,\
-    VideoPresetManager
+from pitivi.preset import AudioPresetManager, VideoPresetManager
 from pitivi.render import CachedEncoderList
 
 
@@ -1400,8 +1399,6 @@ class ProjectSettingsDialog():
         self.select_par_radiobutton = getObj("select_par_radiobutton")
         self.constrain_sar_button = getObj("constrain_sar_button")
         self.select_dar_radiobutton = getObj("select_dar_radiobutton")
-        self.video_preset_infobar = getObj("video-preset-infobar")
-        self.audio_preset_infobar = getObj("audio-preset-infobar")
         self.title_entry = getObj("title_entry")
         self.author_entry = getObj("author_entry")
         self.year_spinbutton = getObj("year_spinbutton")
@@ -1529,12 +1526,6 @@ class ProjectSettingsDialog():
                           self.video_presets_combo,
                           self.video_preset_menubutton)
 
-        # A map which tells which infobar should be used when displaying
-        # an error for a preset manager.
-        self._infobarForPresetManager = {
-            self.audio_presets: self.audio_preset_infobar,
-            self.video_presets: self.video_preset_infobar}
-
         # Bind the widgets in the Video tab to the Video Presets Manager.
         self.bindSpinbutton(self.video_presets, "width", self.width_spinbutton)
         self.bindSpinbutton(
@@ -1649,38 +1640,13 @@ class ProjectSettingsDialog():
 
     def _presetChangedCb(self, combo, mgr, button):
         """Handle the selection of a preset."""
+        # Check whether the user selected a preset or editing the preset name.
         preset_name = combo.get_active_id()
         if preset_name:
             # The user selected a preset.
             mgr.restorePreset(preset_name)
             self._updateSar()
-            self._updatePresetActions(button, combo, mgr)
-            self._hidePresetManagerError(mgr)
-        else:
-            # The user is editing the preset name.
-            self._updatePresetActions(button, combo, mgr)
-
-    def _showPresetManagerError(self, mgr, error_markup):
-        """Show the specified error on the infobar associated with the manager.
-
-        @param mgr: The preset manager for which to show the error.
-        @type mgr: PresetManager
-        """
-        infobar = self._infobarForPresetManager[mgr]
-        # The infobar must contain exactly one object in the content area:
-        # a label for displaying the error.
-        label = infobar.get_content_area().children()[0]
-        label.set_markup(error_markup)
-        infobar.show()
-
-    def _hidePresetManagerError(self, mgr):
-        """Hide the error infobar associated with the manager.
-
-        @param mgr: The preset manager for which to hide the error infobar.
-        @type mgr: PresetManager
-        """
-        infobar = self._infobarForPresetManager[mgr]
-        infobar.hide()
+        self._updatePresetActions(button, combo, mgr)
 
     def widthHeightLinked(self):
         return self.constrain_sar_button.props.active and not self.video_presets.ignore_update_requests
