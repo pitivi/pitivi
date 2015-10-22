@@ -612,7 +612,9 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        self.set_name(bClip.get_name())
+        name = bClip.get_name()
+        self.set_name(name)
+        self.get_accessible().set_name(name)
 
         self.handles = []
         self.z_order = -1
@@ -634,14 +636,21 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self._childAdded(self.bClip, child)
             self.__connectToChild(child)
 
-        self._connectWidgetSignals()
+        # Connect to Widget signals.
+        self.connect("button-release-event", self.__buttonReleaseEventCb)
+        self.connect("event", self._eventCb)
 
-        self._connectGES()
-        self.get_accessible().set_name(self.bClip.get_name())
+        # Connect to GES signals.
+        self.bClip.connect("notify::start", self._startChangedCb)
+        self.bClip.connect("notify::inpoint", self._startChangedCb)
+        self.bClip.connect("notify::duration", self._durationChangedCb)
+        self.bClip.connect("notify::layer", self._layerChangedCb)
+
+        self.bClip.connect_after("child-added", self._childAddedCb)
+        self.bClip.connect_after("child-removed", self._childRemovedCb)
 
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
-
         self.connect("drag-drop", self.__dragDropCb)
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
@@ -774,10 +783,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         return False
 
-    def _connectWidgetSignals(self):
-        self.connect("button-release-event", self.__buttonReleaseEventCb)
-        self.connect("event", self._eventCb)
-
     def release(self):
         for child in self.bClip.get_children(True):
             self.__disconnectFromChild(child)
@@ -848,15 +853,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.__force_position_update = True
         self.__disconnectFromChild(child)
         self._childRemoved(clip, child)
-
-    def _connectGES(self):
-        self.bClip.connect("notify::start", self._startChangedCb)
-        self.bClip.connect("notify::inpoint", self._startChangedCb)
-        self.bClip.connect("notify::duration", self._durationChangedCb)
-        self.bClip.connect("notify::layer", self._layerChangedCb)
-
-        self.bClip.connect_after("child-added", self._childAddedCb)
-        self.bClip.connect_after("child-removed", self._childRemovedCb)
 
 
 class SourceClip(Clip):
