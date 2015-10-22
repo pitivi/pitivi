@@ -20,11 +20,11 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from random import randrange
 import cairo
 import numpy
 import os
 import pickle
+import random
 import sqlite3
 
 from gi.repository import GES
@@ -306,7 +306,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         # Save periodically to avoid the common situation where the user exits
         # the app before a long clip has been fully thumbnailed.
         # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
-        random_time = randrange(30, 80)
+        random_time = random.randrange(30, 80)
         GLib.timeout_add_seconds(random_time, self._autosave)
 
         # Remove the GSource
@@ -381,14 +381,15 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
         for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            self.put(thumb, Zoomable.nsToPixel(current_time) - self.nsToPixel(self.bElement.props.in_point),
-                     (self.props.height_request - self.thumb_height) / 2)
+            x = Zoomable.nsToPixel(current_time) - self.nsToPixel(self.bElement.props.in_point)
+            y = (self.props.height_request - self.thumb_height) / 2
+            self.put(thumb, x, y)
 
             self.thumbs[current_time] = thumb
             if current_time in self.thumb_cache:
-                gdkpixbuf = self.thumb_cache[current_time]
-                self.thumbs[current_time].set_from_pixbuf(gdkpixbuf)
-                self.thumbs[current_time].set_visible(True)
+                pixbuf = self.thumb_cache[current_time]
+                thumb.set_from_pixbuf(pixbuf)
+                thumb.set_visible(True)
             else:
                 self.wishlist.append(current_time)
 
@@ -489,13 +490,14 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         Zoomable.__del__(self)
 
     def do_draw(self, context):
-        clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
-        if self.__last_rectangle.x != clipped_rect.x or \
-                self.__last_rectangle.y != clipped_rect.y or \
-                self.__last_rectangle.width != clipped_rect.width or \
-                self.__last_rectangle.height != clipped_rect.height:
-            if self._addVisibleThumbnails(clipped_rect):
-                self.__last_rectangle = clipped_rect
+        res, rect = Gdk.cairo_get_clip_rectangle(context)
+        assert res
+        if self.__last_rectangle.x != rect.x or \
+                self.__last_rectangle.y != rect.y or \
+                self.__last_rectangle.width != rect.width or \
+                self.__last_rectangle.height != rect.height:
+            if self._addVisibleThumbnails(rect):
+                self.__last_rectangle = rect
             else:
                 self.__last_rectangle = Gdk.Rectangle()
 
