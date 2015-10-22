@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-from configparser import SafeConfigParser, ParsingError
+from configparser import ConfigParser, ParsingError
 
 from gi.repository import GLib
 from gi.repository import GObject
@@ -146,7 +146,7 @@ class GlobalSettings(GObject.Object, Loggable):
         Loggable.__init__(self)
 
         self.conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
-        self._config = SafeConfigParser()
+        self._config = ConfigParser()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
 
