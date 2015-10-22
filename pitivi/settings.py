@@ -20,7 +20,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
-from configparser import ConfigParser, ParsingError
+import configparser
 
 from gi.repository import GLib
 from gi.repository import GObject
@@ -146,7 +146,7 @@ class GlobalSettings(GObject.Object, Loggable):
         Loggable.__init__(self)
 
         self.conf_file_path = os.path.join(xdg_config_home(), "pitivi.conf")
-        self._config = ConfigParser()
+        self._config = configparser.ConfigParser()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
 
@@ -161,7 +161,7 @@ class GlobalSettings(GObject.Object, Loggable):
             self.error("Failed to read %s: %s", self.conf_file_path, e)
             unicode_error_dialog()
             return
-        except ParsingError as e:
+        except configparser.ParsingError as e:
             self.error("Failed to parse %s: %s", self.conf_file_path, e)
             return
 
@@ -337,5 +337,8 @@ class GlobalSettings(GObject.Object, Loggable):
 
     @classmethod
     def notifiesConfigOption(cls, attrname):
+        """
+        Whether a changed signal is emitted for the specified setting.
+        """
         signal_name = Notification.signalName(attrname)
-        GObject.signal_lookup(signal_name, cls)
+        return bool(GObject.signal_lookup(signal_name, cls))
