@@ -328,14 +328,14 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         # the Title tab allows adding titles.
         self.context_tabs.set_current_page(2)
 
-        self.secondhpaned.pack1(self.main_tabs, resize=True, shrink=False)
+        self.secondhpaned.pack1(self.main_tabs, resize=False, shrink=False)
         self.secondhpaned.pack2(self.context_tabs, resize=False, shrink=False)
         self.main_tabs.show()
         self.context_tabs.show()
 
         # Viewer
         self.viewer = ViewerContainer(self.app)
-        self.mainhpaned.pack2(self.viewer, resize=False, shrink=False)
+        self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
         self.timeline_ui = TimelineContainer(self, self.app, self.uimanager)
