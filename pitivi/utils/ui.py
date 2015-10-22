@@ -70,7 +70,6 @@ LAYER_CREATION_BLOCK_TIME = 0.2
 FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)
 EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, 0)
-LAYER_CONTROL_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/layer-control", 0, 0)
 
 
 def _get_settings(schema):
@@ -118,12 +117,12 @@ TIMELINE_CSS = """
         opacity:0.5;
     }
 
-    .Trimbar:first-child {
-        border-radius: 5px 0 0 5px;
+    .Trimbar.left {
+        border-radius: 5px 0px 0px 5px;
     }
 
-    .Trimbar:last-child {
-        border-radius: 0 5px 5px 0;
+    .Trimbar.right {
+        border-radius: 0px 5px 5px 0px;
     }
 
     .Trimbar:hover {

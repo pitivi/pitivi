@@ -574,8 +574,14 @@ class TrimHandle(Gtk.EventBox, Loggable):
         Loggable.__init__(self)
 
         self.clip = clip
-        self.get_style_context().add_class("Trimbar")
         self.edge = edge
+
+        self.get_style_context().add_class("Trimbar")
+        if edge == GES.Edge.EDGE_END:
+            css_class = "right"
+        else:
+            css_class = "left"
+        self.get_style_context().add_class(css_class)
 
         self.props.valign = Gtk.Align.FILL
         self.shrink()
