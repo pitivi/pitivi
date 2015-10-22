@@ -423,19 +423,19 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.grab_focus()
 
     def _create_headerbar_buttons(self):
-        self.undo_button = Gtk.Button.new_from_icon_name(
+        undo_button = Gtk.Button.new_from_icon_name(
             "edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-        self.undo_button.set_always_show_image(True)
-        self.undo_button.set_label(_("Undo"))
-        self.undo_button.set_action_name("app.undo")
-        self.undo_button.set_use_underline(True)
+        undo_button.set_always_show_image(True)
+        undo_button.set_label(_("Undo"))
+        undo_button.set_action_name("app.undo")
+        undo_button.set_use_underline(True)
 
-        self.redo_button = Gtk.Button.new_from_icon_name(
+        redo_button = Gtk.Button.new_from_icon_name(
             "edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
-        self.redo_button.set_always_show_image(True)
-        self.redo_button.set_label(_("Redo"))
-        self.redo_button.set_action_name("app.redo")
-        self.redo_button.set_use_underline(True)
+        redo_button.set_always_show_image(True)
+        redo_button.set_label(_("Redo"))
+        redo_button.set_action_name("app.redo")
+        redo_button.set_use_underline(True)
 
         separator = Gtk.Separator()
 
@@ -456,9 +456,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.render_button.set_sensitive(False)  # The only one we have to set.
         self.render_button.connect("clicked", self._renderCb)
 
-        self._headerbar.pack_start(self.undo_button)
-        self._headerbar.pack_start(self.redo_button)
-        self._headerbar.pack_start(separator)
+        # TODO: Add these back once we revisit undo/redo T3360
+        # self._headerbar.pack_start(undo_button)
+        # self._headerbar.pack_start(redo_button)
+        # self._headerbar.pack_start(separator)
         self._headerbar.pack_start(self.save_button)
         self._headerbar.pack_start(self.render_button)
 
