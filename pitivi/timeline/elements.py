@@ -573,6 +573,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     SELECTED_WIDTH = 5
     DEFAULT_WIDTH = 1
+    PIXBUF = None
 
     def __init__(self, clip, edge):
         Gtk.EventBox.__init__(self)
@@ -596,8 +597,10 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     def do_draw(self, cr):
         Gtk.EventBox.do_draw(self, cr)
-        Gdk.cairo_set_source_pixbuf(cr, GdkPixbuf.Pixbuf.new_from_file(os.path.join(
-                                    configure.get_pixmap_dir(), "trimbar-focused.png")), 10, 10)
+        if TrimHandle.PIXBUF is None:
+            TrimHandle.PIXBUF = GdkPixbuf.Pixbuf.new_from_file(
+                os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
+        Gdk.cairo_set_source_pixbuf(cr, TrimHandle.PIXBUF, 10, 10)
 
 
 class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
