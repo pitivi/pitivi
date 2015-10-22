@@ -291,7 +291,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
         self.mainhpaned = Gtk.HPaned()  # Separates the viewer from tabs
         self.secondhpaned = Gtk.HPaned()  # Separates the two sets of tabs
-        self.vpaned.pack1(self.mainhpaned, resize=True, shrink=False)
+        self.vpaned.pack1(self.mainhpaned, resize=False, shrink=False)
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
         self.add(self.vpaned)
         self.vpaned.show()
