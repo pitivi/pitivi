@@ -501,7 +501,7 @@ class TitleSource(TimelineElement):
         return ui.LAYER_HEIGHT / 2, ui.LAYER_HEIGHT
 
 
-class VideoBackground (Gtk.Box):
+class VideoBackground(Gtk.Box):
 
     def __init__(self):
         super(VideoBackground, self).__init__(self)
@@ -536,7 +536,7 @@ class VideoUriSource(VideoSource):
                 return spec
 
 
-class AudioBackground (Gtk.Box):
+class AudioBackground(Gtk.Box):
 
     def __init__(self):
         super(AudioBackground, self).__init__(self)
@@ -890,7 +890,7 @@ class SourceClip(Clip):
 
 
 class UriClip(SourceClip):
-    __gtype_name__ = "PitiviuriClip"
+    __gtype_name__ = "PitiviUriClip"
 
     def __init__(self, layer, bClip):
         super(UriClip, self).__init__(layer, bClip)
@@ -966,15 +966,16 @@ class TransitionClip(Clip):
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
 
-        self.set_tooltip_markup("%s" % str(bClip.props.vtype.value_nick))
+        self.props.has_tooltip = True
 
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
         if self.__has_video:
-            self.set_tooltip_markup("%s" % str(self.bClip.props.vtype.value_nick))
+            markup = str(self.bClip.props.vtype.value_nick)
         else:
-            self.set_tooltip_markup(_("Audio crossfade"))
+            markup = _("Audio crossfade")
+        self.set_tooltip_markup(markup)
 
-        return Clip.do_query_tooltip(self, x, y, keyboard_mode, tooltip)
+        return True
 
     def _childAdded(self, clip, child):
         super(TransitionClip, self)._childAdded(clip, child)
