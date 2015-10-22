@@ -1524,6 +1524,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
 
+            self.timeline.selection.setSelection([], SELECT)
+
     def _ungroupSelected(self, unused_action):
         if self.bTimeline:
             self.app.action_log.begin("ungroup")
