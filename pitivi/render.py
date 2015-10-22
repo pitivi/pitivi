@@ -354,9 +354,6 @@ class RenderDialog(Loggable):
 
         self._createUi()
 
-        # FIXME: re-enable this widget when bug #637078 is implemented
-        self.selected_only_button.destroy()
-
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
         if not self.project.name:
@@ -589,7 +586,6 @@ class RenderDialog(Loggable):
         builder.connect_signals(self)
 
         self.window = builder.get_object("render-dialog")
-        self.selected_only_button = builder.get_object("selected_only_button")
         self.video_output_checkbutton = builder.get_object(
             "video_output_checkbutton")
         self.audio_output_checkbutton = builder.get_object(
