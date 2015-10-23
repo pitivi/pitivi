@@ -828,6 +828,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer.connect("remove-me", self._removeLayerCb)
 
         control = LayerControls(bLayer, self.app)
+        control.show_all()
         self.__layers_controls_vbox.pack_start(control, False, False, 0)
         bLayer.control_ui = control
         # Check the media types so the controls are set up properly.
@@ -837,11 +838,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer_widget.pack_start(layer.before_sep, False, False, 0)
         layer_widget.pack_start(layer, True, True, 0)
         layer_widget.pack_start(layer.after_sep, False, False, 0)
+        layer_widget.show_all()
         self.__layers_vbox.pack_start(layer_widget, True, True, 0)
 
         bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
-
-        self.show_all()
 
     def _removeLayerCb(self, layer):
         self.bTimeline.remove_layer(layer.bLayer)
