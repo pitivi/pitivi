@@ -61,3 +61,4 @@ pitivi/libpitivi/.deps/*
 pitivi/libpitivi/.libs/*
 *.gir
 *.typelib
+prebuilt/
