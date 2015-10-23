@@ -567,8 +567,12 @@ class TransformationBox(Gtk.EventBox, Loggable):
                     width += delta_y
                 else:
                     width += delta_y
-                    wpercent = float(width) / float(self.__editSource.get_asset().get_stream_info().get_width())
-                    height = int(float(self.__editSource.get_asset().get_stream_info().get_height()) * float(wpercent))
+                    if isinstance(self.__editSource, GES.VideoUriSource):
+                        wpercent = float(width) / float(self.__editSource.get_asset().get_stream_info().get_width())
+                        height = int(float(self.__editSource.get_asset().get_stream_info().get_height()) * float(wpercent))
+                    else:
+                        wpercent = float(width) / float(self.app.project_manager.current_project.videowidth)
+                        height = int(float(self.app.project_manager.current_project.videoheight) * float(wpercent))
 
                 self.__editSource.set_child_property("width", width)
                 self.__editSource.set_child_property("height", height)
