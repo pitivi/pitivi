@@ -1,5 +1,6 @@
 {
-    "phabricator.uri" : "https:\/\/phabricator.freedesktop.org\/api\/",
+    "phabricator.uri" : "https://phabricator.freedesktop.org/",
     "project": "Pitivi",
+    "default-reviewers": "thiblahute,aleb",
     "repository.callsign": "PTV"
 }
