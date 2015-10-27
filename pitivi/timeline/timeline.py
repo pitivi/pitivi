@@ -407,7 +407,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.__setLayoutSize()
         self.hadj.set_value(self.nsToPixel(self.__last_position) -
-                            (self.layout.get_allocation().width / 2))
+                            self.layout.get_allocation().width / 2)
 
     def _positionCb(self, unused_pipeline, position):
         if self.__last_position == position:
@@ -441,7 +441,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def __setLayoutSize(self):
         if self.bTimeline:
-            width = self._computeTheoricalWidth()
+            width = self._timelineLengthInPixels()
             if self.draggingElement:
                 width = max(width, self.layout.props.width)
 
@@ -479,11 +479,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     # ------------- #
     # util methods  #
     # ------------- #
-    def _computeTheoricalWidth(self):
+    def _timelineLengthInPixels(self):
         if self.bTimeline is None:
             return 100
 
-        return self.nsToPixel(self.bTimeline.props.duration)
+        space_at_the_end = self.layout.get_allocation().width * 2 / 3
+        return self.nsToPixel(self.bTimeline.props.duration) + space_at_the_end
 
     def _getParentOfType(self, widget, _type):
         """
@@ -1093,7 +1094,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 layer = self.__getDroppedLayer()
                 self.editing_context.editTo(self.editing_context.new_position,
                                             layer.get_priority())
-            self.layout.props.width = self._computeTheoricalWidth()
+            self.layout.props.width = self._timelineLengthInPixels()
 
             self.editing_context.finish()
 
