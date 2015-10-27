@@ -306,8 +306,11 @@ class SimplePipeline(GObject.Object, Loggable):
         """
         self.setState(Gst.State.READY)
 
+    def playing(self):
+        return self.getState() == Gst.State.PLAYING
+
     def togglePlayback(self):
-        if self.getState() == Gst.State.PLAYING:
+        if self.playing():
             self.pause()
         else:
             self.play()

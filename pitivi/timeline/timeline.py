@@ -277,7 +277,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__last_position = 0
         self.__playhead = VerticalBar("PlayHead")
         self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
-        self.__disableCenterPlayhead = False
         self._scrubbing = False
         self._scrolling = False
 
@@ -396,23 +395,43 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _durationChangedCb(self, bTimeline, pspec):
         self.queue_draw()
 
-    def scrollToPlayhead(self,):
-        if self.__disableCenterPlayhead or self.parent.ruler.pressed:
-            self.__disableCenterPlayhead = False
-            return
+    def scrollToPlayhead(self, align=None, when_not_in_view=False):
+        """
+        Scroll so that the playhead is in view.
+
+        @param align: Where the playhead should be post-scroll.
+        @type align: L{Gtk.Align}
+        @param when_not_in_view: Whether to scroll only if the playhead is not
+                                 visible.
+        """
         self.debug("Scrolling to playhead")
-
         self.__setLayoutSize()
-        self.hadj.set_value(self.nsToPixel(self.__last_position) -
-                            self.layout.get_allocation().width / 2)
+        layout_width = self.layout.get_allocation().width
+        if when_not_in_view:
+            x = self.nsToPixel(self.__last_position) - self.hadj.get_value()
+            if x >= 0 and x <= layout_width:
+                return
 
-    def _positionCb(self, unused_pipeline, position):
+        # Deciding the new position of the playhead in the timeline's view.
+        if align == Gtk.Align.START:
+            delta = 100
+        elif align == Gtk.Align.END:
+            delta = layout_width - 100
+        else:
+            # Center.
+            delta = layout_width / 2
+        self.hadj.set_value(self.nsToPixel(self.__last_position) - delta)
+
+    def _positionCb(self, pipeline, position):
         if self.__last_position == position:
             return
 
         self.__last_position = position
-        self.scrollToPlayhead()
-        self.layout.move(self.__playhead, max(0, self.nsToPixel(self.__last_position)), 0)
+        layout_width = self.layout.get_allocation().width
+        x = max(0, self.nsToPixel(self.__last_position))
+        self.layout.move(self.__playhead, x, 0)
+        if pipeline.playing() and x - self.hadj.get_value() > layout_width - 100:
+            self.scrollToPlayhead(Gtk.Align.START)
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
@@ -523,6 +542,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return x, y
 
     # Gtk events management
+
     def __scrollEventCb(self, unused_widget, event):
         res, delta_x, delta_y = event.get_scroll_deltas()
         if not res:
@@ -547,26 +567,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             elif delta_y < 0:
                 self.parent.scroll_up()
         elif event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-            event_widget = self.get_event_widget(event)
-            x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+            # Remember the time at the mouse position so it remains
+            # in the same position.
             x -= CONTROL_WIDTH
             mouse_position = self.pixelToNs(x + self.hadj.get_value())
-
-            rescroll = False
-            self.__disableCenterPlayhead = True
             if delta_y > 0:
-                rescroll = True
                 Zoomable.zoomOut()
-                self.queue_draw()
             elif delta_y < 0:
-                rescroll = True
                 Zoomable.zoomIn()
+            if delta_y > 0 or delta_y < 0:
                 self.queue_draw()
-            self.__disableCenterPlayhead = False
-
-            if rescroll:
-                diff = x - (self.layout.get_allocation().width / 2)
-                self.hadj.set_value(self.nsToPixel(mouse_position) - (self.layout.get_allocation().width / 2) - diff)
+                self.hadj.set_value(self.nsToPixel(mouse_position) - x)
         else:
             if delta_y > 0:
                 self.parent.scroll_right()
@@ -579,8 +590,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         event_widget = self.get_event_widget(event)
 
         self.debug("PRESSED %s", event)
-        self.__disableCenterPlayhead = True
-
         res, button = event.get_button()
         if res and button == 1:
             self.draggingElement = self._getParentOfType(event_widget, Clip)
@@ -917,8 +926,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     # Interface Zoomable
     def zoomChanged(self):
         self.updatePosition()
-        self.layout.move(self.__playhead, self.nsToPixel(self.__last_position), 0)
-        self.scrollToPlayhead()
+        x = max(0, self.nsToPixel(self.__last_position))
+        self.layout.move(self.__playhead, x, 0)
         self.queue_draw()
 
     def __getEditingMode(self):
@@ -1556,9 +1565,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.queue_draw()
         return False
 
-    def scrollToPlayhead(self):
-        self.timeline.scrollToPlayhead()
-
     def _deleteSelected(self, unused_action):
         if self.bTimeline:
             self.app.action_log.begin("delete clip")
@@ -1751,11 +1757,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 self._seeker.seekRelative(0 - Gst.SECOND)
             else:
                 self._project.pipeline.stepFrame(self._framerate, -1)
+            self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
         elif event.keyval == Gdk.KEY_Right:
             if self._shiftMask:
                 self._seeker.seekRelative(Gst.SECOND)
             else:
                 self._project.pipeline.stepFrame(self._framerate, 1)
+            self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def do_key_release_event(self, event):
         if event.keyval == Gdk.KEY_Shift_L:

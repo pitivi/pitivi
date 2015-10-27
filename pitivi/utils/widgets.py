@@ -1074,7 +1074,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
                                         "optional-action-type": True})
 
         if self._manual_set is False:
-            self.timeline.scrollToPlayhead()
+            self.timeline.timeline.scrollToPlayhead()
 
     def _zoomFitCb(self, unused_button):
         self.timeline.zoomFit()
