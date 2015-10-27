@@ -73,8 +73,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.log("Creating new ScaleRuler")
 
         self.timeline = timeline
-        self._background_color = timeline.get_style_context().lookup_color(
-            'theme_bg_color')[1]
         self._seeker = Seeker()
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
@@ -95,16 +93,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.connect('configure-event', self.configureEventCb)
         self.callback_id = None
         self.set_size_request(0, HEIGHT)
-
-        style = self.get_style_context()
-        color_normal = style.get_color(Gtk.StateFlags.NORMAL)
-        color_insensitive = style.get_color(Gtk.StateFlags.INSENSITIVE)
-        self._color_normal = color_normal
-        self._color_dimmed = Gdk.RGBA(
-            *[(x * 3 + y * 2) / 5
-              for x, y in ((color_normal.red, color_insensitive.red),
-                           (color_normal.green, color_insensitive.green),
-                           (color_normal.blue, color_insensitive.blue))])
 
         self.scales = SCALES
 
@@ -139,6 +127,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         # Create a new buffer
         self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
+
+        style = self.app.gui.get_style_context()
+        color_normal = style.get_color(Gtk.StateFlags.NORMAL)
+        color_insensitive = style.get_color(Gtk.StateFlags.INSENSITIVE)
+        self._color_normal = color_normal
+        self._color_dimmed = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 5
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
 
         return False
 
@@ -213,19 +211,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 # Drawing methods
 
     def drawBackground(self, context):
-        style = self.get_style_context()
-        set_cairo_color(context, self._background_color)
         width = context.get_target().get_width()
         height = context.get_target().get_height()
-        context.rectangle(0, 0, width, height)
-        context.fill()
-        offset = int(self.nsToPixel(Gst.CLOCK_TIME_NONE)) - self.pixbuf_offset
-        if offset > 0:
-            set_cairo_color(
-                context, style.get_background_color(Gtk.StateFlags.ACTIVE))
-            context.rectangle(
-                0, 0, int(offset), height)
-            context.fill()
+        style_context = self.app.gui.get_style_context()
+        Gtk.render_background(style_context, context, 0, 0, width, height)
 
     def drawRuler(self, context):
         context.set_font_face(NORMAL_FONT)
@@ -279,9 +268,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             current_time = current_time - (current_time % interval) + interval
             paintpos += spacing - offset
 
-        state = Gtk.StateFlags.NORMAL
-        style = self.get_style_context()
-        set_cairo_color(context, style.get_color(state))
+        set_cairo_color(context, self._color_normal)
         y_bearing = context.text_extents("0")[1]
         millis = scale < 1
 
