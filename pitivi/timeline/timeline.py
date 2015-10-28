@@ -359,15 +359,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def setProject(self, project):
         """
-        Connects with the GES.Timeline holding the project.
+        Connects to the GES.Timeline holding the project.
         """
-        self._project = project
-        if self._project:
-            self._project.pipeline.connect('position', self._positionCb)
-            bTimeline = self._project.timeline
-        else:
-            bTimeline = None
-
         if self.bTimeline is not None:
             self.bTimeline.disconnect_by_func(self._durationChangedCb)
             self.bTimeline.disconnect_by_func(self._layerAddedCb)
@@ -378,13 +371,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self._removeLayer(bLayer)
 
             self.bTimeline.ui = None
+            self.bTimeline = None
 
-        self.bTimeline = bTimeline
+        self._project = project
+        if self._project:
+            self._project.pipeline.connect('position', self._positionCb)
+            self.bTimeline = self._project.timeline
 
-        if bTimeline is None:
+        if self.bTimeline is None:
             return
 
-        for bLayer in bTimeline.get_layers():
+        for bLayer in self.bTimeline.get_layers():
             self._addLayer(bLayer)
 
         self.bTimeline.connect("notify::duration", self._durationChangedCb)
