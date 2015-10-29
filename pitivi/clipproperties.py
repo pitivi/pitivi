@@ -227,14 +227,13 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Prepare the main container widgets and lay out everything
         self._vcontent = Gtk.VPaned()
-        self._table = Gtk.Table(n_rows=3, n_columns=1, homogeneous=False)
-        self._table.attach(self.treeview_scrollwin, 0, 1, 0, 1)
-        self._table.attach(
-            self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
-        self._vcontent.pack1(self._table, resize=True, shrink=False)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        vbox.pack_start(self.treeview_scrollwin, expand=True, fill=True, padding=0)
+        vbox.pack_start(self._toolbar, expand=False, fill=False, padding=0)
+        self._vcontent.pack1(vbox, resize=True, shrink=False)
         self.add(self._vcontent)
         self._vcontent.show()
-        self._table.show_all()
+        vbox.show_all()
         self._infobar.show_all()
         self._toolbar.hide()
         self.hide()
