@@ -218,44 +218,6 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def _searchEntryIconClickedCb(self, entry, unused, unused_1):
         entry.set_text("")
 
-# GES callbacks
-
-    def _transitionTypeChangedCb(self, element, unused_prop):
-        try:
-            self.iconview.disconnect_by_func(self._transitionSelectedCb)
-        except TypeError:
-            pass
-        finally:
-            self.selectTransition(element.get_asset())
-            self.iconview.connect(
-                "button-release-event", self._transitionSelectedCb)
-
-    def _borderChangedCb(self, element, unused_prop):
-        """
-        The "border" transition property changed in the backend. Update the UI.
-        """
-        value = element.get_border()
-        try:
-            self.borderScale.disconnect_by_func(self._borderScaleCb)
-        except TypeError:
-            pass
-        finally:
-            self.borderScale.set_value(float(value))
-            self.borderScale.connect("value-changed", self._borderScaleCb)
-
-    def _invertChangedCb(self, element, unused_prop):
-        """
-        The "invert" transition property changed in the backend. Update the UI.
-        """
-        value = element.is_inverted()
-        try:
-            self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
-        except TypeError:
-            pass
-        finally:
-            self.invert_checkbox.set_active(value)
-            self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
-
 # UI methods
 
     def _loadAvailableTransitionsCb(self):
@@ -283,9 +245,6 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         if isinstance(element, GES.AudioTransition):
             return
         self.element = element
-        self.element.connect("notify::border", self._borderChangedCb)
-        self.element.connect("notify::invert", self._invertChangedCb)
-        self.element.connect("notify::type", self._transitionTypeChangedCb)
         transition_asset = element.get_parent().get_asset()
         if transition_asset.get_id() == "crossfade":
             self.props_widgets.set_sensitive(False)
@@ -315,18 +274,6 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         """
         Show the infobar and hide the transitions UI.
         """
-        try:
-            self.element.disconnect_by_func(self._borderChangedCb)
-            self.element.disconnect_by_func(self._invertChangedCb)
-            self.element.disconnect_by_func(self._transitionTypeChangedCb)
-        except TypeError:
-            pass
-        except AttributeError:
-            # This happens when selecting a normal track object before any
-            # transition object has been created. Normal track objects don't
-            # have these signals, so we just ignore them. Anyway, we just want
-            # to deactivate the UI now.
-            pass
         self.iconview.unselect_all()
         self.iconview.hide()
         self.props_widgets.hide()
