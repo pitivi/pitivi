@@ -65,7 +65,7 @@ class DynamicWidget(object):
     def setWidgetValue(self, value):
         raise NotImplementedError
 
-    def getWidgetValue(self, value):
+    def getWidgetValue(self):
         raise NotImplementedError
 
     def getWidgetDefault(self):
@@ -123,13 +123,13 @@ class TextWidget(Gtk.Box, DynamicWidget):
             self.combo = Gtk.ComboBoxText.new_with_entry()
             self.text = self.combo.get_child()
             self.combo.show()
-            self.pack_start(self.combo, expand=True, fill=True, padding=0)
+            self.pack_start(self.combo, expand=False, fill=False, padding=0)
             for choice in choices:
                 self.combo.append_text(choice)
         else:
             self.text = Gtk.Entry()
             self.text.show()
-            self.pack_start(self.text, expand=True, fill=True, padding=0)
+            self.pack_start(self.text, expand=False, fill=False, padding=0)
         self.matches = None
         self.last_valid = None
         self.valid = False
@@ -219,8 +219,9 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
             self.slider = Gtk.Scale.new(
                 Gtk.Orientation.HORIZONTAL, self.adjustment)
-            self.pack_start(self.slider, expand=True, fill=True, padding=0)
+            self.pack_end(self.slider, expand=False, fill=False, padding=0)
             self.slider.show()
+            self.slider.set_size_request(width=100, height=-1)
             self.slider.props.draw_value = False
             # Abuse GTK3's progressbar "fill level" feature to provide
             # a visual indication of the default value on property sliders.
@@ -236,8 +237,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, fill=True,
-                      expand=not hasattr(self, 'slider'), padding=0)
+        self.pack_end(self.spinner, expand=False, fill=False, padding=0)
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
@@ -450,7 +450,7 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
         self.values = None
         self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.contents = Gtk.ComboBoxText()
-        self.pack_start(self.contents, expand=True, fill=True, padding=0)
+        self.pack_start(self.contents, expand=False, fill=False, padding=0)
         self.setChoices(choices)
         self.contents.show()
         cell = self.contents.get_cells()[0]
@@ -636,12 +636,12 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
     def _addWidgets(self, values, default_btn):
         """
-        Prepare a gtk table containing the property widgets of an element.
-        Each property is on a separate row of the table.
+        Prepare a Gtk.Grid containing the property widgets of an element.
+
+        Each property is on a separate row.
         A row is typically a label followed by the widget and a reset button.
 
-        If there are no properties, returns a table containing the label
-        "No properties."
+        If there are no properties, returns a "No properties" label.
         """
         self.properties.clear()
         self.bindings = {}
@@ -649,31 +649,23 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         is_effect = False
         if isinstance(self.element, GES.Effect):
             is_effect = True
-            props = [
-                prop for prop in self.element.list_children_properties() if prop.name not in self.ignore]
+            props = [prop for prop in self.element.list_children_properties()
+                     if prop.name not in self.ignore]
         else:
-            props = [prop for prop in GObject.list_properties(
-                self.element) if prop.name not in self.ignore]
+            props = [prop for prop in GObject.list_properties(self.element)
+                     if prop.name not in self.ignore]
         if not props:
-            table = Gtk.Table(n_rows=1, n_columns=1)
             widget = Gtk.Label(label=_("No properties."))
-            widget.set_sensitive(False)
-            table.attach(widget, 0, 1, 0, 1, yoptions=Gtk.AttachOptions.FILL)
-            self.pack_start(table, expand=True, fill=True, padding=0)
-            self.show_all()
+            self.pack_start(widget, expand=False, fill=False, padding=0)
+            widget.show()
             return
 
-        if default_btn:
-            table = Gtk.Table(n_rows=len(props), n_columns=4)
-        else:
-            table = Gtk.Table(n_rows=len(props), n_columns=3)
+        grid = Gtk.Grid()
+        grid.props.row_spacing = SPACING
+        grid.props.column_spacing = SPACING
+        grid.props.border_width = SPACING
 
-        table.set_row_spacings(SPACING)
-        table.set_col_spacings(SPACING)
-        table.set_border_width(SPACING)
-
-        y = 0
-        for prop in props:
+        for y, prop in enumerate(props):
             # We do not know how to work with GObjects, so blacklist
             # them to avoid noise in the UI
             if (not prop.flags & GObject.PARAM_WRITABLE or
@@ -696,21 +688,20 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
-                table.attach(
-                    widget, 0, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                grid.attach(widget, 0, y, 1, 1)
             else:
-                label = Gtk.Label(label=prop.nick + ":")
+                text = _("%(preference_label)s:") % {"preference_label": prop.nick}
+                label = Gtk.Label(label=text)
                 label.set_alignment(0.0, 0.5)
-                table.attach(
-                    label, 0, 1, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-                table.attach(
-                    widget, 1, 2, y, y + 1, yoptions=Gtk.AttachOptions.FILL)
+                grid.attach(label, 0, y, 1, 1)
+                grid.attach(widget, 1, y, 1, 1)
 
-            if not isinstance(widget, ToggleWidget) and not isinstance(widget, ChoiceWidget) and self.isControllable:
-                button = self._getKeyframeToggleButton(prop)
-                self.keyframeToggleButtons[button] = widget
-                table.attach(
-                    button, 3, 4, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+            if (not isinstance(widget, ToggleWidget) and
+                    not isinstance(widget, ChoiceWidget) and
+                    self.isControllable):
+                keyframe_toggle_button = self._getKeyframeToggleButton(prop)
+                self.keyframeToggleButtons[keyframe_toggle_button] = widget
+                grid.attach(keyframe_toggle_button, 3, y, 1, 1)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
@@ -729,14 +720,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                         widget.set_sensitive(False)
                         self.bindings[widget] = binding
                 button = self._getResetToDefaultValueButton(prop, widget)
-                table.attach(
-                    button, 2, 3, y, y + 1, xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
+                grid.attach(button, 2, y, 1, 1)
                 self.buttons[button] = widget
 
-            y += 1
-
         self.element.connect('deep-notify', self._propertyChangedCb)
-        self.pack_start(table, expand=True, fill=True, padding=0)
+        self.pack_start(grid, expand=False, fill=False, padding=0)
         self.show_all()
 
     def _propertyChangedCb(self, effect, gst_element, pspec):
