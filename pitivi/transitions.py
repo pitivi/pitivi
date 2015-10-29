@@ -127,12 +127,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
         self.searchEntry.connect("changed", self._searchEntryChangedCb)
         self.searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
-        self.iconview.connect("selection-changed", self._transitionSelectedCb)
         self.iconview.connect("query-tooltip", self._queryTooltipCb)
-        self.borderScale.connect("value-changed", self._borderScaleCb)
-        self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
-        self.border_mode_normal.connect("released", self._borderTypeChangedCb)
-        self.border_mode_loop.connect("released", self._borderTypeChangedCb)
 
         # Speed-up startup by only checking available transitions on idle
         GLib.idle_add(self._loadAvailableTransitionsCb)
@@ -153,6 +148,20 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.props_widgets.hide()
         self.searchbar.hide()
 
+    def __connectUi(self):
+        self.iconview.connect("selection-changed", self._transitionSelectedCb)
+        self.borderScale.connect("value-changed", self._borderScaleCb)
+        self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
+        self.border_mode_normal.connect("released", self._borderTypeChangedCb)
+        self.border_mode_loop.connect("released", self._borderTypeChangedCb)
+
+    def __disconnectUi(self):
+        self.iconview.disconnect_by_func(self._transitionSelectedCb)
+        self.borderScale.disconnect_by_func(self._borderScaleCb)
+        self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
+        self.border_mode_normal.disconnect_by_func(self._borderTypeChangedCb)
+        self.border_mode_loop.disconnect_by_func(self._borderTypeChangedCb)
+
 # UI callbacks
 
     def _transitionSelectedCb(self, unused_widget):
@@ -169,6 +178,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             self.props_widgets.set_sensitive(True)
 
         self.element.get_parent().set_asset(transition_asset)
+        self.app.project_manager.current_project.setModificationState(True)
         self.app.write_action("element-set-asset", {
             "asset-id": transition_asset.get_id(),
             "element-name": self.element.get_name()})
@@ -180,12 +190,14 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         value = widget.get_value()
         self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
+        self.app.project_manager.current_project.setModificationState(True)
         self.app.project_manager.current_project.seeker.flush(True)
 
     def _invertCheckboxCb(self, widget):
         value = widget.get_active()
         self.debug("User changed the invert property to %s", value)
         self.element.set_inverted(value)
+        self.app.project_manager.current_project.setModificationState(True)
         self.app.project_manager.current_project.seeker.flush()
 
     def _borderTypeChangedCb(self, widget):
@@ -253,13 +265,14 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.iconview.show_all()
         self.props_widgets.show_all()
         self.searchbar.show_all()
-        self.selectTransition(transition_asset)
+        self.__selectTransition(transition_asset)
+        self.__connectUi()
         # We REALLY want the infobar to be hidden as space is really constrained
         # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
         # this must happen *after* the tab has been made visible/switched to:
         self.infobar.hide()
 
-    def selectTransition(self, transition_asset):
+    def __selectTransition(self, transition_asset):
         """
         For a given transition type, select it in the iconview if available.
         """
@@ -274,6 +287,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         """
         Show the infobar and hide the transitions UI.
         """
+        self.__disconnectUi()
         self.iconview.unselect_all()
         self.iconview.hide()
         self.props_widgets.hide()
