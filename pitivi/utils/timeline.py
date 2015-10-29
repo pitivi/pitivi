@@ -152,6 +152,9 @@ class Selection(GObject.Object, Loggable):
                     element.selected.selected = True
         self.emit("selection-changed")
 
+    def unselect(self, objs):
+        self.setSelection(objs, UNSELECT)
+
     def getSelectedTrackElements(self):
         """
         Returns the list of L{TrackElement} contained in this selection.

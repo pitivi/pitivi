@@ -443,10 +443,10 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def move(self, child, x, y):
         self._layout.move(child, x, y)
 
-    def _childAddedCb(self, bClip, child):
+    def _childAddedToClipCb(self, bClip, child):
         self.checkMediaTypes()
 
-    def _childRemovedCb(self, bClip, child):
+    def _childRemovedFromClipCb(self, bClip, child):
         self.checkMediaTypes()
 
     def _clipAddedCb(self, layer, bClip):
@@ -465,8 +465,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self._layout.put(clip, self.nsToPixel(bClip.props.start), 0)
         self.show_all()
-        bClip.connect_after("child-added", self._childAddedCb)
-        bClip.connect_after("child-removed", self._childRemovedCb)
+        bClip.connect_after("child-added", self._childAddedToClipCb)
+        bClip.connect_after("child-removed", self._childRemovedFromClipCb)
         self.checkMediaTypes()
 
     def _clipRemovedCb(self, bLayer, bClip):
@@ -483,6 +483,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         bClip.ui.release()
         self._layout.remove(bClip.ui)
+        self.timeline.selection.unselect([bClip])
 
     def __childWidgetRemovedCb(self, layout, clip):
         bClip = clip.bClip
@@ -491,8 +492,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             bClip.ui.release()
             bClip.ui = None
 
-        bClip.disconnect_by_func(self._childAddedCb)
-        bClip.disconnect_by_func(self._childRemovedCb)
+        bClip.disconnect_by_func(self._childAddedToClipCb)
+        bClip.disconnect_by_func(self._childRemovedFromClipCb)
         self.checkMediaTypes()
 
     def updatePosition(self):
