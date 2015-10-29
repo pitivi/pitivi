@@ -87,9 +87,9 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             group=self.border_mode_normal, label=_("Loop"))
         self.props_widgets.attach(self.border_mode_loop, 0, 1, 1, 1)
 
-        self.borderScale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, None)
-        self.borderScale.set_draw_value(False)
-        self.props_widgets.attach(self.borderScale, 1, 0, 1, 2)
+        self.border_scale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, None)
+        self.border_scale.set_draw_value(False)
+        self.props_widgets.attach(self.border_scale, 1, 0, 1, 2)
 
         self.invert_checkbox = Gtk.CheckButton(label=_("Reverse direction"))
         self.invert_checkbox.props.margin_top = SPACING
@@ -150,14 +150,14 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
     def __connectUi(self):
         self.iconview.connect("selection-changed", self._transitionSelectedCb)
-        self.borderScale.connect("value-changed", self._borderScaleCb)
+        self.border_scale.connect("value-changed", self._borderScaleCb)
         self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
         self.border_mode_normal.connect("released", self._borderTypeChangedCb)
         self.border_mode_loop.connect("released", self._borderTypeChangedCb)
 
     def __disconnectUi(self):
         self.iconview.disconnect_by_func(self._transitionSelectedCb)
-        self.borderScale.disconnect_by_func(self._borderScaleCb)
+        self.border_scale.disconnect_by_func(self._borderScaleCb)
         self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
         self.border_mode_normal.disconnect_by_func(self._borderTypeChangedCb)
         self.border_mode_loop.disconnect_by_func(self._borderTypeChangedCb)
@@ -203,25 +203,27 @@ class TransitionsListWidget(Gtk.Box, Loggable):
     def _borderTypeChangedCb(self, widget):
         self.__updateBorderScale(widget == self.border_mode_loop)
 
-    def __updateBorderScale(self, loop=False):
+    def __updateBorderScale(self, loop=False, border=None):
         """
         The "border" property in gstreamer is unlimited, but if you go over
         25 thousand it "loops" the transition instead of smoothing it.
         """
+        if border is not None:
+            loop = border >= 50000
         if loop:
-            self.borderScale.set_range(50000, 500000)
-            self.borderScale.clear_marks()
-            self.borderScale.add_mark(
+            self.border_scale.set_range(50000, 500000)
+            self.border_scale.clear_marks()
+            self.border_scale.add_mark(
                 50000, Gtk.PositionType.BOTTOM, _("Slow"))
-            self.borderScale.add_mark(
+            self.border_scale.add_mark(
                 200000, Gtk.PositionType.BOTTOM, _("Fast"))
-            self.borderScale.add_mark(
+            self.border_scale.add_mark(
                 500000, Gtk.PositionType.BOTTOM, _("Epileptic"))
         else:
-            self.borderScale.set_range(0, 25000)
-            self.borderScale.clear_marks()
-            self.borderScale.add_mark(0, Gtk.PositionType.BOTTOM, _("Sharp"))
-            self.borderScale.add_mark(
+            self.border_scale.set_range(0, 25000)
+            self.border_scale.clear_marks()
+            self.border_scale.add_mark(0, Gtk.PositionType.BOTTOM, _("Sharp"))
+            self.border_scale.add_mark(
                 25000, Gtk.PositionType.BOTTOM, _("Smooth"))
 
     def _searchEntryChangedCb(self, unused_entry):
@@ -266,6 +268,10 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.props_widgets.show_all()
         self.searchbar.show_all()
         self.__selectTransition(transition_asset)
+        border = element.get_border()
+        self.__updateBorderScale(border=border)
+        self.border_scale.set_value(border)
+        self.invert_checkbox.set_active(element.is_inverted())
         self.__connectUi()
         # We REALLY want the infobar to be hidden as space is really constrained
         # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
