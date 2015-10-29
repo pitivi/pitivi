@@ -697,19 +697,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.resetSelectionGroup()
         if self.__marquee.props.width_request > 0:
             clips = self.__marquee.findSelected()
-
-            if clips:
-                for clip in clips:
-                    self.current_group.add(clip.get_toplevel_parent())
-
-                self.selection.setSelection(clips, SELECT)
-            else:
-                self.selection.setSelection([], SELECT)
+            for clip in clips:
+                self.current_group.add(clip.get_toplevel_parent())
         else:
-            only_transitions = not bool([selected for selected in self.selection.selected
-                                         if not isinstance(selected, GES.TransitionClip)])
-            if not only_transitions:
-                self.selection.setSelection([], SELECT)
+            clips = []
+        self.selection.setSelection(clips, SELECT)
 
         self.__marquee.hide()
 
