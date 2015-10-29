@@ -29,7 +29,6 @@ A collection of helper classes and routines for:
 import math
 import os
 import re
-import sys
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -37,6 +36,7 @@ from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import Pango
 from gi.repository import GObject
+from gi.repository import GLib
 
 from gettext import gettext as _
 
@@ -212,11 +212,25 @@ class NumericWidget(Gtk.Box, DynamicWidget):
 
         self.set_orientation(Gtk.Orientation.HORIZONTAL)
         self.set_spacing(SPACING)
-        self.adjustment = Gtk.Adjustment()
-        self.upper = upper
-        self.lower = lower
         self._type = None
-        if (lower is not None and upper is not None) and (lower > -5000 and upper < 5000):
+
+        reasonable_limit = 5000
+        with_slider = (lower is not None and lower > -reasonable_limit and
+            upper is not None and upper < reasonable_limit)
+
+        self.adjustment = Gtk.Adjustment()
+        # Limit the limits, otherwise the widget appears huge.
+        # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=727294
+        # If these hardcoded limits are a problem, the fix should be passing
+        # the proper limits using the upper and lower parameters.
+        if upper is None:
+            upper = GLib.MAXINT16
+        if lower is None:
+            lower = GLib.MININT16
+        self.adjustment.props.lower = max(GLib.MININT16, lower)
+        self.adjustment.props.upper = min(upper, GLib.MAXINT16)
+
+        if with_slider:
             self.slider = Gtk.Scale.new(
                 Gtk.Orientation.HORIZONTAL, self.adjustment)
             self.pack_end(self.slider, expand=False, fill=False, padding=0)
@@ -230,14 +244,8 @@ class NumericWidget(Gtk.Box, DynamicWidget):
                 self.slider.set_fill_level(float(default))
                 self.slider.set_show_fill_level(True)
 
-        if upper is None:
-            upper = GObject.G_MAXDOUBLE
-        if lower is None:
-            lower = GObject.G_MINDOUBLE
-        self.adjustment.props.lower = lower
-        self.adjustment.props.upper = upper
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_end(self.spinner, expand=False, fill=False, padding=0)
+        self.pack_start(self.spinner, expand=False, fill=False, padding=0)
         self.spinner.show()
 
     def connectValueChanged(self, callback, *args):
@@ -254,21 +262,18 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         if self._type is None:
             self._type = type_
 
-        if type_ == int or type_ == int:
-            minimum, maximum = (-sys.maxsize, sys.maxsize)
+        if type_ == int:
             step = 1.0
             page = 10.0
         elif type_ == float:
-            minimum, maximum = (GObject.G_MINDOUBLE, GObject.G_MAXDOUBLE)
             step = 0.01
             page = 0.1
             self.spinner.props.digits = 2
-        if self.lower is not None:
-            minimum = self.lower
-        if self.upper is not None:
-            maximum = self.upper
-        self.adjustment.configure(value, minimum, maximum, step, page, 0)
-        self.spinner.set_adjustment(self.adjustment)
+        else:
+            raise Exception('Unsupported property type: %s' % type_)
+        lower = min(self.adjustment.props.lower, value)
+        upper = max(self.adjustment.props.upper, value)
+        self.adjustment.configure(value, lower, upper, step, page, 0)
 
 
 class TimeWidget(TextWidget, DynamicWidget):
