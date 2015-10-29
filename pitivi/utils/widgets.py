@@ -587,8 +587,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = None
-        self.ignore = None
-        self.properties = None
+        self.ignore = []
+        self.properties = {}
         self.buttons = {}
         self.isControllable = isControllable
         self.set_orientation(Gtk.Orientation.VERTICAL)
@@ -621,18 +621,20 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             self.log("Effect has no parent (it has been removed?)")
             return
 
-    def setElement(self, element, properties={}, ignore=['name'],
-                   default_btn=False, use_element_props=False):
+    def setElement(self, element, values={}, ignore=['name'],
+                   default_btn=False):
         """
-        Set given element on Widget, with optional properties
+        Set the element to be edited.
+
+        @param values: The values of the element properties.
+                       If empty, the default values will be used.
         """
-        self.info("element: %s, use properties: %s", element, properties)
+        self.info("element: %s, use values: %s", element, values)
         self.element = element
         self.ignore = ignore
-        self.properties = {}
-        self._addWidgets(properties, default_btn, use_element_props)
+        self._addWidgets(values, default_btn)
 
-    def _addWidgets(self, properties, default_btn, use_element_props):
+    def _addWidgets(self, values, default_btn):
         """
         Prepare a gtk table containing the property widgets of an element.
         Each property is on a separate row of the table.
@@ -641,6 +643,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         If there are no properties, returns a table containing the label
         "No properties."
         """
+        self.properties.clear()
         self.bindings = {}
         self.keyframeToggleButtons = {}
         is_effect = False
@@ -674,20 +677,21 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             # We do not know how to work with GObjects, so blacklist
             # them to avoid noise in the UI
             if (not prop.flags & GObject.PARAM_WRITABLE or
-               not prop.flags & GObject.PARAM_READABLE or
-               GObject.type_is_a(prop.value_type, GObject.Object)):
+                    not prop.flags & GObject.PARAM_READABLE or
+                    GObject.type_is_a(prop.value_type, GObject.Object)):
                 continue
 
             if is_effect:
                 result, prop_value = self.element.get_child_property(prop.name)
-                if result is False:
+                if not result:
                     self.debug(
                         "Could not get value for property: %s", prop.name)
             else:
-                if use_element_props:
+                if not values:
+                    # Use the default value.
                     prop_value = self.element.get_property(prop.name)
                 else:
-                    prop_value = properties.get(prop.name)
+                    prop_value = values.get(prop.name)
 
             widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
@@ -871,6 +875,13 @@ class GstElementSettingsDialog(Loggable):
         Loggable.__init__(self)
         self.debug("factory: %s, properties: %s", elementfactory, properties)
 
+        self.factory = elementfactory
+        self.element = self.factory.create("elementsettings")
+        if not self.element:
+            self.warning(
+                "Couldn't create element from factory %s", self.factory)
+        self.properties = properties
+
         self.builder = Gtk.Builder()
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "elementsettingsdialog.ui"))
@@ -881,13 +892,10 @@ class GstElementSettingsDialog(Loggable):
         self.elementsettings = GstElementSettingsWidget(isControllable)
         self.builder.get_object("viewport1").add(self.elementsettings)
 
-        self.factory = elementfactory
-        self.element = self.factory.create("elementsettings")
-        if not self.element:
-            self.warning(
-                "Couldn't create element from factory %s", self.factory)
-        self.properties = properties
-        self._fillWindow()
+        # set title and frame label
+        self.window.set_title(
+            _("Properties for %s") % self.factory.get_longname())
+        self.elementsettings.setElement(self.element, self.properties)
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()
@@ -909,12 +917,6 @@ class GstElementSettingsDialog(Loggable):
         if parent_window:
             self.window.set_transient_for(parent_window)
         self.window.show()
-
-    def _fillWindow(self):
-        # set title and frame label
-        self.window.set_title(
-            _("Properties for %s") % self.factory.get_longname())
-        self.elementsettings.setElement(self.element, self.properties)
 
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """

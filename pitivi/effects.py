@@ -562,7 +562,7 @@ class EffectsPropertiesManager:
             # Here we should handle special effects configuration UI
             effect_settings_widget = GstElementSettingsWidget()
             effect_settings_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                              default_btn=True, use_element_props=True)
+                                              default_btn=True)
             scrolled_window = Gtk.ScrolledWindow()
             scrolled_window.add_with_viewport(effect_settings_widget)
             scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC,
