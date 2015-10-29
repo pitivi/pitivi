@@ -31,7 +31,7 @@ from gettext import gettext as _
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import PADDING, SPACING
 
 
 (COL_TRANSITION_ASSET,
@@ -74,34 +74,29 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.searchEntry.set_placeholder_text(_("Search..."))
         self.searchbar.pack_end(self.searchEntry, True, True, 0)
 
-        self.props_widgets = Gtk.Box()
-        self.props_widgets.set_orientation(Gtk.Orientation.VERTICAL)
-        borderTable = Gtk.Table(n_rows=2, n_columns=3)
+        self.props_widgets = Gtk.Grid()
+        self.props_widgets.props.margin = PADDING
+        self.props_widgets.props.column_spacing = SPACING
 
         self.border_mode_normal = Gtk.RadioButton(
             group=None, label=_("Normal"))
+        self.border_mode_normal.set_active(True)
+        self.props_widgets.attach(self.border_mode_normal, 0, 0, 1, 1)
+
         self.border_mode_loop = Gtk.RadioButton(
             group=self.border_mode_normal, label=_("Loop"))
-        self.border_mode_normal.set_active(True)
+        self.props_widgets.attach(self.border_mode_loop, 0, 1, 1, 1)
+
         self.borderScale = Gtk.Scale.new(Gtk.Orientation.HORIZONTAL, None)
         self.borderScale.set_draw_value(False)
-
-        borderTable.attach(self.border_mode_normal, 0, 1, 0, 1,
-                           xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-        borderTable.attach(self.border_mode_loop, 1, 2, 0, 1,
-                           xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL)
-        # The ypadding is a hack to make the slider widget align with the
-        # radiobuttons.
-        borderTable.attach(self.borderScale, 2, 3, 0, 2, ypadding=SPACING * 2)
+        self.props_widgets.attach(self.borderScale, 1, 0, 1, 2)
 
         self.invert_checkbox = Gtk.CheckButton(label=_("Reverse direction"))
-        self.invert_checkbox.set_border_width(SPACING)
-
-        self.props_widgets.add(borderTable)
-        self.props_widgets.add(self.invert_checkbox)
+        self.invert_checkbox.props.margin_top = SPACING
+        self.props_widgets.attach(self.invert_checkbox, 1, 2, 1, 1)
 
         # Set the default values
-        self._borderTypeChangedCb()
+        self.__updateBorderScale()
 
         self.infobar = Gtk.InfoBar()
         self.infobar.props.message_type = Gtk.MessageType.OTHER
@@ -160,7 +155,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
 # UI callbacks
 
-    def _transitionSelectedCb(self, unused_event):
+    def _transitionSelectedCb(self, unused_widget):
         transition_asset = self.getSelectedItem()
         if not transition_asset:
             # The user clicked between icons
@@ -181,8 +176,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
         return True
 
-    def _borderScaleCb(self, range_changed):
-        value = range_changed.get_value()
+    def _borderScaleCb(self, widget):
+        value = widget.get_value()
         self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
         self.app.project_manager.current_project.seeker.flush(True)
@@ -193,12 +188,15 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.element.set_inverted(value)
         self.app.project_manager.current_project.seeker.flush()
 
-    def _borderTypeChangedCb(self, widget=None):
+    def _borderTypeChangedCb(self, widget):
+        self.__updateBorderScale(widget == self.border_mode_loop)
+
+    def __updateBorderScale(self, loop=False):
         """
         The "border" property in gstreamer is unlimited, but if you go over
         25 thousand it "loops" the transition instead of smoothing it.
         """
-        if widget == self.border_mode_loop:
+        if loop:
             self.borderScale.set_range(50000, 500000)
             self.borderScale.clear_marks()
             self.borderScale.add_mark(
