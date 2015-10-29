@@ -1097,7 +1097,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             "rendering-settings-changed", self._renderingSettingsChangedCb)
 
         self.viewer.setPipeline(project.pipeline)
-        self.app.timeline_log_observer.setPipeline(project.pipeline)
+        self.app.timeline_log_observer.pipeline = project.pipeline
         self._renderingSettingsChangedCb(project)
         self.clipconfig.project = project
         # FIXME GES port undo/redo

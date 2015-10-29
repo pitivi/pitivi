@@ -513,14 +513,14 @@ class TimelineLogObserver(Loggable):
         self._pipeline = None
         Loggable.__init__(self)
 
-    def setPipeline(self, pipeline):
-        self._pipeline = pipeline
-        self.children_props_tracker.pipeline = pipeline
-
-    def getPipeline(self):
+    @property
+    def pipeline(self):
         return self._pipeline
 
-    pipeline = property(getPipeline, setPipeline)
+    @pipeline.setter
+    def pipeline(self, pipeline):
+        self._pipeline = pipeline
+        self.children_props_tracker.pipeline = pipeline
 
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)

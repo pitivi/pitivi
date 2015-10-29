@@ -72,14 +72,14 @@ class Selected(GObject.Object):
         """
         return self._selected
 
-    def getSelected(self):
+    @property
+    def selected(self):
         return self._selected
 
-    def setSelected(self, selected):
+    @selected.setter
+    def selected(self, selected):
         self._selected = selected
         self.emit("selected-changed", selected)
-
-    selected = property(getSelected, setSelected)
 
 
 class Selection(GObject.Object, Loggable):

@@ -88,18 +88,17 @@ class ClipProperties(Gtk.Box, Loggable):
         viewport.add(self.effect_expander)
         self.pack_start(viewport, True, True, 0)
 
-    def _setProject(self, project):
-        self._project = project
-        if project:
-            self.effect_expander._connectTimelineSelection(
-                self.app.gui.timeline_ui.timeline)
-            if self.transformation_expander:
-                self.transformation_expander.timeline = self.app.gui.timeline_ui.timeline
-
-    def _getProject(self):
+    @property
+    def project(self):
         return self._project
 
-    project = property(_getProject, _setProject)
+    @project.setter
+    def project(self, project):
+        self._project = project
+        if project:
+            timeline = self.app.gui.timeline_ui.timeline
+            self.effect_expander.timeline = timeline
+            self.transformation_expander.timeline = timeline
 
     def createInfoBar(self, text):
         label = Gtk.Label(label=text)
@@ -250,10 +249,12 @@ class EffectProperties(Gtk.Expander, Loggable):
             self._config_ui_h_pos = self._vcontent.get_position()
             self.settings.effectVPanedPosition = self._config_ui_h_pos
 
-    def _getTimeline(self):
+    @property
+    def timeline(self):
         return self._timeline
 
-    def _setTimeline(self, timeline):
+    @timeline.setter
+    def timeline(self, timeline):
         if self.connected:
             self._timeline.selection.disconnect_by_func(
                 self._selectionChangedCb)
@@ -262,8 +263,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             self._timeline.selection.connect(
                 "selection-changed", self._selectionChangedCb)
         self.connected = bool(timeline)
-
-    timeline = property(_getTimeline, _setTimeline)
 
     def _selectionChangedCb(self, selection,):
         for clip in self.clips:
@@ -294,9 +293,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             selec = self.timeline.selection.getSelectedEffects()
             self.selected_effects = selec
             self.updateAll()
-
-    def _connectTimelineSelection(self, timeline):
-        self.timeline = timeline
 
     def _removeEffectCb(self, toolbutton):
         if not self.selection.get_selected()[1]:
@@ -664,15 +660,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.__setSource()
             self.hide()
 
-    def _getTimeline(self):
+    @property
+    def timeline(self):
         return self._timeline
 
-    def _setTimeline(self, timeline):
+    @timeline.setter
+    def timeline(self, timeline):
         if self.timeline:
             self.timeline.selection.disconnect_by_func(self._selectionChangedCb)
         self._timeline = timeline
         if timeline:
-            self._timeline.selection.connect(
+            timeline.selection.connect(
                 'selection-changed', self._selectionChangedCb)
-
-    timeline = property(_getTimeline, _setTimeline)
