@@ -110,17 +110,6 @@ class ClipProperties(Gtk.Box, Loggable):
         self.infobar_box.pack_start(infobar, False, False, 0)
         return infobar
 
-    def _getTimeline(self):
-        return self._timeline
-
-    def _setTimeline(self, timeline):
-        self.effect_expander.timeline = timeline
-        # Transformation boxed DISABLED
-        # self.transformation_expander.timeline = timeline
-        self._timeline = timeline
-
-    timeline = property(_getTimeline, _setTimeline)
-
 
 class EffectProperties(Gtk.Expander, Loggable):
     """
@@ -582,9 +571,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__setupSpinButton("width_spinbtn", "width")
         self.__setupSpinButton("height_spinbtn", "height")
-
-    def _zoomViewerCb(self, scale):
-        self.app.gui.viewer.setZoom(scale.get_value())
 
     def _expandedCb(self, expander, params):
         if self._selected_clip:

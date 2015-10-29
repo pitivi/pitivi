@@ -909,7 +909,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.project_manager.current_project.timeline.disconnect_by_func(
             self._timelineDurationChangedCb)
         self.timeline_ui.setProject(None)
-        self.clipconfig.timeline = None
         self.render_button.set_sensitive(False)
         return False
 
