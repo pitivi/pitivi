@@ -330,8 +330,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def addEffectToClip(self, clip, factory_name, priority=None):
         """Adds the specified effect if it can be applied to the clip."""
         model = self.treeview.get_model()
-        media_type = self.app.effects.getFactoryFromName(
-            factory_name).media_type
+        media_type = self.app.effects.getInfo(factory_name).media_type
         for track_element in clip.get_children(False):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
@@ -483,8 +482,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         for effect in clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
-            asset = self.app.effects.getFactoryFromName(
-                effect.props.bin_description)
+            effect_info = self.app.effects.getInfo(effect.props.bin_description)
             to_append = [effect.props.active]
             track_type = effect.get_track_type()
             if track_type == GES.TrackType.AUDIO:
@@ -492,10 +490,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             elif track_type == GES.TrackType.VIDEO:
                 to_append.append("Video")
             to_append.append(effect.props.bin_description)
-            effect_factory = self.app.effects.getFactoryFromName(
-                effect.props.bin_description)
-            to_append.append(effect_factory.human_name)
-            to_append.append(asset.description)
+            to_append.append(effect_info.human_name)
+            to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
 

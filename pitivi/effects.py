@@ -49,10 +49,8 @@ from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir, get_pixmap_dir
 from pitivi.settings import GlobalSettings
-
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY, SPACING
-
 from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
 
 
@@ -139,10 +137,8 @@ BLACKLISTED_PLUGINS = ["ldaspa"]
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
-class EffectFactory(object):
-    """
-    Factories that applies an effect on a stream
-    """
+class EffectInfo(object):
+
     def __init__(self, effect_name, media_type, categories,
                  human_name, description):
         object.__init__(self)
@@ -152,54 +148,63 @@ class EffectFactory(object):
         self.description = description
         self.human_name = human_name
 
+    @property
+    def icon(self):
+        pixdir = os.path.join(get_pixmap_dir(), "effects")
+        icon = None
+        try:
+            # We can afford to scale the images here, the impact is negligible
+            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(pixdir, self.effect_name + ".png"),
+                ICON_WIDTH, ICON_WIDTH)
+        # An empty except clause is bad, but "gi._glib.GError" is not helpful.
+        except:
+            icon = GdkPixbuf.Pixbuf.new_from_file(
+                os.path.join(pixdir, "defaultthumbnail.svg"))
+        return icon
+
 
 class EffectsManager(object):
 
     """
-    Groups effects.
+    Info about effects.
     """
 
     def __init__(self):
         object.__init__(self)
-        self._pixdir = os.path.join(get_pixmap_dir(), "effects")
         self.video_effects = []
         self.audio_effects = []
-        self._effect_factories_dict = {}
-        self._setAllEffects()
+        self._effects = {}
 
-    def _setAllEffects(self):
-        """
-        go trough the list of element factories and
-        add them to the correct list filtering if necessary
-        """
+        uselessWords = [_("Video"), _("Audio"), _("Audio").lower(), _("effect")]
+        uselessRe = re.compile(" |".join(uselessWords))
+
         factories = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
-        for element_factory in factories:
-            klass = element_factory.get_klass()
-            name = element_factory.get_name()
+        for factory in factories:
+            klass = factory.get_klass()
+            name = factory.get_name()
+            if ("Effect" not in klass or
+                    any(black in name for black in BLACKLISTED_PLUGINS)):
+                continue
 
-            if ("Effect" in klass and name not in BLACKLISTED_EFFECTS and not
-                    [bplug for bplug in BLACKLISTED_PLUGINS if bplug in name]):
-                media_type = None
+            media_type = None
+            if "Audio" in klass:
+                self.audio_effects.append(factory)
+                media_type = AUDIO_EFFECT
+            elif "Video" in klass:
+                self.video_effects.append(factory)
+                media_type = VIDEO_EFFECT
+            if not media_type:
+                HIDDEN_EFFECTS.append(name)
+                continue
 
-                if "Audio" in klass:
-                    self.audio_effects.append(element_factory)
-                    media_type = AUDIO_EFFECT
-                elif "Video" in klass:
-                    self.video_effects.append(element_factory)
-                    media_type = VIDEO_EFFECT
-
-                if not media_type:
-                    HIDDEN_EFFECTS.append(name)
-                    continue
-
-                effect = EffectFactory(name,
-                                       media_type,
-                                       categories=self._getEffectCategories(
-                                           name),
-                                       human_name=self._getEffectName(
-                                           element_factory),
-                                       description=self._getEffectDescripton(element_factory))
-                self._addEffectToDic(name, effect)
+            human_name = uselessRe.sub("", factory.get_longname()).title()
+            effect = EffectInfo(name,
+                                media_type,
+                                categories=self._getEffectCategories(name),
+                                human_name=human_name,
+                                description=factory.get_description())
+            self._effects[name] = effect
 
     def getAllAudioEffects(self):
         """
@@ -213,24 +218,13 @@ class EffectsManager(object):
         """
         return self.video_effects
 
-    def _addEffectToDic(self, name, factory):
-        self._effect_factories_dict[name] = factory
-
-    def getFactoryFromName(self, name):
+    def getInfo(self, name):
         """
         @param name: The bin_description of the effect.
         @type name: C{str}
-        @return: The l{EffectFactory} corresponding to the name or None
+        @return: The l{EffectInfo} corresponding to the name or None
         """
-        return self._effect_factories_dict.get(name)
-
-    def _getEffectDescripton(self, element_factory):
-        """
-        @param element_factory: The element factory
-        @type element_factory: L{Gst.ElementFactory}
-        @return: A human description C{str} for the effect
-        """
-        return element_factory.get_description()
+        return self._effects.get(name)
 
     def _getEffectCategories(self, effect_name):
         """
@@ -251,33 +245,19 @@ class EffectsManager(object):
         categories.insert(0, _("All effects"))
         return categories
 
-    def _getEffectName(self, element_factory):
-        """
-        @param element_factory: The element factory
-        @type element_factory: L{Gst.ElementFactory}
-        @return: A human readable name C{str} for the effect
-        """
-        video = _("Video")
-        audio = _("Audio")
-        effect = _("effect")
-        uselessWords = re.compile(" |".join([video, audio, audio.lower(), effect]))
-        return uselessWords.sub("", element_factory.get_longname()).title()
-
-    def getVideoCategories(self):
+    @property
+    def video_categories(self):
         """
         Get all video effect categories names.
         """
         return EffectsManager._getCategoriesNames(VIDEO_EFFECTS_CATEGORIES)
 
-    video_categories = property(getVideoCategories)
-
-    def getAudioCategories(self):
+    @property
+    def audio_categories(self):
         """
         Get all audio effect categories names.
         """
         return EffectsManager._getCategoriesNames(AUDIO_EFFECTS_CATEGORIES)
-
-    audio_categories = property(getAudioCategories)
 
     @staticmethod
     def _getCategoriesNames(categories):
@@ -289,19 +269,6 @@ class EffectsManager(object):
             ret.append(_("Uncategorized"))
         return ret
 
-    def getEffectIcon(self, effect_name):
-        icon = None
-        try:
-            # We can afford to scale the images here, the impact is negligible
-            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
-                os.path.join(self._pixdir, effect_name + ".png"),
-                ICON_WIDTH, ICON_WIDTH)
-        # An empty except clause is bad, but "gi._glib.GError" is not helpful.
-        except:
-            icon = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(self._pixdir, "defaultthumbnail.svg"))
-        return icon
-
 
 # ----------------------- UI classes to manage effects -------------------------#
 HIDDEN_EFFECTS = ["frei0r-filter-scale0tilt"]
@@ -312,9 +279,8 @@ GlobalSettings.addConfigSection('effect-library')
  COL_DESC_TEXT,
  COL_EFFECT_TYPE,
  COL_EFFECT_CATEGORIES,
- COL_FACTORY,
  COL_ELEMENT_NAME,
- COL_ICON) = list(range(7))
+ COL_ICON) = list(range(6))
 
 
 class EffectListWidget(Gtk.Box, Loggable):
@@ -343,7 +309,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         # Store
         self.storemodel = Gtk.ListStore(
-            str, str, int, object, object, str, GdkPixbuf.Pixbuf)
+            str, str, int, object, str, GdkPixbuf.Pixbuf)
 
         self.view = Gtk.TreeView(model=self.storemodel)
         self.view.props.headers_visible = False
@@ -419,15 +385,15 @@ class EffectListWidget(Gtk.Box, Loggable):
     def _addFactories(self, elements, effectType):
         for element in elements:
             name = element.get_name()
-            if name not in HIDDEN_EFFECTS:
-                effect_factory = self.app.effects.getFactoryFromName(name)
-                self.storemodel.append([effect_factory.human_name,
-                                        effect_factory.description,
-                                        effectType,
-                                        effect_factory.categories,
-                                        effect_factory,
-                                        name,
-                                        self.app.effects.getEffectIcon(name)])
+            if name in HIDDEN_EFFECTS:
+                continue
+            effect_info = self.app.effects.getInfo(name)
+            self.storemodel.append([effect_info.human_name,
+                                    effect_info.description,
+                                    effectType,
+                                    effect_info.categories,
+                                    name,
+                                    effect_info.icon])
         self.storemodel.set_sort_column_id(
             COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
@@ -447,8 +413,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         self.categoriesWidget.set_active(0)
 
     def _dndDragDataGetCb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
-        factory_name = bytes(self.getSelectedEffectFactoryName(), "UTF-8")
-        selection_data.set(drag_context.list_targets()[0], 0, factory_name)
+        data = bytes(self.getSelectedEffect(), "UTF-8")
+        selection_data.set(drag_context.list_targets()[0], 0, data)
         return True
 
     def _rowUnderMouseSelected(self, view, event):
@@ -461,10 +427,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         return False
 
     def _enterPressEventCb(self, unused_view, unused_event=None):
-        factory_name = self.getSelectedEffectFactoryName()
-        if factory_name is not None:
-            self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(
-                factory_name)
+        self._addSelectedEffect()
 
     def _buttonPressEventCb(self, view, event):
         chain_up = True
@@ -472,22 +435,25 @@ class EffectListWidget(Gtk.Box, Loggable):
         if event.button == 3:
             chain_up = False
         elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            factory_name = self.getSelectedEffectFactoryName()
-            if factory_name is not None:
-                self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(
-                    factory_name)
+            self._addSelectedEffect()
         else:
             chain_up = not self._rowUnderMouseSelected(view, event)
 
         if chain_up:
             self._draggedItems = None
         else:
-            self._draggedItems = self.getSelectedEffectFactoryName()
+            self._draggedItems = self.getSelectedEffect()
 
         Gtk.TreeView.do_button_press_event(view, event)
         return True
 
-    def getSelectedEffectFactoryName(self):
+    def _addSelectedEffect(self):
+        effect = self.getSelectedEffect()
+        if not effect:
+            return
+        self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(effect)
+
+    def getSelectedEffect(self):
         if self._draggedItems:
             return self._draggedItems
         model, rows = self.view.get_selection().get_selected_rows()
@@ -523,17 +489,15 @@ class EffectListWidget(Gtk.Box, Loggable):
         entry.set_text("")
 
     def _setRowVisible(self, model, iter, unused_data):
-        if self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
-            if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
-                return False
-            if self.categoriesWidget.get_active_text() in model.get_value(iter, COL_EFFECT_CATEGORIES):
-                text = self.searchEntry.get_text().lower()
-                return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-                    text in model.get_value(iter, COL_NAME_TEXT).lower()
-            else:
-                return False
-        else:
+        if not self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
             return False
+        if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
+            return False
+        if self.categoriesWidget.get_active_text() not in model.get_value(iter, COL_EFFECT_CATEGORIES):
+            return False
+        text = self.searchEntry.get_text().lower()
+        return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
+            text in model.get_value(iter, COL_NAME_TEXT).lower()
 
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
