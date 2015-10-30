@@ -71,19 +71,18 @@ class ClipProperties(Gtk.Box, Loggable):
         self.infobar_box.show()
         self.pack_start(self.infobar_box, False, False, 0)
 
-        self.transformation_expander = TransformationProperties(app, app.action_log)
+        self.transformation_expander = TransformationProperties(app)
         self.transformation_expander.set_vexpand(False)
         self.pack_start(self.transformation_expander, False, False, 0)
         self.transformation_expander.show_all()
 
-        effects_properties_manager = EffectsPropertiesManager(app)
-        self.effect_expander = EffectProperties(
-            app, effects_properties_manager, self)
-        self.effect_expander.set_vexpand(False)
         viewport = Gtk.ScrolledWindow()
         viewport.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
         viewport.set_visible(True)
+
+        self.effect_expander = EffectProperties(app, self)
+        self.effect_expander.set_vexpand(False)
         viewport.add(self.effect_expander)
         self.pack_start(viewport, True, True, 0)
 
@@ -117,7 +116,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     @type effects_properties_manager: C{EffectsPropertiesManager}
     """
 
-    def __init__(self, app, effects_properties_manager, clip_properties):
+    def __init__(self, app, clip_properties):
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
         self.set_label(_("Effects"))
@@ -129,7 +128,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.selected_effects = []
         self.clips = []
         self._effect_config_ui = None
-        self.effects_properties_manager = effects_properties_manager
+        self.effects_properties_manager = EffectsPropertiesManager(app)
         self.clip_properties = clip_properties
         self._config_ui_h_pos = None
         self._timeline = None
@@ -534,10 +533,9 @@ class TransformationProperties(Gtk.Expander, Loggable):
     __signals__ = {
         'selection-changed': []}
 
-    def __init__(self, app, action_log):
+    def __init__(self, app):
         Gtk.Expander.__init__(self)
         Loggable.__init__(self)
-        self.action_log = action_log
         self.app = app
         self._timeline = None
         self.source = None
@@ -619,9 +617,9 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         res, cvalue = self.source.get_child_property(prop)
         if value != cvalue:
-            self.action_log.begin("Transformation property change")
+            self.app.action_log.begin("Transformation property change")
             self.source.set_child_property(prop, value)
-            self.action_log.commit()
+            self.app.action_log.commit()
             self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def __setSource(self):
