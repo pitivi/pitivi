@@ -506,12 +506,13 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
 class EffectsPropertiesManager:
 
     """
+    Provides and caches UIs for editing effects.
+
     @type app: L{Pitivi}
     """
 
     def __init__(self, app):
         self.cache_dict = {}
-        self._current_effect_setting_ui = None
         self._current_element_values = {}
         self.action_log = app.action_log
         self.app = app
@@ -524,30 +525,26 @@ class EffectsPropertiesManager:
         """
         if effect not in self.cache_dict:
             # Here we should handle special effects configuration UI
-            effect_settings_widget = GstElementSettingsWidget()
-            effect_settings_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                              default_btn=True)
+            effect_widget = GstElementSettingsWidget()
+            effect_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
+                                     default_btn=True)
             scrolled_window = Gtk.ScrolledWindow()
-            scrolled_window.add_with_viewport(effect_settings_widget)
+            scrolled_window.add_with_viewport(effect_widget)
             scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC,
                                        Gtk.PolicyType.AUTOMATIC)
             self.cache_dict[effect] = scrolled_window
-            self._connectAllWidgetCallbacks(effect_settings_widget, effect)
-            self._postConfiguration(effect, effect_settings_widget)
+            self._connectAllWidgetCallbacks(effect_widget, effect)
+            self._postConfiguration(effect, effect_widget)
 
-        self._current_effect_setting_ui = self._getUiToSetEffect(effect)
-        element = self._current_effect_setting_ui.element
-        for prop in element.list_children_properties():
-            self._current_element_values[
-                prop.name] = element.get_child_property(prop.name)
+        for prop in effect.list_children_properties():
+            value = effect.get_child_property(prop.name)
+            self._current_element_values[prop.name] = value
 
         return self.cache_dict[effect]
 
     def cleanCache(self, effect):
         if effect in self.cache_dict:
-            conf_ui = self.cache_dict.get(effect)
-            self.cache_dict.pop(effect)
-            return conf_ui
+            return self.cache_dict.pop(effect)
 
     def _postConfiguration(self, effect, effect_set_ui):
         if 'aspectratiocrop' in effect.get_property("bin-description"):
@@ -555,24 +552,15 @@ class EffectsPropertiesManager:
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
 
-    def _getUiToSetEffect(self, effect):
-        """ Permit to get the widget to set the effect and not its container """
-        if type(self.cache_dict[effect]) is Gtk.ScrolledWindow:
-            effect_set_ui = self.cache_dict[
-                effect].get_children()[0].get_children()[0]
-        else:
-            effect_set_ui = self.cache_dict[effect]
-        return effect_set_ui
-
-    def _connectAllWidgetCallbacks(self, effect_settings_widget, unused_effect):
+    def _connectAllWidgetCallbacks(self, effect_settings_widget, effect):
         for prop, widget in effect_settings_widget.properties.items():
-            widget.connectValueChanged(self._onValueChangedCb, widget, prop)
+            widget.connectValueChanged(self._onValueChangedCb, widget, prop, effect)
 
-    def _onSetDefaultCb(self, unused_widget, dynamic):
-        dynamic.setWidgetToDefault()
+    def _onSetDefaultCb(self, unused_widget, effect_widget):
+        effect_widget.setWidgetToDefault()
 
-    def _onValueChangedCb(self, unused_widget, dynamic, prop):
-        value = dynamic.getWidgetValue()
+    def _onValueChangedCb(self, unused_widget, effect_widget, prop, effect):
+        value = effect_widget.getWidgetValue()
 
         # FIXME Workaround in order to make aspectratiocrop working
         if isinstance(value, Gst.Fraction):
@@ -580,8 +568,7 @@ class EffectsPropertiesManager:
 
         if value != self._current_element_values.get(prop.name):
             self.action_log.begin("Effect property change")
-            self._current_effect_setting_ui.element.set_child_property(
-                prop.name, value)
+            effect.set_child_property(prop.name, value)
             self.action_log.commit()
 
             self.app.project_manager.current_project.pipeline.flushSeek()
