@@ -280,9 +280,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.set_titlebar(self._headerbar)
 
         # Set up our main containers, in the order documented above
-        self.vpaned = Gtk.VPaned()  # Separates the timeline from tabs+viewer
-        self.mainhpaned = Gtk.HPaned()  # Separates the viewer from tabs
-        self.secondhpaned = Gtk.HPaned()  # Separates the two sets of tabs
+        self.vpaned = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL)  # Separates the tabs+viewer from the timeline
+        self.mainhpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)  # Separates the tabs from the viewer
+        self.secondhpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)  # Separates the two sets of tabs
         self.vpaned.pack1(self.mainhpaned, resize=False, shrink=False)
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
         self.add(self.vpaned)

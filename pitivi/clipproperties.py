@@ -211,7 +211,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             _("Select a clip on the timeline to configure its associated effects"))
 
         # Prepare the main container widgets and lay out everything
-        self._vcontent = Gtk.VPaned()
+        self._vcontent = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL)
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.pack_start(self.treeview_scrollwin, expand=True, fill=True, padding=0)
         vbox.pack_start(self._toolbar, expand=False, fill=False, padding=0)
@@ -445,7 +445,8 @@ class EffectProperties(Gtk.Expander, Loggable):
     def updateAll(self, path=None):
         if self.get_expanded():
             if len(self.clips) == 1:
-                self._setEffectDragable()
+                self.show()
+                self._infobar.hide()
                 self._updateTreeview()
                 if path:
                     self.selection.select_path(path)
@@ -475,10 +476,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
-
-    def _setEffectDragable(self):
-        self.show()
-        self._infobar.hide()
 
     def _treeviewSelectionChangedCb(self, treeview):
         if self.selection.count_selected_rows() == 0:
