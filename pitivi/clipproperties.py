@@ -62,7 +62,6 @@ class ClipProperties(Gtk.Box, Loggable):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.app = app
-        self.settings = app.settings
         self._project = None
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
@@ -126,7 +125,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Global variables related to effects
         self.app = app
-        self.settings = app.settings
 
         self.selected_effects = []
         self.clips = []
@@ -247,7 +245,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _vcontentNotifyCb(self, paned, gparamspec):
         if gparamspec and gparamspec.name == 'position':
             self._config_ui_h_pos = self._vcontent.get_position()
-            self.settings.effectVPanedPosition = self._config_ui_h_pos
+            self.app.settings.effectVPanedPosition = self._config_ui_h_pos
 
     @property
     def timeline(self):
