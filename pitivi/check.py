@@ -375,12 +375,12 @@ GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
 HARD_DEPENDENCIES = [GICheck("3.14.0"),
                      CairoDependency("1.10.0"),
-                     GstDependency("Gst", GST_API_VERSION, "1.4.0"),
-                     GstDependency("GES", GST_API_VERSION, "1.5.0.0"),
+                     GstDependency("Gst", GST_API_VERSION, "1.6.0"),
+                     GstDependency("GES", GST_API_VERSION, "1.6.0.0"),
                      GtkDependency("Gtk", GTK_API_VERSION, "3.10.0"),
                      ClassicDependency("numpy"),
                      GIDependency("Gio", "2.0"),
-                     GstPluginDependency("opengl", "1.4.0"),
+                     GstPluginDependency("gstgtk", "1.6.0"),
                      ClassicDependency("matplotlib"),
                      ]
 
