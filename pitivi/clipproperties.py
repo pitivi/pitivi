@@ -73,7 +73,6 @@ class ClipProperties(Gtk.Box, Loggable):
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
         self.pack_start(transformation_expander, False, False, 0)
-        transformation_expander.show_all()
 
         viewport = Gtk.ScrolledWindow()
         viewport.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -624,12 +623,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.source = None
 
     def _selectionChangedCb(self, unused_timeline):
-        if self._selection:
-            # choose last selected clip
-            # TODO: hide source properties when multiple clips are selected
-            for clip in self._selection.selected:
-                pass
-
+        if len(self._selection) == 1:
+            clip = list(self._selection)[0]
             if clip != self._selected_clip:
                 self._selected_clip = clip
 
