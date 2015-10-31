@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.19.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkToolbar" id="medialibrary_toolbar">
@@ -11,7 +11,6 @@
       <object class="GtkToolButton" id="media_import_button">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="has_tooltip">True</property>
         <property name="tooltip_markup" translatable="yes">Add media files to your project</property>
         <property name="is_important">True</property>
         <property name="label" translatable="yes">Import</property>
@@ -32,15 +31,12 @@
     <child>
       <object class="GtkToolButton" id="media_remove_button">
         <property name="visible">True</property>
-        <property name="sensitive">False</property>
         <property name="can_focus">False</property>
-        <property name="has_tooltip">True</property>
-        <property name="tooltip_markup" translatable="yes">Remove selected clips from the project</property>
         <property name="tooltip_text" translatable="yes">Remove selected clips from the project</property>
+        <property name="action_name">medialibrary.remove_assets</property>
         <property name="label" translatable="yes">_Remove from Project</property>
         <property name="use_underline">True</property>
         <property name="icon_name">list-remove-symbolic</property>
-        <signal name="clicked" handler="_removeClickedCb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_remove_button-atkobject">
             <property name="AtkObject::accessible-name">media_remove_button</property>
@@ -55,11 +51,8 @@
     <child>
       <object class="GtkToolButton" id="media_props_button">
         <property name="visible">True</property>
-        <property name="sensitive">False</property>
         <property name="can_focus">False</property>
-        <property name="has_tooltip">True</property>
-        <property name="tooltip_markup" translatable="yes">Clip Properties...</property>
-        <property name="tooltip_text" translatable="yes">Clip Properties...</property>
+        <property name="tooltip_text" translatable="yes">Clip properties...</property>
         <property name="use_underline">True</property>
         <property name="icon_name">document-properties-symbolic</property>
         <signal name="clicked" handler="_clipPropertiesCb" swapped="no"/>
@@ -77,15 +70,12 @@
     <child>
       <object class="GtkToolButton" id="media_insert_button">
         <property name="visible">True</property>
-        <property name="sensitive">False</property>
         <property name="can_focus">False</property>
-        <property name="has_tooltip">True</property>
-        <property name="tooltip_markup" translatable="yes">Insert the selected clips at the end of the timeline</property>
         <property name="tooltip_text" translatable="yes">Insert the selected clips at the end of the timeline</property>
+        <property name="action_name">medialibrary.insert_assets_at_end</property>
         <property name="label" translatable="yes">Insert at _End of Timeline</property>
         <property name="use_underline">True</property>
         <property name="icon_name">insert-object-symbolic</property>
-        <signal name="clicked" handler="_insertEndCb" swapped="no"/>
         <child internal-child="accessible">
           <object class="AtkObject" id="media_insert_button-atkobject">
             <property name="AtkObject::accessible-name">media_insert_button</property>
@@ -125,7 +115,6 @@
           <object class="GtkEntry" id="media_search_entry">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="has_tooltip">True</property>
             <property name="margin_start">3</property>
             <property name="invisible_char">•</property>
             <property name="primary_icon_name">starred-symbolic</property>
@@ -185,7 +174,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Close this message</property>
             <signal name="clicked" handler="_warningInfoBarDismissedCb" swapped="no"/>
           </object>
@@ -215,8 +203,8 @@
           <object class="GtkLabel" id="warning_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="xalign">0</property>
             <property name="wrap">True</property>
+            <property name="xalign">0</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -267,9 +255,9 @@
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="xalign">0</property>
             <property name="label" translatable="yes">Add media to your project by dragging files and folders here or by using the "Import" button.</property>
             <property name="wrap">True</property>
+            <property name="xalign">0</property>
           </object>
           <packing>
             <property name="expand">False</property>

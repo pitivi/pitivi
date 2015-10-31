@@ -287,7 +287,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
     """ Widget for listing effects """
 
-    def __init__(self, instance, unused_uiman):
+    def __init__(self, instance):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
 

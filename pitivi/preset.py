@@ -99,19 +99,19 @@ class PresetManager(GObject.Object, Loggable):
 
         action = Gio.SimpleAction.new("new", None)
         action.connect("activate", self._addPresetCb)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("New"), "preset.%s" % action.get_name())
         self.action_new = action
 
         action = Gio.SimpleAction.new("remove", None)
         action.connect("activate", self._removePresetCb)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Remove"), "preset.%s" % action.get_name())
         self.action_remove = action
 
         action = Gio.SimpleAction.new("save", None)
         action.connect("activate", self._savePresetCb)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Save"), "preset.%s" % action.get_name())
         self.action_save = action
 

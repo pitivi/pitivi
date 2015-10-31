@@ -85,13 +85,6 @@ STORE_MODEL_STRUCTURE = (
  COL_LENGTH,
  COL_SEARCH_TEXT) = list(range(len(STORE_MODEL_STRUCTURE)))
 
-ui = '''
-<ui>
-    <accelerator action="RemoveSources" />
-    <accelerator action="InsertEnd" />
-</ui>
-'''
-
 # This whitelist is made from personal knowledge of file extensions in the wild,
 # from gst-inspect |grep demux,
 # http://en.wikipedia.org/wiki/Comparison_of_container_formats and
@@ -116,7 +109,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         'play': (GObject.SignalFlags.RUN_LAST, None,
                  (GObject.TYPE_PYOBJECT,))}
 
-    def __init__(self, app, uiman):
+    def __init__(self, app):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
@@ -129,6 +122,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._draggedPaths = None
         self.dragged = False
         self.clip_view = self.app.settings.lastClipView
+        if self.clip_view not in (SHOW_TREEVIEW, SHOW_ICONVIEW):
+            self.clip_view = SHOW_ICONVIEW
         self.import_start_time = time.time()
         self._last_imported_uris = []
 
@@ -150,9 +145,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         toolbar = builder.get_object("medialibrary_toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._import_button = builder.get_object("media_import_button")
-        self._remove_button = builder.get_object("media_remove_button")
         self._clipprops_button = builder.get_object("media_props_button")
-        self._insert_button = builder.get_object("media_insert_button")
         self._listview_button = builder.get_object("media_listview_button")
         searchEntry = builder.get_object("media_search_entry")
 
@@ -289,19 +282,20 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
 
-        # Keyboard shortcuts for some items in the gtkbuilder file
-        selection_actions = (
-            ("RemoveSources", Gtk.STOCK_DELETE, _("_Remove from Project"),
-             "<Control>Delete", None, self._removeSourcesCb),
+        actions_group = Gio.SimpleActionGroup()
+        self.insert_action_group("medialibrary", actions_group)
 
-            ("InsertEnd", Gtk.STOCK_COPY, _("Insert at _End of Timeline"),
-             "Insert", None, self._insertEndCb),
-        )
-        self.selection_actions = Gtk.ActionGroup(name="medialibraryselection")
-        self.selection_actions.add_actions(selection_actions)
-        self.selection_actions.set_sensitive(False)
-        uiman.insert_action_group(self.selection_actions, 0)
-        uiman.add_ui_from_string(ui)
+        self.remove_assets_action = Gio.SimpleAction.new("remove_assets", None)
+        self.remove_assets_action.connect("activate", self._removeAssetsCb)
+        actions_group.add_action(self.remove_assets_action)
+        self.app.add_accelerator("<Control>Delete", "medialibrary.remove_assets", None)
+
+        self.insert_at_end_action = Gio.SimpleAction.new("insert_assets_at_end", None)
+        self.insert_at_end_action.connect("activate", self._insertEndCb)
+        actions_group.add_action(self.insert_at_end_action)
+        self.app.add_accelerator("Insert", "medialibrary.insert_assets_at_end", None)
+
+        self._updateActions()
 
         # Set the state of the view mode toggle button.
         self._listview_button.set_active(self.clip_view == SHOW_TREEVIEW)
@@ -350,10 +344,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             info = asset.get_info()
             asset_uri = info.get_uri()
             if asset_uri == uri:
-                self.debug("Found asset: %s for uri: %s" % (asset, uri))
+                self.debug("Found asset: %s for uri: %s", asset, uri)
                 return asset
 
-        self.warning("Did not find any asser for uri: %s" % (uri))
+        self.warning("Did not find any asset for uri: %s", uri)
 
     def _setupViewAsDragAndDropSource(self, view):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
@@ -367,10 +361,27 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _importSourcesCb(self, unused_action):
         self._showImportSourcesDialog()
 
-    def _removeSourcesCb(self, unused_action):
-        self._removeSources()
+    def _removeAssetsCb(self, unused_action, unused_parameter):
+        """
+        Determine which clips are selected in the icon or list view,
+        and ask MediaLibrary to remove them from the project.
+        """
+        model = self.treeview.get_model()
+        paths = self.getSelectedPaths()
+        if not paths:
+            return
+        # use row references so we don't have to care if a path has been
+        # removed
+        rows = [Gtk.TreeRowReference.new(model, path)
+                for path in paths]
 
-    def _insertEndCb(self, unused_action):
+        self.app.action_log.begin("remove asset from media library")
+        for row in rows:
+            asset = model[row.get_path()][COL_ASSET]
+            self.app.project_manager.current_project.remove_asset(asset)
+        self.app.action_log.commit()
+
+    def _insertEndCb(self, unused_action, unused_parameter):
         self.app.gui.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
 
     def _searchEntryChangedCb(self, entry):
@@ -386,6 +397,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             entry.set_text("")
         elif icon_pos == Gtk.EntryIconPosition.PRIMARY:
             self._selectUnusedSources()
+            # Focus the container so the user can use Ctrl+Delete, for example.
+            if self.clip_view == SHOW_TREEVIEW:
+                self.treeview.grab_focus()
+            elif self.clip_view == SHOW_ICONVIEW:
+                self.iconview.grab_focus()
 
     def _setRowVisible(self, model, iter, data):
         """
@@ -792,28 +808,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             dialogbox.destroy()
             self._importDialog = None
 
-    def _removeSources(self):
-        """
-        Determine which clips are selected in the icon or list view,
-        and ask MediaLibrary to remove them from the project.
-        """
-        model = self.treeview.get_model()
-        paths = self.getSelectedPaths()
-        if not paths:
-            return
-        # use row references so we don't have to care if a path has been
-        # removed
-        rows = []
-        for path in paths:
-            row = Gtk.TreeRowReference.new(model, path)
-            rows.append(row)
-
-        self.app.action_log.begin("remove clip from source list")
-        for row in rows:
-            asset = model[row.get_path()][COL_ASSET]
-            self.app.project_manager.current_project.remove_asset(asset)
-        self.app.action_log.commit()
-
     def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
         layers = self.app.project_manager.current_project.timeline.get_layers()
@@ -825,7 +819,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _selectUnusedSources(self):
         """
-        Select, in the media library, unused sources in the project.
+        Select the assets not used by any clip in the project's timeline.
         """
         project = self.app.project_manager.current_project
         unused_sources_uris = []
@@ -857,10 +851,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if response_id == Gtk.ResponseType.OK:
             self.app.gui.showProjectSettingsDialog()
         infobar.hide()
-
-    def _removeClickedCb(self, unused_widget=None):
-        """ Called when a user clicks on the remove button """
-        self._removeSources()
 
     def _clipPropertiesCb(self, unused_widget=None):
         """
@@ -1005,20 +995,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 ts.select_path(path[0])
 
     def _viewSelectionChangedCb(self, unused):
-        selected_items = len(self.getSelectedPaths())
-        if selected_items:
-            self.selection_actions.set_sensitive(True)
-            self._remove_button.set_sensitive(True)
-            self._insert_button.set_sensitive(True)
-            # Some actions can only be done on a single item at a time:
-            self._clipprops_button.set_sensitive(False)
-            if selected_items == 1:
-                self._clipprops_button.set_sensitive(True)
-        else:
-            self.selection_actions.set_sensitive(False)
-            self._remove_button.set_sensitive(False)
-            self._insert_button.set_sensitive(False)
-            self._clipprops_button.set_sensitive(False)
+        self._updateActions()
+
+    def _updateActions(self):
+        selected_count = len(self.getSelectedPaths())
+        self.remove_assets_action.set_enabled(selected_count)
+        self.insert_at_end_action.set_enabled(selected_count)
+        # Some actions can only be done on a single item at a time:
+        self._clipprops_button.set_sensitive(selected_count == 1)
 
     def _itemOrRowActivatedCb(self, unused_view, path, *unused_column):
         """

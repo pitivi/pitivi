@@ -212,15 +212,13 @@ class Marquee(Gtk.Box, Loggable):
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """
-    The main timeline Widget, it contains the representation of the GESTimeline
-    without any extra widgets.
+    Contains the layer controls and the layers representation.
     """
 
     __gtype_name__ = "PitiviTimeline"
 
     def __init__(self, container, app):
-        super(Timeline, self).__init__()
-
+        Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -229,12 +227,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._project = None
         self.bTimeline = None
 
+        self.props.can_focus = False
+
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
         # Stuff the layers representation in a Layout so we can have other
         # widgets there, see below.
         self.layout = Gtk.Layout()
+        self.layout.props.can_focus = True
+        self.layout.props.can_default = True
         self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_vbox.props.width_request = self.get_allocated_width()
         self.__layers_vbox.props.height_request = self.get_allocated_height()
@@ -587,9 +589,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def __buttonPressEventCb(self, unused_widget, event):
+        self.debug("PRESSED %s", event)
+        self.app.gui.focusTimeline()
         event_widget = self.get_event_widget(event)
 
-        self.debug("PRESSED %s", event)
         res, button = event.get_button()
         if res and button == 1:
             self.draggingElement = self._getParentOfType(event_widget, Clip)
@@ -1121,28 +1124,23 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     Container for zoom box, ruler, timeline, scrollbars and toolbar.
     """
 
-    def __init__(self, gui, instance, ui_manager):
+    def __init__(self, gui, instance):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
-        # Allows stealing focus from other GTK widgets, prevent accidents:
-        self.props.can_focus = True
-
         self.gui = gui
-        self.ui_manager = ui_manager
         self.app = instance
         self._settings = self.app.settings
+        self._autoripple_active = self._settings.timelineAutoRipple
 
         self._projectmanager = None
         self._project = None
         self.bTimeline = None
         self.__copiedGroup = None
 
-        self.ui_manager.add_ui_from_file(
-            os.path.join(get_ui_dir(), "timelinecontainer.xml"))
-        self._createActions()
         self._createUi()
+        self._createActions()
 
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
@@ -1269,21 +1267,17 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
-    def setActionsSensitivity(self, sensitive):
-        """
-        The timeline's "actions" have global keyboard shortcuts that are
-        dangerous in any context other than the timeline. In a text entry widget
-        for example, you don't want the "Delete" key to remove clips currently
-        selected on the timeline, or "Spacebar" to toggle playback.
-
-        This sets the sensitivity of all actiongroups that might interfere.
-        """
-        self.playhead_actions.set_sensitive(sensitive)
-        self.debug("Playback shortcuts sensitivity set to %s", sensitive)
-
-        sensitive = sensitive and self.timeline.selection
-        self.selection_actions.set_sensitive(sensitive)
-        self.debug("Editing shortcuts sensitivity set to %s", sensitive)
+    def updateActions(self):
+        selection_non_empty = bool(self.timeline.selection)
+        self.delete_action.set_enabled(selection_non_empty)
+        self.group_action.set_enabled(selection_non_empty)
+        self.ungroup_action.set_enabled(selection_non_empty)
+        self.copy_action.set_enabled(selection_non_empty)
+        can_paste = bool(self.__copiedGroup and
+                         self.__copiedGroup.get_children(True))
+        self.paste_action.set_enabled(can_paste)
+        self.align_action.set_enabled(selection_non_empty)
+        self.keyframe_action.set_enabled(selection_non_empty)
 
     # Internal API
 
@@ -1308,14 +1302,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ruler.setProjectFrameRate(24.)
         self.ruler.hide()
 
-        toolbar = self.ui_manager.get_widget("/TimelineToolBar")
-        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        toolbar.set_orientation(Gtk.Orientation.VERTICAL)
-        toolbar.set_style(Gtk.ToolbarStyle.ICONS)
-        toolbar.get_accessible().set_name("timeline toolbar")
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar.ui"))
+        self.toolbar = builder.get_object("timeline_toolbar")
+        self.toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        self.toolbar.get_accessible().set_name("timeline toolbar")
 
-        alter_style_class(".%s" % Gtk.STYLE_CLASS_INLINE_TOOLBAR, toolbar,
-                          "padding-left: %dpx; border-width: 0px; background: alpha (@base_color, 0.0);" % (SPACING / 2))
+        self.gapless_button = builder.get_object("gapless_button")
+        self.gapless_button.set_active(self._autoripple_active)
+
         alter_style_class(
             ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._vscrollbar,
             "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
@@ -1323,24 +1318,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._hscrollbar,
             "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
-        # Toggle/pushbuttons like the "gapless mode" ones are special, it seems
-        # you can't insert them as normal "actions", so we create them here:
-        gapless_mode_button = Gtk.ToggleToolButton()
-        gapless_mode_button.set_stock_id("pitivi-gapless")
-        gapless_mode_button.set_tooltip_markup(_("Toggle gapless mode\n"
-                                                 "When enabled, adjacent clips automatically move to fill gaps."))
-        toolbar.add(gapless_mode_button)
-        # Restore the state of the timeline's "gapless" mode:
-        self._autoripple_active = self._settings.timelineAutoRipple
-        gapless_mode_button.set_active(self._autoripple_active)
-        gapless_mode_button.connect("toggled", self._gaplessmodeToggledCb)
-
         self.attach(self.zoomBox, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(self._vscrollbar, 2, 1, 1, 1)
         self.attach(self._hscrollbar, 1, 2, 1, 1)
-        self.attach(toolbar, 3, 1, 1, 1)
+        self.attach(self.toolbar, 3, 1, 1, 1)
 
         min_height = (self.ruler.get_size_request()[1] +
                       (EXPANDED_SIZE + SPACING) * 2 +
@@ -1396,91 +1379,86 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return longest_layer
 
     def _createActions(self):
-        """
-        Sets up the GtkActions. This allows managing the sensitivity of widgets
-        to the mouse and keyboard shortcuts.
-        """
-        # TODO: use GAction + GActionGroup (Gio.SimpleAction +
-        # Gio.SimpleActionGroup)
+        # The actions below are all added to this action group and they
+        # are accessible only to the self.timeline.layout and self.toolbar
+        # widgets (and their children) using the "timeline" prefix.
+        # When the action for an accelerator is searched, due to the "timeline"
+        # prefix, the accelerators work only when the focus is on one of these
+        # two widgets: the layout with the layers representation (excluding the
+        # controls) and the timeline toolbar.
+        group = Gio.SimpleActionGroup()
+        self.timeline.layout.insert_action_group("timeline", group)
+        self.toolbar.insert_action_group("timeline", group)
 
-        # Action list items can vary in size (1-6 items). The first one is the
-        # name, and it is the only mandatory option. All the other options are
-        # optional, and if omitted will default to None.
-        #
-        # name (required), stock ID, translatable label,
-        # keyboard shortcut, translatable tooltip, callback function
-        zoom_in_tooltip = _("Zoom In")
-        zoom_out_tooltip = _("Zoom Out")
-        zoom_fit_tooltip = _("Zoom Fit")
-        actions = (
-            ("ZoomIn", Gtk.STOCK_ZOOM_IN, None,
-             "<Control>plus", zoom_in_tooltip, self._zoomInCb),
+        self.zoom_in_action = Gio.SimpleAction.new("zoom_in", None)
+        self.zoom_in_action.connect("activate", self._zoomInCb)
+        group.add_action(self.zoom_in_action)
+        self.app.add_accelerator("<Control>plus", "timeline.zoom_in", None)
+        self.app.add_accelerator("<Control>equal", "timeline.zoom_in", None)
+        self.app.add_accelerator("<Control>KP_Add", "timeline.zoom_in", None)
 
-            ("ZoomOut", Gtk.STOCK_ZOOM_OUT, None,
-             "<Control>minus", zoom_out_tooltip, self._zoomOutCb),
+        self.zoom_out_action = Gio.SimpleAction.new("zoom_out", None)
+        self.zoom_out_action.connect("activate", self._zoomOutCb)
+        group.add_action(self.zoom_out_action)
+        self.app.add_accelerator("<Control>minus", "timeline.zoom_out", None)
+        self.app.add_accelerator("<Control>KP_Subtract", "timeline.zoom_out", None)
 
-            ("ZoomFit", Gtk.STOCK_ZOOM_FIT, None,
-             "<Control>0", zoom_fit_tooltip, self._zoomFitCb),
+        self.zoom_fit_action = Gio.SimpleAction.new("zoom_fit", None)
+        self.zoom_fit_action.connect("activate", self._zoomFitCb)
+        group.add_action(self.zoom_fit_action)
+        self.app.add_accelerator("<Control>0", "timeline.zoom_fit", None)
 
-            # Alternate keyboard shortcuts to the actions above
-            ("ControlEqualAccel", Gtk.STOCK_ZOOM_IN, None,
-             "<Control>equal", zoom_in_tooltip, self._zoomInCb),
+        # Clips actions.
+        self.delete_action = Gio.SimpleAction.new("delete_selected_clips", None)
+        self.delete_action.connect("activate", self._deleteSelected)
+        group.add_action(self.delete_action)
+        self.app.add_accelerator("Delete", "timeline.delete_selected_clips", None)
 
-            ("ControlKPAddAccel", Gtk.STOCK_ZOOM_IN, None,
-             "<Control>KP_Add", zoom_in_tooltip, self._zoomInCb),
+        self.group_action = Gio.SimpleAction.new("group_selected_clips", None)
+        self.group_action.connect("activate", self._groupSelected)
+        group.add_action(self.group_action)
+        self.app.add_accelerator("<Control>g", "timeline.group_selected_clips", None)
 
-            ("ControlKPSubtractAccel", Gtk.STOCK_ZOOM_OUT, None,
-             "<Control>KP_Subtract", zoom_out_tooltip, self._zoomOutCb),
-        )
+        self.ungroup_action = Gio.SimpleAction.new("ungroup_selected_clips", None)
+        self.ungroup_action.connect("activate", self._ungroupSelected)
+        group.add_action(self.ungroup_action)
+        self.app.add_accelerator("<Shift><Control>g", "timeline.ungroup_selected_clips", None)
 
-        selection_actions = (
-            ("DeleteObj", Gtk.STOCK_DELETE, None,
-             "Delete", _("Delete Selected"), self._deleteSelected),
+        self.copy_action = Gio.SimpleAction.new("copy_selected_clips", None)
+        self.copy_action.connect("activate", self.__copyClipsCb)
+        group.add_action(self.copy_action)
+        self.app.add_accelerator("<Control>c", "timeline.copy_selected_clips", None)
 
-            ("UngroupObj", "pitivi-ungroup", _("Ungroup"),
-             "<Shift><Control>G", _("Ungroup clips"), self._ungroupSelected),
+        self.paste_action = Gio.SimpleAction.new("paste_clips", None)
+        self.paste_action.connect("activate", self.__pasteClipsCb)
+        group.add_action(self.paste_action)
+        self.app.add_accelerator("<Control>v", "timeline.paste_clips", None)
 
-            # Translators: This is an action, the title of a button
-            ("GroupObj", "pitivi-group", _("Group"),
-             "<Control>G", _("Group clips"), self._groupSelected),
+        self.align_action = Gio.SimpleAction.new("align_selected_clips", None)
+        self.align_action.connect("activate", self._alignSelectedCb)
+        group.add_action(self.align_action)
+        self.app.add_accelerator("<Shift><Control>a", "timeline.align_selected_clips", None)
 
-            ("Copy", "copy", _("Copy"),
-             "<Control>c", _("Copy clips"), self.__copyClipsCb),
+        self.gapless_action = Gio.SimpleAction.new("toggle_gapless_mode", None)
+        self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
+        group.add_action(self.gapless_action)
 
-            ("Paste", "paste", _("Paste"),
-             "<Control>v", _("Paste clips"), self.__pasteClipsCb),
+        # Playhead actions.
+        self.play_action = Gio.SimpleAction.new("play", None)
+        self.play_action.connect("activate", self._playPauseCb)
+        group.add_action(self.play_action)
+        self.app.add_accelerator("space", "timeline.play", None)
 
-            # TODO: Fix the align feature.
-            # ("AlignObj", "pitivi-align", _("Align"),
-            #  "<Shift><Control>A", _("Align clips based on their soundtracks"), self._alignSelected),
-        )
+        self.split_action = Gio.SimpleAction.new("split_clips", None)
+        self.split_action.connect("activate", self._splitCb)
+        group.add_action(self.split_action)
+        self.app.add_accelerator("S", "timeline.split_clips", None)
+        self.split_action.set_enabled(True)
 
-        playhead_actions = (
-            ("PlayPause", Gtk.STOCK_MEDIA_PLAY, None,
-             "space", _("Start Playback"), self._playPauseCb),
-
-            ("Split", "pitivi-split", _("Split"),
-             "S", _("Split clip at playhead position"), self._splitCb),
-
-            ("Keyframe", "pitivi-keyframe", _("Add a Keyframe"),
-             "K", _("Add a keyframe"), self._keyframeCb),
-        )
-
-        actiongroup = Gtk.ActionGroup(name="timelinepermanent")
-        self.selection_actions = Gtk.ActionGroup(name="timelineselection")
-        self.playhead_actions = Gtk.ActionGroup(name="timelineplayhead")
-
-        actiongroup.add_actions(actions)
-
-        self.ui_manager.insert_action_group(actiongroup, 0)
-        self.selection_actions.add_actions(selection_actions)
-        self.selection_actions.set_sensitive(False)
-        self.ui_manager.insert_action_group(self.selection_actions, -1)
-        self.playhead_actions.add_actions(playhead_actions)
-        self.ui_manager.insert_action_group(self.playhead_actions, -1)
-
-        self.selection_actions.get_action("Copy").set_gicon(Gio.Icon.new_for_string("edit-copy"))
-        self.selection_actions.get_action("Paste").set_gicon(Gio.Icon.new_for_string("edit-paste"))
+        self.keyframe_action = Gio.SimpleAction.new("keyframe_selected_clips", None)
+        self.keyframe_action.connect("activate", self._keyframeCb)
+        group.add_action(self.keyframe_action)
+        self.app.add_accelerator("K", "timeline.keyframe_selected_clips", None)
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """
@@ -1557,7 +1535,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.queue_draw()
         return False
 
-    def _deleteSelected(self, unused_action):
+    def _deleteSelected(self, unused_action, unused_parameter):
         if self.bTimeline:
             self.app.action_log.begin("delete clip")
 
@@ -1572,7 +1550,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.timeline.selection.setSelection([], SELECT)
 
-    def _ungroupSelected(self, unused_action):
+    def _ungroupSelected(self, unused_action, unused_parameter):
         if self.bTimeline:
             self.app.action_log.begin("ungroup")
 
@@ -1589,7 +1567,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.app.action_log.commit()
             self._project.pipeline.commit_timeline()
 
-    def _groupSelected(self, unused_action):
+    def _groupSelected(self, unused_action, unused_parameter):
         if self.bTimeline:
             self.app.action_log.begin("group")
 
@@ -1612,11 +1590,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._project.pipeline.commit_timeline()
             self.app.action_log.commit()
 
-    def __copyClipsCb(self, unused_action):
+    def __copyClipsCb(self, unused_action, unused_parameter):
         if self.timeline.current_group:
             self.__copiedGroup = self.timeline.current_group.copy(True)
+            self.updateActions()
 
-    def __pasteClipsCb(self, unused_action):
+    def __pasteClipsCb(self, unused_action, unused_parameter):
         if self.__copiedGroup:
             save = self.__copiedGroup.copy(True)
             position = self._project.pipeline.getPosition()
@@ -1624,7 +1603,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.__copiedGroup = save
             self._project.pipeline.commit_timeline()
 
-    def _alignSelected(self, unused_action):
+    def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.bTimeline:
             self.error(
                 "Trying to use the autoalign feature with an empty timeline")
@@ -1647,7 +1626,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.error("Could not start the autoaligner: %s", e)
             progress_dialog.window.destroy()
 
-    def _splitCb(self, unused_action):
+    def _splitCb(self, unused_action, unused_parameter):
         """
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
@@ -1683,7 +1662,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if not splitted and splitting_selection:
             self._splitElements()
 
-    def _keyframeCb(self, unused_action):
+    def _keyframeCb(self, unused_action, unused_parameter):
         """
         Add or remove a keyframe at the current position of the selected clip.
         """
@@ -1708,7 +1687,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     interpolator.newKeyframe(position_in_obj)
                     self.app.action_log.commit()
 
-    def _playPauseCb(self, unused_action):
+    def _playPauseCb(self, unused_action, unused_parameter):
         self._project.pipeline.togglePlayback()
 
     def transposeXY(self, x, y):
@@ -1750,12 +1729,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             else:
                 self._project.pipeline.stepFrame(self._framerate, -1)
             self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+            return True
         elif event.keyval == Gdk.KEY_Right:
             if self._shiftMask:
                 self._seeker.seekRelative(Gst.SECOND)
             else:
                 self._project.pipeline.stepFrame(self._framerate, 1)
             self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+            return True
+        return False
 
     def do_key_release_event(self, event):
         if event.keyval == Gdk.KEY_Shift_L:
@@ -1765,17 +1747,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def do_focus_in_event(self, unused_event):
         self.log("Timeline has grabbed focus")
-        self.setActionsSensitivity(True)
+        self.updateActions()
 
     def do_focus_out_event(self, unused_event):
         self.log("Timeline has lost focus")
-        self.setActionsSensitivity(False)
-
-    def do_button_press_event(self, event):
-        self.pressed = True
-        self.grab_focus()  # Prevent other widgets from being confused
-
-        return True
+        self.updateActions()
 
     # Callbacks
     def _renderingSettingsChangedCb(self, project, item, value):
@@ -1838,33 +1814,22 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.setProject(project)
 
-    def _zoomInCb(self, unused_action):
+    def _zoomInCb(self, unused_action, unused_parameter):
         Zoomable.zoomIn()
 
-    def _zoomOutCb(self, unused_action):
+    def _zoomOutCb(self, unused_action, unused_parameter):
         Zoomable.zoomOut()
 
-    def _zoomFitCb(self, unused_action):
+    def _zoomFitCb(self, unused_action, unused_parameter):
         self.zoomFit()
 
     def _selectionChangedCb(self, selection):
         """
-        The selected clips on the timeline canvas have changed with the
-        "selection-changed" signal.
-
-        This is where you apply global UI changes, unlike individual
-        track elements' "selected-changed" signal from the Selected class.
+        The selected clips on the timeline have changed.
         """
-        if selection:
-            self.selection_actions.set_sensitive(True)
-        else:
-            self.selection_actions.set_sensitive(False)
+        self.updateActions()
 
-    def _gaplessmodeToggledCb(self, button):
-        if button.get_active():
-            self.info("Automatic ripple activated")
-            self._autoripple_active = True
-        else:
-            self.info("Automatic ripple deactivated")
-            self._autoripple_active = False
+    def _gaplessmodeToggledCb(self, unused_action, unused_parameter):
+        self._autoripple_active = self.gapless_button.get_active()
+        self.info("Automatic ripple: %s", self._autoripple_active)
         self._settings.timelineAutoRipple = self._autoripple_active

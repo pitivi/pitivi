@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.19.0 -->
+<interface>
+  <requires lib="gtk+" version="3.16"/>
+  <object class="GtkToolbar" id="timeline_toolbar">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="valign">start</property>
+    <property name="orientation">vertical</property>
+    <property name="toolbar_style">icons</property>
+    <child>
+      <object class="GtkToolButton" id="toolbutton1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Split clips at playhead position</property>
+        <property name="action_name">timeline.split_clips</property>
+        <property name="label" translatable="yes">Split</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">pitivi-split</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton2">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Delete clips</property>
+        <property name="action_name">timeline.delete_selected_clips</property>
+        <property name="label" translatable="yes">Delete</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">gtk-delete</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton3">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Group clips</property>
+        <property name="action_name">timeline.group_selected_clips</property>
+        <property name="label" translatable="yes">Group</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">pitivi-group</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton4">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Ungroup clips</property>
+        <property name="action_name">timeline.ungroup_selected_clips</property>
+        <property name="label" translatable="yes">Ungroup</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">pitivi-ungroup</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton5">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Copy clips</property>
+        <property name="action_name">timeline.copy_selected_clips</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">gtk-copy</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton6">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Paste clips</property>
+        <property name="action_name">timeline.paste_clips</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">gtk-paste</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToolButton" id="toolbutton7">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Align clips based on their soundtracks</property>
+        <property name="visible_horizontal">False</property>
+        <property name="visible_vertical">False</property>
+        <property name="action_name">timeline.align_selected_clips</property>
+        <property name="label" translatable="yes">Align</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">pitivi-align</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkToggleToolButton" id="gapless_button">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Toggle gapless mode
+When enabled, adjacent clips automatically move to fill gaps.</property>
+        <property name="action_name">timeline.toggle_gapless_mode</property>
+        <property name="label" translatable="yes">Gapless mode</property>
+        <property name="use_underline">True</property>
+        <property name="stock_id">pitivi-gapless</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
+  </object>
+</interface>

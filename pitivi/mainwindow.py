@@ -136,11 +136,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         self.connect("destroy", self._destroyedCb)
 
-        self.uimanager = Gtk.UIManager()
         self.setupCss()
         self.builder_handler_ids = []
         self.builder = Gtk.Builder()
-        self.add_accel_group(self.uimanager.get_accel_group())
 
         self._createUi()
         self.recent_manager = Gtk.RecentManager()
@@ -292,8 +290,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         # First set of tabs
         self.main_tabs = BaseTabs(self.app)
-        self.medialibrary = MediaLibraryWidget(self.app, self.uimanager)
-        self.effectlist = EffectListWidget(self.app, self.uimanager)
+        self.medialibrary = MediaLibraryWidget(self.app)
+        self.effectlist = EffectListWidget(self.app)
         self.main_tabs.append_page(
             self.medialibrary, Gtk.Label(label=_("Media Library")))
         self.main_tabs.append_page(
@@ -330,7 +328,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
-        self.timeline_ui = TimelineContainer(self, self.app, self.uimanager)
+        self.timeline_ui = TimelineContainer(self, self.app)
         self.timeline_ui.setProjectManager(self.app.project_manager)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
@@ -373,7 +371,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.connect("configure-event", self._configureCb)
 
         # Focus the timeline by default!
-        self.timeline_ui.grab_focus()
+        self.focusTimeline()
         self.updateTitle()
 
     def _setDefaultPositions(self):
@@ -435,7 +433,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.context_tabs.set_current_page(page)
 
     def focusTimeline(self):
-        self.timeline_ui.grab_focus()
+        layers_representation = self.timeline_ui.timeline.layout
+        # Check whether it has focus already, grab_focus always emits an event.
+        if not layers_representation.props.is_focus:
+            layers_representation.grab_focus()
 
     def _create_headerbar_buttons(self):
         undo_button = Gtk.Button.new_from_icon_name(
@@ -479,15 +480,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self._headerbar.pack_start(self.render_button)
 
     def _set_keyboard_shortcuts(self):
-        """
-        You can't rely on Glade/GTKBuilder to set accelerators properly
-        on menu items or buttons, it just doesn't work.
-        GAction and GActionGroup are overkill and a massive PITA.
-
-        This code keeps things *really* simple, and it actually works.
-        Bonus points: the accelerators disable themselves when buttons or
-        menu items are set_sensitive(False), which is exactly what we want.
-        """
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
         self.add_action(self.save_action)
@@ -1323,11 +1315,11 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
     def __titleTypeCb(self, widget, event, project):
         if event.keyval == Gdk.KEY_Return:
-            self.timeline_ui.grab_focus()
+            self.focusTimeline()
             return True
         elif event.keyval == Gdk.KEY_Escape:
             widget.set_text(project.name)
-            self.timeline_ui.grab_focus()
+            self.focusTimeline()
             return True
         return False
 

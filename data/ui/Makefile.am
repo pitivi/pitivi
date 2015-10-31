@@ -14,7 +14,7 @@ ui_DATA = \
 	renderingdialog.ui \
 	renderingprogress.ui \
 	startupwizard.ui \
-	timelinecontainer.xml \
+	timelinetoolbar.ui \
 	titleeditor.ui \
 	$(NULL)
 

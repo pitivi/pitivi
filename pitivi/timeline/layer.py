@@ -225,31 +225,31 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__move_layer_top_action = Gio.SimpleAction.new("move_layer_to_top", None)
         action = self.__move_layer_top_action
         action.connect("activate", self._moveLayerCb, -2)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Move layer to top"), "layer.%s" % action.get_name().replace(" ", "."))
 
         self.__move_layer_up_action = Gio.SimpleAction.new("move_layer_up", None)
         action = self.__move_layer_up_action
         action.connect("activate", self._moveLayerCb, -1)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Move layer up"), "layer.%s" % action.get_name().replace(" ", "."))
 
         self.__move_layer_down_action = Gio.SimpleAction.new("move_layer_down", None)
         action = self.__move_layer_down_action
         action.connect("activate", self._moveLayerCb, 1)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Move layer down"), "layer.%s" % action.get_name().replace(" ", "."))
 
         self.__move_layer_bottom_action = Gio.SimpleAction.new("move_layer_to_bottom", None)
         action = self.__move_layer_bottom_action
         action.connect("activate", self._moveLayerCb, 2)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
 
         self.__delete_layer_action = Gio.SimpleAction.new("delete_layer", None)
         action = self.__delete_layer_action
         action.connect("activate", self._deleteLayerCb)
-        action_group.insert(action)
+        action_group.add_action(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
 
         return menu_model, action_group
