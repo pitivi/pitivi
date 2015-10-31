@@ -421,19 +421,18 @@ class EffectProperties(Gtk.Expander, Loggable):
         return True
 
     def updateAll(self, path=None):
-        if self.get_expanded():
-            if len(self.clips) == 1:
-                self.show()
-                self._infobar.hide()
-                self._updateTreeview()
-                if path:
-                    self.treeview_selection.select_path(path)
-            else:
-                self._removeEffectConfigurationWidget()
-                self.storemodel.clear()
-                self._infobar.show()
+        if len(self.clips) == 1:
+            self.show()
+            self._infobar.hide()
+            self._updateTreeview()
+            if path:
+                self.treeview_selection.select_path(path)
             self._vcontent.show()
         else:
+            self.hide()
+            self._removeEffectConfigurationWidget()
+            self.storemodel.clear()
+            self._infobar.show()
             self._vcontent.hide()
 
     def _updateTreeview(self):
