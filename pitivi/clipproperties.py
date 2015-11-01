@@ -525,7 +525,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.add(self.builder.get_object("transform_box"))
         self.show_all()
         self._initButtons()
-        self.connect('notify::expanded', self._expandedCb)
         self.hide()
 
         self.app.project_manager.connect(
@@ -549,15 +548,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__setupSpinButton("width_spinbtn", "width")
         self.__setupSpinButton("height_spinbtn", "height")
-
-    def _expandedCb(self, expander, params):
-        if self._selected_clip:
-            self.source = self._selected_clip.find_track_element(None,
-                                                                 GES.VideoSource)
-            self.__setSource()
-            self.set_expanded(self.get_expanded())
-        else:
-            self.set_expanded(False)
 
     def _defaultValuesCb(self, widget):
         for name, spinbtn in list(self.spin_buttons.items()):
@@ -584,7 +574,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
             else:
                 self.default_values[name] = 0
             spinbtn.set_value(value)
-            self.source.connect("deep-notify", self.__sourcePropertyChangedCb)
 
     def __setupSpinButton(self, widget_name, property_name):
         """
@@ -608,32 +597,30 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.app.action_log.commit()
             self._project.pipeline.commit_timeline()
 
-    def __setSource(self):
+    def __setSource(self, source):
         if self.source:
             try:
                 self.source.disconnect_by_func(self.__sourcePropertyChangedCb)
             except TypeError:
                 pass
-        if self.get_expanded() and self._selected_clip:
-            self.source = self._selected_clip.find_track_element(None,
-                                                                 GES.VideoSource)
-
+        self.source = source
+        if self.source:
             self._updateSpinButtons()
-        else:
-            self.source = None
+            self.source.connect("deep-notify", self.__sourcePropertyChangedCb)
 
     def _selectionChangedCb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
-            if clip != self._selected_clip:
+            source = clip.find_track_element(None, GES.VideoSource)
+            if source:
                 self._selected_clip = clip
+                self.__setSource(source)
+                self.show()
+                return
 
-            self.show()
-            self.__setSource()
-        else:
-            # Deselect
-            if self._selected_clip:
-                self._selected_clip = None
-                self._project.pipeline.flushSeek()
-            self.__setSource()
-            self.hide()
+        # Deselect
+        if self._selected_clip:
+            self._selected_clip = None
+            self._project.pipeline.flushSeek()
+        self.__setSource(None)
+        self.hide()
