@@ -125,11 +125,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._toolbar.get_style_context().add_class(
             Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
+        spring = Gtk.SeparatorToolItem()
+        spring.set_draw(False)
+        spring.set_expand(True)
+        self._toolbar.insert(spring, 0)
         removeEffectButton = Gtk.ToolButton()
         removeEffectButton.set_icon_name("list-remove-symbolic")
         removeEffectButton.set_label(_("Remove effect"))
         removeEffectButton.set_is_important(True)
-        self._toolbar.insert(removeEffectButton, 0)
+        self._toolbar.insert(removeEffectButton, -1)
 
         # Treeview to display a list of effects (checkbox, effect type and
         # name)
