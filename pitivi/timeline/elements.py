@@ -416,6 +416,9 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         Gtk.Layout.do_set_property(self, property_id, value, pspec)
 
     def __showKeyframes(self):
+        if self.timeline.app.project_manager.current_project.pipeline.getState() == Gst.State.PLAYING:
+            return False
+
         if not self.__keyframeCurve:
             return False
 
