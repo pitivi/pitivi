@@ -675,7 +675,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
                                                                     self.timeline.dropData)
             self.timeline.resetSelectionGroup()
             self.timeline.selection.setSelection([self.bClip], timelineUtils.SELECT)
-            self.timeline.parent.gui.switchContextTab(self.bClip)
+            self.app.gui.switchContextTab(self.bClip)
             self.timeline.cleanDropData()
             success = True
 
@@ -796,7 +796,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.timeline.resetSelectionGroup()
             self.timeline.current_group.add(
                 self.bClip.get_toplevel_parent())
-            self.timeline.parent.gui.switchContextTab(self.bClip)
+            self.app.gui.switchContextTab(self.bClip)
         else:
             self.timeline.resetSelectionGroup()
 
@@ -997,11 +997,11 @@ class TransitionClip(Clip):
 
     def _selectedChangedCb(self, unused_child, selected, child):
         if selected:
-            self.timeline.parent.app.gui.trans_list.activate(child)
+            self.app.gui.trans_list.activate(child)
             self.selected = True
         else:
             self.selected = False
-            self.timeline.parent.app.gui.trans_list.deactivate()
+            self.app.gui.trans_list.deactivate()
 
 
 GES_TYPE_UI_TYPE = {

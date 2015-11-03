@@ -1124,12 +1124,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     Container for zoom box, ruler, timeline, scrollbars and toolbar.
     """
 
-    def __init__(self, gui, instance):
+    def __init__(self, instance):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
-        self.gui = gui
         self.app = instance
         self._settings = self.app.settings
         self._autoripple_active = self._settings.timelineAutoRipple
@@ -1144,6 +1143,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
+        self.setProjectManager(self.app.project_manager)
 
     # Public API
 

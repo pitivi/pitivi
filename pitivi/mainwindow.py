@@ -326,8 +326,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.mainhpaned.pack2(self.viewer, resize=True, shrink=False)
 
         # Now, the lower part: the timeline
-        self.timeline_ui = TimelineContainer(self, self.app)
-        self.timeline_ui.setProjectManager(self.app.project_manager)
+        self.timeline_ui = TimelineContainer(self.app)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
 
         # Enable our shortcuts for HeaderBar buttons and menu items:
