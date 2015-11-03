@@ -311,8 +311,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self.trans_list, Gtk.Label(label=_("Transition")))
         self.context_tabs.append_page(
             self.title_editor.widget, Gtk.Label(label=_("Title")))
-        self.context_tabs.connect(
-            "switch-page", self.title_editor.tabSwitchedCb)
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
@@ -331,9 +329,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui = TimelineContainer(self, self.app)
         self.timeline_ui.setProjectManager(self.app.project_manager)
         self.vpaned.pack2(self.timeline_ui, resize=True, shrink=False)
-
-        self.timeline_ui.timeline.selection.connect(
-            "selection-changed", self.title_editor.selectionChangedCb)
 
         # Enable our shortcuts for HeaderBar buttons and menu items:
         self._set_keyboard_shortcuts()

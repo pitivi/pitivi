@@ -57,6 +57,7 @@ class TitleEditor(Loggable):
         self.settings = {}
         self.source = None
         self.seeker = Seeker()
+        self._selection = None
 
         # Drag attributes
         self._drag_events = []
@@ -65,6 +66,11 @@ class TitleEditor(Loggable):
         self._children_props_handler = None
 
         self._createUI()
+        # Updates the UI.
+        self.set_source(None)
+
+        self.app.project_manager.connect(
+            "new-project-loaded", self._newProjectLoadedCb)
 
     def _createUI(self):
         builder = Gtk.Builder()
@@ -77,8 +83,7 @@ class TitleEditor(Loggable):
         toolbar = builder.get_object("toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
-        self.textbuffer = Gtk.TextBuffer()
-        self.textarea.set_buffer(self.textbuffer)
+        self.textbuffer = self.textarea.props.buffer
         self.textbuffer.connect("changed", self._textChangedCb)
 
         self.font_button = builder.get_object("fontbutton1")
@@ -101,7 +106,6 @@ class TitleEditor(Loggable):
                            _("Center"): "center",
                            _("Right"): "right"}.items()):
             self.settings["halignment"].append(en, n)
-        self._deactivate()
 
     def _setChildProperty(self, name, value):
         self.action_log.begin("Title %s change" % name)
@@ -126,24 +130,6 @@ class TitleEditor(Loggable):
         font_desc = widget.get_font_desc().to_string()
         self.debug("Setting font desc to %s", font_desc)
         self._setChildProperty("font-desc", font_desc)
-
-    def _activate(self):
-        """
-        Show the title editing UI widgets and hide the infobar
-        """
-        self.infobar.hide()
-        self.textarea.show()
-        self.editing_box.show()
-        self._connect_signals()
-
-    def _deactivate(self):
-        """
-        Reset the title editor interface to its default look
-        """
-        self.infobar.show()
-        self.textarea.hide()
-        self.editing_box.hide()
-        self._disconnect_signals()
 
     def _setWidgetText(self):
         res, source_text = self.source.get_child_property("text")
@@ -231,16 +217,18 @@ class TitleEditor(Loggable):
         @type source: L{GES.TitleSource}
         """
         self.debug("Source set to %s", source)
-        self._deactivate()
-        assert isinstance(source, GES.TextOverlay) or \
-            isinstance(source, GES.TitleSource)
+        self._disconnect_signals()
         self.source = source
-        self._updateFromSource()
-        self._activate()
-
-    def unset_source(self):
-        self._deactivate()
-        self.source = None
+        if source:
+            assert isinstance(source, GES.TextOverlay) or \
+                isinstance(source, GES.TitleSource)
+            self._updateFromSource()
+            self.infobar.hide()
+            self.editing_box.show()
+            self._connect_signals()
+        else:
+            self.infobar.show()
+            self.editing_box.hide()
 
     def _createCb(self, unused_button):
         clip = GES.TitleClip()
@@ -254,7 +242,7 @@ class TitleEditor(Loggable):
         assert(source.set_child_property("color", FOREGROUND_DEFAULT_COLOR))
         assert(source.set_child_property("font-desc", "Sans 10"))
         # Select it so the Title editor becomes active.
-        self.app.gui.timeline_ui.timeline.selection.setSelection([clip], SELECT)
+        self._selection.setSelection([clip], SELECT)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
@@ -311,12 +299,10 @@ class TitleEditor(Loggable):
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._propertyChangedCb)
         if not self._signals_connected:
-            self.app.gui.viewer.target.connect(
-                "motion-notify-event", self.drag_notify_event)
-            self.app.gui.viewer.target.connect(
-                "button-press-event", self.drag_press_event)
-            self.app.gui.viewer.target.connect(
-                "button-release-event", self.drag_release_event)
+            widget = self.app.gui.viewer.target
+            widget.connect("motion-notify-event", self.viewerDragNotifyCb)
+            widget.connect("button-press-event", self.viewerDragPressCb)
+            widget.connect("button-release-event", self.viewerDragReleaseCb)
             self._signals_connected = True
 
     def _disconnect_signals(self):
@@ -326,12 +312,12 @@ class TitleEditor(Loggable):
 
         if not self._signals_connected:
             return
-        self.app.gui.viewer.target.disconnect_by_func(self.drag_notify_event)
-        self.app.gui.viewer.target.disconnect_by_func(self.drag_press_event)
-        self.app.gui.viewer.target.disconnect_by_func(self.drag_release_event)
+        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragNotifyCb)
+        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragPressCb)
+        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragReleaseCb)
         self._signals_connected = False
 
-    def drag_press_event(self, unused_widget, event):
+    def viewerDragPressCb(self, unused_widget, event):
         if event.button == 1:
             self._drag_events = [(event.x, event.y)]
             # Update drag by drag event change, but not too often
@@ -369,21 +355,23 @@ class TitleEditor(Loggable):
         else:
             return False
 
-    def drag_notify_event(self, unused_widget, event):
+    def viewerDragNotifyCb(self, unused_widget, event):
         if len(self._drag_events) > 0 and event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
             self._drag_updated = True
             self._drag_events.append((event.x, event.y))
 
-    def drag_release_event(self, unused_widget, unused_event):
+    def viewerDragReleaseCb(self, unused_widget, unused_event):
         self._drag_events = []
 
-    def tabSwitchedCb(self, unused_notebook, page_widget, unused_page_index):
-        if self.widget == page_widget:
-            self._connect_signals()
-        else:
-            self._disconnect_signals()
+    def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
+        if self._selection is not None:
+            self._selection.disconnect_by_func(self._selectionChangedCb)
+            self._selection = None
+        if project:
+            self._selection = project.timeline.ui.selection
+            self._selection.connect('selection-changed', self._selectionChangedCb)
 
-    def selectionChangedCb(self, selection):
+    def _selectionChangedCb(self, selection):
         selected_clip = selection.getSingleClip(GES.TitleClip)
         source = None
         if selected_clip:
@@ -392,7 +380,4 @@ class TitleEditor(Loggable):
                     source = child
                     break
 
-        if source:
-            self.set_source(source)
-        else:
-            self.unset_source()
+        self.set_source(source)
