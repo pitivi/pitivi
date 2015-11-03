@@ -380,6 +380,7 @@ class LayerAdded(UndoableAction):
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-layer")
         st.set_value("priority", self.layer.props.priority)
+        st.set_value("auto-transition", self.layer.props.auto_transition)
         return st
 
 
