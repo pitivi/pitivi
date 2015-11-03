@@ -620,12 +620,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 togglebutton.set_label("◇")
                 self._setKeyframeToggleButtonState(togglebutton, False)
 
-        effect = self.element
-        parent = effect.get_parent()
-        if not parent:
-            self.log("Effect has no parent (it has been removed?)")
-            return
-
     def setElement(self, element, values={}, ignore=['name'],
                    default_btn=False):
         """
@@ -801,7 +795,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             for track_element in effect.get_parent().get_children(False):
                 if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
                     binding.props.control_source.unset_all()
-                    track_element.ui_element.updateKeyframes()
 
         widget.set_sensitive(True)
         widget.setWidgetToDefault()
