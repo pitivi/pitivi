@@ -99,9 +99,9 @@ class Seeker(GObject.Object, Loggable):
         if self.pending_seek_id is None:
             if on_idle:
                 self.pending_seek_id = self._scheduleSeek(
-                    self.timeout, self._seekTimeoutCb)
+                    self.timeout, self._seekTimeoutCb, relative=False)
             else:
-                self._seekTimeoutCb()
+                self._seek(relative=False)
         else:
             self.pending_position = position
 
@@ -112,7 +112,7 @@ class Seeker(GObject.Object, Loggable):
                 self.pending_seek_id = self._scheduleSeek(
                     self.timeout, self._seekTimeoutCb, relative=True)
             else:
-                self._seekTimeoutCb(relative=True)
+                self._seek(relative=True)
 
     def flush(self, on_idle=False):
         self.seekRelative(0, on_idle)
@@ -120,7 +120,10 @@ class Seeker(GObject.Object, Loggable):
     def _scheduleSeek(self, timeout, callback, relative=False):
         return GLib.timeout_add(timeout, callback, relative)
 
-    def _seekTimeoutCb(self, relative=False):
+    def _seekTimeoutCb(self, relative):
+        self._seek(relative)
+
+    def _seek(self, relative):
         self.pending_seek_id = None
 
         if relative:
