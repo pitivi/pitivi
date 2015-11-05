@@ -40,6 +40,9 @@ from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
+DEFAULT_FONT_DESCRIPTION = "Sans 36"
+DEFAULT_VALIGNMENT = GES.TextVAlign.CENTER
+DEFAULT_HALIGNMENT = GES.TextHAlign.CENTER
 
 
 class TitleEditor(Loggable):
@@ -110,8 +113,10 @@ class TitleEditor(Loggable):
     def _setChildProperty(self, name, value):
         self.action_log.begin("Title %s change" % name)
         self._setting_props = True
-        self.source.set_child_property(name, value)
-        self._setting_props = False
+        try:
+            assert(self.source.set_child_property(name, value))
+        finally:
+            self._setting_props = False
         self.action_log.commit()
 
     def _backgroundColorButtonCb(self, widget):
@@ -240,7 +245,9 @@ class TitleEditor(Loggable):
         assert(source.set_child_property("text", ""))
         assert(source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR))
         assert(source.set_child_property("color", FOREGROUND_DEFAULT_COLOR))
-        assert(source.set_child_property("font-desc", "Sans 10"))
+        assert(source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION))
+        assert(source.set_child_property("valignment", DEFAULT_VALIGNMENT))
+        assert(source.set_child_property("halignment", DEFAULT_HALIGNMENT))
         # Select it so the Title editor becomes active.
         self._selection.setSelection([clip], SELECT)
 
