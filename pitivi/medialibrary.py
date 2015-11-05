@@ -364,7 +364,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._removeSources()
 
     def _insertEndCb(self, unused_action):
-        self.app.gui.timeline_ui.insertEnd(self.getSelectedAssets())
+        self.app.gui.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
 
     def _searchEntryChangedCb(self, entry):
         # With many hundred clips in an iconview with dynamic columns and

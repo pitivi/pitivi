@@ -62,7 +62,6 @@ class TitleEditor(Loggable):
         self._drag_events = []
         self._signals_connected = False
         self._setting_props = False
-        self._setting_initial_props = False
         self._children_props_handler = None
 
         self._createUI()
@@ -244,31 +243,20 @@ class TitleEditor(Loggable):
         self.source = None
 
     def _createCb(self, unused_button):
-        """
-        The user clicked the "Create and insert" button, initialize the UI
-        """
         clip = GES.TitleClip()
         clip.set_duration(int(Gst.SECOND * 5))
-
-        # TODO: insert on the current layer at the playhead position.
-        # If no space is available, create a new layer to insert to on top.
-        self.app.gui.timeline_ui.insertEnd([clip])
-        self.app.gui.timeline_ui.timeline.selection.setToObj(clip, SELECT)
-
-        self._setting_initial_props = True
-        source = self.source = clip.get_children(False)[0]
+        self.app.gui.timeline_ui.insertClips([clip])
+        # Now that the clip is inserted in the timeline, it has a source which
+        # can be used to set its properties.
+        source = clip.get_children(False)[0]
         assert(source.set_child_property("text", ""))
         assert(source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR))
         assert(source.set_child_property("color", FOREGROUND_DEFAULT_COLOR))
         assert(source.set_child_property("font-desc", "Sans 10"))
-        self._setting_initial_props = False
-
-        self._updateFromSource()
+        # Select it so the Title editor becomes active.
+        self.app.gui.timeline_ui.timeline.selection.setSelection([clip], SELECT)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
-        if self._setting_initial_props:
-            return
-
         if self._setting_props:
             self.seeker.flush()
             return

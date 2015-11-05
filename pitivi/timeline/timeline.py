@@ -1132,15 +1132,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def insertEnd(self, assets):
+    def insertAssets(self, assets, position=None):
         """
-        Allows to add any asset at the end of the current timeline.
+        Add assets to the timeline and create clips on the longest layer.
         """
-        self.app.action_log.begin("add clip")
+        layer = self._getLongestLayer()
+        self._insertClipsAndAssets(assets, position, layer)
+
+    def insertClips(self, clips, position=None):
+        """
+        Add clips to the timeline on the first layer.
+        """
+        layers = self._getLayers()
+        layer = layers[0]
+        self._insertClipsAndAssets(clips, position, layer)
+
+    def _insertClipsAndAssets(self, objs, position, layer):
         if self.bTimeline is None:
             raise TimelineError("No bTimeline set, this is a bug")
-
-        layer = self._getLongestLayer()
 
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
@@ -1148,21 +1157,31 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # inserted...
         zoom_was_fitted = self.zoomed_fitted
 
-        for asset in assets:
-            if isinstance(asset, GES.TitleClip):
-                clip_duration = asset.get_duration()
-            elif asset.is_image():
-                clip_duration = self.app.settings.imageClipLength * \
-                    Gst.SECOND / 1000.0
-            else:
-                clip_duration = asset.get_duration()
+        clip_position = self.__getInsertPosition(position)
 
-            if not isinstance(asset, GES.TitleClip):
-                layer.add_asset(asset, self.bTimeline.props.duration,
-                                0, clip_duration, asset.get_supported_formats())
+        self.app.action_log.begin("add asset")
+        for obj in objs:
+            if isinstance(obj, GES.Clip):
+                obj.set_start(clip_position)
+                layer.add_clip(obj)
+                duration = obj.get_duration()
+            elif isinstance(obj, GES.Asset):
+                if obj.is_image():
+                    duration = self.app.settings.imageClipLength * \
+                        Gst.SECOND / 1000.0
+                else:
+                    duration = obj.get_duration()
+
+                layer.add_asset(obj,
+                                start=clip_position,
+                                inpoint=0,
+                                duration=duration,
+                                track_types=obj.get_supported_formats())
             else:
-                asset.set_start(self.bTimeline.props.duration)
-                layer.add_clip(asset)
+                raise TimelineError("Cannot insert: %s" % type(obj))
+            clip_position += duration
+        self.app.action_log.commit()
+        self._project.pipeline.commit_timeline()
 
         if zoom_was_fitted:
             self._setBestZoomRatio()
@@ -1170,8 +1189,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.scrollToPixel(
                 Zoomable.nsToPixel(self.bTimeline.props.duration))
 
-        self.app.action_log.commit()
-        self._project.pipeline.commit_timeline()
+    def __getInsertPosition(self, position):
+        if position is None:
+            return self._project.pipeline.getPosition()
+        if position < 0:
+            return self.bTimeline.props.duration
+        return position
 
     def purgeObject(self, asset_id):
         """Remove all instances of an asset from the timeline."""
@@ -1325,7 +1348,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _getLayers(self):
         """
-        Make sure we have at least one layer in our timeline.
+        Get the layers of the timeline.
+
+        Makes sure there is at least one layer in the timeline.
+
+        @rtype: list of GES.Layer
         """
         layers = self.bTimeline.get_layers()
         if not layers:

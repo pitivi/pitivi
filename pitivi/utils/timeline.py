@@ -103,14 +103,6 @@ class Selection(GObject.Object, Loggable):
         Loggable.__init__(self)
         self.selected = set()
 
-    def setToObj(self, obj, mode):
-        """
-        Convenience method for calling L{setSelection} with a single L{GES.Clip}
-
-        @see: L{setSelection}
-        """
-        self.setSelection(set([obj]), mode)
-
     def setSelection(self, objs, mode):
         """
         Update the current selection.
@@ -122,8 +114,6 @@ class Selection(GObject.Object, Loggable):
 
         @param objs: Timeline objects to update the selection with.
         @param mode: The type of update to apply. Can be C{SELECT}, C{UNSELECT} or C{SELECT_ADD}
-
-        @see: L{setToObj}
         """
         selection = set()
         for obj in objs:
