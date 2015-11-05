@@ -39,7 +39,7 @@ from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
-BACKGROUND_DEFAULT_COLOR = 0xFF000000  # Black
+BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 
 
 class TitleEditor(Loggable):
