@@ -337,6 +337,7 @@ def initialize_modules():
     require_version("Gst", GST_API_VERSION)
     require_version("GstController", GST_API_VERSION)
     from gi.repository import Gst
+    from pitivi.configure import get_audiopresets_dir, get_videopresets_dir
     Gst.init(None)
 
     require_version("GES", GST_API_VERSION)
@@ -377,6 +378,7 @@ HARD_DEPENDENCIES = [GICheck("3.14.0"),
                      CairoDependency("1.10.0"),
                      GstDependency("Gst", GST_API_VERSION, "1.6.0"),
                      GstDependency("GES", GST_API_VERSION, "1.6.0.0"),
+                     GIDependency("GstTranscoder", GST_API_VERSION),
                      GtkDependency("Gtk", GTK_API_VERSION, "3.10.0"),
                      ClassicDependency("numpy"),
                      GIDependency("Gio", "2.0"),

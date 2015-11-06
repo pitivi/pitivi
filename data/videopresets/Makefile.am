@@ -7,4 +7,5 @@ videopresets_DATA = \
     iPod.json
 
 EXTRA_DIST = \
-	$(videopresets_DATA)
+	$(videopresets_DATA) \
+	$(gstvideopresets_DATA)

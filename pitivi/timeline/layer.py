@@ -418,7 +418,10 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         bClips = self.bLayer.get_clips()
         for bClip in bClips:
             for child in bClip.get_children(False):
-                self.media_types |= child.get_track().props.track_type
+                track = child.get_track()
+                if not track:
+                    continue
+                self.media_types |= track.props.track_type
                 if self.media_types == GES.TrackType.AUDIO | GES.TrackType.VIDEO:
                     # Cannot find more types than these.
                     break
@@ -458,10 +461,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             self.error("Implement UI for type %s?", bClip.__gtype__)
             return
 
-        if not hasattr(bClip, "ui") or bClip.ui is None:
-            clip = ui_type(self, bClip)
-        else:
-            clip = bClip.ui
+        clip = ui_type(self, bClip)
 
         self._layout.put(clip, self.nsToPixel(bClip.props.start), 0)
         self.show_all()

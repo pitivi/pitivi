@@ -48,10 +48,14 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri
-from pitivi.utils.ui import beautify_info, beautify_length, info_name, \
-    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, SPACING
+from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri,\
+    get_proxy_target, disconnectAllByFunc
+from pitivi.utils.proxy import ProxyingStrategy
+from pitivi.utils.ui import beautify_asset, beautify_length, info_name, \
+    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, SPACING,  \
+    beautify_ETA, PADDING
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
@@ -75,7 +79,7 @@ GlobalSettings.addConfigOption('lastClipView',
 
 STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
-    str, object, str, str, str)
+    str, object, str, str, str, object)
 
 (COL_ICON_64,
  COL_ICON_128,
@@ -83,7 +87,8 @@ STORE_MODEL_STRUCTURE = (
  COL_ASSET,
  COL_URI,
  COL_LENGTH,
- COL_SEARCH_TEXT) = list(range(len(STORE_MODEL_STRUCTURE)))
+ COL_SEARCH_TEXT,
+ COL_THUMB_DECORATOR) = list(range(len(STORE_MODEL_STRUCTURE)))
 
 # This whitelist is made from personal knowledge of file extensions in the wild,
 # from gst-inspect |grep demux,
@@ -91,14 +96,139 @@ STORE_MODEL_STRUCTURE = (
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
 # ...and looking at the contents of /usr/share/mime
 SUPPORTED_FILE_FORMATS = {
-    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg"),
+    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg", "mp2t"),  # noqa
     "application": ("mxf",),
     # Don't forget audio formats
-    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
+    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),  # noqa
     # ...and image formats
     "image": ("jp2", "jpeg", "png", "svg+xml")}
-# Stuff that we're not too confident about but might improve eventually:
-OTHER_KNOWN_FORMATS = ("video/mp2t",)
+
+SUPPORTED_MIMETYPES = []
+for category, mime_types in SUPPORTED_FILE_FORMATS.items():
+    for mime in mime_types:
+        SUPPORTED_MIMETYPES.append(category + "/" + mime)
+
+
+class FileChooserExtraWidget(Gtk.Grid, Loggable):
+    def __init__(self, app):
+        Loggable.__init__(self)
+        Gtk.Grid.__init__(self)
+        self.app = app
+
+        self.set_row_spacing(SPACING)
+        self.set_column_spacing(SPACING)
+
+        self.__close_after = Gtk.CheckButton(label=_("Close after importing files"))
+        self.__close_after.set_active(self.app.settings.closeImportDialog)
+        self.attach(self.__close_after, 0, 0, 1, 2)
+
+        self.__automatic_proxies = Gtk.RadioButton.new_with_label(
+            None, _("Create proxies when the media format is not supported officially"))
+        self.__automatic_proxies.set_tooltip_markup(
+            _("Let Pitivi decide when to "
+              " create proxy files and when not. The decision will be made"
+              " depending on the file format, and how well it is supported."
+              " For example H264, FLAC files contained in Quicktime will"
+              " not be proxied, but AAC, H264 contained in MPEG-TS will.\n\n"
+              " <i>This is the only option officially supported by the"
+              " Pitivi developers and thus is the safest."
+              "</i>"))
+
+        self.__force_proxies = Gtk.RadioButton.new_with_label_from_widget(
+            self.__automatic_proxies, _("Create proxies for all files"))
+        self.__force_proxies.set_tooltip_markup(
+            _("Use proxies for every imported file"
+              " whatever its current media format is."))
+        self.__no_proxies = Gtk.RadioButton.new_with_label_from_widget(
+            self.__automatic_proxies, _("Do not use proxy files"))
+
+        if self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
+            self.__force_proxies.set_active(True)
+        elif self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
+            self.__no_proxies.set_active(True)
+        else:
+            self.__automatic_proxies.set_active(True)
+
+        self.attach(self.__automatic_proxies, 1, 0, 1, 1)
+        self.attach(self.__force_proxies, 1, 1, 1, 1)
+        self.attach(self.__no_proxies, 1, 2, 1, 1)
+        self.show_all()
+
+    def saveValues(self):
+        self.app.settings.closeImportDialog = self.__close_after.get_active()
+        if self.__force_proxies.get_active():
+            self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
+        elif self.__no_proxies.get_active():
+            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
+        else:
+            self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+
+
+class ThumbnailsDecorator(Loggable):
+    EMBLEMS = {}
+    PROXIED = "asset-proxied"
+    NO_PROXY = "no-proxy"
+    IN_PROGRESS = "asset-proxy-in-progress"
+    ASSET_PROXYING_ERROR = "asset-proxying-error"
+
+    DEFAULT_ALPHA = 255
+
+    for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR]:
+        EMBLEMS[status] = []
+        for size in [32, 64]:
+            EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
+
+    def __init__(self, thumbs, asset):
+        Loggable.__init__(self)
+        self.src_64 = thumbs[0]
+        self.src_128 = thumbs[1]
+
+        self.__asset = asset
+        self.decorate()
+
+    def __setState(self):
+        asset = self.__asset
+        target = asset.get_proxy_target()
+        if target and not target.get_error():
+            self.state = self.PROXIED
+        elif asset.proxying_error:
+            self.state = self.ASSET_PROXYING_ERROR
+        elif not asset.creation_progress == 100:
+            self.state = self.IN_PROGRESS
+        else:
+            self.state = self.NO_PROXY
+
+    def decorate(self):
+        self.__setState()
+        if self.state == self.NO_PROXY:
+            self.thumb_64 = self.src_64
+            self.thumb_128 = self.src_128
+            return
+
+        self.thumb_64 = self.src_64.copy()
+        self.thumb_128 = self.src_128.copy()
+        for i, thumb in enumerate([self.thumb_64, self.thumb_128]):
+            emblems = self.EMBLEMS[self.state]
+            src = emblems[i]
+
+            # We need to set dest_y == offset_y for the source image
+            # not to be cropped, that API is weird.
+            if thumb.get_height() < src.get_height():
+                src = src.copy()
+                src = src.scale_simple(src.get_width(),
+                                       thumb.get_height(),
+                                       GdkPixbuf.InterpType.BILINEAR)
+
+            src.composite(thumb, dest_x=0,
+                          dest_y=thumb.get_height() - src.get_height(),
+                          dest_width=src.get_width(),
+                          dest_height=src.get_height(),
+                          offset_x=0,
+                          offset_y=thumb.get_height() - src.get_height(),
+                          scale_x=1.0, scale_y=1.0,
+                          interp_type=GdkPixbuf.InterpType.BILINEAR,
+                          overall_alpha=self.DEFAULT_ALPHA)
 
 
 class MediaLibraryWidget(Gtk.Box, Loggable):
@@ -125,7 +255,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if self.clip_view not in (SHOW_TREEVIEW, SHOW_ICONVIEW):
             self.clip_view = SHOW_ICONVIEW
         self.import_start_time = time.time()
-        self._last_imported_uris = []
+        self._last_imported_uris = set()
+        self.__last_proxying_estimate_time = _("Unknown")
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -156,6 +287,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Prefer to sort the media library elements by URI
         # rather than show them randomly.
         self.storemodel.set_sort_column_id(COL_URI, Gtk.SortType.ASCENDING)
+        self.storemodel.connect("row-deleted", self.__updateViewCb)
+        self.storemodel.connect("row-inserted", self.__updateViewCb)
 
         # Scrolled Windows
         self.treeview_scrollwin = Gtk.ScrolledWindow()
@@ -212,7 +345,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         namecol.set_sizing(Gtk.TreeViewColumnSizing.GROW_ONLY)
         namecol.set_min_width(150)
         txtcell = Gtk.CellRendererText()
-        txtcell.set_property("ellipsize", Pango.EllipsizeMode.END)
+        txtcell.set_property("ellipsize", Pango.EllipsizeMode.START)
         namecol.pack_start(txtcell, True)
         namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
 
@@ -251,7 +384,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         cell.props.yalign = 0.0
         cell.props.xpad = 0
         cell.props.ypad = 0
-        cell.set_property("ellipsize", Pango.EllipsizeMode.END)
+        cell.set_property("ellipsize", Pango.EllipsizeMode.START)
         self.iconview.pack_start(cell, False)
         self.iconview.add_attribute(cell, "markup", COL_SEARCH_TEXT)
 
@@ -313,6 +446,22 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.thumbnailer = MediaLibraryWidget._getThumbnailer()
 
+    def finalize(self):
+        if not self._project:
+            self.debug("No project set...")
+            return
+
+        self.debug("Finalizing %s", self)
+        for asset in self._project.list_assets(GES.Extractable):
+            disconnectAllByFunc(asset, self.__assetProxiedCb)
+            disconnectAllByFunc(asset, self.__assetProxyingCb)
+
+        self.__disconnectFromProject()
+
+        self.app.project_manager.disconnect_by_func(self._newProjectCreatedCb)
+        self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
+        self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
+
     @staticmethod
     def _getThumbnailer():
         if "GnomeDesktop" in missing_soft_deps:
@@ -357,6 +506,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         view.connect("drag-data-get", self._dndDragDataGetCb)
         view.connect("drag-begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
+
+    def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
+        if not len(self.storemodel):
+            self._welcome_infobar.show_all()
+        else:
+            self._welcome_infobar.hide()
 
     def _importSourcesCb(self, unused_action):
         self._showImportSourcesDialog()
@@ -442,16 +597,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         Connect signal handlers to a project.
         """
         project.connect("asset-added", self._assetAddedCb)
+        project.connect("asset-loading-progress", self._assetLoadingProgressCb)
         project.connect("asset-removed", self._assetRemovedCb)
         project.connect("error-loading-asset", self._errorCreatingAssetCb)
-        project.connect("done-importing", self._sourcesStoppedImportingCb)
-        project.connect("start-importing", self._sourcesStartedImportingCb)
+        project.connect("proxying-error", self._proxyingErrorCb)
         project.connect("settings-set-from-imported-asset", self.__projectSettingsSetFromImportedAssetCb)
-
-        # The start-importing signal would have already been emited at that
-        # time, make sure to catch if it is the case
-        if project.nb_remaining_file_to_import > 0:
-            self._sourcesStartedImportingCb(project)
 
     def _setClipView(self, view_type):
         """
@@ -476,8 +626,24 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.treeview_scrollwin.hide()
             self.iconview_scrollwin.show_all()
 
-        if not len(self.storemodel):
-            self._welcome_infobar.show_all()
+    def __filterProxies(self, filter_info):
+        if filter_info.mime_type not in SUPPORTED_MIMETYPES:
+            return False
+
+        if filter_info.uri.endswith(".proxy.mkv"):
+            return False
+
+        source_uri, size = os.path.splitext(filter_info.uri.replace(
+            ".proxy.mkv", ""))
+        if os.path.exists(source_uri):
+            sfile = Gio.File.new_for_uri(source_uri)
+            file_size = sfile.query_info(
+                Gio.FILE_ATTRIBUTE_STANDARD_SIZEi,
+                Gio.FileQueryInfoFlags.NONE, None).get_size()
+            if file_size == size:
+                return False
+
+        return True
 
     def _showImportSourcesDialog(self):
         """Pop up the "Import Sources" dialog box"""
@@ -487,16 +653,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         chooser_action = Gtk.FileChooserAction.OPEN
         dialogtitle = _("Select One or More Files")
 
-        close_after = Gtk.CheckButton(label=_("Close after importing files"))
-        close_after.set_active(self.app.settings.closeImportDialog)
-
         self._importDialog = Gtk.FileChooserDialog(
             title=dialogtitle, transient_for=None, action=chooser_action)
 
         self._importDialog.set_icon_name("pitivi")
         self._importDialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                                        _("Add"), Gtk.ResponseType.OK)
-        self._importDialog.props.extra_widget = close_after
+        self._importDialog.props.extra_widget = FileChooserExtraWidget(self.app)
         self._importDialog.set_default_response(Gtk.ResponseType.OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(True)
@@ -511,45 +674,17 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             'update-preview', previewer.add_preview_request)
         # Filter for the "known good" formats by default
         filt_supported = Gtk.FileFilter()
-        filt_known = Gtk.FileFilter()
         filt_supported.set_name(_("Supported file formats"))
-        for category, mime_types in SUPPORTED_FILE_FORMATS.items():
-            for mime in mime_types:
-                filt_supported.add_mime_type(category + "/" + mime)
-                filt_known.add_mime_type(category + "/" + mime)
-        # Also allow showing known but not reliable demuxers
-        filt_known.set_name(_("All known file formats"))
-        for fullmime in OTHER_KNOWN_FORMATS:
-            filt_known.add_mime_type(fullmime)
+        filt_supported.add_custom(Gtk.FileFilterFlags.URI |
+                                  Gtk.FileFilterFlags.MIME_TYPE,
+                                  self.__filterProxies)
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
         default.add_pattern("*")
         self._importDialog.add_filter(filt_supported)
-        self._importDialog.add_filter(filt_known)
         self._importDialog.add_filter(default)
         self._importDialog.show()
-
-    def _updateProgressbar(self):
-        """
-        Update the _progressbar with the ratio of clips imported vs the total
-        """
-        # The clip iter has a +1 offset in the progressbar label (to refer to
-        # the actual # of the clip we're processing), but there is no offset
-        # in the progressbar itself (to reflect the process being incomplete).
-        current_clip_iter = self.app.project_manager.current_project.nb_imported_files
-        total_clips = self.app.project_manager.current_project.nb_remaining_file_to_import + \
-            current_clip_iter
-
-        progressbar_text = (_("Importing clip %(current_clip)d of %(total)d") %
-            {"current_clip": current_clip_iter + 1,
-            "total": total_clips})
-        self._progressbar.set_text(progressbar_text)
-        if current_clip_iter == 0:
-            self._progressbar.set_fraction(0.0)
-        elif total_clips != 0:
-            self._progressbar.set_fraction(
-                current_clip_iter / float(total_clips))
 
     def _getThumbnailInDir(self, dir, hash):
         """
@@ -583,7 +718,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _generateThumbnails(self, uri):
         if not self.thumbnailer:
-            # TODO: Use thumbnails generated with GStreamer.
             return None
         # This way of getting the mimetype feels awfully convoluted but
         # seems to be the proper/reliable way in a GNOME context
@@ -611,18 +745,27 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         LARGE_SIZE = 96
         info = asset.get_info()
 
+        if self.app.proxy_manager.isProxyAsset(asset) and not \
+                asset.props.proxy_target:
+            self.info("%s is a proxy asset but has no target,"
+                      "not displaying it.", asset.props.id)
+            return
+
+        self.debug("Adding asset %s", asset.props.id)
+
         # The code below tries to read existing thumbnails from the freedesktop
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
         video_streams = [
             i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]
+        real_uri = get_proxy_target(asset).props.id
         if len(video_streams) > 0:
             # From the freedesktop spec: "if the environment variable
             # $XDG_CACHE_HOME is set and not blank then the directory
             # $XDG_CACHE_HOME/thumbnails will be used, otherwise
             # $HOME/.cache/thumbnails will be used."
             # Older version of the spec also mentioned $HOME/.thumbnails
-            quoted_uri = quote_uri(info.get_uri())
+            quoted_uri = quote_uri(real_uri)
             thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
             try:
                 thumb_dir = os.environ['XDG_CACHE_HOME']
@@ -644,78 +787,160 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     thumb_128 = self._getIcon(
                         "image-x-generic", None, LARGE_SIZE)
                 else:
-                    thumb_64 = self._getIcon("video-x-generic")
-                    thumb_128 = self._getIcon(
-                        "video-x-generic", None, LARGE_SIZE)
-                # TODO ideally gst discoverer should create missing thumbnails.
-                self.log(
-                    "Missing a thumbnail for %s, queuing", path_from_uri(quoted_uri))
-                self._missing_thumbs.append(quoted_uri)
+                    thumb_cache = getThumbnailCache(asset)
+                    thumb_64 = thumb_cache.getPreviewThumbnail()
+                    if not thumb_64:
+                        thumb_64 = self._getIcon("video-x-generic")
+                        thumb_128 = self._getIcon("video-x-generic",
+                                                  None, LARGE_SIZE)
+                    else:
+                        thumb_128 = thumb_64.scale_simple(
+                            128, thumb_64.get_height() * 2,
+                            GdkPixbuf.InterpType.BILINEAR)
         else:
             thumb_64 = self._getIcon("audio-x-generic")
             thumb_128 = self._getIcon("audio-x-generic", None, LARGE_SIZE)
 
+        thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset)
         if info.get_duration() == Gst.CLOCK_TIME_NONE:
             duration = ''
         else:
             duration = beautify_length(info.get_duration())
-
-        name = info_name(info)
-
-        self.pending_rows.append((thumb_64,
-                                  thumb_128,
-                                  beautify_info(info),
+        name = info_name(asset)
+        self.pending_rows.append((thumbs_decorator.thumb_64,
+                                  thumbs_decorator.thumb_128,
+                                  beautify_asset(asset),
                                   asset,
-                                  info.get_uri(),
+                                  asset.props.id,
                                   duration,
-                                  name))
-        if len(self.pending_rows) > 50:
-            self._flushPendingRows()
+                                  name,
+                                  thumbs_decorator))
+        self._flushPendingRows()
 
     def _flushPendingRows(self):
         self.debug("Flushing %d pending model rows", len(self.pending_rows))
         for row in self.pending_rows:
             self.storemodel.append(row)
+
         del self.pending_rows[:]
 
     # medialibrary callbacks
 
-    def _assetAddedCb(self, unused_project, asset,
-                      unused_current_clip_iter=None, unused_total_clips=None):
+    def _assetLoadingProgressCb(self, project, progress, estimated_time):
+        self._progressbar.set_fraction(progress / 100)
+
+        for row in self.storemodel:
+            row[COL_INFOTEXT] = beautify_asset(row[COL_ASSET])
+
+        if progress == 0:
+            self._startImporting(project)
+        else:
+            if project.loaded:
+                num_proxying_files = [asset for asset in project.loading_assets if not asset.ready]
+                if estimated_time:
+                    self.__last_proxying_estimate_time = beautify_ETA(int(
+                        estimated_time * Gst.SECOND))
+
+                # Translators: this string indicates the estimated time
+                # remaining until an action (such as rendering) completes.
+                # The "%s" is an already-localized human-readable duration,
+                # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+                # In some languages, "About %s left" can be expressed roughly as
+                # "There remains approximatively %s" (to handle gender and plurals)
+                progress_message = _("Transcoding %d assets: %d%% (About %s left)") % (
+                    len(num_proxying_files), progress,
+                    self.__last_proxying_estimate_time)
+                self._progressbar.set_text(progress_message)
+                self._last_imported_uris.update([asset.props.id for asset in
+                                                 project.loading_assets])
+
+        self._progressbar.set_fraction(progress / 100)
+
+        if progress == 100:
+            self._doneImporting()
+
+    def __assetProxyingCb(self, proxy, unused_pspec):
+        self.debug("Proxy is %s", proxy.props.id)
+        self.__removeAsset(proxy)
+
+        if proxy.get_proxy_target() is not None:
+            # Re add the proxy so its emblem icon is updated.
+            self._addAsset(proxy)
+
+    def __assetProxiedCb(self, asset, unused_pspec):
+        self.debug("Asset proxied: %s -- %s", asset, asset.props.id)
+        proxy = asset.props.proxy
+        self.__removeAsset(asset)
+        if not proxy:
+            self._addAsset(asset)
+
+        self.app.gui.timeline_ui.switchProxies(asset)
+
+    def _assetAddedCb(self, unused_project, asset):
         """ a file was added to the medialibrary """
-        if isinstance(asset, GES.UriClipAsset):
-            self._updateProgressbar()
+
+        if asset in [row[COL_ASSET] for row in self.storemodel]:
+            self.info("Asset %s already in!", asset.props.id)
+            return
+
+        if isinstance(asset, GES.UriClipAsset) and not asset.error:
+            self.debug("Asset %s added: %s", asset, asset.props.id)
+            asset.connect("notify::proxy", self.__assetProxiedCb)
+            asset.connect("notify::proxy-target", self.__assetProxyingCb)
+            if asset.get_proxy():
+                self.debug("Not adding asset %s "
+                           "as it is proxied by %s",
+                           asset.props.id,
+                           asset.get_proxy().props.id)
+                return
+
             self._addAsset(asset)
 
     def _assetRemovedCb(self, unused_project, asset):
+        self.debug("%s Disconnecting %s - %s", self, asset, asset.props.id)
+        asset.disconnect_by_func(self.__assetProxiedCb)
+        asset.disconnect_by_func(self.__assetProxyingCb)
+        self.__removeAsset(asset)
+
+    def __removeAsset(self, asset):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
         model = self.storemodel
         uri = asset.get_id()
+        found = False
         for row in model:
             if uri == row[COL_URI]:
                 model.remove(row.iter)
+                found = True
                 break
-        if not len(model):
-            self._welcome_infobar.show_all()
-        self.debug("Removing: %s", uri)
+
+        if not found:
+            self.info("Trying to removed %s but that was not found"
+                      "in the liststore", uri)
+
+    def _proxyingErrorCb(self, unused_project, asset):
+        self.__removeAsset(asset)
+        self._addAsset(asset)
 
     def _errorCreatingAssetCb(self, unused_project, error, id, type):
         """ The given uri isn't a media file """
+
         if GObject.type_is_a(type, GES.UriClip):
+            if self.app.proxy_manager.isProxyAsset(id):
+                self.debug("Error %s with a proxy"
+                           ", not showing the error message", error)
+                return
+
             error = (id, str(error.domain), error)
             self._errors.append(error)
-            self._updateProgressbar()
 
-    def _sourcesStartedImportingCb(self, project):
+    def _startImporting(self, project):
+        self.__last_proxying_estimate_time = _("Unknown")
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
         self._progressbar.show()
-        if project.loaded:
-            # Some new files are being imported.
-            self._last_imported_uris += [asset.props.id for asset in project.get_loading_assets()]
 
-    def _sourcesStoppedImportingCb(self, unused_project):
+    def _doneImporting(self):
         self.debug("Importing took %.3f seconds",
                    time.time() - self.import_start_time)
         self._flushPendingRows()
@@ -764,7 +989,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if not self._last_imported_uris:
             return
         self._selectSources(self._last_imported_uris)
-        self._last_imported_uris = []
+        self._last_imported_uris = set()
 
     def _generateThumbnailsThread(self, missing_thumbs):
         for uri in missing_thumbs:
@@ -803,8 +1028,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
             self.app.settings.lastImportFolder = lastfolder
-            self.app.settings.closeImportDialog = \
-                dialogbox.props.extra_widget.get_active()
+            dialogbox.props.extra_widget.saveValues()
             filenames = dialogbox.get_uris()
             self.app.project_manager.current_project.addUris(filenames)
             if self.app.settings.closeImportDialog:
@@ -915,7 +1139,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         else:
             self._setClipView(SHOW_ICONVIEW)
 
+    def __getPathUnderMouse(self, view, event):
+        if isinstance(view, Gtk.TreeView):
+            path = None
+            tup = view.get_path_at_pos(int(event.x), int(event.y))
+            if tup:
+                path, column, x, y = tup
+            return path
+        elif isinstance(view, Gtk.IconView):
+            return view.get_path_at_pos(int(event.x), int(event.y))
+        else:
+            raise RuntimeError(
+                "Unknown media library view type: %s" % type(view))
+
     def _rowUnderMouseSelected(self, view, event):
+        path = self.__getPathUnderMouse(view, event)
         if isinstance(view, Gtk.TreeView):
             path = None
             tup = view.get_path_at_pos(int(event.x), int(event.y))
@@ -923,6 +1161,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 path, column, x, y = tup
             if path:
                 selection = view.get_selection()
+
                 return selection.path_is_selected(path) and selection.count_selected_rows() > 0
         elif isinstance(view, Gtk.IconView):
             path = view.get_path_at_pos(int(event.x), int(event.y))
@@ -965,15 +1204,112 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         elif self.clip_view == SHOW_ICONVIEW:
             self.iconview.unselect_all()
 
+    def __stopUsingProxyCb(self,
+                           unused_action,
+                           unused_parameter):
+        self._project.disableProxiesForAssets(self.getSelectedAssets())
+
+    def __useProxiesCb(self, unused_action, unused_parameter):
+        self._project.useProxiesForAssets(self.getSelectedAssets())
+
+    def __deleteProxiesCb(self, unused_action, unused_parameter):
+        self._project.disableProxiesForAssets(self.getSelectedAssets(), delete_proxy_file=True)
+
+    def __createMenuModel(self):
+        if self.app.proxy_manager.proxyingUnsupported:
+            return None, None
+
+        assets = self.getSelectedAssets()
+        action_group = Gio.SimpleActionGroup()
+        menu_model = Gio.Menu()
+
+        proxies = [asset.get_proxy_target() for asset in assets
+                   if asset.get_proxy_target()]
+        in_progress = [asset.creation_progress for asset in assets
+                       if asset.creation_progress < 100]
+
+        if proxies or in_progress:
+            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action.connect("activate", self.__stopUsingProxyCb)
+            action_group.insert(action)
+            text = ngettext("Do not use proxy for selected asset",
+                            "Do not use proxies for selected assets",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+            action = Gio.SimpleAction.new("delete-proxies", None)
+            action.connect("activate", self.__deleteProxiesCb)
+            action_group.insert(action)
+
+            text = ngettext("Delete corresponding proxy file",
+                            "Delete corresponding proxy files",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+        if len(proxies) != len(assets) and len(in_progress) != len(assets):
+            action = Gio.SimpleAction.new("use-proxies", None)
+            action.connect("activate", self.__useProxiesCb)
+            action_group.insert(action)
+            text = ngettext("Use proxy for selected asset",
+                            "Use proxies for selected assets", len(assets))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+        return menu_model, action_group
+
+    def __maybeShowPopoverMenu(self, view, event):
+        res, button = event.get_button()
+        if not res or button != 3:
+            return False
+
+        if not self._rowUnderMouseSelected(view, event):
+            path = self.__getPathUnderMouse(view, event)
+            if path:
+                if isinstance(view, Gtk.IconView):
+                    view.unselect_all()
+                    view.select_path(path)
+                else:
+                    selection = view.get_selection()
+                    selection.unselect_all()
+                    selection.select_path(path)
+
+        model, action_group = self.__createMenuModel()
+        if not model:
+            return True
+
+        popover = Gtk.Popover.new_from_model(view, model)
+        popover.insert_action_group("assets", action_group)
+        popover.props.position = Gtk.PositionType.BOTTOM
+
+        if self.clip_view == SHOW_TREEVIEW:
+            scrollwindow = self.treeview_scrollwin
+        elif self.clip_view == SHOW_ICONVIEW:
+            scrollwindow = self.iconview_scrollwin
+
+        rect = Gdk.Rectangle()
+        rect.x = event.x - scrollwindow.props.hadjustment.props.value
+        rect.y = event.y - scrollwindow.props.vadjustment.props.value
+        rect.width = 1
+        rect.height = 1
+        popover.set_pointing_to(rect)
+        popover.show_all()
+
+        return True
+
     def _treeViewButtonPressEventCb(self, treeview, event):
         self._updateDraggedPaths(treeview, event)
 
         Gtk.TreeView.do_button_press_event(treeview, event)
 
-        ts = self.treeview.get_selection()
+        selection = self.treeview.get_selection()
         if self._draggedPaths:
             for path in self._draggedPaths:
-                ts.select_path(path)
+                selection.select_path(path)
 
         return True
 
@@ -995,16 +1331,20 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         else:
             self._draggedPaths = None
 
-    def _treeViewButtonReleaseEventCb(self, unused_treeview, event):
-        ts = self.treeview.get_selection()
-        state = event.get_state() & (
+    def _treeViewButtonReleaseEventCb(self, treeview, event):
+        selection = self.treeview.get_selection()
+        state = selection() & (
             Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
         path = self.treeview.get_path_at_pos(event.x, event.y)
 
+        if self.__maybeShowPopoverMenu(treeview, event):
+            self.debug("Returning after showing popup menu")
+            return
+
         if not state and not self.dragged:
-            ts.unselect_all()
+            selection.unselect_all()
             if path:
-                ts.select_path(path[0])
+                selection.select_path(path[0])
 
     def _viewSelectionChangedCb(self, unused):
         self._updateActions()
@@ -1043,6 +1383,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
         shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
         modifier_active = control_mask or shift_mask
+
+        if self.__maybeShowPopoverMenu(iconview, event):
+            self.debug("Returning after showing popup menu")
+            return
+
         if not modifier_active and self.iconview_cursor_pos:
             current_cursor_pos = self.iconview.get_path_at_pos(
                 event.x, event.y)
@@ -1052,13 +1397,28 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     iconview.unselect_all()
                     iconview.select_path(current_cursor_pos)
 
+    def __disconnectFromProject(self):
+        if not self._project:
+            return
+
+        self._project.disconnect_by_func(self._assetAddedCb)
+        self._project.disconnect_by_func(self._assetLoadingProgressCb)
+        self._project.disconnect_by_func(self._assetRemovedCb)
+        self._project.disconnect_by_func(self._proxyingErrorCb)
+        self._project.disconnect_by_func(self._errorCreatingAssetCb)
+        self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
+
     def _newProjectCreatedCb(self, unused_app, project):
-        if self._project is not project:
-            self._project = project
-            self._resetErrorList()
-            self.storemodel.clear()
-            self._welcome_infobar.show_all()
-            self._connectToProject(project)
+        if self._project is project:
+            return
+
+        self.__disconnectFromProject()
+
+        self._project = project
+        self._resetErrorList()
+        self.storemodel.clear()
+        self._welcome_infobar.show_all()
+        self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_app, project, unused_fully_ready):
         if self._project is not project:
@@ -1114,9 +1474,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             # library
             self.app.threads.addThread(PathWalker, directories, self._addUris)
         if filenames:
-            self._last_imported_uris += filenames
+            self._last_imported_uris.update(filenames)
             project = self.app.project_manager.current_project
-            assets = project.assetsForUris(self._last_imported_uris)
+            assets = project.assetsForUris(list(self._last_imported_uris))
             if assets:
                 # All the files have already been added.
                 self._selectLastImportedUris()

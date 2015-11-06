@@ -1,4 +1,4 @@
-SUBDIRS=icons pixmaps ui renderpresets audiopresets videopresets
+SUBDIRS=icons pixmaps ui renderpresets audiopresets videopresets gstpresets
 
 desktopdir = $(datadir)/applications
 desktop_in_files = pitivi.desktop.in

@@ -9,9 +9,11 @@ tests =	\
 	test_common.py \
 	test_log.py \
 	test_mainwindow.py \
+	test_media_library.py \
 	test_misc.py \
 	test_prefs.py \
 	test_preset.py \
+	test_previewers.py \
 	test_project.py \
 	test_system.py \
 	test_timeline_layer.py \

@@ -161,4 +161,5 @@ data/ui/Makefile
 data/renderpresets/Makefile
 data/audiopresets/Makefile
 data/videopresets/Makefile
+data/gstpresets/Makefile
 )

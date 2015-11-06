@@ -30,12 +30,13 @@ from gi.repository import Gst
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager, Project
 from pitivi.utils.misc import uri_is_reachable
+from pitivi.utils.proxy import ProxyingStrategy
 
 from tests import common
 
 
 def _createRealProject(name=None):
-    app = common.getPitiviMock()
+    app = common.getPitiviMock(proxyingStrategy=ProxyingStrategy.NOTHING)
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
     project = project_manager.current_project
@@ -57,6 +58,9 @@ class MockProject(object):
         pass
 
     def disconnect_by_function(self, ignored):
+        pass
+
+    def finalize(self):
         pass
 
 
@@ -358,31 +362,39 @@ class TestProjectLoading(common.TestCase):
             os.remove(xges_path)
 
     def testAssetAddingRemovingAdding(self):
-        def loaded(project, timeline, mainloop, result, uris):
-            result[0] = True
-            project.addUris(uris)
+        def loadingProgressCb(project, progress, estimated_time,
+                              self, result, uris):
 
-        def added(project, mainloop, result, uris):
+            def readd(mainloop, result, uris):
+                project.addUris(uris)
+                result[2] = True
+                mainloop.quit()
+
+            if progress < 100:
+                return
+
             result[1] = True
             assets = project.list_assets(GES.UriClip)
+            self.assertEqual(len(assets), 1)
             asset = assets[0]
             project.remove_asset(asset)
-            GLib.idle_add(readd, mainloop, result, uris)
+            GLib.idle_add(readd, self.mainloop, result, uris)
 
-        def readd(mainloop, result, uris):
+        def loadedCb(project, timeline, mainloop, result, uris):
+            result[0] = True
             project.addUris(uris)
-            result[2] = True
-            mainloop.quit()
-
-        def quit(mainloop):
-            mainloop.quit()
 
         # Create a blank project and add an asset.
         project = _createRealProject()
         result = [False, False, False]
         uris = [common.getSampleUri("tears_of_steel.webm")]
-        project.connect("loaded", loaded, self.mainloop, result, uris)
-        project.connect("done-importing", added, self.mainloop, result, uris)
+        project.connect("loaded", loadedCb, self.mainloop, result, uris)
+        project.connect("asset-loading-progress",
+                        loadingProgressCb, self,
+                        result, uris)
+
+        def quit(mainloop):
+            mainloop.quit()
 
         self.assertTrue(project.createTimeline())
         GLib.timeout_add_seconds(5, quit, self.mainloop)
@@ -390,7 +402,8 @@ class TestProjectLoading(common.TestCase):
         self.assertTrue(
             result[0], "Project creation failed to trigger signal: loaded")
         self.assertTrue(
-            result[1], "Asset add failed to trigger signal: done-importing")
+            result[1], "Asset add failed to trigger asset-loading-progress"
+            "with progress == 100")
         self.assertTrue(result[2], "Asset re-adding failed")
 
 
@@ -421,11 +434,12 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(Gst.Fraction(2, 7), project.videopar)
 
     def testInitialization(self):
-        def loaded(project, timeline, mainloop, uris):
+        def loadedCb(project, timeline, mainloop, uris):
             project.addUris(uris)
 
-        def added(project, mainloop):
-            mainloop.quit()
+        def progressCb(project, progress, estimated_time, mainloop):
+            if progress == 100:
+                mainloop.quit()
 
         def quit(mainloop):
             mainloop.quit()
@@ -438,8 +452,8 @@ class TestProjectSettings(common.TestCase):
         uris = [common.getSampleUri("flat_colour1_640x480.png"),
                 common.getSampleUri("tears_of_steel.webm"),
                 common.getSampleUri("1sec_simpsons_trailer.mp4")]
-        project.connect("loaded", loaded, self.mainloop, uris)
-        project.connect("done-importing", added, self.mainloop)
+        project.connect("loaded", loadedCb, self.mainloop, uris)
+        project.connect("asset-loading-progress", progressCb, self.mainloop)
 
         self.assertTrue(project.createTimeline())
         GLib.timeout_add_seconds(5, quit, self.mainloop)
@@ -462,7 +476,7 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(Gst.Fraction(1, 1), project.videopar)
 
     def testLoad(self):
-        ptv = common.getPitiviMock()
+        ptv = common.getPitiviMock(proxyingStrategy=ProxyingStrategy.NOTHING)
         project = Project(uri="fake.xges", app=ptv)
         self.assertFalse(project._has_default_video_settings)
         self.assertFalse(project._has_default_audio_settings)

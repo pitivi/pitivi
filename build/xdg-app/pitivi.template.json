@@ -142,19 +142,6 @@
             ]
         },
         {
-            "name": "ipdb",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "ipdb-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
             "name": "gstreamer",
             "sources": [
                 {
@@ -234,6 +221,32 @@
                 {
                     "type": "git",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
+                }
+            ]
+        },
+        {
+
+            "name": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/mesonbuild/meson.git"
+
+                },
+                {
+                    "type": "file",
+                    "path": "meson-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "gst-transcoder",
+            "config-opts": ["--libdir=lib"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/thiblahute/gst-transcoder.git"
                 }
             ]
         },

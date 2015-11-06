@@ -12,6 +12,7 @@ utils_PYTHON = 	\
 	ripple_update_group.py	\
 	misc.py         \
 	validate.py     \
+	proxy.py     \
 	widgets.py
 
 clean-local:

@@ -42,6 +42,7 @@ from pitivi.utils.threads import ThreadMaster
 from pitivi.utils import loggable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import quote_uri, path_from_uri
+from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import getSystem
 from pitivi.utils.timeline import Zoomable
 
@@ -135,6 +136,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
         self.effects = EffectsManager()
+        self.proxy_manager = ProxyManager(self)
         self.system = getSystem()
 
         self.action_log.connect("commit", self._actionLogCommit)

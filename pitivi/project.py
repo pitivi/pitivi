@@ -557,6 +557,8 @@ class ProjectManager(GObject.Object, Loggable):
                 "Could not close project - this could be because there were unsaved changes and the user cancelled when prompted about them")
             return False
 
+        self.current_project.finalize()
+
         self.emit("project-closed", self.current_project)
         # We should never choke on silly stuff like disconnecting signals
         # that were already disconnected. It blocks the UI for nothing.
@@ -580,6 +582,7 @@ class ProjectManager(GObject.Object, Loggable):
         the creation of a new project without prompting the user about unsaved
         changes. This is an "extreme" way to reset Pitivi's state.
         """
+        self.debug("New blank project")
         if self.current_project is not None:
             # This will prompt users about unsaved changes (if any):
             if not ignore_unsaved_changes and not self.closeRunningProject():
@@ -702,12 +705,15 @@ class Project(Loggable, GES.Project):
     Signals:
      - C{project-changed}: Modifications were made to the project
      - C{start-importing}: Started to import files
-     - C{done-importing}: Done importing files
     """
 
     __gsignals__ = {
+        "asset-loading-progress": (GObject.SignalFlags.RUN_LAST, None, (object, int)),
+        # Working around the fact that PyGObject does not let us emit error-loading-asset
+        # and bugzilla does not let me file a bug right now :/
+        "proxying-error": (GObject.SignalFlags.RUN_LAST, None,
+                           (object,)),
         "start-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
-        "done-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
         "project-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
         "rendering-settings-changed": (GObject.SignalFlags.RUN_LAST, None,
                                        (GObject.TYPE_PYOBJECT,
@@ -730,6 +736,15 @@ class Project(Loggable, GES.Project):
         self.loaded = False
         self._at_least_one_asset_missing = False
         self.app = app
+        self.loading_assets = []
+        self.asset_loading_progress = 100
+        self.app.proxy_manager.connect("progress", self.__assetTranscodingProgressCb)
+        self.app.proxy_manager.connect("error-preparing-asset",
+                                       self.__proxyErrorCb)
+        self.app.proxy_manager.connect("asset-preparing-cancelled",
+                                       self.__assetTranscodingCancelledCb)
+        self.app.proxy_manager.connect("proxy-ready",
+                                       self.__proxyReadyCb)
 
         # GstValidate
         self.scenario = scenario
@@ -1020,34 +1035,171 @@ class Project(Loggable, GES.Project):
         if value:
             self.set_meta("render-scale", value)
 
+    # ------------------------------#
+    # Proxy creation implementation #
+    # ------------------------------#
+    def __assetTranscodingProgressCb(self, unused_proxy_manager, asset,
+                                     creation_progress, estimated_time):
+        self.__updateAssetLoadingProgress(estimated_time)
+
+    def __updateAssetLoadingProgress(self, estimated_time=0):
+        num_loading_assets = len(self.loading_assets)
+
+        if num_loading_assets == 0:
+            self.emit("asset-loading-progress", 100, estimated_time)
+            return
+
+        total_import_duration = 0
+        for asset in self.loading_assets:
+            total_import_duration += asset.get_duration()
+
+        if total_import_duration == 0:
+            self.info("No known duration yet")
+            return
+
+        self.asset_loading_progress = 0
+        all_ready = True
+        for asset in self.loading_assets:
+            asset_weight = asset.get_duration() / total_import_duration
+            self.asset_loading_progress += asset_weight * asset.creation_progress
+
+            if asset.creation_progress < 100:
+                all_ready = False
+            elif not asset.ready:
+                self.setModificationState(True)
+                asset.ready = True
+
+        if all_ready:
+            self.asset_loading_progress = 100
+
+        self.emit("asset-loading-progress", self.asset_loading_progress,
+                  estimated_time)
+
+        if all_ready:
+            self.info("No more loading assets")
+            self.loading_assets = []
+
+    def __assetTranscodingCancelledCb(self, unused_proxy_manager, asset):
+        self.__setProxy(asset, None, emit_asset_added=False)
+        self.__updateAssetLoadingProgress()
+
+    def __proxyErrorCb(self, unused_proxy_manager, asset, proxy,
+                       error):
+        if asset is None:
+            asset_id = self.app.proxy_manager.getTargetUri(proxy)
+            asset = GES.Asset.request(proxy.get_extractable_type(),
+                                      asset_id)
+            if not asset:
+                for tmpasset in self.loading_assets.keys():
+                    if tmpasset.props.id == asset_id:
+                        asset = tmpasset
+                        break
+
+                if not asset:
+                    self.error("Could not get the asset %s from its proxy %s", asset_id,
+                               proxy.props.id)
+
+                    return
+
+        asset.proxying_error = error
+        asset.creation_progress = 100
+
+        self.emit("proxying-error", asset)
+        self.__updateAssetLoadingProgress()
+
+    def __proxyReadyCb(self, unused_proxy_manager, asset, proxy):
+        self.__setProxy(asset, proxy)
+
+    def __setProxy(self, asset, proxy, emit_asset_added=True):
+        asset.creation_progress = 100
+        if proxy:
+            proxy.ready = False
+            proxy.error = None
+            proxy.creation_progress = 100
+
+        asset.set_proxy(proxy)
+        try:
+            self.loading_assets.remove(asset)
+        except ValueError:
+            pass
+
+        if proxy:
+            self.add_asset(proxy)
+        elif emit_asset_added:
+            self.emit("asset-added", asset)
+
+        if proxy:
+            self.loading_assets.append(proxy)
+
+        self.__updateAssetLoadingProgress()
+
     # ------------------------------------------ #
     # GES.Project virtual methods implementation #
     # ------------------------------------------ #
-
-    def _handle_asset_loaded(self, asset=None):
+    def do_asset_loading(self, asset):
         if asset and not GObject.type_is_a(asset.get_extractable_type(), GES.UriClip):
             # Ignore for example the assets producing GES.TitleClips.
             return
-        self.nb_imported_files += 1
-        self.nb_remaining_file_to_import = self.__countRemainingFilesToImport()
-        if self.nb_remaining_file_to_import == 0:
-            self.nb_imported_files = 0
-            # We do not take into account asset comming from project
-            if self.loaded is True:
-                self.app.action_log.commit()
-            self._emitChange("done-importing")
+
+        if not self.loading_assets:
+            # Progress == 0 means "starting to import"
+            self.emit("asset-loading-progress", 0, 0)
+
+        if not self.loaded:
+            self.debug("Project still loading, not using proxies: "
+                       "%s", asset.props.id)
+            asset.creation_progress = 100
+        else:
+            asset.creation_progress = 0
+
+        asset.error = None
+        asset.ready = False
+        asset.force_proxying = False
+        asset.proxying_error = None
+        self.loading_assets.append(asset)
+
+    def do_asset_removed(self, asset):
+        self.app.proxy_manager.cancelJob(asset)
 
     def do_asset_added(self, asset):
         """
         When GES.Project emit "asset-added" this vmethod
         get calls
         """
-        self._handle_asset_loaded(asset=asset)
         self._maybeInitSettingsFromAsset(asset)
+        if asset and not GObject.type_is_a(asset.get_extractable_type(),
+                                           GES.UriClip):
+            # Ignore for example the assets producing GES.TitleClips.
+            self.debug("Ignoring asset: %s", asset.props.id)
+            return
 
-    def do_loading_error(self, unused_error, unused_asset_id, unused_type):
+        if asset not in self.loading_assets:
+            self.debug("Asset %s is not in loading assets, "
+                       " it must not be proxied", asset.get_id())
+            return
+
+        if self.loaded:
+            if not asset.get_proxy_target() in self.list_assets(GES.Extractable):
+                self.app.proxy_manager.addJob(asset, asset.force_proxying)
+        else:
+            self.debug("Project still loading, not using proxies: "
+                       "%s", asset.props.id)
+            asset.creation_progress = 100
+            self.__updateAssetLoadingProgress()
+
+    def do_loading_error(self, error, asset_id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
-        self._handle_asset_loaded()
+        asset = None
+        for asset in self.loading_assets:
+            if asset.get_id() == asset_id:
+                break
+
+        self.error("Could not load %s: %s -> %s" % (asset_id, error,
+                                                    asset))
+        asset.error = error
+        asset.creation_progress = 100
+        self.loading_assets.remove(asset)
+        self.__updateAssetLoadingProgress()
 
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
@@ -1055,11 +1207,11 @@ class Project(Loggable, GES.Project):
         self._ensureTracks()
         self.timeline.props.auto_transition = True
         self._ensureLayer()
+        self.loaded = True
 
         if self.scenario is not None:
             return
 
-        self.loaded = True
         encoders = CachedEncoderList()
         # The project just loaded, we need to check the new
         # encoding profiles and make use of it now.
@@ -1097,6 +1249,47 @@ class Project(Loggable, GES.Project):
     # Our API                                    #
     # ------------------------------------------ #
 
+    def finalize(self):
+        """
+        Disconnect all signals and everything so that the project won't
+        be doing anything after the call to the method.
+        """
+        if self._scenario:
+            self._scenario.disconnect_by_func(self._scenarioDoneCb)
+        self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingProgressCb)
+        self.app.proxy_manager.disconnect_by_func(self.__proxyErrorCb)
+        self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingCancelledCb)
+        self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
+
+    def useProxiesForAssets(self, assets):
+        for asset in assets:
+            proxy_target = asset.get_proxy_target()
+            if not proxy_target:
+                # Add and remove the asset to
+                # trigger the proxy creation code path
+                self.remove_asset(asset)
+                self.emit("asset-loading", asset)
+                asset.force_proxying = True
+                self.add_asset(asset)
+
+    def disableProxiesForAssets(self, assets, delete_proxy_file=False):
+        for asset in assets:
+            proxy_target = asset.get_proxy_target()
+            if proxy_target:
+                self.debug("Stop proxying %s", proxy_target.props.id)
+                proxy_target.set_proxy(None)
+                if delete_proxy_file:
+                    if not self.app.proxy_manager.isProxyAsset(asset):
+                        raise RuntimeError("Trying to remove proxy %s"
+                                           " but it does not look like one!",
+                                           asset.props.id)
+                    os.remove(Gst.uri_get_location(asset.props.id))
+            else:
+                self.app.proxy_manager.cancelJob(asset)
+
+        if assets:
+            self.setModificationState(True)
+
     def hasDefaultName(self):
         return DEFAULT_NAME == self.name
 
@@ -1123,8 +1316,6 @@ class Project(Loggable, GES.Project):
             return False
 
         self.timeline.commit = self._commit
-        self._calculateNbLoadingAssets()
-
         self.pipeline = Pipeline(self.app)
         try:
             self.pipeline.set_timeline(self.timeline)
@@ -1163,7 +1354,6 @@ class Project(Loggable, GES.Project):
         self.app.action_log.begin("Adding assets")
         for uri in uris:
             self.create_asset(quote_uri(uri), GES.UriClip)
-        self._calculateNbLoadingAssets()
 
     def assetsForUris(self, uris):
         assets = []
@@ -1378,19 +1568,6 @@ class Project(Loggable, GES.Project):
             factories.sort(key=lambda x: - x.get_rank())
             return factories[0].get_name()
         return None
-
-    def _calculateNbLoadingAssets(self):
-        nb_remaining_file_to_import = self.__countRemainingFilesToImport()
-        if self.nb_remaining_file_to_import == 0 and nb_remaining_file_to_import:
-            self.nb_remaining_file_to_import = nb_remaining_file_to_import
-            self._emitChange("start-importing")
-            return
-        self.nb_remaining_file_to_import = nb_remaining_file_to_import
-
-    def __countRemainingFilesToImport(self):
-        assets = self.get_loading_assets()
-        return len([asset for asset in assets if
-                    GObject.type_is_a(asset.get_extractable_type(), GES.UriClip)])
 
 
 # ---------------------- UI classes ----------------------------------------- #

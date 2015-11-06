@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 
 from unittest import mock
-
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gtk

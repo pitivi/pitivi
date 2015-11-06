@@ -1,0 +1,24 @@
+[GStreamer Encoding Target]
+name=matroskaproresflac
+category=device
+description=Standard config for prores and FLAC in matroska
+
+[profile-default]
+name=default
+type=container
+description[c]=Matroska muxer with default configs
+format=video/x-matroska
+
+[streamprofile-flac]
+parent=default
+type=audio
+format=audio/x-flac
+presence=0
+
+[streamprofile-prores]
+parent=default
+type=video
+format=video/x-prores
+presence=0
+pass=0
+variableframerate=false

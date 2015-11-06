@@ -1167,6 +1167,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
+    def switchProxies(self, asset):
+        proxy = asset.props.proxy
+        unproxy = False
+
+        if not proxy:
+            unproxy = True
+            proxy_uri = self.app.proxy_manager.getProxyUri(asset)
+            proxy = GES.Asset.request(GES.UriClip,
+                                      proxy_uri)
+            if not proxy:
+                self.debug("proxy_uri: %s does not have an asset associated",
+                           proxy_uri)
+                return
+
+        layers = self.bTimeline.get_layers()
+        for layer in layers:
+            for clip in layer.get_clips():
+                if unproxy:
+                    if clip.get_asset() == proxy:
+                        clip.set_asset(asset)
+                elif clip.get_asset() == proxy.get_proxy_target():
+                    clip.set_asset(proxy)
+        self._project.pipeline.commit_timeline()
+
     def insertAssets(self, assets, position=None):
         """
         Add assets to the timeline and create clips on the longest layer.

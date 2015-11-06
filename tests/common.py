@@ -18,27 +18,34 @@ from pitivi.application import Pitivi
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Selected
 from pitivi.utils.validate import Event
+from pitivi.utils.proxy import ProxyManager, ProxyingStrategy
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
 
 
-def cleanPitiviMock(ptv):
-    ptv.settings = None
+def cleanPitiviMock(app):
+    app.settings = None
+    app.proxy_manager = None
 
 
-def getPitiviMock(settings=None):
-    ptv = mock.MagicMock()
+def getPitiviMock(settings=None, proxyingStrategy=ProxyingStrategy.NOTHING,
+                  numTranscodingJobs=4):
+    app = mock.MagicMock()
 
-    ptv.write_action = mock.MagicMock(spec=Pitivi.write_action)
+    app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     check.check_requirements()
 
     if not settings:
         settings = mock.MagicMock()
 
-    ptv.settings = settings
+        settings.proxyingStrategy = proxyingStrategy
+        settings.numTranscodingJobs = numTranscodingJobs
 
-    return ptv
+    app.settings = settings
+    app.proxy_manager = ProxyManager(app)
+
+    return app
 
 
 class TestCase(unittest.TestCase, Loggable):
@@ -129,7 +136,18 @@ class TestCase(unittest.TestCase, Loggable):
 
 def getSampleUri(sample):
     assets_dir = os.path.dirname(os.path.abspath(__file__))
-    return "file://%s/samples/%s" % (assets_dir, sample)
+
+    return "file://%s" % os.path.join(assets_dir, "samples", sample)
+
+
+def cleanProxySamples():
+    _dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples")
+    proxy_manager = ProxyManager(mock.MagicMock())
+
+    for f in os.listdir(_dir):
+        if f.endswith(proxy_manager.proxy_extension):
+            f = os.path.join(_dir, f)
+            os.remove(f)
 
 
 class SignalMonitor(object):

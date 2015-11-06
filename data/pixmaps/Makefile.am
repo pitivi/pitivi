@@ -18,7 +18,10 @@ pixmap_DATA = \
     processing-clip.png \
     processing-clip.svg \
     trimbar-focused.png \
-    trimbar-normal.png
+    trimbar-normal.png \
+    asset-proxied.svg \
+    asset-proxying-error.svg \
+    asset-proxy-in-progress.svg
 
 effectspixmapdir = $(pkgdatadir)/pixmaps/effects
 effectspixmap_DATA = \

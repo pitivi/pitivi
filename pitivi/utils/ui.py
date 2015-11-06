@@ -45,7 +45,7 @@ from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
     DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
 
 from pitivi.utils.loggable import doLog, ERROR
-from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import path_from_uri, get_proxy_target
 from pitivi.configure import get_pixmap_dir
 
 
@@ -253,7 +253,7 @@ def set_cairo_color(context, color):
     context.set_source_rgb(*cairo_color)
 
 
-def beautify_info(info):
+def beautify_asset(asset):
     """
     Formats the specified info for display.
 
@@ -271,6 +271,8 @@ def beautify_info(info):
         except KeyError:
             return len(ranks)
 
+    info = asset.get_info()
+    uri = get_proxy_target(asset).props.id
     info.get_stream_list().sort(key=stream_sort_key)
     nice_streams_txts = []
     for stream in info.get_stream_list():
@@ -282,8 +284,13 @@ def beautify_info(info):
         if beautified_string:
             nice_streams_txts.append(beautified_string)
 
-    return ("<b>" + path_from_uri(info.get_uri()) + "</b>\n" +
-            "\n".join(nice_streams_txts))
+    res = "<b>" + path_from_uri(uri) + "</b>\n" + "\n".join(nice_streams_txts)
+
+    if asset.creation_progress < 100:
+        res += _("\n<b>Proxy creation progress: ") + \
+            "</b>%d%%" % asset.creation_progress
+
+    return res
 
 
 def info_name(info):
@@ -293,7 +300,7 @@ def info_name(info):
     @type info: L{GES.Asset} or L{DiscovererInfo}
     """
     if isinstance(info, GES.Asset):
-        filename = urllib.parse.unquote(os.path.basename(info.get_id()))
+        filename = urllib.parse.unquote(os.path.basename(get_proxy_target(info).get_id()))
     elif isinstance(info, DiscovererInfo):
         filename = urllib.parse.unquote(os.path.basename(info.get_uri()))
     else:
@@ -303,6 +310,9 @@ def info_name(info):
 
 def beautify_stream(stream):
     if type(stream) is DiscovererAudioInfo:
+        if stream.get_depth() == 0:
+            return None
+
         templ = ngettext(
             "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
             "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",

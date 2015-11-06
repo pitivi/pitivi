@@ -85,7 +85,7 @@ EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-editing-services/tests/tools"
 if pkg-config gstreamer-1.0 --atleast-version=$GST_MIN_VERSION --print-errors; then
     MODULES="gst-editing-services gst-python"
 else
-    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gst-editing-services gst-python"
+    MODULES="gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad gst-ffmpeg gst-editing-services gst-python gst-transcoder"
     EXTRA_PATH="$EXTRA_PATH:$PITIVI/gstreamer/tools"
     EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-plugins-base/tools"
 fi
@@ -143,7 +143,7 @@ else
     export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
     export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/:$GST_VALIDATE_SCENARIOS_PATH
     export GST_VALIDATE_PLUGIN_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/plugins/
-    export GST_ENCODING_TARGET_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/data/encoding-profiles/
+    export GST_ENCODING_TARGET_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/pitivi/data/encoding-profiles/
 
     export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-base/pkgconfig\
@@ -180,6 +180,7 @@ $PITIVI/gstreamer/plugins\
 :$PITIVI/libnice/gst\
 :$PITIVI/gst-editing-services/plugins/nle/\
 :$PITIVI/gst-editing-services/plugins/ges/\
+:$PITIVI/gst-transcoder/build/\
 :${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
 
 export GST_PRESET_PATH="\
@@ -191,6 +192,8 @@ $PITIVI/gst-plugins-good/gst/equalizer/\
 :$PITIVI/gst-plugins-ugly/ext/amrnb\
 :$PITIVI/gst-plugins-bad/gst/freeverb\
 :$PITIVI/gst-plugins-bad/ext/voamrwbenc\
+:$PITIVI/pitivi/data/videopresets/\
+:$PITIVI/pitivi/data/audiopresets/\
 ${GST_PRESET_PATH:+:$GST_PRESET_PATH}"
 
     # don't use any system-installed plug-ins at all
@@ -216,6 +219,12 @@ export DYLD_LIBRARY_PATH=$PITIVI/gst-editing-services/ges/.libs:$DYLD_LIBRARY_PA
 export PATH=$PITIVI/gst-editing-services/tools:$PATH
 GI_TYPELIB_PATH=$PITIVI/gst-editing-services/ges:$GI_TYPELIB_PATH
 GI_TYPELIB_PATH=$PITIVI_PREFIX/share/gir-1.0:${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}:/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0
+
+# And anyway add GstTranscoder
+export LD_LIBRARY_PATH=$PITIVI/gst-transcoder/build/:$LD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$PITIVI/gst-transcoder/build/:$DYLD_LIBRARY_PATH
+export PATH=$PITIVI/gst-transcoder/build/:$PATH
+GI_TYPELIB_PATH=$PITIVI/gst-transcoder/build/:$GI_TYPELIB_PATH
 
 # And python
 PYTHONPATH=$PYTHONPATH:$MYPITIVI/gst-python:$MYPITIVI/gst-editing-services/bindings/python
@@ -381,7 +390,12 @@ if [ "$ready_to_run" != "1" ]; then
         # If the folder doesn't exist, check out the module. Later on, we will
         # update it anyway.
         if test ! -d $m; then
-          git clone git://anongit.freedesktop.org/gstreamer/$m
+          if [ "$m" == "gst-transcoder" ]; then
+            git clone https://github.com/thiblahute/gst-transcoder.git
+          else
+            git clone git://anongit.freedesktop.org/gstreamer/$m
+          fi
+
           if [ $? -ne 0 ]; then
               echo "Could not checkout $m ; result: $?"
               exit 1
@@ -422,16 +436,31 @@ if [ "$ready_to_run" != "1" ]; then
             git checkout -- acinclude.m4
         fi
 
-        if test ! -f ./configure || [ "$force_autogen" = "1" ]; then
-            # Allow passing per-module arguments when running autogen.
-            # For example, specify the following environment variable
-            # to pass --disable-eglgles to gst-plugins-bad's autogen.sh:
-            #   gst_plugins_bad_AUTOGEN_EXTRA="--disable-eglgles"
-            EXTRA_VAR="$(echo $m | sed "s/-/_/g")_AUTOGEN_EXTRA"
-            if $BUILD_DOCS; then
-                ./autogen.sh ${!EXTRA_VAR}
+        needs_configure="0"
+        if [ "$force_autogen" = "1" ]; then
+            needs_configure="1"
+        elif [ "$m" == "gst-transcoder" ]; then
+            if test ! -f build/build.ninja; then
+                needs_configure='1'
+            fi
+        elif test ! -f ./configure; then
+            needs_configure='1'
+        fi
+
+        if [ "$needs_configure" = "1" ]; then
+            if [ "$m" == "gst-transcoder" ]; then
+                ./configure
             else
-                ./autogen.sh --disable-gtk-doc --disable-docbook ${!EXTRA_VAR}
+                # Allow passing per-module arguments when running autogen.
+                # For example, specify the following environment variable
+                # to pass --disable-eglgles to gst-plugins-bad's autogen.sh:
+                #   gst_plugins_bad_AUTOGEN_EXTRA="--disable-eglgles"
+                EXTRA_VAR="$(echo $m | sed "s/-/_/g")_AUTOGEN_EXTRA"
+                if $BUILD_DOCS; then
+                    ./autogen.sh ${!EXTRA_VAR}
+                else
+                    ./autogen.sh --disable-gtk-doc --disable-docbook ${!EXTRA_VAR}
+              fi
             fi
             if [ $? -ne 0 ]; then
                 echo "Could not run autogen for $m ; result: $?"

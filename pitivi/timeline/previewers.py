@@ -44,7 +44,8 @@ except ImportError:
 
 from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file
+from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, \
+    get_proxy_target
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
@@ -65,12 +66,202 @@ PREVIEW_GENERATOR_SIGNALS = {
     "error": (GObject.SIGNAL_RUN_LAST, None, ()),
 }
 
+THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 
 """
 Convention throughout this file:
 Every GES element which name could be mistaken with a UI element
 is prefixed with a little b, example : bTimeline
 """
+
+
+class PreviewerBin(Gst.Bin, Loggable):
+    """
+    A baseclass for element specialized in gathering datas to create previews
+    """
+    def __init__(self, bin_desc):
+        Gst.Bin.__init__(self)
+        Loggable.__init__(self)
+
+        self.internal_bin = Gst.parse_bin_from_description(bin_desc, True)
+        self.add(self.internal_bin)
+        self.add_pad(Gst.GhostPad.new(None, self.internal_bin.sinkpads[0]))
+        self.add_pad(Gst.GhostPad.new(None, self.internal_bin.srcpads[0]))
+
+    def finalize(self):
+        pass
+
+
+class ThumbnailBin(PreviewerBin):
+    __gproperties__ = {
+        "uri": (str,
+                "uri of the media file",
+                "A URI",
+                "",
+                GObject.PARAM_READWRITE
+                ),
+    }
+
+    def __init__(self, bin_desc="videoconvert ! videorate ! "
+                 "videoscale method=lanczos ! "
+                 "capsfilter caps=video/x-raw,format=(string)RGBA,"
+                 "height=(int)%d,pixel-aspect-ratio=(fraction)1/1,"
+                 "framerate=2/1 ! gdkpixbufsink name=gdkpixbufsink " %
+                 THUMB_HEIGHT):
+        PreviewerBin.__init__(self, bin_desc)
+
+        self.thumb_cache = None
+        self.gdkpixbufsink = self.internal_bin.get_by_name("gdkpixbufsink")
+
+    def addThumbnail(self, message):
+        struct = message.get_structure()
+        struct_name = struct.get_name()
+        if struct_name == "pixbuf":
+            stream_time = struct.get_value("stream-time")
+            self.log("%s new thumbnail %s", self.uri, stream_time)
+            pixbuf = struct.get_value("pixbuf")
+            self.thumb_cache[stream_time] = pixbuf
+
+        return False
+
+    def do_post_message(self, message):
+        if message.type == Gst.MessageType.ELEMENT and \
+                message.src == self.gdkpixbufsink:
+            GLib.idle_add(self.addThumbnail, message)
+
+        return Gst.Bin.do_post_message(self, message)
+
+    def finalize(self, proxy):
+        self.thumb_cache.commit()
+        if proxy:
+            self.thumb_cache.copy(proxy.get_id())
+
+    def do_get_property(self, prop):
+        if prop.name == 'uri':
+            return self.uri
+        else:
+            raise AttributeError('unknown property %s' % prop.name)
+
+    def do_set_property(self, prop, value):
+        if prop.name == 'uri':
+            self.uri = value
+            self.thumb_cache = getThumbnailCache(value)
+        else:
+            raise AttributeError('unknown property %s' % prop.name)
+
+
+class TeedThumbnailBin(ThumbnailBin):
+    def __init__(self):
+        ThumbnailBin.__init__(
+            self, bin_desc="tee name=t ! queue  "
+            "max-size-buffers=0 max-size-bytes=0 max-size-time=0  ! "
+            "videoconvert ! videorate ! videoscale method=lanczos ! "
+            "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int)%d,"
+            "pixel-aspect-ratio=(fraction)1/1,"
+            "framerate=2/1 ! gdkpixbufsink name=gdkpixbufsink "
+            "t. ! queue " % THUMB_HEIGHT)
+
+
+class WaveformPreviewer(PreviewerBin):
+    __gproperties__ = {
+        "uri": (str,
+                "uri of the media file",
+                "A URI",
+                "",
+                GObject.PARAM_READWRITE),
+        "duration": (GObject.TYPE_UINT64,
+                     "Duration",
+                     "Duration",
+                     0, GLib.MAXUINT64 - 1, 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        PreviewerBin.__init__(self,
+                              "audioconvert ! audioresample ! level name=level"
+                              " ! audioconvert ! audioresample")
+        self.level = self.internal_bin.get_by_name("level")
+        self.debug("Creating waveforms!!")
+        self.peaks = None
+
+        self.uri = None
+        self.wavefile = None
+        self.passthrough = False
+        self.nSamples = 0
+
+    def do_get_property(self, prop):
+        if prop.name == 'uri':
+            return self.uri
+        elif prop.name == 'duration':
+            return self.duration
+        else:
+            raise AttributeError('unknown property %s' % prop.name)
+
+    def do_set_property(self, prop, value):
+        if prop.name == 'uri':
+            self.uri = value
+            self.wavefile = get_wavefile_location_for_uri(self.uri)
+            self.passthrough = os.path.exists(self.wavefile)
+        elif prop.name == 'duration':
+            self.duration = value
+            self.nSamples = self.duration / 10000000
+        else:
+            raise AttributeError('unknown property %s' % prop.name)
+
+    def do_post_message(self, message):
+        if not self.passthrough and \
+                message.type == Gst.MessageType.ELEMENT and \
+                message.src == self.level:
+            s = message.get_structure()
+            p = None
+            if s:
+                p = s.get_value("rms")
+
+            if p:
+                st = s.get_value("stream-time")
+
+                if self.peaks is None:
+                    self.peaks = []
+                    for channel in p:
+                        self.peaks.append([0] * int(self.nSamples))
+
+                pos = int(st / 10000000)
+                if pos >= len(self.peaks[0]):
+                    return
+
+                for i, val in enumerate(p):
+                    if val < 0:
+                        val = 10 ** (val / 20) * 100
+                        self.peaks[i][pos] = val
+                    else:
+                        self.peaks[i][pos] = self.peaks[i][pos - 1]
+
+        return Gst.Bin.do_post_message(self, message)
+
+    def finalize(self, proxy=None):
+        if not self.passthrough and self.peaks:
+            # Let's go mono.
+            if len(self.peaks) > 1:
+                samples = (
+                    numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
+            else:
+                samples = numpy.array(self.peaks[0])
+
+            self.samples = list(samples)
+            with open(self.wavefile, 'wb') as wavefile:
+                pickle.dump(list(samples), wavefile)
+
+        if proxy:
+            proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
+            self.debug("symlinking %s and %s", self.wavefile, proxy_wavefile)
+            os.symlink(self.wavefile, proxy_wavefile)
+
+
+Gst.Element.register(None, "waveformbin", Gst.Rank.NONE,
+                     WaveformPreviewer)
+Gst.Element.register(None, "thumbnailbin", Gst.Rank.NONE,
+                     ThumbnailBin)
+Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
+                     TeedThumbnailBin)
 
 
 class PreviewGeneratorManager():
@@ -170,8 +361,9 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         # Variables related to the timeline objects
         self.timeline = bElement.get_parent().get_timeline().ui
         self.bElement = bElement
+
         # Guard against malformed URIs
-        self.uri = quote_uri(bElement.props.uri)
+        self.uri = quote_uri(get_proxy_target(bElement).props.id)
 
         # Variables related to thumbnailing
         self.wishlist = []
@@ -181,11 +373,11 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         # We should have one thumbnail per thumb_period.
         # TODO: get this from the user settings
         self.thumb_period = int(0.5 * Gst.SECOND)
-        self.thumb_height = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+        self.thumb_height = THUMB_HEIGHT
 
         # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
-        self.thumb_cache = get_cache_for_uri(self.uri)
+        self.thumb_cache = getThumbnailCache(self.uri)
         self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
 
         self.cpu_usage_tracker = CPUUsageTracker()
@@ -516,7 +708,12 @@ class Thumbnail(Gtk.Image):
 caches = {}
 
 
-def get_cache_for_uri(uri):
+def getThumbnailCache(obj):
+    if isinstance(obj, str):
+        uri = obj
+    elif isinstance(obj, GES.UriClipAsset):
+        uri = get_proxy_target(obj).props.id
+
     if uri in caches:
         return caches[uri]
     else:
@@ -537,12 +734,19 @@ class ThumbnailCache(Loggable):
         self._filehash = hash_file(Gst.uri_get_location(uri))
         self._filename = filename_from_uri(uri)
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        dbfile = os.path.join(thumbs_cache_dir, self._filehash)
-        self._db = sqlite3.connect(dbfile)
+        self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
+        self._db = sqlite3.connect(self._dbfile)
         self._cur = self._db.cursor()  # Use this for normal db operations
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
                           (Time INTEGER NOT NULL PRIMARY KEY,\
                           Jpeg BLOB NOT NULL)")
+
+    def copy(self, uri):
+        filehash = hash_file(Gst.uri_get_location(uri))
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        dbfile = os.path.join(thumbs_cache_dir, filehash)
+
+        os.symlink(self._dbfile, dbfile)
 
     def getImagesSize(self):
         self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
@@ -552,6 +756,14 @@ class ThumbnailCache(Loggable):
 
         pixbuf = self.__getPixbufFromRow(row)
         return pixbuf.get_width(), pixbuf.get_height()
+
+    def getPreviewThumbnail(self):
+        self._cur.execute("SELECT Time FROM Thumbs")
+        timestamps = self._cur.fetchall()
+        if not timestamps:
+            return None
+
+        return self[timestamps[int(len(timestamps) / 2)][0]]
 
     def __getPixbufFromRow(self, row):
         jpeg = row[1]
@@ -592,6 +804,8 @@ class ThumbnailCache(Loggable):
             'Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
         self.log("Saved thumbnail cache file: %s" % self._filehash)
+
+        return False
 
 
 class PipelineCpuAdapter(Loggable):
@@ -692,6 +906,13 @@ class PipelineCpuAdapter(Loggable):
                     self.ready = False
 
 
+def get_wavefile_location_for_uri(uri):
+    filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
+    cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
+
+    return os.path.join(cache_dir, filename)
+
+
 class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
     """
@@ -717,7 +938,7 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self._surface_x = 0
 
         # Guard against malformed URIs
-        self._uri = quote_uri(bElement.props.uri)
+        self._uri = quote_uri(get_proxy_target(bElement).props.id)
 
         self._num_failures = 0
         self.adapter = None
@@ -736,10 +957,7 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
-        self.log('Preparing waveforms for "%s"' % filename_from_uri(self._uri))
-        filename = hash_file(Gst.uri_get_location(self._uri)) + ".wave"
-        cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
-        filename = os.path.join(cache_dir, filename)
+        filename = get_wavefile_location_for_uri(self._uri)
 
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
@@ -753,11 +971,15 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.debug(
             'Now generating waveforms for: %s', filename_from_uri(self._uri))
         self.peaks = None
-        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" + self._uri +
-                                         " ! audioconvert ! level name=wavelevel interval=10000000 post-messages=true ! fakesink qos=false name=faked")
+        self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
+                                         self._uri + " ! waveformbin name=wave"
+                                         " ! fakesink qos=false name=faked")
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
-        self._wavelevel = self.pipeline.get_by_name("wavelevel")
+        self._wavebin = self.pipeline.get_by_name("wave")
+        asset = self.bElement.get_parent().get_asset()
+        self._wavebin.props.uri = asset.get_id()
+        self._wavebin.props.duration = asset.get_duration()
         decode = self.pipeline.get_by_name("decode")
         decode.connect("autoplug-select", self._autoplugSelectCb)
         bus = self.pipeline.get_bus()
@@ -775,16 +997,8 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self._force_redraw = True
 
     def _prepareSamples(self):
-        # Let's go mono.
-        if len(self.peaks) > 1:
-            samples = (
-                numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
-        else:
-            samples = numpy.array(self.peaks[0])
-
-        self.samples = samples.tolist()
-        with open(self.wavefile, 'wb') as wavefile:
-            pickle.dump(self.samples, wavefile)
+        self._wavebin.finalize()
+        self.samples = self._wavebin.samples
 
     def _startRendering(self):
         self.nbSamples = len(self.samples)
@@ -795,32 +1009,6 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
             self.adapter.stop()
 
     def _busMessageCb(self, bus, message):
-        if message.src == self._wavelevel:
-            s = message.get_structure()
-            p = None
-            if s:
-                p = s.get_value("rms")
-
-            if p:
-                st = s.get_value("stream-time")
-
-                if self.peaks is None:
-                    self.peaks = []
-                    for channel in p:
-                        self.peaks.append([0] * int(self.nSamples))
-
-                pos = int(st / 10000000)
-                if pos >= len(self.peaks[0]):
-                    return
-
-                for i, val in enumerate(p):
-                    if val < 0:
-                        val = 10 ** (val / 20) * 100
-                        self.peaks[i][pos] = val
-                    else:
-                        self.peaks[i][pos] = self.peaks[i][pos - 1]
-            return
-
         if message.type == Gst.MessageType.EOS:
             self._prepareSamples()
             self._startRendering()
@@ -842,6 +1030,9 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
                 self._launchPipeline()
                 self.becomeControlled()
             else:
+                Gst.debug_bin_to_dot_file_with_ts(self.pipeline,
+                                                  Gst.DebugGraphDetails.ALL,
+                                                  "error-generating-waveforms")
                 self.error("Issue during waveforms generation: %s"
                            "Abandonning", message.parse_error())
 

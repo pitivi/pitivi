@@ -370,6 +370,7 @@ class RenderDialog(Loggable):
         # the current container format.
         self.preferred_vencoder = self.project.vencoder
         self.preferred_aencoder = self.project.aencoder
+        self.__unproxiedClips = {}
 
         self._initializeComboboxModels()
         self._displaySettings()
@@ -507,6 +508,15 @@ class RenderDialog(Loggable):
 
         self.video_output_checkbutton.props.active = self.project.video_profile.is_enabled()
         self.audio_output_checkbutton.props.active = self.project.audio_profile.is_enabled()
+
+        self.__automatically_use_proxies = builder.get_object(
+            "automatically_use_proxies")
+
+        self.__always_use_proxies = builder.get_object("always_use_proxies")
+        self.__always_use_proxies.props.group = self.__automatically_use_proxies
+
+        self.__never_use_proxies = builder.get_object("never_use_proxies")
+        self.__never_use_proxies.props.group = self.__automatically_use_proxies
 
         self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
 
@@ -686,6 +696,7 @@ class RenderDialog(Loggable):
         self._rendering_is_paused = False
         self._time_spent_paused = 0
         self._pipeline.set_state(Gst.State.NULL)
+        self.__useProxyAssets()
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
@@ -731,6 +742,46 @@ class RenderDialog(Loggable):
         canberra = pycanberra.Canberra()
         canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
 
+    def __maybeUseSourceAsset(self):
+        if self.__always_use_proxies.get_active():
+            self.debug("Rendering from proxies, not replacing assets")
+            return
+
+        for layer in self.app.gui.timeline_ui.bTimeline.get_layers():
+            for clip in layer.get_clips():
+                if not isinstance(clip, GES.UriClip):
+                    continue
+
+                asset = clip.get_asset()
+                asset_target = asset.get_proxy_target()
+                if not asset_target:
+                    continue
+
+                if self.__automatically_use_proxies.get_active():
+                    if self.app.proxy_manager.isAssetFormatWellSupported(
+                            asset_target):
+                        self.info("Asset %s format well supported, "
+                                  "rendering from real asset.",
+                                  asset_target.props.id)
+                    else:
+                        self.info("Asset %s format not well supported, "
+                                  "rendering from proxy.",
+                                  asset_target.props.id)
+                        continue
+
+                if not asset_target.get_error():
+                    clip.set_asset(asset_target)
+                    self.error("Using %s as an asset (instead of %s)",
+                               asset_target.get_id(),
+                               asset.get_id())
+                    self.__unproxiedClips[clip] = asset
+
+    def __useProxyAssets(self):
+        for clip, asset in self.__unproxiedClips.items():
+            clip.set_asset(asset)
+
+        self.__unproxiedClips = {}
+
     # ------------------- Callbacks ------------------------------------------ #
 
     # -- UI callbacks
@@ -743,6 +794,7 @@ class RenderDialog(Loggable):
         The render button inside the render dialog has been clicked,
         start the rendering process.
         """
+        self.__maybeUseSourceAsset()
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)

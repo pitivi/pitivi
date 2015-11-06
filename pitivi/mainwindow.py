@@ -999,17 +999,19 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                 False)
         else:
             dialog.hide()
-            # Reset the project manager and disconnect all the signals.
-            self.app.project_manager.newBlankProject(
-                ignore_unsaved_changes=True)
-            # Signal the project loading failure.
-            # You have to do this *after* successfully creating a blank project,
-            # or the startupwizard will still be connected to that signal too.
-            reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                       'Pitivi does not currently support partial projects.'
-                       % info_name(asset))
-            self.app.project_manager.emit(
-                "new-project-failed", project.uri, reason)
+
+            if self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
+                # Reset the project manager and disconnect all the signals.
+                self.app.project_manager.newBlankProject(
+                    ignore_unsaved_changes=True)
+                # Signal the project loading failure.
+                # You have to do this *after* successfully creating a blank project,
+                # or the startupwizard will still be connected to that signal too.
+                reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
+                           'Pitivi does not currently support partial projects.'
+                           % info_name(asset))
+                self.app.project_manager.emit(
+                    "new-project-failed", project.uri, reason)
 
         dialog.destroy()
         return new_uri

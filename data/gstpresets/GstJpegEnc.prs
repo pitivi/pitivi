@@ -1,0 +1,15 @@
+[_presets_]
+version=1.0
+element-name=GstJpegEnc
+
+[Quality Low]
+_meta/comment=Low quality
+quality=50
+
+[Quality Normal]
+_meta/comment=Normal quality
+quality=80
+
+[Quality High]
+_meta/comment=High quality
+quality=95

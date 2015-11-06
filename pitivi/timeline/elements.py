@@ -463,10 +463,6 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if binding.props.name == self.__controlledProperty.name:
             self.__createKeyframeCurve(binding)
 
-    # Gtk implementation
-    def do_set_property(self, property_id, value, pspec):
-        Gtk.Layout.do_set_property(self, property_id, value, pspec)
-
     def __showKeyframes(self):
         if self.timeline.app.project_manager.current_project.pipeline.getState() == Gst.State.PLAYING:
             return False
@@ -972,8 +968,15 @@ class UriClip(SourceClip):
 
     def __init__(self, layer, bClip):
         super(UriClip, self).__init__(layer, bClip)
+        self.props.has_tooltip = True
 
         self.set_tooltip_markup(misc.filename_from_uri(bClip.get_uri()))
+
+    def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
+        tooltip.set_markup(misc.filename_from_uri(
+            self.bClip.get_asset().props.id))
+
+        return True
 
     def _childAdded(self, clip, child):
         super(UriClip, self)._childAdded(clip, child)

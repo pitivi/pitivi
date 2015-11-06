@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="26.955959mm"
+   height="25.062054mm"
+   viewBox="0 0 95.513242 88.802552"
+   id="svg5243"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="exported - proxy status - ready.svg">
+  <defs
+     id="defs5245">
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4173"
+       id="radialGradient4181"
+       cx="33.283539"
+       cy="1002.8445"
+       fx="33.283539"
+       fy="1002.8445"
+       r="80.256622"
+       gradientTransform="matrix(1.1432904,-1.9668506e-8,1.8574145e-8,1.0796774,660.16152,-337.56481)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4173">
+      <stop
+         style="stop-color:#000000;stop-opacity:0.502"
+         offset="0"
+         id="stop4175" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0"
+         offset="1"
+         id="stop4177" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="17.271176"
+     inkscape:cy="31.063057"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata5248">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-697.95764,-656.53235)">
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:url(#radialGradient4181);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.54330707;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4171"
+       width="95.513245"
+       height="88.802551"
+       x="697.95764"
+       y="656.53235" />
+    <g
+       style="display:inline;fill:#000000"
+       id="g4199-0"
+       transform="matrix(1.3502829,0,0,1.3502829,704.35019,716.59025)">
+      <g
+         style="display:inline;fill:#000000"
+         id="layer9-6"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="status" />
+      <g
+         id="layer10-7"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="devices"
+         style="fill:#000000" />
+      <g
+         id="layer11-9"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="apps"
+         style="fill:#000000" />
+      <g
+         id="layer13-62"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="places"
+         style="fill:#000000" />
+      <g
+         id="layer14-3"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="mimetypes"
+         style="fill:#000000" />
+      <g
+         style="display:inline;fill:#000000"
+         id="layer15-38"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="emblems" />
+      <g
+         style="display:inline;fill:#000000"
+         id="g71291-8"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="emotes" />
+      <g
+         style="display:inline;fill:#000000"
+         id="g4953-8"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="categories" />
+      <g
+         style="display:inline;fill:#000000"
+         id="layer12-49"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="actions">
+        <path
+           style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:Sans;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3;marker:none;enable-background:accumulate"
+           id="path8913-6-7-1-5-5"
+           d="M 72.9375,790.9375 68,795.875 l -1.9375,-1.9375 -2.125,2.125 3,3 1.0625,1.0625 1.0625,-1.0625 6,-6 -2.125,-2.125 z"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       style="display:inline"
+       id="g4199"
+       transform="matrix(1.3502829,0,0,1.3502829,704.35029,715.84813)">
+      <g
+         style="display:inline"
+         id="layer9"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="status" />
+      <g
+         id="layer10"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="devices" />
+      <g
+         id="layer11"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="apps" />
+      <g
+         id="layer13"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="places" />
+      <g
+         id="layer14"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="mimetypes" />
+      <g
+         style="display:inline"
+         id="layer15"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="emblems" />
+      <g
+         style="display:inline"
+         id="g71291"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="emotes" />
+      <g
+         style="display:inline"
+         id="g4953"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="categories" />
+      <g
+         style="display:inline"
+         id="layer12"
+         transform="translate(-61.000665,-787)"
+         inkscape:label="actions">
+        <path
+           style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:Sans;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:#bebebe;fill-opacity:1;stroke:none;stroke-width:3;marker:none;enable-background:accumulate"
+           id="path8913-6-7-1-5"
+           d="M 72.9375,790.9375 68,795.875 l -1.9375,-1.9375 -2.125,2.125 3,3 1.0625,1.0625 1.0625,-1.0625 6,-6 -2.125,-2.125 z"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>
