@@ -27,7 +27,6 @@ from gi.repository import GES
 from gi.repository import Gst
 
 from gettext import gettext as _
-from xml.sax.saxutils import escape, unescape
 
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
@@ -131,48 +130,24 @@ class TitleEditor(Loggable):
         self.debug("Setting font desc to %s", font_desc)
         self._setChildProperty("font-desc", font_desc)
 
-    def _setWidgetText(self):
-        res, source_text = self.source.get_child_property("text")
-        source_text = unescape(source_text)
-        text = unescape(self.textbuffer.get_text(
-            self.textbuffer.get_start_iter(), self.textbuffer.get_end_iter(),
-            True))
-
-        if text == source_text:
-            return False
-
-        if res is False:
-            # FIXME: sometimes we get a TextOverlay/TitleSource
-            # without a valid text property. This should not happen.
-            source_text = ""
-            self.warning(
-                'Source did not have a text property, setting it to "" to avoid pango choking up on None')
-        self.log("Title text set to %s", source_text)
-        self.textbuffer.set_text(source_text)
-
-        return True
-
-    def _updateFromSource(self):
-        if not self.source:
-            # Nothing to update from.
-            return
-
-        self._setWidgetText()
-        self.settings['xpos'].set_value(self.source.get_child_property("xpos")[1])
-        self.settings['ypos'].set_value(self.source.get_child_property("ypos")[1])
+    def _updateFromSource(self, source):
+        self.textbuffer.set_text(source.get_child_property("text")[1] or "")
+        self.settings['xpos'].set_value(source.get_child_property("xpos")[1])
+        self.settings['ypos'].set_value(source.get_child_property("ypos")[1])
         self.settings['valignment'].set_active_id(
-            self.source.get_child_property("valignment")[1].value_name)
+            source.get_child_property("valignment")[1].value_name)
         self.settings['halignment'].set_active_id(
-            self.source.get_child_property("halignment")[1].value_name)
+            source.get_child_property("halignment")[1].value_name)
+        self._updateWidgetsVisibility()
 
         font_desc = Pango.FontDescription.from_string(
-            self.source.get_child_property("font-desc")[1])
+            source.get_child_property("font-desc")[1])
         self.font_button.set_font_desc(font_desc)
 
-        color = argb_to_gdk_rgba(self.source.get_child_property("color")[1])
+        color = argb_to_gdk_rgba(source.get_child_property("color")[1])
         self.foreground_color_button.set_rgba(color)
 
-        color = argb_to_gdk_rgba(self.source.get_child_property("foreground-color")[1])
+        color = argb_to_gdk_rgba(source.get_child_property("foreground-color")[1])
         self.background_color_button.set_rgba(color)
 
     def _textChangedCb(self, unused_updated_obj):
@@ -180,11 +155,9 @@ class TitleEditor(Loggable):
             # Nothing to update.
             return
 
-        text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
-                                        self.textbuffer.get_end_iter(),
-                                        True)
+        text = self.textbuffer.props.text
         self.log("Source text updated to %s", text)
-        self._setChildProperty("text", escape(unescape(text)))
+        self._setChildProperty("text", text)
 
     def _updateSource(self, updated_obj):
         """
@@ -198,17 +171,21 @@ class TitleEditor(Loggable):
             if obj == updated_obj:
                 if name == "valignment":
                     value = getattr(GES.TextVAlign, obj.get_active_id().upper())
-                    visible = obj.get_active_id() == "position"
-                    self.settings["ypos"].set_visible(visible)
+                    self._updateWidgetsVisibility()
                 elif name == "halignment":
                     value = getattr(GES.TextHAlign, obj.get_active_id().upper())
-                    visible = obj.get_active_id() == "position"
-                    self.settings["xpos"].set_visible(visible)
+                    self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
 
                 self._setChildProperty(name, value)
                 return
+
+    def _updateWidgetsVisibility(self):
+        visible = self.settings["valignment"].get_active_id() == "position"
+        self.settings["ypos"].set_visible(visible)
+        visible = self.settings["halignment"].get_active_id() == "position"
+        self.settings["xpos"].set_visible(visible)
 
     def set_source(self, source):
         """
@@ -217,15 +194,19 @@ class TitleEditor(Loggable):
         @type source: L{GES.TitleSource}
         """
         self.debug("Source set to %s", source)
-        self._disconnect_signals()
-        self.source = source
+        if self._children_props_handler is not None:
+            self.source.disconnect(self._children_props_handler)
+            self._children_props_handler = None
+        self.source = None
         if source:
             assert isinstance(source, GES.TextOverlay) or \
                 isinstance(source, GES.TitleSource)
-            self._updateFromSource()
+            self._updateFromSource(source)
+            self.source = source
             self.infobar.hide()
             self.editing_box.show()
-            self._connect_signals()
+            self._children_props_handler = self.source.connect('deep-notify',
+                                                               self._propertyChangedCb)
         else:
             self.infobar.show()
             self.editing_box.hide()
@@ -251,60 +232,38 @@ class TitleEditor(Loggable):
             self.seeker.flush()
             return
 
-        flush = False
+        value = self.source.get_child_property(pspec.name)[1]
         if pspec.name == "text":
-            if self._setWidgetText() is True:
-                flush = True
+            value = value or ""
+            if self.textbuffer.props.text == value:
+                return
+            self.textbuffer.props.text = value
         elif pspec.name in ["xpos", "ypos"]:
-            value = self.source.get_child_property(pspec.name)[1]
             if self.settings[pspec.name].get_value() == value:
                 return
-
-            flush = True
             self.settings[pspec.name].set_value(value)
         elif pspec.name in ["valignment", "halignment"]:
-            value = self.source.get_child_property(pspec.name)[1].value_name
+            value = value.value_name
             if self.settings[pspec.name].get_active_id() == value:
                 return
-
-            flush = True
             self.settings[pspec.name].set_active_id(value)
         elif pspec.name == "font-desc":
-            value = self.source.get_child_property("font-desc")[1]
             if self.font_button.get_font_desc() == value:
                 return
-
-            flush = True
             font_desc = Pango.FontDescription.from_string(value)
             self.font_button.set_font_desc(font_desc)
         elif pspec.name == "color":
-            color = argb_to_gdk_rgba(self.source.get_child_property("color")[1])
+            color = argb_to_gdk_rgba(value)
             if color == self.foreground_color_button.get_rgba():
                 return
-
-            flush = True
             self.foreground_color_button.set_rgba(color)
         elif pspec.name == "foreground-color":
-            color = argb_to_gdk_rgba(self.source.get_child_property("foreground-color")[1])
-
+            color = argb_to_gdk_rgba(value)
             if color == self.background_color_button.get_rgba():
                 return
-
-            flush = True
             self.background_color_button.set_rgba(color)
 
-        if flush is True:
-            self.seeker.flush()
-
-    def _connect_signals(self):
-        if self.source and not self._children_props_handler:
-            self._children_props_handler = self.source.connect('deep-notify',
-                                                               self._propertyChangedCb)
-
-    def _disconnect_signals(self):
-        if self._children_props_handler is not None:
-            self.source.disconnect(self._children_props_handler)
-            self._children_props_handler = None
+        self.seeker.flush()
 
     def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
         if self._selection is not None:
