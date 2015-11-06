@@ -538,16 +538,35 @@ class TransformationBox(Gtk.EventBox, Loggable):
                     x, y = event_widget.translate_coordinates(self, event.x, event.y)
                     self.__startEditSourcePosition = (current_x, current_y)
                     self.__startDraggingPosition = (x, y)
+                    if type(self.__editSource) == GES.TitleSource:
+                        res_x, xpos = self.__editSource.get_child_property("xpos")
+                        res_y, ypos = self.__editSource.get_child_property("ypos")
+                        assert res_x
+                        assert res_y
+                        self.__startDraggingTitlePos = (xpos, ypos)
         elif event.type == Gdk.EventType.MOTION_NOTIFY:
             if self.__startDraggingPosition and self.__editSource:
                 event_widget = Gtk.get_event_widget(event)
                 x, y = event_widget.translate_coordinates(self, event.x, event.y)
-                self.__editSource.set_child_property("posx",
-                                                     self.__startEditSourcePosition[0] +
-                                                     (x - self.__startDraggingPosition[0]))
+                delta_x = x - self.__startDraggingPosition[0]
+                delta_y = y - self.__startDraggingPosition[1]
+                if type(self.__editSource) == GES.TitleSource:
+                    self.__editSource.set_child_property("halignment", GES.TextHAlign.POSITION)
+                    self.__editSource.set_child_property("valignment", GES.TextVAlign.POSITION)
+                    alloc = self.get_allocation()
+                    delta_xpos = delta_x / alloc.width
+                    delta_ypos = delta_y / alloc.height
+                    xpos = max(0, min(self.__startDraggingTitlePos[0] + delta_xpos, 1))
+                    ypos = max(0, min(self.__startDraggingTitlePos[1] + delta_ypos, 1))
+                    self.__editSource.set_child_property("xpos", xpos)
+                    self.__editSource.set_child_property("ypos", ypos)
+                else:
+                    self.__editSource.set_child_property("posx",
+                                                         self.__startEditSourcePosition[0] +
+                                                         delta_x)
 
-                self.__editSource.set_child_property("posy", self.__startEditSourcePosition[1] +
-                                                     (y - self.__startDraggingPosition[1]))
+                    self.__editSource.set_child_property("posy", self.__startEditSourcePosition[1] +
+                                                         delta_y)
                 self.app.project_manager.current_project.pipeline.commit_timeline()
         elif event.type == Gdk.EventType.SCROLL:
             if self.__editSource:
@@ -630,8 +649,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.area = None
         self.zoom = 1.0
         self.sink = sink
-        self.pixbuf = None
-        self.pipeline = None
         self.transformation_properties = None
         self._setting_ratio = False
         self.__startDraggingPosition = None

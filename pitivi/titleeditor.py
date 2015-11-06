@@ -22,11 +22,9 @@
 import os
 
 from gi.repository import Gtk
-from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GES
 from gi.repository import Gst
-from gi.repository import GLib
 
 from gettext import gettext as _
 from xml.sax.saxutils import escape, unescape
@@ -62,9 +60,6 @@ class TitleEditor(Loggable):
         self.seeker = Seeker()
         self._selection = None
 
-        # Drag attributes
-        self._drag_events = []
-        self._signals_connected = False
         self._setting_props = False
         self._children_props_handler = None
 
@@ -305,70 +300,11 @@ class TitleEditor(Loggable):
         if self.source and not self._children_props_handler:
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._propertyChangedCb)
-        if not self._signals_connected:
-            widget = self.app.gui.viewer.target
-            widget.connect("motion-notify-event", self.viewerDragNotifyCb)
-            widget.connect("button-press-event", self.viewerDragPressCb)
-            widget.connect("button-release-event", self.viewerDragReleaseCb)
-            self._signals_connected = True
 
     def _disconnect_signals(self):
         if self._children_props_handler is not None:
             self.source.disconnect(self._children_props_handler)
             self._children_props_handler = None
-
-        if not self._signals_connected:
-            return
-        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragNotifyCb)
-        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragPressCb)
-        self.app.gui.viewer.target.disconnect_by_func(self.viewerDragReleaseCb)
-        self._signals_connected = False
-
-    def viewerDragPressCb(self, unused_widget, event):
-        if event.button == 1:
-            self._drag_events = [(event.x, event.y)]
-            # Update drag by drag event change, but not too often
-            self.timeout = GLib.timeout_add(100, self.drag_update_event)
-            # If drag goes out for 0.3 second, and do not come back, consider
-            # drag end
-            self._drag_updated = True
-            self.timeout = GLib.timeout_add(1000, self.drag_possible_end_event)
-
-    def drag_possible_end_event(self):
-        if self._drag_updated:
-            # Updated during last timeout, wait more
-            self._drag_updated = False
-            return True
-        else:
-            # Not updated - posibly out of bounds, stop drag
-            self.log("Drag timeout")
-            self._drag_events = []
-            return False
-
-    def drag_update_event(self):
-        if len(self._drag_events) > 0:
-            st = self._drag_events[0]
-            self._drag_events = [self._drag_events[-1]]
-            e = self._drag_events[0]
-            xdiff = e[0] - st[0]
-            ydiff = e[1] - st[1]
-            xdiff /= self.app.gui.viewer.target.get_allocated_width()
-            ydiff /= self.app.gui.viewer.target.get_allocated_height()
-            newxpos = self.settings["xpos"].get_value() + xdiff
-            newypos = self.settings["ypos"].get_value() + ydiff
-            self.settings["xpos"].set_value(newxpos)
-            self.settings["ypos"].set_value(newypos)
-            return True
-        else:
-            return False
-
-    def viewerDragNotifyCb(self, unused_widget, event):
-        if len(self._drag_events) > 0 and event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
-            self._drag_updated = True
-            self._drag_events.append((event.x, event.y))
-
-    def viewerDragReleaseCb(self, unused_widget, unused_event):
-        self._drag_events = []
 
     def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
         if self._selection is not None:
