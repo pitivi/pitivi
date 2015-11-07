@@ -143,6 +143,7 @@ else
     export GST_VALIDATE_APPS_DIR=$GST_VALIDATE_APPS_DIR:$PITIVI/gst-editing-services/tests/validate/
     export GST_VALIDATE_SCENARIOS_PATH=$PITIVI/gst-devtools/validate/data/scenarios/:$GST_VALIDATE_SCENARIOS_PATH
     export GST_VALIDATE_PLUGIN_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/plugins/
+    export GST_ENCODING_TARGET_PATH=$GST_VALIDATE_PLUGIN_PATH:$PITIVI/gst-devtools/validate/data/encoding-profiles/
 
     export PKG_CONFIG_PATH="$PITIVI/gstreamer/pkgconfig\
 :$PITIVI/gst-plugins-base/pkgconfig\
@@ -180,6 +181,17 @@ $PITIVI/gstreamer/plugins\
 :$PITIVI/gst-editing-services/plugins/nle/\
 :$PITIVI/gst-editing-services/plugins/ges/\
 :${GST_PLUGIN_PATH:+:$GST_PLUGIN_PATH}"
+
+export GST_PRESET_PATH="\
+$PITIVI/gst-plugins-good/gst/equalizer/\
+:$PITIVI/gst-plugins-good/gst/equalizer\
+:$PITIVI/gst-plugins-good/ext/jpeg\
+:$PITIVI/gst-plugins-good/ext/vpx/\
+:$PITIVI/gst-plugins-ugly/ext/x264\
+:$PITIVI/gst-plugins-ugly/ext/amrnb\
+:$PITIVI/gst-plugins-bad/gst/freeverb\
+:$PITIVI/gst-plugins-bad/ext/voamrwbenc\
+${GST_PRESET_PATH:+:$GST_PRESET_PATH}"
 
     # don't use any system-installed plug-ins at all
     export GST_PLUGIN_SYSTEM_PATH=
