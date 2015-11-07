@@ -35,7 +35,7 @@ from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.elements import Clip, TrimHandle
+from pitivi.timeline.elements import Clip, TransitionClip, TrimHandle
 from pitivi.timeline.layer import Layer, LayerControls
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
@@ -552,19 +552,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         res, button = event.get_button()
         if res and button == 1:
             self.draggingElement = self._getParentOfType(event_widget, Clip)
-            self.debug("Dragging element is %s", self.draggingElement)
             if isinstance(event_widget, TrimHandle):
                 self.__clickedHandle = event_widget
+            self.debug("Dragging element is %s", self.draggingElement)
 
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
                 self._on_layer = self.draggingElement.layer.bLayer
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
-                if not layer_controls:
-                    self.__marquee.setStartPosition(event)
-                else:
+                if layer_controls:
                     self.__moving_layer = layer_controls.bLayer
+                else:
+                    self.__marquee.setStartPosition(event)
 
         return False
 
@@ -601,11 +601,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def __motionNotifyEventCb(self, unused_widget, event):
         if self.draggingElement:
-            state = event.get_state()
+            if type(self.draggingElement) == TransitionClip and \
+                    not self.__clickedHandle:
+                # Don't allow dragging a transition.
+                return False
 
+            state = event.get_state()
             if isinstance(state, tuple):
                 state = state[1]
-
             if not state & Gdk.ModifierType.BUTTON1_MASK:
                 self.dragEnd()
                 return False
