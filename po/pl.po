@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-25 19:59+0100\n"
-"PO-Revision-Date: 2015-10-25 20:00+0100\n"
+"POT-Creation-Date: 2015-11-08 20:54+0100\n"
+"PO-Revision-Date: 2015-11-08 20:55+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -682,15 +682,15 @@ msgstr ""
 "— %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
 "wersji %s"
 
-#: ../pitivi/check.py:260
+#: ../pitivi/check.py:269
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "BŁĄD — brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:269
+#: ../pitivi/check.py:278
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:276
+#: ../pitivi/check.py:285
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -698,7 +698,7 @@ msgstr ""
 "BŁĄD — nie można utworzyć Gst.Fraction — oznacza to, że gst-python nie jest "
 "poprawnie zainstalowane."
 
-#: ../pitivi/check.py:281
+#: ../pitivi/check.py:290
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -706,31 +706,41 @@ msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
 
-#: ../pitivi/check.py:286
+#: ../pitivi/check.py:295
 msgid ""
-"Could not create video output sink. Make sure you have a gtksink avalaible."
+"Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Nie można utworzyć odpływu wyjścia obrazu. Proszę się upewnić, że odpływ "
 "gtksink jest dostępny."
 
-#: ../pitivi/check.py:353
+#: ../pitivi/check.py:308
+#, python-format
+msgid "Could not import '%s'. Make sure you have it available."
+msgstr "Nie można zaimportować „%s”. Proszę się upewnić, że jest dostępne."
+
+#: ../pitivi/check.py:324
+msgid "Could not import 'gi'. Make sure you have pygobject available."
+msgstr ""
+"Nie można zaimportować „gi”. Proszę się upewnić, że PyGObject jest dostępne."
+
+#: ../pitivi/check.py:389
 msgid "enables sound notifications when rendering is complete"
 msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
 
-#: ../pitivi/check.py:354
+#: ../pitivi/check.py:390
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr ""
 "miniatury plików dostarczane przez generatory miniatur środowiska GNOME"
 
-#: ../pitivi/check.py:355
+#: ../pitivi/check.py:391
 msgid "enables visual notifications when rendering is complete"
 msgstr "włącza powiadomienia po ukończeniu renderowania"
 
-#: ../pitivi/check.py:356
+#: ../pitivi/check.py:392
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
 
-#: ../pitivi/check.py:357
+#: ../pitivi/check.py:393
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1425,7 +1435,7 @@ msgstr ""
 msgid "Setting property: %s"
 msgstr "Ustawianie właściwości: %s"
 
-#: ../pitivi/timeline/elements.py:967
+#: ../pitivi/timeline/elements.py:970
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
@@ -1486,7 +1496,7 @@ msgstr ""
 "Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
 "czasu."
 
-#: ../pitivi/timeline/timeline.py:1287
+#: ../pitivi/timeline/timeline.py:1290
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1503,72 +1513,72 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1363
+#: ../pitivi/timeline/timeline.py:1366
 msgid "Zoom In"
 msgstr "Powiększenie"
 
-#: ../pitivi/timeline/timeline.py:1364
+#: ../pitivi/timeline/timeline.py:1367
 msgid "Zoom Out"
 msgstr "Pomniejszenie"
 
-#: ../pitivi/timeline/timeline.py:1365 ../pitivi/utils/widgets.py:1031
+#: ../pitivi/timeline/timeline.py:1368 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/timeline/timeline.py:1389
+#: ../pitivi/timeline/timeline.py:1392
 msgid "Delete Selected"
 msgstr "Usuwa zaznaczone"
 
-#: ../pitivi/timeline/timeline.py:1391
+#: ../pitivi/timeline/timeline.py:1394
 msgid "Ungroup"
 msgstr "Rozgrupuj"
 
-#: ../pitivi/timeline/timeline.py:1392
+#: ../pitivi/timeline/timeline.py:1395
 msgid "Ungroup clips"
 msgstr "Rozgrupowuje klipy"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1395
+#: ../pitivi/timeline/timeline.py:1398
 msgid "Group"
 msgstr "Grupuj"
 
-#: ../pitivi/timeline/timeline.py:1396
+#: ../pitivi/timeline/timeline.py:1399
 msgid "Group clips"
 msgstr "Grupuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1398
+#: ../pitivi/timeline/timeline.py:1401
 msgid "Copy"
 msgstr "Skopiuj"
 
-#: ../pitivi/timeline/timeline.py:1399
+#: ../pitivi/timeline/timeline.py:1402
 msgid "Copy clips"
 msgstr "Kopiuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1401
+#: ../pitivi/timeline/timeline.py:1404
 msgid "Paste"
 msgstr "Wklej"
 
-#: ../pitivi/timeline/timeline.py:1402
+#: ../pitivi/timeline/timeline.py:1405
 msgid "Paste clips"
 msgstr "Wkleja klipy"
 
-#: ../pitivi/timeline/timeline.py:1411
+#: ../pitivi/timeline/timeline.py:1414
 msgid "Start Playback"
 msgstr "Rozpocznij odtwarzanie"
 
-#: ../pitivi/timeline/timeline.py:1413
+#: ../pitivi/timeline/timeline.py:1416
 msgid "Split"
 msgstr "Podziel"
 
-#: ../pitivi/timeline/timeline.py:1414
+#: ../pitivi/timeline/timeline.py:1417
 msgid "Split clip at playhead position"
 msgstr "Przecina klip w pozycji głowicy"
 
-#: ../pitivi/timeline/timeline.py:1416
+#: ../pitivi/timeline/timeline.py:1419
 msgid "Add a Keyframe"
 msgstr "Dodaj klatkę kluczową"
 
-#: ../pitivi/timeline/timeline.py:1417
+#: ../pitivi/timeline/timeline.py:1420
 msgid "Add a keyframe"
 msgstr "Dodaje klatkę kluczową"
 
