@@ -293,7 +293,7 @@ def check_requirements():
 
     if not _check_videosink():
         print((_("Could not create video output sink. "
-                 "Make sure you have a gtksink avalaible.")))
+                 "Make sure you have a gtksink available.")))
         return False
 
     return True
@@ -305,8 +305,8 @@ def require_version(modulename, version):
     try:
         gi.require_version(modulename, version)
     except ValueError:
-        print((_("Could not import '%s'"
-                 "Make sure you have it avalaible."
+        print((_("Could not import '%s'. "
+                 "Make sure you have it available."
                  % modulename)))
         exit(1)
 
@@ -321,8 +321,8 @@ def initialize_modules():
     try:
         import gi
     except ImportError:
-        print((_("Could not import 'gi'"
-                 "Make sure you have pygobject avalaible.")))
+        print((_("Could not import 'gi'. "
+                 "Make sure you have pygobject available.")))
         exit(1)
 
     require_version("Gtk", GTK_API_VERSION)
