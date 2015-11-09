@@ -172,7 +172,6 @@ class Marquee(Gtk.Box, Loggable):
         w = self.props.width_request
         for layer in self._timeline.bTimeline.get_layers():
             intersects, unused_rect = layer.ui.get_allocation().intersect(self.get_allocation())
-
             if not intersects:
                 continue
 
@@ -931,15 +930,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         else:
             is_handle = self.editing_context.edge != GES.Edge.EDGE_NONE
 
-        return self.get_parent().getEditionMode(isAHandle=is_handle)
+        parent = self.get_parent()
+        if parent._shiftMask or parent._autoripple_active:
+            return GES.EditMode.EDIT_RIPPLE
+        if is_handle and parent._controlMask:
+            return GES.EditMode.EDIT_ROLL
+        elif is_handle:
+            return GES.EditMode.EDIT_TRIM
+        return GES.EditMode.EDIT_NORMAL
 
     def __layerGetSeps(self, bLayer, sep_name):
-        if self.__getEditingMode() != GES.EditMode.EDIT_NORMAL:
-            return []
-
-        if self.current_group.props.height > 1:
-            return []
-
         return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
 
     def __getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
@@ -996,13 +996,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.debug("Returning layer %s, separators: %s", bLayer, separators)
                 return bLayer, separators
 
-    def __setHoverSeparators(self):
+    def __setHoverSeparators(self, separators):
+        self.__on_separators = separators
         for sep in self.__on_separators:
             set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
 
     def __unsetHoverSeparators(self):
         for sep in self.__on_separators:
             unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+        self.__on_separators = []
 
     def __dragUpdate(self, event_widget, x, y):
         if not self.draggingElement:
@@ -1038,9 +1040,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x - self.__drag_start_x)
 
         self.__unsetHoverSeparators()
-        self._on_layer, self.__on_separators = self.__getLayerAt(y,
-                                                                 prefer_bLayer=self._on_layer)
-        self.__setHoverSeparators()
+        self._on_layer, on_separators = self.__getLayerAt(y,
+                                                          prefer_bLayer=self._on_layer)
+        if (mode != GES.EditMode.EDIT_NORMAL or
+                self.current_group.props.height > 1):
+            # When dragging clips from more than one layer, do not allow
+            # them to be dragged between layers to create a new layer.
+            on_separators = []
+        self.__setHoverSeparators(on_separators)
 
         priority = self._on_layer.props.priority
         self.editing_context.editTo(position, priority)
@@ -1109,7 +1116,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             layer.ui.checkMediaTypes()
 
         self.__unsetHoverSeparators()
-        self.__on_separators = []
 
         self.queue_draw()
 
@@ -1132,6 +1138,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app = instance
         self._settings = self.app.settings
         self._autoripple_active = self._settings.timelineAutoRipple
+        self._shiftMask = False
+        self._controlMask = False
+
+        # Whether the entire content is in the timeline view, in which case
+        # it should be kept that way if it makes sense.
+        self.zoomed_fitted = True
 
         self._projectmanager = None
         self._project = None
@@ -1258,15 +1270,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.selection.connect(
             "selection-changed", self._selectionChangedCb)
 
-    def getEditionMode(self, isAHandle=False):
-        if self._shiftMask or self._autoripple_active:
-            return GES.EditMode.EDIT_RIPPLE
-        if isAHandle and self._controlMask:
-            return GES.EditMode.EDIT_ROLL
-        elif isAHandle:
-            return GES.EditMode.EDIT_TRIM
-        return GES.EditMode.EDIT_NORMAL
-
     def updateActions(self):
         selection_non_empty = bool(self.timeline.selection)
         self.delete_action.set_enabled(selection_non_empty)
@@ -1283,12 +1286,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _createUi(self):
         self.zoomBox = ZoomBox(self)
-        self._shiftMask = False
-        self._controlMask = False
-
-        self.scrolled = 0
-
-        self.zoomed_fitted = True
 
         self.timeline = Timeline(self, self.app)
         self.hadj = self.timeline.layout.get_hadjustment()
