@@ -26,8 +26,6 @@ import cairo
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
-from gi.repository import GLib
-from gi.repository import GObject
 
 from gettext import gettext as _
 
@@ -68,15 +66,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
     time is shown. If zoomed in enough, shows the frames in alternate colors.
     """
 
-    __gsignals__ = {
-        "button-press-event": "override",
-        "button-release-event": "override",
-        "motion-notify-event": "override",
-        "scroll-event": "override",
-        "seek": (GObject.SignalFlags.RUN_LAST, None,
-                 [GObject.TYPE_UINT64])
-    }
-
     def __init__(self, timeline, hadj):
         Gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
@@ -103,11 +92,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # all values are in pixels
         self.pixbuf_offset = 0
         self.pixbuf_offset_painted = 0
-        # This is the number of width we allocate for the pixbuf
-        self.pixbuf_multiples = 4
 
         self.position = 0  # In nanoseconds
-        self.pressed = False
         self.frame_rate = Gst.Fraction(1 / 1)
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
         self.connect('draw', self.drawCb)
@@ -190,20 +176,20 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def do_button_press_event(self, event):
         self.debug("button pressed at x:%d", event.x)
-        self.pressed = True
         position = self.pixelToNs(event.x + self.pixbuf_offset)
         self._seeker.seek(position, on_idle=True)
-        return True
+        return False
 
     def do_button_release_event(self, event):
         self.debug("button released at x:%d", event.x)
         self.grab_focus()  # Prevent other widgets from being confused
-        self.pressed = False
         return False
 
     def do_motion_notify_event(self, event):
         position = self.pixelToNs(event.x + self.pixbuf_offset)
-        if self.pressed:
+        seek_mask = (Gdk.ModifierType.BUTTON3_MASK |
+                     Gdk.ModifierType.BUTTON1_MASK)
+        if event.state & seek_mask:
             self.debug("motion at event.x %d", event.x)
             self._seeker.seek(position, on_idle=True)
 
@@ -213,19 +199,19 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_scroll_event(self, event):
-        if event.scroll.state & Gdk.ModifierType.CONTROL_MASK:
+        if event.state & Gdk.ModifierType.CONTROL_MASK:
             # Control + scroll = zoom
-            if event.scroll.direction == Gdk.ScrollDirection.UP:
+            if event.direction == Gdk.ScrollDirection.UP:
                 Zoomable.zoomIn()
-            elif event.scroll.direction == Gdk.ScrollDirection.DOWN:
+            elif event.direction == Gdk.ScrollDirection.DOWN:
                 Zoomable.zoomOut()
         else:
             # No modifier key held down, just scroll
-            if event.scroll.direction in (Gdk.ScrollDirection.UP,
-                                          Gdk.ScrollDirection.LEFT):
+            if event.direction in (Gdk.ScrollDirection.UP,
+                                   Gdk.ScrollDirection.LEFT):
                 self.timeline.scroll_left()
-            elif event.scroll.direction in (Gdk.ScrollDirection.DOWN,
-                                            Gdk.ScrollDirection.RIGHT):
+            elif event.direction in (Gdk.ScrollDirection.DOWN,
+                                     Gdk.ScrollDirection.RIGHT):
                 self.timeline.scroll_right()
 
     def setProjectFrameRate(self, rate):
