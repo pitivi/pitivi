@@ -22,20 +22,21 @@
 # Boston, MA 02110-1301, USA.
 
 import cairo
+import os
 
-from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import Gst
+from gi.repository import Gtk
 
 from gettext import gettext as _
 
+from pitivi import configure
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
-
-HEIGHT = 25
 
 # Tuples of:
 # - an interval lengths in seconds for which a timestamp will be displayed
@@ -116,10 +117,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.position = 0  # In nanoseconds
         self.frame_rate = Gst.Fraction(1 / 1)
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
-        self.connect('draw', self.drawCb)
-        self.connect('configure-event', self.configureEventCb)
-        self.callback_id = None
-        self.set_size_request(0, HEIGHT)
+
+        self.playhead_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
+            os.path.join(configure.get_pixmap_dir(), "pitivi-playhead.svg"))
 
         self.scales = SCALES
 
@@ -142,9 +142,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.queue_draw()
 
 # Gtk.Widget overrides
-    def configureEventCb(self, widget, unused_event, unused_data=None):
-        width = widget.get_allocated_width()
-        height = widget.get_allocated_height()
+
+    def do_configure_event(self, unused_event):
+        width = self.get_allocated_width()
+        height = self.get_allocated_height()
         self.debug("Configuring, height %d, width %d", width, height)
 
         # Destroy previous buffer
@@ -167,7 +168,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         return False
 
-    def drawCb(self, unused_widget, context):
+    def do_draw(self, context):
         if self.pixbuf is None:
             self.info('No buffer to paint')
             return False
@@ -377,11 +378,20 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             frame_num += 1
 
     def drawPosition(self, context):
+        height = self.pixbuf.get_height()
         # Add 0.5 so that the line center is at the middle of the pixel,
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
-        context.set_line_width(PLAYHEAD_WIDTH + 2)
+        context.set_line_width(PLAYHEAD_WIDTH)
         set_cairo_color(context, (255, 0, 0))
-        context.move_to(xpos, 0)
-        context.line_to(xpos, context.get_target().get_height())
+        context.move_to(xpos, height / 2)
+        context.line_to(xpos, height)
         context.stroke()
+
+        playhead_width = self.playhead_pixbuf.props.width
+        playhead_height = self.playhead_pixbuf.props.height
+        xpos -= playhead_width / 2
+        ypos = (height - playhead_height) / 2
+        Gdk.cairo_set_source_pixbuf(context, self.playhead_pixbuf, xpos, ypos)
+        context.rectangle(xpos, ypos, playhead_width, playhead_height)
+        context.fill()

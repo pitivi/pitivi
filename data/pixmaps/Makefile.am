@@ -8,6 +8,7 @@ pixmap_DATA = \
 	pitivi-group-24.svg  \
 	pitivi-keyframe-24.svg  \
 	pitivi-keyframe.svg     \
+	pitivi-playhead.svg	\
 	pitivi-relink-24.svg	\
 	pitivi-relink.svg	\
 	pitivi-render-16.png	\
