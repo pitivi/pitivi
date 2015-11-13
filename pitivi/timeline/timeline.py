@@ -263,8 +263,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.get_accessible().set_name("timeline canvas")
         self.__fake_event_widget = None
 
-        self.connect("scroll-event", self.__scrollEventCb)
-
         # A lot of operations go through these callbacks.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
         self.connect("button-press-event", self.__buttonPressEventCb)
@@ -544,7 +542,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     # Gtk events management
 
-    def __scrollEventCb(self, unused_widget, event):
+    def do_scroll_event(self, event):
         res, delta_x, delta_y = event.get_scroll_deltas()
         if not res:
             res, direction = event.get_scroll_direction()

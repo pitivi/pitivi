@@ -212,20 +212,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_scroll_event(self, event):
-        if event.state & Gdk.ModifierType.CONTROL_MASK:
-            # Control + scroll = zoom
-            if event.direction == Gdk.ScrollDirection.UP:
-                Zoomable.zoomIn()
-            elif event.direction == Gdk.ScrollDirection.DOWN:
-                Zoomable.zoomOut()
-        else:
-            # No modifier key held down, just scroll
-            if event.direction in (Gdk.ScrollDirection.UP,
-                                   Gdk.ScrollDirection.LEFT):
-                self.timeline.scroll_left()
-            elif event.direction in (Gdk.ScrollDirection.DOWN,
-                                     Gdk.ScrollDirection.RIGHT):
-                self.timeline.scroll_right()
+        self.timeline.timeline.do_scroll_event(event)
 
     def setProjectFrameRate(self, rate):
         """
