@@ -646,8 +646,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         authors = [_("Current maintainers:"),
                    "Jean-François Fortin Tam <nekohayo@gmail.com>",
-                   "Thibault Saunier <thibault.saunier@collabora.com>",
+                   "Thibault Saunier <tsaunier@gnome.org>",
                    "Mathieu Duponchelle <mduponchelle1@gmail.com>",
+                   "Alexandru Băluț <alexandru.balut@gmail.com>",
                    "",
                    _("Past maintainers:"),
                    "Edward Hervey <bilboed@bilboed.com>",

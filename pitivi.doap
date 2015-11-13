@@ -29,7 +29,7 @@ we would recommend building from version control.
   <maintainer>
     <foaf:Person>
       <foaf:name>Thibault Saunier</foaf:name>
-      <foaf:mbox rdf:resource="mailto:thibault.saunier@collabora.com" />
+      <foaf:mbox rdf:resource="mailto:tsaunier@gnome.org" />
       <gnome:userid>tsaunier</gnome:userid>
     </foaf:Person>
   </maintainer>
