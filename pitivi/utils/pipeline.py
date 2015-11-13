@@ -80,79 +80,27 @@ class Seeker(GObject.Object, Loggable):
             cls._instance = super(Seeker, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self, timeout=80):
-        """
-        @param timeout (optional): the amount of miliseconds for a seek attempt
-        """
+    def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
-        self.timeout = timeout
-        self.pending_seek_id = None
-        self.position = None
-        self._time = None
-        self.pending_position = None
+    def seek(self, position):
+        position = max(0, position)
+        try:
+            self.emit('seek', position)
+        except PipelineError as e:
+            self.error("Error while seeking to position: %s, reason: %s",
+                       format_ns(position), e)
 
-    def seek(self, position, on_idle=False):
-        self.position = position
+    def seekRelative(self, time):
+        time = int(time)
+        try:
+            self.emit('seek-relative', time)
+        except PipelineError:
+            self.error("Error while seeking %s relative", time)
 
-        if self.pending_seek_id is None:
-            if on_idle:
-                self.pending_seek_id = self._scheduleSeek(
-                    self.timeout, self._seekTimeoutCb, relative=False)
-            else:
-                self._seek(relative=False)
-        else:
-            self.pending_position = position
-
-    def seekRelative(self, time, on_idle=False):
-        if self.pending_seek_id is None:
-            self._time = int(time)
-            if on_idle:
-                self.pending_seek_id = self._scheduleSeek(
-                    self.timeout, self._seekTimeoutCb, relative=True)
-            else:
-                self._seek(relative=True)
-
-    def flush(self, on_idle=False):
-        self.seekRelative(0, on_idle)
-
-    def _scheduleSeek(self, timeout, callback, relative=False):
-        return GLib.timeout_add(timeout, callback, relative)
-
-    def _seekTimeoutCb(self, relative):
-        self._seek(relative)
-
-    def _seek(self, relative):
-        self.pending_seek_id = None
-
-        if relative:
-            try:
-                self.emit('seek-relative', self._time)
-            except PipelineError:
-                self.error("Error while seeking %s relative", self._time)
-                # if an exception happened while seeking, properly
-                # reset ourselves
-                return False
-
-            self._time = None
-        elif self.position is not None:
-            position = max(0, self.position)
-            self.position = None
-            try:
-                self.emit('seek', position)
-            except PipelineError as e:
-                self.error("Error while seeking to position: %s, reason: %s",
-                           format_ns(position), e)
-                # if an exception happened while seeking, properly
-                # reset ourselves
-                return False
-
-        if self.pending_position:
-            self.seek(self.pending_position, on_idle=True)
-            self.pending_position = None
-
-        return False
+    def flush(self):
+        self.seekRelative(0)
 
 
 class SimplePipeline(GObject.Object, Loggable):
