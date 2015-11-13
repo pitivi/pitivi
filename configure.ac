@@ -1,6 +1,6 @@
 m4_define([gi_req_version], [1.31.1])
 m4_define([glib_req_version], [2.30.0])
-m4_define([gstreamer_req_version], [1.4.0])
+m4_define([gstreamer_req_version], [1.6.0])
 m4_define([gtk_req_version], [3.10.0])
 
 AC_PREREQ(2.52)
@@ -11,7 +11,7 @@ dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
 AC_INIT(Pitivi, 0.94,
-    https://bugzilla.gnome.org/browse.cgi?product=pitivi,
+    https://phabricator.freedesktop.org/tag/pitivi/,
     pitivi)
 
 LT_INIT()
