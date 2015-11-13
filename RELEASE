@@ -1,20 +1,13 @@
-0.94 Release "Tricks or Tracebacks?"
-------------------------------------
-This is the fourth release for the new version of Pitivi based on GES,
+0.95 Release "Enfant suisse"
+----------------------------
+This is the fifth release for the new version of Pitivi based on GES,
 the GStreamer Editing Services library. This is a incremental bugfixing release.
 
-Detailed release notes for 0.94 are on http://wiki.pitivi.org/wiki/0.94
-
-This is now considered a beta release. As per the feedback we've received since
-0.91 and the many fixes we've made since then, we are confident that the new
-release series is of much higher quality than the 0.15 series and older.
-
-This release works well for us and we make nice movies with it.
-Try it out, have fun and report detailed bugs for issues you may encounter!
+Detailed release notes for 0.95 are on http://wiki.pitivi.org/wiki/0.95
 
 == Requirements ==
 
-For this release, we depend on GStreamer, GSt-Python, GNonLin and GES 1.4.0.
+For this release, we depend on GStreamer, GSt-Python, GES 1.6
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
 See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
@@ -24,55 +17,51 @@ See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
 In Pitivi:
 
-    94  Alexandru Băluț
-    33  Tomas Karger
-    24  Thibault Saunier
-    22  Jean-François Fortin Tam
-    20  Lubosz Sarnecki
-     8  Mathieu Duponchelle
-     5  Marek Černocký
-     5  Piotr Drąg
-     2  Alexandre Franke
-     2  Daniel Mustieles
-     2  Dušan Kazik
-     2  Fabian Orccon
-     2  Georges Basile Stavracas Neto
-     2  Ken MacLeod
-     2  Milagros Alessandra Infante Montero
-     2  Мирослав Николић
-     1  Alexandre Prokoudine
-     1  Aurimas Černius
-     1  Balázs Úr
-     1  Bernd Homuth
-     1  Brion Vibber
-     1  Cheng-Chia Tseng
-     1  Dimitris Spingos
-     1  Dominique Leuenberger
-     1  Lasse Liehu
-     1  Martin Srebotnjak
-     1  Rafael Ferreira
-     1  Tom Tryfonidis
-     1  Yuri Myasoedov
+  213  Thibault Saunier
+  100  Alexandru Băluț
+   18  Mathieu Duponchelle
+   17  Jean-François Fortin Tam
+   14  Piotr Drąg (translations)
+    7  Dušan Kazik (translations)
+    7  Marek Černocký (translations)
+    4  Daniel Mustieles (translations)
+    4  Josef Andersson (translations)
+    2  Balázs Úr (translations)
+    2  Gábor Kelemen (translations)
+    2  Inaki Larranaga Murgoitio (translations)
+    2  Lubosz Sarnecki
+    1  Aurimas Černius (translations)
+    1  Cheng-Chia Tseng (translations)
+    1  Christian Kirbach (translations)
+    1  Jiri Grönroos (translations)
+    1  Jordi Mas (translations)
+    1  Luke Faraone
+    1  Rafael Fontenelle (translations)
+    1  Samir Ribic (translations)
+    1  Tiago S (translations)
+    1  Wim Taymans
+    1  Мирослав Николић (translations)
 
 
 In GES:
 
-    53  Thibault Saunier
-    15  Mathieu Duponchelle
-     5  Edward Hervey
-     5  Lubosz Sarnecki
-     4  Sebastian Dröge
-     3  Tim-Philipp Müller
-     2  Christoph Reiter
-     1  Alexandru Băluț
-     1  Lazar Claudiu
-     1  Vincent Penquerc'h
+  244  Thibault Saunier
+  108  Mathieu Duponchelle
+   28  Tim-Philipp Müller
+   13  Justin Kim
+    8  Luis de Bethencourt
+    7  Sebastian Dröge
+    7  Stefan Sauer
+    4  Edward Hervey
+    2  Joris Valette
+    1  Jan Schmidt
+    1  Nicolas Dufresne
 
 
 == Download ==
 
   Pitivi source tarballs are available on the GNOME FTP servers:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.94
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.95
 
   See the website for distribution-specific packages.
 
@@ -81,9 +70,9 @@ In GES:
 
  * Information for users and developers can be found on http://www.pitivi.org
  * Comments and feedback are welcome.
- * Pitivi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi
+ * Pitivi bug-tracker : https://phabricator.freedesktop.org/tag/pitivi/
 
 
 == Bugs Fixed ==
 
-See https://bugzilla.gnome.org/buglist.cgi?product=pitivi;target_milestone=0.94
+See https://phabricator.freedesktop.org/maniphest/query/iwzeFEu9xmQG/#R

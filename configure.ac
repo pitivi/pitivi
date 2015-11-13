@@ -10,7 +10,7 @@ dnl Note for packagers: see pitivi/check.py for the dependencies
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(Pitivi, 0.94,
+AC_INIT(Pitivi, 0.95,
     https://phabricator.freedesktop.org/tag/pitivi/,
     pitivi)
 
