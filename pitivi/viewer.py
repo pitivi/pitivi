@@ -31,7 +31,7 @@ from time import time
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
-from pitivi.utils.pipeline import AssetPipeline, Seeker
+from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
 
@@ -66,7 +66,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     """
     A wiget holding a viewer and the controls.
+
+    @type pipeline: L{pitivi.utils.pipeline.SimplePipeline}
     """
+
     __gtype_name__ = 'ViewerContainer'
     __gsignals__ = {
         "activate-playback-controls": (GObject.SignalFlags.RUN_LAST,
@@ -87,7 +90,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.pipeline = None
         self.docked = True
-        self.seeker = Seeker()
         self.target = None
         self._compactMode = False
 
@@ -123,7 +125,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.debug("New pipeline: %r", pipeline)
         self.pipeline = pipeline
         if position:
-            self.seeker.seek(position)
+            self.pipeline.simple_seek(position)
 
         self.pipeline.connect("state-change", self._pipelineStateChangedCb)
         self.pipeline.connect("position", self._positionCb)
@@ -139,7 +141,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.sink = self.pipeline.createSink()
         self.pipeline.setSink(self.sink)
 
-        self.target = ViewerWidget(self.sink, self.app)
+        self.target = ViewerWidget(self.pipeline, self.app)
 
         if self.docked:
             self.pack_start(self.target, True, True, 0)
@@ -296,7 +298,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _entryActivateCb(self, unused_entry):
         nanoseconds = self.timecode_entry.getWidgetValue()
-        self.seeker.seek(nanoseconds)
+        self.app.project_manager.current_project.pipeline.simple_seek(nanoseconds)
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     # Active Timeline calllbacks
@@ -311,25 +313,25 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.app.gui.focusTimeline()
 
     def _goToStartCb(self, unused_button):
-        self.seeker.seek(0)
+        self.app.project_manager.current_project.pipeline.simple_seek(0)
         self.app.gui.focusTimeline()
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.START, when_not_in_view=True)
 
     def _backCb(self, unused_button):
         # Seek backwards one second
-        self.seeker.seekRelative(0 - Gst.SECOND)
+        self.app.project_manager.current_project.pipeline.seekRelative(0 - Gst.SECOND)
         self.app.gui.focusTimeline()
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.END, when_not_in_view=True)
 
     def _forwardCb(self, unused_button):
         # Seek forward one second
-        self.seeker.seekRelative(Gst.SECOND)
+        self.app.project_manager.current_project.pipeline.seekRelative(Gst.SECOND)
         self.app.gui.focusTimeline()
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.START, when_not_in_view=True)
 
     def _goToEndCb(self, unused_button):
         end = self.app.project_manager.current_project.pipeline.getDuration()
-        self.seeker.seek(end)
+        self.app.project_manager.current_project.pipeline.simple_seek(end)
         self.app.gui.focusTimeline()
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
@@ -368,7 +370,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.settings.viewerWidth, self.settings.viewerHeight)
         if self.pipeline:
             self.pipeline.pause()
-            self.seeker.seek(position)
+            self.pipeline.simple_seek(position)
 
     def dock(self):
         if self.docked:
@@ -393,7 +395,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.external_window.hide()
         if position:
             self.pipeline.pause()
-            self.seeker.seek(position)
+            self.pipeline.simple_seek(position)
 
     def _toggleFullscreen(self, widget):
         if widget.get_active():
@@ -491,6 +493,8 @@ class TransformationBox(Gtk.EventBox, Loggable):
         self.app = app
         self.__editSource = None
         self.__startDraggingPosition = None
+        self.__startEditSourcePosition = None
+
         self.add_events(Gdk.EventMask.SCROLL_MASK)
 
     def __setupEditSource(self):
@@ -613,56 +617,42 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     """
     Widget for displaying a GStreamer video sink.
 
-    @ivar settings: The settings of the application.
-    @type settings: L{GlobalSettings}
+    @type _pipeline: L{pitivi.utils.pipeline.SimplePipeline}
     """
 
     __gsignals__ = {}
 
-    def __init__(self, sink, app=None):
+    def __init__(self, pipeline, app=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
-        self.__transformationBox = TransformationBox(app)
+
+        self._pipeline = pipeline
+
+        transformation_box = TransformationBox(app)
+        self.add(transformation_box)
 
         # We only work with a gtkglsink inside a glsinkbin
+        sink = pipeline.video_sink
         try:
             self.drawing_area = sink.props.sink.props.widget
         except AttributeError:
             self.drawing_area = sink.props.widget
+        self.drawing_area.show()
+        transformation_box.add(self.drawing_area)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
-        self.add(self.__transformationBox)
-        self.__transformationBox.add(self.drawing_area)
-
-        self.drawing_area.show()
-
-        self.seeker = Seeker()
-        if app:
-            self.settings = app.settings
-        self.app = app
-        self.box = None
-        self.stored = False
-        self.area = None
-        self.zoom = 1.0
-        self.sink = sink
-        self.transformation_properties = None
-        self._setting_ratio = False
-        self.__startDraggingPosition = None
-        self.__startEditSourcePosition = None
-        self.__editSource = None
 
     def setDisplayAspectRatio(self, ratio):
-        self._setting_ratio = True
         self.set_property("ratio", float(ratio))
 
     def _sizeCb(self, unused_widget, unused_area):
         # The transformation box is cleared when using regular rendering
         # so we need to flush the pipeline
-        self.seeker.flush()
+        self._pipeline.flushSeek()
 
     def do_get_preferred_width(self):
         # Do not let a chance for Gtk to choose video natural size

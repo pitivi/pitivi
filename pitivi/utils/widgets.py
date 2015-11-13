@@ -316,7 +316,6 @@ class TimeWidget(TextWidget, DynamicWidget):
             # We were given a frame number. Convert from the project framerate.
             frame_no = int(timecode)
             nanosecs = frame_no / float(self._framerate) * Gst.SECOND
-        # The seeker won't like floating point nanoseconds!
         return int(nanosecs)
 
     def setWidgetValue(self, timeNanos, send_signal=True):

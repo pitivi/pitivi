@@ -33,7 +33,6 @@ from gettext import gettext as _
 
 from pitivi import configure
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
 
@@ -92,6 +91,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     Displays a series of consecutive intervals. For each interval its beginning
     time is shown. If zoomed in enough, shows the frames in alternate colors.
+
+    @type timeline: L{pitivi.timeline.timeline.TimelineContainer}
+    @type _pipeline: L{pitivi.utils.pipeline.Pipeline}
     """
 
     def __init__(self, timeline, hadj):
@@ -101,7 +103,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.log("Creating new ScaleRuler")
 
         self.timeline = timeline
-        self._seeker = Seeker()
+        self._pipeline = None
         self.hadj = hadj
         hadj.connect("value-changed", self._hadjValueChangedCb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
@@ -135,7 +137,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 # Timeline position changed method
 
     def setPipeline(self, pipeline):
-        pipeline.connect('position', self.timelinePositionCb)
+        self._pipeline = pipeline
+        self._pipeline.connect('position', self.timelinePositionCb)
 
     def timelinePositionCb(self, unused_pipeline, position):
         self.position = position
@@ -188,9 +191,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_button_press_event(self, event):
+        if not self._pipeline:
+            return False
+
         self.debug("button pressed at x:%d", event.x)
         position = self.pixelToNs(event.x + self.pixbuf_offset)
-        self._seeker.seek(position)
+        self._pipeline.simple_seek(position)
         return False
 
     def do_button_release_event(self, event):
@@ -199,12 +205,15 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         return False
 
     def do_motion_notify_event(self, event):
+        if not self._pipeline:
+            return False
+
         position = self.pixelToNs(event.x + self.pixbuf_offset)
         seek_mask = (Gdk.ModifierType.BUTTON3_MASK |
                      Gdk.ModifierType.BUTTON1_MASK)
         if event.state & seek_mask:
             self.debug("motion at event.x %d", event.x)
-            self._seeker.seek(position)
+            self._pipeline.simple_seek(position)
 
         human_time = beautify_length(position)
         cur_frame = int(position / self.ns_per_frame) + 1

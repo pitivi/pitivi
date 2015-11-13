@@ -24,34 +24,34 @@
 Project related classes
 """
 
+import datetime
 import os
+import pwd
+import tarfile
+import time
+
 from gi.repository import GstPbutils
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import GLib
 from gi.repository import GObject
-import tarfile
 
-from time import time
-from datetime import datetime
 from gettext import gettext as _
-from pwd import getpwuid
 
 from pitivi.configure import get_ui_dir
+from pitivi.preset import AudioPresetManager, VideoPresetManager
+from pitivi.render import CachedEncoderList
 from pitivi.undo.undo import UndoableAction
-from pitivi.utils.validate import has_validate, create_monitor
-from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
-from pitivi.utils.pipeline import PipelineError, Seeker
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.pipeline import Pipeline
-from pitivi.utils.widgets import FractionWidget
+from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
+from pitivi.utils.pipeline import Pipeline, PipelineError
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import frame_rates, audio_rates,\
     audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
     pixel_aspect_ratios, display_aspect_ratios, SPACING
-from pitivi.preset import AudioPresetManager, VideoPresetManager
-from pitivi.render import CachedEncoderList
+from pitivi.utils.validate import has_validate, create_monitor
+from pitivi.utils.widgets import FractionWidget
 
 
 DEFAULT_NAME = _("New Project")
@@ -592,7 +592,7 @@ class ProjectManager(GObject.Object, Loggable):
         project = Project(self.app, name=DEFAULT_NAME)
 
         # setting default values for project metadata
-        project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
+        project.author = pwd.getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
         project.createTimeline()
         project._ensureTracks()
@@ -604,7 +604,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.pipeline.connect("died", self._pipelineDied)
         project.setModificationState(False)
         self.emit("new-project-loaded", self.current_project, emission)
-        self.time_loaded = time()
+        self.time_loaded = time.time()
 
         return True
 
@@ -680,7 +680,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.emit("new-project-loaded", self.current_project, True)
         if self.__missing_uris:
             self.current_project.setModificationState(True)
-        self.time_loaded = time()
+        self.time_loaded = time.time()
 
 
 class Project(Loggable, GES.Project):
@@ -726,7 +726,6 @@ class Project(Loggable, GES.Project):
         self.log("name:%s, uri:%s", name, uri)
         self.pipeline = None
         self.timeline = None
-        self.seeker = Seeker()
         self.uri = uri
         self.loaded = False
         self._at_least_one_asset_missing = False
@@ -1696,7 +1695,7 @@ class ProjectSettingsDialog(object):
         if self.project.year:
             year = int(self.project.year)
         else:
-            year = datetime.now().year
+            year = datetime.datetime.now().year
         self.year_spinbutton.get_adjustment().set_value(year)
 
     def updateProject(self):

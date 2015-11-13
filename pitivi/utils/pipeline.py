@@ -24,6 +24,7 @@
 """
 High-level pipelines
 """
+
 import os
 
 from gi.repository import GLib
@@ -57,52 +58,6 @@ class PipelineError(Exception):
     pass
 
 
-class Seeker(GObject.Object, Loggable):
-
-    """
-    The Seeker is a singleton helper class to do various seeking
-    operations in the pipeline.
-    """
-
-    _instance = None
-
-    __gsignals__ = {
-        "seek": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_UINT64,)),
-        "seek-relative": (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_INT64,)),
-    }
-
-    def __new__(cls, *args, **kwargs):
-        """
-        Override the new method to return the singleton instance if available.
-        Otherwise, create one.
-        """
-        if not cls._instance:
-            cls._instance = super(Seeker, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
-    def __init__(self):
-        GObject.Object.__init__(self)
-        Loggable.__init__(self)
-
-    def seek(self, position):
-        position = max(0, position)
-        try:
-            self.emit('seek', position)
-        except PipelineError as e:
-            self.error("Error while seeking to position: %s, reason: %s",
-                       format_ns(position), e)
-
-    def seekRelative(self, time):
-        time = int(time)
-        try:
-            self.emit('seek-relative', time)
-        except PipelineError:
-            self.error("Error while seeking %s relative", time)
-
-    def flush(self):
-        self.seekRelative(0)
-
-
 class SimplePipeline(GObject.Object, Loggable):
 
     """
@@ -117,6 +72,8 @@ class SimplePipeline(GObject.Object, Loggable):
      - C{position} : The current position of the pipeline changed.
      - C{eos} : The Pipeline has finished playing.
      - C{error} : An error happened.
+
+    @type _pipeline: L{Gst.Pipeline}
     """
 
     __gsignals__ = PIPELINE_SIGNALS
@@ -191,7 +148,7 @@ class SimplePipeline(GObject.Object, Loggable):
             return
 
         try:
-            self.seekRelative(0)
+            self.simple_seek(self.getPosition())
         except PipelineError as e:
             self.warning("Could not flush because: %s", e)
             pass
@@ -397,9 +354,13 @@ class SimplePipeline(GObject.Object, Loggable):
         # clamp between [0, duration]
         position = max(0, min(position, self.getDuration()))
 
-        res = self._pipeline.seek(1.0, Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                                  Gst.SeekType.SET, position,
-                                  Gst.SeekType.NONE, -1)
+        res = self._pipeline.seek(1.0,
+                                  Gst.Format.TIME,
+                                  Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                                  Gst.SeekType.SET,
+                                  position,
+                                  Gst.SeekType.NONE,
+                                  -1)
         self._addWaitingForAsyncDoneTimeout()
 
         if not res:
@@ -411,7 +372,10 @@ class SimplePipeline(GObject.Object, Loggable):
         self.emit('position', position)
 
     def seekRelative(self, time_delta):
-        self.simple_seek(self.getPosition() + time_delta)
+        try:
+            self.simple_seek(self.getPosition() + int(time_delta))
+        except PipelineError:
+            self.error("Error while seeking %s relative", time_delta)
 
     # Private methods
 
@@ -568,12 +532,11 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
     """
     Helper to handle GES.Pipeline through the SimplePipeline API
-    and handle the Seeker properly
     """
 
     __gsignals__ = PIPELINE_SIGNALS
 
-    def __init__(self, app, pipeline=None):
+    def __init__(self, app):
         GES.Pipeline.__init__(self)
         SimplePipeline.__init__(self, self)
 
@@ -583,9 +546,6 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._commit_wanted = False
 
         self._timeline = None
-        self._seeker = Seeker()
-        self._seeker.connect("seek", self._seekCb)
-        self._seeker.connect("seek-relative", self._seekRelativeCb)
 
         if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
@@ -618,12 +578,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         @postcondition: The L{Pipeline} will no longer be usable.
         """
-        self._seeker.disconnect_by_func(self._seekRelativeCb)
-        self._seeker.disconnect_by_func(self._seekCb)
         SimplePipeline.release(self)
-
-    def _seekRelativeCb(self, unused_seeker, time_delta):
-        self.seekRelative(time_delta)
 
     def stepFrame(self, framerate, frames_offset):
         """
@@ -649,33 +604,27 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                       new_pos / float(Gst.SECOND))
         self.simple_seek(new_pos)
 
-    def _seekCb(self, unused_seeker, position):
-        """
-        The app's main seek method used when the user seeks manually.
-
-        We clamp the seeker position so that it cannot go past 0 or the
-        end of the timeline.
-        """
-        self.simple_seek(position)
-
     def simple_seek(self, position):
         if self._timeline.is_empty():
+            # Nowhere to seek.
             return
 
         if self._rendering():
             raise PipelineError("Trying to seek while rendering")
 
         st = Gst.Structure.new_empty("seek")
-
         if self.getState() == Gst.State.PLAYING:
             st.set_value("playback_time", float(
                 self.getPosition()) / Gst.SECOND)
-
         st.set_value("start", float(position / Gst.SECOND))
         st.set_value("flags", "accurate+flush")
         self.app.write_action(st)
 
-        SimplePipeline.simple_seek(self, position)
+        try:
+            SimplePipeline.simple_seek(self, position)
+        except PipelineError as e:
+            self.error("Error while seeking to position: %s, reason: %s",
+                       format_ns(position), e)
 
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.ASYNC_DONE:

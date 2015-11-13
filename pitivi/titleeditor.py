@@ -30,7 +30,6 @@ from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.pipeline import Seeker
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
 
@@ -48,6 +47,7 @@ class TitleEditor(Loggable):
     Widget for configuring the selected title.
 
     @type app: L{Pitivi}
+    @type _project: L{pitivi.project.Project}
     """
 
     def __init__(self, app):
@@ -56,7 +56,7 @@ class TitleEditor(Loggable):
         self.action_log = app.action_log
         self.settings = {}
         self.source = None
-        self.seeker = Seeker()
+        self._project = None
         self._selection = None
 
         self._setting_props = False
@@ -229,7 +229,7 @@ class TitleEditor(Loggable):
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
-            self.seeker.flush()
+            self._project.pipeline.flushSeek()
             return
 
         value = self.source.get_child_property(pspec.name)[1]
@@ -263,7 +263,7 @@ class TitleEditor(Loggable):
                 return
             self.background_color_button.set_rgba(color)
 
-        self.seeker.flush()
+        self._project.pipeline.flushSeek()
 
     def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
         if self._selection is not None:
@@ -272,6 +272,7 @@ class TitleEditor(Loggable):
         if project:
             self._selection = project.timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
+        self._project = project
 
     def _selectionChangedCb(self, selection):
         selected_clip = selection.getSingleClip(GES.TitleClip)
