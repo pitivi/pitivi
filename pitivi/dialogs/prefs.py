@@ -267,20 +267,27 @@ class PreferencesDialog(object):
             grid.props.row_spacing = SPACING / 2
             self.sections[section] = grid
 
-            prefs = {}
+            prefs = []
             for attrname in options:
                 label, description, widget_class, args = options[attrname]
                 widget = widget_class(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(
                     self._valueChangedCb, widget, attrname)
+                widget.set_tooltip_text(description)
                 self.widgets[attrname] = widget
                 # Add a semicolon, except for checkbuttons.
-                if not isinstance(widget, widgets.ToggleWidget):
+                if isinstance(widget, widgets.ToggleWidget):
+                    widget.set_label(label)
+                    label_widget = None
+                else:
                     # Translators: This adds a semicolon to an already
                     # translated name of a preference.
                     label = _("%(preference_label)s:") % {"preference_label": label}
-                label_widget = Gtk.Label(label=label)
+                    label_widget = Gtk.Label(label=label)
+                    label_widget.set_tooltip_text(description)
+                    label_widget.set_alignment(1.0, 0.5)
+                    label_widget.show()
                 icon = Gtk.Image()
                 icon.set_from_icon_name(
                     "edit-clear-all-symbolic", Gtk.IconSize.MENU)
@@ -292,27 +299,23 @@ class PreferencesDialog(object):
                 revert.connect("clicked", self._resetOptionCb, attrname)
                 revert.show_all()
                 self.resets[attrname] = revert
-                prefs[label] = (label_widget, widget, description, revert)
+                row_widgets = (label_widget, widget, revert)
+                # Construct the prefs list so that it can be sorted.
+                # Make sure the L{ToggleWidget}s appear at the end.
+                prefs.append((label_widget is None, label, row_widgets))
 
             # Sort widgets: I think we only want to sort by the non-localized
             # names, so options appear in the same place across locales ...
             # but then I may be wrong
-
-            for y, unlocalized in enumerate(sorted(prefs)):
-                label, widget, description, revert = prefs[unlocalized]
-                if isinstance(widget, widgets.ToggleWidget):
-                    # Avoid the separating the label from the checkbox
-                    widget.set_label(label.get_text())
+            for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
+                label, widget, revert = row_widgets
+                if not label:
                     grid.attach(widget, 0, y, 2, 1)
                     grid.attach(revert, 2, y, 1, 1)
                 else:
-                    label.set_alignment(1.0, 0.5)
-                    label.set_tooltip_text(description)
                     grid.attach(label, 0, y, 1, 1)
                     grid.attach(widget, 1, y, 1, 1)
                     grid.attach(revert, 2, y, 1, 1)
-                    label.show()
-                widget.set_tooltip_text(description)
                 widget.show()
                 revert.show()
 
