@@ -48,7 +48,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 import numpy
 
-KEYFRAME_LINE_COLOR = (237, 212, 0)  # "Tango" yellow
+KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
+KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -110,15 +111,14 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__keyframes = None
 
         sizes = [50]
-        colors = ['r']
-
         self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
-                                             c=colors, zorder=2)
+                                             c=KEYFRAME_NODE_COLOR, zorder=2)
 
         # matplotlib weirdness, simply here to avoid a warning ..
         self.__keyframes.set_picker(True)
-        self.__line = self.__ax.plot([], [],
-                                     linewidth=1.0, zorder=1)[0]
+
+        self.__line = self.__ax.plot([], [], alpha=0.5, c=KEYFRAME_LINE_COLOR,
+                                     linewidth=1.5, zorder=1)[0]
         self.__updatePlots()
 
         # Drag and drop logic
@@ -132,8 +132,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.connect("event", self._eventCb)
 
         self.mpl_connect('button_press_event', self.__mplButtonPressEventCb)
-        self.mpl_connect(
-            'button_release_event', self.__mplButtonReleaseEventCb)
+        self.mpl_connect('button_release_event', self.__mplButtonReleaseEventCb)
         self.mpl_connect('motion_notify_event', self.__mplMotionEventCb)
 
     # Private methods
