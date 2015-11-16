@@ -357,7 +357,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         view.connect("drag-end", self._dndDragEndCb)
 
     def _importSourcesCb(self, unused_action):
-        self.showImportSourcesDialog()
+        self._showImportSourcesDialog()
 
     def _removeSourcesCb(self, unused_action):
         self._removeSources()
@@ -448,7 +448,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if not len(self.storemodel):
             self._welcome_infobar.show_all()
 
-    def showImportSourcesDialog(self):
+    def _showImportSourcesDialog(self):
         """Pop up the "Import Sources" dialog box"""
         if self._importDialog:
             return
@@ -639,9 +639,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                   duration,
                                   name))
         if len(self.pending_rows) > 50:
-            self.flush_pending_rows()
+            self._flushPendingRows()
 
-    def flush_pending_rows(self):
+    def _flushPendingRows(self):
         self.debug("Flushing %d pending model rows", len(self.pending_rows))
         for row in self.pending_rows:
             self.storemodel.append(row)
@@ -687,7 +687,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _sourcesStoppedImportingCb(self, unused_project):
         self.debug("Importing took %.3f seconds",
                    time.time() - self.import_start_time)
-        self.flush_pending_rows()
+        self._flushPendingRows()
         self._progressbar.hide()
         if self._errors:
             errors_amount = len(self._errors)
@@ -1042,7 +1042,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._connectToProject(project)
 
         # Make sure that the sources added to the project are added added
-        self.flush_pending_rows()
+        self._flushPendingRows()
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
         self.storemodel.clear()
