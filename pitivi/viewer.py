@@ -89,6 +89,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.docked = True
         self.seeker = Seeker()
         self.target = None
+        self._compactMode = False
 
         # Only used for restoring the pipeline position after a live clip trim
         # preview:
@@ -144,9 +145,11 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pack_start(self.target, True, True, 0)
             screen = Gdk.Screen.get_default()
             height = screen.get_height()
-            if height >= 800:
-                # show the controls and force the aspect frame to have at least the same
-                # width (+110, which is a magic number to minimize dead padding).
+            # Force the aspect frame to have at least the same width as
+            # the toolbar +110 (magic number to minimize dead padding).
+            # TODO: review this code to create a smarter algorithm,
+            # and use get_preferred_size() instead of size_request()
+            if not self._compactMode and height >= 800:
                 req = self.buttons.size_request()
                 width = req.width
                 height = req.height
@@ -283,6 +286,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.buttons_container = bbox
         self.show_all()
         self.external_vbox.show_all()
+
+    def activateCompactMode(self):
+        self.back_button.hide()
+        self.forward_button.hide()
+        self._compactMode = True  # Prevent set_size_request later
 
     def setDisplayAspectRatio(self, ratio):
         self.debug("Setting aspect ratio to %f [%r]", float(ratio), ratio)

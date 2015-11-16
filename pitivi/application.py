@@ -194,6 +194,7 @@ class Pitivi(Gtk.Application, Loggable):
             return
         self.gui = PitiviMainWindow(self)
         self.add_window(self.gui)
+        self.gui.checkScreenConstraints()
         # We might as well show it.
         self.gui.show()
 

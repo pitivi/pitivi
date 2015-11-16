@@ -143,6 +143,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
+        self._import_button = builder.get_object("media_import_button")
         self._remove_button = builder.get_object("media_remove_button")
         self._clipprops_button = builder.get_object("media_props_button")
         self._insert_button = builder.get_object("media_insert_button")
@@ -1150,3 +1151,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     for path in self._draggedPaths]
         return [self.modelFilter[path][COL_ASSET]
                 for path in self.getSelectedPaths()]
+
+    def activateCompactMode(self):
+        self._import_button.set_is_important(False)

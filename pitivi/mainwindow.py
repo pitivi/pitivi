@@ -392,6 +392,29 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                 value = self.vpaned.size_request().height / 2
             self.settings.mainWindowVPanePosition = value
 
+    def checkScreenConstraints(self):
+        """
+        Measure the approximate minimum size required by the main window
+        and shrink some widgets to fit smaller screen resolutions.
+        """
+        # This code works, but keep in mind get_preferred_size's output
+        # is only an approximation. As of 2015, GTK still does not have
+        # a way, even with client-side decorations, to tell us the exact
+        # minimum required dimensions of a window.
+        min_size, natural_size = self.get_preferred_size()
+        screen_width = self.get_screen().get_width()
+        screen_height = self.get_screen().get_height()
+        self.debug("Minimum UI size is " +
+                str(min_size.width) + "x" + str(min_size.height))
+        self.debug("Screen size is " +
+                str(screen_width) + "x" + str(screen_height))
+        if min_size.width >= 0.9 * screen_width:
+            self.medialibrary.activateCompactMode()
+            self.viewer.activateCompactMode()
+            min_size, natural_size = self.get_preferred_size()
+            self.info("Minimum UI size has been reduced to " +
+                   str(min_size.width) + "x" + str(min_size.height))
+
     def switchContextTab(self, bClip):
         """
         Switch the tab being displayed on the second set of tabs,
