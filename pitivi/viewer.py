@@ -145,16 +145,14 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pack_start(self.target, True, True, 0)
             screen = Gdk.Screen.get_default()
             height = screen.get_height()
-            # Force the aspect frame to have at least the same width as
-            # the toolbar +110 (magic number to minimize dead padding).
+            # Force the AspectFrame to be tall (and wide) enough to look good.
             # TODO: review this code to create a smarter algorithm,
             # and use get_preferred_size() instead of size_request()
-            if not self._compactMode and height >= 800:
+            if not self._compactMode:
                 req = self.buttons.size_request()
                 width = req.width
-                height = req.height
-                width += 110
                 height = int(width / self.target.props.ratio)
+                width += 110  # Magic number to minimize dead padding
                 self.target.set_size_request(width, height)
         else:
             self.external_vbox.pack_start(self.target, False, False, 0)
