@@ -63,6 +63,11 @@ class StartUpWizard(object):
         self.builder.connect_signals(self)
 
         self.window = self.builder.get_object("window1")
+        # The line below is supremely important, it will NOT work if set
+        # only by the GtkBuilder file. The DIALOG TypeHint allows proper
+        # attachment (visually, behaviorally) to MainWindow, and
+        # prevents other windows from showing on top too easily.
+        self.window.set_type_hint(Gdk.WindowTypeHint.DIALOG)
 
         self.recent_chooser = self.builder.get_object("recentchooser2")
         # FIXME: gtk creates a combo box with only one item, but there is no
@@ -132,7 +137,6 @@ class StartUpWizard(object):
     def show(self):
         """Will show the interal window and position the wizard"""
         self.window.set_transient_for(self.app.gui)
-        self.window.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.window.show()
 
     def hide(self):
