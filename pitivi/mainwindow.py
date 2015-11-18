@@ -197,7 +197,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         """
         from pitivi.render import RenderDialog
 
-        dialog = RenderDialog(self.app, project, self.timeline_ui)
+        dialog = RenderDialog(self.app, project)
         dialog.window.connect("destroy", self._renderDialogDestroyCb)
         self.set_sensitive(False)
         self.timeline_ui.disableKeyboardAndMouseEvents()

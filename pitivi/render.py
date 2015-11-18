@@ -316,16 +316,18 @@ class RenderDialog(Loggable):
 
     """Render dialog box.
 
+    @type app: L{pitivi.application.Pitivi}
     @ivar preferred_aencoder: The last audio encoder selected by the user.
     @type preferred_aencoder: str
     @ivar preferred_vencoder: The last video encoder selected by the user.
     @type preferred_vencoder: str
+    @type project: L{pitivi.project.Project}
     """
     INHIBIT_REASON = _("Currently rendering")
 
     _factory_formats = {}
 
-    def __init__(self, app, project, timeline_ui):
+    def __init__(self, app, project):
 
         from pitivi.preset import RenderPresetManager
 
@@ -334,7 +336,6 @@ class RenderDialog(Loggable):
         self.app = app
         self.project = project
         self.system = app.system
-        self.timeline_ui = timeline_ui
         self._pipeline = self.project.pipeline
 
         self.outfile = None
@@ -762,7 +763,7 @@ class RenderDialog(Loggable):
                     self._factory_formats[encoder_string] = fmt
                     break
 
-        self.timeline_ui.zoomFit()
+        self.app.gui.timeline_ui.zoomFit()
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
             self.outfile, self.project.container_profile)
