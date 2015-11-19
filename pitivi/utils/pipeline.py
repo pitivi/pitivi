@@ -506,7 +506,7 @@ class SimplePipeline(GObject.Object, Loggable):
             Gst.debug_bin_to_dot_file_with_ts(self._pipeline,
                                               Gst.DebugGraphDetails.ALL,
                                               "pitivi.error")
-            if not self._pipeline.get_mode() & GES.PipelineFlags.RENDER:
+            if not self._rendering():
                 self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
             self.debug("Duration might have changed, querying it")
@@ -585,6 +585,9 @@ class SimplePipeline(GObject.Object, Loggable):
         if not res:
             raise PipelineError("Couldn't get duration: Returned None")
         return dur
+
+    def _rendering(self):
+        return False
 
 
 class AssetPipeline(SimplePipeline):
@@ -703,7 +706,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         if self._timeline.is_empty():
             return
 
-        if self._pipeline.get_mode() & GES.PipelineFlags.RENDER:
+        if self._rendering():
             raise PipelineError("Trying to seek while rendering")
 
         st = Gst.Structure.new_empty("seek")
@@ -751,3 +754,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self.debug("No ASYNC_DONE will be emited on empty timelines")
             self._was_empty = True
             self._removeWaitingForAsyncDoneTimeout()
+
+    def _rendering(self):
+        mask = GES.PipelineFlags.RENDER | GES.PipelineFlags.SMART_RENDER
+        return self._pipeline.get_mode() & mask
