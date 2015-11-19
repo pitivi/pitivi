@@ -63,13 +63,6 @@ def setup():
     from pitivi.utils import loggable as log
     log.init('PITIVI_DEBUG')
 
-    try:
-        import mock
-    except ImportError:
-        print("\n\nPython mock library missing! www.voidspace.org.uk/python/mock\n\n", file=sys.stderr)
-        raise
-
-
 if __name__ == "__main__":
     setup()
 
