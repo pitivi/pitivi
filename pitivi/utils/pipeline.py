@@ -503,7 +503,8 @@ class SimplePipeline(GObject.Object, Loggable):
         elif message.type == Gst.MessageType.ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
-            Gst.debug_bin_to_dot_file_with_ts(self, Gst.DebugGraphDetails.ALL,
+            Gst.debug_bin_to_dot_file_with_ts(self._pipeline,
+                                              Gst.DebugGraphDetails.ALL,
                                               "pitivi.error")
             if not self._pipeline.get_mode() & GES.PipelineFlags.RENDER:
                 self._recover()
