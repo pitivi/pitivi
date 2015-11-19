@@ -351,7 +351,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.player.simple_seek(value)
 
     def _pipelineEosCb(self, unused_pipeline):
-        self.pause(state=Gst.State.NULL)
+        self.pause()
         self.pos_adj.set_value(0)
 
     def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
