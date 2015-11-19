@@ -357,7 +357,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
         self.pos_adj.set_value(0)
 
-    def _pipelineErrorCb(self, unused_message, unused_detail):
+    def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
         self.player.setState(Gst.State.NULL)
         self.is_playing = False
 
