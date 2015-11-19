@@ -368,10 +368,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         return self.is_playing
 
     def _on_start_stop_clicked_cb(self, button):
-        if self.is_playing:
-            self.pause()
-        else:
-            self.play()
+        self.togglePlayback()
 
     def _on_zoom_clicked_cb(self, button, increment):
         if self.current_preview_type == 'video':
