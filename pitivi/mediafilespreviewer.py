@@ -302,8 +302,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
         GLib.timeout_add(250, self._update_position)
         self.debug("Preview started")
 
-    def pause(self):
-        self.player.setState(Gst.State.PAUSED)
+    def pause(self, state=Gst.State.PAUSED):
+        if state is not None:
+            self.player.setState(state)
         self.is_playing = False
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
         self.log("Preview paused")
@@ -322,9 +323,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.b_details.hide()
         self.description = ""
         self.l_tags.set_markup("")
-        self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
-        self.player.setState(Gst.State.NULL)
-        self.is_playing = False
+        self.pause(state=Gst.State.NULL)
         self.tags = {}
         self.current_selected_uri = ""
         self.current_preview_type = ""
@@ -352,14 +351,11 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.player.simple_seek(value)
 
     def _pipelineEosCb(self, unused_pipeline):
-        self.player.setState(Gst.State.NULL)
-        self.is_playing = False
-        self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
+        self.pause(state=Gst.State.NULL)
         self.pos_adj.set_value(0)
 
     def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
-        self.player.setState(Gst.State.NULL)
-        self.is_playing = False
+        self.pause(state=Gst.State.NULL)
 
     def _update_position(self, *unused_args):
         if self.is_playing and not self.slider_being_used:
