@@ -89,7 +89,7 @@ PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= gtk_req_version],
                         [HAVE_GTK=no])
 
 AS_IF([test "x$HAVE_GTK" = xno],
-      [AC_MSG_ERROR([GTK+ >= $gtk_req_version is required])])
+      [AC_MSG_ERROR([GTK+ >= gtk_req_version is required])])
 
 PKG_CHECK_MODULES(GTK_X11, gtk+-x11-3.0 >= gtk_req_version, HAVE_GTK_X11=yes, HAVE_GTK_X11=no)
 PKG_CHECK_MODULES(GTK_QUARTZ, gtk+-quartz-3.0 >= gtk_req_version, HAVE_GTK_QUARTZ=yes, HAVE_GTK_QUARTZ=no)
@@ -103,7 +103,7 @@ AC_SUBST(GTK_LIBS)
 
 
 AS_IF([test "x$HAVE_GSTREAMER" = xno],
-      [AC_MSG_ERROR([GStreamer >= $gstreamer_req_version is required])])
+      [AC_MSG_ERROR([GStreamer >= gstreamer_req_version is required])])
 
 PKG_CHECK_MODULES([cairo], [cairo])
 PKG_CHECK_MODULES([py3cairo], [py3cairo])
