@@ -381,6 +381,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.app.project_manager.current_project.remove_asset(asset)
         self.app.action_log.commit()
 
+        # The treeview can make some of the remaining items selected, so
+        # make sure none are selected.
+        self._unselectAll()
+
     def _insertEndCb(self, unused_action, unused_parameter):
         self.app.gui.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
 
@@ -842,8 +846,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if row[COL_URI] not in sources_uris:
                 if self.clip_view == SHOW_TREEVIEW:
                     selection.unselect_iter(row.iter)
-                else:
+                elif self.clip_view == SHOW_ICONVIEW:
                     self.iconview.unselect_path(row.path)
+
+    def _unselectAll(self):
+        if self.clip_view == SHOW_TREEVIEW:
+            self.treeview.get_selection().unselect_all()
+        elif self.clip_view == SHOW_ICONVIEW:
+            self.iconview.unselect_all()
 
     # UI callbacks
 
