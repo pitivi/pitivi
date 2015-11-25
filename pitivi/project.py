@@ -1656,7 +1656,7 @@ class ProjectSettingsDialog(object):
 
         matching_video_preset = self.video_presets.matchingPreset(self.project)
         if matching_video_preset:
-            self.video_presets.restorePreset(matching_video_preset)
+            self.video_presets_combo.set_active_id(matching_video_preset)
 
         # Audio
         set_combo_value(self.channels_combo, self.project.audiochannels)
@@ -1664,7 +1664,7 @@ class ProjectSettingsDialog(object):
 
         matching_audio_preset = self.audio_presets.matchingPreset(self.project)
         if matching_audio_preset:
-            self.audio_presets.restorePreset(matching_audio_preset)
+            self.audio_presets_combo.set_active_id(matching_audio_preset)
 
         # Metadata
         self.title_entry.set_text(self.project.name)
