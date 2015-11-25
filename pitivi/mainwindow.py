@@ -1289,8 +1289,49 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             title = "%s%s — %s" % (unsaved_mark, name, APPNAME)
         else:
             title = APPNAME
-        self._headerbar.set_title(title)
+        event_box = Gtk.EventBox()
+        label = Gtk.Label()
+        label.set_text(title)
+        event_box.add(label)
+        event_box.show_all()
+        event_box.connect("button-press-event", self.__titleClickCb, project)
+        self._headerbar.set_custom_title(event_box)
         self.set_title(title)
+
+    def __titleClickCb(self, unused_widget, unused_event, project):
+        entry = Gtk.Entry()
+        entry.set_width_chars(100)
+        entry.set_margin_left(SPACING)
+        entry.set_margin_right(SPACING)
+        entry.show()
+        entry.set_text(project.name)
+        self._headerbar.set_custom_title(entry)
+        if project.hasDefaultName():
+            entry.grab_focus()
+        else:
+            entry.grab_focus_without_selecting()
+        entry.connect("focus-out-event", self.__titleChangedCb, project)
+        entry.connect("key_release_event", self.__titleTypeCb, project)
+
+    def __titleChangedCb(self, widget, event, project):
+        if not event.window:
+            # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=757036
+            return
+        name = widget.get_text()
+        if project.name == name:
+            self.updateTitle()
+        else:
+            project.name = name
+
+    def __titleTypeCb(self, widget, event, project):
+        if event.keyval == Gdk.KEY_Return:
+            self.timeline_ui.grab_focus()
+            return True
+        elif event.keyval == Gdk.KEY_Escape:
+            widget.set_text(project.name)
+            self.timeline_ui.grab_focus()
+            return True
+        return False
 
 
 class PreviewAssetWindow(Gtk.Window):

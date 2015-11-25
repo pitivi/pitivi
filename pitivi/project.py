@@ -54,6 +54,7 @@ from pitivi.preset import AudioPresetManager, VideoPresetManager
 from pitivi.render import CachedEncoderList
 
 
+DEFAULT_NAME = _("New Project")
 DEFAULT_MUXER = "oggmux"
 DEFAULT_VIDEO_ENCODER = "theoraenc"
 DEFAULT_AUDIO_ENCODER = "vorbisenc"
@@ -588,7 +589,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.__missing_uris = False
         if emission:
             self.emit("new-project-loading", None)
-        project = Project(self.app, name=_("New Project"))
+        project = Project(self.app, name=DEFAULT_NAME)
 
         # setting default values for project metadata
         project.author = getpwuid(os.getuid()).pw_gecos.split(",")[0]
@@ -1101,6 +1102,10 @@ class Project(Loggable, GES.Project):
     # ------------------------------------------ #
     # Our API                                    #
     # ------------------------------------------ #
+
+    def hasDefaultName(self):
+        return DEFAULT_NAME == self.name
+
     def _commit(self):
         """
         Our override of the GES.Timeline.commit method, letting us
