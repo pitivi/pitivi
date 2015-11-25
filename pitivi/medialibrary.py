@@ -137,6 +137,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
         builder.connect_signals(self)
         self._welcome_infobar = builder.get_object("welcome_infobar")
+        self._project_settings_set_infobar = Gtk.InfoBar()
+        self._project_settings_set_infobar.hide()
+        self._project_settings_set_infobar.set_message_type(Gtk.MessageType.OTHER)
+        self._project_settings_set_infobar.set_show_close_button(True)
+        self._project_settings_set_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
+        self._project_settings_set_infobar.connect("response", self.__projectSettingsSetInfobarCb)
         self._import_warning_infobar = builder.get_object("warning_infobar")
         self._import_warning_infobar.hide()
         self._warning_label = builder.get_object("warning_label")
@@ -305,6 +311,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Add all the child widgets.
         self.pack_start(toolbar, False, False, 0)
         self.pack_start(self._welcome_infobar, False, False, 0)
+        self.pack_start(self._project_settings_set_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
@@ -417,6 +424,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project.connect("error-loading-asset", self._errorCreatingAssetCb)
         project.connect("done-importing", self._sourcesStoppedImportingCb)
         project.connect("start-importing", self._sourcesStartedImportingCb)
+        project.connect("settings-set-from-imported-asset", self.__projectSettingsSetFromImportedAssetCb)
 
         # The start-importing signal would have already been emited at that
         # time, make sure to catch if it is the case
@@ -715,6 +723,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self._selectLastImportedUris()
 
+    def __projectSettingsSetFromImportedAssetCb(self, unused_project, asset):
+        if self._project_settings_set_infobar.is_visible():
+            # One is enough.
+            return
+        asset_path = path_from_uri(asset.get_id())
+        file_name = os.path.basename(asset_path)
+        message = _("The project settings have been set to match file '%s'") % file_name
+        label = Gtk.Label(message)
+        label.set_line_wrap(True)
+        content_area = self._project_settings_set_infobar.get_content_area()
+        for widget in content_area.get_children():
+            content_area.remove(widget)
+        content_area.add(label)
+        self._project_settings_set_infobar.show_all()
+
     def _selectLastImportedUris(self):
         if not self._last_imported_uris:
             return
@@ -829,6 +852,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     self.iconview.unselect_path(row.path)
 
     # UI callbacks
+
+    def __projectSettingsSetInfobarCb(self, infobar, response_id):
+        if response_id == Gtk.ResponseType.OK:
+            self.app.gui.showProjectSettingsDialog()
+        infobar.hide()
 
     def _removeClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """

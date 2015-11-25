@@ -711,7 +711,9 @@ class Project(Loggable, GES.Project):
         "project-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
         "rendering-settings-changed": (GObject.SignalFlags.RUN_LAST, None,
                                        (GObject.TYPE_PYOBJECT,
-                                        GObject.TYPE_PYOBJECT,))
+                                        GObject.TYPE_PYOBJECT,)),
+        "settings-set-from-imported-asset": (GObject.SignalFlags.RUN_LAST, None,
+                                             (GES.Asset,)),
     }
 
     def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
@@ -1338,12 +1340,14 @@ class Project(Loggable, GES.Project):
                 self.videopar = Gst.Fraction(video.get_par_num(),
                                              video.get_par_denom())
                 self._has_default_video_settings = False
+                self.emit("settings-set-from-imported-asset", asset)
         audio_streams = info.get_audio_streams()
         if audio_streams and self._has_default_audio_settings:
             audio = audio_streams[0]
             self.audiochannels = audio.get_channels()
             self.audiorate = audio.get_sample_rate()
             self._has_default_audio_settings = False
+            self.emit("settings-set-from-imported-asset", asset)
 
     def _emitChange(self, signal, key=None, value=None):
         if key and value:
