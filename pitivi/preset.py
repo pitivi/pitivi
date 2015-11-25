@@ -108,7 +108,11 @@ class PresetManager(Loggable):
             file_path = os.path.join(self.user_path, file_name)
             self.presets[preset_name]["filepath"] = file_path
         with open(file_path, "w") as fout:
-            self._saveSection(fout, preset_name)
+            values = self.presets[preset_name]
+            raw = self._serializePreset(values)
+            raw["name"] = preset_name
+            serialized = json.dumps(raw, indent=4)
+            fout.write(serialized)
 
     def getUniqueName(self, first=_("Custom"), second=_("Custom %d")):
         name = first
@@ -310,16 +314,6 @@ class PresetManager(Loggable):
             return False
         return True
 
-    def _saveSection(self, fout, section):
-        """Save the specified section into the specified file.
-
-        @param fout: The file where to save the section.
-        @type parser: file
-        @param section: The name of the section to be saved.
-        @type section: string
-        """
-        raise NotImplementedError()
-
     def _projectToPreset(self, project):
         raise NotImplementedError()
 
@@ -367,18 +361,15 @@ class VideoPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def _saveSection(self, fout, section):
-        values = self.presets[section]
-        data = json.dumps({
-            "name": section,
-            "width": int(values["width"]),
-            "height": int(values["height"]),
-            "framerate-num": values["frame-rate"].num,
-            "framerate-denom": values["frame-rate"].denom,
-            "par-num": values["par"].num,
-            "par-denom": values["par"].denom,
-        }, indent=4)
-        fout.write(data)
+    def _serializePreset(self, preset):
+        return {
+            "width": int(preset["width"]),
+            "height": int(preset["height"]),
+            "framerate-num": preset["frame-rate"].num,
+            "framerate-denom": preset["frame-rate"].denom,
+            "par-num": preset["par"].num,
+            "par-denom": preset["par"].denom,
+        }
 
     def _projectToPreset(self, project):
         return {
@@ -409,14 +400,11 @@ class AudioPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def _saveSection(self, fout, section):
-        values = self.presets[section]
-        data = json.dumps({
-            "name": section,
-            "channels": values["channels"],
-            "sample-rate": int(values["sample-rate"]),
-        }, indent=4)
-        fout.write(data)
+    def _serializePreset(self, preset):
+        return {
+            "channels": preset["channels"],
+            "sample-rate": int(preset["sample-rate"]),
+        }
 
     def _projectToPreset(self, project):
         return {
@@ -473,18 +461,15 @@ class RenderPresetManager(PresetManager):
             "filepath": filepath,
         })
 
-    def _saveSection(self, fout, section):
-        values = self.presets[section]
-        data = json.dumps({
-            "name": section,
-            "container": str(values["container"]),
-            "acodec": str(values["acodec"]),
-            "vcodec": str(values["vcodec"]),
-            "width": int(values["width"]),
-            "height": int(values["height"]),
-            "framerate-num": values["frame-rate"].num,
-            "framerate-denom": values["frame-rate"].denom,
-            "channels": values["channels"],
-            "sample-rate": int(values["sample-rate"]),
-        }, indent=4)
-        fout.write(data)
+    def _serializePreset(self, preset):
+        return {
+            "container": str(preset["container"]),
+            "acodec": str(preset["acodec"]),
+            "vcodec": str(preset["vcodec"]),
+            "width": int(preset["width"]),
+            "height": int(preset["height"]),
+            "framerate-num": preset["frame-rate"].num,
+            "framerate-denom": preset["frame-rate"].denom,
+            "channels": preset["channels"],
+            "sample-rate": int(preset["sample-rate"]),
+        }

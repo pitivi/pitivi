@@ -38,8 +38,8 @@ class FakePresetManager(PresetManager):
     def __init__(self, default_path):
         PresetManager.__init__(self, default_path, tempfile.mkdtemp())
 
-    def _saveSection(self, fout, section):
-        pass
+    def _serializePreset(self, preset):
+        return dict(preset.items())
 
 
 def clearPresetManagerPaths(preset_manager):
