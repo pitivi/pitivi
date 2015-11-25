@@ -96,7 +96,6 @@ class PresetManager(GObject.Object, Loggable):
 
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
-        preset_actions = {}
 
         action = Gio.SimpleAction.new("new", None)
         action.connect("activate", self._addPresetCb)
@@ -189,7 +188,7 @@ class PresetManager(GObject.Object, Loggable):
                 try:
                     preset = self._deserializePreset(parser)
                 except DeserializeException as e:
-                    self.error("Failed to load preset %s: %s", filepath, e)
+                    self.debug("Failed to load preset %s: %s", filepath, e)
                     continue
                 preset["filepath"] = filepath
                 for key, value in extra.items():
