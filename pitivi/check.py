@@ -387,8 +387,8 @@ HARD_DEPENDENCIES = [GICheck("3.14.0"),
 SOFT_DEPENDENCIES = \
     (
         ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
-        GIDependency("GnomeDesktop", 1.0, None, _("file thumbnails provided by GNOME's thumbnailers")),
-        GIDependency("Notify", None, 1.0, _("enables visual notifications when rendering is complete")),
+        GIDependency("GnomeDesktop", "3.0", None, _("file thumbnails provided by GNOME's thumbnailers")),
+        GIDependency("Notify", "0.7", None, _("enables visual notifications when rendering is complete")),
         GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
         GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
                                                      " Use to detect errors happening in GStreamer"
