@@ -16,7 +16,7 @@
         <property name="action_name">timeline.split_clips</property>
         <property name="label" translatable="yes">Split</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">pitivi-split</property>
+        <property name="icon_name">pitivi-split</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -46,7 +46,7 @@
         <property name="action_name">timeline.group_selected_clips</property>
         <property name="label" translatable="yes">Group</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">pitivi-group</property>
+        <property name="icon_name">pitivi-group</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -61,7 +61,7 @@
         <property name="action_name">timeline.ungroup_selected_clips</property>
         <property name="label" translatable="yes">Ungroup</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">pitivi-ungroup</property>
+        <property name="icon_name">pitivi-ungroup</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -106,7 +106,7 @@
         <property name="action_name">timeline.align_selected_clips</property>
         <property name="label" translatable="yes">Align</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">pitivi-align</property>
+        <property name="icon_name">pitivi-align</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -122,7 +122,7 @@ When enabled, adjacent clips automatically move to fill gaps.</property>
         <property name="action_name">timeline.toggle_gapless_mode</property>
         <property name="label" translatable="yes">Gapless mode</property>
         <property name="use_underline">True</property>
-        <property name="stock_id">pitivi-gapless</property>
+        <property name="icon_name">pitivi-gapless</property>
       </object>
       <packing>
         <property name="expand">False</property>

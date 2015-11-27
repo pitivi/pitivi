@@ -1,27 +1,24 @@
 pixmapdir = $(pkgdatadir)/pixmaps
 pixmap_DATA = \
-	pitivi-advanced-16.png	\
-	pitivi-advanced-22.png	\
-	pitivi-advanced-24.png	\
-	pitivi-align-24.svg	\
-	pitivi-gapless-24.svg \
-	pitivi-group-24.svg  \
-	pitivi-keyframe-24.svg  \
-	pitivi-keyframe.svg     \
-	pitivi-playhead.svg	\
-	pitivi-relink-24.svg	\
-	pitivi-relink.svg	\
-	pitivi-render-16.png	\
-	pitivi-render-22.png	\
-	pitivi-render-24.png	\
-	pitivi-split-24.svg	\
-	pitivi-ungroup-24.svg	\
-	pitivi-unlink-24.svg	\
-	pitivi-unlink.svg	\
-	processing-clip.png	\
-	processing-clip.svg	\
-	trimbar-focused.png	\
-	trimbar-normal.png
+    hicolor/24x24/actions/pitivi-align.svg \
+    hicolor/24x24/actions/pitivi-gapless.svg \
+    hicolor/24x24/actions/pitivi-group.svg \
+    hicolor/24x24/actions/pitivi-keyframe.svg \
+    hicolor/24x24/actions/pitivi-relink.svg \
+    hicolor/24x24/actions/pitivi-split.svg \
+    hicolor/24x24/actions/pitivi-ungroup.svg \
+    hicolor/24x24/actions/pitivi-unlink.svg \
+    pitivi-advanced-16.png \
+    pitivi-advanced-22.png \
+    pitivi-advanced-24.png \
+    pitivi-playhead.svg \
+    pitivi-render-16.png \
+    pitivi-render-22.png \
+    pitivi-render-24.png \
+    processing-clip.png \
+    processing-clip.svg \
+    trimbar-focused.png \
+    trimbar-normal.png
 
 effectspixmapdir = $(pkgdatadir)/pixmaps/effects
 effectspixmap_DATA = \
@@ -33,7 +30,7 @@ effectspixmap_DATA = \
     effects/cogdownsample.png \
     effects/color-distance.png \
     effects/coloreffects.png \
-	effects/defaultthumbnail.svg \
+    effects/defaultthumbnail.svg \
     effects/dicetv.png \
     effects/diffuse.png \
     effects/dilate.png \
@@ -164,6 +161,6 @@ transitionspixmap_DATA = \
     transitions/windshield-v.png
 
 EXTRA_DIST = \
-	$(pixmap_DATA) \
-	$(effectspixmap_DATA) \
-	$(transitionspixmap_DATA)
+    $(pixmap_DATA) \
+    $(effectspixmap_DATA) \
+    $(transitionspixmap_DATA)

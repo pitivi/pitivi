@@ -30,7 +30,6 @@ from hashlib import md5
 
 from gi.repository import GES
 from gi.repository import Gdk
-from gi.repository import GdkPixbuf
 from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -132,7 +131,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Creating MainWindow")
         self.settings = app.settings
         self.prefsdialog = None
-        self.createStockIcons()
+
+        Gtk.IconTheme.get_default().append_search_path(get_pixmap_dir())
 
         self.connect("destroy", self._destroyedCb)
 
@@ -166,27 +166,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         style_context = self.get_style_context()
         style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-
-    @staticmethod
-    def createStockIcons():
-        """
-        Create the icons used by some buttons.
-        """
-        pixmaps = {
-            "pitivi-split": "pitivi-split-24.svg",
-            "pitivi-keyframe": "pitivi-keyframe-24.svg",
-            "pitivi-ungroup": "pitivi-ungroup-24.svg",
-            "pitivi-group": "pitivi-group-24.svg",
-            "pitivi-align": "pitivi-align-24.svg",
-            "pitivi-gapless": "pitivi-gapless-24.svg",
-        }
-        factory = Gtk.IconFactory()
-        pmdir = get_pixmap_dir()
-        for stockid, path in pixmaps.items():
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pmdir, path))
-            iconset = Gtk.IconSet.new_from_pixbuf(pixbuf)
-            factory.add(stockid, iconset)
-            factory.add_default()
 
     def showRenderDialog(self, project):
         """
