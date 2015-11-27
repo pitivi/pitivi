@@ -279,6 +279,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
         self.__disableCenterPlayhead = False
         self._scrubbing = False
+        self._scrolling = False
 
         self.__snap_position = 0
         self.__snap_bar = VerticalBar("SnapBar")
@@ -606,6 +607,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if clip:
                 clip.shrinkTrimHandles()
 
+        self._scrolling = res and button == 2
+        if self._scrolling:
+            self._scroll_start_x = event.x
+            self._scroll_start_y = event.y
+
         return False
 
     def __buttonReleaseEventCb(self, unused_widget, event):
@@ -621,6 +627,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self._selectUnderMarquee()
 
         self._scrubbing = False
+
+        self._scrolling = False
 
         if allow_seek and res and (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self._seek(event)
@@ -658,6 +666,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__marquee.move(event)
         elif self._scrubbing:
             self._seek(event)
+        elif self._scrolling:
+            self.__scroll(event)
 
         return False
 
@@ -668,6 +678,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         x += self.hadj.get_value()
         position = max(0, self.pixelToNs(x))
         self._project.seeker.seek(position)
+
+    def __scroll(self, event):
+        # determine how much to move the canvas
+        x_diff = self._scroll_start_x - event.x
+        self.hadj.set_value(self.hadj.get_value() + x_diff)
+        y_diff = self._scroll_start_y - event.y
+        self.vadj.set_value(self.vadj.get_value() + y_diff)
 
     def _selectUnderMarquee(self):
         self.resetSelectionGroup()

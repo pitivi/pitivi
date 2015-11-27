@@ -775,8 +775,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             return False
 
         res, button = event.get_button()
-        if res and button == 3:
-            # We are supposed to only seek.
+        if res and not button == 1:
+            # Only the left mouse button selects.
             return False
 
         # TODO : Let's be more specific, masks etc ..
@@ -962,7 +962,6 @@ class TransitionClip(Clip):
             self.z_order = 1
         else:
             self.z_order = 0
-            self.set_sensitive(False)
 
         self.get_style_context().add_class("TransitionClip")
 
