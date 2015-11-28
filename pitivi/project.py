@@ -271,12 +271,12 @@ class ProjectManager(GObject.Object, Loggable):
         primary.set_width_chars(50)
 
         # put the text in a vbox
-        vbox = Gtk.VBox(homogeneous=False, spacing=SPACING * 2)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=SPACING * 2)
         vbox.pack_start(primary, True, True, 0)
 
         # make the [[image] text] hbox
         image = Gtk.Image.new_from_icon_name("dialog-error", Gtk.IconSize.DIALOG)
-        hbox = Gtk.HBox(homogeneous=False, spacing=SPACING * 2)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=SPACING * 2)
         hbox.pack_start(image, False, True, 0)
         hbox.pack_start(vbox, True, True, 0)
         hbox.set_border_width(SPACING)
