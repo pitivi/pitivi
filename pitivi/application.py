@@ -29,21 +29,21 @@ from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import Gst
 
-from pitivi.effects import EffectsManager
 from pitivi.configure import VERSION, RELEASES_URL
-from pitivi.settings import GlobalSettings, xdg_cache_home, get_dir
-from pitivi.utils.threads import ThreadMaster
+from pitivi.dialogs.startupwizard import StartUpWizard
+from pitivi.effects import EffectsManager
 from pitivi.mainwindow import PitiviMainWindow
 from pitivi.project import ProjectManager, ProjectLogObserver
-from pitivi.undo.undo import UndoableActionLog
+from pitivi.settings import GlobalSettings, xdg_cache_home, get_dir
 from pitivi.undo.timeline import TimelineLogObserver
-from pitivi.dialogs.startupwizard import StartUpWizard
+from pitivi.undo.undo import UndoableActionLog
+from pitivi.utils.threads import ThreadMaster
 
+from pitivi.utils import loggable
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import quote_uri, path_from_uri
 from pitivi.utils.system import getSystem
-from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
-import pitivi.utils.loggable as log
 
 
 class Pitivi(Gtk.Application, Loggable):
@@ -129,7 +129,7 @@ class Pitivi(Gtk.Application, Loggable):
         # Let's show a human-readable Pitivi debug output by default, and only
         # show a crazy unreadable mess when surrounded by gst debug statements.
         enable_crack_output = "GST_DEBUG" in os.environ
-        log.init('PITIVI_DEBUG', enable_color, enable_crack_output)
+        loggable.init('PITIVI_DEBUG', enable_color, enable_crack_output)
 
         self.info('starting up')
         self.settings = GlobalSettings()
