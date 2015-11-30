@@ -458,7 +458,7 @@ class TestProjectSettings(common.TestCase):
         # The video settings should match tears_of_steel.webm
         self.assertEqual(960, project.videowidth)
         self.assertEqual(400, project.videoheight)
-        self.assertEqual(Gst.Fraction(25, 1), project.videorate)
+        self.assertEqual(Gst.Fraction(24, 1), project.videorate)
         self.assertEqual(Gst.Fraction(1, 1), project.videopar)
 
     def testLoad(self):
