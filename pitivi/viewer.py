@@ -148,10 +148,9 @@ class ViewerContainer(Gtk.Box, Loggable):
             screen = Gdk.Screen.get_default()
             height = screen.get_height()
             # Force the AspectFrame to be tall (and wide) enough to look good.
-            # TODO: review this code to create a smarter algorithm,
-            # and use get_preferred_size() instead of size_request()
+            # TODO: review this code to create a smarter algorithm.
             if not self._compactMode:
-                req = self.buttons.size_request()
+                req = self.buttons.get_preferred_size()[0]
                 width = req.width
                 height = int(width / self.target.props.ratio)
                 width += 110  # Magic number to minimize dead padding

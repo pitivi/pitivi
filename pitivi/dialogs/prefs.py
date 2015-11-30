@@ -77,7 +77,7 @@ class PreferencesDialog(object):
 
         self.sections = {}
         self.__fillContents()
-        req = self.contents.size_request()
+        req = self.contents.get_preferred_size()[0]
         min_width = req.width
         min_height = req.height
         width = max(min_width, self.settings.prefsDialogWidth)

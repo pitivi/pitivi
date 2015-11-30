@@ -356,11 +356,12 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if self.settings.mainWindowVPanePosition is None:
             screen_width = float(self.get_screen().get_width())
             screen_height = float(self.get_screen().get_height())
+            req = self.vpaned.get_preferred_size()[0]
             if screen_width / screen_height < 0.75:
                 # Tall screen, give some more vertical space the the tabs.
-                value = self.vpaned.size_request().height / 3
+                value = req.height / 3
             else:
-                value = self.vpaned.size_request().height / 2
+                value = req.height / 2
             self.settings.mainWindowVPanePosition = value
 
     def checkScreenConstraints(self):
@@ -1356,7 +1357,7 @@ class PreviewAssetWindow(Gtk.Window):
         max_width = 0.85 * mainwindow_width
         max_height = 0.85 * mainwindow_height
 
-        controls_height = self._previewer.bbox.size_request().height
+        controls_height = self._previewer.bbox.get_preferred_size()[0].height
         if img_width < max_width and (img_height + controls_height) < max_height:
             # The video is small enough, keep it 1:1
             return img_width, img_height + controls_height

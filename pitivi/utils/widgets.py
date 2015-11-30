@@ -884,7 +884,7 @@ class GstElementSettingsDialog(Loggable):
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()
-        contents_height = self.elementsettings.size_request().height
+        contents_height = self.elementsettings.get_preferred_size()[0].height
         maximum_contents_height = max(500, 0.7 * screen_height)
         if contents_height < maximum_contents_height:
             # The height of the content is small enough, disable the
