@@ -1245,10 +1245,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 "new-project-loaded", self._projectChangedCb)
 
     def zoomFit(self):
-        # self._hscrollbar.set_value(0)
         self.app.write_action("zoom-fit", {"optional-action-type": True})
 
         self._setBestZoomRatio(allow_zoom_in=True)
+        self.hadj.set_value(0)
 
     def scrollToPixel(self, x):
         if x > self.hadj.props.upper:
@@ -1291,8 +1291,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.hadj = self.timeline.layout.get_hadjustment()
         self.vadj = self.timeline.layout.get_vadjustment()
 
-        self._vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
-        self._hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
+        vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
+        hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
 
         self.ruler = ScaleRuler(self, self.hadj)
         self.ruler.props.hexpand = True
@@ -1309,17 +1309,17 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.gapless_button.set_active(self._autoripple_active)
 
         alter_style_class(
-            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._vscrollbar,
+            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, vscrollbar,
             "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
         alter_style_class(
-            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, self._hscrollbar,
+            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, hscrollbar,
             "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         self.attach(self.zoomBox, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.timeline, 0, 1, 2, 1)
-        self.attach(self._vscrollbar, 2, 1, 1, 1)
-        self.attach(self._hscrollbar, 1, 2, 1, 1)
+        self.attach(vscrollbar, 2, 1, 1, 1)
+        self.attach(hscrollbar, 1, 2, 1, 1)
         self.attach(self.toolbar, 3, 1, 1, 1)
 
         min_height = (self.ruler.get_size_request()[1] +
@@ -1495,23 +1495,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def scroll_left(self):
         # This method can be a callback for our events, or called by ruler.py
-        self._hscrollbar.set_value(self._hscrollbar.get_value() -
-                                   self.hadj.props.page_size ** (2.0 / 3.0))
+        self.hadj.set_value(self.hadj.get_value() -
+                            self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_right(self):
         # This method can be a callback for our events, or called by ruler.py
-        self._hscrollbar.set_value(self._hscrollbar.get_value() +
-                                   self.hadj.props.page_size ** (2.0 / 3.0))
+        self.hadj.set_value(self.hadj.get_value() +
+                            self.hadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_up(self):
-        self._vscrollbar.set_value(self._vscrollbar.get_value() -
-                                   self.vadj.props.page_size ** (2.0 / 3.0))
+        self.vadj.set_value(self.vadj.get_value() -
+                            self.vadj.props.page_size ** (2.0 / 3.0))
 
     def scroll_down(self):
-        self._vscrollbar.set_value(self._vscrollbar.get_value() +
-                                   self.vadj.props.page_size ** (2.0 / 3.0))
+        self.vadj.set_value(self.vadj.get_value() +
+                            self.vadj.props.page_size ** (2.0 / 3.0))
 
     def _scrollToPixel(self, x):
+        self.log("Scroll to: %s %s %s", x, self.hadj.props.lower, self.hadj.props.upper)
         if x > self.hadj.props.upper:
             self.warning(
                 "Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?",
@@ -1521,12 +1522,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 "Position %s is smaller than the hscrollbar's lower bound (%s)",
                 x, self.hadj.props.lower)
 
-        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.error("FIXME What should be done here?")
-
-        self._hscrollbar.set_value(x)
-        if self._project and self._project.pipeline.getState() != Gst.State.PLAYING:
-            self.error("FIXME What should be done here?")
+        self.hadj.set_value(x)
 
         self.timeline.updatePosition()
         self.timeline.queue_draw()
