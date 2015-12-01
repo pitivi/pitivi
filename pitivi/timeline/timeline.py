@@ -1184,7 +1184,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # inserted...
         zoom_was_fitted = self.zoomed_fitted
 
-        clip_position = self.__getInsertPosition(position)
+        initial_position = self.__getInsertPosition(position)
+        clip_position = initial_position
 
         self.app.action_log.begin("add asset")
         for obj in objs:
@@ -1213,8 +1214,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if zoom_was_fitted:
             self._setBestZoomRatio()
         else:
-            self.scrollToPixel(
-                Zoomable.nsToPixel(self.bTimeline.props.duration))
+            self.scrollToPixel(Zoomable.nsToPixel(initial_position))
 
     def __getInsertPosition(self, position):
         if position is None:
