@@ -1231,13 +1231,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return self.bTimeline.props.duration
         return position
 
-    def purgeObject(self, asset_id):
+    def purgeAsset(self, asset_id):
         """Remove all instances of an asset from the timeline."""
         layers = self.bTimeline.get_layers()
         for layer in layers:
-            for tlobj in layer.get_clips():
-                if asset_id == tlobj.get_id():
-                    layer.remove_clip(tlobj)
+            for clip in layer.get_clips():
+                if asset_id == clip.get_id():
+                    layer.remove_clip(clip)
         self._project.pipeline.commit_timeline()
 
     def setProjectManager(self, projectmanager):

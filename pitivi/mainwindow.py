@@ -538,11 +538,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.save_action.set_enabled(True)
         self.updateTitle()
 
-    def _mediaLibrarySourceRemovedCb(self, unused_project, asset):
-        """When a clip is removed from the Media Library, tell the timeline
-        to remove all instances of that clip."""
-        self.timeline_ui.purgeObject(asset.get_id())
-
     def _builderConnectCb(self, builder, gobject, signal_name, handler_name,
                           connect_object, flags, user_data):
         id_ = gobject.connect(signal_name, getattr(self, handler_name))
@@ -1021,7 +1016,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _connectToProject(self, project):
         # FIXME GES we should re-enable this when possible
         # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
-        project.connect("asset-removed", self._mediaLibrarySourceRemovedCb)
         project.connect("project-changed", self._projectChangedCb)
         project.connect(
             "rendering-settings-changed", self._renderingSettingsChangedCb)
@@ -1076,7 +1070,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self.settings.lastProjectFolder = folder_path
 
     def _disconnectFromProject(self, project):
-        project.disconnect_by_func(self._mediaLibrarySourceRemovedCb)
         project.disconnect_by_func(self._projectChangedCb)
         project.disconnect_by_func(self._renderingSettingsChangedCb)
 

@@ -379,6 +379,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         for row in rows:
             asset = model[row.get_path()][COL_ASSET]
             self.app.project_manager.current_project.remove_asset(asset)
+            self.app.gui.timeline_ui.purgeAsset(asset.props.id)
+
         self.app.action_log.commit()
 
         # The treeview can make some of the remaining items selected, so
