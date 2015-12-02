@@ -213,6 +213,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """
     Contains the layer controls and the layers representation.
 
+    @type parent: L{pitivi.timeline.timeline.TimelineContainer}
     @type _project: L{pitivi.project.Project}
     """
 
@@ -567,18 +568,25 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.parent.scroll_down()
             elif delta_y < 0:
                 self.parent.scroll_up()
-        elif event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-            # Remember the time at the mouse position so it remains
-            # in the same position.
+        elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
+                                  Gdk.ModifierType.MOD1_MASK):
             x -= CONTROL_WIDTH
-            mouse_position = self.pixelToNs(x + self.hadj.get_value())
+            # Figure out first where to scroll at the end
+            if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
+                # The time at the mouse cursor.
+                position = self.pixelToNs(x + self.hadj.get_value())
+            else:
+                # The time at the playhead.
+                position = self.__last_position
             if delta_y > 0:
                 Zoomable.zoomOut()
             elif delta_y < 0:
                 Zoomable.zoomIn()
-            if delta_y > 0 or delta_y < 0:
+            self.__setLayoutSize()
+            if delta_y:
                 self.queue_draw()
-                self.hadj.set_value(self.nsToPixel(mouse_position) - x)
+                # Scroll so position is at the current mouse cursor position.
+                self.hadj.set_value(self.nsToPixel(position) - x)
         else:
             if delta_y > 0:
                 self.parent.scroll_right()
