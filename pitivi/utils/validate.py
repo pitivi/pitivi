@@ -71,6 +71,8 @@ if GstValidate:
 
             if GstValidate:
                 try:
+                    import gi
+                    gi.require_version('Wnck', '3.0')
                     from gi.repository import Wnck
                     Wnck.Screen.get_default().connect("window-opened", self._windowOpenedCb)
                 except ImportError:
@@ -137,6 +139,37 @@ def stop(scenario, action):
     GstValidate.print_action(action, "STOP: not doing anything in pitivi\n")
 
     return 1
+
+
+def positionChangedCb(pipeline, position, scenario, action,
+                      wanted_position):
+    if pipeline._waiting_for_async_done:
+        return
+
+    if pipeline._next_seek:
+        return
+
+    print(str(wanted_position), str(position))
+    if wanted_position != position:
+        scenario.report_simple(GLib.quark_from_string(
+            "scenario::execution-error"),
+            "Position after seek (%s) does not match wanted "
+            "one %s" % (Gst.TIME_ARGS(position),
+                        Gst.TIME_ARGS(wanted_position)))
+
+    pipeline.disconnect_by_func(positionChangedCb)
+    action.set_done()
+
+
+def seek(scenario, action):
+    from pitivi.utils.pipeline import Seeker
+    res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
+                                                      "start")
+    Seeker().seek(action.structure["start"])
+    scenario.pipeline.connect("position", positionChangedCb, scenario,
+                              action, wanted_position)
+
+    return GstValidate.ActionReturn.ASYNC
 
 
 def set_state(scenario, action):
@@ -473,6 +506,11 @@ def init():
         GstValidate.register_action_type("stop", "pitivi",
                                          stop, None,
                                          "Pitivi override for the stop action",
+                                         GstValidate.ActionTypeFlags.NONE)
+
+        GstValidate.register_action_type("seek", "pitivi",
+                                         seek, None,
+                                         "Pitivi override for the seek action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("pause", "pitivi",
