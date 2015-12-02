@@ -4,8 +4,6 @@ add-layer, priority=(int)0;
 add-clip, name=(string)uriclip0, layer-priority=(int)0, asset-id=(string)file:///home/someone/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/tears_of_steel.webm, type=(string)GESUriClip, start=(double)0, inpoint=(double)0, duration=(double)2;
 commit;
 add-clip, name=(string)uriclip1, layer-priority=(int)0, asset-id=(string)file:///home/someone/devel/pitivi/1.0-uninstalled/pitivi/tests/samples/tears_of_steel.webm, type=(string)GESUriClip, start=(double)2, inpoint=(double)0, duration=(double)2;
-set-control-source, binding-type=(string)direct, interpolation-mode=(string)linear, element-name=(string)videourisource1, property-name=(string)alpha, source-type=(string)interpolation;
-set-control-source, binding-type=(string)direct, interpolation-mode=(string)linear, element-name=(string)audiourisource1, property-name=(string)volume, source-type=(string)interpolation;
 commit;
 zoom-fit, optional-action-type=(boolean)true;
 set-zoom-level, optional-action-type=(boolean)true, level=(double)73;
