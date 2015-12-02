@@ -979,7 +979,7 @@ class TransitionClip(Clip):
             markup = str(self.bClip.props.vtype.value_nick)
         else:
             markup = _("Audio crossfade")
-        self.set_tooltip_markup(markup)
+        tooltip.set_text(markup)
 
         return True
 
