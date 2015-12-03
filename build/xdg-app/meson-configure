@@ -1,0 +1,14 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	echo "Nothing"
+
+install:
+	./install_meson.py $FLAGS
+
+EOF
+
+

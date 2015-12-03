@@ -1,0 +1,17 @@
+#!/bin/sh
+
+GITREPO="$(git rev-parse --show-toplevel)"
+cd $GITREPO
+
+function generate_path_and_completion_calls {
+  echo "export PATH=$GITREPO/bin/:\$PATH"
+  echo "export CC='ccache gcc'"
+  echo "export CXX='ccache g++'"
+}
+
+RCFILE=$GITREPO/.bashrc
+cp ~/.bashrc $RCFILE
+echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
+generate_path_and_completion_calls >> $RCFILE
+
+bash --rcfile $RCFILE

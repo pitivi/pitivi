@@ -1,0 +1,14 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	ARCHFLAGS='-arch x86_64' CFLAGS=' -L/usr/lib -Lbuild/temp.linux-x86_64-3.3 -I/usr/include -I/usr/include/python3.3m/ ' python3 ./setup.py install --prefix=/app
+
+install:
+	echo "Already done"
+
+
+EOF
+

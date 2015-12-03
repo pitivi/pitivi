@@ -1,0 +1,13 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	echo "Nothing"
+
+install:
+	cp ninja /app/bin/
+
+EOF
+

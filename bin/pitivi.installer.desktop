@@ -1,0 +1,7 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Terminal=true
+Name=Pitivi xdg-app installer and updater
+Icon=pitivi
+Exec=bash -c "cd `dirname %k`; ./pitivi-xdg-app --installer"

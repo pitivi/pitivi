@@ -1,0 +1,180 @@
+{
+    "app-id": "org.pitivi.Pitivi",
+    "version": "master",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.18",
+    "finish-args": ["--command=pitivi",
+                    "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
+                    "--talk-name=ca.desrt.dconf",
+                    "--filesystem=home",
+                    "--filesystem=xdg-videos",
+                    "--filesystem=xdg-music",
+                    "--filesystem=xdg-pictures"],
+    "sdk": "org.gnome.Sdk",
+    "rename-desktop-file": "pitivi.desktop",
+    "rename-icon": "pitivi",
+    "desktop-file-name-prefix": "(Daily) ",
+    "strip": false,
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+          "PYTHON": "python3"
+        }
+    },
+    "modules": [
+        {
+            "name": "yasm",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz",
+                    "sha256": "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f"
+                }
+            ]
+        },
+        {
+            "name": "gstreamer",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gstreamer"
+                }
+            ]
+        },
+        {
+            "name": "gst-plugins-base",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-base"
+                }
+            ]
+        },
+        {
+            "name": "gst-plugins-good",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-good"
+                }
+            ]
+        },
+        {
+            "name": "x264",
+            "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2",
+                    "sha256": "5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18"
+                }
+            ]
+        },
+        {
+            "name": "gst-plugins-ugly",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly"
+                }
+            ]
+        },
+        {
+            "name": "gst-plugins-bad",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-bad"
+                }
+            ]
+        },
+        {
+            "name": "gst-libav",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
+                }
+            ]
+        },
+        {
+            "name": "gst-python",
+            "config-opts": ["--with-pygi-overrides-dir=/app/lib/python3.3/site-packages/gi/overrides/"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-python"
+                }
+            ]
+        },
+        {
+            "name": "gst-editing-services",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
+                }
+            ]
+        },
+        {
+            "name": "setuptools",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/source/s/setuptools/setuptools-18.5.tar.gz",
+                    "sha256": "4846755f18c0528d87583342d5e1221052858ce9922c5c38acbadd5015bd683d"
+                },
+                {
+                    "type": "file",
+                    "path": "setuptools-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "numpy",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/source/n/numpy/numpy-1.10.1.tar.gz",
+                    "sha256": "8b9f453f29ce96a14e625100d3dcf8926301d36c5f622623bf8820e748510858"
+                },
+                {
+                    "type": "file",
+                    "path": "numpy-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "matplotlib",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/source/m/matplotlib/matplotlib-1.5.0.tar.gz",
+                    "sha256": "67b08b1650a00a6317d94b76a30a47320087e5244920604c5462188cba0c2646"
+                },
+                {
+                    "type": "file",
+                    "path": "matplotlib-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "pitivi",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "$GITREPO",
+                    "branch": "$BRANCHNAME"
+                }
+            ]
+        }
+    ]
+}
+
