@@ -82,6 +82,13 @@ class DefaultWidget(Gtk.Label):
 
     def __init__(self, *unused, **unused_kwargs):
         Gtk.Label.__init__(self, _("Implement Me"))
+        self.props.halign = Gtk.Align.START
+
+    def connectValueChanged(self, callback, *args):
+        pass
+
+    def setWidgetValue(self, value):
+        pass
 
     def setWidgetToDefault(self):
         pass
@@ -644,9 +651,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.properties.clear()
         self.bindings = {}
         self.keyframeToggleButtons = {}
-        is_effect = False
-        if isinstance(self.element, GES.Effect):
-            is_effect = True
+        is_effect = isinstance(self.element, GES.Effect)
+        if is_effect:
             props = [prop for prop in self.element.list_children_properties()
                      if prop.name not in self.ignore]
         else:
@@ -694,9 +700,10 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 grid.attach(label, 0, y, 1, 1)
                 grid.attach(widget, 1, y, 1, 1)
 
-            if (not isinstance(widget, ToggleWidget) and
-                    not isinstance(widget, ChoiceWidget) and
-                    self.isControllable):
+            controllable = self.isControllable and not isinstance(widget, DefaultWidget)
+            if (controllable and
+                    not isinstance(widget, ToggleWidget) and
+                    not isinstance(widget, ChoiceWidget)):
                 keyframe_toggle_button = self._getKeyframeToggleButton(prop)
                 self.keyframeToggleButtons[keyframe_toggle_button] = widget
                 grid.attach(keyframe_toggle_button, 3, y, 1, 1)
@@ -707,16 +714,13 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             self.properties[prop] = widget
 
             # The "reset to default" button associated with this property
-            if default_btn:
-                widget.propName = prop.name.split("-")[0]
-
-                if self.isControllable:
-                    # If this element is controlled, the value means nothing
-                    # anymore.
-                    binding = self.element.get_control_binding(prop.name)
-                    if binding:
-                        widget.set_sensitive(False)
-                        self.bindings[widget] = binding
+            if controllable and default_btn:
+                # If this element is controlled, the value means nothing
+                # anymore.
+                binding = self.element.get_control_binding(prop.name)
+                if binding:
+                    widget.set_sensitive(False)
+                    self.bindings[widget] = binding
                 button = self._getResetToDefaultValueButton(prop, widget)
                 grid.attach(button, 2, y, 1, 1)
                 self.buttons[button] = widget
@@ -807,8 +811,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         for prop, widget in self.properties.items():
             if not prop.flags & GObject.PARAM_WRITABLE:
                 continue
-            if isinstance(widget, DefaultWidget):
-                continue
             value = widget.getWidgetValue()
             if value is not None and (value != prop.default_value or with_default):
                 d[prop.name] = value
@@ -844,7 +846,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
         if value is None:
             value = prop.default_value
-        if value is not None and not isinstance(widget, DefaultWidget):
+        else:
             widget.setWidgetValue(value)
 
         return widget
