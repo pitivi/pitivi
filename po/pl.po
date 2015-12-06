@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-29 22:37+0100\n"
-"PO-Revision-Date: 2015-11-29 22:38+0100\n"
+"POT-Creation-Date: 2015-12-06 19:05+0100\n"
+"PO-Revision-Date: 2015-12-06 19:07+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -333,27 +333,18 @@ msgstr ""
 "używając przycisku „Zaimportuj”."
 
 #: ../data/ui/preferences.ui.h:2
-msgid "Section"
-msgstr "Sekcja"
-
-#: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr ""
-"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
-
-#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Przywróć ustawienia fabryczne"
 
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:3
 msgid "Reset all settings to their default values"
 msgstr "Przywraca wszystkie ustawienia do ich domyślnych wartości"
 
-#: ../data/ui/preferences.ui.h:6
+#: ../data/ui/preferences.ui.h:4
 msgid "Revert"
 msgstr "Przywróć"
 
-#: ../data/ui/preferences.ui.h:7
+#: ../data/ui/preferences.ui.h:5
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
@@ -361,10 +352,19 @@ msgstr ""
 "Przywraca wszystkie ustawienia do poprzednich wartości (sprzed otwarcia okna "
 "preferencji)"
 
-#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:8
 #: ../data/ui/renderingprogress.ui.h:6
 msgid "Close"
 msgstr "Zamknij"
+
+#: ../data/ui/preferences.ui.h:7
+msgid "Section"
+msgstr "Sekcja"
+
+#: ../data/ui/preferences.ui.h:8
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr ""
+"Niektóre zmiany zostaną uwzględnione po ponownym uruchomieniu programu Pitivi"
 
 #: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:538
 msgid "Standard (4:3)"
@@ -1399,7 +1399,7 @@ msgstr ""
 msgid "Setting property: %s"
 msgstr "Ustawianie właściwości: %s"
 
-#: ../pitivi/timeline/elements.py:969
+#: ../pitivi/timeline/elements.py:979
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
@@ -1434,6 +1434,7 @@ msgid "Frame #%d"
 msgstr "Klatka #%d"
 
 #: ../pitivi/timeline/timeline.py:60 ../pitivi/timeline/timeline.py:73
+#: ../pitivi/timeline/timeline.py:86
 msgid "Behavior"
 msgstr "Zachowanie"
 
@@ -1461,7 +1462,17 @@ msgstr ""
 "Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
 "czasu."
 
-#: ../pitivi/timeline/timeline.py:1316
+#: ../pitivi/timeline/timeline.py:87
+msgid "Left click also seeks"
+msgstr "Lewy przycisk także przewija"
+
+#: ../pitivi/timeline/timeline.py:89
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
+msgstr ""
+"Czy kliknięcie lewym przyciskiem poza zaznaczaniem i modyfikowaniem klipów "
+"także przewija."
+
+#: ../pitivi/timeline/timeline.py:1331
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1478,72 +1489,72 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1396
+#: ../pitivi/timeline/timeline.py:1413
 msgid "Zoom In"
 msgstr "Powiększenie"
 
-#: ../pitivi/timeline/timeline.py:1397
+#: ../pitivi/timeline/timeline.py:1414
 msgid "Zoom Out"
 msgstr "Pomniejszenie"
 
-#: ../pitivi/timeline/timeline.py:1398 ../pitivi/utils/widgets.py:1031
+#: ../pitivi/timeline/timeline.py:1415 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/timeline/timeline.py:1422
+#: ../pitivi/timeline/timeline.py:1439
 msgid "Delete Selected"
 msgstr "Usuwa zaznaczone"
 
-#: ../pitivi/timeline/timeline.py:1424
+#: ../pitivi/timeline/timeline.py:1441
 msgid "Ungroup"
 msgstr "Rozgrupuj"
 
-#: ../pitivi/timeline/timeline.py:1425
+#: ../pitivi/timeline/timeline.py:1442
 msgid "Ungroup clips"
 msgstr "Rozgrupowuje klipy"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1428
+#: ../pitivi/timeline/timeline.py:1445
 msgid "Group"
 msgstr "Grupuj"
 
-#: ../pitivi/timeline/timeline.py:1429
+#: ../pitivi/timeline/timeline.py:1446
 msgid "Group clips"
 msgstr "Grupuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1431
+#: ../pitivi/timeline/timeline.py:1448
 msgid "Copy"
 msgstr "Skopiuj"
 
-#: ../pitivi/timeline/timeline.py:1432
+#: ../pitivi/timeline/timeline.py:1449
 msgid "Copy clips"
 msgstr "Kopiuje klipy"
 
-#: ../pitivi/timeline/timeline.py:1434
+#: ../pitivi/timeline/timeline.py:1451
 msgid "Paste"
 msgstr "Wklej"
 
-#: ../pitivi/timeline/timeline.py:1435
+#: ../pitivi/timeline/timeline.py:1452
 msgid "Paste clips"
 msgstr "Wkleja klipy"
 
-#: ../pitivi/timeline/timeline.py:1444
+#: ../pitivi/timeline/timeline.py:1461
 msgid "Start Playback"
 msgstr "Rozpocznij odtwarzanie"
 
-#: ../pitivi/timeline/timeline.py:1446
+#: ../pitivi/timeline/timeline.py:1463
 msgid "Split"
 msgstr "Podziel"
 
-#: ../pitivi/timeline/timeline.py:1447
+#: ../pitivi/timeline/timeline.py:1464
 msgid "Split clip at playhead position"
 msgstr "Przecina klip w pozycji głowicy"
 
-#: ../pitivi/timeline/timeline.py:1449
+#: ../pitivi/timeline/timeline.py:1466
 msgid "Add a Keyframe"
 msgstr "Dodaj klatkę kluczową"
 
-#: ../pitivi/timeline/timeline.py:1450
+#: ../pitivi/timeline/timeline.py:1467
 msgid "Add a keyframe"
 msgstr "Dodaje klatkę kluczową"
 
@@ -1571,12 +1582,12 @@ msgstr "Informacje dodatkowe:"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:277
+#: ../pitivi/dialogs/prefs.py:286
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:284 ../pitivi/utils/widgets.py:755
+#: ../pitivi/dialogs/prefs.py:296 ../pitivi/utils/widgets.py:755
 msgid "Reset to default value"
 msgstr "Przywróć domyślne wartości"
 
