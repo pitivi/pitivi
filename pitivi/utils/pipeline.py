@@ -50,6 +50,8 @@ WATCHDOG_TIMEOUT = 3
 MAX_BRINGING_TO_PAUSED_DURATION = 5
 MAX_SET_STATE_DURATION = 1
 
+DEFAULT_POSITION_LISTENNING_INTERVAL = 500
+
 
 class PipelineError(Exception):
     pass
@@ -182,7 +184,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
         self._listening = False  # for the position handler
-        self._listeningInterval = 50  # default 300ms
+        self._listeningInterval = DEFAULT_POSITION_LISTENNING_INTERVAL
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
         self._last_position = int(0 * Gst.SECOND)
@@ -349,7 +351,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._duration = dur
         return dur
 
-    def activatePositionListener(self, interval=50):
+    def activatePositionListener(self, interval=DEFAULT_POSITION_LISTENNING_INTERVAL):
         """
         Activate the position listener.
 
@@ -527,8 +529,8 @@ class SimplePipeline(GObject.Object, Loggable):
     def __emitPosition(self):
         # When the pipeline has been paused we need to update the
         # timeline/playhead position, as the 'position' signal
-        # is only emitted every 300ms and the playhead jumps
-        # during the playback.
+        # is only emitted every DEFAULT_POSITION_LISTENNING_INTERVAL
+        # ms and the playhead jumps during the playback.
         try:
             position = self.getPosition()
         except PipelineError as e:
