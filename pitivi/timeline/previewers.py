@@ -376,7 +376,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         thumb_duration = self._get_thumb_duration()
 
         element_left = self.pixelToNs(rect.x) + self.bElement.props.in_point
-        element_right = element_left + self.bElement.props.duration
+        element_right = element_left + self.pixelToNs(rect.width)
         element_left = quantize(element_left, thumb_duration)
 
         for current_time in range(element_left, element_right, thumb_duration):
