@@ -337,8 +337,7 @@ then
 	sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $APPLICATION_NAME.template.json > $JSON
 
     echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON"
-    xdg-app-builder $APPDIR $JSON || exit 1
-
+    xdg-app-builder --keep-build-dirs --build-only $APPDIR $JSON || exit 1
 	if [ -z $BUNDLE ]
 	then
 	  echo "-> Building $APPLICATION_NAME from current repository"

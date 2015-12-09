@@ -1,0 +1,15 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	echo "Nothing"
+
+install:
+	python3 ./setup.py install --prefix=/app
+	2to3 -W /app/lib/python3.3/site-packages/nose-1.3.7-py3.3.egg/nose/*.py /app/lib/python3.3/site-packages/nose-1.3.7-py3.3.egg/nose/*/*.py
+
+
+EOF
+

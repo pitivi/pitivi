@@ -1,0 +1,14 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	echo "Nothing"
+
+install:
+	python3 ./setup.py install --prefix=/app
+
+
+EOF
+
