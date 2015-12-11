@@ -300,6 +300,11 @@ fi
 
 if [ -n "$DEVEL" ]
 then
+  XDG_APP_BUILD_OPTIONS="--keep-build-dirs"
+  if [ -z $BUNDLE ]
+  then
+    XDG_APP_BUILD_OPTIONS=" $XDG_APP_BUILD_OPTIONS --build-only"
+  fi
 
   if [ -z "$USE_REMOTE" ]
   then
@@ -336,8 +341,8 @@ then
 	JSON=$BUILDDIR/$APP_BUILD_NAME.json
 	sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $APPLICATION_NAME.template.json > $JSON
 
-    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON"
-    xdg-app-builder --keep-build-dirs --build-only $APPDIR $JSON || exit 1
+    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
+    xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $APPDIR $JSON || exit 1
 	if [ -z $BUNDLE ]
 	then
 	  echo "-> Building $APPLICATION_NAME from current repository"
