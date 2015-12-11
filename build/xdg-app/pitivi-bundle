@@ -45,7 +45,7 @@ SDK_REPO_NAME=`xdg-app list-remotes --user -d | grep "$SDK_REPO" |awk '{ print $
 SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
 BUILDDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})" )" && pwd )"
-REPO=$BUILDDIR/xdg-app-repos/$0/
+REPO=$BUILDDIR/xdg-app-repos/$APPLICATION_NAME
 
 # Some terminal output color values
 RED='\033[0;31m'
