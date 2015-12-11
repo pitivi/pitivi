@@ -17,7 +17,10 @@ APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
 BRANCH="master"
 
 # The URL of the bundle remote repository
-APPLICATION_REPO=http://people.freedesktop.org/~tsaunier/xdg-app-repos/pitivi/
+APPLICATION_XDG_APP_REPO=http://people.freedesktop.org/~tsaunier/xdg-app-repos/pitivi/
+
+# The URL of the bundle remote repository
+APPLICATION_GIT_REPO=https://git.gnome.org/browse/pitivi
 # The name to give to the repository if it is not registered in xdg-app yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
 
@@ -35,7 +38,7 @@ SDK_DEFAULT_REPO_NAME=gnome
 # ------------------------------------------- #
 
 # Computation of actual variable values
-APPLICATION_REPO_NAME=`xdg-app list-remotes --user -d | grep "$APPLICATION_REPO" |awk '{ print $1 }'`
+APPLICATION_REPO_NAME=`xdg-app list-remotes --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 
 SDK_REPO_NAME=`xdg-app list-remotes --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
@@ -79,6 +82,7 @@ Options:
        --bundle:     Create bundle repository in $REPO, implies --build
   -b=, --branch=:    The xdg-app branch to use (0.95, master...)
   -c,  --clean:      Clean previous builds and restart from scratch
+       --use-remote: Build from the official repository (master branch)
 
 You can find more information about xdg-app at: https://wiki.gnome.org/Projects/SandboxedApps
 "
@@ -89,35 +93,39 @@ do
   case $i in
     -d|--devel)
     DEVEL=true
-    shift # past argument=value
+    shift
     ;;
     -u|--update)
     UPDATE=true
-    shift # past argument=value
+    shift
     ;;
     -n|--no-update)
     NO_UPDATE=true
-    shift # past argument=value
+    shift
     ;;
     -bu|--bundle)
     BUNDLE=true
-    shift # past argument=value
+    shift
     ;;
     -c|--clean)
     CLEAN=true
-    shift # past argument=value
+    shift
     ;;
     -b=*|--branch=*)
     BRANCH="${i#*=}"
-    shift # past argument=value
+    shift
     ;;
     -b|--build)
     BUILD=true
-    shift # past argument=value
+    shift
     ;;
     --installer)
     INSTALLER=true
-    shift # past argument=value
+    shift
+    ;;
+    --use-remote)
+    USE_REMOTE=true
+    shift
     ;;
     *) # unknown option
 	printf "$RED-> Unknown option $i$NC\n\n$HELP"
@@ -237,13 +245,20 @@ then
   fi
 fi
 
-DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
-if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
+if [ -z "$USE_REMOTE" ]
 then
-  DEVELOPMENT_BRANCHNAME="master"
-  APP_BUILD_NAME=$APPLICATION_NAME
+  DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
+  if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
+  then
+    DEVELOPMENT_BRANCHNAME="master"
+    APP_BUILD_NAME=$APPLICATION_NAME
+  else
+    APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
+  fi
 else
-  APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
+  DEVELOPMENT_BRANCHNAME=master
+  APP_BUILD_NAME=$APPLICATION_NAME
+  GITREPO_URI=$APPLICATION_GIT_REPO
 fi
 
 if [ -n "$BUNDLE" ]
@@ -266,7 +281,7 @@ fi
 
 if [ -z $DEVEL ] || [ -z $BUILD ]
 then
-   xdg-app add-remote --user --no-gpg-verify $APPLICATION_REPO_NAME $APPLICATION_REPO > /dev/null 2>&1
+   xdg-app add-remote --user --no-gpg-verify $APPLICATION_REPO_NAME $APPLICATION_XDG_APP_REPO > /dev/null 2>&1
 
    if [ -z "$APP_INSTALLED" ]
    then
@@ -285,12 +300,16 @@ fi
 
 if [ -n "$DEVEL" ]
 then
-  GITREPO="$(git rev-parse --show-toplevel)"
-  GITREPO_URI="file://$GITREPO"
+
+  if [ -z "$USE_REMOTE" ]
+  then
+    GITREPO="$(git rev-parse --show-toplevel)"
+    GITREPO_URI="file://$GITREPO"
+  fi
 
   if [ -z $BUILD ]
   then
-	 if [ -z "$APP_INSTALLED" ]
+	 if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
 	 then
 		cd $GITREPO
 		xdg-app run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
