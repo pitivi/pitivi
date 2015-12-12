@@ -161,7 +161,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         style = self.app.gui.get_style_context()
         color_normal = style.get_color(Gtk.StateFlags.NORMAL)
-        color_insensitive = style.get_color(Gtk.StateFlags.INSENSITIVE)
+        color_insensitive = style.get_color(Gtk.StateFlags.BACKDROP)
+
         self._color_normal = color_normal
         self._color_dimmed = Gdk.RGBA(
             *[(x * 3 + y * 2) / 5
