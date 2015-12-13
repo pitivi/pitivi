@@ -15,8 +15,8 @@ msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-11-26 14:10+0000\n"
-"PO-Revision-Date: 2015-12-02 16:38+0100\n"
+"POT-Creation-Date: 2015-12-02 20:14+0000\n"
+"PO-Revision-Date: 2015-12-07 12:42+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -333,26 +333,18 @@ msgstr ""
 "usando el botón «Importar»."
 
 #: ../data/ui/preferences.ui.h:2
-msgid "Section"
-msgstr "Sección"
-
-#: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr "Algunos cambios no tendrán efecto hasta que reinicie Pitivi"
-
-#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Restaurar a los ajustes de fábrica"
 
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:3
 msgid "Reset all settings to their default values"
 msgstr "Restablecer toda la configuración a sus valores predeterminados"
 
-#: ../data/ui/preferences.ui.h:6
+#: ../data/ui/preferences.ui.h:4
 msgid "Revert"
 msgstr "Revertir"
 
-#: ../data/ui/preferences.ui.h:7
+#: ../data/ui/preferences.ui.h:5
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
@@ -360,10 +352,18 @@ msgstr ""
 "Revertir toda la configuración a los valores anteriores (antes de que "
 "abriera el diálogo de preferencias)"
 
-#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:8
 #: ../data/ui/renderingprogress.ui.h:6
 msgid "Close"
 msgstr "Cerrar"
+
+#: ../data/ui/preferences.ui.h:7
+msgid "Section"
+msgstr "Sección"
+
+#: ../data/ui/preferences.ui.h:8
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Algunos cambios no tendrán efecto hasta que reinicie Pitivi"
 
 #: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:538
 msgid "Standard (4:3)"
@@ -382,17 +382,14 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../data/ui/projectsettings.ui.h:6 ../data/ui/renderingdialog.ui.h:16
-#| msgid "Save Preset"
 msgid "Preset:"
 msgstr "Configuración predefinida:"
 
 #: ../data/ui/projectsettings.ui.h:7
-#| msgid "Size"
 msgid "Size:"
 msgstr "Tamaño:"
 
 #: ../data/ui/projectsettings.ui.h:8
-#| msgid "Size (pixels):"
 msgid "pixels"
 msgstr "píxeles"
 
@@ -525,7 +522,6 @@ msgid "Height"
 msgstr "Altura"
 
 #: ../data/ui/renderingdialog.ui.h:22
-#| msgid "Project Settings"
 msgid "Project Settings..."
 msgstr "Configuración del proyecto…"
 
@@ -674,9 +670,6 @@ msgstr ""
 "menos uno disponible (pulsesink, alsasink u osssink)."
 
 #: ../pitivi/check.py:295
-#| msgid ""
-#| "Could not create audio output sink. Make sure you have a valid one "
-#| "(pulsesink, alsasink or osssink)."
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
@@ -1110,7 +1103,6 @@ msgid "The following file can not be used with Pitivi."
 msgstr "El siguiente archivo no se puede usar con Pitivi."
 
 #: ../pitivi/preset.py:109
-#| msgid "Remove layer"
 msgid "Remove"
 msgstr "Quitar"
 
@@ -1252,10 +1244,6 @@ msgid "%d MB"
 msgstr "%d MB"
 
 #: ../pitivi/render.py:646
-#| msgid ""
-#| "An error occured while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. The GStreamer error "
-#| "was:"
 msgid ""
 "An error occurred while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. The GStreamer error "
@@ -1403,7 +1391,7 @@ msgstr ""
 msgid "Setting property: %s"
 msgstr "Configurando propiedad: %s"
 
-#: ../pitivi/timeline/elements.py:969
+#: ../pitivi/timeline/elements.py:979
 msgid "Audio crossfade"
 msgstr "Fundido de sonido"
 
@@ -1438,6 +1426,7 @@ msgid "Frame #%d"
 msgstr "Fotograma nº %d"
 
 #: ../pitivi/timeline/timeline.py:60 ../pitivi/timeline/timeline.py:73
+#: ../pitivi/timeline/timeline.py:86
 msgid "Behavior"
 msgstr "Comportamiento"
 
@@ -1458,9 +1447,6 @@ msgid "Image clip duration"
 msgstr "Duración del clip de imagen"
 
 #: ../pitivi/timeline/timeline.py:76
-#| msgid ""
-#| "Default clip length (in miliseconds) of images when inserting on the "
-#| "timeline."
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1468,7 +1454,17 @@ msgstr ""
 "Duración predeterminada (el milisegundos) del clip de imágenes al insertarlo "
 "en la línea de tiempo."
 
-#: ../pitivi/timeline/timeline.py:1316
+#: ../pitivi/timeline/timeline.py:87
+msgid "Left click also seeks"
+msgstr "La pulsación izquierda también busca"
+
+#: ../pitivi/timeline/timeline.py:89
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
+msgstr ""
+"Indica si la pulsación izquierda también busca más allá de seleccionar y "
+"editar clips."
+
+#: ../pitivi/timeline/timeline.py:1331
 msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
@@ -1485,72 +1481,72 @@ msgstr ""
 #.
 #. name (required), stock ID, translatable label,
 #. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1396
+#: ../pitivi/timeline/timeline.py:1413
 msgid "Zoom In"
 msgstr "Ampliar"
 
-#: ../pitivi/timeline/timeline.py:1397
+#: ../pitivi/timeline/timeline.py:1414
 msgid "Zoom Out"
 msgstr "Alejar"
 
-#: ../pitivi/timeline/timeline.py:1398 ../pitivi/utils/widgets.py:1031
+#: ../pitivi/timeline/timeline.py:1415 ../pitivi/utils/widgets.py:1031
 msgid "Zoom Fit"
 msgstr "Ajustar ampliación"
 
-#: ../pitivi/timeline/timeline.py:1422
+#: ../pitivi/timeline/timeline.py:1439
 msgid "Delete Selected"
 msgstr "Borrar los seleccionados"
 
-#: ../pitivi/timeline/timeline.py:1424
+#: ../pitivi/timeline/timeline.py:1441
 msgid "Ungroup"
 msgstr "Desagrupar"
 
-#: ../pitivi/timeline/timeline.py:1425
+#: ../pitivi/timeline/timeline.py:1442
 msgid "Ungroup clips"
 msgstr "Desagrupar vídeos"
 
 #. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1428
+#: ../pitivi/timeline/timeline.py:1445
 msgid "Group"
 msgstr "Agrupar"
 
-#: ../pitivi/timeline/timeline.py:1429
+#: ../pitivi/timeline/timeline.py:1446
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
-#: ../pitivi/timeline/timeline.py:1431
+#: ../pitivi/timeline/timeline.py:1448
 msgid "Copy"
 msgstr "Copiar"
 
-#: ../pitivi/timeline/timeline.py:1432
+#: ../pitivi/timeline/timeline.py:1449
 msgid "Copy clips"
 msgstr "Copiar vídeos"
 
-#: ../pitivi/timeline/timeline.py:1434
+#: ../pitivi/timeline/timeline.py:1451
 msgid "Paste"
 msgstr "Pegar"
 
-#: ../pitivi/timeline/timeline.py:1435
+#: ../pitivi/timeline/timeline.py:1452
 msgid "Paste clips"
 msgstr "Pegar vídeos"
 
-#: ../pitivi/timeline/timeline.py:1444
+#: ../pitivi/timeline/timeline.py:1461
 msgid "Start Playback"
 msgstr "Iniciar reproducción"
 
-#: ../pitivi/timeline/timeline.py:1446
+#: ../pitivi/timeline/timeline.py:1463
 msgid "Split"
 msgstr "Dividir"
 
-#: ../pitivi/timeline/timeline.py:1447
+#: ../pitivi/timeline/timeline.py:1464
 msgid "Split clip at playhead position"
 msgstr "Cortar vídeo en la posición actual"
 
-#: ../pitivi/timeline/timeline.py:1449
+#: ../pitivi/timeline/timeline.py:1466
 msgid "Add a Keyframe"
 msgstr "Añadir un fotograma clave"
 
-#: ../pitivi/timeline/timeline.py:1450
+#: ../pitivi/timeline/timeline.py:1467
 msgid "Add a keyframe"
 msgstr "Añadir un fotograma clave"
 
@@ -1578,13 +1574,12 @@ msgstr "Información extra: "
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:277
+#: ../pitivi/dialogs/prefs.py:286
 #, python-format
-#| msgid "Preferences"
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:284 ../pitivi/utils/widgets.py:755
+#: ../pitivi/dialogs/prefs.py:296 ../pitivi/utils/widgets.py:755
 msgid "Reset to default value"
 msgstr "Restablecer al valor predeterminado"
 
