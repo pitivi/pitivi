@@ -5,50 +5,47 @@
 # Jorge González <jorgegonz@svn.gnome.org>, 2011.
 # Sylvia Sánchez <LailahFSF@gmail.com>, 2011.
 # Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013, 2014.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013, 2014.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013, 2014, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2014-03-25 11:49+0000\n"
-"PO-Revision-Date: 2014-03-25 16:21+0100\n"
+"POT-Creation-Date: 2014-10-07 21:02+0000\n"
+"PO-Revision-Date: 2015-12-10 12:59+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2014\n"
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2015\n"
 "Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013"
 
 #. (itstool) path: credit/name
-#: C/about.page:10 C/cheatsheet.page:12 C/codecscontainers.page:10
-#: C/crossfading.page:11 C/effects.page:11 C/effectsanimation.page:10
-#: C/fadeinfadeout.page:10 C/gstreamer.page:10 C/importingmpegts.page:11
-#: C/importing.page:10 C/index.page:11 C/interface.page:10
-#: C/keyframecurves.page:10 C/layers.page:10 C/mainwindow.page:12
-#: C/medialibrary.page:10 C/movearoundtimeline.page:10
-#: C/othertransitions.page:10 C/presets.page:11 C/rendering.page:10
-#: C/savescreenshot.page:10 C/selectiongrouping.page:14
-#: C/selectunusedfiles.page:12 C/splitting.page:10 C/sysreq.page:11
-#: C/trimming.page:11 C/usingclips.page:10 C/welcomedialog.page:10
+#: C/about.page:10 C/cheatsheet.page:11 C/codecscontainers.page:10
+#: C/effects.page:11 C/gstreamer.page:10 C/importingmpegts.page:11
+#: C/importing.page:10 C/index.page:11 C/keyframecurves.page:12
+#: C/layers.page:10 C/mainwindow.page:12 C/medialibrary.page:10
+#: C/movearoundtimeline.page:10 C/presets.page:12 C/rendering.page:10
+#: C/savescreenshot.page:10 C/selectiongrouping.page:14 C/splitting.page:10
+#: C/sysreq.page:10 C/transitions.page:14 C/trimming.page:10
+#: C/usingclips.page:10 C/usingeffects.page:14 C/welcomedialog.page:10
 #: C/workwithprojects.page:10
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
 #. (itstool) path: credit/name
-#: C/about.page:14 C/crossfading.page:15 C/fadeinfadeout.page:14
-#: C/gstreamer.page:14 C/importing.page:14 C/index.page:15
-#: C/keyframecurves.page:14 C/layers.page:14 C/movearoundtimeline.page:14
-#: C/othertransitions.page:14 C/rendering.page:14 C/selectiongrouping.page:16
-#: C/splitting.page:14 C/sysreq.page:15 C/trimming.page:15
+#: C/about.page:14 C/gstreamer.page:14 C/importing.page:14 C/index.page:15
+#: C/keyframecurves.page:16 C/layers.page:14 C/movearoundtimeline.page:14
+#: C/rendering.page:14 C/selectiongrouping.page:16 C/splitting.page:14
+#: C/sysreq.page:14 C/transitions.page:16 C/trimming.page:14
 #: C/usingclips.page:14 C/workwithprojects.page:14
 msgid "Mario Blättermann"
 msgstr "Mario Blättermann"
@@ -60,16 +57,14 @@ msgstr ""
 "Estado actual de este manual del usuario e invitación a la participación."
 
 #. (itstool) path: license/p
-#: C/about.page:21 C/cheatsheet.page:16 C/codecscontainers.page:14
-#: C/crossfading.page:22 C/effects.page:16 C/effectsanimation.page:15
-#: C/fadeinfadeout.page:21 C/gstreamer.page:21 C/importingmpegts.page:18
-#: C/importing.page:23 C/index.page:19 C/interface.page:15
-#: C/keyframecurves.page:21 C/layers.page:23 C/mainwindow.page:23
-#: C/medialibrary.page:23 C/movearoundtimeline.page:25
-#: C/othertransitions.page:19 C/presets.page:15 C/rendering.page:23
-#: C/savescreenshot.page:14 C/selectiongrouping.page:23
-#: C/selectunusedfiles.page:19 C/splitting.page:23 C/sysreq.page:22
-#: C/trimming.page:22 C/usingclips.page:23 C/welcomedialog.page:21
+#: C/about.page:21 C/cheatsheet.page:15 C/codecscontainers.page:18
+#: C/effects.page:18 C/gstreamer.page:23 C/importingmpegts.page:18
+#: C/importing.page:23 C/index.page:19 C/keyframecurves.page:25
+#: C/layers.page:23 C/mainwindow.page:23 C/medialibrary.page:23
+#: C/movearoundtimeline.page:25 C/presets.page:23 C/rendering.page:23
+#: C/savescreenshot.page:14 C/selectiongrouping.page:23 C/splitting.page:23
+#: C/sysreq.page:23 C/transitions.page:23 C/trimming.page:23
+#: C/usingclips.page:23 C/usingeffects.page:19 C/welcomedialog.page:21
 #: C/workwithprojects.page:23
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Compartir Igual 3.0"
@@ -134,12 +129,12 @@ msgstr ""
 "link>."
 
 #. (itstool) path: page/title
-#: C/cheatsheet.page:20
+#: C/cheatsheet.page:19
 msgid "Keyboard shortcuts and cheatsheet"
 msgstr "Atajos de teclado y lista de trucos"
 
 #. (itstool) path: page/p
-#: C/cheatsheet.page:22
+#: C/cheatsheet.page:21
 msgid ""
 "This page is a list of important shortcuts to access commonly used or hidden "
 "features. Take the time to get familiar with them as they will improve your "
@@ -150,70 +145,71 @@ msgstr ""
 "mejorarán su productividad enormemente."
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:25
+#: C/cheatsheet.page:24
 msgid "General"
 msgstr "General"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:27
+#: C/cheatsheet.page:26
 msgid "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project"
 msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: crear un proyecto nuevo"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:28
+#: C/cheatsheet.page:27
 msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
 msgstr ""
 "<keyseq><key>Ctrl</key><key>O</key></keyseq>: abrir un archivo de proyecto"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:29
+#: C/cheatsheet.page:28
 msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
 msgstr ""
 "<keyseq><key>Ctrl</key><key>S</key></keyseq>: guardar el proyecto actual"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:30
+#: C/cheatsheet.page:29
 msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
 msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: salir de la aplicación"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:31
+#: C/cheatsheet.page:30
 msgid "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo"
 msgstr "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: deshacer"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:32
-msgid "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: Redo"
-msgstr "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: rehacer"
+#: C/cheatsheet.page:31
+#| msgid "<keyseq><key>Ctrl</key><key>Y</key></keyseq>: Redo"
+msgid "<keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>: Redo"
+msgstr "<keyseq><key>Ctrl</key><key>Mayús</key><key>Z</key></keyseq>: rehacer"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:33
+#: C/cheatsheet.page:32
 msgid "<key>F11</key>: Toggle fullscreen mode"
 msgstr "<key>F11</key>: cambiar el modo de pantalla completa"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:34
+#: C/cheatsheet.page:33
 msgid "<key>F1</key>: Show the user manual"
 msgstr "<key>F1</key>: mostrar el manual de usuario"
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:39
+#: C/cheatsheet.page:38
 msgid "Media Library"
 msgstr "Biblioteca de medios"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:41
+#: C/cheatsheet.page:40
 msgid "<key>Enter</key>: Preview (playback) the selected clip"
 msgstr "<key>Intro</key>: previsualizar (reproducción) el clip seleccionado"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:42
+#: C/cheatsheet.page:41
 msgid "<key>Insert</key>: Insert the selected clips into the timeline"
 msgstr ""
 "<key>Insertar</key>: insertar los clips seleccionados en la línea del tiempo"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:43
+#: C/cheatsheet.page:42
 msgid ""
 "<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
 "from the project"
@@ -222,17 +218,18 @@ msgstr ""
 "seleccionados del proyecto"
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:48 C/mainwindow.page:80
+#. (itstool) path: item/p
+#: C/cheatsheet.page:47 C/mainwindow.page:39 C/mainwindow.page:72
 msgid "Timeline"
 msgstr "Línea de tiempo"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:50
+#: C/cheatsheet.page:49
 msgid "<key>Spacebar</key>: Toggle playback."
 msgstr "<key>Barra espaciadora</key>: alternar reproducción."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:51
+#: C/cheatsheet.page:50
 msgid ""
 "<key>S</key>: Split the clips at the current playhead position. If there are "
 "selected clips, only those will be split."
@@ -241,13 +238,13 @@ msgstr ""
 "seleccionados, sólo esos se dividirán."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:52
+#: C/cheatsheet.page:51
 msgid "<key>Delete</key>: Remove selected clips from the timeline."
 msgstr ""
 "<key>Eliminar</key>: quitar los clips seleccionados de la línea del tiempo."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:53
+#: C/cheatsheet.page:52
 msgid ""
 "<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
 "depends on your project framerate."
@@ -256,7 +253,7 @@ msgstr ""
 "Esto depende de las imágenes por segundo en su proyecto."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:54
+#: C/cheatsheet.page:53
 msgid ""
 "<keyseq><key>Shift</key><key>←</key></keyseq> and <keyseq><key>Shift</"
 "key><key>→</key></keyseq>: Seek one second backwards or forwards."
@@ -265,7 +262,7 @@ msgstr ""
 "key><key>→</key></keyseq>: buscar un segundo hacia atrás o hacia adelante."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:55
+#: C/cheatsheet.page:54
 msgid ""
 "<keyseq><key>Ctrl</key><key>+</key></keyseq> and <keyseq><key>Ctrl</"
 "key><key>-</key></keyseq>: Zoom in or zoom out. You can also use <key>Ctrl</"
@@ -276,7 +273,7 @@ msgstr ""
 "rueda del ratón para controlar la ampliación más eficientemente."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:56
+#: C/cheatsheet.page:55
 msgid ""
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the "
 "timeline."
@@ -285,23 +282,23 @@ msgstr ""
 "encajar en la línea del tiempo."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:57
+#: C/cheatsheet.page:56
 msgid "<key>Shift</key>+drag: Ripple edit."
 msgstr "<key>Mayús</key>+arrastrar: edición de onda."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:58
+#: C/cheatsheet.page:57
 msgid "<key>Ctrl</key>+drag: Roll edit."
 msgstr "<key>Ctrl</key>+arrastrar: edición de desplazamiento."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:59
+#: C/cheatsheet.page:58
 msgid "<key>K</key>: Add a property keyframe at the current playhead position."
 msgstr ""
 "<key>K</key>: añadir una propiedad de fotograma clave en la posición actual."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:60
+#: C/cheatsheet.page:59
 msgid ""
 "<key>.</key> and <key>,</key>: Go to the next or previous property keyframe."
 msgstr ""
@@ -313,7 +310,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/codecscontainers.page:26
+#: C/codecscontainers.page:29
 msgctxt "_"
 msgid ""
 "external ref='figures/codecscontainers.jpg' "
@@ -322,8 +319,19 @@ msgstr ""
 "external ref='figures/codecscontainers.jpg' "
 "md5='e43e6a92cda311d0cd8c24fb0df67a17'"
 
+#. (itstool) path: credit/name
+#: C/codecscontainers.page:14 C/effects.page:13 C/gstreamer.page:16
+#: C/importing.page:16 C/keyframecurves.page:18 C/layers.page:16
+#: C/mainwindow.page:16 C/medialibrary.page:16 C/movearoundtimeline.page:18
+#: C/presets.page:16 C/rendering.page:16 C/selectiongrouping.page:10
+#: C/splitting.page:16 C/sysreq.page:16 C/transitions.page:10
+#: C/trimming.page:16 C/usingclips.page:16 C/usingeffects.page:10
+#: C/welcomedialog.page:14 C/workwithprojects.page:16
+msgid "Tomáš Karger"
+msgstr "Tomáš Karger"
+
 #. (itstool) path: info/desc
-#: C/codecscontainers.page:16
+#: C/codecscontainers.page:20
 msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
@@ -332,31 +340,28 @@ msgstr ""
 "Aprenda acerca de códecs y formatos de contenedor aquí."
 
 #. (itstool) path: page/title
-#: C/codecscontainers.page:19
+#: C/codecscontainers.page:23
 msgid "Understanding codecs and containers"
 msgstr "Entender los códecs y los contenedores"
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:20
+#: C/codecscontainers.page:24
+#, fuzzy
+#| msgid ""
+#| "This guide is an attempt at clarifying this distinction without going "
+#| "into technical details. If you want to learn more about containers and "
+#| "codecs, you should probably look at Wikipedia's page on <link href="
+#| "\"http://en.wikipedia.org/wiki/Container_format_(digital)\">containers</"
+#| "link> and <link href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
 msgid ""
-"The following is one of the most complex topics of video editing. Many "
-"people do not know the distinction between codecs and container file "
-"formats, thanks in part to the general lack of standardization, confusing "
-"marketing terms and filename extensions."
-msgstr ""
-"El siguiente tema es uno de los más complejos de edición de vídeo. Muchas "
-"personas no saben la diferencia entre códecs y formatos de archivo de "
-"contenedor, en parte debido a la falta general de estandarización, "
-"confundiendo términos de marketing y extensiones de nombre de archivo."
-
-#. (itstool) path: page/p
-#: C/codecscontainers.page:21
-msgid ""
-"This guide is an attempt at clarifying this distinction without going into "
-"technical details. If you want to learn more about containers and codecs, "
-"you should probably look at Wikipedia's page on <link href=\"http://en."
-"wikipedia.org/wiki/Container_format_(digital)\">containers</link> and <link "
-"href=\"http://en.wikipedia.org/wiki/Codec\">codecs</link>."
+"The distinction between codecs and container file formats is often "
+"ambiguous. This is in part due to the general lack of standardization, "
+"confusing marketing terms and filename extensions. This page attempts to "
+"clarify this distinction briefly and without going into technical details. "
+"If you want to learn more about containers and codecs, you should probably "
+"look at Wikipedia's page on <link href=\"http://en.wikipedia.org/wiki/"
+"Digital_container_format\">containers</link> and <link href=\"http://en."
+"wikipedia.org/wiki/Codec\">codecs</link>."
 msgstr ""
 "Esta guía es un intento de aclarar esta diferencia, sin entrar en detalles "
 "técnicos. Si quiere aprender más acerca de los contenedores y códecs, "
@@ -365,301 +370,175 @@ msgstr ""
 "link> y <link href=\"http://en.wikipedia.org/wiki/Codec\">códecs</link>."
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:22
+#: C/codecscontainers.page:25
+#| msgid ""
+#| "Basically, a container is what we typically associate with the file "
+#| "format. Containers \"contain\" the various components of a video: the "
+#| "stream of images, the sound, and anything else. For example, you could "
+#| "have multiple soundtracks and subtitles included in a video file, if the "
+#| "container format allows it. Example of popular containers are OGG, "
+#| "Matroska, AVI, MPEG."
 msgid ""
-"Basically, a container is what we typically associate with the file format. "
+"<em>Container</em> is what we typically associate with the file format. "
 "Containers \"contain\" the various components of a video: the stream of "
 "images, the sound, and anything else. For example, you could have multiple "
 "soundtracks and subtitles included in a video file, if the container format "
 "allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
 msgstr ""
-"Básicamente, un contenedor es lo que normalmente asociamos con el formato de "
-"archivo. Los contenedores «contienen» los diversos componentes de un vídeo: "
-"el flujo de imágenes, el sonido, y cualquier otra cosa. Por ejemplo, puede "
-"tener varias pistas de sonido y subtítulos incluidos en un archivo de vídeo, "
-"si el formato de contenedor lo permite. Ejemplos de contenedores populares "
-"son OGG, Matroska, AVI, MPEG."
+"Básicamente, un <em>contenedor</em> es lo que normalmente se asocia con el "
+"formato de archivo. Los contenedores «contienen» los diversos componentes de "
+"un vídeo: el flujo de imágenes, el sonido, y cualquier otra cosa. Por "
+"ejemplo, puede tener varias pistas de sonido y subtítulos incluidos en un "
+"archivo de vídeo, si el formato de contenedor lo permite. Ejemplos de "
+"contenedores populares son OGG, Matroska, AVI, MPEG."
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:23
+#: C/codecscontainers.page:26
+#| msgid ""
+#| "Codecs are ways of \"coding\" and \"decoding\" streams. Their job is "
+#| "typically to compress data (and decompress it when playing it back) so "
+#| "that you can store and transmit files with a smaller filesize. There are "
+#| "many codecs available out there, each with their strengths, weaknesses "
+#| "and peculiarities, and choosing the right codec with the right settings "
+#| "for the right situation is a form of art."
 msgid ""
-"Codecs are ways of \"coding\" and \"decoding\" streams. Their job is "
-"typically to compress data (and decompress it when playing it back) so that "
-"you can store and transmit files with a smaller filesize. There are many "
-"codecs available out there, each with their strengths, weaknesses and "
+"<em>Codecs</em> are ways of \"coding\" and \"decoding\" streams. Their job "
+"is typically to compress data (and decompress it when playing it back) so "
+"that you can store and transmit files with a smaller filesize. There are "
+"many codecs available out there, each with their strengths, weaknesses and "
 "peculiarities, and choosing the right codec with the right settings for the "
-"right situation is a form of art."
+"right situation is close to be a form of art in itself."
 msgstr ""
-"Los códecs son maneras de «codificar» y «decodificar» flujos. Su trabajo "
-"generalmente consiste en comprimir datos (y descomprimirlos cuando se "
-"reproducen) para que se puedan almacenar y transmitir archivos con un tamaño "
-"de archivo más pequeño. Hay muchos códecs disponibles por ahí, cada uno con "
-"sus bondades, debilidades y peculiaridades, y elegir el códec adecuado con "
-"los ajustes adecuados para la situación adecuada es una forma de arte."
+"Los <em>códecs</em> son maneras de «codificar» y «decodificar» flujos. Su "
+"trabajo generalmente consiste en comprimir datos (y descomprimirlos cuando "
+"se reproducen) para que se puedan almacenar y transmitir archivos con un "
+"tamaño de archivo más pequeño. Hay muchos códecs disponibles por ahí, cada "
+"uno con sus bondades, debilidades y peculiaridades, y elegir el códec "
+"adecuado con los ajustes adecuados para la situación adecuada es una forma "
+"de arte."
 
-#. (itstool) path: page/p
-#: C/codecscontainers.page:24
-msgid "The following figure should make things clearer:"
-msgstr "Las siguientes imágenes deberían aclarar las cosas:"
+#. (itstool) path: figure/title
+#: C/codecscontainers.page:28
+msgid "The relationship between containers and codecs"
+msgstr "La relación entre contenedores y decodificadores"
 
 #. (itstool) path: info/desc
-#: C/crossfading.page:18
-msgid "Making two clips fade into each other."
-msgstr "Hacer que dos clips se desvanezcan uno en el otro."
+#: C/effects.page:16
+#| msgid "Adding special effects to your video and audio"
+msgid "Adding special effects to your video and audio clips"
+msgstr "Añadir efectos especiales a sus clips de vídeo y sonido"
 
 #. (itstool) path: page/title
-#: C/crossfading.page:26
-msgid "Crossfading clips"
-msgstr "Mezclar clips"
-
-#. (itstool) path: page/p
-#: C/crossfading.page:28
-msgid ""
-"To do a crossfade between two clips on the same layer, simply drag one of "
-"the clips onto the other so that it overlaps. The overlapping region will be "
-"used for transitions (crossfade by default) between the two clips. You can "
-"adjust the length of the transition by moving or trimming the clips."
-msgstr ""
-"Para hacer una mezcla entre dos clips en la misma capa, simplemente arrastre "
-"uno de los clips sobre el otro para que se superponga. La región de "
-"superposición se usará para transiciones (mezcla predeterminada) entre los "
-"dos clips. Puede modificar la longitud de la transición moviendo o "
-"recortando los clips."
-
-#. (itstool) path: note/p
-#: C/crossfading.page:30
-msgid ""
-"Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
-"which use keyframes to control the opacity of clips."
-msgstr ""
-"Las mezclas se logran utilizando las funciones de mezcla de vídeo de "
-"<app>Pitivi</app>, que usan fotogramas clave para controlar la opacidad de "
-"los clips."
-
-#. (itstool) path: note/p
-#: C/crossfading.page:31
-msgid ""
-"This also means that if you set opacity keyframes for that clip, they will "
-"be taken into account for the crossfade."
-msgstr ""
-"Esto también significa que si se establece fotogramas clave de opacidad para "
-"ese clip, se tendrán en cuenta para la mezcla."
-
-#. (itstool) path: info/desc
-#: C/effects.page:14
-msgid "Adding special effects to your video and audio"
-msgstr "Añadir efectos especiales a su vídeo y sonido"
-
-#. (itstool) path: page/title
-#: C/effects.page:20
+#: C/effects.page:22
 msgid "Introduction to effects"
 msgstr "Introducción a los efectos"
 
 #. (itstool) path: page/p
-#: C/effects.page:22
-msgid ""
-"<app>Pitivi</app> offers a wide variety of video and audio effects to spice "
-"up your movies. Effects are non destructive: they are only applied to the "
-"resulting rendered movie and do not affect your source files."
-msgstr ""
-"<app>Pitivi</app> ofrece una amplia variedad de efectos de vídeo y sonido "
-"para darle vida a sus películas. Los efectos son no destructivos: sólo se "
-"aplican a la película renderizada resultante y no afectan sus archivos de "
-"origen."
-
-#. (itstool) path: note/p
 #: C/effects.page:24
 msgid ""
-"Available effects depend on the software installed on your computer. If you "
-"don't see anything (or only a handful of effects) in <app>Pitivi</app>'s "
-"effect library, make sure that the following are installed on your system:"
+"<app>Pitivi</app> uses a wide variety of video and audio effects to spice up "
+"your movies. Available effects depend on the software installed on your "
+"computer. If you don't see anything (or only a handful of effects) in the "
+"effect library, make sure that the <app>gnome-video-effects</app> package is "
+"installed on your system. Alternatively, you can look for packages "
+"containing GStreamer or frei0r effect plugins that are available in the "
+"repositories of your distribution."
 msgstr ""
-"Los efectos disponibles dependen del software instalado en su equipo. Si no "
-"ve nada (o solo un puñado de efectos) en la biblioteca de efectos de "
-"<app>Pitivi</app>, asegúrese que los siguientes paquetes están instalados en "
-"su sistema:"
 
-#. (itstool) path: item/p
+#. (itstool) path: note/p
 #: C/effects.page:26
-msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
+#| msgid ""
+#| "<app>Pitivi</app> offers a wide variety of video and audio effects to "
+#| "spice up your movies. Effects are non destructive: they are only applied "
+#| "to the resulting rendered movie and do not affect your source files."
+msgid ""
+"Effects are non-destructive: they are only applied to the resulting rendered "
+"movie and do not affect your source files."
 msgstr ""
-"Los <link xref=\"gstreamer\">complementos de GStreamer apropiados</link>"
-
-#. (itstool) path: item/p
-#: C/effects.page:27
-msgid "frei0r-plugins"
-msgstr "frei0r-plugins"
-
-#. (itstool) path: item/p
-#: C/effects.page:28
-msgid "gnome-video-effects"
-msgstr "gnome-video-effects"
+"Los efectos son no destructivos: sólo se aplican a la película renderizada "
+"resultante y no afectan sus a archivos fuente."
 
 #. (itstool) path: section/title
-#: C/effects.page:33
+#: C/effects.page:30
 msgid "Adding and removing effects to clips"
 msgstr "Añadir y quitar efectos a los clips"
 
 #. (itstool) path: section/p
-#: C/effects.page:34
+#: C/effects.page:31
 msgid "To add an effect:"
 msgstr "Para añadir un efecto:"
 
 #. (itstool) path: item/p
-#: C/effects.page:36
+#: C/effects.page:33 C/effects.page:39
 msgid "Select an existing clip on the timeline"
 msgstr "Seleccione un clip existente en la línea del tiempo"
 
 #. (itstool) path: item/p
-#: C/effects.page:37
+#: C/effects.page:34
 msgid "Choose an effect in the effect library"
 msgstr "Elija un efecto en la biblioteca de efectos"
 
 #. (itstool) path: item/p
-#: C/effects.page:38
+#: C/effects.page:35
+#| msgid ""
+#| "Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
+#| "<gui>Effects</gui> section"
 msgid ""
-"Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
-"<gui>Effects</gui> section"
+"Drag the chosen effect into the <guiseq><gui>middle pane</gui><gui>Clip "
+"configuration</gui> <gui>Effects</gui></guiseq>"
 msgstr ""
-"Arrastre el efecto elegido dentro de la sección <gui>Efectos</gui> del panel "
-"de <gui>Configuración del clip</gui>"
+"Arrastre el efecto elegido dentro de la sección <guiseq><gui>panel central</"
+"gui><gui>Configuración del clip</gui> <gui>Efectos</gui></guiseq>"
 
 #. (itstool) path: section/p
+#: C/effects.page:37
+#| msgid "To add an effect:"
+msgid "To remove an effect:"
+msgstr "Para quitar un efecto:"
+
+#. (itstool) path: item/p
 #: C/effects.page:40
+#| msgid ""
+#| "Drag the chosen effect into the <gui>Clip configuration</gui> pane's "
+#| "<gui>Effects</gui> section"
 msgid ""
-"To remove an effect on a selected clip, select it in the clip's effect list "
-"and click the <gui>Remove</gui> button."
+"Select the effect you want to remove in the <guiseq><gui>middle pane</"
+"gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>"
 msgstr ""
-"Para quitar un efecto de un clip seleccionado, selecciónelo en la lista de "
-"efectos del clip y pulse el botón <gui>Quitar</gui>."
+"Seleccione el efecto que quiere quitar en el <guiseq><gui>panel central</"
+"gui><gui>Configuración del clip</gui> <gui>Efectos</gui></guiseq>"
+
+#. (itstool) path: item/p
+#: C/effects.page:41
+#| msgid "Click the <gui>Render</gui> button."
+msgid "Click the <gui>Remove effect</gui> button"
+msgstr "Pulse el botón <gui>Quitar efecto</gui>."
 
 #. (itstool) path: section/title
-#: C/effects.page:43
-msgid "Toggling effects on and off"
+#: C/effects.page:45
+#| msgid "Toggling effects on and off"
+msgid "Toggling effects"
 msgstr "Activar y desactivar efectos"
 
 #. (itstool) path: section/p
-#: C/effects.page:44
+#: C/effects.page:46
+#| msgid ""
+#| "If you want to temporarily disable an effect (to compare with and without "
+#| "the effect, or for performance reasons), click the corresponding checkbox "
+#| "in the effect properties pane."
 msgid ""
 "If you want to temporarily disable an effect (to compare with and without "
 "the effect, or for performance reasons), click the corresponding checkbox in "
-"the effect properties pane."
+"the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> "
+"<gui>Effects</gui></guiseq>."
 msgstr ""
 "Si quiere desactivar temporalmente un efecto (para comparar con y sin el "
 "efecto, o por razones de rendimiento), pulse en la casilla correspondiente "
-"en el panel de propiedades del efecto."
-
-#. (itstool) path: note/p
-#: C/effects.page:46
-msgid ""
-"Currently, effects are applied on a \"per-clip\" basis. It is not yet "
-"possible to apply effects to timeline layers."
-msgstr ""
-"Actualmente, los efectos se aplican «por clip\"». Todavía no es posible "
-"aplicar efectos a las capas de la línea del tiempo."
+"en el <guiseq><gui>panel central</gui><gui>Configuración del clip</gui> "
+"<gui>Efectos</gui></guiseq>."
 
 #. (itstool) path: info/desc
-#: C/effectsanimation.page:13
-msgid "Changing the properties of effects over time"
-msgstr "Cambiar las propiedades de los efectos en el tiempo"
-
-#. (itstool) path: page/title
-#: C/effectsanimation.page:19
-msgid "Animating effects with Keyframes"
-msgstr "Animar efectos con fotogramas clave"
-
-#. (itstool) path: page/p
-#: C/effectsanimation.page:21
-msgid ""
-"This feature is not yet implemented, but is planned to be completed as a "
-"GSoC 2011 project."
-msgstr ""
-"Está función aún no está implementada, pero está previsto que se complete "
-"como un proyecto en GSoC 2011."
-
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:33
-msgctxt "_"
-msgid ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-msgstr ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:36
-msgctxt "_"
-msgid ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
-msgstr ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
-
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/fadeinfadeout.page:42
-msgctxt "_"
-msgid ""
-"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
-msgstr ""
-"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
-
-#. (itstool) path: info/desc
-#: C/fadeinfadeout.page:17
-msgid "Fading video to black or to a layer below, or fading audio."
-msgstr ""
-"Oscurecer el vídeo o moverse a una capa inferior, o aumentar/disminuir el "
-"sonido."
-
-#. (itstool) path: page/title
-#: C/fadeinfadeout.page:25
-msgid "Fade-ins and fade-outs"
-msgstr "Desvanecimientos"
-
-#. (itstool) path: page/p
-#: C/fadeinfadeout.page:27
-msgid ""
-"You can do “fades” of single clip by using <app>Pitivi</app>'s video mixing "
-"capabilities, which relies on keyframes controlling each clip's opacity (see "
-"also: <link xref=\"layers\">Understanding layers</link>)."
-msgstr ""
-"Puede hacer «desvanecimientos» de un solo clip usando las capacidades de "
-"mezcla de vídeo de <app>Pitivi</app>, que se basan en fotogramas clave que "
-"controlan la opacidad de cada clip (consulte la sección: <link xref=\"layers"
-"\">entender las capas</link>)."
-
-#. (itstool) path: page/p
-#: C/fadeinfadeout.page:28
-msgid "To fade a clip to black:"
-msgstr "Para oscurecer un clip:"
-
-#. (itstool) path: item/p
-#: C/fadeinfadeout.page:31
-msgid ""
-"Double-click on its opacity keyframe curve where you want the fade-out to "
-"start (or the fade-in to end)."
-msgstr ""
-"Pulse dos veces en su curva de fotograma clave de opacidad donde quiere que "
-"empiece (o termine) el desvanecimiento.."
-
-#. (itstool) path: item/p
-#: C/fadeinfadeout.page:40
-msgid "Click and drag the last (or first) keyframe of the clip downwards."
-msgstr ""
-"Pulse y arrastre el último (o el primer) fotograma clave del clip hacia "
-"abajo."
-
-#. (itstool) path: info/desc
-#: C/gstreamer.page:17
+#: C/gstreamer.page:19
 msgid ""
 "Ensuring you have the proper multimedia codecs and plugins installed for "
 "maximum compatibility."
@@ -668,17 +547,22 @@ msgstr ""
 "complementos instalados para una máxima compatibilidad."
 
 #. (itstool) path: page/title
-#: C/gstreamer.page:25
+#: C/gstreamer.page:27
 msgid "Gstreamer and compatibility"
 msgstr "Gstreamer y compatibilidad"
 
 #. (itstool) path: page/p
-#: C/gstreamer.page:27
+#: C/gstreamer.page:29
+#| msgid ""
+#| "A great strength in <app>Pitivi</app> lies in its use of the "
+#| "<app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used "
+#| "by dozens of multimedia applications across desktop environments, "
+#| "operating systems and architectures."
 msgid ""
-"A great strength in <app>Pitivi</app> lies in its use of the <app>GStreamer</"
-"app> multimedia framework. <app>GStreamer</app> is used by dozens of "
-"multimedia applications across desktop environments, operating systems and "
-"architectures."
+"A great strength of <app>Pitivi</app> lies in the fact that it uses the "
+"<app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by "
+"dozens of multimedia applications across desktop environments, operating "
+"systems and architectures."
 msgstr ""
 "La gran fortaleza en <app>Pitivi</app> radica en su uso del entorno de "
 "trabajo multimedia <app>GStreamer</app>. <app>GStreamer</app> lo usan "
@@ -686,21 +570,26 @@ msgstr ""
 "sistemas operativos y arquitecturas."
 
 #. (itstool) path: page/p
-#: C/gstreamer.page:28
-msgid "This essentially means three things to you, the user:"
-msgstr "Esto significa esencialmente tres cosas para usted, el usuario:"
+#: C/gstreamer.page:30
+msgid "For <app>Pitivi</app> users, this essentially means two things:"
+msgstr ""
+"Para los usuarios de <app>Pitivi</app>, esto significa básicamente dos cosas:"
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:31
+#: C/gstreamer.page:33
+#| msgid ""
+#| "You can, in theory, import pretty much any media file supported by "
+#| "<app>GStreamer</app> (but see the next section)."
 msgid ""
 "You can, in theory, import pretty much any media file supported by "
-"<app>GStreamer</app> (but see the next section)."
+"<app>GStreamer</app> (see the sections below for more details)."
 msgstr ""
 "Puede, en teoría, importar casi cualquier archivo multimedia soportado por "
-"<app>GStreamer</app> (pero consulte la siguiente sección)."
+"<app>GStreamer</app> (pero consulte la siguiente sección para obtener más "
+"detalles)."
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:34
+#: C/gstreamer.page:36
 msgid ""
 "You can render your projects using any supported container and codec "
 "combination from <app>GStreamer</app>."
@@ -708,28 +597,34 @@ msgstr ""
 "Puede renderizar sus proyectos utilizando cualquier contenedor compatible y "
 "combinación de códec de <app>GStreamer</app>."
 
-#. (itstool) path: item/p
-#: C/gstreamer.page:37
+#. (itstool) path: note/p
+#: C/gstreamer.page:40
+#| msgid ""
+#| "You need a very recent version of <app>GStreamer</app> to maximize "
+#| "<app>Pitivi's</app> capabilities and reduce the possibilities of bugs. "
+#| "This is because the <app>Pitivi</app> project developers work hard in "
+#| "fixing problems directly in <app>GStreamer</app> (instead of putting "
+#| "temporary workarounds inside <app>Pitivi</app>)."
 msgid ""
-"You need a very recent version of <app>GStreamer</app> to maximize "
-"<app>Pitivi's</app> capabilities and reduce the possibilities of bugs. This "
-"is because the <app>Pitivi</app> project developers work hard in fixing "
-"problems directly in <app>GStreamer</app> (instead of putting temporary "
-"workarounds inside <app>Pitivi</app>)."
+"To maximize <app>Pitivi</app>'s capabilities and reduce the possibilities of "
+"bugs, a very recent version of <app>GStreamer</app> is recommended. This is "
+"because <app>Pitivi</app> developers work hard on fixing problems directly "
+"in <app>GStreamer</app> instead of putting temporary workarounds inside "
+"<app>Pitivi</app>."
 msgstr ""
 "Necesita la versión más reciente de <app>GStreamer</app> para maximizar las "
 "capacidades de <app>Pitivi</app> y reducir las posibilidades de errores. "
-"Esto es porque los desarrolladores del proyecto de <app>Pitivi</app> "
-"trabajan duro solucionando problemas directamente en <app>GStreamer</app> "
-"(en lugar de poner soluciones temporales dentro de <app>Pitivi</app>."
+"Esto es porque los desarrolladores de <app>Pitivi</app> trabajan duro "
+"solucionando problemas directamente en <app>GStreamer</app> (en lugar de "
+"poner soluciones temporales dentro de <app>Pitivi</app>."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:42
+#: C/gstreamer.page:44
 msgid "A word about editing-friendly codecs"
 msgstr "Un comentario acerca de los códecs de edición amigable"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:43
+#: C/gstreamer.page:45
 msgid ""
 "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
 "not compress each frame independently. While it is the goal of <app>Pitivi</"
@@ -745,70 +640,104 @@ msgstr ""
 "independientes (tales como <em>MJPEG</em> o <em>DV</em>)."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:47
+#: C/gstreamer.page:49
 msgid "The Good, the Bad and the Ugly"
 msgstr "El bueno, el feo y el malo («good», «bad» y «ugly»)"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:48
+#: C/gstreamer.page:50
+#| msgid ""
+#| "<app>GStreamer</app> plugins come into three categories: good, bad and "
+#| "ugly. To maximize your experience, you may need to install some of all of "
+#| "these plugins to ensure compatibility with your media files. Whether or "
+#| "not you install them is up to you, and may depend on your country's "
+#| "jurisdiction regarding software patents."
 msgid ""
 "<app>GStreamer</app> plugins come into three categories: good, bad and ugly. "
-"To maximize your experience, you may need to install some of all of these "
-"plugins to ensure compatibility with your media files. Whether or not you "
-"install them is up to you, and may depend on your country's jurisdiction "
-"regarding software patents."
+"You may need to install plugins from any category to ensure compatibility "
+"with your media files. Whether or not you install them is up to you, and may "
+"depend on your country's jurisdiction regarding software patents. An "
+"overview of gstreamer plugins and their classification into categories can "
+"be found on the <link href=\"http://gstreamer.freedesktop.org/documentation/"
+"plugins.html\">Gstreamer website</link>."
 msgstr ""
-"Los complementos de <app>GStreamer</app> vienen en tres categorías: buenos, "
-"feos y malos. Para maximizar su experiencia, necesita instalar algunos de "
-"los complementos para asegurar compatibilidad con sus archivos de medios. "
-"Los instale o no depende de usted, y dependerá de la jurisdicción de su país "
-"en relación con las patentes de software."
-
-#. (itstool) path: item/p
-#: C/gstreamer.page:50
-msgid ""
-"The \"Good\" plugins are good quality plugins under the LGPL license. These "
-"plugins are considered safe and recommended at any time."
-msgstr ""
-"Los complementos «buenos» son complementos de buena calidad bajo la licencia "
-"LGPL. Estos complementos se consideran seguros y recomendados en todo "
-"momento."
-
-#. (itstool) path: item/p
-#: C/gstreamer.page:51
-msgid ""
-"The \"Bad\" plugins are plugins whose code is not of good enough quality, or "
-"are not considered tested well enough. The licensing may or may not be LGPL."
-msgstr ""
-"Los complementos «malos» son complementos cuyo código no es de suficiente "
-"buena calidad, o no son lo suficientemente buenos para probarlos. La "
-"licencia puede ser o no LGPL."
+"Los complementos de <app>GStreamer</app> se dividen en tres categorías: "
+"buenos, feos y malos. Puede necesitar instalar complementos de cualquier "
+"categoría para asegurar la compatibilidad con sus archivos de medios. Es su "
+"decisión instalarlos o no, y dependerá de la jurisdicción de su país en "
+"relación con las patentes de software. Puede ver una clasificación general "
+"de los complementos de GStreamer en su <link href=\"http://gstreamer."
+"freedesktop.org/documentation/plugins.html\">página web</link>."
 
 #. (itstool) path: item/p
 #: C/gstreamer.page:52
+#| msgid ""
+#| "The \"Good\" plugins are good quality plugins under the LGPL license. "
+#| "These plugins are considered safe and recommended at any time."
+msgid ""
+"The \"Good\" plugins are high quality plugins under the LGPL license. These "
+"plugins are considered safe and recommended at any time. To install them, "
+"search for packages containing gstreamer plugins good in your distribution's "
+"repositories."
+msgstr ""
+"Los complementos «buenos» son complementos de buena calidad bajo la licencia "
+"LGPL. Estos complementos se consideran seguros y recomendados en todo "
+"momento. Para instalarlos, busque en los repositorios de su distribución los "
+"paquetes que contienen los complementos «good» de GStreamer."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:53
+#| msgid ""
+#| "The \"Bad\" plugins are plugins whose code is not of good enough quality, "
+#| "or are not considered tested well enough. The licensing may or may not be "
+#| "LGPL."
+msgid ""
+"The \"Bad\" plugins are plugins whose code quality is not good enough, or "
+"are not considered tested well enough. The licensing may or may not be LGPL. "
+"To install them, search for packages containing gstreamer plugins bad in "
+"your distribution's repositories."
+msgstr ""
+"Los complementos «malos» son complementos cuyo código no es de suficiente "
+"buena calidad, o no son lo suficientemente buenos para probarlos. La "
+"licencia puede ser o no LGPL. Para instalarlos, busque en los repositorios "
+"de su distribución los paquetes que contienen los complementos «bad» de "
+"GStreamer."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:54
+#| msgid ""
+#| "The \"Ugly\" plugins are good quality plugins whose license is not LGPL "
+#| "or with licensing issues."
 msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
-"with licensing issues."
+"with licensing issues. To install them, search for packages containing "
+"containing gstreamer plugins ugly in your distribution's repositories."
 msgstr ""
 "Los complementos «feos» son complementos de buena calidad cuya licencia no "
-"es LGPL o tienen problemas de licencia."
+"es LGPL o tienen problemas de licencia. Para instalarlos, busque en los "
+"repositorios de su distribución los paquetes que contienen los complementos "
+"«ugly» de GStreamer."
 
 #. (itstool) path: note/p
-#: C/gstreamer.page:54
+#: C/gstreamer.page:57
+#| msgid ""
+#| "In addition to the Good, Bad and Ugly plugins, you may want to install "
+#| "gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
 msgid ""
-"In addition to the Good, Bad and Ugly plugins, you may want to install "
-"gstreamer-ffmpeg to have access to ffmpeg's set of codecs."
+"In addition to the Good, Bad and Ugly plugins, you may want to install the "
+"<em>gstreamer-ffmpeg</em> package to have access to ffmpeg's set of codecs."
 msgstr ""
-"Además de los complementos Buenos, Malos y Feos, es posible que quiera "
-"instalar gstreamer-ffmpeg para tener acceso al conjunto de códecs de ffmpeg."
+"Además de los complementos Buenos, Feos y Malos, es posible que quiera "
+"instalar el paquete <em>gstreamer-ffmpeg</em> para tener acceso al conjunto "
+"de códecs de ffmpeg."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:59
+#: C/gstreamer.page:63
 msgid "Image file formats"
 msgstr "Formatos de archivo de imagen"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:60
+#: C/gstreamer.page:64
 msgid ""
 "While it is not feasible to list every possible combination of supported "
 "video or audio formats, it is however possible to list the static image "
@@ -856,26 +785,6 @@ msgstr ""
 msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
 msgstr "ffmpeg -i su_vídeo.MTS -vcodec copy -acodec copy -sn prueba.mp4"
 
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/importing.page:51
-msgctxt "_"
-msgid ""
-"external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
-msgstr ""
-"external ref='figures/filechooser.png' md5='7c99958f9d766b874c3994fd56870259'"
-
-#. (itstool) path: credit/name
-#: C/importing.page:16 C/layers.page:16 C/mainwindow.page:16
-#: C/medialibrary.page:16 C/movearoundtimeline.page:18 C/rendering.page:16
-#: C/selectiongrouping.page:10 C/splitting.page:16 C/usingclips.page:16
-#: C/welcomedialog.page:14 C/workwithprojects.page:16
-msgid "Tomáš Karger"
-msgstr "Tomáš Karger"
-
 #. (itstool) path: info/desc
 #: C/importing.page:19
 msgid "Importing files into your project as clips."
@@ -888,10 +797,26 @@ msgstr "Obtener medios"
 
 #. (itstool) path: page/p
 #: C/importing.page:29
+msgid "Pitivi allows importing media files from your computer's hard drive."
+msgstr ""
+"Pitivi permite importar archivos multimedia del disco duro de su equipo."
+
+#. (itstool) path: note/p
+#: C/importing.page:31
+#, fuzzy
+#| msgid ""
+#| "At the time of this writing, the only supported method is importing files "
+#| "from your hard drive. As such, you cannot use <app>Pitivi</app> to "
+#| "capture directly from a camcorder. For DV/HDV camcorders using an IEEE "
+#| "1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to "
+#| "capture footage."
 msgid ""
-"At the time of this writing, the only supported method is importing files "
-"from your hard drive. As such, you cannot use <app>Pitivi</app> to capture "
-"directly from a camcorder. For DV/HDV camcorders using an IEEE 1394 "
+"Due to our limited resources and the rapid evolution of filmmaking hardware "
+"in the past few years, and to ensure <app>Pitivi</app> remains robust and "
+"simple to use, we do not attempt to support every possible hardware device "
+"out there. As a result, you currently cannot use <app>Pitivi</app> to "
+"capture directly from a camcorder; specialized applications are better "
+"suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 "
 "connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
 "footage."
 msgstr ""
@@ -901,63 +826,14 @@ msgstr ""
 "DV/HDV que usen una conexión IEEE 1394, debe usar <app>Kino</app> o "
 "<app>dvgrab</app> para capturar imágenes."
 
-#. (itstool) path: note/p
-#: C/importing.page:31
-msgid "We would welcome good quality patches to implement the following:"
-msgstr ""
-"Los parches de buena calidad son bien recibidos para implementar lo "
-"siguiente:"
-
-#. (itstool) path: item/p
-#: C/importing.page:33
-msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
-msgstr "Capturar de una cámara DV o HDV usando una conexión IEEE 1394."
-
-#. (itstool) path: item/p
-#: C/importing.page:34
-msgid "Capture from a webcam."
-msgstr "Capturar desde una cámara web."
-
-#. (itstool) path: item/p
+#. (itstool) path: section/title
 #: C/importing.page:35
-msgid "Dumping a network/Internet stream."
-msgstr "Descargar un flujo de red/Internet."
-
-#. (itstool) path: item/p
-#: C/importing.page:36
-msgid "Importing from DVD."
-msgstr "Importar desde un DVD."
-
-#. (itstool) path: item/p
-#: C/importing.page:37
-msgid "Importing from an audio CD."
-msgstr "Importar desde un CD de sonido."
-
-#. (itstool) path: item/p
-#: C/importing.page:38
-msgid ""
-"Downloading from content providers such as <link href=\"http://www.jamendo."
-"com\">Jamendo</link>, <link href=\"http://www.magnatune.com/\">Magnatune</"
-"link>, <link href=\"http://creativecommons.org/\">CreativeCommons</link>, "
-"etc."
-msgstr ""
-"Descargar de los proveedores de contenido tales como <link href=\"http://www."
-"jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
-"\">Magnatune</link>, <link href=\"http://creativecommons.org/"
-"\">CreativeCommons</link>, etc."
-
-#. (itstool) path: section/title
-#: C/importing.page:44
-msgid "Importing files"
-msgstr "Importar archivos"
-
-#. (itstool) path: section/title
-#: C/importing.page:45
-msgid "Using the file chooser"
-msgstr "Usar el selector de archivos"
+#| msgid "Using the file chooser"
+msgid "Importing files using the file chooser"
+msgstr "Importar archivos usando el selector de archivos"
 
 #. (itstool) path: section/p
-#: C/importing.page:46
+#: C/importing.page:36
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
@@ -971,32 +847,25 @@ msgstr ""
 "<keyseq><key>Ctrl</key><key>i</key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/importing.page:47
-msgid "The following file chooser dialog window will appear:"
-msgstr "Aparecerá la siguiente ventana de diálogo del selector de archivos:"
-
-#. (itstool) path: figure/title
-#. (itstool) path: figure/desc
-#: C/importing.page:49 C/importing.page:50
-msgid "Filechooser dialog"
-msgstr "Diálogo del selector de archivos"
-
-#. (itstool) path: section/p
-#: C/importing.page:53
+#: C/importing.page:37
+#| msgid ""
+#| "Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
+#| "same time."
 msgid ""
-"Press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the "
-"same time."
+"A file chooser dialog window will appear. You can press <key>Ctrl</key> or "
+"<key>Shift</key> to select multiple files at the same time."
 msgstr ""
-"Pulse <key>Ctrl</key> o <key>Mayús</key> para seleccionar varios archivos a "
-"la vez."
+"Aparecerá un selector de archivos. Pulse <key>Ctrl</key> o <key>Mayús</key> "
+"para seleccionar varios archivos a la vez."
 
 #. (itstool) path: section/title
-#: C/importing.page:56
-msgid "Using drag and drop"
-msgstr "Usar arrastrar y soltar"
+#: C/importing.page:40
+#| msgid "Using drag and drop"
+msgid "Importing files using drag and drop"
+msgstr "Importar archivos usando arrastrar y soltar"
 
 #. (itstool) path: section/p
-#: C/importing.page:57
+#: C/importing.page:41
 msgid ""
 "The concept of drag and drop is a well-established method of bridging the "
 "gap between software applications. Simply select the files you want to "
@@ -1011,12 +880,12 @@ msgstr ""
 "<gui>Biblioteca de Medios</gui> de <app>Pitivi</app>."
 
 #. (itstool) path: section/p
-#: C/importing.page:58
+#: C/importing.page:42
 msgid "This feature can be used to:"
 msgstr "Esta característica se puede usar para:"
 
 #. (itstool) path: item/p
-#: C/importing.page:61
+#: C/importing.page:45
 msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
@@ -1025,7 +894,7 @@ msgstr ""
 "(tal como <app>Rhythmbox</app> o <app>Totem</app>)."
 
 #. (itstool) path: item/p
-#: C/importing.page:64
+#: C/importing.page:48
 msgid ""
 "Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
@@ -1036,13 +905,13 @@ msgstr ""
 "del diálogo del selector de archivos."
 
 #. (itstool) path: item/p
-#: C/importing.page:67
+#: C/importing.page:51
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr ""
 "Importar una combinación de varios archivos y carpetas al mismo tiempo."
 
 #. (itstool) path: item/p
-#: C/importing.page:70
+#: C/importing.page:54
 msgid ""
 "Leverage the searching capability of another application (such as <app>GNOME "
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
@@ -1124,35 +993,21 @@ msgstr "Edición básica con la línea de tiempo"
 
 #. (itstool) path: section/title
 #: C/index.page:44
-msgid "Special Effects"
-msgstr "Efectos especiales"
+#| msgid "Transitions"
+msgid "Effects and Transitions"
+msgstr "Efectos y transiciones"
 
 #. (itstool) path: section/title
 #: C/index.page:48
-msgid "Transitions"
-msgstr "Transiciones"
-
-#. (itstool) path: section/title
-#: C/index.page:52
 msgid "Exporting Your Finished Movie"
 msgstr "Exportar su película terminada"
-
-#. (itstool) path: info/desc
-#: C/interface.page:13
-msgid "Discover the various windows, components and widgets."
-msgstr "Descubrir varias ventanas, componentes y widgets."
-
-#. (itstool) path: page/title
-#: C/interface.page:19
-msgid "An overview of the user interface"
-msgstr "Una visión general de la interfaz de usuario"
 
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/keyframecurves.page:29
+#: C/keyframecurves.page:34
 msgctxt "_"
 msgid ""
 "external ref='figures/keyframecurves.png' "
@@ -1162,110 +1017,159 @@ msgstr ""
 "md5='d91b335281ec48ab9f8fade73bf09852'"
 
 #. (itstool) path: info/desc
-#: C/keyframecurves.page:17
-msgid "Changing the opacity or volume of a clip over time."
-msgstr "Cambiar la opacidad o volumen de un clip en el tiempo."
+#: C/keyframecurves.page:21
+#| msgid "Changing the properties of effects over time"
+msgid "Changing properties of a clip over time."
+msgstr "Cambiar las propiedades de un clip en el tiempo."
 
 #. (itstool) path: page/title
-#: C/keyframecurves.page:25
+#: C/keyframecurves.page:29
 msgid "Keyframe curves"
 msgstr "Curvas de fotograma clave"
 
 #. (itstool) path: page/p
-#: C/keyframecurves.page:27
+#: C/keyframecurves.page:31
 msgid ""
-"Some types of clips (currently only audio clips) support interpolating "
-"property values over their time. The user can add one or more <em>keyframes</"
-"em> to control the interpolation, a term borrowed from animation. "
-"<app>Pitivi</app> represents the value of the property in between keyframes "
-"as a <em>curve</em> drawn over the clip. Currently only linear interpolation "
-"is supported."
+"By using keyframe curves, you can change property values of clips over time. "
+"This can be used to change opacity or volume just as well as control effect "
+"variables at any point in the clip's duration."
 msgstr ""
-"Algunos tipos de clips (actualmente solo clips de sonido) soportan valores "
-"de la propiedad de interpolación sobre su tiempo. El usuario puede añadir "
-"uno o mas <em>fotogramas clave</em> para controlar la interpolación, un "
-"término tomado de la animación. <app>Pitivi</app> representa el valor de una "
-"propiedad entre los fotogramas clave como una <em>curva</em> dibujada sobre "
-"el clip. Actualmente solo se soporta la interpolación linear."
 
-#. (itstool) path: section/title
+#. (itstool) path: figure/title
 #: C/keyframecurves.page:33
-msgid "General usage"
-msgstr "Uso general"
+#| msgid "Keyframe curves"
+msgid "Keyframe curve"
+msgstr "Curvas de fotograma clave"
 
-#. (itstool) path: section/p
-#: C/keyframecurves.page:34
-msgid ""
-"Curves are an intrinsic property of clips and can not be removed by the "
-"user. The start and end points of the curve are fixed to the start and end "
-"points of the clip, and also can not be removed by the user."
-msgstr ""
-"Las curvas son una propiedad intrínseca de los clips y el usuario no puede "
-"quitarlas. Los puntos de inicio y fin de la curva se fijan en los puntos de "
-"inicio y fin del clip, e incluso el usuario no puede quitarlas."
-
-#. (itstool) path: item/p
+#. (itstool) path: page/p
 #: C/keyframecurves.page:36
-msgid ""
-"You can add a new keyframe by double-clicking on an empty portion of a curve."
-msgstr ""
-"Puede añadir un nuevo fotograma pulsando dos veces en una porción vacía de "
-"una curva."
-
-#. (itstool) path: item/p
-#: C/keyframecurves.page:37
-msgid "You can remove a keyframe by double-clicking on it."
-msgstr "Puede quitar un fotograma clave pulsando dos veces en él."
+msgid "A terminological note:"
+msgstr "Una nota sobre la terminología:"
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:38
 msgid ""
-"You can adjust the time and value of a keyframe by moving it with the mouse. "
-"You can place the keyframe anywhere on the clip you like, even if this "
-"changes the order of the keyframes."
+"<em>Keyframes</em> are the points that are used to determine the property "
+"value at a given point in time."
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:39
+msgid ""
+"<em>Keyframe curves</em> are the lines connecting the points providing "
+"smooth transitions between them."
+msgstr ""
+
+#. (itstool) path: page/p
+#: C/keyframecurves.page:41
+msgid ""
+"By default, keyframe curves are flat: there are two keyframes with the same "
+"value, one at the beginning and one at the end of the clip. As a result, the "
+"curve connecting the two keyframes is a straight horizontal line indicating "
+"that the vlaue of a given property is the same at each point in time within "
+"the clip's duration. To change the value (and the rate of it's change) at "
+"any point, you can add one or more keyframes to the clip and drag them to "
+"appropriate positions representing their values."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/keyframecurves.page:43
+msgid "Currently only linear keyframe curves are supported."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/keyframecurves.page:47
+msgid "General usage"
+msgstr "Uso general"
+
+#. (itstool) path: section/p
+#: C/keyframecurves.page:48
+#| msgid ""
+#| "Curves are an intrinsic property of clips and can not be removed by the "
+#| "user. The start and end points of the curve are fixed to the start and "
+#| "end points of the clip, and also can not be removed by the user."
+msgid ""
+"Keyframe curves are an intrinsic property of clips and can not be removed by "
+"the user. The start and end keyframes are fixed to the start and end points "
+"of the clip, and can not be removed by the user either. Besides that, you "
+"can:"
+msgstr ""
+"Las curvas de los fotogramas clave son una propiedad intrínseca de los clips "
+"y el usuario no puede quitarlas. Los fotogramas clave de inicio y fin de la "
+"curva se fijan en los puntos de inicio y fin del clip, e incluso el usuario "
+"no puede quitarlas. Sin embargo, sí puede:"
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:50
+#| msgid ""
+#| "You can add a new keyframe by double-clicking on an empty portion of a "
+#| "curve."
+msgid "add a new keyframe by double-clicking on an empty portion of a curve"
+msgstr ""
+"añadir un nuevo fotograma clave, pulsando dos veces en una porción vacía de "
+"una curva."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:51
+#| msgid "You can remove a keyframe by double-clicking on it."
+msgid "remove a keyframe by double-clicking on it"
+msgstr "quitar un fotograma clave pulsando dos veces en él."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:52
+msgid "adjust the time and value of a keyframe by moving it with the mouse"
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:53
+#| msgid ""
+#| "You can click-and-drag on a segment of a curve between two keyframes to "
+#| "adjust the vertical position of the segment."
+msgid ""
+"click-and-drag on a segment of a curve between two keyframes to adjust the "
+"vertical position of the segment"
+msgstr ""
+"pulse y arrastre un segmento de una curva entre dos fotogramas clave para "
+"ajustar la posición vertical del segmento."
+
+#. (itstool) path: note/p
+#: C/keyframecurves.page:56
+#, fuzzy
+#| msgid ""
+#| "You can adjust the time and value of a keyframe by moving it with the "
+#| "mouse. You can place the keyframe anywhere on the clip you like, even if "
+#| "this changes the order of the keyframes."
+msgid ""
+"You can place the keyframe anywhere on the clip, even if this changes the "
+"order of the keyframes."
 msgstr ""
 "Puede modificar el tiempo y el valor de un fotograma clave moviéndolo con el "
 "ratón. Puede colocar el fotograma clave en cualquier lugar en el clip que "
 "quiera, incluso si esto cambia el orden de los fotogramas clave."
 
-#. (itstool) path: item/p
-#: C/keyframecurves.page:39
-msgid ""
-"You can click-and-drag on a segment of a curve between two keyframes to "
-"adjust the vertical position of the segment."
-msgstr ""
-"Puede pulsar y arrastrar en un segmento de una curva entre dos fotogramas "
-"claves para modificar la posición vertical del segmento."
-
 #. (itstool) path: section/title
-#: C/keyframecurves.page:44
-msgid "Audio curves"
-msgstr "Curvas de sonido"
+#: C/keyframecurves.page:61
+#| msgid "Audio curves"
+msgid "Audio and video curves"
+msgstr "Curvas de sonido y vídeo"
 
 #. (itstool) path: section/p
-#: C/keyframecurves.page:45
+#: C/keyframecurves.page:62
+#| msgid ""
+#| "The vertical position represents the alpha (opacity) of the clip on a "
+#| "scale from 0 to 100%. See the <link xref=\"layers\">Understanding layers</"
+#| "link> section for more details."
 msgid ""
 "For volume curves the vertical position represents the volume of the clip on "
-"a scale from 0 to 200%."
+"a scale from 0 to 200%. For video curves, the vertical position represents "
+"the alpha (opacity) of the clip on a scale from 0 to 100%. See the <link "
+"xref=\"layers\">Understanding layers</link> page for more details on opacity."
 msgstr ""
-"Para las curvas de volumen la posición vertical representa el volumen del "
-"clip en una escala del 0 al 200%"
-
-#. (itstool) path: section/title
-#: C/keyframecurves.page:49
-msgid "Video compositing curves"
-msgstr "Curvas de composición de vídeo"
-
-#. (itstool) path: section/p
-#: C/keyframecurves.page:50
-msgid ""
-"The vertical position represents the alpha (opacity) of the clip on a scale "
-"from 0 to 100%. See the <link xref=\"layers\">Understanding layers</link> "
-"section for more details."
-msgstr ""
-"La posición vertical representa el alfa (opacidad) del clip en una escala "
-"del 0 al 100%. Consulte la sección <link xref=\"layers\">Entender las capas</"
-"link> para obtener mayor información."
+"PAra curvas de volumen, la posición vertical representa el el volumen del "
+"clip en una escala del 0 al 200%. Para curvas de vídeo, la posición vertical "
+"representa el canal alfa (opacidad) del clip, en una escala del 0 al 100%. "
+"Consulte la sección <link xref=\"layers\">Entender las capas</link> para "
+"obtener más información sobre la opacidad."
 
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
@@ -1535,24 +1439,16 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:32
+#: C/mainwindow.page:30
+#| msgctxt "_"
+#| msgid ""
+#| "external ref='figures/mainwindow.jpg' "
+#| "md5='544f1d503faaec759beac50fd36670df'"
 msgctxt "_"
 msgid ""
-"external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
 msgstr ""
-"external ref='figures/mainwindow.jpg' md5='544f1d503faaec759beac50fd36670df'"
-
-#. (itstool) path: media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:55
-msgctxt "_"
-msgid ""
-"external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
-msgstr ""
-"external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
 
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
@@ -1575,32 +1471,69 @@ msgstr "Descubrir los componentes de la ventana principal."
 msgid "The main window"
 msgstr "La ventana principal"
 
-#. (itstool) path: figure/title
-#: C/mainwindow.page:30
-msgid "<app>Pitivi</app> main window"
-msgstr "Ventana principal de <app>Pitivi</app>"
-
-#. (itstool) path: figure/desc
-#: C/mainwindow.page:31
+#. (itstool) path: page/p
+#: C/mainwindow.page:29
+#| msgid ""
+#| "The main window, as the name implies, is the window containing the main "
+#| "components of the <app>Pitivi</app> user interface, namely: the menu bar, "
+#| "the toolbars, the timeline and various customizable components (media "
+#| "library, previewer, effects library, transitions library, etc.)."
 msgid ""
 "The main window, as the name implies, is the window containing the main "
-"components of the <app>Pitivi</app> user interface, namely: the menu bar, "
+"components of the <app>Pitivi</app> user interface, namely: the header bar, "
 "the toolbars, the timeline and various customizable components (media "
 "library, previewer, effects library, transitions library, etc.)."
 msgstr ""
 "La ventana principal, como su nombre indica, es la ventana que contiene los "
 "componentes principales de la interfaz de usuario de <app>Pitivi</app>, es "
-"decir: la barra de menú, las barras de herramientas, la línea del tiempo y "
-"los distintos componentes personalizados (la biblioteca de medios, la vista "
-"previa, la biblioteca de efectos, la biblioteca de transiciones, etc.)."
+"decir: la barra de cabecera, las barras de herramientas, la línea del tiempo "
+"y los distintos componentes personalizados (la biblioteca de medios, la "
+"vista previa, la biblioteca de efectos, la biblioteca de transiciones, etc.)."
+
+#. (itstool) path: page/p
+#: C/mainwindow.page:31
+msgid "In the figure above, the following areas can be observed:"
+msgstr "En la siguiente figura se pueden ver las siguientes áreas:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:33
+msgid "Header bar and main toolbar buttons"
+msgstr "Barra de cabecera y botones de la barra de herramientas principal"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:34
+msgid "Main menu button"
+msgstr "Botón del menú principal"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:35
+msgid "Primary tabs: media library and effects library"
+msgstr "Pestañas primarias: bibliotecas de medios y de efectos"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:36
+msgid "Contextual tabs: clip properties, transitions, titles"
+msgstr "Pestañas contextuales: propiedades del clip, transiciones, títulos"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:37
+#| msgid "Previewer"
+msgid "Viewer"
+msgstr "Visor"
+
+#. (itstool) path: item/p
+#. (itstool) path: section/title
+#: C/mainwindow.page:38 C/mainwindow.page:60
+msgid "Ruler"
+msgstr "Regla"
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:37
+#: C/mainwindow.page:43
 msgid "Resizing components of the main window"
 msgstr "Redimensionar los componentes de la ventana principal."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:38
+#: C/mainwindow.page:44
 msgid ""
 "In the spaces between components, there are handles indicated by five light "
 "dots. You can proportionally resize pairs of components by clicking and "
@@ -1610,73 +1543,45 @@ msgstr ""
 "puntos. Puede redimensionar proporcionalmente pares de componentes pulsando "
 "y arrastrando los tiradores a la posición que quiera."
 
-#. (itstool) path: section/title
-#: C/mainwindow.page:42
-msgid "Menu bar"
-msgstr "Barra de menú"
-
-#. (itstool) path: section/p
-#: C/mainwindow.page:43
-msgid ""
-"The menu bar is a place where many functions can be accessed. It contains "
-"all actions contained in the three toolbars, plus actions related to "
-"managing projects, view settings and help. <gui>Project settings</gui> and "
-"<gui>Preferences</gui> can also be accessed through the menu bar. However, "
-"actions specific to the <gui>Media library</gui>, <gui>Effect library</gui>, "
-"<gui>Clip configuration</gui>, <gui>Transitions</gui>, or <gui>Title editor</"
-"gui> are not included in the menu bar."
-msgstr ""
-"La barra de menú es el lugar desde el que se puede acceder a muchas "
-"funciones. Contiene todas las secciones que aparecen en las tres barras de "
-"herramientas, incluyendo acciones relacionadas con la gestión de proyectos, "
-"configuración de vistas y ayuda. También se puede acceder a la "
-"<gui>Configuración del proyecto</gui> y a las <gui>Preferencias</gui> "
-"mediante la barra de menú. sin embargo, las acciones de la <gui>Biblioteca "
-"de medios</gui>, <gui>Biblioteca de efectos</gui>, <gui>Configuración del "
-"vídeo</gui>, <gui>Transiciones</gui>, o <gui>Editor de títulos</gui> no "
-"están incluidos en la barra de menús."
+#. (itstool) path: note/title
+#: C/mainwindow.page:47
+msgid "Hovering for more information"
+msgstr "Pasar el ratón por encima para obtener más información"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:44
-msgid "The menu bar cannot be hidden."
-msgstr "La barra de menú no se puede ocultar."
+#: C/mainwindow.page:48
+#| msgid ""
+#| "You can hover the mouse cursor over a toolbar item to reveal an "
+#| "information tooltip regarding its function."
+msgid ""
+"Hovering the mouse cursor over an element in the main window usually reveals "
+"an information tooltip regarding its function."
+msgstr ""
+"Pasar el cursor del ratón sobre un elemento de la ventana principal "
+"normalmente muestra una descripción emergente relativa a a su función."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:49
-msgid "The toolbars"
-msgstr "Las barras de herramientas"
-
-#. (itstool) path: section/p
-#: C/mainwindow.page:50
-msgid ""
-"There are three toolbars in the <app>Pitivi</app> main window: the <gui>Main "
-"toolbar</gui>, the <gui>Playback toolbar</gui> and the <gui>Timeline "
-"toolbar</gui>. These provide access to the most commonly used functions of "
-"<app>Pitivi</app>. All items in toolbars can also be accessed through the "
-"menu bar. Toolbars can be activated or deactivated in the <gui>View</gui> "
-"menu."
-msgstr ""
-"Hay tres barras de herramientas en la ventana principal de <app>Pitivi</"
-"app>: la <gui>Barra de herramientas principal</gui>, la <gui>Barra de "
-"herramientas de reproducción</gui> y la <gui>Barra de herramientas de la "
-"línea de tiempo</gui>. Proporcionan acceso a las funciones más comúnmente "
-"usadas de <app>Pitivi</app>. Se puede acceder a todos los elementos de las "
-"barras de herramientas mediante la barra de menú. Las barras de herramientas "
-"se pueden activar o desactivar en el menú <gui>Ver</gui>."
-
-#. (itstool) path: note/p
 #: C/mainwindow.page:52
-msgid ""
-"You can hover the mouse cursor over a toolbar item to reveal an information "
-"tooltip regarding its function."
-msgstr ""
-"Puede situar el cursor del ratón sobre un elemento de la barra de "
-"herramientas para revelar una descripción emergente relativa a a su función."
+#| msgid "Marker bar"
+msgid "Header bar"
+msgstr "Barra de cabecera"
 
-#. (itstool) path: section/title
-#: C/mainwindow.page:60
-msgid "Ruler"
-msgstr "Regla"
+#. (itstool) path: section/p
+#: C/mainwindow.page:53
+msgid ""
+"The header bar is a place where basic functions such as <gui>Undo</gui>, "
+"<gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly "
+"accessed. It also contains the main <gui>menu button</gui> where you can "
+"find further functions such as <gui>New project</gui>, <gui>Open project</"
+"gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:55
+msgid ""
+"The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</"
+"key>."
+msgstr ""
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:61
@@ -1721,34 +1626,8 @@ msgstr ""
 "fotogramas individuales ocupan se basa en la configuración de imágenes por "
 "segundo del proyecto."
 
-#. (itstool) path: section/title
-#: C/mainwindow.page:72
-msgid "Marker bar"
-msgstr "Barra de marcadores"
-
 #. (itstool) path: section/p
 #: C/mainwindow.page:73
-msgid ""
-"Markers are visual cues that you can create to <em>mark</em> important "
-"points or regions in your project's timeline. The marker bar allows you to "
-"view and edit markers that you created."
-msgstr ""
-"Los marcadores son señales visuales que puede crear para <em>marcar</em> "
-"puntos o regiones importantes en la línea de tiempo de su proyecto. La barra "
-"de marcadores le permite ver y editar los marcadores que ha creado."
-
-#. (itstool) path: note/p
-#: C/mainwindow.page:75
-msgid ""
-"This feature is not yet implemented. See <link href=\"https://bugzilla.gnome."
-"org/show_bug.cgi?id=608682\">bug #608682</link> for more information."
-msgstr ""
-"Esta función aún no está implementada. Consulte el <link href=\"https://"
-"bugzilla.gnome.org/show_bug.cgi?id=608682\">error nº 608682</link> para "
-"obtener más información."
-
-#. (itstool) path: section/p
-#: C/mainwindow.page:81
 msgid ""
 "The timeline is the core user interface component that you will use for "
 "editing. Vertically, it is divided into layers that can be filled with audio "
@@ -1765,7 +1644,7 @@ msgstr ""
 "aplican sólo a la dimensión horizontal (cronológica) de la línea del tiempo."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:82
+#: C/mainwindow.page:74
 msgid ""
 "See the <link xref=\"layers\">Understanding layers</link> and <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
@@ -1776,12 +1655,12 @@ msgstr ""
 "obtener más información sobre cómo trabajar con la línea de tiempo"
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:86
+#: C/mainwindow.page:78
 msgid "Timeline toolbar"
 msgstr "Barra de herramientas de la línea de tiempo"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:87
+#: C/mainwindow.page:79
 msgid ""
 "The timeline toolbar is located at the right edge of the timeline. It "
 "contains basic actions for editing in timeline:"
@@ -1791,37 +1670,37 @@ msgstr ""
 "tiempo."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:89
+#: C/mainwindow.page:81
 msgid "Split clip at playhead position"
 msgstr "Cortar vídeo en la posición actual"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:90
+#: C/mainwindow.page:82
 msgid "Delete selected"
 msgstr "Eliminar lo seleccionado"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:91
+#: C/mainwindow.page:83
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:92
+#: C/mainwindow.page:84
 msgid "Ungroup clips"
 msgstr "Desagrupar vídeos"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:93
+#: C/mainwindow.page:85
 msgid "Align clips based on their soundtracks"
 msgstr "Alinear vídeos basándose en sus pistas de sonido"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:94
+#: C/mainwindow.page:86
 msgid "Toggle gapless mode"
 msgstr "Conmutar el modo sin esapcios"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:97
+#: C/mainwindow.page:89
 msgid ""
 "Note that most of the actions become available only once a clip is selected. "
 "When there is no subject for the action to be performed on, it remains "
@@ -1832,12 +1711,12 @@ msgstr ""
 "acción, permanecen sombreadas (indicando que no están disponibles)."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:102
+#: C/mainwindow.page:94
 msgid "Playback toolbar"
 msgstr "Barra de herramientas de reproducción"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:103
+#: C/mainwindow.page:95
 msgid ""
 "This toolbar, located below the previewer, contains buttons controlling the "
 "playback of the timeline. Options provided by the toolbar are the following:"
@@ -1847,37 +1726,33 @@ msgstr ""
 "proporciona la barra de herramientas son las siguientes:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:105
-msgid "Play"
-msgstr "Reproducir"
+#: C/mainwindow.page:97
+#| msgid "Pause"
+msgid "Play/Pause"
+msgstr "Reproducir/pausar"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:106
-msgid "Pause"
-msgstr "Pausar"
-
-#. (itstool) path: item/p
-#: C/mainwindow.page:107
+#: C/mainwindow.page:98
 msgid "Go forward one second"
 msgstr "Avanzar un segundo"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:108
+#: C/mainwindow.page:99
 msgid "Go back one second"
 msgstr "Retroceder un segundo"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:109
+#: C/mainwindow.page:100
 msgid "Go to the end of the timeline"
 msgstr "Ir al final de la línea de tiempo"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:110
+#: C/mainwindow.page:101
 msgid "Go to the beginning of the timeline"
 msgstr "Ir al comienzo de la línea de tiempo"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:112
+#: C/mainwindow.page:103
 msgid ""
 "For more information on how to move on the timeline, see the <em>Moving the "
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
@@ -1888,50 +1763,63 @@ msgstr ""
 "em> en la página <link xref=\"movearoundtimeline\">Moverse por la línea de "
 "tiempo</link>."
 
-#. (itstool) path: note/p
-#: C/mainwindow.page:114
-msgid ""
-"The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
-"playing, and reverts to a <gui>Play</gui> button again when not playing."
-msgstr ""
-"El botón <gui>Reproducir</gui> se transforma en un botón <gui>Pausa</gui> "
-"durante la reproducción y vuelve otra vez al botón <gui>Reproducir</gui> "
-"cuando ya no se reproduce."
-
 #. (itstool) path: section/title
-#: C/mainwindow.page:119
+#: C/mainwindow.page:107
 msgid "Previewer"
 msgstr "Vista previa"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:120
-msgid "The previewer displays"
-msgstr "La vista previa muestra"
+#: C/mainwindow.page:108
+#| msgid "The previewer displays"
+msgid "The previewer displays:"
+msgstr "La vista previa muestra:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:122
+#: C/mainwindow.page:110
 msgid "The video frame at the current position of the playhead."
 msgstr "El fotograma en la posición actual."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:123
+#: C/mainwindow.page:111
 msgid "Your project's video when playing back."
 msgstr "El vídeo de su proyecto cuando se reproduce."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:124
+#: C/mainwindow.page:112
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr ""
 "Una <em>vista previa en vivo</em> cuando recorte un punto inicio/final del "
 "clip."
 
+#. (itstool) path: note/title
+#: C/mainwindow.page:116
+msgid "Detaching the previewer into a separate window"
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:117
+msgid ""
+"You can detach the previewer into a separate window by clicking the "
+"<gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From "
+"the separate window, you can play the preview in fullscreen. This will also "
+"allow other parts of the main window to take up the space the previewer "
+"occupied. You can attach the previewer back by closing the separate window."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:120
+msgid "<app>Pitivi</app> inhibits screensaver while playing video preview."
+msgstr ""
+"<app>Pitivi</app> desactiva el salvapantallas al reproducir la vista previa "
+"de vídeo."
+
 #. (itstool) path: section/title
-#: C/mainwindow.page:130
+#: C/mainwindow.page:125
 msgid "Left pane"
 msgstr "Panel izquierdo"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:131
+#: C/mainwindow.page:126
 msgid ""
 "The left pane contains media and effect libraries. You can switch between "
 "them by selecting the appropriate tab. The <gui>Media library</gui> displays "
@@ -1946,7 +1834,7 @@ msgstr ""
 "gui> contiene el número de efectos de sonido y vídeo aplicables a los clips."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:133
+#: C/mainwindow.page:128
 msgid ""
 "You can search the libraries by using the text box in the header of each "
 "library."
@@ -1955,12 +1843,12 @@ msgstr ""
 "biblioteca."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:138
+#: C/mainwindow.page:133
 msgid "Middle pane"
 msgstr "Panel central"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:139
+#: C/mainwindow.page:134
 msgid ""
 "The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</"
 "gui> and <gui>Title editor</gui>. You can switch between them by selecting "
@@ -2019,13 +1907,22 @@ msgstr ""
 "archivos a la <gui>Biblioteca de medios</gui>. Al importar un <em>archivo</"
 "em> en la <gui>Biblioteca de medios</gui>, se convierte en un <em>clip</em>."
 
+#. (itstool) path: note/p
+#: C/medialibrary.page:33
+msgid ""
+"Once imported, the clips in <gui>Media library</gui> are sorted "
+"alphabetically."
+msgstr ""
+"Una vez importados, los clips de la <gui>Biblioteca de medios</gui> se "
+"ordenan alfabéticamente."
+
 #. (itstool) path: section/title
-#: C/medialibrary.page:34
+#: C/medialibrary.page:37
 msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgstr "Vista previa de un clip desde la <gui>Biblioteca de medios</gui>"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:35
+#: C/medialibrary.page:38
 msgid ""
 "To preview a clip before placing it on the timeline, you can double-click on "
 "it in the <gui>Media Library</gui>. This will open the clip in a window that "
@@ -2037,12 +1934,12 @@ msgstr ""
 "fuera de la ventana."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:38
+#: C/medialibrary.page:41
 msgid "Filtering search"
 msgstr "Filtro de búsqueda"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:39
+#: C/medialibrary.page:42
 msgid ""
 "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
 "into the search entry filters the contents of the <gui>Media Library</gui> "
@@ -2057,12 +1954,12 @@ msgstr ""
 "entrada de búsqueda."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:42
+#: C/medialibrary.page:45
 msgid "View modes"
 msgstr "Modos de vistas"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:43
+#: C/medialibrary.page:46
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list or in an icon "
 "view. The default mode is icon view because it display more clips without "
@@ -2078,12 +1975,75 @@ msgstr ""
 "gui> junto a la barra de búsqueda."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:46
+#: C/medialibrary.page:49
+#| msgid "Selecting unused files"
+msgid "Selecting unused clips"
+msgstr "Seleccionar clips no utilizados"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:50
+#| msgid ""
+#| "You may sometimes find that you have imported more clips that you needed "
+#| "in your project. <app>Pitivi</app> allows you to select files that are "
+#| "present in the media library but not in the timeline. There are various "
+#| "reasons to do this:"
+msgid ""
+"You may sometimes find that you have imported more clips that you needed in "
+"your project. <app>Pitivi</app> allows you to select clips that are present "
+"in the media library but not in the timeline. There are various reasons to "
+"do this:"
+msgstr ""
+"A veces puede encontrar que ha importado más clips de los que necesita en su "
+"proyecto. <app>Pitivi</app> le permite seleccionar archivos que están "
+"presentes en la biblioteca de medios pero no en la línea de tiempo. Hay "
+"varias razones para hacer esto:"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:52
+msgid "Improving performance when loading the project"
+msgstr "Mejorar el rendimiento cuando se cargue el proyecto"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:53
+msgid "Simplifying your editing workflow"
+msgstr "Simplificar su flujo de trabajo de edición"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:54
+msgid "Check which clips you may have forgot to use in your movie"
+msgstr ""
+"Verificar cuales son los clips que puede haber olvidado usar en su película"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:55
+msgid "Backup or share your project more easily"
+msgstr "Sacar una copia de seguridad o comparta su proyecto con más facilidad"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:57
+msgid ""
+"To identify which clips are not being used in your project, use the "
+"<gui>Select clips that have not been used in the project</gui> button at the "
+"left side of the search bar. Unused clips will then be selected in the media "
+"library."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/medialibrary.page:58
+msgid ""
+"If there are no unused clips in your project, nothing will be selected in "
+"the media library."
+msgstr ""
+"Si no hay clips sin usar en su proyecto, no se seleccionará nada en la "
+"biblioteca de medios."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:61
 msgid "Other actions"
 msgstr "Otras acciones"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:47
+#: C/medialibrary.page:62
 msgid ""
 "There are three further actions you can perform with clips. Each is "
 "represented by a button in the upper right part of the <gui>Media Library</"
@@ -2094,7 +2054,7 @@ msgstr ""
 "de medios</gui>:"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:49
+#: C/medialibrary.page:64
 msgid ""
 "<gui>Remove selected clips from the project</gui> (this can also be "
 "performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>)."
@@ -2103,7 +2063,7 @@ msgstr ""
 "puede hacer pulsando <keyseq><key>Ctr</key><key>Supr</key></keyseq>)."
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:50
+#: C/medialibrary.page:65
 msgid ""
 "<gui>Clip properties...</gui> opens a new window with information on "
 "<em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking "
@@ -2118,7 +2078,7 @@ msgstr ""
 "Puede seleccionar qué propiedades se aplican al dejarlos marcados/sin marcar."
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:51
+#: C/medialibrary.page:66
 msgid ""
 "<gui>Insert selected clips at the end of the timeline</gui> inserts selected "
 "clips one after another into the first layer of the timeline at a position, "
@@ -2129,7 +2089,7 @@ msgstr ""
 "la línea de tiempo, donde terminan el último clip o cualquier capa."
 
 #. (itstool) path: note/p
-#: C/medialibrary.page:54
+#: C/medialibrary.page:69
 msgid ""
 "In order for these actions to become available, one or more clips must be "
 "selected."
@@ -2427,34 +2387,32 @@ msgid ""
 "down."
 msgstr "Para depurar, pulse en la regla y mueva el ratón con el botón pulsado."
 
-#. (itstool) path: page/title
-#: C/othertransitions.page:23
-msgid "Other transitions"
-msgstr "Otras transiciones"
-
-#. (itstool) path: page/p
-#: C/othertransitions.page:25
-msgid ""
-"Other types of transitions (such as wipes) are not yet implemented (see "
-"<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
-"#609353</link>)."
-msgstr ""
-"Otros tipos de transiciones (tales como transiciones de una película) no "
-"están aún implementadas (consulte el <link href=\"https://bugzilla.gnome.org/"
-"show_bug.cgi?id=609353\">error nº 609353</link>)."
-
-#. (itstool) path: page/title
+#. (itstool) path: info/desc
 #: C/presets.page:19
+#| msgid "Editing project settings"
+msgid "Using presets in rendering and project settings."
+msgstr ""
+"Usar configuraciones predefinidas en el renderizado y en la configuración "
+"del proyecto."
+
+#. (itstool) path: page/title
+#: C/presets.page:27
 msgid "Presets"
 msgstr "Preajustes"
 
 #. (itstool) path: page/p
-#: C/presets.page:20
+#: C/presets.page:28
+#, fuzzy
+#| msgid ""
+#| "Both the project settings dialog and the rendering dialog allow you to "
+#| "save presets for later use. If you often deal with the same kind of "
+#| "project settings, with different cameras or target devices for rendering, "
+#| "you may want to create custom presets."
 msgid ""
-"Both the project settings dialog and the rendering dialog allow you to save "
-"presets for later use. If you often deal with the same kind of project "
-"settings, with different cameras or target devices for rendering, you may "
-"want to create custom presets."
+"Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> "
+"dialog allow you to save presets for later use. If you often deal with the "
+"same kind of project settings, with different cameras or target devices for "
+"rendering, you may want to create custom presets."
 msgstr ""
 "Las configuraciones del proyecto y el diálogo de renderizado le permiten "
 "guardar ajustes predefinidos para su uso posterior. Si trata con frecuencia "
@@ -2462,16 +2420,34 @@ msgstr ""
 "dispositivos de destino para renderizado, es posible que quiera crear "
 "ajustes predefinidos personalizados."
 
-#. (itstool) path: page/p
-#: C/presets.page:21
+#. (itstool) path: section/title
+#: C/presets.page:30
+#| msgid ""
+#| "Learn the difference between saving a project and exporting a rendered "
+#| "movie."
+msgid "The difference between Project settings and Rendering"
+msgstr "Diferencia entre configuración de un proyecto y renderizado."
+
+#. (itstool) path: section/p
+#: C/presets.page:31
+#, fuzzy
+#| msgid ""
+#| "While project settings concern themselves with global settings (such as "
+#| "resolution, framerate, aspect ratio and number of audio channels), the "
+#| "rendering presets are concerned with codecs and device constraints (for "
+#| "example, a handheld device or television may have a maximum screen "
+#| "resolution and framerate, which is not necessarily the case if you are "
+#| "exporting to a laptop or a website). As such, the presets in the "
+#| "rendering dialog are related to the project settings, but they govern "
+#| "different things."
 msgid ""
 "While project settings concern themselves with global settings (such as "
 "resolution, framerate, aspect ratio and number of audio channels), the "
-"rendering presets are concerned with codecs and device constraints (for "
+"rendering settings are concerned with codecs and device constraints (for "
 "example, a handheld device or television may have a maximum screen "
 "resolution and framerate, which is not necessarily the case if you are "
-"exporting to a laptop or a website). As such, the presets in the rendering "
-"dialog are related to the project settings, but they govern different things."
+"exporting to a laptop or a website). The presets in the <gui>Rendering</gui> "
+"dialog are related to project settings, but they govern different things."
 msgstr ""
 "Mientras las configuraciones del proyecto se refieren a sí mismas como "
 "configuraciones globales (tales como resolución, imágenes por segundo, "
@@ -2485,7 +2461,7 @@ msgstr ""
 "cosas."
 
 #. (itstool) path: note/p
-#: C/presets.page:22
+#: C/presets.page:32
 msgid ""
 "In project settings, video presets and audio presets are independent of each "
 "other."
@@ -2494,27 +2470,28 @@ msgstr ""
 "de sonido son independientes el uno del otro."
 
 #. (itstool) path: section/title
-#: C/presets.page:24
+#: C/presets.page:35
 msgid "Creating and editing presets"
 msgstr "Crear y editar ajustes predefinidos"
 
 #. (itstool) path: section/p
-#: C/presets.page:25
+#: C/presets.page:36
 msgid "To create a preset:"
 msgstr "Para crear un ajuste predefinido:"
 
 #. (itstool) path: item/p
-#: C/presets.page:27 C/presets.page:34
+#: C/presets.page:38 C/presets.page:45
 msgid "Change the settings to your liking."
 msgstr "Cambie los ajustes de acuerdo a sus preferencias."
 
 #. (itstool) path: item/p
-#: C/presets.page:28
-msgid "Click the <gui>Add</gui> button."
-msgstr "Pulse el botón <gui>Añadir</gui>."
+#: C/presets.page:39
+#| msgid "Click the <gui>Save</gui> button."
+msgid "Click the <gui>Create</gui> button."
+msgstr "Pulse el botón <gui>Crear</gui>."
 
 #. (itstool) path: item/p
-#: C/presets.page:29
+#: C/presets.page:40
 msgid ""
 "Give your preset a unique name: while the preset is selected in the list, "
 "click on its name to toggle editing mode. When you're done, press "
@@ -2525,24 +2502,24 @@ msgstr ""
 "Cuando haya terminado, pulse <key>Intro</key>."
 
 #. (itstool) path: section/p
-#: C/presets.page:31
+#: C/presets.page:42
 msgid "To edit a preset:"
 msgstr "Para editar un ajuste predefinido:"
 
 #. (itstool) path: item/p
-#: C/presets.page:33
+#: C/presets.page:44
 msgid "Select your preset in the list of existing presets."
 msgstr ""
 "Seleccione su ajuste predefinido en la lista de ajustes predefinidos "
 "existentes."
 
 #. (itstool) path: item/p
-#: C/presets.page:35
+#: C/presets.page:46
 msgid "Click the <gui>Save</gui> button."
 msgstr "Pulse el botón <gui>Guardar</gui>."
 
 #. (itstool) path: section/p
-#: C/presets.page:37
+#: C/presets.page:48
 msgid ""
 "To remove a preset, simply select it in the list of presets and press the "
 "<gui>Remove</gui> button."
@@ -2551,23 +2528,29 @@ msgstr ""
 "ajustes predefinidos y pulse el botón <gui>Quitar</gui>."
 
 #. (itstool) path: note/p
-#: C/presets.page:38
+#: C/presets.page:49
 msgid "Some presets are provided by default and cannot be removed."
 msgstr ""
 "Algunos ajustes predefinidos están predeterminados y no se pueden quitar."
 
 #. (itstool) path: section/title
-#: C/presets.page:41
+#: C/presets.page:52
 msgid "Ignoring presets"
 msgstr "Ignorar ajustes predefinidos"
 
 #. (itstool) path: section/p
-#: C/presets.page:42
+#: C/presets.page:53
+#, fuzzy
+#| msgid ""
+#| "Presets are there to save time and reduce complexity. Experts can choose "
+#| "to simply ignore them and set everything manually; the \"No preset\" "
+#| "preset is a special preset that automatically saves its changes directly "
+#| "in the project file."
 msgid ""
-"Presets are there to save time and reduce complexity. Experts can choose to "
-"simply ignore them and set everything manually; the \"No preset\" preset is "
-"a special preset that automatically saves its changes directly in the "
-"project file."
+"Presets are there to save time and reduce complexity. However, you can "
+"choose to simply ignore them and set everything manually. This is what the "
+"<em>No preset</em> option is meant for. When chosen, it automatically saves "
+"the settings directly in the project file."
 msgstr ""
 "Los ajustes predefinidos están ahí para ahorrar tiempo y reducir la "
 "complejidad. Los expertos pueden elegir simplemente ignorarlos y establecer "
@@ -2576,12 +2559,12 @@ msgstr ""
 "proyecto."
 
 #. (itstool) path: section/title
-#: C/presets.page:45
+#: C/presets.page:56
 msgid "Limiting the resolution of a rendering preset"
 msgstr "Limitar la resolución de un ajuste predefinido renderizado"
 
 #. (itstool) path: section/p
-#: C/presets.page:46
+#: C/presets.page:57
 msgid ""
 "If you want to make a preset with a fixed maximum resolution, you need to "
 "edit the preset file with a text editor. Presets files are typically stored "
@@ -2642,8 +2625,19 @@ msgstr ""
 msgid "Click the <gui>Render</gui> button."
 msgstr "Pulse el botón <gui>Renderizar</gui>."
 
+#. (itstool) path: page/p
+#: C/rendering.page:35
+msgid ""
+"While rendering, you can pause the process by clicking the <gui>Pause</gui> "
+"button and unpause it by clicking it again. You can also stop rendering "
+"either by clicking the <gui>Cancel</gui> button or by pressing <key>Esc</"
+"key>. If you stop the rendering process, the already rendered part of the "
+"video will be saved into the destined folder and <app>Pitivi</app> will "
+"offer you the <gui>Rendering dialog</gui> again."
+msgstr ""
+
 #. (itstool) path: note/p
-#: C/rendering.page:36
+#: C/rendering.page:37
 msgid ""
 "If your computer is set to suspend or hibernate automatically, <app>Pitivi</"
 "app> will automatically inhibit the power saving features during the render "
@@ -2654,12 +2648,12 @@ msgstr ""
 "energía durante el proceso de renderizado."
 
 #. (itstool) path: section/title
-#: C/rendering.page:39
+#: C/rendering.page:40
 msgid "Project settings and the rendering dialog"
 msgstr "Configuración del proyecto y el diálogo de renderizado"
 
 #. (itstool) path: section/p
-#: C/rendering.page:40
+#: C/rendering.page:41
 msgid ""
 "In rendering, project settings are taken as default values for most of the "
 "rendering settings such as framerate, number of audio channels or their "
@@ -2842,74 +2836,6 @@ msgstr ""
 "Ahora puede seleccionar, editar y mover los clips de manera independiente."
 
 #. (itstool) path: info/desc
-#: C/selectunusedfiles.page:15
-msgid "Finding and removing unused media to cleanup your project"
-msgstr "Encontrar y remover datos no utilizados para limpiar su proyecto."
-
-#. (itstool) path: page/title
-#: C/selectunusedfiles.page:23
-msgid "Selecting unused files"
-msgstr "Seleccionar archivos no utilizados"
-
-#. (itstool) path: page/p
-#: C/selectunusedfiles.page:24
-msgid ""
-"You may sometimes find that you have imported more clips that you needed in "
-"your project. <app>Pitivi</app> allows you to select files that are present "
-"in the media library but not in the timeline. There are various reasons to "
-"do this:"
-msgstr ""
-"A veces puede encontrar que ha importado más clips de los que necesita en su "
-"proyecto. <app>Pitivi</app> le permite seleccionar archivos que están "
-"presentes en la biblioteca de medios pero no en la línea de tiempo. Hay "
-"varias razones para hacer esto:"
-
-#. (itstool) path: item/p
-#: C/selectunusedfiles.page:26
-msgid "Improving performance when loading the project"
-msgstr "Mejorar el rendimiento cuando se cargue el proyecto"
-
-#. (itstool) path: item/p
-#: C/selectunusedfiles.page:27
-msgid "Simplifying your editing workflow"
-msgstr "Simplificar su flujo de trabajo de edición"
-
-#. (itstool) path: item/p
-#: C/selectunusedfiles.page:28
-msgid "Check which clips you may have forgot to use in your movie"
-msgstr ""
-"Verificar cuales son los clips que puede haber olvidado usar en su película"
-
-#. (itstool) path: item/p
-#: C/selectunusedfiles.page:29
-msgid "Backup or share your project more easily"
-msgstr "Sacar una copia de seguridad o comparta su proyecto con más facilidad"
-
-#. (itstool) path: page/p
-#: C/selectunusedfiles.page:31
-msgid ""
-"To identify which clips are not being used in your project, use "
-"<guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused "
-"clips will then be selected in the media library. If you want to remove them "
-"from your project, use <guiseq><gui>Library</gui><gui>Remove from Project</"
-"gui></guiseq>."
-msgstr ""
-"Para identificar cuales son los clips que no se han usado en su proyecto, "
-"use <guiseq><gui>Biblioteca</gui><gui>Seleccione medios no utilizados</gui></"
-"guiseq>. Los clips no utilizados se seleccionarán luego en la biblioteca de "
-"medios. Si quiere quitarlos de su proyecto, use <guiseq><gui>Biblioteca</"
-"gui><gui>Quitar del Proyecto</gui></guiseq>."
-
-#. (itstool) path: note/p
-#: C/selectunusedfiles.page:32
-msgid ""
-"If there are no unused clips in your project, nothing will be selected in "
-"the media library."
-msgstr ""
-"Si no hay clips sin usar en su proyecto, no se seleccionará nada en la "
-"biblioteca de medios."
-
-#. (itstool) path: info/desc
 #: C/splitting.page:19
 msgid "Dividing clips in two parts."
 msgstr "Dividir clips en dos partes."
@@ -3041,37 +2967,35 @@ msgstr ""
 "el otro hasta que se alineen."
 
 #. (itstool) path: info/desc
-#: C/sysreq.page:18
+#: C/sysreq.page:19
 msgid "What kind of hardware is needed to do video editing?"
 msgstr "¿Qué clase de hardware se necesita para editar vídeo?"
 
 #. (itstool) path: page/title
-#: C/sysreq.page:26
+#: C/sysreq.page:27
 msgid "System requirements"
 msgstr "Requerimientos del sistema"
 
 #. (itstool) path: page/p
-#: C/sysreq.page:28
+#: C/sysreq.page:29
+#, fuzzy
+#| msgid ""
+#| "Editing HD (High Definition) video usually requires (at the time of this "
+#| "writing) state of the art hardware (depending on the codec used), while "
+#| "SD (Standard Definition) video editing can be done on modest hardware "
+#| "configurations. It is up to you to make sure that your equipment is "
+#| "adequate. It should at least be able to playback your media in "
+#| "<app>Totem</app> without lagging."
 msgid ""
 "In terms of hardware, video editing typically requires a powerful computer, "
 "depending on the type of video you are editing. While the processing power "
 "of computers has increased tremendously over the years, so has demand for "
-"higher quality video."
-msgstr ""
-"En términos de hardware, la edición de vídeo requiere un equipo potente, "
-"dependiendo del tipo de vídeo que esté editando. A lo largo de los años la "
-"potencia de procesado de los equipos se ha incrementado enormemente, lo "
-"mismo ha pasado con la demanda por una mayor calidad de vídeo. "
-
-#. (itstool) path: page/p
-#: C/sysreq.page:29
-msgid ""
-"Editing HD (High Definition) video usually requires (at the time of this "
-"writing) state of the art hardware (depending on the codec used), while SD "
-"(Standard Definition) video editing can be done on modest hardware "
-"configurations. It is up to you to make sure that your equipment is "
-"adequate. It should at least be able to playback your media in <app>Totem</"
-"app> without lagging."
+"higher quality video. Editing HD (High Definition) video usually requires "
+"(at the time of this writing) state of the art hardware (depending on the "
+"codec used), while SD (Standard Definition) video editing can be done on "
+"modest hardware configurations. It is up to you to make sure that your "
+"equipment is adequate. It should at least be able to playback your media in "
+"<app>Totem</app> without lagging."
 msgstr ""
 "Editar vídeos en HD (Alta Definición) generalmente requiere (en el momento "
 "de escribir esto) un hardware potente (dependiendo del códec utilizado), "
@@ -3082,6 +3006,33 @@ msgstr ""
 
 #. (itstool) path: page/p
 #: C/sysreq.page:30
+msgid "Here are some general hardware recommendations:"
+msgstr "Estas son algunas recomendaciones generales sobre hardware:"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:32
+msgid "Modern quad core CPU"
+msgstr "CPU de 4 núcleos moderna"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:33
+msgid "Solid state drive"
+msgstr "Disco de estado sólido"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:34
+msgid "Intel graphic cards tend to work without problems"
+msgstr "Las tarjetas gráficas de Intel no suelen dar problemas"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:35
+msgid ""
+"Full HD (1920x1080) capable monitor (resolutions below 1024x768 are not "
+"supported)"
+msgstr ""
+
+#. (itstool) path: page/p
+#: C/sysreq.page:37
 msgid ""
 "It is possible, however, to use low-quality versions of your footage during "
 "editing and use the high-quality versions when rendering the final output, "
@@ -3095,12 +3046,268 @@ msgstr ""
 "en cierta medida. Esto se conoce como <em>Edición intermedia</em>. Esta "
 "característica, sin embargo, aún no está disponible en <app>Pitivi</app>"
 
+#. (itstool) path: note/p
+#: C/sysreq.page:39
+#, fuzzy
+#| msgid ""
+#| "Other types of transitions (such as wipes) are not yet implemented (see "
+#| "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
+#| "#609353</link>)."
+msgid ""
+"You can track the state of proxy editing in <app>Pitivi</app> through <link "
+"href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609136\">bug 609136</link>."
+msgstr ""
+"Otros tipos de transiciones (tales como transiciones de una película) no "
+"están aún implementadas (consulte el <link href=\"https://bugzilla.gnome.org/"
+"show_bug.cgi?id=609353\">error nº 609353</link>)."
+
+#. (itstool) path: page/p
+#: C/sysreq.page:41
+msgid ""
+"Software requirements are covered in <link xref=\"gstreamer\">Gstreamer and "
+"compatibility</link> and <link xref=\"effects\">Introduction to effects</"
+"link>."
+msgstr ""
+
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:34
+#: C/transitions.page:59
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+msgstr ""
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+
+#. (itstool) path: media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:64
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+msgstr ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+
+#. (itstool) path: media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:69
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
+msgstr ""
+"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
+
+#. (itstool) path: info/desc
+#: C/transitions.page:19
+msgid ""
+"Applying crossfades, fade-ins, fade-outs and other types of transitions."
+msgstr ""
+
+#. (itstool) path: page/title
+#: C/transitions.page:27
+msgid "Transitions"
+msgstr "Transiciones"
+
+#. (itstool) path: section/title
+#: C/transitions.page:30
+msgid "Crossfading clips"
+msgstr "Mezclar clips"
+
+#. (itstool) path: section/p
+#: C/transitions.page:31
+#, fuzzy
+#| msgid ""
+#| "To do a crossfade between two clips on the same layer, simply drag one of "
+#| "the clips onto the other so that it overlaps. The overlapping region will "
+#| "be used for transitions (crossfade by default) between the two clips. You "
+#| "can adjust the length of the transition by moving or trimming the clips."
+msgid ""
+"To do a crossfade between two clips on the same layer, simply drag one of "
+"the clips onto the other so that it overlaps. The overlapping region will be "
+"used as a space for transition between the two clips. You can adjust the "
+"length of the transition either by moving the clips or by trimming them. If "
+"you want to apply other types of transitions than the default (crossfade), "
+"see the <em>Other types of transitions</em> section on this page."
+msgstr ""
+"Para hacer una mezcla entre dos clips en la misma capa, simplemente arrastre "
+"uno de los clips sobre el otro para que se superponga. La región de "
+"superposición se usará para transiciones (mezcla predeterminada) entre los "
+"dos clips. Puede modificar la longitud de la transición moviendo o "
+"recortando los clips."
+
+#. (itstool) path: note/p
+#: C/transitions.page:33
+#, fuzzy
+#| msgid ""
+#| "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
+#| "which use keyframes to control the opacity of clips."
+msgid ""
+"Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
+"which use keyframes to control the opacity of clips. This means that if you "
+"set opacity keyframes for a clip, they will be taken into account for the "
+"crossfade."
+msgstr ""
+"Las mezclas se logran utilizando las funciones de mezcla de vídeo de "
+"<app>Pitivi</app>, que usan fotogramas clave para controlar la opacidad de "
+"los clips."
+
+#. (itstool) path: section/title
+#: C/transitions.page:37
+#| msgid "Other transitions"
+msgid "Other types of transitions"
+msgstr "Otros tipos de transiciones"
+
+#. (itstool) path: section/p
+#: C/transitions.page:38
+msgid ""
+"Assuming that you have two overlapping clips in your timeline, you can "
+"achieve other types of transitions by following these steps:"
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:40
+msgid "Select the overlapping region by clicking on it."
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:41
+msgid "Select the <gui>Transition</gui> tab in the middle pane."
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:42
+msgid "Select one of the offered transitions."
+msgstr "Seleccione una de las transiciones ofrecidas."
+
+#. (itstool) path: section/p
+#: C/transitions.page:44
+msgid ""
+"The transitions can be further adjusted with the following options from the "
+"bottom of the <gui>Transition</gui> tab:"
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:46
+msgid ""
+"<em>Normal mode</em> will apply the transition in a linear fashion over the "
+"whole overlapping region. When in normal mode, you can adjust the degree of "
+"sharpness/smoothenss of the transition."
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:47
+msgid ""
+"<em>Loop</em> mode will apply the transition in a circular manner. When in "
+"loop mode, you can adjust the speed with which the transition will repeat "
+"itself."
+msgstr ""
+
+#. (itstool) path: item/p
+#: C/transitions.page:48
+msgid ""
+"In both modes, you can apply the transition in <em>reverse direction</em> by "
+"ticking the corresponding checkbox."
+msgstr ""
+"En ambos modos, puede aplicar la transición en <em>sentido contrario</em> "
+"marcando la casilla correspondiente."
+
+#. (itstool) path: note/p
+#: C/transitions.page:51
+msgid ""
+"Each transition has its name and description. They are displayed when you "
+"hover the cursor over the transition icon. You can also filter the "
+"transitions by typing into the search entry at the top of the "
+"<gui>Transition</gui> tab. This will show only transitions whose name or "
+"description match your search terms."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/transitions.page:55
+msgid "Fade-ins and fade-outs"
+msgstr "Desvanecimientos"
+
+#. (itstool) path: section/p
+#: C/transitions.page:56
+msgid ""
+"You can create fade-in and fade-out transitions in single clips by using "
+"keyframes controlling the clip's opacity. Keyframes and opacity are "
+"explained elsewhere in this manual. For more information on keyframes, see "
+"<link xref=\"keyframecurves\">Keyframe curves</link>. To understand opacity, "
+"see <link xref=\"layers\">Understanding layers</link>. The following images "
+"illustrate how to fade a clip to black:"
+msgstr ""
+
+#. (itstool) path: figure/title
+#: C/transitions.page:58
+msgid "Default opacity keyframe curve"
+msgstr ""
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:60
+msgid ""
+"The default curve is flat indicating the same opacity at any position within "
+"the clip."
+msgstr ""
+
+#. (itstool) path: figure/title
+#: C/transitions.page:63
+msgid "Adding a new keyframe"
+msgstr "Añadir un fotograma clave nuevo"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:65
+#, fuzzy
+#| msgid ""
+#| "You can add a new keyframe by double-clicking on an empty portion of a "
+#| "curve."
+msgid ""
+"Create a new keyframe by double-clicking the curve in a position where you "
+"want to start the fade-out."
+msgstr ""
+"Puede añadir un nuevo fotograma pulsando dos veces en una porción vacía de "
+"una curva."
+
+#. (itstool) path: figure/title
+#: C/transitions.page:68
+#| msgid "Moving the playhead"
+msgid "Moving the keyframe"
+msgstr "Mover el fotograma clave"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:70
+#| msgid "Click and drag the last (or first) keyframe of the clip downwards."
+msgid "Click and drag the last keyframe downwards."
+msgstr "Pulse y arrastre el último fotograma clave hacia abajo."
+
+#. (itstool) path: section/p
+#: C/transitions.page:72
+msgid ""
+"To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe "
+"in a position where the fade-in should end and the first keyframe dragged "
+"down) at the beginning of the clip."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/transitions.page:74
+msgid ""
+"Fades and crossfading as described here can be applied to both audio and "
+"video clips."
+msgstr ""
+
+#. (itstool) path: media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:33
 msgctxt "_"
 msgid ""
 "external ref='figures/trimming-individual.png' "
@@ -3114,7 +3321,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:47
+#: C/trimming.page:43
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-before.png' "
@@ -3128,7 +3335,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:51
+#: C/trimming.page:48
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-after.png' "
@@ -3142,7 +3349,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:71
+#: C/trimming.page:74
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
@@ -3155,7 +3362,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:75
+#: C/trimming.page:79
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
@@ -3163,7 +3370,7 @@ msgstr ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
 
 #. (itstool) path: info/desc
-#: C/trimming.page:18
+#: C/trimming.page:19
 msgid ""
 "Shortening clips by changing the beginning and ending points. Also covers "
 "ripple and roll editing."
@@ -3172,41 +3379,50 @@ msgstr ""
 "la edición en cascada y con desplazamiento."
 
 #. (itstool) path: page/title
-#: C/trimming.page:26
+#: C/trimming.page:27
 msgid "Trimming"
 msgstr "Recortar"
 
 #. (itstool) path: page/p
-#: C/trimming.page:28
+#: C/trimming.page:29
 msgid ""
-"Trimming is the act of changing the beginning or end point of a clip in the "
-"timeline."
+"<em>Trimming</em> is the act of changing the length of a clip by moving its "
+"beginning or end point in the timeline. Move the mouse cursor over the edge "
+"of a clip and a trimming handle will appear. Drag the trimming handle in an "
+"appropriate direction to either reduce or increase the length of the clip."
 msgstr ""
-"Recortar es el acto de cambiar el punto de comienzo o final de un vídeo en "
-"la línea de tiempo."
 
-#. (itstool) path: section/title
+#. (itstool) path: figure/title
 #: C/trimming.page:31
-msgid "Trimming an individual clip"
-msgstr "Recortar un vídeo individual"
+#| msgid "Drag the trimming handle."
+msgid "Trimming handle"
+msgstr "Herramienta de recorte"
 
-#. (itstool) path: section/p
+#. (itstool) path: figure/desc
 #: C/trimming.page:32
+#| msgid ""
+#| "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgid ""
-"Move the mouse cursor over a clip, and trimming handles will appear. Drag "
-"one of the trimming handles on the left or right edge of the clip to trim."
+"The mouse cursor transforms into trimming handle when hovering over the edge "
+"of a clip."
 msgstr ""
-"Mueva el cursor sobre un vídeo, y la herramienta de recortado aparecerá. "
-"Arrastre una de las herramientas de recortado hacia el borde izquierdo o "
-"derecho del vídeo para recortar."
+"El cursor del ratón se convierte en la herramienta de recorte al pasarlo por "
+"encima del borde de un clip."
 
-#. (itstool) path: section/p
-#: C/trimming.page:36
+#. (itstool) path: page/p
+#: C/trimming.page:35
+#, fuzzy
+#| msgid ""
+#| "Clips that are grouped together, such as a video clip with its associated "
+#| "audio clip, will trim in unison when you drag the trimming handles. To "
+#| "trim only the audio or only the video part, you need to ungroup them "
+#| "first (see the section on Grouping/linking)."
 msgid ""
-"Clips that are grouped together, such as a video clip with its associated "
-"audio clip, will trim in unison when you drag the trimming handles. To trim "
-"only the audio or only the video part, you need to ungroup them first (see "
-"the section on Grouping/linking)."
+"Clips that are grouped together, such as corresponding audio and video "
+"clips, will trim in unison when you drag the trimming handle. To trim only "
+"the audio or only the video clip, you need to ungroup them first (see the "
+"<link xref=\"selectiongrouping\">Selection and grouping</link> page for "
+"instructions on how to do that)."
 msgstr ""
 "Los vídeos que están agrupados, como un vídeo con sonido asociado, se "
 "cortarán uniformemente cuando arrastre las herramientas de recorte. Para "
@@ -3214,64 +3430,94 @@ msgstr ""
 "primero (consulte la sección en Agrupamiento/Enlazado)"
 
 #. (itstool) path: section/title
-#: C/trimming.page:40
+#: C/trimming.page:38
 msgid "Ripple editing"
 msgstr "Edición de onda"
 
 #. (itstool) path: section/p
-#: C/trimming.page:41
+#: C/trimming.page:39
+#| msgid ""
+#| "Ripple edits are a variant of basic trimming which, in addition to "
+#| "trimming a clip, moves the “following” clips (the clips that start after "
+#| "the one you're directly editing) to fill the gap."
 msgid ""
-"Ripple edits are a variant of basic trimming which, in addition to trimming "
-"a clip, moves the “following” clips (the clips that start after the one "
-"you're directly editing) to fill the gap."
+"Ripple editing is a variant of basic trimming which, in addition to trimming "
+"a clip, also moves the following clips (the clips that start after the one "
+"you're directly editing) so that their relative position to the edited clip "
+"stays the same."
 msgstr ""
-"La edición de ondas son una variante del recorte básico que, además de "
+"La edición de ondas es una variante del recorte básico que, además de "
 "recortar un clip, mueve el «siguiente» clip (los clips que empiezan después "
-"del primero que está editando directamente) para llenar el espacio vacío."
+"del primero que está editando directamente) por lo que la posición relativa "
+"del clip editado se mantiene."
+
+#. (itstool) path: figure/title
+#: C/trimming.page:41 C/trimming.page:72
+#| msgid "Before:"
+msgid "Before"
+msgstr "Antes"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:42
+msgid "Relative position of two adjacent clips before ripple editing"
+msgstr "Posición relativa de los clips adyacentes antes de la edición de onda"
+
+#. (itstool) path: figure/title
+#: C/trimming.page:46 C/trimming.page:77
+#| msgid "After:"
+msgid "After"
+msgstr "Después"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:47
+msgid "Relative position of two adjacent clips after ripple editing"
+msgstr ""
+"Posición relativa de los clips adyacentes después de la edición de onda"
 
 #. (itstool) path: note/p
-#: C/trimming.page:43
+#: C/trimming.page:51
 msgid ""
-"The ripple applies to all “following” clips, regardless of whether or not "
+"Note that if there is a gap between the clips, the following clip moves "
+"toward the edited so that the gap length stays the same."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/trimming.page:54
+#, fuzzy
+#| msgid ""
+#| "The ripple applies to all “following” clips, regardless of whether or not "
+#| "they are on the same layer."
+msgid ""
+"Ripple editing affects all following clips, regardless of whether or not "
 "they are on the same layer."
 msgstr ""
 "La onda se aplica a todos los clips «siguientes¢, independientemente de si "
 "están o no están en la misma capa."
 
 #. (itstool) path: section/p
-#: C/trimming.page:45 C/trimming.page:69
-msgid "Before:"
-msgstr "Antes:"
-
-#. (itstool) path: section/p
-#: C/trimming.page:49 C/trimming.page:73
-msgid "After:"
-msgstr "Después:"
-
-#. (itstool) path: section/p
-#: C/trimming.page:53
+#: C/trimming.page:56
 msgid "To do a ripple edit:"
 msgstr "Para hacer una edición de onda:"
 
 #. (itstool) path: item/p
-#: C/trimming.page:56 C/trimming.page:79
-msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
-msgstr ""
-"Coloque el cursor del ratón en la herramienta de recorte entre dos clips "
-"adyacentes."
+#: C/trimming.page:59
+#| msgid ""
+#| "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgid "Place the mouse cursor on a trimming handle."
+msgstr "Coloque el cursor del ratón en la herramienta de recorte."
 
 #. (itstool) path: item/p
-#: C/trimming.page:57
+#: C/trimming.page:60
 msgid "Press and hold <key>Shift</key>."
 msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
 #. (itstool) path: item/p
-#: C/trimming.page:58 C/trimming.page:81
+#: C/trimming.page:61 C/trimming.page:88
 msgid "Drag the trimming handle."
 msgstr "Arrastre la herramienta de recorte."
 
-#. (itstool) path: section/p
-#: C/trimming.page:60
+#. (itstool) path: note/p
+#: C/trimming.page:64
 msgid ""
 "Ripple editing can also be used when moving clips around in the timeline. "
 "For detailed explanations on how to do this, see the section <link xref="
@@ -3283,36 +3529,62 @@ msgstr ""
 "edición de onda al mover los clips</link>."
 
 #. (itstool) path: section/title
-#: C/trimming.page:64
+#: C/trimming.page:69
 msgid "Roll editing"
 msgstr "Recorte con relleno"
 
 #. (itstool) path: section/p
-#: C/trimming.page:65
+#: C/trimming.page:70
+#| msgid ""
+#| "Roll edits are a variant of basic trimming which, in addition to trimming "
+#| "a clip, <em>trims</em> the adjacent clips to prevent creating gaps."
 msgid ""
-"Roll edits are a variant of basic trimming which, in addition to trimming a "
-"clip, <em>trims</em> the adjacent clips to prevent creating gaps."
+"Roll editing is a variant of basic trimming which, in addition to trimming a "
+"clip, <em>trims</em> the adjacent clips in a complementary way to prevent "
+"creating gaps."
 msgstr ""
 "El recorte con relleno es una variante del recorte básico que, además de "
 "recortar un clip, <em>recorta</em> los clips adyacentes para evitar que se "
 "creen espacios vacíos."
 
-#. (itstool) path: note/p
-#: C/trimming.page:67
-msgid ""
-"The roll applies to all temporally adjacent clips, regardless of whether or "
-"not they are on the same layer."
+#. (itstool) path: figure/desc
+#: C/trimming.page:73
+msgid "Relative position of two adjacent clips before roll editing"
 msgstr ""
-"El relleno se aplica a todos los clips adyacentes temporales, "
-"independientemente de si están o no están en la misma capa."
+"Posición relativa de dos clips adyacentes antes del recorte con relleno"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:78
+msgid "Relative position of two adjacent clips after roll editing"
+msgstr ""
+"Posición relativa de dos clips adyacentes después del recorte con relleno"
+
+#. (itstool) path: note/p
+#: C/trimming.page:82
+#| msgid ""
+#| "The roll applies to all temporally adjacent clips, regardless of whether "
+#| "or not they are on the same layer."
+msgid ""
+"Roll editing affects all adjacent clips, regardless of whether or not they "
+"are on the same layer."
+msgstr ""
+"El relleno se aplica a todos los clips adyacentes, independientemente de si "
+"están o no están en la misma capa."
 
 #. (itstool) path: section/p
-#: C/trimming.page:77
+#: C/trimming.page:84
 msgid "To do a roll edit:"
 msgstr "Para hacer una recorte con relleno:"
 
 #. (itstool) path: item/p
-#: C/trimming.page:80
+#: C/trimming.page:86
+msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgstr ""
+"Coloque el cursor del ratón en la herramienta de recorte entre dos clips "
+"adyacentes."
+
+#. (itstool) path: item/p
+#: C/trimming.page:87
 msgid "Press and hold <key>Ctrl</key>."
 msgstr "Mantenga pulsada la tecla <key>Mayús</key>."
 
@@ -3525,6 +3797,102 @@ msgstr ""
 "soltar el botón del ratón."
 
 #. (itstool) path: info/desc
+#: C/usingeffects.page:17
+#| msgid "Choose an effect in the effect library"
+msgid "Configuring effects and using Effect Library."
+msgstr "Configurar efectos usando la biblioteca de efectos."
+
+#. (itstool) path: page/title
+#: C/usingeffects.page:23
+#| msgid "Using clips"
+msgid "Using effects"
+msgstr "Usar efectos"
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:26
+#| msgid "Media Library"
+msgid "Effect Library"
+msgstr "Biblioteca de efectos"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:27
+msgid ""
+"<gui>Effect Library</gui> is a place where all available audio and video "
+"effects are stored. The library shows either audio or video effects "
+"depending on which button (<gui>Show video effects</gui> or <gui>Show audio "
+"effects</gui>) in its upper left corner is activated. Once you choose audio "
+"or video effects you can further sort them by choosing one of the categories "
+"from the drop down list next to the two buttons. By default, the list is set "
+"to show all effects."
+msgstr ""
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:28
+#, fuzzy
+#| msgid ""
+#| "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
+#| "into the search entry filters the contents of the <gui>Media Library</"
+#| "gui> to show only clips whose filenames match your search terms. To reset "
+#| "the search entry, click the \"cleanup\" icon in the search entry."
+msgid ""
+"Alternatively, you can use the <gui>Search Bar</gui> that is shown at the "
+"top of the <gui>Effect Library</gui>. Typing into the search entry filters "
+"the contents of the <gui>Effect Library</gui> to show only effects whose "
+"name or description match your search terms. To reset the search entry, "
+"click the <gui>Clear</gui> icon in the search entry."
+msgstr ""
+"En la parte superior de la <gui>Biblioteca de medios</gui> se muestra una "
+"barra de búsqueda. Escriba en los filtros de entrada de búsqueda los "
+"contenidos de la <gui>Biblioteca de medios</gui> para mostrar solo los clips "
+"cuyos nombres de archivo coincidan con sus términos de búsqueda. Para "
+"restablecer la entrada de búsqueda, pulse en el icono \"limpiar\" en la "
+"entrada de búsqueda."
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:31
+msgid "Configuring effects"
+msgstr "Configurar efectos"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:32
+msgid ""
+"To configure an effect, simply select it in the <guiseq><gui>middle pane</"
+"gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>. Variables "
+"that can be adjusted will appear in the lower part of the <gui>Clip "
+"configuration</gui> tab. Each variable can be put back to it's original "
+"value by clicking the corresponding <gui>Reset to default value</gui> button."
+msgstr ""
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:35
+#| msgid "Animating effects with Keyframes"
+msgid "Animating effects with keyframes"
+msgstr "Animar efectos con fotogramas clave"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:36
+msgid ""
+"Most effect variables can be controlled with keyframes. In order to access "
+"the keyframes, click the <gui>Show keyframes for this value</gui> button "
+"next to the variable you want to control. On the selected clip you will see "
+"a keyframe curve that belongs to the variable. You can now edit the "
+"keyframes to achieve the desired effect. Once you are done with editing, you "
+"can click the button again and the keyframe curve disappears from the clip. "
+"However, the effect variable is still controlled by the adjusted keyframe "
+"curve (which is indicated by the filled shape on the button). To revert the "
+"keyframe curve to the default flat state, use the <gui>Reset to default "
+"value</gui> button. For more information on how to use keyframes see the "
+"<link xref=\"keyframecurves\">Keyframe curves</link> page."
+msgstr ""
+
+#. (itstool) path: note/p
+#: C/usingeffects.page:38
+msgid ""
+"If there is no <gui>Show keyframes for this value</gui> button next to the "
+"effect variable, it can not be controlled with keyframes."
+msgstr ""
+
+#. (itstool) path: info/desc
 #: C/welcomedialog.page:17
 msgid "Creating new projects and opening recent projects on startup"
 msgstr "Crear proyectos nuevos y abrir proyectos recientes al iniciar"
@@ -3621,12 +3989,18 @@ msgstr "Guardar un proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:31
+#, fuzzy
+#| msgid ""
+#| "To save your project work, use <guiseq><gui>Project</gui><gui>Save</gui></"
+#| "guiseq> from the menu bar, the <gui>Save</gui> button on the main toolbar "
+#| "or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a "
+#| "project for the first time, a dialog window appears, asking you where to "
+#| "save the project file and how to name it."
 msgid ""
-"To save your project work, use <guiseq><gui>Project</gui><gui>Save</gui></"
-"guiseq> from the menu bar, the <gui>Save</gui> button on the main toolbar or "
-"press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a project "
-"for the first time, a dialog window appears, asking you where to save the "
-"project file and how to name it."
+"To save your project work, use the <gui>Save</gui> button in the header bar "
+"or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a "
+"project for the first time, a dialog window appears, asking you where to "
+"save the project file and how to name it."
 msgstr ""
 "Para guardar su trabajo del proyecto, use de la barra de menú "
 "<guiseq><gui>Proyecto</gui><gui>Guardar</gui></guiseq>, el botón "
@@ -3637,16 +4011,22 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:33
+#| msgid ""
+#| "If you want to save your project as a different file, use "
+#| "<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> from the menu bar "
+#| "or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. "
+#| "This can be used to create different versions of your project."
 msgid ""
-"If you want to save your project as a different file, use "
-"<guiseq><gui>Project</gui><gui>Save as</gui></guiseq> from the menu bar or "
-"press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can "
-"be used to create different versions of your project."
+"If you want to save your project as a different file, use <guiseq><gui>App "
+"menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</"
+"key><key>Shift</key><key>S</key></keyseq>. This can be used to create "
+"different versions of your project."
 msgstr ""
 "Si quiere guardar su proyecto como un archivo diferente, use "
-"<guiseq><gui>Proyecto</gui><gui>Guardar como</gui></guiseq> de la barra de "
-"menú o pulse <keyseq><key>Ctrl</key><key>Mayús</key><key>S</key></keyseq>. "
-"Esto se puede usar para crear versiones diferentes de su proyecto."
+"<guiseq><gui>Menú de la aplicación</gui><gui>Guardar como</gui></guiseq> de "
+"la barra de menú o pulse <keyseq><key>Ctrl</key><key>Mayús</key><key>S</"
+"key></keyseq>. Esto se puede usar para crear versiones diferentes de su "
+"proyecto."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:37
@@ -3655,12 +4035,20 @@ msgstr "Deshacer y revertir cambios"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:38
+#, fuzzy
+#| msgid ""
+#| "To undo a change, simply click on the <gui>Undo</gui> button in the main "
+#| "toolbar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In "
+#| "addition to undoing individual changes, you can also decide to revert all "
+#| "the changes you have made since the last time you saved your project. To "
+#| "do so, use <guiseq><gui>Project</gui><gui>Revert</gui></guiseq> from the "
+#| "menu bar."
 msgid ""
-"To undo a change, simply click on the <gui>Undo</gui> button in the main "
-"toolbar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition "
-"to undoing individual changes, you can also decide to revert all the changes "
+"To undo a change, simply click on the <gui>Undo</gui> button in the header "
+"bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to "
+"undoing individual changes, you can also decide to revert all the changes "
 "you have made since the last time you saved your project. To do so, use "
-"<guiseq><gui>Project</gui><gui>Revert</gui></guiseq> from the menu bar."
+"<guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>."
 msgstr ""
 "Para deshacer un cambio, simplemente pulse en el botón <gui>Deshacer</gui> "
 "en la barra de herramientas principal o pulse <keyseq><key>Ctrl</key><key>Z</"
@@ -3669,13 +4057,24 @@ msgstr ""
 "guardó su proyecto. Para hacer esto, use <guiseq><gui>Proyecto</"
 "gui><gui>Deshacer</gui></guiseq> de la barra de menú."
 
+#. (itstool) path: note/p
+#: C/workwithprojects.page:40
+msgid ""
+"To redo changes that were undone, click on the <gui>Redo</gui> button in the "
+"header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></"
+"keyseq>."
+msgstr ""
+"Para rehacer los cambios deshechos, pulse el botón <gui>Rehacer</gui> en la "
+"barra de cabecera, o pulse <keyseq><key>Ctrl</key><key>Mayús</key><key>Z</"
+"key></keyseq>."
+
 #. (itstool) path: section/title
-#: C/workwithprojects.page:42
+#: C/workwithprojects.page:45
 msgid "Editing project settings"
 msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:43
+#: C/workwithprojects.page:46
 msgid ""
 "When starting a new project, you should make sure to adjust the project "
 "settings, such as framerate, resolution and preferred codecs. The video "
@@ -3691,28 +4090,33 @@ msgstr ""
 "vídeo puede verse aplastado o encajado."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:45
+#: C/workwithprojects.page:48
+#| msgid ""
+#| "Everytime you start a new project, a dialog window appears where you can "
+#| "adjust audio and video settings or metadata. To edit the project settings "
+#| "after initial creation, use <guiseq><gui>Edit</gui><gui>Project Settings</"
+#| "gui></guiseq> from the menu bar."
 msgid ""
 "Everytime you start a new project, a dialog window appears where you can "
 "adjust audio and video settings or metadata. To edit the project settings "
-"after initial creation, use <guiseq><gui>Edit</gui><gui>Project Settings</"
-"gui></guiseq> from the menu bar."
+"after initial creation, use <guiseq><gui>App menu</gui><gui>Project "
+"Settings</gui></guiseq>."
 msgstr ""
 "Cada vez que inicie un nuevo proyecto, aparecerá una ventana de diálogo "
 "donde podrá ajustar las configuraciones de sonido y vídeo o los metadatos. "
-"Para editar las configuraciones del proyecto después de la creación inicial, "
-"use de la barra de menú <guiseq><gui>Editar</gui><gui>Configuración del "
-"proyecto</gui></guiseq>."
+"Para editar la configuración del proyecto después de la creación inicial, "
+"use <guiseq><gui>Menú de la aplicación</gui><gui>Configuración del proyecto</"
+"gui></guiseq>."
 
 #. (itstool) path: section/title
-#: C/workwithprojects.page:50
+#: C/workwithprojects.page:53
 msgid "Pixel aspect ratio vs display aspect ratio"
 msgstr ""
 "Proporción del aspecto en píxeles frente a proporción del aspecto "
 "visualizado "
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:51
+#: C/workwithprojects.page:54
 msgid ""
 "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
 "org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
@@ -3732,7 +4136,7 @@ msgstr ""
 "matemática de anchura:altura para la imagen completa."
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:52
+#: C/workwithprojects.page:55
 msgid ""
 "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
 "related to each other through video resolution (width and height). Once your "
@@ -3746,7 +4150,7 @@ msgstr ""
 "DAR o PAR, con la que esté más cómodo."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:54
+#: C/workwithprojects.page:57
 msgid ""
 "You can use the ratios already provided in the combo boxes, or input a "
 "custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
@@ -3756,6 +4160,316 @@ msgstr ""
 "una proporción del aspecto en la entrada de texto a continuación (usando una "
 "sintaxis tal como «4:3» o «1.3333», aunque la versión decimal es menos "
 "precisa)."
+
+#~ msgid ""
+#~ "The following is one of the most complex topics of video editing. Many "
+#~ "people do not know the distinction between codecs and container file "
+#~ "formats, thanks in part to the general lack of standardization, confusing "
+#~ "marketing terms and filename extensions."
+#~ msgstr ""
+#~ "El siguiente tema es uno de los más complejos de edición de vídeo. Muchas "
+#~ "personas no saben la diferencia entre códecs y formatos de archivo de "
+#~ "contenedor, en parte debido a la falta general de estandarización, "
+#~ "confundiendo términos de marketing y extensiones de nombre de archivo."
+
+#~ msgid "The following figure should make things clearer:"
+#~ msgstr "Las siguientes imágenes deberían aclarar las cosas:"
+
+#~ msgid "Making two clips fade into each other."
+#~ msgstr "Hacer que dos clips se desvanezcan uno en el otro."
+
+#~ msgid ""
+#~ "This also means that if you set opacity keyframes for that clip, they "
+#~ "will be taken into account for the crossfade."
+#~ msgstr ""
+#~ "Esto también significa que si se establece fotogramas clave de opacidad "
+#~ "para ese clip, se tendrán en cuenta para la mezcla."
+
+#~ msgid ""
+#~ "Available effects depend on the software installed on your computer. If "
+#~ "you don't see anything (or only a handful of effects) in <app>Pitivi</"
+#~ "app>'s effect library, make sure that the following are installed on your "
+#~ "system:"
+#~ msgstr ""
+#~ "Los efectos disponibles dependen del software instalado en su equipo. Si "
+#~ "no ve nada (o solo un puñado de efectos) en la biblioteca de efectos de "
+#~ "<app>Pitivi</app>, asegúrese que los siguientes paquetes están instalados "
+#~ "en su sistema:"
+
+#~ msgid "The <link xref=\"gstreamer\">appropriate GStreamer plugins</link>"
+#~ msgstr ""
+#~ "Los <link xref=\"gstreamer\">complementos de GStreamer apropiados</link>"
+
+#~ msgid "frei0r-plugins"
+#~ msgstr "frei0r-plugins"
+
+#~ msgid "gnome-video-effects"
+#~ msgstr "gnome-video-effects"
+
+#~ msgid ""
+#~ "To remove an effect on a selected clip, select it in the clip's effect "
+#~ "list and click the <gui>Remove</gui> button."
+#~ msgstr ""
+#~ "Para quitar un efecto de un clip seleccionado, selecciónelo en la lista "
+#~ "de efectos del clip y pulse el botón <gui>Quitar</gui>."
+
+#~ msgid ""
+#~ "Currently, effects are applied on a \"per-clip\" basis. It is not yet "
+#~ "possible to apply effects to timeline layers."
+#~ msgstr ""
+#~ "Actualmente, los efectos se aplican «por clip\"». Todavía no es posible "
+#~ "aplicar efectos a las capas de la línea del tiempo."
+
+#~ msgid ""
+#~ "This feature is not yet implemented, but is planned to be completed as a "
+#~ "GSoC 2011 project."
+#~ msgstr ""
+#~ "Está función aún no está implementada, pero está previsto que se complete "
+#~ "como un proyecto en GSoC 2011."
+
+#~ msgid "Fading video to black or to a layer below, or fading audio."
+#~ msgstr ""
+#~ "Oscurecer el vídeo o moverse a una capa inferior, o aumentar/disminuir el "
+#~ "sonido."
+
+#~ msgid ""
+#~ "You can do “fades” of single clip by using <app>Pitivi</app>'s video "
+#~ "mixing capabilities, which relies on keyframes controlling each clip's "
+#~ "opacity (see also: <link xref=\"layers\">Understanding layers</link>)."
+#~ msgstr ""
+#~ "Puede hacer «desvanecimientos» de un solo clip usando las capacidades de "
+#~ "mezcla de vídeo de <app>Pitivi</app>, que se basan en fotogramas clave "
+#~ "que controlan la opacidad de cada clip (consulte la sección: <link xref="
+#~ "\"layers\">entender las capas</link>)."
+
+#~ msgid "To fade a clip to black:"
+#~ msgstr "Para oscurecer un clip:"
+
+#~ msgid ""
+#~ "Double-click on its opacity keyframe curve where you want the fade-out to "
+#~ "start (or the fade-in to end)."
+#~ msgstr ""
+#~ "Pulse dos veces en su curva de fotograma clave de opacidad donde quiere "
+#~ "que empiece (o termine) el desvanecimiento.."
+
+#~ msgid "This essentially means three things to you, the user:"
+#~ msgstr "Esto significa esencialmente tres cosas para usted, el usuario:"
+
+#~ msgctxt "_"
+#~ msgid ""
+#~ "external ref='figures/filechooser.png' "
+#~ "md5='7c99958f9d766b874c3994fd56870259'"
+#~ msgstr ""
+#~ "external ref='figures/filechooser.png' "
+#~ "md5='7c99958f9d766b874c3994fd56870259'"
+
+#~ msgid "We would welcome good quality patches to implement the following:"
+#~ msgstr ""
+#~ "Los parches de buena calidad son bien recibidos para implementar lo "
+#~ "siguiente:"
+
+#~ msgid "Capture from a DV or HDV camcorder using an IEEE 1394 connection."
+#~ msgstr "Capturar de una cámara DV o HDV usando una conexión IEEE 1394."
+
+#~ msgid "Capture from a webcam."
+#~ msgstr "Capturar desde una cámara web."
+
+#~ msgid "Dumping a network/Internet stream."
+#~ msgstr "Descargar un flujo de red/Internet."
+
+#~ msgid "Importing from DVD."
+#~ msgstr "Importar desde un DVD."
+
+#~ msgid "Importing from an audio CD."
+#~ msgstr "Importar desde un CD de sonido."
+
+#~ msgid ""
+#~ "Downloading from content providers such as <link href=\"http://www."
+#~ "jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
+#~ "\">Magnatune</link>, <link href=\"http://creativecommons.org/"
+#~ "\">CreativeCommons</link>, etc."
+#~ msgstr ""
+#~ "Descargar de los proveedores de contenido tales como <link href=\"http://"
+#~ "www.jamendo.com\">Jamendo</link>, <link href=\"http://www.magnatune.com/"
+#~ "\">Magnatune</link>, <link href=\"http://creativecommons.org/"
+#~ "\">CreativeCommons</link>, etc."
+
+#~ msgid "Importing files"
+#~ msgstr "Importar archivos"
+
+#~ msgid "The following file chooser dialog window will appear:"
+#~ msgstr "Aparecerá la siguiente ventana de diálogo del selector de archivos:"
+
+#~ msgid "Filechooser dialog"
+#~ msgstr "Diálogo del selector de archivos"
+
+#~ msgid "Special Effects"
+#~ msgstr "Efectos especiales"
+
+#~ msgid "Discover the various windows, components and widgets."
+#~ msgstr "Descubrir varias ventanas, componentes y widgets."
+
+#~ msgid "An overview of the user interface"
+#~ msgstr "Una visión general de la interfaz de usuario"
+
+#~ msgid "Changing the opacity or volume of a clip over time."
+#~ msgstr "Cambiar la opacidad o volumen de un clip en el tiempo."
+
+#~ msgid ""
+#~ "Some types of clips (currently only audio clips) support interpolating "
+#~ "property values over their time. The user can add one or more "
+#~ "<em>keyframes</em> to control the interpolation, a term borrowed from "
+#~ "animation. <app>Pitivi</app> represents the value of the property in "
+#~ "between keyframes as a <em>curve</em> drawn over the clip. Currently only "
+#~ "linear interpolation is supported."
+#~ msgstr ""
+#~ "Algunos tipos de clips (actualmente solo clips de sonido) soportan "
+#~ "valores de la propiedad de interpolación sobre su tiempo. El usuario "
+#~ "puede añadir uno o mas <em>fotogramas clave</em> para controlar la "
+#~ "interpolación, un término tomado de la animación. <app>Pitivi</app> "
+#~ "representa el valor de una propiedad entre los fotogramas clave como una "
+#~ "<em>curva</em> dibujada sobre el clip. Actualmente solo se soporta la "
+#~ "interpolación linear."
+
+#~ msgid ""
+#~ "For volume curves the vertical position represents the volume of the clip "
+#~ "on a scale from 0 to 200%."
+#~ msgstr ""
+#~ "Para las curvas de volumen la posición vertical representa el volumen del "
+#~ "clip en una escala del 0 al 200%"
+
+#~ msgid "Video compositing curves"
+#~ msgstr "Curvas de composición de vídeo"
+
+#~ msgctxt "_"
+#~ msgid ""
+#~ "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
+#~ msgstr ""
+#~ "external ref='figures/hovering.png' md5='b4a8bd739707a43056e55a5d2b31ed57'"
+
+#~ msgid "<app>Pitivi</app> main window"
+#~ msgstr "Ventana principal de <app>Pitivi</app>"
+
+#~ msgid "Menu bar"
+#~ msgstr "Barra de menú"
+
+#~ msgid ""
+#~ "The menu bar is a place where many functions can be accessed. It contains "
+#~ "all actions contained in the three toolbars, plus actions related to "
+#~ "managing projects, view settings and help. <gui>Project settings</gui> "
+#~ "and <gui>Preferences</gui> can also be accessed through the menu bar. "
+#~ "However, actions specific to the <gui>Media library</gui>, <gui>Effect "
+#~ "library</gui>, <gui>Clip configuration</gui>, <gui>Transitions</gui>, or "
+#~ "<gui>Title editor</gui> are not included in the menu bar."
+#~ msgstr ""
+#~ "La barra de menú es el lugar desde el que se puede acceder a muchas "
+#~ "funciones. Contiene todas las secciones que aparecen en las tres barras "
+#~ "de herramientas, incluyendo acciones relacionadas con la gestión de "
+#~ "proyectos, configuración de vistas y ayuda. También se puede acceder a la "
+#~ "<gui>Configuración del proyecto</gui> y a las <gui>Preferencias</gui> "
+#~ "mediante la barra de menú. sin embargo, las acciones de la "
+#~ "<gui>Biblioteca de medios</gui>, <gui>Biblioteca de efectos</gui>, "
+#~ "<gui>Configuración del vídeo</gui>, <gui>Transiciones</gui>, o "
+#~ "<gui>Editor de títulos</gui> no están incluidos en la barra de menús."
+
+#~ msgid "The menu bar cannot be hidden."
+#~ msgstr "La barra de menú no se puede ocultar."
+
+#~ msgid "The toolbars"
+#~ msgstr "Las barras de herramientas"
+
+#~ msgid ""
+#~ "There are three toolbars in the <app>Pitivi</app> main window: the "
+#~ "<gui>Main toolbar</gui>, the <gui>Playback toolbar</gui> and the "
+#~ "<gui>Timeline toolbar</gui>. These provide access to the most commonly "
+#~ "used functions of <app>Pitivi</app>. All items in toolbars can also be "
+#~ "accessed through the menu bar. Toolbars can be activated or deactivated "
+#~ "in the <gui>View</gui> menu."
+#~ msgstr ""
+#~ "Hay tres barras de herramientas en la ventana principal de <app>Pitivi</"
+#~ "app>: la <gui>Barra de herramientas principal</gui>, la <gui>Barra de "
+#~ "herramientas de reproducción</gui> y la <gui>Barra de herramientas de la "
+#~ "línea de tiempo</gui>. Proporcionan acceso a las funciones más comúnmente "
+#~ "usadas de <app>Pitivi</app>. Se puede acceder a todos los elementos de "
+#~ "las barras de herramientas mediante la barra de menú. Las barras de "
+#~ "herramientas se pueden activar o desactivar en el menú <gui>Ver</gui>."
+
+#~ msgid ""
+#~ "Markers are visual cues that you can create to <em>mark</em> important "
+#~ "points or regions in your project's timeline. The marker bar allows you "
+#~ "to view and edit markers that you created."
+#~ msgstr ""
+#~ "Los marcadores son señales visuales que puede crear para <em>marcar</em> "
+#~ "puntos o regiones importantes en la línea de tiempo de su proyecto. La "
+#~ "barra de marcadores le permite ver y editar los marcadores que ha creado."
+
+#~ msgid ""
+#~ "This feature is not yet implemented. See <link href=\"https://bugzilla."
+#~ "gnome.org/show_bug.cgi?id=608682\">bug #608682</link> for more "
+#~ "information."
+#~ msgstr ""
+#~ "Esta función aún no está implementada. Consulte el <link href=\"https://"
+#~ "bugzilla.gnome.org/show_bug.cgi?id=608682\">error nº 608682</link> para "
+#~ "obtener más información."
+
+#~ msgid "Play"
+#~ msgstr "Reproducir"
+
+#~ msgid ""
+#~ "The <gui>Play</gui> button transforms into a <gui>Pause</gui> button when "
+#~ "playing, and reverts to a <gui>Play</gui> button again when not playing."
+#~ msgstr ""
+#~ "El botón <gui>Reproducir</gui> se transforma en un botón <gui>Pausa</gui> "
+#~ "durante la reproducción y vuelve otra vez al botón <gui>Reproducir</gui> "
+#~ "cuando ya no se reproduce."
+
+#~ msgid "Click the <gui>Add</gui> button."
+#~ msgstr "Pulse el botón <gui>Añadir</gui>."
+
+#~ msgid "Finding and removing unused media to cleanup your project"
+#~ msgstr "Encontrar y remover datos no utilizados para limpiar su proyecto."
+
+#~ msgid ""
+#~ "To identify which clips are not being used in your project, use "
+#~ "<guiseq><gui>Library</gui><gui>Select Unused Media</gui></guiseq>. Unused "
+#~ "clips will then be selected in the media library. If you want to remove "
+#~ "them from your project, use <guiseq><gui>Library</gui><gui>Remove from "
+#~ "Project</gui></guiseq>."
+#~ msgstr ""
+#~ "Para identificar cuales son los clips que no se han usado en su proyecto, "
+#~ "use <guiseq><gui>Biblioteca</gui><gui>Seleccione medios no utilizados</"
+#~ "gui></guiseq>. Los clips no utilizados se seleccionarán luego en la "
+#~ "biblioteca de medios. Si quiere quitarlos de su proyecto, use "
+#~ "<guiseq><gui>Biblioteca</gui><gui>Quitar del Proyecto</gui></guiseq>."
+
+#~ msgid ""
+#~ "In terms of hardware, video editing typically requires a powerful "
+#~ "computer, depending on the type of video you are editing. While the "
+#~ "processing power of computers has increased tremendously over the years, "
+#~ "so has demand for higher quality video."
+#~ msgstr ""
+#~ "En términos de hardware, la edición de vídeo requiere un equipo potente, "
+#~ "dependiendo del tipo de vídeo que esté editando. A lo largo de los años "
+#~ "la potencia de procesado de los equipos se ha incrementado enormemente, "
+#~ "lo mismo ha pasado con la demanda por una mayor calidad de vídeo. "
+
+#~ msgid ""
+#~ "Trimming is the act of changing the beginning or end point of a clip in "
+#~ "the timeline."
+#~ msgstr ""
+#~ "Recortar es el acto de cambiar el punto de comienzo o final de un vídeo "
+#~ "en la línea de tiempo."
+
+#~ msgid "Trimming an individual clip"
+#~ msgstr "Recortar un vídeo individual"
+
+#~ msgid ""
+#~ "Move the mouse cursor over a clip, and trimming handles will appear. Drag "
+#~ "one of the trimming handles on the left or right edge of the clip to trim."
+#~ msgstr ""
+#~ "Mueva el cursor sobre un vídeo, y la herramienta de recortado aparecerá. "
+#~ "Arrastre una de las herramientas de recortado hacia el borde izquierdo o "
+#~ "derecho del vídeo para recortar."
 
 #~ msgid ""
 #~ "<key>Ctrl+←</key> and <key>Ctrl+→</key>: Seek one clip backwards or "
