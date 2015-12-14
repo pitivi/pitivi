@@ -19,5 +19,11 @@
   <screenshot type="default">http://www.pitivi.org/i/screenshots/software_center_main.jpg</screenshot>
  </screenshots>
  <url type="homepage">http://www.pitivi.org</url>
+ <kudos>
+  <kudo>HiDpiIcon</kudo>
+  <kudo>UserDocs</kudo>
+  <kudo>ModernToolkit</kudo>
+  <kudo>Notifications</kudo>
+ </kudos>
  <updatecontact>nekohayo@gmail.com</updatecontact>
 </application>
