@@ -103,8 +103,7 @@ class TestTimelineUndo(TestCase):
         app.project_manager.newBlankProject()
 
         self.timeline = app.project_manager.current_project.timeline
-        self.layer = GES.Layer()
-        self.timeline.add_layer(self.layer)
+        self.layer = self.timeline.append_layer()
         self.action_log = UndoableActionLog()
         self.observer = TimelineObserverSpy(self.action_log)
         self.observer.startObserving(self.timeline)
@@ -117,6 +116,22 @@ class TestTimelineUndo(TestCase):
     @staticmethod
     def commitCb(action_log, stack, stacks):
         stacks.append(stack)
+
+    def testLayerRemoved(self):
+        layer1 = self.layer
+        layer2 = self.timeline.append_layer()
+        layer3 = self.timeline.append_layer()
+        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+
+        self.action_log.begin("layer removed")
+        self.timeline.remove_layer(layer2)
+        self.action_log.commit()
+        self.assertEqual([layer1, layer3], self.timeline.get_layers())
+
+        self.action_log.undo()
+        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+        self.action_log.redo()
+        self.assertEqual([layer1, layer3], self.timeline.get_layers())
 
     def testAddClip(self):
         stacks = []
