@@ -140,6 +140,21 @@ class TestTimelineUndo(TestCase):
         self.action_log.redo()
         self.assertTrue(clip1 in self.getTimelineClips())
 
+    def testTrackElementPropertyChanged(self):
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        self.action_log.begin("Title text change")
+        source = clip1.get_children(False)[0]
+        source.set_child_property("text", "pigs fly!")
+        self.assertEqual(source.get_child_property("text")[1], "pigs fly!")
+        self.action_log.commit()
+
+        self.action_log.undo()
+        self.assertEqual(source.get_child_property("text")[1], "")
+        self.action_log.redo()
+        self.assertEqual(source.get_child_property("text")[1], "pigs fly!")
+
     def testRemoveClip(self):
         stacks = []
         self.action_log.connect("commit", TestTimelineUndo.commitCb, stacks)
