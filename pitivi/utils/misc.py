@@ -38,6 +38,19 @@ from pitivi.utils.threads import Thread
 from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
 
+# Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249
+def disconnectAllByFunc(obj, func):
+    i = 0
+    while True:
+        i += 1
+        try:
+            obj.disconnect_by_func(func)
+        except TypeError:
+            return i
+
+    return i
+
+
 def format_ns(timestamp):
     if timestamp is None:
         return None

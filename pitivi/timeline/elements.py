@@ -821,6 +821,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         for child in self.bClip.get_children(True):
             self.__disconnectFromChild(child)
 
+        misc.disconnectAllByFunc(self.bClip, self._startChangedCb)
+        misc.disconnectAllByFunc(self.bClip, self._durationChangedCb)
+        misc.disconnectAllByFunc(self.bClip, self._layerChangedCb)
+        misc.disconnectAllByFunc(self.bClip, self._childAddedCb)
+        misc.disconnectAllByFunc(self.bClip, self._childRemovedCb)
+
     def __showHandles(self):
         for handle in self.handles:
             handle.show()
