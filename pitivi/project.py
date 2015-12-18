@@ -852,19 +852,27 @@ class Project(Loggable, GES.Project):
 
     # Encoding related properties
     def set_rendering(self, rendering):
-        if rendering and self._has_rendering_values != rendering:
-            self.videowidth = self.videowidth * self.render_scale / 100
-            self.videoheight = self.videoheight * self.render_scale / 100
-        elif self._has_rendering_values != rendering:
-            self.videowidth = self.videowidth / self.render_scale * 100
-            self.videoheight = self.videoheight / self.render_scale * 100
-        else:
-            restriction = self.video_profile.get_restriction().copy_nth(0)
-            self.video_profile.set_restriction(restriction)
+        video_restrictions = self.video_profile.get_restriction().copy_nth(0)
+        video_restrictions_struct = video_restrictions[0]
 
+        if rendering and self._has_rendering_values != rendering:
+            width = int(video_restrictions_struct["width"] * self.render_scale / 100)
+            height = int(video_restrictions_struct["height"] * self.render_scale / 100)
+
+            video_restrictions.set_value('width', width)
+            video_restrictions.set_value('height', height)
+        elif self._has_rendering_values != rendering:
+            width = int(video_restrictions_struct["width"] / self.render_scale * 100)
+            height = int(video_restrictions_struct["height"] / self.render_scale * 100)
+
+            video_restrictions.set_value("width", width)
+            video_restrictions.set_value("height", height)
+        else:
             restriction = self.audio_profile.get_restriction().copy_nth(0)
             self.audio_profile.set_restriction(restriction)
+
         self._has_rendering_values = rendering
+        self.video_profile.set_restriction(video_restrictions)
 
     @staticmethod
     def _set_restriction(profile, name, value):
@@ -1127,10 +1135,12 @@ class Project(Loggable, GES.Project):
         return True
 
     def update_restriction_caps(self):
+        # Get the height/width without rendering settings applied
+        width, height = self.getVideoWidthAndHeight()
         caps = Gst.Caps.new_empty_simple("video/x-raw")
 
-        caps.set_value("width", self.videowidth)
-        caps.set_value("height", self.videoheight)
+        caps.set_value("width", width)
+        caps.set_value("height", height)
         caps.set_value("framerate", self.videorate)
         for track in self.timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
