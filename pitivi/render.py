@@ -505,6 +505,9 @@ class RenderDialog(Loggable):
         self.presets_combo = builder.get_object("presets_combo")
         self.preset_menubutton = builder.get_object("preset_menubutton")
 
+        self.video_output_checkbutton.props.active = self.project.video_profile.is_enabled()
+        self.audio_output_checkbutton.props.active = self.project.audio_profile.is_enabled()
+
         self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
 
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
@@ -929,6 +932,7 @@ class RenderDialog(Loggable):
         self.sample_rate_combo.set_sensitive(active)
         self.audio_encoder_combo.set_sensitive(active)
         self.audio_settings_button.set_sensitive(active)
+        self.project.audio_profile.set_enabled(active)
         self.__updateRenderButtonSensitivity()
 
     def _videoOutputCheckbuttonToggledCb(self, unused_video):
@@ -937,6 +941,7 @@ class RenderDialog(Loggable):
         self.frame_rate_combo.set_sensitive(active)
         self.video_encoder_combo.set_sensitive(active)
         self.video_settings_button.set_sensitive(active)
+        self.project.video_profile.set_enabled(active)
         self.__updateRenderButtonSensitivity()
 
     def __updateRenderButtonSensitivity(self):
