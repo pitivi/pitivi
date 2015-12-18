@@ -17,6 +17,7 @@ data/pitivi.desktop.in.in
 [type: gettext/glade]data/ui/renderingdialog.ui
 [type: gettext/glade]data/ui/renderingprogress.ui
 [type: gettext/glade]data/ui/startupwizard.ui
+[type: gettext/glade]data/ui/timelinetoolbar.ui
 [type: gettext/glade]data/ui/titleeditor.ui
 pitivi/application.py
 pitivi/check.py
