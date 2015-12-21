@@ -48,6 +48,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 import numpy
 
+KEYFRAME_LINE_HEIGHT = 2
+KEYFRAME_LINE_ALPHA = 0.5
 KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
 KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
 
@@ -95,8 +97,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__timeline = timeline
         self.__source = binding.props.control_source
         self.__propertyName = binding.props.name
-        self.__pspec = binding.pspec
         self.__resetTooltip()
+
+        self.__ylim_min, self.__ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
+            binding.pspec, (0.0, 1.0))
 
         # Curve values, basically separating source.get_values() timestamps
         # and values.
@@ -132,8 +136,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # matplotlib weirdness, simply here to avoid a warning ..
         self.__keyframes.set_picker(True)
 
-        self.__line = self.__ax.plot([], [], alpha=0.5, c=KEYFRAME_LINE_COLOR,
-                                     linewidth=1.5, zorder=1)[0]
+        self.__line = self.__ax.plot([], [],
+                                     alpha=KEYFRAME_LINE_ALPHA,
+                                     c=KEYFRAME_LINE_COLOR,
+                                     linewidth=KEYFRAME_LINE_HEIGHT, zorder=1)[0]
         self.__updatePlots()
 
         # Drag and drop logic
@@ -145,12 +151,25 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
         self.connect("event", self._eventCb)
+        self.connect("notify::height-request", self.__heightRequestCb)
 
         self.mpl_connect('button_press_event', self.__mplButtonPressEventCb)
         self.mpl_connect('button_release_event', self.__mplButtonReleaseEventCb)
         self.mpl_connect('motion_notify_event', self.__mplMotionEventCb)
 
     # Private methods
+    def __computeYlim(self):
+        height = self.props.height_request
+
+        if height <= 0:
+            return
+
+        ylim_max = (self.__ylim_max * height) / (height - KEYFRAME_LINE_HEIGHT)
+        self.__ax.set_ylim(self.__ylim_min, ylim_max)
+
+    def __heightRequestCb(self, unused_self, unused_pspec):
+        self.__computeYlim()
+
     def __updatePlots(self):
         values = self.__source.get_all()
 
@@ -161,9 +180,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__line_ys.append(value.value)
 
         self.__ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
-        ylim_min, ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
-            self.__pspec, (0.0, 1.0))
-        self.__ax.set_ylim(ylim_min, ylim_max)
+        self.__computeYlim()
 
         arr = numpy.array((self.__line_xs, self.__line_ys))
         arr = arr.transpose()
@@ -261,7 +278,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if event.ydata is not None and event.xdata is not None:
                 keyframe_ts = self.__computeKeyframeNewTimestamp(event)
                 self.__source.unset(int(self.__offset))
-                self.__source.set(keyframe_ts, event.ydata)
+                self.__source.set(keyframe_ts,
+                                  min(self.__ylim_max, event.ydata))
                 self.__offset = keyframe_ts
                 self.__setTooltip(event)
                 self.__updatePlots()
