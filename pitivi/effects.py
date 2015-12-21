@@ -128,7 +128,7 @@ VIDEO_EFFECTS_CATEGORIES = (
 
 BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
-                       "navigationtest", "videoanalyse"]
+                       "navigationtest", "videoanalyse", "volume"]
 
 # FIXME Check if this is still true with GES
 # We should unblacklist it when #650985 is solved

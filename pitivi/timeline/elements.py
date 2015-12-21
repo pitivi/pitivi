@@ -60,7 +60,23 @@ NORMAL_CURSOR = Gdk.Cursor.new(Gdk.CursorType.LEFT_PTR)
 DRAG_CURSOR = Gdk.Cursor.new(Gdk.CursorType.HAND1)
 
 
+def get_pspec(element_factory_name, propname):
+    element = Gst.ElementFactory.make(element_factory_name)
+    if not element:
+        return None
+
+    return [prop for prop in element.list_properties() if prop.name == propname][0]
+
+
 class KeyframeCurve(FigureCanvas, Loggable):
+    YLIM_OVERRIDES = {}
+
+    __YLIM_OVERRIDES_VALUES = [("volume", "volume", (0.0, 0.2))]
+
+    for factory_name, propname, values in __YLIM_OVERRIDES_VALUES:
+        pspec = get_pspec(factory_name, propname)
+        if pspec:
+            YLIM_OVERRIDES[pspec] = values
 
     __gsignals__ = {
         # Signal our values changed, and a redraw will be needed
@@ -79,6 +95,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__timeline = timeline
         self.__source = binding.props.control_source
         self.__propertyName = binding.props.name
+        self.__pspec = binding.pspec
         self.__resetTooltip()
 
         # Curve values, basically separating source.get_values() timestamps
@@ -144,7 +161,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__line_ys.append(value.value)
 
         self.__ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
-        self.__ax.set_ylim(0.0, 1.0)
+        ylim_min, ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
+            self.__pspec, (0.0, 1.0))
+        self.__ax.set_ylim(ylim_min, ylim_max)
 
         arr = numpy.array((self.__line_xs, self.__line_ys))
         arr = arr.transpose()
