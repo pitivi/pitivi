@@ -96,6 +96,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__timeline = timeline
         self.__source = binding.props.control_source
+        self.__source.connect("value-added", self.__controlSourceChangedCb)
+        self.__source.connect("value-removed", self.__controlSourceChangedCb)
+        self.__source.connect("value-changed", self.__controlSourceChangedCb)
         self.__propertyName = binding.props.name
         self.__resetTooltip()
 
@@ -157,6 +160,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.mpl_connect('button_release_event', self.__mplButtonReleaseEventCb)
         self.mpl_connect('motion_notify_event', self.__mplMotionEventCb)
 
+    def release(self):
+        misc.disconnectAllByFunc(self, self.__heightRequestCb)
+        misc.disconnectAllByFunc(self, self.__gtkMotionEventCb)
+        misc.disconnectAllByFunc(self, self.__controlSourceChangedCb)
+
     # Private methods
     def __computeYlim(self):
         height = self.props.height_request
@@ -196,9 +204,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
             res, value = self.__source.control_source_get_value(event.xdata)
             assert res
             self.__source.set(event.xdata, value)
-            self.__updatePlots()
 
     # Callbacks
+    def __controlSourceChangedCb(self, unused_control_source, timed_value):
+        self.__updatePlots()
 
     def __gtkMotionEventCb(self, widget, event):
         """
@@ -228,7 +237,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS and not \
                     is_edge_keyframe:
                 self.__source.unset(self.__offset)
-                self.__updatePlots()
             else:
                 self.handling_motion = True
 
@@ -282,7 +290,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
                                   min(self.__ylim_max, event.ydata))
                 self.__offset = keyframe_ts
                 self.__setTooltip(event)
-                self.__updatePlots()
 
         cursor = NORMAL_CURSOR
         result = self.__line.contains(event)
@@ -400,6 +407,8 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
             self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
             self.remove(self.__keyframeCurve)
+
+            self.__keyframeCurve.release()
         self.__keyframeCurve = None
 
     # Private methods
