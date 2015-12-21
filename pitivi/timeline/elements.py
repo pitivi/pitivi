@@ -973,8 +973,6 @@ class TransitionClip(Clip):
 
         self.get_style_context().add_class("TransitionClip")
 
-        self.bClip.connect("child-added", self._childAddedCb)
-
         # In the case of TransitionClips, we are the only container
         self._addTrimHandles()
 
