@@ -381,6 +381,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def _busMessageCb(self, unused_bus, message):
         if message.type == Gst.MessageType.EOS:
+            self.__emitPosition()
             self.pause()
             self.emit('eos')
         elif message.type == Gst.MessageType.STATE_CHANGED:
