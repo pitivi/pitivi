@@ -90,6 +90,9 @@ class DefaultWidget(Gtk.Label):
     def setWidgetValue(self, value):
         pass
 
+    def getWidgetValue(self):
+        pass
+
     def setWidgetToDefault(self):
         pass
 
