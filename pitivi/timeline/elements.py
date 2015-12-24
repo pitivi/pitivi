@@ -673,7 +673,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.handles = []
         self.z_order = -1
-        self.layer = layer
         self.timeline = layer.timeline
         self.app = layer.app
 
@@ -707,6 +706,10 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         self.connect("drag-drop", self.__dragDropCb)
+
+    @property
+    def layer(self):
+        return self.bClip.get_layer().ui
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
         success = False
@@ -904,9 +907,6 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def _layerChangedCb(self, bClip, unused_pspec):
         self.updatePosition()
-        bLayer = bClip.props.layer
-        if bLayer:
-            self.layer = bLayer.ui
 
     def __disconnectFromChild(self, child):
         if child.ui:
