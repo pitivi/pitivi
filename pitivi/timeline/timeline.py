@@ -1284,8 +1284,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.group_action.set_enabled(selection_non_empty)
         self.ungroup_action.set_enabled(selection_non_empty)
         self.copy_action.set_enabled(selection_non_empty)
-        can_paste = bool(self.__copiedGroup and
-                         self.__copiedGroup.get_children(True))
+        can_paste = bool(self.__copiedGroup)
         self.paste_action.set_enabled(can_paste)
         self.align_action.set_enabled(selection_non_empty)
         self.keyframe_action.set_enabled(selection_non_empty)
