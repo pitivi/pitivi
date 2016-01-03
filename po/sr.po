@@ -1,14 +1,14 @@
 # Serbian translation for pitivi
-# Courtesy of Prevod.org team (http://prevod.org/) -- 2010—2014.
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2010—2016.
 # This file is distributed under the same license as the pitivi package.
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2010—2014.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2010—2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi&"
 "keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-12-13 19:10+0000\n"
-"PO-Revision-Date: 2014-12-27 16:37+0200\n"
+"POT-Creation-Date: 2015-12-18 12:24+0000\n"
+"PO-Revision-Date: 2016-01-03 20:40+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
@@ -93,7 +93,7 @@ msgstr "Самопоравнање је започето"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<big><b>Извршавам самопоравнање</b></big>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1069
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:885
 msgid "Estimating..."
 msgstr "Приближно..."
 
@@ -109,11 +109,11 @@ msgstr "_Откажи"
 msgid "_Apply to project"
 msgstr "_Примени на пројекат"
 
-#: ../data/ui/clipmediaprops.ui.h:4 ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/clipmediaprops.ui.h:4
 msgid "Size (pixels):"
 msgstr "Величина (пиксела):"
 
-#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:30
+#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:26
 msgid "Frame rate:"
 msgstr "Проток кадрова:"
 
@@ -126,13 +126,13 @@ msgstr "Однос размере пиксела:"
 msgid "Video:"
 msgstr "Видео:"
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:23
-#: ../data/ui/renderingdialog.ui.h:34
+#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:17
+#: ../data/ui/renderingdialog.ui.h:28
 msgid "Channels:"
 msgstr "Број канала:"
 
-#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:24
-#: ../data/ui/renderingdialog.ui.h:35
+#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:18
+#: ../data/ui/renderingdialog.ui.h:29
 msgid "Sample rate:"
 msgstr "Проток узорка:"
 
@@ -141,36 +141,28 @@ msgid "Audio:"
 msgstr "Аудио:"
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "Viewer Zoom"
-msgstr "Зум прегледача"
-
-#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:3
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/cliptransformation.ui.h:4
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Position"
 msgstr "Положај"
 
-#: ../data/ui/cliptransformation.ui.h:5
+#: ../data/ui/cliptransformation.ui.h:4
 msgid "Width:"
 msgstr "Ширина:"
 
-#: ../data/ui/cliptransformation.ui.h:6
+#: ../data/ui/cliptransformation.ui.h:5
 msgid "Height:"
 msgstr "Висина:"
 
-#: ../data/ui/cliptransformation.ui.h:7
+#: ../data/ui/cliptransformation.ui.h:6
 msgid "Size"
 msgstr "Величина"
-
-#: ../data/ui/cliptransformation.ui.h:8
-msgid "Crop"
-msgstr "Опсеци"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -201,7 +193,7 @@ msgid "Clear the current search"
 msgstr "Очисти текућу претрагу"
 
 #: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
-#: ../pitivi/transitions.py:72
+#: ../pitivi/transitions.py:74
 msgid "Search..."
 msgstr "Потражи..."
 
@@ -213,7 +205,7 @@ msgstr "Својства за <element>"
 msgid "Reset all"
 msgstr "Врати све"
 
-#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:6
+#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:5
 msgid "OK"
 msgstr "У реду"
 
@@ -229,8 +221,8 @@ msgstr "Отвори пројекат..."
 msgid "Save the current project under a new name or a different location"
 msgstr "Сачувајте текући пројекат под новим називом или на другом месту"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1177
-#: ../pitivi/mainwindow.py:1235
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1157
+#: ../pitivi/mainwindow.py:1215
 msgid "Save As..."
 msgstr "Сачувај као..."
 
@@ -262,7 +254,8 @@ msgstr "Извези текући кадар..."
 msgid "Edit the project settings"
 msgstr "Уредите подешавања пројекта"
 
-#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:4
+#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:3
+#: ../pitivi/medialibrary.py:139
 msgid "Project Settings"
 msgstr "Подешавања пројекта"
 
@@ -290,19 +283,20 @@ msgstr "Увези"
 msgid "Remove selected clips from the project"
 msgstr "Уклоните изабране снимке из пројекта"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:288
+#: ../data/ui/medialibrary.ui.h:4
 msgid "_Remove from Project"
 msgstr "_Уклони из пројекта"
 
 #: ../data/ui/medialibrary.ui.h:5
-msgid "Clip Properties..."
+#| msgid "Clip Properties..."
+msgid "Clip properties..."
 msgstr "Својства снимка..."
 
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Уметните изабране снимке на крај временске линије"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:291
+#: ../data/ui/medialibrary.ui.h:7
 msgid "Insert at _End of Timeline"
 msgstr "Убаци на _крај временске линије"
 
@@ -332,26 +326,18 @@ msgstr ""
 "или користите дугме „Увези“."
 
 #: ../data/ui/preferences.ui.h:2
-msgid "Section"
-msgstr "Одељак"
-
-#: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr "Неке промене неће бити доступне све док поново не покренете Питиви"
-
-#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Врати на фабричка подешавања"
 
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:3
 msgid "Reset all settings to their default values"
 msgstr "Вратите сва подешавања на основне вредности"
 
-#: ../data/ui/preferences.ui.h:6
+#: ../data/ui/preferences.ui.h:4
 msgid "Revert"
 msgstr "Врати"
 
-#: ../data/ui/preferences.ui.h:7
+#: ../data/ui/preferences.ui.h:5
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
@@ -359,12 +345,20 @@ msgstr ""
 "Вратите сва подешавања на претходне вредности (пре него ли сте отворили "
 "прозорче поставки)"
 
-#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:8
 #: ../data/ui/renderingprogress.ui.h:6
 msgid "Close"
 msgstr "Затвори"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:451
+#: ../data/ui/preferences.ui.h:7
+msgid "Section"
+msgstr "Одељак"
+
+#: ../data/ui/preferences.ui.h:8
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Неке промене неће бити доступне све док поново не покренете Питиви"
+
+#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:538
 msgid "Standard (4:3)"
 msgstr "Стандардни (4:3)"
 
@@ -372,91 +366,78 @@ msgstr "Стандардни (4:3)"
 msgid "Standard PAL"
 msgstr "Стандардни ПАЛ"
 
-#: ../data/ui/projectsettings.ui.h:3
-msgid "25 FPS"
-msgstr "25 К/С"
-
-#: ../data/ui/projectsettings.ui.h:5 ../data/ui/renderingprogress.ui.h:4
-#: ../pitivi/mainwindow.py:684 ../pitivi/mainwindow.py:806
-#: ../pitivi/mainwindow.py:938 ../pitivi/mainwindow.py:1133
-#: ../pitivi/mainwindow.py:1180 ../pitivi/mainwindow.py:1237
-#: ../pitivi/medialibrary.py:469
+#: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingprogress.ui.h:4
+#: ../pitivi/mainwindow.py:674 ../pitivi/mainwindow.py:791
+#: ../pitivi/mainwindow.py:926 ../pitivi/mainwindow.py:1108
+#: ../pitivi/mainwindow.py:1160 ../pitivi/mainwindow.py:1217
+#: ../pitivi/medialibrary.py:495
 msgid "Cancel"
 msgstr "Откажи"
 
+#: ../data/ui/projectsettings.ui.h:6 ../data/ui/renderingdialog.ui.h:16
+#| msgid "Video Preset"
+msgid "Preset:"
+msgstr "Подешеност:"
+
 #: ../data/ui/projectsettings.ui.h:7
-msgid "Video Preset"
-msgstr "Видео предизбор"
+#| msgid "Size"
+msgid "Size:"
+msgstr "Величина:"
 
-#: ../data/ui/projectsettings.ui.h:8 ../data/ui/renderingdialog.ui.h:10
-msgid "Create a new preset"
-msgstr "Направите ново претподешавање"
+#: ../data/ui/projectsettings.ui.h:8
+#| msgid "Size (pixels):"
+msgid "pixels"
+msgstr "тачака"
 
-#: ../data/ui/projectsettings.ui.h:9 ../data/ui/renderingdialog.ui.h:11
-msgid "Remove the selected preset"
-msgstr "Уклоните изабрана претподешавања"
+#: ../data/ui/projectsettings.ui.h:9
+msgid "Link"
+msgstr "Састави"
 
-#: ../data/ui/projectsettings.ui.h:10 ../data/ui/renderingdialog.ui.h:12
-msgid "Save changes to the currently selected preset"
-msgstr "Сачувајте измене у тренутно изабрано претподешавање"
-
-#: ../data/ui/projectsettings.ui.h:12
+#: ../data/ui/projectsettings.ui.h:10
 msgid "Aspect Ratio:"
 msgstr "Однос размере:"
 
 #. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:12
 msgid "Display aspect ratio"
 msgstr "Однос размере екрана"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: ../data/ui/projectsettings.ui.h:16
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Pixel aspect ratio"
 msgstr "Однос размере пиксела"
 
-#: ../data/ui/projectsettings.ui.h:17
-msgid "x"
-msgstr "x"
-
-#: ../data/ui/projectsettings.ui.h:18
-msgid "Link"
-msgstr "Састави"
-
-#: ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/projectsettings.ui.h:15
 msgid "Frame Rate:"
 msgstr "Проток кадрова:"
 
-#: ../data/ui/projectsettings.ui.h:20 ../data/ui/renderingdialog.ui.h:33
-#: ../pitivi/effects.py:260
+#: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:27
+#: ../pitivi/effects.py:179
 msgid "Video"
 msgstr "Видео"
 
-#: ../data/ui/projectsettings.ui.h:21
-msgid "Audio Preset"
-msgstr "Аудио предизбор"
-
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Format"
-msgstr "Формат"
-
-#: ../data/ui/projectsettings.ui.h:25 ../data/ui/renderingdialog.ui.h:37
-#: ../pitivi/effects.py:261
+#: ../data/ui/projectsettings.ui.h:19 ../data/ui/renderingdialog.ui.h:30
+#: ../pitivi/effects.py:179
 msgid "Audio"
 msgstr "Аудио"
 
-#: ../data/ui/projectsettings.ui.h:26
+#: ../data/ui/projectsettings.ui.h:20
 msgid "Author:"
 msgstr "Аутор:"
 
-#: ../data/ui/projectsettings.ui.h:27
-msgid "Year:"
-msgstr "Година:"
-
-#: ../data/ui/projectsettings.ui.h:28
+#: ../data/ui/projectsettings.ui.h:21
 msgid "Project title:"
 msgstr "Назив пројекта:"
 
-#: ../data/ui/projectsettings.ui.h:29
+#: ../data/ui/projectsettings.ui.h:22
+msgid "Year:"
+msgstr "Година:"
+
+#: ../data/ui/projectsettings.ui.h:23
+msgid "1900"
+msgstr "1900"
+
+#: ../data/ui/projectsettings.ui.h:24
 msgid "Info"
 msgstr "Информације"
 
@@ -484,53 +465,62 @@ msgstr "ААЦ"
 msgid "6 channels (5.1)"
 msgstr "6 канала (5.1)"
 
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:442
+#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:443
 msgid "Render"
 msgstr "Генерисање"
 
 #: ../data/ui/renderingdialog.ui.h:9
-msgid "Render Preset"
-msgstr "Подешеност исцртавања"
-
-#: ../data/ui/renderingdialog.ui.h:13
 msgid "Folder"
 msgstr "Фасцикла"
 
-#: ../data/ui/renderingdialog.ui.h:14
-msgid "Container format:"
-msgstr "Формат садржаоца:"
-
-#: ../data/ui/renderingdialog.ui.h:15
+#: ../data/ui/renderingdialog.ui.h:10
 msgid "Folder:"
 msgstr "Фасцикла:"
 
-#: ../data/ui/renderingdialog.ui.h:16
+#: ../data/ui/renderingdialog.ui.h:11
 msgid "File name:"
 msgstr "Назив датотеке:"
 
-#: ../data/ui/renderingdialog.ui.h:17
+#: ../data/ui/renderingdialog.ui.h:12
 msgid "File name"
 msgstr "Назив датотеке"
 
-#: ../data/ui/renderingdialog.ui.h:18
+#: ../data/ui/renderingdialog.ui.h:13
+msgid "Container format:"
+msgstr "Формат садржаоца:"
+
+#: ../data/ui/renderingdialog.ui.h:14
 msgid "Container format"
 msgstr "Формат садржаоца"
 
-#: ../data/ui/renderingdialog.ui.h:19 ../data/ui/startupwizard.ui.h:5
+#: ../data/ui/renderingdialog.ui.h:15 ../data/ui/startupwizard.ui.h:5
 msgid "Help"
 msgstr "Помоћ"
 
+#: ../data/ui/renderingdialog.ui.h:17
+msgid "Scale:"
+msgstr "Размера:"
+
+#: ../data/ui/renderingdialog.ui.h:18
+msgid "1.0"
+msgstr "1.0"
+
+#: ../data/ui/renderingdialog.ui.h:19
+msgid "Scale"
+msgstr "Скалирај"
+
 #: ../data/ui/renderingdialog.ui.h:20
-msgid "Render only the selected clips"
-msgstr "Исцртај само изабране снимке"
+msgid "1000 x 1000"
+msgstr "1000 x 1000"
 
 #: ../data/ui/renderingdialog.ui.h:21
-msgid "Draft (no special effects, single pass)"
-msgstr "Једноставно (без специјалних ефеката, један пролаз)"
+msgid "Height"
+msgstr "Висина"
 
 #: ../data/ui/renderingdialog.ui.h:22
-msgid "General"
-msgstr "Опште"
+#| msgid "Project Settings"
+msgid "Project Settings..."
+msgstr "Подешавања пројекта..."
 
 #: ../data/ui/renderingdialog.ui.h:23
 msgid "Advanced..."
@@ -543,34 +533,6 @@ msgstr "Кодек:"
 #: ../data/ui/renderingdialog.ui.h:25
 msgid "Framerate"
 msgstr "Проток кадрова"
-
-#: ../data/ui/renderingdialog.ui.h:26
-msgid "Scale"
-msgstr "Скалирај"
-
-#: ../data/ui/renderingdialog.ui.h:27
-msgid "1000 x 1000"
-msgstr "1000 x 1000"
-
-#: ../data/ui/renderingdialog.ui.h:28
-msgid "Height"
-msgstr "Висина"
-
-#: ../data/ui/renderingdialog.ui.h:29
-msgid "Edit Project Settings..."
-msgstr "Измени подешавања пројекта..."
-
-#: ../data/ui/renderingdialog.ui.h:31
-msgid "Scale:"
-msgstr "Размера:"
-
-#: ../data/ui/renderingdialog.ui.h:32
-msgid "Enable video"
-msgstr "Укључите видео"
-
-#: ../data/ui/renderingdialog.ui.h:36
-msgid "Enable audio"
-msgstr "Укључите аудио"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -586,11 +548,11 @@ msgstr ""
 "кодека, резолуције слике, снаге процесора вашег рачунара, примењених ефеката "
 "и трајања вашег филма.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1079
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:704
 msgid "Pause"
 msgstr "Паузирај"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1071
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:696
 msgid "Play"
 msgstr "Пусти"
 
@@ -610,7 +572,7 @@ msgstr "Добродошли"
 msgid "Double-click a project below to load it:"
 msgstr "Двапут кликните на пројекат испод да га учитате:"
 
-#: ../data/ui/startupwizard.ui.h:3
+#: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:103
 msgid "New"
 msgstr "Ново"
 
@@ -625,6 +587,70 @@ msgstr "Пречице тастатуре"
 #: ../data/ui/startupwizard.ui.h:7
 msgid "Missing dependencies..."
 msgstr "Недостајуће зависности..."
+
+#: ../data/ui/timelinetoolbar.ui.h:1
+#| msgid "Split clip at playhead position"
+msgid "Split clips at playhead position"
+msgstr "Поделите снимке на прву позицију"
+
+#: ../data/ui/timelinetoolbar.ui.h:2
+msgid "Split"
+msgstr "Подели"
+
+#: ../data/ui/timelinetoolbar.ui.h:3
+#| msgid "_Delete layer"
+msgid "Delete clips"
+msgstr "Обришите снимке"
+
+#: ../data/ui/timelinetoolbar.ui.h:4
+#| msgid "_Delete layer"
+msgid "Delete"
+msgstr "Обриши"
+
+#: ../data/ui/timelinetoolbar.ui.h:5
+msgid "Group clips"
+msgstr "Групишите снимке"
+
+#: ../data/ui/timelinetoolbar.ui.h:6
+msgid "Group"
+msgstr "Групиши"
+
+#: ../data/ui/timelinetoolbar.ui.h:7
+msgid "Ungroup clips"
+msgstr "Разгрупишите снимке"
+
+#: ../data/ui/timelinetoolbar.ui.h:8
+msgid "Ungroup"
+msgstr "Разгрупиши"
+
+#: ../data/ui/timelinetoolbar.ui.h:9
+#| msgid "Group clips"
+msgid "Copy clips"
+msgstr "Умножи снимке"
+
+#: ../data/ui/timelinetoolbar.ui.h:10
+msgid "Paste clips"
+msgstr "Убаци снимке"
+
+#: ../data/ui/timelinetoolbar.ui.h:11
+msgid "Align clips based on their soundtracks"
+msgstr "Поравнајте снимке на основу њихових звучних нумера"
+
+#: ../data/ui/timelinetoolbar.ui.h:12
+msgid "Align"
+msgstr "Поравнај"
+
+#: ../data/ui/timelinetoolbar.ui.h:13
+msgid ""
+"Toggle gapless mode\n"
+"When enabled, adjacent clips automatically move to fill gaps."
+msgstr ""
+"Пребацује режим без размака\n"
+"Када је укључено, суседни снимци се самостално премештају да попуне размаке."
+
+#: ../data/ui/timelinetoolbar.ui.h:15
+msgid "Gapless mode"
+msgstr "Режим без размака"
 
 #: ../data/ui/titleeditor.ui.h:1
 msgid "Create"
@@ -667,26 +693,26 @@ msgid "Advanced positioning"
 msgstr "Напредно постављање"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:112
+#: ../pitivi/check.py:114
 #, python-format
 msgid "- %s not found on the system"
 msgstr "— нисам нашао на систему „%s“"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:115
+#: ../pitivi/check.py:117
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "— „%s“ издање %s је инсталиран али Питиви захтева најмање издање %s"
 
-#: ../pitivi/check.py:220
+#: ../pitivi/check.py:269
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ГРЕШКА — Следеће чврсте зависности нису задовољене:"
 
-#: ../pitivi/check.py:229
+#: ../pitivi/check.py:278
 msgid "Missing soft dependency:"
 msgstr "Недостајуће благе зависности:"
 
-#: ../pitivi/check.py:236
+#: ../pitivi/check.py:285
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -694,7 +720,7 @@ msgstr ""
 "ГРЕШКА — Не могу да направим „Gst.Fraction“ — то значи да „gst-python“ није "
 "исправно инсталиран."
 
-#: ../pitivi/check.py:241
+#: ../pitivi/check.py:290
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -702,23 +728,42 @@ msgstr ""
 "Не могу да направим излазни усклађивач звука. Уверите се да имате неки "
 "исправан („pulsesink“, „alsasink“ или „osssink“)."
 
-#: ../pitivi/check.py:301
+#: ../pitivi/check.py:295
+#| msgid ""
+#| "Could not create audio output sink. Make sure you have a valid one "
+#| "(pulsesink, alsasink or osssink)."
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink available."
+msgstr ""
+"Не могу да направим излазни усклађивач видеа. Уверите се да вам је доступан "
+"гтксинк."
+
+#: ../pitivi/check.py:308
+#, python-format
+msgid "Could not import '%s'. Make sure you have it available."
+msgstr "Не могу да увезем „%s“. Уверите се да вам је доступан."
+
+#: ../pitivi/check.py:324
+msgid "Could not import 'gi'. Make sure you have pygobject available."
+msgstr "Не могу да увезем „gi“. Уверите се да вам је доступан „pygobject“."
+
+#: ../pitivi/check.py:389
 msgid "enables sound notifications when rendering is complete"
 msgstr "укључује звучна обавештења када се заврши исцртавање"
 
-#: ../pitivi/check.py:302
+#: ../pitivi/check.py:390
 msgid "file thumbnails provided by GNOME's thumbnailers"
 msgstr "минијатуре датотеке које доставља Гномов сличичар"
 
-#: ../pitivi/check.py:303
+#: ../pitivi/check.py:391
 msgid "enables visual notifications when rendering is complete"
 msgstr "укључује видна обавештења када се заврши исцртавање"
 
-#: ../pitivi/check.py:304
+#: ../pitivi/check.py:392
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "додатни мултимедијски кодеци кроз Либав библиотеку"
 
-#: ../pitivi/check.py:305
+#: ../pitivi/check.py:393
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -726,140 +771,141 @@ msgstr ""
 "укључује чуваркућу у спојци Гстримера. Користите га за откривање грешака у "
 "Гстримеру и за њихово исправљање"
 
-#: ../pitivi/clipproperties.py:156
+#: ../pitivi/clipproperties.py:108
 msgid "Effects"
 msgstr "Ефекти"
 
-#: ../pitivi/clipproperties.py:178
+#: ../pitivi/clipproperties.py:134
 msgid "Remove effect"
 msgstr "Уклони ефекат"
 
-#: ../pitivi/clipproperties.py:213
+#: ../pitivi/clipproperties.py:169
 msgid "Active"
 msgstr "Активиран"
 
-#: ../pitivi/clipproperties.py:215
+#: ../pitivi/clipproperties.py:171
 msgid "Type"
 msgstr "Врста"
 
-#: ../pitivi/clipproperties.py:225
+#: ../pitivi/clipproperties.py:181
 msgid "Effect name"
 msgstr "Назив ефекта"
 
-#: ../pitivi/clipproperties.py:246
+#: ../pitivi/clipproperties.py:202
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Изаберите снимак на временској линији да подесите његове придружене ефекте"
 
-#: ../pitivi/clipproperties.py:587
+#: ../pitivi/clipproperties.py:523
 msgid "Transformation"
 msgstr "Преображај"
 
-#: ../pitivi/effects.py:64
+#: ../pitivi/effects.py:62
 msgid "Colors"
 msgstr "Боје"
 
-#: ../pitivi/effects.py:81
+#: ../pitivi/effects.py:79
 msgid "Compositing"
 msgstr "Слагање"
 
-#: ../pitivi/effects.py:88
+#: ../pitivi/effects.py:86
 msgid "Noise & blur"
 msgstr "Шум и замућење"
 
-#: ../pitivi/effects.py:94
+#: ../pitivi/effects.py:92
 msgid "Analysis"
 msgstr "Анализа"
 
-#: ../pitivi/effects.py:102
+#: ../pitivi/effects.py:100
 msgid "Geometry"
 msgstr "Геометрија"
 
-#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:111
 msgid "Fancy"
 msgstr "Кичерај"
 
-#: ../pitivi/effects.py:125
+#: ../pitivi/effects.py:123
 msgid "Time"
 msgstr "Време"
 
-#. Add Uncategorized only if there are other categories defined.
-#: ../pitivi/effects.py:249 ../pitivi/effects.py:289
-msgid "Uncategorized"
-msgstr "Некатегорисано"
-
-#: ../pitivi/effects.py:251 ../pitivi/effects.py:286
-msgid "All effects"
-msgstr "Сви ефекти"
-
-#: ../pitivi/effects.py:262
+#: ../pitivi/effects.py:179
 msgid "effect"
 msgstr "ефекат"
 
-#: ../pitivi/mainwindow.py:297
+#. Add Uncategorized only if there are other categories defined.
+#: ../pitivi/effects.py:243 ../pitivi/effects.py:269
+msgid "Uncategorized"
+msgstr "Некатегорисано"
+
+#: ../pitivi/effects.py:245 ../pitivi/effects.py:266
+msgid "All effects"
+msgstr "Сви ефекти"
+
+#: ../pitivi/mainwindow.py:275
 msgid "Media Library"
 msgstr "Библиотека медија"
 
-#: ../pitivi/mainwindow.py:299
+#: ../pitivi/mainwindow.py:277
 msgid "Effect Library"
 msgstr "Библиотека ефекта"
 
-#: ../pitivi/mainwindow.py:310
+#: ../pitivi/mainwindow.py:288
 msgid "Clip"
 msgstr "Снимак"
 
-#: ../pitivi/mainwindow.py:312
+#: ../pitivi/mainwindow.py:290
 msgid "Transition"
 msgstr "Прелаз"
 
-#: ../pitivi/mainwindow.py:314
+#: ../pitivi/mainwindow.py:292
 msgid "Title"
 msgstr "Наслов"
 
-#: ../pitivi/mainwindow.py:421
+#: ../pitivi/mainwindow.py:419
 msgid "Undo"
 msgstr "Опозови"
 
-#: ../pitivi/mainwindow.py:427
+#: ../pitivi/mainwindow.py:426
 msgid "Redo"
 msgstr "Поврати"
 
-#: ../pitivi/mainwindow.py:435 ../pitivi/mainwindow.py:800
-#: ../pitivi/mainwindow.py:1134 ../pitivi/mainwindow.py:1181
-#: ../pitivi/mainwindow.py:1238
+#: ../pitivi/mainwindow.py:435 ../pitivi/mainwindow.py:785
+#: ../pitivi/mainwindow.py:1109 ../pitivi/mainwindow.py:1161
+#: ../pitivi/mainwindow.py:1218 ../pitivi/preset.py:115
+#: ../pitivi/project.py:255
 msgid "Save"
 msgstr "Сачувај"
 
-#: ../pitivi/mainwindow.py:444
+#: ../pitivi/mainwindow.py:445
 msgid "Export your project as a finished movie"
 msgstr "Извезите ваш пројекат као завршен филм"
 
-#: ../pitivi/mainwindow.py:624
+#: ../pitivi/mainwindow.py:612
 msgid "Development version"
 msgstr "Развојно издање"
 
-#: ../pitivi/mainwindow.py:626
+#: ../pitivi/mainwindow.py:614
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Издање %(cur_ver)s — %(new_ver)s је доступно"
 
-#: ../pitivi/mainwindow.py:630
+#: ../pitivi/mainwindow.py:618
 #, python-format
 msgid "Version %s"
 msgstr "Издање %s"
 
-#: ../pitivi/mainwindow.py:638
+#: ../pitivi/mainwindow.py:627
 msgid "Current maintainers:"
 msgstr "Тренутни одржаваоци:"
 
-#: ../pitivi/mainwindow.py:643
+#: ../pitivi/mainwindow.py:633
 msgid "Past maintainers:"
 msgstr "Бивши одржаваоци:"
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
 #. below it
-#: ../pitivi/mainwindow.py:651
+#: ../pitivi/mainwindow.py:641
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -878,7 +924,7 @@ msgstr ""
 "Уз дужно поштовање према нашим доприносиоцима, упућујемо вас на:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:658
+#: ../pitivi/mainwindow.py:648
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
@@ -887,7 +933,7 @@ msgstr ""
 "Списак доприносиоца на Охлоху %s\n"
 "Или можете да покренете: „git shortlog -s -n“"
 
-#: ../pitivi/mainwindow.py:662
+#: ../pitivi/mainwindow.py:652
 msgid "translator-credits"
 msgstr ""
 "Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
@@ -895,66 +941,66 @@ msgstr ""
 "http://prevod.org — превод на српски језик"
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:681
+#: ../pitivi/mainwindow.py:671
 msgid "Open File..."
 msgstr "Отвори датотеку..."
 
-#: ../pitivi/mainwindow.py:685 ../pitivi/mainwindow.py:939
+#: ../pitivi/mainwindow.py:675 ../pitivi/mainwindow.py:927
 msgid "Open"
 msgstr "Отвори"
 
-#: ../pitivi/mainwindow.py:701
+#: ../pitivi/mainwindow.py:691
 msgid "All supported formats"
 msgstr "Сви подржани записи"
 
-#: ../pitivi/mainwindow.py:769
+#: ../pitivi/mainwindow.py:754
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Не могу да сачувам пројекат „%s“"
 
-#: ../pitivi/mainwindow.py:802
+#: ../pitivi/mainwindow.py:787 ../pitivi/project.py:254
 msgid "Save as..."
 msgstr "Сачувај као..."
 
-#: ../pitivi/mainwindow.py:805
+#: ../pitivi/mainwindow.py:790
 msgid "Close without saving"
 msgstr "Затвори без чувања"
 
-#: ../pitivi/mainwindow.py:820
+#: ../pitivi/mainwindow.py:805
 msgid "Save changes to the current project before closing?"
 msgstr "Да сачувам измене у текућем пројекту пре затварања?"
 
-#: ../pitivi/mainwindow.py:833
+#: ../pitivi/mainwindow.py:818
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr ""
 "Ако не сачувате, измене које сте начинили у последњих %s ће бити изгубљене."
 
-#: ../pitivi/mainwindow.py:837
+#: ../pitivi/mainwindow.py:822
 msgid "If you don't save, your changes will be lost."
 msgstr "Ако не сачувате, ваше измене ће бити изгубљене."
 
-#: ../pitivi/mainwindow.py:901
+#: ../pitivi/mainwindow.py:887
 msgid "Revert to saved project version?"
 msgstr "Да вратим на издање сачуваног пројекта?"
 
-#: ../pitivi/mainwindow.py:906
+#: ../pitivi/mainwindow.py:892
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Ово ће поново учитати текући пројекат. Све несачуване измене ће бити "
 "изгубљене."
 
-#: ../pitivi/mainwindow.py:921
+#: ../pitivi/mainwindow.py:907
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Не могу да учитам пројекат „%s“"
 
-#: ../pitivi/mainwindow.py:934
+#: ../pitivi/mainwindow.py:922
 msgid "Locate missing file..."
 msgstr "Пронађите датотеку која недостаје..."
 
 #. The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:965
+#: ../pitivi/mainwindow.py:954
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
@@ -963,7 +1009,7 @@ msgstr ""
 "Следећа датотека је премештена: „<b>%s</b>“\n"
 "Молим наведите њено ново место:"
 
-#: ../pitivi/mainwindow.py:970
+#: ../pitivi/mainwindow.py:959
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
@@ -974,16 +1020,19 @@ msgstr ""
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
-#: ../pitivi/mainwindow.py:994
+#: ../pitivi/mainwindow.py:983
 #, python-format
 msgid "%s files"
 msgstr "%s датотеке"
 
-#: ../pitivi/mainwindow.py:998 ../pitivi/medialibrary.py:498
+#: ../pitivi/mainwindow.py:987 ../pitivi/medialibrary.py:524
 msgid "All files"
 msgstr "Све датотеке"
 
-#: ../pitivi/mainwindow.py:1023
+#. Signal the project loading failure.
+#. You have to do this *after* successfully creating a blank project,
+#. or the startupwizard will still be connected to that signal too.
+#: ../pitivi/mainwindow.py:1012
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -994,97 +1043,97 @@ msgstr ""
 "\n"
 "Питиви тренутно не подржава делимичне пројекте."
 
-#: ../pitivi/mainwindow.py:1130
+#: ../pitivi/mainwindow.py:1105
 msgid "Export To..."
 msgstr "Извези у..."
 
-#: ../pitivi/mainwindow.py:1145 ../pitivi/mainwindow.py:1190
-#: ../pitivi/mainwindow.py:1241 ../pitivi/mainwindow.py:1269
-#: ../pitivi/render.py:366
+#: ../pitivi/mainwindow.py:1120 ../pitivi/mainwindow.py:1170
+#: ../pitivi/mainwindow.py:1221 ../pitivi/mainwindow.py:1249
+#: ../pitivi/render.py:364
 msgid "Untitled"
 msgstr "Неименовано"
 
-#: ../pitivi/mainwindow.py:1151
+#: ../pitivi/mainwindow.py:1126
 msgid "Tar archive"
 msgstr "Тар архива"
 
-#: ../pitivi/mainwindow.py:1155 ../pitivi/mainwindow.py:1196
+#: ../pitivi/mainwindow.py:1130 ../pitivi/mainwindow.py:1176
 msgid "Detect automatically"
 msgstr "Сам откриј"
 
-#: ../pitivi/mainwindow.py:1243
+#: ../pitivi/mainwindow.py:1223
 msgid "PNG image"
 msgstr "ПНГ слика"
 
-#: ../pitivi/mainwindow.py:1244
+#: ../pitivi/mainwindow.py:1224
 msgid "JPEG image"
 msgstr "ЈПЕГ слика"
 
-#: ../pitivi/mainwindow.py:1295
+#: ../pitivi/mainwindow.py:1316
 msgid "Preview"
 msgstr "Претпреглед"
 
-#: ../pitivi/mediafilespreviewer.py:164
+#: ../pitivi/mediafilespreviewer.py:165
 msgid "Pitivi can not preview this file."
 msgstr "Питиви не може да прикаже преглед ове датотеке."
 
-#: ../pitivi/mediafilespreviewer.py:165
+#: ../pitivi/mediafilespreviewer.py:166
 msgid "More info"
 msgstr "Још података"
 
-#: ../pitivi/mediafilespreviewer.py:264
+#: ../pitivi/mediafilespreviewer.py:265
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Резолуција</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:266 ../pitivi/mediafilespreviewer.py:283
+#: ../pitivi/mediafilespreviewer.py:267 ../pitivi/mediafilespreviewer.py:284
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Трајање</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:455 ../pitivi/medialibrary.py:860
+#: ../pitivi/mediafilespreviewer.py:445 ../pitivi/medialibrary.py:897
 msgid "Error while analyzing a file"
 msgstr "Грешка приликом анализирања датотеке"
 
-#: ../pitivi/medialibrary.py:198
+#: ../pitivi/medialibrary.py:199
 msgid "Icon"
 msgstr "Иконица"
 
-#: ../pitivi/medialibrary.py:207
+#: ../pitivi/medialibrary.py:208
 msgid "Information"
 msgstr "Информације"
 
-#: ../pitivi/medialibrary.py:218
+#: ../pitivi/medialibrary.py:219
 msgid "Duration"
 msgstr "Трајање"
 
-#: ../pitivi/medialibrary.py:460
+#: ../pitivi/medialibrary.py:486
 msgid "Select One or More Files"
 msgstr "Изабери једну или више датотека"
 
-#: ../pitivi/medialibrary.py:462
+#: ../pitivi/medialibrary.py:488
 msgid "Close after importing files"
 msgstr "Затвори након увожења датотека"
 
-#: ../pitivi/medialibrary.py:470
+#: ../pitivi/medialibrary.py:496
 msgid "Add"
 msgstr "Додај"
 
-#: ../pitivi/medialibrary.py:487
+#: ../pitivi/medialibrary.py:513
 msgid "Supported file formats"
 msgstr "Подржани облици датотеке"
 
 #. Also allow showing known but not reliable demuxers
-#: ../pitivi/medialibrary.py:493
+#: ../pitivi/medialibrary.py:519
 msgid "All known file formats"
 msgstr "Сви познати облици датотеке"
 
-#: ../pitivi/medialibrary.py:516
+#: ../pitivi/medialibrary.py:542
 #, python-format
 msgid "Importing clip %(current_clip)d of %(total)d"
 msgstr "Увозим снимак бр. %(current_clip)d од %(total)d"
 
-#: ../pitivi/medialibrary.py:694
+#: ../pitivi/medialibrary.py:723
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Прегледајте грешку"
@@ -1093,7 +1142,7 @@ msgstr[2] "Прегледајте грешке"
 msgstr[3] "Прегледајте грешку"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: ../pitivi/medialibrary.py:696
+#: ../pitivi/medialibrary.py:725
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
@@ -1102,77 +1151,79 @@ msgstr[1] "Догодиле су се {0:d} грешке приликом уво
 msgstr[2] "Догодило се {0:d} грешака приликом увоза."
 msgstr[3] "Дошло је до грешке приликом увоза."
 
-#: ../pitivi/medialibrary.py:857
+#: ../pitivi/medialibrary.py:752
+#, python-format
+msgid "The project settings have been set to match file '%s'"
+msgstr "Подешавања пројекта су постављена да одговарају датотеци „%s“"
+
+#: ../pitivi/medialibrary.py:894
 msgid "Error while analyzing files"
 msgstr "Грешка приликом анализирања датотека"
 
-#: ../pitivi/medialibrary.py:858
+#: ../pitivi/medialibrary.py:895
 msgid "The following files can not be used with Pitivi."
 msgstr "Следеће датотеке не могу бити коришћене у Питивију."
 
-#: ../pitivi/medialibrary.py:861
+#: ../pitivi/medialibrary.py:898
 msgid "The following file can not be used with Pitivi."
 msgstr "Следећа датотека не може бити коришћена у Питивију."
 
-#: ../pitivi/preset.py:96 ../pitivi/preset.py:211 ../pitivi/preset.py:216
-#: ../pitivi/preset.py:259 ../pitivi/preset.py:276 ../pitivi/project.py:1558
-#: ../pitivi/project.py:1563 ../pitivi/render.py:430
-msgid "No preset"
-msgstr "Без подешености"
+#: ../pitivi/preset.py:109
+#| msgid "Remove layer"
+msgid "Remove"
+msgstr "Уклони"
 
-#: ../pitivi/project.py:240
-#| msgid "New project"
-msgid "Save project as"
-msgstr "Сачувај пројекат као"
+#: ../pitivi/preset.py:224
+msgid "New preset"
+msgstr "Нова подешеност"
+
+#: ../pitivi/preset.py:227
+#, python-format
+msgid "New preset %d"
+msgstr "Нова подешеност %d"
+
+#: ../pitivi/project.py:57
+msgid "New Project"
+msgstr "Нови пројекат"
+
+#. GTK does not allow an empty string as the dialog title, so we use the
+#. same translatable one as render.py's pipeline error message dialog:
+#: ../pitivi/project.py:238 ../pitivi/render.py:646
+msgid "Sorry, something didn’t work right."
+msgstr "Извините, нешто није одрађено како треба."
 
 #: ../pitivi/project.py:241
-#| msgid "New project"
-msgid "Save project"
-msgstr "Сачувај пројекат"
-
-#: ../pitivi/project.py:242
-#| msgid "Close without saving"
-msgid "Close pitivi"
-msgstr "Затвори питиви"
-
-#. Even though we set the title to an empty string when creating dialog,
-#. seems we really have to do it once more so it doesn't show
-#. "pitivi"...
-#: ../pitivi/project.py:246
-msgid "Pitivi died"
-msgstr "Питиви се урушио"
-
-#: ../pitivi/project.py:247
 msgid ""
-"We detected the application had a serious problem.\n"
-"There is no other choice than saving your project and <b>restart\n"
-"the application</b> at this point.\n"
+"Pitivi detected a serious backend problem and could not recover from it, "
+"even after multiple tries. The only thing that can be done at this point is "
+"to <b>restart Pitivi</b>.\n"
 "\n"
-"Note that a severe bug happened and we would be very happy\n"
-"to hear about that to make sure it get fixed.\n"
+"This is a rare and severe kind of bug. Please see our <a href=\"http://wiki."
+"pitivi.org/wiki/Bug_reporting\">bug reporting guide</a> and take the time to "
+"report it! We will be very happy to fix this bug and make sure it does not "
+"occur again in future versions.\n"
 "\n"
-"You are very welcome to follow our guide to report bugs:\n"
-"\n"
-"      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">How to report a "
-"bug</a>\n"
-"\n"
-"and we will make sure to get it fixed!"
+"Before closing Pitivi, you can save changes to the existing project file or "
+"as a separate project file."
 msgstr ""
-"Открили смо да програм има озбиљни проблем.\n"
-"У овом тренутку немате другог избора осим да сачувате ваш пројекат и да <b>"
-"поново покренете програм</b>.\n"
+"Питиви је открио озбиљан проблем позадинца и не може да се опорави, чак и "
+"након више покушаја. Једина ствар која може бити урађена у овом тренутку је "
+"<b>поновно покретање Питивија</b>.\n"
 "\n"
-"Знајте да се догодило неколико грешака, а ми бисмо били презадовољни\n"
-"када бисте нас изестили о њима не бисмо ли их отклонили.\n"
+"Ово је ретка и озбиљна врста грешке. Молимо вас погледајте наш <a href=\""
+"http://wiki.pitivi.org/wiki/Bug_reporting\">водич за пријављивање грешака</a>"
+" и нађите времена да нас обавестите о томе! Са задовољством ћемо исправити "
+"ту грешку и осигураћемо да се не понови у будућим издањима.\n"
 "\n"
-"Слободно пратите наше упутство за пријављивање грешака:\n"
-"\n"
-"      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">Како пријавити "
-"грешку</a>\n"
-"\n"
-"а ми ћемо се постарати да их отклонимо!"
+"Пре затварања Питивија, можете да сачувате измене у постојећој датотеци "
+"пројекта или као засебну датотеку пројекта."
 
-#: ../pitivi/project.py:334
+#: ../pitivi/project.py:256
+#| msgid "Close pitivi"
+msgid "Close Pitivi"
+msgstr "Затвори Питиви"
+
+#: ../pitivi/project.py:337
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1182,15 +1233,15 @@ msgstr ""
 "сте покушали да додате медијску датотеку вашем пројекту, уместо тога "
 "користите дугме „Увези“."
 
-#: ../pitivi/project.py:347
+#: ../pitivi/project.py:350
 msgid "Ignore backup"
 msgstr "Занемари резерву"
 
-#: ../pitivi/project.py:348
+#: ../pitivi/project.py:351
 msgid "Restore from backup"
 msgstr "Врати из резерве"
 
-#: ../pitivi/project.py:364
+#: ../pitivi/project.py:367
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1203,37 +1254,18 @@ msgstr ""
 "\n"
 "Да ли бисте желели да га учитате?"
 
-#: ../pitivi/project.py:436
+#: ../pitivi/project.py:441
 msgid "You do not have permissions to write to this folder."
 msgstr "Немате овлашћења да пишете у ову фасиклу."
 
 #. write project file to temporary file
-#: ../pitivi/project.py:472
+#: ../pitivi/project.py:477
 msgid "project"
 msgstr "пројекат"
 
-#. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:587
-msgid "New Project"
-msgstr "Нови пројекат"
-
-#: ../pitivi/project.py:737
+#: ../pitivi/project.py:754
 msgid "Pitivi encoding profile"
 msgstr "Профил кодирања Питивија"
-
-#: ../pitivi/project.py:1579 ../pitivi/render.py:562
-#, python-format
-msgid "\"%s\" already exists."
-msgstr "„%s“ већ постоји."
-
-#: ../pitivi/project.py:1652 ../pitivi/render.py:603
-msgid "New preset"
-msgstr "Нова подешеност"
-
-#: ../pitivi/project.py:1655 ../pitivi/render.py:606
-#, python-format
-msgid "New preset %d"
-msgstr "Нова подешеност %d"
 
 #: ../pitivi/render.py:275
 #, python-format
@@ -1251,15 +1283,15 @@ msgstr "Исцртавање — %d%% је завршено"
 msgid "About %s left"
 msgstr "Преостаје око %s"
 
-#: ../pitivi/render.py:324
+#: ../pitivi/render.py:326
 msgid "Currently rendering"
 msgstr "Тренутно исцртавам"
 
-#: ../pitivi/render.py:742
+#: ../pitivi/render.py:555
 msgid "A file name is required."
 msgstr "Потребан је назив датотеке."
 
-#: ../pitivi/render.py:744
+#: ../pitivi/render.py:557
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1268,28 +1300,24 @@ msgstr ""
 "Ако не желите да је препишете, изаберите неки други назив датотеке или "
 "фасцикле."
 
-#: ../pitivi/render.py:773
+#: ../pitivi/render.py:586
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:778
+#: ../pitivi/render.py:591
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:833
-msgid "Sorry, something didn’t work right."
-msgstr "Извините, нешто није одрађено како треба."
-
-#: ../pitivi/render.py:834
+#: ../pitivi/render.py:647
 #| msgid ""
 #| "An error occured while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. See the details "
-#| "below for some basic information that may help identify the problem."
+#| "check our troubleshooting guide or file a bug report. The GStreamer error "
+#| "was:"
 msgid ""
-"An error occured while trying to render your project. You might want to "
+"An error occurred while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. The GStreamer error "
 "was:"
 msgstr ""
@@ -1297,48 +1325,48 @@ msgstr ""
 "пожелети да проверите водич за решавање проблема или да попуните извештај о "
 "грешци. Грешка Гстримера је:"
 
-#: ../pitivi/render.py:1018 ../pitivi/render.py:1019 ../pitivi/render.py:1025
+#: ../pitivi/render.py:834 ../pitivi/render.py:835 ../pitivi/render.py:841
 msgid "Render complete"
 msgstr "Генерисање је завршено"
 
-#: ../pitivi/render.py:1023
+#: ../pitivi/render.py:839
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ је завршио са исцртавањем."
 
-#: ../pitivi/titleeditor.py:92 ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
 msgid "Custom"
 msgstr "Произвољно"
 
-#: ../pitivi/titleeditor.py:93
+#: ../pitivi/titleeditor.py:95
 msgid "Top"
 msgstr "Горе"
 
-#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:96 ../pitivi/titleeditor.py:103
 msgid "Center"
 msgstr "По средини"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:97
 msgid "Bottom"
 msgstr "Доле"
 
-#: ../pitivi/titleeditor.py:96
+#: ../pitivi/titleeditor.py:98
 msgid "Baseline"
 msgstr "Подножје"
 
-#: ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:102
 msgid "Left"
 msgstr "Лево"
 
-#: ../pitivi/titleeditor.py:102
+#: ../pitivi/titleeditor.py:104
 msgid "Right"
 msgstr "Десно"
 
-#: ../pitivi/transitions.py:79
+#: ../pitivi/transitions.py:82
 msgid "Normal"
 msgstr "Обично"
 
-#: ../pitivi/transitions.py:81
+#: ../pitivi/transitions.py:87
 msgid "Loop"
 msgstr "Понављање"
 
@@ -1346,7 +1374,7 @@ msgstr "Понављање"
 msgid "Reverse direction"
 msgstr "Супротан смер"
 
-#: ../pitivi/transitions.py:108
+#: ../pitivi/transitions.py:106
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
@@ -1354,47 +1382,47 @@ msgstr ""
 "Направите прелаз преклапајући два суседна снимка на истом слоју. Кликните "
 "прелаз на временској линији да измените врсту прелаза."
 
-#: ../pitivi/transitions.py:203
+#: ../pitivi/transitions.py:217
 msgid "Slow"
 msgstr "Споро"
 
-#: ../pitivi/transitions.py:205
+#: ../pitivi/transitions.py:219
 msgid "Fast"
 msgstr "Брзо"
 
-#: ../pitivi/transitions.py:207
+#: ../pitivi/transitions.py:221
 msgid "Epileptic"
 msgstr "Падавичарски"
 
-#: ../pitivi/transitions.py:211
+#: ../pitivi/transitions.py:225
 msgid "Sharp"
 msgstr "Оштро"
 
-#: ../pitivi/transitions.py:213
+#: ../pitivi/transitions.py:227
 msgid "Smooth"
 msgstr "Меко"
 
-#: ../pitivi/viewer.py:87
+#: ../pitivi/viewer.py:79
 msgid "Currently playing"
 msgstr "Тренутно пуштам"
 
-#: ../pitivi/viewer.py:221
+#: ../pitivi/viewer.py:227
 msgid "Go to the beginning of the timeline"
 msgstr "Идите на почетак временске линије"
 
-#: ../pitivi/viewer.py:228
+#: ../pitivi/viewer.py:234
 msgid "Go back one second"
 msgstr "Идите назад једну секунду"
 
-#: ../pitivi/viewer.py:240
+#: ../pitivi/viewer.py:246
 msgid "Go forward one second"
 msgstr "Идите напред једну секунду"
 
-#: ../pitivi/viewer.py:248
+#: ../pitivi/viewer.py:254
 msgid "Go to the end of the timeline"
 msgstr "Идите на крај временске линије"
 
-#: ../pitivi/viewer.py:255
+#: ../pitivi/viewer.py:261
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1402,7 +1430,7 @@ msgstr ""
 "Унесите временски код или број кадра\n"
 "и притисните „Унеси“ да пређете на тај положај"
 
-#: ../pitivi/viewer.py:263
+#: ../pitivi/viewer.py:269
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1410,96 +1438,76 @@ msgstr ""
 "Отјачите прегледача\n"
 "Можете поново да га прикачите затварањем новог прозора."
 
-#: ../pitivi/viewer.py:375 ../pitivi/viewer.py:413
+#: ../pitivi/viewer.py:359 ../pitivi/viewer.py:409
 msgid "Show this window in fullscreen"
 msgstr "Прикажите овај прозор преко целог екрана"
 
-#: ../pitivi/viewer.py:410
+#: ../pitivi/viewer.py:406
 msgid "Exit fullscreen mode"
 msgstr "Напустите режим целог екрана"
 
-#: ../pitivi/timeline/layer.py:89
-msgid "Set a personalized name for this layer"
-msgstr "Подесите персонализовани назив за овај слој"
-
-#: ../pitivi/timeline/layer.py:98
+#: ../pitivi/timeline/elements.py:203
+#, python-format
 msgid ""
-"<b>Solo mode</b>\n"
-"Other non-soloed layers will be disabled as long as this is enabled."
+"Property: %s\n"
+"Timestamp: %s\n"
+"Value: %s"
 msgstr ""
-"<b>Соло режим</b>\n"
-"Остали не-солоизовани слојеви ће бити приказани чим ово буде било укључено."
+"Својство: %s\n"
+"Ознака времена: %s\n"
+"Вредност: %s"
 
-#: ../pitivi/timeline/layer.py:114
-msgid ""
-"<b>Enable or disable this layer</b>\n"
-"Disabled layers will not play nor render."
-msgstr ""
-"<b>Укључи или искључи овај слој</b>\n"
-"Ускључени слојеви неће бити пуштани нити исцртавани."
+#: ../pitivi/timeline/elements.py:209
+#, python-format
+msgid "Setting property: %s"
+msgstr "Подешавам својство: %s"
 
-#: ../pitivi/timeline/layer.py:134
-msgid "_Delete layer"
-msgstr "_Обриши слој"
+#: ../pitivi/timeline/elements.py:981
+#| msgid "Audio Preset"
+msgid "Audio crossfade"
+msgstr "Ишчезавање звука"
 
-#: ../pitivi/timeline/layer.py:136
-msgid "Move layer up"
-msgstr "Помери слој горе"
-
-#: ../pitivi/timeline/layer.py:138
-msgid "Move layer down"
-msgstr "Помери слој доле"
-
-#: ../pitivi/timeline/layer.py:140
+#: ../pitivi/timeline/layer.py:229
 msgid "Move layer to top"
 msgstr "Помери слој на врх"
 
-#: ../pitivi/timeline/layer.py:143
+#: ../pitivi/timeline/layer.py:235
+msgid "Move layer up"
+msgstr "Помери слој горе"
+
+#: ../pitivi/timeline/layer.py:241
+msgid "Move layer down"
+msgstr "Помери слој доле"
+
+#: ../pitivi/timeline/layer.py:247
 msgid "Move layer to bottom"
 msgstr "Помери слој на дно"
 
-#: ../pitivi/timeline/layer.py:179
-msgid "Make layer invisible"
-msgstr "Учини слој невидљивим"
+#: ../pitivi/timeline/layer.py:253
+#| msgid "_Delete layer"
+msgid "Delete layer"
+msgstr "Обриши слој"
 
-#: ../pitivi/timeline/layer.py:181
-msgid "Make layer visible"
-msgstr "Учини слој видљивим"
+#: ../pitivi/timeline/layer.py:402
+#, python-format
+msgid "Layer %d"
+msgstr "Слој „%d“"
 
-#: ../pitivi/timeline/layer.py:303
-msgid "Opacity:"
-msgstr "Непровидност:"
-
-#: ../pitivi/timeline/layer.py:312
-msgid "Change video opacity"
-msgstr "Измени непровидност слоја"
-
-#: ../pitivi/timeline/layer.py:331
-msgid "Vol:"
-msgstr "Вол:"
-
-#: ../pitivi/timeline/layer.py:334
-msgid "Pan:"
-msgstr "Пан:"
-
-#: ../pitivi/timeline/layer.py:342
-msgid "Change audio panning"
-msgstr "Измените каналисање звука"
-
-#: ../pitivi/timeline/ruler.py:220
+#: ../pitivi/timeline/ruler.py:224
 #, python-format
 msgid "Frame #%d"
 msgstr "Кадар #%d"
 
-#: ../pitivi/timeline/timeline.py:57 ../pitivi/timeline/timeline.py:70
+#: ../pitivi/timeline/timeline.py:60 ../pitivi/timeline/timeline.py:73
+#: ../pitivi/timeline/timeline.py:86
 msgid "Behavior"
 msgstr "Понашање"
 
-#: ../pitivi/timeline/timeline.py:58
+#: ../pitivi/timeline/timeline.py:61
 msgid "Snap distance"
 msgstr "Растојање пријањања"
 
-#: ../pitivi/timeline/timeline.py:59
+#: ../pitivi/timeline/timeline.py:62
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1507,94 +1515,30 @@ msgstr ""
 "Праг (у пикселима) при коме ће два снимка пријањати заједно приликом "
 "превлачења или дотеривања."
 
-#: ../pitivi/timeline/timeline.py:71
+#: ../pitivi/timeline/timeline.py:74
 msgid "Image clip duration"
 msgstr "Трајање снимка слике"
 
-#: ../pitivi/timeline/timeline.py:73
+#: ../pitivi/timeline/timeline.py:76
+#| msgid ""
+#| "Default clip length (in miliseconds) of images when inserting on the "
+#| "timeline."
 msgid ""
-"Default clip length (in miliseconds) of images when inserting on the "
+"Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
 "Основно трајање снимка слике (у милисекундама) приликом уметања на временску "
 "линију."
 
-#: ../pitivi/timeline/timeline.py:917
-msgid ""
-"Toggle gapless mode\n"
-"When enabled, adjacent clips automatically move to fill gaps."
+#: ../pitivi/timeline/timeline.py:87
+msgid "Left click also seeks"
+msgstr "Леви тастер такође премотава"
+
+#: ../pitivi/timeline/timeline.py:89
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
-"Пребацује режим без размака\n"
-"Када је укључено, суседни снимци се самостално премештају да попуне размаке."
-
-#. TODO: use GAction + GActionGroup (Gio.SimpleAction +
-#. Gio.SimpleActionGroup)
-#. Action list items can vary in size (1-6 items). The first one is the
-#. name, and it is the only mandatory option. All the other options are
-#. optional, and if omitted will default to None.
-#.
-#. name (required), stock ID, translatable label,
-#. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1006
-msgid "Zoom In"
-msgstr "Увећај"
-
-#: ../pitivi/timeline/timeline.py:1007
-msgid "Zoom Out"
-msgstr "Умањи"
-
-#: ../pitivi/timeline/timeline.py:1008 ../pitivi/utils/widgets.py:1028
-msgid "Zoom Fit"
-msgstr "Испуните увећање"
-
-#: ../pitivi/timeline/timeline.py:1032
-msgid "Delete Selected"
-msgstr "Уклоните изабрано"
-
-#: ../pitivi/timeline/timeline.py:1034
-msgid "Ungroup"
-msgstr "Разгрупиши"
-
-#: ../pitivi/timeline/timeline.py:1035
-msgid "Ungroup clips"
-msgstr "Разгрупишите снимке"
-
-#. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1038
-msgid "Group"
-msgstr "Групиши"
-
-#: ../pitivi/timeline/timeline.py:1039
-msgid "Group clips"
-msgstr "Групишите снимке"
-
-#: ../pitivi/timeline/timeline.py:1041
-msgid "Align"
-msgstr "Поравнај"
-
-#: ../pitivi/timeline/timeline.py:1042
-msgid "Align clips based on their soundtracks"
-msgstr "Поравнајте снимке на основу њихових звучних нумера"
-
-#: ../pitivi/timeline/timeline.py:1047
-msgid "Start Playback"
-msgstr "Покрените репродукцију"
-
-#: ../pitivi/timeline/timeline.py:1049
-msgid "Split"
-msgstr "Подели"
-
-#: ../pitivi/timeline/timeline.py:1050
-msgid "Split clip at playhead position"
-msgstr "Поделите снимак на прву позицију"
-
-#: ../pitivi/timeline/timeline.py:1052
-msgid "Add a Keyframe"
-msgstr "Додај кључни кадар"
-
-#: ../pitivi/timeline/timeline.py:1053
-msgid "Add a keyframe"
-msgstr "Додај кључни кадар"
+"Да ли притисак левим тастером такође премотава осим што бира и уређује "
+"снимке."
 
 #. Translators: a label showing an invalid framerate value
 #: ../pitivi/dialogs/clipmediaprops.py:112
@@ -1618,15 +1562,23 @@ msgstr "Проблем:"
 msgid "Extra information:"
 msgstr "Додатне информације:"
 
-#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:753
+#. Translators: This adds a semicolon to an already
+#. translated name of a preference.
+#: ../pitivi/dialogs/prefs.py:286 ../pitivi/utils/widgets.py:697
+#, python-format
+#| msgid "Preferences"
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: ../pitivi/dialogs/prefs.py:296 ../pitivi/utils/widgets.py:749
 msgid "Reset to default value"
 msgstr "Вратите на основне вредности"
 
-#: ../pitivi/dialogs/startupwizard.py:71
+#: ../pitivi/dialogs/startupwizard.py:76
 msgid "Projects"
 msgstr "Пројекти"
 
-#: ../pitivi/dialogs/startupwizard.py:180
+#: ../pitivi/dialogs/startupwizard.py:183
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Питиви %s је доступан."
@@ -1654,7 +1606,7 @@ msgstr ""
 msgid "Error while decoding a string"
 msgstr "Грешка приликом декодирања ниске"
 
-#: ../pitivi/utils/ui.py:232
+#: ../pitivi/utils/ui.py:303
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
@@ -1663,18 +1615,18 @@ msgstr[1] "<b>Аудио:</b> %d канала при %d <i>Hz</i> (%d <i>бит�
 msgstr[2] "<b>Аудио:</b> %d каналa при %d <i>Hz</i> (%d <i>бита</i>)"
 msgstr[3] "<b>Аудио:</b> %d канал при %d <i>Hz</i> (%d <i>бита</i>)"
 
-#: ../pitivi/utils/ui.py:242
+#: ../pitivi/utils/ui.py:313
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgstr "<b>Видео:</b> %dx%d <i>пиксела</i> при %.3f<i>к/с</i>"
 
-#: ../pitivi/utils/ui.py:250
+#: ../pitivi/utils/ui.py:321
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Слика:</b> %dx%d <i>пиксела</i>"
 
-#: ../pitivi/utils/ui.py:297 ../pitivi/utils/ui.py:325
-#: ../pitivi/utils/ui.py:349
+#: ../pitivi/utils/ui.py:368 ../pitivi/utils/ui.py:396
+#: ../pitivi/utils/ui.py:420
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -1683,8 +1635,8 @@ msgstr[1] "%d сата"
 msgstr[2] "%d сати"
 msgstr[3] "%d сат"
 
-#: ../pitivi/utils/ui.py:300 ../pitivi/utils/ui.py:328
-#: ../pitivi/utils/ui.py:352
+#: ../pitivi/utils/ui.py:371 ../pitivi/utils/ui.py:399
+#: ../pitivi/utils/ui.py:423
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -1693,8 +1645,8 @@ msgstr[1] "%d минута"
 msgstr[2] "%d минута"
 msgstr[3] "%d минут"
 
-#: ../pitivi/utils/ui.py:303 ../pitivi/utils/ui.py:331
-#: ../pitivi/utils/ui.py:355
+#: ../pitivi/utils/ui.py:374 ../pitivi/utils/ui.py:402
+#: ../pitivi/utils/ui.py:426
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -1703,7 +1655,7 @@ msgstr[1] "%d секунде"
 msgstr[2] "%d секунди"
 msgstr[3] "%d секунда"
 
-#: ../pitivi/utils/ui.py:323
+#: ../pitivi/utils/ui.py:394
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -1713,118 +1665,118 @@ msgstr[2] "%d дана"
 msgstr[3] "%d дан"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:408 ../pitivi/utils/ui.py:409
-#: ../pitivi/utils/ui.py:410 ../pitivi/utils/ui.py:412
-#: ../pitivi/utils/ui.py:413 ../pitivi/utils/ui.py:415
-#: ../pitivi/utils/ui.py:416 ../pitivi/utils/ui.py:418
-#: ../pitivi/utils/ui.py:419
+#: ../pitivi/utils/ui.py:495 ../pitivi/utils/ui.py:496
+#: ../pitivi/utils/ui.py:497 ../pitivi/utils/ui.py:499
+#: ../pitivi/utils/ui.py:500 ../pitivi/utils/ui.py:502
+#: ../pitivi/utils/ui.py:503 ../pitivi/utils/ui.py:505
+#: ../pitivi/utils/ui.py:506
 #, python-format
 msgid "%d fps"
 msgstr "%d к/с"
 
-#: ../pitivi/utils/ui.py:411
+#: ../pitivi/utils/ui.py:498
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f к/с"
 
-#: ../pitivi/utils/ui.py:414 ../pitivi/utils/ui.py:417
+#: ../pitivi/utils/ui.py:501 ../pitivi/utils/ui.py:504
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f к/с"
 
-#: ../pitivi/utils/ui.py:423 ../pitivi/utils/ui.py:424
-#: ../pitivi/utils/ui.py:425 ../pitivi/utils/ui.py:427
-#: ../pitivi/utils/ui.py:428
+#: ../pitivi/utils/ui.py:510 ../pitivi/utils/ui.py:511
+#: ../pitivi/utils/ui.py:512 ../pitivi/utils/ui.py:514
+#: ../pitivi/utils/ui.py:515
 #, python-format
 msgid "%d kHz"
 msgstr "%d kHz"
 
-#: ../pitivi/utils/ui.py:426
+#: ../pitivi/utils/ui.py:513
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
-#: ../pitivi/utils/ui.py:431
+#: ../pitivi/utils/ui.py:518
 msgid "6 Channels (5.1)"
 msgstr "6 канала (5.1)"
 
-#: ../pitivi/utils/ui.py:432
+#: ../pitivi/utils/ui.py:519
 msgid "4 Channels (4.0)"
 msgstr "4 канала (4.0)"
 
-#: ../pitivi/utils/ui.py:433
+#: ../pitivi/utils/ui.py:520
 msgid "Stereo"
 msgstr "Стерео"
 
-#: ../pitivi/utils/ui.py:434
+#: ../pitivi/utils/ui.py:521
 msgid "Mono"
 msgstr "Моно"
 
-#: ../pitivi/utils/ui.py:439
+#: ../pitivi/utils/ui.py:526
 msgid "Square"
 msgstr "Квадрат"
 
-#: ../pitivi/utils/ui.py:440
+#: ../pitivi/utils/ui.py:527
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:441
+#: ../pitivi/utils/ui.py:528
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:442
+#: ../pitivi/utils/ui.py:529
 msgid "480p Wide"
 msgstr "480p широки"
 
-#: ../pitivi/utils/ui.py:443
+#: ../pitivi/utils/ui.py:530
 msgid "480i Wide"
 msgstr "480i широки"
 
-#: ../pitivi/utils/ui.py:444
+#: ../pitivi/utils/ui.py:531
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:445
+#: ../pitivi/utils/ui.py:532
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:446
+#: ../pitivi/utils/ui.py:533
 msgid "576p Wide"
 msgstr "576p широки"
 
-#: ../pitivi/utils/ui.py:447
+#: ../pitivi/utils/ui.py:534
 msgid "576i Wide"
 msgstr "576i широки"
 
-#: ../pitivi/utils/ui.py:452
+#: ../pitivi/utils/ui.py:539
 msgid "DV (15:11)"
 msgstr "ДВ (15:11)"
 
-#: ../pitivi/utils/ui.py:453
+#: ../pitivi/utils/ui.py:540
 msgid "DV Widescreen (16:9)"
 msgstr "ДВ широки екран (16:9)"
 
-#: ../pitivi/utils/ui.py:454
+#: ../pitivi/utils/ui.py:541
 msgid "Cinema (1.37)"
 msgstr "Биоскоп (1.37)"
 
-#: ../pitivi/utils/ui.py:455
+#: ../pitivi/utils/ui.py:542
 msgid "Cinema (1.66)"
 msgstr "Биоскоп (1.66)"
 
-#: ../pitivi/utils/ui.py:456
+#: ../pitivi/utils/ui.py:543
 msgid "Cinema (1.85)"
 msgstr "Биоскоп (1.85)"
 
-#: ../pitivi/utils/ui.py:457
+#: ../pitivi/utils/ui.py:544
 msgid "Anamorphic (2.35)"
 msgstr "Анаморфни (2.35)"
 
-#: ../pitivi/utils/ui.py:458
+#: ../pitivi/utils/ui.py:545
 msgid "Anamorphic (2.39)"
 msgstr "Анаморфни (2.39)"
 
-#: ../pitivi/utils/ui.py:459
+#: ../pitivi/utils/ui.py:546
 msgid "Anamorphic (2.4)"
 msgstr "Анаморфни (2.4)"
 
@@ -1832,34 +1784,186 @@ msgstr "Анаморфни (2.4)"
 msgid "Implement Me"
 msgstr "Реализуј ме"
 
-#: ../pitivi/utils/widgets.py:654
+#: ../pitivi/utils/widgets.py:662
 msgid "No properties."
 msgstr "Без података."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:744
+#: ../pitivi/utils/widgets.py:740
 msgid "Show keyframes for this value"
 msgstr "Прикажите кључне кадрове за ову вредност"
 
-#: ../pitivi/utils/widgets.py:914
+#: ../pitivi/utils/widgets.py:884
 #, python-format
 msgid "Properties for %s"
 msgstr "Својства за %s"
 
-#: ../pitivi/utils/widgets.py:1033
+#: ../pitivi/utils/widgets.py:1020
+msgid "Zoom Fit"
+msgstr "Испуните увећање"
+
+#: ../pitivi/utils/widgets.py:1025
 msgid "Zoom"
 msgstr "Зумирај"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1101
+#: ../pitivi/utils/widgets.py:1100
 #, python-format
 msgid "%s displayed"
 msgstr "%s приказивања"
 
-#: ../pitivi/utils/widgets.py:1105
+#: ../pitivi/utils/widgets.py:1104
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d наносекунде приказивања, зато што можемо"
+
+#~ msgid "Viewer Zoom"
+#~ msgstr "Зум прегледача"
+
+#~ msgid "Crop"
+#~ msgstr "Опсеци"
+
+#~ msgid "25 FPS"
+#~ msgstr "25 К/С"
+
+#~ msgid "Create a new preset"
+#~ msgstr "Направите ново претподешавање"
+
+#~ msgid "Remove the selected preset"
+#~ msgstr "Уклоните изабрана претподешавања"
+
+#~ msgid "Save changes to the currently selected preset"
+#~ msgstr "Сачувајте измене у тренутно изабрано претподешавање"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid "Format"
+#~ msgstr "Формат"
+
+#~ msgid "Render Preset"
+#~ msgstr "Подешеност исцртавања"
+
+#~ msgid "Render only the selected clips"
+#~ msgstr "Исцртај само изабране снимке"
+
+#~ msgid "Draft (no special effects, single pass)"
+#~ msgstr "Једноставно (без специјалних ефеката, један пролаз)"
+
+#~ msgid "General"
+#~ msgstr "Опште"
+
+#~ msgid "Edit Project Settings..."
+#~ msgstr "Измени подешавања пројекта..."
+
+#~ msgid "Enable video"
+#~ msgstr "Укључите видео"
+
+#~ msgid "Enable audio"
+#~ msgstr "Укључите аудио"
+
+#~ msgid "No preset"
+#~ msgstr "Без подешености"
+
+#~| msgid "New project"
+#~ msgid "Save project as"
+#~ msgstr "Сачувај пројекат као"
+
+#~| msgid "New project"
+#~ msgid "Save project"
+#~ msgstr "Сачувај пројекат"
+
+#~ msgid "Pitivi died"
+#~ msgstr "Питиви се урушио"
+
+#~ msgid ""
+#~ "We detected the application had a serious problem.\n"
+#~ "There is no other choice than saving your project and <b>restart\n"
+#~ "the application</b> at this point.\n"
+#~ "\n"
+#~ "Note that a severe bug happened and we would be very happy\n"
+#~ "to hear about that to make sure it get fixed.\n"
+#~ "\n"
+#~ "You are very welcome to follow our guide to report bugs:\n"
+#~ "\n"
+#~ "      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">How to report "
+#~ "a bug</a>\n"
+#~ "\n"
+#~ "and we will make sure to get it fixed!"
+#~ msgstr ""
+#~ "Открили смо да програм има озбиљни проблем.\n"
+#~ "У овом тренутку немате другог избора осим да сачувате ваш пројекат и да "
+#~ "<b>поново покренете програм</b>.\n"
+#~ "\n"
+#~ "Знајте да се догодило неколико грешака, а ми бисмо били презадовољни\n"
+#~ "када бисте нас изестили о њима не бисмо ли их отклонили.\n"
+#~ "\n"
+#~ "Слободно пратите наше упутство за пријављивање грешака:\n"
+#~ "\n"
+#~ "      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">Како "
+#~ "пријавити грешку</a>\n"
+#~ "\n"
+#~ "а ми ћемо се постарати да их отклонимо!"
+
+#~ msgid "\"%s\" already exists."
+#~ msgstr "„%s“ већ постоји."
+
+#~ msgid "Set a personalized name for this layer"
+#~ msgstr "Подесите персонализовани назив за овај слој"
+
+#~ msgid ""
+#~ "<b>Solo mode</b>\n"
+#~ "Other non-soloed layers will be disabled as long as this is enabled."
+#~ msgstr ""
+#~ "<b>Соло режим</b>\n"
+#~ "Остали не-солоизовани слојеви ће бити приказани чим ово буде било "
+#~ "укључено."
+
+#~ msgid ""
+#~ "<b>Enable or disable this layer</b>\n"
+#~ "Disabled layers will not play nor render."
+#~ msgstr ""
+#~ "<b>Укључи или искључи овај слој</b>\n"
+#~ "Ускључени слојеви неће бити пуштани нити исцртавани."
+
+#~ msgid "Make layer invisible"
+#~ msgstr "Учини слој невидљивим"
+
+#~ msgid "Make layer visible"
+#~ msgstr "Учини слој видљивим"
+
+#~ msgid "Opacity:"
+#~ msgstr "Непровидност:"
+
+#~ msgid "Change video opacity"
+#~ msgstr "Измени непровидност слоја"
+
+#~ msgid "Vol:"
+#~ msgstr "Вол:"
+
+#~ msgid "Pan:"
+#~ msgstr "Пан:"
+
+#~ msgid "Change audio panning"
+#~ msgstr "Измените каналисање звука"
+
+#~ msgid "Zoom In"
+#~ msgstr "Увећај"
+
+#~ msgid "Zoom Out"
+#~ msgstr "Умањи"
+
+#~ msgid "Delete Selected"
+#~ msgstr "Уклоните изабрано"
+
+#~ msgid "Start Playback"
+#~ msgstr "Покрените репродукцију"
+
+#~ msgid "Add a Keyframe"
+#~ msgstr "Додај кључни кадар"
+
+#~ msgid "Add a keyframe"
+#~ msgstr "Додај кључни кадар"
 
 #~ msgid "Details"
 #~ msgstr "Појединости"
@@ -1908,9 +2012,6 @@ msgstr "%d наносекунде приказивања, зато што мож
 
 #~ msgid "Keyframe"
 #~ msgstr "Кључни кадар"
-
-#~ msgid "Gapless mode"
-#~ msgstr "Режим без размака"
 
 #~ msgid "Create a new project"
 #~ msgstr "Направите нови пројекат"
@@ -1966,9 +2067,6 @@ msgstr "%d наносекунде приказивања, зато што мож
 
 #~ msgid "additional video effects, clip transformation feature"
 #~ msgstr "додатни ефекти снимка, одсеца функцију преображаја"
-
-#~ msgid "Remove layer"
-#~ msgstr "Уклони слој"
 
 #~ msgid "Remove the selected layer from the project"
 #~ msgstr "Уклоните изабрани слој из пројекта"
