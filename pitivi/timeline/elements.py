@@ -180,6 +180,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     def __updatePlots(self):
         values = self.__source.get_all()
+        if len(values) < 2:
+            # No plot for less than two points.
+            return
 
         self.__line_xs = []
         self.__line_ys = []
@@ -206,10 +209,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__source.set(event.xdata, value)
 
     # Callbacks
-    def __controlSourceChangedCb(self, unused_control_source, timed_value):
+    def __controlSourceChangedCb(self, unused_control_source, unused_timed_value):
         self.__updatePlots()
 
-    def __gtkMotionEventCb(self, widget, event):
+    def __gtkMotionEventCb(self, unused_widget, unused_event):
         """
         We need to do that here, because mpl's callbacks can't stop
         signal propagation.
@@ -218,7 +221,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             return True
         return False
 
-    def _eventCb(self, element, event):
+    def _eventCb(self, unused_element, event):
         if event.type == Gdk.EventType.LEAVE_NOTIFY:
             cursor = NORMAL_CURSOR
             self.__timeline.get_window().set_cursor(cursor)
