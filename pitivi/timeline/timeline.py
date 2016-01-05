@@ -1631,7 +1631,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
+        self.app.action_log.begin("split clip")
         self._splitElements(self.timeline.selection.selected)
+        self.app.action_log.commit()
 
         self.timeline.hideSnapBar()
         self._project.pipeline.commit_timeline()

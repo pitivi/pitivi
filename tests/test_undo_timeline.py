@@ -343,3 +343,30 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(1, len(timeline_clips))
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
+
+    def testSplitClip(self):
+        clip = GES.TitleClip()
+        clip.set_start(0 * Gst.SECOND)
+        clip.set_duration(20 * Gst.SECOND)
+
+        self.layer.add_clip(clip)
+
+        self.action_log.begin("split clip")
+        clip1 = clip.split(10 * Gst.SECOND)
+        self.assertEqual(2, len(self.layer.get_clips()))
+        self.action_log.commit()
+
+        self.action_log.begin("split clip")
+        clip2 = clip1.split(15 * Gst.SECOND)
+        self.assertEqual(3, len(self.layer.get_clips()))
+        self.action_log.commit()
+
+        self.action_log.undo()
+        self.assertEqual(2, len(self.layer.get_clips()))
+        self.action_log.undo()
+        self.assertEqual(1, len(self.layer.get_clips()))
+
+        self.action_log.redo()
+        self.assertEqual(2, len(self.layer.get_clips()))
+        self.action_log.redo()
+        self.assertEqual(3, len(self.layer.get_clips()))
