@@ -2,18 +2,48 @@
 A collection of objects to use for testing
 """
 
-from gi.repository import Gst
 import os
 import gc
 import unittest
+import tempfile
 
+from gi.repository import Gst
+
+from unittest import mock
+from pitivi import check
+
+from pitivi.application import Pitivi
 from pitivi.utils.timeline import Selected
+from pitivi.utils.loggable import Loggable
 
-detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
+detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
+os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
 
 
-class TestCase(unittest.TestCase):
+def cleanPitiviMock(ptv):
+    ptv.settings = None
+
+
+def getPitiviMock(settings=None):
+    ptv = mock.MagicMock()
+
+    ptv.write_action = mock.MagicMock(spec=Pitivi.write_action)
+    check.check_requirements()
+
+    if not settings:
+        settings = mock.MagicMock()
+
+    ptv.settings = settings
+
+    return ptv
+
+
+class TestCase(unittest.TestCase, Loggable):
     _tracked_types = (Gst.MiniObject, Gst.Element, Gst.Pad, Gst.Caps)
+
+    def __init__(self, *args):
+        Loggable.__init__(self)
+        unittest.TestCase.__init__(self, *args)
 
     def gctrack(self):
         self.gccollect()
@@ -77,10 +107,10 @@ class TestCase(unittest.TestCase):
         self._result = result
         unittest.TestCase.run(self, result)
 
-    @staticmethod
-    def getSampleUri(sample):
-        dir = os.path.dirname(os.path.abspath(__file__))
-        return "file://%s/samples/%s" % (dir, sample)
+
+def getSampleUri(sample):
+    assets_dir = os.path.dirname(os.path.abspath(__file__))
+    return "file://%s/samples/%s" % (assets_dir, sample)
 
 
 class SignalMonitor(object):

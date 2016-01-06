@@ -315,7 +315,7 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(20, clip1.get_priority())
 
     def testUngroup(self):
-        uri = common.TestCase.getSampleUri("tears_of_steel.webm")
+        uri = common.getSampleUri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
         self.layer.add_clip(clip1)

@@ -22,21 +22,20 @@ import os
 import tempfile
 import time
 
-from unittest import TestCase
-
+from unittest import TestCase, mock
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
-
-from tests import common
 
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager, Project
 from pitivi.utils.misc import uri_is_reachable
 
+from tests import common
+
 
 def _createRealProject(name=None):
-    app = Pitivi()
+    app = common.getPitiviMock()
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
     project = project_manager.current_project
@@ -88,7 +87,8 @@ class ProjectManagerListener(object):
 class TestProjectManager(TestCase):
 
     def setUp(self):
-        self.manager = ProjectManager(None)
+        app = mock.MagicMock()
+        self.manager = ProjectManager(app)
         self.listener = ProjectManagerListener(self.manager)
         self.signals = self.listener.signals
 
@@ -380,7 +380,7 @@ class TestProjectLoading(common.TestCase):
         # Create a blank project and add an asset.
         project = _createRealProject()
         result = [False, False, False]
-        uris = [self.getSampleUri("tears_of_steel.webm")]
+        uris = [common.getSampleUri("tears_of_steel.webm")]
         project.connect("loaded", loaded, self.mainloop, result, uris)
         project.connect("done-importing", added, self.mainloop, result, uris)
 
@@ -435,9 +435,9 @@ class TestProjectSettings(common.TestCase):
         self.assertTrue(project._has_default_video_settings)
         self.assertTrue(project._has_default_audio_settings)
 
-        uris = [self.getSampleUri("flat_colour1_640x480.png"),
-                self.getSampleUri("tears_of_steel.webm"),
-                self.getSampleUri("1sec_simpsons_trailer.mp4")]
+        uris = [common.getSampleUri("flat_colour1_640x480.png"),
+                common.getSampleUri("tears_of_steel.webm"),
+                common.getSampleUri("1sec_simpsons_trailer.mp4")]
         project.connect("loaded", loaded, self.mainloop, uris)
         project.connect("done-importing", added, self.mainloop)
 
@@ -462,7 +462,8 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(Gst.Fraction(1, 1), project.videopar)
 
     def testLoad(self):
-        project = Project(uri="fake.xges", app=None)
+        ptv = common.getPitiviMock()
+        project = Project(uri="fake.xges", app=ptv)
         self.assertFalse(project._has_default_video_settings)
         self.assertFalse(project._has_default_audio_settings)
 

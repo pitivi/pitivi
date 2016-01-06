@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
 
 from . import runtests
-runtests.setup()
+if not runtests.setup():
+    raise ImportError("Could not setup testsuite")

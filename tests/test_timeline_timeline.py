@@ -18,7 +18,7 @@
 # Boston, MA 02110-1301, USA.
 
 from unittest import TestCase, mock
-
+from tests.common import getPitiviMock
 from gi.repository import Gdk
 
 from pitivi.project import Project, ProjectManager
@@ -34,10 +34,11 @@ THICK = ui.LAYER_HEIGHT
 class TestLayers(TestCase):
 
     def createTimeline(self, layers_heights):
-        project_manager = ProjectManager(app=None)
+        app = getPitiviMock()
+        project_manager = ProjectManager(app)
         project_manager.newBlankProject()
         project = project_manager.current_project
-        timeline = Timeline(container=None, app=None)
+        timeline = Timeline(container=mock.MagicMock(), app=app)
         timeline.get_parent = mock.MagicMock()
         timeline.setProject(project)
         y = 0

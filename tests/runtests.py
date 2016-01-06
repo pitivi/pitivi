@@ -46,6 +46,7 @@ def get_build_dir():
 
 
 def setup():
+    res = True
     # Make available to configure.py the top level dir.
     pitivi_dir = get_pitivi_dir()
     os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', pitivi_dir)
@@ -58,10 +59,12 @@ def setup():
     # Make sure the modules are initialized correctly.
     from pitivi import check
     check.initialize_modules()
-    assert(check.check_requirements())
+    res = check.check_requirements()
 
     from pitivi.utils import loggable as log
     log.init('PITIVI_DEBUG')
+
+    return res
 
 if __name__ == "__main__":
     setup()
