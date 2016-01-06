@@ -856,11 +856,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if parent == self.timeline.current_group or parent is None:
             selection = [self.bClip]
         else:
-            while parent:
-                if parent.get_parent() == self.timeline.current_group:
+            while True:
+                grandparent = parent.get_parent()
+                if not grandparent or grandparent == self.timeline.current_group:
                     break
-                parent = parent.get_parent()
 
+                parent = grandparent
             children = parent.get_children(True)
             selection = [elem for elem in children if isinstance(elem, GES.SourceClip) or
                          isinstance(elem, GES.TransitionClip)]

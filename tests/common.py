@@ -110,7 +110,7 @@ class TestCase(unittest.TestCase, Loggable):
         self._result = result
         unittest.TestCase.run(self, result)
 
-    def toggleClipSelection(self, bClip):
+    def toggleClipSelection(self, bClip, expect_selected):
         '''
         Toggle selection state of @bClip.
         '''
@@ -123,8 +123,8 @@ class TestCase(unittest.TestCase, Loggable):
             Event(Gdk.EventType.BUTTON_RELEASE, button=1), bClip.ui)
 
         self.assertEqual(bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
-                         not selected)
-        self.assertEqual(bClip.selected.selected, not selected)
+                         expect_selected)
+        self.assertEqual(bClip.selected.selected, expect_selected)
 
 
 def getSampleUri(sample):
