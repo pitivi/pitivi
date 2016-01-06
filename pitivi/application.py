@@ -29,7 +29,7 @@ from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import Gst
 
-from pitivi.configure import VERSION, RELEASES_URL
+from pitivi.configure import VERSION, RELEASES_URL, in_devel
 from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import PitiviMainWindow
@@ -358,7 +358,7 @@ class Pitivi(Gtk.Application, Loggable):
     def _syncDoUndo(self, action_log):
         can_undo = bool(action_log.undo_stacks)
         # TODO: Remove this once we revisit undo/redo T3360
-        can_undo = False
+        can_undo = in_devel()
         self.undo_action.set_enabled(can_undo)
 
         can_redo = bool(action_log.redo_stacks)
