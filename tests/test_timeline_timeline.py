@@ -217,3 +217,58 @@ class TestGrouping(BaseTestTimeline):
 
         for clip in clips:
             self.assertIsNone(clip.get_parent())
+
+
+class TestCopyPaste(BaseTestTimeline):
+    def copyClips(self, num_clips):
+        timeline = self.createTimeline()
+        timeline.app.settings.leftClickAlsoSeeks = False
+        layer = timeline.bTimeline.append_layer()
+
+        asset = GES.UriClipAsset.request_sync(
+            common.getSampleUri("tears_of_steel.webm"))
+
+        clips = [layer.add_asset(asset, i * 10, 0, 10, GES.TrackType.UNKNOWN)
+                 for i in range(num_clips)]
+
+        # Press <ctrl> so selecting in ADD mode
+        timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
+                                     keyval=Gdk.KEY_Control_L))
+
+        # Select the 2 clips
+        for clip in clips:
+            self.toggleClipSelection(clip)
+
+        self.assertTrue(timeline.parent.copy_action.props.enabled)
+        self.assertFalse(timeline.parent.paste_action.props.enabled)
+        timeline.parent.copy_action.emit("activate", None)
+        self.assertTrue(timeline.parent.paste_action.props.enabled)
+
+        return timeline
+
+    def testCopyPaste(self):
+        position = 20
+
+        def fakeGetPosition():
+            return position
+
+        timeline = self.copyClips(2)
+
+        layer = timeline.bTimeline.get_layers()[0]
+        project = timeline.bTimeline.get_asset()
+
+        # Monkey patching the pipeline.getPosition method
+        project.pipeline.getPosition = fakeGetPosition
+
+        clips = layer.get_clips()
+        self.assertEqual(len(clips), 2)
+
+        timeline.parent.paste_action.emit("activate", None)
+
+        n_clips = layer.get_clips()
+        self.assertEqual(len(n_clips), 4)
+
+        copied_clips = [clip for clip in n_clips if clip not in clips]
+        self.assertEqual(len(copied_clips), 2)
+        self.assertEqual(copied_clips[0].props.start, position)
+        self.assertEqual(copied_clips[1].props.start, position + 10)
