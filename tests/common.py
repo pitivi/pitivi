@@ -7,14 +7,17 @@ import gc
 import unittest
 import tempfile
 
+from gi.repository import Gdk
 from gi.repository import Gst
+from gi.repository import Gtk
 
 from unittest import mock
 from pitivi import check
 
 from pitivi.application import Pitivi
-from pitivi.utils.timeline import Selected
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import Selected
+from pitivi.utils.validate import Event
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
@@ -106,6 +109,22 @@ class TestCase(unittest.TestCase, Loggable):
             result = self.defaultTestResult()
         self._result = result
         unittest.TestCase.run(self, result)
+
+    def toggleClipSelection(self, bClip):
+        '''
+        Toggle selection state of @bClip.
+        '''
+        selected = bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+        self.assertEqual(bClip.selected.selected, selected)
+
+        bClip.ui.sendFakeEvent(
+            Event(Gdk.EventType.BUTTON_PRESS, button=1), bClip.ui)
+        bClip.ui.sendFakeEvent(
+            Event(Gdk.EventType.BUTTON_RELEASE, button=1), bClip.ui)
+
+        self.assertEqual(bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
+                         not selected)
+        self.assertEqual(bClip.selected.selected, not selected)
 
 
 def getSampleUri(sample):

@@ -1562,21 +1562,21 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if toplevel == self.timeline.current_group:
                 for child in toplevel.get_children(False):
                     child.ungroup(False)
-            else:
-                toplevel.ungroup(False)
 
         self.timeline.resetSelectionGroup()
+        self.timeline.selection.setSelection([], SELECT)
 
         self.app.action_log.commit()
         self._project.pipeline.commit_timeline()
 
     def _groupSelected(self, unused_action, unused_parameter):
         if not self.bTimeline:
-            self.error("No timeline set yet?")
+            self.info("No timeline set yet?")
             return
 
         self.app.action_log.begin("group")
-        containers = set({})
+        containers = set()
+        new_group = None
         for obj in self.timeline.selection:
             toplevel = obj.get_toplevel_parent()
             if toplevel == self.timeline.current_group:
@@ -1587,9 +1587,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 containers.add(toplevel)
 
         if containers:
-            GES.Container.group(list(containers))
+            new_group = GES.Container.group(list(containers))
 
         self.timeline.resetSelectionGroup()
+
+        if new_group:
+            self.timeline.current_group.add(new_group)
 
         self._project.pipeline.commit_timeline()
         self.app.action_log.commit()
