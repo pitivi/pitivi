@@ -1551,44 +1551,48 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline.selection.setSelection([], SELECT)
 
     def _ungroupSelected(self, unused_action, unused_parameter):
-        if self.bTimeline:
-            self.app.action_log.begin("ungroup")
+        if not self.bTimeline:
+            self.info("No bTimeline set yet!")
+            return
 
-            for obj in self.timeline.selection:
-                toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        child.ungroup(False)
-                else:
-                    toplevel.ungroup(False)
+        self.app.action_log.begin("ungroup")
 
-            self.timeline.resetSelectionGroup()
+        for obj in self.timeline.selection:
+            toplevel = obj.get_toplevel_parent()
+            if toplevel == self.timeline.current_group:
+                for child in toplevel.get_children(False):
+                    child.ungroup(False)
+            else:
+                toplevel.ungroup(False)
 
-            self.app.action_log.commit()
-            self._project.pipeline.commit_timeline()
+        self.timeline.resetSelectionGroup()
+
+        self.app.action_log.commit()
+        self._project.pipeline.commit_timeline()
 
     def _groupSelected(self, unused_action, unused_parameter):
-        if self.bTimeline:
-            self.app.action_log.begin("group")
+        if not self.bTimeline:
+            self.error("No timeline set yet?")
+            return
 
-            containers = set({})
+        self.app.action_log.begin("group")
+        containers = set({})
+        for obj in self.timeline.selection:
+            toplevel = obj.get_toplevel_parent()
+            if toplevel == self.timeline.current_group:
+                for child in toplevel.get_children(False):
+                    containers.add(child)
+                toplevel.ungroup(False)
+            else:
+                containers.add(toplevel)
 
-            for obj in self.timeline.selection:
-                toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        containers.add(child)
-                    toplevel.ungroup(False)
-                else:
-                    containers.add(toplevel)
+        if containers:
+            GES.Container.group(list(containers))
 
-            if containers:
-                GES.Container.group(list(containers))
+        self.timeline.resetSelectionGroup()
 
-            self.timeline.resetSelectionGroup()
-
-            self._project.pipeline.commit_timeline()
-            self.app.action_log.commit()
+        self._project.pipeline.commit_timeline()
+        self.app.action_log.commit()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
         if self.timeline.current_group:
