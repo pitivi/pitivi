@@ -343,10 +343,13 @@ class EffectListWidget(Gtk.Box, Loggable):
         text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
         text_col.pack_start(text_cell, True)
         text_col.set_cell_data_func(
-            text_cell, self.view_description_cell_data_func, None)
+            text_cell, self.viewDescriptionCellDataFunc, None)
 
         self.view.append_column(icon_col)
         self.view.append_column(text_col)
+
+        self.view.connect("query-tooltip", self._treeViewQueryTooltipCb)
+        self.view.props.has_tooltip = True
 
         # Make the treeview a drag source which provides effects.
         self.view.enable_model_drag_source(
@@ -374,12 +377,23 @@ class EffectListWidget(Gtk.Box, Loggable):
         scrollwin.show_all()
         toolbar.show_all()
 
-    @staticmethod
-    def view_description_cell_data_func(unused_column, cell, model, iter_, unused_data):
-        name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
+    def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+        is_row, x, y, model, path, tree_iter = view.get_tooltip_context(
+            x, y, keyboard_mode)
+        if not is_row:
+            return False
+
+        view.set_tooltip_row(tooltip, path)
+        tooltip.set_markup(self.formatDescription(model, tree_iter))
+        return True
+
+    def viewDescriptionCellDataFunc(self, unused_column, cell, model, iter_, unused_data):
+        cell.props.markup = self.formatDescription(model, iter_)
+
+    def formatDescription(self, model, iter_):
+        name, element_name, desc = model.get(iter_, COL_NAME_TEXT, COL_ELEMENT_NAME, COL_DESC_TEXT)
         escape = GLib.markup_escape_text
-        cell.props.markup = "<b>%s</b>\n%s" % (escape(name),
-                                               escape(desc),)
+        return "<b>%s</b>\n%s" % (escape(name), escape(desc))
 
     def _loadAvailableEffectsCb(self):
         self._addFactories(self.app.effects.getAllVideoEffects(), VIDEO_EFFECT)
