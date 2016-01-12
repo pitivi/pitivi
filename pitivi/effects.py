@@ -271,7 +271,11 @@ class EffectsManager(object):
 
 
 # ----------------------- UI classes to manage effects -------------------------#
-HIDDEN_EFFECTS = ["frei0r-filter-scale0tilt"]
+
+HIDDEN_EFFECTS = [
+    # Overlaying an image onto a video stream can already be done.
+    "gdkpixbufoverlay",
+    "frei0r-filter-scale0tilt"]
 
 GlobalSettings.addConfigSection('effect-library')
 
