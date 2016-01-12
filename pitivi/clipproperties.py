@@ -29,13 +29,10 @@ from gi.repository import GES
 from gettext import gettext as _
 
 from pitivi.configure import get_ui_dir
-
-from pitivi.utils.ui import EFFECT_TARGET_ENTRY
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import PADDING, SPACING
-
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
     EffectsPropertiesManager
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY, PADDING, SPACING
 
 
 (COL_ACTIVATED,
@@ -51,7 +48,7 @@ class ClipPropertiesError(Exception):
     pass
 
 
-class ClipProperties(Gtk.Box, Loggable):
+class ClipProperties(Gtk.ScrolledWindow, Loggable):
     """
     Widget for configuring the selected clip.
 
@@ -59,30 +56,33 @@ class ClipProperties(Gtk.Box, Loggable):
     """
 
     def __init__(self, app):
-        Gtk.Box.__init__(self)
+        Gtk.ScrolledWindow.__init__(self)
         Loggable.__init__(self)
         self.app = app
 
-        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+
+        viewport = Gtk.Viewport()
+        viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
+        viewport.show()
+        self.add(viewport)
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        vbox.show()
+        viewport.add(vbox)
 
         self.infobar_box = Gtk.Box()
         self.infobar_box.set_orientation(Gtk.Orientation.VERTICAL)
         self.infobar_box.show()
-        self.pack_start(self.infobar_box, False, False, 0)
+        vbox.pack_start(self.infobar_box, False, False, 0)
 
         transformation_expander = TransformationProperties(app)
         transformation_expander.set_vexpand(False)
-        self.pack_start(transformation_expander, False, False, 0)
-
-        viewport = Gtk.ScrolledWindow()
-        viewport.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        viewport.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-        viewport.set_visible(True)
+        vbox.pack_start(transformation_expander, False, False, 0)
 
         self.effect_expander = EffectProperties(app, self)
         self.effect_expander.set_vexpand(False)
-        viewport.add(self.effect_expander)
-        self.pack_start(viewport, True, True, 0)
+        vbox.pack_start(self.effect_expander, False, False, 0)
 
     def createInfoBar(self, text):
         label = Gtk.Label(label=text)
@@ -118,7 +118,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._effect_config_ui = None
         self.effects_properties_manager = EffectsPropertiesManager(app)
         self.clip_properties = clip_properties
-        self._config_ui_h_pos = None
 
         # The toolbar that will go between the list of effects and properties
         self._toolbar = Gtk.Toolbar()
@@ -135,13 +134,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         removeEffectButton.set_is_important(True)
         self._toolbar.insert(removeEffectButton, -1)
 
-        # Treeview to display a list of effects (checkbox, effect type and
-        # name)
-        self.treeview_scrollwin = Gtk.ScrolledWindow()
-        self.treeview_scrollwin.set_policy(Gtk.PolicyType.NEVER,
-                                           Gtk.PolicyType.AUTOMATIC)
-        self.treeview_scrollwin.set_shadow_type(Gtk.ShadowType.ETCHED_IN)
-
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
         # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
         class EffectsListStore(Gtk.ListStore, Gtk.TreeDragSource):
@@ -157,7 +149,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self.storemodel = EffectsListStore(bool, str, str, str, str, object)
         self.treeview = Gtk.TreeView(model=self.storemodel)
-        self.treeview_scrollwin.add(self.treeview)
         self.treeview.set_property("has_tooltip", True)
         self.treeview.set_headers_clickable(False)
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
@@ -200,17 +191,14 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self._infobar = clip_properties.createInfoBar(
             _("Select a clip on the timeline to configure its associated effects"))
+        self._infobar.show_all()
 
         # Prepare the main container widgets and lay out everything
-        self._vcontent = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL)
-        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        vbox.pack_start(self.treeview_scrollwin, expand=True, fill=True, padding=0)
-        vbox.pack_start(self._toolbar, expand=False, fill=False, padding=0)
-        self._vcontent.pack1(vbox, resize=True, shrink=False)
-        self.add(self._vcontent)
-        self._vcontent.show()
-        vbox.show_all()
-        self._infobar.show_all()
+        self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
+        self._vbox.pack_start(self._toolbar, expand=False, fill=False, padding=0)
+        self._vbox.show_all()
+        self.add(self._vbox)
         self._toolbar.hide()
         self.hide()
 
@@ -220,7 +208,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        self._vcontent.connect("notify", self._vcontentNotifyCb)
         removeEffectButton.connect("clicked", self._removeEffectCb)
         self.app.project_manager.connect(
             "new-project-loaded", self._newProjectLoadedCb)
@@ -236,11 +223,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             self._selection.connect('selection-changed', self._selectionChangedCb)
             self.selected_effects = self._selection.getSelectedEffects()
         self.updateAll()
-
-    def _vcontentNotifyCb(self, paned, gparamspec):
-        if gparamspec and gparamspec.name == 'position':
-            self._config_ui_h_pos = self._vcontent.get_position()
-            self.app.settings.effectVPanedPosition = self._config_ui_h_pos
 
     def _selectionChangedCb(self, selection):
         for clip in self.clips:
@@ -430,13 +412,11 @@ class EffectProperties(Gtk.Expander, Loggable):
             self._updateTreeview()
             if path:
                 self.treeview_selection.select_path(path)
-            self._vcontent.show()
         else:
             self.hide()
             self._removeEffectConfigurationWidget()
             self.storemodel.clear()
             self._infobar.show()
-            self._vcontent.hide()
 
     def _updateTreeview(self):
         self.storemodel.clear()
@@ -466,11 +446,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._updateEffectConfigUi()
 
     def _updateEffectConfigUi(self):
-        if self._config_ui_h_pos is None:
-            self._config_ui_h_pos = self.app.gui.settings.effectVPanedPosition
-            if self._config_ui_h_pos is None:
-                self._config_ui_h_pos = self.app.gui.settings.mainWindowHeight // 3
-
         model, tree_iter = self.treeview_selection.get_selected()
         if tree_iter:
             effect = model.get_value(tree_iter, COL_TRACK_EFFECT)
@@ -483,11 +458,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Nothing to remove.
             return
 
-        viewport = self._effect_config_ui.get_children()[0]
-        element_settings_widget = viewport.get_children()[0]
-        element_settings_widget.resetKeyframeToggleButtons()
-
-        self._vcontent.remove(self._effect_config_ui)
+        self._effect_config_ui.resetKeyframeToggleButtons()
+        self._vbox.remove(self._effect_config_ui)
         self._effect_config_ui = None
 
     def _showEffectConfigurationWidget(self, effect):
@@ -496,10 +468,9 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect)
         if not self._effect_config_ui:
             return
-        self._vcontent.pack2(
-            self._effect_config_ui, resize=False, shrink=False)
-        self._vcontent.set_position(int(self._config_ui_h_pos))
+        self._effect_config_ui.show()
         self._effect_config_ui.show_all()
+        self._vbox.add(self._effect_config_ui)
 
 
 class TransformationProperties(Gtk.Expander, Loggable):

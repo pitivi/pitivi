@@ -559,11 +559,7 @@ class EffectsPropertiesManager:
             effect_widget = GstElementSettingsWidget()
             effect_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
                                      default_btn=True)
-            scrolled_window = Gtk.ScrolledWindow()
-            scrolled_window.add_with_viewport(effect_widget)
-            scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC,
-                                       Gtk.PolicyType.AUTOMATIC)
-            self.cache_dict[effect] = scrolled_window
+            self.cache_dict[effect] = effect_widget
             self._connectAllWidgetCallbacks(effect_widget, effect)
             self._postConfiguration(effect, effect_widget)
 

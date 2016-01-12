@@ -88,11 +88,6 @@ GlobalSettings.addConfigOption('lastExportFolder',
                                key="last-export-folder",
                                environment="PITIVI_EXPORT_FOLDER",
                                default=os.path.expanduser("~"))
-GlobalSettings.addConfigSection("effect-configuration")
-GlobalSettings.addConfigOption('effectVPanedPosition',
-                               section='effect-configuration',
-                               key='effect-vpaned-position',
-                               type_=int)
 GlobalSettings.addConfigSection("version")
 GlobalSettings.addConfigOption('displayCounter',
                                section='version',
