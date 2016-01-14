@@ -180,6 +180,14 @@ class EffectsManager(object):
         uselessRe = re.compile(" |".join(uselessWords))
 
         factories = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
+        longnames = set()
+        duplicate_longnames = set()
+        for factory in factories:
+            longname = factory.get_longname()
+            if longname in longnames:
+                duplicate_longnames.add(longname)
+            else:
+                longnames.add(longname)
         for factory in factories:
             klass = factory.get_klass()
             name = factory.get_name()
@@ -198,7 +206,12 @@ class EffectsManager(object):
                 HIDDEN_EFFECTS.append(name)
                 continue
 
-            human_name = uselessRe.sub("", factory.get_longname()).title()
+            longname = factory.get_longname()
+            if longname in duplicate_longnames:
+                # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=760566
+                # Add name which identifies the element and is unique.
+                longname = "%s %s" % (longname, name)
+            human_name = uselessRe.sub("", longname).title()
             effect = EffectInfo(name,
                                 media_type,
                                 categories=self._getEffectCategories(name),
