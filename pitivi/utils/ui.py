@@ -442,6 +442,18 @@ def beautify_ETA(length):
 
 
 # -------------------- Gtk widget helpers ----------------------------------- #
+
+def clear_styles(widget):
+    """
+    Make sure the widget has no border, background or other decorations.
+
+    @type widget: L{Gtk.Widget}
+    """
+    style = widget.get_style_context()
+    for css_class in style.list_classes():
+        style.remove_class(css_class)
+
+
 def model(columns, data):
     ret = Gtk.ListStore(*columns)
     for datum in data:

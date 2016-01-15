@@ -42,7 +42,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import EditingContext, Selection, \
     TimelineError, Zoomable, \
     SELECT, SELECT_ADD
-from pitivi.utils.ui import alter_style_class, \
+from pitivi.utils.ui import alter_style_class, clear_styles, \
     set_children_state_recurse, unset_children_state_recurse, \
     EXPANDED_SIZE, SPACING, CONTROL_WIDTH, \
     PLAYHEAD_WIDTH, LAYER_HEIGHT, SNAPBAR_WIDTH, \
@@ -255,10 +255,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
         viewport.add(self.__layers_controls_vbox)
-        # Make sure the viewport has no border or other decorations.
-        viewport_style = viewport.get_style_context()
-        for css_class in viewport_style.list_classes():
-            viewport_style.remove_class(css_class)
+        clear_styles(viewport)
         hbox.pack_start(viewport, False, False, 0)
 
         self.get_style_context().add_class("Timeline")

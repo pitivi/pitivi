@@ -47,8 +47,8 @@ from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
-from pitivi.utils.ui import info_name, beautify_time_delta, SPACING, \
-    beautify_length, TIMELINE_CSS
+from pitivi.utils.ui import clear_styles, beautify_length, \
+    beautify_time_delta, info_name, SPACING, TIMELINE_CSS
 from pitivi.viewer import ViewerContainer
 
 
@@ -1251,6 +1251,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             title = APPNAME
         event_box = Gtk.EventBox()
         label = Gtk.Label()
+        clear_styles(label)
         label.set_text(title)
         event_box.add(label)
         event_box.show_all()
