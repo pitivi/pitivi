@@ -162,10 +162,9 @@ def positionChangedCb(pipeline, position, scenario, action,
 
 
 def seek(scenario, action):
-    from pitivi.utils.pipeline import Seeker
     res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
                                                       "start")
-    Seeker().seek(action.structure["start"])
+    scenario.pipeline.simple_seek(wanted_position)
     scenario.pipeline.connect("position", positionChangedCb, scenario,
                               action, wanted_position)
 
