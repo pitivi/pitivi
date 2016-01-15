@@ -112,6 +112,10 @@ TIMELINE_CSS = """
         background-color: #0f0f0f;
     }
 
+    .KeyframeCurve {
+        background-color: rgba(0, 0, 0, 0);
+    }
+
     .Trimbar {
         background-image: url('%(trimbar_normal)s');
         opacity:0.5;

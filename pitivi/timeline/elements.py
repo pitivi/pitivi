@@ -101,6 +101,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__source.connect("value-changed", self.__controlSourceChangedCb)
         self.__propertyName = binding.props.name
         self.__resetTooltip()
+        self.get_style_context().add_class("KeyframeCurve")
 
         self.__ylim_min, self.__ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
             binding.pspec, (0.0, 1.0))
@@ -341,7 +342,8 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self._bElement.selected.connect(
             "selected-changed", self.__selectedChangedCb)
 
-        self.__width = self.__height = 0
+        self.__width = 0
+        self.__height = 0
 
         # Needed for effect's keyframe toggling
         self._bElement.ui_element = self
