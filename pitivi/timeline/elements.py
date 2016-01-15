@@ -972,7 +972,6 @@ class UriClip(SourceClip):
         super(UriClip, self).__init__(layer, bClip)
 
         self.set_tooltip_markup(misc.filename_from_uri(bClip.get_uri()))
-        self.bClip.selected.connect("selected-changed", self._selectedChangedCb)
 
     def _childAdded(self, clip, child):
         super(UriClip, self)._childAdded(clip, child)
@@ -988,9 +987,6 @@ class UriClip(SourceClip):
                 child.ui = self._videoSource
                 self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
-
-    def _selectedChangedCb(self, unused_child, selected):
-        self.selected = selected
 
 
 class TitleClip(SourceClip):
@@ -1052,9 +1048,7 @@ class TransitionClip(Clip):
     def _selectedChangedCb(self, unused_child, selected, child):
         if selected:
             self.app.gui.trans_list.activate(child)
-            self.selected = True
         else:
-            self.selected = False
             self.app.gui.trans_list.deactivate()
 
 
