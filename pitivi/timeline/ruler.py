@@ -170,6 +170,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                            (color_normal.green, color_insensitive.green),
                            (color_normal.blue, color_insensitive.blue))])
 
+        # Two colors with high contrast.
+        self._color_frame = style.get_color(Gtk.StateFlags.LINK)
+
         return False
 
     def do_draw(self, context):
@@ -359,11 +362,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         offset = self.pixbuf_offset % frame_width
         height = context.get_target().get_height()
         y = int(height - FRAME_HEIGHT_PIXELS)
-        # INSENSITIVE is a dark shade of gray, but lacks contrast
-        # SELECTED will be bright blue and more visible to represent frames
-        style = self.get_style_context()
-        states = [style.get_background_color(Gtk.StateFlags.ACTIVE),
-                  style.get_background_color(Gtk.StateFlags.SELECTED)]
 
         frame_num = int(
             self.pixelToNs(self.pixbuf_offset) * float(self.frame_rate) / Gst.SECOND)
@@ -372,10 +370,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         while paintpos < max_pos:
             paintpos = self.nsToPixel(
                 1 / float(self.frame_rate) * Gst.SECOND * frame_num)
-            set_cairo_color(context, states[(frame_num + 1) % 2])
-            context.rectangle(
-                0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
-            context.fill()
+            if frame_num % 2:
+                set_cairo_color(context, self._color_frame)
+                context.rectangle(
+                    0.5 + paintpos - self.pixbuf_offset, y, frame_width, height)
+                context.fill()
             frame_num += 1
 
     def drawPosition(self, context):
