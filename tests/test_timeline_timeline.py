@@ -58,8 +58,12 @@ class BaseTestTimeline(common.TestCase):
         asset = GES.UriClipAsset.request_sync(
             common.getSampleUri("tears_of_steel.webm"))
 
-        return [layer.add_asset(asset, i * 10, 0, 10, GES.TrackType.UNKNOWN)
+        clips = [layer.add_asset(asset, i * 10, 0, 10, GES.TrackType.UNKNOWN)
                 for i in range(num_clips)]
+
+        self.assertEqual(len(clips), num_clips)
+
+        return clips
 
 
 class TestLayers(BaseTestTimeline):
@@ -255,6 +259,37 @@ class TestGrouping(BaseTestTimeline):
         timeline.parent.group_action.emit("activate", None)
 
         self.toggleClipSelection(clips[1], expect_selected=True)
+
+    def testUngroupClip(self):
+        timeline = self.createTimeline()
+        bClip, = self.addClipsSimple(timeline, 1)
+
+        self.toggleClipSelection(bClip, expect_selected=True)
+
+        timeline.parent.ungroup_action.emit("activate", None)
+        layer = timeline.bTimeline.get_layers()[0]
+        bClip0, bClip1 = layer.get_clips()
+
+        self.assertEqual(bClip0.props.start, bClip1.props.start)
+        self.assertEqual(bClip0.props.duration, bClip1.props.duration)
+
+        bTrackElem0, = bClip0.get_children(recursive=False)
+        bTrackElem1, = bClip1.get_children(recursive=False)
+
+        if bTrackElem0.get_track_type() == GES.TrackType.AUDIO:
+            aclip = bClip0.ui
+            atrackelem = bTrackElem0.ui
+            vclip = bClip1.ui
+            vtrackelem = bTrackElem1.ui
+        else:
+            aclip = bClip1.ui
+            atrackelem = bTrackElem1.ui
+
+            vclip = bClip0.ui
+            vtrackelem = bTrackElem0.ui
+
+        self.assertEqual(aclip._audioSource, atrackelem)
+        self.assertEqual(vclip._videoSource, vtrackelem)
 
 
 class TestCopyPaste(BaseTestTimeline):
