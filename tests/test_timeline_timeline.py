@@ -118,7 +118,7 @@ class TestLayers(BaseTestTimeline):
         s = SEPARATOR_HEIGHT
 
         def assertLayerAt(bLayer, y):
-            result = timeline._Timeline__getLayerAt(
+            result = timeline._getLayerAt(
                 int(y),
                 prefer_bLayer=preferred_bLayer,
                 past_middle_when_adjacent=past_middle_when_adjacent)
@@ -152,6 +152,13 @@ class TestLayers(BaseTestTimeline):
         assertLayerAt(bLayers[expectations[13]], h[0] + s + h[1] + s + h[2] / 2 - 1)
         assertLayerAt(bLayers[expectations[14]], h[0] + s + h[1] + s + h[2] / 2)
         assertLayerAt(bLayers[expectations[15]], h[0] + s + h[1] + s + h[2] - 1)
+
+    def testSetSeparatorsPrelight(self):
+        timeline = self.createTimeline()
+        timeline.__on_separators = [mock.Mock()]
+        timeline._setSeparatorsPrelight(False)
+        self.assertEqual(len(timeline.__on_separators), 1,
+                         "The separators must be forgotten only in dragEnd()")
 
 
 class TestGrouping(BaseTestTimeline):

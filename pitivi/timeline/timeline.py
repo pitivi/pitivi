@@ -671,7 +671,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
-            layer, unused_on_sep = self.__getLayerAt(
+            layer, unused_on_sep = self._getLayerAt(
                 y, prefer_bLayer=self.__moving_layer, past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
@@ -739,7 +739,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 clip_duration = asset.get_duration()
 
-            bLayer, unused_on_sep = self.__getLayerAt(y)
+            bLayer, unused_on_sep = self._getLayerAt(y)
             if not placement:
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
@@ -780,7 +780,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return True
 
     def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
-        self.__unsetHoverSeparators()
+        # De-highlight the separators. We still need to remember them.
+        # See how __on_separators is used in __dragDropCb for details
+        self._setSeparatorsPrelight(False)
+
         if self.draggingElement:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.current_group.get_children(False)]
@@ -947,7 +950,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def __layerGetSeps(self, bLayer, sep_name):
         return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
 
-    def __getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
+    def _getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
+        """ Used in the testsuite """
         bLayers = self.bTimeline.get_layers()
         if y < 20:
             # The cursor is at the top, above the first layer.
@@ -1001,15 +1005,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.debug("Returning layer %s, separators: %s", bLayer, separators)
                 return bLayer, separators
 
-    def __setHoverSeparators(self, separators):
-        self.__on_separators = separators
+    def _setSeparatorsPrelight(self, light):
+        """ Used in the testsuite """
         for sep in self.__on_separators:
-            set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
-
-    def __unsetHoverSeparators(self):
-        for sep in self.__on_separators:
-            unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
-        self.__on_separators = []
+            if light:
+                set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
+            else:
+                unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
 
     def __dragUpdate(self, event_widget, x, y):
         if not self.draggingElement:
@@ -1044,15 +1046,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         else:
             position = self.pixelToNs(x - self.__drag_start_x)
 
-        self.__unsetHoverSeparators()
-        self._on_layer, on_separators = self.__getLayerAt(y,
-                                                          prefer_bLayer=self._on_layer)
+        self._setSeparatorsPrelight(False)
+        res = self._getLayerAt(y, prefer_bLayer=self._on_layer)
+        self._on_layer, self.__on_separators = res
         if (mode != GES.EditMode.EDIT_NORMAL or
                 self.current_group.props.height > 1):
             # When dragging clips from more than one layer, do not allow
             # them to be dragged between layers to create a new layer.
             on_separators = []
-        self.__setHoverSeparators(on_separators)
+        self._setSeparatorsPrelight(True)
 
         priority = self._on_layer.props.priority
         self.editing_context.editTo(position, priority)
@@ -1120,7 +1122,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for layer in self.bTimeline.get_layers():
             layer.ui.checkMediaTypes()
 
-        self.__unsetHoverSeparators()
+        self._setSeparatorsPrelight(False)
+        self.__on_separators = []
 
         self.queue_draw()
 
