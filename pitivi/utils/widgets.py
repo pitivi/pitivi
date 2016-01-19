@@ -42,7 +42,7 @@ from gettext import gettext as _
 
 from pitivi.utils.loggable import Loggable
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import beautify_length, \
+from pitivi.utils.ui import beautify_length, disable_scroll, \
     unpack_color, pack_color_32, pack_color_64, \
     time_to_string, SPACING, CONTROL_WIDTH
 from pitivi.utils.timeline import Zoomable
@@ -133,6 +133,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
             self.combo = Gtk.ComboBoxText.new_with_entry()
             self.text = self.combo.get_child()
             self.combo.show()
+            disable_scroll(self.combo)
             self.pack_start(self.combo, expand=False, fill=False, padding=0)
             for choice in choices:
                 self.combo.append_text(choice)
@@ -245,6 +246,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
                 Gtk.Orientation.HORIZONTAL, self.adjustment)
             self.pack_end(self.slider, expand=False, fill=False, padding=0)
             self.slider.show()
+            disable_scroll(self.slider)
             self.slider.set_size_request(width=100, height=-1)
             self.slider.props.draw_value = False
             # Abuse GTK3's progressbar "fill level" feature to provide
@@ -257,6 +259,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
         self.pack_start(self.spinner, expand=False, fill=False, padding=0)
         self.spinner.show()
+        disable_scroll(self.spinner)
 
     def connectValueChanged(self, callback, *args):
         self.adjustment.connect("value-changed", callback, *args)
@@ -467,6 +470,7 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
         self.pack_start(self.contents, expand=False, fill=False, padding=0)
         self.setChoices(choices)
         self.contents.show()
+        disable_scroll(self.contents)
         cell = self.contents.get_cells()[0]
         cell.props.ellipsize = Pango.EllipsizeMode.END
 

@@ -35,8 +35,9 @@ import urllib.error
 
 from gettext import ngettext, gettext as _
 
-from gi.repository import GLib
 from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import Gst
@@ -512,6 +513,17 @@ def unset_children_state_recurse(widget, state):
         child.unset_state_flags(state)
         if isinstance(child, Gtk.Container):
             unset_children_state_recurse(child, state)
+
+
+def disable_scroll(widget):
+    """
+    Make sure the specified widget does not react to scroll events.
+    """
+    def scroll_event_cb(widget, unused_event):
+        GObject.signal_stop_emission_by_name(widget, "scroll-event")
+        return False
+
+    widget.connect("scroll-event", scroll_event_cb)
 
 
 # ----------------------- encoding datas --------------------------------------- #

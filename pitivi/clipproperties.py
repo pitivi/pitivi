@@ -21,19 +21,19 @@
 
 import os
 
+from gettext import gettext as _
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
 from gi.repository import GES
 
-from gettext import gettext as _
-
 from pitivi.configure import get_ui_dir
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
     EffectsPropertiesManager
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import EFFECT_TARGET_ENTRY, PADDING, SPACING
-
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY, PADDING, SPACING, \
+    disable_scroll
 
 (COL_ACTIVATED,
  COL_TYPE,
@@ -557,6 +557,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         """
         spinbtn = self.builder.get_object(widget_name)
         spinbtn.connect("output", self._onValueChangedCb, property_name)
+        disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
 
     def _onValueChangedCb(self, spinbtn, prop):
