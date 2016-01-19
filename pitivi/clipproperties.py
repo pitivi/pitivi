@@ -150,7 +150,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.storemodel = EffectsListStore(bool, str, str, str, str, object)
         self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview.set_property("has_tooltip", True)
-        self.treeview.set_headers_clickable(False)
+        self.treeview.set_headers_visible(False)
         self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 
         activatedcell = Gtk.CellRendererToggle()
