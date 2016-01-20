@@ -23,10 +23,11 @@ import os
 
 from gettext import gettext as _
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Pango
 from gi.repository import GES
+from gi.repository import Gdk
+from gi.repository import Gio
+from gi.repository import Gtk
+from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
 from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
@@ -120,19 +121,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.clip_properties = clip_properties
 
         # The toolbar that will go between the list of effects and properties
-        self._toolbar = Gtk.Toolbar()
-        self._toolbar.get_style_context().add_class(
-            Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        self._toolbar.set_icon_size(Gtk.IconSize.SMALL_TOOLBAR)
-        spring = Gtk.SeparatorToolItem()
-        spring.set_draw(False)
-        spring.set_expand(True)
-        self._toolbar.insert(spring, 0)
-        removeEffectButton = Gtk.ToolButton()
-        removeEffectButton.set_icon_name("list-remove-symbolic")
-        removeEffectButton.set_label(_("Remove effect"))
-        removeEffectButton.set_is_important(True)
-        self._toolbar.insert(removeEffectButton, -1)
+        buttons_box = Gtk.ButtonBox()
+        buttons_box.set_halign(Gtk.Align.END)
+        buttons_box.set_margin_end(SPACING)
+        buttons_box.props.margin_top = SPACING / 2
+
+        remove_effect_button = Gtk.Button()
+        remove_icon = Gtk.Image.new_from_icon_name("list-remove-symbolic", Gtk.IconSize.BUTTON)
+        remove_effect_button.set_image(remove_icon)
+        remove_effect_button.set_always_show_image(True)
+        remove_effect_button.set_label(_("Remove effect"))
+        buttons_box.pack_start(remove_effect_button, expand=False, fill=False, padding=0)
 
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
         # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
@@ -151,31 +150,37 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview.set_property("has_tooltip", True)
         self.treeview.set_headers_visible(False)
-        self.treeview.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+        self.treeview.props.margin_top = SPACING
+        self.treeview.props.margin_left = SPACING
+        # Without this, the treeview hides the border of its parent.
+        # I should file a bug about this.
+        self.treeview.props.margin_right = 1
 
-        activatedcell = Gtk.CellRendererToggle()
-        activatedcell.props.xpad = PADDING
-        activatedcell.connect("toggled", self._effectActiveToggleCb)
+        activated_cell = Gtk.CellRendererToggle()
+        activated_cell.props.xalign = 0
+        activated_cell.props.xpad = 0
+        activated_cell.connect("toggled", self._effectActiveToggleCb)
         self.treeview.insert_column_with_attributes(-1,
-                                                    _("Active"), activatedcell, active=COL_ACTIVATED)
+                                                    _("Active"), activated_cell,
+                                                    active=COL_ACTIVATED)
 
-        typecol = Gtk.TreeViewColumn(_("Type"))
-        typecol.set_spacing(SPACING)
-        typecol.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        typecell = Gtk.CellRendererText()
-        typecell.props.xpad = PADDING
-        typecol.pack_start(typecell, True)
-        typecol.add_attribute(typecell, "text", COL_TYPE)
-        self.treeview.append_column(typecol)
+        type_col = Gtk.TreeViewColumn(_("Type"))
+        type_col.set_spacing(SPACING)
+        type_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+        type_cell = Gtk.CellRendererText()
+        type_cell.props.xpad = PADDING
+        type_col.pack_start(type_cell, expand=True)
+        type_col.add_attribute(type_cell, "text", COL_TYPE)
+        self.treeview.append_column(type_col)
 
-        namecol = Gtk.TreeViewColumn(_("Effect name"))
-        namecol.set_spacing(SPACING)
-        namecell = Gtk.CellRendererText()
-        namecell.props.xpad = PADDING
-        namecell.set_property("ellipsize", Pango.EllipsizeMode.END)
-        namecol.pack_start(namecell, True)
-        namecol.add_attribute(namecell, "text", COL_NAME_TEXT)
-        self.treeview.append_column(namecol)
+        name_col = Gtk.TreeViewColumn(_("Effect name"))
+        name_col.set_spacing(SPACING)
+        name_cell = Gtk.CellRendererText()
+        name_cell.props.xpad = PADDING
+        name_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
+        name_col.pack_start(name_cell, expand=True)
+        name_col.add_attribute(name_cell, "text", COL_NAME_TEXT)
+        self.treeview.append_column(name_col)
 
         # Allow the treeview to accept EFFECT_TARGET_ENTRY when drag&dropping.
         self.treeview.enable_model_drag_dest([EFFECT_TARGET_ENTRY],
@@ -187,6 +192,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                                                Gdk.DragAction.MOVE)
 
         self.treeview_selection = self.treeview.get_selection()
+        self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
         self._infobar = clip_properties.createInfoBar(
             _("Select a clip on the timeline to configure its associated effects"))
@@ -195,11 +201,26 @@ class EffectProperties(Gtk.Expander, Loggable):
         # Prepare the main container widgets and lay out everything
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
-        self._vbox.pack_start(self._toolbar, expand=False, fill=False, padding=0)
+        self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
+        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        separator.set_margin_top(SPACING)
+        separator.set_margin_left(SPACING)
+        separator.set_margin_right(SPACING)
+        self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
         self._vbox.show_all()
         self.add(self._vbox)
-        self._toolbar.hide()
         self.hide()
+
+        effects_actions_group = Gio.SimpleActionGroup()
+        self.treeview.insert_action_group("clipproperties_effects", effects_actions_group)
+        buttons_box.insert_action_group("clipproperties_effects", effects_actions_group)
+
+        self.remove_effect_action = Gio.SimpleAction.new("remove_effect", None)
+        self.remove_effect_action.connect("activate", self._removeEffectCb)
+        effects_actions_group.add_action(self.remove_effect_action)
+        self.app.add_accelerator("Delete", "clipproperties_effects.remove_effect", None)
+        self.remove_effect_action.set_enabled(False)
+        remove_effect_button.set_action_name("clipproperties_effects.remove_effect")
 
         # Connect all the widget signals
         self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)
@@ -207,7 +228,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        removeEffectButton.connect("clicked", self._removeEffectCb)
         self.app.project_manager.connect(
             "new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
@@ -253,12 +273,12 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.selected_effects = selec
             self.updateAll()
 
-    def _removeEffectCb(self, toolbutton):
-        if not self.treeview_selection.get_selected()[1]:
+    def _removeEffectCb(self, action, unused_param):
+        selected = self.treeview_selection.get_selected()
+        if not selected[1]:
             # Cannot remove nothing,
             return
-        effect = self.storemodel.get_value(self.treeview_selection.get_selected()[1],
-                                           COL_TRACK_EFFECT)
+        effect = self.storemodel.get_value(selected[1], COL_TRACK_EFFECT)
         self._removeEffect(effect)
 
     def _removeEffect(self, effect):
@@ -435,12 +455,11 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
+        self._vbox.set_visible(len(self.storemodel) > 0)
 
     def _treeviewSelectionChangedCb(self, treeview):
-        if self.treeview_selection.count_selected_rows() == 0:
-            self._toolbar.hide()
-        else:
-            self._toolbar.show()
+        selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
+        self.remove_effect_action.set_enabled(not selection_is_emtpy)
 
         self._updateEffectConfigUi()
 
