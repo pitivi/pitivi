@@ -711,7 +711,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             if (controllable and
                     not isinstance(widget, ToggleWidget) and
                     not isinstance(widget, ChoiceWidget)):
-                keyframe_toggle_button = self._getKeyframeToggleButton(prop)
+                keyframe_toggle_button = self._createKeyframeToggleButton(prop)
                 self.keyframeToggleButtons[keyframe_toggle_button] = widget
                 grid.attach(keyframe_toggle_button, 3, y, 1, 1)
 
@@ -728,7 +728,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 if binding:
                     widget.set_sensitive(False)
                     self.bindings[widget] = binding
-                button = self._getResetToDefaultValueButton(prop, widget)
+                button = self._createResetToDefaultValueButton(prop, widget)
                 grid.attach(button, 2, y, 1, 1)
                 self.buttons[button] = widget
 
@@ -740,15 +740,16 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         widget = self.properties[pspec]
         widget.setWidgetValue(self.element.get_child_property(pspec.name)[1])
 
-    def _getKeyframeToggleButton(self, prop):
+    def _createKeyframeToggleButton(self, prop):
         button = Gtk.ToggleButton()
         button.set_label("◇")
         button.props.focus_on_click = False  # Avoid the ugly selection outline
         button.set_tooltip_text(_("Show keyframes for this value"))
+        button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect('toggled', self._showKeyframesToggledCb, prop)
         return button
 
-    def _getResetToDefaultValueButton(self, unused_prop, widget):
+    def _createResetToDefaultValueButton(self, unused_prop, widget):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()
