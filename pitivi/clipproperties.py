@@ -164,7 +164,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         typecol.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
         typecell = Gtk.CellRendererText()
         typecell.props.xpad = PADDING
-        typecell.set_property("ellipsize", Pango.EllipsizeMode.END)
         typecol.pack_start(typecell, True)
         typecol.add_attribute(typecell, "text", COL_TYPE)
         self.treeview.append_column(typecol)
