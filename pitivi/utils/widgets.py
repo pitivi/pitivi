@@ -699,7 +699,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
                 widget.set_label(prop.nick)
-                grid.attach(widget, 0, y, 1, 1)
+                grid.attach(widget, 0, y, 2, 1)
             else:
                 text = _("%(preference_label)s:") % {"preference_label": prop.nick}
                 label = Gtk.Label(label=text)
