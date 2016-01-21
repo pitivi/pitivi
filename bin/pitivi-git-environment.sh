@@ -380,8 +380,6 @@ if [ "$ready_to_run" != "1" ]; then
         export PYTHON=${PITIVI_PYTHON}
     done
 
-
-
     # Build all the necessary gstreamer modules.
     for m in $MODULES; do
         cd $PITIVI

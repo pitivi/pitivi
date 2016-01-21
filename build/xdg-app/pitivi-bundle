@@ -156,7 +156,7 @@ SDK_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
 SDK_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME.Locale.$LOCAL/.*/$SDK_VERSION"`
 
 RUNTIME_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
-RUNTIME_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME.Local.$LOCAL/.*/$SDK_VERSION"`
+RUNTIME_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME.Locale.$LOCAL/.*/$SDK_VERSION"`
 APP_INSTALLED=`xdg-app list-apps -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
 
 if [ -n "$BUNDLE" ]
@@ -211,12 +211,11 @@ then
 
   xdg-app add-remote  --no-gpg-verify  --user $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
   xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
-
-  if [ -n "$LOCAL" ] && [ -z "$RUNTIME_LOCAL_INSTALLED" ]
-  then
-    echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
+fi
+if [ -n "$LOCAL" ] && [ -z "$RUNTIME_LOCAL_INSTALLED" ]
+then
+echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
     xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
-  fi
 fi
 
 # Update runtimes if needed
