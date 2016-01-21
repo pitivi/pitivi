@@ -713,7 +713,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     not isinstance(widget, ChoiceWidget)):
                 keyframe_toggle_button = self._createKeyframeToggleButton(prop)
                 self.keyframeToggleButtons[keyframe_toggle_button] = widget
-                grid.attach(keyframe_toggle_button, 3, y, 1, 1)
+                grid.attach(keyframe_toggle_button, 2, y, 1, 1)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
@@ -729,7 +729,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     widget.set_sensitive(False)
                     self.bindings[widget] = binding
                 button = self._createResetToDefaultValueButton(prop, widget)
-                grid.attach(button, 2, y, 1, 1)
+                grid.attach(button, 3, y, 1, 1)
                 self.buttons[button] = widget
 
         self.element.connect('deep-notify', self._propertyChangedCb)
