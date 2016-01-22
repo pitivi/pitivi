@@ -211,6 +211,9 @@ class ProxyManager(GObject.Object, Loggable):
             self.info("No proxying supported")
             return False
 
+        if asset.is_image():
+            return False
+
         if force_proxying:
             self.info("Forcing proxy creation")
             return True
