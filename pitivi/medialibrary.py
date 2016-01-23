@@ -125,12 +125,12 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
         self.__automatic_proxies = Gtk.RadioButton.new_with_label(
             None, _("Create proxies when the media format is not supported officially"))
         self.__automatic_proxies.set_tooltip_markup(
-            _("Let Pitivi decide when to "
+            _("Let Pitivi decide when to"
               " create proxy files and when not. The decision will be made"
               " depending on the file format, and how well it is supported."
-              " For example H264, FLAC files contained in Quicktime will"
-              " not be proxied, but AAC, H264 contained in MPEG-TS will.\n\n"
-              " <i>This is the only option officially supported by the"
+              " For example H.264, FLAC files contained in QuickTime will"
+              " not be proxied, but AAC, H.264 contained in MPEG-TS will.\n\n"
+              "<i>This is the only option officially supported by the"
               " Pitivi developers and thus is the safest."
               "</i>"))
 
