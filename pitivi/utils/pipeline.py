@@ -361,11 +361,11 @@ class SimplePipeline(GObject.Object, Loggable):
                                   position,
                                   Gst.SeekType.NONE,
                                   -1)
-        self._addWaitingForAsyncDoneTimeout()
 
         if not res:
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
+        self._addWaitingForAsyncDoneTimeout()
         self._last_position = position
 
         self.debug("seeking successful")
