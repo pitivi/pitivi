@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2013 Jean-François Fortin Tam <nekohayo@gmail.com> -->
-<application>
- <id type="desktop">pitivi.desktop</id>
- <licence>CC-BY</licence>
- <description>
-  <_p>Pitivi is a video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on efficiency, quality and usability. It integrates well with other applications and sports a beautiful user interface designed to be powerful yet easy to learn.</_p>
-  <_p>With a non-modal editing workflow, a framerate-independent and playhead-centric timeline, Pitivi allows you quickly and accurately trim, split and review your scenes. Pitivi's ripple and roll editing features allow spending more time on storytelling and less time on "pushing clips around".</_p>
-  <_p>Some other features include:</_p>
-  <ul>
-    <_li>Accepts any file formats supported by the GStreamer multimedia framework</_li>
-    <_li>Can animate hundreds of special effects and filters with keyframable properties</_li>
-    <_li>Ability to set custom aspect ratios, framerates and rendering presets</_li>
-    <_li>Easy to use crossfades and SMPTE transitions</_li>
-    <_li>Multihead-friendly with detachable user interface components</_li>
-  </ul>
- </description>
- <screenshots>
-  <screenshot type="default">http://www.pitivi.org/i/screenshots/software_center_main.jpg</screenshot>
- </screenshots>
- <url type="homepage">http://www.pitivi.org</url>
- <kudos>
-  <kudo>HiDpiIcon</kudo>
-  <kudo>UserDocs</kudo>
-  <kudo>ModernToolkit</kudo>
-  <kudo>Notifications</kudo>
- </kudos>
- <updatecontact>nekohayo@gmail.com</updatecontact>
- <project_group>GNOME</project_group>
-</application>
+<component type="desktop">
+  <id>pitivi.desktop</id>
+  <metadata_license>CC-BY-3.0</metadata_license>
+  <project_license>LGPL-2.0+</project_license>
+  <_name>Pitivi</_name>
+  <_summary>Create and edit your own movies</_summary>
+  <description>
+    <_p>Pitivi is a video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on efficiency, quality and usability. It integrates well with other applications and sports a beautiful user interface designed to be powerful yet easy to learn.</_p>
+    <_p>With a non-modal editing workflow, a framerate-independent and playhead-centric timeline, Pitivi allows you quickly and accurately trim, split and review your scenes. Pitivi's ripple and roll editing features allow spending more time on storytelling and less time on "pushing clips around".</_p>
+    <_p>Some other features include:</_p>
+    <ul>
+      <_li>Accepts any file formats supported by the GStreamer multimedia framework</_li>
+      <_li>Can animate hundreds of special effects and filters with keyframable properties</_li>
+      <_li>Ability to set custom aspect ratios, framerates and rendering presets</_li>
+      <_li>Easy to use crossfades and SMPTE transitions</_li>
+      <_li>Multihead-friendly with detachable user interface components</_li>
+    </ul>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>http://www.pitivi.org/i/screenshots/software_center_main.jpg</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">http://www.pitivi.org</url>
+  <url type="bugtracker">https://phabricator.freedesktop.org/tag/pitivi/</url>
+  <url type="donation">http://fundraiser.pitivi.org/</url>
+  <url type="help">http://www.pitivi.org/manual/</url>
+  <kudos>
+    <kudo>HiDpiIcon</kudo>
+    <kudo>UserDocs</kudo>
+    <kudo>ModernToolkit</kudo>
+    <kudo>Notifications</kudo>
+  </kudos>
+  <update_contact>nekohayo@gmail.com</update_contact>
+  <project_group>GNOME</project_group>
+  <translation type="gettext">pitivi</translation>
+</component>
