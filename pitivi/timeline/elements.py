@@ -531,21 +531,6 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         return None
 
 
-class TitleSource(TimelineElement):
-
-    __gtype_name__ = "PitiviTitleSource"
-
-    def __init__(self, element, timeline):
-        super(TitleSource, self).__init__(element, timeline)
-        self.get_style_context().add_class("VideoUriSource")
-
-    def _getBackground(self):
-        return VideoBackground()
-
-    def do_get_preferred_height(self):
-        return ui.LAYER_HEIGHT / 2, ui.LAYER_HEIGHT
-
-
 class VideoBackground(Gtk.Box):
 
     def __init__(self):
@@ -559,6 +544,16 @@ class VideoSource(TimelineElement):
 
     def _getBackground(self):
         return VideoBackground()
+
+
+class TitleSource(VideoSource):
+
+    __gtype_name__ = "PitiviTitleSource"
+
+    def _getDefaultMixingProperty(self):
+        for spec in self._bElement.list_children_properties():
+            if spec.name == "alpha":
+                return spec
 
 
 class VideoUriSource(VideoSource):
@@ -1002,7 +997,7 @@ class TitleClip(SourceClip):
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.VIDEO:
-                self._videoSource = VideoSource(child, self.timeline)
+                self._videoSource = TitleSource(child, self.timeline)
                 child.ui = self._videoSource
                 self._elements_container.pack_start(self._videoSource, True, False, 0)
                 self._videoSource.set_visible(True)
