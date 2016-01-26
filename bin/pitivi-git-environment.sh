@@ -78,6 +78,7 @@ LD_LIBRARY_PATH=$MYPITIVI/pitivi/pitivi/libpitivi/.libs:${LD_LIBRARY_PATH:+:$LD_
 EXTRA_PATH="$PITIVI/pitivi/bin"
 EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-editing-services/tools"
 EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-editing-services/tests/tools"
+EXTRA_PATH="$EXTRA_PATH:$PITIVI/gst-transcoder/build"
 
 # The following decision has to be made before we've set any env variables,
 # otherwise the script will detect our "gst uninstalled" and think it's the
