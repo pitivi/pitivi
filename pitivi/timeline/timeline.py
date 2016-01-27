@@ -426,6 +426,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.move(self.__playhead, x, 0)
         if pipeline.playing() and x - self.hadj.get_value() > layout_width - 100:
             self.scrollToPlayhead(Gtk.Align.START)
+        if not pipeline.playing():
+            self.update_visible_overlays(position)
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
@@ -587,9 +589,30 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return False
 
+    def get_sources_at_position(self, position):
+        """
+        Returns GES.VideoSource objects at current timeline position on all layers,
+        in layer order.
+        """
+        sources = []
+        for layer in self.ges_timeline.layers:
+            clips = layer.get_clips()
+            for clip in clips:
+                start = clip.get_start()
+                duration = clip.get_duration()
+                if start <= position <= duration + start:
+                    source = clip.find_track_element(None, GES.VideoSource)
+                    sources.append(source)
+                    continue
+        return sources
+
+    def update_visible_overlays(self, position):
+        self.app.gui.viewer.target.overlay_stack.set_current_sources(self.get_sources_at_position(position))
+
     def __buttonPressEventCb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
         self.app.gui.focusTimeline()
+
         event_widget = self.get_event_widget(event)
 
         res, button = event.get_button()
