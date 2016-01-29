@@ -44,6 +44,7 @@ PIPELINE_SIGNALS = {
     "eos": (GObject.SignalFlags.RUN_LAST, None, ()),
     "error": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_STRING, GObject.TYPE_STRING)),
     "died": (GObject.SignalFlags.RUN_LAST, None, ()),
+    "async-done": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
 MAX_RECOVERIES = 3
@@ -433,6 +434,7 @@ class SimplePipeline(GObject.Object, Loggable):
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
+            self.emit("async-done")
             if self._recovery_state == self.RecoveryState.SEEKED_AFTER_RECOVERING:
                 self._recovery_state = self.RecoveryState.NOT_RECOVERING
                 self._attempted_recoveries = 0

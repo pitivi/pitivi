@@ -27,6 +27,7 @@ from gi.repository import Gdk
 from gi.repository import Gtk
 
 from pitivi.viewer.move_scale_overlay import MoveScaleOverlay
+from pitivi.viewer.title_overlay import TitleOverlay
 
 
 class OverlayStack(Gtk.Overlay):
@@ -56,8 +57,10 @@ class OverlayStack(Gtk.Overlay):
             overlay.update_from_source()
 
     def __create_overlay_for_source(self, source):
-        overlay = MoveScaleOverlay(self, source)
-
+        if type(source) == GES.TitleSource:
+            overlay = TitleOverlay(self, source)
+        else:
+            overlay = MoveScaleOverlay(self, source)
         self.add_overlay(overlay)
         self.__overlays[source] = overlay
 
