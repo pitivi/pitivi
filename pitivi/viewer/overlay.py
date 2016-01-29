@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+# Pitivi video editor
+#
+#       pitivi/viewer/overlay.py
+#
+# Copyright (c) 2016, Lubosz Sarnecki <lubosz.sarnecki@collabora.co.uk>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import numpy
+
+from gi.repository import GES
+from gi.repository import Gtk
+
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import SELECT
+
+
+class Overlay(Gtk.DrawingArea, Loggable):
+    """
+    Abstract class for viewer overlays.
+    """
+    def __init__(self, stack, source):
+        Gtk.DrawingArea.__init__(self)
+        Loggable.__init__(self)
+        self._source = source
+        self.click_source_position = None
+        self.stack = stack
+        project = stack.app.project_manager.current_project
+        self.project_size = numpy.array([project.videowidth, project.videoheight])
+
+    def _is_hovered(self):
+        return self.stack.hovered_overlay == self
+
+    def _is_selected(self):
+        return self.stack.selected_overlay == self
+
+    def _select(self):
+        self.stack.selected_overlay = self
+        self.stack.app.gui.timeline_ui.timeline.selection.setSelection([self._source], SELECT)
+        if isinstance(self._source, GES.TitleSource):
+            page = 2
+        elif isinstance(self._source, GES.VideoUriSource):
+            page = 0
+        else:
+            self.warning("Unknown clip type: %s", self._source)
+            return
+        self.stack.app.gui.context_tabs.set_current_page(page)
+
+    def _deselect(self):
+        self.stack.selected_overlay = None
+
+    def _hover(self):
+        self.stack.hovered_overlay = self
+
+    def unhover(self):
+        self.stack.hovered_overlay = None
+        self.queue_draw()
+
+    def _commit(self):
+        self.stack.app.project_manager.current_project.pipeline.commit_timeline()

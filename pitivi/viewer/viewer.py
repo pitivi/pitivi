@@ -34,6 +34,7 @@ from pitivi.utils.misc import format_ns
 from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
+from pitivi.viewer.overlay_stack import OverlayStack
 
 GlobalSettings.addConfigSection("viewer")
 GlobalSettings.addConfigOption("viewerDocked", section="viewer",
@@ -63,7 +64,6 @@ GlobalSettings.addConfigOption("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-
     """
     A wiget holding a viewer and the controls.
 
@@ -484,135 +484,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.system.uninhibitScreensaver(self.INHIBIT_REASON)
 
 
-class TransformationBox(Gtk.EventBox, Loggable):
-    def __init__(self, app):
-        Gtk.EventBox.__init__(self)
-        Loggable.__init__(self)
-
-        self.app = app
-        self.__editSource = None
-        self.__startDraggingPosition = None
-        self.__startEditSourcePosition = None
-
-        self.add_events(Gdk.EventMask.SCROLL_MASK)
-
-    def __setupEditSource(self):
-        if not self.app:
-            return
-
-        if self.__editSource:
-            return
-        elif self.app.project_manager.current_project.pipeline.getState() != Gst.State.PAUSED:
-            return
-
-        try:
-            position = self.app.project_manager.current_project.pipeline.getPosition()
-        except:
-            return False
-
-        self.__editSource = None
-        selection = self.app.project_manager.current_project.timeline.ui.selection
-        selected_videoelements = selection.getSelectedTrackElementsAtPosition(position,
-                                                                              GES.VideoSource,
-                                                                              GES.TrackType.VIDEO)
-        if len(selected_videoelements) == 1:
-            self.__editSource = selected_videoelements[0]
-
-    def do_event(self, event):
-        if event.type == Gdk.EventType.ENTER_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
-            self.__setupEditSource()
-            if self.__editSource:
-                self.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
-        elif event.type == Gdk.EventType.BUTTON_RELEASE:
-            self.__startDraggingPosition = None
-        elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
-            self.get_window().set_cursor(None)
-            self.__startDraggingPosition = None
-            self.__editSource = None
-            self.__startEditSourcePosition = None
-        elif event.type == Gdk.EventType.BUTTON_PRESS:
-            self.__setupEditSource()
-            if self.__editSource:
-                res_x, current_x = self.__editSource.get_child_property("posx")
-                res_y, current_y = self.__editSource.get_child_property("posy")
-
-                if res_x and res_y:
-                    event_widget = Gtk.get_event_widget(event)
-                    x, y = event_widget.translate_coordinates(self, event.x, event.y)
-                    self.__startEditSourcePosition = (current_x, current_y)
-                    self.__startDraggingPosition = (x, y)
-                    if type(self.__editSource) == GES.TitleSource:
-                        res_x, xpos = self.__editSource.get_child_property("xpos")
-                        res_y, ypos = self.__editSource.get_child_property("ypos")
-                        assert res_x
-                        assert res_y
-                        self.__startDraggingTitlePos = (xpos, ypos)
-        elif event.type == Gdk.EventType.MOTION_NOTIFY:
-            if self.__startDraggingPosition and self.__editSource:
-                event_widget = Gtk.get_event_widget(event)
-                x, y = event_widget.translate_coordinates(self, event.x, event.y)
-                delta_x = x - self.__startDraggingPosition[0]
-                delta_y = y - self.__startDraggingPosition[1]
-                if type(self.__editSource) == GES.TitleSource:
-                    self.__editSource.set_child_property("halignment", GES.TextHAlign.POSITION)
-                    self.__editSource.set_child_property("valignment", GES.TextVAlign.POSITION)
-                    alloc = self.get_allocation()
-                    delta_xpos = delta_x / alloc.width
-                    delta_ypos = delta_y / alloc.height
-                    xpos = max(0, min(self.__startDraggingTitlePos[0] + delta_xpos, 1))
-                    ypos = max(0, min(self.__startDraggingTitlePos[1] + delta_ypos, 1))
-                    self.__editSource.set_child_property("xpos", xpos)
-                    self.__editSource.set_child_property("ypos", ypos)
-                else:
-                    self.__editSource.set_child_property("posx",
-                                                         self.__startEditSourcePosition[0] +
-                                                         delta_x)
-
-                    self.__editSource.set_child_property("posy", self.__startEditSourcePosition[1] +
-                                                         delta_y)
-                self.app.project_manager.current_project.pipeline.commit_timeline()
-        elif event.type == Gdk.EventType.SCROLL:
-            if self.__editSource:
-                res, delta_x, delta_y = event.get_scroll_deltas()
-                if not res:
-                    res, direction = event.get_scroll_direction()
-                    if not res:
-                        self.error("Could not get scroll delta")
-                        return True
-
-                    if direction == Gdk.ScrollDirection.UP:
-                        delta_y = -1.0
-                    elif direction == Gdk.ScrollDirection.DOWN:
-                        delta_y = 1.0
-                    else:
-                        self.error("Could not handle %s scroll event" % direction)
-                        return True
-
-                delta_y = delta_y * -1.0
-                width = self.__editSource.get_child_property("width")[1]
-                height = self.__editSource.get_child_property("height")[1]
-                if event.get_state()[1] & Gdk.ModifierType.SHIFT_MASK:
-                    height += delta_y
-                elif event.get_state()[1] & Gdk.ModifierType.CONTROL_MASK:
-                    width += delta_y
-                else:
-                    width += delta_y
-                    if isinstance(self.__editSource, GES.VideoUriSource):
-                        wpercent = float(width) / float(self.__editSource.get_asset().get_stream_info().get_width())
-                        height = int(float(self.__editSource.get_asset().get_stream_info().get_height()) * float(wpercent))
-                    else:
-                        wpercent = float(width) / float(self.app.project_manager.current_project.videowidth)
-                        height = int(float(self.app.project_manager.current_project.videoheight) * float(wpercent))
-
-                self.__editSource.set_child_property("width", width)
-                self.__editSource.set_child_property("height", height)
-                self.app.project_manager.current_project.pipeline.commit_timeline()
-
-        return True
-
-
 class ViewerWidget(Gtk.AspectFrame, Loggable):
-
     """
     Widget for displaying a GStreamer video sink.
 
@@ -630,20 +502,20 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
         self._pipeline = pipeline
 
-        transformation_box = TransformationBox(app)
-        self.add(transformation_box)
-
         # We only work with a gtkglsink inside a glsinkbin
         sink = pipeline.video_sink
         try:
-            self.drawing_area = sink.props.sink.props.widget
+            sink_widget = sink.props.sink.props.widget
         except AttributeError:
-            self.drawing_area = sink.props.widget
-        self.drawing_area.show()
-        transformation_box.add(self.drawing_area)
+            sink_widget = sink.props.widget
+        sink_widget.show()
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
+
+        # Assign Viewer Overlay via Gtk.Overlay
+        self.overlay_stack = OverlayStack(app, sink_widget)
+        self.add(self.overlay_stack)
 
     def setDisplayAspectRatio(self, ratio):
         self.set_property("ratio", float(ratio))
