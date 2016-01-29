@@ -1,6 +1,6 @@
 # Pitivi video editor
 #
-#       pitivi/viewer.py
+#       pitivi/viewer/viewer.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
@@ -19,14 +19,14 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Gst
-from gi.repository import GObject
-from gi.repository import GES
-
 from gettext import gettext as _
 from time import time
+
+from gi.repository import GES
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import Gst
+from gi.repository import Gtk
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable

@@ -22,21 +22,22 @@
 # Boston, MA 02110-1301, USA.
 
 from gettext import gettext as _
+
 from gi.repository import GLib
 from gi.repository import GObject
-from gi.repository import Gst
-from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
-from gi.repository import Pango
+from gi.repository import Gst
 from gi.repository import GstPbutils
+from gi.repository import Gtk
+from gi.repository import Pango
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import uri_is_valid
 from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import beautify_length, beautify_stream, SPACING
-from pitivi.viewer import ViewerWidget
+from pitivi.viewer.viewer import ViewerWidget
 
 PREVIEW_WIDTH = 250
 PREVIEW_HEIGHT = 100

@@ -22,18 +22,17 @@
 
 import os
 import subprocess
-
-from time import time
-from urllib.parse import unquote
 from gettext import gettext as _
 from hashlib import md5
+from time import time
+from urllib.parse import unquote
 
 from gi.repository import GES
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import Gst
-from gi.repository import Gtk
 from gi.repository import GstPbutils
+from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, \
@@ -51,7 +50,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual, path_from_uri
 from pitivi.utils.ui import clear_styles, beautify_length, \
     beautify_time_delta, info_name, SPACING, TIMELINE_CSS
-from pitivi.viewer import ViewerContainer
+from pitivi.viewer.viewer import ViewerContainer
 
 
 GlobalSettings.addConfigSection("main-window")
