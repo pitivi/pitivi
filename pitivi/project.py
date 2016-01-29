@@ -1087,19 +1087,24 @@ class Project(Loggable, GES.Project):
                        error):
         if asset is None:
             asset_id = self.app.proxy_manager.getTargetUri(proxy)
-            asset = GES.Asset.request(proxy.get_extractable_type(),
-                                      asset_id)
-            if not asset:
-                for tmpasset in self.loading_assets.keys():
-                    if tmpasset.props.id == asset_id:
-                        asset = tmpasset
-                        break
-
+            if asset_id:
+                asset = GES.Asset.request(proxy.get_extractable_type(),
+                                          asset_id)
                 if not asset:
-                    self.error("Could not get the asset %s from its proxy %s", asset_id,
-                               proxy.props.id)
+                    for tmpasset in self.loading_assets:
+                        if tmpasset.props.id == asset_id:
+                            asset = tmpasset
+                            break
 
-                    return
+                    if not asset:
+                        self.error("Could not get the asset %s from its proxy %s", asset_id,
+                                   proxy.props.id)
+
+                        return
+            else:
+                self.info("%s is not a proxy asset", proxy.props.id)
+
+                return
 
         asset.proxying_error = error
         asset.creation_progress = 100
@@ -1189,6 +1194,12 @@ class Project(Loggable, GES.Project):
 
     def do_loading_error(self, error, asset_id, unused_type):
         """ vmethod, get called on "asset-loading-error"""
+        if not self.loaded:
+            self.info("Error loading asset %s while loading a project"
+                      " not updating proxy creation progress", asset_id)
+            self.__updateAssetLoadingProgress()
+            return
+
         asset = None
         for asset in self.loading_assets:
             if asset.get_id() == asset_id:

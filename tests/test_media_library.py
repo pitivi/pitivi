@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import tempfile
 
 from unittest import mock
 from gettext import gettext as _
@@ -59,7 +60,7 @@ class TestMediaLibrary(common.TestCase):
             self.medialibrary.finalize()
             self.medialibrary = None
 
-    def _customSetUp(self, settings):
+    def _customSetUp(self, settings, project_uri=None):
         # Always make sure we start with a clean medialibrary, and no other
         # is connected to some assets.
         self.clean()
@@ -69,7 +70,12 @@ class TestMediaLibrary(common.TestCase):
         self.app = common.getPitiviMock(settings)
         self.app.project_manager = ProjectManager(self.app)
         self.medialibrary = medialibrary.MediaLibraryWidget(self.app)
-        self.app.project_manager.newBlankProject(ignore_unsaved_changes=True)
+
+        if project_uri:
+            self.app.project_manager.loadProject(project_uri)
+        else:
+            self.app.project_manager.newBlankProject(ignore_unsaved_changes=True)
+
         self.app.project_manager.current_project.connect(
             "loaded", self.projectLoadedCb)
         self.mainloop.run()
@@ -187,3 +193,28 @@ class TestMediaLibrary(common.TestCase):
 
         self.assertEqual(asset.creation_progress, 100)
         self.assertEqual(asset.get_proxy(), proxy)
+
+    def testMissingUriDisplayed(self):
+        # Load a project with a missing asset.
+        unused, xges_path = tempfile.mkstemp()
+        with open(xges_path, "w") as xges:
+            xges.write("""<ges version='0.1'>
+  <project>
+    <ressources>
+      <asset id='file:///icantpossiblyexist.png' extractable-type-name='GESUriClip' />
+    </ressources>
+    <timeline>
+      <track caps='video/x-raw' track-type='4' track-id='0' />
+      <layer priority='0'>
+        <clip id='0' asset-id='file:///icantpossiblyexist.png' type-name='GESUriClip' layer-priority='0' track-types='4' start='0' duration='2590000000' inpoint='0' rate='0' />
+      </layer>
+    </timeline>
+</project>
+</ges>""")
+        uri = "file://%s" % xges_path
+
+        try:
+            self._customSetUp(None, project_uri=uri)
+            self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
+        finally:
+            os.remove(xges_path)
