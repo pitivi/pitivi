@@ -74,8 +74,8 @@ Options:
 
   -d,  --devel:      Setup a devel environment, meaning that it et you in
                      a bash environment ready to work on $APPLICATION_NAME, not that the environment
-					 will be 'read only' and you will be only able to work on $APPLICATION_NAME
-					 itself easily. To have more control, you should use the --build option.
+          will be 'read only' and you will be only able to work on $APPLICATION_NAME
+          itself easily. To have more control, you should use the --build option.
   -b,  --build:      Build $APPLICATION_NAME and its dependencies inside a xdg-app environment.
   -u,  --update:     Update the runtime/sdk/app and rebuild the development environment if needed
   -n,  --no-update:  Do not update anything (By default we update bundles when not in development mode)
@@ -128,8 +128,8 @@ do
     shift
     ;;
     *) # unknown option
-	printf "$RED-> Unknown option $i$NC\n\n$HELP"
-	exit
+    printf "$RED-> Unknown option $i$NC\n\n$HELP"
+    exit
     ;;
   esac
 done
@@ -182,9 +182,9 @@ then
 
   if [ -n "$RUNTIME_INSTALLED" ]
   then
-	printf "$GREEN\n==========\nUpdating $APPLICATION_NAME \n==========$NC\n\n"
+    printf "$GREEN\n==========\nUpdating $APPLICATION_NAME \n==========$NC\n\n"
   else
-	printf "$GREEN\n==========\nInstalling $APPLICATION_NAME \n==========$NC\n\n"
+    printf "$GREEN\n==========\nInstalling $APPLICATION_NAME \n==========$NC\n\n"
   fi
 fi
 
@@ -193,15 +193,15 @@ if [ -n "$DEVEL" ]
 then
   if [ -z "$SDK_INSTALLED" ]
   then
-	echo "-> Installing $SDK_NAME $SDK_VERSION"
-	xdg-app add-remote  --no-gpg-verify  --user $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
-	xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
+    echo "-> Installing $SDK_NAME $SDK_VERSION"
+    xdg-app add-remote  --no-gpg-verify  --user $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+    xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
   if [ -n "$LOCAL" ] && [ -z "$SDK_LOCAL_INSTALLED" ]
   then
-	echo "-> Installing $SDK_NAME.Locale.$LOCAL"
-	xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+    echo "-> Installing $SDK_NAME.Locale.$LOCAL"
+    xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
   fi
 fi
 
@@ -313,19 +313,19 @@ then
 
   if [ -z $BUILD ]
   then
-	 if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
-	 then
-		cd $GITREPO
-		xdg-app run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
-		xdg-app run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
-	  fi
+    if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
+    then
+      cd $GITREPO
+      xdg-app run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
+      xdg-app run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
+    fi
 
-	  echo "=============================="
-	  echo "Entering prebuilt environment "
-	  echo "=============================="
-	  xdg-app run --branch=$BRANCH -d --command=$BUILDDIR/enter_env $APPLICATION_REF_NAME
+    echo "=============================="
+    echo "Entering prebuilt environment "
+    echo "=============================="
+    xdg-app run --branch=$BRANCH -d --command=$BUILDDIR/enter_env $APPLICATION_REF_NAME
 
-	  exit $?
+    exit $?
   fi
 
   if [ -n $BUILD ] && [ ! -f $APPDIR/metadata ]
@@ -336,50 +336,53 @@ then
   if [ -n "$UPDATE" ]
   then
 
-	# Update values in the json template
-	JSON=$BUILDDIR/$APP_BUILD_NAME.json
-	sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $APPLICATION_NAME.template.json > $JSON
+  # Update values in the json template
+  JSON=$BUILDDIR/$APP_BUILD_NAME.json
+  sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $APPLICATION_NAME.template.json > $JSON
 
-    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
-    xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $APPDIR $JSON || exit 1
-	if [ -z $BUNDLE ]
-	then
-	  echo "-> Building $APPLICATION_NAME from current repository"
-	  cd $GITREPO && xdg-app build --env=PYTHON=python3 $APPDIR ./autogen.sh --prefix=/app || exit 1
-	  xdg-app build --env=PYTHON=python3 $APPDIR make || exit 1
-	fi
+  echo "-> Removing $APPDIR"
+  rm -Rf $APPDIR
+
+  echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
+  xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $APPDIR $JSON || exit 1
+  if [ -z $BUNDLE ]
+  then
+    echo "-> Building $APPLICATION_NAME from current repository"
+    cd $GITREPO && xdg-app build --env=PYTHON=python3 $APPDIR ./autogen.sh --prefix=/app || exit 1
+    xdg-app build --env=PYTHON=python3 $APPDIR make || exit 1
   fi
+fi
 
   # Launch development environment if we are not creating a bundle
   if [ -z $BUNDLE ]
   then
-	echo "=============================="
-	echo "Entering own built environment"
-	echo "=============================="
-	xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $BUILDDIR/enter_env
+    echo "=============================="
+    echo "Entering own built environment"
+    echo "=============================="
+    xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $BUILDDIR/enter_env
 
-	exit $?
+    exit $?
   fi
 else
-   if [ -n "$INSTALLER" ]
-   then
-	  printf "$GREEN
+  if [ -n "$INSTALLER" ]
+  then
+    printf "$GREEN
 ====>$APPLICATION_DESKTOP_NAME is now ready to be used, you can launch it through the application launcher, \
 as any other application. $NC
 
 To update the application, you can re launch that installer.\n\n"
-   fi
+  fi
 
-   echo "-> Running $APPLICATION_REF_NAME $BRANCH..."
-   xdg-app run --branch=$BRANCH $APPLICATION_REF_NAME
+  echo "-> Running $APPLICATION_REF_NAME $BRANCH..."
+  xdg-app run --branch=$BRANCH $APPLICATION_REF_NAME
 
-   exitcode=$?
-   if [ -n "$INSTALLER" ]
-   then
-	 printf "\n\nYou can now exit that terminal."
-   fi
+  exitcode=$?
+  if [ -n "$INSTALLER" ]
+  then
+    printf "\n\nYou can now exit that terminal."
+  fi
 
-   exit $exitcode
+  exit $exitcode
 fi
 
 
