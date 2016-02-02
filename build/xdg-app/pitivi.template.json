@@ -178,6 +178,16 @@
             ]
         },
         {
+            "name": "frei0r-plugin",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://files.dyne.org/frei0r/releases/frei0r-plugins-1.4.tar.gz",
+                    "sha256": "8470fcabde9f341b729be3be16385ffc8383d6f3328213907a43851b6e83be57"
+                }
+            ]
+        },
+        {
             "name": "gst-plugins-bad",
             "sources": [
                 {
