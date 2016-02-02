@@ -33,6 +33,7 @@ import re
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gst
+from gi.repository import GstController
 from gi.repository import GES
 from gi.repository import Pango
 from gi.repository import GObject
@@ -707,13 +708,20 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 grid.attach(label, 0, y, 1, 1)
                 grid.attach(widget, 1, y, 1, 1)
 
-            controllable = self.isControllable and not isinstance(widget, DefaultWidget)
-            if (controllable and
-                    not isinstance(widget, ToggleWidget) and
-                    not isinstance(widget, ChoiceWidget)):
-                keyframe_toggle_button = self._createKeyframeToggleButton(prop)
-                self.keyframeToggleButtons[keyframe_toggle_button] = widget
-                grid.attach(keyframe_toggle_button, 2, y, 1, 1)
+            controllable = self.isControllable and \
+                not isinstance(widget, DefaultWidget)
+            if controllable and not isinstance(widget, (ToggleWidget,
+                                                        ChoiceWidget)):
+                res, element, pspec = self.element.lookup_child(prop.name)
+                assert(res)
+                binding = GstController.DirectControlBinding.new(
+                    element, prop.name,
+                    GstController.InterpolationControlSource())
+
+                if binding.pspec:
+                    keyframe_toggle_button = self._createKeyframeToggleButton(prop)
+                    self.keyframeToggleButtons[keyframe_toggle_button] = widget
+                    grid.attach(keyframe_toggle_button, 2, y, 1, 1)
 
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
