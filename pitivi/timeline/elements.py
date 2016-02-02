@@ -4,6 +4,7 @@
 #       pitivi/timeline/elements.py
 #
 # Copyright (c) 2013, Mathieu Duponchelle <mduponchelle1@gmail.com>
+# Copyright (c) 2016, Thibault Saunier <tsaunier@gnome.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -173,8 +174,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if height <= 0:
             return
 
+        ylim_min = -(KEYFRAME_LINE_HEIGHT / height)
         ylim_max = (self.__ylim_max * height) / (height - KEYFRAME_LINE_HEIGHT)
-        self.__ax.set_ylim(self.__ylim_min, ylim_max)
+        self.__ax.set_ylim(ylim_min, ylim_max)
 
     def __heightRequestCb(self, unused_self, unused_pspec):
         self.__computeYlim()
@@ -290,8 +292,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if event.ydata is not None and event.xdata is not None:
                 keyframe_ts = self.__computeKeyframeNewTimestamp(event)
                 self.__source.unset(int(self.__offset))
-                self.__source.set(keyframe_ts,
-                                  min(self.__ylim_max, event.ydata))
+
+                value = max(self.__ylim_min, min(self.__ylim_max, event.ydata))
+                self.__source.set(keyframe_ts, value)
                 self.__offset = keyframe_ts
                 self.__setTooltip(event)
 
