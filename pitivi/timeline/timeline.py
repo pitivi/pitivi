@@ -672,7 +672,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
             layer, unused_on_sep = self._getLayerAt(
-                y, prefer_bLayer=self.__moving_layer, past_middle_when_adjacent=True)
+                y, prefer_bLayer=self.__moving_layer,
+                past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
                 self.moveLayer(self.__moving_layer, priority)
@@ -768,22 +769,28 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def __dragMotionCb(self, unused_widget, context, x, y, timestamp):
         target = self.drag_dest_find_target(context, None)
+        if not target:
+            Gdk.drag_status(context, 0, timestamp)
+            return True
+
         if not self.dropDataReady:
             # We don't know yet the details of what's being dragged.
             # Ask for the details.
             self.drag_get_data(context, target, timestamp)
-        else:
+        elif target.name() == URI_TARGET_ENTRY.target:
             if not self.__createClips(x, y):
                 # The clips are already created.
                 self.__dragUpdate(self, x, y)
+
         Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
         return True
 
-    def __dragLeaveCb(self, unused_widget, unused_context, unused_timestamp):
+    def __dragLeaveCb(self, unused_widget, context, unused_timestamp):
         # De-highlight the separators. We still need to remember them.
         # See how __on_separators is used in __dragDropCb for details
         self._setSeparatorsPrelight(False)
 
+        target = self.drag_dest_find_target(context, None)
         if self.draggingElement:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.current_group.get_children(False)]
@@ -800,7 +807,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.draggingElement = None
             self.__got_dragged = False
             self._createdClips = False
-        else:
+        elif target == URI_TARGET_ENTRY.target:
             self.cleanDropData()
 
     def cleanDropData(self):
