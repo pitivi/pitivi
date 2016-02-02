@@ -44,7 +44,8 @@ APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 SDK_REPO_NAME=`xdg-app list-remotes --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
 SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
-BUILDDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})" )" && pwd )"
+BUILDDIR=$PWD
+SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})" )" && pwd )"
 REPO=$BUILDDIR/xdg-app-repos/$APPLICATION_NAME
 
 # Some terminal output color values
@@ -126,10 +127,6 @@ do
     --use-remote)
     USE_REMOTE=true
     shift
-    ;;
-    *) # unknown option
-    printf "$RED-> Unknown option $i$NC\n\n$HELP"
-    exit
     ;;
   esac
 done
@@ -246,7 +243,9 @@ fi
 
 if [ -z "$USE_REMOTE" ]
 then
+  cd $SCRIPTDIR
   DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
+  cd -
   if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
   then
     DEVELOPMENT_BRANCHNAME="master"
@@ -264,7 +263,8 @@ if [ -n "$BUNDLE" ]
 then
   APPDIR=$BUILDDIR/$APP_BUILD_NAME/
 else
-  APPDIR=$BUILDDIR/../devel/
+  APPDIR=$BUILDDIR/prefix
+  DEPSDIR=$BUILDDIR/
 fi
 
 if [ -n "$CLEAN" ]
@@ -307,7 +307,9 @@ then
 
   if [ -z "$USE_REMOTE" ]
   then
+    cd $SCRIPTDIR
     GITREPO="$(git rev-parse --show-toplevel)"
+    cd -
     GITREPO_URI="file://$GITREPO"
   fi
 
@@ -323,8 +325,8 @@ then
     echo "=============================="
     echo "Entering prebuilt environment "
     echo "=============================="
-    xdg-app run --branch=$BRANCH -d --command=$BUILDDIR/enter_env $APPLICATION_REF_NAME
 
+    xdg-app run --branch=$BRANCH -d --command=$SCRIPTDIR/enter_env $APPLICATION_REF_NAME
     exit $?
   fi
 
@@ -337,13 +339,14 @@ then
   then
 
   # Update values in the json template
-  JSON=$BUILDDIR/$APP_BUILD_NAME.json
-  sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $APPLICATION_NAME.template.json > $JSON
+  JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
+  sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $SCRIPTDIR/$APPLICATION_NAME.template.json > $JSON
 
   echo "-> Removing $APPDIR"
   rm -Rf $APPDIR
 
   echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
+  cd $SCRIPTDIR
   xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $APPDIR $JSON || exit 1
   if [ -z $BUNDLE ]
   then
@@ -356,10 +359,27 @@ fi
   # Launch development environment if we are not creating a bundle
   if [ -z $BUNDLE ]
   then
-    echo "=============================="
-    echo "Entering own built environment"
-    echo "=============================="
-    xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $BUILDDIR/enter_env
+    if [ -z "$*" ]
+    then
+      echo "=============================="
+      echo "Entering own built environment"
+      echo "=============================="
+
+      cd $SCRIPTDIR
+      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $SCRIPTDIR/enter_env
+    else
+
+      echo "#!/bin/sh" > $SCRIPTDIR/tmpscript
+      echo $* >> $SCRIPTDIR/tmpscript
+      chmod +x $SCRIPTDIR/tmpscript
+
+      echo "Run:"
+      echo "-----"
+      cat $SCRIPTDIR/tmpscript
+      echo "-----"
+
+      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $SCRIPTDIR/tmpscript
+    fi
 
     exit $?
   fi
