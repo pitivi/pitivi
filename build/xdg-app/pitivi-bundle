@@ -55,19 +55,6 @@ NC='\033[0m'
 
 cd $BUILDDIR
 
-_commandline_args=("$@")
-_document() {
-  help="$1"
-  for arg in "${_commandline_args[@]}"; do
-    if [ "x$arg" = "x-h" -o "x$arg" = "x--help" ]; then
-      echo "$help"
-      exit
-    elif [ "x$arg" = "x--" ]; then
-      break
-    fi
-  done
-}
-
 HELP="Helper script to work with xdg-app for $APPLICATION_NAME
 
 Options:
@@ -87,11 +74,14 @@ Options:
 
 You can find more information about xdg-app at: https://wiki.gnome.org/Projects/SandboxedApps
 "
-_document $HELP
 
 for i in "$@"
 do
   case $i in
+    -h|--help)
+    echo "$HELP"
+    exit 0
+    ;;
     -d|--devel)
     DEVEL=true
     shift
@@ -176,6 +166,15 @@ fi
 if [ -z "$DEVEL" ] && [ -z "$NO_UPDATE" ]
 then
   UPDATE=true
+
+  if [ -n "$*" ]
+  then
+    echo "Unknown arguments: $*"
+    echo ""
+    echo "$HELP"
+
+    exit 1
+  fi
 
   if [ -n "$RUNTIME_INSTALLED" ]
   then
