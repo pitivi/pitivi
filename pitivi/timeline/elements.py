@@ -101,6 +101,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__source.connect("value-removed", self.__controlSourceChangedCb)
         self.__source.connect("value-changed", self.__controlSourceChangedCb)
         self.__propertyName = binding.props.name
+        self.__paramspec = binding.pspec
         self.__resetTooltip()
         self.get_style_context().add_class("KeyframeCurve")
 
@@ -250,6 +251,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if event.xdata:
             res, value = self.__source.control_source_get_value(event.xdata)
             assert res
+            pmin = self.__paramspec.minimum
+            pmax = self.__paramspec.maximum
+            value = value * (pmax - pmin) + pmin
             self.set_tooltip_markup(_("Property: %s\nTimestamp: %s\nValue: %s")
                                     % (self.__propertyName,
                                        Gst.TIME_ARGS(event.xdata),
