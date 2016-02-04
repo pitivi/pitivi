@@ -75,6 +75,21 @@
             ]
         },
         {
+            "name": "setuptools",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/source/s/setuptools/setuptools-19.7.tar.gz",
+                    "sha256": "9e0783f3e6b736530a84980dce99fb0f01dafcd31b3f600cde2aa446f6f77cc0"
+                },
+                {
+                    "type": "file",
+                    "path": "setuptools-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
             "name": "ipdb",
             "build-options" : {
               "build-args": ["--share=network"]

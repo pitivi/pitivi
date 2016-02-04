@@ -2,14 +2,11 @@
 
 FLAGS="$@"
 
-./install_meson.py $FLAGS
-
 cat <<EOF > Makefile
 all:
 	echo "Nothing"
 
 install:
-	echo "Nothing"
+	python3 setup.py install --prefix=/app/
 
 EOF
-
