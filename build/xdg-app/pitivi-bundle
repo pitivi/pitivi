@@ -210,8 +210,8 @@ then
 fi
 if [ -n "$LOCAL" ] && [ -z "$RUNTIME_LOCAL_INSTALLED" ]
 then
-echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
-    xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+  echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
+  xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
 fi
 
 # Update runtimes if needed
@@ -244,7 +244,7 @@ if [ -z "$USE_REMOTE" ]
 then
   cd $SCRIPTDIR
   DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
-  cd -
+  cd - > /dev/null
   if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
   then
     DEVELOPMENT_BRANCHNAME="master"
@@ -308,7 +308,7 @@ then
   then
     cd $SCRIPTDIR
     GITREPO="$(git rev-parse --show-toplevel)"
-    cd -
+    cd - > /dev/null
     GITREPO_URI="file://$GITREPO"
   fi
 
@@ -371,11 +371,6 @@ fi
       echo "#!/bin/sh" > $SCRIPTDIR/tmpscript
       echo $* >> $SCRIPTDIR/tmpscript
       chmod +x $SCRIPTDIR/tmpscript
-
-      echo "Run:"
-      echo "-----"
-      cat $SCRIPTDIR/tmpscript
-      echo "-----"
 
       xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $SCRIPTDIR/tmpscript
     fi
