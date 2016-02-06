@@ -7,10 +7,16 @@
 # application
 # ------------------------------------------- #
 
+# Where to build the XDG_APP
+XDGAPP_ENVPATH=${XDGAPP_ENVPATH:-$HOME/$APPLICATION-xdg-app}
+
 # The name of the bundled application (must respect xdg-app application naming convention).
 APPLICATION_REF_NAME=org.pitivi.Pitivi
 # The usual application name
 APPLICATION_NAME=pitivi
+# Local path to the application repository
+APPLICATION_REPOSITORY=$XDGAPP_ENVPATH/$APPLICATION_NAME
+
 # The name given to the application in the .desktop file
 APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
 # The default branch to use and create if generating the bundle
@@ -19,8 +25,6 @@ BRANCH="master"
 # The URL of the bundle remote repository
 APPLICATION_XDG_APP_REPO=http://people.freedesktop.org/~tsaunier/xdg-app-repos/pitivi/
 
-# The URL of the bundle remote repository
-APPLICATION_GIT_REPO=https://git.gnome.org/browse/pitivi
 # The name to give to the repository if it is not registered in xdg-app yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
 
@@ -40,20 +44,17 @@ SDK_DEFAULT_REPO_NAME=gnome
 # Computation of actual variable values
 APPLICATION_REPO_NAME=`xdg-app list-remotes --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
+SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
 
 SDK_REPO_NAME=`xdg-app list-remotes --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
 SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
-BUILDDIR=$PWD
-SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})" )" && pwd )"
-REPO=$BUILDDIR/xdg-app-repos/$APPLICATION_NAME
+REPO=$XDGAPP_ENVPATH/xdg-app-repos/$APPLICATION_NAME
 
 # Some terminal output color values
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
-
-cd $BUILDDIR
 
 HELP="Helper script to work with xdg-app for $APPLICATION_NAME
 
@@ -242,7 +243,7 @@ fi
 
 if [ -z "$USE_REMOTE" ]
 then
-  cd $SCRIPTDIR
+  cd $APPLICATION_REPOSITORY
   DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
   cd - > /dev/null
   if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
@@ -252,26 +253,26 @@ then
   else
     APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
   fi
+  LOCAL_REPOS_PATH=$XDGAPP_ENVPATH
 else
-  DEVELOPMENT_BRANCHNAME=master
+  DEVELOPMENT_BRANCHNAME=${BRANCH:-master}
   APP_BUILD_NAME=$APPLICATION_NAME
-  GITREPO_URI=$APPLICATION_GIT_REPO
+. LOCAL_REPOS_PATH=/nowhere/really
 fi
 
 if [ -n "$BUNDLE" ]
 then
-  APPDIR=$BUILDDIR/$APP_BUILD_NAME/
+  PREFIX=$XDGAPP_ENVPATH/$APP_BUILD_NAME/
 else
-  APPDIR=$BUILDDIR/prefix
-  DEPSDIR=$BUILDDIR/
+  PREFIX=$XDGAPP_ENVPATH/prefix
 fi
 
 if [ -n "$CLEAN" ]
 then
   echo "Cleaning environment..."
 
-  echo "-> Removing $APPDIR"
-  rm -Rf $APPDIR
+  echo "-> Removing $PREFIX"
+  rm -Rf $PREFIX
 
   echo "-> Removing .xdg-app-builder"
   rm -Rf .xdg-app-builder
@@ -285,7 +286,7 @@ then
    then
      echo "Installing $APPLICATION_REF_NAME $BRANCH..."
 
-     xdg-app install-app --user $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
+     xdg-app install --user $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
    fi
 
    if [ -n "$UPDATE" ]
@@ -298,25 +299,11 @@ fi
 
 if [ -n "$DEVEL" ]
 then
-  XDG_APP_BUILD_OPTIONS="--keep-build-dirs"
-  if [ -z $BUNDLE ]
-  then
-    XDG_APP_BUILD_OPTIONS=" $XDG_APP_BUILD_OPTIONS --build-only"
-  fi
-
-  if [ -z "$USE_REMOTE" ]
-  then
-    cd $SCRIPTDIR
-    GITREPO="$(git rev-parse --show-toplevel)"
-    cd - > /dev/null
-    GITREPO_URI="file://$GITREPO"
-  fi
-
   if [ -z $BUILD ]
   then
     if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
     then
-      cd $GITREPO
+      cd $APPLICATION_REPOSITORY
       xdg-app run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
       xdg-app run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
     fi
@@ -329,31 +316,38 @@ then
     exit $?
   fi
 
-  if [ -n $BUILD ] && [ ! -f $APPDIR/metadata ]
+  if [ -n $BUILD ] && [ ! -f $PREFIX/metadata ]
   then
     UPDATE=true
+    echo "Updating env $PREFIX"
   fi
 
   if [ -n "$UPDATE" ]
   then
+    # Update values in the json template
+    JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
+    $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH
 
-  # Update values in the json template
-  JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
-  sed -e "s/\$GITREPO/$(echo $GITREPO_URI | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/" -e "s/\$BRANCHNAME/$DEVELOPMENT_BRANCHNAME/" $SCRIPTDIR/$APPLICATION_NAME.template.json > $JSON
+    echo "-> Removing $PREFIX"
+    rm -Rf $PREFIX
 
-  echo "-> Removing $APPDIR"
-  rm -Rf $APPDIR
+    XDG_APP_BUILD_OPTIONS="--keep-build-dirs"
+    if [ -z $BUNDLE ]
+    then
+      XDG_APP_BUILD_OPTIONS=" $XDG_APP_BUILD_OPTIONS --build-only"
+    fi
 
-  echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
-  cd $SCRIPTDIR
-  xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $APPDIR $JSON || exit 1
-  if [ -z $BUNDLE ]
-  then
-    echo "-> Building $APPLICATION_NAME from current repository"
-    cd $GITREPO && xdg-app build --env=PYTHON=python3 $APPDIR ./autogen.sh --prefix=/app || exit 1
-    xdg-app build --env=PYTHON=python3 $APPDIR make || exit 1
+    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
+    cd $SCRIPTDIR
+    xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
+
+    if [ -z $BUNDLE ]
+    then
+      echo "-> Building $APPLICATION_NAME from current repository"
+      cd $APPLICATION_REPOSITORY && xdg-app build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
+      xdg-app build --env=PYTHON=python3 $PREFIX make || exit 1
+    fi
   fi
-fi
 
   # Launch development environment if we are not creating a bundle
   if [ -z $BUNDLE ]
@@ -365,14 +359,14 @@ fi
       echo "=============================="
 
       cd $SCRIPTDIR
-      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $SCRIPTDIR/enter_env
+      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $PREFIX $SCRIPTDIR/enter_env
     else
 
       echo "#!/bin/sh" > $SCRIPTDIR/tmpscript
       echo $* >> $SCRIPTDIR/tmpscript
       chmod +x $SCRIPTDIR/tmpscript
 
-      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $APPDIR $SCRIPTDIR/tmpscript
+      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $PREFIX $SCRIPTDIR/tmpscript
     fi
 
     exit $?
@@ -406,7 +400,7 @@ then
   mkdir -p $REPO
 
   echo "Exporting repo $REPO $DEVELOPMENT_BRANCHNAME"
-  xdg-app build-export $REPO $APPDIR $DEVELOPMENT_BRANCHNAME || exit 1
+  xdg-app build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
   xdg-app repo-update $REPO || exit 1
