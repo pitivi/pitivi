@@ -1,0 +1,33 @@
+#!/bin/sh
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+which meson > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    echo "You should install mesonbuild to build gst-transcoder: http://mesonbuild.com/"
+    echo "You can simply install it with:"
+    echo "    $ sudo pip3 install meson"
+
+    exit 1
+fi
+
+rm -Rf build > /dev/null 2>&1
+mkdir build/ && cd build && meson ../ $@
+
+cat <<EOF > $DIR/Makefile
+all:
+	cd build && ninja
+
+install:
+	chmod 775 /app/lib
+	chmod 775 /app/bin
+	chmod 775 /app/lib/pkgconfig
+	cd build && ninja install
+
+clean:
+	rm -Rf build
+	rm Makefile
+
+EOF
+

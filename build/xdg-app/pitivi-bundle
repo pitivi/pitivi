@@ -262,7 +262,7 @@ then
 else
   DEVELOPMENT_BRANCHNAME=${BRANCH:-master}
   APP_BUILD_NAME=$APPLICATION_NAME
-. LOCAL_REPOS_PATH=/nowhere/really
+  LOCAL_REPOS_PATH=/nowhere/really
 fi
 
 if [ -n "$BUNDLE" ]

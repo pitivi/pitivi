@@ -262,6 +262,9 @@
         {
 
             "name": "meson",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
             "sources": [
                 {
                     "type": "git",
@@ -283,6 +286,11 @@
                 {
                     "type": "git",
                     "url": "https://github.com/thiblahute/gst-transcoder.git"
+                },
+                {
+                    "type": "file",
+                    "path": "gst-transcoder-configure",
+                    "dest-filename": "configure"
                 }
             ]
         },

@@ -7,8 +7,7 @@ all:
 	echo "Nothing"
 
 install:
-	./install_meson.py $FLAGS
-
+	pip3 install --install-option="--prefix=/app/" meson==0.29
 EOF
 
 
