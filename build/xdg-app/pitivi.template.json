@@ -267,12 +267,6 @@
             },
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/mesonbuild/meson.git",
-                    "branch": "0.28.0"
-
-                },
-                {
                     "type": "file",
                     "path": "meson-configure",
                     "dest-filename": "configure"

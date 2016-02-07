@@ -20,9 +20,6 @@ all:
 	cd build && ninja
 
 install:
-	chmod 775 /app/lib
-	chmod 775 /app/bin
-	chmod 775 /app/lib/pkgconfig
 	cd build && ninja install
 
 clean:
