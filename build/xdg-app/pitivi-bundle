@@ -51,6 +51,11 @@ SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
 REPO=$XDGAPP_ENVPATH/xdg-app-repos/$APPLICATION_NAME
 
+# ------------------------------------------- #
+XDG_APP_INSTALL="xdg-app install --user "
+XDG_APP_UPDATE="xdg-app update --user "
+XDG_APP_ADD_REMOTE="xdg-app add-remote --no-gpg-verify --user "
+
 # Some terminal output color values
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -191,14 +196,14 @@ then
   if [ -z "$SDK_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME $SDK_VERSION"
-    xdg-app add-remote  --no-gpg-verify  --user $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
-    xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
+    $XDG_APP_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
   if [ -n "$LOCAL" ] && [ -z "$SDK_LOCAL_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME.Locale.$LOCAL"
-    xdg-app install-runtime --user $SDK_REPO_NAME $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
   fi
 fi
 
@@ -206,13 +211,13 @@ if [ -z "$RUNTIME_INSTALLED" ]
 then
   echo "-> Installing $RUNTIME_NAME $SDK_VERSION $RUNTIME_INSTALLED"
 
-  xdg-app add-remote  --no-gpg-verify  --user $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
-  xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
+  $XDG_APP_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
 fi
 if [ -n "$LOCAL" ] && [ -z "$RUNTIME_LOCAL_INSTALLED" ]
 then
   echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
-  xdg-app install-runtime --user $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
 fi
 
 # Update runtimes if needed
@@ -220,23 +225,23 @@ if [ -n "$UPDATE" ]
 then
   echo "-> Updating $RUNTIME_NAME $SDK_VERSION"
 
-  xdg-app update-runtime --user $RUNTIME_NAME $SDK_VERSION || exit 1
+  $XDG_APP_UPDATE $RUNTIME_NAME $SDK_VERSION || exit 1
 
   if [ -n "$LOCAL" ]
   then
     echo "-> Updating $RUNTIME_NAME.Locale.$LOCAL"
-    xdg-app update-runtime --user $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+    $XDG_APP_UPDATE $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
   fi
 
   if [ -n "$DEVEL" ]
   then
     echo "-> Updating $SDK_NAME $SDK_VERSION"
-    xdg-app update-runtime --user $SDK_NAME $SDK_VERSION || exit 1
+    $XDG_APP_UPDATE $SDK_NAME $SDK_VERSION || exit 1
 
     if [ -n "$LOCAL" ]
     then
       echo "-> Updating $SDK_NAME.Locale.$LOCAL $SDK_VERSION"
-      xdg-app update-runtime --user $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+      $XDG_APP_UPDATE $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
     fi
   fi
 fi
@@ -280,20 +285,20 @@ fi
 
 if [ -z $DEVEL ] || [ -z $BUILD ]
 then
-   xdg-app add-remote --user --no-gpg-verify $APPLICATION_REPO_NAME $APPLICATION_XDG_APP_REPO > /dev/null 2>&1
+   $XDG_APP_ADD_REMOTE $APPLICATION_REPO_NAME $APPLICATION_XDG_APP_REPO > /dev/null 2>&1
 
    if [ -z "$APP_INSTALLED" ]
    then
      echo "Installing $APPLICATION_REF_NAME $BRANCH..."
 
-     xdg-app install --user $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
+     $XDG_APP_INSTALL $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
    fi
 
    if [ -n "$UPDATE" ]
    then
      echo "-> Updating $APPLICATION_REF_NAME $BRANCH..."
 
-     xdg-app update-app --user $APPLICATION_REF_NAME $BRANCH
+     $XDG_APP_UPDATE $APPLICATION_REF_NAME $BRANCH
    fi
 fi
 
@@ -403,7 +408,7 @@ then
   xdg-app build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
-  xdg-app repo-update $REPO || exit 1
+  xdg-app build-update-repo $REPO || exit 1
 
   echo "DONE!"
 fi
