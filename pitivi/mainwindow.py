@@ -684,12 +684,13 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         chooser.add_filter(default)
 
         response = chooser.run()
+        uri = chooser.get_uri()
+        chooser.destroy()
         if response == Gtk.ResponseType.OK:
-            self.app.project_manager.loadProject(chooser.get_uri())
+            self.app.project_manager.loadProject(uri)
         else:
             self.info("User cancelled loading a new project")
             self.app.welcome_wizard.show()
-        chooser.destroy()
 
     def _canLoadUri(self, filterinfo, unused_uri):
         try:
