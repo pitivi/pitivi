@@ -147,16 +147,15 @@ class StartUpWizard(object):
         """Handle the failure of a project open operation."""
         self.show()
 
-    def _projectLoadedCb(self, project_manager, unused_project, fully_loaded):
+    def _projectLoadedCb(self, project_manager, unused_project):
         """
         Handle the success of a project load operation.
 
         @type project_manager: L{ProjectManager}
         """
-        if fully_loaded:
-            project_manager.disconnect_by_func(self._projectFailedCb)
-            project_manager.disconnect_by_func(self._projectLoadedCb)
-            project_manager.disconnect_by_func(self._projectLoadingCb)
+        project_manager.disconnect_by_func(self._projectFailedCb)
+        project_manager.disconnect_by_func(self._projectLoadedCb)
+        project_manager.disconnect_by_func(self._projectLoadingCb)
 
     def _projectLoadingCb(self, unused_project_manager, unused_project):
         """Handle the start of a project load operation."""

@@ -58,7 +58,7 @@ class Pitivi(Gtk.Application, Loggable):
     @ivar project_manager: The project manager object used in the application
     @type project_manager: L{ProjectManager}
     @ivar settings: Application-wide settings.
-    @type settings: L{GlobalSettings}.
+    @type settings: L{pitivi.settings.GlobalSettings}.
     """
 
     __gsignals__ = {
@@ -260,7 +260,7 @@ class Pitivi(Gtk.Application, Loggable):
     def _newProjectLoadingCb(self, unused_project_manager, uri):
         self._setScenarioFile(uri)
 
-    def _newProjectLoaded(self, unused_project_manager, project, unused_fully_loaded):
+    def _newProjectLoaded(self, unused_project_manager, project):
         self.action_log.clean()
 
         self.timeline_log_observer.startObserving(project.timeline)

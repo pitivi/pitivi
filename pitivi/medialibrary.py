@@ -1423,7 +1423,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._welcome_infobar.show_all()
         self._connectToProject(project)
 
-    def _newProjectLoadedCb(self, unused_project_manager, project, unused_fully_ready):
+    def _newProjectLoadedCb(self, unused_project_manager, project):
         if self._project is not project:
             self._project = project
             self.storemodel.clear()

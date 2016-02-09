@@ -1267,7 +1267,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def setProjectManager(self, projectmanager):
         if self._projectmanager is not None:
-            self._projectmanager.disconnect_by_func(self._projectChangedCb)
+            self._projectmanager.disconnect_by_func(self._projectLoadedCb)
 
         self._projectmanager = projectmanager
 
@@ -1275,7 +1275,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             projectmanager.connect(
                 "new-project-created", self._projectCreatedCb)
             projectmanager.connect(
-                "new-project-loaded", self._projectChangedCb)
+                "new-project-loaded", self._projectLoadedCb)
 
     def zoomFit(self):
         self.app.write_action("zoom-fit", {"optional-action-type": True})
@@ -1811,7 +1811,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ges_timeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
-    def _projectChangedCb(self, unused_app, project, unused_fully_loaded):
+    def _projectLoadedCb(self, unused_app, project):
         """
         When a project is loaded, we connect to its pipeline
         """

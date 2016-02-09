@@ -247,7 +247,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             "new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
 
-    def _newProjectLoadedCb(self, unused_app, project, unused_fully_loaded):
+    def _newProjectLoadedCb(self, unused_app, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None
@@ -560,7 +560,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.app.project_manager.connect(
             "new-project-loaded", self._newProjectLoadedCb)
 
-    def _newProjectLoadedCb(self, unused_app, project, unused_fully_loaded):
+    def _newProjectLoadedCb(self, unused_app, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None

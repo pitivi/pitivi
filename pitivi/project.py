@@ -173,7 +173,7 @@ class ProjectManager(GObject.Object, Loggable):
         "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (str,)),
         "new-project-created": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
-        "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "save-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
         "project-saved": (GObject.SIGNAL_RUN_LAST, None, (object, str)),
         "closing-project": (GObject.SIGNAL_RUN_LAST, bool, (object,)),
@@ -578,7 +578,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return True
 
-    def newBlankProject(self, emission=True, ignore_unsaved_changes=False):
+    def newBlankProject(self, ignore_unsaved_changes=False):
         """
         Start up a new blank project.
 
@@ -594,8 +594,7 @@ class ProjectManager(GObject.Object, Loggable):
                 return False
 
         self.__missing_uris = False
-        if emission:
-            self.emit("new-project-loading", None)
+        self.emit("new-project-loading", None)
         project = Project(self.app, name=DEFAULT_NAME)
 
         # setting default values for project metadata
@@ -610,7 +609,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.connect("project-changed", self._projectChangedCb)
         project.pipeline.connect("died", self._projectPipelineDiedCb)
         project.setModificationState(False)
-        self.emit("new-project-loaded", self.current_project, emission)
+        self.emit("new-project-loaded", self.current_project)
         self.time_loaded = time.time()
 
         return True
@@ -684,7 +683,7 @@ class ProjectManager(GObject.Object, Loggable):
 
     def _projectLoadedCb(self, unused_project, unused_timeline):
         self.debug("Project loaded %s", self.current_project.props.uri)
-        self.emit("new-project-loaded", self.current_project, True)
+        self.emit("new-project-loaded", self.current_project)
         if self.__missing_uris:
             self.current_project.setModificationState(True)
         self.time_loaded = time.time()

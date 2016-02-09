@@ -271,7 +271,7 @@ class TitleEditor(Loggable):
 
         self._project.pipeline.commit_timeline()
 
-    def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
+    def _newProjectLoadedCb(self, app, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None

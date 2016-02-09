@@ -707,7 +707,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
 # Project management callbacks
 
-    def _projectManagerNewProjectLoadedCb(self, project_manager, project, unused_fully_loaded):
+    def _projectManagerNewProjectLoadedCb(self, project_manager, project):
         """
         @type project_manager: L{ProjectManager}
         @type project: L{Project}
