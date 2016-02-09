@@ -22,17 +22,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from gi.repository import Gst
-from gi.repository import GES
-from gi.repository import Gio
-from gi.repository import GLib
-from gi.repository import GObject
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Pango
-from gi.repository import GdkPixbuf
-from gi.repository.GstPbutils import DiscovererVideoInfo
-
 import os
 import threading
 import time
@@ -41,6 +30,17 @@ from gettext import ngettext, gettext as _
 from hashlib import md5
 from urllib.parse import unquote
 from urllib.parse import urlparse
+
+from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import Gio
+from gi.repository import Gst
+from gi.repository import Gtk
+from gi.repository import Pango
+from gi.repository import GstPbutils
 
 from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir, get_pixmap_dir
@@ -55,7 +55,7 @@ from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri,\
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.ui import beautify_asset, beautify_length, info_name, \
     URI_TARGET_ENTRY, FILE_TARGET_ENTRY, SPACING,  \
-    beautify_ETA, PADDING
+    beautify_ETA
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1
@@ -745,8 +745,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         LARGE_SIZE = 96
         info = asset.get_info()
 
-        if self.app.proxy_manager.isProxyAsset(asset) and not \
-                asset.props.proxy_target:
+        if self.app.proxy_manager.isProxyAsset(asset) and \
+                not asset.props.proxy_target:
             self.info("%s is a proxy asset but has no target,"
                       "not displaying it.", asset.props.id)
             return
@@ -757,9 +757,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # thumbnails directory (~/.thumbnails). The filenames are simply
         # the file URI hashed with md5, so we can retrieve them easily.
         video_streams = [
-            i for i in info.get_stream_list() if isinstance(i, DiscovererVideoInfo)]
+            stream_info for stream_info in info.get_stream_list()
+            if isinstance(stream_info, GstPbutils.DiscovererVideoInfo)]
         real_uri = get_proxy_target(asset).props.id
-        if len(video_streams) > 0:
+        if video_streams:
             # From the freedesktop spec: "if the environment variable
             # $XDG_CACHE_HOME is set and not blank then the directory
             # $XDG_CACHE_HOME/thumbnails will be used, otherwise
@@ -1408,7 +1409,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disconnect_by_func(self._errorCreatingAssetCb)
         self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
 
-    def _newProjectCreatedCb(self, unused_app, project):
+    def _newProjectCreatedCb(self, unused_project_manager, project):
         if self._project is project:
             return
 
@@ -1420,7 +1421,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._welcome_infobar.show_all()
         self._connectToProject(project)
 
-    def _newProjectLoadedCb(self, unused_app, project, unused_fully_ready):
+    def _newProjectLoadedCb(self, unused_project_manager, project, unused_fully_ready):
         if self._project is not project:
             self._project = project
             self.storemodel.clear()
@@ -1429,7 +1430,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Make sure that the sources added to the project are added added
         self._flushPendingRows()
 
-    def _newProjectFailedCb(self, unused_pitivi, unused_reason, unused_uri):
+    def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
         self.storemodel.clear()
         self._project = None
 
