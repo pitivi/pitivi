@@ -232,6 +232,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         return False
 
     def __mplButtonPressEventCb(self, event):
+        if event.button != 1:
+            return
+
         result = self.__keyframes.contains(event)
         if result[0]:
             self.__offset = self.__keyframes.get_offsets()[
@@ -319,6 +322,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
             cursor)
 
     def __mplButtonReleaseEventCb(self, event):
+        if event.button != 1:
+            return
+
         if not self.__dragged and not self.__offset:
             if event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE:
                 self.__maybeCreateKeyframe(event)
