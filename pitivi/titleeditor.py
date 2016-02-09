@@ -229,7 +229,13 @@ class TitleEditor(Loggable):
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
-            self._project.pipeline.flushSeek()
+            self._project.pipeline.commit_timeline()
+            return
+
+        control_binding = self.source.get_control_binding(pspec.name)
+        if control_binding:
+            self.debug("Not handling %s as it is being interpollated",
+                       pspec.name)
             return
 
         value = self.source.get_child_property(pspec.name)[1]
@@ -263,7 +269,7 @@ class TitleEditor(Loggable):
                 return
             self.background_color_button.set_rgba(color)
 
-        self._project.pipeline.flushSeek()
+        self._project.pipeline.commit_timeline()
 
     def _newProjectLoadedCb(self, app, project, unused_fully_loaded):
         if self._selection is not None:
