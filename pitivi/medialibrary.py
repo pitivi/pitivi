@@ -401,6 +401,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             "new-project-created", self._newProjectCreatedCb)
         project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
         project_manager.connect("new-project-failed", self._newProjectFailedCb)
+        project_manager.connect("project-closed", self._projectClosedCb)
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -461,6 +462,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app.project_manager.disconnect_by_func(self._newProjectCreatedCb)
         self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
         self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
+        self.app.project_manager.disconnect_by_func(self._projectClosedCb)
 
     @staticmethod
     def _getThumbnailer():
@@ -1433,6 +1435,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
         self.storemodel.clear()
         self._project = None
+
+    def _projectClosedCb(self, unused_project_manager, unused_project):
+        self._project_settings_set_infobar.hide()
 
     def _addUris(self, uris):
         if self.app.project_manager.current_project:
