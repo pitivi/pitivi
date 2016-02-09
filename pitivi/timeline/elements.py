@@ -215,6 +215,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
     # Callbacks
     def __controlSourceChangedCb(self, unused_control_source, unused_timed_value):
         self.__updatePlots()
+        self.__timeline.bTimeline.get_parent().commit_timeline()
 
     def __gtkMotionEventCb(self, unused_widget, unused_event):
         """
