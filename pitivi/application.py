@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 #
 #       pitivi/application.py
 #
 # Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
-# Copyright (c) 2014 <alexandru.balut@gmail.com>
+# Copyright (c) 2014 Alexandru Băluț<alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -52,13 +53,11 @@ class Pitivi(Gtk.Application, Loggable):
     """
     Pitivi's application.
 
-    @type effects: L{EffectsManager}
-    @ivar gui: The main window of the app.
-    @type gui: L{PitiviMainWindow}
-    @ivar project_manager: The project manager object used in the application
-    @type project_manager: L{ProjectManager}
-    @ivar settings: Application-wide settings.
-    @type settings: L{pitivi.settings.GlobalSettings}.
+    Attributes:
+        effects (EffectsManager): The effects which can be applied to a clip.
+        gui (PitiviMainWindow): The main window of the app.
+        project_manager (ProjectManager): The holder of the current project.
+        settings (GlobalSettings): The application-wide settings.
     """
 
     __gsignals__ = {
@@ -83,7 +82,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
-        self.welcome_wizard = None
+        self.__welcome_wizard = None
 
         self._version_information = {}
 
@@ -188,8 +187,13 @@ class Pitivi(Gtk.Application, Loggable):
             # No need to show the welcome wizard.
             return
         self.createMainWindow()
-        self.welcome_wizard = StartUpWizard(self)
         self.welcome_wizard.show()
+
+    @property
+    def welcome_wizard(self):
+        if not self.__welcome_wizard:
+            self.__welcome_wizard = StartUpWizard(self)
+        return self.__welcome_wizard
 
     def createMainWindow(self):
         if self.gui:

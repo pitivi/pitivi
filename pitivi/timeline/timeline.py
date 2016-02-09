@@ -373,6 +373,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.ges_timeline is None:
             return
 
+        self.ges_timeline.ui = self
+
         for bLayer in self.ges_timeline.get_layers():
             self._addLayer(bLayer)
 
@@ -381,7 +383,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.ges_timeline.connect("layer-removed", self._layerRemovedCb)
         self.ges_timeline.connect("snapping-started", self._snapCb)
         self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
-        self.ges_timeline.ui = self
 
         self.queue_draw()
 

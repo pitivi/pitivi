@@ -86,11 +86,6 @@ class StartUpWizard(object):
         if not missing_soft_deps:
             missing_button.hide()
 
-        project_manager = self.app.project_manager
-        project_manager.connect("new-project-failed", self._projectFailedCb)
-        project_manager.connect("new-project-loaded", self._projectLoadedCb)
-        project_manager.connect("new-project-loading", self._projectLoadingCb)
-
         vbox = self.builder.get_object("topvbox")
         self.infobar = Gtk.InfoBar()
         vbox.pack_start(self.infobar, True, True, 0)
@@ -103,7 +98,6 @@ class StartUpWizard(object):
     def _newProjectCb(self, unused_button):
         """Handle a click on the New (Project) button."""
         self.app.project_manager.newBlankProject()
-        self.hide()
 
     def _loadCb(self, unused_recent_chooser):
         """
@@ -118,7 +112,6 @@ class StartUpWizard(object):
         if event.keyval == Gdk.KEY_Escape:
             # The user pressed "Esc".
             self.app.project_manager.newBlankProject()
-            self.hide()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
         """Handle a click on the Browse button."""
@@ -131,33 +124,23 @@ class StartUpWizard(object):
     def _deleteCb(self, unused_widget, unused_event):
         """Handle a click on the X button of the dialog."""
         self.app.project_manager.newBlankProject()
-        self.hide()
 
     def show(self):
-        """Will show the interal window and position the wizard"""
+        if self.window.props.visible:
+            return
         self.window.set_transient_for(self.app.gui)
         self.window.show()
+        project_manager = self.app.project_manager
+        project_manager.connect("new-project-loading", self._projectLoadingCb)
 
     def hide(self):
-        """Will hide the internal window"""
+        if not self.window.props.visible:
+            return
         self.window.hide()
-
-    def _projectFailedCb(self, unused_project_manager, unused_uri,
-                         unused_exception):
-        """Handle the failure of a project open operation."""
-        self.show()
-
-    def _projectLoadedCb(self, project_manager, unused_project):
-        """
-        Handle the success of a project load operation.
-
-        @type project_manager: L{ProjectManager}
-        """
-        project_manager.disconnect_by_func(self._projectFailedCb)
-        project_manager.disconnect_by_func(self._projectLoadedCb)
+        project_manager = self.app.project_manager
         project_manager.disconnect_by_func(self._projectLoadingCb)
 
-    def _projectLoadingCb(self, unused_project_manager, unused_project):
+    def _projectLoadingCb(self, unused_project_manager, unused_uri):
         """Handle the start of a project load operation."""
         self.hide()
 

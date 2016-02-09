@@ -687,11 +687,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if response == Gtk.ResponseType.OK:
             self.app.project_manager.loadProject(chooser.get_uri())
         else:
-            self.info(
-                "User cancelled loading a new project, but no other project is currently active. Resetting")
-            self.app.project_manager.newBlankProject()
+            self.info("User cancelled loading a new project")
+            self.app.welcome_wizard.show()
         chooser.destroy()
-        return True
 
     def _canLoadUri(self, filterinfo, unused_uri):
         try:
@@ -889,7 +887,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                 return False
         return True
 
-    def _projectManagerNewProjectFailedCb(self, unused_project_manager, uri, exception):
+    def _projectManagerNewProjectFailedCb(self, unused_project_manager, uri, reason):
         project_filename = unquote(uri.split("/")[-1])
         dialog = Gtk.MessageDialog(transient_for=self,
                                    modal=True,
@@ -897,12 +895,13 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
                                    buttons=Gtk.ButtonsType.OK,
                                    text=_('Unable to load project "%s"') % project_filename)
         dialog.set_property("secondary-use-markup", True)
-        dialog.set_property("secondary-text", unquote(str(exception)))
+        dialog.set_property("secondary-text", unquote(str(reason)))
         dialog.set_transient_for(self)
         dialog.run()
         dialog.destroy()
+        self.app.welcome_wizard.show()
 
-    def _projectManagerMissingUriCb(self, unused_project_manager, project, unused_error, asset):
+    def _projectManagerMissingUriCb(self, project_manager, project, unused_error, asset):
         if project.at_least_one_asset_missing:
             # One asset is already missing so no point in spamming the user
             # with more file-missing dialogs, as we need all of them.
@@ -990,23 +989,20 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            self.app.project_manager.current_project.setModificationState(
-                False)
+            project_manager.current_project.setModificationState(False)
         else:
             dialog.hide()
 
             if not self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
                 # Reset the project manager and disconnect all the signals.
-                self.app.project_manager.newBlankProject(
-                    ignore_unsaved_changes=True)
+                project_manager.closeRunningProject()
                 # Signal the project loading failure.
                 # You have to do this *after* successfully creating a blank project,
                 # or the startupwizard will still be connected to that signal too.
                 reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
                            'Pitivi does not currently support partial projects.'
                            % info_name(asset))
-                self.app.project_manager.emit(
-                    "new-project-failed", project.uri, reason)
+                project_manager.emit("new-project-failed", project.uri, reason)
 
         dialog.destroy()
         return new_uri

@@ -172,7 +172,7 @@ class ProjectManager(GObject.Object, Loggable):
     __gsignals__ = {
         "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (str,)),
         "new-project-created": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
+        "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, str)),
         "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "save-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
         "project-saved": (GObject.SIGNAL_RUN_LAST, None, (object, str)),
@@ -318,27 +318,27 @@ class ProjectManager(GObject.Object, Loggable):
             uri = None
 
         # Load the project:
-        self.current_project = Project(self.app, uri=uri, scenario=scenario)
+        project = Project(self.app, uri=uri, scenario=scenario)
 
-        self.current_project.connect_after("missing-uri", self._missingURICb)
-        self.current_project.connect("loaded", self._projectLoadedCb)
+        project.connect_after("missing-uri", self._missingURICb)
+        project.connect("loaded", self._projectLoadedCb)
 
-        if self.current_project.createTimeline():
-            self.emit("new-project-created", self.current_project)
-            self.current_project.connect(
-                "project-changed", self._projectChangedCb)
-            self.current_project.pipeline.connect("died", self._projectPipelineDiedCb)
-
-            if is_validate_scenario:
-                self.current_project.setupValidateScenario()
-            return True
-        else:
+        if not project.createTimeline():
             self.emit("new-project-failed", uri,
                       _('This might be due to a bug or an unsupported project file format. '
                         'If you were trying to add a media file to your project, '
                         'use the "Import" button instead.'))
-            self.newBlankProject(ignore_unsaved_changes=True)
             return False
+
+        self.current_project = project
+        self.emit("new-project-created", self.current_project)
+        self.current_project.connect("project-changed", self._projectChangedCb)
+        self.current_project.pipeline.connect("died", self._projectPipelineDiedCb)
+
+        if is_validate_scenario:
+            self.current_project.setupValidateScenario()
+
+        return True
 
     def _restoreFromBackupDialog(self, time_diff):
         """
