@@ -229,7 +229,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         return False
 
-    def _pipelineDied(self, unused_pipeline):
+    def _projectPipelineDiedCb(self, unused_pipeline):
         """
         Show an error dialog telling the user that everything went kaboom.
         """
@@ -327,7 +327,7 @@ class ProjectManager(GObject.Object, Loggable):
             self.emit("new-project-created", self.current_project)
             self.current_project.connect(
                 "project-changed", self._projectChangedCb)
-            self.current_project.pipeline.connect("died", self._pipelineDied)
+            self.current_project.pipeline.connect("died", self._projectPipelineDiedCb)
 
             if is_validate_scenario:
                 self.current_project.setupValidateScenario()
@@ -568,6 +568,10 @@ class ProjectManager(GObject.Object, Loggable):
         except Exception:
             self.debug(
                 "Tried disconnecting signals, but they were not connected")
+        try:
+            self.current_project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
+        except Exception:
+            self.fixme("Handle better the errors and not get to this point")
         self._cleanBackup(self.current_project.uri)
         self.exitcode = self.current_project.release()
         self.current_project = None
@@ -604,7 +608,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.emit("new-project-created", project)
 
         project.connect("project-changed", self._projectChangedCb)
-        project.pipeline.connect("died", self._pipelineDied)
+        project.pipeline.connect("died", self._projectPipelineDiedCb)
         project.setModificationState(False)
         self.emit("new-project-loaded", self.current_project, emission)
         self.time_loaded = time.time()
