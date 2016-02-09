@@ -11,6 +11,7 @@ tests =	\
 	test_mainwindow.py \
 	test_media_library.py \
 	test_misc.py \
+	test_pipeline.py \
 	test_prefs.py \
 	test_preset.py \
 	test_previewers.py \
