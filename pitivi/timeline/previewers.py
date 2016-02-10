@@ -186,6 +186,7 @@ class WaveformPreviewer(PreviewerBin):
         self.uri = None
         self.wavefile = None
         self.passthrough = False
+        self.samples = []
         self.nSamples = 0
 
     def do_get_property(self, prop):
