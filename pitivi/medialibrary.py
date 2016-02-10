@@ -271,6 +271,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project_settings_set_infobar.connect("response", self.__projectSettingsSetInfobarCb)
         self._import_warning_infobar = builder.get_object("warning_infobar")
         self._import_warning_infobar.hide()
+        self._import_warning_infobar.connect("response", self.__warningInfobarCb)
         self._warning_label = builder.get_object("warning_label")
         self._view_error_button = builder.get_object("view_error_button")
         toolbar = builder.get_object("medialibrary_toolbar")
@@ -1108,14 +1109,17 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
 
-    def _warningInfoBarDismissedCb(self, unused_button):
+    def __warningInfobarCb(self, infobar, response_id):
+        if response_id == Gtk.ResponseType.OK:
+            self.__showErrors()
         self._resetErrorList()
+        infobar.hide()
 
     def _resetErrorList(self):
         self._errors = []
         self._import_warning_infobar.hide()
 
-    def _viewErrorsButtonClickedCb(self, unused_button):
+    def __showErrors(self):
         """
         Show a FileListErrorDialog to display import _errors.
         """
@@ -1133,8 +1137,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             error_dialogbox.addFailedFile(uri, reason, extra)
         error_dialogbox.window.set_transient_for(self.app.gui)
         error_dialogbox.window.show()
-        # Reset the error list, since the user has read them.
-        self._resetErrorList()
 
     def _toggleViewTypeCb(self, widget):
         if widget.get_active():

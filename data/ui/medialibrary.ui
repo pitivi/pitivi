@@ -149,6 +149,7 @@
     <property name="app_paintable">True</property>
     <property name="can_focus">False</property>
     <property name="message_type">warning</property>
+    <property name="show_close_button">True</property>
     <child internal-child="action_area">
       <object class="GtkButtonBox" id="infobar-action_area3">
         <property name="can_focus">False</property>
@@ -160,27 +161,11 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <signal name="clicked" handler="_viewErrorsButtonClickedCb" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="warnings_dismiss_button">
-            <property name="label">✖</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Close this message</property>
-            <signal name="clicked" handler="_warningInfoBarDismissedCb" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -191,8 +176,7 @@
       </packing>
     </child>
     <action-widgets>
-      <action-widget response="0">view_error_button</action-widget>
-      <action-widget response="0">warnings_dismiss_button</action-widget>
+      <action-widget response="-5">view_error_button</action-widget>
     </action-widgets>
     <child internal-child="content_area">
       <object class="GtkBox" id="infobar-content_area3">
@@ -219,10 +203,6 @@
         <property name="position">0</property>
       </packing>
     </child>
-    <action-widgets>
-      <action-widget response="0">view_error_button</action-widget>
-      <action-widget response="0">warnings_dismiss_button</action-widget>
-    </action-widgets>
   </object>
   <object class="GtkInfoBar" id="welcome_infobar">
     <property name="visible">True</property>
