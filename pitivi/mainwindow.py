@@ -995,7 +995,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         else:
             dialog.hide()
 
-            if self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
+            if not self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
                 # Reset the project manager and disconnect all the signals.
                 self.app.project_manager.newBlankProject(
                     ignore_unsaved_changes=True)

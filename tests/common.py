@@ -4,8 +4,9 @@ A collection of objects to use for testing
 
 import os
 import gc
-import unittest
+import sys
 import tempfile
+import unittest
 
 from gi.repository import Gdk
 from gi.repository import Gst
@@ -31,16 +32,27 @@ def cleanPitiviMock(app):
 
 def getPitiviMock(settings=None, proxyingStrategy=ProxyingStrategy.NOTHING,
                   numTranscodingJobs=4):
+    def __create_settings():
+        settings = mock.MagicMock()
+
+        settings.proxyingStrategy = proxyingStrategy
+        settings.numTranscodingJobs = numTranscodingJobs
+
+        return settings
+
     app = mock.MagicMock()
 
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     check.check_requirements()
 
     if not settings:
-        settings = mock.MagicMock()
+        settings = __create_settings()
+    elif isinstance(settings, dict):
+        nsettings = __create_settings()
 
-        settings.proxyingStrategy = proxyingStrategy
-        settings.numTranscodingJobs = numTranscodingJobs
+        for key, value in settings.items():
+            setattr(nsettings, key, value)
+        settings = nsettings
 
     app.settings = settings
     app.proxy_manager = ProxyManager(app)
@@ -132,6 +144,38 @@ class TestCase(unittest.TestCase, Loggable):
         self.assertEqual(bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)
         self.assertEqual(bClip.selected.selected, expect_selected)
+
+    def createTempProject(self):
+        """
+        Created a temporary project
+
+        Always generate projects with missing assets for now
+
+        Returns:
+            str: The path of the new project
+            str: The URI of the new project
+        """
+        unused_fd, xges_path = tempfile.mkstemp()
+        with open(xges_path, "w") as xges:
+            xges.write("""
+<ges version='0.1'>
+  <project>
+    <ressources>
+      <asset id='file:///icantpossiblyexist.png'
+            extractable-type-name='GESUriClip' />
+    </ressources>
+    <timeline>
+      <track caps='video/x-raw' track-type='4' track-id='0' />
+      <layer priority='0'>
+        <clip id='0' asset-id='file:///icantpossiblyexist.png'
+            type-name='GESUriClip' layer-priority='0' track-types='4'
+            start='0' duration='2590000000' inpoint='0' rate='0' />
+      </layer>
+    </timeline>
+</project>
+</ges>""")
+
+        return xges_path, Gst.filename_to_uri(xges_path)
 
 
 def getSampleUri(sample):

@@ -195,23 +195,7 @@ class TestMediaLibrary(common.TestCase):
         self.assertEqual(asset.get_proxy(), proxy)
 
     def testMissingUriDisplayed(self):
-        # Load a project with a missing asset.
-        unused, xges_path = tempfile.mkstemp()
-        with open(xges_path, "w") as xges:
-            xges.write("""<ges version='0.1'>
-  <project>
-    <ressources>
-      <asset id='file:///icantpossiblyexist.png' extractable-type-name='GESUriClip' />
-    </ressources>
-    <timeline>
-      <track caps='video/x-raw' track-type='4' track-id='0' />
-      <layer priority='0'>
-        <clip id='0' asset-id='file:///icantpossiblyexist.png' type-name='GESUriClip' layer-priority='0' track-types='4' start='0' duration='2590000000' inpoint='0' rate='0' />
-      </layer>
-    </timeline>
-</project>
-</ges>""")
-        uri = "file://%s" % xges_path
+        xges_path, uri = self.createTempProject()
 
         try:
             self._customSetUp(None, project_uri=uri)

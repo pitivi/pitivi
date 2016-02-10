@@ -18,14 +18,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""
+A helper object to work with Gtk.Notebook tabs
+"""
 
 from gi.repository import Gtk
 from gi.repository import Gdk
+
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING
-from pitivi.settings import GlobalSettings
+from pitivi.settings import GlobalSettings, ConfigError
 
 
-class BaseTabs(Gtk.Notebook):
+class BaseTabs(Gtk.Notebook, Loggable):
 
     """
     @type app: Pitivi
@@ -33,6 +38,7 @@ class BaseTabs(Gtk.Notebook):
 
     def __init__(self, app):
         Gtk.Notebook.__init__(self)
+        Loggable.__init__(self)
         self.set_border_width(SPACING)
         self.set_scrollable(True)
         self.connect("create-window", self._createWindowCb)
@@ -40,6 +46,7 @@ class BaseTabs(Gtk.Notebook):
         notebook_widget_settings = self.get_settings()
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
 
+    # pylint: disable=arguments-differ
     def append_page(self, child, label):
         child_name = label.get_text()
         Gtk.Notebook.append_page(self, child, label)
@@ -60,8 +67,8 @@ class BaseTabs(Gtk.Notebook):
         self.child_set_property(child, "tab-fill", True)
         label.props.xalign = 0.0
 
-    def _detachedComponentWindowDestroyCb(self, window, child,
-                                          original_position, child_name):
+    def __detached_window_destroyed_cb(self, window, child,
+                                       original_position, child_name):
         notebook = window.get_child()
         position = notebook.page_num(child)
         notebook.remove_page(position)
@@ -108,10 +115,10 @@ class BaseTabs(Gtk.Notebook):
         window.show_all()
         window.move(x, y)
         window.connect(
-            "configure-event", self._detachedComponentWindowConfiguredCb,
+            "configure-event", self._detached_window_configure_cb,
             child_name)
         window.connect(
-            "destroy", self._detachedComponentWindowDestroyCb, child,
+            "destroy", self.__detached_window_destroyed_cb, child,
             original_position, child_name)
 
         if not created_by_signal:
@@ -122,7 +129,7 @@ class BaseTabs(Gtk.Notebook):
         else:
             return notebook
 
-    def _detachedComponentWindowConfiguredCb(self, window, event, child_name):
+    def _detached_window_configure_cb(self, window, event, child_name):
         """
         When the user configures the detached window
         (changes its size, position, etc.), save the settings.
@@ -141,7 +148,12 @@ class BaseTabs(Gtk.Notebook):
         If they do not exist already, create default settings
         to save the state of a detachable widget.
         """
-        GlobalSettings.addConfigSection(child_name)
+        try:
+            GlobalSettings.addConfigSection(child_name)
+        except ConfigError:
+            self.info("Section %s already exists", child_name)
+            return
+
         GlobalSettings.addConfigOption(child_name + "docked",
                                        section=child_name,
                                        key="docked",
