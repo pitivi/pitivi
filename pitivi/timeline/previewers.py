@@ -19,13 +19,18 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-import cairo
-import numpy
+"""
+Classes to draw Audio and Video 'previewers', meaning computing
+waveforms from an audio file and thumbnails from a video, and
+drawing them on Cairo surfaces.
+"""
 import os
 import pickle
 import random
 import sqlite3
+
+import cairo
+import numpy
 
 from gi.repository import GES
 from gi.repository import GObject
@@ -42,16 +47,18 @@ except ImportError:
     # Running uninstalled?
     import renderer
 
+# pylint: disable=ungrouped-imports
 from pitivi.settings import get_dir, xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import binary_search, filename_from_uri, quantize, quote_uri, hash_file, \
-    get_proxy_target
+from pitivi.utils.misc import binary_search, filename_from_uri, quantize
+from pitivi.utils.misc import quote_uri, hash_file, get_proxy_target
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
 
 
 WAVEFORMS_CPU_USAGE = 30
+SAMPLE_DURATION = 10000000
 
 # A little lower as it's more fluctuating
 THUMBNAILS_CPU_USAGE = 20
@@ -88,18 +95,23 @@ class PreviewerBin(Gst.Bin, Loggable):
         self.add_pad(Gst.GhostPad.new(None, self.internal_bin.sinkpads[0]))
         self.add_pad(Gst.GhostPad.new(None, self.internal_bin.srcpads[0]))
 
-    def finalize(self):
+    def finalize(self, proxy=None):
+        """
+        Finalize the previewer (saving data to file if needed)
+        """
         pass
 
 
 class ThumbnailBin(PreviewerBin):
+    """
+    A bin to generate and save thumbnails to a sqlite database
+    """
     __gproperties__ = {
         "uri": (str,
                 "uri of the media file",
                 "A URI",
                 "",
-                GObject.PARAM_READWRITE
-                ),
+                GObject.PARAM_READWRITE),
     }
 
     def __init__(self, bin_desc="videoconvert ! videorate ! "
@@ -110,10 +122,11 @@ class ThumbnailBin(PreviewerBin):
                  THUMB_HEIGHT):
         PreviewerBin.__init__(self, bin_desc)
 
+        self.uri = None
         self.thumb_cache = None
         self.gdkpixbufsink = self.internal_bin.get_by_name("gdkpixbufsink")
 
-    def addThumbnail(self, message):
+    def __addThumbnail(self, message):
         struct = message.get_structure()
         struct_name = struct.get_name()
         if struct_name == "pixbuf":
@@ -124,14 +137,18 @@ class ThumbnailBin(PreviewerBin):
 
         return False
 
+    # pylint: disable=arguments-differ
     def do_post_message(self, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
-            GLib.idle_add(self.addThumbnail, message)
+            GLib.idle_add(self.__addThumbnail, message)
 
         return Gst.Bin.do_post_message(self, message)
 
-    def finalize(self, proxy):
+    def finalize(self, proxy=None):
+        """
+        Finalize the previewer (saving data to file if needed)
+        """
         self.thumb_cache.commit()
         if proxy:
             self.thumb_cache.copy(proxy.get_id())
@@ -151,6 +168,10 @@ class ThumbnailBin(PreviewerBin):
 
 
 class TeedThumbnailBin(ThumbnailBin):
+    """
+    A bin to generate and save thumbnails to a sqlite database and
+    output the stream in another branch
+    """
     def __init__(self):
         ThumbnailBin.__init__(
             self, bin_desc="tee name=t ! queue  "
@@ -162,7 +183,11 @@ class TeedThumbnailBin(ThumbnailBin):
             "t. ! queue " % THUMB_HEIGHT)
 
 
+# pylint: disable=too-many-instance-attributes
 class WaveformPreviewer(PreviewerBin):
+    """
+    A bin to generate and save waveforms as pickle file
+    """
     __gproperties__ = {
         "uri": (str,
                 "uri of the media file",
@@ -187,7 +212,8 @@ class WaveformPreviewer(PreviewerBin):
         self.wavefile = None
         self.passthrough = False
         self.samples = []
-        self.nSamples = 0
+        self.n_samples = 0
+        self.duration = 0
 
     def do_get_property(self, prop):
         if prop.name == 'uri':
@@ -204,32 +230,33 @@ class WaveformPreviewer(PreviewerBin):
             self.passthrough = os.path.exists(self.wavefile)
         elif prop.name == 'duration':
             self.duration = value
-            self.nSamples = self.duration / 10000000
+            self.n_samples = self.duration / SAMPLE_DURATION
         else:
             raise AttributeError('unknown property %s' % prop.name)
 
+    # pylint: disable=arguments-differ
     def do_post_message(self, message):
         if not self.passthrough and \
                 message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.level:
-            s = message.get_structure()
-            p = None
-            if s:
-                p = s.get_value("rms")
+            struct = message.get_structure()
+            peaks = None
+            if struct:
+                peaks = struct.get_value("rms")
 
-            if p:
-                st = s.get_value("stream-time")
+            if peaks:
+                stream_time = struct.get_value("stream-time")
 
                 if self.peaks is None:
                     self.peaks = []
-                    for channel in p:
-                        self.peaks.append([0] * int(self.nSamples))
+                    for unused_channel in peaks:
+                        self.peaks.append([0] * int(self.n_samples))
 
-                pos = int(st / 10000000)
+                pos = int(stream_time / SAMPLE_DURATION)
                 if pos >= len(self.peaks[0]):
                     return
 
-                for i, val in enumerate(p):
+                for i, val in enumerate(peaks):
                     if val < 0:
                         val = 10 ** (val / 20) * 100
                         self.peaks[i][pos] = val
@@ -239,6 +266,9 @@ class WaveformPreviewer(PreviewerBin):
         return Gst.Bin.do_post_message(self, message)
 
     def finalize(self, proxy=None):
+        """
+        Finalize the previewer (saving data to file if needed)
+        """
         if not self.passthrough and self.peaks:
             # Let's go mono.
             if len(self.peaks) > 1:
@@ -265,22 +295,28 @@ Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
                      TeedThumbnailBin)
 
 
+# pylint: disable=too-few-public-methods
 class PreviewGeneratorManager():
-
     """
-    Manage the execution of PreviewGenerators
+    Manage the execution of Previewers preview generation
     """
 
     def __init__(self):
-        # The current PreviewGenerator per GES.TrackType.
+        # The current Previewer per GES.TrackType.
         self._cpipeline = {}
-        # The queue of PreviewGenerators.
+        # The queue of Previewers.
         self._pipelines = {
             GES.TrackType.AUDIO: [],
             GES.TrackType.VIDEO: []
         }
 
     def addPipeline(self, pipeline):
+        """
+        Add a pipeline to the list of controlled pipelines
+
+        Args:
+            pipeline (Gst.Pipeline): The pipeline to control
+        """
         track_type = pipeline.track_type
 
         current_pipeline = self._cpipeline.get(track_type)
@@ -309,7 +345,7 @@ class PreviewGeneratorManager():
             self._setPipeline(self._pipelines[track_type].pop())
 
 
-class PreviewGenerator(object):
+class Previewer(Gtk.Layout):
 
     """
     Interface to be implemented by classes that generate previews
@@ -325,26 +361,39 @@ class PreviewGenerator(object):
         """
         @param track_type : GES.TrackType.*
         """
+        super(Previewer, self).__init__()
+
         self.track_type = track_type
 
     def startGeneration(self):
-        raise NotImplemented
+        """
+        Start preview generation
+        """
+        raise NotImplementedError
 
     def stopGeneration(self):
-        raise NotImplemented
+        """
+        Stop preview generation
+        """
+        raise NotImplementedError
 
     def becomeControlled(self):
         """
         Let the PreviewGeneratorManager control our execution
         """
-        PreviewGenerator.__manager.addPipeline(self)
+        Previewer.__manager.addPipeline(self)
 
     def setSelected(self, selected):
+        """
+        Mark a previewer as being selected
+        """
         pass
 
 
-class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
-
+class VideoPreviewer(Previewer, Zoomable, Loggable):
+    """
+    A video previewer widget, drawing thumbnails
+    """
     # We could define them in PreviewGenerator, but then for some reason they
     # are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
@@ -354,8 +403,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         @param bElement : the backend GES.TrackElement
         @param track : the track to which the bElement belongs
         """
-        super(VideoPreviewer, self).__init__()
-        PreviewGenerator.__init__(self, GES.TrackType.VIDEO)
+        Previewer.__init__(self, GES.TrackType.VIDEO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -368,6 +416,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
         # Variables related to thumbnailing
         self.wishlist = []
+        self.queue = []
         self._thumb_cb_id = None
         self._running = False
 
@@ -388,6 +437,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.bElement.connect("notify::in-point", self._inpointChangedCb)
 
         self.pipeline = None
+        self.gdkpixbufsink = None
         self.__last_rectangle = Gdk.Rectangle()
         self.becomeControlled()
 
@@ -440,7 +490,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
             continue
         # add a message handler that listens for the created pixbufs
         self.pipeline.get_bus().add_signal_watch()
-        self.pipeline.get_bus().connect("message", self.bus_message_handler)
+        self.pipeline.get_bus().connect("message", self.__bus_message_handler)
 
     def _checkCPU(self):
         """
@@ -628,7 +678,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
     # Callbacks
 
-    def bus_message_handler(self, unused_bus, message):
+    def __bus_message_handler(self, unused_bus, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
             struct = message.get_structure()
@@ -642,6 +692,7 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
             self._checkCPU()
         return Gst.BusSyncReply.PASS
 
+    # pylint: disable=no-self-use
     def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug audio decoders / parsers.
         if "Audio" in factory.get_klass():
@@ -651,8 +702,9 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
     def _heightChangedCb(self, unused_widget, unused_value):
         self._remove_all_children()
 
-    def _inpointChangedCb(self, unused_bElement, unused_value):
-        self.get_hadjustment().set_value(Zoomable.nsToPixel(self.bElement.props.in_point))
+    def _inpointChangedCb(self, unused_b_element, unused_value):
+        self.get_hadjustment().set_value(Zoomable.nsToPixel(
+            self.bElement.props.in_point))
 
     def setSelected(self, selected):
         if selected:
@@ -679,9 +731,13 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.emit("done")
 
     def cleanup(self):
+        """
+        Stop preview generation and cleanup object
+        """
         self.stopGeneration()
         Zoomable.__del__(self)
 
+    # pylint: disable=arguments-differ
     def do_draw(self, context):
         res, rect = Gdk.cairo_get_clip_rectangle(context)
         assert res
@@ -698,7 +754,9 @@ class VideoPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
 
 class Thumbnail(Gtk.Image):
-
+    """
+    Simple widget representing a Thumbnail
+    """
     def __init__(self, width, height):
         super(Thumbnail, self).__init__()
         self.width = width
@@ -706,20 +764,28 @@ class Thumbnail(Gtk.Image):
         self.props.width_request = self.width
         self.props.height_request = self.height
 
-caches = {}
+CACHES = {}
 
 
+# pylint: disable=invalid-name
 def getThumbnailCache(obj):
+    """
+    Get a ThumbnailCache for @obj
+
+    Args:
+      obj: The object for which to get a ThumbnailCache, it can be a string or
+           a GES.UriClipAsset
+    """
     if isinstance(obj, str):
         uri = obj
     elif isinstance(obj, GES.UriClipAsset):
         uri = get_proxy_target(obj).props.id
 
-    if uri in caches:
-        return caches[uri]
+    if uri in CACHES:
+        return CACHES[uri]
     else:
         cache = ThumbnailCache(uri)
-        caches[uri] = cache
+        CACHES[uri] = cache
         return cache
 
 
@@ -743,6 +809,12 @@ class ThumbnailCache(Loggable):
                           Jpeg BLOB NOT NULL)")
 
     def copy(self, uri):
+        """
+        Copy @self to @uri
+
+        Args:
+            uri (str): The place where to copy/save the ThumbnailCache
+        """
         filehash = hash_file(Gst.uri_get_location(uri))
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         dbfile = os.path.join(thumbs_cache_dir, filehash)
@@ -750,6 +822,12 @@ class ThumbnailCache(Loggable):
         os.symlink(self._dbfile, dbfile)
 
     def getImagesSize(self):
+        """
+        Get the image size
+        Returns:
+            int: The width of the images contained in the cache
+            int: The height of the images contained in the cache
+        """
         self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
         row = self._cur.fetchone()
         if not row:
@@ -759,6 +837,9 @@ class ThumbnailCache(Loggable):
         return pixbuf.get_width(), pixbuf.get_height()
 
     def getPreviewThumbnail(self):
+        """
+        Get a thumbnail contained 'at the middle' of the cache
+        """
         self._cur.execute("SELECT Time FROM Thumbs")
         timestamps = self._cur.fetchall()
         if not timestamps:
@@ -766,6 +847,7 @@ class ThumbnailCache(Loggable):
 
         return self[timestamps[int(len(timestamps) / 2)][0]]
 
+    # pylint: disable=no-self-use
     def __getPixbufFromRow(self, row):
         jpeg = row[1]
         loader = GdkPixbuf.PixbufLoader.new()
@@ -801,6 +883,9 @@ class ThumbnailCache(Loggable):
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
 
     def commit(self):
+        """
+        Save the cache on disk (in the database)
+        """
         self.debug(
             'Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
@@ -831,11 +916,18 @@ class PipelineCpuAdapter(Loggable):
         self._bus_cb_id = None
 
     def start(self):
+        """
+        Start modulating the rate on the controlled pipeline to
+        avoid using too much CPU
+        """
         GLib.timeout_add(200, self._modulateRate)
         self._bus_cb_id = self.bus.connect("message", self._messageCb)
         self.done = False
 
     def stop(self):
+        """
+        Stop modulating the rate on the controlled pipeline
+        """
         if self._bus_cb_id is not None:
             self.bus.disconnect(self._bus_cb_id)
             self._bus_cb_id = None
@@ -858,6 +950,7 @@ class PipelineCpuAdapter(Loggable):
                     self.pipeline.set_state(Gst.State.READY)
                     res, self.lastPos = self.pipeline.query_position(
                         Gst.Format.TIME)
+                    assert(res)
                 return True
 
             if self.rate > 0.0:
@@ -870,6 +963,7 @@ class PipelineCpuAdapter(Loggable):
 
         if not self.ready:
             res, position = self.pipeline.query_position(Gst.Format.TIME)
+            assert(res)
         else:
             # This to avoid going back and forth from READY to PAUSED
             if self.rate > 0.5:
@@ -894,7 +988,7 @@ class PipelineCpuAdapter(Loggable):
         if not self.ready:
             return
         if message.type == Gst.MessageType.STATE_CHANGED:
-            prev, new, pending = message.parse_state_changed()
+            prev, new, unused_pending_state = message.parse_state_changed()
             if message.src == self.pipeline:
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
                     self.pipeline.seek(1.0,
@@ -908,13 +1002,16 @@ class PipelineCpuAdapter(Loggable):
 
 
 def get_wavefile_location_for_uri(uri):
+    """
+    Compute the URI where the pickled wave file should be stored
+    """
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
     return os.path.join(cache_dir, filename)
 
 
-class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
+class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     """
     Audio previewer based on the results from the "level" gstreamer element.
@@ -923,22 +1020,27 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
     def __init__(self, bElement):
-        super(AudioPreviewer, self).__init__()
-        PreviewGenerator.__init__(self, GES.TrackType.AUDIO)
+        Previewer.__init__(self, GES.TrackType.AUDIO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.pipeline = None
+        self._wavebin = None
+
         self.discovered = False
         self.bElement = bElement
         self.timeline = bElement.get_parent().get_timeline().ui
 
-        self.nSamples = self.bElement.get_parent().get_asset().get_duration() / 10000000
+        asset = self.bElement.get_parent().get_asset()
+        self.n_samples = asset.get_duration() / SAMPLE_DURATION
+        self.samples = None
+        self.peaks = None
         self._start = 0
         self._end = 0
         self._surface_x = 0
 
         # Guard against malformed URIs
+        self.wavefile = None
         self._uri = quote_uri(get_proxy_target(bElement).props.id)
 
         self._num_failures = 0
@@ -949,10 +1051,13 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
 
         self.bElement.connect("notify::in-point", self._inpointChangedCb)
 
-    def _inpointChangedCb(self, unused_bElement, unused_value):
+    def _inpointChangedCb(self, unused_b_element, unused_value):
         self._force_redraw = True
 
     def startLevelsDiscoveryWhenIdle(self):
+        """
+        Start processing waveform (whenever possible)
+        """
         self.debug('Waiting for UI to become idle for: %s',
                    filename_from_uri(self._uri))
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
@@ -971,7 +1076,6 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
     def _launchPipeline(self):
         self.debug(
             'Now generating waveforms for: %s', filename_from_uri(self._uri))
-        self.peaks = None
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
                                          self._uri + " ! waveformbin name=wave"
                                          " ! fakesink qos=false name=faked")
@@ -986,11 +1090,12 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
-        self.nSamples = self.bElement.get_parent(
-        ).get_asset().get_duration() / 10000000
+        asset = self.bElement.get_parent().get_asset()
+        self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
         self.becomeControlled()
 
+    # pylint: disable=arguments-differ
     def set_size(self, unused_width, unused_height):
         self._force_redraw = True
 
@@ -1002,10 +1107,8 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.samples = self._wavebin.samples
 
     def _startRendering(self):
-        self.nbSamples = len(self.samples)
+        self.n_samples = len(self.samples)
         self.discovered = True
-        self.start = 0
-        self.end = self.nbSamples
         if self.adapter:
             self.adapter.stop()
 
@@ -1038,7 +1141,7 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
                            "Abandonning", message.parse_error())
 
         elif message.type == Gst.MessageType.STATE_CHANGED:
-            prev, new, pending = message.parse_state_changed()
+            prev, new, unused_pending_state = message.parse_state_changed()
             if message.src == self.pipeline:
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
                     self.pipeline.seek(1.0,
@@ -1055,6 +1158,7 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
                     self.adapter = PipelineCpuAdapter(self.pipeline)
                     self.adapter.start()
 
+    # pylint: disable=no-self-use
     def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug video decoders / parsers.
         if "Video" in factory.get_klass():
@@ -1064,10 +1168,11 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
     def _get_num_inpoint_samples(self):
         if self.bElement.props.in_point:
             asset_duration = self.bElement.get_asset().get_filesource_asset().get_duration()
-            return int(self.nbSamples / (float(asset_duration) / float(self.bElement.props.in_point)))
+            return int(self.n_samples / (float(asset_duration) / float(self.bElement.props.in_point)))
 
         return 0
 
+    # pylint: disable=arguments-differ
     def do_draw(self, context):
         if not self.discovered:
             return
@@ -1075,17 +1180,23 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
 
         num_inpoint_samples = self._get_num_inpoint_samples()
-        start = int(self.pixelToNs(clipped_rect.x) / 10000000) + num_inpoint_samples
-        end = int((self.pixelToNs(clipped_rect.x) + self.pixelToNs(clipped_rect.width)) / 10000000) + num_inpoint_samples
+        drawn_start = self.pixelToNs(clipped_rect.x)
+        drawn_duration = self.pixelToNs(clipped_rect.width)
+        start = int(drawn_start / SAMPLE_DURATION) + num_inpoint_samples
+        end = int((drawn_start + drawn_duration) / SAMPLE_DURATION) + num_inpoint_samples
 
         if self._force_redraw or self._surface_x > clipped_rect.x or self._end < end:
             self._start = start
-            end = int(min(self.nSamples, end + (self.pixelToNs(MARGIN) / 10000000)))
+            end = int(min(self.n_samples, end + (self.pixelToNs(MARGIN) /
+                                                 SAMPLE_DURATION)))
             self._end = end
             self._surface_x = clipped_rect.x
+            surface_width = min(self.props.width_request - clipped_rect.x,
+                                clipped_rect.width + MARGIN)
+            surface_height = int(self.get_parent().get_allocation().height)
             self.surface = renderer.fill_surface(self.samples[start:end],
-                                                 min(self.props.width_request - clipped_rect.x, clipped_rect.width + MARGIN),
-                                                 int(self.get_parent().get_allocation().height))
+                                                 surface_width,
+                                                 surface_height)
 
             self._force_redraw = False
 
@@ -1110,5 +1221,8 @@ class AudioPreviewer(Gtk.Layout, PreviewGenerator, Zoomable, Loggable):
         self.emit("done")
 
     def cleanup(self):
+        """
+        Stop preview generation and cleanup object
+        """
         self.stopGeneration()
         Zoomable.__del__(self)

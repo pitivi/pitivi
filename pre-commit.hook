@@ -60,7 +60,6 @@ pitivi/timeline/timeline.py \
 pitivi/timeline/layer.py \
 pitivi/timeline/ruler.py \
 pitivi/timeline/elements.py \
-pitivi/timeline/previewers.py \
 pitivi/autoaligner.py \
 pitivi/mainwindow.py \
 pitivi/mediafilespreviewer.py \
@@ -82,6 +81,8 @@ elif [ -z $PYLINT ]; then
   done
   echo "Pylint ignoring files:$IGNORED_FILES"
 fi
+
+export PYTHONPATH=$(git rev-parse --show-toplevel)/pitivi/coptimizations/.libs:$PYTHONPATH
 
 git-pylint-commit-hook --pylintrc=$RCFILE $IGNORE_ARGS --limit=10.0 --suppress-report &&\
   git_pep8_commit_hook --pep8-params="--repeat --ignore=E501,E128"
