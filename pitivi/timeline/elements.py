@@ -373,9 +373,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         # We set up the default mixing property right here, if a binding was
         # already set (when loading a project), it will be added later
         # and override that one.
-        self.__controlledProperty = self._getDefaultMixingProperty()
-        if self.__controlledProperty:
-            self.__createControlBinding(self._ges_elem)
+        self.showDefaultKeyframes()
 
     def release(self):
         if self.__previewer:
@@ -398,15 +396,17 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__width = width
         self.__height = height
 
-    def showKeyframes(self, effect, prop):
-        self.__controlledProperty = prop
-        self.__createControlBinding(effect)
+    def showKeyframes(self, ges_elem, prop):
+        self.__setKeyframes(ges_elem, prop)
 
-    def hideKeyframes(self):
+    def showDefaultKeyframes(self):
+        self.__setKeyframes(self._ges_elem, self._getDefaultMixingProperty())
+
+    def __setKeyframes(self, ges_elem, prop):
         self.__removeKeyframes()
-        self.__controlledProperty = self._getDefaultMixingProperty()
+        self.__controlledProperty = prop
         if self.__controlledProperty:
-            self.__createControlBinding(self._ges_elem)
+            self.__createControlBinding(ges_elem)
 
     def __curveEnterCb(self, unused_keyframe_curve):
         self.emit("curve-enter")
@@ -415,14 +415,17 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.emit("curve-leave")
 
     def __removeKeyframes(self):
-        if self.__keyframeCurve:
-            self.__keyframeCurve.disconnect_by_func(
-                self.__keyframePlotChangedCb)
-            self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
-            self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
-            self.remove(self.__keyframeCurve)
+        if not self.__keyframeCurve:
+            # Nothing to remove.
+            return
 
-            self.__keyframeCurve.release()
+        self.__keyframeCurve.disconnect_by_func(
+            self.__keyframePlotChangedCb)
+        self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
+        self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
+        self.remove(self.__keyframeCurve)
+
+        self.__keyframeCurve.release()
         self.__keyframeCurve = None
 
     # Private methods

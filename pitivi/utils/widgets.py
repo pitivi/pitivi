@@ -807,7 +807,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 binding = self.element.get_control_binding(prop.name)
                 self.bindings[widget] = binding
             elif hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
-                track_element.ui_element.hideKeyframes()
+                track_element.ui_element.showDefaultKeyframes()
 
     def _defaultBtnClickedCb(self, unused_button, widget):
         try:
