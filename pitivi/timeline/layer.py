@@ -114,7 +114,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         Loggable.__init__(self)
 
         self.bLayer = bLayer
-        self.bTimeline = self.bLayer.get_timeline()
+        self.ges_timeline = self.bLayer.get_timeline()
         self.app = app
 
         self.props.width_request = ui.CONTROL_WIDTH
@@ -173,8 +173,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         vbox.pack_start(self.after_sep, False, False, 0)
 
         self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
-        self.bTimeline.connect("layer-added", self.__timelineLayerAddedCb)
-        self.bTimeline.connect("layer-removed", self.__timelineLayerRemovedCb)
+        self.ges_timeline.connect("layer-added", self.__timelineLayerAddedCb)
+        self.ges_timeline.connect("layer-removed", self.__timelineLayerRemovedCb)
         self.__updateActions()
 
         # When the window property is set, specify the mouse cursor.
@@ -186,8 +186,8 @@ class LayerControls(Gtk.EventBox, Loggable):
     def __del__(self):
         self.name_entry.disconnect_by_func(self.__nameChangedCb)
         self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
-        self.bTimeline.disconnect_by_func(self.__timelineLayerAddedCb)
-        self.bTimeline.disconnect_by_func(self.__timelineLayerRemovedCb)
+        self.ges_timeline.disconnect_by_func(self.__timelineLayerAddedCb)
+        self.ges_timeline.disconnect_by_func(self.__timelineLayerRemovedCb)
         super(LayerControls, self).__del__()
 
     def __nameChangedCb(self, unused_widget, unused_event):
@@ -209,7 +209,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         first = priority == 0
         self.__move_layer_up_action.props.enabled = not first
         self.__move_layer_top_action.props.enabled = not first
-        layers_count = len(self.bTimeline.get_layers())
+        layers_count = len(self.ges_timeline.get_layers())
         last = priority == layers_count - 1
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
@@ -256,8 +256,8 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def _deleteLayerCb(self, unused_action, unused_parametter):
         self.app.action_log.begin("delete layer")
-        self.bTimeline.remove_layer(self.bLayer)
-        self.bTimeline.get_asset().pipeline.commit_timeline()
+        self.ges_timeline.remove_layer(self.bLayer)
+        self.ges_timeline.get_asset().pipeline.commit_timeline()
         self.app.action_log.commit()
 
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
@@ -267,8 +267,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = len(self.bTimeline.get_layers()) - 1
-        self.bTimeline.ui.moveLayer(self.bLayer, index)
+            index = len(self.ges_timeline.get_layers()) - 1
+        self.ges_timeline.ui.moveLayer(self.bLayer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def update(self, media_types):
@@ -336,9 +336,9 @@ class LayerLayout(Gtk.Layout, Loggable):
             self._changed = False
 
         self.props.width = max(self.timeline.layout.get_allocation().width,
-                               timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration))
+                               timelineUtils.Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
         self.props.width_request = max(self.timeline.layout.get_allocation().width,
-                                       timelineUtils.Zoomable.nsToPixel(self.timeline.bTimeline.props.duration))
+                                       timelineUtils.Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
 
         for child in self._children:
             self.propagate_draw(child, cr)
@@ -415,9 +415,9 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             return
         old_media_types = self.media_types
         self.media_types = GES.TrackType(0)
-        bClips = self.bLayer.get_clips()
-        for bClip in bClips:
-            for child in bClip.get_children(False):
+        ges_clips = self.bLayer.get_clips()
+        for ges_clip in ges_clips:
+            for child in ges_clip.get_children(False):
                 track = child.get_track()
                 if not track:
                     continue
@@ -446,59 +446,59 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def move(self, child, x, y):
         self._layout.move(child, x, y)
 
-    def _childAddedToClipCb(self, bClip, child):
+    def _childAddedToClipCb(self, ges_clip, child):
         self.checkMediaTypes()
 
-    def _childRemovedFromClipCb(self, bClip, child):
+    def _childRemovedFromClipCb(self, ges_clip, child):
         self.checkMediaTypes()
 
-    def _clipAddedCb(self, layer, bClip):
-        self._addClip(bClip)
+    def _clipAddedCb(self, layer, ges_clip):
+        self._addClip(ges_clip)
 
-    def _addClip(self, bClip):
-        ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
+    def _addClip(self, ges_clip):
+        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
         if ui_type is None:
-            self.error("Implement UI for type %s?", bClip.__gtype__)
+            self.error("Implement UI for type %s?", ges_clip.__gtype__)
             return
 
-        clip = ui_type(self, bClip)
+        clip = ui_type(self, ges_clip)
 
-        self._layout.put(clip, self.nsToPixel(bClip.props.start), 0)
+        self._layout.put(clip, self.nsToPixel(ges_clip.props.start), 0)
         self.show_all()
-        bClip.connect_after("child-added", self._childAddedToClipCb)
-        bClip.connect_after("child-removed", self._childRemovedFromClipCb)
+        ges_clip.connect_after("child-added", self._childAddedToClipCb)
+        ges_clip.connect_after("child-removed", self._childRemovedFromClipCb)
         self.checkMediaTypes()
 
-    def _clipRemovedCb(self, bLayer, bClip):
-        self._removeClip(bClip)
+    def _clipRemovedCb(self, bLayer, ges_clip):
+        self._removeClip(ges_clip)
 
-    def _removeClip(self, bClip):
-        if not bClip.ui:
+    def _removeClip(self, ges_clip):
+        if not ges_clip.ui:
             return
 
-        ui_type = elements.GES_TYPE_UI_TYPE.get(bClip.__gtype__, None)
+        ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
         if ui_type is None:
-            self.error("Implement UI for type %s?", bClip.__gtype__)
+            self.error("Implement UI for type %s?", ges_clip.__gtype__)
             return
 
-        bClip.ui.release()
-        self._layout.remove(bClip.ui)
-        self.timeline.selection.unselect([bClip])
+        ges_clip.ui.release()
+        self._layout.remove(ges_clip.ui)
+        self.timeline.selection.unselect([ges_clip])
 
     def __childWidgetRemovedCb(self, layout, clip):
-        bClip = clip.bClip
+        ges_clip = clip.ges_clip
         if self.timeline.draggingElement is None:
-            bClip.ui.release()
-            bClip.ui = None
+            ges_clip.ui.release()
+            ges_clip.ui = None
 
-        bClip.disconnect_by_func(self._childAddedToClipCb)
-        bClip.disconnect_by_func(self._childRemovedFromClipCb)
+        ges_clip.disconnect_by_func(self._childAddedToClipCb)
+        ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
         self.checkMediaTypes()
 
     def updatePosition(self):
-        for bClip in self.bLayer.get_clips():
-            if hasattr(bClip, "ui"):
-                bClip.ui.updatePosition()
+        for ges_clip in self.bLayer.get_clips():
+            if hasattr(ges_clip, "ui"):
+                ges_clip.ui.updatePosition()
 
     def do_draw(self, cr):
         Gtk.Box.do_draw(self, cr)

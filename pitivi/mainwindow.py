@@ -382,22 +382,22 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             self.info("Minimum UI size has been reduced to " +
                    str(min_size.width) + "x" + str(min_size.height))
 
-    def switchContextTab(self, bClip):
+    def switchContextTab(self, ges_clip):
         """
         Switch the tab being displayed on the second set of tabs,
         depending on the context.
 
-        @param bClip: The clip which has been focused.
-        @type bClip: GES.SourceClip
+        @param ges_clip: The clip which has been focused.
+        @type ges_clip: GES.SourceClip
         """
-        if isinstance(bClip, GES.TitleClip):
+        if isinstance(ges_clip, GES.TitleClip):
             page = 2
-        elif isinstance(bClip, GES.SourceClip):
+        elif isinstance(ges_clip, GES.SourceClip):
             page = 0
-        elif isinstance(bClip, GES.TransitionClip):
+        elif isinstance(ges_clip, GES.TransitionClip):
             page = 1
         else:
-            self.warning("Unknown clip type: %s", bClip)
+            self.warning("Unknown clip type: %s", ges_clip)
             return
         self.context_tabs.set_current_page(page)
 

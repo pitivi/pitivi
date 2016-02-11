@@ -21,11 +21,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-"""
-Convention throughout this file:
-Every GES element which name could be mistaken with a UI element
-is prefixed with a little b, example : bTimeline
-"""
 import os
 
 from gettext import gettext as _
@@ -215,7 +210,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
     # Callbacks
     def __controlSourceChangedCb(self, unused_control_source, unused_timed_value):
         self.__updatePlots()
-        self.__timeline.bTimeline.get_parent().commit_timeline()
+        self.__timeline.ges_timeline.get_parent().commit_timeline()
 
     def __gtkMotionEventCb(self, unused_widget, unused_event):
         """
@@ -351,16 +346,16 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.set_name(element.get_name())
 
         self.timeline = timeline
-        self._bElement = element
-        self._bElement.selected = timelineUtils.Selected()
-        self._bElement.selected.connect(
+        self._ges_elem = element
+        self._ges_elem.selected = timelineUtils.Selected()
+        self._ges_elem.selected.connect(
             "selected-changed", self.__selectedChangedCb)
 
         self.__width = 0
         self.__height = 0
 
         # Needed for effect's keyframe toggling
-        self._bElement.ui_element = self
+        self._ges_elem.ui_element = self
 
         self.props.vexpand = True
 
@@ -380,7 +375,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         # and override that one.
         self.__controlledProperty = self._getDefaultMixingProperty()
         if self.__controlledProperty:
-            self.__createControlBinding(self._bElement)
+            self.__createControlBinding(self._ges_elem)
 
     def release(self):
         if self.__previewer:
@@ -411,7 +406,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__removeKeyframes()
         self.__controlledProperty = self._getDefaultMixingProperty()
         if self.__controlledProperty:
-            self.__createControlBinding(self._bElement)
+            self.__createControlBinding(self._ges_elem)
 
     def __curveEnterCb(self, unused_keyframe_curve):
         self.emit("curve-enter")
@@ -440,9 +435,9 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             val = float(self.__controlledProperty.default_value) / \
                 (self.__controlledProperty.maximum -
                  self.__controlledProperty.minimum)
-            source.set(self._bElement.props.in_point, val)
+            source.set(self._ges_elem.props.in_point, val)
             source.set(
-                self._bElement.props.duration + self._bElement.props.in_point,
+                self._ges_elem.props.duration + self._ges_elem.props.in_point,
                 val)
 
         self.__removeKeyframes()
@@ -453,7 +448,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__keyframeCurve.connect("leave", self.__curveLeaveCb)
         self.add(self.__keyframeCurve)
         self.__keyframeCurve.set_size_request(self.__width, self.__height)
-        self.__keyframeCurve.props.visible = bool(self._bElement.selected)
+        self.__keyframeCurve.props.visible = bool(self._ges_elem.selected)
         self.queue_draw()
 
     def __createControlBinding(self, element):
@@ -473,7 +468,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             element.set_control_source(source,
                                        self.__controlledProperty.name, "direct")
 
-    def __controlBindingAddedCb(self, unused_bElement, binding):
+    def __controlBindingAddedCb(self, unused_ges_elem, binding):
         if binding.props.name == self.__controlledProperty.name:
             self.__createKeyframeCurve(binding)
 
@@ -492,7 +487,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if len(self.timeline.selection) > 1:
             return False
 
-        return self._bElement.selected
+        return self._ges_elem.selected
 
     def do_draw(self, cr):
         self.propagate_draw(self.__background, cr)
@@ -505,13 +500,13 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
     def do_show_all(self):
         for child in self.get_children():
-            if bool(self._bElement.selected) or child != self.__keyframeCurve:
+            if bool(self._ges_elem.selected) or child != self.__keyframeCurve:
                 child.show_all()
 
         self.show()
 
     # Callbacks
-    def __selectedChangedCb(self, unused_bElement, selected):
+    def __selectedChangedCb(self, unused_ges_elem, selected):
         if self.__keyframeCurve:
             self.__keyframeCurve.props.visible = selected
 
@@ -565,7 +560,7 @@ class TitleSource(VideoSource):
     __gtype_name__ = "PitiviTitleSource"
 
     def _getDefaultMixingProperty(self):
-        for spec in self._bElement.list_children_properties():
+        for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
 
@@ -579,13 +574,13 @@ class VideoUriSource(VideoSource):
         self.get_style_context().add_class("VideoUriSource")
 
     def _getPreviewer(self):
-        previewer = previewers.VideoPreviewer(self._bElement)
+        previewer = previewers.VideoPreviewer(self._ges_elem)
         previewer.get_style_context().add_class("VideoUriSource")
 
         return previewer
 
     def _getDefaultMixingProperty(self):
-        for spec in self._bElement.list_children_properties():
+        for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
 
@@ -606,7 +601,7 @@ class AudioUriSource(TimelineElement):
         self.get_style_context().add_class("AudioUriSource")
 
     def _getPreviewer(self):
-        previewer = previewers.AudioPreviewer(self._bElement)
+        previewer = previewers.AudioPreviewer(self._ges_elem)
         previewer.get_style_context().add_class("AudioUriSource")
         previewer.startLevelsDiscoveryWhenIdle()
 
@@ -616,7 +611,7 @@ class AudioUriSource(TimelineElement):
         return AudioBackground()
 
     def _getDefaultMixingProperty(self):
-        for spec in self._bElement.list_children_properties():
+        for spec in self._ges_elem.list_children_properties():
             if spec.name == "volume":
                 return spec
 
@@ -672,12 +667,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     __gtype_name__ = "PitiviClip"
 
-    def __init__(self, layer, bClip):
+    def __init__(self, layer, ges_clip):
         super(Clip, self).__init__()
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        name = bClip.get_name()
+        name = ges_clip.get_name()
         self.set_name(name)
         self.get_accessible().set_name(name)
 
@@ -686,9 +681,9 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.timeline = layer.timeline
         self.app = layer.app
 
-        self.bClip = bClip
-        self.bClip.ui = self
-        self.bClip.selected = timelineUtils.Selected()
+        self.ges_clip = ges_clip
+        self.ges_clip.ui = self
+        self.ges_clip.selected = timelineUtils.Selected()
 
         self._audioSource = None
         self._videoSource = None
@@ -696,8 +691,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self._setupWidget()
         self.__force_position_update = True
 
-        for child in self.bClip.get_children(False):
-            self._childAdded(self.bClip, child)
+        for child in self.ges_clip.get_children(False):
+            self._childAdded(self.ges_clip, child)
             self.__connectToChild(child)
 
         # Connect to Widget signals.
@@ -705,13 +700,13 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.connect("event", self._eventCb)
 
         # Connect to GES signals.
-        self.bClip.connect("notify::start", self._startChangedCb)
-        self.bClip.connect("notify::inpoint", self._startChangedCb)
-        self.bClip.connect("notify::duration", self._durationChangedCb)
-        self.bClip.connect("notify::layer", self._layerChangedCb)
+        self.ges_clip.connect("notify::start", self._startChangedCb)
+        self.ges_clip.connect("notify::inpoint", self._startChangedCb)
+        self.ges_clip.connect("notify::duration", self._durationChangedCb)
+        self.ges_clip.connect("notify::layer", self._layerChangedCb)
 
-        self.bClip.connect_after("child-added", self._childAddedCb)
-        self.bClip.connect_after("child-removed", self._childRemovedCb)
+        self.ges_clip.connect_after("child-added", self._childAddedCb)
+        self.ges_clip.connect_after("child-removed", self._childRemovedCb)
 
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
@@ -719,7 +714,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     @property
     def layer(self):
-        return self.bClip.get_layer().ui
+        return self.ges_clip.get_layer().ui
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
         success = False
@@ -730,11 +725,11 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         if target.name() == ui.EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
-            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.bClip,
+            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.ges_clip,
                                                                     self.timeline.dropData)
             self.timeline.resetSelectionGroup()
-            self.timeline.selection.setSelection([self.bClip], timelineUtils.SELECT)
-            self.app.gui.switchContextTab(self.bClip)
+            self.timeline.selection.setSelection([self.ges_clip], timelineUtils.SELECT)
+            self.app.gui.switchContextTab(self.ges_clip)
             self.timeline.cleanDropData()
             success = True
 
@@ -748,8 +743,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         y = 0
         height = parent_height
-        has_video = self.bClip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
-        has_audio = self.bClip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
+        has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
+        has_audio = self.ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
         if not has_video or not has_audio:
             if self.layer and self.layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
                 height = parent_height / 2
@@ -764,8 +759,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if not parent or not self.layer:
             return
 
-        start = self.bClip.props.start
-        duration = self.bClip.props.duration
+        start = self.ges_clip.props.start
+        duration = self.ges_clip.props.duration
         x = self.nsToPixel(start)
         # The calculation of the width assumes that the start is always
         # int(pixels_float). In that case, the rounding can add up and a pixel
@@ -846,22 +841,22 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
                 mode = timelineUtils.SELECT_ADD
                 self.timeline.current_group.add(
-                    self.bClip.get_toplevel_parent())
+                    self.ges_clip.get_toplevel_parent())
             else:
                 self.timeline.current_group.remove(
-                    self.bClip.get_toplevel_parent())
+                    self.ges_clip.get_toplevel_parent())
                 mode = timelineUtils.UNSELECT
         elif not self.get_state_flags() & Gtk.StateFlags.SELECTED:
             self.timeline.resetSelectionGroup()
             self.timeline.current_group.add(
-                self.bClip.get_toplevel_parent())
-            self.app.gui.switchContextTab(self.bClip)
+                self.ges_clip.get_toplevel_parent())
+            self.app.gui.switchContextTab(self.ges_clip)
         else:
             self.timeline.resetSelectionGroup()
 
-        parent = self.bClip.get_parent()
+        parent = self.ges_clip.get_parent()
         if parent == self.timeline.current_group or parent is None:
-            selection = [self.bClip]
+            selection = [self.ges_clip]
         else:
             while True:
                 grandparent = parent.get_parent()
@@ -878,14 +873,14 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         return False
 
     def release(self):
-        for child in self.bClip.get_children(True):
+        for child in self.ges_clip.get_children(True):
             self.__disconnectFromChild(child)
 
-        misc.disconnectAllByFunc(self.bClip, self._startChangedCb)
-        misc.disconnectAllByFunc(self.bClip, self._durationChangedCb)
-        misc.disconnectAllByFunc(self.bClip, self._layerChangedCb)
-        misc.disconnectAllByFunc(self.bClip, self._childAddedCb)
-        misc.disconnectAllByFunc(self.bClip, self._childRemovedCb)
+        misc.disconnectAllByFunc(self.ges_clip, self._startChangedCb)
+        misc.disconnectAllByFunc(self.ges_clip, self._durationChangedCb)
+        misc.disconnectAllByFunc(self.ges_clip, self._layerChangedCb)
+        misc.disconnectAllByFunc(self.ges_clip, self._childAddedCb)
+        misc.disconnectAllByFunc(self.ges_clip, self._childRemovedCb)
 
     def __showHandles(self):
         for handle in self.handles:
@@ -916,7 +911,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def _durationChangedCb(self, unused_clip, unused_pspec):
         self.updatePosition()
 
-    def _layerChangedCb(self, bClip, unused_pspec):
+    def _layerChangedCb(self, ges_clip, unused_pspec):
         self.updatePosition()
 
     def __disconnectFromChild(self, child):
@@ -958,8 +953,8 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 class SourceClip(Clip):
     __gtype_name__ = "PitiviSourceClip"
 
-    def __init__(self, layer, bClip):
-        super(SourceClip, self).__init__(layer, bClip)
+    def __init__(self, layer, ges_clip):
+        super(SourceClip, self).__init__(layer, ges_clip)
 
     def _setupWidget(self):
         self._addTrimHandles()
@@ -975,15 +970,15 @@ class SourceClip(Clip):
 class UriClip(SourceClip):
     __gtype_name__ = "PitiviUriClip"
 
-    def __init__(self, layer, bClip):
-        super(UriClip, self).__init__(layer, bClip)
+    def __init__(self, layer, ges_clip):
+        super(UriClip, self).__init__(layer, ges_clip)
         self.props.has_tooltip = True
 
-        self.set_tooltip_markup(misc.filename_from_uri(bClip.get_uri()))
+        self.set_tooltip_markup(misc.filename_from_uri(ges_clip.get_uri()))
 
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
         tooltip.set_markup(misc.filename_from_uri(
-            self.bClip.get_asset().props.id))
+            self.ges_clip.get_asset().props.id))
 
         return True
 
@@ -1021,10 +1016,10 @@ class TransitionClip(Clip):
 
     __gtype_name__ = "PitiviTransitionClip"
 
-    def __init__(self, layer, bClip):
+    def __init__(self, layer, ges_clip):
         self.__has_video = False
 
-        super(TransitionClip, self).__init__(layer, bClip)
+        super(TransitionClip, self).__init__(layer, ges_clip)
 
         if self.__has_video:
             self.z_order = 1
@@ -1040,7 +1035,7 @@ class TransitionClip(Clip):
 
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
         if self.__has_video:
-            markup = str(self.bClip.props.vtype.value_nick)
+            markup = str(self.ges_clip.props.vtype.value_nick)
         else:
             markup = _("Audio crossfade")
         tooltip.set_text(markup)

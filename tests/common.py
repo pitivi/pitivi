@@ -129,21 +129,21 @@ class TestCase(unittest.TestCase, Loggable):
         self._result = result
         unittest.TestCase.run(self, result)
 
-    def toggleClipSelection(self, bClip, expect_selected):
+    def toggleClipSelection(self, ges_clip, expect_selected):
         '''
-        Toggle selection state of @bClip.
+        Toggle selection state of @ges_clip.
         '''
-        selected = bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
-        self.assertEqual(bClip.selected.selected, selected)
+        selected = bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
+        self.assertEqual(ges_clip.selected.selected, selected)
 
-        bClip.ui.sendFakeEvent(
-            Event(Gdk.EventType.BUTTON_PRESS, button=1), bClip.ui)
-        bClip.ui.sendFakeEvent(
-            Event(Gdk.EventType.BUTTON_RELEASE, button=1), bClip.ui)
+        ges_clip.ui.sendFakeEvent(
+            Event(Gdk.EventType.BUTTON_PRESS, button=1), ges_clip.ui)
+        ges_clip.ui.sendFakeEvent(
+            Event(Gdk.EventType.BUTTON_RELEASE, button=1), ges_clip.ui)
 
-        self.assertEqual(bool(bClip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
+        self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)
-        self.assertEqual(bClip.selected.selected, expect_selected)
+        self.assertEqual(ges_clip.selected.selected, expect_selected)
 
     def createTempProject(self):
         """

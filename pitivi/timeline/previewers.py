@@ -75,12 +75,6 @@ PREVIEW_GENERATOR_SIGNALS = {
 
 THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 
-"""
-Convention throughout this file:
-Every GES element which name could be mistaken with a UI element
-is prefixed with a little b, example : bTimeline
-"""
-
 
 class PreviewerBin(Gst.Bin, Loggable):
     """
@@ -398,21 +392,21 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
     # are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
-    def __init__(self, bElement):
+    def __init__(self, ges_elem):
         """
-        @param bElement : the backend GES.TrackElement
-        @param track : the track to which the bElement belongs
+        @param ges_elem : the backend GES.TrackElement
+        @param track : the track to which the ges_elem belongs
         """
         Previewer.__init__(self, GES.TrackType.VIDEO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
         # Variables related to the timeline objects
-        self.timeline = bElement.get_parent().get_timeline().ui
-        self.bElement = bElement
+        self.timeline = ges_elem.get_parent().get_timeline().ui
+        self.ges_elem = ges_elem
 
         # Guard against malformed URIs
-        self.uri = quote_uri(get_proxy_target(bElement).props.id)
+        self.uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         # Variables related to thumbnailing
         self.wishlist = []
@@ -434,7 +428,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.interval = 500  # Every 0.5 second, reevaluate the situation
 
         # Connect signals and fire things up
-        self.bElement.connect("notify::in-point", self._inpointChangedCb)
+        self.ges_elem.connect("notify::in-point", self._inpointChangedCb)
 
         self.pipeline = None
         self.gdkpixbufsink = None
@@ -526,24 +520,24 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             # started this job.
             return
 
-        # self.props.width_request = self.nsToPixel(self.bElement.get_asset().get_filesource_asset().props.duration)
-        # self.props.width = self.nsToPixel(self.bElement.get_asset().get_filesource_asset().props.duration)
+        # self.props.width_request = self.nsToPixel(self.ges_elem.get_asset().get_filesource_asset().props.duration)
+        # self.props.width = self.nsToPixel(self.ges_elem.get_asset().get_filesource_asset().props.duration)
 
         self.debug(
             'Now generating thumbnails for: %s', filename_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of: %s", self.uri)
-            duration = self.bElement.props.duration
+            duration = self.ges_elem.props.duration
 
         self.queue = list(range(0, duration, self.thumb_period))
 
         self._checkCPU()
 
-        if self.bElement.props.in_point != 0:
+        if self.ges_elem.props.in_point != 0:
             adj = self.get_hadjustment()
             adj.props.page_size = 1.0
-            adj.props.value = Zoomable.nsToPixel(self.bElement.props.in_point)
+            adj.props.value = Zoomable.nsToPixel(self.ges_elem.props.in_point)
 
         # self._addVisibleThumbnails()
         # Save periodically to avoid the common situation where the user exits
@@ -618,13 +612,13 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         thumb_duration = self._get_thumb_duration()
 
-        element_left = self.pixelToNs(rect.x) + self.bElement.props.in_point
+        element_left = self.pixelToNs(rect.x) + self.ges_elem.props.in_point
         element_right = element_left + self.pixelToNs(rect.width)
         element_left = quantize(element_left, thumb_duration)
 
         for current_time in range(element_left, element_right, thumb_duration):
             thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            x = Zoomable.nsToPixel(current_time) - self.nsToPixel(self.bElement.props.in_point)
+            x = Zoomable.nsToPixel(current_time) - self.nsToPixel(self.ges_elem.props.in_point)
             y = (self.props.height_request - self.thumb_height) / 2
             self.put(thumb, x, y)
 
@@ -704,7 +698,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def _inpointChangedCb(self, unused_b_element, unused_value):
         self.get_hadjustment().set_value(Zoomable.nsToPixel(
-            self.bElement.props.in_point))
+            self.ges_elem.props.in_point))
 
     def setSelected(self, selected):
         if selected:
@@ -1019,7 +1013,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
-    def __init__(self, bElement):
+    def __init__(self, ges_elem):
         Previewer.__init__(self, GES.TrackType.AUDIO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -1028,10 +1022,10 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._wavebin = None
 
         self.discovered = False
-        self.bElement = bElement
-        self.timeline = bElement.get_parent().get_timeline().ui
+        self.ges_elem = ges_elem
+        self.timeline = ges_elem.get_parent().get_timeline().ui
 
-        asset = self.bElement.get_parent().get_asset()
+        asset = self.ges_elem.get_parent().get_asset()
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         self.samples = None
         self.peaks = None
@@ -1041,7 +1035,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         # Guard against malformed URIs
         self.wavefile = None
-        self._uri = quote_uri(get_proxy_target(bElement).props.id)
+        self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         self._num_failures = 0
         self.adapter = None
@@ -1049,7 +1043,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self._force_redraw = True
 
-        self.bElement.connect("notify::in-point", self._inpointChangedCb)
+        self.ges_elem.connect("notify::in-point", self._inpointChangedCb)
 
     def _inpointChangedCb(self, unused_b_element, unused_value):
         self._force_redraw = True
@@ -1082,7 +1076,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
         self._wavebin = self.pipeline.get_by_name("wave")
-        asset = self.bElement.get_parent().get_asset()
+        asset = self.ges_elem.get_parent().get_asset()
         self._wavebin.props.uri = asset.get_id()
         self._wavebin.props.duration = asset.get_duration()
         decode = self.pipeline.get_by_name("decode")
@@ -1090,7 +1084,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
-        asset = self.bElement.get_parent().get_asset()
+        asset = self.ges_elem.get_parent().get_asset()
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
         self.becomeControlled()
@@ -1166,9 +1160,9 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         return False
 
     def _get_num_inpoint_samples(self):
-        if self.bElement.props.in_point:
-            asset_duration = self.bElement.get_asset().get_filesource_asset().get_duration()
-            return int(self.n_samples / (float(asset_duration) / float(self.bElement.props.in_point)))
+        if self.ges_elem.props.in_point:
+            asset_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
+            return int(self.n_samples / (float(asset_duration) / float(self.ges_elem.props.in_point)))
 
         return 0
 

@@ -88,12 +88,6 @@ PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
                                       description=_(
                                           "Whether left-clicking also seeks besides selecting and editing clips."))
 
-"""
-Convention throughout this file:
-Every GES element which name could be mistaken with a UI element
-is prefixed with a little b, example : bTimeline
-"""
-
 
 class VerticalBar(Gtk.DrawingArea, Loggable):
     """
@@ -170,7 +164,7 @@ class Marquee(Gtk.Box, Loggable):
         res = []
 
         w = self.props.width_request
-        for layer in self._timeline.bTimeline.get_layers():
+        for layer in self._timeline.ges_timeline.get_layers():
             intersects, unused_rect = layer.ui.get_allocation().intersect(self.get_allocation())
             if not intersects:
                 continue
@@ -227,7 +221,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.parent = container
         self.app = app
         self._project = None
-        self.bTimeline = None
+        self.ges_timeline = None
 
         self.props.can_focus = False
 
@@ -359,39 +353,39 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         Connects to the GES.Timeline holding the project.
         """
-        if self.bTimeline is not None:
-            self.bTimeline.disconnect_by_func(self._durationChangedCb)
-            self.bTimeline.disconnect_by_func(self._layerAddedCb)
-            self.bTimeline.disconnect_by_func(self._layerRemovedCb)
-            self.bTimeline.disconnect_by_func(self._snapCb)
-            self.bTimeline.disconnect_by_func(self._snapEndedCb)
-            for bLayer in self.bTimeline.get_layers():
+        if self.ges_timeline is not None:
+            self.ges_timeline.disconnect_by_func(self._durationChangedCb)
+            self.ges_timeline.disconnect_by_func(self._layerAddedCb)
+            self.ges_timeline.disconnect_by_func(self._layerRemovedCb)
+            self.ges_timeline.disconnect_by_func(self._snapCb)
+            self.ges_timeline.disconnect_by_func(self._snapEndedCb)
+            for bLayer in self.ges_timeline.get_layers():
                 self._removeLayer(bLayer)
 
-            self.bTimeline.ui = None
-            self.bTimeline = None
+            self.ges_timeline.ui = None
+            self.ges_timeline = None
 
         self._project = project
         if self._project:
             self._project.pipeline.connect('position', self._positionCb)
-            self.bTimeline = self._project.timeline
+            self.ges_timeline = self._project.timeline
 
-        if self.bTimeline is None:
+        if self.ges_timeline is None:
             return
 
-        for bLayer in self.bTimeline.get_layers():
+        for bLayer in self.ges_timeline.get_layers():
             self._addLayer(bLayer)
 
-        self.bTimeline.connect("notify::duration", self._durationChangedCb)
-        self.bTimeline.connect("layer-added", self._layerAddedCb)
-        self.bTimeline.connect("layer-removed", self._layerRemovedCb)
-        self.bTimeline.connect("snapping-started", self._snapCb)
-        self.bTimeline.connect("snapping-ended", self._snapEndedCb)
-        self.bTimeline.ui = self
+        self.ges_timeline.connect("notify::duration", self._durationChangedCb)
+        self.ges_timeline.connect("layer-added", self._layerAddedCb)
+        self.ges_timeline.connect("layer-removed", self._layerRemovedCb)
+        self.ges_timeline.connect("snapping-started", self._snapCb)
+        self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
+        self.ges_timeline.ui = self
 
         self.queue_draw()
 
-    def _durationChangedCb(self, bTimeline, pspec):
+    def _durationChangedCb(self, ges_timeline, pspec):
         self.queue_draw()
 
     def scrollToPlayhead(self, align=None, when_not_in_view=False):
@@ -455,13 +449,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return LAYER_HEIGHT, natural_height
 
     def __setLayoutSize(self):
-        if self.bTimeline:
+        if self.ges_timeline:
             width = self._timelineLengthInPixels()
             if self.draggingElement:
                 width = max(width, self.layout.props.width)
 
             self.__layers_vbox.props.width_request = width
-            self.layout.set_size(width, len(self.bTimeline.get_layers()) * 200)
+            self.layout.set_size(width, len(self.ges_timeline.get_layers()) * 200)
 
     def do_size_allocate(self, request):
         self.__setLayoutSize()
@@ -495,11 +489,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     # util methods  #
     # ------------- #
     def _timelineLengthInPixels(self):
-        if self.bTimeline is None:
+        if self.ges_timeline is None:
             return 100
 
         space_at_the_end = self.layout.get_allocation().width * 2 / 3
-        return self.nsToPixel(self.bTimeline.props.duration) + space_at_the_end
+        return self.nsToPixel(self.ges_timeline.props.duration) + space_at_the_end
 
     def _getParentOfType(self, widget, _type):
         """
@@ -748,19 +742,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
             self.app.action_log.begin("add clip")
-            bClip = bLayer.add_asset(asset,
+            ges_clip = bLayer.add_asset(asset,
                                      placement,
                                      0,
                                      clip_duration,
                                      asset.get_supported_formats())
             placement += clip_duration
-            self.current_group.add(bClip.get_toplevel_parent())
+            self.current_group.add(ges_clip.get_toplevel_parent())
             self.selection.setSelection([], SELECT_ADD)
             self.app.action_log.commit()
             self._project.pipeline.commit_timeline()
 
             if not self.draggingElement:
-                self.draggingElement = bClip.ui
+                self.draggingElement = ges_clip.ui
                 self._on_layer = bLayer
 
             self._createdClips = True
@@ -864,7 +858,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._addLayer(bLayer)
 
     def moveLayer(self, bLayer, index):
-        layers = self.bTimeline.get_layers()
+        layers = self.ges_timeline.get_layers()
         layer = layers.pop(bLayer.get_priority())
         layers.insert(index, layer)
 
@@ -896,7 +890,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
 
     def _removeLayerCb(self, layer):
-        self.bTimeline.remove_layer(layer.bLayer)
+        self.ges_timeline.remove_layer(layer.bLayer)
 
     def __layerPriorityChangedCb(self, bLayer, pspec):
         self.__resetLayersByPriority()
@@ -929,7 +923,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.__resetLayersByPriority(True)
 
-    def _layerRemovedCb(self, unused_bTimeline, bLayer):
+    def _layerRemovedCb(self, unused_ges_timeline, bLayer):
         self._removeLayer(bLayer)
 
     # Interface Zoomable
@@ -959,7 +953,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
         """ Used in the testsuite """
-        bLayers = self.bTimeline.get_layers()
+        bLayers = self.ges_timeline.get_layers()
         if y < 20:
             # The cursor is at the top, above the first layer.
             self.debug("Returning very first layer")
@@ -1033,8 +1027,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 edit_mode = GES.EditMode.EDIT_NORMAL
                 dragging_edge = GES.Edge.EDGE_NONE
 
-            self.editing_context = EditingContext(self.draggingElement.bClip,
-                                                  self.bTimeline,
+            self.editing_context = EditingContext(self.draggingElement.ges_clip,
+                                                  self.ges_timeline,
                                                   edit_mode,
                                                   dragging_edge,
                                                   None,
@@ -1069,9 +1063,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def createLayer(self, priority):
         new_bLayer = GES.Layer.new()
         new_bLayer.props.priority = priority
-        self.bTimeline.add_layer(new_bLayer)
+        self.ges_timeline.add_layer(new_bLayer)
 
-        bLayers = self.bTimeline.get_layers()
+        bLayers = self.ges_timeline.get_layers()
         if priority < len(bLayers):
             for bLayer in bLayers:
                 if bLayer == new_bLayer:
@@ -1106,7 +1100,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             priority = self._on_layer.props.priority + 1
 
         self.createLayer(max(0, priority))
-        return self.bTimeline.get_layers()[priority]
+        return self.ges_timeline.get_layers()[priority]
 
     def dragEnd(self):
         if self.editing_context:
@@ -1126,7 +1120,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.editing_context = None
         self.hideSnapBar()
 
-        for layer in self.bTimeline.get_layers():
+        for layer in self.ges_timeline.get_layers():
             layer.ui.checkMediaTypes()
 
         self._setSeparatorsPrelight(False)
@@ -1162,7 +1156,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._projectmanager = None
         self._project = None
-        self.bTimeline = None
+        self.ges_timeline = None
         self.__copiedGroup = None
 
         self._createUi()
@@ -1188,7 +1182,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                            proxy_uri)
                 return
 
-        layers = self.bTimeline.get_layers()
+        layers = self.ges_timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if unproxy:
@@ -1214,8 +1208,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._insertClipsAndAssets(clips, position, layer)
 
     def _insertClipsAndAssets(self, objs, position, layer):
-        if self.bTimeline is None:
-            raise TimelineError("No bTimeline set, this is a bug")
+        if self.ges_timeline is None:
+            raise TimelineError("No ges_timeline set, this is a bug")
 
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
@@ -1259,12 +1253,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if position is None:
             return self._project.pipeline.getPosition()
         if position < 0:
-            return self.bTimeline.props.duration
+            return self.ges_timeline.props.duration
         return position
 
     def purgeAsset(self, asset_id):
         """Remove all instances of an asset from the timeline."""
-        layers = self.bTimeline.get_layers()
+        layers = self.ges_timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if asset_id == clip.get_id():
@@ -1301,9 +1295,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self._project:
             self._project.connect("rendering-settings-changed",
                                   self._renderingSettingsChangedCb)
-            self.bTimeline = project.timeline
+            self.ges_timeline = project.timeline
         else:
-            self.bTimeline = None
+            self.ges_timeline = None
 
         self.timeline.setProject(self._project)
         self.timeline.selection.connect(
@@ -1391,11 +1385,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         @rtype: list of GES.Layer
         """
-        layers = self.bTimeline.get_layers()
+        layers = self.ges_timeline.get_layers()
         if not layers:
             layer = GES.Layer()
             layer.props.auto_transition = True
-            self.bTimeline.add_layer(layer)
+            self.ges_timeline.add_layer(layer)
             return [layer]
         return layers
 
@@ -1500,7 +1494,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Set the zoom level so that the entire timeline is in view.
         """
         ruler_width = self.ruler.get_allocation().width
-        duration = 0 if not self.bTimeline else self.bTimeline.get_duration()
+        duration = 0 if not self.ges_timeline else self.ges_timeline.get_duration()
         if not duration:
             return
 
@@ -1524,7 +1518,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 return
 
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.bTimeline.set_snapping_distance(
+        self.ges_timeline.set_snapping_distance(
             Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
         # Only do this at the very end, after updating the other widgets.
@@ -1567,7 +1561,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return False
 
     def _deleteSelected(self, unused_action, unused_parameter):
-        if self.bTimeline:
+        if self.ges_timeline:
             self.app.action_log.begin("delete clip")
 
             for clip in self.timeline.selection:
@@ -1582,8 +1576,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline.selection.setSelection([], SELECT)
 
     def _ungroupSelected(self, unused_action, unused_parameter):
-        if not self.bTimeline:
-            self.info("No bTimeline set yet!")
+        if not self.ges_timeline:
+            self.info("No ges_timeline set yet!")
             return
 
         self.app.action_log.begin("ungroup")
@@ -1601,7 +1595,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project.pipeline.commit_timeline()
 
     def _groupSelected(self, unused_action, unused_parameter):
-        if not self.bTimeline:
+        if not self.ges_timeline:
             self.info("No timeline set yet?")
             return
 
@@ -1642,7 +1636,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._project.pipeline.commit_timeline()
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
-        if not self.bTimeline:
+        if not self.ges_timeline:
             self.error(
                 "Trying to use the autoalign feature with an empty timeline")
             return
@@ -1680,7 +1674,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         splitting_selection = clips is not None
         if clips is None:
             clips = []
-            for layer in self.timeline.bTimeline.get_layers():
+            for layer in self.timeline.ges_timeline.get_layers():
                 clips.extend(layer.get_clips())
 
         position = self._project.pipeline.getPosition()
@@ -1738,9 +1732,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Zoomable
 
     def zoomChanged(self):
-        if self.bTimeline:
+        if self.ges_timeline:
             # zoomChanged might be called various times before the UI is ready
-            self.bTimeline.set_snapping_distance(
+            self.ges_timeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
         self.zoomed_fitted = False
 
@@ -1813,8 +1807,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             project.update_restriction_caps()
 
     def _snapDistanceChangedCb(self, unused_settings):
-        if self.bTimeline:
-            self.bTimeline.set_snapping_distance(
+        if self.ges_timeline:
+            self.ges_timeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectChangedCb(self, unused_app, project, unused_fully_loaded):
@@ -1830,8 +1824,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self._renderingSettingsChangedCb(self._project, None, None)
             self._setBestZoomRatio()
-            if self.bTimeline:
-                self.bTimeline.set_snapping_distance(
+            if self.ges_timeline:
+                self.ges_timeline.set_snapping_distance(
                     Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectCreatedCb(self, unused_app, project):

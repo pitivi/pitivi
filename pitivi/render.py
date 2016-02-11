@@ -747,7 +747,7 @@ class RenderDialog(Loggable):
             self.debug("Rendering from proxies, not replacing assets")
             return
 
-        for layer in self.app.gui.timeline_ui.bTimeline.get_layers():
+        for layer in self.app.gui.timeline_ui.ges_timeline.get_layers():
             for clip in layer.get_clips():
                 if not isinstance(clip, GES.UriClip):
                     continue

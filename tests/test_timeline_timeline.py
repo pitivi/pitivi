@@ -53,7 +53,7 @@ class BaseTestTimeline(common.TestCase):
         return timeline
 
     def addClipsSimple(self, timeline, num_clips):
-        layer = timeline.bTimeline.append_layer()
+        layer = timeline.ges_timeline.append_layer()
 
         asset = GES.UriClipAsset.request_sync(
             common.getSampleUri("tears_of_steel.webm"))
@@ -207,7 +207,7 @@ class TestGrouping(BaseTestTimeline):
     def testGroupSelection(self):
         num_clips = 2
         timeline = self.groupClips(num_clips)
-        layer = timeline.bTimeline.get_layers()[0]
+        layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), num_clips)
 
@@ -226,7 +226,7 @@ class TestGrouping(BaseTestTimeline):
         self.assertEqual(len(timeline.selection.selected), num_clips)
 
         timeline.parent.ungroup_action.emit("activate", None)
-        layer = timeline.bTimeline.get_layers()[0]
+        layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), num_clips)
 
@@ -240,8 +240,8 @@ class TestGrouping(BaseTestTimeline):
         clips = self.addClipsSimple(timeline, 1)
         self.toggleClipSelection(clips[0], expect_selected=True)
 
-        timeline.bTimeline.get_asset().pipeline.getPosition = mock.Mock(return_value=position)
-        layer = timeline.bTimeline.get_layers()[0]
+        timeline.ges_timeline.get_asset().pipeline.getPosition = mock.Mock(return_value=position)
+        layer = timeline.ges_timeline.get_layers()[0]
 
         # Split
         timeline.parent.split_action.emit("activate", None)
@@ -269,30 +269,30 @@ class TestGrouping(BaseTestTimeline):
 
     def testUngroupClip(self):
         timeline = self.createTimeline()
-        bClip, = self.addClipsSimple(timeline, 1)
+        ges_clip, = self.addClipsSimple(timeline, 1)
 
-        self.toggleClipSelection(bClip, expect_selected=True)
+        self.toggleClipSelection(ges_clip, expect_selected=True)
 
         timeline.parent.ungroup_action.emit("activate", None)
-        layer = timeline.bTimeline.get_layers()[0]
-        bClip0, bClip1 = layer.get_clips()
+        layer = timeline.ges_timeline.get_layers()[0]
+        ges_clip0, ges_clip1 = layer.get_clips()
 
-        self.assertEqual(bClip0.props.start, bClip1.props.start)
-        self.assertEqual(bClip0.props.duration, bClip1.props.duration)
+        self.assertEqual(ges_clip0.props.start, ges_clip1.props.start)
+        self.assertEqual(ges_clip0.props.duration, ges_clip1.props.duration)
 
-        bTrackElem0, = bClip0.get_children(recursive=False)
-        bTrackElem1, = bClip1.get_children(recursive=False)
+        bTrackElem0, = ges_clip0.get_children(recursive=False)
+        bTrackElem1, = ges_clip1.get_children(recursive=False)
 
         if bTrackElem0.get_track_type() == GES.TrackType.AUDIO:
-            aclip = bClip0.ui
+            aclip = ges_clip0.ui
             atrackelem = bTrackElem0.ui
-            vclip = bClip1.ui
+            vclip = ges_clip1.ui
             vtrackelem = bTrackElem1.ui
         else:
-            aclip = bClip1.ui
+            aclip = ges_clip1.ui
             atrackelem = bTrackElem1.ui
 
-            vclip = bClip0.ui
+            vclip = ges_clip0.ui
             vtrackelem = bTrackElem0.ui
 
         self.assertEqual(aclip._audioSource, atrackelem)
@@ -325,9 +325,9 @@ class TestCopyPaste(BaseTestTimeline):
 
         timeline = self.copyClips(2)
 
-        layer = timeline.bTimeline.get_layers()[0]
+        layer = timeline.ges_timeline.get_layers()[0]
         # Monkey patching the pipeline.getPosition method
-        project = timeline.bTimeline.get_asset()
+        project = timeline.ges_timeline.get_asset()
         project.pipeline.getPosition = mock.Mock(return_value=position)
 
         clips = layer.get_clips()
