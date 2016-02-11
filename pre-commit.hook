@@ -1,5 +1,87 @@
 #!/usr/bin/env bash
 
 RCFILE=$(git rev-parse --show-toplevel)/docs/pylint.rc
-git-pylint-commit-hook --pylintrc=$RCFILE --limit=10.0 --suppress-report &&\
+
+IGNORED_FILES=" \
+tests/test_check.py \
+tests/test_system.py \
+tests/test_timeline_layer.py \
+tests/runtests.py \
+tests/test_utils_timeline.py \
+tests/test_prefs.py \
+mests/test_undo.py \
+tests/test_utils.py \
+tests/test_project.py \
+tests/test_clipproperties.py \
+tests/test_preset.py \
+tests/test_previewers.py \
+tests/test_undo_timeline.py \
+tests/validate-tests/pitivi.py \
+tests/validate-tests/pitivivalidate.py \
+tests/test_media_library.py \
+tests/test_misc.py \
+tests/test_widgets.py \
+tests/test_common.py \
+tests/common.py \
+tests/test_timeline_timeline.py \
+tests/test_pipeline.py \
+tests/test_application.py \
+tests/test_log.py \
+pitivi/titleeditor.py \
+pitivi/settings.py \
+pitivi/project.py \
+pitivi/check.py \
+pitivi/medialibrary.py \
+pitivi/preset.py \
+pitivi/configure.py \
+pitivi/utils/validate.py \
+pitivi/utils/loggable.py \
+pitivi/utils/widgets.py \
+pitivi/utils/proxy.py \
+pitivi/utils/system.py \
+pitivi/utils/timeline.py \
+pitivi/utils/threads.py \
+pitivi/utils/pipeline.py \
+pitivi/utils/extract.py \
+pitivi/utils/misc.py \
+pitivi/utils/ripple_update_group.py \
+pitivi/utils/ui.py \
+pitivi/dialogs/startupwizard.py \
+pitivi/dialogs/clipmediaprops.py \
+pitivi/dialogs/prefs.py \
+pitivi/dialogs/depsmanager.py \
+pitivi/dialogs/filelisterrordialog.py \
+pitivi/transitions.py \
+pitivi/application.py \
+pitivi/effects.py \
+pitivi/viewer.py \
+pitivi/clipproperties.py \
+pitivi/timeline/timeline.py \
+pitivi/timeline/layer.py \
+pitivi/timeline/ruler.py \
+pitivi/timeline/elements.py \
+pitivi/timeline/previewers.py \
+pitivi/autoaligner.py \
+pitivi/mainwindow.py \
+pitivi/mediafilespreviewer.py \
+pitivi/undo/undo.py \
+pitivi/undo/timeline.py \
+pitivi/render.py \
+pitivi/viewer/move_scale_overlay.py \
+"
+
+git-pylint-commit-hook --help |grep ignore > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+  echo "Your git-pylint-commit-hook version can't ignore files that have not been fixed yet"
+  echo ""
+elif [ -z $PYLINT ]; then
+  IGNORE_ARGS=''
+  for f in $IGNORED_FILES; do
+    IGNORE_ARGS="$IGNORE_ARGS --ignore=$f"
+  done
+  echo "Pylint ignoring files:$IGNORED_FILES"
+fi
+
+git-pylint-commit-hook --pylintrc=$RCFILE $IGNORE_ARGS --limit=10.0 --suppress-report &&\
   git_pep8_commit_hook --pep8-params="--repeat --ignore=E501,E128"
