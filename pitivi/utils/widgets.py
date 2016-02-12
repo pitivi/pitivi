@@ -745,8 +745,14 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.show_all()
 
     def _propertyChangedCb(self, effect, gst_element, pspec):
+        if gst_element.get_control_binding(pspec.name):
+            self.log("%s controlled, not displaying value", pspec.name)
+            return
+
         widget = self.properties[pspec]
-        widget.setWidgetValue(self.element.get_child_property(pspec.name)[1])
+        res, value = self.element.get_child_property(pspec.name)
+        assert(res)
+        widget.setWidgetValue(value)
 
     def _createKeyframeToggleButton(self, prop):
         button = Gtk.ToggleButton()
