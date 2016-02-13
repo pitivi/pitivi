@@ -857,8 +857,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if project.pipeline is not None:
             project.pipeline.deactivatePositionListener()
 
-        self.info("Project closed - clearing the media library and timeline")
-        self.medialibrary.storemodel.clear()
+        self.info("Project closed")
         self._disconnectFromProject(project)
         self.timeline_ui.setProject(None)
         self.render_button.set_sensitive(False)

@@ -1440,6 +1440,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _projectClosedCb(self, unused_project_manager, unused_project):
         self._project_settings_set_infobar.hide()
+        self.storemodel.clear()
 
     def _addUris(self, uris):
         if self.app.project_manager.current_project:
