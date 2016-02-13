@@ -858,6 +858,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             project.pipeline.deactivatePositionListener()
 
         self.info("Project closed")
+        self.updateTitle()
         self._disconnectFromProject(project)
         self.timeline_ui.setProject(None)
         self.render_button.set_sensitive(False)

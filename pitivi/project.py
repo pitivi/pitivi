@@ -559,22 +559,23 @@ class ProjectManager(GObject.Object, Loggable):
 
         self.current_project.finalize()
 
-        self.emit("project-closed", self.current_project)
+        project = self.current_project
+        self.current_project = None
+        self.emit("project-closed", project)
         # We should never choke on silly stuff like disconnecting signals
         # that were already disconnected. It blocks the UI for nothing.
         # This can easily happen when a project load/creation failed.
         try:
-            self.current_project.disconnect_by_function(self._projectChangedCb)
+            project.disconnect_by_function(self._projectChangedCb)
         except Exception:
             self.debug(
                 "Tried disconnecting signals, but they were not connected")
         try:
-            self.current_project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
+            project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
         except Exception:
             self.fixme("Handle better the errors and not get to this point")
-        self._cleanBackup(self.current_project.uri)
-        self.exitcode = self.current_project.release()
-        self.current_project = None
+        self._cleanBackup(project.uri)
+        self.exitcode = project.release()
 
         return True
 
