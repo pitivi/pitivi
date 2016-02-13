@@ -513,7 +513,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Nothing to remove.
             return
 
-        self._effect_config_ui.resetKeyframeToggleButtons()
+        self._effect_config_ui.deactivate_keyframe_toggle_buttons()
         self._vbox.remove(self._effect_config_ui)
         self._effect_config_ui = None
 

@@ -597,57 +597,51 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
 
 
 class GstElementSettingsWidget(Gtk.Box, Loggable):
+    """Widget to modify the properties of a Gst.Element.
 
-    """
-    Widget to view/modify properties of a Gst.Element
+    Can be used to configure an effect or an encoder, etc.
+
+    Args:
+        controllable (bool): Whether the properties being controlled by
+            keyframes is allowed.
     """
 
-    def __init__(self, isControllable=True):
+    def __init__(self, controllable=True):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = None
         self.ignore = []
         self.properties = {}
-        self.buttons = {}
-        self.isControllable = isControllable
+        self.__controllable = controllable
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
-    def resetKeyframeToggleButtons(self, widget=None):
-        """
-        Reset all the keyframe togglebuttons for all properties.
-        If a property widget is specified, reset only its keyframe togglebutton.
-        """
-        if widget:
-            # Use the dynamic widget (that has been provided as an argument)
-            # to find which of the togglebuttons is the related one.
-            self.log("Resetting one keyframe button")
-            for togglebutton in list(self.keyframeToggleButtons.keys()):
-                if self.keyframeToggleButtons[togglebutton] is widget:
-                    # The dynamic widget matches the one
-                    # related to the current to the current togglebutton
-                    togglebutton.set_label("◇")
-                    self._setKeyframeToggleButtonState(togglebutton, False)
-                    break  # Stop searching
-        else:
-            self.log("Resetting all keyframe buttons")
-            for togglebutton in list(self.keyframeToggleButtons.keys()):
-                togglebutton.set_label("◇")
-                self._setKeyframeToggleButtonState(togglebutton, False)
+    def deactivate_keyframe_toggle_buttons(self):
+        """Make sure the keyframe togglebuttons are deactivated."""
+        self.log("Deactivating all keyframe toggle buttons")
+        for keyframe_button in self.__widgets_by_keyframe_button.keys():
+            if keyframe_button.get_active():
+                # Deactivate the button. The only effect should be that
+                # the keyframe curve will control again the default property.
+                keyframe_button.set_active(False)
+                # There can be only one active keyframes button.
+                break
 
     def setElement(self, element, values={}, ignore=['name'],
-                   default_btn=False):
-        """
-        Set the element to be edited.
+                   with_reset_button=False):
+        """Set the element to be edited.
 
-        @param values: The values of the element properties.
-                       If empty, the default values will be used.
+        Args:
+            values (dict): The current values of the element props, by name.
+                If empty, the default values will be used.
+            with_reset_button (bool): Whether to show a reset button for each
+                property.
         """
         self.info("element: %s, use values: %s", element, values)
         self.element = element
         self.ignore = ignore
-        self._addWidgets(values, default_btn)
+        self.__add_widgets(values, with_reset_button)
 
-    def _addWidgets(self, values, default_btn):
+    def __add_widgets(self, values, with_reset_button):
         """
         Prepare a Gtk.Grid containing the property widgets of an element.
 
@@ -657,8 +651,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         If there are no properties, returns a "No properties" label.
         """
         self.properties.clear()
-        self.bindings = {}
-        self.keyframeToggleButtons = {}
+        self.__bindings_by_keyframe_button = {}
+        self.__widgets_by_keyframe_button = {}
         is_effect = isinstance(self.element, GES.Effect)
         if is_effect:
             props = [prop for prop in self.element.list_children_properties()
@@ -708,37 +702,31 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 grid.attach(label, 0, y, 1, 1)
                 grid.attach(widget, 1, y, 1, 1)
 
-            controllable = self.isControllable and \
-                not isinstance(widget, DefaultWidget)
-            if controllable and not isinstance(widget, (ToggleWidget,
-                                                        ChoiceWidget)):
-                res, element, pspec = self.element.lookup_child(prop.name)
-                assert(res)
-                binding = GstController.DirectControlBinding.new(
-                    element, prop.name,
-                    GstController.InterpolationControlSource())
-
-                if binding.pspec:
-                    keyframe_toggle_button = self._createKeyframeToggleButton(prop)
-                    self.keyframeToggleButtons[keyframe_toggle_button] = widget
-                    grid.attach(keyframe_toggle_button, 2, y, 1, 1)
-
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
             self.properties[prop] = widget
 
+            if not self.__controllable or isinstance(widget, DefaultWidget):
+                continue
+
+            keyframe_button = None
+            if not isinstance(widget, (ToggleWidget, ChoiceWidget)):
+                res, element, pspec = self.element.lookup_child(prop.name)
+                assert(res)
+                binding = GstController.DirectControlBinding.new(
+                    element, prop.name,
+                    GstController.InterpolationControlSource())
+                if binding.pspec:
+                    # The prop can be controlled (keyframed).
+                    keyframe_button = self.__create_keyframe_toggle_button(prop, widget)
+                    grid.attach(keyframe_button, 2, y, 1, 1)
+
             # The "reset to default" button associated with this property
-            if controllable and default_btn:
-                # If this element is controlled, the value means nothing
-                # anymore.
-                binding = self.element.get_control_binding(prop.name)
-                if binding:
-                    widget.set_sensitive(False)
-                    self.bindings[widget] = binding
-                button = self._createResetToDefaultValueButton(prop, widget)
+            if with_reset_button:
+                button = self.__create_reset_to_default_button(prop, widget,
+                                                               keyframe_button)
                 grid.attach(button, 3, y, 1, 1)
-                self.buttons[button] = widget
 
         self.element.connect('deep-notify', self._propertyChangedCb)
         self.pack_start(grid, expand=False, fill=False, padding=0)
@@ -754,50 +742,61 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         assert(res)
         widget.setWidgetValue(value)
 
-    def _createKeyframeToggleButton(self, prop):
-        button = Gtk.ToggleButton()
-        button.set_label("◇")
-        button.props.focus_on_click = False  # Avoid the ugly selection outline
-        button.set_tooltip_text(_("Show keyframes for this value"))
-        button.set_relief(Gtk.ReliefStyle.NONE)
-        button.connect('toggled', self._showKeyframesToggledCb, prop)
-        return button
+    def __create_keyframe_toggle_button(self, prop, widget):
+        keyframe_button = Gtk.ToggleButton()
+        keyframe_button.props.focus_on_click = False  # Avoid the ugly selection outline
+        keyframe_button.set_tooltip_text(_("Show keyframes for this value"))
+        keyframe_button.set_relief(Gtk.ReliefStyle.NONE)
+        keyframe_button.connect('toggled', self.__keyframes_toggled_cb, prop)
+        self.__widgets_by_keyframe_button[keyframe_button] = widget
+        prop_binding = self.element.get_control_binding(prop.name)
+        self.__bindings_by_keyframe_button[keyframe_button] = prop_binding
+        self.__display_controlled(keyframe_button, bool(prop_binding))
+        return keyframe_button
 
-    def _createResetToDefaultValueButton(self, unused_prop, widget):
+    def __create_reset_to_default_button(self, unused_prop, widget,
+                                         keyframe_button):
         icon = Gtk.Image()
         icon.set_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
         button = Gtk.Button()
         button.add(icon)
         button.set_tooltip_text(_("Reset to default value"))
         button.set_relief(Gtk.ReliefStyle.NONE)
-        button.connect('clicked', self._defaultBtnClickedCb, widget)
+        button.connect('clicked', self.__reset_to_default_clicked_cb, widget,
+                       keyframe_button)
         return button
 
-    def _setKeyframeToggleButtonState(self, button, active_state):
+    def __set_keyframe_active(self, button, active):
         """
         This is meant for programmatically (un)pushing the provided keyframe
         togglebutton, without triggering its signals.
         """
         self.log("Manually resetting the UI state of %s" % button)
-        button.handler_block_by_func(self._showKeyframesToggledCb)
-        button.set_active(active_state)
-        button.handler_unblock_by_func(self._showKeyframesToggledCb)
+        button.handler_block_by_func(self.__keyframes_toggled_cb)
+        button.set_active(active)
+        button.handler_unblock_by_func(self.__keyframes_toggled_cb)
 
-    def _showKeyframesToggledCb(self, button, prop):
-        self.log("keyframes togglebutton clicked for %s" % prop)
-        active = button.get_active()
-        # Disable the related dynamic gst property widget
-        widget = self.keyframeToggleButtons[button]
-        widget.set_sensitive(False)
+    def __display_controlled(self, toggle_button, controlled):
+        """Display whether the prop is keyframed."""
+        widget = self.__widgets_by_keyframe_button[toggle_button]
+        # The displayed value means nothing if the prop is controlled.
+        widget.set_sensitive(not controlled)
+        # The full disc label indicates the property is controlled (keyframed).
+        toggle_button.set_label("◆" if controlled else "◇")
+
+    def __keyframes_toggled_cb(self, keyframe_button, prop):
+        widget = self.__widgets_by_keyframe_button[keyframe_button]
+        self.log("keyframes togglebutton clicked for %s", prop)
+        active = keyframe_button.get_active()
         # Now change the state of the *other* togglebuttons.
-        for togglebutton in list(self.keyframeToggleButtons.keys()):
-            if togglebutton != button:
+        for toggle_keyframe_button in self.__widgets_by_keyframe_button.keys():
+            if toggle_keyframe_button != keyframe_button:
                 # Don't use set_active directly on the buttons; doing so will
                 # fire off signals that will toggle the others/confuse the UI
-                self._setKeyframeToggleButtonState(togglebutton, False)
-        # We always set this label, since the only way to *deactivate* keyframes
-        # (not just hide them temporarily) is to use the separate reset button.
-        button.set_label("◆")
+                self.__set_keyframe_active(toggle_keyframe_button, False)
+        # The only way to *deactivate* keyframes (not just hide them) is to use
+        # the separate reset button.
+        self.__display_controlled(keyframe_button, True)
 
         track_element = self.__get_track_element_of_same_type(self.element)
         if not track_element:
@@ -806,23 +805,23 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if active:
             track_element.ui_element.showKeyframes(self.element, prop)
             binding = self.element.get_control_binding(prop.name)
-            self.bindings[widget] = binding
+            self.__bindings_by_keyframe_button[keyframe_button] = binding
         else:
             track_element.ui_element.showDefaultKeyframes()
 
-    def _defaultBtnClickedCb(self, unused_button, widget):
-        try:
-            binding = self.bindings[widget]
-        except KeyError:
-            binding = None
+    def __reset_to_default_clicked_cb(self, unused_button, widget,
+                                      keyframe_button):
+        binding = self.__bindings_by_keyframe_button.get(keyframe_button)
         if binding:
-            track_element = self.__get_track_element_of_same_type(self.element)
-            if track_element:
-                binding.props.control_source.unset_all()
-
-        widget.set_sensitive(True)
+            # The prop is controllable (keyframmable).
+            binding.props.control_source.unset_all()
+            if keyframe_button.get_active():
+                track_element = self.__get_track_element_of_same_type(self.element)
+                if track_element:
+                    track_element.ui_element.showDefaultKeyframes()
+        self.__display_controlled(keyframe_button, False)
         widget.setWidgetToDefault()
-        self.resetKeyframeToggleButtons(widget)
+        self.__set_keyframe_active(keyframe_button, False)
 
     def __get_track_element_of_same_type(self, effect):
         track_type = effect.get_track_type()
@@ -834,17 +833,15 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         return None
 
     def getSettings(self, with_default=False):
-        """
-        returns the dictionnary of propertyname/propertyvalue
-        """
-        d = {}
+        """Get a name/value dict with the properties."""
+        values = {}
         for prop, widget in self.properties.items():
             if not prop.flags & GObject.PARAM_WRITABLE:
                 continue
             value = widget.getWidgetValue()
             if value is not None and (value != prop.default_value or with_default):
-                d[prop.name] = value
-        return d
+                values[prop.name] = value
+        return values
 
     def _makePropertyWidget(self, prop, value=None):
         """ Creates a Widget for the specified element property """
@@ -883,12 +880,10 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
 
 class GstElementSettingsDialog(Loggable):
-
-    """
-    Dialog window for viewing/modifying properties of a Gst.Element
+    """Dialog window for viewing/modifying properties of a Gst.Element.
     """
 
-    def __init__(self, elementfactory, properties, parent_window=None, isControllable=True):
+    def __init__(self, elementfactory, properties, parent_window=None):
         Loggable.__init__(self)
         self.debug("factory: %s, properties: %s", elementfactory, properties)
 
@@ -906,7 +901,7 @@ class GstElementSettingsDialog(Loggable):
         self.ok_btn = self.builder.get_object("okbutton1")
 
         self.window = self.builder.get_object("dialog1")
-        self.elementsettings = GstElementSettingsWidget(isControllable)
+        self.elementsettings = GstElementSettingsWidget(controllable=False)
         self.builder.get_object("viewport1").add(self.elementsettings)
 
         # set title and frame label

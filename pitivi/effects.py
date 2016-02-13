@@ -558,7 +558,7 @@ class EffectsPropertiesManager:
             # Here we should handle special effects configuration UI
             effect_widget = GstElementSettingsWidget()
             effect_widget.setElement(effect, ignore=PROPS_TO_IGNORE,
-                                     default_btn=True)
+                                     with_reset_button=True)
             self.cache_dict[effect] = effect_widget
             self._connectAllWidgetCallbacks(effect_widget, effect)
             self._postConfiguration(effect, effect_widget)
