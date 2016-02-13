@@ -713,8 +713,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         """
         self.log("A new project is loaded")
         self._connectToProject(project)
-        project.timeline.connect("notify::duration",
-                                 self._timelineDurationChangedCb)
         project.pipeline.activatePositionListener()
         self._setProject(project)
 
@@ -861,9 +859,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         self.info("Project closed - clearing the media library and timeline")
         self.medialibrary.storemodel.clear()
-        self._disconnectFromProject(self.app.project_manager.current_project)
-        self.app.project_manager.current_project.timeline.disconnect_by_func(
-            self._timelineDurationChangedCb)
+        self._disconnectFromProject(project)
         self.timeline_ui.setProject(None)
         self.render_button.set_sensitive(False)
         return False
@@ -1014,6 +1010,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         project.connect("project-changed", self._projectChangedCb)
         project.connect(
             "rendering-settings-changed", self._renderingSettingsChangedCb)
+        project.timeline.connect("notify::duration",
+                                 self._timelineDurationChangedCb)
 
 # Missing Plugins Support
 
@@ -1067,6 +1065,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _disconnectFromProject(self, project):
         project.disconnect_by_func(self._projectChangedCb)
         project.disconnect_by_func(self._renderingSettingsChangedCb)
+        project.timeline.disconnect_by_func(self._timelineDurationChangedCb)
 
 # Pitivi current project callbacks
 
