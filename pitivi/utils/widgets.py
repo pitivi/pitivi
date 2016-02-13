@@ -799,15 +799,16 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         # (not just hide them temporarily) is to use the separate reset button.
         button.set_label("◆")
 
-        effect = self.element
-        track_type = effect.get_track_type()
-        for track_element in effect.get_parent().get_children(False):
-            if active and hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
-                track_element.ui_element.showKeyframes(effect, prop)
-                binding = self.element.get_control_binding(prop.name)
-                self.bindings[widget] = binding
-            elif hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
-                track_element.ui_element.showDefaultKeyframes()
+        track_element = self.__get_track_element_of_same_type(self.element)
+        if not track_element:
+            return
+
+        if active:
+            track_element.ui_element.showKeyframes(self.element, prop)
+            binding = self.element.get_control_binding(prop.name)
+            self.bindings[widget] = binding
+        else:
+            track_element.ui_element.showDefaultKeyframes()
 
     def _defaultBtnClickedCb(self, unused_button, widget):
         try:
@@ -815,15 +816,22 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         except KeyError:
             binding = None
         if binding:
-            effect = self.element
-            track_type = effect.get_track_type()
-            for track_element in effect.get_parent().get_children(False):
-                if hasattr(track_element, "ui_element") and track_type == track_element.get_track_type():
-                    binding.props.control_source.unset_all()
+            track_element = self.__get_track_element_of_same_type(self.element)
+            if track_element:
+                binding.props.control_source.unset_all()
 
         widget.set_sensitive(True)
         widget.setWidgetToDefault()
         self.resetKeyframeToggleButtons(widget)
+
+    def __get_track_element_of_same_type(self, effect):
+        track_type = effect.get_track_type()
+        for track_element in effect.get_parent().get_children(False):
+            if hasattr(track_element, "ui_element") and \
+                    track_element.get_track_type() == track_type:
+                return track_element
+        self.warning("Failed to find track element of type %s", track_type)
+        return None
 
     def getSettings(self, with_default=False):
         """
