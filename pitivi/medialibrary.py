@@ -1398,9 +1398,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     iconview.select_path(current_cursor_pos)
 
     def __disconnectFromProject(self):
-        if not self._project:
-            return
-
         self._project.disconnect_by_func(self._assetAddedCb)
         self._project.disconnect_by_func(self._assetLoadingProgressCb)
         self._project.disconnect_by_func(self._assetRemovedCb)
@@ -1409,10 +1406,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
 
     def _newProjectCreatedCb(self, unused_project_manager, project):
-        if self._project is project:
-            return
-
-        self.__disconnectFromProject()
+        assert (not self._project)
 
         self._project = project
         self._resetErrorList()
@@ -1421,11 +1415,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._connectToProject(project)
 
     def _newProjectLoadedCb(self, unused_project_manager, project):
-        if self._project is not project:
-            self._project = project
-            self.storemodel.clear()
-            self._connectToProject(project)
-
         # Make sure that the sources added to the project are added
         self._flushPendingRows()
 
@@ -1434,8 +1423,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project = None
 
     def _projectClosedCb(self, unused_project_manager, unused_project):
+        self.__disconnectFromProject()
         self._project_settings_set_infobar.hide()
         self.storemodel.clear()
+        self._project = None
 
     def _addUris(self, uris):
         if self._project:
