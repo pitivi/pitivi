@@ -359,8 +359,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.ges_timeline.disconnect_by_func(self._layerRemovedCb)
             self.ges_timeline.disconnect_by_func(self._snapCb)
             self.ges_timeline.disconnect_by_func(self._snapEndedCb)
-            for bLayer in self.ges_timeline.get_layers():
-                self._removeLayer(bLayer)
+            for ges_layer in self.ges_timeline.get_layers():
+                self._removeLayer(ges_layer)
 
             self.ges_timeline.ui = None
             self.ges_timeline = None
@@ -375,8 +375,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.ges_timeline.ui = self
 
-        for bLayer in self.ges_timeline.get_layers():
-            self._addLayer(bLayer)
+        for ges_layer in self.ges_timeline.get_layers():
+            self._addLayer(ges_layer)
 
         self.ges_timeline.connect("notify::duration", self._durationChangedCb)
         self.ges_timeline.connect("layer-added", self._layerAddedCb)
@@ -601,11 +601,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.draggingElement is not None:
                 self.__drag_start_x = event.x
-                self._on_layer = self.draggingElement.layer.bLayer
+                self._on_layer = self.draggingElement.layer.ges_layer
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
                 if layer_controls:
-                    self.__moving_layer = layer_controls.bLayer
+                    self.__moving_layer = layer_controls.ges_layer
                 else:
                     self.__marquee.setStartPosition(event)
 
@@ -667,7 +667,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
             layer, unused_on_sep = self._getLayerAt(
-                y, prefer_bLayer=self.__moving_layer,
+                y, prefer_ges_layer=self.__moving_layer,
                 past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
@@ -735,7 +735,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 clip_duration = asset.get_duration()
 
-            bLayer, unused_on_sep = self._getLayerAt(y)
+            ges_layer, unused_on_sep = self._getLayerAt(y)
             if not placement:
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
@@ -743,11 +743,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
             self.app.action_log.begin("add clip")
-            ges_clip = bLayer.add_asset(asset,
-                                     placement,
-                                     0,
-                                     clip_duration,
-                                     asset.get_supported_formats())
+            ges_clip = ges_layer.add_asset(asset,
+                                           placement,
+                                           0,
+                                           clip_duration,
+                                           asset.get_supported_formats())
             placement += clip_duration
             self.current_group.add(ges_clip.get_toplevel_parent())
             self.selection.setSelection([], SELECT_ADD)
@@ -756,7 +756,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if not self.draggingElement:
                 self.draggingElement = ges_clip.ui
-                self._on_layer = bLayer
+                self._on_layer = ges_layer
 
             self._createdClips = True
 
@@ -855,12 +855,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dropDataReady = True
 
     # Handle layers
-    def _layerAddedCb(self, timeline, bLayer):
-        self._addLayer(bLayer)
+    def _layerAddedCb(self, timeline, ges_layer):
+        self._addLayer(ges_layer)
 
-    def moveLayer(self, bLayer, index):
+    def moveLayer(self, ges_layer, index):
         layers = self.ges_timeline.get_layers()
-        layer = layers.pop(bLayer.get_priority())
+        layer = layers.pop(ges_layer.get_priority())
         layers.insert(index, layer)
 
         for i, layer in enumerate(layers):
@@ -868,16 +868,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._project.setModificationState(True)
 
-    def _addLayer(self, bLayer):
-        layer = Layer(bLayer, self)
-        bLayer.ui = layer
+    def _addLayer(self, ges_layer):
+        layer = Layer(ges_layer, self)
+        ges_layer.ui = layer
         self._layers.append(layer)
         layer.connect("remove-me", self._removeLayerCb)
 
-        control = LayerControls(bLayer, self.app)
+        control = LayerControls(ges_layer, self.app)
         control.show_all()
         self.__layers_controls_vbox.pack_start(control, False, False, 0)
-        bLayer.control_ui = control
+        ges_layer.control_ui = control
         # Check the media types so the controls are set up properly.
         layer.checkMediaTypes()
 
@@ -888,44 +888,44 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer_widget.show_all()
         self.__layers_vbox.pack_start(layer_widget, True, True, 0)
 
-        bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
+        ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
 
     def _removeLayerCb(self, layer):
-        self.ges_timeline.remove_layer(layer.bLayer)
+        self.ges_timeline.remove_layer(layer.ges_layer)
 
-    def __layerPriorityChangedCb(self, bLayer, pspec):
+    def __layerPriorityChangedCb(self, ges_layer, pspec):
         self.__resetLayersByPriority()
 
     def __resetLayersByPriority(self, reset=False):
-        self._layers.sort(key=lambda layer: layer.bLayer.props.priority)
+        self._layers.sort(key=lambda layer: layer.ges_layer.props.priority)
         self.debug("Reseting layers priorities")
         for i, layer in enumerate(self._layers):
             if reset:
-                layer.bLayer.props.priority = i
+                layer.ges_layer.props.priority = i
 
             self.__layers_vbox.child_set_property(layer.get_parent(),
                                                   "position",
-                                                  layer.bLayer.props.priority)
+                                                  layer.ges_layer.props.priority)
 
-            self.__layers_controls_vbox.child_set_property(layer.bLayer.control_ui,
+            self.__layers_controls_vbox.child_set_property(layer.ges_layer.control_ui,
                                                            "position",
-                                                           layer.bLayer.props.priority)
+                                                           layer.ges_layer.props.priority)
 
-    def _removeLayer(self, bLayer):
-        self.info("Removing layer: %s", bLayer.props.priority)
-        self.__layers_vbox.remove(bLayer.ui.get_parent())
-        self.__layers_controls_vbox.remove(bLayer.control_ui)
-        bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+    def _removeLayer(self, ges_layer):
+        self.info("Removing layer: %s", ges_layer.props.priority)
+        self.__layers_vbox.remove(ges_layer.ui.get_parent())
+        self.__layers_controls_vbox.remove(ges_layer.control_ui)
+        ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
 
-        self._layers.remove(bLayer.ui)
-        bLayer.ui.release()
-        bLayer.ui = None
-        bLayer.control_ui = None
+        self._layers.remove(ges_layer.ui)
+        ges_layer.ui.release()
+        ges_layer.ui = None
+        ges_layer.control_ui = None
 
         self.__resetLayersByPriority(True)
 
-    def _layerRemovedCb(self, unused_ges_timeline, bLayer):
-        self._removeLayer(bLayer)
+    def _layerRemovedCb(self, unused_ges_timeline, ges_layer):
+        self._removeLayer(ges_layer)
 
     # Interface Zoomable
     def zoomChanged(self):
@@ -949,63 +949,63 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
-    def __layerGetSeps(self, bLayer, sep_name):
-        return [getattr(bLayer.ui, sep_name), getattr(bLayer.control_ui, sep_name)]
+    def __layerGetSeps(self, ges_layer, sep_name):
+        return [getattr(ges_layer.ui, sep_name), getattr(ges_layer.control_ui, sep_name)]
 
-    def _getLayerAt(self, y, prefer_bLayer=None, past_middle_when_adjacent=False):
+    def _getLayerAt(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
         """ Used in the testsuite """
-        bLayers = self.ges_timeline.get_layers()
+        ges_layers = self.ges_timeline.get_layers()
         if y < 20:
             # The cursor is at the top, above the first layer.
             self.debug("Returning very first layer")
-            bLayer = bLayers[0]
-            return bLayer, self.__layerGetSeps(bLayer, "before_sep")
+            ges_layer = ges_layers[0]
+            return ges_layer, self.__layerGetSeps(ges_layer, "before_sep")
 
         # This means if an asset is dragged directly on a separator,
         # it will prefer the layer below the separator, if any.
-        # Otherwise, it helps choosing a layer as close to prefer_bLayer
+        # Otherwise, it helps choosing a layer as close to prefer_ges_layer
         # as possible when having an option (y is between two layers).
         prefer_after = True
 
         if past_middle_when_adjacent:
-            index_preferred = prefer_bLayer.get_priority()
-            height_preferred = prefer_bLayer.ui.get_allocation().height
+            index_preferred = prefer_ges_layer.get_priority()
+            height_preferred = prefer_ges_layer.ui.get_allocation().height
 
-        for i, bLayer in enumerate(bLayers):
-            layer_rect = bLayer.ui.get_allocation()
+        for i, ges_layer in enumerate(ges_layers):
+            layer_rect = ges_layer.ui.get_allocation()
             layer_y = layer_rect.y
             layer_height = layer_rect.height
             if layer_y <= y < layer_y + layer_height:
-                # The cursor is exactly on bLayer.
+                # The cursor is exactly on ges_layer.
                 if past_middle_when_adjacent:
-                    # Check if far enough from prefer_bLayer.
-                    delta = index_preferred - bLayer.get_priority()
+                    # Check if far enough from prefer_ges_layer.
+                    delta = index_preferred - ges_layer.get_priority()
                     if (delta == 1 and y >= layer_y + height_preferred) or \
                             (delta == -1 and y < layer_y + layer_height - height_preferred):
-                        # bLayer is adjacent to prefer_bLayer, but the cursor
+                        # ges_layer is adjacent to prefer_ges_layer, but the cursor
                         # is not far enough to warrant a change.
-                        return prefer_bLayer, []
-                return bLayer, []
+                        return prefer_ges_layer, []
+                return ges_layer, []
 
-            separators = self.__layerGetSeps(bLayer, "after_sep")
+            separators = self.__layerGetSeps(ges_layer, "after_sep")
             try:
-                next_bLayer = bLayers[i + 1]
+                next_ges_layer = ges_layers[i + 1]
             except IndexError:
                 # The cursor is below the last layer.
                 self.debug("Returning very last layer")
-                return bLayer, separators
+                return ges_layer, separators
 
-            if bLayer == prefer_bLayer:
-                # Choose a layer as close to prefer_bLayer as possible.
+            if ges_layer == prefer_ges_layer:
+                # Choose a layer as close to prefer_ges_layer as possible.
                 prefer_after = False
 
-            if layer_y + layer_height <= y < next_bLayer.ui.get_allocation().y:
+            if layer_y + layer_height <= y < next_ges_layer.ui.get_allocation().y:
                 # The cursor is between this layer and the one below.
-                separators.extend(self.__layerGetSeps(next_bLayer, "before_sep"))
+                separators.extend(self.__layerGetSeps(next_ges_layer, "before_sep"))
                 if prefer_after:
-                    bLayer = next_bLayer
-                self.debug("Returning layer %s, separators: %s", bLayer, separators)
-                return bLayer, separators
+                    ges_layer = next_ges_layer
+                self.debug("Returning layer %s, separators: %s", ges_layer, separators)
+                return ges_layer, separators
 
     def _setSeparatorsPrelight(self, light):
         """ Used in the testsuite """
@@ -1049,7 +1049,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x - self.__drag_start_x)
 
         self._setSeparatorsPrelight(False)
-        res = self._getLayerAt(y, prefer_bLayer=self._on_layer)
+        res = self._getLayerAt(y, prefer_ges_layer=self._on_layer)
         self._on_layer, self.__on_separators = res
         if (mode != GES.EditMode.EDIT_NORMAL or
                 self.current_group.props.height > 1):
@@ -1062,35 +1062,35 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.editing_context.editTo(position, priority)
 
     def createLayer(self, priority):
-        new_bLayer = GES.Layer.new()
-        new_bLayer.props.priority = priority
-        self.ges_timeline.add_layer(new_bLayer)
+        new_ges_layer = GES.Layer.new()
+        new_ges_layer.props.priority = priority
+        self.ges_timeline.add_layer(new_ges_layer)
 
-        bLayers = self.ges_timeline.get_layers()
-        if priority < len(bLayers):
-            for bLayer in bLayers:
-                if bLayer == new_bLayer:
+        ges_layers = self.ges_timeline.get_layers()
+        if priority < len(ges_layers):
+            for ges_layer in ges_layers:
+                if ges_layer == new_ges_layer:
                     continue
 
-                if bLayer.get_priority() >= priority:
-                    bLayer.props.priority += 1
-                    self.__layers_vbox.child_set_property(bLayer.ui.get_parent(),
+                if ges_layer.get_priority() >= priority:
+                    ges_layer.props.priority += 1
+                    self.__layers_vbox.child_set_property(ges_layer.ui.get_parent(),
                                                           "position",
-                                                          bLayer.props.priority)
+                                                          ges_layer.props.priority)
 
-                    self.__layers_controls_vbox.child_set_property(bLayer.control_ui,
+                    self.__layers_controls_vbox.child_set_property(ges_layer.control_ui,
                                                                    "position",
-                                                                   bLayer.props.priority)
+                                                                   ges_layer.props.priority)
 
-        self.__layers_vbox.child_set_property(new_bLayer.ui.get_parent(),
+        self.__layers_vbox.child_set_property(new_ges_layer.ui.get_parent(),
                                               "position",
-                                              new_bLayer.props.priority)
+                                              new_ges_layer.props.priority)
 
-        self.__layers_controls_vbox.child_set_property(new_bLayer.control_ui,
+        self.__layers_controls_vbox.child_set_property(new_ges_layer.control_ui,
                                                        "position",
-                                                       new_bLayer.props.priority)
+                                                       new_ges_layer.props.priority)
 
-        return new_bLayer
+        return new_ges_layer
 
     def __getDroppedLayer(self):
         """

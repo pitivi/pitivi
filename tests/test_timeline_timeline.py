@@ -102,56 +102,56 @@ class TestLayers(BaseTestTimeline):
 
         y = 0
         for priority, height in enumerate(heights):
-            bLayer = timeline.createLayer(priority=priority)
+            ges_layer = timeline.createLayer(priority=priority)
             rect = Gdk.Rectangle()
             rect.y = y
             rect.height = height
-            bLayer.ui.set_allocation(rect)
+            ges_layer.ui.set_allocation(rect)
             y += height + SEPARATOR_HEIGHT
 
-        bLayers = [layer.bLayer for layer in timeline._layers]
+        ges_layers = [layer.ges_layer for layer in timeline._layers]
         if preferred is None:
-            preferred_bLayer = None
+            preferred_ges_layer = None
         else:
-            preferred_bLayer = bLayers[preferred]
+            preferred_ges_layer = ges_layers[preferred]
         h = [layer.get_allocation().height for layer in timeline._layers]
         s = SEPARATOR_HEIGHT
 
-        def assertLayerAt(bLayer, y):
+        def assertLayerAt(ges_layer, y):
             result = timeline._getLayerAt(
                 int(y),
-                prefer_bLayer=preferred_bLayer,
+                prefer_ges_layer=preferred_ges_layer,
                 past_middle_when_adjacent=past_middle_when_adjacent)
             self.assertEqual(
-                bLayer,
+                ges_layer,
                 result[0],
-                "Expected %d, got %d at %d" % (bLayers.index(bLayer), bLayers.index(result[0]), y))
+                "Expected %d, got %d at %d" % (ges_layers.index(ges_layer), ges_layers.index(result[0]), y))
 
         # y on the top layer.
-        assertLayerAt(bLayers[expectations[0]], 0)
-        assertLayerAt(bLayers[expectations[1]], h[0] / 2 - 1)
-        assertLayerAt(bLayers[expectations[2]], h[0] / 2)
-        assertLayerAt(bLayers[expectations[3]], h[0] - 1)
+        assertLayerAt(ges_layers[expectations[0]], 0)
+        assertLayerAt(ges_layers[expectations[1]], h[0] / 2 - 1)
+        assertLayerAt(ges_layers[expectations[2]], h[0] / 2)
+        assertLayerAt(ges_layers[expectations[3]], h[0] - 1)
 
         # y on the separator.
-        assertLayerAt(bLayers[expectations[4]], h[0])
-        assertLayerAt(bLayers[expectations[5]], h[0] + s - 1)
+        assertLayerAt(ges_layers[expectations[4]], h[0])
+        assertLayerAt(ges_layers[expectations[5]], h[0] + s - 1)
 
         # y on the middle layer.
-        assertLayerAt(bLayers[expectations[6]], h[0] + s)
-        assertLayerAt(bLayers[expectations[7]], h[0] + s + h[1] / 2 - 1)
-        assertLayerAt(bLayers[expectations[8]], h[0] + s + h[1] / 2)
-        assertLayerAt(bLayers[expectations[9]], h[0] + s + h[1] - 1)
+        assertLayerAt(ges_layers[expectations[6]], h[0] + s)
+        assertLayerAt(ges_layers[expectations[7]], h[0] + s + h[1] / 2 - 1)
+        assertLayerAt(ges_layers[expectations[8]], h[0] + s + h[1] / 2)
+        assertLayerAt(ges_layers[expectations[9]], h[0] + s + h[1] - 1)
 
         # y on the separator.
-        assertLayerAt(bLayers[expectations[10]], h[0] + s + h[1])
-        assertLayerAt(bLayers[expectations[11]], h[0] + s + h[1] + s - 1)
+        assertLayerAt(ges_layers[expectations[10]], h[0] + s + h[1])
+        assertLayerAt(ges_layers[expectations[11]], h[0] + s + h[1] + s - 1)
 
         # y on the bottom layer.
-        assertLayerAt(bLayers[expectations[12]], h[0] + s + h[1] + s)
-        assertLayerAt(bLayers[expectations[13]], h[0] + s + h[1] + s + h[2] / 2 - 1)
-        assertLayerAt(bLayers[expectations[14]], h[0] + s + h[1] + s + h[2] / 2)
-        assertLayerAt(bLayers[expectations[15]], h[0] + s + h[1] + s + h[2] - 1)
+        assertLayerAt(ges_layers[expectations[12]], h[0] + s + h[1] + s)
+        assertLayerAt(ges_layers[expectations[13]], h[0] + s + h[1] + s + h[2] / 2 - 1)
+        assertLayerAt(ges_layers[expectations[14]], h[0] + s + h[1] + s + h[2] / 2)
+        assertLayerAt(ges_layers[expectations[15]], h[0] + s + h[1] + s + h[2] - 1)
 
     def testSetSeparatorsPrelight(self):
         timeline = self.createTimeline()

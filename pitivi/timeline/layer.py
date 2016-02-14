@@ -109,12 +109,12 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     __gtype_name__ = 'PitiviLayerControls'
 
-    def __init__(self, bLayer, app):
+    def __init__(self, ges_layer, app):
         Gtk.EventBox.__init__(self)
         Loggable.__init__(self)
 
-        self.bLayer = bLayer
-        self.ges_timeline = self.bLayer.get_timeline()
+        self.ges_layer = ges_layer
+        self.ges_timeline = self.ges_layer.get_timeline()
         self.app = app
 
         self.props.width_request = ui.CONTROL_WIDTH
@@ -172,7 +172,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.after_sep.props.vexpand = False
         vbox.pack_start(self.after_sep, False, False, 0)
 
-        self.bLayer.connect("notify::priority", self.__layerPriorityChangedCb)
+        self.ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.ges_timeline.connect("layer-added", self.__timelineLayerAddedCb)
         self.ges_timeline.connect("layer-removed", self.__timelineLayerRemovedCb)
         self.__updateActions()
@@ -185,27 +185,27 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def __del__(self):
         self.name_entry.disconnect_by_func(self.__nameChangedCb)
-        self.bLayer.disconnect_by_func(self.__layerPriorityChangedCb)
+        self.ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerAddedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerRemovedCb)
         super(LayerControls, self).__del__()
 
     def __nameChangedCb(self, unused_widget, unused_event):
-        self.bLayer.ui.setName(self.name_entry.get_text())
+        self.ges_layer.ui.setName(self.name_entry.get_text())
         self.app.project_manager.current_project.setModificationState(True)
 
-    def __layerPriorityChangedCb(self, unused_bLayer, unused_pspec):
+    def __layerPriorityChangedCb(self, unused_ges_layer, unused_pspec):
         self.__updateActions()
         self.__updateName()
 
-    def __timelineLayerAddedCb(self, unused_timeline, unused_bLayer):
+    def __timelineLayerAddedCb(self, unused_timeline, unused_ges_layer):
         self.__updateActions()
 
-    def __timelineLayerRemovedCb(self, unused_timeline, unused_bLayer):
+    def __timelineLayerRemovedCb(self, unused_timeline, unused_ges_layer):
         self.__updateActions()
 
     def __updateActions(self):
-        priority = self.bLayer.get_priority()
+        priority = self.ges_layer.get_priority()
         first = priority == 0
         self.__move_layer_up_action.props.enabled = not first
         self.__move_layer_top_action.props.enabled = not first
@@ -216,7 +216,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__delete_layer_action.props.enabled = layers_count > 1
 
     def __updateName(self):
-        self.name_entry.set_text(self.bLayer.ui.getName())
+        self.name_entry.set_text(self.ges_layer.ui.getName())
 
     def __createMenuModel(self):
         action_group = Gio.SimpleActionGroup()
@@ -256,23 +256,23 @@ class LayerControls(Gtk.EventBox, Loggable):
 
     def _deleteLayerCb(self, unused_action, unused_parametter):
         self.app.action_log.begin("delete layer")
-        self.ges_timeline.remove_layer(self.bLayer)
+        self.ges_timeline.remove_layer(self.ges_layer)
         self.ges_timeline.get_asset().pipeline.commit_timeline()
         self.app.action_log.commit()
 
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
-        index = self.bLayer.get_priority()
+        index = self.ges_layer.get_priority()
         if abs(step) == 1:
             index += step
         elif step == -2:
             index = 0
         else:
             index = len(self.ges_timeline.get_layers()) - 1
-        self.ges_timeline.ui.moveLayer(self.bLayer, index)
+        self.ges_timeline.ui.moveLayer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def update(self, media_types):
-        self.props.height_request = self.bLayer.ui.props.height_request + ui.PADDING * 3
+        self.props.height_request = self.ges_layer.ui.props.height_request + ui.PADDING * 3
 
         if media_types & GES.TrackType.VIDEO:
             icon = "video-x-generic"
@@ -352,17 +352,17 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         "remove-me": (GObject.SignalFlags.RUN_LAST, None, (),)
     }
 
-    def __init__(self, bLayer, timeline):
+    def __init__(self, ges_layer, timeline):
         super(Layer, self).__init__()
         Loggable.__init__(self)
 
-        self.bLayer = bLayer
-        self.bLayer.ui = self
+        self.ges_layer = ges_layer
+        self.ges_layer.ui = self
         self.timeline = timeline
         self.app = timeline.app
 
-        self.bLayer.connect("clip-added", self._clipAddedCb)
-        self.bLayer.connect("clip-removed", self._clipRemovedCb)
+        self.ges_layer.connect("clip-added", self._clipAddedCb)
+        self.ges_layer.connect("clip-removed", self._clipRemovedCb)
 
         # FIXME Make the layer height user setable with 'Paned'
         self.props.height_request = ui.LAYER_HEIGHT / 2
@@ -373,19 +373,19 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.add(self._layout)
 
         self.media_types = GES.TrackType(0)
-        for clip in bLayer.get_clips():
+        for clip in ges_layer.get_clips():
             self._addClip(clip)
 
         self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
         self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
 
     def setName(self, name):
-        self.bLayer.set_meta("video::name", name)
+        self.ges_layer.set_meta("video::name", name)
 
     def __nameIfSet(self):
-        name = self.bLayer.get_meta("video::name")
+        name = self.ges_layer.get_meta("video::name")
         if not name:
-            name = self.bLayer.get_meta("audio::name")
+            name = self.ges_layer.get_meta("audio::name")
         return name
 
     def __nameIfMeaningful(self):
@@ -399,14 +399,14 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     def getName(self):
         name = self.__nameIfMeaningful()
         if not name:
-            name = _('Layer %d') % self.bLayer.get_priority()
+            name = _('Layer %d') % self.ges_layer.get_priority()
         return name
 
     def release(self):
-        for clip in self.bLayer.get_clips():
+        for clip in self.ges_layer.get_clips():
             self._removeClip(clip)
-        self.bLayer.disconnect_by_func(self._clipAddedCb)
-        self.bLayer.disconnect_by_func(self._clipRemovedCb)
+        self.ges_layer.disconnect_by_func(self._clipAddedCb)
+        self.ges_layer.disconnect_by_func(self._clipRemovedCb)
 
     def checkMediaTypes(self):
         if self.timeline.editing_context:
@@ -415,7 +415,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             return
         old_media_types = self.media_types
         self.media_types = GES.TrackType(0)
-        ges_clips = self.bLayer.get_clips()
+        ges_clips = self.ges_layer.get_clips()
         for ges_clip in ges_clips:
             for child in ges_clip.get_children(False):
                 track = child.get_track()
@@ -437,8 +437,8 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             height += ui.LAYER_HEIGHT / 2
 
         self.props.height_request = height
-        if hasattr(self.bLayer, "control_ui") and self.bLayer.control_ui:
-            self.bLayer.control_ui.update(self.media_types)
+        if hasattr(self.ges_layer, "control_ui") and self.ges_layer.control_ui:
+            self.ges_layer.control_ui.update(self.media_types)
 
         if old_media_types != self.media_types:
             self.updatePosition()
@@ -469,7 +469,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         ges_clip.connect_after("child-removed", self._childRemovedFromClipCb)
         self.checkMediaTypes()
 
-    def _clipRemovedCb(self, bLayer, ges_clip):
+    def _clipRemovedCb(self, ges_layer, ges_clip):
         self._removeClip(ges_clip)
 
     def _removeClip(self, ges_clip):
@@ -496,7 +496,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         self.checkMediaTypes()
 
     def updatePosition(self):
-        for ges_clip in self.bLayer.get_clips():
+        for ges_clip in self.ges_layer.get_clips():
             if hasattr(ges_clip, "ui"):
                 ges_clip.ui.updatePosition()
 

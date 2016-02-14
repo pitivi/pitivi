@@ -31,24 +31,24 @@ class TestLayerControl(common.TestCase):
 
     def testName(self):
         timeline = mock.MagicMock()
-        bLayer = GES.Layer()
-        layer = Layer(bLayer, timeline)
-        self.assertEqual("Layer 0", layer.getName(), "Default name generation failed")
-        bLayer.set_meta("audio::name", "a")
-        self.assertEqual("a", layer.getName(), "Cannot use old audio name")
-        bLayer.set_meta("video::name", "v")
-        self.assertEqual("v", layer.getName(), "Cannot use old video name")
+        ges_layer = GES.Layer()
+        layer = Layer(ges_layer, timeline)
+        self.assertEqual(layer.getName(), "Layer 0", "Default name generation failed")
+        ges_layer.set_meta("audio::name", "a")
+        self.assertEqual(layer.getName(), "a", "Cannot use old audio name")
+        ges_layer.set_meta("video::name", "v")
+        self.assertEqual(layer.getName(), "v", "Cannot use old video name")
         layer.setName("vv")
-        self.assertEqual("vv", layer.getName())
+        self.assertEqual(layer.getName(), "vv")
 
 
 class TestLayer(common.TestCase):
 
     def testCheckMediaTypesWhenNoUI(self):
-        bLayer = GES.Layer()
+        ges_layer = GES.Layer()
         png = common.getSampleUri("flat_colour1_640x480.png")
         video_clip = GES.UriClipAsset.request_sync(png).extract()
-        self.assertTrue(bLayer.add_clip(video_clip))
-        self.assertEqual(1, len(bLayer.get_clips()))
+        self.assertTrue(ges_layer.add_clip(video_clip))
+        self.assertEqual(len(ges_layer.get_clips()), 1)
         timeline = Timeline(container=None, app=None)
-        layer = Layer(bLayer, timeline)
+        layer = Layer(ges_layer, timeline)
