@@ -750,7 +750,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if self.app.proxy_manager.isProxyAsset(asset) and \
                 not asset.props.proxy_target:
-            self.info("%s is a proxy asset but has no target,"
+            self.info("%s is a proxy asset but has no target, "
                       "not displaying it.", asset.props.id)
             return
 
@@ -858,8 +858,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 self._last_imported_uris.update([asset.props.id for asset in
                                                  project.loading_assets])
 
-        self._progressbar.set_fraction(progress / 100)
-
         if progress == 100:
             self._doneImporting()
 
@@ -909,12 +907,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def __removeAsset(self, asset):
         """ the given uri was removed from the medialibrary """
         # find the good line in the storemodel and remove it
-        model = self.storemodel
         uri = asset.get_id()
         found = False
-        for row in model:
+        for row in self.storemodel:
             if uri == row[COL_URI]:
-                model.remove(row.iter)
+                self.storemodel.remove(row.iter)
                 found = True
                 break
 
