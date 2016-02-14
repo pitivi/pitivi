@@ -536,7 +536,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app.action_log.begin("remove asset from media library")
         for row in rows:
             asset = model[row.get_path()][COL_ASSET]
-            self.app.project_manager.current_project.remove_asset(asset)
+            self._project.remove_asset(asset)
             self.app.gui.timeline_ui.purgeAsset(asset.props.id)
 
         self.app.action_log.commit()
@@ -669,7 +669,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._importDialog.set_transient_for(self.app.gui)
         self._importDialog.set_current_folder(
             self.app.settings.lastImportFolder)
-        self._importDialog.connect('response', self._dialogBoxResponseCb)
+        self._importDialog.connect('response', self._importDialogBoxResponseCb)
         previewer = PreviewWidget(self.app.settings)
         self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
@@ -1027,14 +1027,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # Import Sources Dialog Box callbacks
 
-    def _dialogBoxResponseCb(self, dialogbox, response):
+    def _importDialogBoxResponseCb(self, dialogbox, response):
         self.debug("response: %r", response)
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
             self.app.settings.lastImportFolder = lastfolder
             dialogbox.props.extra_widget.saveValues()
             filenames = dialogbox.get_uris()
-            self.app.project_manager.current_project.addUris(filenames)
+            self._project.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -1044,7 +1044,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
-        layers = self.app.project_manager.current_project.timeline.get_layers()
+        layers = self._project.timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if clip.get_asset() == asset:
@@ -1055,9 +1055,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         """
         Select the assets not used by any clip in the project's timeline.
         """
-        project = self.app.project_manager.current_project
         unused_sources_uris = []
-        for asset in project.list_assets(GES.UriClip):
+        for asset in self._project.list_assets(GES.UriClip):
             if not self._sourceIsUsed(asset):
                 unused_sources_uris.append(asset.get_id())
         self._selectSources(unused_sources_uris)
@@ -1104,8 +1103,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Only use the first item.
         path = paths[0]
         asset = self.storemodel[path][COL_ASSET]
-        dialog = ClipMediaPropsDialog(
-            self.app.project_manager.current_project, asset)
+        dialog = ClipMediaPropsDialog(self._project, asset)
         dialog.dialog.set_transient_for(self.app.gui)
         dialog.run()
 
@@ -1431,7 +1429,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.storemodel.clear()
             self._connectToProject(project)
 
-        # Make sure that the sources added to the project are added added
+        # Make sure that the sources added to the project are added
         self._flushPendingRows()
 
     def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
@@ -1443,8 +1441,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.storemodel.clear()
 
     def _addUris(self, uris):
-        if self.app.project_manager.current_project:
-            self.app.project_manager.current_project.addUris(uris)
+        if self._project:
+            self._project.addUris(uris)
         else:
             self.warning(
                 "Adding uris to project, but the project has changed in the meantime")
@@ -1484,13 +1482,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.app.threads.addThread(PathWalker, directories, self._addUris)
         if filenames:
             self._last_imported_uris.update(filenames)
-            project = self.app.project_manager.current_project
-            assets = project.assetsForUris(list(self._last_imported_uris))
+            assets = self._project.assetsForUris(list(self._last_imported_uris))
             if assets:
                 # All the files have already been added.
                 self._selectLastImportedUris()
             else:
-                project.addUris(filenames)
+                self._project.addUris(filenames)
 
     # Used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
