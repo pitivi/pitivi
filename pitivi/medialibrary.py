@@ -449,21 +449,22 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.thumbnailer = MediaLibraryWidget._getThumbnailer()
 
     def finalize(self):
-        if not self._project:
-            self.debug("No project set...")
-            return
-
         self.debug("Finalizing %s", self)
-        for asset in self._project.list_assets(GES.Extractable):
-            disconnectAllByFunc(asset, self.__assetProxiedCb)
-            disconnectAllByFunc(asset, self.__assetProxyingCb)
-
-        self.__disconnectFromProject()
 
         self.app.project_manager.disconnect_by_func(self._newProjectCreatedCb)
         self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
         self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
         self.app.project_manager.disconnect_by_func(self._projectClosedCb)
+
+        if not self._project:
+            self.debug("No project set...")
+            return
+
+        for asset in self._project.list_assets(GES.Extractable):
+            disconnectAllByFunc(asset, self.__assetProxiedCb)
+            disconnectAllByFunc(asset, self.__assetProxyingCb)
+
+        self.__disconnectFromProject()
 
     @staticmethod
     def _getThumbnailer():
