@@ -261,8 +261,8 @@ class Pitivi(Gtk.Application, Loggable):
                 self.write_action("load-project",
                                   {"serialized-content": content})
 
-    def _newProjectLoadingCb(self, unused_project_manager, uri):
-        self._setScenarioFile(uri)
+    def _newProjectLoadingCb(self, unused_project_manager, project):
+        self._setScenarioFile(project.get_uri())
 
     def _newProjectLoaded(self, unused_project_manager, project):
         self.action_log.clean()

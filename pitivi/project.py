@@ -170,7 +170,7 @@ class ProjectManager(GObject.Object, Loggable):
     """
 
     __gsignals__ = {
-        "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (str,)),
+        "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "new-project-created": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, str)),
         "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object,)),
@@ -307,7 +307,6 @@ class ProjectManager(GObject.Object, Loggable):
             return False
 
         self.__missing_uris = False
-        self.emit("new-project-loading", uri)
 
         is_validate_scenario = self._isValidateScenario(uri)
         if not is_validate_scenario:
@@ -319,6 +318,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         # Load the project:
         project = Project(self.app, uri=uri, scenario=scenario)
+        self.emit("new-project-loading", project)
 
         project.connect_after("missing-uri", self._missingURICb)
         project.connect("loaded", self._projectLoadedCb)
@@ -331,7 +331,7 @@ class ProjectManager(GObject.Object, Loggable):
             return False
 
         self.current_project = project
-        self.emit("new-project-created", self.current_project)
+        self.emit("new-project-created", project)
         self.current_project.connect("project-changed", self._projectChangedCb)
         self.current_project.pipeline.connect("died", self._projectPipelineDiedCb)
 
@@ -595,8 +595,8 @@ class ProjectManager(GObject.Object, Loggable):
                 return False
 
         self.__missing_uris = False
-        self.emit("new-project-loading", None)
         project = Project(self.app, name=DEFAULT_NAME)
+        self.emit("new-project-loading", project)
 
         # setting default values for project metadata
         project.author = pwd.getpwuid(os.getuid()).pw_gecos.split(",")[0]

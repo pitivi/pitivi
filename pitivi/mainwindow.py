@@ -728,7 +728,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         if project.timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
-    def _projectManagerNewProjectLoadingCb(self, unused_project_manager, uri):
+    def _projectManagerNewProjectLoadingCb(self, unused_project_manager, project):
+        uri = project.get_uri()
         if uri:
             self.recent_manager.add_item(uri)
         self.log("A NEW project is loading, deactivate UI")

@@ -399,7 +399,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # changing project.
         project_manager = self.app.project_manager
         project_manager.connect(
-            "new-project-created", self._newProjectCreatedCb)
+            "new-project-loading", self._new_project_loading_cb)
         project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
         project_manager.connect("new-project-failed", self._newProjectFailedCb)
         project_manager.connect("project-closed", self._projectClosedCb)
@@ -451,7 +451,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def finalize(self):
         self.debug("Finalizing %s", self)
 
-        self.app.project_manager.disconnect_by_func(self._newProjectCreatedCb)
+        self.app.project_manager.disconnect_by_func(self._new_project_loading_cb)
         self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
         self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
         self.app.project_manager.disconnect_by_func(self._projectClosedCb)
@@ -1406,7 +1406,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disconnect_by_func(self._errorCreatingAssetCb)
         self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
 
-    def _newProjectCreatedCb(self, unused_project_manager, project):
+    def _new_project_loading_cb(self, unused_project_manager, project):
         assert (not self._project)
 
         self._project = project

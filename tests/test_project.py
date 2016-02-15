@@ -106,7 +106,7 @@ class TestProjectManager(TestCase):
 
         # loading
         name, args = self.signals[0]
-        self.assertEqual(uri, args[0], self.signals)
+        self.assertEqual(uri, args[0].get_uri(), self.signals)
 
         # failed
         name, args = self.signals[1]
@@ -150,7 +150,6 @@ class TestProjectManager(TestCase):
             mainloop.quit()
 
         def missingUriCb(self, project, error, clip_asset, mainloop, result):
-            print(project, error, clip_asset, mainloop, result)
             result[0] = True
             mainloop.quit()
 
@@ -240,13 +239,13 @@ class TestProjectManager(TestCase):
 
         name, args = self.signals[0]
         self.assertEqual("new-project-loading", name)
-        uri = args[0]
-        self.assertTrue(uri is None)
+        project = args[0]
+        self.assertTrue(project.get_uri() is None)
 
         name, args = self.signals[1]
         self.assertEqual("new-project-created", name)
         project = args[0]
-        self.assertEqual(uri, project.uri)
+        self.assertEqual(project.get_uri(), project.uri)
 
         name, args = self.signals[2]
         self.assertEqual("new-project-loaded", name)
