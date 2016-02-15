@@ -15,7 +15,7 @@ MYPITIVI=${MYPITIVI:-$HOME/pitivi-git}
 # Change DEFAULT_GST_VERSION to a number greater than the last known release
 # if you prefer to work with the "master" branch of everything.
 # In that case, the script will automatically "pull --rebase" modules.
-DEFAULT_GST_VERSION="1.7.1"
+DEFAULT_GST_VERSION="1.8.0"
 
 GST_RELEASE_TAG=${GST_RELEASE_TAG:-$DEFAULT_GST_VERSION}
 GST_MIN_VERSION=${GST_MIN_VERSION:-$DEFAULT_GST_VERSION}
