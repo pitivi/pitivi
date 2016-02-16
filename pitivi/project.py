@@ -1401,6 +1401,9 @@ class Project(Loggable, GES.Project):
         return res
 
     def setModificationState(self, state):
+        if not self.loaded:
+            return
+
         self._dirty = state
         if state:
             self.emit('project-changed')
