@@ -1135,17 +1135,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
+    """Container for zoom box, ruler, timeline, scrollbars and toolbar."""
 
-    """
-    Container for zoom box, ruler, timeline, scrollbars and toolbar.
-    """
-
-    def __init__(self, instance):
+    def __init__(self, app):
         Zoomable.__init__(self)
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
-        self.app = instance
+        self.app = app
         self._settings = self.app.settings
         self._autoripple_active = self._settings.timelineAutoRipple
         self._shiftMask = False
@@ -1155,7 +1152,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # it should be kept that way if it makes sense.
         self.zoomed_fitted = True
 
-        self._projectmanager = None
         self._project = None
         self.ges_timeline = None
         self.__copiedGroup = None
@@ -1165,7 +1161,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
-        self.setProjectManager(self.app.project_manager)
+
+        self.app.project_manager.connect("new-project-created",
+                                         self._projectCreatedCb)
+        self.app.project_manager.connect("new-project-loaded",
+                                         self._projectLoadedCb)
 
     # Public API
 
@@ -1265,18 +1265,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 if asset_id == clip.get_id():
                     layer.remove_clip(clip)
         self._project.pipeline.commit_timeline()
-
-    def setProjectManager(self, projectmanager):
-        if self._projectmanager is not None:
-            self._projectmanager.disconnect_by_func(self._projectLoadedCb)
-
-        self._projectmanager = projectmanager
-
-        if projectmanager is not None:
-            projectmanager.connect(
-                "new-project-created", self._projectCreatedCb)
-            projectmanager.connect(
-                "new-project-loaded", self._projectLoadedCb)
 
     def zoomFit(self):
         self.app.write_action("zoom-fit", {"optional-action-type": True})
