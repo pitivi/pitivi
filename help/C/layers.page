@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
-    <revision pkgversion="0.92" version="0.1" date="2014-02-22" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -48,11 +48,8 @@
 
      <section>
       <title>Adding and removing layers</title>
-       <p>There is no “layer management” interface in <app>Pitivi</app>. Layers are created and removed automatically:</p>
-       <list>
-       <item><p>To create a layer, drag a clip to the middle space between two existing layers. Once the grey shadow (a thin rectangle) appears between the layers, release it.</p></item>
-       <item><p>If there are no more clips on a layer, it is automatically removed. Thus, to remove a layer, simply drag its clips onto another layer.</p></item>
-       </list>
+       <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
+       <p>To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the layer name field.</p>
      </section>
 
      <section>
