@@ -6,7 +6,7 @@
   <info>
     <link type="topic" xref="index"/>
     <link type="seealso" xref="movearoundtimeline"/>
-    <revision pkgversion="0.16" version="0.1" date="2012-09-03" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -55,8 +55,8 @@
           <item><p><keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the timeline.</p></item>
           <item><p><key>Shift</key>+drag: Ripple edit.</p></item>
           <item><p><key>Ctrl</key>+drag: Roll edit.</p></item>
-          <item><p><key>K</key>: Add a property keyframe at the current playhead position.</p></item>
-          <item><p><key>.</key> and <key>,</key>: Go to the next or previous property keyframe.</p></item>
+          <!--item><p><key>K</key>: Add a property keyframe at the current playhead position.</p></item-->
+          <!--item><p><key>.</key> and <key>,</key>: Go to the next or previous property keyframe.</p></item-->
         </list>
     </section>
 </page>
