@@ -7,7 +7,7 @@
     <link type="guide" xref="index#gettingstarted"/>
     <link type="seealso" xref="codecscontainers"/>
     <link type="seealso" xref="rendering"/>
-    <revision pkgversion="0.93" version="0.1" date="2014-05-06" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -26,31 +26,22 @@
 
     <title>Presets</title>
     <p>Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets.</p>
-    <section>
-    <title>The difference between Project settings and Rendering</title>
-    <p>While project settings concern themselves with global settings (such as resolution, framerate, aspect ratio and number of audio channels), the rendering settings are concerned with codecs and device constraints (for example, a handheld device or television may have a maximum screen resolution and framerate, which is not necessarily the case if you are exporting to a laptop or a website). The presets in the <gui>Rendering</gui> dialog are related to project settings, but they govern different things.</p>
     <note><p>In project settings, video presets and audio presets are independent of each other.</p></note>
-    </section>
     <section>
         <title>Creating and editing presets</title>
         <p>To create a preset:</p>
         <steps>
             <item><p>Change the settings to your liking.</p></item>
-            <item><p>Click the <gui>Create</gui> button.</p></item>
-            <item><p>Give your preset a unique name: while the preset is selected in the list, click on its name to toggle editing mode. When you're done, press <key>Enter</key>.</p></item>
+            <item><p>At the right of the presets combobox click <guiseq><gui>Menu button</gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next step.</p></item>
+            <item><p>Give your preset a unique name: click on the combobox to edit the name. When you're done, press <key>Enter</key>.</p></item>
         </steps>
         <p>To edit a preset:</p>
         <steps>
-            <item><p>Select your preset in the list of existing presets.</p></item>
+            <item><p>Select your preset in the presets combobox.</p></item>
             <item><p>Change the settings to your liking.</p></item>
-            <item><p>Click the <gui>Save</gui> button.</p></item>
+            <item><p>Click at the right of the presets combobox <guiseq><gui>Menu button</gui><gui>Save</gui></guiseq>.</p></item>
         </steps>
-        <p>To remove a preset, simply select it in the list of presets and press the <gui>Remove</gui> button.</p>
-        <note><p>Some presets are provided by default and cannot be removed.</p></note>
-    </section>
-    <section>
-        <title>Ignoring presets</title>
-        <p>Presets are there to save time and reduce complexity. However, you can choose to simply ignore them and set everything manually. This is what the <em>No preset</em> option is meant for. When chosen, it automatically saves the settings directly in the project file.</p>
+        <p>To remove a preset, simply select it in the presets combobox and click <guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>.</p>
     </section>
     <section>
         <title>Limiting the resolution of a rendering preset</title>
