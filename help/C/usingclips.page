@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.92" version="0.1" date="2013-12-30" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+    </credit>
+    <credit type="contributor">
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
     </credit>
@@ -29,7 +31,7 @@
      <section>
       <title>Clips vs files</title>
         <p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>Pitivi</app> and incorporated in your video editing project.</p>
-        <p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the media library to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p>
+        <p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the <gui>Media Library</gui> to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p>
        <note>
        <p>Since Pitivi is a non-destructive editor, clips are edited, not files. As such, your files stay intact.</p>
        </note>
@@ -37,14 +39,14 @@
 
      <section>     
      <title>Inserting clips</title>
-     <p>From the media library, you can insert one or more clips by selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and doing one of the following:</p>
+     <p>From the <gui>Media Library</gui>, you can insert one or more clips by selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and doing one of the following:</p>
      <list>
       <item><p>Dragging and dropping them onto a place in the timeline.</p></item>
-      <item><p>Clicking the <gui>Insert the selected clips at the end of the timeline</gui> button in the <gui>Media library</gui>.</p></item>
+      <item><p>Clicking the <gui>Insert the selected clips at the end of the timeline</gui> button in the <gui>Media Library</gui> header.</p></item>
       <item><p>Pressing the <key>Insert</key> key.</p></item>
      </list>
      <p>
-     When following the second and third options (clicking or pressing insert), selected clips will be inserted one after another into the first layer of the timeline at a position, where the last clip on any layer ends.
+     When following the second and third options (clicking or pressing insert), the new clips will be inserted one after another on the longest layer of the timeline where the last clip ends.
      </p>
      </section>
 
@@ -52,17 +54,17 @@
       <title>Moving clips along the timeline</title>
        <p>You can move a clip within a layer or move it to a different layer.</p>
        <p>Click and drag a single clip to move it, and release the mouse button to place it. Dragging horizontally keeps the clip on the same layer, but dragging it vertically moves the clip to a different layer (see <link xref="layers">Understanding layers</link> for more information).</p>
-       <p>To move a clip to an existing layer, drag it on the layer and release it when a grey shadow representing the space the clip would occupy appears. To move a clip to a new layer, drag it to the middle space between two existing layers. Once the grey shadow (now a thin rectangle) appears between the layers, release it.</p>
+       <p>To move a clip to an existing layer, drag it on the layer at the desired position and release it. To move a clip to a new layer, drag it to the middle space between two existing layers. Once the space between the respective layers is highlighted, release it.</p>
        <p>To move multiple clips at the same time, use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips (see <link xref="selectiongrouping">Selection and grouping</link> for more details). Selected clips do not need to be on the same layer. Then, drag the clips just as you would do for a single clip; their position relative to each other will be preserved.</p>
-      <section>
+      <section id="ripple">
        <title>Using ripple editing while moving clips</title>
-        <p>While dragging clips around in the timeline, you can use the <link xref="trimming">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) to fill the gap.</p>
+        <p>While dragging clips around in the timeline, you can use the <link xref="trimming#ripple">ripple technique</link> to move the <em>following</em> clips (the clips that start after the one you're directly editing) in sync with the moved clip.</p>
         <steps>
          <item><p>Click and drag the clip you want to move, with the mouse button held down</p></item>
          <item><p>During the drag, hold down <key>Shift</key> on the keyboard</p></item>
          <item><p>Release the mouse button to end the drag operation, then release the <key>Shift</key> key.</p></item>
         </steps>
-        <p>During the drag operation, if you changed your mind and only want to drag one clip at a time, just release the <key>Shift</key> key before you release the mouse button.</p>
+        <p>You can release and press <key>Shift</key> at any time during the drag operation to disable or enable ripple editing.</p>
       </section>
      </section>
 

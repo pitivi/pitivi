@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#timeline"/>
-    <revision pkgversion="0.92" version="0.1" date="2014-03-17" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+    </credit>
+    <credit type="contributor">
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
     </credit>
@@ -34,7 +36,7 @@
        </figure>
        <p>Clips that are grouped together, such as corresponding audio and video clips, will trim in unison when you drag the trimming handle. To trim only the audio or only the video clip, you need to ungroup them first (see the <link xref="selectiongrouping">Selection and grouping</link> page for instructions on how to do that).</p>
 
-     <section>
+     <section id="ripple">
       <title>Ripple editing</title>
        <p>Ripple editing is a variant of basic trimming which, in addition to trimming a clip, also moves the following clips (the clips that start after the one you're directly editing) so that their relative position to the edited clip stays the same.</p>
        <figure>
@@ -61,7 +63,7 @@
         <item><p>Drag the trimming handle.</p></item>
        </steps>
        <note style="tip">
-           <p>Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref="usingclips">Using ripple editing while moving clips</link>.</p>
+           <p>Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref="usingclips#ripple">Using ripple editing while moving clips</link>.</p>
        </note>
      </section>
 
