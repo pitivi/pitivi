@@ -6,7 +6,7 @@
   <info>
     <link type="guide" xref="index#effectstransitions"/>
     <link type="seealso" xref="gstreamer"/>
-    <revision pkgversion="0.92" version="0.2" date="2014-03-07" status="incomplete"/>
+    <revision pkgversion="0.96" version="0.3" date="2016-02-17" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -21,7 +21,7 @@
 
     <title>Introduction to effects</title>
      
-     <p><app>Pitivi</app> uses a wide variety of video and audio effects to spice up your movies. Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in the effect library, make sure that the <app>gnome-video-effects</app> package is installed on your system. Alternatively, you can look for packages containing GStreamer or frei0r effect plugins that are available in the repositories of your distribution.</p>
+     <p><app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in the effect library, make sure that the <app>gnome-video-effects</app> package is installed on your system. Alternatively, you can look for packages containing GStreamer or frei0r effect plugins that are available in the repositories of your distribution.</p>
      <note>
       <p>Effects are non-destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
      </note>
@@ -31,8 +31,7 @@
         <p>To add an effect:</p>
         <steps>
             <item><p>Select an existing clip on the timeline</p></item>
-            <item><p>Choose an effect in the effect library</p></item>
-            <item><p>Drag the chosen effect into the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq></p></item>
+            <item><p>Double-click an effect in the effect library</p></item>
         </steps>
         <p>To remove an effect:</p>
         <steps>
