@@ -7,7 +7,7 @@
     <link type="guide" xref="index#intro"/>
     <link type="seealso" xref="medialibrary"/>
     <link type="seealso" xref="movearoundtimeline"/>
-    <revision pkgversion="0.93" version="0.3" date="2014-06-27" status="complete"/>
+    <revision pkgversion="0.96" version="0.4" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -40,8 +40,8 @@
     </list>
 
     <note style="tip">
-    <title>Resizing components of the main window</title>
-    <p>In the spaces between components, there are handles indicated by five light dots. You can proportionally resize pairs of components by clicking and dragging the handles to the desired position.</p>
+    <title>Resizing the components of the main window</title>
+    <p>The spaces between components can be clicked and dragged to proportionally resize the respective adjacent components.</p>
     </note>
     <note style="tip">
     <title>Hovering for more information</title>
@@ -82,11 +82,13 @@
       <item><p>Delete selected</p></item>
       <item><p>Group clips</p></item>
       <item><p>Ungroup clips</p></item>
-      <item><p>Align clips based on their soundtracks</p></item>
+      <item><p>Copy</p></item>
+      <item><p>Paste</p></item>
+      <!--item><p>Align clips based on their soundtracks</p></item-->
       <item><p>Toggle gapless mode</p></item>
       </list>
       <note>
-      <p>Note that most of the actions become available only once a clip is selected. When there is no subject for the action to be performed on, it remains shaded (indicating its unavailability).</p>
+      <p>Note that most of the actions become available only once a clip is selected (see <link xref="selectiongrouping">Selection and grouping</link> for more details). When there is no subject for the action to be performed on, it remains shaded (indicating its unavailability).</p>
       </note>
     </section>
 
@@ -117,13 +119,13 @@
           <p>You can detach the previewer into a separate window by clicking the <gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From the separate window, you can play the preview in fullscreen. This will also allow other parts of the main window to take up the space the previewer occupied. You can attach the previewer back by closing the separate window.</p>
       </note>
       <note>
-          <p><app>Pitivi</app> inhibits screensaver while playing video preview.</p>
+          <p><app>Pitivi</app> inhibits the screensaver while playing the video preview.</p>
       </note>
     </section>
 
     <section>
      <title>Left pane</title>
-      <p>The left pane contains media and effect libraries. You can switch between them by selecting the appropriate tab. The <gui>Media library</gui> displays the imported media files in your project and allows you to manage them. The <gui>Effect library</gui> contains number of audio and video effects applicable to clips.</p>
+      <p>The left pane contains media and effect libraries. You can switch between them by selecting the appropriate tab. The <gui>Media Library</gui> displays the imported media files in your project and allows you to manage them. The <gui>Effect library</gui> contains number of audio and video effects applicable to clips.</p>
       <note style="tip">
       <p>You can search the libraries by using the text box in the header of each library.</p>
       </note>
