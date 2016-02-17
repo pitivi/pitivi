@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.92" version="0.1" date="2014-01-27" status="complete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -35,7 +35,12 @@
 
      <section>
       <title>Scrolling</title>
-       <p>You can use the scrollbars (located on the right and bottom of the timeline), use the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mousewheel to scroll the timeline layers vertically.</p>
+       <p>You can scroll by:</p>
+       <list>
+         <item><p>Using the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mouse wheel to scroll the timeline layers vertically</p></item>
+         <item><p>Clicking anywhere over the timeline with the middle button and dragging the timeline</p></item>
+         <item><p>Using the scrollbars located on the right and bottom of the timeline</p></item>
+       </list>
      </section>
 
      <section>
@@ -47,17 +52,13 @@
        </list>
        <p>You can zoom in and out by:</p>
        <list>
-           <item><p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline</p></item>
-           <item><p>Using the <guiseq><gui>View</gui><gui>Zoom In</gui></guiseq> and <guiseq><gui>View</gui><gui>Zoom Out</gui></guiseq> menu items</p></item>
+           <item><p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline, to keep the timeline point where the mouse cursor is in place if possible</p></item>
+           <item><p>Holding the <key>Alt</key> key while using the mousewheel over the timeline, to keep the playhead in view</p></item>
            <item><p>Dragging the zoom slider on the left of the ruler</p></item>
            <item><p>Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> (<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom in</p></item>
        </list>
-       <p>To get a better overview of your timeline, you may use the <guiseq><gui>View</gui><gui>Best Fit</gui></guiseq> menu item or click the <gui>Zoom</gui> button on the left of the zoom slider. The third way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq></p>.
+       <p>To get a global overview of your timeline, you may click the <gui>Zoom</gui> button on the left of the zoom slider. Another way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq></p>.
 
-       <note>
-           <title>Zooming is always centered around the location of your playhead</title>
-           <p>When using the mouse wheel to zoom in and out, remember that the zoom is not relative to the position of your mouse, only to the position of the playhead on the timeline.</p>
-       </note>
        <note style="tip">
         <title><em>Warping</em> between zoom levels</title>
         <p>Using your mouse, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click anywhere on the zoom slider.</p>
@@ -66,13 +67,7 @@
 
      <section id="movingplayhead">
       <title>Moving the playhead</title>
-       <p>You can change the position of the playhead by clicking anywhere on the ruler or on the timeline.</p>
-       <p>When clicking on the <em>timeline</em>:</p>
-       <list>
-        <item><p>If a clip is under the mouse cursor, it will replace the current clip selection (see the <link xref="selectiongrouping">Making selections</link> section for more detailed instructions).</p></item>
-        <item><p>If there is no clip under the cursor, all selected clips (if any) will be deselected.</p></item>
-       </list>
-       <p>When clicking on the ruler, only the playhead's position changes; clip selections are not affected.</p>
+       <p>You can change the position of the playhead by clicking with the right mouse button anywhere on the ruler or on the timeline.</p>
         <note style="tip">
         <title>Jumping to an exact position</title>
         <p>You can jump to an exact position in the timeline by editing the time value shown in the playback toolbar (see description of <link xref="mainwindow">The main window</link>). To edit it, simply click on the widget, overwrite the value and hit <key>enter</key>. The value can represent either timecode or a frame number. Timecode has the following form: <em>hh:mm:ss.milisec</em> where hours are optional. To insert a frame number, overwrite the timecode with a plain number of the desired frame.</p>
@@ -86,7 +81,7 @@
         <item><p>Search for a specific position in time by approximation/trial and error.</p></item>
         <item><p>Review repeatedly the visual motion in a scene by moving back and forth in time.</p></item>
        </list>
-       <p>To scrub, click on the ruler and move the mouse with the button still held down.</p>
+       <p>To scrub, click on the ruler with the right mouse button and move the mouse with the button still held down.</p>
      </section>
 
 </page>
