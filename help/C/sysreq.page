@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#intro"/>
-    <revision pkgversion="0.93" version="0.1" date="2014-05-13" status="incomplete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -36,7 +36,7 @@
      </list>
      <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>Pitivi</app>.</p>
      <note style="bug">
-      <p>You can track the state of proxy editing in <app>Pitivi</app> through <link href="https://bugzilla.gnome.org/show_bug.cgi?id=609136">bug 609136</link>.</p>
+      <p>You can track the state of proxy editing in <app>Pitivi</app> through <link href="https://phabricator.freedesktop.org/T2455">task T2455</link>.</p>
      </note>
      <p>Software requirements are covered in <link xref="gstreamer">Gstreamer and compatibility</link> and <link xref="effects">Introduction to effects</link>.</p>
 

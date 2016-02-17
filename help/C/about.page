@@ -5,7 +5,7 @@
 
   <info>
     <link type="seealso" xref="index"/>
-    <revision pkgversion="0.14" version="0.2" date="2011-06-05" status="complete"/>
+    <revision pkgversion="0.96" version="0.3" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -32,7 +32,7 @@
 
    <section>
     <title>Patches welcome</title>
-     <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://bugzilla.gnome.org/enter_bug.cgi?product=pitivi;component=documentation">file bugs on the “documentation” component in our bug tracker</link>.</p>
+     <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://phabricator.freedesktop.org/maniphest/task/create/?projects=pitivi,pitivi_documentation">file bugs in our bug tracker</link>.</p>
    </section>
  
 </page>
