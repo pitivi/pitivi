@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.94" version="0.4" date="2014-10-01" status="complete"/>
+    <revision pkgversion="0.96" version="0.5" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -33,7 +33,7 @@
 
       <section>
        <title>Importing files using the file chooser</title>
-         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <guiseq><gui>Library</gui><gui>Import</gui></guiseq> button, or press <keyseq><key>Ctrl</key><key>i</key></keyseq>.</p>
+         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <gui>Import</gui> button in the <gui>Media Library</gui> header.</p>
          <p>A file chooser dialog window will appear. You can press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
        </section>
        <section>
