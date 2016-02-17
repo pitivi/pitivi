@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#rendering"/>
-    <revision pkgversion="0.93" version="0.1" date="2014-06-27" status="incomplete"/>
+    <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="incomplete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+    </credit>
+    <credit>
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
     </credit>
@@ -28,17 +30,21 @@
 
      <p>Rendering is the process of exporting your project into a new, finalized media file. Rendering only creates a new “rendered” video file, and does not affect the project itself; you can still make edits to your project and render again as many times as needed.</p>
      <steps>
-      <item><p>From the <gui>Project</gui> menu, use <gui>Render</gui>.</p></item>
-      <item><p>Adjust the various encoding settings, if needed, to use settings different from the project settings.</p></item>
+      <item><p>Click <guiseq><gui>Headerbar</gui><gui>Render</gui></guiseq>.</p></item>
+      <item><p>Choose the location and name of the exported file.</p></item>
+      <item><p>Optionally choose a preset.</p></item>
+      <item><p>Choose a container. See the <link xref="codecscontainers">codecs and containers</link> page for details.</p></item>
+      <item><p>Adjust the various encoding settings.</p></item>
       <item><p>Click the <gui>Render</gui> button.</p></item>
      </steps>
-     <p>While rendering, you can pause the process by clicking the <gui>Pause</gui> button and unpause it by clicking it again. You can also stop rendering either by clicking the <gui>Cancel</gui> button or by pressing <key>Esc</key>. If you stop the rendering process, the already rendered part of the video will be saved into the destined folder and <app>Pitivi</app> will offer you the <gui>Rendering dialog</gui> again.</p>
+     <p>While rendering, you can pause the process by clicking the <gui>Pause</gui> button and unpause it by clicking it again. You can also stop rendering either by clicking the <gui>Cancel</gui> button or by pressing <key>Esc</key>. If you stop the rendering process, the already rendered part of the project will be saved at the specified location. You might be able to use a partially rendered file, depending on the specified container format. A new render operation cannot resume from a partially rendered file.</p>
      <note style="tip">
       <p>If your computer is set to suspend or hibernate automatically, <app>Pitivi</app> will automatically inhibit the power saving features during the render process.</p>
      </note>
      <section>
       <title>Project settings and the rendering dialog</title>
-       <p>In rendering, project settings are taken as default values for most of the rendering settings such as framerate, number of audio channels or their sampling rate. These values can be overridden only temporarily for a given render. Once the render is complete, the values will reset to the project settings defaults. However, some settings, such as the resolution scale, container, codecs, codec settings and the render output folder are saved so they appear as defaults in the next rendering.</p>
+      <p>The <gui>Project Settings</gui> are a base on which the <gui>Rendering dialog</gui> settings are applied when performing a render. The <gui>Project Settings</gui> are kept separate because they also determine how you preview the project while editing it. The values specified in the <gui>Rendering dialog</gui> are temporary and used only at render time. Because they are so closely related, the <gui>Rendering dialog</gui> has a button which opens the <gui>Project Settings</gui>.</p>
+      <p>are by default taken as default values for most of the rendering settings such as framerate, number of audio channels or their sampling rate. The settings specified in the <gui>Rendering dialog</gui> affect only the rendering. Some settings, such as the resolution scale, container, codecs, codec settings and the render output folder are saved so they appear as defaults in the next rendering.</p>
      </section>
 
 </page>
