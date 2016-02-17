@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.93" version="0.3" date="2014-06-27" status="complete"/>
+    <revision pkgversion="0.96" version="0.4" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Brian Grohe</name>
       <email>grohe43@gmail.com</email>
+    </credit>
+    <credit>
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
     </credit>
@@ -28,9 +30,9 @@
 
         <section>
         <title>Importing a file to the <gui>Media Library</gui></title>
-         <p>There are two ways to import files into the <gui>Media library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media library</gui>. By importing a <em>file</em> into the <gui>Media library</gui>, it becomes a <em>clip</em>.</p>
+         <p>There are two ways to import files into the <gui>Media Library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported into the <gui>Media Library</gui> are called <em>clips</em>.</p>
          <note>
-             <p>Once imported, the clips in <gui>Media library</gui> are sorted alphabetically.</p>
+             <p>The clips in the <gui>Media Library</gui> are sorted alphabetically.</p>
          </note>
        </section>
        <section>
@@ -63,7 +65,7 @@
          <list type="numbered">
           <item><p><gui>Remove selected clips from the project</gui> (this can also be performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>).</p></item>
           <item><p><gui>Clip properties...</gui> opens a new window with information on <em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking the <gui>Apply to project</gui> button adjusts the project settings to the clip properties. You can select which properties to apply by leaving them ticked/unticked.</p></item>
-          <item><p><gui>Insert selected clips at the end of the timeline</gui> inserts selected clips one after another into the first layer of the timeline at a position, where the last clip on any layer ends.</p></item>
+          <item><p><gui>Insert selected clips at the end of the timeline</gui> inserts the selected clips one after another into the longest layer of the timeline where the last clip on that layer ends.</p></item>
          </list>
          <note>
          <p>In order for these actions to become available, one or more clips must be selected.</p>
