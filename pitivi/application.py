@@ -271,8 +271,9 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_log_observer.startObserving(project)
 
     def _projectClosed(self, unused_project_manager, project):
-        self.project_log_observer.stopObserving(project)
-        self.timeline_log_observer.stopObserving(project.timeline)
+        if project.loaded:
+            self.project_log_observer.stopObserving(project)
+            self.timeline_log_observer.stopObserving(project.timeline)
 
         if self._scenario_file:
             self.write_action("stop")
@@ -369,6 +370,9 @@ class Pitivi(Gtk.Application, Loggable):
 
         can_redo = bool(action_log.redo_stacks)
         self.redo_action.set_enabled(can_redo)
+
+        if not self.project_manager.current_project:
+            return
 
         dirty = action_log.dirty()
         self.project_manager.current_project.setModificationState(dirty)

@@ -679,14 +679,14 @@ class ProjectManager(GObject.Object, Loggable):
         new_uri = self.emit("missing-uri", project, error, asset)
         if not new_uri:
             project.at_least_one_asset_missing = True
-        self.current_project.setModificationState(True)
+        project.setModificationState(True)
         return new_uri
 
-    def _projectLoadedCb(self, unused_project, unused_timeline):
-        self.debug("Project loaded %s", self.current_project.props.uri)
-        self.emit("new-project-loaded", self.current_project)
+    def _projectLoadedCb(self, project, unused_timeline):
+        self.debug("Project loaded %s", project.props.uri)
         if self.__missing_uris:
-            self.current_project.setModificationState(True)
+            return
+        self.emit("new-project-loaded", project)
         self.time_loaded = time.time()
 
 
@@ -1218,6 +1218,9 @@ class Project(Loggable, GES.Project):
 
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
+
+        if not self.timeline:
+            return
 
         self._ensureTracks()
         self.timeline.props.auto_transition = True

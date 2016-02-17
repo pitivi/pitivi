@@ -860,7 +860,8 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
 
         self.info("Project closed")
         self.updateTitle()
-        self._disconnectFromProject(project)
+        if project.loaded:
+            self._disconnectFromProject(project)
         self.timeline_ui.setProject(None)
         self.render_button.set_sensitive(False)
         return False
@@ -906,7 +907,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             return None
 
         uri = asset.get_id()
-        new_uri = None
         dialog = Gtk.Dialog(title=_("Locate missing file..."),
                             transient_for=self,
                             modal=True)
@@ -984,6 +984,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.set_default_size(1024, 1000)
         response = dialog.run()
 
+        new_uri = None
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
