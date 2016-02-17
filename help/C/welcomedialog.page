@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#intro"/>
-    <revision pkgversion="0.92" version="0.2" date="2014-02-11" status="complete"/>
+    <revision pkgversion="0.96" version="0.3" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -26,7 +26,7 @@
       <p>When you launch <app>Pitivi</app>, a startup assistant appears, allowing you to create a new project or open an existing project in a few clicks. If you want to skip this dialog, press the <key>Escape</key> key on your keyboard or click the window's close button. Skipping the dialog will open a new project with default settings.</p>
       <p>The dialog offers you projects that are found among the recently used files. Double-click one of them to load it or use one of the following buttons:</p>
       <list type="numbered">
-      <item><p><gui>New</gui> opens the <gui>Project settings</gui> dialog for a new project.</p></item>
+      <item><p><gui>New</gui> opens a new project with the default settings.</p></item>
       <item><p><gui>Browse projects...</gui> opens file chooser in the last used directory.</p></item>
       <item><p><gui>Help</gui> opens the user documenation on the index page.</p></item>
       <item><p><gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard shortcuts and cheatsheet page.</p></item>

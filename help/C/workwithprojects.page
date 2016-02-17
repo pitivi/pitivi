@@ -5,7 +5,7 @@
 
   <info>
     <link type="guide" xref="index#gettingstarted"/>
-    <revision pkgversion="0.15" version="0.4" date="2011-08-28" status="complete"/>
+    <revision pkgversion="0.96" version="0.5" date="2016-02-17" status="complete"/>
     <credit type="author">
       <name>Jean-François Fortin Tam</name>
       <email>nekohayo@gmail.com</email>
@@ -13,6 +13,8 @@
     <credit type="contributor">
       <name>Mario Blättermann</name>
       <email>mariobl@gnome.org</email>
+    </credit>
+    <credit type="contributor">
       <name>Tomáš Karger</name>
       <email>tomkarger@gmail.com</email>
     </credit>
@@ -30,7 +32,7 @@
     <title>Saving a project</title>
      <p>To save your project work, use the <gui>Save</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
       <note style="tip">
-      <p>If you want to save your project as a different file, use <guiseq><gui>App menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
+      <p>If you want to save your project to a different file, use <guiseq><gui>App menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
       </note>
     </section>
     <section>
@@ -41,12 +43,12 @@
         </note>
     </section>
 
-    <section>
-    <title>Editing project settings</title>
-    <p>When starting a new project, you should make sure to adjust the project settings, such as framerate, resolution and preferred codecs. The video resolution and aspect ratio will affect the appearance of the previewer. If you do not set the resolution and aspect ratio to match those of your footage, the video may look squished or letterboxed.</p>
-    <note>
-    <p>Everytime you start a new project, a dialog window appears where you can adjust audio and video settings or metadata. To edit the project settings after initial creation, use <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
-    </note>
+    <section id="projectsettings">
+      <title>Editing the project settings</title>
+      <p>The project settings define mainly how the video appears while you edit the project. The video resolution and aspect ratio affect the appearance of the previewer. If the resolution and aspect ratio do not match those of your footage, the video may look squished or letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
+      <note>
+        <p>When you create a new project and import the first video file, its properties are transposed to the project settings (unless you already changed them yourself). An infobar appears when this happens. At this point you have the chance to adjust the project settings applied automatically by clicking the <gui>Project Settings</gui> button in the infobar.</p>
+      </note>
     </section>
 
     <section>
