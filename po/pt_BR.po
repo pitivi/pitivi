@@ -1,5 +1,5 @@
 # Brazilian Portuguese translation of pitivi.
-# Copyright (C) 2006-2014 The Pitivi's copyright holder
+# Copyright (C) 2016 The Pitivi's copyright holder
 # This file is distributed under the same license as the pitivi package.
 # Raphael Higino <In memoriam>, 2006.
 # Flamarion Jorge <jorge.flamarion@gmail.com>, 2009.
@@ -11,30 +11,29 @@
 # Breno Felipe Morais de Santana <breno_info@globomail.com>, 2012.
 # Florêncio Neves <florencioneves@gmail.com>, 2013.
 # Enrico Nicoletto <liverig@gmail.com>, 2013, 2014.
-# Rafael Fontenelle <rffontenelle@gmail.com>, 2013, 2014.
 # Gabriel F. Vilar <cogumm@gmail.com>, 2015.
+# Rafael Fontenelle <rffontenelle@gmail.com>, 2013, 2014, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-02-21 23:19+0000\n"
-"PO-Revision-Date: 2015-10-19 17:00-0200\n"
-"Last-Translator: Gabriel F. Vilar <cogumm@gmail.com>\n"
+"POT-Creation-Date: 2016-02-25 18:15+0000\n"
+"PO-Revision-Date: 2016-03-05 21:12-0300\n"
+"Last-Translator: Rafael Fontenelle <rffontenelle@gmail.com>\n"
 "Language-Team: Português Brasil <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Project-Style: gnome\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
-#, fuzzy
-#| msgid "Pitivi died"
 msgid "Pitivi"
-msgstr "Pitivi morreu"
+msgstr "Pitivi"
 
 #: ../data/pitivi.appdata.xml.in.h:2 ../data/pitivi.desktop.in.in.h:2
 msgid "Create and edit your own movies"
@@ -113,7 +112,7 @@ msgstr "Iniciando auto-alinhamento"
 
 #: ../data/ui/alignmentprogress.ui.h:2
 msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr "<b><big>Realizando auto-alinhamento</big></b>"
+msgstr "<b><big>Realizando autoalinhamento</big></b>"
 
 #: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:940
 msgid "Estimating..."
@@ -303,8 +302,6 @@ msgid "_Remove from Project"
 msgstr "_Remover do projeto"
 
 #: ../data/ui/medialibrary.ui.h:5
-#, fuzzy
-#| msgid "Clip Properties..."
 msgid "Clip properties..."
 msgstr "Propriedades do clipe..."
 
@@ -391,22 +388,16 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: ../data/ui/projectsettings.ui.h:6 ../data/ui/renderingdialog.ui.h:16
-#, fuzzy
-#| msgid "Save Preset"
 msgid "Preset:"
-msgstr "Salvar predefinição"
+msgstr "Predefinição:"
 
 #: ../data/ui/projectsettings.ui.h:7
-#, fuzzy
-#| msgid "Size"
 msgid "Size:"
-msgstr "Tamanho"
+msgstr "Tamanho:"
 
 #: ../data/ui/projectsettings.ui.h:8
-#, fuzzy
-#| msgid "Size (pixels):"
 msgid "pixels"
-msgstr "Tamanho (pixels):"
+msgstr "pixels"
 
 #: ../data/ui/projectsettings.ui.h:9
 msgid "Link"
@@ -454,7 +445,7 @@ msgstr "Ano:"
 
 #: ../data/ui/projectsettings.ui.h:23
 msgid "1900"
-msgstr ""
+msgstr "1900"
 
 #: ../data/ui/projectsettings.ui.h:24
 msgid "Info"
@@ -522,7 +513,7 @@ msgstr "Escala:"
 
 #: ../data/ui/renderingdialog.ui.h:18
 msgid "1.0"
-msgstr ""
+msgstr "1.0"
 
 #: ../data/ui/renderingdialog.ui.h:19
 msgid "Scale"
@@ -537,10 +528,8 @@ msgid "Height"
 msgstr "Altura"
 
 #: ../data/ui/renderingdialog.ui.h:22
-#, fuzzy
-#| msgid "Project Settings"
 msgid "Project Settings..."
-msgstr "Configurações do projeto"
+msgstr "Configurações do projeto..."
 
 #: ../data/ui/renderingdialog.ui.h:23
 msgid "Advanced..."
@@ -556,7 +545,7 @@ msgstr "Taxa de quadros"
 
 #: ../data/ui/renderingdialog.ui.h:31
 msgid "Automatically render from proxy files"
-msgstr ""
+msgstr "Renderizar automaticamente a partir de arquivos intermediários"
 
 #: ../data/ui/renderingdialog.ui.h:32
 msgid ""
@@ -566,20 +555,27 @@ msgid ""
 "This option is a good trade of between quality of the rendered video and "
 "stability."
 msgstr ""
+"Usa arquivos intermediários, se eles estiverem disponíveis e se não houver "
+"suporte oficial ao formato de mídia do ativo fonte.\n"
+"\n"
+"Essa opção é uma boa troca entre qualidade do vídeo renderizado e "
+"estabilidade."
 
 #: ../data/ui/renderingdialog.ui.h:35
 msgid "Always render from proxy files"
-msgstr ""
+msgstr "Sempre renderizar a partir de arquivos intermediários"
 
 #: ../data/ui/renderingdialog.ui.h:36
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
+"Renderizar todos os clipes a partir dos ativos intermediados. Pode haver uma "
+"perda de qualidade durante o processo de renderização."
 
 #: ../data/ui/renderingdialog.ui.h:37
 msgid "Never render from proxy files"
-msgstr ""
+msgstr "Nunca renderizar a partir de arquivos intermediários"
 
 #: ../data/ui/renderingdialog.ui.h:38
 msgid ""
@@ -588,6 +584,10 @@ msgid ""
 "use of not officially supported media formats.\n"
 "<i>Use at your own risk!</i>"
 msgstr ""
+"Sempre usa os ativos fonte para renderização. É a melhor escolha para a "
+"qualidade do vídeo renderizado, mas você pode encontrar alguns erros por "
+"causa do uso de formatos de mídia sem suporte oficial.\n"
+"<i>Use por sua conta e risco!</i>"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -644,26 +644,20 @@ msgid "Missing dependencies..."
 msgstr "Dependências faltantes..."
 
 #: ../data/ui/timelinetoolbar.ui.h:1
-#, fuzzy
-#| msgid "Split clip at playhead position"
 msgid "Split clips at playhead position"
-msgstr "Divide o clipe na posição indicadora de reprodução"
+msgstr "Divide clipes na posição indicadora de reprodução"
 
 #: ../data/ui/timelinetoolbar.ui.h:2
 msgid "Split"
 msgstr "Dividir"
 
 #: ../data/ui/timelinetoolbar.ui.h:3
-#, fuzzy
-#| msgid "Paste clips"
 msgid "Delete clips"
-msgstr "Colar clips"
+msgstr "Excluir clipes"
 
 #: ../data/ui/timelinetoolbar.ui.h:4
-#, fuzzy
-#| msgid "Delete layer"
 msgid "Delete"
-msgstr "Apagar camada"
+msgstr "Excluir"
 
 #: ../data/ui/timelinetoolbar.ui.h:5
 msgid "Group clips"
@@ -779,48 +773,32 @@ msgstr ""
 "ERRO — Não foi possível criar um Gst.Fraction — isso significa que gst-"
 "python não está instalado corretamente."
 
-# Tradução para sink?
 #: ../pitivi/check.py:290
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
 msgstr ""
-"Não foi possível criar uma sink saída de áudio. Certifique-se de que você "
-"tem uma válida (pulsesink, alsasink ou osssink)."
+"Não foi possível criar um assento de saída de áudio. Certifique-se de que "
+"você tem uma válida (pulsesink, alsasink ou osssink)."
 
-# Tradução para sink?
 #: ../pitivi/check.py:295
-#, fuzzy
-#| msgid ""
-#| "Could not create video output sink. Make sure you have a gtksink "
-#| "avalaible."
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
-"Não foi possível criar uma saída de áudio sink. Verifique se você tem um "
-"gtksink disponível."
+"Não foi possível criar uma assento de saída de áudio. Certifique-se de que "
+"um gtksink está disponível."
 
-# Tradução para sink?
 #: ../pitivi/check.py:308
-#, fuzzy, python-format
-#| msgid ""
-#| "Could not create video output sink. Make sure you have a gtksink "
-#| "avalaible."
+#, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr ""
-"Não foi possível criar uma saída de áudio sink. Verifique se você tem um "
-"gtksink disponível."
+"Não foi possível importar \"%s\". Certifique-se de que ele está disponível."
 
-# Tradução para sink?
 #: ../pitivi/check.py:324
-#, fuzzy
-#| msgid ""
-#| "Could not create video output sink. Make sure you have a gtksink "
-#| "avalaible."
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
-"Não foi possível criar uma saída de áudio sink. Verifique se você tem um "
-"gtksink disponível."
+"Não foi possível importar \"gi\". Certifique-se de que pyobject está "
+"disponível."
 
 #: ../pitivi/check.py:391
 msgid "enables sound notifications when rendering is complete"
@@ -1021,7 +999,8 @@ msgstr ""
 "Gabriel Feitosa Vilar <cogumm@gmail.com>, 2011.\n"
 "Breno Felipe Morais de Santana <breno_info@globomail.com>, 2012.\n"
 "Florêncio Neves <florencioneves@gmail.com>, 2013.\n"
-"Enrico Nicoletto <liverig@gmail.com>, 2013."
+"Enrico Nicoletto <liverig@gmail.com>, 2013.\n"
+"Rafael Fontenelle <rffontenelle@gmail.com>, 2016."
 
 #. The user has not made a decision, don't do anything
 #: ../pitivi/mainwindow.py:662
@@ -1183,6 +1162,7 @@ msgstr "Fechar após a importação dos arquivos"
 #: ../pitivi/medialibrary.py:126
 msgid "Create proxies when the media format is not supported officially"
 msgstr ""
+"Criar intermediários quando o formato de mídia não possui suporte oficial"
 
 #: ../pitivi/medialibrary.py:128
 msgid ""
@@ -1194,25 +1174,33 @@ msgid ""
 "<i>This is the only option officially supported by the Pitivi developers and "
 "thus is the safest.</i>"
 msgstr ""
+"Deixa o Pitivi decidir quando criar arquivos intermediários e quando não "
+"criar. A decisão será tomada com base no formato do arquivo e o quão bom é o "
+"suporte a este formato. Por exemplo: H.264, arquivos FLAC contidos no "
+"QuickTime não serão intermediados, porém AAC, H.264 contido em MPEG-TS, "
+"vão.\n"
+"\n"
+"<i>Essa é única opção com suporte oficial oferecido pelos desenvolvedores do "
+"Pitivi e, portanto, é a mais segura.</i>"
 
 #: ../pitivi/medialibrary.py:138
 msgid "Create proxies for all files"
-msgstr ""
+msgstr "Criar intermediários para todos arquivos"
 
 #: ../pitivi/medialibrary.py:140
 msgid ""
 "Use proxies for every imported file whatever its current media format is."
 msgstr ""
+"Usa intermediários para todos os arquivos importados não importando qual é o "
+"formato da mídia atual."
 
 #: ../pitivi/medialibrary.py:143
 msgid "Do not use proxy files"
-msgstr ""
+msgstr "Não usa arquivos intermediários"
 
 #: ../pitivi/medialibrary.py:259 ../pitivi/medialibrary.py:941
-#, fuzzy
-#| msgid "Unknown reason"
 msgid "Unknown"
-msgstr "Razão desconhecida"
+msgstr "Desconhecido"
 
 #: ../pitivi/medialibrary.py:332
 msgid "Icon"
@@ -1247,7 +1235,7 @@ msgstr "Todos os formatos suportados"
 #: ../pitivi/medialibrary.py:853
 #, python-format
 msgid "Transcoding %d assets: %d%% (About %s left)"
-msgstr ""
+msgstr "Transcodificando %d ativos: %d%% (Cerca de %s restantes)"
 
 #: ../pitivi/medialibrary.py:953
 msgid "View error"
@@ -1267,6 +1255,8 @@ msgstr[1] "{0:d} erros ocorreram durante a importação."
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
+"As configurações do projeto foram definidas para corresponder ao arquivo \"%s"
+"\""
 
 #: ../pitivi/medialibrary.py:1123
 msgid "Error while analyzing files"
@@ -1283,26 +1273,24 @@ msgstr "O seguinte arquivo não pode ser usado com o Pitivi."
 #: ../pitivi/medialibrary.py:1238
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Não usar intermediário para o ativo selecionado"
+msgstr[1] "Não usar intermediários para os ativos selecionados"
 
 #: ../pitivi/medialibrary.py:1249
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Excluir o arquivo intermediário correspondente"
+msgstr[1] "Excluir os arquivos intermediários correspondentes"
 
 #: ../pitivi/medialibrary.py:1260
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Usar intermediário para o ativo selecionado"
+msgstr[1] "Usar intermediários para os ativos selecionados"
 
 #: ../pitivi/preset.py:109
-#, fuzzy
-#| msgid "Remove layer"
 msgid "Remove"
-msgstr "Remover camada"
+msgstr "Remover"
 
 #: ../pitivi/preset.py:224
 msgid "New preset"
@@ -1337,14 +1325,14 @@ msgid ""
 "Before closing Pitivi, you can save changes to the existing project file or "
 "as a separate project file."
 msgstr ""
-"Pitivi detectado um grave problema de back-end e não foi possível se recuperar, "
-"mesmo após várias tentativas. A única coisa que pode ser feito neste momento "
-"é <b>reiniciar o Pitivi</b>.\n"
+"Pitivi detectado um grave problema de backend e não foi possível se "
+"recuperar, mesmo após várias tentativas. A única coisa que pode ser feito "
+"neste momento é <b>reiniciar o Pitivi</b>.\n"
 "\n"
-"Este é um tipo raro e grave de bug. Consulte o nosso <a href=\"http://wiki."
-"pitivi.org/wiki/Bug_reporting\">guia de relato de erros</a> e reserve um tempo "
-"para relatá-lo! Ficaremos muito felizes em corrigir esse erro e certificar "
-"que não isso não ocorra novamente em futuras versões.\n"
+"Este é um tipo raro e grave de erro. Consulte o nosso <a href=\"http://wiki."
+"pitivi.org/wiki/Bug_reporting\">guia de relato de erros</a> e reserve um "
+"tempo para relatá-lo! Ficaremos muito felizes em corrigir esse erro e "
+"certificar que não isso não ocorra novamente em futuras versões.\n"
 "\n"
 "Antes de fechar Pitivi, você pode salvar as alterações no arquivo de projeto "
 "existente ou como um arquivo de projeto separado."
@@ -1449,7 +1437,7 @@ msgid ""
 msgstr ""
 "Ocorreu um erro ao tentar renderizar o seu projeto. Você pode querer "
 "verificar o nosso guia de solução de problemas ou enviar um relatório de "
-"bug. O erro GStreamer foi:"
+"erro. O erro GStreamer foi:"
 
 #: ../pitivi/render.py:889 ../pitivi/render.py:890 ../pitivi/render.py:896
 msgid "Render complete"
@@ -1615,7 +1603,7 @@ msgstr "Excluir camada"
 #: ../pitivi/timeline/layer.py:402
 #, python-format
 msgid "Layer %d"
-msgstr ""
+msgstr "Camada %d"
 
 #: ../pitivi/timeline/ruler.py:228
 #, python-format
@@ -1653,11 +1641,13 @@ msgstr ""
 
 #: ../pitivi/timeline/timeline.py:87
 msgid "Left click also seeks"
-msgstr ""
+msgstr "Clique com botão esquerdo também busca"
 
 #: ../pitivi/timeline/timeline.py:89
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
+"Se clique com botão esquerdo do mouse também busca, além de selecionar e "
+"editar clipes."
 
 #. Translators: a label showing an invalid framerate value
 #: ../pitivi/dialogs/clipmediaprops.py:112
@@ -1729,6 +1719,8 @@ msgid ""
 "\n"
 "<b>Proxy creation progress: "
 msgstr ""
+"\n"
+"<b>Progresso de criação de intermediários: "
 
 #: ../pitivi/utils/ui.py:318
 #, python-format
