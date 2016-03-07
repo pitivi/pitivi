@@ -7,13 +7,14 @@
 # application
 # ------------------------------------------- #
 
+# The usual application name
+APPLICATION_NAME=pitivi
+
 # Where to build the XDG_APP
-XDGAPP_ENVPATH=${XDGAPP_ENVPATH:-$HOME/$APPLICATION-xdg-app}
+XDGAPP_ENVPATH=${XDGAPP_ENVPATH:-$HOME/$APPLICATION_NAME-xdg-app}
 
 # The name of the bundled application (must respect xdg-app application naming convention).
 APPLICATION_REF_NAME=org.pitivi.Pitivi
-# The usual application name
-APPLICATION_NAME=pitivi
 # Local path to the application repository
 APPLICATION_REPOSITORY=$XDGAPP_ENVPATH/$APPLICATION_NAME
 
