@@ -3,15 +3,15 @@
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="position_x_adj">
-    <property name="upper">2</property>
-    <property name="lower">-2</property>
+    <property name="upper">100</property>
+    <property name="lower">-100</property>
     <property name="value">0.5</property>
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="position_y_adj">
-    <property name="upper">2</property>
-    <property name="lower">-2</property>
+    <property name="upper">100</property>
+    <property name="lower">-100</property>
     <property name="value">0.5</property>
     <property name="step_increment">0.050000000000000003</property>
     <property name="page_increment">0.10000000000000001</property>
@@ -275,7 +275,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="xpos">
+                          <object class="GtkSpinButton" id="x-absolute">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">•</property>
@@ -290,7 +290,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSpinButton" id="ypos">
+                          <object class="GtkSpinButton" id="y-absolute">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">•</property>

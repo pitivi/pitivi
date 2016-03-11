@@ -53,8 +53,8 @@ class TitleOverlay(Overlay):
         cr.line_to(*self.__position.tolist())
 
     def __get_source_position(self):
-        res_x, x = self._source.get_child_property("xpos")
-        res_y, y = self._source.get_child_property("ypos")
+        res_x, x = self._source.get_child_property("x-absolute")
+        res_y, y = self._source.get_child_property("y-absolute")
         assert res_x and res_y
         return numpy.array([x, y])
 
@@ -71,8 +71,8 @@ class TitleOverlay(Overlay):
         return numpy.array([w, h])
 
     def __set_source_position(self, position):
-        self._source.set_child_property("xpos", float(position[0]))
-        self._source.set_child_property("ypos", float(position[1]))
+        self._source.set_child_property("x-absolute", float(position[0]))
+        self._source.set_child_property("y-absolute", float(position[1]))
 
     def __update_corners(self):
         self.__corners = [
@@ -125,9 +125,12 @@ class TitleOverlay(Overlay):
     def on_motion_notify(self, cursor_position):
         if not isinstance(self.stack.click_position, numpy.ndarray):
                 return
-        title_position = self.__click_source_position + self.stack.get_normalized_drag_distance(cursor_position)
+
         self.__update_from_motion(self.__click_window_position + self.stack.get_drag_distance(cursor_position))
         self.queue_draw()
+
+        title_position = self.__position / (self.stack.window_size * (1 - self.__get_text_size() / self.project_size))
+
         self.__set_source_position(title_position)
         self._commit()
 

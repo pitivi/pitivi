@@ -87,18 +87,18 @@ class TitleEditor(Loggable):
         self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
 
-        settings = ["valignment", "halignment", "xpos", "ypos"]
+        settings = ["valignment", "halignment", "x-absolute", "y-absolute"]
         for setting in settings:
             self.settings[setting] = builder.get_object(setting)
 
-        for n, en in list({_("Custom"): "position",
+        for n, en in list({_("Absolute"): "absolute",
                            _("Top"): "top",
                            _("Center"): "center",
                            _("Bottom"): "bottom",
                            _("Baseline"): "baseline"}.items()):
             self.settings["valignment"].append(en, n)
 
-        for n, en in list({_("Custom"): "position",
+        for n, en in list({_("Absolute"): "absolute",
                            _("Left"): "left",
                            _("Center"): "center",
                            _("Right"): "right"}.items()):
@@ -132,8 +132,8 @@ class TitleEditor(Loggable):
 
     def _updateFromSource(self, source):
         self.textbuffer.set_text(source.get_child_property("text")[1] or "")
-        self.settings['xpos'].set_value(source.get_child_property("xpos")[1])
-        self.settings['ypos'].set_value(source.get_child_property("ypos")[1])
+        self.settings['x-absolute'].set_value(source.get_child_property("x-absolute")[1])
+        self.settings['y-absolute'].set_value(source.get_child_property("y-absolute")[1])
         self.settings['valignment'].set_active_id(
             source.get_child_property("valignment")[1].value_name)
         self.settings['halignment'].set_active_id(
@@ -182,10 +182,10 @@ class TitleEditor(Loggable):
                 return
 
     def _updateWidgetsVisibility(self):
-        visible = self.settings["valignment"].get_active_id() == "position"
-        self.settings["ypos"].set_visible(visible)
-        visible = self.settings["halignment"].get_active_id() == "position"
-        self.settings["xpos"].set_visible(visible)
+        visible = self.settings["valignment"].get_active_id() == "absolute"
+        self.settings["y-absolute"].set_visible(visible)
+        visible = self.settings["halignment"].get_active_id() == "absolute"
+        self.settings["x-absolute"].set_visible(visible)
 
     def set_source(self, source):
         """
@@ -244,7 +244,7 @@ class TitleEditor(Loggable):
             if self.textbuffer.props.text == value:
                 return
             self.textbuffer.props.text = value
-        elif pspec.name in ["xpos", "ypos"]:
+        elif pspec.name in ["x-absolute", "y-absolute"]:
             if self.settings[pspec.name].get_value() == value:
                 return
             self.settings[pspec.name].set_value(value)
