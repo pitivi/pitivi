@@ -329,14 +329,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     def __setTooltip(self, event):
         if event.xdata:
-            res, value = self.__source.control_source_get_value(event.xdata)
+            xdata = max(self.__line_xs[0], min(event.xdata, self.__line_xs[-1]))
+            res, value = self.__source.control_source_get_value(xdata)
             assert res
             pmin = self.__paramspec.minimum
             pmax = self.__paramspec.maximum
             value = value * (pmax - pmin) + pmin
             self.set_tooltip_markup(_("Property: %s\nTimestamp: %s\nValue: %s")
                                     % (self.__propertyName,
-                                       Gst.TIME_ARGS(event.xdata),
+                                       Gst.TIME_ARGS(xdata),
                                        "{:.3f}".format(value)))
 
     def __resetTooltip(self):
