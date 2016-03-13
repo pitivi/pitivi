@@ -110,6 +110,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         # axisbg to None for transparency
         self.__ax = figure.add_axes([0, 0, 1, 1], axisbg='None')
+        # Clear the Axes object.
         self.__ax.cla()
 
         # FIXME: drawing a grid and ticks would be nice, but
@@ -126,10 +127,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # This seems to also be necessary for transparency ..
         figure.patch.set_visible(False)
 
-        # The actual Line2D object
-        self.__line = None
-
-        # The PathCollection as returned by scatter
+        # The PathCollection object holding the keyframes dots.
         sizes = [50]
         self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
                                              c=KEYFRAME_NODE_COLOR, zorder=2)
@@ -137,6 +135,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # matplotlib weirdness, simply here to avoid a warning ..
         self.__keyframes.set_picker(True)
 
+        # The Line2D object holding the lines between keyframes.
         self.__line = self.__ax.plot([], [],
                                      alpha=KEYFRAME_LINE_ALPHA,
                                      c=KEYFRAME_LINE_COLOR,
@@ -144,8 +143,13 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__updatePlots()
 
         # Drag and drop logic
+        # Whether the clicked keyframe or line has been dragged.
         self.__dragged = False
+        # The inpoint of the clicked keyframe.
         self.__offset = None
+        # The (offset, value) of both keyframes of the clicked keyframe line.
+        self.__clicked_line = ()
+        # Whether the mouse events go to the keyframes logic.
         self.handling_motion = False
 
         self.__hovered = False
@@ -233,18 +237,95 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         result = self.__keyframes.contains(event)
         if result[0]:
-            self.__offset = self.__keyframes.get_offsets()[
-                result[1]['ind'][0]][0]
+            # A keyframe has been clicked.
+            keyframe_index = result[1]['ind'][0]
+            offsets = self.__keyframes.get_offsets()
+            offset = offsets[keyframe_index][0]
 
-            # We won't remove edge keyframes
-            is_edge_keyframe = result[1]['ind'][0] == 0 or result[1]['ind'][0] == \
-                len(self.__keyframes.get_offsets()) - 1
-
-            if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS and not \
-                    is_edge_keyframe:
-                self.__source.unset(self.__offset)
+            if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS:
+                index = result[1]['ind'][0]
+                if index == 0 or index == len(offsets) - 1:
+                    # It's an edge keyframe. These should not be removed.
+                    return
+                # A keyframe has been double-clicked, remove it.
+                self.__source.unset(offset)
             else:
+                # Remember the clicked frame for drag&drop.
+                self.__offset = offset
                 self.handling_motion = True
+            return
+
+        result = self.__line.contains(event)
+        if result[0]:
+            # The line has been clicked.
+            x = event.xdata
+            offsets = self.__keyframes.get_offsets()
+            keyframes = offsets[:,0]
+            right = numpy.searchsorted(keyframes, x)
+            # Remember the clicked line for drag&drop.
+            self.__clicked_line = [offsets[right - 1], offsets[right]]
+            self.__ydata_drag_start = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
+            self.handling_motion = True
+
+    def __mplMotionEventCb(self, event):
+        if not self.props.visible:
+            return
+
+        if event.ydata is not None and event.xdata is not None:
+            # The mouse event is in the figure boundaries.
+            if self.__offset is not None:
+                self.__dragged = True
+                keyframe_ts = self.__computeKeyframeNewTimestamp(event)
+                self.__source.unset(int(self.__offset))
+
+                ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
+                self.__source.set(keyframe_ts, ydata)
+                self.__offset = keyframe_ts
+                self.__setTooltip(event)
+                hovering = True
+            elif self.__clicked_line:
+                self.__dragged = True
+                ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
+                offsets = self.__keyframes.get_offsets()
+                delta = ydata - self.__ydata_drag_start
+                for offset, value in self.__clicked_line:
+                    value = max(self.__ylim_min, min(value + delta, self.__ylim_max))
+                    self.__source.set(offset, value)
+                hovering = True
+            else:
+                hovering = self.__line.contains(event)[0]
+        else:
+            hovering = False
+
+        if hovering:
+            cursor = DRAG_CURSOR
+            self.__setTooltip(event)
+            if not self.__hovered:
+                self.emit("enter")
+                self.__hovered = True
+        else:
+            cursor = NORMAL_CURSOR
+            if self.__hovered:
+                self.emit("leave")
+                self.__resetTooltip()
+                self.__hovered = False
+
+        self.__timeline.get_window().set_cursor(cursor)
+
+    def __mplButtonReleaseEventCb(self, event):
+        if event.button != 1:
+            return
+
+        self.handling_motion = False
+        self.__offset = None
+        self.__clicked_line = None
+
+        if self.__dragged:
+            # The keyframe or keyframe line has already been dragged.
+            self.__dragged = False
+        else:
+            assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
+            self.__maybeCreateKeyframe(event)
 
     def __setTooltip(self, event):
         if event.xdata:
@@ -265,8 +346,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # The user can not change the timestamp of the first
         # and last keyframes.
         values = self.__source.get_all()
-        if (values[0].timestamp == self.__offset or
-                values[-1].timestamp == self.__offset):
+        if self.__offset in (values[0].timestamp, values[-1].timestamp):
             return self.__offset
 
         if event.xdata != self.__offset:
@@ -284,50 +364,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
                     return values[i - 1].timestamp + 1
 
         return event.xdata
-
-    def __mplMotionEventCb(self, event):
-        if not self.props.visible:
-            return
-
-        if self.__offset is not None:
-            self.__dragged = True
-            # Check that the mouse event still is in the figure boundaries
-            if event.ydata is not None and event.xdata is not None:
-                keyframe_ts = self.__computeKeyframeNewTimestamp(event)
-                self.__source.unset(int(self.__offset))
-
-                value = max(self.__ylim_min, min(self.__ylim_max, event.ydata))
-                self.__source.set(keyframe_ts, value)
-                self.__offset = keyframe_ts
-                self.__setTooltip(event)
-
-        cursor = NORMAL_CURSOR
-        result = self.__line.contains(event)
-        if result[0]:
-            cursor = DRAG_CURSOR
-            self.__setTooltip(event)
-            if not self.__hovered:
-                self.emit("enter")
-                self.__hovered = True
-        elif self.__hovered:
-            self.emit("leave")
-            self.__resetTooltip()
-            self.__hovered = False
-
-        self.__timeline.get_window().set_cursor(
-            cursor)
-
-    def __mplButtonReleaseEventCb(self, event):
-        if event.button != 1:
-            return
-
-        if not self.__dragged and not self.__offset:
-            if event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE:
-                self.__maybeCreateKeyframe(event)
-
-        self.__offset = None
-        self.handling_motion = False
-        self.__dragged = False
 
 
 class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
