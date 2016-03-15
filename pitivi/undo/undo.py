@@ -152,7 +152,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     def begin(self, action_group_name, finalizing_action=None):
         if self.running:
-            self.debug("Abort because already running")
+            self.debug("Abort because running")
             return
 
         stack = UndoableActionStack(action_group_name, finalizing_action)
@@ -162,36 +162,34 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("begin", stack)
 
     def push(self, action):
-        self.debug("Pushing %s", action)
-
-        try:
-            if action is not None:
+        if action is not None:
+            try:
                 st = action.asScenarioAction()
                 if self.app is not None and st is not None:
                     self.app.write_action(st)
-        except NotImplementedError:
-            self.warning("No serialization method for that action")
+            except NotImplementedError:
+                self.warning("No serialization method for that action")
 
         if self.running:
-            self.debug("Abort because already running")
+            self.debug("Ignore push because running")
             return
 
         try:
             stack = self._getTopmostStack()
-        except UndoWrongStateError:
+        except UndoWrongStateError as e:
+            self.debug("Ignore push because %s", e)
             return
-
         stack.push(action)
         self.debug("push action %s in action group %s",
                    action, stack.action_group_name)
         self.emit("push", stack, action)
 
     def rollback(self):
-        self.debug("Rolling back")
         if self.running:
-            self.debug("Abort because already running")
+            self.debug("Ignore rollback because running")
             return
 
+        self.debug("Rolling back")
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
@@ -201,11 +199,11 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack.undo()
 
     def commit(self):
-        self.debug("Committing")
         if self.running:
-            self.debug("Abort because already running")
+            self.debug("Ignore commit because running")
             return
 
+        self.debug("Committing")
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
@@ -222,8 +220,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("commit", stack)
 
     def undo(self):
-        if self.stacks or not self.undo_stacks:
-            raise UndoWrongStateError()
+        if self.stacks:
+            raise UndoWrongStateError("Recording a transaction")
+        if not self.undo_stacks:
+            raise UndoWrongStateError("Nothing to undo")
 
         stack = self.undo_stacks.pop(-1)
         self._run(stack.undo)
@@ -231,8 +231,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("undo", stack)
 
     def redo(self):
-        if self.stacks or not self.redo_stacks:
-            raise UndoWrongStateError()
+        if self.stacks:
+            raise UndoWrongStateError("Recording a transaction")
+        if not self.redo_stacks:
+            raise UndoWrongStateError("Nothing to redo")
 
         stack = self.redo_stacks.pop(-1)
         self._run(stack.do)
@@ -248,7 +250,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     def checkpoint(self):
         if self.stacks:
-            raise UndoWrongStateError()
+            raise UndoWrongStateError("Recording a transaction")
 
         self._checkpoint = self._takeSnapshot()
 
@@ -264,14 +266,13 @@ class UndoableActionLog(GObject.Object, Loggable):
             self.running = False
 
     def _getTopmostStack(self, pop=False):
-        stack = None
         try:
             if pop:
                 stack = self.stacks.pop(-1)
             else:
                 stack = self.stacks[-1]
         except IndexError:
-            raise UndoWrongStateError()
+            raise UndoWrongStateError("No transaction")
 
         return stack
 
