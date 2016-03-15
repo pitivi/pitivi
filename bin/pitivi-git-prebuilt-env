@@ -143,8 +143,8 @@ class Bundle:
 
 def enter_dev_environment(prefix):
     printf("Entering development environment...")
-    os.system("APP_IMAGE_TEST=1 APPDIR=%s %s" % (prefix,
-                                                 os.path.join(prefix, "./AppRun")))
+    os.system("APP_IMAGE_TEST=1 PITIVI_DEVELOPMENT=1 APPDIR=%s %s"
+        % (prefix, os.path.join(prefix, "./AppRun")))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

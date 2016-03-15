@@ -35,8 +35,7 @@ def in_devel():
     """
     Returns whether the app is run from a git checkout.
     """
-    rd = _get_root_dir()
-    return os.path.exists(os.path.join(rd, '.git'))
+    return os.environ.get("PITIVI_DEVELOPMENT", "0") != "0"
 
 if "APPDIR" in os.environ:
     basedir = os.environ["APPDIR"]

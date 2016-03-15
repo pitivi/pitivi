@@ -9,6 +9,7 @@ function generate_path_and_completion_calls {
 RCFILE=$GITREPO/.bashrc
 cp ~/.bashrc $RCFILE
 echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
+echo "export PITIVI_DEVELOPMENT=1" >> $RCFILE
 generate_path_and_completion_calls >> $RCFILE
 
 

@@ -31,6 +31,8 @@ PYGOBJECT_RELEASE_TAG="3.8.0"
 GOBJECT_INTROSPECTION_MINIMUM_VERSION="1.34.2"
 GOBJECT_INTROSPECTION_RELEASE_TAG="GOBJECT_INTROSPECTION_$(echo $GOBJECT_INTROSPECTION_MINIMUM_VERSION | tr '.' '_')"
 
+# If you want to run the development version of Pitivi:
+export PITIVI_DEVELOPMENT=1
 
 #
 # Everything below this line shouldn't be edited!

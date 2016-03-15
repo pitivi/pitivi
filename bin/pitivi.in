@@ -63,8 +63,7 @@ def jump_through_hoops():
 
 # Check if we're in development or installed version and set paths properly
 def _in_devel():
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    return os.path.exists(os.path.join(root_dir, '.git'))
+    return os.environ.get("PITIVI_DEVELOPMENT", "0") != "0"
 
 
 def _add_pitivi_path():
