@@ -359,7 +359,6 @@ then
   # Launch development environment if we are not creating a bundle
   if [ -z $BUNDLE ]
   then
-    cd $SCRIPTDIR
     xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
       --env=GST_DEBUG=$GST_DEBUG \

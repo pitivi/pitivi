@@ -1,8 +1,5 @@
 #!/bin/sh
 
-GITREPO="$(git rev-parse --show-toplevel)"
-cd $GITREPO
-
 function generate_path_and_completion_calls {
   echo "export PATH=$GITREPO/bin/:\$PATH"
   echo "export CC='ccache gcc'"
@@ -21,6 +18,8 @@ then
   echo "Entering own built environment"
   echo "=============================="
 
+  GITREPO="$(git rev-parse --show-toplevel)"
+  cd $GITREPO
   bash --rcfile $RCFILE
 else
   $*
