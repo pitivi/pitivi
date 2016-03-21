@@ -359,41 +359,15 @@ then
   # Launch development environment if we are not creating a bundle
   if [ -z $BUNDLE ]
   then
-    if [ -z "$*" ]
-    then
-      echo "=============================="
-      echo "Entering own built environment"
-      echo "=============================="
-
-      cd $SCRIPTDIR
-      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $PREFIX $SCRIPTDIR/enter_env
-    else
-
-      echo "#!/bin/sh" > $SCRIPTDIR/tmpscript
-      echo $* >> $SCRIPTDIR/tmpscript
-      chmod +x $SCRIPTDIR/tmpscript
-
-      xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio --share=network $PREFIX $SCRIPTDIR/tmpscript
-    fi
-
-    exit $?
-  fi
-else
-  if [ -n "$INSTALLER" ]
-  then
-    printf "$GREEN
-====>$APPLICATION_DESKTOP_NAME is now ready to be used, you can launch it through the application launcher, \
-as any other application. $NC
-
-To update the application, you can re launch that installer.\n\n"
-  fi
-
-  echo "-> Running $APPLICATION_REF_NAME $BRANCH..."
-  xdg-app run --branch=$BRANCH $APPLICATION_REF_NAME
-
-  exitcode=$?
-  if [ -n "$INSTALLER" ]
-  then
+    cd $SCRIPTDIR
+    xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio \
+      --share=network \
+      --env=GST_DEBUG=$GST_DEBUG \
+      --env=GST_VALIDATE=$GST_VALIDATE \
+      --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
+      --env=PITIVI_DEBUG=$PITIVI_DEBUG \
+      --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
+      $PREFIX $SCRIPTDIR/enter_env $*
     printf "\n\nYou can now exit that terminal."
   fi
 

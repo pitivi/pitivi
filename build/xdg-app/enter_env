@@ -14,4 +14,14 @@ cp ~/.bashrc $RCFILE
 echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
 generate_path_and_completion_calls >> $RCFILE
 
-bash --rcfile $RCFILE
+
+if [ -z "$*" ]
+then
+  echo "=============================="
+  echo "Entering own built environment"
+  echo "=============================="
+
+  bash --rcfile $RCFILE
+else
+  $*
+fi
