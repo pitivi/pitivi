@@ -337,7 +337,7 @@ then
     echo "-> Removing $PREFIX"
     rm -Rf $PREFIX
 
-    XDG_APP_BUILD_OPTIONS="--keep-build-dirs"
+    XDG_APP_BUILD_OPTIONS=""
     if [ -z $BUNDLE ]
     then
       XDG_APP_BUILD_OPTIONS=" $XDG_APP_BUILD_OPTIONS --build-only"
@@ -345,7 +345,8 @@ then
 
     echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
     cd $SCRIPTDIR
-    xdg-app-builder --keep-build-dirs $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
+    echo "Building with: xdg-app-builder $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
+    xdg-app-builder $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
     if [ -z $BUNDLE ]
     then

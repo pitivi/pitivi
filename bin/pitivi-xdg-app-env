@@ -1,0 +1,38 @@
+#!/bin/bash
+
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] \
+    && printf "This script should not be executed but sourced lile:\n    $ source $0\n" \
+    && exit 1
+
+SCRIPTDIR=$(dirname $(realpath $_))
+export XDGAPP_ENVPATH=$(realpath $SCRIPTDIR/../../)
+export CURRENT_GST=$XDGAPP_ENVPATH
+export MYPITIVI=$XDGAPP_ENVPATH
+
+export make="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b make"
+export check="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b make check"
+export minstall="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b make install"
+export autogen="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b ./autogen.sh --prefix=/app --disable-gtk-doc"
+export configure="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b ./configure --prefix=/app --disable-gtk-doc"
+
+alias make=$make
+alias check=$check
+alias minstall=$minstall
+alias autogen=$autogen
+alias configure=$configure
+
+alias ptvenv="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b"
+alias ptivi-xdg-app="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b"
+
+echo "-> Setting up environment if needed:"
+ptvenv "echo '===> Environment ready'"
+
+for i in `ptvenv ls /app/bin/`;
+do
+    alias $i="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b $i"
+done
+
+alias pitivi="cd $XDGAPP_ENVPATH/pitivi && $XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b bin/pitivi && cd - > /dev/null"
+
+export PS1="(ptv-xdgapp) $PS1"
+export PATH="$XDGAPP_ENVPATH/bin/:$PATH"
