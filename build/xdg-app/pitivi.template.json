@@ -4,7 +4,7 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "finish-args": ["--command=pitivi",
-                    "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
+                    "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",
                     "--filesystem=home",
                     "--filesystem=xdg-videos",
