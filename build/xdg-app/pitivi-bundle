@@ -368,9 +368,10 @@ then
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
       $PREFIX $SCRIPTDIR/enter_env $*
     printf "\n\nYou can now exit that terminal."
+
+    exit $exitcode
   fi
 
-  exit $exitcode
 fi
 
 
