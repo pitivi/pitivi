@@ -17,6 +17,7 @@ tests =	\
 	test_previewers.py \
 	test_project.py \
 	test_system.py \
+	test_timeline_elements.py \
 	test_timeline_layer.py \
 	test_timeline_timeline.py \
 	test_undo.py \

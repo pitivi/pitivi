@@ -152,6 +152,9 @@ class Selection(GObject.Object, Loggable):
                     element.selected.selected = True
         self.emit("selection-changed")
 
+    def select(self, objs):
+        self.setSelection(objs, SELECT)
+
     def unselect(self, objs):
         self.setSelection(objs, UNSELECT)
 

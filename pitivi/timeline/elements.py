@@ -213,6 +213,21 @@ class KeyframeCurve(FigureCanvas, Loggable):
             with self.__timeline.app.action_log.started("Keyframe added"):
                 self.__source.set(event.xdata, value)
 
+    def toggle_keyframe(self, offset):
+        """
+        Set or unset the keyframe at the given offset.
+        """
+        items = self.__source.get_all()
+        if offset in (items[0].timestamp, items[-1].timestamp):
+            return
+
+        if offset in [item.timestamp for item in items]:
+            self.__source.unset(offset)
+        else:
+            res, value = self.__source.control_source_get_value(offset)
+            assert res
+            self.__source.set(offset, value)
+
     # Callbacks
     def __controlSourceChangedCb(self, unused_control_source, unused_timed_value):
         self.__updatePlots()
@@ -423,7 +438,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.__background:
             self.add(self.__background)
 
-        self.__keyframeCurve = None
+        self.keyframe_curve = None
         self.show_all()
 
         # We set up the default mixing property right here, if a binding was
@@ -446,8 +461,8 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.__background:
             self.__background.set_size_request(width, height)
 
-        if self.__keyframeCurve:
-            self.__keyframeCurve.set_size_request(width, height)
+        if self.keyframe_curve:
+            self.keyframe_curve.set_size_request(width, height)
 
         self.__width = width
         self.__height = height
@@ -471,18 +486,18 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.emit("curve-leave")
 
     def __removeKeyframes(self):
-        if not self.__keyframeCurve:
+        if not self.keyframe_curve:
             # Nothing to remove.
             return
 
-        self.__keyframeCurve.disconnect_by_func(
+        self.keyframe_curve.disconnect_by_func(
             self.__keyframePlotChangedCb)
-        self.__keyframeCurve.disconnect_by_func(self.__curveEnterCb)
-        self.__keyframeCurve.disconnect_by_func(self.__curveLeaveCb)
-        self.remove(self.__keyframeCurve)
+        self.keyframe_curve.disconnect_by_func(self.__curveEnterCb)
+        self.keyframe_curve.disconnect_by_func(self.__curveLeaveCb)
+        self.remove(self.keyframe_curve)
 
-        self.__keyframeCurve.release()
-        self.__keyframeCurve = None
+        self.keyframe_curve.release()
+        self.keyframe_curve = None
 
     # Private methods
     def __createKeyframeCurve(self, binding):
@@ -500,14 +515,14 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
                 val)
 
         self.__removeKeyframes()
-        self.__keyframeCurve = KeyframeCurve(self.timeline, binding)
-        self.__keyframeCurve.connect("plot-changed",
+        self.keyframe_curve = KeyframeCurve(self.timeline, binding)
+        self.keyframe_curve.connect("plot-changed",
                                      self.__keyframePlotChangedCb)
-        self.__keyframeCurve.connect("enter", self.__curveEnterCb)
-        self.__keyframeCurve.connect("leave", self.__curveLeaveCb)
-        self.add(self.__keyframeCurve)
-        self.__keyframeCurve.set_size_request(self.__width, self.__height)
-        self.__keyframeCurve.props.visible = bool(self._ges_elem.selected)
+        self.keyframe_curve.connect("enter", self.__curveEnterCb)
+        self.keyframe_curve.connect("leave", self.__curveLeaveCb)
+        self.add(self.keyframe_curve)
+        self.keyframe_curve.set_size_request(self.__width, self.__height)
+        self.keyframe_curve.props.visible = bool(self._ges_elem.selected)
         self.queue_draw()
 
     def __createControlBinding(self, element):
@@ -535,11 +550,11 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         if self.timeline.app.project_manager.current_project.pipeline.getState() == Gst.State.PLAYING:
             return False
 
-        if not self.__keyframeCurve:
+        if not self.keyframe_curve:
             return False
 
         # We do not show keyframes while a clip is being moved on the timeline
-        if self.timeline.draggingElement and not self.__keyframeCurve.handling_motion:
+        if self.timeline.draggingElement and not self.keyframe_curve.handling_motion:
             return False
 
         # We do not show keyframes when there are several clips selected
@@ -555,19 +570,19 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
             self.propagate_draw(self.__previewer, cr)
 
         if self.__showKeyframes():
-            self.propagate_draw(self.__keyframeCurve, cr)
+            self.propagate_draw(self.keyframe_curve, cr)
 
     def do_show_all(self):
         for child in self.get_children():
-            if bool(self._ges_elem.selected) or child != self.__keyframeCurve:
+            if bool(self._ges_elem.selected) or child != self.keyframe_curve:
                 child.show_all()
 
         self.show()
 
     # Callbacks
     def __selectedChangedCb(self, unused_ges_elem, selected):
-        if self.__keyframeCurve:
-            self.__keyframeCurve.props.visible = selected
+        if self.keyframe_curve:
+            self.keyframe_curve.props.visible = selected
 
         if self.__previewer:
             self.__previewer.setSelected(selected)

@@ -1494,7 +1494,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.split_action.set_enabled(True)
 
         self.keyframe_action = Gio.SimpleAction.new("keyframe_selected_clips", None)
-        self.keyframe_action.connect("activate", self._keyframeCb)
+        self.keyframe_action.connect("activate", self._keyframe_cb)
         group.add_action(self.keyframe_action)
         self.app.add_accelerator("K", "timeline.keyframe_selected_clips", None)
 
@@ -1698,30 +1698,24 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if not splitted and splitting_selection:
             self._splitElements()
 
-    def _keyframeCb(self, unused_action, unused_parameter):
+    def _keyframe_cb(self, unused_action, unused_parameter):
         """
         Add or remove a keyframe at the current position of the selected clip.
         """
-        selected = self.timeline.selection.getSelectedTrackElements()
+        ges_clip = self.timeline.selection.getSingleClip(GES.Clip)
+        if ges_clip is None:
+            return
 
-        for obj in selected:
-            keyframe_exists = False
-            position = self._project.pipeline.getPosition()
-            position_in_obj = (position - obj.props.start) + obj.props.in_point
-            interpolators = obj.getInterpolators()
-            for value in interpolators:
-                interpolator = obj.getInterpolator(value)
-                keyframes = interpolator.getInteriorKeyframes()
-                for kf in keyframes:
-                    if kf.getTime() == position_in_obj:
-                        keyframe_exists = True
-                        self.app.action_log.begin("remove volume point")
-                        interpolator.removeKeyframe(kf)
-                        self.app.action_log.commit()
-                if keyframe_exists is False:
-                    self.app.action_log.begin("add volume point")
-                    interpolator.newKeyframe(position_in_obj)
-                    self.app.action_log.commit()
+        ges_track_elements = ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GES.Source)
+        ges_track_elements += ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GES.Source)
+
+        offset = self._project.pipeline.getPosition() - ges_clip.props.start
+        if offset <= 0 or offset >= ges_clip.props.duration:
+            return
+
+        for ges_track_element in ges_track_elements:
+            keyframe_curve = ges_track_element.ui.keyframe_curve
+            keyframe_curve.toggle_keyframe(offset)
 
     def _playPauseCb(self, unused_action, unused_parameter):
         self._project.pipeline.togglePlayback()

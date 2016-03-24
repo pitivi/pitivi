@@ -23,6 +23,7 @@ tests/test_misc.py \
 tests/test_widgets.py \
 tests/test_common.py \
 tests/common.py \
+tests/test_timeline_elements.py \
 tests/test_timeline_timeline.py \
 tests/test_pipeline.py \
 tests/test_application.py \

@@ -53,15 +53,11 @@ class BaseTestTimeline(common.TestCase):
 
     def addClipsSimple(self, timeline, num_clips):
         layer = timeline.ges_timeline.append_layer()
-
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
-
         clips = [layer.add_asset(asset, i * 10, 0, 10, GES.TrackType.UNKNOWN)
-                for i in range(num_clips)]
-
+                 for i in range(num_clips)]
         self.assertEqual(len(clips), num_clips)
-
         return clips
 
 
