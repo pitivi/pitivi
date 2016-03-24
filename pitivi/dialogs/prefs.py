@@ -32,6 +32,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING
 
 
@@ -48,7 +49,7 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
                                default=400)
 
 
-class PreferencesDialog(object):
+class PreferencesDialog(Loggable):
 
     """
     Preferences for how the app works.
@@ -58,6 +59,8 @@ class PreferencesDialog(object):
     original_values = {}
 
     def __init__(self, app):
+        Loggable.__init__(self)
+
         self.settings = app.settings
         self.widgets = {}
         self.resets = {}

@@ -36,8 +36,10 @@ from gi.repository import Gtk
 from gi.repository import GstPbutils
 
 from pitivi.clipproperties import ClipProperties
-from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, get_pixmap_dir, get_ui_dir
+from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, \
+    get_pixmap_dir, get_ui_dir
 from pitivi.effects import EffectListWidget
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.settings import GlobalSettings
@@ -125,7 +127,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.app = app
         self.log("Creating MainWindow")
         self.settings = app.settings
-        self.prefsdialog = None
 
         Gtk.IconTheme.get_default().append_search_path(get_pixmap_dir())
 
@@ -699,10 +700,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             return False
 
     def _prefsCb(self, unused_action):
-        if not self.prefsdialog:
-            from pitivi.dialogs.prefs import PreferencesDialog
-            self.prefsdialog = PreferencesDialog(self.app)
-        self.prefsdialog.run()
+        PreferencesDialog(self.app).run()
 
 # Project management callbacks
 
