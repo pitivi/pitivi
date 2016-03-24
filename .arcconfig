@@ -2,5 +2,6 @@
     "phabricator.uri" : "https://phabricator.freedesktop.org/",
     "project": "Pitivi",
     "default-reviewers": "thiblahute,aleb",
-    "repository.callsign": "PTV"
+    "repository.callsign": "PTV",
+    "git-phab.force-tasks": true
 }
