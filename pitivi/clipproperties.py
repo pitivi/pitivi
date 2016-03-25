@@ -283,6 +283,10 @@ class EffectProperties(Gtk.Expander, Loggable):
             selec = self._selection.getSelectedEffects()
             self.selected_effects = selec
             self.__updateAll()
+            for path, row in enumerate(self.storemodel):
+                if row[COL_TRACK_EFFECT] == track_element:
+                    self.treeview_selection.select_path(path)
+                    break
 
     def _trackElementRemovedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
@@ -322,7 +326,6 @@ class EffectProperties(Gtk.Expander, Loggable):
                     if priority is not None and priority < len(model):
                         clip.set_top_effect_priority(effect, priority)
                     self._project.timeline.commit()
-                self.__updateAll()
                 break
 
     def addEffectToCurrentSelection(self, factory_name):

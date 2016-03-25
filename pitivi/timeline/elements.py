@@ -762,11 +762,12 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         if target.name() == ui.EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
-            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.ges_clip,
-                                                                    self.timeline.dropData)
             self.timeline.resetSelectionGroup()
             self.timeline.selection.setSelection([self.ges_clip], timelineUtils.SELECT)
             self.app.gui.switchContextTab(self.ges_clip)
+
+            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.ges_clip,
+                                                                    self.timeline.dropData)
             self.timeline.cleanDropData()
             success = True
 
