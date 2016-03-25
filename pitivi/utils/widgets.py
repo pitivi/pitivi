@@ -811,17 +811,21 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
     def __reset_to_default_clicked_cb(self, unused_button, widget,
                                       keyframe_button):
-        binding = self.__bindings_by_keyframe_button.get(keyframe_button)
-        if binding:
+        if keyframe_button:
             # The prop is controllable (keyframmable).
-            binding.props.control_source.unset_all()
-            if keyframe_button.get_active():
-                track_element = self.__get_track_element_of_same_type(self.element)
-                if track_element:
-                    track_element.ui_element.showDefaultKeyframes()
-        self.__display_controlled(keyframe_button, False)
+            binding = self.__bindings_by_keyframe_button.get(keyframe_button)
+            if binding:
+                # The prop has been keyframed
+                binding.props.control_source.unset_all()
+                if keyframe_button.get_active():
+                    track_element = self.__get_track_element_of_same_type(
+                        self.element)
+                    if track_element:
+                        track_element.ui_element.showDefaultKeyframes()
+                self.__set_keyframe_active(keyframe_button, False)
+                self.__display_controlled(keyframe_button, False)
+
         widget.setWidgetToDefault()
-        self.__set_keyframe_active(keyframe_button, False)
 
     def __get_track_element_of_same_type(self, effect):
         track_type = effect.get_track_type()
