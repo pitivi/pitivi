@@ -463,6 +463,8 @@ class MoveScaleOverlay(Overlay):
         self._commit()
 
     def on_hover(self, cursor_pos):
+        if not self.is_visible():
+            return
         # handles hover check
         self.hovered_handle = None
         if self._is_selected():

@@ -666,6 +666,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self._seek(event)
 
         self._snapEndedCb()
+        self.update_visible_overlays(self.__last_position)
 
         return False
 
