@@ -427,7 +427,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if pipeline.playing() and x - self.hadj.get_value() > layout_width - 100:
             self.scrollToPlayhead(Gtk.Align.START)
         if not pipeline.playing():
-            self.update_visible_overlays(position)
+            self.update_visible_overlays()
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
@@ -606,8 +606,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     continue
         return sources
 
-    def update_visible_overlays(self, position):
-        self.app.gui.viewer.target.overlay_stack.set_current_sources(self.get_sources_at_position(position))
+    def update_visible_overlays(self):
+        sources = self.get_sources_at_position(self.__last_position)
+        self.app.gui.viewer.target.overlay_stack.set_current_sources(sources)
 
     def __buttonPressEventCb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
@@ -666,7 +667,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self._seek(event)
 
         self._snapEndedCb()
-        self.update_visible_overlays(self.__last_position)
+        self.update_visible_overlays()
 
         return False
 

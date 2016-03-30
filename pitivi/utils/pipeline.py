@@ -632,6 +632,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.ASYNC_DONE:
             self.commiting = False
+            self.app.gui.timeline_ui.timeline.update_visible_overlays()
+
         if message.type == Gst.MessageType.ASYNC_DONE and\
                 self._commit_wanted:
             self.debug("Commiting now that ASYNC is DONE")
