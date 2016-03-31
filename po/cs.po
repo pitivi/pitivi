@@ -237,7 +237,7 @@ msgstr "Vrátit se k uložené verzi"
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
-msgstr "Exportovat aktuální projekt a všechna jeho média v archivu .tar"
+msgstr "Exportovat aktuální projekt a všechna jeho multimédia v archivu .tar"
 
 #: ../data/ui/mainmenubutton.ui.h:8
 msgid "Export as Archive..."
@@ -322,7 +322,7 @@ msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
 msgstr ""
-"Přidejte média do vašeho projektu přetažení souborů a složek sem nebo pomocí "
+"Přidejte multimédia do vašeho projektu přetažení souborů a složek sem nebo pomocí "
 "tlačítka „Importovat“."
 
 #: ../data/ui/preferences.ui.h:2
@@ -868,7 +868,7 @@ msgstr "Všechny efekty"
 
 #: ../pitivi/mainwindow.py:270
 msgid "Media Library"
-msgstr "Knihovna médií"
+msgstr "Knihovna multimédií"
 
 #: ../pitivi/mainwindow.py:272
 msgid "Effect Library"
@@ -1602,7 +1602,7 @@ msgstr ""
 
 #: ../pitivi/timeline/timeline.py:87
 msgid "Left click also seeks"
-msgstr "Kliknutí levým tlačítkem také přeskakuje"
+msgstr "Kliknutí levým tlačítkem také mění pozici přehrávání"
 
 #: ../pitivi/timeline/timeline.py:89
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
