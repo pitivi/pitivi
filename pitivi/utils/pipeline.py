@@ -226,7 +226,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     # Position and Seeking methods
 
-    def getPosition(self, blocks=False):
+    def getPosition(self, fails=True):
         """
         Get the current position of the L{Pipeline}.
 
@@ -234,12 +234,6 @@ class SimplePipeline(GObject.Object, Loggable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
-        maincontext = GLib.main_context_default()
-        if blocks and self._recovery_state == self.RecoveryState.NOT_RECOVERING:
-            while self._waiting_for_async_done and self._recovery_state == self.RecoveryState.NOT_RECOVERING:
-                self.info("Iterating mainloop waiting for the pipeline to be ready to be queried")
-                maincontext.iteration(True)
-
         try:
             res, cur = self._pipeline.query_position(Gst.Format.TIME)
         except Exception as e:
@@ -247,7 +241,10 @@ class SimplePipeline(GObject.Object, Loggable):
             raise PipelineError("Couldn't get position")
 
         if not res:
-            raise PipelineError("Position not available")
+            if fails:
+                raise PipelineError("Position not available")
+
+            cur = self._last_position
 
         self.log("Got position %s", format_ns(cur))
         return cur
@@ -565,6 +562,12 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
     def _getDuration(self):
         return self._timeline.get_duration()
+
+    def do_change_state(self, state):
+        if state == Gst.StateChange.PAUSED_TO_READY:
+            self._removeWaitingForAsyncDoneTimeout()
+
+        return GES.Pipeline.do_change_state(self, state)
 
     def set_timeline(self, timeline):
         if not GES.Pipeline.set_timeline(self, timeline):

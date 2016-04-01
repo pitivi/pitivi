@@ -54,7 +54,7 @@ pitivi/dialogs/filelisterrordialog.py \
 pitivi/transitions.py \
 pitivi/application.py \
 pitivi/effects.py \
-pitivi/viewer.py \
+pitivi/viewer/viewer.py \
 pitivi/clipproperties.py \
 pitivi/timeline/timeline.py \
 pitivi/timeline/layer.py \
