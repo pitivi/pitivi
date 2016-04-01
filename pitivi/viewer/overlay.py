@@ -19,6 +19,9 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""
+Base class for the video viewer overlays
+"""
 
 import numpy
 
@@ -39,8 +42,16 @@ class Overlay(Gtk.DrawingArea, Loggable):
         self._source = source
         self.click_source_position = None
         self.stack = stack
+
         project = stack.app.project_manager.current_project
-        self.project_size = numpy.array([project.videowidth, project.videoheight])
+        project.connect("video-size-changed", self._canvas_size_changed_cb)
+        self.project_size = numpy.array([project.videowidth,
+                                         project.videoheight])
+
+    def _canvas_size_changed_cb(self, project):
+        project = self.stack.app.project_manager.current_project
+        self.project_size = numpy.array([project.videowidth,
+                                         project.videoheight])
 
     def _is_hovered(self):
         return self.stack.hovered_overlay == self
@@ -67,6 +78,9 @@ class Overlay(Gtk.DrawingArea, Loggable):
         self.stack.hovered_overlay = self
 
     def unhover(self):
+        """
+        Mark @self as not over anymore
+        """
         self.stack.hovered_overlay = None
         self.queue_draw()
 

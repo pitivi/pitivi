@@ -724,6 +724,7 @@ class Project(Loggable, GES.Project):
                                         GObject.TYPE_PYOBJECT,)),
         "settings-set-from-imported-asset": (GObject.SignalFlags.RUN_LAST, None,
                                              (GES.Asset,)),
+        "video-size-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
@@ -905,7 +906,12 @@ class Project(Loggable, GES.Project):
 
     def setVideoRestriction(self, name, value):
         self._has_default_video_settings = False
-        return Project._set_restriction(self.video_profile, name, value)
+        res = Project._set_restriction(self.video_profile, name, value)
+
+        if res:
+            self.emit("video-size-changed")
+
+        return res
 
     def __setAudioRestriction(self, name, value):
         self._has_default_audio_settings = False
