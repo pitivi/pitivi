@@ -602,7 +602,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 duration = clip.get_duration()
                 if start <= position <= duration + start:
                     source = clip.find_track_element(None, GES.VideoSource)
-                    sources.append(source)
+                    if source:
+                        sources.append(source)
                     continue
         return sources
 
