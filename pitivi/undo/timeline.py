@@ -71,13 +71,14 @@ class TrackElementPropertyChanged(UndoableAction):
 
 # FIXME We should refactor pitivi.undo.PropertyChangeTracker so we can use it as
 # a baseclass here!
-class TrackElementChildPropertyTracker:
+class TrackElementChildPropertyTracker(Loggable):
 
     """
     Track track_element configuration changes in its list of control track_elements
     """
 
     def __init__(self, action_log):
+        Loggable.__init__(self)
         self._tracked_track_elements = {}
         self.action_log = action_log
         self.pipeline = None
@@ -112,6 +113,11 @@ class TrackElementChildPropertyTracker:
         return self._tracked_track_elements[track_element]
 
     def _propertyChangedCb(self, track_element, unused_gstelement, pspec):
+
+        if track_element.get_control_binding(pspec.name):
+            self.debug("Property %s controlled", pspec.name)
+            return
+
         old_value = self._tracked_track_elements[track_element][pspec.name]
         new_value = track_element.get_child_property(pspec.name)[1]
         action = TrackElementPropertyChanged(
@@ -515,12 +521,13 @@ class TimelineLogObserver(Loggable):
     activePropertyChangedAction = ActivePropertyChanged
 
     def __init__(self, log):
+        Loggable.__init__(self)
+
         self.log = log
         self.clip_property_trackers = {}
         self.control_source_keyframe_trackers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(log)
         self._pipeline = None
-        Loggable.__init__(self)
 
     @property
     def pipeline(self):
