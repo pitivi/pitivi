@@ -363,9 +363,11 @@ class Pitivi(Gtk.Application, Loggable):
         self._syncDoUndo(action_log)
 
     def _syncDoUndo(self, action_log):
-        can_undo = bool(action_log.undo_stacks)
         # TODO: Remove this once we revisit undo/redo T3360
         can_undo = in_devel()
+
+        if can_undo:
+            can_undo = bool(action_log.undo_stacks)
         self.undo_action.set_enabled(can_undo)
 
         can_redo = bool(action_log.redo_stacks)
