@@ -24,8 +24,17 @@ from gi.repository import GES
 from gi.repository import GObject
 
 from pitivi.utils.loggable import Loggable
-from pitivi.undo.undo import PropertyChangeTracker, UndoableAction
+from pitivi.undo.undo import PropertyChangeTracker, UndoableAction,\
+    FinalizingAction
 from pitivi.effects import PROPS_TO_IGNORE
+
+
+class CommitTimelineFinalizingAction(FinalizingAction):
+    def __init__(self, pipeline):
+        self.__pipeline = pipeline
+
+    def do(self):
+        self.__pipeline.commit_timeline()
 
 
 class TrackElementPropertyChanged(UndoableAction):
@@ -592,7 +601,7 @@ class TimelineLogObserver(Loggable):
                               self._controlBindingAddedCb)
         if isinstance(track_element, GES.BaseEffect):
             self.children_props_tracker.addTrackElement(track_element)
-        elif isinstance(track_element, GES.TitleSource):
+        elif isinstance(track_element, GES.VideoSource):
             self.children_props_tracker.addTrackElement(track_element)
 
     def _disconnectFromTrackElement(self, track_element):

@@ -67,6 +67,7 @@ pitivi/undo/undo.py \
 pitivi/undo/timeline.py \
 pitivi/render.py \
 pitivi/viewer/move_scale_overlay.py \
+pitivi/viewer/overlay_stack.py \
 "
 
 git-pylint-commit-hook --help |grep ignore > /dev/null 2>&1

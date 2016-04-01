@@ -27,6 +27,8 @@ from math import pi
 
 from gi.repository import Gdk
 
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
+from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.viewer.overlay import Overlay
 
 
@@ -304,13 +306,14 @@ class MoveScaleOverlay(Overlay):
     """
     Viewer overlays class for GESVideoSource transformations
     """
-    def __init__(self, stack, source):
+    def __init__(self, stack, action_log, source):
         Overlay.__init__(self, stack, source)
 
         self.__clicked_handle = None
         self.__click_diagonal_sign = None
         self.__box_hovered = False
 
+        self.__action_log = action_log
         self.hovered_handle = None
 
         # Corner handles need to be ordered for drawing.
@@ -327,6 +330,7 @@ class MoveScaleOverlay(Overlay):
         for key in self.handles:
             self.handles[key].set_placement(key)
 
+        self._source.connect("deep-notify", self.__source_property_changed_cb)
         self.update_from_source()
 
     def __get_source_position(self):
@@ -410,9 +414,13 @@ class MoveScaleOverlay(Overlay):
         return size[0] / size[1]
 
     def on_button_press(self):
+        disconnectAllByFunc(self._source, self.__source_property_changed_cb)
         self.click_source_position = self.__get_source_position()
         self.__clicked_handle = None
 
+        self.__action_log.begin("Video position change",
+                                CommitTimelineFinalizingAction(
+                                    self._source.get_timeline().get_parent()))
         if self.hovered_handle:
             self.hovered_handle.on_click()
             self.__clicked_handle = self.hovered_handle
@@ -429,6 +437,7 @@ class MoveScaleOverlay(Overlay):
         self.update_from_source()
         self.on_hover(cursor_position)
 
+        self.__action_log.commit()
         if self.__clicked_handle:
             if not self.__clicked_handle.hovered:
                 self.stack.reset_cursor()
@@ -437,7 +446,12 @@ class MoveScaleOverlay(Overlay):
         elif self._is_hovered():
             self.stack.set_cursor("grab")
 
+        self._source.connect("deep-notify", self.__source_property_changed_cb)
         self.queue_draw()
+
+    def __source_property_changed_cb(self, unused_source, unused_gstelement,
+                                     unused_pspec):
+        self.update_from_source()
 
     def on_motion_notify(self, cursor_pos):
         click_to_cursor = self.stack.get_normalized_drag_distance(cursor_pos)

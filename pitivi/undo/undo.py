@@ -79,6 +79,15 @@ class UndoableAction(GObject.Object, Loggable):
         self.emit("undone")
 
 
+class FinalizingAction:
+    """
+    Base class for actions to happen when an UndoableActionStack is
+    done or undone.
+    """
+    def do(self):
+        raise NotImplementedError()
+
+
 class UndoableActionStack(UndoableAction):
 
     """
@@ -89,12 +98,13 @@ class UndoableActionStack(UndoableAction):
         "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
-    def __init__(self, action_group_name):
+    def __init__(self, action_group_name, finalizing_action=None):
         UndoableAction.__init__(self)
         self.action_group_name = action_group_name
         self.done_actions = []
         self.undone_actions = []
         self.actions = []
+        self.finalizing_action = finalizing_action
 
     def push(self, action):
         self.done_actions.append(action)
@@ -109,10 +119,16 @@ class UndoableActionStack(UndoableAction):
         self.done_actions = self.undone_actions[::-1]
         self.emit("done")
 
+        if self.finalizing_action:
+            self.finalizing_action.do()
+
     def undo(self):
         self._runAction(self.done_actions, "undo")
         self.undone_actions = self.done_actions[::-1]
         self.emit("undone")
+
+        if self.finalizing_action:
+            self.finalizing_action.do()
 
     def clean(self):
         actions = self.done_actions + self.undone_actions
@@ -152,13 +168,13 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.running = False
         self._checkpoint = self._takeSnapshot()
 
-    def begin(self, action_group_name):
+    def begin(self, action_group_name, finalizing_action=None):
         self.debug("Beginning %s", action_group_name)
         if self.running:
             self.debug("Abort because already running")
             return
 
-        stack = UndoableActionStack(action_group_name)
+        stack = UndoableActionStack(action_group_name, finalizing_action)
         nested = self._stackIsNested(stack)
         self.stacks.append(stack)
         self.debug("begin action group %s, nested %s",

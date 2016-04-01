@@ -60,7 +60,7 @@ class OverlayStack(Gtk.Overlay):
         if type(source) == GES.TitleSource:
             overlay = TitleOverlay(self, source)
         else:
-            overlay = MoveScaleOverlay(self, source)
+            overlay = MoveScaleOverlay(self, self.app.action_log, source)
         self.add_overlay(overlay)
         self.__overlays[source] = overlay
 
