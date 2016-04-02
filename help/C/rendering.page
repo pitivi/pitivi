@@ -44,7 +44,6 @@
      <section>
       <title>Project settings and the rendering dialog</title>
       <p>The <gui>Project Settings</gui> are a base on which the <gui>Rendering dialog</gui> settings are applied when performing a render. The <gui>Project Settings</gui> are kept separate because they also determine how you preview the project while editing it. The values specified in the <gui>Rendering dialog</gui> are temporary and used only at render time. Because they are so closely related, the <gui>Rendering dialog</gui> has a button which opens the <gui>Project Settings</gui>.</p>
-      <p>are by default taken as default values for most of the rendering settings such as framerate, number of audio channels or their sampling rate. The settings specified in the <gui>Rendering dialog</gui> affect only the rendering. Some settings, such as the resolution scale, container, codecs, codec settings and the render output folder are saved so they appear as defaults in the next rendering.</p>
      </section>
 
 </page>
