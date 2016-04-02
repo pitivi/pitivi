@@ -17,12 +17,10 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
-import tempfile
 from gettext import gettext as _
 from unittest import mock
 
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gst
 
 from pitivi import medialibrary
@@ -62,7 +60,7 @@ class TestMediaLibrary(common.TestCase):
         # is connected to some assets.
         self.clean()
 
-        self.mainloop = GLib.MainLoop.new(None, False)
+        self.mainloop = common.create_main_loop()
         self.check_no_transcoding = False
         self.app = common.getPitiviMock(settings)
         self.app.project_manager = ProjectManager(self.app)
@@ -80,7 +78,7 @@ class TestMediaLibrary(common.TestCase):
     def projectLoadedCb(self, unused_project, unused_timeline):
         self.mainloop.quit()
 
-    def _progressBarCb(self, progressbar, unused_pspecunused):
+    def _progressBarCb(self, progressbar, unused_pspec):
         if self.check_no_transcoding:
             self.assertTrue(progressbar.props.fraction == 1.0 or
                             progressbar.props.fraction == 0.0,

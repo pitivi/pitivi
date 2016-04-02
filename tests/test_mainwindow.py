@@ -23,7 +23,6 @@ import os
 from unittest import mock
 
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.mainwindow import PitiviMainWindow
@@ -59,7 +58,7 @@ class TestMainWindow(common.TestCase):
         mainwindow.destroy()
 
     def __loading_failure(self, has_proxy):
-        mainloop = GLib.MainLoop.new(None, False)
+        mainloop = common.create_main_loop()
 
         app = common.getPitiviMock(
             settings={"lastProjectFolder": "/tmp",

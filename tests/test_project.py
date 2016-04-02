@@ -27,7 +27,6 @@ from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 
-from pitivi.application import Pitivi
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
@@ -146,18 +145,15 @@ class TestProjectManager(TestCase):
         self.assertEqual("new-project-loaded", name, self.signals)
 
     def testMissingUriForwarded(self):
-        def quit(mainloop):
-            mainloop.quit()
+        mainloop = common.create_main_loop()
 
-        def missingUriCb(self, project, error, clip_asset, mainloop, result):
+        def missingUriCb(self, project, error, clip_asset, result):
             result[0] = True
             mainloop.quit()
 
-        self.mainloop = GLib.MainLoop()
-
         result = [False]
         self.manager.connect(
-            "missing-uri", missingUriCb, self.mainloop, result)
+            "missing-uri", missingUriCb, result)
 
         # Load a project with a missing asset.
         unused, xges_path = tempfile.mkstemp()
@@ -179,8 +175,7 @@ class TestProjectManager(TestCase):
         try:
             self.assertTrue(self.manager.loadProject(uri))
 
-            GLib.timeout_add_seconds(5, quit, self.mainloop)
-            self.mainloop.run()
+            mainloop.run()
             self.assertTrue(result[0], "missing not missing")
         finally:
             os.remove(xges_path)
@@ -318,28 +313,23 @@ class TestProjectManager(TestCase):
 
 class TestProjectLoading(common.TestCase):
 
-    def setUp(self):
-        self.mainloop = GLib.MainLoop()
-
     def tearDown(self):
         pass
 
     def testLoadedCallback(self):
-        def loaded(project, timeline, mainloop, result):
-            result[0] = True
-            mainloop.quit()
+        mainloop = common.create_main_loop()
 
-        def quit(mainloop):
+        def loaded(project, timeline, result):
+            result[0] = True
             mainloop.quit()
 
         # Create a blank project and save it.
         project = _createRealProject(name="noname")
         result = [False]
-        project.connect("loaded", loaded, self.mainloop, result)
+        project.connect("loaded", loaded, result)
 
         self.assertTrue(project.createTimeline())
-        GLib.timeout_add_seconds(5, quit, self.mainloop)
-        self.mainloop.run()
+        mainloop.run()
         self.assertTrue(
             result[0], "Blank project creation failed to trigger signal: loaded")
 
@@ -352,19 +342,20 @@ class TestProjectLoading(common.TestCase):
             project2 = _createRealProject()
             self.assertTrue(project2.createTimeline())
             result = [False]
-            project2.connect("loaded", loaded, self.mainloop, result)
-            GLib.timeout_add_seconds(5, quit, self.mainloop)
-            self.mainloop.run()
+            project2.connect("loaded", loaded, result)
+            mainloop.run()
             self.assertTrue(
                 result[0], "Blank project loading failed to trigger signal: loaded")
         finally:
             os.remove(xges_path)
 
     def testAssetAddingRemovingAdding(self):
+        mainloop = common.create_main_loop()
+
         def loadingProgressCb(project, progress, estimated_time,
                               self, result, uris):
 
-            def readd(mainloop, result, uris):
+            def readd(result, uris):
                 project.addUris(uris)
                 result[2] = True
                 mainloop.quit()
@@ -377,9 +368,9 @@ class TestProjectLoading(common.TestCase):
             self.assertEqual(len(assets), 1)
             asset = assets[0]
             project.remove_asset(asset)
-            GLib.idle_add(readd, self.mainloop, result, uris)
+            GLib.idle_add(readd, result, uris)
 
-        def loadedCb(project, timeline, mainloop, result, uris):
+        def loadedCb(project, timeline, result, uris):
             result[0] = True
             project.addUris(uris)
 
@@ -387,17 +378,13 @@ class TestProjectLoading(common.TestCase):
         project = _createRealProject()
         result = [False, False, False]
         uris = [common.getSampleUri("tears_of_steel.webm")]
-        project.connect("loaded", loadedCb, self.mainloop, result, uris)
+        project.connect("loaded", loadedCb, result, uris)
         project.connect("asset-loading-progress",
                         loadingProgressCb, self,
                         result, uris)
 
-        def quit(mainloop):
-            mainloop.quit()
-
         self.assertTrue(project.createTimeline())
-        GLib.timeout_add_seconds(5, quit, self.mainloop)
-        self.mainloop.run()
+        mainloop.run()
         self.assertTrue(
             result[0], "Project creation failed to trigger signal: loaded")
         self.assertTrue(
@@ -407,12 +394,6 @@ class TestProjectLoading(common.TestCase):
 
 
 class TestProjectSettings(common.TestCase):
-
-    def setUp(self):
-        self.mainloop = GLib.MainLoop()
-
-    def tearDown(self):
-        pass
 
     def testAudio(self):
         project = _createRealProject(name="noname")
@@ -433,15 +414,14 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(Gst.Fraction(2, 7), project.videopar)
 
     def testInitialization(self):
-        def loadedCb(project, timeline, mainloop, uris):
+        mainloop = common.create_main_loop()
+
+        def loadedCb(project, timeline, uris):
             project.addUris(uris)
 
-        def progressCb(project, progress, estimated_time, mainloop):
+        def progressCb(project, progress, estimated_time):
             if progress == 100:
                 mainloop.quit()
-
-        def quit(mainloop):
-            mainloop.quit()
 
         # Create a blank project and add some assets.
         project = _createRealProject()
@@ -451,12 +431,11 @@ class TestProjectSettings(common.TestCase):
         uris = [common.getSampleUri("flat_colour1_640x480.png"),
                 common.getSampleUri("tears_of_steel.webm"),
                 common.getSampleUri("1sec_simpsons_trailer.mp4")]
-        project.connect("loaded", loadedCb, self.mainloop, uris)
-        project.connect("asset-loading-progress", progressCb, self.mainloop)
+        project.connect("loaded", loadedCb, uris)
+        project.connect("asset-loading-progress", progressCb)
 
         self.assertTrue(project.createTimeline())
-        GLib.timeout_add_seconds(5, quit, self.mainloop)
-        self.mainloop.run()
+        mainloop.run()
 
         assets = project.list_assets(GES.UriClip)
         self.assertEqual(3, len(assets), assets)

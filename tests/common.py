@@ -1,14 +1,32 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (c) 2015, Thibault Saunier <tsaunier@gnome.org>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 """
 A collection of objects to use for testing
 """
 import gc
 import os
-import sys
 import tempfile
 import unittest
 from unittest import mock
 
 from gi.repository import Gdk
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 
@@ -57,6 +75,27 @@ def getPitiviMock(settings=None, proxyingStrategy=ProxyingStrategy.NOTHING,
     app.proxy_manager = ProxyManager(app)
 
     return app
+
+
+def create_main_loop():
+    mainloop = GLib.MainLoop()
+    timed_out = False
+
+    def quit_cb(unused):
+        timed_out = True
+        mainloop.quit()
+
+    def run(timeout_seconds=5):
+        source = GLib.timeout_source_new_seconds(timeout_seconds)
+        source.set_callback(quit_cb)
+        source.attach()
+        GLib.MainLoop.run(mainloop)
+        source.destroy()
+        if timed_out:
+            raise Exception("Timed out after %s seconds" % timeout_seconds)
+
+    mainloop.run = run
+    return mainloop
 
 
 class TestCase(unittest.TestCase, Loggable):
