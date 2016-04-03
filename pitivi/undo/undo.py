@@ -93,7 +93,6 @@ class UndoableActionStack(UndoableAction):
         self.action_group_name = action_group_name
         self.done_actions = []
         self.undone_actions = []
-        self.actions = []
         self.finalizing_action = finalizing_action
 
     def push(self, action):
@@ -175,7 +174,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
 
         try:
-            stack = self._getTopmostStack()
+            stack = self._get_last_stack()
         except UndoWrongStateError as e:
             self.debug("Ignore push because %s", e)
             return
@@ -190,9 +189,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
 
         self.debug("Rolling back")
-        stack = self._getTopmostStack(pop=True)
-        if stack is None:
-            return
+        stack = self._get_last_stack(pop=True)
         self.debug("rollback action group %s, nested %s",
                    stack.action_group_name, len(self.stacks))
         self.emit("rollback", stack)
@@ -204,9 +201,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
 
         self.debug("Committing")
-        stack = self._getTopmostStack(pop=True)
-        if stack is None:
-            return
+        stack = self._get_last_stack(pop=True)
         if not self.stacks:
             self.undo_stacks.append(stack)
         else:
@@ -265,7 +260,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         finally:
             self.running = False
 
-    def _getTopmostStack(self, pop=False):
+    def _get_last_stack(self, pop=False):
         try:
             if pop:
                 stack = self.stacks.pop(-1)
