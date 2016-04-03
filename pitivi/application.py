@@ -35,11 +35,11 @@ from pitivi.configure import VERSION
 from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import PitiviMainWindow
-from pitivi.project import ProjectLogObserver
 from pitivi.project import ProjectManager
 from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
+from pitivi.undo.project import ProjectLogObserver
 from pitivi.undo.timeline import TimelineLogObserver
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils import loggable

@@ -40,7 +40,6 @@ from pitivi.configure import get_ui_dir
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.render import CachedEncoderList
-from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
@@ -67,107 +66,6 @@ DEFAULT_NAME = _("New Project")
 DEFAULT_MUXER = "oggmux"
 DEFAULT_VIDEO_ENCODER = "theoraenc"
 DEFAULT_AUDIO_ENCODER = "vorbisenc"
-
-# ------------------ Backend classes ---------------------------------------- #
-
-
-class AssetRemovedAction(UndoableAction):
-
-    def __init__(self, project, asset):
-        UndoableAction.__init__(self)
-        self.project = project
-        self.asset = asset
-
-    def undo(self):
-        self.project.add_asset(self.asset)
-
-    def do(self):
-        self.project.remove_asset(self.asset)
-
-    def asScenarioAction(self):
-        st = Gst.Structure.new_empty("remove-asset")
-        st.set_value("id", self.asset.get_id())
-        type_string = GObject.type_name(self.asset.get_extractable_type())
-        st.set_value("type", type_string)
-        return st
-
-
-class AssetAddedAction(UndoableAction):
-
-    def __init__(self, project, asset):
-        UndoableAction.__init__(self)
-        self.project = project
-        self.asset = asset
-
-    def undo(self):
-        self.project.remove_asset(self.asset)
-
-    def do(self):
-        self.project.add_asset(self.asset)
-
-    def asScenarioAction(self):
-        st = Gst.Structure.new_empty("add-asset")
-        st.set_value("id", self.asset.get_id())
-        type_string = GObject.type_name(self.asset.get_extractable_type())
-        st.set_value("type", type_string)
-        return st
-
-
-class ProjectSettingsChanged(UndoableAction):
-
-    def __init__(self, project, old, new):
-        UndoableAction.__init__(self)
-        self.project = project
-        self.oldsettings = old
-        self.newsettings = new
-
-    def do(self):
-        self.project.setSettings(self.newsettings)
-        self._done()
-
-    def undo(self):
-        self.project.setSettings(self.oldsettings)
-        self._undone()
-
-
-class ProjectLogObserver(UndoableAction):
-
-    def __init__(self, log):
-        UndoableAction.__init__(self)
-        self.log = log
-
-    def startObserving(self, project):
-        project.connect("notify-meta", self._settingsChangedCb)
-        project.connect("asset-added", self._assetAddedCb)
-        project.connect("asset-removed", self._assetRemovedCb)
-
-    def stopObserving(self, project):
-        try:
-            project.disconnect_by_func(self._settingsChangedCb)
-            project.disconnect_by_func(self._assetAddedCb)
-            project.disconnect_by_func(self._assetRemovedCb)
-        except Exception:
-            # This can happen when we interrupt the loading of a project,
-            # such as in mainwindow's _projectManagerMissingUriCb
-            pass
-
-    def _settingsChangedCb(self, project, item, value):
-        """
-        FIXME Renable undo/redo
-        action = ProjectSettingsChanged(project, old, new)
-        self.log.begin("change project settings")
-        self.log.push(action)
-        self.log.commit()
-        """
-        pass
-
-    def _assetAddedCb(self, project, asset):
-        action = AssetAddedAction(project, asset)
-        self.log.push(action)
-
-    def _assetRemovedCb(self, project, asset):
-        action = AssetRemovedAction(project, asset)
-        self.log.push(action)
 
 
 class ProjectManager(GObject.Object, Loggable):
