@@ -242,7 +242,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             raise UndoWrongStateError()
 
         stack = self.undo_stacks.pop(-1)
-        self._runStack(stack, stack.undo)
+        self._run(stack.undo)
         self.redo_stacks.append(stack)
         self.emit("undo", stack)
 
@@ -251,7 +251,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             raise UndoWrongStateError()
 
         stack = self.redo_stacks.pop(-1)
-        self._runStack(stack, stack.do)
+        self._run(stack.do)
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
 
@@ -261,7 +261,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.undo_stacks = []
 
         for stack in stacks:
-            self._runStack(stack, stack.clean)
+            self._run(stack.clean)
         self.emit("cleaned")
 
     def _takeSnapshot(self):
@@ -277,10 +277,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         current_snapshot = self._takeSnapshot()
         return current_snapshot != self._checkpoint
 
-    def _runStack(self, unused_stack, run):
+    def _run(self, operation):
         self.running = True
         try:
-            run()
+            operation()
         finally:
             self.running = False
 
