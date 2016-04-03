@@ -700,7 +700,7 @@ class Project(Loggable, GES.Project):
         self._has_default_video_settings = has_default_settings
 
         # FIXME That does not really belong to here and should be savable into
-        # The serialized file. For now, just let it be here.
+        # the serialized file. For now, just let it be here.
         # A (muxer -> containersettings) map.
         self._containersettings_cache = {}
         # A (vencoder -> vcodecsettings) map.
@@ -1103,6 +1103,9 @@ class Project(Loggable, GES.Project):
         if self.loaded:
             if not asset.get_proxy_target() in self.list_assets(GES.Extractable):
                 self.app.proxy_manager.addJob(asset, asset.force_proxying)
+
+            if not self.loading_assets:
+                self.app.action_log.commit()
         else:
             self.debug("Project still loading, not using proxies: "
                        "%s", asset.props.id)

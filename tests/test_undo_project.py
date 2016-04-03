@@ -20,6 +20,8 @@
 # Boston, MA 02110-1301, USA.
 from unittest import TestCase
 
+from gi.repository import GES
+
 from pitivi.application import Pitivi
 from tests import common
 
@@ -47,3 +49,25 @@ class TestProjectUndo(TestCase):
         self.assertFalse(self.action_log.is_in_transaction())
         self.assertFalse(self.action_log.undo_stacks)
 
+    def test_asset_added(self):
+        mainloop = common.create_main_loop()
+
+        def commit_cb(unused_action_log, stack):
+            self.assertEqual(stack.action_group_name, "Adding assets")
+            mainloop.quit()
+
+        self.action_log.connect("commit", commit_cb)
+
+        def loaded_cb(unused_project, unused_timeline):
+            uris = [common.getSampleUri("tears_of_steel.webm")]
+            self.project.addUris(uris)
+
+        self.project.connect_after("loaded", loaded_cb)
+
+        mainloop.run()
+
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
+        self.action_log.undo()
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 0)
+        self.action_log.redo()
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
