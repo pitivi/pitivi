@@ -63,10 +63,6 @@ class UndoableAction(GObject.Object, Loggable):
     def undo(self):
         raise NotImplementedError()
 
-    def clean(self):
-        # Meant to be overridden by UndoableActionStack?
-        pass
-
     def asScenarioAction(self):
         raise NotImplementedError()
 
@@ -91,10 +87,6 @@ class UndoableActionStack(UndoableAction):
     """
     Simply a stack of UndoableAction objects.
     """
-
-    __gsignals__ = {
-        "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
-    }
 
     def __init__(self, action_group_name, finalizing_action=None):
         UndoableAction.__init__(self)
@@ -128,13 +120,6 @@ class UndoableActionStack(UndoableAction):
         if self.finalizing_action:
             self.finalizing_action.do()
 
-    def clean(self):
-        actions = self.done_actions + self.undone_actions
-        self.undone_actions = []
-        self.done_actions = []
-        self._runAction(actions, "clean")
-        self.emit("cleaned")
-
 
 class UndoableActionLog(GObject.Object, Loggable):
 
@@ -149,7 +134,6 @@ class UndoableActionLog(GObject.Object, Loggable):
         "commit": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "undo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "redo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
     }
 
     def __init__(self, app=None):
@@ -256,13 +240,8 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("redo", stack)
 
     def clean(self):
-        stacks = self.redo_stacks + self.undo_stacks
         self.redo_stacks = []
         self.undo_stacks = []
-
-        for stack in stacks:
-            self._run(stack.clean)
-        self.emit("cleaned")
 
     def _takeSnapshot(self):
         return list(self.undo_stacks)

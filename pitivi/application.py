@@ -145,7 +145,6 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("undo", self._actionLogUndo)
         self.action_log.connect("redo", self._actionLogRedo)
-        self.action_log.connect("cleaned", self._actionLogCleaned)
         self.timeline_log_observer = TimelineLogObserver(self.action_log)
         self.project_log_observer = ProjectLogObserver(self.action_log)
 
@@ -270,6 +269,7 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _newProjectLoaded(self, unused_project_manager, project):
         self.action_log.clean()
+        self._syncDoUndo(self.action_log)
 
         self.timeline_log_observer.startObserving(project.timeline)
         self.project_log_observer.startObserving(project)
@@ -361,9 +361,6 @@ class Pitivi(Gtk.Application, Loggable):
         self._syncDoUndo(action_log)
 
     def _actionLogRedo(self, action_log, unused_stack):
-        self._syncDoUndo(action_log)
-
-    def _actionLogCleaned(self, action_log):
         self._syncDoUndo(action_log)
 
     def _syncDoUndo(self, action_log):
