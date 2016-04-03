@@ -352,8 +352,8 @@ class Pitivi(Gtk.Application, Loggable):
     def _redoCb(self, unused_action, unused_param):
         self.action_log.redo()
 
-    def _actionLogCommit(self, action_log, unused_stack, nested):
-        if nested:
+    def _actionLogCommit(self, action_log, unused_stack):
+        if action_log.is_in_transaction():
             return
         self._syncDoUndo(action_log)
 

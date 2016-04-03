@@ -143,10 +143,10 @@ class UndoableActionLog(GObject.Object, Loggable):
     only one instance of it in Pitivi: application.py's "action_log" property.
     """
     __gsignals__ = {
-        "begin": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "begin": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
-        "rollback": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
-        "commit": (GObject.SIGNAL_RUN_LAST, None, (object, bool)),
+        "rollback": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "commit": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "undo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "redo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "cleaned": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -167,17 +167,15 @@ class UndoableActionLog(GObject.Object, Loggable):
         self._checkpoint = self._takeSnapshot()
 
     def begin(self, action_group_name, finalizing_action=None):
-        self.debug("Beginning %s", action_group_name)
         if self.running:
             self.debug("Abort because already running")
             return
 
         stack = UndoableActionStack(action_group_name, finalizing_action)
-        nested = self._stackIsNested(stack)
         self.stacks.append(stack)
         self.debug("begin action group %s, nested %s",
-                   stack.action_group_name, nested)
-        self.emit("begin", stack, nested)
+                   stack.action_group_name, len(self.stacks))
+        self.emit("begin", stack)
 
     def push(self, action):
         self.debug("Pushing %s", action)
@@ -213,10 +211,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
-        nested = self._stackIsNested(stack)
         self.debug("rollback action group %s, nested %s",
-                   stack.action_group_name, nested)
-        self.emit("rollback", stack, nested)
+                   stack.action_group_name, len(self.stacks))
+        self.emit("rollback", stack)
         stack.undo()
 
     def commit(self):
@@ -228,7 +225,6 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
-        nested = self._stackIsNested(stack)
         if not self.stacks:
             self.undo_stacks.append(stack)
         else:
@@ -238,8 +234,8 @@ class UndoableActionLog(GObject.Object, Loggable):
             self.redo_stacks = []
 
         self.debug("commit action group %s nested %s",
-                   stack.action_group_name, nested)
-        self.emit("commit", stack, nested)
+                   stack.action_group_name, len(self.stacks))
+        self.emit("commit", stack)
 
     def undo(self):
         if self.stacks or not self.undo_stacks:
@@ -300,8 +296,8 @@ class UndoableActionLog(GObject.Object, Loggable):
 
         return stack
 
-    def _stackIsNested(self, unused_stack):
-        return bool(len(self.stacks))
+    def is_in_transaction(self):
+        return bool(self.stacks)
 
 
 class PropertyChangeTracker(GObject.Object):

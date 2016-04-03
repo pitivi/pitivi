@@ -121,7 +121,7 @@ class TestTimelineUndo(TestCase):
                 yield clip
 
     @staticmethod
-    def commitCb(action_log, stack, nested, stacks):
+    def commitCb(action_log, stack, stacks):
         stacks.append(stack)
 
     def testAddClip(self):
