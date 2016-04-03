@@ -27,6 +27,7 @@ from unittest import TestCase
 from gi.repository import GES
 from gi.repository import Gst
 
+from pitivi.application import Pitivi
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
@@ -348,6 +349,35 @@ class TestProjectLoading(common.TestCase):
                 result[0], "Blank project loading failed to trigger signal: loaded")
         finally:
             os.remove(xges_path)
+
+    def test_asset_added_signal(self):
+        app = Pitivi()
+        app._startupCb(app)
+        self.assertTrue(app.project_manager.newBlankProject())
+
+        project = app.project_manager.current_project
+        proxy_manager = app.proxy_manager
+
+        mainloop = common.create_main_loop()
+
+        def asset_added_cb(project, asset, assets):
+            assets.append(asset)
+
+        assets = []
+        project.connect("asset-added", asset_added_cb, assets)
+
+        def proxy_ready_cb(unused_proxy_manager, asset, proxy):
+            mainloop.quit()
+
+        proxy_manager.connect("proxy-ready", proxy_ready_cb)
+
+
+        uris = [common.getSampleUri("tears_of_steel.webm")]
+        project.addUris(uris)
+
+        mainloop.run()
+
+        self.assertEqual(len(assets), 1, assets)
 
 
 class TestProjectSettings(common.TestCase):

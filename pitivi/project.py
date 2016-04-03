@@ -997,7 +997,7 @@ class Project(Loggable, GES.Project):
             self.loading_assets = []
 
     def __assetTranscodingCancelledCb(self, unused_proxy_manager, asset):
-        self.__setProxy(asset, None, emit_asset_added=False)
+        self.__setProxy(asset, None)
         self.__updateAssetLoadingProgress()
 
     def __proxyErrorCb(self, unused_proxy_manager, asset, proxy,
@@ -1032,7 +1032,7 @@ class Project(Loggable, GES.Project):
     def __proxyReadyCb(self, unused_proxy_manager, asset, proxy):
         self.__setProxy(asset, proxy)
 
-    def __setProxy(self, asset, proxy, emit_asset_added=True):
+    def __setProxy(self, asset, proxy):
         asset.creation_progress = 100
         if proxy:
             proxy.ready = False
@@ -1047,10 +1047,6 @@ class Project(Loggable, GES.Project):
 
         if proxy:
             self.add_asset(proxy)
-        elif emit_asset_added:
-            self.emit("asset-added", asset)
-
-        if proxy:
             self.loading_assets.append(proxy)
 
         self.__updateAssetLoadingProgress()
