@@ -107,7 +107,7 @@ class TitleEditor(Loggable):
         self.action_log.begin("Title %s change" % name)
         self._setting_props = True
         try:
-            assert(self.source.set_child_property(name, value))
+            assert self.source.set_child_property(name, value)
         finally:
             self._setting_props = False
         self.action_log.commit()
@@ -217,12 +217,12 @@ class TitleEditor(Loggable):
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
         source = clip.get_children(False)[0]
-        assert(source.set_child_property("text", ""))
-        assert(source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR))
-        assert(source.set_child_property("color", FOREGROUND_DEFAULT_COLOR))
-        assert(source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION))
-        assert(source.set_child_property("valignment", DEFAULT_VALIGNMENT))
-        assert(source.set_child_property("halignment", DEFAULT_HALIGNMENT))
+        assert source.set_child_property("text", "")
+        assert source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR)
+        assert source.set_child_property("color", FOREGROUND_DEFAULT_COLOR)
+        assert source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION)
+        assert source.set_child_property("valignment", DEFAULT_VALIGNMENT)
+        assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
         # Select it so the Title editor becomes active.
         self._selection.setSelection([clip], SELECT)
 

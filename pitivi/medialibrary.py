@@ -1414,7 +1414,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
 
     def _new_project_loading_cb(self, unused_project_manager, project):
-        assert (not self._project)
+        assert not self._project
 
         self._project = project
         self._resetErrorList()

@@ -592,14 +592,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
             return
 
         res, value = self.source.get_child_property(param.name)
-        assert(res)
+        assert res
         if spin.get_value() != value:
             spin.set_value(value)
 
     def _updateSpinButtons(self):
         for name, spinbtn in list(self.spin_buttons.items()):
             res, value = self.source.get_child_property(name)
-            assert(res)
+            assert res
             if name == "width":
                 self.default_values[name] = self._project.videowidth
             elif name == "height":
@@ -625,7 +625,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         value = spinbtn.get_value()
 
         res, cvalue = self.source.get_child_property(prop)
-        assert(res)
+        assert res
         if value != cvalue:
             self.app.action_log.begin("Transformation property change")
             self.source.set_child_property(prop, value)

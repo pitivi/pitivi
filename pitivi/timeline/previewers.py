@@ -943,7 +943,7 @@ class PipelineCpuAdapter(Loggable):
                     self.pipeline.set_state(Gst.State.READY)
                     res, self.lastPos = self.pipeline.query_position(
                         Gst.Format.TIME)
-                    assert(res)
+                    assert res
                 return True
 
             if self.rate > 0.0:
@@ -956,7 +956,7 @@ class PipelineCpuAdapter(Loggable):
 
         if not self.ready:
             res, position = self.pipeline.query_position(Gst.Format.TIME)
-            assert(res)
+            assert res
         else:
             # This to avoid going back and forth from READY to PAUSED
             if self.rate > 0.5:

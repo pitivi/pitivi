@@ -715,7 +715,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             keyframe_button = None
             if not isinstance(widget, (ToggleWidget, ChoiceWidget)):
                 res, element, pspec = self.element.lookup_child(prop.name)
-                assert(res)
+                assert res
                 binding = GstController.DirectControlBinding.new(
                     element, prop.name,
                     GstController.InterpolationControlSource())
@@ -741,7 +741,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
         widget = self.properties[pspec]
         res, value = self.element.get_child_property(pspec.name)
-        assert(res)
+        assert res
         widget.setWidgetValue(value)
 
     def __create_keyframe_toggle_button(self, prop, widget):
