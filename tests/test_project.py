@@ -349,49 +349,6 @@ class TestProjectLoading(common.TestCase):
         finally:
             os.remove(xges_path)
 
-    def testAssetAddingRemovingAdding(self):
-        mainloop = common.create_main_loop()
-
-        def loadingProgressCb(project, progress, estimated_time,
-                              self, result, uris):
-
-            def readd(result, uris):
-                project.addUris(uris)
-                result[2] = True
-                mainloop.quit()
-
-            if progress < 100:
-                return
-
-            result[1] = True
-            assets = project.list_assets(GES.UriClip)
-            self.assertEqual(len(assets), 1)
-            asset = assets[0]
-            project.remove_asset(asset)
-            GLib.idle_add(readd, result, uris)
-
-        def loadedCb(project, timeline, result, uris):
-            result[0] = True
-            project.addUris(uris)
-
-        # Create a blank project and add an asset.
-        project = _createRealProject()
-        result = [False, False, False]
-        uris = [common.getSampleUri("tears_of_steel.webm")]
-        project.connect("loaded", loadedCb, result, uris)
-        project.connect("asset-loading-progress",
-                        loadingProgressCb, self,
-                        result, uris)
-
-        self.assertTrue(project.createTimeline())
-        mainloop.run()
-        self.assertTrue(
-            result[0], "Project creation failed to trigger signal: loaded")
-        self.assertTrue(
-            result[1], "Asset add failed to trigger asset-loading-progress"
-            "with progress == 100")
-        self.assertTrue(result[2], "Asset re-adding failed")
-
 
 class TestProjectSettings(common.TestCase):
 
