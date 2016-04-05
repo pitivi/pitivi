@@ -122,6 +122,7 @@ class StartUpWizard(object):
     def _deleteCb(self, unused_widget, unused_event):
         """Handle a click on the X button of the dialog."""
         self.app.project_manager.newBlankProject()
+        return True
 
     def show(self):
         if self.window.props.visible:
