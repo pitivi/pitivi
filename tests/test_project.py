@@ -17,6 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import collections
 import os
 import tempfile
 import time
@@ -24,7 +25,6 @@ from unittest import mock
 from unittest import TestCase
 
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gst
 
 from pitivi.project import Project
@@ -372,26 +372,29 @@ class TestProjectSettings(common.TestCase):
 
     def testInitialization(self):
         mainloop = common.create_main_loop()
+        uris = collections.deque([
+            common.getSampleUri("flat_colour1_640x480.png"),
+            common.getSampleUri("tears_of_steel.webm"),
+            common.getSampleUri("1sec_simpsons_trailer.mp4")])
 
-        def loadedCb(project, timeline, uris):
-            project.addUris(uris)
+        def loaded_cb(project, timeline):
+            project.addUris([uris.popleft()])
 
-        def progressCb(project, progress, estimated_time):
+        def progress_cb(project, progress, estimated_time):
             if progress == 100:
-                mainloop.quit()
+                if uris:
+                    project.addUris([uris.popleft()])
+                else:
+                    mainloop.quit()
 
         # Create a blank project and add some assets.
         project = _createRealProject()
         self.assertTrue(project._has_default_video_settings)
         self.assertTrue(project._has_default_audio_settings)
 
-        uris = [common.getSampleUri("flat_colour1_640x480.png"),
-                common.getSampleUri("tears_of_steel.webm"),
-                common.getSampleUri("1sec_simpsons_trailer.mp4")]
-        project.connect("loaded", loadedCb, uris)
-        project.connect("asset-loading-progress", progressCb)
+        project.connect_after("loaded", loaded_cb)
+        project.connect_after("asset-loading-progress", progress_cb)
 
-        self.assertTrue(project.createTimeline())
         mainloop.run()
 
         assets = project.list_assets(GES.UriClip)
