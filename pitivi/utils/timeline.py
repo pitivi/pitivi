@@ -217,7 +217,7 @@ class EditingContext(GObject.Object, Loggable):
         This is the main class for interactive edition.
     """
 
-    def __init__(self, focus, timeline, mode, edge, unused_settings, action_log):
+    def __init__(self, focus, timeline, mode, edge, app):
         """
         @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the
@@ -235,8 +235,8 @@ class EditingContext(GObject.Object, Loggable):
         can be change during the time using the same context.
         @type mode: L{GES.EditMode}
 
-        @param setting: The Pitivi settings, used to get the snap_distance
-        parametter
+        @param app: The Pitivi instance, for reporting actions.
+        @type app: L{Pitivi}
 
         @returns: An instance of L{pitivi.utils.timeline.EditingContext}
         """
@@ -255,15 +255,15 @@ class EditingContext(GObject.Object, Loggable):
         self.new_position = None
 
         self.timeline = timeline
-        self.action_log = action_log
+        self.app = app
 
         self.edge = edge
         self.mode = mode
 
-        self.action_log.begin("move-clip")
+        self.app.action_log.begin("move-clip")
 
     def finish(self):
-        self.action_log.commit()
+        self.app.action_log.commit()
         self.timeline.get_asset().pipeline.commit_timeline()
         self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
 
@@ -284,7 +284,7 @@ class EditingContext(GObject.Object, Loggable):
         self.new_priority = priority
 
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
-        self.action_log.app.write_action("edit-container", {
+        self.app.write_action("edit-container", {
             "container-name": self.focus.get_name(),
             "position": float(position / Gst.SECOND),
             "edit-mode": self.mode.value_nick,

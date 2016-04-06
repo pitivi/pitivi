@@ -1066,8 +1066,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                   self.ges_timeline,
                                                   edit_mode,
                                                   dragging_edge,
-                                                  None,
-                                                  self.app.action_log)
+                                                  self.app)
 
         x, y = event_widget.translate_coordinates(self, x, y)
         x -= CONTROL_WIDTH
