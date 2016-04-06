@@ -525,16 +525,16 @@ class TimelineObserver(Loggable):
     timelinePropertyChangedAction = ClipPropertyChanged
     activePropertyChangedAction = ActivePropertyChanged
 
-    def __init__(self, log):
+    def __init__(self, action_log, app):
         Loggable.__init__(self)
-
-        self.log = log
+        self.action_log = action_log
+        self.app = app
         self.clip_property_trackers = {}
         self.control_source_keyframe_trackers = {}
-        self.children_props_tracker = TrackElementChildPropertyTracker(log)
+        self.children_props_tracker = TrackElementChildPropertyTracker(self.action_log)
 
     def startObserving(self, timeline):
-        """Starts monitoring the specified Timeline.
+        """Starts monitoring the specified timeline.
 
         Args:
             timeline (GES.Timeline): The timeline to be monitored.
@@ -625,8 +625,8 @@ class TimelineObserver(Loggable):
         tracker.connect("keyframe-moved", self._controlSourceKeyFrameMovedCb)
         self.control_source_keyframe_trackers[control_source] = tracker
 
-        if self.log.app and not existed:
-            self.log.app.write_action("set-control-source",
+        if not existed:
+            self.app.write_action("set-control-source",
                                       {"element-name": track_element.get_name(),
                                        "property-name": binding.props.name,
                                        "binding-type": "direct",
@@ -656,14 +656,14 @@ class TimelineObserver(Loggable):
             return
         self._connectToClip(clip)
         action = ClipAdded(layer, clip)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _clipRemovedCb(self, layer, clip):
         if isinstance(clip, GES.TransitionClip):
             return
         self._disconnectFromClip(clip)
         action = ClipRemoved(layer, clip)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _clipPropertyChangedCb(self, tracker, clip,
                                property_name, old_value, new_value):
@@ -673,14 +673,14 @@ class TimelineObserver(Loggable):
         action = self.timelinePropertyChangedAction(clip, property_name,
                                                     old_value, new_value)
         setattr(tracker, attr_name, new_value)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _clipTrackElementAddedCb(self, clip, track_element):
         self._connectToTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
             action = TrackElementAdded(clip, track_element,
                                        self.children_props_tracker)
-            self.log.push(action)
+            self.action_log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
         self.debug("%s REMOVED from (%s)" % (track_element, clip))
@@ -688,41 +688,41 @@ class TimelineObserver(Loggable):
         if isinstance(track_element, GES.BaseEffect):
             action = TrackElementRemoved(clip, track_element,
                                          self.children_props_tracker)
-            self.log.push(action)
+            self.action_log.push(action)
 
     def _controlSourceKeyFrameAddedCb(self, source, keyframe, track_element,
                                       property_name):
         action = ControlSourceValueAdded(track_element,
                                          source, keyframe, property_name)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _controlSourceKeyFrameRemovedCb(self, source, keyframe, track_element,
                                         property_name):
         action = ControlSourceValueRemoved(track_element,
                                            source, keyframe, property_name)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
         """
         This happens when an effect is (de)activated on a clip in the timeline.
         """
         action = self.activePropertyChangedAction(add_effect_action, active)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _controlSourceKeyFrameMovedCb(self, tracker, track_element,
                                       keyframe, old_snapshot, new_snapshot):
         action = ControlSourceKeyframeChanged(track_element, keyframe,
                                               old_snapshot, new_snapshot)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _layerAddedCb(self, timeline, layer):
         layer.connect("clip-added", self._clipAddedCb)
         layer.connect("clip-removed", self._clipRemovedCb)
         action = LayerAdded(timeline, layer)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _layerRemovedCb(self, timeline, layer):
         layer.disconnect_by_func(self._clipAddedCb)
         layer.disconnect_by_func(self._clipRemovedCb)
         action = LayerRemoved(timeline, layer)
-        self.log.push(action)
+        self.action_log.push(action)

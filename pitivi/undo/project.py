@@ -87,11 +87,11 @@ class ProjectObserver():
     """Monitors a project instance and reports UndoableActions.
 
     Attributes:
-        log (UndoableActionLog): The action log where to report actions.
+        action_log (UndoableActionLog): The action log where to report actions.
     """
 
-    def __init__(self, log):
-        self.log = log
+    def __init__(self, action_log):
+        self.action_log = action_log
 
     def startObserving(self, project):
         """Starts monitoring the specified Project.
@@ -115,8 +115,8 @@ class ProjectObserver():
 
     def _assetAddedCb(self, project, asset):
         action = AssetAddedAction(project, asset)
-        self.log.push(action)
+        self.action_log.push(action)
 
     def _assetRemovedCb(self, project, asset):
         action = AssetRemovedAction(project, asset)
-        self.log.push(action)
+        self.action_log.push(action)

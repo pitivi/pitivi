@@ -268,7 +268,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("undo", self._actionLogUndo)
         self.action_log.connect("redo", self._actionLogRedo)
 
-        timeline_observer = TimelineObserver(self.action_log)
+        timeline_observer = TimelineObserver(self.action_log, app=self)
         timeline_observer.startObserving(project.timeline)
 
         project_observer = ProjectObserver(self.action_log)

@@ -19,6 +19,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+from unittest import mock
 from unittest import TestCase
 
 from gi.repository import GES
@@ -66,7 +67,7 @@ class TestTimelineLogObserver(TestCase):
 
     def setUp(self):
         self.action_log = UndoableActionLog()
-        self.observer = TimelineObserverSpy(self.action_log)
+        self.observer = TimelineObserverSpy(self.action_log, app=mock.Mock())
 
     def testConnectionAndDisconnection(self):
         timeline = GES.Timeline.new_audio_video()
@@ -106,7 +107,7 @@ class TestTimelineUndo(TestCase):
         self.timeline = app.project_manager.current_project.timeline
         self.layer = self.timeline.append_layer()
         self.action_log = UndoableActionLog()
-        self.observer = TimelineObserverSpy(self.action_log)
+        self.observer = TimelineObserverSpy(self.action_log, app=mock.Mock())
         self.observer.startObserving(self.timeline)
 
     def getTimelineClips(self):
