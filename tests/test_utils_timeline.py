@@ -16,15 +16,17 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-from unittest import TestCase, mock
+from unittest import mock
+from unittest import TestCase
 
 from gi.repository import GES
 
+from pitivi.utils.timeline import SELECT
+from pitivi.utils.timeline import SELECT_ADD
+from pitivi.utils.timeline import Selected
+from pitivi.utils.timeline import Selection
+from pitivi.utils.timeline import UNSELECT
 from tests import common
-
-from pitivi.utils.timeline import Selected, Selection, SELECT, SELECT_ADD, \
-    UNSELECT
 
 
 class TestSelected(TestCase):

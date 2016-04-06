@@ -20,21 +20,23 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import os
+from gettext import gettext as _
 
 import cairo
-import os
-
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from gettext import gettext as _
-
 from pitivi import configure
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import NORMAL_FONT, PLAYHEAD_WIDTH, set_cairo_color, time_to_string, beautify_length
+from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import NORMAL_FONT
+from pitivi.utils.ui import PLAYHEAD_WIDTH
+from pitivi.utils.ui import set_cairo_color
+from pitivi.utils.ui import time_to_string
 
 
 # Tuples of:

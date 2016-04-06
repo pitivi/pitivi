@@ -19,7 +19,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 Effects global handling
  Note: Some effects are available through the frei0r
@@ -34,24 +33,25 @@ Effects global handling
      that are too cumbersome to use as such
   _ Complex Audio/Video Effects
 """
-
 import os
 import re
+from gettext import gettext as _
 
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository import Gdk
 from gi.repository import Pango
-from gi.repository import GdkPixbuf
 
-from gettext import gettext as _
-
-from pitivi.configure import get_ui_dir, get_pixmap_dir
+from pitivi.configure import get_pixmap_dir
+from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import EFFECT_TARGET_ENTRY, SPACING
-from pitivi.utils.widgets import GstElementSettingsWidget, FractionWidget
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import SPACING
+from pitivi.utils.widgets import FractionWidget
+from pitivi.utils.widgets import GstElementSettingsWidget
 
 
 (VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))

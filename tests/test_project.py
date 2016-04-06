@@ -17,21 +17,21 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import tempfile
 import time
+from unittest import mock
+from unittest import TestCase
 
-from unittest import TestCase, mock
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 
 from pitivi.application import Pitivi
-from pitivi.project import ProjectManager, Project
+from pitivi.project import Project
+from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
 from pitivi.utils.proxy import ProxyingStrategy
-
 from tests import common
 
 

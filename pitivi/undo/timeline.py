@@ -18,15 +18,15 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-from gi.repository import Gst
 from gi.repository import GES
 from gi.repository import GObject
+from gi.repository import Gst
 
-from pitivi.utils.loggable import Loggable
-from pitivi.undo.undo import PropertyChangeTracker, UndoableAction,\
-    FinalizingAction
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.undo import FinalizingAction
+from pitivi.undo.undo import PropertyChangeTracker
+from pitivi.undo.undo import UndoableAction
+from pitivi.utils.loggable import Loggable
 
 
 class CommitTimelineFinalizingAction(FinalizingAction):

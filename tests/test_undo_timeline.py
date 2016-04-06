@@ -19,19 +19,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import TestCase
 
 from gi.repository import GES
 from gi.repository import Gst
 
-from tests import common
-
-from pitivi.undo.timeline import TimelineLogObserver, \
-    ClipAdded, ClipRemoved, \
-    ClipPropertyChanged, TrackElementAdded
-from pitivi.undo.undo import UndoableActionLog
 from pitivi.application import Pitivi
+from pitivi.undo.timeline import ClipAdded
+from pitivi.undo.timeline import ClipPropertyChanged
+from pitivi.undo.timeline import ClipRemoved
+from pitivi.undo.timeline import TimelineLogObserver
+from pitivi.undo.timeline import TrackElementAdded
+from pitivi.undo.undo import UndoableActionLog
+from tests import common
 
 
 class TimelineLogObserverSpy(TimelineLogObserver):

@@ -21,30 +21,34 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import time
 
-from gi.repository import GObject
 from gi.repository import Gio
-from gi.repository import Gtk
+from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import Gtk
 
-from pitivi.configure import VERSION, RELEASES_URL, in_devel
+from pitivi.configure import in_devel
+from pitivi.configure import RELEASES_URL
+from pitivi.configure import VERSION
 from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import PitiviMainWindow
-from pitivi.project import ProjectManager, ProjectLogObserver
-from pitivi.settings import GlobalSettings, xdg_cache_home, get_dir
+from pitivi.project import ProjectLogObserver
+from pitivi.project import ProjectManager
+from pitivi.settings import get_dir
+from pitivi.settings import GlobalSettings
+from pitivi.settings import xdg_cache_home
 from pitivi.undo.timeline import TimelineLogObserver
 from pitivi.undo.undo import UndoableActionLog
-from pitivi.utils.threads import ThreadMaster
-
 from pitivi.utils import loggable
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import quote_uri, path_from_uri
+from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import getSystem
+from pitivi.utils.threads import ThreadMaster
 from pitivi.utils.timeline import Zoomable
 
 

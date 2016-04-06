@@ -21,23 +21,25 @@
 """
 Widgets to control clips properties
 """
-
 import os
-
 from gettext import gettext as _
 
-from gi.repository import GES
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
-from pitivi.effects import AUDIO_EFFECT, VIDEO_EFFECT, HIDDEN_EFFECTS, \
-    EffectsPropertiesManager
+from pitivi.effects import AUDIO_EFFECT
+from pitivi.effects import EffectsPropertiesManager
+from pitivi.effects import HIDDEN_EFFECTS
+from pitivi.effects import VIDEO_EFFECT
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import EFFECT_TARGET_ENTRY, PADDING, SPACING, \
-    disable_scroll
+from pitivi.utils.ui import disable_scroll
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import PADDING
+from pitivi.utils.ui import SPACING
 
 (COL_ACTIVATED,
  COL_TYPE,

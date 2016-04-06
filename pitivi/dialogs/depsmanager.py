@@ -19,14 +19,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """ This module implements the notions of missing dependencies """
-
-from gi.repository import Gtk
 import os
 
-from pitivi.configure import get_ui_dir
+from gi.repository import Gtk
+
 from pitivi.check import missing_soft_deps
+from pitivi.configure import get_ui_dir
 
 
 class DepsManager(object):

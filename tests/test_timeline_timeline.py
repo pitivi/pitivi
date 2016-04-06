@@ -16,18 +16,17 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import mock
+
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gtk
 
-from tests import common
-
 from pitivi.project import ProjectManager
 from pitivi.timeline.timeline import TimelineContainer
-from pitivi.utils.validate import Event
 from pitivi.utils import ui
+from pitivi.utils.validate import Event
+from tests import common
 
 
 SEPARATOR_HEIGHT = 4

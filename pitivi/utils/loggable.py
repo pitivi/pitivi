@@ -18,17 +18,16 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import collections
 import errno
-import sys
-import re
-import os
 import fnmatch
+import os
+import re
+import sys
 import threading
 import time
-import types
 import traceback
+import types
 
 
 # environment variables controlling levels for each category

@@ -20,29 +20,26 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
-
 from gettext import gettext as _
 
-from gi.repository import GES
-from gi.repository import Gst
-from gi.repository import Gtk
+import numpy
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
-from gi.repository import GstController
+from gi.repository import GES
 from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import GstController
+from gi.repository import Gtk
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
+from matplotlib.figure import Figure
 
-from pitivi.utils import ui
-from pitivi.utils import misc
 from pitivi import configure
 from pitivi.timeline import previewers
-from pitivi.utils.loggable import Loggable
+from pitivi.utils import misc
 from pitivi.utils import timeline as timelineUtils
-
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
-import numpy
+from pitivi.utils import ui
+from pitivi.utils.loggable import Loggable
 
 KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5

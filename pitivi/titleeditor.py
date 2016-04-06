@@ -18,20 +18,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
+from gettext import gettext as _
 
-from gi.repository import Gtk
-from gi.repository import Pango
 from gi.repository import GES
 from gi.repository import Gst
-
-from gettext import gettext as _
+from gi.repository import Gtk
+from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import SELECT
-from pitivi.utils.ui import argb_to_gdk_rgba, gdk_rgba_to_argb
+from pitivi.utils.ui import argb_to_gdk_rgba
+from pitivi.utils.ui import gdk_rgba_to_argb
 
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White

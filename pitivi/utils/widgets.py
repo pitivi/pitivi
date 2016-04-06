@@ -19,34 +19,36 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 A collection of helper classes and routines for:
     * dynamically creating user interfaces
     * Creating UI from GstElement-s
 """
-
 import math
 import os
 import re
-
-from gi.repository import Gtk
-from gi.repository import Gdk
-from gi.repository import Gst
-from gi.repository import GstController
-from gi.repository import GES
-from gi.repository import Pango
-from gi.repository import GObject
-from gi.repository import GLib
-
 from gettext import gettext as _
 
-from pitivi.utils.loggable import Loggable
+from gi.repository import Gdk
+from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import GstController
+from gi.repository import Gtk
+from gi.repository import Pango
+
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import beautify_length, disable_scroll, \
-    unpack_color, pack_color_32, pack_color_64, \
-    time_to_string, SPACING, CONTROL_WIDTH
+from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import CONTROL_WIDTH
+from pitivi.utils.ui import disable_scroll
+from pitivi.utils.ui import pack_color_32
+from pitivi.utils.ui import pack_color_64
+from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import time_to_string
+from pitivi.utils.ui import unpack_color
 
 
 ZOOM_SLIDER_PADDING = SPACING * 4 / 5

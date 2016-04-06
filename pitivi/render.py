@@ -19,14 +19,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 Rendering-related utilities and classes
 """
-
 import os
 import subprocess
 import time
+from gettext import gettext as _
 
 from gi.repository import GES
 from gi.repository import GLib
@@ -34,16 +33,19 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from gettext import gettext as _
-
 from pitivi import configure
-
 from pitivi.check import missing_soft_deps
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import show_user_manual, path_from_uri
+from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import model, frame_rates, audio_rates,\
-    audio_channels, get_combo_value, set_combo_value, beautify_ETA
+from pitivi.utils.ui import audio_channels
+from pitivi.utils.ui import audio_rates
+from pitivi.utils.ui import beautify_ETA
+from pitivi.utils.ui import frame_rates
+from pitivi.utils.ui import get_combo_value
+from pitivi.utils.ui import model
+from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
 
 

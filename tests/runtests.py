@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-
 """Pitivi tests runner."""
-
 import os
 import sys
 import unittest

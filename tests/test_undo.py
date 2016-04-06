@@ -18,11 +18,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import TestCase
 
-from pitivi.undo.undo import UndoError, UndoWrongStateError, UndoableAction, \
-    UndoableActionStack, UndoableActionLog
+from pitivi.undo.undo import UndoableAction
+from pitivi.undo.undo import UndoableActionLog
+from pitivi.undo.undo import UndoableActionStack
+from pitivi.undo.undo import UndoError
+from pitivi.undo.undo import UndoWrongStateError
 
 
 class DummyUndoableAction(UndoableAction):

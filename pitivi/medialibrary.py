@@ -21,41 +21,48 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import threading
 import time
-
-from gettext import ngettext, gettext as _
+from gettext import gettext as _
+from gettext import ngettext
 from hashlib import md5
 from urllib.parse import unquote
 from urllib.parse import urlparse
 
-from gi.repository import GES
-from gi.repository import GLib
-from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import GstPbutils
 from gi.repository import Gtk
 from gi.repository import Pango
-from gi.repository import GstPbutils
 
 from pitivi.check import missing_soft_deps
-from pitivi.configure import get_ui_dir, get_pixmap_dir
+from pitivi.configure import get_pixmap_dir
+from pitivi.configure import get_ui_dir
 from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import PathWalker, quote_uri, path_from_uri,\
-    get_proxy_target, disconnectAllByFunc
+from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import get_proxy_target
+from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import PathWalker
+from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import ProxyingStrategy
-from pitivi.utils.ui import beautify_asset, beautify_length, info_name, \
-    URI_TARGET_ENTRY, FILE_TARGET_ENTRY, SPACING,  \
-    beautify_ETA
+from pitivi.utils.ui import beautify_asset
+from pitivi.utils.ui import beautify_ETA
+from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import FILE_TARGET_ENTRY
+from pitivi.utils.ui import info_name
+from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import URI_TARGET_ENTRY
 
 # Values used in the settings file.
 SHOW_TREEVIEW = 1

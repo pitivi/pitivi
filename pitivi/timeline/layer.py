@@ -19,21 +19,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import re
+from gettext import gettext as _
 
 from gi.repository import Gdk
-from gi.repository import Gtk
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GObject
-
-from gettext import gettext as _
+from gi.repository import Gtk
 
 from pitivi.timeline import elements
-from pitivi.utils.loggable import Loggable
-from pitivi.utils import ui
 from pitivi.utils import timeline as timelineUtils
+from pitivi.utils import ui
+from pitivi.utils.loggable import Loggable
 
 
 class TwoStateButton(Gtk.Button):

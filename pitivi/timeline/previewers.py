@@ -31,13 +31,12 @@ import sqlite3
 
 import cairo
 import numpy
-
-from gi.repository import GES
-from gi.repository import GObject
-from gi.repository import GLib
-from gi.repository import GdkPixbuf
-from gi.repository import Gst
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gst
 from gi.repository import Gtk
 
 # Our C module optimizing waveforms rendering

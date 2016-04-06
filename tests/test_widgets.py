@@ -16,10 +16,15 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import TestCase
 
-from pitivi.utils.widgets import PathWidget, TextWidget, NumericWidget, ToggleWidget, ChoiceWidget, ColorWidget, FontWidget
+from pitivi.utils.widgets import ChoiceWidget
+from pitivi.utils.widgets import ColorWidget
+from pitivi.utils.widgets import FontWidget
+from pitivi.utils.widgets import NumericWidget
+from pitivi.utils.widgets import PathWidget
+from pitivi.utils.widgets import TextWidget
+from pitivi.utils.widgets import ToggleWidget
 
 
 class TestWidgets(TestCase):

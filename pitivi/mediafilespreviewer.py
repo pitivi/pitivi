@@ -20,13 +20,12 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from gettext import gettext as _
 
-from gi.repository import GLib
-from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import Gtk
@@ -36,7 +35,9 @@ from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import uri_is_valid
 from pitivi.utils.pipeline import AssetPipeline
-from pitivi.utils.ui import beautify_length, beautify_stream, SPACING
+from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import beautify_stream
+from pitivi.utils.ui import SPACING
 from pitivi.viewer.viewer import ViewerWidget
 
 PREVIEW_WIDTH = 250

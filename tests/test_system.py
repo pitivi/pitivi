@@ -19,12 +19,15 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import TestCase
 
-from pitivi.utils.system import System, getSystem, GnomeSystem, \
-    INHIBIT_LOGOUT, INHIBIT_SUSPEND, INHIBIT_SESSION_IDLE, \
-    INHIBIT_USER_SWITCHING
+from pitivi.utils.system import getSystem
+from pitivi.utils.system import GnomeSystem
+from pitivi.utils.system import INHIBIT_LOGOUT
+from pitivi.utils.system import INHIBIT_SESSION_IDLE
+from pitivi.utils.system import INHIBIT_SUSPEND
+from pitivi.utils.system import INHIBIT_USER_SWITCHING
+from pitivi.utils.system import System
 
 
 class TestSystem(TestCase):

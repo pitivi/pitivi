@@ -19,20 +19,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.from gi.repository import Gst
-
 """
 Classes for extracting decoded contents of streams into Python
 
 Code derived from ui/previewer.py.
 """
-
 # FIXME reimplement after GES port
+from collections import deque
 
 from gi.repository import Gst
-from collections import deque
+
+from pitivi.utils.loggable import Loggable
 # from pitivi.elements.singledecodebin import SingleDecodeBin
 # from pitivi.elements.extractionsink import ExtractionSink
-from pitivi.utils.loggable import Loggable
 
 
 def linkDynamic(element, target):

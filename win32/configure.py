@@ -20,7 +20,6 @@
 Utilities for getting the location of various directories.
 Enables identical use for installed and uninstalled versions.
 """
-
 import os.path
 
 LIBDIR = os.path.realpath('../lib/pitivi')

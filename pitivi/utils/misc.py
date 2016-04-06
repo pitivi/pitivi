@@ -19,24 +19,26 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import bisect
 import hashlib
 import os
 import threading
 import time
-from urllib.parse import urlparse, unquote, urlsplit
+from gettext import gettext as _
+from urllib.parse import unquote
+from urllib.parse import urlparse
+from urllib.parse import urlsplit
 
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
-from gi.repository import GES
 from gi.repository import Gtk
 
-from gettext import gettext as _
-
 import pitivi.utils.loggable as log
+from pitivi.configure import APPMANUALURL_OFFLINE
+from pitivi.configure import APPMANUALURL_ONLINE
+from pitivi.configure import APPNAME
 from pitivi.utils.threads import Thread
-from pitivi.configure import APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE, APPNAME
 
 
 # Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249

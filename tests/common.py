@@ -1,25 +1,24 @@
 """
 A collection of objects to use for testing
 """
-
-import os
 import gc
+import os
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from unittest import mock
 from pitivi import check
-
 from pitivi.application import Pitivi
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.proxy import ProxyingStrategy
+from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.timeline import Selected
 from pitivi.utils.validate import Event
-from pitivi.utils.proxy import ProxyManager, ProxyingStrategy
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")

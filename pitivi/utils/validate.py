@@ -22,14 +22,14 @@ import locale
 import subprocess
 
 import gi
-from gi.repository import Gtk
-from gi.repository import Gst
-from gi.repository import GES
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import GLib
+from gi.repository import Gst
+from gi.repository import Gtk
 
-from pitivi.utils import ui
 from pitivi.utils import timeline as timelineUtils
+from pitivi.utils import ui
 
 
 CAT = "validate"

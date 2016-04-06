@@ -16,13 +16,10 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 Test for pitivi/mainwindow.py
 """
-
 import os
-
 from unittest import mock
 
 from gi.repository import GES
@@ -32,7 +29,6 @@ from gi.repository import Gtk
 from pitivi.mainwindow import PitiviMainWindow
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnectAllByFunc
-
 from tests import common
 
 

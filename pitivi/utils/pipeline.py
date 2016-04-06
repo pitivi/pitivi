@@ -20,21 +20,19 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-
 """
 High-level pipelines
 """
-
 import os
 
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
-from gi.repository import GES
 
+from pitivi.check import videosink_factory
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
-from pitivi.check import videosink_factory
 
 
 PIPELINE_SIGNALS = {

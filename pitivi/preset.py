@@ -18,19 +18,19 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import json
 import os.path
-
-from gi.repository import Gio
-from gi.repository import Gst
-from gi.repository import Gtk
-from gi.repository import GObject
-
 from gettext import gettext as _
 
+from gi.repository import Gio
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import Gtk
+
+from pitivi.configure import get_audiopresets_dir
+from pitivi.configure import get_renderpresets_dir
+from pitivi.configure import get_videopresets_dir
 from pitivi.settings import xdg_data_home
-from pitivi.configure import get_renderpresets_dir, get_audiopresets_dir, get_videopresets_dir
 from pitivi.utils import system
 from pitivi.utils.loggable import Loggable
 

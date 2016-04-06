@@ -19,38 +19,47 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 Project related classes
 """
-
 import datetime
 import os
 import pwd
 import tarfile
 import time
-
-from gi.repository import GstPbutils
-from gi.repository import GES
-from gi.repository import Gst
-from gi.repository import Gtk
-from gi.repository import GLib
-from gi.repository import GObject
-
 from gettext import gettext as _
 
+from gi.repository import GES
+from gi.repository import GLib
+from gi.repository import GObject
+from gi.repository import Gst
+from gi.repository import GstPbutils
+from gi.repository import Gtk
+
 from pitivi.configure import get_ui_dir
-from pitivi.preset import AudioPresetManager, VideoPresetManager
+from pitivi.preset import AudioPresetManager
+from pitivi.preset import VideoPresetManager
 from pitivi.render import CachedEncoderList
 from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import quote_uri, path_from_uri, isWritable, unicode_error_dialog
-from pitivi.utils.pipeline import Pipeline, PipelineError
+from pitivi.utils.misc import isWritable
+from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import unicode_error_dialog
+from pitivi.utils.pipeline import Pipeline
+from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import frame_rates, audio_rates,\
-    audio_channels, beautify_time_delta, get_combo_value, set_combo_value,\
-    pixel_aspect_ratios, display_aspect_ratios, SPACING
-from pitivi.utils.validate import has_validate, create_monitor
+from pitivi.utils.ui import audio_channels
+from pitivi.utils.ui import audio_rates
+from pitivi.utils.ui import beautify_time_delta
+from pitivi.utils.ui import display_aspect_ratios
+from pitivi.utils.ui import frame_rates
+from pitivi.utils.ui import get_combo_value
+from pitivi.utils.ui import pixel_aspect_ratios
+from pitivi.utils.ui import set_combo_value
+from pitivi.utils.ui import SPACING
+from pitivi.utils.validate import create_monitor
+from pitivi.utils.validate import has_validate
 from pitivi.utils.widgets import FractionWidget
 
 

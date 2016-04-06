@@ -16,20 +16,18 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import pickle
-
 from unittest import mock
 
 from gi.repository import GES
 from gi.repository import Gst
 
+from pitivi.timeline.previewers import get_wavefile_location_for_uri
+from pitivi.timeline.previewers import getThumbnailCache
+from pitivi.timeline.previewers import THUMB_HEIGHT
 from tests import common
 from tests.test_media_library import TestMediaLibrary
-
-from pitivi.timeline.previewers import getThumbnailCache, THUMB_HEIGHT, \
-    get_wavefile_location_for_uri
 
 
 class TestPreviewers(common.TestCase):

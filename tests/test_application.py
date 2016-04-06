@@ -19,11 +19,9 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-from tests import common
-
 from pitivi import application
 from pitivi import configure
+from tests import common
 
 
 class MockGioFile(object):

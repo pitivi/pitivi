@@ -22,9 +22,7 @@
 """
 Base class for the video viewer overlays
 """
-
 import numpy
-
 from gi.repository import GES
 from gi.repository import Gtk
 

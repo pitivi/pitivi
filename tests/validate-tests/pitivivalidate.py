@@ -16,13 +16,15 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import sys
+from urllib import unquote
+
 import urlparse
 import utils
-from urllib import unquote
-from baseclasses import GstValidateTest, TestsManager, ScenarioManager
+from baseclasses import GstValidateTest
+from baseclasses import ScenarioManager
+from baseclasses import TestsManager
 
 Pitivi_DURATION_TOLERANCE = utils.GST_SECOND / 2
 

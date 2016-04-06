@@ -19,14 +19,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.utils.loggable import Loggable
 from pitivi.utils import ui
+from pitivi.utils.loggable import Loggable
 
 
 # Selection modes

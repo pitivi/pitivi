@@ -19,34 +19,46 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
-
 from gettext import gettext as _
 
+from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
-from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.autoaligner import AlignmentProgressDialog, AutoAligner
+from pitivi.autoaligner import AlignmentProgressDialog
+from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.elements import Clip, TransitionClip, TrimHandle
-from pitivi.timeline.layer import Layer, LayerControls
+from pitivi.timeline.elements import Clip
+from pitivi.timeline.elements import TransitionClip
+from pitivi.timeline.elements import TrimHandle
+from pitivi.timeline.layer import Layer
+from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.timeline import EditingContext, Selection, \
-    TimelineError, Zoomable, \
-    SELECT, SELECT_ADD
-from pitivi.utils.ui import alter_style_class, clear_styles, \
-    set_children_state_recurse, unset_children_state_recurse, \
-    EXPANDED_SIZE, SPACING, CONTROL_WIDTH, \
-    PLAYHEAD_WIDTH, LAYER_HEIGHT, SNAPBAR_WIDTH, \
-    EFFECT_TARGET_ENTRY, URI_TARGET_ENTRY
+from pitivi.utils.timeline import EditingContext
+from pitivi.utils.timeline import SELECT
+from pitivi.utils.timeline import SELECT_ADD
+from pitivi.utils.timeline import Selection
+from pitivi.utils.timeline import TimelineError
+from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import alter_style_class
+from pitivi.utils.ui import clear_styles
+from pitivi.utils.ui import CONTROL_WIDTH
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import EXPANDED_SIZE
+from pitivi.utils.ui import LAYER_HEIGHT
+from pitivi.utils.ui import PLAYHEAD_WIDTH
+from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import SNAPBAR_WIDTH
+from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import unset_children_state_recurse
+from pitivi.utils.ui import URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
 

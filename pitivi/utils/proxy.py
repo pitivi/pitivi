@@ -18,14 +18,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import time
 
-from gi.repository import GObject
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gio
+from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import GstTranscoder

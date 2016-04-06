@@ -20,12 +20,12 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import TestCase
 
 from gi.repository import Gst
-from pitivi.utils.ui import beautify_length
+
 from pitivi.check import *  # noqa
+from pitivi.utils.ui import beautify_length
 
 second = Gst.SECOND
 minute = second * 60

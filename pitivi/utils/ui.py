@@ -20,34 +20,36 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 UI constants and various functions and classes that help with UI drawing.
 """
-
-
-import cairo
 import decimal
 import os
-import urllib.request
-import urllib.parse
 import urllib.error
+import urllib.parse
+import urllib.request
+from gettext import gettext as _
+from gettext import ngettext
 
-from gettext import ngettext, gettext as _
-
+import cairo
+from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
-from gi.repository import Gdk
-from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository.GstPbutils import DiscovererVideoInfo, DiscovererAudioInfo,\
-    DiscovererStreamInfo, DiscovererSubtitleInfo, DiscovererInfo
+from gi.repository.GstPbutils import DiscovererAudioInfo
+from gi.repository.GstPbutils import DiscovererInfo
+from gi.repository.GstPbutils import DiscovererStreamInfo
+from gi.repository.GstPbutils import DiscovererSubtitleInfo
+from gi.repository.GstPbutils import DiscovererVideoInfo
 
-from pitivi.utils.loggable import doLog, ERROR
-from pitivi.utils.misc import path_from_uri, get_proxy_target
 from pitivi.configure import get_pixmap_dir
+from pitivi.utils.loggable import doLog
+from pitivi.utils.loggable import ERROR
+from pitivi.utils.misc import get_proxy_target
+from pitivi.utils.misc import path_from_uri
 
 
 # Dimensions in pixels

@@ -19,7 +19,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
 import subprocess
 from gettext import gettext as _
@@ -27,18 +26,22 @@ from hashlib import md5
 from time import time
 from urllib.parse import unquote
 
-from gi.repository import GES
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gst
 from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
-from pitivi.configure import in_devel, VERSION, APPNAME, APPURL, \
-    get_pixmap_dir, get_ui_dir
-from pitivi.effects import EffectListWidget
+from pitivi.configure import APPNAME
+from pitivi.configure import APPURL
+from pitivi.configure import get_pixmap_dir
+from pitivi.configure import get_ui_dir
+from pitivi.configure import in_devel
+from pitivi.configure import VERSION
 from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.settings import GlobalSettings
@@ -47,9 +50,14 @@ from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import show_user_manual, path_from_uri
-from pitivi.utils.ui import clear_styles, beautify_length, \
-    beautify_time_delta, info_name, SPACING, TIMELINE_CSS
+from pitivi.utils.misc import path_from_uri
+from pitivi.utils.misc import show_user_manual
+from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import beautify_time_delta
+from pitivi.utils.ui import clear_styles
+from pitivi.utils.ui import info_name
+from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import TIMELINE_CSS
 from pitivi.viewer.viewer import ViewerContainer
 
 

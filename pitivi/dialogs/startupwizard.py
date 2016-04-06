@@ -18,14 +18,12 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import os
+from gettext import gettext as _
 
-from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GES
-
-from gettext import gettext as _
+from gi.repository import Gtk
 
 from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir

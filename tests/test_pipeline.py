@@ -16,15 +16,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 from unittest import mock
 
 from gi.repository import GLib
 from gi.repository import Gst
 
-from tests import common
-
 from pitivi.utils import pipeline
+from tests import common
 
 
 class MockedPipeline(pipeline.Pipeline):

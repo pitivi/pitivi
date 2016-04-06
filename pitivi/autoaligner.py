@@ -18,18 +18,17 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 # TODO reimplement after GES port
 """
 Classes for automatic alignment of L{Clip}s
 """
+import array
+import os
+import time
 
 from gi.repository import GObject
 from gi.repository import Gst
-import array
-import time
 from gi.repository import Gtk
-import os
 
 
 try:

@@ -21,13 +21,13 @@
 """
 A helper object to work with Gtk.Notebook tabs
 """
-
-from gi.repository import Gtk
 from gi.repository import Gdk
+from gi.repository import Gtk
 
+from pitivi.settings import ConfigError
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import SPACING
-from pitivi.settings import GlobalSettings, ConfigError
 
 
 class BaseTabs(Gtk.Notebook, Loggable):

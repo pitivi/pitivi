@@ -20,16 +20,14 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 # TODO: add a specific testcase for audio, video, render presets
-
 import os.path
 import shutil
 import tempfile
 from unittest import TestCase
 
-from pitivi.preset import PresetManager, \
-    AudioPresetManager
+from pitivi.preset import AudioPresetManager
+from pitivi.preset import PresetManager
 
 
 class FakePresetManager(PresetManager):

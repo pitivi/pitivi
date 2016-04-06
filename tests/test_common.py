@@ -18,10 +18,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
-from tests import common
-
 import pitivi.utils.ui as ui_common
+from tests import common
 
 
 class TestColors(common.TestCase):

@@ -16,18 +16,19 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
-
 import os
+from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from gettext import gettext as _
-
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import frame_rates, audio_rates, \
-    audio_channels, pixel_aspect_ratios, get_value_from_model
+from pitivi.utils.ui import audio_channels
+from pitivi.utils.ui import audio_rates
+from pitivi.utils.ui import frame_rates
+from pitivi.utils.ui import get_value_from_model
+from pitivi.utils.ui import pixel_aspect_ratios
 
 
 class ClipMediaPropsDialog(object):
