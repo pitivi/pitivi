@@ -19,7 +19,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 """
 This file is run by bin/pitivi on startup. Its purpose is to ensure that all
 the important dependencies for running the pitivi UI can be imported and satisfy
@@ -32,10 +31,8 @@ when called from application.py instead of bin/pitivi, if it has an impact.
 
 Package maintainers should look at the bottom section of this file.
 """
-
 import os
 import sys
-
 from gettext import gettext as _
 
 missing_soft_deps = {}
@@ -356,21 +353,20 @@ def initialize_modules():
             exit(1)
 
 
-"""
---------------------------------------------------------------------------------
-Package maintainers, this is where you can see the list of requirements.
+# Package maintainers, this is where you can see the list of requirements.
+# -----------------------------------------------------------------------------
+#
+# Those are either:
+# - Classic Python modules
+# - Dynamic Python bindings through GObject introspection ("GIDependency")
+# - Something else. For example, there are various GStreamer plugins/elements
+#   for which there is no clear detection method other than trying to instantiate;
+#   there are special snowflakes like gst-python that are GI bindings "overrides"
+#   for which there is no way to detect the version either.
+#
+# Some of our dependencies have version numbers requirements; for those without
+# a specific version requirement, they have the "None" value.
 
-Those are either:
-- Classic Python modules
-- Dynamic Python bindings through GObject introspection ("GIDependency")
-- Something else. For example, there are various GStreamer plugins/elements
-  for which there is no clear detection method other than trying to instantiate;
-  there are special snowflakes like gst-python that are GI bindings "overrides"
-  for which there is no way to detect the version either.
-
-Some of our dependencies have version numbers requirements; for those without
-a specific version requirement, they have the "None" value.
-"""
 GST_API_VERSION = "1.0"
 GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
