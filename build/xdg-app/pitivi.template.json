@@ -103,6 +103,19 @@
             ]
         },
         {
+            "name": "pre-commit",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "pre-commit-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
             "name": "matplotlib",
             "build-options" : {
               "build-args": ["--share=network"]
