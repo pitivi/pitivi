@@ -21,20 +21,22 @@
 from unittest import TestCase
 
 from gi.repository import GES
+from gi.repository import Gtk
 
 from pitivi.application import Pitivi
+from pitivi.project import ProjectSettingsDialog
 from tests import common
 
 
 class TestProjectUndo(TestCase):
 
     def setUp(self):
-        app = Pitivi()
-        app._startupCb(app)
-        self.assertTrue(app.project_manager.newBlankProject())
+        self.app = Pitivi()
+        self.app._startupCb(self.app)
+        self.assertTrue(self.app.project_manager.newBlankProject())
 
-        self.project = app.project_manager.current_project
-        self.action_log = app.action_log
+        self.project = self.app.project_manager.current_project
+        self.action_log = self.app.action_log
 
     def test_new_project_has_nothing_to_undo(self):
         mainloop = common.create_main_loop()
@@ -71,3 +73,33 @@ class TestProjectUndo(TestCase):
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 0)
         self.action_log.redo()
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
+
+    def test_project_settings(self):
+        window = Gtk.Window()
+        dialog = ProjectSettingsDialog(parent_window=window,
+                                       project=self.project,
+                                       app=self.app)
+
+        def assert_meta(title, author, year):
+            self.assertEqual(self.project.name, title)
+            self.assertEqual(self.project.author, author)
+            self.assertEqual(self.project.year, year)
+
+
+        dialog.title_entry.set_text("t1")
+        dialog.author_entry.set_text("a1")
+        dialog.year_spinbutton.set_value(2001)
+        dialog.updateProject()
+        assert_meta("t1", "a1", "2001")
+
+        dialog.title_entry.set_text("t2")
+        dialog.author_entry.set_text("a2")
+        dialog.year_spinbutton.set_value(2002)
+        dialog.updateProject()
+        assert_meta("t2", "a2", "2002")
+
+        self.action_log.undo()
+        assert_meta("t1", "a1", "2001")
+
+        self.action_log.redo()
+        assert_meta("t2", "a2", "2002")

@@ -1507,7 +1507,15 @@ class Project(Loggable, GES.Project):
 
 class ProjectSettingsDialog(object):
 
-    def __init__(self, parent_window, project):
+    """
+    UI for viewing and changing the project settings.
+
+    Attributes:
+        project (Project): The project who's settings are displayed.
+    """
+
+    def __init__(self, parent_window, project, app):
+        self.app = app
         self.project = project
         self.audio_presets = AudioPresetManager()
         self.video_presets = VideoPresetManager()
@@ -1819,6 +1827,7 @@ class ProjectSettingsDialog(object):
         self.year_spinbutton.get_adjustment().set_value(year)
 
     def updateProject(self):
+        self.app.action_log.begin("change project settings")
         self.project.name = self.title_entry.get_text()
         self.project.author = self.author_entry.get_text()
         self.project.year = str(self.year_spinbutton.get_value_as_int())
@@ -1831,6 +1840,7 @@ class ProjectSettingsDialog(object):
 
         self.project.audiochannels = get_combo_value(self.channels_combo)
         self.project.audiorate = get_combo_value(self.sample_rate_combo)
+        self.app.action_log.commit()
 
     def _responseCb(self, unused_widget, response):
         """Handle the dialog being closed."""

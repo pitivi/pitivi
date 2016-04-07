@@ -977,7 +977,7 @@ class RenderDialog(Loggable):
 
     def _projectSettingsButtonClickedCb(self, unused_button):
         from pitivi.project import ProjectSettingsDialog
-        dialog = ProjectSettingsDialog(self.window, self.project)
+        dialog = ProjectSettingsDialog(self.window, self.project, self.app)
         dialog.window.run()
 
     def _audioOutputCheckbuttonToggledCb(self, unused_audio):

@@ -44,6 +44,7 @@ from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
+from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
@@ -588,9 +589,9 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         self.showProjectSettingsDialog()
 
     def showProjectSettingsDialog(self):
-        from pitivi.project import ProjectSettingsDialog
-        ProjectSettingsDialog(
-            self, self.app.project_manager.current_project).window.run()
+        project = self.app.project_manager.current_project
+        dialog = ProjectSettingsDialog(self, project, self.app)
+        dialog.window.run()
         self.updateTitle()
 
     def _menuCb(self, unused_action, unused_param):

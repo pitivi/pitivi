@@ -66,21 +66,20 @@ class AssetRemovedAction(UndoableAction):
         return st
 
 
-class ProjectSettingsChanged(UndoableAction):
+class MetaChangedAction(UndoableAction):
 
-    def __init__(self, project, old, new):
+    def __init__(self, meta_container, item, current_value, new_value):
         UndoableAction.__init__(self)
-        self.project = project
-        self.oldsettings = old
-        self.newsettings = new
+        self.meta_container = meta_container
+        self.item = item
+        self.old_value = current_value
+        self.new_value = new_value
 
     def do(self):
-        self.project.setSettings(self.newsettings)
-        self._done()
+        self.meta_container.set_meta(self.item, self.new_value)
 
     def undo(self):
-        self.project.setSettings(self.oldsettings)
-        self._undone()
+        self.meta_container.set_meta(self.item, self.old_value)
 
 
 class ProjectObserver():
@@ -99,19 +98,20 @@ class ProjectObserver():
         Args:
             project (Project): The project to be monitored.
         """
+        self.metas = {}
+        def set_meta(project, item, value):
+            self.metas[item] = value
+        project.foreach(set_meta)
+
         project.connect("notify-meta", self._settingsChangedCb)
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-removed", self._assetRemovedCb)
 
     def _settingsChangedCb(self, project, item, value):
-        """
-        FIXME Renable undo/redo
-        action = ProjectSettingsChanged(project, old, new)
-        self.log.begin("change project settings")
-        self.log.push(action)
-        self.log.commit()
-        """
-        pass
+        current_value = self.metas.get(item)
+        action = MetaChangedAction(project, item, current_value, value)
+        self.metas[item] = value
+        self.action_log.push(action)
 
     def _assetAddedCb(self, project, asset):
         action = AssetAddedAction(project, asset)
