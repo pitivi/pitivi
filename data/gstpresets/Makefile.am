@@ -5,4 +5,4 @@ gstpresets_DATA = \
 	prores-flac-in-matroska.gep
 
 EXTRA_DIST = \
-	$(audiopresets_DATA)
+	$(gstpresets_DATA)

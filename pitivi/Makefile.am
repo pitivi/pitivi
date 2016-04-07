@@ -4,6 +4,7 @@ SUBDIRS = \
 	utils \
 	timeline \
 	undo \
+	viewer \
 	$(NULL)
 
 pitividir = $(libdir)/pitivi/python/pitivi
@@ -25,7 +26,6 @@ pitivi_PYTHON = \
 	settings.py \
 	tabsmanager.py \
 	transitions.py \
-	viewer.py \
 	titleeditor.py \
 	$(NULL)
 

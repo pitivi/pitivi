@@ -33,7 +33,7 @@ pitivi/settings.py
 pitivi/tabsmanager.py
 pitivi/titleeditor.py
 pitivi/transitions.py
-pitivi/viewer.py
+pitivi/viewer/viewer.py
 
 pitivi/timeline/elements.py
 pitivi/timeline/layer.py
