@@ -130,9 +130,7 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
                        "alphacolor", "cogcolorspace", "videodetect",
                        "navigationtest", "videoanalyse", "volume"]
 
-# FIXME Check if this is still true with GES
-# We should unblacklist it when #650985 is solved
-BLACKLISTED_PLUGINS = ["ldaspa"]
+BLACKLISTED_PLUGINS = []
 
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
