@@ -83,26 +83,25 @@ class ProjectSettingsChanged(UndoableAction):
         self._undone()
 
 
-class ProjectLogObserver(UndoableAction):
+class ProjectObserver():
+    """Monitors a project instance and reports UndoableActions.
+
+    Attributes:
+        log (UndoableActionLog): The action log where to report actions.
+    """
 
     def __init__(self, log):
-        UndoableAction.__init__(self)
         self.log = log
 
     def startObserving(self, project):
+        """Starts monitoring the specified Project.
+
+        Args:
+            project (Project): The project to be monitored.
+        """
         project.connect("notify-meta", self._settingsChangedCb)
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-removed", self._assetRemovedCb)
-
-    def stopObserving(self, project):
-        try:
-            project.disconnect_by_func(self._settingsChangedCb)
-            project.disconnect_by_func(self._assetAddedCb)
-            project.disconnect_by_func(self._assetRemovedCb)
-        except Exception:
-            # This can happen when we interrupt the loading of a project,
-            # such as in mainwindow's _projectManagerMissingUriCb
-            pass
 
     def _settingsChangedCb(self, project, item, value):
         """

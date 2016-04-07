@@ -721,8 +721,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         project.pipeline.activatePositionListener()
         self._setProject(project)
 
-        # FIXME GES we should re-enable this when possible
-        # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
         if project_manager.disable_save is True:
@@ -757,7 +755,6 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
     def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
         # FIXME GES: Reimplement Undo/Redo
         # self.app.action_log.checkpoint()
-        # self._syncDoUndo(self.app.action_log)
         self.updateTitle()
 
         self.save_action.set_enabled(False)
@@ -1057,14 +1054,10 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
             "rendering-settings-changed", self._renderingSettingsChangedCb)
 
         self.viewer.setPipeline(project.pipeline)
-        self.app.timeline_log_observer.pipeline = project.pipeline
         self._renderingSettingsChangedCb(project)
         self.clipconfig.project = project
-        # FIXME GES port undo/redo
-        # self.app.timelineLogObserver.pipeline = project.pipeline
 
-        # When creating a blank project, medialibrary will eventually trigger
-        # this _setProject method, but there's no project URI yet.
+        # When creating a blank project there's no project URI yet.
         if project.uri:
             folder_path = os.path.dirname(path_from_uri(project.uri))
             self.settings.lastProjectFolder = folder_path

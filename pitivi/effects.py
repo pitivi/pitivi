@@ -545,7 +545,6 @@ class EffectsPropertiesManager:
     def __init__(self, app):
         self.cache_dict = {}
         self._current_element_values = {}
-        self.action_log = app.action_log
         self.app = app
 
     def getEffectConfigurationUI(self, effect):
@@ -594,9 +593,9 @@ class EffectsPropertiesManager:
             value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
-            self.action_log.begin("Effect property change")
+            self.app.action_log.begin("Effect property change")
             effect.set_child_property(prop.name, value)
-            self.action_log.commit()
+            self.app.action_log.commit()
 
             self.app.project_manager.current_project.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

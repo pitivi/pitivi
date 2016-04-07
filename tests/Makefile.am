@@ -20,6 +20,7 @@ tests =	\
 	test_timeline_layer.py \
 	test_timeline_timeline.py \
 	test_undo.py \
+	test_undo_project.py \
 	test_undo_timeline.py \
 	test_utils.py \
 	test_utils_timeline.py \

@@ -28,36 +28,36 @@ from pitivi.application import Pitivi
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipPropertyChanged
 from pitivi.undo.timeline import ClipRemoved
-from pitivi.undo.timeline import TimelineLogObserver
+from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import UndoableActionLog
 from tests import common
 
 
-class TimelineLogObserverSpy(TimelineLogObserver):
+class TimelineObserverSpy(TimelineObserver):
 
     def _connectToTimeline(self, timeline):
-        TimelineLogObserver._connectToTimeline(self, timeline)
+        TimelineObserver._connectToTimeline(self, timeline)
         timeline.connected = True
 
     def _disconnectFromTimeline(self, timeline):
-        TimelineLogObserver._disconnectFromTimeline(self, timeline)
+        TimelineObserver._disconnectFromTimeline(self, timeline)
         timeline.connected = False
 
     def _connectToClip(self, clip):
-        TimelineLogObserver._connectToClip(self, clip)
+        TimelineObserver._connectToClip(self, clip)
         clip.connected = True
 
     def _disconnectFromClip(self, clip):
-        TimelineLogObserver._disconnectFromClip(self, clip)
+        TimelineObserver._disconnectFromClip(self, clip)
         clip.connected = False
 
     def _connectToTrackElement(self, track_element):
-        TimelineLogObserver._connectToTrackElement(self, track_element)
+        TimelineObserver._connectToTrackElement(self, track_element)
         track_element.connected = True
 
     def _disconnectFromTrackElement(self, track_element):
-        TimelineLogObserver._disconnectFromTrackElement(self, track_element)
+        TimelineObserver._disconnectFromTrackElement(self, track_element)
         track_element.connected = False
 
 
@@ -65,7 +65,7 @@ class TestTimelineLogObserver(TestCase):
 
     def setUp(self):
         self.action_log = UndoableActionLog()
-        self.observer = TimelineLogObserverSpy(self.action_log)
+        self.observer = TimelineObserverSpy(self.action_log)
 
     def testConnectionAndDisconnection(self):
         timeline = GES.Timeline.new_audio_video()
@@ -94,12 +94,6 @@ class TestTimelineLogObserver(TestCase):
         self.assertFalse(track_element1.connected)
         self.assertTrue(track_element2.connected)
 
-        self.observer.stopObserving(timeline)
-        self.assertFalse(timeline.connected)
-        self.assertFalse(clip1.connected)
-        self.assertFalse(track_element1.connected)
-        self.assertFalse(track_element2.connected)
-
 
 class TestTimelineUndo(TestCase):
 
@@ -112,7 +106,7 @@ class TestTimelineUndo(TestCase):
         self.layer = GES.Layer()
         self.timeline.add_layer(self.layer)
         self.action_log = UndoableActionLog()
-        self.observer = TimelineLogObserverSpy(self.action_log)
+        self.observer = TimelineObserverSpy(self.action_log)
         self.observer.startObserving(self.timeline)
 
     def getTimelineClips(self):

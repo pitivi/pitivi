@@ -29,19 +29,16 @@ from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):
-
     """ Any exception related to the undo/redo feature."""
     pass
 
 
 class UndoWrongStateError(UndoError):
-
     """ Exception related to the current state of the undo/redo stack. """
     pass
 
 
 class UndoableAction(GObject.Object, Loggable):
-
     """
     An action that can be undone.
     In other words, when your object's state changes, create an UndoableAction
@@ -83,7 +80,6 @@ class FinalizingAction:
 
 
 class UndoableActionStack(UndoableAction):
-
     """
     Simply a stack of UndoableAction objects.
     """
@@ -121,11 +117,12 @@ class UndoableActionStack(UndoableAction):
 
 
 class UndoableActionLog(GObject.Object, Loggable):
+    """
+    The undo/redo manager.
 
+    A separate instance should be created for each Project instance.
     """
-    This is the "master" class that handles all the undo/redo system. There is
-    only one instance of it in Pitivi: application.py's "action_log" property.
-    """
+
     __gsignals__ = {
         "begin": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
@@ -236,10 +233,6 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
 
-    def clean(self):
-        self.redo_stacks = []
-        self.undo_stacks = []
-
     def _takeSnapshot(self):
         return list(self.undo_stacks)
 
@@ -276,7 +269,6 @@ class UndoableActionLog(GObject.Object, Loggable):
 
 
 class PropertyChangeTracker(GObject.Object):
-
     """
     BaseClass to track a class property, Used for undo/redo
     """

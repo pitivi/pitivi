@@ -81,7 +81,6 @@ class TrackElementChildPropertyTracker(Loggable):
         Loggable.__init__(self)
         self._tracked_track_elements = {}
         self.action_log = action_log
-        self.pipeline = None
 
     def addTrackElement(self, track_element):
         if track_element in self._tracked_track_elements:
@@ -516,7 +515,13 @@ class ActivePropertyChanged(UndoableAction):
         self._undone()
 
 
-class TimelineLogObserver(Loggable):
+class TimelineObserver(Loggable):
+    """Monitors a project's timeline and reports UndoableActions.
+
+    Attributes:
+        log (UndoableActionLog): The action log where to report actions.
+    """
+
     timelinePropertyChangedAction = ClipPropertyChanged
     activePropertyChangedAction = ActivePropertyChanged
 
@@ -527,30 +532,17 @@ class TimelineLogObserver(Loggable):
         self.clip_property_trackers = {}
         self.control_source_keyframe_trackers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(log)
-        self._pipeline = None
-
-    @property
-    def pipeline(self):
-        return self._pipeline
-
-    @pipeline.setter
-    def pipeline(self, pipeline):
-        self._pipeline = pipeline
-        self.children_props_tracker.pipeline = pipeline
 
     def startObserving(self, timeline):
+        """Starts monitoring the specified Timeline.
+
+        Args:
+            timeline (GES.Timeline): The timeline to be monitored.
+        """
         self._connectToTimeline(timeline)
         for layer in timeline.get_layers():
             for clip in layer.get_clips():
                 self._connectToClip(clip)
-
-    def stopObserving(self, timeline):
-        self._disconnectFromTimeline(timeline)
-        for layer in timeline.layers:
-            for clip in layer.get_clips():
-                self._disconnectFromClip(clip)
-                for track_element in clip.get_children(True):
-                    self._disconnectFromTrackElement(track_element)
 
     def _connectToTimeline(self, timeline):
         for layer in timeline.get_layers():

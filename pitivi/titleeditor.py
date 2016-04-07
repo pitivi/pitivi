@@ -52,7 +52,6 @@ class TitleEditor(Loggable):
     def __init__(self, app):
         Loggable.__init__(self)
         self.app = app
-        self.action_log = app.action_log
         self.settings = {}
         self.source = None
         self._project = None
@@ -104,13 +103,13 @@ class TitleEditor(Loggable):
             self.settings["halignment"].append(en, n)
 
     def _setChildProperty(self, name, value):
-        self.action_log.begin("Title %s change" % name)
+        self.app.action_log.begin("Title %s change" % name)
         self._setting_props = True
         try:
             assert self.source.set_child_property(name, value)
         finally:
             self._setting_props = False
-        self.action_log.commit()
+        self.app.action_log.commit()
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())

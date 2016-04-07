@@ -39,8 +39,8 @@ from pitivi.project import ProjectManager
 from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
-from pitivi.undo.project import ProjectLogObserver
-from pitivi.undo.timeline import TimelineLogObserver
+from pitivi.undo.project import ProjectObserver
+from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils import loggable
 from pitivi.utils.loggable import Loggable
@@ -58,6 +58,7 @@ class Pitivi(Gtk.Application, Loggable):
     Pitivi's application.
 
     Attributes:
+        action_log (UndoableActionLog): The undo/redo log for the current project.
         effects (EffectsManager): The effects which can be applied to a clip.
         gui (PitiviMainWindow): The main window of the app.
         project_manager (ProjectManager): The holder of the current project.
@@ -80,9 +81,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.system = None
         self.project_manager = ProjectManager(self)
 
-        self.action_log = UndoableActionLog(self)
-        self.timeline_log_observer = None
-        self.project_log_observer = None
+        self.action_log = None
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
@@ -142,12 +141,6 @@ class Pitivi(Gtk.Application, Loggable):
         self.proxy_manager = ProxyManager(self)
         self.system = getSystem()
 
-        self.action_log.connect("commit", self._actionLogCommit)
-        self.action_log.connect("undo", self._actionLogUndo)
-        self.action_log.connect("redo", self._actionLogRedo)
-        self.timeline_log_observer = TimelineLogObserver(self.action_log)
-        self.project_log_observer = ProjectLogObserver(self.action_log)
-
         self.project_manager.connect(
             "new-project-loading", self._newProjectLoadingCb)
         self.project_manager.connect(
@@ -155,6 +148,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.connect("project-closed", self._projectClosed)
 
         self._createActions()
+        self._syncDoUndo()
+
         self._checkVersion()
 
     def _createActions(self):
@@ -268,16 +263,21 @@ class Pitivi(Gtk.Application, Loggable):
         self._setScenarioFile(project.get_uri())
 
     def _newProjectLoaded(self, unused_project_manager, project):
-        self.action_log.clean()
-        self._syncDoUndo(self.action_log)
+        self.action_log = UndoableActionLog(self)
+        self.action_log.connect("commit", self._actionLogCommit)
+        self.action_log.connect("undo", self._actionLogUndo)
+        self.action_log.connect("redo", self._actionLogRedo)
 
-        self.timeline_log_observer.startObserving(project.timeline)
-        self.project_log_observer.startObserving(project)
+        timeline_observer = TimelineObserver(self.action_log)
+        timeline_observer.startObserving(project.timeline)
+
+        project_observer = ProjectObserver(self.action_log)
+        project_observer.startObserving(project)
 
     def _projectClosed(self, unused_project_manager, project):
         if project.loaded:
-            self.project_log_observer.stopObserving(project)
-            self.timeline_log_observer.stopObserving(project.timeline)
+            self.action_log = None
+            self._syncDoUndo()
 
         if self._scenario_file:
             self.write_action("stop")
@@ -355,29 +355,27 @@ class Pitivi(Gtk.Application, Loggable):
     def _actionLogCommit(self, action_log, unused_stack):
         if action_log.is_in_transaction():
             return
-        self._syncDoUndo(action_log)
+        self._syncDoUndo()
 
     def _actionLogUndo(self, action_log, unused_stack):
-        self._syncDoUndo(action_log)
+        self._syncDoUndo()
 
     def _actionLogRedo(self, action_log, unused_stack):
-        self._syncDoUndo(action_log)
+        self._syncDoUndo()
 
-    def _syncDoUndo(self, action_log):
+    def _syncDoUndo(self):
+        can_undo = self.action_log and bool(self.action_log.undo_stacks)
         # TODO: Remove this once we revisit undo/redo T3360
-        can_undo = in_devel()
+        can_undo = can_undo and in_devel()
+        self.undo_action.set_enabled(bool(can_undo))
 
-        if can_undo:
-            can_undo = bool(action_log.undo_stacks)
-        self.undo_action.set_enabled(can_undo)
-
-        can_redo = bool(action_log.redo_stacks)
-        self.redo_action.set_enabled(can_redo)
+        can_redo = self.action_log and bool(self.action_log.redo_stacks)
+        self.redo_action.set_enabled(bool(can_redo))
 
         if not self.project_manager.current_project:
             return
 
-        dirty = action_log.dirty()
+        dirty = self.action_log and self.action_log.dirty()
         self.project_manager.current_project.setModificationState(dirty)
         # In the tests we do not want to create any gui
         if self.gui is not None:
