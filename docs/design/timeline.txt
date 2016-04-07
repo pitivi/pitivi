@@ -8,9 +8,9 @@ Timeline view design document (c) 2005 Edward Hervey
    _ View is the UI
 
   This design allows pitivi to have different 'views':
-   _ The 'Simple' View : à la iMovie
+   _ The 'Simple' View : Ã  la iMovie
    _ The 'Full' View : Allows every possible composition
-  
+
 
 * Simple View
 
@@ -28,7 +28,7 @@ Timeline view design document (c) 2005 Edward Hervey
      _ Display a thumbnail of the source if it's video
      _ In normal situations, the sources follow each others without any gaps.
      _ Special Cases:
-       * Gap between two sources : 
+       * Gap between two sources :
 	 => Black source (which can be removed)
        * Source A overlaps part of Source B:
 	 => Display normally
@@ -155,7 +155,7 @@ Timeline view design document (c) 2005 Edward Hervey
 
   * FileSource
     Seekable sources (mostly files)
-    
+
     * Properties
       _ Media Start/Stop Time
 
@@ -181,7 +181,7 @@ Timeline view design document (c) 2005 Edward Hervey
     _ Source(s) contained in it follow each other if possible
     _ Source can overlap each other
       _ Knows the "visibility" of the sources contained within
-    
+
     * Sandwich view example (top: high priority):
 	     [ Global Simple Effect(s) (RGB, YUV, Speed,...)	]
 	     [ Simple Effect(s), can be several layers		]
@@ -204,7 +204,7 @@ Timeline view design document (c) 2005 Edward Hervey
       remove_transition(transition)
       add_source(source, position)
       remove_source(source)
-      
+
     * Implemented Methods:
       _make_gnl_object()
 
