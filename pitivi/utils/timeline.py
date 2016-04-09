@@ -263,7 +263,7 @@ class EditingContext(GObject.Object, Loggable):
         self.app.action_log.begin("move-clip")
 
     def finish(self):
-        self.app.action_log.commit()
+        self.app.action_log.commit("move-clip")
         self.timeline.get_asset().pipeline.commit_timeline()
         self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
 

@@ -1101,7 +1101,7 @@ class Project(Loggable, GES.Project):
                 self.app.proxy_manager.addJob(asset, asset.force_proxying)
 
             if not self.loading_assets:
-                self.app.action_log.commit()
+                self.app.action_log.commit("Adding assets")
         else:
             self.debug("Project still loading, not using proxies: "
                        "%s", asset.props.id)

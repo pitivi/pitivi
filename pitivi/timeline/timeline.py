@@ -835,7 +835,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
-                self.app.action_log.commit()
+                self.app.action_log.commit("add dragged clip")
 
             self.draggingElement = None
             self.__got_dragged = False
@@ -858,7 +858,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.cleanDropData()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
-                self.app.action_log.begin("add clip")
+                self.app.action_log.begin("add dragged clip")
 
                 if self.__on_separators:
                     created_layer = self.__getDroppedLayer()

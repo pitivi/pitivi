@@ -184,7 +184,7 @@ class TestUndoableActionLog(TestCase):
         self.assertRaises(UndoWrongStateError, self.log.rollback)
 
     def testCommitWrongState(self):
-        self.assertRaises(UndoWrongStateError, self.log.commit)
+        self.assertRaises(UndoWrongStateError, self.log.commit, "")
 
     def testPushWrongState(self):
         # no error in this case
@@ -208,7 +208,7 @@ class TestUndoableActionLog(TestCase):
         self.assertFalse(self.log.dirty())
         self.log.begin("meh")
         self.log.push(DummyUndoableAction())
-        self.log.commit()
+        self.log.commit("meh")
         self.assertTrue(self.log.dirty())
         self.log.checkpoint()
         self.assertFalse(self.log.dirty())
@@ -230,13 +230,17 @@ class TestUndoableActionLog(TestCase):
         self.assertTrue(self.log.is_in_transaction())
 
         self.assertEqual(self.log.undo_stacks, [])
-        self.log.commit()
+        self.log.commit("meh")
         self.assertEqual(len(self.signals), 2)
         name, (stack,) = self.signals[1]
         self.assertEqual(name, "commit")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
+
+    def test_commit_proper(self):
+        self.log.begin("meh")
+        self.assertRaises(UndoWrongStateError, self.log.commit, "notmeh")
 
     def testNestedCommit(self):
         """
@@ -259,7 +263,7 @@ class TestUndoableActionLog(TestCase):
         self.assertTrue(self.log.is_in_transaction())
 
         self.assertEqual(self.log.undo_stacks, [])
-        self.log.commit()
+        self.log.commit("nested")
         self.assertEqual(len(self.signals), 3)
         name, (stack,) = self.signals[2]
         self.assertEqual(name, "commit")
@@ -268,7 +272,7 @@ class TestUndoableActionLog(TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
 
         self.assertEqual(self.log.undo_stacks, [])
-        self.log.commit()
+        self.log.commit("meh")
         self.assertEqual(len(self.signals), 4)
         name, (stack,) = self.signals[3]
         self.assertEqual(name, "commit")
@@ -361,7 +365,7 @@ class TestUndoableActionLog(TestCase):
         # commit
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
-        self.log.commit()
+        self.log.commit("meh")
         self.assertEqual(len(self.signals), 4)
         name, (stack,) = self.signals[3]
         self.assertEqual(name, "commit")
@@ -422,9 +426,9 @@ class TestUndoableActionLog(TestCase):
         self.log.push(action1)
         self.log.begin("nested")
         self.log.push(action2)
-        self.log.commit()
+        self.log.commit("nested")
         self.log.push(action3)
-        self.log.commit()
+        self.log.commit("meh")
 
         self.log.undo()
         self.assertEqual(call_sequence, ["undo3", "undo2", "undo1"])

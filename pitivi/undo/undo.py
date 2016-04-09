@@ -161,7 +161,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         """
         self.begin(action_group_name, finalizing_action)
         yield
-        self.commit()
+        self.commit(action_group_name)
 
     def begin(self, action_group_name, finalizing_action=None):
         """
@@ -218,7 +218,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("rollback", stack)
         stack.undo()
 
-    def commit(self):
+    def commit(self, action_group_name):
         """
         Commits the last started transaction.
         """
@@ -228,6 +228,8 @@ class UndoableActionLog(GObject.Object, Loggable):
 
         self.debug("Committing")
         stack = self._get_last_stack(pop=True)
+        if action_group_name != stack.action_group_name:
+            raise UndoWrongStateError("Unexpected commit", action_group_name, stack, self.stacks)
         if not self.stacks:
             self.undo_stacks.append(stack)
         else:

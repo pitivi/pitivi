@@ -436,7 +436,7 @@ class MoveScaleOverlay(Overlay):
         self.update_from_source()
         self.on_hover(cursor_position)
 
-        self.__action_log.commit()
+        self.__action_log.commit("Video position change")
         if self.__clicked_handle:
             if not self.__clicked_handle.hovered:
                 self.stack.reset_cursor()

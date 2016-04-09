@@ -125,9 +125,8 @@ class TestTimelineUndo(TestCase):
         layer3 = self.timeline.append_layer()
         self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
 
-        self.action_log.begin("layer removed")
-        self.timeline.remove_layer(layer2)
-        self.action_log.commit()
+        with self.action_log.started("layer removed"):
+            self.timeline.remove_layer(layer2)
         self.assertEqual([layer1, layer3], self.timeline.get_layers())
 
         self.action_log.undo()
@@ -147,9 +146,8 @@ class TestTimelineUndo(TestCase):
         control_source.props.mode = GstController.InterpolationMode.LINEAR
         source.set_control_source(control_source, "alpha", "direct")
 
-        self.action_log.begin("keyframe added")
-        self.assertTrue(control_source.set(Gst.SECOND * 0.5, 0.2))
-        self.action_log.commit()
+        with self.action_log.started("keyframe added"):
+            self.assertTrue(control_source.set(Gst.SECOND * 0.5, 0.2))
 
         self.assertEqual(1, len(control_source.get_all()))
         self.action_log.undo()
@@ -173,9 +171,8 @@ class TestTimelineUndo(TestCase):
         source.set_control_source(control_source, "alpha", "direct")
         self.assertTrue(control_source.set(Gst.SECOND * 0.5, 0.2))
 
-        self.action_log.begin("keyframe removed")
-        self.assertTrue(control_source.unset(Gst.SECOND * 0.5))
-        self.action_log.commit()
+        with self.action_log.started("keyframe removed"):
+            self.assertTrue(control_source.unset(Gst.SECOND * 0.5))
 
         self.assertEqual(0, len(control_source.get_all()))
         self.action_log.undo()
@@ -191,9 +188,8 @@ class TestTimelineUndo(TestCase):
         self.action_log.connect("commit", TestTimelineUndo.commitCb, stacks)
 
         clip1 = GES.TitleClip()
-        self.action_log.begin("add clip")
-        self.layer.add_clip(clip1)
-        self.action_log.commit()
+        with self.action_log.started("add clip"):
+            self.layer.add_clip(clip1)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -212,11 +208,10 @@ class TestTimelineUndo(TestCase):
         clip1 = GES.TitleClip()
         self.layer.add_clip(clip1)
 
-        self.action_log.begin("Title text change")
-        source = clip1.get_children(False)[0]
-        source.set_child_property("text", "pigs fly!")
-        self.assertEqual(source.get_child_property("text")[1], "pigs fly!")
-        self.action_log.commit()
+        with self.action_log.started("Title text change"):
+            source = clip1.get_children(False)[0]
+            source.set_child_property("text", "pigs fly!")
+            self.assertEqual(source.get_child_property("text")[1], "pigs fly!")
 
         self.action_log.undo()
         self.assertEqual(source.get_child_property("text")[1], "")
@@ -229,9 +224,8 @@ class TestTimelineUndo(TestCase):
 
         clip1 = GES.TitleClip()
         self.layer.add_clip(clip1)
-        self.action_log.begin("remove clip")
-        self.layer.remove_clip(clip1)
-        self.action_log.commit()
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip1)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -254,9 +248,8 @@ class TestTimelineUndo(TestCase):
         self.layer.add_clip(clip1)
 
         effect1 = GES.Effect.new("agingtv")
-        self.action_log.begin("add effect")
-        clip1.add(effect1)
-        self.action_log.commit()
+        with self.action_log.started("add effect"):
+            clip1.add(effect1)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -285,9 +278,8 @@ class TestTimelineUndo(TestCase):
         self.layer.add_clip(clip1)
 
         effect1 = GES.Effect.new("agingtv")
-        self.action_log.begin("add effect")
-        clip1.add(effect1)
-        self.action_log.commit()
+        with self.action_log.started("add effect"):
+            clip1.add(effect1)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -300,9 +292,8 @@ class TestTimelineUndo(TestCase):
                                  clip1.get_children(True)
                                  if isinstance(effect, GES.Effect)]))
 
-        self.action_log.begin("remove effect")
-        clip1.remove(effect1)
-        self.action_log.commit()
+        with self.action_log.started("remove effect"):
+            clip1.remove(effect1)
 
         self.assertEqual(0, len([effect for effect in
                                  clip1.get_children(True)
@@ -326,9 +317,8 @@ class TestTimelineUndo(TestCase):
         self.layer.add_clip(clip1)
 
         effect1 = GES.Effect.new("agingtv")
-        self.action_log.begin("add effect")
-        clip1.add(effect1)
-        self.action_log.commit()
+        with self.action_log.started("add effect"):
+            clip1.add(effect1)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -341,9 +331,8 @@ class TestTimelineUndo(TestCase):
                                  clip1.get_children(True)
                                  if isinstance(effect, GES.Effect)]))
 
-        self.action_log.begin("change child property")
-        effect1.set_child_property("scratch-lines", 0)
-        self.action_log.commit()
+        with self.action_log.started("change child property"):
+            effect1.set_child_property("scratch-lines", 0)
 
         self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
         self.action_log.undo()
@@ -364,9 +353,8 @@ class TestTimelineUndo(TestCase):
         clip1.set_start(5 * Gst.SECOND)
         clip1.set_duration(20 * Gst.SECOND)
         self.layer.add_clip(clip1)
-        self.action_log.begin("modify clip")
-        clip1.set_start(10 * Gst.SECOND)
-        self.action_log.commit()
+        with self.action_log.started("modify clip"):
+            clip1.set_start(10 * Gst.SECOND)
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
@@ -381,9 +369,8 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(10 * Gst.SECOND, clip1.get_start())
 
         clip1.set_priority(10)
-        self.action_log.begin("priority change")
-        clip1.set_priority(20)
-        self.action_log.commit()
+        with self.action_log.started("priority change"):
+            clip1.set_priority(20)
 
         self.assertEqual(20, clip1.get_priority())
         self.action_log.undo()
@@ -404,10 +391,9 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
 
-        self.action_log.begin("ungroup")
-        ungrouped = GES.Container.ungroup(clip1, False)
-        self.assertEqual(2, len(ungrouped), ungrouped)
-        self.action_log.commit()
+        with self.action_log.started("ungroup"):
+            ungrouped = GES.Container.ungroup(clip1, False)
+            self.assertEqual(2, len(ungrouped), ungrouped)
         timeline_clips = list(self.getTimelineClips())
         self.assertEqual(2, len(timeline_clips), timeline_clips)
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
@@ -428,15 +414,13 @@ class TestTimelineUndo(TestCase):
 
         self.layer.add_clip(clip)
 
-        self.action_log.begin("split clip")
-        clip1 = clip.split(10 * Gst.SECOND)
-        self.assertEqual(2, len(self.layer.get_clips()))
-        self.action_log.commit()
+        with self.action_log.started("split clip"):
+            clip1 = clip.split(10 * Gst.SECOND)
+            self.assertEqual(2, len(self.layer.get_clips()))
 
-        self.action_log.begin("split clip")
-        clip2 = clip1.split(15 * Gst.SECOND)
-        self.assertEqual(3, len(self.layer.get_clips()))
-        self.action_log.commit()
+        with self.action_log.started("split clip"):
+            clip2 = clip1.split(15 * Gst.SECOND)
+            self.assertEqual(3, len(self.layer.get_clips()))
 
         self.action_log.undo()
         self.assertEqual(2, len(self.layer.get_clips()))
