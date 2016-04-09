@@ -103,13 +103,12 @@ class TitleEditor(Loggable):
             self.settings["halignment"].append(en, n)
 
     def _setChildProperty(self, name, value):
-        self.app.action_log.begin("Title %s change" % name)
-        self._setting_props = True
-        try:
-            assert self.source.set_child_property(name, value)
-        finally:
-            self._setting_props = False
-        self.app.action_log.commit()
+        with self.app.action_log.started("Title %s change" % name):
+            self._setting_props = True
+            try:
+                assert self.source.set_child_property(name, value)
+            finally:
+                self._setting_props = False
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())

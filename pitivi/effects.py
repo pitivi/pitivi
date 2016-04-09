@@ -591,9 +591,8 @@ class EffectsPropertiesManager:
             value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
-            self.app.action_log.begin("Effect property change")
-            effect.set_child_property(prop.name, value)
-            self.app.action_log.commit()
+            with self.app.action_log.started("Effect property change"):
+                effect.set_child_property(prop.name, value)
 
             self.app.project_manager.current_project.pipeline.flushSeek()
             self._current_element_values[prop.name] = value

@@ -541,13 +541,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         rows = [Gtk.TreeRowReference.new(model, path)
                 for path in paths]
 
-        self.app.action_log.begin("remove asset from media library")
-        for row in rows:
-            asset = model[row.get_path()][COL_ASSET]
-            self._project.remove_asset(asset)
-            self.app.gui.timeline_ui.purgeAsset(asset.props.id)
-
-        self.app.action_log.commit()
+        with self.app.action_log.started("remove asset from media library"):
+            for row in rows:
+                asset = model[row.get_path()][COL_ASSET]
+                self._project.remove_asset(asset)
+                self.app.gui.timeline_ui.purgeAsset(asset.props.id)
 
         # The treeview can make some of the remaining items selected, so
         # make sure none are selected.

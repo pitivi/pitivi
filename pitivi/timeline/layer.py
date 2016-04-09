@@ -253,10 +253,9 @@ class LayerControls(Gtk.EventBox, Loggable):
         return menu_model, action_group
 
     def _deleteLayerCb(self, unused_action, unused_parametter):
-        self.app.action_log.begin("delete layer")
-        self.ges_timeline.remove_layer(self.ges_layer)
-        self.ges_timeline.get_asset().pipeline.commit_timeline()
-        self.app.action_log.commit()
+        with self.app.action_log.started("delete layer"):
+            self.ges_timeline.remove_layer(self.ges_layer)
+            self.ges_timeline.get_asset().pipeline.commit_timeline()
 
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
         index = self.ges_layer.get_priority()

@@ -1827,20 +1827,18 @@ class ProjectSettingsDialog(object):
         self.year_spinbutton.get_adjustment().set_value(year)
 
     def updateProject(self):
-        self.app.action_log.begin("change project settings")
-        self.project.name = self.title_entry.get_text()
-        self.project.author = self.author_entry.get_text()
-        self.project.year = str(self.year_spinbutton.get_value_as_int())
+        with self.app.action_log.started("change project settings"):
+            self.project.name = self.title_entry.get_text()
+            self.project.author = self.author_entry.get_text()
+            self.project.year = str(self.year_spinbutton.get_value_as_int())
 
-        self.project.videowidth = int(self.width_spinbutton.get_value())
-        self.project.videoheight = int(self.height_spinbutton.get_value())
-        self.project.videopar = self.par_fraction_widget.getWidgetValue()
-        self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue(
-        )
+            self.project.videowidth = int(self.width_spinbutton.get_value())
+            self.project.videoheight = int(self.height_spinbutton.get_value())
+            self.project.videopar = self.par_fraction_widget.getWidgetValue()
+            self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue()
 
-        self.project.audiochannels = get_combo_value(self.channels_combo)
-        self.project.audiorate = get_combo_value(self.sample_rate_combo)
-        self.app.action_log.commit()
+            self.project.audiochannels = get_combo_value(self.channels_combo)
+            self.project.audiorate = get_combo_value(self.sample_rate_combo)
 
     def _responseCb(self, unused_widget, response):
         """Handle the dialog being closed."""

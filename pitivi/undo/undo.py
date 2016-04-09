@@ -21,6 +21,7 @@
 """
 Base classes for undo/redo.
 """
+import contextlib
 import weakref
 
 from gi.repository import GObject
@@ -146,7 +147,19 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.running = False
         self._checkpoint = self._takeSnapshot()
 
+    @contextlib.contextmanager
+    def started(self, action_group_name, finalizing_action=None):
+        """
+        Returns a context manager which commits the transaction at the end.
+        """
+        self.begin(action_group_name, finalizing_action)
+        yield
+        self.commit()
+
     def begin(self, action_group_name, finalizing_action=None):
+        """
+        Starts a transaction aka a high-level operation.
+        """
         if self.running:
             self.debug("Abort because running")
             return
@@ -158,6 +171,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("begin", stack)
 
     def push(self, action):
+        """
+        Adds an action to the current transaction.
+        """
         if action is not None:
             try:
                 st = action.asScenarioAction()
@@ -181,6 +197,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("push", stack, action)
 
     def rollback(self):
+        """
+        Forgets about the last started transaction.
+        """
         if self.running:
             self.debug("Ignore rollback because running")
             return
@@ -193,6 +212,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack.undo()
 
     def commit(self):
+        """
+        Commits the last started transaction.
+        """
         if self.running:
             self.debug("Ignore commit because running")
             return
@@ -212,6 +234,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("commit", stack)
 
     def undo(self):
+        """
+        Undo the last recorded operation.
+        """
         if self.stacks:
             raise UndoWrongStateError("Recording a transaction")
         if not self.undo_stacks:
@@ -223,6 +248,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("undo", stack)
 
     def redo(self):
+        """
+        Redo the last undone operation.
+        """
         if self.stacks:
             raise UndoWrongStateError("Recording a transaction")
         if not self.redo_stacks:
@@ -265,6 +293,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         return stack
 
     def is_in_transaction(self):
+        """
+        Whether currently recording an operation.
+        """
         return bool(self.stacks)
 
 

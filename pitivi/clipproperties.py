@@ -299,12 +299,11 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        self.app.action_log.begin("remove effect")
-        self.__remove_configuration_widget()
-        self.effects_properties_manager.cleanCache(effect)
-        effect.get_parent().remove(effect)
-        self._project.timeline.commit()
-        self.app.action_log.commit()
+        with self.app.action_log.started("remove effect"):
+            self.__remove_configuration_widget()
+            self.effects_properties_manager.cleanCache(effect)
+            effect.get_parent().remove(effect)
+            self._project.timeline.commit()
         self._updateTreeview()
 
     def addEffectToClip(self, clip, factory_name, priority=None):
@@ -317,13 +316,12 @@ class EffectProperties(Gtk.Expander, Loggable):
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                 # Actually add the effect
-                self.app.action_log.begin("add effect")
-                effect = GES.Effect.new(bin_description=factory_name)
-                clip.add(effect)
-                if priority is not None and priority < len(model):
-                    clip.set_top_effect_priority(effect, priority)
-                self._project.timeline.commit()
-                self.app.action_log.commit()
+                with self.app.action_log.started("add effect"):
+                    effect = GES.Effect.new(bin_description=factory_name)
+                    clip.add(effect)
+                    if priority is not None and priority < len(model):
+                        clip.set_top_effect_priority(effect, priority)
+                    self._project.timeline.commit()
                 self.__updateAll()
                 break
 
@@ -413,10 +411,9 @@ class EffectProperties(Gtk.Expander, Loggable):
         # The paths are different.
         effects = clip.get_top_effects()
         effect = effects[source_index]
-        self.app.action_log.begin("move effect")
-        clip.set_top_effect_priority(effect, drop_index)
-        self._project.timeline.commit()
-        self.app.action_log.commit()
+        with self.app.action_log.started("move effect"):
+            clip.set_top_effect_priority(effect, drop_index)
+            self._project.timeline.commit()
         self._project.pipeline.flushSeek()
         new_path = Gtk.TreePath.new()
         new_path.append_index(drop_index)
@@ -440,12 +437,11 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         _iter = self.storemodel.get_iter(path)
         tck_effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
-        self.app.action_log.begin("change active state")
-        tck_effect.set_active(not tck_effect.is_active())
-        cellrenderertoggle.set_active(tck_effect.is_active())
-        self._updateTreeview()
-        self._project.timeline.commit()
-        self.app.action_log.commit()
+        with self.app.action_log.started("change active state"):
+            tck_effect.set_active(not tck_effect.is_active())
+            cellrenderertoggle.set_active(tck_effect.is_active())
+            self._updateTreeview()
+            self._project.timeline.commit()
 
     def _expandedCb(self, unused_expander, unused_params):
         self.__updateAll()
@@ -627,9 +623,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         res, cvalue = self.source.get_child_property(prop)
         assert res
         if value != cvalue:
-            self.app.action_log.begin("Transformation property change")
-            self.source.set_child_property(prop, value)
-            self.app.action_log.commit()
+            with self.app.action_log.started("Transformation property change"):
+                self.source.set_child_property(prop, value)
             self._project.pipeline.commit_timeline()
             self.app.gui.viewer.target.overlay_stack.update(self.source)
 

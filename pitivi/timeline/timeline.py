@@ -781,16 +781,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
-            self.app.action_log.begin("add clip")
-            ges_clip = ges_layer.add_asset(asset,
-                                           placement,
-                                           0,
-                                           clip_duration,
-                                           asset.get_supported_formats())
-            placement += clip_duration
-            self.current_group.add(ges_clip.get_toplevel_parent())
-            self.selection.setSelection([], SELECT_ADD)
-            self.app.action_log.commit()
+            with self.app.action_log.started("add clip"):
+                ges_clip = ges_layer.add_asset(asset,
+                                               placement,
+                                               0,
+                                               clip_duration,
+                                               asset.get_supported_formats())
+                placement += clip_duration
+                self.current_group.add(ges_clip.get_toplevel_parent())
+                self.selection.setSelection([], SELECT_ADD)
             self._project.pipeline.commit_timeline()
 
             if not self.draggingElement:
@@ -1255,28 +1254,27 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         initial_position = self.__getInsertPosition(position)
         clip_position = initial_position
 
-        self.app.action_log.begin("add asset")
-        for obj in objs:
-            if isinstance(obj, GES.Clip):
-                obj.set_start(clip_position)
-                layer.add_clip(obj)
-                duration = obj.get_duration()
-            elif isinstance(obj, GES.Asset):
-                if obj.is_image():
-                    duration = self.app.settings.imageClipLength * \
-                        Gst.SECOND / 1000.0
-                else:
+        with self.app.action_log.started("add asset"):
+            for obj in objs:
+                if isinstance(obj, GES.Clip):
+                    obj.set_start(clip_position)
+                    layer.add_clip(obj)
                     duration = obj.get_duration()
+                elif isinstance(obj, GES.Asset):
+                    if obj.is_image():
+                        duration = self.app.settings.imageClipLength * \
+                            Gst.SECOND / 1000.0
+                    else:
+                        duration = obj.get_duration()
 
-                layer.add_asset(obj,
-                                start=clip_position,
-                                inpoint=0,
-                                duration=duration,
-                                track_types=obj.get_supported_formats())
-            else:
-                raise TimelineError("Cannot insert: %s" % type(obj))
-            clip_position += duration
-        self.app.action_log.commit()
+                    layer.add_asset(obj,
+                                    start=clip_position,
+                                    inpoint=0,
+                                    duration=duration,
+                                    track_types=obj.get_supported_formats())
+                else:
+                    raise TimelineError("Cannot insert: %s" % type(obj))
+                clip_position += duration
         self._project.pipeline.commit_timeline()
 
         if zoom_was_fitted:
@@ -1585,16 +1583,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
-            self.app.action_log.begin("delete clip")
+            with self.app.action_log.started("delete clip"):
+                for clip in self.timeline.selection:
+                    layer = clip.get_layer()
+                    if isinstance(clip, GES.TransitionClip):
+                        continue
+                    layer.remove_clip(clip)
 
-            for clip in self.timeline.selection:
-                layer = clip.get_layer()
-                if isinstance(clip, GES.TransitionClip):
-                    continue
-                layer.remove_clip(clip)
-
-            self._project.pipeline.commit_timeline()
-            self.app.action_log.commit()
+                self._project.pipeline.commit_timeline()
 
             self.timeline.selection.setSelection([], SELECT)
 
@@ -1603,18 +1599,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("No ges_timeline set yet!")
             return
 
-        self.app.action_log.begin("ungroup")
+        with self.app.action_log.started("ungroup"):
+            for obj in self.timeline.selection:
+                toplevel = obj.get_toplevel_parent()
+                if toplevel == self.timeline.current_group:
+                    for child in toplevel.get_children(False):
+                        child.ungroup(False)
 
-        for obj in self.timeline.selection:
-            toplevel = obj.get_toplevel_parent()
-            if toplevel == self.timeline.current_group:
-                for child in toplevel.get_children(False):
-                    child.ungroup(False)
+            self.timeline.resetSelectionGroup()
+            self.timeline.selection.setSelection([], SELECT)
 
-        self.timeline.resetSelectionGroup()
-        self.timeline.selection.setSelection([], SELECT)
-
-        self.app.action_log.commit()
         self._project.pipeline.commit_timeline()
 
     def _groupSelected(self, unused_action, unused_parameter):
@@ -1622,28 +1616,27 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("No timeline set yet?")
             return
 
-        self.app.action_log.begin("group")
-        containers = set()
-        new_group = None
-        for obj in self.timeline.selection:
-            toplevel = obj.get_toplevel_parent()
-            if toplevel == self.timeline.current_group:
-                for child in toplevel.get_children(False):
-                    containers.add(child)
-                toplevel.ungroup(False)
-            else:
-                containers.add(toplevel)
+        with self.app.action_log.started("group"):
+            containers = set()
+            new_group = None
+            for obj in self.timeline.selection:
+                toplevel = obj.get_toplevel_parent()
+                if toplevel == self.timeline.current_group:
+                    for child in toplevel.get_children(False):
+                        containers.add(child)
+                    toplevel.ungroup(False)
+                else:
+                    containers.add(toplevel)
 
-        if containers:
-            new_group = GES.Container.group(list(containers))
+            if containers:
+                new_group = GES.Container.group(list(containers))
 
-        self.timeline.resetSelectionGroup()
+            self.timeline.resetSelectionGroup()
 
-        if new_group:
-            self.timeline.current_group.add(new_group)
+            if new_group:
+                self.timeline.current_group.add(new_group)
 
-        self._project.pipeline.commit_timeline()
-        self.app.action_log.commit()
+            self._project.pipeline.commit_timeline()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
         if self.timeline.current_group:
@@ -1686,9 +1679,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
-        self.app.action_log.begin("split clip")
-        self._splitElements(self.timeline.selection.selected)
-        self.app.action_log.commit()
+        with self.app.action_log.started("split clip"):
+            self._splitElements(self.timeline.selection.selected)
 
         self.timeline.hideSnapBar()
         self._project.pipeline.commit_timeline()
