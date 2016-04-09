@@ -1,7 +1,7 @@
 #!/bin/bash
 
 [[ "${BASH_SOURCE[0]}" == "${0}" ]] \
-    && printf "This script should not be executed but sourced lile:\n    $ source $0\n" \
+    && printf "This script should not be executed but sourced like:\n    $ source $0\n" \
     && exit 1
 
 SCRIPTDIR=$(dirname $(realpath $_))
