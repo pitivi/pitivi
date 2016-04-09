@@ -30,12 +30,16 @@ from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):
-    """ Any exception related to the undo/redo feature."""
+    """
+    Base class for undo/redo exceptions.
+    """
     pass
 
 
 class UndoWrongStateError(UndoError):
-    """ Exception related to the current state of the undo/redo stack. """
+    """
+    Exception related to the current state of the undo/redo stack.
+    """
     pass
 
 
@@ -91,6 +95,9 @@ class UndoableActionStack(UndoableAction):
         self.done_actions = []
         self.undone_actions = []
         self.finalizing_action = finalizing_action
+
+    def __repr__(self):
+        return "%s: %s" % (self.action_group_name, self.done_actions)
 
     def push(self, action):
         self.done_actions.append(action)
@@ -238,7 +245,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         Undo the last recorded operation.
         """
         if self.stacks:
-            raise UndoWrongStateError("Recording a transaction")
+            raise UndoWrongStateError("Recording a transaction", self.stacks)
         if not self.undo_stacks:
             raise UndoWrongStateError("Nothing to undo")
 
@@ -252,7 +259,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         Redo the last undone operation.
         """
         if self.stacks:
-            raise UndoWrongStateError("Recording a transaction")
+            raise UndoWrongStateError("Recording a transaction", self.stacks)
         if not self.redo_stacks:
             raise UndoWrongStateError("Nothing to redo")
 
@@ -266,7 +273,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     def checkpoint(self):
         if self.stacks:
-            raise UndoWrongStateError("Recording a transaction")
+            raise UndoWrongStateError("Recording a transaction", self.stacks)
 
         self._checkpoint = self._takeSnapshot()
 
