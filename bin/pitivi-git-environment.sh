@@ -519,9 +519,13 @@ if [ "$ready_to_run" = "1" ]; then
         else
             function generate_path_and_completion_calls {
                 echo "export PATH=$EXTRA_PATH:\$PATH"
-                echo "source $MYPITIVI/gstreamer/data/completions/gst-launch-1.0"
-                echo "source $MYPITIVI/gstreamer/data/completions/gst-inspect-1.0"
-                echo "source $MYPITIVI/gst-editing-services/data/completions/ges-launch-1.0"
+                if [[ -d $MYPITIVI/gstreamer ]]; then
+                    echo "source $MYPITIVI/gstreamer/data/completions/gst-launch-1.0"
+                    echo "source $MYPITIVI/gstreamer/data/completions/gst-inspect-1.0"
+                fi
+                if [[ -d $MYPITIVI/gst-editing-services ]]; then
+                    echo "source $MYPITIVI/gst-editing-services/data/completions/ges-launch-1.0"
+                fi
             }
 
             cd $PITIVI/pitivi
