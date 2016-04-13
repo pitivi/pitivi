@@ -7,20 +7,21 @@ AC_PREREQ(2.52)
 
 dnl Note for packagers: see pitivi/check.py for the dependencies
 
-dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
 AC_INIT(Pitivi, 0.95,
     https://phabricator.freedesktop.org/tag/pitivi/,
     pitivi)
 
+dnl https://www.gnu.org/software/libtool/manual/html_node/LT_005fINIT.html
+LT_PREREQ([2.2.6])
 LT_INIT()
 
-dnl initialize automake
-AM_INIT_AUTOMAKE
+dnl https://www.gnu.org/software/automake/manual/html_node/List-of-Automake-options.html
+dnl "1.6" is the minimum automake version.
+dnl "foreign" because we don't have an INSTALL file.
+AM_INIT_AUTOMAKE([1.6 foreign])
 
-dnl define PACKAGE_VERSION_* variables
-AS_VERSION
 
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([pitivi/application.py])
@@ -28,8 +29,7 @@ AC_CONFIG_SRCDIR([pitivi/application.py])
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
 
-AM_INIT_AUTOMAKE([foreign])
-AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
+AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 AC_CONFIG_MACRO_DIR([m4])
 
 AS_AC_EXPAND(LIBDIR, $libdir)
@@ -134,8 +134,6 @@ dnl output stuff
 AC_OUTPUT(
 Makefile
 bin/Makefile
-common/Makefile
-common/m4/Makefile
 help/Makefile
 pitivi/Makefile
 pitivi/configure.py

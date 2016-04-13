@@ -1,5 +1,10 @@
 @YELP_HELP_RULES@
 
+# Without this, make all fails because it uses itstool which
+# is a Python2 script which can be confused by the PYTHONPATH
+# set by bin/pitivi-git-environment.sh
+PYTHONPATH = ''
+
 HELP_ID = pitivi
 HELP_MEDIA = \
     figures/codecscontainers.jpg\
