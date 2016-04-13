@@ -392,7 +392,7 @@ if [ "$ready_to_run" != "1" ]; then
         # update it anyway.
         if test ! -d $m; then
           if [ "$m" == "gst-transcoder" ]; then
-            git clone https://github.com/thiblahute/gst-transcoder.git
+            git clone https://github.com/pitivi/gst-transcoder.git
           else
             git clone git://anongit.freedesktop.org/gstreamer/$m
           fi
