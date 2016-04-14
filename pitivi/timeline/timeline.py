@@ -932,22 +932,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.ges_timeline.remove_layer(layer.ges_layer)
 
     def __layerPriorityChangedCb(self, ges_layer, pspec):
-        self.__resetLayersByPriority()
+        self.__update_layers()
 
-    def __resetLayersByPriority(self, reset=False):
+    def __update_layers(self, reset=False):
         self._layers.sort(key=lambda layer: layer.ges_layer.props.priority)
         self.debug("Reseting layers priorities")
         for i, layer in enumerate(self._layers):
+            ges_layer = layer.ges_layer
             if reset:
-                layer.ges_layer.props.priority = i
-
-            self.__layers_vbox.child_set_property(layer.get_parent(),
-                                                  "position",
-                                                  layer.ges_layer.props.priority)
-
-            self.__layers_controls_vbox.child_set_property(layer.ges_layer.control_ui,
-                                                           "position",
-                                                           layer.ges_layer.props.priority)
+                ges_layer.props.priority = i
+            self.__update_layer(ges_layer)
 
     def _removeLayer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
@@ -960,7 +954,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         ges_layer.ui = None
         ges_layer.control_ui = None
 
-        self.__resetLayersByPriority(True)
+        self.__update_layers(True)
 
     def _layerRemovedCb(self, unused_ges_timeline, ges_layer):
         self._removeLayer(ges_layer)
@@ -1112,23 +1106,24 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
                 if ges_layer.get_priority() >= priority:
                     ges_layer.props.priority += 1
-                    self.__layers_vbox.child_set_property(ges_layer.ui.get_parent(),
-                                                          "position",
-                                                          ges_layer.props.priority)
+                    self.__update_layer(ges_layer)
 
-                    self.__layers_controls_vbox.child_set_property(ges_layer.control_ui,
-                                                                   "position",
-                                                                   ges_layer.props.priority)
-
-        self.__layers_vbox.child_set_property(new_ges_layer.ui.get_parent(),
-                                              "position",
-                                              new_ges_layer.props.priority)
-
-        self.__layers_controls_vbox.child_set_property(new_ges_layer.control_ui,
-                                                       "position",
-                                                       new_ges_layer.props.priority)
+        self.__update_layer(new_ges_layer)
 
         return new_ges_layer
+
+    def __update_layer(self, ges_layer):
+        """
+        Update the position child prop of the layer and layer control widgets.
+        """
+        priority = ges_layer.props.priority
+
+        layer_box = ges_layer.ui.get_parent()
+        self.__layers_vbox.child_set_property(layer_box, "position", priority)
+
+        self.__layers_controls_vbox.child_set_property(ges_layer.control_ui,
+                                                       "position",
+                                                       priority)
 
     def __getDroppedLayer(self):
         """
