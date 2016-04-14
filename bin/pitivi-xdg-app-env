@@ -1,10 +1,13 @@
 #!/bin/bash
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] \
+# This has to be the first command because BASH_SOURCE[0] gets changed.
+SCRIPT=${BASH_SOURCE[0]:-$0}
+
+[[ "${BASH_SOURCE[0]}" == "$0" ]] \
     && printf "This script should not be executed but sourced like:\n    $ source $0\n" \
     && exit 1
 
-SCRIPTDIR=$(dirname $(realpath $_))
+SCRIPTDIR=$(dirname $(realpath $SCRIPT))
 export XDGAPP_ENVPATH=$(realpath $SCRIPTDIR/../../)
 export CURRENT_GST=$XDGAPP_ENVPATH
 export MYPITIVI=$XDGAPP_ENVPATH
