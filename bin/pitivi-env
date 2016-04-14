@@ -40,4 +40,11 @@ then
 
     export PS1="(ptv-xdgapp) $PS1"
     export PATH="$XDGAPP_ENVPATH/bin/:$PATH"
+
+    echo "===================================================================="
+    echo "                   BATTLECRUISER OPERATIONAL                        "
+    echo "                          >(°)__/                                   "
+    echo "                           (_~_/                                    "
+    echo "                         ~~~~~~~~~~~~                               "
+    echo "===================================================================="
 fi
