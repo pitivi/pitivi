@@ -54,13 +54,17 @@ class OverlayStack(Gtk.Overlay):
         for overlay in self.__overlays.values():
             overlay.update_from_source()
 
-    def __create_overlay_for_source(self, source):
+    def __overlay_for_source(self, source):
+        if source in self.__overlays:
+            return self.__overlays[source]
+
         if type(source) == GES.TitleSource:
             overlay = TitleOverlay(self, source)
         else:
             overlay = MoveScaleOverlay(self, self.app.action_log, source)
         self.add_overlay(overlay)
         self.__overlays[source] = overlay
+        return overlay
 
     def do_event(self, event):
         if event.type == Gdk.EventType.BUTTON_RELEASE:
@@ -115,23 +119,20 @@ class OverlayStack(Gtk.Overlay):
         self.__visible_overlays = []
         # check if source has instanced viewer
         for source in sources:
-            if source not in self.__overlays.keys():
-                self.__create_overlay_for_source(source)
-            self.__visible_overlays.append(self.__overlays[source])
+            overlay = self.__overlay_for_source(source)
+            self.__visible_overlays.append(overlay)
         # check if viewer should be visible
-        for source in self.__overlays.keys():
+        for source, overlay in self.__overlays.items():
             if source in sources:
-                self.__overlays[source].show()
+                overlay.show()
             else:
-                self.__overlays[source].hide()
+                overlay.hide()
 
     def update(self, source):
         self.__overlays[source].update_from_source()
 
     def select(self, source):
-        if source not in self.__overlays.keys():
-            self.__create_overlay_for_source(source)
-        self.selected_overlay = self.__overlays[source]
+        self.selected_overlay = self.__overlay_for_source(source)
         self.selected_overlay.queue_draw()
 
     def set_cursor(self, name):
