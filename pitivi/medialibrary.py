@@ -1341,7 +1341,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _treeViewButtonReleaseEventCb(self, treeview, event):
         selection = self.treeview.get_selection()
-        state = selection() & (
+        state = event.get_state() & (
             Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
         path = self.treeview.get_path_at_pos(event.x, event.y)
 
