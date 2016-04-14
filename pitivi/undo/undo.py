@@ -196,7 +196,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         try:
             stack = self._get_last_stack()
         except UndoWrongStateError as e:
-            self.debug("Ignore push because %s", e)
+            self.warning("Ignore push because: %s", e)
             return
         stack.push(action)
         self.debug("push action %s in action group %s",
