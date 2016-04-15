@@ -34,7 +34,7 @@ RUNTIME_NAME=org.gnome.Platform
 # The name of the Sdk to build the bundle against
 SDK_NAME=org.gnome.Sdk
 # The version of the Sdk to build the bundle against
-SDK_VERSION=3.18
+SDK_VERSION=3.20
 # The URL of the Sdk remote repository
 SDK_REPO=http://sdk.gnome.org/repo/
 # The name to give to the repository if it is not registered in xdg-app yet
@@ -145,12 +145,11 @@ You can find some informations about how to install it for your distribution at:
   exit 1
 fi
 
-LOCAL=${LANG:0:2}
 SDK_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
-SDK_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME.Locale.$LOCAL/.*/$SDK_VERSION"`
+SDK_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
 
 RUNTIME_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
-RUNTIME_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME.Locale.$LOCAL/.*/$SDK_VERSION"`
+RUNTIME_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME.Locale/.*/$SDK_VERSION"`
 APP_INSTALLED=`xdg-app list-apps -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
 
 if [ -n "$BUNDLE" ]
@@ -201,10 +200,10 @@ then
     $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
-  if [ -n "$LOCAL" ] && [ -z "$SDK_LOCAL_INSTALLED" ]
+  if [ -z "$SDK_LOCAL_INSTALLED" ]
   then
-    echo "-> Installing $SDK_NAME.Locale.$LOCAL"
-    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+    echo "-> Installing $SDK_NAME.Locale"
+    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -215,10 +214,10 @@ then
   $XDG_APP_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
   $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
 fi
-if [ -n "$LOCAL" ] && [ -z "$RUNTIME_LOCAL_INSTALLED" ]
+if [ -z "$RUNTIME_LOCAL_INSTALLED" ]
 then
-  echo "-> Installing $RUNTIME_NAME.Locale.$LOCAL"
-  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
+  echo "-> Installing $RUNTIME_NAME.Locale"
+  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 fi
 
 # Update runtimes if needed
@@ -228,22 +227,16 @@ then
 
   $XDG_APP_UPDATE $RUNTIME_NAME $SDK_VERSION || exit 1
 
-  if [ -n "$LOCAL" ]
-  then
-    echo "-> Updating $RUNTIME_NAME.Locale.$LOCAL"
-    $XDG_APP_UPDATE $RUNTIME_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
-  fi
+  echo "-> Updating $RUNTIME_NAME.Locale"
+  $XDG_APP_UPDATE $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 
   if [ -n "$DEVEL" ]
   then
     echo "-> Updating $SDK_NAME $SDK_VERSION"
     $XDG_APP_UPDATE $SDK_NAME $SDK_VERSION || exit 1
 
-    if [ -n "$LOCAL" ]
-    then
-      echo "-> Updating $SDK_NAME.Locale.$LOCAL $SDK_VERSION"
-      $XDG_APP_UPDATE $SDK_NAME.Locale.$LOCAL $SDK_VERSION || exit 1
-    fi
+    echo "-> Updating $SDK_NAME.Locale $SDK_VERSION"
+    $XDG_APP_UPDATE $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -346,7 +339,7 @@ then
     echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
     cd $SCRIPTDIR
     echo "Building with: xdg-app-builder $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
-    xdg-app-builder $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
+    xdg-app-builder --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
     if [ -z $BUNDLE ]
     then
@@ -365,6 +358,7 @@ then
       --env=GST_VALIDATE=$GST_VALIDATE \
       --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
       --env=PITIVI_DEBUG=$PITIVI_DEBUG \
+      --env=PITIVI_DEVELOPMENT=1 \
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
       $PREFIX $SCRIPTDIR/enter_env $*
     printf "\n\nYou can now exit that terminal."

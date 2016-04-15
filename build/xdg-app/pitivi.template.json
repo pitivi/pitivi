@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "version": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.18",
+    "runtime-version": "3.20",
     "finish-args": ["--command=pitivi",
                     "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",
@@ -14,13 +14,14 @@
     "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
     "desktop-file-name-prefix": "(Daily) ",
-    "strip": false,
     "build-options" : {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
+        "cflags": "-O0 -g",
+        "cxxflags": "-O0 -g",
         "env": {
           "PYTHON": "python3"
-        }
+        },
+        "strip": false,
+        "no-debuginfo": true
     },
     "modules": [
         {
@@ -61,30 +62,30 @@
         },
         {
             "name": "numpy",
+            "build-options" : {
+              "build-args": ["--share=network"],
+              "cflags": "-O0 -g  -L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.4m/",
+              "env": {"ARCHFLAGS": "-arch x86_64"}
+            },
+            "config-opts": ["--module=numpy==1.10.1"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/source/n/numpy/numpy-1.10.1.tar.gz",
-                    "sha256": "8b9f453f29ce96a14e625100d3dcf8926301d36c5f622623bf8820e748510858"
-                },
-                {
                     "type": "file",
-                    "path": "numpy-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
         },
         {
             "name": "setuptools",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
+            "config-opts": ["--module=setuptools==19.7"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/source/s/setuptools/setuptools-19.7.tar.gz",
-                    "sha256": "9e0783f3e6b736530a84980dce99fb0f01dafcd31b3f600cde2aa446f6f77cc0"
-                },
-                {
                     "type": "file",
-                    "path": "setuptools-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
@@ -94,10 +95,11 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=ipdb==0.8.1"],
             "sources": [
                 {
                     "type": "file",
-                    "path": "ipdb-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
@@ -107,10 +109,11 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=pre-commit==0.8.0"],
             "sources": [
                 {
                     "type": "file",
-                    "path": "pre-commit-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
@@ -120,33 +123,25 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=matplotlib==1.5.1"],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/source/m/matplotlib/matplotlib-1.5.0.tar.gz",
-                    "sha256": "67b08b1650a00a6317d94b76a30a47320087e5244920604c5462188cba0c2646"
-                },
-                {
                     "type": "file",
-                    "path": "matplotlib-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
         },
         {
             "name": "nose",
+            "config-opts": ["--module=nose==1.3.7"],
             "build-options" : {
               "build-args": ["--share=network"]
             },
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/source/n/nose/nose-1.3.7.tar.gz",
-                    "sha256": "f1bffef9cbc82628f6e7d7b40d7e255aefaa1adb6a1b1d26c69a8b79e6208a98"
-                },
-                {
                     "type": "file",
-                    "path": "nose-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]
@@ -156,12 +151,8 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=pep8==1.6.2"],
             "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/source/p/pep8/pep8-1.6.2.tar.gz",
-                    "sha256": "b8b7e35630b5539e26a197dfc6005be9e1e9a135496b377723a8ebc01b9bcbff"
-                },
                 {
                     "type": "file",
                     "path": "py-configure",
@@ -288,10 +279,11 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=meson==0.29"],
             "sources": [
                 {
                     "type": "file",
-                    "path": "meson-configure",
+                    "path": "py-configure",
                     "dest-filename": "configure"
                 }
             ]

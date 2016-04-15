@@ -1,13 +1,26 @@
 #!/bin/sh
 
-FLAGS="$@"
+for i in "$@"
+do
+  case $i in
+    --module=*)
+    MODULENAME="${i#*=}"
+    shift
+    ;;
+    *)
+    ARGS="$ARGS $i"
+    shift
+    ;;
+  esac
+done
+
 
 cat <<EOF > Makefile
 all:
 	echo "Nothing"
 
 install:
-	python3 ./setup.py install --prefix=/app
+	CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ pip3 install --user $MODULENAME
 
 
 EOF
