@@ -29,9 +29,9 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from pitivi.timeline import elements
-from pitivi.utils import timeline as timelineUtils
 from pitivi.utils import ui
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import Zoomable
 
 
 class TwoStateButton(Gtk.Button):
@@ -334,15 +334,15 @@ class LayerLayout(Gtk.Layout, Loggable):
             self._changed = False
 
         self.props.width = max(self.timeline.layout.get_allocation().width,
-                               timelineUtils.Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
+                               Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
         self.props.width_request = max(self.timeline.layout.get_allocation().width,
-                                       timelineUtils.Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
+                                       Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
 
         for child in self._children:
             self.propagate_draw(child, cr)
 
 
-class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
+class Layer(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviLayer"
 
@@ -352,6 +352,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
     def __init__(self, ges_layer, timeline):
         Gtk.EventBox.__init__(self)
+        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.ges_layer = ges_layer
