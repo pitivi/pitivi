@@ -246,6 +246,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.props.can_focus = True
         self.layout.props.can_default = True
         self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.__layers_vbox.get_style_context().add_class("LayersBox")
         self.__layers_vbox.props.width_request = self.get_allocated_width()
         self.__layers_vbox.props.height_request = self.get_allocated_height()
         self.layout.put(self.__layers_vbox, 0, 0)
@@ -919,12 +920,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Check the media types so the controls are set up properly.
         layer.checkMediaTypes()
 
-        layer_widget = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        layer_widget.pack_start(layer.before_sep, False, False, 0)
-        layer_widget.pack_start(layer, True, True, 0)
-        layer_widget.pack_start(layer.after_sep, False, False, 0)
-        layer_widget.show_all()
-        self.__layers_vbox.pack_start(layer_widget, True, True, 0)
+        layer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        layer_box.get_style_context().add_class("LayerBox")
+        layer_box.pack_start(layer.before_sep, False, False, 0)
+        layer_box.pack_start(layer, True, True, 0)
+        layer_box.pack_start(layer.after_sep, False, False, 0)
+        layer_box.show_all()
+        self.__layers_vbox.pack_start(layer_box, True, True, 0)
 
         ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
 

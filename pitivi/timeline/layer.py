@@ -497,6 +497,3 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         for ges_clip in self.ges_layer.get_clips():
             if hasattr(ges_clip, "ui"):
                 ges_clip.ui.updatePosition()
-
-    def do_draw(self, cr):
-        Gtk.Box.do_draw(self, cr)
