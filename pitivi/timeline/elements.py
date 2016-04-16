@@ -373,7 +373,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
     }
 
     def __init__(self, element, timeline):
-        super(TimelineElement, self).__init__()
+        Gtk.Layout.__init__(self)
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -580,7 +580,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 class VideoBackground(Gtk.Box):
 
     def __init__(self):
-        super(VideoBackground, self).__init__(self)
+        Gtk.Box.__init__(self)
         self.get_style_context().add_class("VideoBackground")
 
 
@@ -607,7 +607,7 @@ class VideoUriSource(VideoSource):
     __gtype_name__ = "PitiviUriVideoSource"
 
     def __init__(self, element, timeline):
-        super(VideoUriSource, self).__init__(element, timeline)
+        VideoSource.__init__(self, element, timeline)
         self.get_style_context().add_class("VideoUriSource")
 
     def _getPreviewer(self):
@@ -625,7 +625,7 @@ class VideoUriSource(VideoSource):
 class AudioBackground(Gtk.Box):
 
     def __init__(self):
-        super(AudioBackground, self).__init__(self)
+        Gtk.Box.__init__(self)
         self.get_style_context().add_class("AudioBackground")
 
 
@@ -634,7 +634,7 @@ class AudioUriSource(TimelineElement):
     __gtype_name__ = "PitiviAudioUriSource"
 
     def __init__(self, element, timeline):
-        super(AudioUriSource, self).__init__(element, timeline)
+        TimelineElement.__init__(self, element, timeline)
         self.get_style_context().add_class("AudioUriSource")
 
     def _getPreviewer(self):
@@ -705,7 +705,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     __gtype_name__ = "PitiviClip"
 
     def __init__(self, layer, ges_clip):
-        super(Clip, self).__init__()
+        Gtk.EventBox.__init__(self)
         timelineUtils.Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -991,7 +991,7 @@ class SourceClip(Clip):
     __gtype_name__ = "PitiviSourceClip"
 
     def __init__(self, layer, ges_clip):
-        super(SourceClip, self).__init__(layer, ges_clip)
+        Clip.__init__(self, layer, ges_clip)
 
     def _setupWidget(self):
         self._addTrimHandles()
@@ -1008,7 +1008,7 @@ class UriClip(SourceClip):
     __gtype_name__ = "PitiviUriClip"
 
     def __init__(self, layer, ges_clip):
-        super(UriClip, self).__init__(layer, ges_clip)
+        SourceClip.__init__(self, layer, ges_clip)
         self.props.has_tooltip = True
 
         self.set_tooltip_markup(misc.filename_from_uri(ges_clip.get_uri()))
@@ -1020,7 +1020,7 @@ class UriClip(SourceClip):
         return True
 
     def _childAdded(self, clip, child):
-        super(UriClip, self)._childAdded(clip, child)
+        SourceClip._childAdded(self, clip, child)
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.AUDIO:
@@ -1039,7 +1039,7 @@ class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
     def _childAdded(self, clip, child):
-        super(TitleClip, self)._childAdded(clip, child)
+        SourceClip._childAdded(self, clip, child)
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.VIDEO:
@@ -1056,7 +1056,7 @@ class TransitionClip(Clip):
     def __init__(self, layer, ges_clip):
         self.__has_video = False
 
-        super(TransitionClip, self).__init__(layer, ges_clip)
+        Clip.__init__(self, layer, ges_clip)
 
         if self.__has_video:
             self.z_order = 1
@@ -1080,7 +1080,7 @@ class TransitionClip(Clip):
         return True
 
     def _childAdded(self, clip, child):
-        super(TransitionClip, self)._childAdded(clip, child)
+        Clip._childAdded(self, clip, child)
 
         if isinstance(child, GES.VideoTransition):
             self.z_order = 1

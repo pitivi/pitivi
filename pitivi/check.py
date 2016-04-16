@@ -121,9 +121,10 @@ class Dependency(object):
 
 
 class GIDependency(Dependency):
+
     def __init__(self, modulename, apiversion, version_required_string=None, additional_message=None):
         self.__api_version = apiversion
-        super(GIDependency, self).__init__(modulename, version_required_string, additional_message)
+        Dependency.__init__(self, modulename, version_required_string, additional_message)
 
     def _try_importing_component(self):
         try:

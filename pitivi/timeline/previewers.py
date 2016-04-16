@@ -354,7 +354,7 @@ class Previewer(Gtk.Layout):
         """
         @param track_type : GES.TrackType.*
         """
-        super(Previewer, self).__init__()
+        Gtk.Layout.__init__(self)
 
         self.track_type = track_type
 
@@ -751,7 +751,7 @@ class Thumbnail(Gtk.Image):
     Simple widget representing a Thumbnail
     """
     def __init__(self, width, height):
-        super(Thumbnail, self).__init__()
+        Gtk.Image.__init__(self)
         self.width = width
         self.height = height
         self.props.width_request = self.width

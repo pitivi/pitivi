@@ -108,7 +108,7 @@ class VerticalBar(Gtk.DrawingArea, Loggable):
     __gtype_name__ = "PitiviVerticalBar"
 
     def __init__(self, css_class):
-        super(VerticalBar, self).__init__()
+        Gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
         self.get_style_context().add_class(css_class)
 
@@ -135,7 +135,7 @@ class Marquee(Gtk.Box, Loggable):
         @timeline: The #Timeline on which the marquee will
                    be used
         """
-        super(Marquee, self).__init__()
+        Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
         self._timeline = timeline

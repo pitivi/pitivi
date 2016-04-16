@@ -290,7 +290,7 @@ class LayerLayout(Gtk.Layout, Loggable):
     __gtype_name__ = "PitiviLayerLayout"
 
     def __init__(self, timeline):
-        super(LayerLayout, self).__init__()
+        Gtk.Layout.__init__(self)
         Loggable.__init__(self)
 
         self._children = []
@@ -351,7 +351,7 @@ class Layer(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
     }
 
     def __init__(self, ges_layer, timeline):
-        super(Layer, self).__init__()
+        Gtk.EventBox.__init__(self)
         Loggable.__init__(self)
 
         self.ges_layer = ges_layer

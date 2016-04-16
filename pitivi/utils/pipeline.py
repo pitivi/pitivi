@@ -642,7 +642,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self._timeline.commit()
             self._commit_wanted = False
         else:
-            super(Pipeline, self)._busMessageCb(bus, message)
+            SimplePipeline._busMessageCb(self, bus, message)
 
     def commit_timeline(self):
         if self._waiting_for_async_done and not self._was_empty\
@@ -660,7 +660,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 self._was_empty = False
 
     def setState(self, state):
-        super(Pipeline, self).setState(state)
+        SimplePipeline.setState(self, state)
         if state >= Gst.State.PAUSED and self._timeline.is_empty():
             self.debug("No ASYNC_DONE will be emited on empty timelines")
             self._was_empty = True
