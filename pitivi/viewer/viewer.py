@@ -137,8 +137,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.pause()
 
     def __createNewViewer(self):
-        self.sink = self.pipeline.createSink()
-        self.pipeline.setSink(self.sink)
+        self.pipeline.setSink(self.pipeline.createSink())
 
         self.target = ViewerWidget(self.pipeline, self.app)
 
@@ -490,8 +489,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     @type _pipeline: L{pitivi.utils.pipeline.SimplePipeline}
     """
 
-    __gsignals__ = {}
-
     def __init__(self, pipeline, app=None):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
@@ -518,11 +515,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
     def setDisplayAspectRatio(self, ratio):
         self.set_property("ratio", float(ratio))
-
-    def _sizeCb(self, unused_widget, unused_area):
-        # The transformation box is cleared when using regular rendering
-        # so we need to flush the pipeline
-        self._pipeline.flushSeek()
 
     def do_get_preferred_width(self):
         # Do not let a chance for Gtk to choose video natural size
