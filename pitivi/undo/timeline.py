@@ -281,10 +281,10 @@ class KeyframeChangeTracker(GObject.Object):
     def _keyframeAddedCb(self, control_source, keyframe):
         self.keyframes[keyframe.timestamp] = self._getKeyframeSnapshot(keyframe)
 
-    def _keyframeRemovedCb(self, control_source, keyframe, old_value=None):
-        pass  # FIXME: this has not been implemented
+    def _keyframeRemovedCb(self, control_source, keyframe):
+        del self.keyframes[keyframe.timestamp]
 
-    def _keyframeMovedCb(self, control_source, keyframe, old_value=None):
+    def _keyframeMovedCb(self, control_source, keyframe):
         old_snapshot = self.keyframes[keyframe.timestamp]
         new_snapshot = self._getKeyframeSnapshot(keyframe)
         self.keyframes[keyframe.timestamp] = new_snapshot
@@ -502,25 +502,23 @@ class ControlSourceValueRemoved(UndoableAction):
 
 class ControlSourceKeyframeChanged(UndoableAction):
 
-    def __init__(self, track_element, keyframe, old_snapshot, new_snapshot):
+    def __init__(self, control_source, old_snapshot, new_snapshot):
         UndoableAction.__init__(self)
-        self.track_element = track_element
-        self.keyframe = keyframe
+        self.control_source = control_source
         self.old_snapshot = old_snapshot
         self.new_snapshot = new_snapshot
 
     def do(self):
-        self._setSnapshot(self.new_snapshot)
+        self._applySnapshot(self.new_snapshot)
         self._done()
 
     def undo(self):
-        self._setSnapshot(self.old_snapshot)
+        self._applySnapshot(self.old_snapshot)
         self._undone()
 
-    def _setSnapshot(self, snapshot):
+    def _applySnapshot(self, snapshot):
         time, value = snapshot
-        self.keyframe.setTime(time)
-        self.keyframe.setValue(value)
+        self.control_source.set(time, value)
 
 
 class ActivePropertyChanged(UndoableAction):
@@ -742,9 +740,9 @@ class TimelineObserver(Loggable):
         action = self.activePropertyChangedAction(add_effect_action, active)
         self.action_log.push(action)
 
-    def _controlSourceKeyFrameMovedCb(self, tracker, track_element,
+    def _controlSourceKeyFrameMovedCb(self, tracker, control_source,
                                       keyframe, old_snapshot, new_snapshot):
-        action = ControlSourceKeyframeChanged(track_element, keyframe,
+        action = ControlSourceKeyframeChanged(control_source,
                                               old_snapshot, new_snapshot)
         self.action_log.push(action)
 
