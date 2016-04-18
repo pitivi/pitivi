@@ -181,6 +181,14 @@ TIMELINE_CSS = """
 # ---------------------- ARGB color helper-------------------------------------#
 
 
+def gtk_style_context_get_color(context, state):
+    context.save()
+    context.set_state(state)
+    color = context.get_color(context.get_state())
+    context.restore()
+    return color
+
+
 def argb_to_gdk_rgba(color_int):
     return Gdk.RGBA(color_int / 256 ** 2 % 256 / 255.,
                     color_int / 256 ** 1 % 256 / 255.,

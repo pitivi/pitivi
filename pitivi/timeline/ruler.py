@@ -33,6 +33,7 @@ from pitivi import configure
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import gtk_style_context_get_color
 from pitivi.utils.ui import NORMAL_FONT
 from pitivi.utils.ui import PLAYHEAD_WIDTH
 from pitivi.utils.ui import set_cairo_color
@@ -161,10 +162,10 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # Create a new buffer
         self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 
-        style = self.app.gui.get_style_context()
-        color_normal = style.get_color(Gtk.StateFlags.NORMAL)
-        color_insensitive = style.get_color(Gtk.StateFlags.BACKDROP)
+        context = self.app.gui.get_style_context()
 
+        color_normal = gtk_style_context_get_color(context, Gtk.StateFlags.NORMAL)
+        color_insensitive = gtk_style_context_get_color(context, Gtk.StateFlags.BACKDROP)
         self._color_normal = color_normal
         self._color_dimmed = Gdk.RGBA(
             *[(x * 3 + y * 2) / 5
@@ -173,7 +174,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                            (color_normal.blue, color_insensitive.blue))])
 
         # Two colors with high contrast.
-        self._color_frame = style.get_color(Gtk.StateFlags.LINK)
+        self._color_frame = gtk_style_context_get_color(context, Gtk.StateFlags.LINK)
 
         return False
 
