@@ -151,6 +151,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__hovered = False
 
+        # Whether a keyframe has just been removed.
+        self.__keyframe_removed = False
+
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
         self.connect("event", self._eventCb)
         self.connect("notify::height-request", self.__heightRequestCb)
@@ -245,6 +248,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
                     # It's an edge keyframe. These should not be removed.
                     return
                 # A keyframe has been double-clicked, remove it.
+                self.debug("Removing keyframe at timestamp %lf", offset)
+                self.__keyframe_removed = True
                 self.__source.unset(offset)
             else:
                 # Remember the clicked frame for drag&drop.
@@ -322,7 +327,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__dragged = False
         else:
             assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
-            self.__maybeCreateKeyframe(event)
+            if not self.__keyframe_removed:
+                self.__maybeCreateKeyframe(event)
+            else:
+                self.__keyframe_removed = False
+
 
     def __setTooltip(self, event):
         if event.xdata:
