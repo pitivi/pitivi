@@ -35,6 +35,7 @@ from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import gtk_style_context_get_color
 from pitivi.utils.ui import NORMAL_FONT
+from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
 from pitivi.utils.ui import set_cairo_color
 from pitivi.utils.ui import time_to_string
@@ -386,7 +387,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
         context.set_line_width(PLAYHEAD_WIDTH)
-        set_cairo_color(context, (255, 0, 0))
+        set_cairo_color(context, PLAYHEAD_COLOR)
         context.move_to(xpos, height / 2)
         context.line_to(xpos, height)
         context.stroke()

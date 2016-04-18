@@ -53,8 +53,11 @@ from pitivi.utils.ui import CONTROL_WIDTH
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import EXPANDED_SIZE
 from pitivi.utils.ui import LAYER_HEIGHT
+from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
+from pitivi.utils.ui import set_cairo_color
 from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import SNAPBAR_COLOR
 from pitivi.utils.ui import SNAPBAR_WIDTH
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import unset_children_state_recurse
@@ -99,24 +102,6 @@ PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
                                       label=_("Left click also seeks"),
                                       description=_(
                                           "Whether left-clicking also seeks besides selecting and editing clips."))
-
-
-class VerticalBar(Gtk.DrawingArea, Loggable):
-    """
-    A simple vertical bar to be drawn on top of the timeline
-    """
-    __gtype_name__ = "PitiviVerticalBar"
-
-    def __init__(self, css_class):
-        Gtk.DrawingArea.__init__(self)
-        Loggable.__init__(self)
-        self.get_style_context().add_class(css_class)
-
-    def do_get_preferred_width(self):
-        return PLAYHEAD_WIDTH, PLAYHEAD_WIDTH
-
-    def do_get_preferred_height(self):
-        return self.get_parent().get_allocated_height(), self.get_parent().get_allocated_height()
 
 
 class Marquee(Gtk.Box, Loggable):
@@ -281,15 +266,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__moving_layer = None
 
         self.__last_position = 0
-        self.__playhead = VerticalBar("PlayHead")
-        self.layout.put(self.__playhead, self.nsToPixel(self.__last_position), 0)
         self._scrubbing = False
         self._scrolling = False
 
         self.__snap_position = 0
-        self.__snap_bar = VerticalBar("SnapBar")
-        self.__snap_bar.props.no_show_all = True
-        self.layout.put(self.__snap_bar, 0, 0)
 
         # Clip selection.
         self.selection = Selection()
@@ -436,27 +416,23 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__last_position = position
         layout_width = self.layout.get_allocation().width
         x = max(0, self.nsToPixel(self.__last_position))
-        self.layout.move(self.__playhead, x, 0)
         if pipeline.playing() and x - self.hadj.get_value() > layout_width - 100:
             self.scrollToPlayhead(Gtk.Align.START)
         if not pipeline.playing():
             self.update_visible_overlays()
+        self.queue_draw()
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
         """
         Display or hide a snapping indicator line
         """
-        self.layout.move(self.__snap_bar, self.nsToPixel(position), 0)
-        self.__snap_bar.show()
-        self.__snap_position = position
-
-    def hideSnapBar(self):
-        self.__snap_position = 0
-        self.__snap_bar.hide()
+        self.__snap_position = self.nsToPixel(position)
+        self.queue_draw()
 
     def _snapEndedCb(self, *unused_args):
-        self.hideSnapBar()
+        self.__snap_position = 0
+        self.queue_draw()
 
     # Gtk.Widget virtual methods implementation
     def do_get_preferred_height(self):
@@ -478,28 +454,37 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         Gtk.EventBox.do_size_allocate(self, request)
 
     def do_draw(self, cr):
-        self.__setLayoutSize()
         Gtk.EventBox.do_draw(self, cr)
 
-        self.__drawSnapIndicator(cr)
-        self.__drawPlayHead(cr)
+        self.__draw_playhead(cr)
+        self.__draw_snap_indicator(cr)
 
-        self.layout.propagate_draw(self.__marquee, cr)
+    def __draw_vertical_bar(self, cr, xpos, width, color):
+        hadj_position = self.hadj.get_value()
+        layer_controls_width = self.__layers_controls_vbox.get_allocated_width()
+        xpos = xpos + layer_controls_width - hadj_position
+        if xpos < layer_controls_width:
+            return
 
-    def __drawSnapIndicator(self, cr):
-        if self.__snap_position > 0:
-            self.__snap_bar.props.height_request = self.layout.props.height
-            self.__snap_bar.props.width_request = SNAPBAR_WIDTH
+        height = self.get_allocated_height()
+        cr.set_line_width(width)
+        cr.move_to(xpos, 0)
+        set_cairo_color(cr, color)
+        cr.line_to(xpos, height)
+        cr.stroke()
 
-            self.layout.propagate_draw(self.__snap_bar, cr)
-        else:
-            self.__snap_bar.hide()
+    def __draw_snap_indicator(self, cr):
+        if self.__snap_position <= 0:
+            return
 
-    def __drawPlayHead(self, cr):
-        self.__playhead.props.height_request = self.layout.props.height
-        self.__playhead.props.width_request = PLAYHEAD_WIDTH
+        self.__draw_vertical_bar(cr, self.__snap_position, SNAPBAR_WIDTH,
+                                 SNAPBAR_COLOR)
 
-        self.layout.propagate_draw(self.__playhead, cr)
+    def __draw_playhead(self, cr):
+        position = max(0, self.nsToPixel(self.__last_position))
+
+        self.__draw_vertical_bar(cr, position + 0.5, PLAYHEAD_WIDTH,
+                                 PLAYHEAD_COLOR)
 
     # ------------- #
     # util methods  #
@@ -964,7 +949,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def zoomChanged(self):
         self.updatePosition()
         x = max(0, self.nsToPixel(self.__last_position))
-        self.layout.move(self.__playhead, x, 0)
         self.queue_draw()
 
     def __getEditingMode(self):
@@ -1152,7 +1136,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__clickedHandle = None
         self.__got_dragged = False
         self.editing_context = None
-        self.hideSnapBar()
+        self.queue_draw()
 
         for layer in self.ges_timeline.get_layers():
             layer.ui.checkMediaTypes()
@@ -1682,7 +1666,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         with self.app.action_log.started("split clip"):
             self._splitElements(self.timeline.selection.selected)
 
-        self.timeline.hideSnapBar()
         self._project.pipeline.commit_timeline()
 
     def _splitElements(self, clips=None):

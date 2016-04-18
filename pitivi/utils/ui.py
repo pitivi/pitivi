@@ -61,7 +61,9 @@ PADDING = 6
 SPACING = 10
 
 PLAYHEAD_WIDTH = 1
+PLAYHEAD_COLOR = (255, 0, 0)
 SNAPBAR_WIDTH = 5
+SNAPBAR_COLOR = (127, 153, 204)
 CANVAS_SPACING = 21
 KEYFRAME_SIZE = 8
 LAYER_HEIGHT = 130
@@ -136,16 +138,8 @@ TIMELINE_CSS = """
          background-image: url('%(trimbar_focused)s');
     }
 
-    .PlayHead {
-        background-color: red;
-    }
-
     .Clip {
     /* TODO */
-    }
-
-    .SnapBar {
-        background-color: rgb(127, 153, 204);
     }
 
     .TransitionClip {
