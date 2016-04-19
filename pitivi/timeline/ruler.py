@@ -20,16 +20,13 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-import os
 from gettext import gettext as _
 
 import cairo
 from gi.repository import Gdk
-from gi.repository import GdkPixbuf
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi import configure
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
@@ -123,9 +120,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.position = 0  # In nanoseconds
         self.frame_rate = Gst.Fraction(1 / 1)
         self.ns_per_frame = float(1 / self.frame_rate) * Gst.SECOND
-
-        self.playhead_pixbuf = GdkPixbuf.Pixbuf.new_from_file(
-            os.path.join(configure.get_pixmap_dir(), "pitivi-playhead.svg"))
 
         self.scales = SCALES
 
@@ -382,20 +376,32 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             frame_num += 1
 
     def drawPosition(self, context):
+        """
+        Draw the top part of the playhead.
+
+        This should be in sync with the playhead drawn by the timeline.
+        See Timeline.__draw_playhead().
+        """
         height = self.pixbuf.get_height()
+
+        semi_width = 4
+        semi_height = int(semi_width * 1.61803)
+        y = int(3 * height / 4)
+
         # Add 0.5 so that the line center is at the middle of the pixel,
         # without this the line appears blurry.
         xpos = self.nsToPixel(self.position) - self.pixbuf_offset + 0.5
-        context.set_line_width(PLAYHEAD_WIDTH)
         set_cairo_color(context, PLAYHEAD_COLOR)
-        context.move_to(xpos, height / 2)
+
+        context.set_line_width(PLAYHEAD_WIDTH)
+        context.move_to(xpos, y)
         context.line_to(xpos, height)
         context.stroke()
 
-        playhead_width = self.playhead_pixbuf.props.width
-        playhead_height = self.playhead_pixbuf.props.height
-        xpos -= playhead_width / 2
-        ypos = (height - playhead_height) / 2
-        Gdk.cairo_set_source_pixbuf(context, self.playhead_pixbuf, xpos, ypos)
-        context.rectangle(xpos, ypos, playhead_width, playhead_height)
-        context.fill()
+        context.set_line_width(PLAYHEAD_WIDTH * 2)
+        context.move_to(xpos, y)
+        context.line_to(xpos + semi_width, y - semi_height)
+        context.line_to(xpos, y - semi_height * 2)
+        context.line_to(xpos - semi_width, y - semi_height)
+        context.close_path()
+        context.stroke()
