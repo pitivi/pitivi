@@ -49,20 +49,20 @@ class TestMediaLibrary(common.TestCase):
         self.mainloop = None
 
         if self.app:
-            self.app = common.cleanPitiviMock(self.app)
+            self.app = common.clean_pitivi_mock(self.app)
 
         if self.medialibrary:
             self.medialibrary.finalize()
             self.medialibrary = None
 
-    def _customSetUp(self, settings, project_uri=None):
+    def _customSetUp(self, project_uri=None, **kwargs):
         # Always make sure we start with a clean medialibrary, and no other
         # is connected to some assets.
         self.clean()
 
         self.mainloop = common.create_main_loop()
         self.check_no_transcoding = False
-        self.app = common.getPitiviMock(settings)
+        self.app = common.create_pitivi_mock(**kwargs)
         self.app.project_manager = ProjectManager(self.app)
         self.medialibrary = medialibrary.MediaLibraryWidget(self.app)
 
@@ -98,12 +98,9 @@ class TestMediaLibrary(common.TestCase):
 
     def runCheckImport(self, assets, proxying_strategy=ProxyingStrategy.ALL,
                        check_no_transcoding=False, clean_proxies=True):
-        settings = mock.MagicMock()
-        settings.proxyingStrategy = proxying_strategy
-        settings.numTranscodingJobs = 4
-        settings.lastClipView = medialibrary.SHOW_TREEVIEW
-
-        self._customSetUp(settings)
+        self._customSetUp(proxyingStrategy=proxying_strategy,
+                          numTranscodingJobs=4,
+                          lastClipView=medialibrary.SHOW_TREEVIEW)
         self.check_no_transcoding = check_no_transcoding
 
         self.medialibrary._progressbar.connect(
@@ -193,7 +190,7 @@ class TestMediaLibrary(common.TestCase):
         xges_path, uri = self.createTempProject()
 
         try:
-            self._customSetUp(None, project_uri=uri)
+            self._customSetUp(project_uri=uri)
             self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
         finally:
             os.remove(xges_path)

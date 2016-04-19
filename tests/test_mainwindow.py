@@ -40,7 +40,7 @@ class TestMainWindow(common.TestCase):
         """
         Test tab switches
         """
-        app = common.getPitiviMock()
+        app = common.create_pitivi_mock()
         mainwindow = PitiviMainWindow(app)
         for expected_tab, b_element in [
                 (2, GES.TitleClip()),
@@ -60,9 +60,8 @@ class TestMainWindow(common.TestCase):
     def __loading_failure(self, has_proxy):
         mainloop = common.create_main_loop()
 
-        app = common.getPitiviMock(
-            settings={"lastProjectFolder": "/tmp",
-                      "edgeSnapDeadband": 32})
+        app = common.create_pitivi_mock(lastProjectFolder="/tmp",
+                                        edgeSnapDeadband=32)
         app.project_manager = ProjectManager(app)
         mainwindow = PitiviMainWindow(app)
         mainwindow.viewer = mock.MagicMock()

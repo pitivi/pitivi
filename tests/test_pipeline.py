@@ -28,7 +28,7 @@ from tests import common
 class MockedPipeline(pipeline.Pipeline):
 
     def __init__(self):
-        pipeline.Pipeline.__init__(self, common.getPitiviMock(None))
+        pipeline.Pipeline.__init__(self, common.create_pitivi_mock())
         self.state_calls = {}
         self._timeline = mock.MagicMock()
 

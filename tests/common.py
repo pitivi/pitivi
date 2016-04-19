@@ -42,19 +42,21 @@ detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
 
 
-def cleanPitiviMock(app):
+def clean_pitivi_mock(app):
     app.settings = None
     app.proxy_manager = None
 
 
-def getPitiviMock(settings=None, proxyingStrategy=ProxyingStrategy.NOTHING,
-                  numTranscodingJobs=4):
+def create_pitivi_mock(proxyingStrategy=ProxyingStrategy.NOTHING,
+                       numTranscodingJobs=4,
+                       **additional_settings):
+
     def __create_settings():
         settings = mock.MagicMock()
-
         settings.proxyingStrategy = proxyingStrategy
         settings.numTranscodingJobs = numTranscodingJobs
-
+        for key, value in additional_settings.items():
+            setattr(settings, key, value)
         return settings
 
     app = mock.MagicMock()
@@ -62,16 +64,7 @@ def getPitiviMock(settings=None, proxyingStrategy=ProxyingStrategy.NOTHING,
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     check.check_requirements()
 
-    if not settings:
-        settings = __create_settings()
-    elif isinstance(settings, dict):
-        nsettings = __create_settings()
-
-        for key, value in settings.items():
-            setattr(nsettings, key, value)
-        settings = nsettings
-
-    app.settings = settings
+    app.settings = __create_settings()
     app.proxy_manager = ProxyManager(app)
 
     return app

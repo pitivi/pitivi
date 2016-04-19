@@ -31,13 +31,11 @@ from pitivi.application import Pitivi
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
-from pitivi.utils.proxy import ProxyingStrategy
 from tests import common
 
 
 def _createRealProject(name=None):
-    app = common.getPitiviMock(proxyingStrategy=ProxyingStrategy.NOTHING)
-    project_manager = ProjectManager(app)
+    project_manager = ProjectManager(common.create_pitivi_mock())
     project_manager.newBlankProject()
     project = project_manager.current_project
     if name:
@@ -444,8 +442,7 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(Gst.Fraction(1, 1), project.videopar)
 
     def testLoad(self):
-        ptv = common.getPitiviMock(proxyingStrategy=ProxyingStrategy.NOTHING)
-        project = Project(uri="fake.xges", app=ptv)
+        project = Project(uri="fake.xges", app=common.create_pitivi_mock())
         self.assertFalse(project._has_default_video_settings)
         self.assertFalse(project._has_default_audio_settings)
 

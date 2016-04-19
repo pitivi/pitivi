@@ -36,7 +36,7 @@ THICK = ui.LAYER_HEIGHT
 
 class BaseTestTimeline(common.TestCase):
     def createTimeline(self):
-        app = common.getPitiviMock()
+        app = common.create_pitivi_mock()
         project_manager = ProjectManager(app)
         project_manager.newBlankProject()
         project = project_manager.current_project
