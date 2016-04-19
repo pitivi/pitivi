@@ -93,9 +93,6 @@ class Pitivi(Gtk.Application, Loggable):
         self._first_action = True
 
         Zoomable.app = self
-        self.connect("startup", self._startupCb)
-        self.connect("activate", self._activateCb)
-        self.connect("open", self.openCb)
 
     def write_action(self, action, properties={}):
         if self._scenario_file is None:
@@ -125,7 +122,9 @@ class Pitivi(Gtk.Application, Loggable):
         self._scenario_file.write(action.to_string() + "\n")
         self._scenario_file.flush()
 
-    def _startupCb(self, unused_app):
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+
         # Init logging as early as possible so we can log startup code
         enable_color = not os.environ.get(
             'PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
@@ -168,7 +167,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.add_action(self.quit_action)
         self.add_accelerator("<Control>q", "app.quit", None)
 
-    def _activateCb(self, unused_app):
+    def do_activate(self):
         if self.gui:
             # The app is already started and the window already created.
             # Present the already existing window.
@@ -202,7 +201,7 @@ class Pitivi(Gtk.Application, Loggable):
         # We might as well show it.
         self.gui.show()
 
-    def openCb(self, unused_app, giofiles, unused_count, unused_hint):
+    def do_open(self, giofiles, unused_count, unused_hint):
         assert giofiles
         self.createMainWindow()
         if len(giofiles) > 1:
