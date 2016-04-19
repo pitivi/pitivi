@@ -23,7 +23,6 @@ from unittest import TestCase
 from gi.repository import GES
 from gi.repository import Gtk
 
-from pitivi.application import Pitivi
 from pitivi.project import ProjectSettingsDialog
 from tests import common
 
@@ -31,8 +30,7 @@ from tests import common
 class TestProjectUndo(TestCase):
 
     def setUp(self):
-        self.app = Pitivi()
-        self.app._startupCb(self.app)
+        self.app = common.create_pitivi()
         self.assertTrue(self.app.project_manager.newBlankProject())
 
         self.project = self.app.project_manager.current_project

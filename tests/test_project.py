@@ -27,7 +27,6 @@ from unittest import TestCase
 from gi.repository import GES
 from gi.repository import Gst
 
-from pitivi.application import Pitivi
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import uri_is_reachable
@@ -340,8 +339,7 @@ class TestProjectLoading(common.TestCase):
             os.remove(xges_path)
 
     def test_asset_added_signal(self):
-        app = Pitivi()
-        app._startupCb(app)
+        app = common.create_pitivi()
         self.assertTrue(app.project_manager.newBlankProject())
 
         project = app.project_manager.current_project

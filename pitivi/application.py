@@ -134,6 +134,10 @@ class Pitivi(Gtk.Application, Loggable):
         loggable.init('PITIVI_DEBUG', enable_color, enable_crack_output)
 
         self.info('starting up')
+        self._setup()
+        self._checkVersion()
+
+    def _setup(self):
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
         self.effects = EffectsManager()
@@ -148,8 +152,6 @@ class Pitivi(Gtk.Application, Loggable):
 
         self._createActions()
         self._syncDoUndo()
-
-        self._checkVersion()
 
     def _createActions(self):
         self.undo_action = Gio.SimpleAction.new("undo", None)

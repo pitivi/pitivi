@@ -78,6 +78,12 @@ def create_project():
     return project
 
 
+def create_pitivi():
+    app = Pitivi()
+    app._setup()
+    return app
+
+
 def create_main_loop():
     mainloop = GLib.MainLoop()
     timed_out = False

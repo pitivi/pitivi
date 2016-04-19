@@ -26,7 +26,6 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GstController
 
-from pitivi.application import Pitivi
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipPropertyChanged
 from pitivi.undo.timeline import ClipRemoved
@@ -100,8 +99,7 @@ class TestTimelineLogObserver(TestCase):
 class TestTimelineUndo(TestCase):
 
     def setUp(self):
-        app = Pitivi()
-        app._startupCb(app)
+        app = common.create_pitivi()
         app.project_manager.newBlankProject()
 
         self.timeline = app.project_manager.current_project.timeline
