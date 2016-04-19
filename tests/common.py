@@ -33,6 +33,7 @@ from gi.repository import Gtk
 from pitivi import check
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
@@ -48,24 +49,25 @@ def clean_pitivi_mock(app):
     app.proxy_manager = None
 
 
-def create_pitivi_mock(proxyingStrategy=ProxyingStrategy.NOTHING,
-                       numTranscodingJobs=4,
-                       **additional_settings):
+def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
+                      numTranscodingJobs=4,
+                      **additional_settings):
+    settings = GlobalSettings()
+    settings.proxyingStrategy = proxyingStrategy
+    settings.numTranscodingJobs = numTranscodingJobs
+    for key, value in additional_settings.items():
+        setattr(settings, key, value)
+    return settings
 
-    def __create_settings():
-        settings = mock.MagicMock()
-        settings.proxyingStrategy = proxyingStrategy
-        settings.numTranscodingJobs = numTranscodingJobs
-        for key, value in additional_settings.items():
-            setattr(settings, key, value)
-        return settings
+
+def create_pitivi_mock(**settings):
 
     app = mock.MagicMock()
 
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
     check.check_requirements()
 
-    app.settings = __create_settings()
+    app.settings = __create_settings(**settings)
     app.proxy_manager = ProxyManager(app)
 
     return app
@@ -78,9 +80,10 @@ def create_project():
     return project
 
 
-def create_pitivi():
+def create_pitivi(**settings):
     app = Pitivi()
     app._setup()
+    app.settings = __create_settings(**settings)
     return app
 
 

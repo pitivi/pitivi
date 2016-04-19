@@ -138,9 +138,7 @@ class GlobalSettings(GObject.Object, Loggable):
     environment = set()
     defaults = {}
 
-    __gsignals__ = {}
-
-    def __init__(self, **unused_kwargs):
+    def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
