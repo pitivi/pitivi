@@ -34,15 +34,6 @@ from pitivi.utils.misc import uri_is_reachable
 from tests import common
 
 
-def _createRealProject(name=None):
-    project_manager = ProjectManager(common.create_pitivi_mock())
-    project_manager.newBlankProject()
-    project = project_manager.current_project
-    if name:
-        project.name = name
-    return project
-
-
 class MockProject(object):
     settings = None
     format = None
@@ -323,7 +314,7 @@ class TestProjectLoading(common.TestCase):
             mainloop.quit()
 
         # Create a blank project and save it.
-        project = _createRealProject(name="noname")
+        project = common.create_project()
         result = [False]
         project.connect("loaded", loaded, result)
 
@@ -338,7 +329,7 @@ class TestProjectLoading(common.TestCase):
         try:
             project.save(project.timeline, uri, None, overwrite=True)
 
-            project2 = _createRealProject()
+            project2 = common.create_project()
             self.assertTrue(project2.createTimeline())
             result = [False]
             project2.connect("loaded", loaded, result)
@@ -381,14 +372,14 @@ class TestProjectLoading(common.TestCase):
 class TestProjectSettings(common.TestCase):
 
     def testAudio(self):
-        project = _createRealProject(name="noname")
+        project = common.create_project()
         project.audiochannels = 2
         self.assertEqual(2, project.audiochannels)
         project.audiorate = 44100
         self.assertEqual(44100, project.audiorate)
 
     def testVideo(self):
-        project = _createRealProject(name="noname")
+        project = common.create_project()
         project.videowidth = 1920
         self.assertEqual(1920, project.videowidth)
         project.videoheight = 1080
@@ -416,7 +407,7 @@ class TestProjectSettings(common.TestCase):
                     mainloop.quit()
 
         # Create a blank project and add some assets.
-        project = _createRealProject()
+        project = common.create_project()
         self.assertTrue(project._has_default_video_settings)
         self.assertTrue(project._has_default_audio_settings)
 
@@ -458,7 +449,7 @@ class TestExportSettings(TestCase):
 
     def _testMasterAttribute(self, attr, dependant_attr):
         """Test changing the specified attr has effect on its dependant attr."""
-        project = _createRealProject()
+        project = common.create_project()
 
         attr_value1 = "%s_value1" % attr
         attr_value2 = "%s_value2" % attr

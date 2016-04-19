@@ -32,6 +32,7 @@ from gi.repository import Gtk
 
 from pitivi import check
 from pitivi.application import Pitivi
+from pitivi.project import ProjectManager
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
@@ -68,6 +69,13 @@ def create_pitivi_mock(proxyingStrategy=ProxyingStrategy.NOTHING,
     app.proxy_manager = ProxyManager(app)
 
     return app
+
+
+def create_project():
+    project_manager = ProjectManager(create_pitivi_mock())
+    project_manager.newBlankProject()
+    project = project_manager.current_project
+    return project
 
 
 def create_main_loop():
