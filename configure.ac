@@ -1,4 +1,3 @@
-m4_define([gi_req_version], [1.31.1])
 m4_define([glib_req_version], [2.30.0])
 m4_define([gstreamer_req_version], [1.6.0])
 m4_define([gtk_req_version], [3.10.0])
@@ -79,10 +78,6 @@ CONFIGURED_GI_TYPELIB_PATH=$GI_TYPELIB_PATH
 AC_SUBST(CONFIGURED_GI_TYPELIB_PATH)
 
 AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
-
-dnl === GObject introspection =================================================
-
-GOBJECT_INTROSPECTION_CHECK([gi_req_version])
 
 PKG_CHECK_MODULES(GTK, [gtk+-3.0 >= gtk_req_version],
                         [HAVE_GTK=yes],
