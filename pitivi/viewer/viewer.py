@@ -137,7 +137,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.pause()
 
     def __createNewViewer(self):
-        self.pipeline.setSink(self.pipeline.createSink())
+        self.pipeline.create_sink()
 
         self.target = ViewerWidget(self.pipeline, self.app)
 
@@ -498,19 +498,13 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
         self._pipeline = pipeline
 
-        # We only work with a gtkglsink inside a glsinkbin
-        sink = pipeline.video_sink
-        try:
-            sink_widget = sink.props.sink.props.widget
-        except AttributeError:
-            sink_widget = sink.props.widget
-        sink_widget.show()
+        pipeline.sink_widget.show()
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
 
         # Assign Viewer Overlay via Gtk.Overlay
-        self.overlay_stack = OverlayStack(app, sink_widget)
+        self.overlay_stack = OverlayStack(app, pipeline.sink_widget)
         self.add(self.overlay_stack)
 
     def setDisplayAspectRatio(self, ratio):

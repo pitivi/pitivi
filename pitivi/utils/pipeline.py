@@ -102,24 +102,21 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = 0
         self._force_position_listener = False
 
-        self.setSink(self.createSink())
+        self.video_sink = None
+        self.sink_widget = None
 
-    def createSink(self):
+    def create_sink(self):
         sink = Gst.ElementFactory.make(videosink_factory.get_name(), None)
+        self.sink_widget = sink.props.widget
+
         if videosink_factory.get_name() == "gtksink":
             self.info("Using gtksink")
-            return sink
-
-        sinkbin = Gst.ElementFactory.make("glsinkbin", None)
-        sinkbin.props.sink = sink
-        return sinkbin
-
-    def setSink(self, sink):
-        self.video_sink = sink
-        if isinstance(self._pipeline, GES.Pipeline):
-            self._pipeline.preview_set_video_sink(self.video_sink)
+            self.video_sink = sink
         else:
-            self._pipeline.set_property("video_sink", self.video_sink)
+            self.info("Using glsinkbin around %s", videosink_factory.get_name())
+            sinkbin = Gst.ElementFactory.make("glsinkbin", None)
+            sinkbin.props.sink = sink
+            self.video_sink = sinkbin
 
     def setForcePositionListener(self, force):
         self._force_position_listener = force
@@ -518,9 +515,15 @@ class AssetPipeline(SimplePipeline):
         bPipeline = Gst.ElementFactory.make("playbin", name)
         SimplePipeline.__init__(self, bPipeline)
 
+        self.create_sink()
+
         self.clip = clip
         if self.clip:
             self.setClipUri(self.clip.props.uri)
+
+    def create_sink(self):
+        SimplePipeline.create_sink(self)
+        self._pipeline.set_property("video_sink", self.video_sink)
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)
@@ -553,6 +556,10 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 watchdog = Gst.ElementFactory.make("watchdog", None)
                 watchdog.props.timeout = WATCHDOG_TIMEOUT * 1000
                 self.props.audio_filter = watchdog
+
+    def create_sink(self):
+        SimplePipeline.create_sink(self)
+        self._pipeline.preview_set_video_sink(self.video_sink)
 
     def set_mode(self, mode):
         self._next_seek = None
