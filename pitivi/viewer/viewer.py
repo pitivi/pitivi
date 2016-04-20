@@ -139,7 +139,8 @@ class ViewerContainer(Gtk.Box, Loggable):
     def __createNewViewer(self):
         self.pipeline.create_sink()
 
-        self.target = ViewerWidget(self.pipeline, self.app)
+        self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
+        self.target = ViewerWidget(self.overlay_stack)
 
         if self.docked:
             self.pack_start(self.target, True, True, 0)
@@ -484,28 +485,23 @@ class ViewerContainer(Gtk.Box, Loggable):
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):
     """
-    Widget for displaying a GStreamer video sink.
+    Widget for displaying a video sink.
 
-    @type _pipeline: L{pitivi.utils.pipeline.SimplePipeline}
+    Args:
+        sink_widget (Gtk.Widget): The widget doing the real work.
     """
 
-    def __init__(self, pipeline, app=None):
+    def __init__(self, sink_widget):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
-        self._pipeline = pipeline
-
-        pipeline.sink_widget.show()
+        self.add(sink_widget)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
-
-        # Assign Viewer Overlay via Gtk.Overlay
-        self.overlay_stack = OverlayStack(app, pipeline.sink_widget)
-        self.add(self.overlay_stack)
 
     def setDisplayAspectRatio(self, ratio):
         self.set_property("ratio", float(ratio))

@@ -626,7 +626,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             with self.app.action_log.started("Transformation property change"):
                 self.source.set_child_property(prop, value)
             self._project.pipeline.commit_timeline()
-            self.app.gui.viewer.target.overlay_stack.update(self.source)
+            self.app.gui.viewer.overlay_stack.update(self.source)
 
     def __setSource(self, source):
         if self.source:
@@ -646,7 +646,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             if source:
                 self._selected_clip = clip
                 self.__setSource(source)
-                self.app.gui.viewer.target.overlay_stack.select(source)
+                self.app.gui.viewer.overlay_stack.select(source)
                 self.show()
                 return
 

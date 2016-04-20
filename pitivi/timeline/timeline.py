@@ -607,7 +607,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def update_visible_overlays(self):
         sources = self.get_sources_at_position(self.__last_position)
-        self.app.gui.viewer.target.overlay_stack.set_current_sources(sources)
+        self.app.gui.viewer.overlay_stack.set_current_sources(sources)
 
     def __buttonPressEventCb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
