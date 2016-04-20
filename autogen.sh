@@ -47,12 +47,11 @@ echo
 # install pre-commit hook for doing clean commits
 rm -f .git/hooks/pre-commit
 ln -s ../../pre-commit.hook .git/hooks/pre-commit
-which pre-commit > /dev/null
-PRE_COMMIT=$?
 echo ""
-if (($PRE_COMMIT != 0)); then
+which pre-commit > /dev/null
+if [ $? -eq 0  ]; then
+  pre-commit install
+else
   echo "Please install pre-commit from http://pre-commit.com/ before proposing patches"
   echo ""
-else
-  pre-commit install
 fi
