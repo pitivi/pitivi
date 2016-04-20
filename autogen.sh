@@ -50,7 +50,7 @@ ln -s ../../pre-commit.hook .git/hooks/pre-commit
 which pre-commit > /dev/null
 PRE_COMMIT=$?
 echo ""
-if ((PRE_COMMIT != 0)); then
+if (($PRE_COMMIT != 0)); then
   echo "Please install pre-commit from http://pre-commit.com/ before proposing patches"
   echo ""
 else
