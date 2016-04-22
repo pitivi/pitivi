@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <cairo.h>
 #include <py3cairo.h>
+#include <gst/gst.h>
 
 static Pycairo_CAPI_t *Pycairo_CAPI;
+static GObjectClass * gobject_class;
 
 /*
  * This function must be called with a range of samples, and a desired
@@ -94,14 +96,46 @@ static PyModuleDef module = {
   renderer_methods, NULL, NULL, NULL, NULL
 };
 
+static void
+pitivi_disable_gst_object_dispatch_properties_changed (GObject * object,
+    guint n_pspecs, GParamSpec ** pspecs)
+{
+    GST_DEBUG_OBJECT (object, "Disabling `deep-notify`");
+
+    gobject_class->dispatch_properties_changed (object, n_pspecs, pspecs);
+}
+
+static void
+_disable_gst_object_deep_notify_recurse (GType type)
+{
+  gint i;
+  GType *types;
+  GObjectClass *klass = g_type_class_ref (type);
+
+  klass->dispatch_properties_changed =
+      pitivi_disable_gst_object_dispatch_properties_changed;
+  g_type_class_unref (klass);
+
+  types = g_type_children (type, NULL);
+  for (i=0; types[i]; i++)
+   _disable_gst_object_deep_notify_recurse (types[i]);
+
+}
+
 PyMODINIT_FUNC
 PyInit_renderer (void)
 {
+  PyObject *m;
+
+  gobject_class = g_type_class_peek (G_TYPE_OBJECT);
+
+  /* Workaround https://phabricator.freedesktop.org/T3350 */
+  _disable_gst_object_deep_notify_recurse (GST_TYPE_OBJECT);
+
   if (import_cairo () < 0) {
     g_print ("Cairo import failed.");
   }
 
-  PyObject *m;
   m = PyModule_Create (&module);
   if (m == NULL)
     return NULL;
