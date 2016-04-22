@@ -1,12 +1,14 @@
 #!/bin/sh
 
+PITIVI_DIR=$(dirname $(realpath $0))/../../
+echo $PITIVI_DIR
 function generate_path_and_completion_calls {
-  echo "export PATH=$GITREPO/bin/:\$PATH"
+  echo "export PATH=$PITIVI_DIR/bin/:\$PATH"
   echo "export CC='ccache gcc'"
   echo "export CXX='ccache g++'"
 }
 
-RCFILE=$GITREPO/.bashrc
+RCFILE=$PITIVI_DIR/.bashrc
 cp ~/.bashrc $RCFILE
 echo "export PS1=[ptv]\ \$PS1" >> $RCFILE
 echo "export PITIVI_DEVELOPMENT=1" >> $RCFILE
@@ -19,8 +21,7 @@ then
   echo "Entering own built environment"
   echo "=============================="
 
-  GITREPO="$(git rev-parse --show-toplevel)"
-  cd $GITREPO
+  cd $PITIVI_DIR
   bash --rcfile $RCFILE
 else
   $*
