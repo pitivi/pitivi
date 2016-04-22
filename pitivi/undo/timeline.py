@@ -380,40 +380,42 @@ class ClipRemoved(UndoableAction):
 
 class LayerAdded(UndoableAction):
 
-    def __init__(self, timeline, layer):
-        self.timeline = timeline
-        self.layer = layer
+    def __init__(self, ges_timeline, ges_layer):
+        UndoableAction.__init__(self)
+        self.ges_timeline = ges_timeline
+        self.ges_layer = ges_layer
 
     def do(self):
-        self.timeline.add_layer(self.layer)
+        self.ges_timeline.add_layer(self.ges_layer)
 
     def undo(self):
-        self.timeline.remove_layer(self.layer)
-        self.timeline.get_asset().pipeline.commit_timeline()
+        self.ges_timeline.remove_layer(self.ges_layer)
+        self.ges_timeline.get_asset().pipeline.commit_timeline()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-layer")
-        st.set_value("priority", self.layer.props.priority)
-        st.set_value("auto-transition", self.layer.props.auto_transition)
+        st.set_value("priority", self.ges_layer.props.priority)
+        st.set_value("auto-transition", self.ges_layer.props.auto_transition)
         return st
 
 
 class LayerRemoved(UndoableAction):
 
-    def __init__(self, timeline, layer):
-        self.timeline = timeline
-        self.layer = layer
+    def __init__(self, ges_timeline, ges_layer):
+        UndoableAction.__init__(self)
+        self.ges_timeline = ges_timeline
+        self.ges_layer = ges_layer
 
     def do(self):
-        self.timeline.remove_layer(self.layer)
-        self.timeline.get_asset().pipeline.commit_timeline()
+        self.ges_timeline.remove_layer(self.ges_layer)
+        self.ges_timeline.get_asset().pipeline.commit_timeline()
 
     def undo(self):
-        self.timeline.add_layer(self.layer)
+        self.ges_timeline.add_layer(self.ges_layer)
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-layer")
-        st.set_value("priority", self.layer.props.priority)
+        st.set_value("priority", self.ges_layer.props.priority)
         return st
 
 
@@ -519,7 +521,7 @@ class TimelineObserver(Loggable):
     """Monitors a project's timeline and reports UndoableActions.
 
     Attributes:
-        log (UndoableActionLog): The action log where to report actions.
+        action_log (UndoableActionLog): The action log where to report actions.
     """
 
     timelinePropertyChangedAction = ClipPropertyChanged
@@ -533,32 +535,29 @@ class TimelineObserver(Loggable):
         self.control_source_keyframe_trackers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(self.action_log)
 
-    def startObserving(self, timeline):
+    def startObserving(self, ges_timeline):
         """Starts monitoring the specified timeline.
 
         Args:
-            timeline (GES.Timeline): The timeline to be monitored.
+            ges_timeline (GES.Timeline): The timeline to be monitored.
         """
-        self._connectToTimeline(timeline)
-        for layer in timeline.get_layers():
-            for clip in layer.get_clips():
-                self._connectToClip(clip)
+        for ges_layer in ges_timeline.get_layers():
+            self._connect_to_layer(ges_layer)
 
-    def _connectToTimeline(self, timeline):
-        for layer in timeline.get_layers():
-            layer.connect("clip-added", self._clipAddedCb)
-            layer.connect("clip-removed", self._clipRemovedCb)
+        ges_timeline.connect("layer-added", self._layerAddedCb)
+        ges_timeline.connect("layer-removed", self._layerRemovedCb)
 
-        timeline.connect("layer-added", self._layerAddedCb)
-        timeline.connect("layer-removed", self._layerRemovedCb)
+        for ges_layer in ges_timeline.get_layers():
+            for ges_clip in ges_layer.get_clips():
+                self._connectToClip(ges_clip)
 
-    def _disconnectFromTimeline(self, timeline):
-        for layer in timeline.get_layers():
-            layer.disconnect_by_func(self._clipAddedCb)
-            layer.disconnect_by_func(self._clipRemovedCb)
+    def _connect_to_layer(self, ges_layer):
+        ges_layer.connect("clip-added", self._clipAddedCb)
+        ges_layer.connect("clip-removed", self._clipRemovedCb)
 
-        timeline.disconnect_by_func(self._layerAddedCb)
-        timeline.disconnect_by_func(self._layerRemovedCb)
+    def _disconnect_from_layer(self, ges_layer):
+        ges_layer.disconnect_by_func(self._clipAddedCb)
+        ges_layer.disconnect_by_func(self._clipRemovedCb)
 
     def _connectToClip(self, clip):
         tracker = ClipPropertyChangeTracker()
@@ -715,14 +714,12 @@ class TimelineObserver(Loggable):
                                               old_snapshot, new_snapshot)
         self.action_log.push(action)
 
-    def _layerAddedCb(self, timeline, layer):
-        layer.connect("clip-added", self._clipAddedCb)
-        layer.connect("clip-removed", self._clipRemovedCb)
-        action = LayerAdded(timeline, layer)
+    def _layerAddedCb(self, ges_timeline, ges_layer):
+        self._connect_to_layer(ges_layer)
+        action = LayerAdded(ges_timeline, ges_layer)
         self.action_log.push(action)
 
-    def _layerRemovedCb(self, timeline, layer):
-        layer.disconnect_by_func(self._clipAddedCb)
-        layer.disconnect_by_func(self._clipRemovedCb)
-        action = LayerRemoved(timeline, layer)
+    def _layerRemovedCb(self, ges_timeline, ges_layer):
+        self._disconnect_from_layer(ges_layer)
+        action = LayerRemoved(ges_timeline, ges_layer)
         self.action_log.push(action)

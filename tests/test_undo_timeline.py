@@ -37,14 +37,6 @@ from tests import common
 
 class TimelineObserverSpy(TimelineObserver):
 
-    def _connectToTimeline(self, timeline):
-        TimelineObserver._connectToTimeline(self, timeline)
-        timeline.connected = True
-
-    def _disconnectFromTimeline(self, timeline):
-        TimelineObserver._disconnectFromTimeline(self, timeline)
-        timeline.connected = False
-
     def _connectToClip(self, clip):
         TimelineObserver._connectToClip(self, clip)
         clip.connected = True
@@ -73,24 +65,20 @@ class TestTimelineLogObserver(TestCase):
         layer = GES.Layer()
         timeline.add_layer(layer)
         self.observer.startObserving(timeline)
-        self.assertTrue(timeline.connected)
 
         clip1 = GES.TitleClip()
 
         layer.add_clip(clip1)
         track_element1 = clip1.get_children(False)[0]
-        self.assertTrue(timeline.connected)
         self.assertTrue(clip1.connected)
         self.assertTrue(track_element1.connected)
 
         layer.remove_clip(clip1)
-        self.assertTrue(timeline.connected)
         self.assertFalse(clip1.connected)
         self.assertFalse(track_element1.connected)
 
         layer.add_clip(clip1)
         track_element2 = clip1.get_children(False)[0]
-        self.assertTrue(timeline.connected)
         self.assertTrue(clip1.connected)
         self.assertFalse(track_element1.connected)
         self.assertTrue(track_element2.connected)
