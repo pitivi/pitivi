@@ -419,6 +419,26 @@ class LayerRemoved(UndoableAction):
         return st
 
 
+class LayerMoved(UndoableAction):
+
+    def __init__(self, ges_layer, old_priority, priority):
+        UndoableAction.__init__(self)
+        self.ges_layer = ges_layer
+        self.old_priority = old_priority
+        self.priority = priority
+
+    def do(self):
+        self.ges_layer.props.priority = self.priority
+
+    def undo(self):
+        self.ges_layer.props.priority = self.old_priority
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("move-layer")
+        st.set_value("priority", self.ges_layer.props.priority)
+        return st
+
+
 class ControlSourceValueAdded(UndoableAction):
 
     def __init__(self, track_element,
@@ -534,6 +554,7 @@ class TimelineObserver(Loggable):
         self.clip_property_trackers = {}
         self.control_source_keyframe_trackers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(self.action_log)
+        self._layers_priorities = {}
 
     def startObserving(self, ges_timeline):
         """Starts monitoring the specified timeline.
@@ -552,12 +573,16 @@ class TimelineObserver(Loggable):
                 self._connectToClip(ges_clip)
 
     def _connect_to_layer(self, ges_layer):
+        self._layers_priorities[ges_layer] = ges_layer.props.priority
         ges_layer.connect("clip-added", self._clipAddedCb)
         ges_layer.connect("clip-removed", self._clipRemovedCb)
+        ges_layer.connect("notify::priority", self._layer_moved_cb)
 
     def _disconnect_from_layer(self, ges_layer):
+        del self._layers_priorities[ges_layer]
         ges_layer.disconnect_by_func(self._clipAddedCb)
         ges_layer.disconnect_by_func(self._clipRemovedCb)
+        ges_layer.disconnect_by_func(self._layer_moved_cb)
 
     def _connectToClip(self, clip):
         tracker = ClipPropertyChangeTracker()
@@ -712,6 +737,13 @@ class TimelineObserver(Loggable):
                                       keyframe, old_snapshot, new_snapshot):
         action = ControlSourceKeyframeChanged(track_element, keyframe,
                                               old_snapshot, new_snapshot)
+        self.action_log.push(action)
+
+    def _layer_moved_cb(self, ges_layer, unused_param):
+        previous = self._layers_priorities[ges_layer]
+        current = ges_layer.props.priority
+        self._layers_priorities[ges_layer] = current
+        action = LayerMoved(ges_layer, previous, current)
         self.action_log.push(action)
 
     def _layerAddedCb(self, ges_timeline, ges_layer):

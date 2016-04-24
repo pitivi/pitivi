@@ -26,6 +26,8 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GstController
 
+from pitivi.timeline.timeline import Timeline
+from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipPropertyChanged
 from pitivi.undo.timeline import ClipRemoved
@@ -87,14 +89,12 @@ class TestTimelineLogObserver(TestCase):
 class TestTimelineUndo(TestCase):
 
     def setUp(self):
-        app = common.create_pitivi()
-        app.project_manager.newBlankProject()
+        self.app = common.create_pitivi()
+        self.app.project_manager.newBlankProject()
 
-        self.timeline = app.project_manager.current_project.timeline
+        self.timeline = self.app.project_manager.current_project.timeline
         self.layer = self.timeline.append_layer()
-        self.action_log = UndoableActionLog()
-        self.observer = TimelineObserverSpy(self.action_log, app=mock.Mock())
-        self.observer.startObserving(self.timeline)
+        self.action_log = self.app.action_log
 
     def getTimelineClips(self):
         for layer in self.timeline.layers:
@@ -109,16 +109,48 @@ class TestTimelineUndo(TestCase):
         layer1 = self.layer
         layer2 = self.timeline.append_layer()
         layer3 = self.timeline.append_layer()
-        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
 
         with self.action_log.started("layer removed"):
             self.timeline.remove_layer(layer2)
-        self.assertEqual([layer1, layer3], self.timeline.get_layers())
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer3])
 
         self.action_log.undo()
-        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
         self.action_log.redo()
-        self.assertEqual([layer1, layer3], self.timeline.get_layers())
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer3])
+
+    def testLayerMoved(self):
+        layer1 = self.layer
+        layer2 = self.timeline.append_layer()
+        layer3 = self.timeline.append_layer()
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
+
+        timeline_ui = Timeline(container=None, app=self.app)
+        timeline_ui.setProject(self.app.project_manager.current_project)
+
+        # Click and drag a layer control box to move the layer.
+        with mock.patch.object(timeline_ui, 'get_event_widget') as get_event_widget:
+            event = mock.Mock()
+            event.get_button.return_value = True, 1
+
+            get_event_widget.return_value = layer1.control_ui
+            timeline_ui._button_press_event_cb(None, event=event)
+
+            with mock.patch.object(layer1.control_ui, "translate_coordinates") as translate_coordinates:
+                translate_coordinates.return_value = (0, 0)
+                with mock.patch.object(timeline_ui, "_get_layer_at") as _get_layer_at:
+                    _get_layer_at.return_value = layer3, None
+                    timeline_ui._motion_notify_event_cb(None, event=event)
+
+            timeline_ui._button_release_event_cb(None, event=event)
+        self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
+
+        self.action_log.undo()
+        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
+
+        self.action_log.redo()
+        self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
 
     def testControlSourceValueAdded(self):
         uri = common.getSampleUri("tears_of_steel.webm")
@@ -179,9 +211,9 @@ class TestTimelineUndo(TestCase):
 
         self.assertEqual(1, len(stacks))
         stack = stacks[0]
-        self.assertEqual(1, len(stack.done_actions))
-        action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, ClipAdded))
+        self.assertEqual(2, len(stack.done_actions), stack.done_actions)
+        self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
+        self.assertTrue(isinstance(stack.done_actions[1], AssetAddedAction))
         self.assertTrue(clip1 in self.getTimelineClips())
 
         self.action_log.undo()

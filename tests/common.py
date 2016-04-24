@@ -83,6 +83,7 @@ def create_project():
 def create_pitivi(**settings):
     app = Pitivi()
     app._setup()
+    app.gui = mock.Mock()
     app.settings = __create_settings(**settings)
     return app
 

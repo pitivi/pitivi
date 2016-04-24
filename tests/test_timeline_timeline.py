@@ -117,7 +117,7 @@ class TestLayers(BaseTestTimeline):
         s = SEPARATOR_HEIGHT
 
         def assertLayerAt(ges_layer, y):
-            result = timeline._getLayerAt(
+            result = timeline._get_layer_at(
                 int(y),
                 prefer_ges_layer=preferred_ges_layer,
                 past_middle_when_adjacent=past_middle_when_adjacent)

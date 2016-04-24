@@ -40,6 +40,7 @@ from pitivi.timeline.elements import TrimHandle
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.ruler import ScaleRuler
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
@@ -257,9 +258,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # A lot of operations go through these callbacks.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
-        self.connect("button-press-event", self.__buttonPressEventCb)
-        self.connect("button-release-event", self.__buttonReleaseEventCb)
-        self.connect("motion-notify-event", self.__motionNotifyEventCb)
+        self.connect("button-press-event", self._button_press_event_cb)
+        self.connect("button-release-event", self._button_release_event_cb)
+        self.connect("motion-notify-event", self._motion_notify_event_cb)
 
         self._layers = []
         # Whether the user is dragging a layer.
@@ -318,11 +319,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.info("Faking %s", event)
         if event.type == Gdk.EventType.BUTTON_PRESS:
-            self.__buttonPressEventCb(self, event)
+            self._button_press_event_cb(self, event)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
-            self.__buttonReleaseEventCb(self, event)
+            self._button_release_event_cb(self, event)
         elif event.type == Gdk.EventType.MOTION_NOTIFY:
-            self.__motionNotifyEventCb(self, event)
+            self._motion_notify_event_cb(self, event)
         else:
             self.parent.sendFakeEvent(event)
 
@@ -609,7 +610,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         sources = self.get_sources_at_position(self.__last_position)
         self.app.gui.viewer.overlay_stack.set_current_sources(sources)
 
-    def __buttonPressEventCb(self, unused_widget, event):
+    def _button_press_event_cb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
         self.app.gui.focusTimeline()
 
@@ -629,6 +630,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
                 if layer_controls:
                     self.__moving_layer = layer_controls.ges_layer
+                    self.app.action_log.begin("move layer",
+                                              CommitTimelineFinalizingAction(self._project.pipeline))
                 else:
                     self.__marquee.setStartPosition(event)
 
@@ -646,7 +649,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return False
 
-    def __buttonReleaseEventCb(self, unused_widget, event):
+    def _button_release_event_cb(self, unused_widget, event):
         allow_seek = not self.__got_dragged
 
         res, button = event.get_button()
@@ -670,7 +673,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return False
 
-    def __motionNotifyEventCb(self, unused_widget, event):
+    def _motion_notify_event_cb(self, unused_widget, event):
         if self.draggingElement:
             if type(self.draggingElement) == TransitionClip and \
                     not self.__clickedHandle:
@@ -690,7 +693,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             event_widget = self.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
-            layer, unused_on_sep = self._getLayerAt(
+            layer, unused_on_sep = self._get_layer_at(
                 y, prefer_ges_layer=self.__moving_layer,
                 past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
@@ -759,7 +762,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 clip_duration = asset.get_duration()
 
-            ges_layer, unused_on_sep = self._getLayerAt(y)
+            ges_layer, unused_on_sep = self._get_layer_at(y)
             if not placement:
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
@@ -889,8 +892,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for i, layer in enumerate(layers):
             layer.set_priority(i)
 
-        self._project.setModificationState(True)
-
     def _addLayer(self, ges_layer):
         layer = Layer(ges_layer, self)
         ges_layer.ui = layer
@@ -969,7 +970,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def __layerGetSeps(self, ges_layer, sep_name):
         return [getattr(ges_layer.ui, sep_name), getattr(ges_layer.control_ui, sep_name)]
 
-    def _getLayerAt(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
+    def _get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
         """ Used in the testsuite """
         ges_layers = self.ges_timeline.get_layers()
         if y < 20:
@@ -1065,7 +1066,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x - self.__drag_start_x)
 
         self._setSeparatorsPrelight(False)
-        res = self._getLayerAt(y, prefer_ges_layer=self._on_layer)
+        res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
         self._on_layer, self.__on_separators = res
         if (mode != GES.EditMode.EDIT_NORMAL or
                 self.current_group.props.height > 1):
@@ -1147,6 +1148,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.queue_draw()
 
     def __endMovingLayer(self):
+        self.app.action_log.commit("move layer")
         self._project.pipeline.commit_timeline()
         self.__moving_layer = None
 
