@@ -113,7 +113,7 @@ GlobalSettings.addConfigOption('timelineAutoRipple',
                                default=False)
 
 
-class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
+class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     """
     Pitivi's main window.
@@ -131,7 +131,7 @@ class PitiviMainWindow(Gtk.ApplicationWindow, Loggable):
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
         Gtk.ApplicationWindow.__init__(self)
-        Loggable.__init__(self, "mainwindow")
+        Loggable.__init__(self)
         self.app = app
         self.log("Creating MainWindow")
         self.settings = app.settings
@@ -1294,7 +1294,7 @@ class PreviewAssetWindow(Gtk.Window):
 
     @ivar asset: The asset to be previewed.
     @type asset: L{GES.UriClipAsset}
-    @type main_window: L{PitiviMainWindow}
+    @type main_window: L{MainWindow}
     """
 
     def __init__(self, asset, main_window):

@@ -34,7 +34,7 @@ from pitivi.configure import RELEASES_URL
 from pitivi.configure import VERSION
 from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
-from pitivi.mainwindow import PitiviMainWindow
+from pitivi.mainwindow import MainWindow
 from pitivi.project import ProjectManager
 from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
@@ -60,7 +60,7 @@ class Pitivi(Gtk.Application, Loggable):
     Attributes:
         action_log (UndoableActionLog): The undo/redo log for the current project.
         effects (EffectsManager): The effects which can be applied to a clip.
-        gui (PitiviMainWindow): The main window of the app.
+        gui (MainWindow): The main window of the app.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
     """
@@ -197,7 +197,7 @@ class Pitivi(Gtk.Application, Loggable):
     def createMainWindow(self):
         if self.gui:
             return
-        self.gui = PitiviMainWindow(self)
+        self.gui = MainWindow(self)
         self.add_window(self.gui)
         self.gui.checkScreenConstraints()
         # We might as well show it.

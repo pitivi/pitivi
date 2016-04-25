@@ -25,7 +25,7 @@ from unittest import mock
 from gi.repository import GES
 from gi.repository import Gtk
 
-from pitivi.mainwindow import PitiviMainWindow
+from pitivi.mainwindow import MainWindow
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnectAllByFunc
 from tests import common
@@ -33,7 +33,7 @@ from tests import common
 
 class TestMainWindow(common.TestCase):
     """
-    Test PitiviMainWindow
+    Test MainWindow
     """
 
     def testSwitchContextTab(self):
@@ -41,7 +41,7 @@ class TestMainWindow(common.TestCase):
         Test tab switches
         """
         app = common.create_pitivi_mock()
-        mainwindow = PitiviMainWindow(app)
+        mainwindow = MainWindow(app)
         for expected_tab, b_element in [
                 (2, GES.TitleClip()),
                 (0, GES.SourceClip()),
@@ -63,7 +63,7 @@ class TestMainWindow(common.TestCase):
         app = common.create_pitivi_mock(lastProjectFolder="/tmp",
                                         edgeSnapDeadband=32)
         app.project_manager = ProjectManager(app)
-        mainwindow = PitiviMainWindow(app)
+        mainwindow = MainWindow(app)
         mainwindow.viewer = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project,
