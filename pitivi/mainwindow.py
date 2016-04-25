@@ -717,7 +717,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         @type project_manager: L{ProjectManager}
         @type project: L{Project}
         """
-        self.log("A new project is loaded")
+        self.log("A new project has been loaded")
         self._connectToProject(project)
         project.pipeline.activatePositionListener()
         self._setProject(project)

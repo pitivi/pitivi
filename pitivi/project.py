@@ -97,7 +97,6 @@ class ProjectManager(GObject.Object, Loggable):
         self.disable_save = False
         self._backup_lock = 0
         self.exitcode = 0
-        self.__missing_uris = False
 
     def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
@@ -212,8 +211,6 @@ class ProjectManager(GObject.Object, Loggable):
         """
         if self.current_project is not None and not self.closeRunningProject():
             return False
-
-        self.__missing_uris = False
 
         is_validate_scenario = self._isValidateScenario(uri)
         if not is_validate_scenario:
@@ -452,7 +449,6 @@ class ProjectManager(GObject.Object, Loggable):
 
     def closeRunningProject(self):
         """ close the current project """
-
         if self.current_project is None:
             self.warning(
                 "Trying to close a project that was already closed/didn't exist")
@@ -501,7 +497,6 @@ class ProjectManager(GObject.Object, Loggable):
                 # The user has not made a decision, don't do anything
                 return False
 
-        self.__missing_uris = False
         project = Project(self.app, name=DEFAULT_NAME)
         self.emit("new-project-loading", project)
 
@@ -582,7 +577,6 @@ class ProjectManager(GObject.Object, Loggable):
         return name + ext + "~"
 
     def _missingURICb(self, project, error, asset):
-        self.__missing_uris = True
         new_uri = self.emit("missing-uri", project, error, asset)
         if not new_uri:
             project.at_least_one_asset_missing = True
@@ -591,7 +585,8 @@ class ProjectManager(GObject.Object, Loggable):
 
     def _projectLoadedCb(self, project, unused_timeline):
         self.debug("Project loaded %s", project.props.uri)
-        if self.__missing_uris:
+        if not self.current_project == project:
+            self.debug("Project is obsolete %s", project.props.uri)
             return
         self.emit("new-project-loaded", project)
         self.time_loaded = time.time()
