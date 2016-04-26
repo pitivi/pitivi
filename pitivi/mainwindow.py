@@ -491,10 +491,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.add_accelerator("F10", "win.menu_button", None)
 
     def showProjectStatus(self):
-        dirty = self.app.project_manager.current_project.hasUnsavedModifications(
-        )
+        project = self.app.project_manager.current_project
+        dirty = project.hasUnsavedModifications()
         self.save_action.set_enabled(dirty)
-        if self.app.project_manager.current_project.uri:
+        if project.uri:
             self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
         self.updateTitle()
 
@@ -991,7 +991,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
             new_uri = chooser.get_uri()
-            project_manager.current_project.setModificationState(False)
         else:
             dialog.hide()
 
