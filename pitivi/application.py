@@ -264,7 +264,8 @@ class Pitivi(Gtk.Application, Loggable):
         self._setScenarioFile(project.get_uri())
 
     def _newProjectLoaded(self, unused_project_manager, project):
-        self.action_log = UndoableActionLog(self)
+        self.action_log = UndoableActionLog()
+        self.action_log.connect("pre-push", self._action_log_pre_push_cb)
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("undo", self._actionLogUndo)
         self.action_log.connect("redo", self._actionLogRedo)
@@ -352,6 +353,15 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _redoCb(self, unused_action, unused_param):
         self.action_log.redo()
+
+    def _action_log_pre_push_cb(self, unused_action_log, action):
+        try:
+            st = action.asScenarioAction()
+        except NotImplementedError:
+            self.warning("No serialization method for action %s", action)
+            return
+        if st:
+            self.write_action(st)
 
     def _actionLogCommit(self, action_log, unused_stack):
         if action_log.is_in_transaction():

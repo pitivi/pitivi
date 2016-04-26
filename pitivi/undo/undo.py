@@ -133,6 +133,7 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     __gsignals__ = {
         "begin": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "pre-push": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
         "rollback": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "commit": (GObject.SIGNAL_RUN_LAST, None, (object,)),
@@ -140,14 +141,10 @@ class UndoableActionLog(GObject.Object, Loggable):
         "redo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
     }
 
-    def __init__(self, app=None):
+    def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
-        if app is not None:
-            self.app = weakref.proxy(app)
-        else:
-            self.app = None
         self.undo_stacks = []
         self.redo_stacks = []
         self.stacks = []
@@ -181,13 +178,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         """
         Adds an action to the current transaction.
         """
-        if action is not None:
-            try:
-                st = action.asScenarioAction()
-                if self.app is not None and st is not None:
-                    self.app.write_action(st)
-            except NotImplementedError:
-                self.warning("No serialization method for that action")
+        self.emit("pre-push", action)
 
         if self.running:
             self.debug("Ignore push because running")
