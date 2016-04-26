@@ -267,8 +267,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log = UndoableActionLog()
         self.action_log.connect("pre-push", self._action_log_pre_push_cb)
         self.action_log.connect("commit", self._actionLogCommit)
-        self.action_log.connect("undo", self._actionLogUndo)
-        self.action_log.connect("redo", self._actionLogRedo)
+        self.action_log.connect("move", self._action_log_move_cb)
 
         timeline_observer = TimelineObserver(self.action_log, app=self)
         timeline_observer.startObserving(project.timeline)
@@ -368,10 +367,7 @@ class Pitivi(Gtk.Application, Loggable):
             return
         self._syncDoUndo()
 
-    def _actionLogUndo(self, action_log, unused_stack):
-        self._syncDoUndo()
-
-    def _actionLogRedo(self, action_log, unused_stack):
+    def _action_log_move_cb(self, action_log, unused_stack):
         self._syncDoUndo()
 
     def _syncDoUndo(self):

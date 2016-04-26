@@ -137,8 +137,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
         "rollback": (GObject.SIGNAL_RUN_LAST, None, (object,)),
         "commit": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "undo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "redo": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "move": (GObject.SIGNAL_RUN_LAST, None, (object,)),
     }
 
     def __init__(self):
@@ -245,7 +244,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = self.undo_stacks.pop(-1)
         self._run(stack.undo)
         self.redo_stacks.append(stack)
-        self.emit("undo", stack)
+        self.emit("move", stack)
 
     def redo(self):
         """
@@ -259,7 +258,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack = self.redo_stacks.pop(-1)
         self._run(stack.do)
         self.undo_stacks.append(stack)
-        self.emit("redo", stack)
+        self.emit("move", stack)
 
     def _takeSnapshot(self):
         return list(self.undo_stacks)

@@ -173,8 +173,7 @@ class TestUndoableActionLog(TestCase):
         self.signals.append((signalName, args))
 
     def _connectToUndoableActionLog(self, log):
-        for signalName in ("begin", "push", "rollback", "commit",
-                           "undo", "redo"):
+        for signalName in ("begin", "push", "rollback", "commit", "move"):
             log.connect(signalName, self._undoActionLogSignalCb, signalName)
 
     def _disconnectFromUndoableActionLog(self, log):
@@ -380,7 +379,7 @@ class TestUndoableActionLog(TestCase):
         self.log.undo()
         self.assertEqual(len(self.signals), 5)
         name, stack = self.signals[4]
-        self.assertEqual(name, "undo")
+        self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 1)
 
@@ -391,7 +390,7 @@ class TestUndoableActionLog(TestCase):
         self.log.redo()
         self.assertEqual(len(self.signals), 6)
         name, stack = self.signals[5]
-        self.assertEqual(name, "redo")
+        self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
