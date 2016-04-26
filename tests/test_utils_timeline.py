@@ -57,8 +57,8 @@ class TestSelection(TestCase):
 
     def testGetSingleClip(self):
         selection = Selection()
-        clip1 = common.createTestClip(GES.UriClip)
-        clip2 = common.createTestClip(GES.TitleClip)
+        clip1 = common.create_test_clip(GES.UriClip)
+        clip2 = common.create_test_clip(GES.TitleClip)
 
         # Selection empty.
         self.assertFalse(selection.getSingleClip(GES.TitleClip))

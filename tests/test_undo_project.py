@@ -59,7 +59,7 @@ class TestProjectUndo(TestCase):
         self.action_log.connect("commit", commit_cb)
 
         def loaded_cb(unused_project, unused_timeline):
-            uris = [common.getSampleUri("tears_of_steel.webm")]
+            uris = [common.get_sample_uri("tears_of_steel.webm")]
             self.project.addUris(uris)
 
         self.project.connect_after("loaded", loaded_cb)

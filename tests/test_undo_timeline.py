@@ -153,7 +153,7 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
 
     def testControlSourceValueAdded(self):
-        uri = common.getSampleUri("tears_of_steel.webm")
+        uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
@@ -177,7 +177,7 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(0.2, keyframes[0].value)
 
     def testControlSourceValueRemoved(self):
-        uri = common.getSampleUri("tears_of_steel.webm")
+        uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip = asset.extract()
         self.layer.add_clip(clip)
@@ -397,7 +397,7 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(20, clip1.get_priority())
 
     def testUngroup(self):
-        uri = common.getSampleUri("tears_of_steel.webm")
+        uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
         self.layer.add_clip(clip1)

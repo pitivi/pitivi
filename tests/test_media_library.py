@@ -94,7 +94,7 @@ class TestMediaLibrary(common.TestCase):
         self.samples = samples
         for sample_name in samples:
             self.app.project_manager.current_project.create_asset(
-                common.getSampleUri(sample_name), GES.UriClip,)
+                common.get_sample_uri(sample_name), GES.UriClip,)
 
     def runCheckImport(self, assets, proxying_strategy=ProxyingStrategy.ALL,
                        check_no_transcoding=False, clean_proxies=True):
@@ -107,7 +107,7 @@ class TestMediaLibrary(common.TestCase):
             "notify::fraction", self._progressBarCb)
 
         if clean_proxies:
-            common.cleanProxySamples()
+            common.clean_proxy_samples()
 
         self._createAssets(assets)
         self.mainloop.run()
@@ -117,7 +117,7 @@ class TestMediaLibrary(common.TestCase):
         sample_name = "30fps_numeroted_frames_red.mkv"
         self.runCheckImport([sample_name])
 
-        asset_uri = common.getSampleUri(sample_name)
+        asset_uri = common.get_sample_uri(sample_name)
         proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
 
         self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)

@@ -43,7 +43,7 @@ class TestPreviewers(common.TestCase):
         sample_name = "1sec_simpsons_trailer.mp4"
         testmedialib.runCheckImport([sample_name])
 
-        sample_uri = common.getSampleUri(sample_name)
+        sample_uri = common.get_sample_uri(sample_name)
         asset = GES.UriClipAsset.request_sync(sample_uri)
 
         thumb_cache = getThumbnailCache(asset)

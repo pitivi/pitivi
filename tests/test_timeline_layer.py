@@ -44,7 +44,7 @@ class TestLayer(common.TestCase):
 
     def testCheckMediaTypesWhenNoUI(self):
         ges_layer = GES.Layer()
-        png = common.getSampleUri("flat_colour1_640x480.png")
+        png = common.get_sample_uri("flat_colour1_640x480.png")
         video_clip = GES.UriClipAsset.request_sync(png).extract()
         self.assertTrue(ges_layer.add_clip(video_clip))
         self.assertEqual(len(ges_layer.get_clips()), 1)

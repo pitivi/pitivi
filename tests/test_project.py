@@ -359,7 +359,7 @@ class TestProjectLoading(common.TestCase):
         proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
 
-        uris = [common.getSampleUri("tears_of_steel.webm")]
+        uris = [common.get_sample_uri("tears_of_steel.webm")]
         project.addUris(uris)
 
         mainloop.run()
@@ -390,9 +390,9 @@ class TestProjectSettings(common.TestCase):
     def testInitialization(self):
         mainloop = common.create_main_loop()
         uris = collections.deque([
-            common.getSampleUri("flat_colour1_640x480.png"),
-            common.getSampleUri("tears_of_steel.webm"),
-            common.getSampleUri("1sec_simpsons_trailer.mp4")])
+            common.get_sample_uri("flat_colour1_640x480.png"),
+            common.get_sample_uri("tears_of_steel.webm"),
+            common.get_sample_uri("1sec_simpsons_trailer.mp4")])
 
         def loaded_cb(project, timeline):
             project.addUris([uris.popleft()])

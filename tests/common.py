@@ -227,13 +227,13 @@ class TestCase(unittest.TestCase, Loggable):
         return xges_path, Gst.filename_to_uri(xges_path)
 
 
-def getSampleUri(sample):
+def get_sample_uri(sample):
     assets_dir = os.path.dirname(os.path.abspath(__file__))
 
     return "file://%s" % os.path.join(assets_dir, "samples", sample)
 
 
-def cleanProxySamples():
+def clean_proxy_samples():
     _dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples")
     proxy_manager = ProxyManager(mock.MagicMock())
 
@@ -242,41 +242,7 @@ def cleanProxySamples():
             f = os.path.join(_dir, f)
             os.remove(f)
 
-
-class SignalMonitor(object):
-
-    def __init__(self, obj, *signals):
-        self.signals = signals
-        self.connectToObj(obj)
-
-    def connectToObj(self, obj):
-        self.obj = obj
-        for signal in self.signals:
-            obj.connect(signal, self._signalCb, signal)
-            setattr(self, self._getSignalCounterName(signal), 0)
-            setattr(self, self._getSignalCollectName(signal), [])
-
-    def disconnectFromObj(self, obj):
-        obj.disconnect_by_func(self._signalCb)
-        del self.obj
-
-    def _getSignalCounterName(self, signal):
-        field = '%s_count' % signal.replace('-', '_')
-        return field
-
-    def _getSignalCollectName(self, signal):
-        field = '%s_collect' % signal.replace('-', '_')
-        return field
-
-    def _signalCb(self, obj, *args):
-        name = args[-1]
-        field = self._getSignalCounterName(name)
-        setattr(self, field, getattr(self, field, 0) + 1)
-        field = self._getSignalCollectName(name)
-        setattr(self, field, getattr(self, field, []) + [args[:-1]])
-
-
-def createTestClip(clip_type):
+def create_test_clip(clip_type):
     clip = clip_type()
     clip.selected = Selected()
 
