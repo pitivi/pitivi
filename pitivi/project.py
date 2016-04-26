@@ -641,7 +641,7 @@ class Project(Loggable, GES.Project):
         self.timeline = None
         self.uri = uri
         self.loaded = False
-        self._at_least_one_asset_missing = False
+        self.at_least_one_asset_missing = False
         self.app = app
         self.loading_assets = []
         self.asset_loading_progress = 100
@@ -725,15 +725,6 @@ class Project(Loggable, GES.Project):
     # --------------- #
     # Our properties  #
     # --------------- #
-
-    @property
-    def at_least_one_asset_missing(self):
-        return self._at_least_one_asset_missing
-
-    @at_least_one_asset_missing.setter
-    def at_least_one_asset_missing(self, value):
-        self._at_least_one_asset_missing = value
-        self.setModificationState(True)
 
     # Project specific properties
     @property
