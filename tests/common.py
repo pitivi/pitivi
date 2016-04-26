@@ -19,6 +19,7 @@
 """
 A collection of objects to use for testing
 """
+import contextlib
 import gc
 import os
 import tempfile
@@ -194,37 +195,36 @@ class TestCase(unittest.TestCase, Loggable):
                          expect_selected)
         self.assertEqual(ges_clip.selected.selected, expect_selected)
 
-    def createTempProject(self):
-        """
-        Created a temporary project
+@contextlib.contextmanager
+def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
+    """
+    Create a project file.
 
-        Always generate projects with missing assets for now
-
-        Returns:
-            str: The path of the new project
-            str: The URI of the new project
-        """
-        unused_fd, xges_path = tempfile.mkstemp()
-        with open(xges_path, "w") as xges:
-            xges.write("""
+    Yields:
+        str: The URI of the new project
+    """
+    unused_fd, xges_path = tempfile.mkstemp()
+    with open(xges_path, "w") as xges:
+        xges.write("""
 <ges version='0.1'>
   <project>
     <ressources>
-      <asset id='file:///icantpossiblyexist.png'
-            extractable-type-name='GESUriClip' />
+      <asset id='%(asset_uri)s' extractable-type-name='GESUriClip' />
     </ressources>
     <timeline>
       <track caps='video/x-raw' track-type='4' track-id='0' />
       <layer priority='0'>
-        <clip id='0' asset-id='file:///icantpossiblyexist.png'
+        <clip id='0' asset-id='%(asset_uri)s'
             type-name='GESUriClip' layer-priority='0' track-types='4'
             start='0' duration='2590000000' inpoint='0' rate='0' />
       </layer>
     </timeline>
 </project>
-</ges>""")
+</ges>""" % {'asset_uri': asset_uri})
 
-        return xges_path, Gst.filename_to_uri(xges_path)
+    yield Gst.filename_to_uri(xges_path)
+
+    os.remove(xges_path)
 
 
 def get_sample_uri(sample):

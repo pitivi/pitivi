@@ -19,7 +19,6 @@
 """
 Test for pitivi/mainwindow.py
 """
-import os
 from unittest import mock
 
 from gi.repository import GES
@@ -113,11 +112,8 @@ class TestMainWindow(common.TestCase):
         app.project_manager.connect("missing-uri",
                                     __pm_missing_uri_cb)
 
-        xges_path, uri = self.createTempProject()
-        try:
+        with common.created_project_file() as uri:
             app.project_manager.loadProject(uri)
-        finally:
-            os.remove(xges_path)
 
         mainloop.run()
 

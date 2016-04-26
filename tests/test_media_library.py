@@ -187,10 +187,6 @@ class TestMediaLibrary(common.TestCase):
         self.assertEqual(asset.get_proxy(), proxy)
 
     def testMissingUriDisplayed(self):
-        xges_path, uri = self.createTempProject()
-
-        try:
+        with common.created_project_file() as uri:
             self._customSetUp(project_uri=uri)
-            self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
-        finally:
-            os.remove(xges_path)
+        self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
