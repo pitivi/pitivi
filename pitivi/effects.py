@@ -591,8 +591,11 @@ class EffectsPropertiesManager:
             value = Gst.Fraction(int(value.num), int(value.denom))
 
         if value != self._current_element_values.get(prop.name):
-            with self.app.action_log.started("Effect property change"):
-                effect.set_child_property(prop.name, value)
+            from pitivi.undo.timeline import CommitTimelineFinalizingAction
 
-            self.app.project_manager.current_project.pipeline.flushSeek()
+            pipeline = self.app.project_manager.current_project.pipeline
+            with self.app.action_log.started("Effect property change",
+                                             CommitTimelineFinalizingAction(pipeline)):
+                effect.set_child_property(prop.name, value)
+            pipeline.commit_timeline()
             self._current_element_values[prop.name] = value

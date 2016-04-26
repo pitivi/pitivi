@@ -148,7 +148,6 @@ class TrackElementAdded(UndoableAction):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._props_changed = []
         self._done()
 
@@ -206,7 +205,6 @@ class TrackElementRemoved(UndoableAction):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._props_changed = []
         self._undone()
 
@@ -302,13 +300,11 @@ class ClipPropertyChanged(UndoableAction):
     def do(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.new_value)
-        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._done()
 
     def undo(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.old_value)
-        self.clip.get_layer().get_timeline().get_asset().pipeline.commit_timeline()
         self._undone()
 
 

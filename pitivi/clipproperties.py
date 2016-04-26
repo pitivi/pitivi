@@ -35,6 +35,7 @@ from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.effects import VIDEO_EFFECT
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
@@ -303,11 +304,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        with self.app.action_log.started("remove effect"):
+        pipeline = self._project.timeline.get_parent()
+        with self.app.action_log.started("remove effect", CommitTimelineFinalizingAction(pipeline)):
             self.__remove_configuration_widget()
             self.effects_properties_manager.cleanCache(effect)
             effect.get_parent().remove(effect)
-            self._project.timeline.commit()
+            pipeline.commit_timeline()
         self._updateTreeview()
 
     def addEffectToClip(self, clip, factory_name, priority=None):
@@ -320,12 +322,14 @@ class EffectProperties(Gtk.Expander, Loggable):
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                 # Actually add the effect
-                with self.app.action_log.started("add effect"):
+                pipeline = self._project.timeline.get_parent()
+                with self.app.action_log.started("add effect",
+                                                 CommitTimelineFinalizingAction(pipeline)):
                     effect = GES.Effect.new(bin_description=factory_name)
                     clip.add(effect)
                     if priority is not None and priority < len(model):
                         clip.set_top_effect_priority(effect, priority)
-                    self._project.timeline.commit()
+                pipeline.commit_timeline()
                 break
 
     def addEffectToCurrentSelection(self, factory_name):
@@ -414,10 +418,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         # The paths are different.
         effects = clip.get_top_effects()
         effect = effects[source_index]
-        with self.app.action_log.started("move effect"):
+        pipeline = self._project.timeline.get_parent()
+        with self.app.action_log.started("move effect",
+                                         CommitTimelineFinalizingAction(pipeline)):
             clip.set_top_effect_priority(effect, drop_index)
-            self._project.timeline.commit()
-        self._project.pipeline.flushSeek()
+
+        pipeline.commit_timeline()
         new_path = Gtk.TreePath.new()
         new_path.append_index(drop_index)
         self.__updateAll(path=new_path)

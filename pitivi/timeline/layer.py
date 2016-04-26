@@ -29,6 +29,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from pitivi.timeline import elements
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils import ui
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
@@ -253,9 +254,11 @@ class LayerControls(Gtk.EventBox, Loggable):
         return menu_model, action_group
 
     def _deleteLayerCb(self, unused_action, unused_parametter):
-        with self.app.action_log.started("delete layer"):
+        pipeline = self.ges_timeline.get_asset().pipeline
+        with self.app.action_log.started("delete layer",
+                                         CommitTimelineFinalizingAction(pipeline)):
             self.ges_timeline.remove_layer(self.ges_layer)
-            self.ges_timeline.get_asset().pipeline.commit_timeline()
+        pipeline.commit_timeline()
 
     def _moveLayerCb(self, unused_simple_action, unused_parametter, step):
         index = self.ges_layer.get_priority()
