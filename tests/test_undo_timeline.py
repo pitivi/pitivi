@@ -106,19 +106,32 @@ class TestTimelineUndo(TestCase):
         stacks.append(stack)
 
     def testLayerRemoved(self):
+        timeline_ui = Timeline(container=None, app=None)
+        timeline_ui.setProject(self.app.project_manager.current_project)
+
         layer1 = self.layer
         layer2 = self.timeline.append_layer()
         layer3 = self.timeline.append_layer()
-        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
+
+        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+        self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
+                        list(range(3)))
 
         with self.action_log.started("layer removed"):
             self.timeline.remove_layer(layer2)
-        self.assertEqual(self.timeline.get_layers(), [layer1, layer3])
+
+        self.assertEqual([layer1, layer3], self.timeline.get_layers())
+        self.assertEqual([l.props.priority for l in [layer1, layer3]],
+                        list(range(2)))
 
         self.action_log.undo()
-        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
+        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
+        self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
+                        list(range(3)))
         self.action_log.redo()
-        self.assertEqual(self.timeline.get_layers(), [layer1, layer3])
+        self.assertEqual([layer1, layer3], self.timeline.get_layers())
+        self.assertEqual([l.props.priority for l in [layer1, layer3]],
+                        list(range(2)))
 
     def testLayerMoved(self):
         layer1 = self.layer
