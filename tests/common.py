@@ -94,6 +94,7 @@ def create_main_loop():
     timed_out = False
 
     def quit_cb(unused):
+        nonlocal timed_out
         timed_out = True
         mainloop.quit()
 
