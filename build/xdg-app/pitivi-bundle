@@ -2,9 +2,6 @@
 
 # ------------------------------------------- #
 # Repository and bundle setup variables.
-# Those are the only variable to set if you
-# want to create an installer for another
-# application
 # ------------------------------------------- #
 
 # The usual application name
@@ -42,6 +39,13 @@ SDK_DEFAULT_REPO_NAME=gnome
 
 # ------------------------------------------- #
 
+  which xdg-app > /dev/null 2>&1 || (echo "You need to install xdg-app.
+
+https://wiki.gnome.org/Projects/SandboxedApps/Packages
+"; exit 1)
+
+# ------------------------------------------- #
+
 # Computation of actual variable values
 APPLICATION_REPO_NAME=`xdg-app list-remotes --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
@@ -53,6 +57,7 @@ SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 REPO=$XDGAPP_ENVPATH/xdg-app-repos/$APPLICATION_NAME
 
 # ------------------------------------------- #
+
 XDG_APP_INSTALL="xdg-app install --user "
 XDG_APP_UPDATE="xdg-app update --user "
 XDG_APP_ADD_REMOTE="xdg-app add-remote --no-gpg-verify --user "
