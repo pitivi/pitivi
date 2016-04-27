@@ -225,15 +225,12 @@ class TrackElementRemoved(UndoableAction):
 
 
 class ClipPropertyChangeTracker(PropertyChangeTracker):
-    # no out-point
-    property_names = ["start", "duration", "in-point", "priority"]
 
-    def __init__(self):
-        PropertyChangeTracker.__init__(self)
-
-    def connectToObject(self, obj):
-        PropertyChangeTracker.connectToObject(self, obj)
-        self.timeline = obj.timeline
+    def __init__(self, ges_clip):
+        PropertyChangeTracker.__init__(self, ges_clip,
+            # No out-point as that's calculated.
+            property_names=["start", "duration", "in-point", "priority"])
+        self.timeline = ges_clip.timeline
         self.timeline.connect("commited", self._timelineCommitedCb)
 
     def disconnectFromObject(self, obj):
@@ -241,12 +238,12 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
         PropertyChangeTracker.disconnectFromObject(self, obj)
 
     def _timelineCommitedCb(self, timeline):
-        properties = self._takeCurrentSnapshot(self.obj)
+        properties = self._takeCurrentSnapshot(self.gobject)
         for property_name, property_value in properties.items():
             old_value = self.properties[property_name]
             if old_value != property_value:
                 self._propertyChangedCb(
-                    self.obj, property_value, property_name)
+                    self.gobject, property_value, property_name)
 
 
 class KeyframeChangeTracker(GObject.Object):
@@ -586,20 +583,19 @@ class TimelineObserver(Loggable):
         ges_layer.disconnect_by_func(self._clipRemovedCb)
         ges_layer.disconnect_by_func(self._layer_moved_cb)
 
-    def _connectToClip(self, clip):
-        tracker = ClipPropertyChangeTracker()
-        tracker.connectToObject(clip)
+    def _connectToClip(self, ges_clip):
+        tracker = ClipPropertyChangeTracker(ges_clip)
         for property_name in tracker.property_names:
             attr_name = "last-%s" % property_name
-            last_value = clip.get_property(property_name)
+            last_value = ges_clip.get_property(property_name)
             setattr(tracker, attr_name, last_value)
         tracker.connect(
             "monitored-property-changed", self._clipPropertyChangedCb)
-        self.clip_property_trackers[clip] = tracker
+        self.clip_property_trackers[ges_clip] = tracker
 
-        clip.connect("child-added", self._clipTrackElementAddedCb)
-        clip.connect("child-removed", self._clipTrackElementRemovedCb)
-        for track_element in clip.get_children(True):
+        ges_clip.connect("child-added", self._clipTrackElementAddedCb)
+        ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
+        for track_element in ges_clip.get_children(True):
             self._connectToTrackElement(track_element)
 
     def _disconnectFromClip(self, clip):
