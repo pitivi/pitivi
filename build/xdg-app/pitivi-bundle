@@ -240,7 +240,7 @@ then
   fi
 fi
 
-if [ -z "$USE_REMOTE" ]
+if [ -z "$APP_INSTALLED" ] && [ -z "$APPLICATION_REPOSITORY" ]
 then
   cd $APPLICATION_REPOSITORY
   DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
@@ -364,7 +364,8 @@ then
 
     exit $exitcode
   fi
-
+else
+  xdg-app run org.pitivi.Pitivi
 fi
 
 
