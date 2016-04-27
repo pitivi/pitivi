@@ -33,25 +33,6 @@ from pitivi.utils.misc import uri_is_reachable
 from tests import common
 
 
-class MockProject(object):
-    settings = None
-    format = None
-    uri = None
-    has_mods = True
-
-    def hasUnsavedModifications(self):
-        return self.has_mods
-
-    def release(self):
-        pass
-
-    def disconnect_by_function(self, ignored):
-        pass
-
-    def finalize(self):
-        pass
-
-
 class ProjectManagerListener(object):
 
     def __init__(self, manager):
@@ -115,7 +96,7 @@ class TestProjectManager(TestCase):
         self.manager.closeRunningProject = close
 
         uri = "file:///Untitled.xptv"
-        self.manager.current_project = MockProject()
+        self.manager.current_project = mock.Mock()
         self.manager.loadProject(uri)
 
         self.assertEqual(0, len(self.signals))
@@ -157,7 +138,7 @@ class TestProjectManager(TestCase):
         def closing(manager, project):
             return False
 
-        self.manager.current_project = MockProject()
+        self.manager.current_project = mock.Mock()
         self.manager.current_project.uri = "file:///ciao"
         self.manager.connect("closing-project", closing)
 
@@ -169,7 +150,9 @@ class TestProjectManager(TestCase):
         self.assertTrue(project is self.manager.current_project)
 
     def testCloseRunningProject(self):
-        current = self.manager.current_project = MockProject()
+        current = mock.Mock()
+        current.uri = None
+        self.manager.current_project = current
         self.assertTrue(self.manager.closeRunningProject())
         self.assertEqual(2, len(self.signals))
 
@@ -189,7 +172,7 @@ class TestProjectManager(TestCase):
         def closing(manager, project):
             return False
 
-        self.manager.current_project = MockProject()
+        self.manager.current_project = mock.Mock()
         self.manager.current_project.uri = "file:///ciao"
         self.manager.connect("closing-project", closing)
         self.assertFalse(self.manager.newBlankProject())
