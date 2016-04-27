@@ -122,13 +122,30 @@ class TestProjectManager(TestCase):
             mainloop.quit()
 
         result = [False]
-        self.manager.connect(
-            "missing-uri", missingUriCb, result)
+        self.manager.connect("missing-uri", missingUriCb, result)
 
         with common.created_project_file() as uri:
             self.assertTrue(self.manager.loadProject(uri))
             mainloop.run()
         self.assertTrue(result[0], "missing-uri has not been emitted")
+
+    def testLoaded(self):
+        mainloop = common.create_main_loop()
+
+        def new_project_loaded_cb(project_manager, project):
+            mainloop.quit()
+
+        self.manager.connect("new-project-loaded", new_project_loaded_cb)
+
+        asset_uri = common.get_sample_uri("flat_colour1_640x480.png")
+        with common.created_project_file(asset_uri=asset_uri) as uri:
+            self.assertTrue(self.manager.loadProject(uri))
+            mainloop.run()
+
+        project = self.manager.current_project
+        self.assertFalse(project.at_least_one_asset_missing)
+        self.assertTrue(project.loaded)
+        self.assertFalse(project.hasUnsavedModifications())
 
     def testCloseRunningProjectNoProject(self):
         self.assertTrue(self.manager.closeRunningProject())
