@@ -161,10 +161,10 @@ fi
 if [ -n "$BUILD" ]
 then
   which xdg-app-builder > /dev/null 2>&1 || (echo "You need to install xdg-app-builder to \
-  use the $0 script for development.
+ use the $0 script for development.
 
-  xdg-app-builder was introduced between the 0.4.5 and 0.4.6 xdg-app releases.
-  "; exit 1)
+xdg-app-builder was introduced between the 0.4.5 and 0.4.6 xdg-app releases.
+"; exit 1)
 
   DEVEL=true
 fi
