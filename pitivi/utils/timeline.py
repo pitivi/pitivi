@@ -217,7 +217,7 @@ class EditingContext(GObject.Object, Loggable):
         This is the main class for interactive edition.
     """
 
-    def __init__(self, focus, timeline, mode, edge, app):
+    def __init__(self, focus, timeline, mode, edge, app, log_actions):
         """
         @param focus: the Clip or TrackElement which is to be the
         main target of interactive editing, such as the object directly under the
@@ -260,10 +260,15 @@ class EditingContext(GObject.Object, Loggable):
         self.edge = edge
         self.mode = mode
 
-        self.app.action_log.begin("move-clip")
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        self.__log_actions = log_actions
+        if log_actions:
+            self.app.action_log.begin("move-clip", CommitTimelineFinalizingAction(
+                self.timeline.get_asset().pipeline))
 
     def finish(self):
-        self.app.action_log.commit("move-clip")
+        if self.__log_actions:
+            self.app.action_log.commit("move-clip")
         self.timeline.get_asset().pipeline.commit_timeline()
         self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
 

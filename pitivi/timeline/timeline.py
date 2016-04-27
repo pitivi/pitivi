@@ -299,7 +299,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # What's being dropped, for example asset URIs.
         self.dropData = None
         # Whether clips have been created in the current drag & drop.
-        self._createdClips = False
+        self.dropping_clips = False
         # The list of (Layer, Clip) tuples dragged into the timeline.
         self.__last_clips_on_leave = None
 
@@ -742,7 +742,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.queue_draw()
 
     def __createClips(self, x, y):
-        if self._createdClips:
+        if self.dropping_clips:
             return False
 
         x = self.adjustCoords(x=x)
@@ -769,22 +769,22 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.debug("Creating %s at %s", asset.props.id, Gst.TIME_ARGS(placement))
 
-            with self.app.action_log.started("add clip"):
-                ges_clip = ges_layer.add_asset(asset,
-                                               placement,
-                                               0,
-                                               clip_duration,
-                                               asset.get_supported_formats())
-                placement += clip_duration
-                self.current_group.add(ges_clip.get_toplevel_parent())
-                self.selection.setSelection([], SELECT_ADD)
+            ges_clip = ges_layer.add_asset(asset,
+                                           placement,
+                                           0,
+                                           clip_duration,
+                                           asset.get_supported_formats())
+            placement += clip_duration
+            self.current_group.add(ges_clip.get_toplevel_parent())
+            self.selection.setSelection([], SELECT_ADD)
+            ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
 
             if not self.draggingElement:
                 self.draggingElement = ges_clip.ui
                 self._on_layer = ges_layer
 
-            self._createdClips = True
+            self.dropping_clips = True
 
         return True
 
@@ -816,25 +816,24 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.current_group.get_children(False)]
             self.dropDataReady = False
-            if self._createdClips:
+            if self.dropping_clips:
                 clips = self.current_group.get_children(False)
                 self.resetSelectionGroup()
                 self.selection.setSelection([], SELECT)
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
-                self.app.action_log.commit("add dragged clip")
 
             self.draggingElement = None
             self.__got_dragged = False
-            self._createdClips = False
+            self.dropping_clips = False
         elif target == URI_TARGET_ENTRY.target:
             self.cleanDropData()
 
     def cleanDropData(self):
         self.dropDataReady = False
         self.dropData = None
-        self._createdClips = False
+        self.dropping_clips = False
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
         # Same as in insertEnd: this value changes during insertion, snapshot
@@ -846,16 +845,18 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.cleanDropData()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
-                self.app.action_log.begin("add dragged clip")
-
                 if self.__on_separators:
                     created_layer = self.__getDroppedLayer()
                 else:
                     created_layer = None
-                for layer, clip in self.__last_clips_on_leave:
-                    if created_layer:
-                        layer = created_layer
-                    layer.add_clip(clip)
+                pipeline = self._project.pipeline
+                with self.app.action_log.started("add clip",
+                                                 CommitTimelineFinalizingAction(pipeline)):
+                    for layer, clip in self.__last_clips_on_leave:
+                        if created_layer:
+                            layer = created_layer
+                        clip.first_placement = False
+                        layer.add_clip(clip)
 
                 if zoom_was_fitted:
                     self.parent._setBestZoomRatio()
@@ -1050,7 +1051,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                   self.ges_timeline,
                                                   edit_mode,
                                                   dragging_edge,
-                                                  self.app)
+                                                  self.app,
+                                                  not self.dropping_clips)
 
         x, y = event_widget.translate_coordinates(self, x, y)
         x -= CONTROL_WIDTH

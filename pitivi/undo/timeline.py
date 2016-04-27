@@ -691,6 +691,12 @@ class TimelineObserver(Loggable):
 
     def _clipPropertyChangedCb(self, tracker, clip,
                                property_name, old_value, new_value):
+
+        # Do not track clips when we are just moving clips around
+        # while drag and dropping them.
+        if self.app.gui.timeline_ui.timeline.dropping_clips:
+            return
+
         attr_name = "last-%s" % property_name
         new_value = clip.get_property(property_name)
         old_value = getattr(tracker, attr_name)
