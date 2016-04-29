@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2016-04-19 13:53+0000\n"
-"PO-Revision-Date: 2016-04-20 12:30+0200\n"
+"POT-Creation-Date: 2016-04-20 10:38+0000\n"
+"PO-Revision-Date: 2016-04-29 08:53+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -948,7 +948,7 @@ msgstr ""
 #. (itstool) path: credit/name
 #: C/keyframecurves.page:24
 msgid "Alexandru Băluț"
-msgstr ""
+msgstr "Alexandru Băluț"
 
 #. (itstool) path: info/desc
 #: C/keyframecurves.page:27
@@ -1053,11 +1053,18 @@ msgid ""
 "can add one or more keyframes to the clip and drag them to appropriate "
 "vertical positions representing their values."
 msgstr ""
+"El comienzo y el final de los fotogramas claves están fijos a los puntos de "
+"comienzo y final del clip y no se pueden quitar. La curva entre esos dos "
+"fotogramas claves es inicialmente una línea horizontal plana, indicando que "
+"el valor de la propiedad controlada es la misma en cada punto en el tiempo "
+"dentro de la duración del clip. Para cambiar éste valor (y su velocidad de "
+"cambio) en cualquier punto, puede agregar uno o mas fotogramas clave al clip "
+"y arrastrarlo a una posición vertical apropiada representando sus valores."
 
 #. (itstool) path: section/p
 #: C/keyframecurves.page:54
 msgid "You can:"
-msgstr ""
+msgstr "Puede:"
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:56
@@ -1079,6 +1086,7 @@ msgstr "quitar un fotograma clave pulsando dos veces en él."
 #: C/keyframecurves.page:58
 msgid "Adjust the time and value of a keyframe by moving it with the mouse."
 msgstr ""
+"Ajustar el tiempo y el valor de un fotograma clave moviéndolo con el ratón."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:59
@@ -1096,7 +1104,7 @@ msgstr ""
 #. (itstool) path: note/p
 #: C/keyframecurves.page:62
 msgid "Currently only linear keyframe curves are supported."
-msgstr ""
+msgstr "Actualmente solo los fotogramas claves lineales están disponibles."
 
 #. (itstool) path: media
 #. This is a reference to an external file such as an image or video. When
@@ -1235,6 +1243,9 @@ msgid ""
 "gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the "
 "layer name field."
 msgstr ""
+"Para quitar una capa, pulse en el <guiseq><gui>Icono de capa</"
+"gui><gui>Eliminar capa</gui></guiseq>. Puede encontrar el <gui>Icono de "
+"Capa</gui> a la derecha del campo del nombre de la capa."
 
 #. (itstool) path: section/title
 #: C/layers.page:56
@@ -1451,6 +1462,8 @@ msgid ""
 "The spaces between components can be clicked and dragged to proportionally "
 "resize the respective adjacent components."
 msgstr ""
+"Los espacios entre los componentes se pueden pulsar y arrastrar para "
+"redimensionar proporcionalmente los componentes adyacentes respectivos."
 
 #. (itstool) path: note/title
 #: C/mainwindow.page:47
@@ -1480,6 +1493,12 @@ msgid ""
 "find further functions such as <gui>New project</gui>, <gui>Open project</"
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
+"La barra de cabecera es un lugar donde fácilmente puede acceder a funciones "
+"básicas tales como <gui>Deshacer</gui>, <gui>Rehacer, <gui>Grabar</gui>, o "
+"<gui>Renderizar</gui>. Ésta barra contiene también el <gui>botón de menú</"
+"gui> principal donde puede encontrar otras funciones tales como "
+"<gui>Proyecto nuevo</gui>, <gui>Abrir proyecto</gui>, <gui>Ajustes del "
+"Proyecto</gui> o <gui>Preferencias</gui>."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:55
@@ -1487,6 +1506,8 @@ msgid ""
 "The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</"
 "key>."
 msgstr ""
+"Puede acceder al contenido del <gui>botón de menú</gui> presionando la tecla "
+"<key>F10</key>."
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:61
@@ -1708,7 +1729,7 @@ msgstr ""
 #. (itstool) path: note/title
 #: C/mainwindow.page:118
 msgid "Detaching the previewer into a separate window"
-msgstr ""
+msgstr "Separar la vista previa en una ventana aparte."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:119
@@ -1719,6 +1740,12 @@ msgid ""
 "allow other parts of the main window to take up the space the previewer "
 "occupied. You can attach the previewer back by closing the separate window."
 msgstr ""
+"Puede separar la vista previa en una ventana aparte pulsando en el botón "
+"<gui>Separar el visor</gui> en la <gui>Barra de reproducción</gui>. Desde "
+"esa ventana que ha separado puede reproducir la vista previa en pantalla "
+"completa. Esto además le permitirá que las otras partes de la ventana "
+"principal retomen el espacio que ocupaba la vista previa. Puede volver a "
+"incorporar la vista previa cerrando la ventana que separó."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:122
