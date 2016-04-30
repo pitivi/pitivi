@@ -26,11 +26,13 @@ from gi.repository import Gtk
 
 from pitivi.viewer.move_scale_overlay import MoveScaleOverlay
 from pitivi.viewer.title_overlay import TitleOverlay
+from pitivi.utils.loggable import Loggable
 
 
-class OverlayStack(Gtk.Overlay):
+class OverlayStack(Gtk.Overlay, Loggable):
     def __init__(self, app, sink_widget):
         Gtk.Overlay.__init__(self)
+        Loggable.__init__(self)
         self.__overlays = {}
         self.__visible_overlays = []
         self.app = app
@@ -136,11 +138,12 @@ class OverlayStack(Gtk.Overlay):
         self.selected_overlay.queue_draw()
 
     def set_cursor(self, name):
+        cursor = None
         display = Gdk.Display.get_default()
-        if isinstance(name, Gdk.CursorType):
-            cursor = Gdk.Cursor.new_for_display(display, name)
-        else:
+        try:
             cursor = Gdk.Cursor.new_from_name(display, name)
+        except TypeError:
+            self.warning ("Cursor '%s' not found.", name)
         self.app.gui.get_window().set_cursor(cursor)
 
     def reset_cursor(self):

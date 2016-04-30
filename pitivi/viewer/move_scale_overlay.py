@@ -43,14 +43,14 @@ class Handle:
     INITIAL_RADIUS = 15
     MINIMAL_RADIUS = 5
     CURSORS = {
-        (Edge.top, Edge.left): Gdk.CursorType.TOP_LEFT_CORNER,
-        (Edge.bottom, Edge.left): Gdk.CursorType.BOTTOM_LEFT_CORNER,
-        (Edge.bottom, Edge.right): Gdk.CursorType.BOTTOM_RIGHT_CORNER,
-        (Edge.top, Edge.right): Gdk.CursorType.TOP_RIGHT_CORNER,
-        (Edge.top,): Gdk.CursorType.TOP_SIDE,
-        (Edge.bottom,): Gdk.CursorType.BOTTOM_SIDE,
-        (Edge.left,): Gdk.CursorType.LEFT_SIDE,
-        (Edge.right,): Gdk.CursorType.RIGHT_SIDE
+        (Edge.top, Edge.left): "nw-resize",
+        (Edge.bottom, Edge.left): "sw-resize",
+        (Edge.bottom, Edge.right): "se-resize",
+        (Edge.top, Edge.right): "ne-resize",
+        (Edge.top,): "n-resize",
+        (Edge.bottom,): "s-resize",
+        (Edge.left,): "w-resize",
+        (Edge.right,): "e-resize"
     }
 
     def __init__(self, overlay):
