@@ -1496,13 +1496,14 @@ class ProjectSettingsDialog(object):
 
     Attributes:
         project (Project): The project who's settings are displayed.
+        app (pitivi.application.Pitivi): The current app.
     """
 
     def __init__(self, parent_window, project, app):
         self.app = app
         self.project = project
-        self.audio_presets = AudioPresetManager()
-        self.video_presets = VideoPresetManager()
+        self.audio_presets = AudioPresetManager(app.system)
+        self.video_presets = VideoPresetManager(app.system)
         self._createUi()
         self.window.set_transient_for(parent_window)
         self._setupUiConstraints()

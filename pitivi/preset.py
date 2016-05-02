@@ -31,7 +31,6 @@ from pitivi.configure import get_audiopresets_dir
 from pitivi.configure import get_renderpresets_dir
 from pitivi.configure import get_videopresets_dir
 from pitivi.settings import xdg_data_home
-from pitivi.utils import system
 from pitivi.utils.loggable import Loggable
 
 
@@ -64,7 +63,7 @@ class PresetManager(GObject.Object, Loggable):
         "preset-loaded": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, default_path, user_path):
+    def __init__(self, default_path, user_path, system):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
@@ -77,7 +76,7 @@ class PresetManager(GObject.Object, Loggable):
         self.cur_preset = None
         # Whether to ignore the updateValue calls.
         self.ignore_update_requests = False
-        self.system = system.getSystem()
+        self.system = system
 
     def setupUi(self, combo, button):
         self.combo = combo
@@ -420,10 +419,10 @@ class PresetManager(GObject.Object, Loggable):
 
 class VideoPresetManager(PresetManager):
 
-    def __init__(self):
+    def __init__(self, system):
         default_path = get_videopresets_dir()
         user_path = os.path.join(xdg_data_home(), 'video_presets')
-        PresetManager.__init__(self, default_path, user_path)
+        PresetManager.__init__(self, default_path, user_path, system)
 
     def _deserializePreset(self, parser):
         width = parser["width"]
@@ -464,10 +463,10 @@ class VideoPresetManager(PresetManager):
 
 class AudioPresetManager(PresetManager):
 
-    def __init__(self):
+    def __init__(self, system):
         default_path = get_audiopresets_dir()
         user_path = os.path.join(xdg_data_home(), 'audio_presets')
-        PresetManager.__init__(self, default_path, user_path)
+        PresetManager.__init__(self, default_path, user_path, system)
 
     def _deserializePreset(self, parser):
         channels = parser["channels"]
@@ -492,10 +491,10 @@ class AudioPresetManager(PresetManager):
 
 class RenderPresetManager(PresetManager):
 
-    def __init__(self):
+    def __init__(self, system):
         default_path = get_renderpresets_dir()
         user_path = os.path.join(xdg_data_home(), 'render_presets')
-        PresetManager.__init__(self, default_path, user_path)
+        PresetManager.__init__(self, default_path, user_path, system)
 
     def _deserializePreset(self, parser):
         container = parser["container"]

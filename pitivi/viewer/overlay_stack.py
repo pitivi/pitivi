@@ -24,9 +24,9 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gtk
 
+from pitivi.utils.loggable import Loggable
 from pitivi.viewer.move_scale_overlay import MoveScaleOverlay
 from pitivi.viewer.title_overlay import TitleOverlay
-from pitivi.utils.loggable import Loggable
 
 
 class OverlayStack(Gtk.Overlay, Loggable):

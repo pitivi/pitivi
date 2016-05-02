@@ -63,6 +63,7 @@ class Pitivi(Gtk.Application, Loggable):
         gui (MainWindow): The main window of the app.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
+        system (pitivi.utils.system.System): The system running the app.
     """
 
     __gsignals__ = {

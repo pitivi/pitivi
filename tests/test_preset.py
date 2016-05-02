@@ -28,12 +28,13 @@ from unittest import TestCase
 
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import PresetManager
+from pitivi.utils.system import System
 
 
 class FakePresetManager(PresetManager):
 
     def __init__(self, default_path):
-        PresetManager.__init__(self, default_path, tempfile.mkdtemp())
+        PresetManager.__init__(self, default_path, tempfile.mkdtemp(), System())
 
     def _serializePreset(self, preset):
         return dict(preset.items())
@@ -121,14 +122,14 @@ class TestPresetBasics(TestCase):
 class TestAudioPresetsIO(TestCase):
 
     def setUp(self):
-        self.manager = AudioPresetManager()
+        self.manager = AudioPresetManager(System())
         self.manager.user_path = tempfile.mkdtemp()
 
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
 
     def createOtherManager(self):
-        other_manager = AudioPresetManager()
+        other_manager = AudioPresetManager(System())
         other_manager.user_path = self.manager.user_path
         return other_manager
 
@@ -192,7 +193,7 @@ class TestAudioPresetsIO(TestCase):
             self.manager.removeCurrentPreset()
 
         # Check that the files have not been deleted or changed.
-        other_manager = AudioPresetManager()
+        other_manager = AudioPresetManager(System())
         other_manager.user_path = "/pitivi/non/existing/directory"
         other_manager.loadAll()
         for preset_name in system_presets:
@@ -215,7 +216,7 @@ class TestAudioPresetsIO(TestCase):
             self.manager.saveCurrentPreset(new_name)
 
         # Check that the files have not been deleted or changed.
-        other_manager = AudioPresetManager()
+        other_manager = AudioPresetManager(System())
         other_manager.user_path = "/pitivi/non/existing/directory"
         other_manager.loadAll()
         for preset_name in system_presets:

@@ -355,7 +355,7 @@ class RenderDialog(Loggable):
         # {object: sigId}
         self._gstSigId = {}
 
-        self.render_presets = RenderPresetManager()
+        self.render_presets = RenderPresetManager(self.app.system)
         self.render_presets.loadAll()
 
         self._createUi()
