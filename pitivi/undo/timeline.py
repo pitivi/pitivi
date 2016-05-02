@@ -543,9 +543,6 @@ class TimelineObserver(Loggable):
         action_log (UndoableActionLog): The action log where to report actions.
     """
 
-    timelinePropertyChangedAction = ClipPropertyChanged
-    activePropertyChangedAction = ActivePropertyChanged
-
     def __init__(self, action_log, app):
         Loggable.__init__(self)
         self.action_log = action_log
@@ -697,8 +694,8 @@ class TimelineObserver(Loggable):
         attr_name = "last-%s" % property_name
         new_value = clip.get_property(property_name)
         old_value = getattr(tracker, attr_name)
-        action = self.timelinePropertyChangedAction(clip, property_name,
-                                                    old_value, new_value)
+        action = ClipPropertyChanged(clip, property_name,
+                                     old_value, new_value)
         setattr(tracker, attr_name, new_value)
         self.action_log.push(action)
 
@@ -733,7 +730,7 @@ class TimelineObserver(Loggable):
         """
         This happens when an effect is (de)activated on a clip in the timeline.
         """
-        action = self.activePropertyChangedAction(add_effect_action, active)
+        action = ActivePropertyChanged(add_effect_action, active)
         self.action_log.push(action)
 
     def _controlSourceKeyFrameMovedCb(self, tracker, control_source,
