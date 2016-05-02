@@ -47,7 +47,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import ProxyManager
-from pitivi.utils.system import getSystem
+from pitivi.utils.system import get_system
 from pitivi.utils.threads import ThreadMaster
 from pitivi.utils.timeline import Zoomable
 
@@ -143,7 +143,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.threads = ThreadMaster()
         self.effects = EffectsManager()
         self.proxy_manager = ProxyManager(self)
-        self.system = getSystem()
+        self.system = get_system()
 
         self.project_manager.connect(
             "new-project-loading", self._newProjectLoadingCb)

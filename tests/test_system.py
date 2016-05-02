@@ -21,7 +21,7 @@
 # Boston, MA 02110-1301, USA.
 from unittest import TestCase
 
-from pitivi.utils.system import getSystem
+from pitivi.utils.system import get_system
 from pitivi.utils.system import GnomeSystem
 from pitivi.utils.system import INHIBIT_LOGOUT
 from pitivi.utils.system import INHIBIT_SESSION_IDLE
@@ -92,7 +92,7 @@ class TestSystem(TestCase):
 class TestGnomeSystem(TestCase):
 
     def setUp(self):
-        self.system = getSystem()
+        self.system = get_system()
 
     def testPowerInhibition(self):
         if not isinstance(self.system, GnomeSystem):

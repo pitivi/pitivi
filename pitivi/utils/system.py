@@ -20,6 +20,7 @@ import datetime
 import multiprocessing
 import os
 import resource
+import sys
 
 from gi.repository import GObject
 
@@ -209,6 +210,8 @@ class GnomeSystem(FreedesktopOrgSystem):
 
     def __init__(self):
         FreedesktopOrgSystem.__init__(self)
+
+        import dbus
         self.bus = dbus.Bus(dbus.Bus.TYPE_SESSION)
 
         # connect to gnome sessionmanager
@@ -220,12 +223,6 @@ class GnomeSystem(FreedesktopOrgSystem):
         self.cookie_type = COOKIE_NONE
 
         self.connect('update-power-inhibition', self._updatePowerInhibitionCb)
-
-    def screensaver_is_blockable(self):
-        return True
-
-    def sleep_is_blockable(self):
-        return True
 
     def _updatePowerInhibitionCb(self, unused_system):
         # there are two states we want the program to be in, with regards to
@@ -271,34 +268,39 @@ class GnomeSystem(FreedesktopOrgSystem):
                 self.debug("already uninhibited")
 
 
-system_ = None
+class DarwinSystem(System):
 
-# attempts to identify the System, import dependencies and overide system_
-if os.name == 'posix':
-    if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
-        try:
-            import dbus
-            system_ = GnomeSystem
-        except:
-            pass
+    """Apple OS X"""
 
-    if system_ is None:
-        system_ = FreedesktopOrgSystem
-elif os.name == 'nt':
-    pass
-elif os.name == 'mac':
-    pass
+    def __init__(self):
+        System.__init__(self)
 
 
-def getSystem():
-    system = None
-    if system_ is not None:
-        system = system_()
+class WindowsSystem(System):
 
-    if system is None:
-        system = System()
+    """Microsoft Windows"""
 
-    return system
+    def __init__(self):
+        System.__init__(self)
+
+
+def get_system():
+    """
+    Create a System object.
+
+    Returns:
+        System: A System object.
+    """
+    if os.name == 'posix':
+        if sys.platform == 'darwin':
+            return DarwinSystem()
+
+        if 'GNOME_DESKTOP_SESSION_ID' in os.environ:
+            return GnomeSystem()
+        return FreedesktopOrgSystem()
+    if os.name == 'nt':
+        return WindowsSystem()
+    return System()
 
 
 class CPUUsageTracker(object):
