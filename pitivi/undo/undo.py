@@ -298,6 +298,51 @@ class UndoableActionLog(GObject.Object, Loggable):
         return bool(self.stacks)
 
 
+class MetaChangedAction(UndoableAction):
+
+    def __init__(self, meta_container, item, current_value, new_value):
+        UndoableAction.__init__(self)
+        self.meta_container = meta_container
+        self.item = item
+        self.old_value = current_value
+        self.new_value = new_value
+
+    def do(self):
+        self.meta_container.set_meta(self.item, self.new_value)
+
+    def undo(self):
+        self.meta_container.set_meta(self.item, self.old_value)
+
+
+class MetaContainerObserver(GObject.Object):
+    """
+    Monitors a MetaContainer's changes.
+
+    Args:
+        meta_container (GES.MetaContainer): The object to be monitored.
+
+    Attributes:
+        action_log (UndoableActionLog): The action log where to report actions.
+    """
+
+    def __init__(self, meta_container, action_log):
+        self.action_log = action_log
+
+        self.metas = {}
+
+        def set_meta(unused_meta_container, item, value):
+            self.metas[item] = value
+        meta_container.foreach(set_meta)
+
+        meta_container.connect("notify-meta", self._notify_meta_cb)
+
+    def _notify_meta_cb(self, meta_container, item, value):
+        current_value = self.metas.get(item)
+        action = MetaChangedAction(meta_container, item, current_value, value)
+        self.metas[item] = value
+        self.action_log.push(action)
+
+
 class PropertyChangeTracker(GObject.Object):
     """
     Monitors a GObject.Object's props and reports UndoableActions.

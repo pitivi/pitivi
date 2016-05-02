@@ -273,8 +273,7 @@ class Pitivi(Gtk.Application, Loggable):
         timeline_observer = TimelineObserver(self.action_log, app=self)
         timeline_observer.startObserving(project.timeline)
 
-        project_observer = ProjectObserver(self.action_log)
-        project_observer.startObserving(project)
+        project_observer = ProjectObserver(project, self.action_log)
 
     def _projectClosed(self, unused_project_manager, project):
         if project.loaded:

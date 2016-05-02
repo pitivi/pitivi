@@ -21,6 +21,7 @@
 from gi.repository import GObject
 from gi.repository import Gst
 
+from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAction
 
 
@@ -66,52 +67,17 @@ class AssetRemovedAction(UndoableAction):
         return st
 
 
-class MetaChangedAction(UndoableAction):
-
-    def __init__(self, meta_container, item, current_value, new_value):
-        UndoableAction.__init__(self)
-        self.meta_container = meta_container
-        self.item = item
-        self.old_value = current_value
-        self.new_value = new_value
-
-    def do(self):
-        self.meta_container.set_meta(self.item, self.new_value)
-
-    def undo(self):
-        self.meta_container.set_meta(self.item, self.old_value)
-
-
-class ProjectObserver():
+class ProjectObserver(MetaContainerObserver):
     """Monitors a project instance and reports UndoableActions.
 
-    Attributes:
-        action_log (UndoableActionLog): The action log where to report actions.
+    Args:
+        project (Project): The project to be monitored.
     """
 
-    def __init__(self, action_log):
-        self.action_log = action_log
-
-    def startObserving(self, project):
-        """Starts monitoring the specified Project.
-
-        Args:
-            project (Project): The project to be monitored.
-        """
-        self.metas = {}
-        def set_meta(project, item, value):
-            self.metas[item] = value
-        project.foreach(set_meta)
-
-        project.connect("notify-meta", self._settingsChangedCb)
+    def __init__(self, project, action_log):
+        MetaContainerObserver.__init__(self, project, action_log)
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-removed", self._assetRemovedCb)
-
-    def _settingsChangedCb(self, project, item, value):
-        current_value = self.metas.get(item)
-        action = MetaChangedAction(project, item, current_value, value)
-        self.metas[item] = value
-        self.action_log.push(action)
 
     def _assetAddedCb(self, project, asset):
         action = AssetAddedAction(project, asset)
