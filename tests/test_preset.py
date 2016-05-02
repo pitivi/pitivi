@@ -31,15 +31,6 @@ from pitivi.preset import PresetManager
 from pitivi.utils.system import System
 
 
-class FakePresetManager(PresetManager):
-
-    def __init__(self, default_path):
-        PresetManager.__init__(self, default_path, tempfile.mkdtemp(), System())
-
-    def _serializePreset(self, preset):
-        return dict(preset.items())
-
-
 def clearPresetManagerPaths(preset_manager):
     try:
         shutil.rmtree(preset_manager.user_path)
@@ -64,7 +55,8 @@ def countUserPresets(preset_manager):
 class TestPresetBasics(TestCase):
 
     def setUp(self):
-        self.manager = FakePresetManager(None)
+        self.manager = PresetManager(None, tempfile.mkdtemp(), System())
+        self.manager._serializePreset = lambda preset: dict(preset.items())
 
     def tearDown(self):
         clearPresetManagerPaths(self.manager)
