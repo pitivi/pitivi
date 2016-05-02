@@ -174,13 +174,13 @@ class Pitivi(Gtk.Application, Loggable):
         if self.gui:
             # The app is already started and the window already created.
             # Present the already existing window.
-            try:
+            if self.system.has_x11():
                 # TODO: Use present() instead of present_with_time() when
                 # https://bugzilla.gnome.org/show_bug.cgi?id=688830 is fixed.
                 from gi.repository import GdkX11
                 x11_server_time = GdkX11.x11_get_server_time(self.gui.get_window())
                 self.gui.present_with_time(x11_server_time)
-            except ImportError:
+            else:
                 # On Wayland or Quartz (Mac OS X) backend there is no GdkX11,
                 # so just use present() directly here.
                 self.gui.present()

@@ -42,8 +42,18 @@ class System(GObject.Object, Loggable):
     def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
-        self.log("new object " + str(self))
+        self.log("new object %s", self)
         self._reset()
+
+        self._x11 = False
+        try:
+            from gi.repository import GdkX11
+            self._x11 = True
+        except ImportError:
+            pass
+
+    def has_x11(self):
+        return self._x11
 
     def _reset(self):
         self._screensaver_keys = []

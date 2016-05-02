@@ -118,8 +118,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     """
     Pitivi's main window.
 
-    @cvar app: The application object
-    @type app: L{Pitivi}
+    Attributes:
+        app (pitivi.application.Pitivi): The current app.
     """
 
     def __init__(self, app):
@@ -1027,7 +1027,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _installPlugins(self, details, missingPluginsCallback):
         context = GstPbutils.InstallPluginsContext()
-        context.set_xid(self.window.xid)
+        if self.app.system.has_x11():
+            context.set_xid(self.window.xid)
 
         res = GstPbutils.install_plugins_async(details, context,
                                                missingPluginsCallback)
