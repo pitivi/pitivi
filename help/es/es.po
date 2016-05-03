@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2016-04-20 10:38+0000\n"
-"PO-Revision-Date: 2016-04-29 08:53+0200\n"
+"POT-Creation-Date: 2016-05-01 13:59+0000\n"
+"PO-Revision-Date: 2016-05-03 10:06+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -1618,12 +1618,12 @@ msgstr "Desagrupar vídeos"
 #. (itstool) path: item/p
 #: C/mainwindow.page:85
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:86
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:88
@@ -1984,6 +1984,10 @@ msgid ""
 "left side of the search bar. Unused clips will then be selected in the media "
 "library."
 msgstr ""
+"Para identificar qué clips no se están usando en su proyecto, use el botón "
+"<gui>Seleccionar clips que no se usan en el proyecto</gui> ubicado al lado "
+"izquierdo de la barra de búsqueda. Los clips sin usar se seleccionarán en la "
+"biblioteca de medios."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:60
@@ -2098,11 +2102,10 @@ msgstr "Desplazamiento"
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:38
 msgid "You can scroll by:"
-msgstr ""
+msgstr "Puede desplazarse:"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:40
-#, fuzzy
 #| msgid ""
 #| "You can use the scrollbars (located on the right and bottom of the "
 #| "timeline), use the mouse wheel anywhere over the timeline to scroll "
@@ -2113,11 +2116,11 @@ msgid ""
 "hold down the <key>Shift</key> key while using the mouse wheel to scroll the "
 "timeline layers vertically"
 msgstr ""
-"Puede usar las barras de desplazamiento (ubicadas en la derecha y en la "
-"parte inferior de la línea del tiempo), usar la rueda del ratón en cualquier "
-"lugar sobre la línea del tiempo para desplazarla horizontalmente, o mantener "
-"pulsada la tecla <key>Mayús</key> mientras usa la rueda del ratón para "
-"desplazar verticalmente las capas de la línea del tiempo."
+"Usando las barras de desplazamiento (ubicadas en la derecha y en la parte "
+"inferior de la línea del tiempo), usando la rueda del ratón en cualquier "
+"lugar sobre la línea del tiempo para desplazarla horizontalmente, o "
+"manteniendo pulsada la tecla <key>Mayús</key> mientras usa la rueda del "
+"ratón para desplazar verticalmente las capas de la línea del tiempo."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:41
@@ -2125,11 +2128,15 @@ msgid ""
 "Clicking anywhere over the timeline with the middle button and dragging the "
 "timeline"
 msgstr ""
+"Pulsndo en cualquier parte sobre la línea de tiempo con el botón del medio "
+"del ratón y arrastrando la línea de tiempo"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:42
 msgid "Using the scrollbars located on the right and bottom of the timeline"
 msgstr ""
+"Usando las barras de desplazamiento ubicadas a la derecha y debajo de la "
+"línea de tiempo"
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:47
@@ -2409,6 +2416,9 @@ msgid ""
 "gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next "
 "step."
 msgstr ""
+"A la derecha de la caja de ajustes predefinidos pulsar<guiseq><gui>Botón de "
+"menú</gui><gui>Nuevo</gui></guiseq>. Si esta opción está desactivada saltar "
+"al próximo paso."
 
 #. (itstool) path: item/p
 #: C/presets.page:36
@@ -2445,6 +2455,8 @@ msgid ""
 "Click at the right of the presets combobox <guiseq><gui>Menu button</"
 "gui><gui>Save</gui></guiseq>."
 msgstr ""
+"Pulsar a la derecha de la caja de ajustes <guiseq><gui>Botón de menú</"
+"gui><gui>Guardar</gui></guiseq>. "
 
 #. (itstool) path: section/p
 #: C/presets.page:44
@@ -2521,12 +2533,12 @@ msgstr ""
 #. (itstool) path: item/p
 #: C/rendering.page:34
 msgid "Choose the location and name of the exported file."
-msgstr ""
+msgstr "Elija la ubicación y el nombre del archivo exportado."
 
 #. (itstool) path: item/p
 #: C/rendering.page:35
 msgid "Optionally choose a preset."
-msgstr ""
+msgstr "Opcionalmente elija un ajuste predefinido."
 
 #. (itstool) path: item/p
 #: C/rendering.page:36
@@ -2534,11 +2546,13 @@ msgid ""
 "Choose a container. See the <link xref=\"codecscontainers\">codecs and "
 "containers</link> page for details."
 msgstr ""
+"Elija un contenedor. Para mas detalles consulte la página <link xref="
+"\"codecscontainers\">codificadores y contenedores</link>."
 
 #. (itstool) path: item/p
 #: C/rendering.page:37
 msgid "Adjust the various encoding settings."
-msgstr ""
+msgstr "Ajuste las distintas configuraciones de codificación."
 
 #. (itstool) path: item/p
 #: C/rendering.page:38
@@ -2556,6 +2570,14 @@ msgid ""
 "partially rendered file, depending on the specified container format. A new "
 "render operation cannot resume from a partially rendered file."
 msgstr ""
+"Mientras renderiza puede pausar el proceso pulsando en el botón <gui>Pausa</"
+"gui> y continuarlo pulsándolo otra vez. Además puede detener el renderizado "
+"pulsando en el botón <gui>Cancelar</gui> o presionando la tecla <key>Esc</"
+"key>. Si detiene el proceso de renderizado, las partes del proyecto que ya "
+"hayan renderizado se guardarán en la ubicación que se había especificado. "
+"Puede usar el archivo parcialmente renderizado, dependiendo del formato del "
+"contenedor utilizado. No sep uede reanudar una nueva operación de "
+"renderizado desde un archivo renderizado parcialmente."
 
 #. (itstool) path: note/p
 #: C/rendering.page:42
@@ -2584,6 +2606,15 @@ msgid ""
 "closely related, the <gui>Rendering dialog</gui> has a button which opens "
 "the <gui>Project Settings</gui>."
 msgstr ""
+"La <gui>Configuración del proyecto</gui> es una base en la cual las "
+"configuraciones del <gui>Diálogo de renderizado</gui>se aplican cuando se "
+"ejecuta un renderizado. La <gui>Configuración del proyecto</gui> se mantiene "
+"separada porque también determina cómo se ve el proyecto en la vista previa "
+"mientras lo edita. Los valores especificados en el <gui>Diálogo de "
+"renderizado</gui> son temporales y se usan solamente al momento de "
+"renderizar. Debido a que están estrechamente relacionados, el <gui>Diálogo "
+"de renderizado</gui> tiene un botón que abre la <gui>Configuración del "
+"proyecto</gui>."
 
 #. (itstool) path: page/title
 #: C/savescreenshot.page:18
@@ -2655,6 +2686,8 @@ msgid ""
 "To select multiple adjacent clips you can click the timeline anywhere in an "
 "empty region and drag. Alternatively, you can:"
 msgstr ""
+"Para seleccionar múltiples clips contiguos puede pulsar y arrastrar la línea "
+"de tiempo en cualquier zona vacía. Alternativamente, puede:"
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:36
@@ -2684,6 +2717,11 @@ msgid ""
 "resetting the selection can be done by toggling individually a clip's "
 "selection:"
 msgstr ""
+"Cuando selecciona un clip pulsando sobre él, o cuando selecciona múltiples "
+"clips contiguos, la selección se reinicia. El resto de los clips se "
+"deseleccionan si se han seleccionado previamente seleccionados. Seleccionar "
+"o deseleccionar clips específicos sin poner a cero la selección puede "
+"hacerse conmutando individualmente una selección de clips."
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:42
