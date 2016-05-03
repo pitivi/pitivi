@@ -564,15 +564,14 @@ class TimelineObserver(Loggable):
         ges_timeline.connect("layer-added", self._layerAddedCb)
         ges_timeline.connect("layer-removed", self._layerRemovedCb)
 
-        for ges_layer in ges_timeline.get_layers():
-            for ges_clip in ges_layer.get_clips():
-                self._connectToClip(ges_clip)
-
     def _connect_to_layer(self, ges_layer):
         self._layers_priorities[ges_layer] = ges_layer.props.priority
         ges_layer.connect("clip-added", self._clipAddedCb)
         ges_layer.connect("clip-removed", self._clipRemovedCb)
         ges_layer.connect("notify::priority", self._layer_moved_cb)
+
+        for ges_clip in ges_layer.get_clips():
+            self._connectToClip(ges_clip)
 
     def _disconnect_from_layer(self, ges_layer):
         del self._layers_priorities[ges_layer]
