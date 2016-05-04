@@ -22,7 +22,6 @@
 Base classes for undo/redo.
 """
 import contextlib
-import weakref
 
 from gi.repository import GObject
 
@@ -50,11 +49,6 @@ class UndoableAction(GObject.Object, Loggable):
     to allow reverting the change if needed later on.
     """
 
-    __gsignals__ = {
-        "done": (GObject.SIGNAL_RUN_LAST, None, ()),
-        "undone": (GObject.SIGNAL_RUN_LAST, None, ()),
-    }
-
     def __init__(self):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
@@ -67,12 +61,6 @@ class UndoableAction(GObject.Object, Loggable):
 
     def asScenarioAction(self):
         raise NotImplementedError()
-
-    def _done(self):
-        self.emit("done")
-
-    def _undone(self):
-        self.emit("undone")
 
 
 class FinalizingAction:
@@ -110,7 +98,6 @@ class UndoableActionStack(UndoableAction):
     def do(self):
         self._runAction(self.undone_actions, "do")
         self.done_actions = self.undone_actions[::-1]
-        self.emit("done")
 
         if self.finalizing_action:
             self.finalizing_action.do()
@@ -118,7 +105,6 @@ class UndoableActionStack(UndoableAction):
     def undo(self):
         self._runAction(self.done_actions, "undo")
         self.undone_actions = self.done_actions[::-1]
-        self.emit("undone")
 
         if self.finalizing_action:
             self.finalizing_action.do()

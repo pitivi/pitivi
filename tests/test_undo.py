@@ -35,80 +35,28 @@ class DummyUndoableAction(UndoableAction):
 
     def do(self):
         self.done_ = True
-        self._done()
 
     def undo(self):
         self.done_ = False
-        self._undone()
-
-
-class TestUndoableAction(TestCase):
-
-    def testSimpleSignals(self):
-        """
-        Test signal emission from _done() and _undone().
-        """
-        state = {"done": False}
-
-        def doneCb(action, val):
-            state["done"] = val
-
-        action = DummyUndoableAction()
-        action.connect("done", doneCb, True)
-        action.connect("undone", doneCb, False)
-
-        action.undo()
-        self.assertFalse(state["done"])
-
-        action.do()
-        self.assertTrue(state["done"])
 
 
 class TestUndoableActionStack(TestCase):
-
-    def testDoUndoEmpty(self):
-        """
-        Undo an empty stack.
-        """
-        state = {"done": True}
-
-        def doneCb(action, value):
-            state["done"] = value
-
-        stack = UndoableActionStack("meh")
-        stack.connect("done", doneCb, True)
-        stack.connect("undone", doneCb, False)
-
-        stack.undo()
-        self.assertFalse(state["done"])
-
-        stack.do()
-        self.assertTrue(state["done"])
 
     def testUndoDo(self):
         """
         Test an undo() do() sequence.
         """
-        state = {"done": True, "actions": 2}
-
-        def doneCb(action, value):
-            state["done"] = value
-
-        state["done"] = 2
+        state = {"actions": 2}
 
         class Action(UndoableAction):
 
             def do(self):
                 state["actions"] += 1
-                self._done()
 
             def undo(self):
                 state["actions"] -= 1
-                self._undone()
 
         stack = UndoableActionStack("meh")
-        stack.connect("done", doneCb, True)
-        stack.connect("undone", doneCb, False)
         action1 = Action()
         action2 = Action()
         stack.push(action1)
@@ -116,22 +64,15 @@ class TestUndoableActionStack(TestCase):
 
         stack.undo()
         self.assertEqual(state["actions"], 0)
-        self.assertFalse(state["done"])
 
         stack.do()
         self.assertEqual(state["actions"], 2)
-        self.assertTrue(state["done"])
 
     def testUndoError(self):
         """
         Undo a stack containing a failing action.
         """
-        state = {"done": True}
-
-        def doneCb(action, value):
-            state["done"] = value
-
-        state["actions"] = 2
+        state = {"actions": 2}
 
         class Action(UndoableAction):
 
@@ -140,13 +81,10 @@ class TestUndoableActionStack(TestCase):
                 if state["actions"] == 1:
                     self.__class__.undo = self.__class__.undo_fail
 
-                self._undone()
-
             def undo_fail(self):
                 raise UndoError("meh")
 
         stack = UndoableActionStack("meh")
-        stack.connect("done", doneCb)
         action1 = Action()
         action2 = Action()
         stack.push(action1)
@@ -154,7 +92,6 @@ class TestUndoableActionStack(TestCase):
 
         self.assertRaises(UndoError, stack.undo)
         self.assertEqual(state["actions"], 1)
-        self.assertTrue(state["done"])
 
 
 class TestUndoableActionLog(TestCase):
@@ -411,11 +348,9 @@ class TestUndoableActionLog(TestCase):
 
             def do(self):
                 call_sequence.append("do%s" % self.n)
-                self._done()
 
             def undo(self):
                 call_sequence.append("undo%s" % self.n)
-                self._undone()
 
         action1 = Action(1)
         action2 = Action(2)

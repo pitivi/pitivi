@@ -53,12 +53,10 @@ class TrackElementPropertyChanged(UndoableAction):
     def do(self):
         self.track_element.set_child_property(
             self.property_name, self.new_value)
-        self._done()
 
     def undo(self):
         self.track_element.set_child_property(
             self.property_name, self.old_value)
-        self._undone()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("set-child-property")
@@ -157,7 +155,6 @@ class TrackElementAdded(UndoableAction):
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
         self._props_changed = []
-        self._done()
 
     def undo(self):
         props = self.track_element.list_children_properties()
@@ -170,7 +167,6 @@ class TrackElementAdded(UndoableAction):
                 self.track_element)
         del self.track_element
         self.track_element = None
-        self._undone()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-add-child")
@@ -207,14 +203,12 @@ class TrackElementRemoved(UndoableAction):
                 self.track_element)
         del self.track_element
         self.track_element = None
-        self._done()
 
     def undo(self):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
         self._props_changed = []
-        self._undone()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-remove-child")
@@ -305,12 +299,10 @@ class ClipPropertyChanged(UndoableAction):
     def do(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.new_value)
-        self._done()
 
     def undo(self):
         self.clip.set_property(
             self.property_name.replace("-", "_"), self.old_value)
-        self._undone()
 
 
 class ClipAdded(UndoableAction):
@@ -324,12 +316,10 @@ class ClipAdded(UndoableAction):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
-        self._done()
 
     def undo(self):
         self.layer.remove_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
-        self._undone()
 
     def asScenarioAction(self):
         timeline = self.layer.get_timeline()
@@ -360,13 +350,11 @@ class ClipRemoved(UndoableAction):
     def do(self):
         self.layer.remove_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
-        self._done()
 
     def undo(self):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
-        self._undone()
 
     def asScenarioAction(self):
         timeline = self.layer.get_timeline()
@@ -454,11 +442,9 @@ class ControlSourceValueAdded(UndoableAction):
     def do(self):
         self.control_source.set(self.keyframe.timestamp,
                                 self.keyframe.value)
-        self._done()
 
     def undo(self):
         self.control_source.unset(self.keyframe.timestamp)
-        self._undone()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-keyframe")
@@ -481,12 +467,10 @@ class ControlSourceValueRemoved(UndoableAction):
 
     def do(self):
         self.control_source.unset(self.keyframe.timestamp)
-        self._undone()
 
     def undo(self):
         self.control_source.set(self.keyframe.timestamp,
                                 self.keyframe.value)
-        self._done()
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-keyframe")
@@ -507,11 +491,9 @@ class ControlSourceKeyframeChanged(UndoableAction):
 
     def do(self):
         self._applySnapshot(self.new_snapshot)
-        self._done()
 
     def undo(self):
         self._applySnapshot(self.old_snapshot)
-        self._undone()
 
     def _applySnapshot(self, snapshot):
         time, value = snapshot
@@ -528,12 +510,10 @@ class ActivePropertyChanged(UndoableAction):
     def do(self):
         self.effect_action.track_element.active = self.active
         self.active = not self.active
-        self._done()
 
     def undo(self):
         self.effect_action.track_element.active = self.active
         self.active = not self.active
-        self._undone()
 
 
 class TimelineObserver(Loggable):
