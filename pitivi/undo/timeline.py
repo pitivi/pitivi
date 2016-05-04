@@ -233,9 +233,9 @@ class ClipPropertyChangeTracker(PropertyChangeTracker):
         self.timeline = ges_clip.timeline
         self.timeline.connect("commited", self._timelineCommitedCb)
 
-    def disconnectFromObject(self, obj):
+    def release(self):
         self.timeline.disconnect_by_func(self._timelineCommitedCb)
-        PropertyChangeTracker.disconnectFromObject(self, obj)
+        PropertyChangeTracker.release(self)
 
     def _timelineCommitedCb(self, timeline):
         properties = self._takeCurrentSnapshot(self.gobject)
@@ -271,9 +271,9 @@ class KeyframeChangeTracker(GObject.Object):
 
         return keyframes
 
-    def disconnectFromObject(self, control_source):
+    def release(self):
+        self.control_source.disconnect_by_func(self._keyframeMovedCb)
         self.control_source = None
-        control_source.disconnect_by_func(self._keyframeMovedCb)
 
     def _keyframeAddedCb(self, control_source, keyframe):
         self.keyframes[keyframe.timestamp] = self._getKeyframeSnapshot(keyframe)
@@ -604,7 +604,7 @@ class TimelineObserver(Loggable):
         clip.disconnect_by_func(self._clipTrackElementAddedCb)
         clip.disconnect_by_func(self._clipTrackElementRemovedCb)
         tracker = self.clip_property_trackers.pop(clip)
-        tracker.disconnectFromObject(clip)
+        tracker.release()
         tracker.disconnect_by_func(self._clipPropertyChangedCb)
 
     def _controlBindingAddedCb(self, track_element, binding):
@@ -662,7 +662,7 @@ class TimelineObserver(Loggable):
 
         try:
             tracker = self.control_source_keyframe_trackers.pop(control_source)
-            tracker.disconnectFromObject(control_source)
+            tracker.release()
             tracker.disconnect_by_func(self._controlSourceKeyFrameMovedCb)
         except KeyError:
             self.debug("Control source already disconnected: %s" % control_source)

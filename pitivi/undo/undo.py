@@ -374,9 +374,9 @@ class PropertyChangeTracker(GObject.Object):
 
         return properties
 
-    def disconnectFromObject(self, obj):
+    def release(self):
+        self.gobject.disconnect_by_func(self._propertyChangedCb)
         self.gobject = None
-        obj.disconnect_by_func(self._propertyChangedCb)
 
     def _propertyChangedCb(self, gobject, property_value, property_name):
         old_value = self.properties[property_name]
