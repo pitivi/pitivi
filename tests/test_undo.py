@@ -60,26 +60,19 @@ class TestUndoableActionStack(TestCase):
         """
         Undo a stack containing a failing action.
         """
-        state = {"actions": 2}
-
-        class Action(UndoableAction):
-
-            def undo(self):
-                state["actions"] -= 1
-                if state["actions"] == 1:
-                    self.__class__.undo = self.__class__.undo_fail
-
-            def undo_fail(self):
-                raise UndoError("meh")
-
         stack = UndoableActionStack("meh")
-        action1 = Action()
-        action2 = Action()
+        action1 = mock.Mock(spec=UndoableAction)
+        action2 = mock.Mock(spec=UndoableAction)
+        action2.undo.side_effect = UndoError("meh")
+        action3 = mock.Mock(spec=UndoableAction)
         stack.push(action1)
         stack.push(action2)
+        stack.push(action3)
 
         self.assertRaises(UndoError, stack.undo)
-        self.assertEqual(state["actions"], 1)
+        self.assertEqual(action1.undo.call_count, 0)
+        self.assertEqual(action2.undo.call_count, 1)
+        self.assertEqual(action3.undo.call_count, 1)
 
 
 class TestUndoableActionLog(TestCase):
@@ -329,39 +322,28 @@ class TestUndoableActionLog(TestCase):
         """
         Test that actions are undone and redone in the correct order.
         """
-        call_sequence = []
+        order = mock.Mock()
+        order.action1 = mock.Mock(spec=UndoableAction)
+        order.action2 = mock.Mock(spec=UndoableAction)
+        order.action3 = mock.Mock(spec=UndoableAction)
 
-        class Action(UndoableAction):
-
-            def __init__(self, n):
-                UndoableAction.__init__(self)
-                self.n = n
-
-            def do(self):
-                call_sequence.append("do%s" % self.n)
-
-            def undo(self):
-                call_sequence.append("undo%s" % self.n)
-
-        action1 = Action(1)
-        action2 = Action(2)
-        action3 = Action(3)
-
-        self.log.begin("meh")
-        self.log.push(action1)
-        self.log.begin("nested")
-        self.log.push(action2)
-        self.log.commit("nested")
-        self.log.push(action3)
-        self.log.commit("meh")
+        with self.log.started("meh"):
+            self.log.push(order.action1)
+            with self.log.started("nested"):
+                self.log.push(order.action2)
+            self.log.push(order.action3)
 
         self.log.undo()
-        self.assertEqual(call_sequence, ["undo3", "undo2", "undo1"])
+        order.assert_has_calls([mock.call.action3.undo(),
+                                mock.call.action2.undo(),
+                                mock.call.action1.undo()])
 
-        call_sequence[:] = []
         self.log.redo()
-        self.assertEqual(call_sequence, ["do1", "do2", "do3"])
+        order.assert_has_calls([mock.call.action1.do(),
+                                mock.call.action2.do(),
+                                mock.call.action3.do()])
 
-        call_sequence[:] = []
         self.log.undo()
-        self.assertEqual(call_sequence, ["undo3", "undo2", "undo1"])
+        order.assert_has_calls([mock.call.action3.undo(),
+                                mock.call.action2.undo(),
+                                mock.call.action1.undo()])
