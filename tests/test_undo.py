@@ -18,6 +18,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+from unittest import mock
 from unittest import TestCase
 
 from pitivi.undo.undo import UndoableAction
@@ -25,19 +26,6 @@ from pitivi.undo.undo import UndoableActionLog
 from pitivi.undo.undo import UndoableActionStack
 from pitivi.undo.undo import UndoError
 from pitivi.undo.undo import UndoWrongStateError
-
-
-class DummyUndoableAction(UndoableAction):
-    done_ = True
-
-    def __init__(self):
-        UndoableAction.__init__(self)
-
-    def do(self):
-        self.done_ = True
-
-    def undo(self):
-        self.done_ = False
 
 
 class TestUndoableActionStack(TestCase):
@@ -134,7 +122,7 @@ class TestUndoableActionLog(TestCase):
 
     def testCheckpoint(self):
         self.log.begin("meh")
-        self.log.push(DummyUndoableAction())
+        self.log.push(mock.Mock(spec=UndoableAction))
         self.assertRaises(UndoWrongStateError, self.log.checkpoint)
         self.log.rollback()
         self.log.checkpoint()
@@ -143,7 +131,7 @@ class TestUndoableActionLog(TestCase):
     def testDirty(self):
         self.assertFalse(self.log.dirty())
         self.log.begin("meh")
-        self.log.push(DummyUndoableAction())
+        self.log.push(mock.Mock(spec=UndoableAction))
         self.log.commit("meh")
         self.assertTrue(self.log.dirty())
         self.log.checkpoint()
@@ -284,14 +272,14 @@ class TestUndoableActionLog(TestCase):
         self.assertTrue(self.log.is_in_transaction())
 
         # push two actions
-        action1 = DummyUndoableAction()
+        action1 = mock.Mock(spec=UndoableAction)
         self.log.push(action1)
         self.assertEqual(len(self.signals), 2)
         name, (stack, signalAction) = self.signals[1]
         self.assertEqual(name, "push")
         self.assertTrue(action1 is signalAction)
 
-        action2 = DummyUndoableAction()
+        action2 = mock.Mock(spec=UndoableAction)
         self.log.push(action2)
         self.assertEqual(len(self.signals), 3)
         name, (stack, signalAction) = self.signals[2]
@@ -308,9 +296,10 @@ class TestUndoableActionLog(TestCase):
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
-
-        self.assertTrue(action1.done_)
-        self.assertTrue(action2.done_)
+        self.assertEqual(action1.do.call_count, 0)
+        self.assertEqual(action1.undo.call_count, 0)
+        self.assertEqual(action2.do.call_count, 0)
+        self.assertEqual(action2.undo.call_count, 0)
 
         # undo what we just committed
         self.log.undo()
@@ -319,9 +308,10 @@ class TestUndoableActionLog(TestCase):
         self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 1)
-
-        self.assertFalse(action1.done_)
-        self.assertFalse(action2.done_)
+        self.assertEqual(action1.do.call_count, 0)
+        self.assertEqual(action1.undo.call_count, 1)
+        self.assertEqual(action2.do.call_count, 0)
+        self.assertEqual(action2.undo.call_count, 1)
 
         # redo
         self.log.redo()
@@ -330,9 +320,10 @@ class TestUndoableActionLog(TestCase):
         self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
-
-        self.assertTrue(action1.done_)
-        self.assertTrue(action2.done_)
+        self.assertEqual(action1.do.call_count, 1)
+        self.assertEqual(action1.undo.call_count, 1)
+        self.assertEqual(action2.do.call_count, 1)
+        self.assertEqual(action2.undo.call_count, 1)
 
     def testOrder(self):
         """
