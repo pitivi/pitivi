@@ -379,6 +379,9 @@ class TestTimelineUndo(TestCase):
         stacks = []
         self.action_log.connect("commit", TestTimelineUndo.commitCb, stacks)
 
+        # We are not dropping clips here...
+        self.app.gui.timeline_ui.timeline.dropping_clips = False
+
         clip1 = GES.TitleClip()
         self.layer.add_clip(clip1)
         clip1.set_start(5 * Gst.SECOND)
