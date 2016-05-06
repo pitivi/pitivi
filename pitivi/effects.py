@@ -529,7 +529,7 @@ class EffectListWidget(Gtk.Box, Loggable):
             text in model.get_value(iter, COL_NAME_TEXT).lower()
 
 
-PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message']
+PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
 
 class EffectsPropertiesManager:

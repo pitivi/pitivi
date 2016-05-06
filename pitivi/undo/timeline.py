@@ -29,6 +29,10 @@ from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
 
 
+def child_property_name(pspec):
+    return "%s::%s" % (pspec.owner_type.name, pspec.name)
+
+
 class CommitTimelineFinalizingAction(FinalizingAction):
     def __init__(self, pipeline):
         self.__pipeline = pipeline
@@ -103,8 +107,11 @@ class TrackElementChildPropertyTracker(Loggable):
         track_element.connect('deep-notify', self._propertyChangedCb)
 
         for prop in track_element.list_children_properties():
-            properties[prop.name] = track_element.get_child_property(
-                prop.name)[1]
+            if prop.name in PROPS_TO_IGNORE:
+                continue
+
+            prop_name = child_property_name(prop)
+            properties[prop_name] = track_element.get_child_property(prop_name)[1]
 
         self._tracked_track_elements[track_element] = properties
 
@@ -113,15 +120,16 @@ class TrackElementChildPropertyTracker(Loggable):
 
     def _propertyChangedCb(self, track_element, unused_gstelement, pspec):
 
-        if track_element.get_control_binding(pspec.name):
-            self.debug("Property %s controlled", pspec.name)
+        pspec_name = child_property_name(pspec)
+        if track_element.get_control_binding(pspec_name):
+            self.debug("Property %s controlled", pspec_name)
             return
 
-        old_value = self._tracked_track_elements[track_element][pspec.name]
-        new_value = track_element.get_child_property(pspec.name)[1]
+        old_value = self._tracked_track_elements[track_element][pspec_name]
+        new_value = track_element.get_child_property(pspec_name)[1]
         action = TrackElementPropertyChanged(
-            track_element, pspec.name, old_value, new_value)
-        self._tracked_track_elements[track_element][pspec.name] = new_value
+            track_element, pspec_name, old_value, new_value)
+        self._tracked_track_elements[track_element][pspec_name] = new_value
         self.action_log.push(action)
 
 
@@ -153,7 +161,7 @@ class TrackElementAdded(UndoableAction):
 
     def undo(self):
         props = self.track_element.list_children_properties()
-        self.track_element_props = [(prop.name, self.track_element.get_child_property(prop.name)[1])
+        self.track_element_props = [(child_property_name(prop), self.track_element.get_child_property(child_property_name(prop))[1])
                                     for prop in props
                                     if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
         self.clip.remove(self.track_element)
@@ -188,7 +196,7 @@ class TrackElementRemoved(UndoableAction):
 
     def do(self):
         props = self.track_element.list_children_properties()
-        self.track_element_props = [(prop.name, self.track_element.get_child_property(prop.name)[1])
+        self.track_element_props = [(child_property_name(prop), self.track_element.get_child_property(child_property_name(prop))[1])
                                     for prop in props
                                     if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
 
@@ -647,12 +655,11 @@ class TimelineObserver(Loggable):
 
         if not existed:
             self.app.write_action("set-control-source",
-                                      {"element-name": track_element.get_name(),
-                                       "property-name": binding.props.name,
-                                       "binding-type": "direct",
-                                       "source-type": "interpolation",
-                                       "interpolation-mode": "linear"
-                                       })
+                                  {"element-name": track_element.get_name(),
+                                   "property-name": binding.props.name,
+                                   "binding-type": "direct",
+                                   "source-type": "interpolation",
+                                   "interpolation-mode": "linear"})
 
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source
