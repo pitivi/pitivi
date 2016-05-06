@@ -90,10 +90,6 @@ You can find more information about xdg-app at: https://wiki.gnome.org/Projects/
 for i in "$@"
 do
   case $i in
-    -h|--help)
-    echo "$HELP"
-    exit 0
-    ;;
     -d|--devel)
     DEVEL=true
     shift
@@ -132,6 +128,12 @@ do
     ;;
   esac
 done
+
+if [ "$1" == "--help" ]
+then
+    echo "$HELP"
+    exit 0
+fi
 
 which xdg-app > /dev/null 2>&1
 if [ ! $? -eq 0 ]
