@@ -7,6 +7,7 @@
                     "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",
                     "--filesystem=home",
+                    "--filesystem=xdg-download",
                     "--filesystem=xdg-videos",
                     "--filesystem=xdg-music",
                     "--filesystem=xdg-pictures"],
