@@ -12,6 +12,7 @@
                     "--filesystem=xdg-music",
                     "--filesystem=xdg-pictures"],
     "sdk": "org.gnome.Sdk",
+    "rename-appdata-file": "pitivi.appdata.xml",
     "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
     "desktop-file-name-prefix": "(Daily) ",
@@ -171,6 +172,16 @@
             ]
         },
         {
+            "name": "libopus",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.xiph.org/releases/opus/opus-1.1.2.tar.gz",
+                    "sha256": "0e290078e31211baa7b5886bcc8ab6bc048b9fc83882532da4a1a45e58e907fd"
+                }
+            ]
+        },
+        {
             "name": "gst-plugins-base",
             "sources": [
                 {
@@ -204,16 +215,6 @@
                     "type": "archive",
                     "url": "https://files.dyne.org/frei0r/releases/frei0r-plugins-1.4.tar.gz",
                     "sha256": "8470fcabde9f341b729be3be16385ffc8383d6f3328213907a43851b6e83be57"
-                }
-            ]
-        },
-        {
-            "name": "libopus",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://downloads.xiph.org/releases/opus/opus-1.1.2.tar.gz",
-                    "sha256": "0e290078e31211baa7b5886bcc8ab6bc048b9fc83882532da4a1a45e58e907fd"
                 }
             ]
         },
