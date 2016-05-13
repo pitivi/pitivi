@@ -329,6 +329,22 @@ class MetaContainerObserver(GObject.Object):
         self.action_log.push(action)
 
 
+class PropertyChangedAction(UndoableAction):
+
+    def __init__(self, gobject, field_name, old_value, new_value):
+        UndoableAction.__init__(self)
+        self.gobject = gobject
+        self.field_name = field_name
+        self.old_value = old_value
+        self.new_value = new_value
+
+    def do(self):
+        self.gobject.set_property(self.field_name, self.new_value)
+
+    def undo(self):
+        self.gobject.set_property(self.field_name, self.old_value)
+
+
 class PropertyChangeTracker(GObject.Object):
     """
     Monitors a GObject.Object's props and reports UndoableActions.
@@ -338,34 +354,29 @@ class PropertyChangeTracker(GObject.Object):
         property_names (List[str]): The props to be monitored.
     """
 
-    __gsignals__ = {
-        "monitored-property-changed": (GObject.SIGNAL_RUN_LAST, None, (object, str, object, object)),
-    }
-
-    def __init__(self, gobject, property_names):
+    def __init__(self, gobject, property_names, action_log):
         GObject.Object.__init__(self)
-        self.property_names = property_names
         self.gobject = gobject
-        self.properties = self._takeCurrentSnapshot(gobject)
-        # Connect to obj to keep track when the monitored props change.
+        self.property_names = property_names
+        self.action_log = action_log
+
+        self.properties = {}
         for property_name in self.property_names:
+            field_name = property_name.replace("-", "_")
+            self.properties[property_name] = gobject.get_property(field_name)
+            # Connect to obj to keep track when the monitored props change.
             signal_name = "notify::%s" % property_name
-            gobject.connect(signal_name, self._propertyChangedCb, property_name)
-
-    def _takeCurrentSnapshot(self, obj):
-        properties = {}
-        for property_name in self.property_names:
-            properties[property_name] = obj.get_property(
-                property_name.replace("-", "_"))
-
-        return properties
+            gobject.connect(signal_name, self._property_changed_cb,
+                            property_name, field_name)
 
     def release(self):
-        self.gobject.disconnect_by_func(self._propertyChangedCb)
+        self.gobject.disconnect_by_func(self._property_changed_cb)
         self.gobject = None
 
-    def _propertyChangedCb(self, gobject, property_value, property_name):
+    def _property_changed_cb(self, gobject, pspec, property_name, field_name):
         old_value = self.properties[property_name]
+        property_value = gobject.get_property(field_name)
         self.properties[property_name] = property_value
-        self.emit("monitored-property-changed", gobject,
-                  property_name, old_value, property_value)
+        action = PropertyChangedAction(gobject, field_name,
+                                       old_value, property_value)
+        self.action_log.push(action)

@@ -218,28 +218,6 @@ class TrackElementRemoved(UndoableAction):
         return st
 
 
-class ClipPropertyChangeTracker(PropertyChangeTracker):
-
-    def __init__(self, ges_clip):
-        PropertyChangeTracker.__init__(self, ges_clip,
-            # No out-point as that's calculated.
-            property_names=["start", "duration", "in-point", "priority"])
-        self.timeline = ges_clip.timeline
-        self.timeline.connect("commited", self._timelineCommitedCb)
-
-    def release(self):
-        self.timeline.disconnect_by_func(self._timelineCommitedCb)
-        PropertyChangeTracker.release(self)
-
-    def _timelineCommitedCb(self, timeline):
-        properties = self._takeCurrentSnapshot(self.gobject)
-        for property_name, property_value in properties.items():
-            old_value = self.properties[property_name]
-            if old_value != property_value:
-                self._propertyChangedCb(
-                    self.gobject, property_value, property_name)
-
-
 class KeyframeChangeTracker(GObject.Object):
 
     __gsignals__ = {
@@ -285,24 +263,6 @@ class KeyframeChangeTracker(GObject.Object):
 
     def _getKeyframeSnapshot(self, keyframe):
         return (keyframe.timestamp, keyframe.value)
-
-
-class ClipPropertyChanged(UndoableAction):
-
-    def __init__(self, clip, property_name, old_value, new_value):
-        UndoableAction.__init__(self)
-        self.clip = clip
-        self.property_name = property_name
-        self.old_value = old_value
-        self.new_value = new_value
-
-    def do(self):
-        self.clip.set_property(
-            self.property_name.replace("-", "_"), self.new_value)
-
-    def undo(self):
-        self.clip.set_property(
-            self.property_name.replace("-", "_"), self.old_value)
 
 
 class ClipAdded(UndoableAction):
@@ -560,13 +520,9 @@ class TimelineObserver(Loggable):
         ges_layer.disconnect_by_func(self._layer_moved_cb)
 
     def _connectToClip(self, ges_clip):
-        tracker = ClipPropertyChangeTracker(ges_clip)
-        for property_name in tracker.property_names:
-            attr_name = "last-%s" % property_name
-            last_value = ges_clip.get_property(property_name)
-            setattr(tracker, attr_name, last_value)
-        tracker.connect(
-            "monitored-property-changed", self._clipPropertyChangedCb)
+        tracker = PropertyChangeTracker(ges_clip,
+            ["start", "duration", "in-point", "priority"],
+            self.action_log)
         self.clip_property_trackers[ges_clip] = tracker
 
         ges_clip.connect("child-added", self._clipTrackElementAddedCb)
@@ -585,7 +541,6 @@ class TimelineObserver(Loggable):
         clip.disconnect_by_func(self._clipTrackElementRemovedCb)
         tracker = self.clip_property_trackers.pop(clip)
         tracker.release()
-        tracker.disconnect_by_func(self._clipPropertyChangedCb)
 
     def _controlBindingAddedCb(self, track_element, binding):
         self._connectToControlSource(track_element, binding)
@@ -660,22 +615,6 @@ class TimelineObserver(Loggable):
             return
         self._disconnectFromClip(clip)
         action = ClipRemoved(layer, clip)
-        self.action_log.push(action)
-
-    def _clipPropertyChangedCb(self, tracker, clip,
-                               property_name, old_value, new_value):
-
-        # Do not track clips when we are just moving clips around
-        # while drag and dropping them.
-        if self.app.gui.timeline_ui.timeline.dropping_clips:
-            return
-
-        attr_name = "last-%s" % property_name
-        new_value = clip.get_property(property_name)
-        old_value = getattr(tracker, attr_name)
-        action = ClipPropertyChanged(clip, property_name,
-                                     old_value, new_value)
-        setattr(tracker, attr_name, new_value)
         self.action_log.push(action)
 
     def _clipTrackElementAddedCb(self, clip, track_element):
