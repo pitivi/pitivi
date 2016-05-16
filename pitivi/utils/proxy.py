@@ -54,8 +54,8 @@ GlobalSettings.addConfigOption('numTranscodingJobs',
                                default=4)
 
 
-ENCODING_FORMAT_PRORES = "prores-flac-in-matroska.gep"
-ENCODING_FORMAT_JPEG = "jpeg-flac-in-matroska.gep"
+ENCODING_FORMAT_PRORES = "prores-opus-in-matroska.gep"
+ENCODING_FORMAT_JPEG = "jpeg-opus-in-matroska.gep"
 
 
 def createEncodingProfileSimple(container_caps, audio_caps, video_caps):

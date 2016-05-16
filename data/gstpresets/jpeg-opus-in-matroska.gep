@@ -1,0 +1,25 @@
+[GStreamer Encoding Target]
+name=matroska
+category=device
+description=Standard config for jpeg and opus in matroska
+
+[profile-default]
+name=default
+type=container
+description[c]=Matroska muxer with default configs
+format=video/x-matroska
+
+[streamprofile-opus]
+parent=default
+type=audio
+format=audio/x-opus
+presence=0
+
+[streamprofile-jpeg]
+parent=default
+type=video
+format=image/jpeg
+presence=0
+pass=0
+variableframerate=false
+preset=Quality High
