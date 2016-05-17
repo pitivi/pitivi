@@ -202,10 +202,13 @@ class UndoableActionLog(GObject.Object, Loggable):
             self.debug("Ignore commit because running")
             return
 
-        self.debug("Committing")
+        self.debug("Committing %s", action_group_name)
         stack = self._get_last_stack(pop=True)
         if action_group_name != stack.action_group_name:
             raise UndoWrongStateError("Unexpected commit", action_group_name, stack, self.stacks)
+        if not stack.done_actions:
+            self.debug("Ignore empty stack %s", stack.action_group_name)
+            return
         if not self.stacks:
             self.undo_stacks.append(stack)
         else:
