@@ -88,7 +88,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
         Loggable.__init__(self)
 
         self.__timeline = timeline
-        self.__action_log = timeline.app.action_log
         self.__source = binding.props.control_source
         self.__source.connect("value-added", self.__controlSourceChangedCb)
         self.__source.connect("value-removed", self.__controlSourceChangedCb)
@@ -211,7 +210,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             res, value = self.__source.control_source_get_value(event.xdata)
             assert res
             self.debug("Create keyframe at (%lf, %lf)", event.xdata, value)
-            with self.__action_log.started("Keyframe added"):
+            with self.__timeline.app.action_log.started("Keyframe added"):
                 self.__source.set(event.xdata, value)
 
     # Callbacks
@@ -253,11 +252,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 # A keyframe has been double-clicked, remove it.
                 self.debug("Removing keyframe at timestamp %lf", offset)
                 self.__keyframe_removed = True
-                with self.__action_log.started("Remove keyframe"):
+                with self.__timeline.app.action_log.started("Remove keyframe"):
                     self.__source.unset(offset)
             else:
                 # Remember the clicked frame for drag&drop.
-                self.__action_log.begin("Move keyframe")
+                self.__timeline.app.action_log.begin("Move keyframe")
                 self.__offset = offset
                 self.handling_motion = True
             return
@@ -266,7 +265,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if result[0]:
             # The line has been clicked.
             self.debug("The keyframe curve has been clicked")
-            self.__action_log.begin("Move keyframe curve segment")
+            self.__timeline.app.action_log.begin("Move keyframe curve segment")
             x = event.xdata
             offsets = self.__keyframes.get_offsets()
             keyframes = offsets[:,0]
@@ -327,10 +326,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         if self.__offset is not None:
             self.debug("Keyframe released")
-            self.__action_log.commit("Move keyframe")
+            self.__timeline.app.action_log.commit("Move keyframe")
         elif self.__clicked_line is not None:
             self.debug("Line released")
-            self.__action_log.commit("Move keyframe curve segment")
+            self.__timeline.app.action_log.commit("Move keyframe curve segment")
 
         self.handling_motion = False
         self.__offset = None
