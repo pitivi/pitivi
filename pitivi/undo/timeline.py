@@ -218,51 +218,57 @@ class TrackElementRemoved(UndoableAction):
         return st
 
 
-class KeyframeChangeTracker(GObject.Object):
+class ControlSourceObserver(GObject.Object):
+    """
+    Monitors a control source's props and reports UndoableActions.
 
-    __gsignals__ = {
-        "keyframe-moved": (GObject.SIGNAL_RUN_LAST, None, (object, object, object, object)),
-    }
+    Attributes:
+        control_source (GstController.TimedValueControlSource): The object to be
+            monitored.
+    """
 
-    def __init__(self):
+    def __init__(self, control_source, action_log, action_info):
         GObject.Object.__init__(self)
-        self.keyframes = None
-        self.control_source = None
 
-    def connectToObject(self, control_source):
+        self.action_log = action_log
+        self.action_info = action_info
         self.control_source = control_source
-        self.keyframes = self._takeCurrentSnapshot(control_source)
-        control_source.connect("value-added", self._keyframeAddedCb)
-        control_source.connect("value-removed", self._keyframeRemovedCb)
-        control_source.connect("value-changed", self._keyframeMovedCb)
 
-    def _takeCurrentSnapshot(self, control_source):
-        keyframes = {}
+        self.keyframes = {}
         for keyframe in self.control_source.get_all():
-            keyframes[keyframe.timestamp] = self._getKeyframeSnapshot(keyframe)
+            self.keyframes[keyframe.timestamp] = (keyframe.timestamp, keyframe.value)
 
-        return keyframes
+        control_source.connect("value-added", self._keyframe_added_cb)
+        control_source.connect("value-changed", self._keyframe_moved_cb)
+        control_source.connect("value-removed", self._keyframe_removed_cb)
 
     def release(self):
-        self.control_source.disconnect_by_func(self._keyframeMovedCb)
+        self.control_source.disconnect_by_func(self._keyframe_added_cb)
+        self.control_source.disconnect_by_func(self._keyframe_moved_cb)
+        self.control_source.disconnect_by_func(self._keyframe_removed_cb)
         self.control_source = None
 
-    def _keyframeAddedCb(self, control_source, keyframe):
-        self.keyframes[keyframe.timestamp] = self._getKeyframeSnapshot(keyframe)
+    def _keyframe_added_cb(self, control_source, keyframe):
+        self.keyframes[keyframe.timestamp] = (keyframe.timestamp, keyframe.value)
 
-    def _keyframeRemovedCb(self, control_source, keyframe):
-        del self.keyframes[keyframe.timestamp]
+        action = KeyframeAddedAction(control_source, keyframe, self.action_info)
+        self.action_log.push(action)
 
-    def _keyframeMovedCb(self, control_source, keyframe):
+    def _keyframe_moved_cb(self, control_source, keyframe):
         old_snapshot = self.keyframes[keyframe.timestamp]
-        new_snapshot = self._getKeyframeSnapshot(keyframe)
+        new_snapshot = (keyframe.timestamp, keyframe.value)
         self.keyframes[keyframe.timestamp] = new_snapshot
 
-        self.emit("keyframe-moved", control_source,
-                  keyframe, old_snapshot, new_snapshot)
+        action = KeyframeChangedAction(control_source,
+                                       old_snapshot, new_snapshot)
+        self.action_log.push(action)
 
-    def _getKeyframeSnapshot(self, keyframe):
-        return (keyframe.timestamp, keyframe.value)
+    def _keyframe_removed_cb(self, control_source, keyframe):
+        del self.keyframes[keyframe.timestamp]
+
+        action = KeyframeRemovedAction(control_source, keyframe,
+                                       self.action_info)
+        self.action_log.push(action)
 
 
 class ClipAdded(UndoableAction):
@@ -388,60 +394,53 @@ class LayerMoved(UndoableAction):
         return st
 
 
-class ControlSourceValueAdded(UndoableAction):
+class KeyframeAddedAction(UndoableAction):
 
-    def __init__(self, track_element,
-                 control_source, keyframe,
-                 property_name):
+    def __init__(self, control_source, keyframe, action_info):
         UndoableAction.__init__(self)
         self.control_source = control_source
         self.keyframe = keyframe
-        self.property_name = property_name
-        self.track_element = track_element
+        self.action_info = action_info
 
     def do(self):
-        self.control_source.set(self.keyframe.timestamp,
-                                self.keyframe.value)
+        self.control_source.set(self.keyframe.timestamp, self.keyframe.value)
 
     def undo(self):
         self.control_source.unset(self.keyframe.timestamp)
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("add-keyframe")
-        st.set_value("element-name", self.track_element.get_name())
-        st.set_value("property-name", self.property_name)
+        for key, value in self.action_info.items():
+            st.set_value(key, value)
         st.set_value("timestamp", float(self.keyframe.timestamp / Gst.SECOND))
         st.set_value("value", self.keyframe.value)
         return st
 
 
-class ControlSourceValueRemoved(UndoableAction):
+class KeyframeRemovedAction(UndoableAction):
 
-    def __init__(self, track_element,
-                 control_source, keyframe, property_name):
+    def __init__(self, control_source, keyframe, action_info):
         UndoableAction.__init__(self)
         self.control_source = control_source
         self.keyframe = keyframe
-        self.property_name = property_name
-        self.track_element = track_element
+        self.action_info = action_info
 
     def do(self):
         self.control_source.unset(self.keyframe.timestamp)
 
     def undo(self):
-        self.control_source.set(self.keyframe.timestamp,
-                                self.keyframe.value)
+        self.control_source.set(self.keyframe.timestamp, self.keyframe.value)
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-keyframe")
-        st.set_value("element-name", self.track_element.get_name())
-        st.set_value("property-name", self.property_name)
+        for key, value in self.action_info.items():
+            st.set_value(key, value)
         st.set_value("timestamp", float(self.keyframe.timestamp / Gst.SECOND))
         st.set_value("value", self.keyframe.value)
         return st
 
 
-class ControlSourceKeyframeChanged(UndoableAction):
+class KeyframeChangedAction(UndoableAction):
 
     def __init__(self, control_source, old_snapshot, new_snapshot):
         UndoableAction.__init__(self)
@@ -488,7 +487,7 @@ class TimelineObserver(Loggable):
         self.action_log = action_log
         self.app = app
         self.clip_property_trackers = {}
-        self.control_source_keyframe_trackers = {}
+        self.keyframe_observers = {}
         self.children_props_tracker = TrackElementChildPropertyTracker(self.action_log)
         self._layers_priorities = {}
 
@@ -562,46 +561,23 @@ class TimelineObserver(Loggable):
 
     def _connectToControlSource(self, track_element, binding, existed=False):
         control_source = binding.props.control_source
-
-        control_source.connect("value-added",
-                               self._controlSourceKeyFrameAddedCb,
-                               track_element,
-                               binding.props.name)
-
-        control_source.connect("value-removed",
-                               self._controlSourceKeyFrameRemovedCb,
-                               track_element,
-                               binding.props.name)
-
-        tracker = KeyframeChangeTracker()
-        tracker.connectToObject(control_source)
-        tracker.connect("keyframe-moved", self._controlSourceKeyFrameMovedCb)
-        self.control_source_keyframe_trackers[control_source] = tracker
+        action_info = {"element-name": track_element.get_name(),
+                       "property-name": binding.props.name}
+        observer = ControlSourceObserver(control_source, self.action_log,
+                                         action_info)
+        self.keyframe_observers[control_source] = observer
 
         if not existed:
-            self.app.write_action("set-control-source",
-                                  {"element-name": track_element.get_name(),
-                                   "property-name": binding.props.name,
-                                   "binding-type": "direct",
-                                   "source-type": "interpolation",
-                                   "interpolation-mode": "linear"})
+            properties = {"binding-type": "direct",
+                          "source-type": "interpolation",
+                          "interpolation-mode": "linear"}
+            properties.update(action_info)
+            self.app.write_action("set-control-source", properties)
 
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source
-
-        try:
-            control_source.disconnect_by_func(self._controlSourceKeyFrameAddedCb)
-            control_source.disconnect_by_func(self._controlSourceKeyFrameRemovedCb)
-        except TypeError:
-            pass
-
-        try:
-            tracker = self.control_source_keyframe_trackers.pop(control_source)
-            tracker.release()
-            tracker.disconnect_by_func(self._controlSourceKeyFrameMovedCb)
-        except KeyError:
-            self.debug("Control source already disconnected: %s" % control_source)
-            pass
+        observer = self.keyframe_observers.pop(control_source)
+        observer.release()
 
     def _clipAddedCb(self, layer, clip):
         if isinstance(clip, GES.TransitionClip):
@@ -632,29 +608,11 @@ class TimelineObserver(Loggable):
                                          self.children_props_tracker)
             self.action_log.push(action)
 
-    def _controlSourceKeyFrameAddedCb(self, source, keyframe, track_element,
-                                      property_name):
-        action = ControlSourceValueAdded(track_element,
-                                         source, keyframe, property_name)
-        self.action_log.push(action)
-
-    def _controlSourceKeyFrameRemovedCb(self, source, keyframe, track_element,
-                                        property_name):
-        action = ControlSourceValueRemoved(track_element,
-                                           source, keyframe, property_name)
-        self.action_log.push(action)
-
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
         """
         This happens when an effect is (de)activated on a clip in the timeline.
         """
         action = ActivePropertyChanged(add_effect_action, active)
-        self.action_log.push(action)
-
-    def _controlSourceKeyFrameMovedCb(self, tracker, control_source,
-                                      keyframe, old_snapshot, new_snapshot):
-        action = ControlSourceKeyframeChanged(control_source,
-                                              old_snapshot, new_snapshot)
         self.action_log.push(action)
 
     def _layer_moved_cb(self, ges_layer, unused_param):
