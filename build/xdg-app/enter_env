@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PITIVI_DIR=$(dirname $(realpath $0))/../../
-echo $PITIVI_DIR
+PITIVI_DIR=$(realpath $(dirname $0)/../../)
+
 function generate_path_and_completion_calls {
   echo "export PATH=$PITIVI_DIR/bin/:\$PATH"
   echo "export CC='ccache gcc'"
