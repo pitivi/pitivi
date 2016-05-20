@@ -36,7 +36,7 @@ then
         alias $i="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b $i"
     done
 
-    alias pitivi="cd $XDGAPP_ENVPATH/pitivi && $XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b bin/pitivi && cd - > /dev/null"
+    alias pitivi="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b bin/pitivi"
 
     export PS1="(ptv-xdgapp) $PS1"
     export PATH="$XDGAPP_ENVPATH/bin/:$PATH"
