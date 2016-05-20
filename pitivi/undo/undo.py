@@ -348,7 +348,7 @@ class PropertyChangedAction(UndoableAction):
         self.gobject.set_property(self.field_name, self.old_value)
 
 
-class PropertyChangeTracker(GObject.Object):
+class GObjectObserver(GObject.Object):
     """
     Monitors a GObject.Object's props and reports UndoableActions.
 

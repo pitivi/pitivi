@@ -24,7 +24,7 @@ from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.undo import FinalizingAction
-from pitivi.undo.undo import PropertyChangeTracker
+from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
 
@@ -71,60 +71,47 @@ class TrackElementPropertyChanged(UndoableAction):
         return st
 
 
-# FIXME We should refactor pitivi.undo.PropertyChangeTracker so we can use it as
-# a baseclass here!
-class TrackElementChildPropertyTracker(Loggable):
-
+class TimelineElementObserver(Loggable):
     """
-    Track track_element configuration changes in its list of control track_elements
+    Monitors the props of a GES.TimelineElement and all its children and reports UndoableActions.
+
+    Attributes:
+        ges_timeline_element (GES.TimelineElement): The object to be monitored.
     """
 
-    def __init__(self, action_log):
+    def __init__(self, ges_timeline_element, action_log):
         Loggable.__init__(self)
-        self._tracked_track_elements = {}
+        self.ges_timeline_element = ges_timeline_element
         self.action_log = action_log
 
-    def addTrackElement(self, track_element):
-        if track_element in self._tracked_track_elements:
-            return
-
-        if track_element.get_track() is None:
-            track_element.connect(
-                "notify::track", self._trackElementTrackSetCb)
-            return
-
-        self._discoverChildProperties(track_element)
-
-    def _trackElementTrackSetCb(self, track_element, unused):
-        self._discoverChildProperties(track_element)
-        track_element.disconnect_by_func(self._trackElementTrackSetCb)
-
-    def _discoverChildProperties(self, track_element):
-        properties = {}
-
-        track_element.connect('deep-notify', self._propertyChangedCb)
-
-        for prop in track_element.list_children_properties():
+        self._properties = {}
+        for prop in ges_timeline_element.list_children_properties():
             if prop.name in PROPS_TO_IGNORE:
                 continue
 
             prop_name = child_property_name(prop)
-            properties[prop_name] = track_element.get_child_property(prop_name)[1]
+            res, value = ges_timeline_element.get_child_property(prop_name)
+            assert res, prop_name
+            self._properties[prop_name] = value
 
-        self._tracked_track_elements[track_element] = properties
+        ges_timeline_element.connect('deep-notify', self._property_changed_cb)
 
-    def _propertyChangedCb(self, track_element, unused_gstelement, pspec):
+    def release(self):
+        self.ges_timeline_element.disconnect_by_func(self._property_changed_cb)
+        self.ges_timeline_element = None
 
-        pspec_name = child_property_name(pspec)
-        if track_element.get_control_binding(pspec_name):
-            self.debug("Property %s controlled", pspec_name)
+    def _property_changed_cb(self, ges_timeline_element, unused_gst_element, pspec):
+        prop_name = child_property_name(pspec)
+        if ges_timeline_element.get_control_binding(prop_name):
+            self.debug("Property %s controlled", prop_name)
             return
 
-        old_value = self._tracked_track_elements[track_element][pspec_name]
-        new_value = track_element.get_child_property(pspec_name)[1]
+        old_value = self._properties[prop_name]
+        res, new_value = ges_timeline_element.get_child_property(prop_name)
+        assert res, prop_name
         action = TrackElementPropertyChanged(
-            track_element, pspec_name, old_value, new_value)
-        self._tracked_track_elements[track_element][pspec_name] = new_value
+            ges_timeline_element, prop_name, old_value, new_value)
+        self._properties[prop_name] = new_value
         self.action_log.push(action)
 
 
@@ -470,7 +457,7 @@ class TimelineObserver(Loggable):
         self.app = app
         self.clip_property_trackers = {}
         self.keyframe_observers = {}
-        self.children_props_tracker = TrackElementChildPropertyTracker(self.action_log)
+        self.track_element_observers = {}
         self._layers_priorities = {}
 
     def startObserving(self, ges_timeline):
@@ -501,7 +488,7 @@ class TimelineObserver(Loggable):
         ges_layer.disconnect_by_func(self._layer_moved_cb)
 
     def _connectToClip(self, ges_clip):
-        tracker = PropertyChangeTracker(ges_clip,
+        tracker = GObjectObserver(ges_clip,
             ["start", "duration", "in-point", "priority"],
             self.action_log)
         self.clip_property_trackers[ges_clip] = tracker
@@ -532,14 +519,18 @@ class TimelineObserver(Loggable):
                                          existed=True)
         track_element.connect("control-binding-added",
                               self._controlBindingAddedCb)
-        if isinstance(track_element, GES.BaseEffect):
-            self.children_props_tracker.addTrackElement(track_element)
-        elif isinstance(track_element, GES.VideoSource):
-            self.children_props_tracker.addTrackElement(track_element)
+        if isinstance(track_element, GES.BaseEffect) or \
+                isinstance(track_element, GES.VideoSource):
+            observer = TimelineElementObserver(track_element, self.action_log)
+            self.track_element_observers[track_element] = observer
 
     def _disconnectFromTrackElement(self, track_element):
         for prop, binding in track_element.get_all_control_bindings().items():
             self._disconnectFromControlSource(binding)
+        observer = self.track_element_observers.pop(track_element, None)
+        # We only keep track of some track_elements.
+        if observer:
+            observer.release()
 
     def _connectToControlSource(self, track_element, binding, existed=False):
         control_source = binding.props.control_source
