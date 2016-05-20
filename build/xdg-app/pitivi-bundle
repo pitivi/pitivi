@@ -367,7 +367,7 @@ then
       --env=PITIVI_DEBUG=$PITIVI_DEBUG \
       --env=PITIVI_DEVELOPMENT=1 \
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
-      $PREFIX $SCRIPTDIR/enter_env $*
+      $PREFIX $SCRIPTDIR/enter_env "$@"
 
     exit $exitcode
   fi

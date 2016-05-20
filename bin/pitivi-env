@@ -28,7 +28,7 @@ alias ptvenv="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b"
 alias ptivi-xdg-app="$XDGAPP_ENVPATH/pitivi/bin/pitivi-xdg-app -b"
 
 echo "-> Setting up environment if needed..."
-ptvenv "echo "
+ptvenv "echo"
 if [ "$?" = "0" ];
 then
     for i in `ptvenv ls /app/bin/`;
