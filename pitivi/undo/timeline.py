@@ -113,9 +113,6 @@ class TrackElementChildPropertyTracker(Loggable):
 
         self._tracked_track_elements[track_element] = properties
 
-    def getPropChangedFromTrackElement(self, track_element):
-        return self._tracked_track_elements[track_element]
-
     def _propertyChangedCb(self, track_element, unused_gstelement, pspec):
 
         pspec_name = child_property_name(pspec)
@@ -140,21 +137,17 @@ class TrackElementAdded(UndoableAction):
     # to the Effect when undoing so we reset theirs track_element when
     # doing it again. The way of doing it is the same with EffectRemoved
 
-    def __init__(self, clip, track_element, properties_watcher):
+    def __init__(self, clip, track_element):
         UndoableAction.__init__(self)
         self.clip = clip
         self.track_element = track_element
         self.asset = track_element.get_asset()
         self.track_element_props = []
-        self.gnl_obj_props = []
-        self._properties_watcher = properties_watcher
-        self._props_changed = []
 
     def do(self):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self._props_changed = []
 
     def undo(self):
         props = self.track_element.list_children_properties()
@@ -162,9 +155,6 @@ class TrackElementAdded(UndoableAction):
                                     for prop in props
                                     if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
         self.clip.remove(self.track_element)
-        self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackElement(
-                self.track_element)
         del self.track_element
         self.track_element = None
 
@@ -180,15 +170,12 @@ class TrackElementAdded(UndoableAction):
 
 class TrackElementRemoved(UndoableAction):
 
-    def __init__(self, clip, track_element, properties_watcher):
+    def __init__(self, clip, track_element):
         UndoableAction.__init__(self)
         self.track_element = track_element
         self.clip = clip
         self.asset = track_element.get_asset()
         self.track_element_props = []
-        self.gnl_obj_props = []
-        self._properties_watcher = properties_watcher
-        self._props_changed = []
 
     def do(self):
         props = self.track_element.list_children_properties()
@@ -197,10 +184,6 @@ class TrackElementRemoved(UndoableAction):
                                     if prop.flags & GObject.PARAM_WRITABLE and prop.name not in PROPS_TO_IGNORE]
 
         self.clip.remove(self.track_element)
-
-        self._props_changed =\
-            self._properties_watcher.getPropChangedFromTrackElement(
-                self.track_element)
         del self.track_element
         self.track_element = None
 
@@ -208,7 +191,6 @@ class TrackElementRemoved(UndoableAction):
         self.track_element = self.clip.add_asset(self.asset)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
-        self._props_changed = []
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-remove-child")
@@ -596,16 +578,14 @@ class TimelineObserver(Loggable):
     def _clipTrackElementAddedCb(self, clip, track_element):
         self._connectToTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = TrackElementAdded(clip, track_element,
-                                       self.children_props_tracker)
+            action = TrackElementAdded(clip, track_element)
             self.action_log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, track_element):
         self.debug("%s REMOVED from (%s)" % (track_element, clip))
         self._disconnectFromTrackElement(track_element)
         if isinstance(track_element, GES.BaseEffect):
-            action = TrackElementRemoved(clip, track_element,
-                                         self.children_props_tracker)
+            action = TrackElementRemoved(clip, track_element)
             self.action_log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
