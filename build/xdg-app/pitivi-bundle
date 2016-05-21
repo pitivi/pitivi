@@ -318,7 +318,7 @@ then
     echo "Entering prebuilt environment "
     echo "=============================="
 
-    xdg-app run --branch=$BRANCH -d --command=$SCRIPTDIR/enter_env $APPLICATION_REF_NAME
+    xdg-app run --branch=$BRANCH -d --command=$SCRIPTDIR/enter-env $APPLICATION_REF_NAME
     exit $?
   fi
 
@@ -367,7 +367,7 @@ then
       --env=PITIVI_DEBUG=$PITIVI_DEBUG \
       --env=PITIVI_DEVELOPMENT=1 \
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
-      $PREFIX $SCRIPTDIR/enter_env "$@"
+      $PREFIX $SCRIPTDIR/enter-env "$@"
 
     exit $exitcode
   fi
