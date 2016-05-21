@@ -356,8 +356,8 @@ then
     fi
   fi
 
-  # Launch development environment if we are not creating a bundle
-  if [ -z $BUNDLE ]
+  # Launch development environment if we are not updating it and not creating a bundle
+  if [ -z $BUNDLE ] && [ -z $UPDATE ]
   then
     xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
