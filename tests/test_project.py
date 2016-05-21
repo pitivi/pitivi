@@ -282,9 +282,6 @@ class TestProjectManager(TestCase):
 
 class TestProjectLoading(common.TestCase):
 
-    def tearDown(self):
-        pass
-
     def testLoadedCallback(self):
         mainloop = common.create_main_loop()
 
@@ -417,8 +414,6 @@ class TestProjectSettings(common.TestCase):
 
 
 class TestExportSettings(TestCase):
-
-    """Test the project.MultimediaSettings class."""
 
     def testMasterAttributes(self):
         self._testMasterAttribute('muxer', dependant_attr='containersettings')
