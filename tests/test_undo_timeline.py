@@ -24,6 +24,7 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GstController
 
+from pitivi.timeline.layer import Layer
 from pitivi.timeline.timeline import Timeline
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
@@ -162,6 +163,20 @@ class TestTimelineUndo(TestCase):
 
         self.action_log.redo()
         self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
+
+    def test_layer_renamed(self):
+        layer = Layer(self.layer, timeline=mock.Mock())
+        self.assertIsNone(layer._nameIfSet())
+
+        with self.app.action_log.started("change layer name"):
+            layer.setName("Beautiful name")
+        self.assertEqual(layer._nameIfSet(), "Beautiful name")
+
+        self.action_log.undo()
+        self.assertIsNone(layer._nameIfSet())
+
+        self.action_log.redo()
+        self.assertEqual(layer._nameIfSet(), "Beautiful name")
 
     def testControlSourceValueAdded(self):
         uri = common.get_sample_uri("tears_of_steel.webm")

@@ -23,6 +23,7 @@ from gi.repository import Gst
 from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
+from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
 
@@ -454,6 +455,7 @@ class TimelineObserver(Loggable):
         self.action_log = action_log
         self.app = app
         self.clip_property_trackers = {}
+        self.layer_observers = {}
         self.keyframe_observers = {}
         self.track_element_observers = {}
         self._layers_priorities = {}
@@ -475,6 +477,8 @@ class TimelineObserver(Loggable):
         ges_layer.connect("clip-added", self._clipAddedCb)
         ges_layer.connect("clip-removed", self._clipRemovedCb)
         ges_layer.connect("notify::priority", self._layer_moved_cb)
+        layer_observer = MetaContainerObserver(ges_layer, self.action_log)
+        self.layer_observers[ges_layer] = layer_observer
 
         for ges_clip in ges_layer.get_clips():
             self._connectToClip(ges_clip)
@@ -484,6 +488,7 @@ class TimelineObserver(Loggable):
         ges_layer.disconnect_by_func(self._clipAddedCb)
         ges_layer.disconnect_by_func(self._clipRemovedCb)
         ges_layer.disconnect_by_func(self._layer_moved_cb)
+        self.layer_observers.pop(ges_layer).release()
 
     def _connectToClip(self, ges_clip):
         tracker = GObjectObserver(ges_clip,

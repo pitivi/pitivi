@@ -313,6 +313,7 @@ class MetaContainerObserver(GObject.Object):
     """
 
     def __init__(self, meta_container, action_log):
+        self.meta_container = meta_container
         self.action_log = action_log
 
         self.metas = {}
@@ -328,6 +329,10 @@ class MetaContainerObserver(GObject.Object):
         action = MetaChangedAction(meta_container, item, current_value, value)
         self.metas[item] = value
         self.action_log.push(action)
+
+    def release(self):
+        self.meta_container.disconnect_by_func(self._notify_meta_cb)
+        self.meta_container = None
 
 
 class PropertyChangedAction(UndoableAction):

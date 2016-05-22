@@ -145,7 +145,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.name_entry = Gtk.Entry()
         self.name_entry.get_style_context().add_class("LayerControlEntry")
         self.name_entry.props.valign = Gtk.Align.CENTER
-        self.name_entry.connect("focus-out-event", self.__nameChangedCb)
+        self.name_entry.connect("focus-out-event", self.__name_focus_out_cb)
+        self.ges_layer.connect("notify-meta", self.__layer_rename_cb)
         self.__updateName()
         name_row.pack_start(self.name_entry, True, True, 0)
 
@@ -180,15 +181,21 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.props.window.set_cursor(Gdk.Cursor.new(Gdk.CursorType.HAND1))
 
     def __del__(self):
-        self.name_entry.disconnect_by_func(self.__nameChangedCb)
+        self.name_entry.disconnect_by_func(self.__name_focus_out_cb)
+        self.ges_layer.disconnect_by_func(self.__layer_rename_cb)
         self.ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerAddedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerRemovedCb)
         super(LayerControls, self).__del__()
 
-    def __nameChangedCb(self, unused_widget, unused_event):
-        self.ges_layer.ui.setName(self.name_entry.get_text())
-        self.app.project_manager.current_project.setModificationState(True)
+    def __layer_rename_cb(self, unused_ges_layer, item, value):
+        if not item == "video::name":
+            return
+        self.__updateName()
+
+    def __name_focus_out_cb(self, unused_widget, unused_event):
+        with self.app.action_log.started("change layer name"):
+            self.ges_layer.ui.setName(self.name_entry.get_text())
 
     def __layerPriorityChangedCb(self, unused_ges_layer, unused_pspec):
         self.__updateActions()
@@ -380,14 +387,14 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
     def setName(self, name):
         self.ges_layer.set_meta("video::name", name)
 
-    def __nameIfSet(self):
+    def _nameIfSet(self):
         name = self.ges_layer.get_meta("video::name")
         if not name:
             name = self.ges_layer.get_meta("audio::name")
         return name
 
     def __nameIfMeaningful(self):
-        name = self.__nameIfSet()
+        name = self._nameIfSet()
         if name:
             for pattern in ("video [0-9]+$", "audio [0-9]+$", "Layer [0-9]+$"):
                 if re.match(pattern, name):
