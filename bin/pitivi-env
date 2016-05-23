@@ -12,11 +12,11 @@ export XDGAPP_ENVPATH=$(realpath $SCRIPTDIR/../../)
 export CURRENT_GST=$XDGAPP_ENVPATH
 export MYPITIVI=$XDGAPP_ENVPATH
 
-export make="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b make"
-export check="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b make check"
-export minstall="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b make install"
-export autogen="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b ./autogen.sh --prefix=/app --disable-gtk-doc"
-export configure="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b ./configure --prefix=/app --disable-gtk-doc"
+export make="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make"
+export check="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make check"
+export minstall="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make install"
+export autogen="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./autogen.sh --prefix=/app --disable-gtk-doc"
+export configure="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./configure --prefix=/app --disable-gtk-doc"
 
 alias make=$make
 alias check=$check
@@ -24,7 +24,7 @@ alias minstall=$minstall
 alias autogen=$autogen
 alias configure=$configure
 
-alias ptvenv="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b"
+alias ptvenv="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b"
 
 echo "-> Setting up environment if needed..."
 ptvenv "echo"
@@ -32,10 +32,10 @@ if [ "$?" = "0" ];
 then
     for i in `ptvenv ls /app/bin/`;
     do
-        alias $i="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b $i"
+        alias $i="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b $i"
     done
 
-    alias pitivi="$XDGAPP_ENVPATH/pitivi/bin/pitivi-flatpak -b bin/pitivi"
+    alias pitivi="$XDGAPP_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b bin/pitivi"
 
     export PS1="(ptv-xdgapp) $PS1"
     export PATH="$XDGAPP_ENVPATH/bin/:$PATH"
