@@ -69,7 +69,9 @@ pitivi/libpitivi/.libs/*
 *.typelib
 prebuilt/
 
-# xdg-app
+# xdg-app/flatpak
+build/flatpak/.flatpak-app-builder/
+build/flatpak/pitivi-*.json
 build/xdg-app/.xdg-app-builder/
 build/xdg-app/pitivi-*.json
 build/devel/

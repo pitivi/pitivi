@@ -5,12 +5,12 @@
 ### Setup pitivi
 
 The official way of getting your environment up and running is by using
-[xdg-app](https://en.wikipedia.org/wiki/Xdg-app)
+[flatpak](http://flatpak.org/)
 
-You first need to [get xdg-app](https://wiki.gnome.org/Projects/SandboxedApps/Packages)
-making sure you also install xdg-app-builder, which might be provided by an
+You first need to [get flatpak](http://flatpak.org/getting.html)
+making sure you also install flatpak-builder, which might be provided by an
 additional package on some distributions (please tell us if it is the case
-        for yours so we can make a list here).
+for yours so we can make a list here).
 
 Then, create a development environment folder and get the [https://git.gnome.org/browse/pitivi/tree/ Pitivi source code] into it:
 
@@ -34,8 +34,8 @@ ptvenv --update
 ```
 
 That will actually clean the prefix, update all dependencies from their
-git repos and tarballs as defined in the xdg-app manifest (located
-in build/xdg-app/pitivi.template.json)
+git repos and tarballs as defined in the flatpak manifest (located
+in build/flatpak/pitivi.template.json)
 
 ### Work on some pitivi dependencies in the development environment
 
@@ -46,7 +46,7 @@ you can clone it into you `pitivi-dev`:
     git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services
 ```
 
-Then you can just hack on it, run `autogen` to run `./autogen.sh` with the right arguments for the xdg-app sandbox,
+Then you can just hack on it, run `autogen` to run `./autogen.sh` with the right arguments for the flatpak sandbox,
 and run `make install` to install your changes inside the sandbox (your changes won’t be taken into accout
 without installing).
 
