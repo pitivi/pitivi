@@ -7,7 +7,7 @@
 # The usual application name
 APPLICATION_NAME=pitivi
 
-# Where to build the XDG_APP
+# Where to build the FLATPAK
 FLATPAK_ENVPATH=${FLATPAK_ENVPATH:-$HOME/$APPLICATION_NAME-flatpak}
 
 # The name of the bundled application (must respect flatpak app application naming convention).
@@ -82,7 +82,7 @@ REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 XDG_APP_INSTALL="$FLATPAK install --user "
 XDG_APP_UPDATE="$FLATPAK update --user "
-XDG_APP_ADD_REMOTE="$FLATPAK add-remote --no-gpg-verify --user "
+XDG_APP_ADD_REMOTE="$FLATPAK remote-add --no-gpg-verify --user "
 
 # Some terminal output color values
 RED='\033[0;31m'
