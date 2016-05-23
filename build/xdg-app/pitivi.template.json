@@ -163,6 +163,20 @@
             ]
         },
         {
+            "name": "python-dbus",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
+            "config-opts": ["--module=dbus-python==1.2.4"],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "py-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "sources": [
                 {
