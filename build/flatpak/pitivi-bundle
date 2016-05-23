@@ -8,12 +8,12 @@
 APPLICATION_NAME=pitivi
 
 # Where to build the XDG_APP
-XDGAPP_ENVPATH=${XDGAPP_ENVPATH:-$HOME/$APPLICATION_NAME-xdg-app}
+FLATPAK_ENVPATH=${FLATPAK_ENVPATH:-$HOME/$APPLICATION_NAME-flatpak}
 
-# The name of the bundled application (must respect xdg-app application naming convention).
+# The name of the bundled application (must respect flatpak app application naming convention).
 APPLICATION_REF_NAME=org.pitivi.Pitivi
 # Local path to the application repository
-APPLICATION_REPOSITORY=$XDGAPP_ENVPATH/$APPLICATION_NAME
+APPLICATION_REPOSITORY=$FLATPAK_ENVPATH/$APPLICATION_NAME
 
 # The name given to the application in the .desktop file
 APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
@@ -21,9 +21,9 @@ APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
 BRANCH="master"
 
 # The URL of the bundle remote repository
-APPLICATION_XDG_APP_REPO=http://people.freedesktop.org/~tsaunier/xdg-app-repos/pitivi/
+APPLICATION_XDG_APP_REPO=http://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi/
 
-# The name to give to the repository if it is not registered in xdg-app yet
+# The name to give to the repository if it is not registered in flatpak yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
 
 # The name of the runtime to build the bundle against
@@ -34,40 +34,62 @@ SDK_NAME=org.gnome.Sdk
 SDK_VERSION=3.20
 # The URL of the Sdk remote repository
 SDK_REPO=http://sdk.gnome.org/repo/
-# The name to give to the repository if it is not registered in xdg-app yet
+# The name to give to the repository if it is not registered in flatpak yet
 SDK_DEFAULT_REPO_NAME=gnome
 
 # ------------------------------------------- #
 
-  which xdg-app > /dev/null 2>&1 || (echo "You need to install xdg-app.
+FLATPAK=flatpak
+FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
+FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
+which $FLATPAK > /dev/null 2>&1
+if [ ! $? -eq 0 ]
+then
+  FLATPAK=xdg-app
+  FLATPAK_REMOTE_LIST="$FLATPAK list-remotes"
+  which $FLATPAK > /dev/null 2>&1
+  if [ ! $? -eq 0 ]
+  then
+    printf "$RED \n\n\nYou need to install flatpak to be able to use the '$0' script.
 
-https://wiki.gnome.org/Projects/SandboxedApps/Packages
-"; exit 1)
+You can find some informations about how to install it for your distribution at:
+
+  * https://wiki.gnome.org/Projects/SandboxedApps/NightlyBuilds $NC\n\n\n"
+
+    if [ -n "$INSTALLER" ]
+    then
+      printf "\n\nYou can now exit that terminal."
+      read
+    fi
+    exit 1
+  fi
+fi
+
 
 # ------------------------------------------- #
 
 # Computation of actual variable values
-APPLICATION_REPO_NAME=`xdg-app list-remotes --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
+APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
 
-SDK_REPO_NAME=`xdg-app list-remotes --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
+SDK_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
 SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
-REPO=$XDGAPP_ENVPATH/xdg-app-repos/$APPLICATION_NAME
+REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 # ------------------------------------------- #
 
-XDG_APP_INSTALL="xdg-app install --user "
-XDG_APP_UPDATE="xdg-app update --user "
-XDG_APP_ADD_REMOTE="xdg-app add-remote --no-gpg-verify --user "
+XDG_APP_INSTALL="$FLATPAK install --user "
+XDG_APP_UPDATE="$FLATPAK update --user "
+XDG_APP_ADD_REMOTE="$FLATPAK add-remote --no-gpg-verify --user "
 
 # Some terminal output color values
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-HELP="Helper script to work with xdg-app for $APPLICATION_NAME
+HELP="Helper script to work with flatpak for $APPLICATION_NAME
 
 Options:
 --------
@@ -76,15 +98,15 @@ Options:
                      a bash environment ready to work on $APPLICATION_NAME, not that the environment
           will be 'read only' and you will be only able to work on $APPLICATION_NAME
           itself easily. To have more control, you should use the --build option.
-  -b,  --build:      Build $APPLICATION_NAME and its dependencies inside a xdg-app environment.
+  -b,  --build:      Build $APPLICATION_NAME and its dependencies inside a flatpak environment.
   -u,  --update:     Update the runtime/sdk/app and rebuild the development environment if needed
   -n,  --no-update:  Do not update anything (By default we update bundles when not in development mode)
        --bundle:     Create bundle repository in $REPO, implies --build
-  -b=, --branch=:    The xdg-app branch to use (0.95, master...)
+  -b=, --branch=:    The flatpak branch to use (0.95, master...)
   -c,  --clean:      Clean previous builds and restart from scratch
        --use-remote: Build from the official repository (master branch)
 
-You can find more information about xdg-app at: https://wiki.gnome.org/Projects/SandboxedApps
+You can find more information about flatpak at: https://wiki.gnome.org/Projects/SandboxedApps
 "
 
 for i in "$@"
@@ -135,29 +157,12 @@ then
     exit 0
 fi
 
-which xdg-app > /dev/null 2>&1
-if [ ! $? -eq 0 ]
-then
-  printf "$RED \n\n\nYou need to install xdg-app to be able to use the '$0' script.
+SDK_INSTALLED=`$FLATPAK list --runtime -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
+SDK_LOCAL_INSTALLED=`$FLATPAK list --runtime -d |grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
 
-You can find some informations about how to install it for your distribution at:
-
-  * https://wiki.gnome.org/Projects/SandboxedApps/NightlyBuilds $NC\n\n\n"
-
-  if [ -n "$INSTALLER" ]
-  then
-    printf "\n\nYou can now exit that terminal."
-	read
-  fi
-  exit 1
-fi
-
-SDK_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
-SDK_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
-
-RUNTIME_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
-RUNTIME_LOCAL_INSTALLED=`xdg-app list-runtimes -d |grep "$RUNTIME_NAME.Locale/.*/$SDK_VERSION"`
-APP_INSTALLED=`xdg-app list-apps -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
+RUNTIME_INSTALLED=`$FLATPAK list --runtime -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
+RUNTIME_LOCAL_INSTALLED=`$FLATPAK list --runtime -d |grep "$RUNTIME_NAME.Locale/.*/$SDK_VERSION"`
+APP_INSTALLED=`$FLATPAK list -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
 
 if [ -n "$BUNDLE" ]
 then
@@ -167,12 +172,21 @@ fi
 
 if [ -n "$BUILD" ]
 then
-  which xdg-app-builder > /dev/null 2>&1 || (echo "You need to install xdg-app-builder to \
- use the $0 script for development.
+  FLATPAK_BUILDER=flatpak-builder
+  which $FLATPAK_BUILDER > /dev/null 2>&1
+  if [ ! $? -eq 0 ]
+  then
+    FLATPAK_BUILDER=xdg-app-builder
+    which $FLATPAK_BUILDER > /dev/null 2>&1
+    if [ ! $? -eq 0 ]
+    then
+      echo "You need to install flatpak-builder to use the $0 script for development.
 
-xdg-app-builder was introduced between the 0.4.5 and 0.4.6 xdg-app releases.
-"; exit 1)
-
+        flatpak-builder was introduced between the 0.4.5 and 0.4.6 flatpak releases.
+"
+        exit 1
+    fi
+  fi
   DEVEL=true
 fi
 
@@ -259,7 +273,7 @@ then
   else
     APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
   fi
-  LOCAL_REPOS_PATH=$XDGAPP_ENVPATH
+  LOCAL_REPOS_PATH=$FLATPAK_ENVPATH
 else
   DEVELOPMENT_BRANCHNAME=${BRANCH:-master}
   APP_BUILD_NAME=$APPLICATION_NAME
@@ -268,9 +282,9 @@ fi
 
 if [ -n "$BUNDLE" ]
 then
-  PREFIX=$XDGAPP_ENVPATH/$APP_BUILD_NAME/
+  PREFIX=$FLATPAK_ENVPATH/$APP_BUILD_NAME/
 else
-  PREFIX=$XDGAPP_ENVPATH/prefix
+  PREFIX=$FLATPAK_ENVPATH/prefix
 fi
 
 if [ -n "$CLEAN" ]
@@ -280,8 +294,8 @@ then
   echo "-> Removing $PREFIX"
   rm -Rf $PREFIX
 
-  echo "-> Removing .xdg-app-builder"
-  rm -Rf .xdg-app-builder
+  echo "-> Removing .$FLATPAK_BUILDER"
+  rm -Rf ".$FLATPAK_BUILDER"
 fi
 
 if [ -z $DEVEL ] || [ -z $BUILD ]
@@ -310,15 +324,15 @@ then
     if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
     then
       cd $APPLICATION_REPOSITORY
-      xdg-app run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
-      xdg-app run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
+      $FLATPAK run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
+      $FLATPAK run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
     fi
 
     echo "=============================="
     echo "Entering prebuilt environment "
     echo "=============================="
 
-    xdg-app run --branch=$BRANCH -d --command=$SCRIPTDIR/enter-env $APPLICATION_REF_NAME
+    $FLATPAK run --branch=$BRANCH -d --command=$SCRIPTDIR/enter-env $APPLICATION_REF_NAME
     exit $?
   fi
 
@@ -345,21 +359,21 @@ then
 
     echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
     cd $SCRIPTDIR
-    echo "Building with: xdg-app-builder $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
-    xdg-app-builder --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
+    echo "Building with: $FLATPAK_BUILDER $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
+    $FLATPAK_BUILDER --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
     if [ -z $BUNDLE ]
     then
       echo "-> Building $APPLICATION_NAME from current repository"
-      cd $APPLICATION_REPOSITORY && xdg-app build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
-      xdg-app build --env=PYTHON=python3 $PREFIX make || exit 1
+      cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
+      $FLATPAK build --env=PYTHON=python3 $PREFIX make || exit 1
     fi
   fi
 
   # Launch development environment if we are not updating it and not creating a bundle
   if [ -z $BUNDLE ] && [ -z $UPDATE ]
   then
-    xdg-app build --socket=x11 --socket=session-bus --socket=pulseaudio \
+      $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
       --env=GST_DEBUG=$GST_DEBUG \
       --env=GST_VALIDATE=$GST_VALIDATE \
@@ -372,7 +386,7 @@ then
     exit $exitcode
   fi
 else
-  xdg-app run org.pitivi.Pitivi
+  $FLATPAK run org.pitivi.Pitivi
 fi
 
 
@@ -382,10 +396,10 @@ then
   mkdir -p $REPO
 
   echo "Exporting repo $REPO $DEVELOPMENT_BRANCHNAME"
-  xdg-app build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
+  $FLATPAK build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
-  xdg-app build-update-repo $REPO || exit 1
+  $FLATPAK build-update-repo $REPO || exit 1
 
   echo "DONE!"
 fi

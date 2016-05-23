@@ -2,6 +2,6 @@
 [Desktop Entry]
 Type=Application
 Terminal=true
-Name=Pitivi xdg-app installer and updater
+Name=Pitivi flatpak installer and updater
 Icon=pitivi
-Exec=bash -c "cd `dirname %k`; echo 'Getting installation script from https://git.gnome.org/browse/pitivi/plain/build/xdg-app/pitivi-bundle'; wget https://git.gnome.org/browse/pitivi/plain/build/xdg-app/pitivi-bundle -O pitivi-xdg-app > /dev/null 2>&1; chmod +x pitivi-xdg-app; ./pitivi-xdg-app --installer"
+Exec=bash -c "cd `dirname %k`; echo 'Getting installation script from https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-bundle'; wget https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-bundle -O pitivi-flatpak > /dev/null 2>&1; chmod +x pitivi-flatpak; ./pitivi-flatpak --installer"

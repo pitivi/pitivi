@@ -21,18 +21,18 @@ if __name__ == "__main__":
 
         repo = os.path.join(basedir, module["name"])
         if not os.path.exists(os.path.join(repo, ".git")):
-            print("-> Module: %s using online repo: %s" % (module["name"],
-                  module["sources"][0]["url"]))
+            print("-> Module: %s using online repo: %s" % (
+                module["name"], module["sources"][0]["url"]))
             continue
 
         os.chdir(repo)
-        branch = subprocess.check_output("git branch 2>&1 | grep \*",
+        branch = subprocess.check_output(r"git branch 2>&1 | grep \*",
                                          shell=True).decode(
-            "utf-8").split(' ')[1][:-1]
+                                             "utf-8").split(' ')[1][:-1]
 
         repo = "file://" + repo
-        print("-> Module: %s repo: %s branch: %s" %(module["name"],
-                                                    repo, branch))
+        print("-> Module: %s repo: %s branch: %s" % (module["name"],
+                                                     repo, branch))
         module["sources"][0]["url"] = repo
         module["sources"][0]["branch"] = branch
 
