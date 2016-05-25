@@ -283,10 +283,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__timeline.app.action_log.begin("Move keyframe curve segment")
             x = event.xdata
             offsets = self.__keyframes.get_offsets()
-            keyframes = offsets[:,0]
+            keyframes = offsets[:, 0]
             right = numpy.searchsorted(keyframes, x)
             # Remember the clicked line for drag&drop.
-            self.__clicked_line = [offsets[right - 1], offsets[right]]
+            self.__clicked_line = (offsets[right - 1], offsets[right])
             self.__ydata_drag_start = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
             self.handling_motion = True
 
@@ -309,7 +309,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
             elif self.__clicked_line:
                 self.__dragged = True
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
-                offsets = self.__keyframes.get_offsets()
                 delta = ydata - self.__ydata_drag_start
                 for offset, value in self.__clicked_line:
                     value = max(self.__ylim_min, min(value + delta, self.__ylim_max))
@@ -342,13 +341,13 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if self.__offset is not None:
             self.debug("Keyframe released")
             self.__timeline.app.action_log.commit("Move keyframe")
-        elif self.__clicked_line is not None:
+        elif self.__clicked_line:
             self.debug("Line released")
             self.__timeline.app.action_log.commit("Move keyframe curve segment")
 
         self.handling_motion = False
         self.__offset = None
-        self.__clicked_line = None
+        self.__clicked_line = ()
 
         if self.__dragged:
             # The keyframe or keyframe line has already been dragged.
@@ -359,7 +358,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 self.__maybeCreateKeyframe(event)
             else:
                 self.__keyframe_removed = False
-
 
     def __setTooltip(self, event):
         if event.xdata:
