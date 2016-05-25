@@ -1670,8 +1670,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         with self.app.action_log.started("split clip"):
             self._splitElements(self.timeline.selection.selected)
 
-        self._project.pipeline.commit_timeline()
-
     def _splitElements(self, clips=None):
         splitting_selection = clips is not None
         if clips is None:
