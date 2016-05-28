@@ -17,6 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import html
 from gettext import gettext as _
 
 from gi.repository import Gdk
@@ -54,7 +55,7 @@ GlobalSettings.addConfigOption('FCpreviewHeight',
                                key='video-preview-height',
                                default=PREVIEW_HEIGHT)
 
-acceptable_tags = [
+ACCEPTABLE_TAGS = [
     Gst.TAG_ALBUM_ARTIST,
     Gst.TAG_ARTIST,
     Gst.TAG_TITLE,
@@ -102,7 +103,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.current_preview_type = ""
         self.play_on_discover = False
         self.description = ""
-        self.tags = {}
 
         # Gui elements:
         # Drawing area for video output
@@ -318,7 +318,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.description = ""
         self.l_tags.set_markup("")
         self.pause(state=Gst.State.NULL)
-        self.tags = {}
         self.current_selected_uri = ""
         self.current_preview_type = ""
         self.preview_image.hide()
@@ -404,8 +403,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.settings.FCpreviewWidth = int(w)
             self.settings.FCpreviewHeight = int(h)
 
-    def _appendTag(self, taglist, tag, unused_udata):
-        if tag in acceptable_tags:
+    def _append_tag(self, taglist, tag, tags):
+        if tag in ACCEPTABLE_TAGS:
             name = Gst.tag_get_nick(tag)
             type = Gst.tag_get_type(tag)
             type_getters = {GObject.TYPE_STRING: 'get_string',
@@ -414,22 +413,23 @@ class PreviewWidget(Gtk.Grid, Loggable):
                             GObject.TYPE_INT: 'get_int',
                             GObject.TYPE_UINT: 'get_uint'}
             if type in type_getters:
-                if type == GObject.TYPE_STRING:
-                    value = getattr(taglist, type_getters[type])(tag)[1]
-                    value = value.replace('<', ' ').replace('>', ' ')
-                else:
-                    value = str(getattr(taglist, type_getters[type])(tag)[1])
-                self.tags[name] = value
+                res, value = getattr(taglist, type_getters[type])(tag)
+                assert res
+                if not type == GObject.TYPE_STRING:
+                    value = str(value)
+                tags[name] = value
 
-    def _tag_found_cb(self, abus, mess):
-        tag_list = mess.parse_tag()
-        tag_list.foreach(self._appendTag, None)
-        keys = list(self.tags.keys())
-        keys.sort()
+    def _tag_found_cb(self, unused_bus, message):
+        tag_list = message.parse_tag()
+        tags = {}
+        tag_list.foreach(self._append_tag, tags)
+        items = list(tags.items())
+        items.sort()
         text = self.description + "\n\n"
-        for key in keys:
-            text = text + "<b>" + \
-                key.capitalize() + "</b>: " + self.tags[key] + "\n"
+        for key, value in items:
+            capitalized = key.capitalize()
+            escaped = html.escape(value)
+            text = text + "<b>%s</b>: %s\n" % (key, escaped)
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked_cb(self, unused_button):
