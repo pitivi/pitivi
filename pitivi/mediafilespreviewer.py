@@ -94,6 +94,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
         # some global variables for preview handling
         self.is_playing = False
+        self.at_eos = False
         self.original_dims = (PREVIEW_WIDTH, PREVIEW_HEIGHT)
         self.countinuous_seek = False
         self.slider_being_used = False
@@ -285,6 +286,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if not self.current_preview_type:
             self.play_on_discover = True
             return
+        if self.at_eos:
+            # The content played once already and the pipeline is at the end.
+            self.at_eos = False
+            self.player.simple_seek(0)
         self.player.setState(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
@@ -329,6 +334,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.countinuous_seek = False
             value = int(widget.get_value())
             self.player.simple_seek(value)
+            self.at_eos = False
             if self.is_playing:
                 self.player.setState(Gst.State.PLAYING)
             # Now, allow gobject timeout to continue updating the slider pos:
@@ -338,10 +344,14 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if self.countinuous_seek:
             value = int(widget.get_value())
             self.player.simple_seek(value)
+            self.at_eos = False
 
     def _pipelineEosCb(self, unused_pipeline):
+        self._update_position()
         self.pause()
-        self.pos_adj.set_value(0)
+        # The pipeline is at the end. Leave it like that so the last frame
+        # is displayed.
+        self.at_eos = True
 
     def _pipelineErrorCb(self, unused_pipeline, unused_message, unused_detail):
         self.pause(state=Gst.State.NULL)
