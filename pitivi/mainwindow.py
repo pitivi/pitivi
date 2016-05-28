@@ -1042,14 +1042,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         if not project:
             self.warning("Current project instance does not exist")
             return False
-        try:
-            project.disconnect_by_func(self._renderingSettingsChangedCb)
-        except TypeError:
-            # When loading the first project, the signal has never been
-            # connected before.
-            pass
-        project.connect(
-            "rendering-settings-changed", self._renderingSettingsChangedCb)
 
         self.viewer.setPipeline(project.pipeline)
         self._renderingSettingsChangedCb(project)
