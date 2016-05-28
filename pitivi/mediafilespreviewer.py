@@ -21,10 +21,10 @@ from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
-from gi.repository import GstPbutils
 from gi.repository import Gtk
 from gi.repository import Pango
 
@@ -84,10 +84,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.connect('destroy', self._destroy_cb)
 
         self.settings = settings
-        self.preview_cache = {}
-        self.preview_cache_errors = {}
-
-        self.discoverer = GstPbutils.Discoverer.new(Gst.SECOND)
+        self.error_message = None
 
         # playbin for play pics
         self.player = AssetPipeline(clip=None, name="preview-player")
@@ -102,6 +99,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.slider_being_used = False
         self.current_selected_uri = ""
         self.current_preview_type = ""
+        self.play_on_discover = False
         self.description = ""
         self.tags = {}
 
@@ -185,37 +183,27 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.log("Preview request for %s", uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        if uri in self.preview_cache:  # Already discovered
-            self.log(uri + " already in cache")
-            self.show_preview(uri, None)
-        elif uri in self.preview_cache_errors:
-            self.log(uri + " already in error cache")
-            self.show_error(uri)
-        else:
-            self.log("Call discoverer for " + uri)
-            self.fixme("Use a GESAsset here, and discover async with it")
-            try:
-                info = self.discoverer.discover_uri(uri)
-            except Exception as e:
-                self.preview_cache_errors[uri] = e
-                if self.current_selected_uri == uri:
-                    self.show_error(uri)
-                return
+        GES.UriClipAsset.new(uri, None, self.__asset_loaded_cb)
 
-            if self.current_selected_uri == uri:
-                self.show_preview(uri, info)
-
-    def show_preview(self, uri, info):
-        if info:
-            self.preview_cache[uri] = info
-        else:
-            self.log("Show preview for " + uri)
-            info = self.preview_cache.get(uri, None)
-
-        if info is None:
-            self.log("No preview for " + uri)
+    def __asset_loaded_cb(self, source, res):
+        uri = source.get_id()
+        try:
+            asset = GES.Asset.request_finish(res)
+        except GLib.Error as error:
+            self.log("Failed discovering %s: %s", uri, error.message)
+            self.error_message = error.message
+            self._show_error(uri)
             return
 
+        self.log("Discovered %s", uri)
+        self.error_message = None
+        self._show_preview(uri, asset.get_info())
+        if self.play_on_discover:
+            self.play_on_discover = False
+            self.play()
+
+    def _show_preview(self, uri, info):
+        self.log("Show preview for %s", uri)
         duration = info.get_duration()
         pretty_duration = beautify_length(duration)
 
@@ -252,8 +240,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 video_height = video.get_height()
                 w, h = self.__get_best_size(video_width, video_height)
                 self.preview_video.set_size_request(w, h)
-                self.preview_video.setDisplayAspectRatio(
-                    float(video_width) / video_height)
+                aspect_ratio = video_width / video_height
+                self.preview_video.setDisplayAspectRatio(aspect_ratio)
                 self.preview_video.show()
                 self.bbox.show()
                 self.play_button.show()
@@ -268,7 +256,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.current_preview_type = 'audio'
             self.preview_video.hide()
             audio = info.get_audio_streams()
-
             if not audio:
                 return
 
@@ -290,11 +277,14 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.b_zoom_out.hide()
             self.bbox.show()
 
-    def show_error(self, unused_uri):
+    def _show_error(self, unused_uri):
         self.l_error.show()
         self.b_details.show()
 
     def play(self):
+        if not self.current_preview_type:
+            self.play_on_discover = True
+            return
         self.player.setState(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
@@ -433,17 +423,18 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.l_tags.set_markup(text)
 
     def _on_b_details_clicked_cb(self, unused_button):
-        mess = self.preview_cache_errors.get(self.current_selected_uri, None)
-        if mess is not None:
-            dialog = Gtk.MessageDialog(transient_for=None,
-                                       modal=True,
-                                       message_type=Gtk.MessageType.WARNING,
-                                       buttons=Gtk.ButtonsType.OK,
-                                       text=str(mess))
-            dialog.set_icon_name("pitivi")
-            dialog.set_title(_("Error while analyzing a file"))
-            dialog.run()
-            dialog.destroy()
+        if not self.error_message:
+            return
+
+        dialog = Gtk.MessageDialog(transient_for=None,
+                                   modal=True,
+                                   message_type=Gtk.MessageType.WARNING,
+                                   buttons=Gtk.ButtonsType.OK,
+                                   text=self.error_message)
+        dialog.set_icon_name("pitivi")
+        dialog.set_title(_("Error while analyzing a file"))
+        dialog.run()
+        dialog.destroy()
 
     def _destroy_cb(self, widget):
         self.player.release()
