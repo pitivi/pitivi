@@ -27,10 +27,11 @@ from pitivi.timeline.previewers import get_wavefile_location_for_uri
 from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.timeline.previewers import THUMB_HEIGHT
 from tests import common
-from tests.test_media_library import TestMediaLibrary
+from tests.test_media_library import BaseTestMediaLibrary
 
 
-class TestPreviewers(common.TestCase):
+class TestPreviewers(BaseTestMediaLibrary):
+
     def testCreateThumbnailBin(self):
         pipeline = Gst.parse_launch("uridecodebin name=decode uri=file:///some/thing"
                                     " waveformbin name=wavebin ! fakesink qos=false name=faked")
@@ -39,9 +40,8 @@ class TestPreviewers(common.TestCase):
         self.assertTrue(wavebin)
 
     def testWaveFormAndThumbnailCreated(self):
-        testmedialib = TestMediaLibrary()
         sample_name = "1sec_simpsons_trailer.mp4"
-        testmedialib.runCheckImport([sample_name])
+        self.runCheckImport([sample_name])
 
         sample_uri = common.get_sample_uri(sample_name)
         asset = GES.UriClipAsset.request_sync(sample_uri)

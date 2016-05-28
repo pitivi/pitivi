@@ -34,7 +34,8 @@ def fakeSwitchProxies(asset):
     timeline.TimelineContainer.switchProxies(mock.MagicMock(), asset)
 
 
-class TestMediaLibrary(common.TestCase):
+class BaseTestMediaLibrary(common.TestCase):
+
     def __init__(self, *args):
         common.TestCase.__init__(self, *args)
         self.app = None
@@ -112,6 +113,9 @@ class TestMediaLibrary(common.TestCase):
         self._createAssets(assets)
         self.mainloop.run()
         self.assertFalse(self.medialibrary._progressbar.props.visible)
+
+
+class TestMediaLibrary(BaseTestMediaLibrary):
 
     def stopUsingProxies(self, delete_proxies=False):
         sample_name = "30fps_numeroted_frames_red.mkv"
