@@ -13,7 +13,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Split clips at playhead position</property>
-        <property name="action_name">timeline.split_clips</property>
+        <property name="action_name">timeline.split-clips</property>
         <property name="label" translatable="yes">Split</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-split</property>
@@ -28,7 +28,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Delete clips</property>
-        <property name="action_name">timeline.delete_selected_clips</property>
+        <property name="action_name">timeline.delete-selected-clips</property>
         <property name="label" translatable="yes">Delete</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-delete</property>
@@ -43,7 +43,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Group clips</property>
-        <property name="action_name">timeline.group_selected_clips</property>
+        <property name="action_name">timeline.group-selected-clips</property>
         <property name="label" translatable="yes">Group</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-group</property>
@@ -58,7 +58,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Ungroup clips</property>
-        <property name="action_name">timeline.ungroup_selected_clips</property>
+        <property name="action_name">timeline.ungroup-selected-clips</property>
         <property name="label" translatable="yes">Ungroup</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-ungroup</property>
@@ -73,7 +73,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Copy clips</property>
-        <property name="action_name">timeline.copy_selected_clips</property>
+        <property name="action_name">timeline.copy-selected-clips</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-copy</property>
       </object>
@@ -87,7 +87,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Paste clips</property>
-        <property name="action_name">timeline.paste_clips</property>
+        <property name="action_name">timeline.paste-clips</property>
         <property name="use_underline">True</property>
         <property name="stock_id">gtk-paste</property>
       </object>
@@ -103,7 +103,7 @@
         <property name="tooltip_text" translatable="yes">Align clips based on their soundtracks</property>
         <property name="visible_horizontal">False</property>
         <property name="visible_vertical">False</property>
-        <property name="action_name">timeline.align_selected_clips</property>
+        <property name="action_name">timeline.align-selected-clips</property>
         <property name="label" translatable="yes">Align</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-align</property>
@@ -119,7 +119,7 @@
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Toggle gapless mode
 When enabled, adjacent clips automatically move to fill gaps.</property>
-        <property name="action_name">timeline.toggle_gapless_mode</property>
+        <property name="action_name">timeline.toggle-gapless-mode</property>
         <property name="label" translatable="yes">Gapless mode</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-gapless</property>

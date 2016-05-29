@@ -221,31 +221,31 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
 
-        self.__move_layer_top_action = Gio.SimpleAction.new("move_layer_to_top", None)
+        self.__move_layer_top_action = Gio.SimpleAction.new("move-layer-to-top", None)
         action = self.__move_layer_top_action
         action.connect("activate", self._moveLayerCb, -2)
         action_group.add_action(action)
         menu_model.append(_("Move layer to top"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__move_layer_up_action = Gio.SimpleAction.new("move_layer_up", None)
+        self.__move_layer_up_action = Gio.SimpleAction.new("move-layer-up", None)
         action = self.__move_layer_up_action
         action.connect("activate", self._moveLayerCb, -1)
         action_group.add_action(action)
         menu_model.append(_("Move layer up"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__move_layer_down_action = Gio.SimpleAction.new("move_layer_down", None)
+        self.__move_layer_down_action = Gio.SimpleAction.new("move-layer-down", None)
         action = self.__move_layer_down_action
         action.connect("activate", self._moveLayerCb, 1)
         action_group.add_action(action)
         menu_model.append(_("Move layer down"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__move_layer_bottom_action = Gio.SimpleAction.new("move_layer_to_bottom", None)
+        self.__move_layer_bottom_action = Gio.SimpleAction.new("move-layer-to-bottom", None)
         action = self.__move_layer_bottom_action
         action.connect("activate", self._moveLayerCb, 2)
         action_group.add_action(action)
         menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__delete_layer_action = Gio.SimpleAction.new("delete_layer", None)
+        self.__delete_layer_action = Gio.SimpleAction.new("delete-layer", None)
         action = self.__delete_layer_action
         action.connect("activate", self._deleteLayerCb)
         action_group.add_action(action)

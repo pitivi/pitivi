@@ -230,15 +230,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.hide()
 
         effects_actions_group = Gio.SimpleActionGroup()
-        self.treeview.insert_action_group("clipproperties_effects", effects_actions_group)
-        buttons_box.insert_action_group("clipproperties_effects", effects_actions_group)
+        self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
+        buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
 
-        self.remove_effect_action = Gio.SimpleAction.new("remove_effect", None)
+        self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._removeEffectCb)
         effects_actions_group.add_action(self.remove_effect_action)
-        self.app.add_accelerator("Delete", "clipproperties_effects.remove_effect", None)
+        self.app.add_accelerator("Delete", "clipproperties-effects.remove-effect", None)
         self.remove_effect_action.set_enabled(False)
-        remove_effect_button.set_action_name("clipproperties_effects.remove_effect")
+        remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
 
         # Connect all the widget signals
         self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)

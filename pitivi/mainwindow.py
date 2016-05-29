@@ -465,30 +465,30 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.add_accelerator("<Control>s", "win.save", None)
         self.save_button.set_action_name("win.save")
 
-        self.new_project_action = Gio.SimpleAction.new("new_project", None)
+        self.new_project_action = Gio.SimpleAction.new("new-project", None)
         self.new_project_action.connect("activate", self._newProjectMenuCb)
         self.add_action(self.new_project_action)
-        self.app.add_accelerator("<Control>n", "win.new_project", None)
+        self.app.add_accelerator("<Control>n", "win.new-project", None)
 
-        self.open_project_action = Gio.SimpleAction.new("open_project", None)
+        self.open_project_action = Gio.SimpleAction.new("open-project", None)
         self.open_project_action.connect("activate", self._openProjectCb)
         self.add_action(self.open_project_action)
-        self.app.add_accelerator("<Control>o", "win.open_project", None)
+        self.app.add_accelerator("<Control>o", "win.open-project", None)
 
-        self.save_as_action = Gio.SimpleAction.new("save_as", None)
+        self.save_as_action = Gio.SimpleAction.new("save-as", None)
         self.save_as_action.connect("activate", self._saveProjectAsCb)
         self.add_action(self.save_as_action)
-        self.app.add_accelerator("<Control><Shift>s", "win.save_as", None)
+        self.app.add_accelerator("<Control><Shift>s", "win.save-as", None)
 
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self._userManualCb)
         self.add_action(self.help_action)
         self.app.add_accelerator("F1", "win.help", None)
 
-        self.menu_button_action = Gio.SimpleAction.new("menu_button", None)
+        self.menu_button_action = Gio.SimpleAction.new("menu-button", None)
         self.menu_button_action.connect("activate", self._menuCb)
         self.add_action(self.menu_button_action)
-        self.app.add_accelerator("F10", "win.menu_button", None)
+        self.app.add_accelerator("F10", "win.menu-button", None)
 
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
