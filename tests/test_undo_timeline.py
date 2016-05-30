@@ -29,8 +29,8 @@ from pitivi.timeline.timeline import Timeline
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
+from pitivi.undo.timeline import EffectAddedAction
 from pitivi.undo.timeline import TimelineObserver
-from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
 from pitivi.undo.undo import UndoableActionLog
 from tests import common
@@ -321,7 +321,7 @@ class TestTimelineUndo(TestCase):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, TrackElementAdded))
+        self.assertTrue(isinstance(action, EffectAddedAction))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in
@@ -351,7 +351,7 @@ class TestTimelineUndo(TestCase):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, TrackElementAdded))
+        self.assertTrue(isinstance(action, EffectAddedAction))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in
@@ -390,7 +390,7 @@ class TestTimelineUndo(TestCase):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, TrackElementAdded))
+        self.assertTrue(isinstance(action, EffectAddedAction))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in
