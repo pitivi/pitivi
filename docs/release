@@ -11,7 +11,7 @@ Pre-requisites:
  * 'make check' passes
  * 'make distcheck' passes
  * Do a test installation and make sure all files are properly dist-ed/install-ed
- * No 'blocker' bugs against the upcoming release in bugzilla
+ * No 'blocker' tasks against the upcoming milestone in phabricator
 
 
 Preparing:
