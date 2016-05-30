@@ -81,6 +81,8 @@ git-pylint-commit-hook --help |grep ignore > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   echo "Your git-pylint-commit-hook version can't ignore files that have not been fixed yet"
+  echo "Use instead our fork:"
+  echo "    $ pip install git+git://github.com/thiblahute/git-pylint-commit-hook.git"
   echo ""
 elif [ -z $PYLINT ]; then
   IGNORE_ARGS=''
