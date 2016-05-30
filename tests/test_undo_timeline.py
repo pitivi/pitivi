@@ -59,7 +59,7 @@ class TestTimelineLogObserver(TestCase):
 
     def setUp(self):
         self.action_log = UndoableActionLog()
-        self.observer = TimelineObserverSpy(self.action_log, app=mock.Mock())
+        self.observer = TimelineObserverSpy(self.action_log)
 
     def testConnectionAndDisconnection(self):
         timeline = GES.Timeline.new_audio_video()

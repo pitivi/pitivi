@@ -267,7 +267,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("move", self._action_log_move_cb)
 
-        timeline_observer = TimelineObserver(self.action_log, app=self)
+        timeline_observer = TimelineObserver(self.action_log)
         timeline_observer.startObserving(project.timeline)
 
         project_observer = ProjectObserver(project, self.action_log)

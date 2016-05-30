@@ -24,6 +24,7 @@ from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
+from pitivi.undo.undo import SimpleUndoableAction
 from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
 
@@ -430,6 +431,22 @@ class ActivePropertyChanged(UndoableAction):
         self.active = not self.active
 
 
+class ControlSourceSetAction(SimpleUndoableAction):
+
+    def __init__(self, action_info):
+        SimpleUndoableAction.__init__(self)
+        self.action_info = action_info
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("set-control-source")
+        for key, value in self.action_info.items():
+            st.set_value(key, value)
+        st.set_value("binding-type", "direct")
+        st.set_value("source-type", "interpolation")
+        st.set_value("interpolation-mode", "linear")
+        return st
+
+
 class TimelineObserver(Loggable):
     """Monitors a project's timeline and reports UndoableActions.
 
@@ -437,10 +454,9 @@ class TimelineObserver(Loggable):
         action_log (UndoableActionLog): The action log where to report actions.
     """
 
-    def __init__(self, action_log, app):
+    def __init__(self, action_log):
         Loggable.__init__(self)
         self.action_log = action_log
-        self.app = app
         self.clip_property_trackers = {}
         self.layer_observers = {}
         self.keyframe_observers = {}
@@ -502,11 +518,14 @@ class TimelineObserver(Loggable):
 
     def _controlBindingAddedCb(self, track_element, binding):
         self._connectToControlSource(track_element, binding)
+        action_info = {"element-name": track_element.get_name(),
+                       "property-name": binding.props.name}
+        action = ControlSourceSetAction(action_info)
+        self.action_log.push(action)
 
     def _connectToTrackElement(self, track_element):
         for prop, binding in track_element.get_all_control_bindings().items():
-            self._connectToControlSource(track_element, binding,
-                                         existed=True)
+            self._connectToControlSource(track_element, binding)
         track_element.connect("control-binding-added",
                               self._controlBindingAddedCb)
         if isinstance(track_element, GES.BaseEffect) or \
@@ -522,20 +541,13 @@ class TimelineObserver(Loggable):
         if observer:
             observer.release()
 
-    def _connectToControlSource(self, track_element, binding, existed=False):
+    def _connectToControlSource(self, track_element, binding):
         control_source = binding.props.control_source
         action_info = {"element-name": track_element.get_name(),
                        "property-name": binding.props.name}
         observer = ControlSourceObserver(control_source, self.action_log,
                                          action_info)
         self.keyframe_observers[control_source] = observer
-
-        if not existed:
-            properties = {"binding-type": "direct",
-                          "source-type": "interpolation",
-                          "interpolation-mode": "linear"}
-            properties.update(action_info)
-            self.app.write_action("set-control-source", properties)
 
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source

@@ -61,6 +61,15 @@ class UndoableAction(GObject.Object, Loggable):
         raise NotImplementedError()
 
 
+class SimpleUndoableAction(UndoableAction):
+
+    def do(self):
+        pass
+
+    def undo(self):
+        pass
+
+
 class FinalizingAction:
     """
     Base class for actions to happen when an UndoableActionStack is
