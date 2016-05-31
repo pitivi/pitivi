@@ -399,7 +399,7 @@ then
   $FLATPAK build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
-  $FLATPAK build-update-repo $REPO || exit 1
+  $FLATPAK build-update-repo --generate-static-deltas $REPO || exit 1
 
   echo "DONE!"
 fi
