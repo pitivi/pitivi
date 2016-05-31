@@ -1467,11 +1467,9 @@ class Project(Loggable, GES.Project):
             self._has_default_audio_settings = False
             self.emit("settings-set-from-imported-asset", asset)
 
-    def _emitChange(self, signal, key=None, value=None):
-        if key and value:
-            self.emit(signal, key, value)
-        else:
-            self.emit(signal)
+    def _emitChange(self, signal, key, value):
+        self.emit(signal, key, value)
+        # TODO: Remove this when it's possible to undo/redo these changes.
         self.setModificationState(True)
 
     def _getElementFactoryName(self, elements, profile):
