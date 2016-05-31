@@ -186,14 +186,12 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         value = widget.get_value()
         self.debug("User changed the border property to %s", value)
         self.element.set_border(int(value))
-        self.app.project_manager.current_project.setModificationState(True)
         self.app.project_manager.current_project.pipeline.flushSeek()
 
     def _invertCheckboxCb(self, widget):
         value = widget.get_active()
         self.debug("User changed the invert property to %s", value)
         self.element.set_inverted(value)
-        self.app.project_manager.current_project.setModificationState(True)
         self.app.project_manager.current_project.pipeline.flushSeek()
 
     def _borderTypeChangedCb(self, widget):
