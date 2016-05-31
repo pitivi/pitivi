@@ -194,8 +194,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__updateName()
 
     def __name_focus_out_cb(self, unused_widget, unused_event):
+        current_name = self.ges_layer.ui.getName()
+        name = self.name_entry.get_text()
+        if name == current_name:
+            return
+
         with self.app.action_log.started("change layer name"):
-            self.ges_layer.ui.setName(self.name_entry.get_text())
+            self.ges_layer.ui.setName(name)
 
     def __layerPriorityChangedCb(self, unused_ges_layer, unused_pspec):
         self.__updateActions()
