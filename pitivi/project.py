@@ -800,17 +800,17 @@ class Project(Loggable, GES.Project):
         return False
 
     def setVideoRestriction(self, name, value):
-        self._has_default_video_settings = False
         res = Project._set_restriction(self.video_profile, name, value)
-
         if res:
             self.emit("video-size-changed")
-
+            self._has_default_video_settings = False
         return res
 
     def __setAudioRestriction(self, name, value):
-        self._has_default_audio_settings = False
-        return Project._set_restriction(self.audio_profile, name, value)
+        res = Project._set_restriction(self.audio_profile, name, value)
+        if res:
+            self._has_default_audio_settings = False
+        return res
 
     @property
     def videowidth(self):
