@@ -478,25 +478,30 @@ class LayerObserver(MetaContainerObserver, Loggable):
             self._connectToClip(ges_clip)
 
     def _connectToClip(self, ges_clip):
+        ges_clip.connect("child-added", self._clipTrackElementAddedCb)
+        ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
+
+        for track_element in ges_clip.get_children(True):
+            self._connectToTrackElement(track_element)
+
+        if isinstance(ges_clip, GES.TransitionClip):
+            return
+
         props = ["start", "duration", "in-point", "priority"]
         clip_observer = GObjectObserver(ges_clip, props, self.action_log)
         self.clip_observers[ges_clip] = clip_observer
 
-        ges_clip.connect("child-added", self._clipTrackElementAddedCb)
-        ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
-        for track_element in ges_clip.get_children(True):
-            self._connectToTrackElement(track_element)
+    def _disconnectFromClip(self, ges_clip):
+        ges_clip.disconnect_by_func(self._clipTrackElementAddedCb)
+        ges_clip.disconnect_by_func(self._clipTrackElementRemovedCb)
 
-    def _disconnectFromClip(self, clip):
-        if isinstance(clip, GES.TransitionClip):
-            return
-
-        for child in clip.get_children(True):
+        for child in ges_clip.get_children(True):
             self._disconnectFromTrackElement(child)
 
-        clip.disconnect_by_func(self._clipTrackElementAddedCb)
-        clip.disconnect_by_func(self._clipTrackElementRemovedCb)
-        clip_observer = self.clip_observers.pop(clip)
+        if isinstance(ges_clip, GES.TransitionClip):
+            return
+
+        clip_observer = self.clip_observers.pop(ges_clip)
         clip_observer.release()
 
     def _controlBindingAddedCb(self, track_element, binding):
@@ -507,6 +512,12 @@ class LayerObserver(MetaContainerObserver, Loggable):
         self.action_log.push(action)
 
     def _connectToTrackElement(self, track_element):
+        if isinstance(track_element, GES.VideoTransition):
+            props = ["border", "invert", "transition-type"]
+            observer = GObjectObserver(track_element, props, self.action_log)
+            self.track_element_observers[track_element] = observer
+            return
+
         for prop, binding in track_element.get_all_control_bindings().items():
             self._connectToControlSource(track_element, binding)
         track_element.connect("control-binding-added",
@@ -538,16 +549,16 @@ class LayerObserver(MetaContainerObserver, Loggable):
         observer.release()
 
     def _clipAddedCb(self, layer, clip):
+        self._connectToClip(clip)
         if isinstance(clip, GES.TransitionClip):
             return
-        self._connectToClip(clip)
         action = ClipAdded(layer, clip)
         self.action_log.push(action)
 
     def _clipRemovedCb(self, layer, clip):
+        self._disconnectFromClip(clip)
         if isinstance(clip, GES.TransitionClip):
             return
-        self._disconnectFromClip(clip)
         action = ClipRemoved(layer, clip)
         self.action_log.push(action)
 

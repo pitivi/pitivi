@@ -26,6 +26,7 @@ from gi.repository import Gtk
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
@@ -35,11 +36,15 @@ from pitivi.utils.ui import SPACING
  COL_DESC_TEXT,
  COL_ICON) = list(range(4))
 
+BORDER_LOOP_THRESHOLD = 50000
+
 
 class TransitionsListWidget(Gtk.Box, Loggable):
     """Widget for configuring the selected transition.
 
-    @type app: L{Pitivi}
+    Attributes:
+        app (Pitivi): The app.
+        element (GES.VideoTransition): The transition being configured.
     """
 
     def __init__(self, app):
@@ -52,6 +57,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         icon_theme = Gtk.IconTheme.get_default()
         self._question_icon = icon_theme.load_icon("dialog-question", 48, 0)
         self.set_orientation(Gtk.Orientation.VERTICAL)
+        # Whether a child widget has the focus.
+        self.container_focused = False
 
         # Tooltip handling
         self._current_transition_name = None
@@ -142,12 +149,34 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.props_widgets.hide()
         self.searchbar.hide()
 
+    def do_set_focus_child(self, child):
+        Gtk.Box.do_set_focus_child(self, child)
+        action_log = self.app.action_log
+        if not action_log:
+            # This happens when the user is editing a transition and
+            # suddenly closes the window. Don't bother.
+            return
+        if child:
+            if not self.container_focused:
+                self.container_focused = True
+                action_log.begin("Change transaction")
+        else:
+            if self.container_focused:
+                self.container_focused = False
+                action_log.commit("Change transaction")
+
     def __connectUi(self):
         self.iconview.connect("selection-changed", self._transitionSelectedCb)
         self.border_scale.connect("value-changed", self._borderScaleCb)
         self.invert_checkbox.connect("toggled", self._invertCheckboxCb)
         self.border_mode_normal.connect("released", self._borderTypeChangedCb)
         self.border_mode_loop.connect("released", self._borderTypeChangedCb)
+        self.element.connect("notify::border", self.__updated_cb)
+        self.element.connect("notify::invert", self.__updated_cb)
+        self.element.connect("notify::transition-type", self.__updated_cb)
+
+    def __updated_cb(self, element, unused_param):
+        self._update_ui()
 
     def __disconnectUi(self):
         self.iconview.disconnect_by_func(self._transitionSelectedCb)
@@ -155,6 +184,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
         self.border_mode_normal.disconnect_by_func(self._borderTypeChangedCb)
         self.border_mode_loop.disconnect_by_func(self._borderTypeChangedCb)
+        disconnectAllByFunc(self.element, self.__updated_cb)
 
 # UI callbacks
 
@@ -172,7 +202,6 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             self.props_widgets.set_sensitive(True)
 
         self.element.get_parent().set_asset(transition_asset)
-        self.app.project_manager.current_project.setModificationState(True)
         self.app.write_action("element-set-asset", {
             "asset-id": transition_asset.get_id(),
             "element-name": self.element.get_name()})
@@ -199,7 +228,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         # The "border" property in gstreamer is unlimited, but if you go over
         # 25 thousand it "loops" the transition instead of smoothing it.
         if border is not None:
-            loop = border >= 50000
+            loop = border >= BORDER_LOOP_THRESHOLD
         if loop:
             self.border_scale.set_range(50000, 500000)
             self.border_scale.clear_marks()
@@ -245,30 +274,37 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         if isinstance(element, GES.AudioTransition):
             return
         self.element = element
-        transition_asset = element.get_parent().get_asset()
-        if transition_asset.get_id() == "crossfade":
-            self.props_widgets.set_sensitive(False)
-        else:
-            self.props_widgets.set_sensitive(True)
+        self._update_ui()
         self.iconview.show_all()
         self.props_widgets.show_all()
         self.searchbar.show_all()
-        self.__selectTransition(transition_asset)
-        border = element.get_border()
-        self.__updateBorderScale(border=border)
-        self.border_scale.set_value(border)
-        self.invert_checkbox.set_active(element.is_inverted())
         self.__connectUi()
         # We REALLY want the infobar to be hidden as space is really constrained
         # and yet GTK 3.10 seems to be racy in showing/hiding infobars, so
         # this must happen *after* the tab has been made visible/switched to:
         self.infobar.hide()
 
-    def __selectTransition(self, transition_asset):
+    def _update_ui(self):
+        transition_type = self.element.get_transition_type()
+        self.props_widgets.set_sensitive(
+            transition_type != GES.VideoStandardTransitionType.CROSSFADE)
+        self.__select_transition(transition_type)
+        border = self.element.get_border()
+        self.__updateBorderScale(border=border)
+        self.border_scale.set_value(border)
+        self.invert_checkbox.set_active(self.element.is_inverted())
+        loop = border >= BORDER_LOOP_THRESHOLD
+        if loop:
+            self.border_mode_loop.activate()
+        else:
+            self.border_mode_normal.activate()
+
+    def __select_transition(self, transition_type):
         """Selects the specified transition type in the iconview."""
         model = self.iconview.get_model()
         for row in model:
-            if transition_asset == row[COL_TRANSITION_ASSET]:
+            asset = row[COL_TRANSITION_ASSET]
+            if transition_type.value_nick == asset.get_id():
                 path = model.get_path(row.iter)
                 self.iconview.select_path(path)
                 self.iconview.scroll_to_path(path, False, 0, 0)

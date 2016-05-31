@@ -343,6 +343,46 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
         self.assertEqual(len(self.layer.get_clips()), 2)
 
+    def test_transitions(self):
+        self._wait_until_project_loaded()
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+
+        clip1 = asset.extract()
+        clip1.set_start(0 * Gst.SECOND)
+        self.layer.add_clip(clip1)
+
+        clip2 = asset.extract()
+        clip2.set_start(clip1.props.duration / 2)
+        clip2.set_duration(10 * Gst.SECOND)
+        self.layer.add_clip(clip2)
+
+        def get_transition_element(ges_layer):
+            for clip in self.layer.get_clips():
+                if isinstance(clip, GES.TransitionClip):
+                    for element in clip.get_children(False):
+                        if isinstance(element, GES.VideoTransition):
+                            return element
+            self.fail("Cannot find video transition")
+
+        transition_element = get_transition_element(self.layer)
+        self.assertEqual(transition_element.get_transition_type(),
+                         GES.VideoStandardTransitionType.CROSSFADE)
+
+        with self.action_log.started("set transition type"):
+            transition_element.set_transition_type(GES.VideoStandardTransitionType.BAR_WIPE_LR)
+        self.assertEqual(transition_element.get_transition_type(),
+                         GES.VideoStandardTransitionType.BAR_WIPE_LR)
+
+        # Try to undo/redo
+        self.action_log.undo()
+        self.assertEqual(transition_element.get_transition_type(),
+                         GES.VideoStandardTransitionType.CROSSFADE)
+
+        self.action_log.redo()
+        self.assertEqual(transition_element.get_transition_type(),
+                         GES.VideoStandardTransitionType.BAR_WIPE_LR)
+
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
 
