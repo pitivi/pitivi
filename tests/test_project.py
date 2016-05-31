@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#
+# Pitivi video editor
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2013, Alex Băluț <alexandru.balut@gmail.com>
 #
@@ -334,7 +334,6 @@ class TestProjectLoading(common.TestCase):
             mainloop.quit()
 
         proxy_manager.connect("proxy-ready", proxy_ready_cb)
-
 
         uris = [common.get_sample_uri("tears_of_steel.webm")]
         project.addUris(uris)

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/utils/ui.py
-#
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2012, Thibault Saunier <thibault.saunier@collabora.com>
 #

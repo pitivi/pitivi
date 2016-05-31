@@ -1,8 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi
-#
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -34,14 +32,17 @@ localedir = ""
 # Add the path of pitivi stuff
 # TODO : change it when it's finally in cvs
 
+
 def _get_root_dir():
     return '/'.join(os.path.dirname(os.path.abspath(os.getcwd())).split('/')[:-1])
+
 
 def _in_devel():
     rd = _get_root_dir()
     return (os.path.exists(os.path.join(rd, '.svn')) or
             os.path.exists(os.path.join(rd, 'CVS')) or
             os.path.exists(os.path.join(rd, '.git')))
+
 
 def _add_pitivi_path():
     global localedir
@@ -54,7 +55,7 @@ def _add_pitivi_path():
         root = os.path.join(LIBDIR, 'pitivi', 'python')
         localedir = os.path.join('../share/locale')
 
-    if not root in sys.path:
+    if root not in sys.path:
         sys.path.insert(0, root)
 
     # prepend any directories found at configure time if they're not
@@ -73,7 +74,8 @@ def _add_pitivi_path():
         gettext.bindtextdomain('pitivi', localedir)
         gettext.textdomain('pitivi')
     except:
-        print "Couldn't set locale !, reverting to C locale"
+        print("Couldn't set locale !, reverting to C locale")
+
 
 def _init_gobject_gtk_gst():
     global localedir
@@ -97,6 +99,7 @@ def _init_gobject_gtk_gst():
         import gst
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")
+
 
 def _run_pitivi():
     import pitivi.application as ptv

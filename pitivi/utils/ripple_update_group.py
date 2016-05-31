@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/utils/ripple_update_group.py
-#
 # Copyright (c) 2010, Brandon Lewis <brandon.lewis@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or

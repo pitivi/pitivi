@@ -1,8 +1,5 @@
-#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       test_utils.py
-#
 # Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
 # Copyright (c) 2014, Mathieu Duponchelle <mduponchelle1@gmail.com>
 #

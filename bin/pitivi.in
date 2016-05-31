@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi
-#
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -76,7 +74,7 @@ def _add_pitivi_path():
         root = os.path.join(LIBDIR, 'pitivi', 'python')
         localedir = os.path.join(DATADIR, "locale")
 
-    if not root in sys.path:
+    if root not in sys.path:
         sys.path.append(root)
 
     # prepend any directories found at configure time if they're not
@@ -122,11 +120,13 @@ def _initialize_modules():
         print("Failed to initialize modules")
         raise
 
+
 def _check_requirements():
     from pitivi.check import check_requirements
 
     if not check_requirements():
         sys.exit(2)
+
 
 def _run_pitivi():
     from pitivi import application

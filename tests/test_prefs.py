@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#
+# Pitivi video editor
 # Copyright (c) 2009, Brandon Lewis <brandon_lewis@berkeley.edu>
 #
 # This program is free software; you can redistribute it and/or

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-#
-#       tests/test_undo_timeline.py
-#
+# Pitivi video editor
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
 #

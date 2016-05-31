@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/dialogs/clipmediaprops.py
-#
 # Copyright (c) 2011, Parthasarathi Susarla <partha@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/timeline/ruler.py
-#
 # Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2014, Alex Băluț <alexandru.balut@gmail.com>
 #

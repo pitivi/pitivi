@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/autoaligner.py
-#
 # Copyright (c) 2011, Benjamin M. Schwartz <bens@alum.mit.edu>
 #
 # This program is free software; you can redistribute it and/or

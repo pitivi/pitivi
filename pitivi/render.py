@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/render.py
-#
 # Copyright (c) 2009, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or

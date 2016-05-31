@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/utils/system.py
-#
 # Copyright (c) 2010, Stephen Griffiths <scgmk5@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

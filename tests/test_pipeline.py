@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#
+# Pitivi video editor
 # Copyright (c) 2016, Thibault Saunier <tsaunier@gnome.org>
 #
 # This program is free software; you can redistribute it and/or

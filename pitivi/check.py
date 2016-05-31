@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/check.py
-#
 # Copyright (c) 2014, Mathieu Duponchelle <mduponchelle1@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/dialogs/depsmanager.py
-#
 # Copyright (c) 2011 Jean-François Fortin Tam <nekohayo@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

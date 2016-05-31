@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/timeline/previewers.py
-#
 # Copyright (c) 2013, Daniel Thul <daniel.thul@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

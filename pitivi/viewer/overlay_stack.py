@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/viewer/overlay_stack.py
-#
 # Copyright (c) 2016, Lubosz Sarnecki <lubosz.sarnecki@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
@@ -143,7 +140,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         try:
             cursor = Gdk.Cursor.new_from_name(display, name)
         except TypeError:
-            self.warning ("Cursor '%s' not found.", name)
+            self.warning("Cursor '%s' not found.", name)
         self.app.gui.get_window().set_cursor(cursor)
 
     def reset_cursor(self):

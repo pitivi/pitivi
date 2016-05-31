@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       tests/test_common.py
-#
 # Copyright (c) 2011 Google <aleb@google.com>
 #
 # This program is free software; you can redistribute it and/or

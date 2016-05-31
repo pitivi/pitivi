@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       configure.py
-#
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -53,7 +51,7 @@ def get_pixmap_dir():
         root = _dir
     else:
         root = PKGDATADIR
-    print (os.path.join(root, 'pixmaps'))
+    print(os.path.join(root, 'pixmaps'))
     return os.path.join(root, 'pixmaps')
 
 

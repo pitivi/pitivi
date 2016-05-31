@@ -1,8 +1,5 @@
-# -- coding: utf-8 --
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/timeline/layer.py
-#
 # Copyright (c) 2012, Paul Lange <palango@gmx.de>
 #
 # This program is free software; you can redistribute it and/or

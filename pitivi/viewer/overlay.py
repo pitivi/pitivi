@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/viewer/overlay.py
-#
 # Copyright (c) 2016, Lubosz Sarnecki <lubosz.sarnecki@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or

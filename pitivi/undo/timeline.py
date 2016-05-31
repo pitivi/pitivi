@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/undo/timeline.py
-#
 # Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

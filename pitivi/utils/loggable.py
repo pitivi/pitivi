@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/utils/loggable.py
-#
 # Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
@@ -648,23 +646,24 @@ def logLevelName(level):
 
 
 def _preformatLevels(enableColorOutput):
-
-    if enableColorOutput:
-        t = TerminalController()
-
-        if type(t.BOLD) == bytes:
-            formatter = lambda level: ''.join(
-                (t.BOLD.decode(), getattr(t, COLORS[level]).decode(),
-                 logLevelName(level), t.NORMAL.decode()))
-        else:
-            formatter = lambda level: ''.join(
-                (t.BOLD, getattr(t, COLORS[level]),
-                 logLevelName(level), t.NORMAL))
-    else:
-        formatter = lambda level: logLevelName(level)
-
+    terminal_controller = TerminalController()
     for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
-        _FORMATTED_LEVELS.append(formatter(level))
+        if enableColorOutput:
+            if type(terminal_controller.BOLD) == bytes:
+                formatter = ''.join(
+                    (terminal_controller.BOLD.decode(),
+                     getattr(terminal_controller, COLORS[level]).decode(),
+                     logLevelName(level),
+                     terminal_controller.NORMAL.decode()))
+            else:
+                formatter = ''.join(
+                    (terminal_controller.BOLD,
+                     getattr(terminal_controller, COLORS[level]),
+                     logLevelName(level),
+                     terminal_controller.NORMAL))
+        else:
+            formatter = logLevelName(level)
+        _FORMATTED_LEVELS.append(formatter)
 
 # "public" useful API
 

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/application.py
-#
 # Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
 # Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
 # Copyright (c) 2014 Alexandru Băluț<alexandru.balut@gmail.com>

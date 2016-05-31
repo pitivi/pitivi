@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#
+# Pitivi video editor
 # Copyright (c) 2015, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

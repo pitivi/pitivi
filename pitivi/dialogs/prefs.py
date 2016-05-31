@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/dialogs/prefs.py
-#
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or

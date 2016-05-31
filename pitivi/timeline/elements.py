@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/timeline/elements.py
-#
 # Copyright (c) 2013, Mathieu Duponchelle <mduponchelle1@gmail.com>
 # Copyright (c) 2016, Thibault Saunier <tsaunier@gnome.org>
 #
@@ -515,7 +512,7 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
         self.__removeKeyframes()
         self.keyframe_curve = KeyframeCurve(self.timeline, binding)
         self.keyframe_curve.connect("plot-changed",
-                                     self.__keyframePlotChangedCb)
+                                    self.__keyframePlotChangedCb)
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
         self.add(self.keyframe_curve)

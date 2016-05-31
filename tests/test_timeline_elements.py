@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       tests/test_timeline_elements.py
-#
 # Copyright (c) 2016, Jakub Brindza <jakub.brindza@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

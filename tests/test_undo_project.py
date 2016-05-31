@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-#
-#       tests/test_undo_project.py
-#
+# Pitivi video editor
 # Copyright (c) 2016, Alex Băluț <alexandru.balut@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -82,7 +80,6 @@ class TestProjectUndo(TestCase):
             self.assertEqual(self.project.name, title)
             self.assertEqual(self.project.author, author)
             self.assertEqual(self.project.year, year)
-
 
         dialog.title_entry.set_text("t1")
         dialog.author_entry.set_text("a1")

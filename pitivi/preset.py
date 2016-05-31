@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/preset.py
-#
 # Copyright (c) 2010, Brandon Lewis <brandon_lewis@berkeley.edu>
 #
 # This program is free software; you can redistribute it and/or

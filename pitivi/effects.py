@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/effects.py
-#
 # Copyright (c) 2010, Thibault Saunier <tsaunier@gnome.org>
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #

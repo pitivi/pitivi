@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#
+# Pitivi video editor
 # Copyright (c) 2015, Thibault Saunier <tsaunier@gnome.org>
 #
 # This program is free software; you can redistribute it and/or
@@ -196,6 +196,7 @@ class TestCase(unittest.TestCase, Loggable):
                          expect_selected)
         self.assertEqual(ges_clip.selected.selected, expect_selected)
 
+
 @contextlib.contextmanager
 def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
     """
@@ -242,6 +243,7 @@ def clean_proxy_samples():
         if f.endswith(proxy_manager.proxy_extension):
             f = os.path.join(_dir, f)
             os.remove(f)
+
 
 def create_test_clip(clip_type):
     clip = clip_type()

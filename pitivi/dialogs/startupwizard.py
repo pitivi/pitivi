@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/dialogs/startupwizard.py
-#
 # Copyright (c) 2010 Mathieu Duponchelle <seeed@laposte.net>
 #
 # This program is free software; you can redistribute it and/or

@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       tests/test_preset.py
-#
 # Copyright (c) 2011, Alex Băluț <alexandru.balut@gmail.com>
 # Copyright (c) 2011, Jean-François Fortin Tam <nekohayo@gmail.com>
 #

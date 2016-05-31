@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       tests/test_system.py
-#
 # Copyright (c) 2012, Jean-François Fortin Tam <nekohayo@gmail.com>
 #
 # This program is free software; you can redistribute it and/or

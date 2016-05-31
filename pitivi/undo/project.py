@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/undo/project.py
-#
 # Copyright (c) 2012, Thibault Saunier <tsaunier@gnome.org>
 #
 # This program is free software; you can redistribute it and/or

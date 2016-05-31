@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/mediafilespreviewer.py
-#
 # Copyright (c) 2011, Pier Carteri <pier.carteri@gmail.com>
 # Copyright (c) 2012, Thibault Saunier <tsaunier@gnome.org>
 #

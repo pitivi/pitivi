@@ -1,7 +1,5 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
-#
-#       pitivi/utils/validate.py
-#
 # Copyright (c) 2014, Thibault Saunier <thibault.saunier@collabora.com>
 #
 # This program is free software; you can redistribute it and/or
