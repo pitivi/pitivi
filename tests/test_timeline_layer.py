@@ -32,12 +32,22 @@ class TestLayerControl(common.TestCase):
         ges_layer = GES.Layer()
         layer = Layer(ges_layer, timeline)
         self.assertEqual(layer.getName(), "Layer 0", "Default name generation failed")
+
         ges_layer.set_meta("audio::name", "a")
         self.assertEqual(layer.getName(), "a", "Cannot use old audio name")
+
         ges_layer.set_meta("video::name", "v")
         self.assertEqual(layer.getName(), "v", "Cannot use old video name")
+
         layer.setName("vv")
         self.assertEqual(layer.getName(), "vv")
+
+    def test_name_meaningful(self):
+        timeline = mock.MagicMock()
+        ges_layer = GES.Layer()
+        layer = Layer(ges_layer, timeline)
+        layer.setName("Layer 0x")
+        self.assertEqual(layer.getName(), "Layer 0x")
 
 
 class TestLayer(common.TestCase):

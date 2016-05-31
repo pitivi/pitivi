@@ -389,7 +389,7 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
     def __nameIfMeaningful(self):
         name = self.__nameIfSet()
         if name:
-            for pattern in ("video [0-9]+", "audio [0-9]+", "Layer [0-9]+"):
+            for pattern in ("video [0-9]+$", "audio [0-9]+$", "Layer [0-9]+$"):
                 if re.match(pattern, name):
                     return None
         return name
