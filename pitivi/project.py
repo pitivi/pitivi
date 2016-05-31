@@ -731,8 +731,9 @@ class Project(Loggable, GES.Project):
 
     @name.setter
     def name(self, name):
+        if name == self.name:
+            return
         self.set_meta("name", name)
-        self.setModificationState(True)
 
     @property
     def year(self):
@@ -740,8 +741,9 @@ class Project(Loggable, GES.Project):
 
     @year.setter
     def year(self, year):
+        if year == self.year:
+            return
         self.set_meta("year", year)
-        self.setModificationState(True)
 
     @property
     def description(self):
@@ -749,8 +751,9 @@ class Project(Loggable, GES.Project):
 
     @description.setter
     def description(self, description):
+        if description == self.description:
+            return
         self.set_meta("description", description)
-        self.setModificationState(True)
 
     @property
     def author(self):
@@ -758,8 +761,9 @@ class Project(Loggable, GES.Project):
 
     @author.setter
     def author(self, author):
+        if author == self.author:
+            return
         self.set_meta("author", author)
-        self.setModificationState(True)
 
     # Encoding related properties
     def set_rendering(self, rendering):
