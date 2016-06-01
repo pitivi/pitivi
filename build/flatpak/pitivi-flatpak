@@ -379,7 +379,7 @@ then
     echo "Building with: $FLATPAK_BUILDER $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
     $FLATPAK_BUILDER --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
-    if [ -z $BUNDLE ] || [ -n $CHECK ]
+    if [ -z $BUNDLE ] || [ -n "$CHECK" ]
     then
       echo "-> Building $APPLICATION_NAME from current repository"
       cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
@@ -402,8 +402,11 @@ then
       $PREFIX $SCRIPTDIR/enter-env "$@"
 
     exit $exitcode
-  elif [ -n $CHECK ]
+  fi
+
+  if [ -n "$CHECK" ]
   then
+      echo "Running tests with nosetests"
       $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
       --env=GST_DEBUG=$GST_DEBUG \
