@@ -20,6 +20,7 @@
 import bisect
 import hashlib
 import os
+import subprocess
 import threading
 import time
 from gettext import gettext as _
@@ -250,19 +251,37 @@ def show_user_manual(page=None):
     Display the user manual with Yelp.
     Optional: for contextual help, a page ID can be specified.
     """
+    def get_page_uri(uri, page):
+        if page is not None:
+            return uri + "#" + page
+        return uri
+
     time_now = int(time.time())
     uris = (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE)
     for uri in uris:
-        if page is not None:
-            uri += "#" + page
         try:
-            Gtk.show_uri(None, uri, time_now)
+            Gtk.show_uri(None, get_page_uri(uri, page), time_now)
             return
         except Exception as e:
-            log.debug("utils", "Failed loading URI %s: %s", uri, e)
+            log.info("utils", "Failed loading URI %s: %s", uri, e)
             continue
-    log.warning("utils", "Failed loading URIs")
-    # TODO: Show an error message to the user.
+
+    try:
+        # Last try calling yelp directly (used in flatpak while we do
+        # not have a portal to access system wild apps)
+        subprocess.Popen(["yelp",
+                          get_page_uri(APPMANUALURL_OFFLINE, page)])
+    except FileNotFoundError:
+        log.warning("utils", "Failed loading URIs")
+        dialog = Gtk.MessageDialog(modal=True,
+                                   message_type=Gtk.MessageType.ERROR,
+                                   buttons=Gtk.ButtonsType.OK,
+                                   text=_("Failed to open the user manual."
+                                          " Make sure to have either the `yelp` gnome "
+                                          " documentaion viewer or a web browser"
+                                          " installed"))
+        dialog.run()
+        dialog.destroy()
 
 
 def unicode_error_dialog():

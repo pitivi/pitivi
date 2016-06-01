@@ -316,6 +316,16 @@
             ]
         },
         {
+            "name": "yelp",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.gnome.org/browse/yelp",
+                    "branch": "3.20.1"
+                }
+            ]
+        },
+        {
             "name": "pitivi",
             "sources": [
                 {
