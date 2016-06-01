@@ -397,6 +397,7 @@ then
       --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
       --env=PITIVI_DEBUG=$PITIVI_DEBUG \
       --env=PITIVI_DEVELOPMENT=1 \
+      --env=DISPLAY=$DISPLAY \
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
       $PREFIX $SCRIPTDIR/enter-env "$@"
 
@@ -410,6 +411,7 @@ then
       --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
       --env=PITIVI_DEBUG=$PITIVI_DEBUG \
       --env=PITIVI_DEVELOPMENT=1 \
+      --env=DISPLAY=$DISPLAY \
       --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
       $PREFIX $SCRIPTDIR/enter-env "nosetests --with-xunit $APPLICATION_REPOSITORY/tests/test_*.py"|| exit 1
   fi
