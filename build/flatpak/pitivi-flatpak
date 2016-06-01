@@ -105,6 +105,8 @@ Options:
   -b=, --branch=:    The flatpak branch to use (0.95, master...)
   -c,  --clean:      Clean previous builds and restart from scratch
        --use-remote: Build from the official repository (master branch)
+       --repo-commit-subject: The commit subject to be used when updating the ostree repository
+       --repo-commit-body: The commit body to be used when updating the ostree repository
 
 You can find more information about flatpak at: https://wiki.gnome.org/Projects/SandboxedApps
 "
@@ -146,6 +148,14 @@ do
     ;;
     --use-remote)
     USE_REMOTE=true
+    shift
+    ;;
+    --repo-commit-subject=*)
+    COMMIT_SUBJECT="${i#*=}"
+    shift
+    ;;
+    --repo-commit-body=*)
+    COMMIT_BODY="${i#*=}"
     shift
     ;;
   esac
@@ -282,7 +292,7 @@ fi
 
 if [ -n "$BUNDLE" ]
 then
-  PREFIX=$FLATPAK_ENVPATH/$APP_BUILD_NAME/
+  PREFIX="$FLATPAK_ENVPATH/$APP_BUILD_NAME-prefix/"
 else
   PREFIX=$FLATPAK_ENVPATH/prefix
 fi
@@ -348,7 +358,7 @@ then
     JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
     $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH
 
-    echo "-> Removing $PREFIX"
+    echo "-> Removing prefix $PREFIX"
     rm -Rf $PREFIX
 
     XDG_APP_BUILD_OPTIONS=""
@@ -395,8 +405,13 @@ then
   echo "-> Creating repository $REPO if needed"
   mkdir -p $REPO
 
-  echo "Exporting repo $REPO $DEVELOPMENT_BRANCHNAME"
-  $FLATPAK build-export $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
+  if [ -z "$COMMIT_SUBJECT" ]
+  then
+      COMMIT_SUBJECT="Updating $APPLICATION_REF_NAME"
+  fi
+
+  echo "-> Exporting repo $REPO $DEVELOPMENT_BRANCHNAME (args: --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT")"
+  $FLATPAK build-export --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
   $FLATPAK build-update-repo --generate-static-deltas $REPO || exit 1
