@@ -12,6 +12,7 @@ FLATPAK_ENVPATH=${FLATPAK_ENVPATH:-$HOME/$APPLICATION_NAME-flatpak}
 
 # The name of the bundled application (must respect flatpak app application naming convention).
 APPLICATION_REF_NAME=org.pitivi.Pitivi
+
 # Local path to the application repository
 APPLICATION_REPOSITORY=$FLATPAK_ENVPATH/$APPLICATION_NAME
 
@@ -107,6 +108,7 @@ Options:
        --use-remote: Build from the official repository (master branch)
        --repo-commit-subject: The commit subject to be used when updating the ostree repository
        --repo-commit-body: The commit body to be used when updating the ostree repository
+       --check: Run make check on pitivi (work only when --bundle is used)
 
 You can find more information about flatpak at: https://wiki.gnome.org/Projects/SandboxedApps
 "
@@ -152,6 +154,10 @@ do
     ;;
     --repo-commit-subject=*)
     COMMIT_SUBJECT="${i#*=}"
+    shift
+    ;;
+    --check)
+    CHECK=true
     shift
     ;;
     --repo-commit-body=*)
@@ -271,7 +277,8 @@ then
   fi
 fi
 
-if [ -z "$APP_INSTALLED" ] && [ -z "$APPLICATION_REPOSITORY" ]
+# Not using remote repo and not bundling
+if [ -n "$BUILD" ] && [ -z "$BUNDLE" ]
 then
   cd $APPLICATION_REPOSITORY
   DEVELOPMENT_BRANCHNAME=`git branch 2>&1 |grep \* |awk '{ print $2 }'`
@@ -372,7 +379,7 @@ then
     echo "Building with: $FLATPAK_BUILDER $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
     $FLATPAK_BUILDER --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
-    if [ -z $BUNDLE ]
+    if [ -z $BUNDLE ] || [ -n $CHECK ]
     then
       echo "-> Building $APPLICATION_NAME from current repository"
       cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
@@ -394,6 +401,17 @@ then
       $PREFIX $SCRIPTDIR/enter-env "$@"
 
     exit $exitcode
+  elif [ -n $CHECK ]
+  then
+      $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
+      --share=network \
+      --env=GST_DEBUG=$GST_DEBUG \
+      --env=GST_VALIDATE=$GST_VALIDATE \
+      --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
+      --env=PITIVI_DEBUG=$PITIVI_DEBUG \
+      --env=PITIVI_DEVELOPMENT=1 \
+      --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
+      $PREFIX $SCRIPTDIR/enter-env "nosetests --with-xunit $APPLICATION_REPOSITORY/tests/test_*.py"|| exit 1
   fi
 else
   $FLATPAK run org.pitivi.Pitivi
