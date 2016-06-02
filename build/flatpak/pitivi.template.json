@@ -12,6 +12,7 @@
     "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
     "desktop-file-name-prefix": "(Daily) ",
+    "copy-icon": true,
     "build-options" : {
         "cflags": "-O0 -g",
         "cxxflags": "-O0 -g",
