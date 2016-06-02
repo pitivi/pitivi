@@ -3,30 +3,14 @@
 export PYTHON=python3
 
 package=pitivi
-srcfile=pitivi/application.py
-
-CONFIGURE_DEF_OPT=''
 
 # if no arguments specified then this will be printed
 if test -z "$*"; then
   echo "+ checking for autogen.sh options"
   echo "  This autogen script will automatically run ./configure as:"
-  echo "  ./configure $CONFIGURE_DEF_OPT"
+  echo "  ./configure $@"
   echo "  To pass any additional options, please specify them on the $0"
   echo "  command line."
-fi
-
-build_help=true
-while getopts disable-help x; do
-  build_help=false
-done; OPTIND=0
-
-if $build_help; then
-  GNOMEDOC=`which yelp-build`
-  if test -z $GNOMEDOC; then
-    echo "Please intall the yelp-tools package"
-    exit 1
-  fi
 fi
 
 autoreconf --force --install || exit 1
@@ -37,12 +21,9 @@ if test -n "$NOCONFIGURE"; then
   exit 0
 fi
 
-echo "+ running configure ... "
-test ! -z "$CONFIGURE_DEF_OPT" && echo "  ./configure default flags: $CONFIGURE_DEF_OPT"
-test ! -z "$CONFIGURE_EXT_OPT" && echo "  ./configure external flags: $CONFIGURE_EXT_OPT"
-echo
-
-./configure $CONFIGURE_DEF_OPT $CONFIGURE_EXT_OPT || exit 2
+echo "+ running configure ..."
+echo "./configure $@"
+./configure "$@" || exit 2
 
 # install pre-commit hook for doing clean commits
 rm -f .git/hooks/pre-commit
