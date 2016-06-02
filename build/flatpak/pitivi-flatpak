@@ -51,11 +51,11 @@ then
   which $FLATPAK > /dev/null 2>&1
   if [ ! $? -eq 0 ]
   then
-    printf "$RED \n\n\nYou need to install flatpak to be able to use the '$0' script.
+    printf "$RED \nYou need to install flatpak to be able to use the '$0' script.
 
 You can find some informations about how to install it for your distribution at:
 
-  * https://wiki.gnome.org/Projects/SandboxedApps/NightlyBuilds $NC\n\n\n"
+  * http://flatpak.org/ $NC\n\n\n"
 
     if [ -n "$INSTALLER" ]
     then
@@ -110,7 +110,7 @@ Options:
        --repo-commit-body: The commit body to be used when updating the ostree repository
        --check: Run make check on pitivi (work only when --bundle is used)
 
-You can find more information about flatpak at: https://wiki.gnome.org/Projects/SandboxedApps
+You can find more information about flatpak at: http://flatpak.org/
 "
 
 for i in "$@"
@@ -392,6 +392,8 @@ then
   then
       $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
+      --env=GST_PRESET_PATH=/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/:$GST_PRESET_PATH \
+      --env=GST_ENCODING_TARGET_PATH=/app/share/pitivi/gstpresets/:$GST_ENCODING_TARGET_PATH \
       --env=GST_DEBUG=$GST_DEBUG \
       --env=GST_VALIDATE=$GST_VALIDATE \
       --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
