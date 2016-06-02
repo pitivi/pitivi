@@ -965,7 +965,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
-    def __layerGetSeps(self, ges_layer, sep_name):
+    def _get_separators(self, ges_layer, sep_name):
         return [getattr(ges_layer.ui, sep_name), getattr(ges_layer.control_ui, sep_name)]
 
     def _get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
@@ -975,7 +975,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # The cursor is at the top, above the first layer.
             self.debug("Returning very first layer")
             ges_layer = ges_layers[0]
-            return ges_layer, self.__layerGetSeps(ges_layer, "before_sep")
+            separators = self._get_separators(ges_layer, "before_sep")
+            return ges_layer, separators
 
         # This means if an asset is dragged directly on a separator,
         # it will prefer the layer below the separator, if any.
@@ -1003,7 +1004,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                         return prefer_ges_layer, []
                 return ges_layer, []
 
-            separators = self.__layerGetSeps(ges_layer, "after_sep")
+            separators = self._get_separators(ges_layer, "after_sep")
             try:
                 next_ges_layer = ges_layers[i + 1]
             except IndexError:
@@ -1017,7 +1018,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if layer_y + layer_height <= y < next_ges_layer.ui.get_allocation().y:
                 # The cursor is between this layer and the one below.
-                separators.extend(self.__layerGetSeps(next_ges_layer, "before_sep"))
+                separators.extend(self._get_separators(next_ges_layer, "before_sep"))
                 if prefer_after:
                     ges_layer = next_ges_layer
                 self.debug("Returning layer %s, separators: %s", ges_layer, separators)

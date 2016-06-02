@@ -20,6 +20,7 @@
 from unittest import mock
 from unittest import TestCase
 
+from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GstController
@@ -269,6 +270,54 @@ class TestTimelineUndo(TestCase):
 
         self.action_log.redo()
         self.assertTrue(clip1 in self.getTimelineClips())
+
+    def test_clip_dragged_to_create_layer(self):
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+
+        clip = GES.TitleClip()
+        self.layer.add_clip(clip)
+
+        timeline_ui = Timeline(None, self.app)
+        timeline_ui.setProject(self.app.project_manager.current_project)
+        timeline_ui.get_parent = mock.MagicMock()
+
+        # Drag a clip on a separator to create a layer.
+        timeline_ui.get_event_widget = mock.Mock(return_value=clip.ui)
+        event = mock.Mock()
+        event.x = 0
+        event.get_button.return_value = True, 1
+        timeline_ui._button_press_event_cb(None, event)
+
+        def translate_coordinates(widget, x, y):
+            return x, y
+        clip.ui.translate_coordinates = translate_coordinates
+        event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
+        event.x = 1
+        event.y = LAYER_HEIGHT * 2
+        timeline_ui._motion_notify_event_cb(None, event)
+
+        timeline_ui._button_release_event_cb(None, event)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [])
+        self.assertEqual(layers[1].get_clips(), [clip])
+
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        layers = self.timeline.get_layers()
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [])
+        self.assertEqual(layers[1].get_clips(), [clip])
 
     def testTrackElementPropertyChanged(self):
         clip1 = GES.TitleClip()
