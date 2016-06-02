@@ -415,6 +415,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.thumb_period = int(0.5 * Gst.SECOND)
         self.thumb_height = THUMB_HEIGHT
 
+        self.__image_pixbuf = None
+        if isinstance(ges_elem, GES.ImageSource):
+            self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
+
         # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
         self.thumb_cache = getThumbnailCache(self.uri)
@@ -619,7 +624,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.put(thumb, x, y)
 
             self.thumbs[current_time] = thumb
-            if current_time in self.thumb_cache:
+            if self.__image_pixbuf:
+                thumb.set_from_pixbuf(self.__image_pixbuf)
+                thumb.set_visible(True)
+            elif current_time in self.thumb_cache:
                 pixbuf = self.thumb_cache[current_time]
                 thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
