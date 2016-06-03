@@ -47,7 +47,7 @@
       <title>Editing the project settings</title>
       <p>The project settings define mainly how the video appears while you edit the project. The video resolution and aspect ratio affect the appearance of the previewer. If the resolution and aspect ratio do not match those of your footage, the video may look squished or letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
       <note>
-        <p>When you create a new project and import the first video file, its properties are transposed to the project settings (unless you already changed them yourself). An infobar appears when this happens. At this point you have the chance to adjust the project settings applied automatically by clicking the <gui>Project Settings</gui> button in the infobar.</p>
+        <p>When you import the first video file the project settings are automatically changed to match. See <link xref="importing">Getting media</link> for details.</p>
       </note>
     </section>
 

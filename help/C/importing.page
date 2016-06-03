@@ -28,6 +28,9 @@
 
     <p>Pitivi allows importing media files from your computer's hard drive.</p>
     <note>
+        <p>When you create a new project and import the first video file, its properties are transposed to the <link xref="workwithprojects#projectsettings">project settings</link>, unless you changed them yourself already. An infobar appears when this happens. Click the <gui>Project Settings</gui> button in the infobar for details.</p>
+    </note>
+    <note>
         <p>Due to our limited resources and the rapid evolution of filmmaking hardware in the past few years, and to ensure <app>Pitivi</app> remains robust and simple to use, we do not attempt to support every possible hardware device out there. As a result, you currently cannot use <app>Pitivi</app> to capture directly from a camcorder; specialized applications are better suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
     </note>
 
