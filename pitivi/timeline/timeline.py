@@ -305,10 +305,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # To be able to receive assets dragged from the media library.
         self.drag_dest_add_uri_targets()
 
-        self.connect("drag-motion", self.__dragMotionCb)
-        self.connect("drag-leave", self.__dragLeaveCb)
-        self.connect("drag-drop", self.__dragDropCb)
-        self.connect("drag-data-received", self.__dragDataReceivedCb)
+        self.connect("drag-motion", self._drag_motion_cb)
+        self.connect("drag-leave", self._drag_leave_cb)
+        self.connect("drag-drop", self._drag_drop_cb)
+        self.connect("drag-data-received", self._drag_data_received_cb)
 
     def sendFakeEvent(self, event, event_widget=None):
         # Member usefull for testsing
@@ -739,9 +739,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.queue_draw()
 
     def __createClips(self, x, y):
-        if self.dropping_clips:
-            return False
-
         x = self.adjustCoords(x=x)
 
         placement = 0
@@ -785,7 +782,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return True
 
-    def __dragMotionCb(self, unused_widget, context, x, y, timestamp):
+    def _drag_motion_cb(self, unused_widget, context, x, y, timestamp):
         target = self.drag_dest_find_target(context, None)
         if not target:
             Gdk.drag_status(context, 0, timestamp)
@@ -796,14 +793,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Ask for the details.
             self.drag_get_data(context, target, timestamp)
         elif target.name() == URI_TARGET_ENTRY.target:
-            if not self.__createClips(x, y):
-                # The clips are already created.
-                self.__dragUpdate(self, x, y)
+            if not self.dropping_clips:
+                # The preview clips have not been created yet.
+                self.__createClips(x, y)
+            self.__dragUpdate(self, x, y)
 
         Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
         return True
 
-    def __dragLeaveCb(self, unused_widget, context, unused_timestamp):
+    def _drag_leave_cb(self, unused_widget, context, unused_timestamp):
         # De-highlight the separators. We still need to remember them.
         # See how __on_separators is used in __dragDropCb for details
         self._setSeparatorsPrelight(False)
@@ -832,7 +830,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.dropData = None
         self.dropping_clips = False
 
-    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
+    def _drag_drop_cb(self, unused_widget, context, x, y, timestamp):
         # Same as in insertEnd: this value changes during insertion, snapshot
         # it
         zoom_was_fitted = self.parent.zoomed_fitted
@@ -842,13 +840,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.cleanDropData()
         if target == URI_TARGET_ENTRY.target:
             if self.__last_clips_on_leave:
-                if self.__on_separators:
-                    created_layer = self.__getDroppedLayer()
-                else:
-                    created_layer = None
                 pipeline = self._project.pipeline
                 with self.app.action_log.started("add clip",
                                                  CommitTimelineFinalizingAction(pipeline)):
+                    if self.__on_separators:
+                        created_layer = self.__getDroppedLayer()
+                    else:
+                        created_layer = None
                     for layer, clip in self.__last_clips_on_leave:
                         if created_layer:
                             layer = created_layer
@@ -864,8 +862,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         Gtk.drag_finish(context, success, False, timestamp)
         return success
 
-    def __dragDataReceivedCb(self, unused_widget, unused_context, unused_x,
-                             unused_y, selection_data, unused_info, timestamp):
+    def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
+                               unused_y, selection_data, unused_info, timestamp):
         data_type = selection_data.get_data_type().name()
         if not self.dropDataReady:
             self.__last_clips_on_leave = None

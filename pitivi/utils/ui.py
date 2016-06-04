@@ -50,7 +50,6 @@ from pitivi.utils.misc import path_from_uri
 
 
 # Dimensions in pixels
-TRACK_SPACING = 8
 EXPANDED_SIZE = 65
 CONTROL_WIDTH = 240
 
@@ -61,12 +60,7 @@ PLAYHEAD_WIDTH = 1
 PLAYHEAD_COLOR = (255, 0, 0)
 SNAPBAR_WIDTH = 5
 SNAPBAR_COLOR = (127, 153, 204)
-CANVAS_SPACING = 21
-KEYFRAME_SIZE = 8
 LAYER_HEIGHT = 130
-
-# Layer creation blocking time in s
-LAYER_CREATION_BLOCK_TIME = 0.2
 
 # Drag and drop
 FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)

@@ -24,6 +24,7 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import GstController
+from gi.repository import Gtk
 
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.timeline import Timeline
@@ -34,6 +35,9 @@ from pitivi.undo.timeline import EffectAddedAction
 from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.undo import PropertyChangedAction
 from pitivi.undo.undo import UndoableActionLog
+from pitivi.utils.ui import CONTROL_WIDTH
+from pitivi.utils.ui import LAYER_HEIGHT
+from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
 
 
@@ -308,7 +312,6 @@ class TestTimelineUndo(TestCase):
         self.action_log.undo()
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
-        layers = self.timeline.get_layers()
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [clip])
 
@@ -318,6 +321,81 @@ class TestTimelineUndo(TestCase):
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
+
+    def test_media_library_asset_dragged_on_separator(self):
+        """Simulate dragging an asset from the media library to the timeline."""
+        project = self.app.project_manager.current_project
+
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        self.assertTrue(project.add_asset(asset))
+
+        timeline_ui = Timeline(container=None, app=self.app)
+        timeline_ui.setProject(project)
+        timeline_ui.get_parent = mock.MagicMock()
+        timeline_ui.parent = mock.MagicMock()
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+
+        # Events emitted while dragging an asset on a separator in the timeline:
+        # motion, receive, motion, leave, drop.
+        with mock.patch.object(Gdk, "drag_status") as drag_status_mock:
+            with mock.patch.object(Gtk, "drag_finish") as drag_finish_mock:
+                target = mock.Mock()
+                target.name.return_value = URI_TARGET_ENTRY.target
+                timeline_ui.drag_dest_find_target = mock.Mock(return_value=target)
+                timeline_ui.drag_get_data = mock.Mock()
+                timeline_ui._drag_motion_cb(None, None, 0, 0, 0)
+                self.assertTrue(timeline_ui.drag_get_data.called)
+
+                self.assertFalse(timeline_ui.dropDataReady)
+                selection_data = mock.Mock()
+                selection_data.get_data_type = mock.Mock(return_value=target)
+                selection_data.get_uris.return_value = [asset.props.id]
+                self.assertIsNone(timeline_ui.dropData)
+                self.assertFalse(timeline_ui.dropDataReady)
+                timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
+                self.assertEqual(timeline_ui.dropData, [asset.props.id])
+                self.assertTrue(timeline_ui.dropDataReady)
+
+                timeline_ui.drag_get_data.reset_mock()
+                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertFalse(timeline_ui.dropping_clips)
+
+                def translate_coordinates(widget, x, y):
+                    return x, y
+                timeline_ui.translate_coordinates = translate_coordinates
+                timeline_ui._drag_motion_cb(None, None, CONTROL_WIDTH, LAYER_HEIGHT * 2, 0)
+                self.assertFalse(timeline_ui.drag_get_data.called)
+                self.assertIsNotNone(timeline_ui.draggingElement)
+                self.assertTrue(timeline_ui.dropping_clips)
+
+                timeline_ui._drag_leave_cb(None, None, None)
+                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertFalse(timeline_ui.dropping_clips)
+
+                timeline_ui._drag_drop_cb(None, None, 0, 0, 0)
+
+        # A clip has been created on a new layer below the existing layer.
+        layers = self.timeline.get_layers()
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [])
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(len(layers[1].get_clips()), 1)
+
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [])
+
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [])
+        self.assertEqual(len(layers[1].get_clips()), 1)
 
     def testTrackElementPropertyChanged(self):
         clip1 = GES.TitleClip()
