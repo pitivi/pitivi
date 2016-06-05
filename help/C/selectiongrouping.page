@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="selectiongrouping">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="selectiongrouping">
   <info>
     <link type="guide" xref="index#timeline"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
@@ -25,44 +22,58 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Selection and grouping</title>
-    
-    <section id="selection">
-      <title>Making selections</title>
-       <p>By selecting a clip, you specify what item should the subsequent actions be applied to. Selecting multiple clips allows you to apply actions (dragging, deleting, grouping, etc.) to all of them at once. To select an individual clip, simply click it.</p>
-       <p>To select multiple adjacent clips you can click the timeline anywhere in an empty region and drag. Alternatively, you can:</p>
-       <steps>
-        <item><p>Click the first clip.</p></item>
-        <item><p>Hold the <key>Shift</key> key.</p></item>
-        <item><p>Click the last clip.</p></item>
-       </steps>
-       <p>When selecting a clip by clicking or when selecting multiple adjacent clips, the selection is reset. The rest of the clips become deselected if they were previously selected. Selecting or deselecting specific clips without resetting the selection can be done by toggling individually a clip's selection:</p>
-       <steps>
-        <item><p>Hold down the <key>Ctrl</key> key.</p></item>
-        <item><p>Click on each clip you want to toggle the selection.</p></item>
-       </steps>
-       <p>To clear the selection, click anywhere on the timeline in an empty region.</p>
-       <note style="tip">
-         <p>By default, clicking in the timeline changes the selection and also moves the playhead. To have a better control of the playhead you can disable seeking when left-clicking. This way left-clicking only changes the selection and the playhead position won't be lost when you make selections. This can be specified at <guiseq><gui>Menu button</gui><gui>Preferences</gui><gui>Left click also seeks</gui></guiseq>. You can still use right-click to move the playhead, as before, see <link xref="movearoundtimeline#movingplayhead"></link> for details.</p>
-       </note>
-     </section>
-
-     <section id="grouping">
-         <title>Grouping and ungrouping clips</title>
-        <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
-        <p>Grouping clips in timeline:</p>
-        <steps>
-         <item><p>Select multiple clips in the timeline.</p></item>
-         <item><p>Click the <gui>Group clips</gui> button on the timeline toolbar, or press <keyseq><key>Ctrl</key><key>G</key></keyseq>.</p></item>
-        </steps>
-        <p>You can now select, edit and move the clips all at once.</p>
-        <p>Ungrouping clips in timeline:</p>
-        <steps>
-         <item><p>Select a group of clips in the timeline.</p></item>
-         <item><p>Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press <keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>.</p></item>
-        </steps>
-        <p>You can now select, edit and move the clips independently.</p>
-     </section>
-
+  <title>Selection and grouping</title>
+  <section id="selection">
+    <title>Making selections</title>
+    <p>By selecting a clip, you specify what item should the subsequent actions be applied to. Selecting multiple clips allows you to apply actions (dragging, deleting, grouping, etc.) to all of them at once. To select an individual clip, simply click it.</p>
+    <p>To select multiple adjacent clips you can click the timeline anywhere in an empty region and drag. Alternatively, you can:</p>
+    <steps>
+      <item>
+        <p>Click the first clip.</p>
+      </item>
+      <item>
+        <p>Hold the <key>Shift</key> key.</p>
+      </item>
+      <item>
+        <p>Click the last clip.</p>
+      </item>
+    </steps>
+    <p>When selecting a clip by clicking or when selecting multiple adjacent clips, the selection is reset. The rest of the clips become deselected if they were previously selected. Selecting or deselecting specific clips without resetting the selection can be done by toggling individually a clip's selection:</p>
+    <steps>
+      <item>
+        <p>Hold down the <key>Ctrl</key> key.</p>
+      </item>
+      <item>
+        <p>Click on each clip you want to toggle the selection.</p>
+      </item>
+    </steps>
+    <p>To clear the selection, click anywhere on the timeline in an empty region.</p>
+    <note style="tip">
+      <p>By default, clicking in the timeline changes the selection and also moves the playhead. To have a better control of the playhead you can disable seeking when left-clicking. This way left-clicking only changes the selection and the playhead position won't be lost when you make selections. This can be specified at <guiseq><gui>Menu button</gui><gui>Preferences</gui><gui>Left click also seeks</gui></guiseq>. You can still use right-click to move the playhead, as before, see <link xref="movearoundtimeline#movingplayhead"/> for details.</p>
+    </note>
+  </section>
+  <section id="grouping">
+    <title>Grouping and ungrouping clips</title>
+    <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
+    <p>Grouping clips in timeline:</p>
+    <steps>
+      <item>
+        <p>Select multiple clips in the timeline.</p>
+      </item>
+      <item>
+        <p>Click the <gui>Group clips</gui> button on the timeline toolbar, or press <keyseq><key>Ctrl</key><key>G</key></keyseq>.</p>
+      </item>
+    </steps>
+    <p>You can now select, edit and move the clips all at once.</p>
+    <p>Ungrouping clips in timeline:</p>
+    <steps>
+      <item>
+        <p>Select a group of clips in the timeline.</p>
+      </item>
+      <item>
+        <p>Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press <keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>.</p>
+      </item>
+    </steps>
+    <p>You can now select, edit and move the clips independently.</p>
+  </section>
 </page>

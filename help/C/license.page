@@ -1,16 +1,12 @@
-<page xmlns="http://projectmallard.org/1.0/"
-  type="topic"
-  id="license">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="license">
   <info>
     <link type="seealso" xref="index"/>
     <revision pkgversion="0.92" version="0.1" date="2013-12-19" status="complete"/>
     <desc>Legal information.</desc>
   </info>
-
   <title>License</title>
-  <p>
-    <!--
+  <p><!--
     Translators: try to use the same translation as the one provided by the CreativeCommons website.
     If there is no translation for your language, consider providing one to CreativeCommons.
     -->
@@ -22,27 +18,34 @@
   </p>
   <terms>
     <item>
-      <title><em>To share</em></title>
+      <title>
+        <em>To share</em>
+      </title>
       <p>To copy, distribute and transmit the work.</p>
     </item>
     <item>
-      <title><em>To remix</em></title>
+      <title>
+        <em>To remix</em>
+      </title>
       <p>To adapt the work.</p>
     </item>
   </terms>
   <p>Under the following conditions:</p>
   <terms>
     <item>
-      <title><em>Attribution</em></title>
+      <title>
+        <em>Attribution</em>
+      </title>
       <p>You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).</p>
     </item>
     <item>
-      <title><em>Share Alike</em></title>
+      <title>
+        <em>Share Alike</em>
+      </title>
       <p>If you alter, transform, or build upon this work, you may distribute the resulting work only under the same, similar or a compatible license.</p>
     </item>
   </terms>
-  <p>
-    <!-- Translators: there are no official localized versions of the legal code, only the deed is localized. -->
+  <p><!-- Translators: there are no official localized versions of the legal code, only the deed is localized. -->
     For the full text of the license, see the <link href="http://creativecommons.org/licenses/by-sa/3.0/legalcode">CreativeCommons website</link>, or read the full <link href="http://creativecommons.org/licenses/by-sa/3.0/">Commons Deed</link>.
   </p>
   <p>For the license of Pitivi itself, see the <link href="http://www.gnu.org/licenses/lgpl-2.1.html">GNU Lesser General Public License</link>.</p>

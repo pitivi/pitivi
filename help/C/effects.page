@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="effects">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="effects">
   <info>
     <link type="guide" xref="index#effectstransitions"/>
     <link type="seealso" xref="gstreamer"/>
@@ -18,30 +15,37 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Introduction to effects</title>
-     
-     <p><app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in the effect library, make sure that the <app>gnome-video-effects</app> package is installed on your system. Alternatively, you can look for packages containing GStreamer or frei0r effect plugins that are available in the repositories of your distribution.</p>
-     <note>
-      <p>Effects are non-destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
-     </note>
-
-    <section id="adding">
-        <title>Adding and removing effects to clips</title>
-        <p>To add an effect:</p>
-        <steps>
-            <item><p>Select an existing clip on the timeline</p></item>
-            <item><p>Double-click an effect in the effect library</p></item>
-        </steps>
-        <p>To remove an effect:</p>
-        <steps>
-            <item><p>Select an existing clip on the timeline</p></item>
-            <item><p>Select the effect you want to remove in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq></p></item>
-            <item><p>Click the <gui>Remove effect</gui> button</p></item>
-        </steps>
-    </section>
-    <section id="toggling">
-        <title>Toggling effects</title>
-        <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>.</p>
-    </section>
+  <title>Introduction to effects</title>
+  <p><app>Pitivi</app> offers a wide variety of video and audio effects to spice up your movies. Available effects depend on the software installed on your computer. If you don't see anything (or only a handful of effects) in the effect library, make sure that the <app>gnome-video-effects</app> package is installed on your system. Alternatively, you can look for packages containing GStreamer or frei0r effect plugins that are available in the repositories of your distribution.</p>
+  <note>
+    <p>Effects are non-destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
+  </note>
+  <section id="adding">
+    <title>Adding and removing effects to clips</title>
+    <p>To add an effect:</p>
+    <steps>
+      <item>
+        <p>Select an existing clip on the timeline</p>
+      </item>
+      <item>
+        <p>Double-click an effect in the effect library</p>
+      </item>
+    </steps>
+    <p>To remove an effect:</p>
+    <steps>
+      <item>
+        <p>Select an existing clip on the timeline</p>
+      </item>
+      <item>
+        <p>Select the effect you want to remove in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq></p>
+      </item>
+      <item>
+        <p>Click the <gui>Remove effect</gui> button</p>
+      </item>
+    </steps>
+  </section>
+  <section id="toggling">
+    <title>Toggling effects</title>
+    <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>.</p>
+  </section>
 </page>

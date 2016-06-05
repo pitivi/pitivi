@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="workwithprojects">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="workwithprojects">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
     <revision pkgversion="0.96" version="0.5" date="2016-02-17" status="complete"/>
@@ -25,38 +22,34 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Working with projects</title>
-
-    <section id="saving">
+  <title>Working with projects</title>
+  <section id="saving">
     <title>Saving a project</title>
-     <p>To save your project work, use the <gui>Save</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
-      <note style="tip">
+    <p>To save your project work, use the <gui>Save</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a project for the first time, a dialog window appears, asking you where to save the project file and how to name it.</p>
+    <note style="tip">
       <p>If you want to save your project to a different file, use <guiseq><gui>App menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</key><key>Shift</key><key>S</key></keyseq>. This can be used to create different versions of your project.</p>
-      </note>
-    </section>
-    <section id="undoing">
-        <title>Undoing and reverting changes</title>
-        <p>To undo a change, simply click on the <gui>Undo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>.</p>
-        <note style="tip">
-            <p>To redo changes that were undone, click on the <gui>Redo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>.</p>
-        </note>
-    </section>
-
-    <section id="projectsettings">
-      <title>Editing the project settings</title>
-      <p>The project settings define mainly how the video appears while you edit the project. The video resolution and aspect ratio affect the appearance of the previewer. If the resolution and aspect ratio do not match those of your footage, the video may look squished or letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
-      <note>
-        <p>When you import the first video file the project settings are automatically changed to match. See <link xref="importing">Getting media</link> for details.</p>
-      </note>
-    </section>
-
-    <section id="pardar">
-        <title>Pixel aspect ratio vs display aspect ratio</title>
-        <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. In some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
-        <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other through video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
-        <note>
-        <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
-        </note>
-    </section>
+    </note>
+  </section>
+  <section id="undoing">
+    <title>Undoing and reverting changes</title>
+    <p>To undo a change, simply click on the <gui>Undo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to undoing individual changes, you can also decide to revert all the changes you have made since the last time you saved your project. To do so, use <guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>.</p>
+    <note style="tip">
+      <p>To redo changes that were undone, click on the <gui>Redo</gui> button in the header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>.</p>
+    </note>
+  </section>
+  <section id="projectsettings">
+    <title>Editing the project settings</title>
+    <p>The project settings define mainly how the video appears while you edit the project. The video resolution and aspect ratio affect the appearance of the previewer. If the resolution and aspect ratio do not match those of your footage, the video may look squished or letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
+    <note>
+      <p>When you import the first video file the project settings are automatically changed to match. See <link xref="importing">Getting media</link> for details.</p>
+    </note>
+  </section>
+  <section id="pardar">
+    <title>Pixel aspect ratio vs display aspect ratio</title>
+    <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. In some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
+    <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other through video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
+    <note>
+      <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
+    </note>
+  </section>
 </page>

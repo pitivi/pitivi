@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="keyframecurves">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="keyframecurves">
   <info>
     <link type="guide" xref="index#timeline"/>
     <link type="seealso" xref="usingeffects"/>
@@ -31,35 +28,46 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
+  <title>Keyframe curves</title>
+  <p>By using keyframe curves, you can change the value of a property over time, instead of having a fixed value for the entire duration of a clip. This can be used to change opacity or volume just as well as effect properties at any point in the clip's duration.</p>
+  <figure>
     <title>Keyframe curves</title>
-     
-     <p>By using keyframe curves, you can change the value of a property over time, instead of having a fixed value for the entire duration of a clip. This can be used to change opacity or volume just as well as effect properties at any point in the clip's duration.</p>
-     <figure>
-     <title>Keyframe curves</title>
-      <media type="image" src="figures/keyframecurves.png" mime="image/png" style="right"></media>
-     </figure>
-     <p>A terminological note:</p>
-     <list>
-         <item><p><em>Keyframes</em> are the points that are used to determine the property value at a specific point in time.</p></item>
-         <item><p><em>Keyframe curves</em> are the lines connecting the points providing smooth transitions between them.</p></item>
-     </list>
-     <p>By default, the keyframe curves on an audio clip control the volume (on a scale from 0 to 200%) and the keyframe curves on a video clip control the alpha (opacity) of the video (on a scale from 0 to 100%). See the <link xref="layers">Understanding layers</link> page for more details on opacity. The default alpha or volume keyframe curves are an intrinsic property of clips and cannot be removed.</p>
-     <note style="tip"><p>You can create fade-in and fade-out transitions by controlling opacity and volume. See an example in the <link xref="transitions#fades">Transitions</link> page.</p></note>
-     <p>Besides volume and alpha, you can use keyframes to control effect properties. See the <link xref="usingeffects#keyframes">Using effects</link> page for details.</p>
-
-     <section id="usage">
-      <title>General usage</title>
-      <p>The start and end keyframes are fixed to the start and end points of the clip and cannot be removed. The curve between these two keyframes is initially a flat horizontal line, indicating that the value of the controlled property is the same at each point in time within the clip's duration. To change the value (and the rate of its change) at any point, you can add one or more keyframes to the clip and drag them to appropriate vertical positions representing their values.</p>
-      <p>You can:</p>
-      <list>
-       <item><p>Add a new keyframe by clicking on the line.</p></item>
-       <item><p>Remove a keyframe by double-clicking on it.</p></item>
-       <item><p>Adjust the time and value of a keyframe by moving it with the mouse.</p></item>
-       <item><p>Click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment.</p></item>
-      </list>
-      <note>
-          <p>Currently only linear keyframe curves are supported.</p>
-      </note>
-     </section>
+    <media type="image" src="figures/keyframecurves.png" mime="image/png" style="right"/>
+  </figure>
+  <p>A terminological note:</p>
+  <list>
+    <item>
+      <p><em>Keyframes</em> are the points that are used to determine the property value at a specific point in time.</p>
+    </item>
+    <item>
+      <p><em>Keyframe curves</em> are the lines connecting the points providing smooth transitions between them.</p>
+    </item>
+  </list>
+  <p>By default, the keyframe curves on an audio clip control the volume (on a scale from 0 to 200%) and the keyframe curves on a video clip control the alpha (opacity) of the video (on a scale from 0 to 100%). See the <link xref="layers">Understanding layers</link> page for more details on opacity. The default alpha or volume keyframe curves are an intrinsic property of clips and cannot be removed.</p>
+  <note style="tip">
+    <p>You can create fade-in and fade-out transitions by controlling opacity and volume. See an example in the <link xref="transitions#fades">Transitions</link> page.</p>
+  </note>
+  <p>Besides volume and alpha, you can use keyframes to control effect properties. See the <link xref="usingeffects#keyframes">Using effects</link> page for details.</p>
+  <section id="usage">
+    <title>General usage</title>
+    <p>The start and end keyframes are fixed to the start and end points of the clip and cannot be removed. The curve between these two keyframes is initially a flat horizontal line, indicating that the value of the controlled property is the same at each point in time within the clip's duration. To change the value (and the rate of its change) at any point, you can add one or more keyframes to the clip and drag them to appropriate vertical positions representing their values.</p>
+    <p>You can:</p>
+    <list>
+      <item>
+        <p>Add a new keyframe by clicking on the line.</p>
+      </item>
+      <item>
+        <p>Remove a keyframe by double-clicking on it.</p>
+      </item>
+      <item>
+        <p>Adjust the time and value of a keyframe by moving it with the mouse.</p>
+      </item>
+      <item>
+        <p>Click-and-drag on a segment of a curve between two keyframes to adjust the vertical position of the segment.</p>
+      </item>
+    </list>
+    <note>
+      <p>Currently only linear keyframe curves are supported.</p>
+    </note>
+  </section>
 </page>

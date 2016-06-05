@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="savescreenshot">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="savescreenshot">
   <info>
     <link type="topic" xref="index"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
@@ -14,10 +11,7 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Saving a snapshot of the current frame</title>
-
-    <p>You can use <guiseq><gui>Menu button</gui><gui>Export current frame...</gui></guiseq> to save a copy of the current frame as an image file.</p>
-    <p>Currently, PNG and JPEG are supported as file formats. The image resolution will match the project settings and any effect or transformation will also be applied to the resulting image.</p>
-
+  <title>Saving a snapshot of the current frame</title>
+  <p>You can use <guiseq><gui>Menu button</gui><gui>Export current frame...</gui></guiseq> to save a copy of the current frame as an image file.</p>
+  <p>Currently, PNG and JPEG are supported as file formats. The image resolution will match the project settings and any effect or transformation will also be applied to the resulting image.</p>
 </page>

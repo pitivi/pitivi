@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="usingeffects">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="usingeffects">
   <info>
     <link type="guide" xref="index#effectstransitions"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="draft"/>
@@ -19,24 +16,22 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Using effects</title>
-
-    <section id="library">
-        <title>Effect Library</title>
-        <p>The <gui>Effect Library</gui> contains all audio and video effects available on the system. The library shows either audio or video effects depending on which button (<gui>Show video effects</gui> or <gui>Show audio effects</gui>) in its upper left corner is activated. Once you choose audio or video effects you can further sort them by choosing one of the categories from the drop down list next to the two buttons. By default, the list is set to show all effects.</p>
-        <p>Alternatively, you can use the <gui>Search Bar</gui> that is shown at the top of the <gui>Effect Library</gui>. Typing into the search entry filters the contents of the <gui>Effect Library</gui> to show only effects whose name or description match your search terms. To reset the search entry, click the <gui>Clear</gui> icon in the search entry.</p>
-    </section>
-    <section id="configuring">
-        <title>Configuring effects</title>
-        <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The properties that can be adjusted will appear below in the same tab. Each variable can be put back to its original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
-    </section>
-    <section id="keyframes">
-        <title>Animating effects with keyframes</title>
-        <p>The effect properties which can be controlled using keyframe curves have a <gui>Show keyframes for this property</gui> button. When you click it, the keyframe curves on the clip start controlling the respective property. You can now edit the keyframes to achieve the desired effect. Once you are done with editing, you can click the button again and the keyframe curve disappears from the clip. However, the effect property is still controlled by the adjusted keyframe curve (which is indicated by the filled shape on the button).</p>
-        <p>Once a property becomes controlled, the widget for editing the property value directly is disabled. To remove the keyframes and be able to set again directly a constant value using the widget, you have to click the <gui>Reset to default value</gui> button. For more information on how to use keyframes see the <link xref="keyframecurves">Keyframe curves</link> page.</p>
-        <note>
-            <p>If there is no <gui>Show keyframes for this value</gui> button next to the effect variable, it cannot be controlled with keyframes.</p>
-        </note>
-    </section>
+  <title>Using effects</title>
+  <section id="library">
+    <title>Effect Library</title>
+    <p>The <gui>Effect Library</gui> contains all audio and video effects available on the system. The library shows either audio or video effects depending on which button (<gui>Show video effects</gui> or <gui>Show audio effects</gui>) in its upper left corner is activated. Once you choose audio or video effects you can further sort them by choosing one of the categories from the drop down list next to the two buttons. By default, the list is set to show all effects.</p>
+    <p>Alternatively, you can use the <gui>Search Bar</gui> that is shown at the top of the <gui>Effect Library</gui>. Typing into the search entry filters the contents of the <gui>Effect Library</gui> to show only effects whose name or description match your search terms. To reset the search entry, click the <gui>Clear</gui> icon in the search entry.</p>
+  </section>
+  <section id="configuring">
+    <title>Configuring effects</title>
+    <p>To configure an effect, simply select it in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The properties that can be adjusted will appear below in the same tab. Each variable can be put back to its original value by clicking the corresponding <gui>Reset to default value</gui> button.</p>
+  </section>
+  <section id="keyframes">
+    <title>Animating effects with keyframes</title>
+    <p>The effect properties which can be controlled using keyframe curves have a <gui>Show keyframes for this property</gui> button. When you click it, the keyframe curves on the clip start controlling the respective property. You can now edit the keyframes to achieve the desired effect. Once you are done with editing, you can click the button again and the keyframe curve disappears from the clip. However, the effect property is still controlled by the adjusted keyframe curve (which is indicated by the filled shape on the button).</p>
+    <p>Once a property becomes controlled, the widget for editing the property value directly is disabled. To remove the keyframes and be able to set again directly a constant value using the widget, you have to click the <gui>Reset to default value</gui> button. For more information on how to use keyframes see the <link xref="keyframecurves">Keyframe curves</link> page.</p>
+    <note>
+      <p>If there is no <gui>Show keyframes for this value</gui> button next to the effect variable, it cannot be controlled with keyframes.</p>
+    </note>
+  </section>
 </page>

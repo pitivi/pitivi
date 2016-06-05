@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="movearoundtimeline">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="movearoundtimeline">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
@@ -25,63 +22,77 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Moving around the timeline</title>
-
-     <section id="activating">
-      <title>Activating the timeline toolbar</title>
-       <p>The timeline toolbar contains many tools, which become active once a clip is selected in the timeline. To select a clip, simply click on the desired clip in the timeline. When selected, the clip will become darker and the timeline toolbar items will now be clickable.</p>
-     </section>
-
-     <section id="scrolling">
-      <title>Scrolling</title>
-       <p>You can scroll by:</p>
-       <list>
-         <item><p>Using the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mouse wheel to scroll the timeline layers vertically</p></item>
-         <item><p>Clicking anywhere over the timeline with the middle button and dragging the timeline</p></item>
-         <item><p>Using the scrollbars located on the right and bottom of the timeline</p></item>
-       </list>
-     </section>
-
-     <section id="zooming">
-      <title>Zooming</title>
-       <p>Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:</p>
-       <list>
-        <item><p>When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits.</p></item>
-        <item><p>Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology.</p></item>
-       </list>
-       <p>You can zoom in and out by:</p>
-       <list>
-           <item><p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline, to keep the timeline point where the mouse cursor is in place if possible</p></item>
-           <item><p>Holding the <key>Alt</key> key while using the mousewheel over the timeline, to keep the playhead in view</p></item>
-           <item><p>Dragging the zoom slider on the left of the ruler</p></item>
-           <item><p>Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> (<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom in</p></item>
-       </list>
-       <p>To get a global overview of your timeline, you may click the <gui>Zoom</gui> button on the left of the zoom slider. Another way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq></p>.
-
-       <note style="tip">
-        <title><em>Warping</em> between zoom levels</title>
-        <p>Using your mouse, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click anywhere on the zoom slider.</p>
-       </note>
-     </section>
-
-     <section id="movingplayhead">
-      <title>Moving the playhead</title>
-       <p>You can change the position of the playhead by clicking with the right mouse button anywhere on the ruler or on the timeline.</p>
-        <note style="tip">
-        <title>Jumping to an exact position</title>
-        <p>You can jump to an exact position in the timeline by editing the time value shown in the playback toolbar (see description of <link xref="mainwindow">The main window</link>). To edit it, simply click on the widget, overwrite the value and hit <key>enter</key>. The value can represent either timecode or a frame number. Timecode has the following form: <em>hh:mm:ss.milisec</em> where hours are optional. To insert a frame number, overwrite the timecode with a plain number of the desired frame.</p>
-       </note>
-     </section>
-
-     <section id="scrubbing">
-      <title>Scrubbing</title>
-       <p><em>Scrubbing</em> is a way of moving the playhead that allows you to:</p>
-       <list>
-        <item><p>Search for a specific position in time by approximation/trial and error.</p></item>
-        <item><p>Review repeatedly the visual motion in a scene by moving back and forth in time.</p></item>
-       </list>
-       <p>To scrub, click on the ruler with the right mouse button and move the mouse with the button still held down.</p>
-     </section>
-
+  <title>Moving around the timeline</title>
+  <section id="activating">
+    <title>Activating the timeline toolbar</title>
+    <p>The timeline toolbar contains many tools, which become active once a clip is selected in the timeline. To select a clip, simply click on the desired clip in the timeline. When selected, the clip will become darker and the timeline toolbar items will now be clickable.</p>
+  </section>
+  <section id="scrolling">
+    <title>Scrolling</title>
+    <p>You can scroll by:</p>
+    <list>
+      <item>
+        <p>Using the mouse wheel anywhere over the timeline to scroll horizontally, or hold down the <key>Shift</key> key while using the mouse wheel to scroll the timeline layers vertically</p>
+      </item>
+      <item>
+        <p>Clicking anywhere over the timeline with the middle button and dragging the timeline</p>
+      </item>
+      <item>
+        <p>Using the scrollbars located on the right and bottom of the timeline</p>
+      </item>
+    </list>
+  </section>
+  <section id="zooming">
+    <title>Zooming</title>
+    <p>Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:</p>
+    <list>
+      <item>
+        <p>When zooming in, video clips display more thumbnails and audio clips display increasingly detailed waveforms, allowing you to do precise edits.</p>
+      </item>
+      <item>
+        <p>Zooming out allows you to scroll faster along the timeline. Zoom can thus be used in conjunction with scrolling to move quickly between distant points of your project's chronology.</p>
+      </item>
+    </list>
+    <p>You can zoom in and out by:</p>
+    <list>
+      <item>
+        <p>Holding the <key>Ctrl</key> key while using the mousewheel over the timeline, to keep the timeline point where the mouse cursor is in place if possible</p>
+      </item>
+      <item>
+        <p>Holding the <key>Alt</key> key while using the mousewheel over the timeline, to keep the playhead in view</p>
+      </item>
+      <item>
+        <p>Dragging the zoom slider on the left of the ruler</p>
+      </item>
+      <item>
+        <p>Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> (<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom in</p>
+      </item>
+    </list>
+    <p>To get a global overview of your timeline, you may click the <gui>Zoom</gui> button on the left of the zoom slider. Another way to do this is by pressing <keyseq><key>Ctrl</key><key>0</key></keyseq>.</p>
+    <note style="tip">
+      <title><em>Warping</em> between zoom levels</title>
+      <p>Using your mouse, you can also <em>warp</em> instantly from any zoom level to another in a single click. To do that, click anywhere on the zoom slider.</p>
+    </note>
+  </section>
+  <section id="movingplayhead">
+    <title>Moving the playhead</title>
+    <p>You can change the position of the playhead by clicking with the right mouse button anywhere on the ruler or on the timeline.</p>
+    <note style="tip">
+      <title>Jumping to an exact position</title>
+      <p>You can jump to an exact position in the timeline by editing the time value shown in the playback toolbar (see description of <link xref="mainwindow">The main window</link>). To edit it, simply click on the widget, overwrite the value and hit <key>enter</key>. The value can represent either timecode or a frame number. Timecode has the following form: <em>hh:mm:ss.milisec</em> where hours are optional. To insert a frame number, overwrite the timecode with a plain number of the desired frame.</p>
+    </note>
+  </section>
+  <section id="scrubbing">
+    <title>Scrubbing</title>
+    <p><em>Scrubbing</em> is a way of moving the playhead that allows you to:</p>
+    <list>
+      <item>
+        <p>Search for a specific position in time by approximation/trial and error.</p>
+      </item>
+      <item>
+        <p>Review repeatedly the visual motion in a scene by moving back and forth in time.</p>
+      </item>
+    </list>
+    <p>To scrub, click on the ruler with the right mouse button and move the mouse with the button still held down.</p>
+  </section>
 </page>

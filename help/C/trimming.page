@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="trimming">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="trimming">
   <info>
     <link type="guide" xref="index#timeline"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
@@ -25,72 +22,77 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Trimming</title>
-
-       <p><em>Trimming</em> is the act of changing the length of a clip by moving its beginning or end point in the timeline. Move the mouse cursor over the edge of a clip and a trimming handle will appear. Drag the trimming handle in an appropriate direction to either reduce or increase the length of the clip.</p>
-       <figure>
-       <title>Trimming handle</title>
-       <desc>The mouse cursor transforms into trimming handle when hovering over the edge of a clip.</desc>
-        <media type="image" src="figures/trimming-individual.png" mime="image/png" style="right"></media>
-       </figure>
-       <p>Clips that are grouped together, such as corresponding audio and video clips, will trim in unison when you drag the trimming handle. To trim only the audio or only the video clip, you need to ungroup them first (see the <link xref="selectiongrouping">Selection and grouping</link> page for instructions on how to do that).</p>
-
-     <section id="ripple">
-      <title>Ripple editing</title>
-       <p>Ripple editing is a variant of basic trimming which, in addition to trimming a clip, also moves the following clips (the clips that start after the one you're directly editing) so that their relative position to the edited clip stays the same.</p>
-       <figure>
-        <title>Before</title>
-        <desc>Relative position of two adjacent clips before ripple editing</desc>
-        <media type="image" src="figures/ripple-before.png" mime="image/png" style="right" width="780"></media>
-       </figure>
-       <figure>
-        <title>After</title>
-        <desc>Relative position of two adjacent clips after ripple editing</desc>
-        <media type="image" src="figures/ripple-after.png" mime="image/png" style="right"></media>
-       </figure>
-       <note>
-           <p>Note that if there is a gap between the clips, the following clip moves toward the edited so that the gap length stays the same.</p>
-       </note>
-       <note>
-        <p>Ripple editing affects all following clips, regardless of whether or not they are on the same layer.</p>
-       </note>
-       <p>To do a ripple edit:
+  <title>Trimming</title>
+  <p><em>Trimming</em> is the act of changing the length of a clip by moving its beginning or end point in the timeline. Move the mouse cursor over the edge of a clip and a trimming handle will appear. Drag the trimming handle in an appropriate direction to either reduce or increase the length of the clip.</p>
+  <figure>
+    <title>Trimming handle</title>
+    <desc>The mouse cursor transforms into trimming handle when hovering over the edge of a clip.</desc>
+    <media type="image" src="figures/trimming-individual.png" mime="image/png" style="right"/>
+  </figure>
+  <p>Clips that are grouped together, such as corresponding audio and video clips, will trim in unison when you drag the trimming handle. To trim only the audio or only the video clip, you need to ungroup them first (see the <link xref="selectiongrouping">Selection and grouping</link> page for instructions on how to do that).</p>
+  <section id="ripple">
+    <title>Ripple editing</title>
+    <p>Ripple editing is a variant of basic trimming which, in addition to trimming a clip, also moves the following clips (the clips that start after the one you're directly editing) so that their relative position to the edited clip stays the same.</p>
+    <figure>
+      <title>Before</title>
+      <desc>Relative position of two adjacent clips before ripple editing</desc>
+      <media type="image" src="figures/ripple-before.png" mime="image/png" style="right" width="780"/>
+    </figure>
+    <figure>
+      <title>After</title>
+      <desc>Relative position of two adjacent clips after ripple editing</desc>
+      <media type="image" src="figures/ripple-after.png" mime="image/png" style="right"/>
+    </figure>
+    <note>
+      <p>Note that if there is a gap between the clips, the following clip moves toward the edited so that the gap length stays the same.</p>
+    </note>
+    <note>
+      <p>Ripple editing affects all following clips, regardless of whether or not they are on the same layer.</p>
+    </note>
+    <p>To do a ripple edit:
        </p>
-       <steps>
-        <item><p>Place the mouse cursor on a trimming handle.</p></item>
-        <item><p>Press and hold <key>Shift</key>.</p></item>
-        <item><p>Drag the trimming handle.</p></item>
-       </steps>
-       <note style="tip">
-           <p>Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref="usingclips#ripple">Using ripple editing while moving clips</link>.</p>
-       </note>
-     </section>
-
-     <section id="rollediting">
-      <title>Roll editing</title>
-       <p>Roll editing is a variant of basic trimming which, in addition to trimming a clip, <em>trims</em> the adjacent clips in a complementary way to prevent creating gaps.</p>
-       <figure>
-        <title>Before</title>
-        <desc>Relative position of two adjacent clips before roll editing</desc>
-        <media type="image" src="figures/roll-before.png" mime="image/png" style="right" width="780"></media>
-       </figure>
-       <figure>
-        <title>After</title>
-        <desc>Relative position of two adjacent clips after roll editing</desc>
-        <media type="image" src="figures/roll-after.png" mime="image/png" style="right" width="780"></media>
-       </figure>
-       <note>
-        <p>Roll editing affects all adjacent clips, regardless of whether or not they are on the same layer.</p>
-       </note>
-       <p>To do a roll edit:</p>
-        <steps>
-        <item><p>Place the mouse cursor on a trimming handle between two adjacent clips.</p></item>
-        <item><p>Press and hold <key>Ctrl</key>.</p></item>
-        <item><p>Drag the trimming handle.</p></item>
-       </steps>
-     </section>
-
-
-
+    <steps>
+      <item>
+        <p>Place the mouse cursor on a trimming handle.</p>
+      </item>
+      <item>
+        <p>Press and hold <key>Shift</key>.</p>
+      </item>
+      <item>
+        <p>Drag the trimming handle.</p>
+      </item>
+    </steps>
+    <note style="tip">
+      <p>Ripple editing can also be used when moving clips around in the timeline. For detailed explanations on how to do this, see the section <link xref="usingclips#ripple">Using ripple editing while moving clips</link>.</p>
+    </note>
+  </section>
+  <section id="rollediting">
+    <title>Roll editing</title>
+    <p>Roll editing is a variant of basic trimming which, in addition to trimming a clip, <em>trims</em> the adjacent clips in a complementary way to prevent creating gaps.</p>
+    <figure>
+      <title>Before</title>
+      <desc>Relative position of two adjacent clips before roll editing</desc>
+      <media type="image" src="figures/roll-before.png" mime="image/png" style="right" width="780"/>
+    </figure>
+    <figure>
+      <title>After</title>
+      <desc>Relative position of two adjacent clips after roll editing</desc>
+      <media type="image" src="figures/roll-after.png" mime="image/png" style="right" width="780"/>
+    </figure>
+    <note>
+      <p>Roll editing affects all adjacent clips, regardless of whether or not they are on the same layer.</p>
+    </note>
+    <p>To do a roll edit:</p>
+    <steps>
+      <item>
+        <p>Place the mouse cursor on a trimming handle between two adjacent clips.</p>
+      </item>
+      <item>
+        <p>Press and hold <key>Ctrl</key>.</p>
+      </item>
+      <item>
+        <p>Drag the trimming handle.</p>
+      </item>
+    </steps>
+  </section>
 </page>

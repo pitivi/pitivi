@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="importing">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="importing">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
     <revision pkgversion="0.96" version="0.5" date="2016-02-17" status="complete"/>
@@ -23,40 +20,36 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Getting media</title>
-
-    <p>Pitivi allows importing media files from your computer's hard drive.</p>
-    <note>
-        <p>When you create a new project and import the first video file, its properties are transposed to the <link xref="workwithprojects#projectsettings">project settings</link>, unless you changed them yourself already. An infobar appears when this happens. Click the <gui>Project Settings</gui> button in the infobar for details.</p>
-    </note>
-    <note>
-        <p>Due to our limited resources and the rapid evolution of filmmaking hardware in the past few years, and to ensure <app>Pitivi</app> remains robust and simple to use, we do not attempt to support every possible hardware device out there. As a result, you currently cannot use <app>Pitivi</app> to capture directly from a camcorder; specialized applications are better suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
-    </note>
-
-      <section id="filechooser">
-       <title>Importing files using the file chooser</title>
-         <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <gui>Import</gui> button in the <gui>Media Library</gui> header.</p>
-         <p>A file chooser dialog window will appear. You can press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
-       </section>
-       <section id="dragdrop">
-        <title>Importing files using drag and drop</title>
-         <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>.</p>
-         <p>This feature can be used to:</p>
-         <list>
-          <item>
-           <p>Easily import music or video clips from a media player (such as <app>Rhythmbox</app> or <app>Totem</app>).</p>
-          </item>
-          <item>
-           <p>Allow using a full-fledged file manager (such as <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the file chooser dialog.</p>
-          </item>
-          <item>
-           <p>Import a combination of multiple files and folders at the same time.</p>
-          </item>
-          <item>
-           <p>Leverage the searching capability of another application (such as <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, etc.).</p>
-          </item>
-         </list>
-       </section>
-
+  <title>Getting media</title>
+  <p>Pitivi allows importing media files from your computer's hard drive.</p>
+  <note>
+    <p>When you create a new project and import the first video file, its properties are transposed to the <link xref="workwithprojects#projectsettings">project settings</link>, unless you changed them yourself already. An infobar appears when this happens. Click the <gui>Project Settings</gui> button in the infobar for details.</p>
+  </note>
+  <note>
+    <p>Due to our limited resources and the rapid evolution of filmmaking hardware in the past few years, and to ensure <app>Pitivi</app> remains robust and simple to use, we do not attempt to support every possible hardware device out there. As a result, you currently cannot use <app>Pitivi</app> to capture directly from a camcorder; specialized applications are better suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture footage.</p>
+  </note>
+  <section id="filechooser">
+    <title>Importing files using the file chooser</title>
+    <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <gui>Import</gui> button in the <gui>Media Library</gui> header.</p>
+    <p>A file chooser dialog window will appear. You can press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
+  </section>
+  <section id="dragdrop">
+    <title>Importing files using drag and drop</title>
+    <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>.</p>
+    <p>This feature can be used to:</p>
+    <list>
+      <item>
+        <p>Easily import music or video clips from a media player (such as <app>Rhythmbox</app> or <app>Totem</app>).</p>
+      </item>
+      <item>
+        <p>Allow using a full-fledged file manager (such as <app>Nautilus</app>, <app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of the file chooser dialog.</p>
+      </item>
+      <item>
+        <p>Import a combination of multiple files and folders at the same time.</p>
+      </item>
+      <item>
+        <p>Leverage the searching capability of another application (such as <app>GNOME Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, <app>GNOME Search Tool</app>, etc.).</p>
+      </item>
+    </list>
+  </section>
 </page>

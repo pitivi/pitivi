@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="medialibrary">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="medialibrary">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
     <revision pkgversion="0.96" version="0.4" date="2016-02-17" status="complete"/>
@@ -25,51 +22,64 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Using the Media Library</title>
-
-        <section id="importing">
-        <title>Importing a file to the <gui>Media Library</gui></title>
-         <p>There are two ways to import files into the <gui>Media Library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported into the <gui>Media Library</gui> are called <em>clips</em>.</p>
-         <note>
-             <p>The clips in the <gui>Media Library</gui> are sorted alphabetically.</p>
-         </note>
-       </section>
-       <section id="previewing">
-        <title>Previewing a clip from the <gui>Media Library</gui></title>
-         <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
-       </section>
-       <section id="searching">
-        <title>Filtering search</title>
-         <p>A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the "cleanup" icon in the search entry.</p>
-       </section>
-       <section id="modes">
-        <title>View modes</title>
-         <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
-       </section>
-       <section id="selectingunused">
-        <title>Selecting unused clips</title>
-        <p>You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select clips that are present in the media library but not in the timeline. There are various reasons to do this:</p>
-        <list>
-          <item><p>Improving performance when loading the project</p></item>
-          <item><p>Simplifying your editing workflow</p></item>
-          <item><p>Check which clips you may have forgot to use in your movie</p></item>
-          <item><p>Backup or share your project more easily</p></item>
-        </list>
-        <p>To identify which clips are not being used in your project, use the <gui>Select clips that have not been used in the project</gui> button at the left side of the search bar. Unused clips will then be selected in the media library.</p>
-        <note><p>If there are no unused clips in your project, nothing will be selected in the media library.</p></note>
-       </section>
-       <section id="otheractions">
-        <title>Other actions</title>
-         <p>There are three further actions you can perform with clips. Each is represented by a button in the upper right part of the <gui>Media Library</gui>:</p>
-         <list type="numbered">
-          <item><p><gui>Remove selected clips from the project</gui> (this can also be performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>).</p></item>
-          <item><p><gui>Clip properties...</gui> opens a new window with information on <em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking the <gui>Apply to project</gui> button adjusts the project settings to the clip properties. You can select which properties to apply by leaving them ticked/unticked.</p></item>
-          <item><p><gui>Insert selected clips at the end of the timeline</gui> inserts the selected clips one after another into the longest layer of the timeline where the last clip on that layer ends.</p></item>
-         </list>
-         <note>
-         <p>In order for these actions to become available, one or more clips must be selected.</p>
-         </note>
-       </section>
-
+  <title>Using the Media Library</title>
+  <section id="importing">
+    <title>Importing a file to the <gui>Media Library</gui></title>
+    <p>There are two ways to import files into the <gui>Media Library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported into the <gui>Media Library</gui> are called <em>clips</em>.</p>
+    <note>
+      <p>The clips in the <gui>Media Library</gui> are sorted alphabetically.</p>
+    </note>
+  </section>
+  <section id="previewing">
+    <title>Previewing a clip from the <gui>Media Library</gui></title>
+    <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
+  </section>
+  <section id="searching">
+    <title>Filtering search</title>
+    <p>A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the "cleanup" icon in the search entry.</p>
+  </section>
+  <section id="modes">
+    <title>View modes</title>
+    <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
+  </section>
+  <section id="selectingunused">
+    <title>Selecting unused clips</title>
+    <p>You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select clips that are present in the media library but not in the timeline. There are various reasons to do this:</p>
+    <list>
+      <item>
+        <p>Improving performance when loading the project</p>
+      </item>
+      <item>
+        <p>Simplifying your editing workflow</p>
+      </item>
+      <item>
+        <p>Check which clips you may have forgot to use in your movie</p>
+      </item>
+      <item>
+        <p>Backup or share your project more easily</p>
+      </item>
+    </list>
+    <p>To identify which clips are not being used in your project, use the <gui>Select clips that have not been used in the project</gui> button at the left side of the search bar. Unused clips will then be selected in the media library.</p>
+    <note>
+      <p>If there are no unused clips in your project, nothing will be selected in the media library.</p>
+    </note>
+  </section>
+  <section id="otheractions">
+    <title>Other actions</title>
+    <p>There are three further actions you can perform with clips. Each is represented by a button in the upper right part of the <gui>Media Library</gui>:</p>
+    <list type="numbered">
+      <item>
+        <p><gui>Remove selected clips from the project</gui> (this can also be performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>).</p>
+      </item>
+      <item>
+        <p><gui>Clip properties...</gui> opens a new window with information on <em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking the <gui>Apply to project</gui> button adjusts the project settings to the clip properties. You can select which properties to apply by leaving them ticked/unticked.</p>
+      </item>
+      <item>
+        <p><gui>Insert selected clips at the end of the timeline</gui> inserts the selected clips one after another into the longest layer of the timeline where the last clip on that layer ends.</p>
+      </item>
+    </list>
+    <note>
+      <p>In order for these actions to become available, one or more clips must be selected.</p>
+    </note>
+  </section>
 </page>

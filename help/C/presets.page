@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="presets">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="presets">
   <info>
     <link type="guide" xref="index#gettingstarted"/>
     <link type="seealso" xref="codecscontainers"/>
@@ -13,8 +10,8 @@
       <email>nekohayo@gmail.com</email>
     </credit>
     <credit type="contributor">
-     <name>Tomáš Karger</name>
-     <email>tomkarger@gmail.com</email>
+      <name>Tomáš Karger</name>
+      <email>tomkarger@gmail.com</email>
     </credit>
     <desc>
       Using presets in rendering and project settings.
@@ -23,29 +20,41 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Presets</title>
-    <p>Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets.</p>
-    <note><p>In project settings, video presets and audio presets are independent of each other.</p></note>
-    <section id="adding">
-        <title>Creating and editing presets</title>
-        <p>To create a preset:</p>
-        <steps>
-            <item><p>Change the settings to your liking.</p></item>
-            <item><p>At the right of the presets combobox click <guiseq><gui>Menu button</gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next step.</p></item>
-            <item><p>Give your preset a unique name: click on the combobox to edit the name. When you're done, press <key>Enter</key>.</p></item>
-        </steps>
-        <p>To edit a preset:</p>
-        <steps>
-            <item><p>Select your preset in the presets combobox.</p></item>
-            <item><p>Change the settings to your liking.</p></item>
-            <item><p>Click at the right of the presets combobox <guiseq><gui>Menu button</gui><gui>Save</gui></guiseq>.</p></item>
-        </steps>
-        <p>To remove a preset, simply select it in the presets combobox and click <guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>.</p>
-    </section>
-    <section id="limiting">
-        <title>Limiting the resolution of a rendering preset</title>
-        <p>If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device.</p>
-    </section>
-
+  <title>Presets</title>
+  <p>Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets.</p>
+  <note>
+    <p>In project settings, video presets and audio presets are independent of each other.</p>
+  </note>
+  <section id="adding">
+    <title>Creating and editing presets</title>
+    <p>To create a preset:</p>
+    <steps>
+      <item>
+        <p>Change the settings to your liking.</p>
+      </item>
+      <item>
+        <p>At the right of the presets combobox click <guiseq><gui>Menu button</gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next step.</p>
+      </item>
+      <item>
+        <p>Give your preset a unique name: click on the combobox to edit the name. When you're done, press <key>Enter</key>.</p>
+      </item>
+    </steps>
+    <p>To edit a preset:</p>
+    <steps>
+      <item>
+        <p>Select your preset in the presets combobox.</p>
+      </item>
+      <item>
+        <p>Change the settings to your liking.</p>
+      </item>
+      <item>
+        <p>Click at the right of the presets combobox <guiseq><gui>Menu button</gui><gui>Save</gui></guiseq>.</p>
+      </item>
+    </steps>
+    <p>To remove a preset, simply select it in the presets combobox and click <guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>.</p>
+  </section>
+  <section id="limiting">
+    <title>Limiting the resolution of a rendering preset</title>
+    <p>If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device.</p>
+  </section>
 </page>

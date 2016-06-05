@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="sysreq">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="sysreq">
   <info>
     <link type="guide" xref="index#intro"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="incomplete"/>
@@ -23,21 +20,26 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>System requirements</title>
-
-     <p>In terms of hardware, video editing typically requires a powerful computer, depending on the type of video you are editing. While the processing power of computers has increased tremendously over the years, so has demand for higher quality video. Editing HD (High Definition) video usually requires (at the time of this writing) state of the art hardware (depending on the codec used), while SD (Standard Definition) video editing can be done on modest hardware configurations. It is up to you to make sure that your equipment is adequate. It should at least be able to playback your media in <app>Totem</app> without lagging.</p>
-     <p>Here are some general hardware recommendations:</p>
-     <list>
-         <item><p>Modern quad core CPU</p></item>
-         <item><p>Solid state drive</p></item>
-         <item><p>Intel graphic cards tend to work without problems</p></item>
-         <item><p>Full HD (1920x1080) capable monitor (resolutions below 1024x768 are not supported)</p></item>
-     </list>
-     <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>Pitivi</app>.</p>
-     <note style="bug">
-      <p>You can track the state of proxy editing in <app>Pitivi</app> through <link href="https://phabricator.freedesktop.org/T2455">task T2455</link>.</p>
-     </note>
-     <p>Software requirements are covered in <link xref="gstreamer">Gstreamer and compatibility</link> and <link xref="effects">Introduction to effects</link>.</p>
-
+  <title>System requirements</title>
+  <p>In terms of hardware, video editing typically requires a powerful computer, depending on the type of video you are editing. While the processing power of computers has increased tremendously over the years, so has demand for higher quality video. Editing HD (High Definition) video usually requires (at the time of this writing) state of the art hardware (depending on the codec used), while SD (Standard Definition) video editing can be done on modest hardware configurations. It is up to you to make sure that your equipment is adequate. It should at least be able to playback your media in <app>Totem</app> without lagging.</p>
+  <p>Here are some general hardware recommendations:</p>
+  <list>
+    <item>
+      <p>Modern quad core CPU</p>
+    </item>
+    <item>
+      <p>Solid state drive</p>
+    </item>
+    <item>
+      <p>Intel graphic cards tend to work without problems</p>
+    </item>
+    <item>
+      <p>Full HD (1920x1080) capable monitor (resolutions below 1024x768 are not supported)</p>
+    </item>
+  </list>
+  <p>It is possible, however, to use low-quality versions of your footage during editing and use the high-quality versions when rendering the final output, thus allowing to bypass hardware limitations to some extent. This is called <em>proxy editing</em>. This feature, however, is not yet available in <app>Pitivi</app>.</p>
+  <note style="bug">
+    <p>You can track the state of proxy editing in <app>Pitivi</app> through <link href="https://phabricator.freedesktop.org/T2455">task T2455</link>.</p>
+  </note>
+  <p>Software requirements are covered in <link xref="gstreamer">Gstreamer and compatibility</link> and <link xref="effects">Introduction to effects</link>.</p>
 </page>

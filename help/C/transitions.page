@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="transitions">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="transitions">
   <info>
     <link type="guide" xref="index#effectstransitions"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="draft"/>
@@ -25,56 +22,65 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Transitions</title>
-
-    <section id="crossfading">
-      <title>Crossfading clips</title>
-        <p>To do a crossfade between two clips on the same layer, simply drag one of the clips onto the other so that it overlaps. The overlapping region will be used as a space for transition between the two clips. You can adjust the length of the transition either by moving the clips or by trimming them. If you want to apply other types of transitions than the default (crossfade), see the <em>Other types of transitions</em> section on this page.</p>
-      <note>
-        <p>Crossfades are achieved using <app>Pitivi</app>'s video mixing features, which use keyframes to control the opacity of clips. This means that if you set opacity keyframes for a clip, they will be taken into account for the crossfade.</p>
-      </note>
-    </section>
-    <section id="types">
-      <title>Other types of transitions</title>
-      <p>Assuming that you have two overlapping clips in your timeline, you can achieve other types of transitions by following these steps:</p>
-      <steps>
-          <item><p>Select the overlapping region by clicking on it.</p></item>
-          <item><p>Select the <gui>Transition</gui> tab in the middle pane.</p></item>
-          <item><p>Select one of the offered transitions.</p></item>
-      </steps>
-      <p>The transitions can be further adjusted with the following options from the bottom of the <gui>Transition</gui> tab:</p>
-      <list>
-          <item><p><em>Normal mode</em> will apply the transition in a linear fashion over the whole overlapping region. When in normal mode, you can adjust the degree of sharpness/smoothenss of the transition.</p></item>
-          <item><p><em>Loop</em> mode will apply the transition in a circular manner. When in loop mode, you can adjust the speed with which the transition will repeat itself.</p></item>
-          <item><p>In both modes, you can apply the transition in <em>reverse direction</em> by ticking the corresponding checkbox.</p></item>
-      </list>
-      <note style="tip">
-          <p>Each transition has its name and description. They are displayed when you hover the cursor over the transition icon. You can also filter the transitions by typing into the search entry at the top of the <gui>Transition</gui> tab. This will show only transitions whose name or description match your search terms.</p>
-      </note>
-    </section>
-    <section id="fades">
-      <title>Fade-ins and fade-outs</title>
-      <p>You can create fade-in and fade-out transitions in single clips by using keyframes controlling the clip's opacity. For more information on keyframes, see <link xref="keyframecurves">Keyframe curves</link>. To understand opacity, see <link xref="layers">Understanding layers</link>. The following images illustrate how to fade a clip to black:</p>
-        <figure>
-        <title>Keyframe curves controlling the video opacity</title>
-        <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"></media>
-        <desc>The default curve is flat indicating the same opacity at any position within the clip.</desc>
-        </figure>
-        <figure>
-        <title>Adding a new keyframe</title>
-        <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"></media>
-        <desc>Create a new keyframe by clicking the curve in a position where you want to start the fade-out.</desc>
-        </figure>
-        <figure>
-        <title>Moving the keyframe</title>
-        <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"></media>
-        <desc>Click and drag the last keyframe downwards.</desc>
-        </figure>
-        <p>To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe in a position where the fade-in should end and the first keyframe dragged down) at the beginning of the clip.</p>
-     <note style="tip">
-        <p>Fades and crossfading as described here can be applied to both audio and video clips.</p>
+  <title>Transitions</title>
+  <section id="crossfading">
+    <title>Crossfading clips</title>
+    <p>To do a crossfade between two clips on the same layer, simply drag one of the clips onto the other so that it overlaps. The overlapping region will be used as a space for transition between the two clips. You can adjust the length of the transition either by moving the clips or by trimming them. If you want to apply other types of transitions than the default (crossfade), see the <em>Other types of transitions</em> section on this page.</p>
+    <note>
+      <p>Crossfades are achieved using <app>Pitivi</app>'s video mixing features, which use keyframes to control the opacity of clips. This means that if you set opacity keyframes for a clip, they will be taken into account for the crossfade.</p>
     </note>
-    </section>
-
+  </section>
+  <section id="types">
+    <title>Other types of transitions</title>
+    <p>Assuming that you have two overlapping clips in your timeline, you can achieve other types of transitions by following these steps:</p>
+    <steps>
+      <item>
+        <p>Select the overlapping region by clicking on it.</p>
+      </item>
+      <item>
+        <p>Select the <gui>Transition</gui> tab in the middle pane.</p>
+      </item>
+      <item>
+        <p>Select one of the offered transitions.</p>
+      </item>
+    </steps>
+    <p>The transitions can be further adjusted with the following options from the bottom of the <gui>Transition</gui> tab:</p>
+    <list>
+      <item>
+        <p><em>Normal mode</em> will apply the transition in a linear fashion over the whole overlapping region. When in normal mode, you can adjust the degree of sharpness/smoothenss of the transition.</p>
+      </item>
+      <item>
+        <p><em>Loop</em> mode will apply the transition in a circular manner. When in loop mode, you can adjust the speed with which the transition will repeat itself.</p>
+      </item>
+      <item>
+        <p>In both modes, you can apply the transition in <em>reverse direction</em> by ticking the corresponding checkbox.</p>
+      </item>
+    </list>
+    <note style="tip">
+      <p>Each transition has its name and description. They are displayed when you hover the cursor over the transition icon. You can also filter the transitions by typing into the search entry at the top of the <gui>Transition</gui> tab. This will show only transitions whose name or description match your search terms.</p>
+    </note>
+  </section>
+  <section id="fades">
+    <title>Fade-ins and fade-outs</title>
+    <p>You can create fade-in and fade-out transitions in single clips by using keyframes controlling the clip's opacity. For more information on keyframes, see <link xref="keyframecurves">Keyframe curves</link>. To understand opacity, see <link xref="layers">Understanding layers</link>. The following images illustrate how to fade a clip to black:</p>
+    <figure>
+      <title>Keyframe curves controlling the video opacity</title>
+      <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"/>
+      <desc>The default curve is flat indicating the same opacity at any position within the clip.</desc>
+    </figure>
+    <figure>
+      <title>Adding a new keyframe</title>
+      <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"/>
+      <desc>Create a new keyframe by clicking the curve in a position where you want to start the fade-out.</desc>
+    </figure>
+    <figure>
+      <title>Moving the keyframe</title>
+      <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"/>
+      <desc>Click and drag the last keyframe downwards.</desc>
+    </figure>
+    <p>To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe in a position where the fade-in should end and the first keyframe dragged down) at the beginning of the clip.</p>
+    <note style="tip">
+      <p>Fades and crossfading as described here can be applied to both audio and video clips.</p>
+    </note>
+  </section>
 </page>

@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="splitting">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="splitting">
   <info>
     <link type="guide" xref="index#timeline"/>
     <revision pkgversion="0.96" version="0.2" date="2016-02-17" status="complete"/>
@@ -25,28 +22,33 @@
       <p>Creative Commons Share Alike 3.0</p>
     </license>
   </info>
-
-    <title>Splitting</title>
-
-     <p>As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly.</p>
-     <p>In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movearoundtimeline">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
-     <p>For example, to split a single clip:</p>
-     <steps>
-      <item><p>Click on the clip to select it.</p></item>
-      <item><p>Reposition the playhead where you want to split (if needed).</p></item>
-      <item><p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p></item>
-     </steps>
-
-     <p>Only the clips under the playhead can be split, depending on the current selection:</p>
-     <list>
-      <item><p>If clips are selected, only the selected clips under the playhead are split.</p></item>
-      <item><p>If the selection is empty, all the clips under the playhead are split.</p></item>
-     </list>
-     <p>See how to select clips in <link xref="selectiongrouping#selection">Selection and grouping</link>.</p>
-
-        <note style="tip">
-        <title>Cutting out the middle</title>
-        <p>When you want to cut out a middle section of a clip, split the clip twice on the positions where the part you want to remove begins and ends. Select the middle part and hit <key>Delete</key>. Now, eliminate the empty space between the remaining two parts by moving one of them towards the other until they snap.</p>
-        </note>
-
+  <title>Splitting</title>
+  <p>As the name implies, splitting a clip divides it into two adjacent clips, with new beginning/end points being created accordingly.</p>
+  <p>In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that you do not have to “activate” a particular tool before doing the split action. Splitting occurs where the playhead is currently located (see also <link xref="movearoundtimeline">Moving the playhead</link>). Combined with zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless splitting is not only fast and efficient, it is also very accurate.</p>
+  <p>For example, to split a single clip:</p>
+  <steps>
+    <item>
+      <p>Click on the clip to select it.</p>
+    </item>
+    <item>
+      <p>Reposition the playhead where you want to split (if needed).</p>
+    </item>
+    <item>
+      <p>Click on the <gui>Split</gui> button on the timeline toolbar or press <key>S</key>.</p>
+    </item>
+  </steps>
+  <p>Only the clips under the playhead can be split, depending on the current selection:</p>
+  <list>
+    <item>
+      <p>If clips are selected, only the selected clips under the playhead are split.</p>
+    </item>
+    <item>
+      <p>If the selection is empty, all the clips under the playhead are split.</p>
+    </item>
+  </list>
+  <p>See how to select clips in <link xref="selectiongrouping#selection">Selection and grouping</link>.</p>
+  <note style="tip">
+    <title>Cutting out the middle</title>
+    <p>When you want to cut out a middle section of a clip, split the clip twice on the positions where the part you want to remove begins and ends. Select the middle part and hit <key>Delete</key>. Now, eliminate the empty space between the remaining two parts by moving one of them towards the other until they snap.</p>
+  </note>
 </page>

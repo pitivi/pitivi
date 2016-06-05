@@ -1,8 +1,5 @@
-<page xmlns="http://projectmallard.org/1.0/"
-      xmlns:e="http://projectmallard.org/experimental/"
-      type="topic"
-      id="codecscontainers">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:e="http://projectmallard.org/experimental/" type="topic" id="codecscontainers">
   <info>
     <link type="guide" xref="index#rendering"/>
     <revision pkgversion="0.93" version="0.1" date="2014-04-06" status="complete"/>
@@ -19,13 +16,12 @@
     </license>
     <desc>What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? Learn about codecs and container formats here.</desc>
   </info>
-
-    <title>Understanding codecs and containers</title>    
-    <p>The distinction between codecs and container file formats is often ambiguous. This is in part due to the general lack of standardization, confusing marketing terms and filename extensions. This page attempts to clarify this distinction briefly and without going into technical details. If you want to learn more about containers and codecs, you should probably look at Wikipedia's page on <link href="http://en.wikipedia.org/wiki/Digital_container_format">containers</link> and <link href="http://en.wikipedia.org/wiki/Codec">codecs</link>.</p>
-    <p><em>Container</em> is what we typically associate with the file format. Containers "contain" the various components of a video: the stream of images, the sound, and anything else. For example, you could have multiple soundtracks and subtitles included in a video file, if the container format allows it. Example of popular containers are OGG, Matroska, AVI, MPEG.</p>
-    <p><em>Codecs</em> are ways of "coding" and "decoding" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is close to be a form of art in itself.</p>
-    <figure>
-        <title>The relationship between containers and codecs</title>
-        <media type="image" mime="image/jpg" src="figures/codecscontainers.jpg" width="780"/>
-    </figure>
+  <title>Understanding codecs and containers</title>
+  <p>The distinction between codecs and container file formats is often ambiguous. This is in part due to the general lack of standardization, confusing marketing terms and filename extensions. This page attempts to clarify this distinction briefly and without going into technical details. If you want to learn more about containers and codecs, you should probably look at Wikipedia's page on <link href="http://en.wikipedia.org/wiki/Digital_container_format">containers</link> and <link href="http://en.wikipedia.org/wiki/Codec">codecs</link>.</p>
+  <p><em>Container</em> is what we typically associate with the file format. Containers "contain" the various components of a video: the stream of images, the sound, and anything else. For example, you could have multiple soundtracks and subtitles included in a video file, if the container format allows it. Example of popular containers are OGG, Matroska, AVI, MPEG.</p>
+  <p><em>Codecs</em> are ways of "coding" and "decoding" streams. Their job is typically to compress data (and decompress it when playing it back) so that you can store and transmit files with a smaller filesize. There are many codecs available out there, each with their strengths, weaknesses and peculiarities, and choosing the right codec with the right settings for the right situation is close to be a form of art in itself.</p>
+  <figure>
+    <title>The relationship between containers and codecs</title>
+    <media type="image" mime="image/jpg" src="figures/codecscontainers.jpg" width="780"/>
+  </figure>
 </page>
