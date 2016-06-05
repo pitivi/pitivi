@@ -24,13 +24,13 @@
 
   <title>About this manual</title>
    <p>This user manual is written and maintained by Jean-François Fortin Tam.</p>
-   <section>
+   <section id="wip">
     <title>Work in progress</title>
      <p>You may encounter unwritten portions due to features that have not yet been implemented in Pitivi at the time of writing.</p>
      <p>You may also encounter smaller areas which have been documented in this manual but have not been implemented in Pitivi – those are areas where the design and expected user interaction are quite narrow/certain.</p>
    </section>
 
-   <section>
+   <section id="patches">
     <title>Patches welcome</title>
      <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://phabricator.freedesktop.org/maniphest/task/create/?projects=pitivi,pitivi_documentation">file bugs in our bug tracker</link>.</p>
    </section>

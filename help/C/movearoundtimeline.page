@@ -28,12 +28,12 @@
 
     <title>Moving around the timeline</title>
 
-     <section>
+     <section id="activating">
       <title>Activating the timeline toolbar</title>
        <p>The timeline toolbar contains many tools, which become active once a clip is selected in the timeline. To select a clip, simply click on the desired clip in the timeline. When selected, the clip will become darker and the timeline toolbar items will now be clickable.</p>
      </section>
 
-     <section>
+     <section id="scrolling">
       <title>Scrolling</title>
        <p>You can scroll by:</p>
        <list>
@@ -43,7 +43,7 @@
        </list>
      </section>
 
-     <section>
+     <section id="zooming">
       <title>Zooming</title>
        <p>Zooming directly affects your editing accuracy and your ability to move quickly along the timeline:</p>
        <list>
@@ -74,7 +74,7 @@
        </note>
      </section>
 
-     <section>
+     <section id="scrubbing">
       <title>Scrubbing</title>
        <p><em>Scrubbing</em> is a way of moving the playhead that allows you to:</p>
        <list>

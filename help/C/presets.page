@@ -27,7 +27,7 @@
     <title>Presets</title>
     <p>Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> dialog allow you to save presets for later use. If you often deal with the same kind of project settings, with different cameras or target devices for rendering, you may want to create custom presets.</p>
     <note><p>In project settings, video presets and audio presets are independent of each other.</p></note>
-    <section>
+    <section id="adding">
         <title>Creating and editing presets</title>
         <p>To create a preset:</p>
         <steps>
@@ -43,7 +43,7 @@
         </steps>
         <p>To remove a preset, simply select it in the presets combobox and click <guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>.</p>
     </section>
-    <section>
+    <section id="limiting">
         <title>Limiting the resolution of a rendering preset</title>
         <p>If you want to make a preset with a fixed maximum resolution, you need to edit the preset file with a text editor. Presets files are typically stored in ~/.local/share/pitivi/ ; since many devices don't have a maximum resolution, the width/height are set to 0 (unlimited) by default. You can change these values to the maximum resolution of your target device.</p>
     </section>

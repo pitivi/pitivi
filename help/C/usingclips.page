@@ -28,7 +28,7 @@
 
     <title>Using clips</title>
 
-     <section>
+     <section id="clipsfiles">
       <title>Clips vs files</title>
         <p><em>Files</em> are data on your hard disk (videos, music, pictures, etc.) that can be accessed by <app>Pitivi</app> and incorporated in your video editing project.</p>
         <p><em>Clips</em> are a visual representation of your files on the timeline. They represent the period of time they consume on the timeline and can be edited independently: each time you drag a file from the <gui>Media Library</gui> to the timeline, a new clip is created. As such, a file can be reused as much as you want to create any amount of different clips.</p>
@@ -37,7 +37,7 @@
        </note>
      </section>
 
-     <section>     
+     <section id="inserting">
      <title>Inserting clips</title>
      <p>From the <gui>Media Library</gui>, you can insert one or more clips by selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select multiple clips) and doing one of the following:</p>
      <list>
@@ -50,7 +50,7 @@
      </p>
      </section>
 
-     <section>
+     <section id="moving">
       <title>Moving clips along the timeline</title>
        <p>You can move a clip within a layer or move it to a different layer.</p>
        <p>Click and drag a single clip to move it, and release the mouse button to place it. Dragging horizontally keeps the clip on the same layer, but dragging it vertically moves the clip to a different layer (see <link xref="layers">Understanding layers</link> for more information).</p>

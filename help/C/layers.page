@@ -29,12 +29,12 @@
      <p><em>Layers</em> are a fundamental concept for advanced editing in the timeline: compositing, mixing multiple videos simultaneously, and adding titles depend on this feature.</p>
      <p>It is easier to think of layers in terms of images painted on glass. With several pieces of glass stacked on top of each other, each of these pieces of glass is a layer. If the top piece of glass is completely painted over, none of the pieces of glass underneath will be visible. If, on the other hand, you only paint over a portion of a piece of glass, you will be able to see what is underneath the non-painted parts.</p>
 
-     <section>
+     <section id="opacity">
       <title>Opacity (how solid “opaque” things are)</title>
        <p>Each layer (and each clip) has its own transparency. To continue the paint on glass metaphor, if the paint is thin enough, it can be seen through. Visually, an opacity of 100% means you cannot see the clips below that layer or clip, and an opacity of of 50% means you can partly see them.</p>
      </section>
 
-     <section>
+     <section id="ui">
       <title>How this translates in terms of user interface</title>
        <p>While, in real life, you can stack pieces of glass onto each other in three dimensions, your computer monitor only has two dimensions. Thus, the <em>layers on top</em> (the “Z” axis in the physical world) are also visually <em>on top</em>, albeit on the “Y” axis.</p>
        <figure>
@@ -46,13 +46,13 @@
        </note>
      </section>
 
-     <section>
+     <section id="adding">
       <title>Adding and removing layers</title>
        <p>To create a layer, drag a clip to the middle space between two existing layers or just above the top layer or just below the bottom layer. Once the thin space between the layers is highlighted, release the clip.</p>
        <p>To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the layer name field.</p>
      </section>
 
-     <section>
+     <section id="audio">
       <title>What about audio layers?</title>
        <p>Unlike in vision, multiple sounds do not “block” each other. If you have multiple audio clips on separate layers, their sound will be mixed together. Controlling the volume of those audio clips simply changes their relative loudness.</p>
      </section>

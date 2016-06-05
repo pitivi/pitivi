@@ -26,7 +26,7 @@
       <p>Effects are non-destructive: they are only applied to the resulting rendered movie and do not affect your source files.</p>
      </note>
 
-    <section>
+    <section id="adding">
         <title>Adding and removing effects to clips</title>
         <p>To add an effect:</p>
         <steps>
@@ -40,7 +40,7 @@
             <item><p>Click the <gui>Remove effect</gui> button</p></item>
         </steps>
     </section>
-    <section>
+    <section id="toggling">
         <title>Toggling effects</title>
         <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui> <gui>Effects</gui></guiseq>.</p>
     </section>

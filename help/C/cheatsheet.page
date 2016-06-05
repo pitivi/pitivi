@@ -20,7 +20,7 @@
 
     <p>This page is a list of important shortcuts to access commonly used or hidden features. Take the time to get familiar with them as they will improve your productivity tremendously.</p>
 
-    <section>
+    <section id="general">
       <title>General</title>
         <list>
           <item><p><keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project</p></item>
@@ -34,7 +34,7 @@
         </list>
     </section>
 
-    <section>
+    <section id="medialibrary">
       <title>Media Library</title>
         <list>
           <item><p><key>Enter</key>: Preview (playback) the selected clip</p></item>
@@ -43,7 +43,7 @@
         </list>
     </section>
 
-    <section>
+    <section id="timeline">
       <title>Timeline</title>
         <list>
           <item><p><key>Spacebar</key>: Toggle playback.</p></item>

@@ -28,26 +28,26 @@
 
     <title>Using the Media Library</title>
 
-        <section>
+        <section id="importing">
         <title>Importing a file to the <gui>Media Library</gui></title>
          <p>There are two ways to import files into the <gui>Media Library</gui>. The first way is to click on the <gui>Import</gui> button in the upper left corner. This will open a file chooser in which you can preview selected files or select multiple files (by holding <key>Shift</key> or <key>Control</key> while selecting them). The second way is to drag and drop the files from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported into the <gui>Media Library</gui> are called <em>clips</em>.</p>
          <note>
              <p>The clips in the <gui>Media Library</gui> are sorted alphabetically.</p>
          </note>
        </section>
-       <section>
+       <section id="previewing">
         <title>Previewing a clip from the <gui>Media Library</gui></title>
          <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
        </section>
-       <section>
+       <section id="searching">
         <title>Filtering search</title>
          <p>A search bar is shown at the top of the <gui>Media Library</gui>. Typing into the search entry filters the contents of the <gui>Media Library</gui> to show only clips whose filenames match your search terms. To reset the search entry, click the "cleanup" icon in the search entry.</p>
        </section>
-       <section>
+       <section id="modes">
         <title>View modes</title>
          <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
        </section>
-       <section>
+       <section id="selectingunused">
         <title>Selecting unused clips</title>
         <p>You may sometimes find that you have imported more clips that you needed in your project. <app>Pitivi</app> allows you to select clips that are present in the media library but not in the timeline. There are various reasons to do this:</p>
         <list>
@@ -59,7 +59,7 @@
         <p>To identify which clips are not being used in your project, use the <gui>Select clips that have not been used in the project</gui> button at the left side of the search bar. Unused clips will then be selected in the media library.</p>
         <note><p>If there are no unused clips in your project, nothing will be selected in the media library.</p></note>
        </section>
-       <section>
+       <section id="otheractions">
         <title>Other actions</title>
          <p>There are three further actions you can perform with clips. Each is represented by a button in the upper right part of the <gui>Media Library</gui>:</p>
          <list type="numbered">

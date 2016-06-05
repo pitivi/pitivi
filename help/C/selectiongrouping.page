@@ -48,7 +48,7 @@
        </note>
      </section>
 
-     <section>
+     <section id="grouping">
          <title>Grouping and ungrouping clips</title>
         <p>The grouping and ungrouping functions are useful when you want to add or separate audio tracks from video clips, or when you want to create a block of clips that you can select, edit and move all at once.</p>
         <p>Grouping clips in timeline:</p>

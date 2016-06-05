@@ -48,7 +48,7 @@
      <note style="tip"><p>You can create fade-in and fade-out transitions by controlling opacity and volume. See an example in the <link xref="transitions#fades">Transitions</link> page.</p></note>
      <p>Besides volume and alpha, you can use keyframes to control effect properties. See the <link xref="usingeffects#keyframes">Using effects</link> page for details.</p>
 
-     <section>
+     <section id="usage">
       <title>General usage</title>
       <p>The start and end keyframes are fixed to the start and end points of the clip and cannot be removed. The curve between these two keyframes is initially a flat horizontal line, indicating that the value of the controlled property is the same at each point in time within the clip's duration. To change the value (and the rate of its change) at any point, you can add one or more keyframes to the clip and drag them to appropriate vertical positions representing their values.</p>
       <p>You can:</p>

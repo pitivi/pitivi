@@ -40,12 +40,12 @@
          <p>To maximize <app>Pitivi</app>'s capabilities and reduce the possibilities of bugs, a very recent version of <app>GStreamer</app> is recommended. This is because <app>Pitivi</app> developers work hard on fixing problems directly in <app>GStreamer</app> instead of putting temporary workarounds inside <app>Pitivi</app>.</p>
      </note>
 
-    <section>
+    <section id="friendlycodecs">
      <title>A word about editing-friendly codecs</title>
       <p>Some formats, like <em>MPEG</em>, are oriented towards playback only, and do not compress each frame independently. While it is the goal of <app>Pitivi</app> to support working with these files, certain operations (like rapid seeking) will not perform as well as they would with frame-independent compressed video (such as <em>MJPEG</em> or <em>DV</em>).</p>
     </section>
 
-    <section>
+    <section id="goodbadugly">
      <title>The Good, the Bad and the Ugly</title>
       <p><app>GStreamer</app> plugins come into three categories: good, bad and ugly. You may need to install plugins from any category to ensure compatibility with your media files. Whether or not you install them is up to you, and may depend on your country's jurisdiction regarding software patents. An overview of gstreamer plugins and their classification into categories can be found on the <link href="http://gstreamer.freedesktop.org/documentation/plugins.html">Gstreamer website</link>.</p>
         <list>
@@ -59,7 +59,7 @@
       <p></p>
     </section>
 
-    <section>
+    <section id="imageformats">
         <title>Image file formats</title>
         <p>While it is not feasible to list every possible combination of supported video or audio formats, it is however possible to list the static image formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG.</p>
         <!-- Note: this is obtained by doing:

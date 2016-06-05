@@ -67,7 +67,7 @@
        </note>
      </section>
 
-     <section>
+     <section id="rollediting">
       <title>Roll editing</title>
        <p>Roll editing is a variant of basic trimming which, in addition to trimming a clip, <em>trims</em> the adjacent clips in a complementary way to prevent creating gaps.</p>
        <figure>
