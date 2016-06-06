@@ -219,6 +219,18 @@
             ]
         },
         {
+            "name": "yelp-xsl",
+            "cleanup-platform": [ "*"  ],
+            "config-opts": ["--disable-doc"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/yelp-xsl",
+                    "branch": "3.20.1"
+                }
+            ]
+        },
+        {
             "name": "yelp",
             "sources": [
                 {
