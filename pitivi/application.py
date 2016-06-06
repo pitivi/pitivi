@@ -155,17 +155,17 @@ class Pitivi(Gtk.Application, Loggable):
         self.undo_action = Gio.SimpleAction.new("undo", None)
         self.undo_action.connect("activate", self._undoCb)
         self.add_action(self.undo_action)
-        self.add_accelerator("<Control>z", "app.undo", None)
+        self.set_accels_for_action("app.undo", ["<Control>z"])
 
         self.redo_action = Gio.SimpleAction.new("redo", None)
         self.redo_action.connect("activate", self._redoCb)
         self.add_action(self.redo_action)
-        self.add_accelerator("<Control><Shift>z", "app.redo", None)
+        self.set_accels_for_action("app.redo", ["<Control><Shift>z"])
 
         self.quit_action = Gio.SimpleAction.new("quit", None)
         self.quit_action.connect("activate", self._quitCb)
         self.add_action(self.quit_action)
-        self.add_accelerator("<Control>q", "app.quit", None)
+        self.set_accels_for_action("app.quit", ["<Control>q"])
 
     def do_activate(self):
         if self.gui:

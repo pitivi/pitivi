@@ -1428,51 +1428,51 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoom_in_action = Gio.SimpleAction.new("zoom-in", None)
         self.zoom_in_action.connect("activate", self._zoomInCb)
         group.add_action(self.zoom_in_action)
-        self.app.add_accelerator("<Control>plus", "timeline.zoom-in", None)
-        self.app.add_accelerator("<Control>equal", "timeline.zoom-in", None)
-        self.app.add_accelerator("<Control>KP_Add", "timeline.zoom-in", None)
+        self.app.set_accels_for_action("timeline.zoom-in", ["<Control>plus",
+                                                            "<Control>equal",
+                                                            "<Control>KP_Add"])
 
         self.zoom_out_action = Gio.SimpleAction.new("zoom-out", None)
         self.zoom_out_action.connect("activate", self._zoomOutCb)
         group.add_action(self.zoom_out_action)
-        self.app.add_accelerator("<Control>minus", "timeline.zoom-out", None)
-        self.app.add_accelerator("<Control>KP_Subtract", "timeline.zoom-out", None)
+        self.app.set_accels_for_action("timeline.zoom-out", ["<Control>minus",
+                                                             "<Control>KP_Subtract"])
 
         self.zoom_fit_action = Gio.SimpleAction.new("zoom-fit", None)
         self.zoom_fit_action.connect("activate", self._zoomFitCb)
         group.add_action(self.zoom_fit_action)
-        self.app.add_accelerator("<Control>0", "timeline.zoom-fit", None)
+        self.app.set_accels_for_action("timeline.zoom-fit", ["<Control>0"])
 
         # Clips actions.
         self.delete_action = Gio.SimpleAction.new("delete-selected-clips", None)
         self.delete_action.connect("activate", self._deleteSelected)
         group.add_action(self.delete_action)
-        self.app.add_accelerator("Delete", "timeline.delete-selected-clips", None)
+        self.app.set_accels_for_action("timeline.delete-selected-clips", ["Delete"])
 
         self.group_action = Gio.SimpleAction.new("group-selected-clips", None)
         self.group_action.connect("activate", self._groupSelected)
         group.add_action(self.group_action)
-        self.app.add_accelerator("<Control>g", "timeline.group-selected-clips", None)
+        self.app.set_accels_for_action("timeline.group-selected-clips", ["<Control>g"])
 
         self.ungroup_action = Gio.SimpleAction.new("ungroup-selected-clips", None)
         self.ungroup_action.connect("activate", self._ungroupSelected)
         group.add_action(self.ungroup_action)
-        self.app.add_accelerator("<Shift><Control>g", "timeline.ungroup-selected-clips", None)
+        self.app.set_accels_for_action("timeline.ungroup-selected-clips", ["<Shift><Control>g"])
 
         self.copy_action = Gio.SimpleAction.new("copy-selected-clips", None)
         self.copy_action.connect("activate", self.__copyClipsCb)
         group.add_action(self.copy_action)
-        self.app.add_accelerator("<Control>c", "timeline.copy-selected-clips", None)
+        self.app.set_accels_for_action("timeline.copy-selected-clips", ["<Control>c"])
 
         self.paste_action = Gio.SimpleAction.new("paste-clips", None)
         self.paste_action.connect("activate", self.__pasteClipsCb)
         group.add_action(self.paste_action)
-        self.app.add_accelerator("<Control>v", "timeline.paste-clips", None)
+        self.app.set_accels_for_action("timeline.paste-clips", ["<Control>v"])
 
         self.align_action = Gio.SimpleAction.new("align-selected-clips", None)
         self.align_action.connect("activate", self._alignSelectedCb)
         group.add_action(self.align_action)
-        self.app.add_accelerator("<Shift><Control>a", "timeline.align-selected-clips", None)
+        self.app.set_accels_for_action("timeline.align-selected-clips", ["<Shift><Control>a"])
 
         self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
         self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
@@ -1482,18 +1482,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.play_action = Gio.SimpleAction.new("play", None)
         self.play_action.connect("activate", self._playPauseCb)
         group.add_action(self.play_action)
-        self.app.add_accelerator("space", "timeline.play", None)
+        self.app.set_accels_for_action("timeline.play", ["space"])
 
         self.split_action = Gio.SimpleAction.new("split-clips", None)
         self.split_action.connect("activate", self._splitCb)
         group.add_action(self.split_action)
-        self.app.add_accelerator("S", "timeline.split-clips", None)
+        self.app.set_accels_for_action("timeline.split-clips", ["S"])
         self.split_action.set_enabled(True)
 
         self.keyframe_action = Gio.SimpleAction.new("keyframe-selected-clips", None)
         self.keyframe_action.connect("activate", self._keyframe_cb)
         group.add_action(self.keyframe_action)
-        self.app.add_accelerator("K", "timeline.keyframe-selected-clips", None)
+        self.app.set_accels_for_action("timeline.keyframe-selected-clips", ["K"])
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """

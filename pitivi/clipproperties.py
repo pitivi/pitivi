@@ -234,7 +234,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._removeEffectCb)
         effects_actions_group.add_action(self.remove_effect_action)
-        self.app.add_accelerator("Delete", "clipproperties-effects.remove-effect", None)
+        self.app.set_accels_for_action("clipproperties-effects.remove-effect", ["Delete"])
         self.remove_effect_action.set_enabled(False)
         remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
 

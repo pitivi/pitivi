@@ -427,12 +427,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.remove_assets_action = Gio.SimpleAction.new("remove-assets", None)
         self.remove_assets_action.connect("activate", self._removeAssetsCb)
         actions_group.add_action(self.remove_assets_action)
-        self.app.add_accelerator("<Control>Delete", "medialibrary.remove-assets", None)
+        self.app.set_accels_for_action("medialibrary.remove-assets", ["<Control>Delete"])
 
         self.insert_at_end_action = Gio.SimpleAction.new("insert-assets-at-end", None)
         self.insert_at_end_action.connect("activate", self._insertEndCb)
         actions_group.add_action(self.insert_at_end_action)
-        self.app.add_accelerator("Insert", "medialibrary.insert-assets-at-end", None)
+        self.app.set_accels_for_action("medialibrary.insert-assets-at-end", ["Insert"])
 
         self._updateActions()
 
