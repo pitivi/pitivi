@@ -108,10 +108,12 @@ class ProxyManager(GObject.Object, Loggable):
         self.__running_transcoders = []
         self.__pending_transcoders = []
 
+        self.__encoding_target_file = None
         self.proxyingUnsupported = False
         for encoding_format in [ENCODING_FORMAT_JPEG, ENCODING_FORMAT_PRORES]:
             self.__encoding_profile = self.__getEncodingProfile(encoding_format)
             if self.__encoding_profile:
+                self.__encoding_target_file = encoding_format
                 self.info("Using %s as proxying format", encoding_format)
                 break
 
@@ -144,7 +146,7 @@ class ProxyManager(GObject.Object, Loggable):
                         return False
         return True
 
-    def __getEncodingProfile(self, encoding_target_file):
+    def __getEncodingProfile(self, encoding_target_file, asset=None):
         encoding_target = GstPbutils.EncodingTarget.load_from_file(
             os.path.join(get_gstpresets_dir(), encoding_target_file))
         encoding_profile = encoding_target.get_profile("default")
@@ -163,6 +165,25 @@ class ProxyManager(GObject.Object, Loggable):
                     Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.MARGINAL),
                     profile.get_format(), Gst.PadDirection.SINK, False):
                 return None
+
+        if asset:
+            # If we have an asset, we force audioconvert to keep
+            # the number of channels
+            # TODO: remove once https://bugzilla.gnome.org/show_bug.cgi?id=767226
+            # is fixed
+            info = asset.get_info()
+            try:
+                # TODO Be smarter about multiple streams
+                audio_stream = info.get_audio_streams()[0]
+                channels = audio_stream.get_channels()
+                audio_profile = [
+                    profile for profile in encoding_profile.get_profiles()
+                    if isinstance(profile, GstPbutils.EncodingAudioProfile)][0]
+                audio_profile.set_restriction(Gst.Caps.from_string(
+                    "audio/x-raw,channels=%d" % channels))
+            except IndexError:
+                pass
+
         return encoding_profile
 
     def isProxyAsset(self, obj):
@@ -341,8 +362,9 @@ class ProxyManager(GObject.Object, Loggable):
         proxy_uri = self.getProxyUri(asset)
 
         dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
+        encoding_profile = self.__getEncodingProfile(self.__encoding_target_file, asset)
         transcoder = GstTranscoder.Transcoder.new_full(
-            asset_uri, proxy_uri + ".part", self.__encoding_profile,
+            asset_uri, proxy_uri + ".part", encoding_profile,
             dispatcher)
         transcoder.props.position_update_interval = 1000
 
