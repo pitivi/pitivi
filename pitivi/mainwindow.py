@@ -122,6 +122,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def __init__(self, app):
         gtksettings = Gtk.Settings.get_default()
         gtksettings.set_property("gtk-application-prefer-dark-theme", True)
+        theme = gtksettings.get_property("gtk-theme-name")
+        os.environ["GTK_THEME"] = theme + ":dark"
+
         # Pulseaudio "role"
         # (http://0pointer.de/blog/projects/tagging-audio.htm)
         os.environ["PULSE_PROP_media.role"] = "production"
