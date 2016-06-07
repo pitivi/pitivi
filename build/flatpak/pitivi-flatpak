@@ -38,6 +38,8 @@ SDK_REPO=http://sdk.gnome.org/repo/
 # The name to give to the repository if it is not registered in flatpak yet
 SDK_DEFAULT_REPO_NAME=gnome
 
+GST_VERSION=master
+
 # ------------------------------------------- #
 
 FLATPAK=flatpak
@@ -162,6 +164,10 @@ do
     ;;
     --repo-commit-body=*)
     COMMIT_BODY="${i#*=}"
+    shift
+    ;;
+    --gst-version=*)
+    GST_VERSION="${i#*=}"
     shift
     ;;
   esac
@@ -363,7 +369,7 @@ then
   then
     # Update values in the json template
     JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
-    $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH
+    $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH $GST_VERSION
 
     echo "-> Removing prefix $PREFIX"
     rm -Rf $PREFIX

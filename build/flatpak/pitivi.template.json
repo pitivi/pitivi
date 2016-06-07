@@ -296,7 +296,7 @@
         },
         {
             "name": "gst-python",
-            "config-opts": ["--with-pygi-overrides-dir=/app/lib/python3.3/site-packages/gi/overrides/"],
+            "config-opts": ["--with-pygi-overrides-dir=/app/lib/python3.4/site-packages/gi/overrides/"],
             "sources": [
                 {
                     "type": "git",
@@ -329,7 +329,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/thiblahute/gst-transcoder.git"
+                    "url": "https://github.com/pitivi/gst-transcoder.git"
                 },
                 {
                     "type": "file",

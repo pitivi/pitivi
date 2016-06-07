@@ -5,20 +5,25 @@ import os
 import subprocess
 import sys
 
+
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("call with: %s <template_file> <outfile> <basedir>" %
+    if len(sys.argv) != 5:
+        print("call with: %s <template_file> <outfile> <basedir> <gst-version> " %
               sys.argv[0])
 
-    print("-> Generating %s" % sys.argv[2])
     basedir = sys.argv[3]
+    gst_version = sys.argv[4]
     with open(sys.argv[1], "r") as tf:
         template = json.load(tf)
+
+    print("-> Generating %s against GStreamer %s" % (sys.argv[2], gst_version))
 
     for module in template["modules"]:
         if module["sources"][0]["type"] != "git":
             continue
 
+        if module["name"].startswith("gst"):
+            module["sources"][0]["branch"] = gst_version
         repo = os.path.join(basedir, module["name"])
         if not os.path.exists(os.path.join(repo, ".git")):
             print("-> Module: %s using online repo: %s" % (
