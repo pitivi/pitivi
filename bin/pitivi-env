@@ -35,7 +35,7 @@ then
         alias $i="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b $i"
     done
 
-    alias pitivi="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b bin/pitivi"
+    alias pitivi="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b $FLATPAK_ENVPATH/pitivi/bin/pitivi"
 
     export PS1="(ptv-flatpak) $PS1"
     export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
