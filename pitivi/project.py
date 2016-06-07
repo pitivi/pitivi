@@ -989,8 +989,7 @@ class Project(Loggable, GES.Project):
         self.__setProxy(asset, None)
         self.__updateAssetLoadingProgress()
 
-    def __proxyErrorCb(self, unused_proxy_manager, asset, proxy,
-                       error):
+    def __proxyErrorCb(self, unused_proxy_manager, asset, proxy, error):
         if asset is None:
             asset_id = self.app.proxy_manager.getTargetUri(proxy)
             if asset_id:
@@ -1178,9 +1177,15 @@ class Project(Loggable, GES.Project):
         self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
 
     def useProxiesForAssets(self, assets):
+        originals = []
         for asset in assets:
             proxy_target = asset.get_proxy_target()
             if not proxy_target:
+                # The asset is not a proxy.
+                originals.append(asset)
+        if originals:
+            self.app.action_log.begin("Adding assets")
+            for asset in originals:
                 # Add and remove the asset to
                 # trigger the proxy creation code path
                 self.remove_asset(asset)

@@ -96,7 +96,7 @@ class BaseTestMediaLibrary(common.TestCase):
         self.samples = samples
         for sample_name in samples:
             self.app.project_manager.current_project.create_asset(
-                common.get_sample_uri(sample_name), GES.UriClip,)
+                common.get_sample_uri(sample_name), GES.UriClip)
 
     def runCheckImport(self, assets, proxying_strategy=ProxyingStrategy.ALL,
                        check_no_transcoding=False, clean_proxies=True):

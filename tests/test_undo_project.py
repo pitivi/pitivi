@@ -70,6 +70,51 @@ class TestProjectUndo(TestCase):
         self.action_log.redo()
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
 
+    def test_use_proxy(self):
+        # Import an asset.
+        uris = [common.get_sample_uri("tears_of_steel.webm")]
+        mainloop = common.create_main_loop()
+
+        def commit_cb(unused_action_log, stack):
+            self.assertEqual(stack.action_group_name, "Adding assets")
+            mainloop.quit()
+        self.action_log.connect("commit", commit_cb)
+
+        def loaded_cb(unused_project, unused_timeline):
+            self.project.addUris(uris)
+        self.project.connect_after("loaded", loaded_cb)
+
+        mainloop.run()
+        self.action_log.disconnect_by_func(commit_cb)
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
+
+        # Make sure the asset is not a proxy.
+        assets = [GES.UriClipAsset.request_sync(uri) for uri in uris]
+        for asset in assets:
+            self.assertIsNone(asset.get_proxy_target(), "Asset is proxy")
+
+        # Use proxy instead of the asset.
+        mainloop = common.create_main_loop()
+
+        def error_cb(proxy_manager, asset, proxy, error):
+            self.fail("Failed to create proxy: %s" % error)
+        self.app.proxy_manager.connect("error-preparing-asset", error_cb)
+
+        def proxy_ready_cb(proxy_manager, asset, proxy):
+            uris.remove(asset.props.id)
+            if not uris:
+                mainloop.quit()
+        self.app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
+
+        self.project.useProxiesForAssets(assets)
+        mainloop.run()
+
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 2)
+        self.action_log.undo()
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
+        self.action_log.redo()
+        self.assertEqual(len(self.project.list_assets(GES.Extractable)), 2)
+
     def test_project_settings(self):
         window = Gtk.Window()
         dialog = ProjectSettingsDialog(parent_window=window,
