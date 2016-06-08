@@ -1222,7 +1222,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """
         Add clips to the timeline on the first layer.
         """
-        layers = self._getLayers()
+        layers = self.ges_timeline.get_layers()
         layer = layers[0]
         self._insertClipsAndAssets(clips, position, layer)
 
@@ -1382,29 +1382,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _ignoreAllEventsCb(self, *unused_args):
         return True
 
-    def _getLayers(self):
-        """
-        Get the layers of the timeline.
-
-        Makes sure there is at least one layer in the timeline.
-
-        @rtype: list of GES.Layer
-        """
-        layers = self.ges_timeline.get_layers()
-        if not layers:
-            layer = GES.Layer()
-            layer.props.auto_transition = True
-            self.ges_timeline.add_layer(layer)
-            return [layer]
-        return layers
-
     def _getLongestLayer(self):
         """
         Return the longest layer.
         """
-        layers = self._getLayers()
+        layers = self.ges_timeline.get_layers()
         if len(layers) == 1:
             return layers[0]
+
         # Create a list of (layer_length, layer) tuples.
         layer_lengths = [(max([(clip.get_start() + clip.get_duration()) for clip in layer.get_clips()] or [0]), layer)
                          for layer in layers]

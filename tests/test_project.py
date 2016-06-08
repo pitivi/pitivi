@@ -282,36 +282,36 @@ class TestProjectManager(TestCase):
 
 class TestProjectLoading(common.TestCase):
 
-    def testLoadedCallback(self):
+    def test_loaded_callback(self):
         mainloop = common.create_main_loop()
 
-        def loaded(project, timeline, result):
-            result[0] = True
+        def loaded(project, timeline):
+            # If not called, the timeout of the mainloop will fail the test.
             mainloop.quit()
 
         # Create a blank project and save it.
         project = common.create_project()
-        result = [False]
-        project.connect("loaded", loaded, result)
-
-        self.assertTrue(project.createTimeline())
+        project.connect("loaded", loaded)
         mainloop.run()
-        self.assertTrue(
-            result[0], "Blank project creation failed to trigger signal: loaded")
+        # The blank project loading succeeded emitting signal "loaded".
+
+        self.assertIsNotNone(project.ges_timeline)
+        self.assertEqual(len(project.ges_timeline.get_layers()), 1)
 
         # Load the blank project and make sure "loaded" is triggered.
         unused, xges_path = tempfile.mkstemp()
         uri = "file://%s" % xges_path
         try:
+            # Save so we can close it without complaints.
             project.save(project.ges_timeline, uri, None, overwrite=True)
 
             project2 = common.create_project()
-            self.assertTrue(project2.createTimeline())
-            result = [False]
-            project2.connect("loaded", loaded, result)
+            project2.connect("loaded", loaded)
             mainloop.run()
-            self.assertTrue(
-                result[0], "Blank project loading failed to trigger signal: loaded")
+            # The blank project loading succeeded emitting signal "loaded".
+
+            self.assertIsNotNone(project2.ges_timeline)
+            self.assertEqual(len(project2.ges_timeline.get_layers()), 1)
         finally:
             os.remove(xges_path)
 
