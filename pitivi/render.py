@@ -588,7 +588,7 @@ class RenderDialog(Loggable):
             return None
 
         current_filesize = os.stat(path_from_uri(self.outfile)).st_size
-        length = self.app.project_manager.current_project.timeline.props.duration
+        length = self.project.timeline.props.duration
         estimated_size = float(
             current_filesize * float(length) / self.current_position)
         # Now let's make it human-readable (instead of octets).
@@ -711,7 +711,7 @@ class RenderDialog(Loggable):
             ) - self._last_timestamp_when_pausing
             self.debug(
                 "Resuming render after %d seconds in pause", self._time_spent_paused)
-        self.app.project_manager.current_project.pipeline.togglePlayback()
+        self.project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
         """ Handle the completion or the cancellation of the render process. """
@@ -724,8 +724,7 @@ class RenderDialog(Loggable):
             obj.disconnect(id)
         self._gstSigId = {}
         try:
-            self.app.project_manager.current_project.pipeline.disconnect_by_func(
-                self._updatePositionCb)
+            self.project.pipeline.disconnect_by_func(self._updatePositionCb)
         except TypeError:
             # The render was successful, so this was already disconnected
             pass
@@ -828,8 +827,7 @@ class RenderDialog(Loggable):
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
         self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
-        self.app.project_manager.current_project.pipeline.connect(
-            "position", self._updatePositionCb)
+        self.project.pipeline.connect("position", self._updatePositionCb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
         self.app.settings.lastExportFolder = self.filebutton.get_current_folder(
@@ -854,7 +852,7 @@ class RenderDialog(Loggable):
         elif self._is_rendering:
             timediff = time.time() - \
                 self._time_started - self._time_spent_paused
-            length = self.app.project_manager.current_project.timeline.props.duration
+            length = self.project.timeline.props.duration
             totaltime = (timediff * float(length) /
                          float(self.current_position)) - timediff
             time_estimate = beautify_ETA(int(totaltime * Gst.SECOND))
@@ -928,7 +926,7 @@ class RenderDialog(Loggable):
         if not self.progress or not position:
             return
 
-        length = self.app.project_manager.current_project.timeline.props.duration
+        length = self.project.timeline.props.duration
         fraction = float(min(position, length)) / float(length)
         self.progress.updatePosition(fraction)
 
