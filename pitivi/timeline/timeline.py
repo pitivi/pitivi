@@ -893,7 +893,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer = Layer(ges_layer, self)
         ges_layer.ui = layer
         self._layers.append(layer)
-        layer.connect("remove-me", self._removeLayerCb)
 
         control = LayerControls(ges_layer, self.app)
         control.show_all()
@@ -911,9 +910,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__layers_vbox.pack_start(layer_box, True, True, 0)
 
         ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
-
-    def _removeLayerCb(self, layer):
-        self.ges_timeline.remove_layer(layer.ges_layer)
 
     def __layerPriorityChangedCb(self, ges_layer, pspec):
         self.__update_layers()

@@ -352,10 +352,6 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviLayer"
 
-    __gsignals__ = {
-        "remove-me": (GObject.SignalFlags.RUN_LAST, None, (),)
-    }
-
     def __init__(self, ges_layer, timeline):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
