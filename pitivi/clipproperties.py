@@ -259,7 +259,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             self._selection = None
         self._project = project
         if project:
-            self._selection = project.timeline.ui.selection
+            self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
             self.selected_effects = self._selection.getSelectedEffects()
         self.__updateAll()
@@ -307,7 +307,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        pipeline = self._project.timeline.get_parent()
+        pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("remove effect", CommitTimelineFinalizingAction(pipeline)):
             self.__remove_configuration_widget()
             self.effects_properties_manager.cleanCache(effect)
@@ -325,7 +325,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                 # Actually add the effect
-                pipeline = self._project.timeline.get_parent()
+                pipeline = self._project.ges_timeline.get_parent()
                 with self.app.action_log.started("add effect",
                                                  CommitTimelineFinalizingAction(pipeline)):
                     effect = GES.Effect.new(bin_description=factory_name)
@@ -421,7 +421,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         # The paths are different.
         effects = clip.get_top_effects()
         effect = effects[source_index]
-        pipeline = self._project.timeline.get_parent()
+        pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("move effect",
                                          CommitTimelineFinalizingAction(pipeline)):
             clip.set_top_effect_priority(effect, drop_index)
@@ -453,7 +453,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             tck_effect.set_active(not tck_effect.is_active())
             cellrenderertoggle.set_active(tck_effect.is_active())
             self._updateTreeview()
-            self._project.timeline.commit()
+            self._project.ges_timeline.commit()
 
     def _expandedCb(self, unused_expander, unused_params):
         self.__updateAll()
@@ -576,7 +576,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._selection = None
         self._project = project
         if project:
-            self._selection = project.timeline.ui.selection
+            self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
 
     def _initButtons(self):

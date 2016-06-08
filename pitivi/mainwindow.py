@@ -740,7 +740,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             # redirects to it if needed, so we still want it to be enabled:
             self.save_action.set_enabled(True)
 
-        if project.timeline.props.duration != 0:
+        if project.ges_timeline.props.duration != 0:
             self.render_button.set_sensitive(True)
 
     def _projectManagerNewProjectLoadingCb(self, unused_project_manager, project):
@@ -1025,8 +1025,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         project.connect("project-changed", self._projectChangedCb)
         project.connect(
             "rendering-settings-changed", self._renderingSettingsChangedCb)
-        project.timeline.connect("notify::duration",
-                                 self._timelineDurationChangedCb)
+        project.ges_timeline.connect("notify::duration",
+                                     self._timelineDurationChangedCb)
 
 # Missing Plugins Support
 
@@ -1069,7 +1069,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _disconnectFromProject(self, project):
         project.disconnect_by_func(self._projectChangedCb)
         project.disconnect_by_func(self._renderingSettingsChangedCb)
-        project.timeline.disconnect_by_func(self._timelineDurationChangedCb)
+        project.ges_timeline.disconnect_by_func(self._timelineDurationChangedCb)
 
 # Pitivi current project callbacks
 

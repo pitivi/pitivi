@@ -360,7 +360,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._project = project
         if self._project:
             self._project.pipeline.connect('position', self._positionCb)
-            self.ges_timeline = self._project.timeline
+            self.ges_timeline = self._project.ges_timeline
 
         if self.ges_timeline is None:
             return
@@ -1301,7 +1301,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self._project:
             self._project.connect("rendering-settings-changed",
                                   self._renderingSettingsChangedCb)
-            self.ges_timeline = project.timeline
+            self.ges_timeline = project.ges_timeline
         else:
             self.ges_timeline = None
 

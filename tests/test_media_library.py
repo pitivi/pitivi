@@ -169,12 +169,12 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         # Save the project and reload it, making sure there is no asset
         # in that new project
         project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
-        project.save(project.timeline, project_uri, None, True)
+        project.save(project.ges_timeline, project_uri, None, True)
 
         self._customSetUp(project_uri)
         self.assertNotEqual(project, self.app.project_manager.current_project)
-        self.assertEqual(self.app.project_manager.current_project.list_assets(
-            GES.Extractable), [])
+        project = self.app.project_manager.current_project
+        self.assertEqual(project.list_assets(GES.Extractable), [])
 
     def testNewlyImportedAssetSelected(self):
         self.runCheckImport(["30fps_numeroted_frames_red.mkv",

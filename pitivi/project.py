@@ -67,11 +67,15 @@ DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
 
 class ProjectManager(GObject.Object, Loggable):
+    """The project manager.
 
-    """
-    @type app: L{Pitivi}
-    @type current_project: L{Project}
-    @param disable_save: Whether saving is disabled to enforce using save-as.
+    Allows the app to close and then load a different project, handle failures,
+    make automatic backups.
+
+    Attributes:
+        app (Pitivi): The app.
+        current_project (Project): The current project displayed by the app.
+        disable_save (bool): Whether save-as is enforced when saving.
     """
 
     __gsignals__ = {
@@ -348,7 +352,7 @@ class ProjectManager(GObject.Object, Loggable):
             # set to always ask the user on our behalf about overwriting, so
             # if saveProject is actually called, that means overwriting is OK.
             saved = self.current_project.save(
-                self.current_project.timeline, uri,
+                self.current_project.ges_timeline, uri,
                 formatter_type, overwrite=True)
         except Exception as e:
             saved = False
@@ -591,24 +595,19 @@ class ProjectManager(GObject.Object, Loggable):
 
 
 class Project(Loggable, GES.Project):
+    """A Pitivi project.
 
-    """
-    The base class for Pitivi projects
-
-    @ivar name: The name of the project
-    @type name: C{str}
-    @ivar description: A description of the project
-    @type description: C{str}
-    @ivar timeline: The timeline
-    @type timeline: L{GES.Timeline}
-    @ivar pipeline: The timeline's pipeline
-    @type pipeline: L{Pipeline}
-    @ivar loaded: Whether the project is fully loaded or not.
-    @type loaded: C{bool}
+    Attributes:
+        app (Pitivi): The app.
+        name (str): The name of the project.
+        description (str): The description of the project.
+        ges_timeline (GES.Timeline): The timeline.
+        pipeline (Pipeline): The timeline's pipeline.
+        loaded (bool): Whether the project is fully loaded.
 
     Signals:
-     - C{project-changed}: Modifications were made to the project
-     - C{start-importing}: Started to import files
+        project-changed: Modifications were made to the project
+        start-importing: Started to import files
     """
 
     __gsignals__ = {
@@ -629,14 +628,16 @@ class Project(Loggable, GES.Project):
 
     def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
         """
-        @param name: The name of the project, if it's a new empty project.
-        @param uri: The URI of the project it will be loaded from.
+        Args:
+            name (Optional[str]): The name of the new empty project.
+            uri (Optional[str]): The URI of the file where the project should
+                be loaded from.
         """
         Loggable.__init__(self)
         GES.Project.__init__(self, uri=uri, extractable_type=GES.Timeline)
         self.log("name:%s, uri:%s", name, uri)
         self.pipeline = None
-        self.timeline = None
+        self.ges_timeline = None
         self.uri = uri
         self.loaded = False
         self.at_least_one_asset_missing = False
@@ -1116,11 +1117,11 @@ class Project(Loggable, GES.Project):
     def do_loaded(self, unused_timeline):
         """ vmethod, get called on "loaded" """
 
-        if not self.timeline:
+        if not self.ges_timeline:
             return
 
         self._ensureTracks()
-        self.timeline.props.auto_transition = True
+        self.ges_timeline.props.auto_transition = True
         self._ensureLayer()
         self.loaded = True
 
@@ -1220,7 +1221,7 @@ class Project(Loggable, GES.Project):
         scenarialize the action in the scenarios.
         """
         self.app.write_action("commit")
-        GES.Timeline.commit(self.timeline)
+        GES.Timeline.commit(self.ges_timeline)
 
     def createTimeline(self):
         """
@@ -1228,18 +1229,18 @@ class Project(Loggable, GES.Project):
         """
         try:
             # The project is loaded from the file in this call.
-            self.timeline = self.extract()
+            self.ges_timeline = self.extract()
         except GLib.Error as e:
             self.warning("Failed to extract the timeline: %s", e)
-            self.timeline = None
+            self.ges_timeline = None
 
-        if self.timeline is None:
+        if self.ges_timeline is None:
             return False
 
-        self.timeline.commit = self._commit
+        self.ges_timeline.commit = self._commit
         self.pipeline = Pipeline(self.app)
         try:
-            self.pipeline.set_timeline(self.timeline)
+            self.pipeline.set_timeline(self.ges_timeline)
         except PipelineError as e:
             self.warning("Failed to set the pipeline's timeline: %s", e)
             return False
@@ -1254,7 +1255,7 @@ class Project(Loggable, GES.Project):
         caps.set_value("width", width)
         caps.set_value("height", height)
         caps.set_value("framerate", self.videorate)
-        for track in self.timeline.get_tracks():
+        for track in self.ges_timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(caps)
 
@@ -1302,7 +1303,7 @@ class Project(Loggable, GES.Project):
             self.monitor = None
 
         self.pipeline = None
-        self.timeline = None
+        self.ges_timeline = None
 
         return res
 
@@ -1405,24 +1406,24 @@ class Project(Loggable, GES.Project):
     # ------------------------------------------ #
 
     def _ensureTracks(self):
-        if self.timeline is None:
+        if self.ges_timeline is None:
             self.warning("Can't ensure tracks if no timeline set")
             return
 
         track_types = [track.get_property("track-type")
-                       for track in self.timeline.get_tracks()]
+                       for track in self.ges_timeline.get_tracks()]
 
         if GES.TrackType.VIDEO not in track_types:
-            self.timeline.add_track(GES.VideoTrack.new())
+            self.ges_timeline.add_track(GES.VideoTrack.new())
         if GES.TrackType.AUDIO not in track_types:
-            self.timeline.add_track(GES.AudioTrack.new())
+            self.ges_timeline.add_track(GES.AudioTrack.new())
 
     def _ensureLayer(self):
-        if self.timeline is None:
+        if self.ges_timeline is None:
             self.warning("Can't ensure tracks if no timeline set")
             return
-        if not self.timeline.get_layers():
-            self.timeline.append_layer()
+        if not self.ges_timeline.get_layers():
+            self.ges_timeline.append_layer()
 
     def _ensureVideoRestrictions(self):
         if self.videowidth is None:

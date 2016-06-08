@@ -96,7 +96,7 @@ class TestTimelineUndo(TestCase):
         self.app = common.create_pitivi()
         self.app.project_manager.newBlankProject()
 
-        self.timeline = self.app.project_manager.current_project.timeline
+        self.timeline = self.app.project_manager.current_project.ges_timeline
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
 

@@ -588,7 +588,7 @@ class RenderDialog(Loggable):
             return None
 
         current_filesize = os.stat(path_from_uri(self.outfile)).st_size
-        length = self.project.timeline.props.duration
+        length = self.project.ges_timeline.props.duration
         estimated_size = float(
             current_filesize * float(length) / self.current_position)
         # Now let's make it human-readable (instead of octets).
@@ -852,7 +852,7 @@ class RenderDialog(Loggable):
         elif self._is_rendering:
             timediff = time.time() - \
                 self._time_started - self._time_spent_paused
-            length = self.project.timeline.props.duration
+            length = self.project.ges_timeline.props.duration
             totaltime = (timediff * float(length) /
                          float(self.current_position)) - timediff
             time_estimate = beautify_ETA(int(totaltime * Gst.SECOND))
@@ -926,7 +926,7 @@ class RenderDialog(Loggable):
         if not self.progress or not position:
             return
 
-        length = self.project.timeline.props.duration
+        length = self.project.ges_timeline.props.duration
         fraction = float(min(position, length)) / float(length)
         self.progress.updatePosition(fraction)
 

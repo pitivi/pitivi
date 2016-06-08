@@ -271,7 +271,7 @@ class TitleEditor(Loggable):
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None
         if project:
-            self._selection = project.timeline.ui.selection
+            self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
         self._project = project
 

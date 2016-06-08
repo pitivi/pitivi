@@ -303,7 +303,7 @@ class TestProjectLoading(common.TestCase):
         unused, xges_path = tempfile.mkstemp()
         uri = "file://%s" % xges_path
         try:
-            project.save(project.timeline, uri, None, overwrite=True)
+            project.save(project.ges_timeline, uri, None, overwrite=True)
 
             project2 = common.create_project()
             self.assertTrue(project2.createTimeline())

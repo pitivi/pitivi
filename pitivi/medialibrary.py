@@ -1057,7 +1057,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _sourceIsUsed(self, asset):
         """Check if a given URI is present in the timeline"""
-        layers = self._project.timeline.get_layers()
+        layers = self._project.ges_timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
                 if clip.get_asset() == asset:
