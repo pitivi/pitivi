@@ -16,11 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Classes to draw Audio and Video 'previewers', meaning computing
-waveforms from an audio file and thumbnails from a video, and
-drawing them on Cairo surfaces.
-"""
+"""Previewers for the timeline."""
 import os
 import pickle
 import random
@@ -73,9 +69,7 @@ THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 
 
 class PreviewerBin(Gst.Bin, Loggable):
-    """
-    A baseclass for element specialized in gathering datas to create previews
-    """
+    """Baseclass for elements gathering datas to create previews."""
     def __init__(self, bin_desc):
         Gst.Bin.__init__(self)
         Loggable.__init__(self)
@@ -86,16 +80,13 @@ class PreviewerBin(Gst.Bin, Loggable):
         self.add_pad(Gst.GhostPad.new(None, self.internal_bin.srcpads[0]))
 
     def finalize(self, proxy=None):
-        """
-        Finalize the previewer (saving data to file if needed)
-        """
+        """Finalizes the previewer, saving data to the disk if needed."""
         pass
 
 
 class ThumbnailBin(PreviewerBin):
-    """
-    A bin to generate and save thumbnails to a sqlite database
-    """
+    """Bin to generate and save thumbnails to an SQLite database."""
+
     __gproperties__ = {
         "uri": (str,
                 "uri of the media file",
@@ -136,9 +127,7 @@ class ThumbnailBin(PreviewerBin):
         return Gst.Bin.do_post_message(self, message)
 
     def finalize(self, proxy=None):
-        """
-        Finalize the previewer (saving data to file if needed)
-        """
+        """Finalizes the previewer, saving data to file if needed."""
         self.thumb_cache.commit()
         if proxy:
             self.thumb_cache.copy(proxy.get_id())
@@ -158,10 +147,8 @@ class ThumbnailBin(PreviewerBin):
 
 
 class TeedThumbnailBin(ThumbnailBin):
-    """
-    A bin to generate and save thumbnails to a sqlite database and
-    output the stream in another branch
-    """
+    """Bin to generate and save thumbnails to as SQLite database."""
+
     def __init__(self):
         ThumbnailBin.__init__(
             self, bin_desc="tee name=t ! queue  "
@@ -175,9 +162,8 @@ class TeedThumbnailBin(ThumbnailBin):
 
 # pylint: disable=too-many-instance-attributes
 class WaveformPreviewer(PreviewerBin):
-    """
-    A bin to generate and save waveforms as pickle file
-    """
+    """Bin to generate and save waveforms as a pickle file."""
+
     __gproperties__ = {
         "uri": (str,
                 "uri of the media file",
@@ -256,9 +242,7 @@ class WaveformPreviewer(PreviewerBin):
         return Gst.Bin.do_post_message(self, message)
 
     def finalize(self, proxy=None):
-        """
-        Finalize the previewer (saving data to file if needed)
-        """
+        """Finalizes the previewer, saving data to file if needed."""
         if not self.passthrough and self.peaks:
             # Let's go mono.
             if len(self.peaks) > 1:
@@ -287,112 +271,93 @@ Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
 
 # pylint: disable=too-few-public-methods
 class PreviewGeneratorManager():
-    """
-    Manage the execution of Previewers preview generation
-    """
+    """Manager for running the previewers."""
 
     def __init__(self):
         # The current Previewer per GES.TrackType.
-        self._cpipeline = {}
+        self._current_previewers = {}
         # The queue of Previewers.
-        self._pipelines = {
+        self._previewers = {
             GES.TrackType.AUDIO: [],
             GES.TrackType.VIDEO: []
         }
 
-    def addPipeline(self, pipeline):
-        """
-        Add a pipeline to the list of controlled pipelines
+    def add_previewer(self, previewer):
+        """Adds the specified previewer to the queue.
 
         Args:
-            pipeline (Gst.Pipeline): The pipeline to control
+            previewer (Previewer): The previewer to control.
         """
-        track_type = pipeline.track_type
+        track_type = previewer.track_type
 
-        current_pipeline = self._cpipeline.get(track_type)
-        if pipeline in self._pipelines[track_type] or \
-                pipeline is current_pipeline:
+        current = self._current_previewers.get(track_type)
+        if previewer in self._previewers[track_type] or previewer is current:
             # Already in the queue or already processing.
             return
 
-        if not self._pipelines[track_type] and current_pipeline is None:
-            self._setPipeline(pipeline)
+        if not self._previewers[track_type] and current is None:
+            self._start_previewer(previewer)
         else:
-            self._pipelines[track_type].insert(0, pipeline)
+            self._previewers[track_type].insert(0, previewer)
 
-    def _setPipeline(self, pipeline):
-        self._cpipeline[pipeline.track_type] = pipeline
-        pipeline.connect("done", self._nextPipeline)
-        pipeline.startGeneration()
+    def _start_previewer(self, previewer):
+        self._current_previewers[previewer.track_type] = previewer
+        previewer.connect("done", self.__previewer_done_cb)
+        previewer.startGeneration()
 
-    def _nextPipeline(self, controlled):
-        track_type = controlled.track_type
-        pipeline = self._cpipeline.pop(track_type, None)
-        if pipeline:
-            pipeline.disconnect_by_func(self._nextPipeline)
+    def __previewer_done_cb(self, previewer):
+        track_type = previewer.track_type
+        next_previewer = self._current_previewers.pop(track_type, None)
+        if next_previewer:
+            next_previewer.disconnect_by_func(self.__previewer_done_cb)
 
-        if self._pipelines[track_type]:
-            self._setPipeline(self._pipelines[track_type].pop())
+        if self._previewers[track_type]:
+            self._start_previewer(self._previewers[track_type].pop())
 
 
 class Previewer(Gtk.Layout):
+    """Base class for previewers.
 
-    """
-    Interface to be implemented by classes that generate previews
-    It is need to implement it so PreviewGeneratorManager can manage
-    those classes
+    Attributes:
+        track_type (GES.TrackType): The type of content.
     """
 
-    # We only want one instance of PreviewGeneratorManager to be used for
-    # all the generators.
+    # We only need one PreviewGeneratorManager to manage all previewers.
     __manager = PreviewGeneratorManager()
 
     def __init__(self, track_type):
-        """
-        @param track_type : GES.TrackType.*
-        """
         Gtk.Layout.__init__(self)
 
         self.track_type = track_type
 
     def startGeneration(self):
-        """
-        Start preview generation
-        """
+        """Starts preview generation."""
         raise NotImplementedError
 
     def stopGeneration(self):
-        """
-        Stop preview generation
-        """
+        """Stops preview generation."""
         raise NotImplementedError
 
     def becomeControlled(self):
-        """
-        Let the PreviewGeneratorManager control our execution
-        """
-        Previewer.__manager.addPipeline(self)
+        """Lets the PreviewGeneratorManager control our execution."""
+        Previewer.__manager.add_previewer(self)
 
     def setSelected(self, selected):
-        """
-        Mark a previewer as being selected
-        """
+        """Marks this instance as being selected."""
         pass
 
 
 class VideoPreviewer(Previewer, Zoomable, Loggable):
+    """A video previewer widget, drawing thumbnails.
+
+    Attributes:
+        ges_elem (GES.TrackElement): The previewed element.
     """
-    A video previewer widget, drawing thumbnails
-    """
-    # We could define them in PreviewGenerator, but then for some reason they
-    # are ignored.
+
+    # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
     def __init__(self, ges_elem):
-        """
-        @param ges_elem : the backend GES.TrackElement
-        @param track : the track to which the ges_elem belongs
-        """
         Previewer.__init__(self, GES.TrackType.VIDEO)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -440,8 +405,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     # Internal API
     def _setupPipeline(self):
-        """
-        Create the pipeline.
+        """Creates the pipeline.
 
         It has the form "playbin ! thumbnailsink" where thumbnailsink
         is a Bin made out of "videorate ! capsfilter ! gdkpixbufsink"
@@ -488,22 +452,23 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.pipeline.get_bus().connect("message", self.__bus_message_handler)
 
     def _checkCPU(self):
-        """
-        Check the CPU usage and adjust the time interval (+10 or -10%) at
-        which the next thumbnail will be generated. Even then, it will only
+        """Adjusts when the next thumbnail is generated.
+
+        Checks the CPU usage and adjusts the waiting time at which the next
+        thumbnail will be generated +/- 10%. Even then, it will only
         happen when the gobject loop is idle to avoid blocking the UI.
         """
         usage_percent = self.cpu_usage_tracker.usage()
         if usage_percent < THUMBNAILS_CPU_USAGE:
             self.interval *= 0.9
             self.log(
-                'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"' %
-                (self.interval, filename_from_uri(self.uri)))
+                'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"',
+                self.interval, filename_from_uri(self.uri))
         else:
             self.interval *= 1.1
             self.log(
-                'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"' %
-                (self.interval, filename_from_uri(self.uri)))
+                'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"',
+                self.interval, filename_from_uri(self.uri))
         self.cpu_usage_tracker.reset()
         self._thumb_cb_id = GLib.timeout_add(self.interval,
                                              self._create_next_thumb,
@@ -602,9 +567,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.remove(child)
 
     def _addVisibleThumbnails(self, rect):
-        """
-        Get the thumbnails to be displayed in the currently visible clip portion
-        """
+        """Gets the thumbnails for the currently visible clip portion."""
         if self.thumb_width is None:
             return False
 
@@ -637,9 +600,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         return True
 
     def _get_wish(self):
-        """
-        Returns a wish that is also in the queue, or None if no such wish exists
-        """
+        """Returns a wish that is also in the queue, if any."""
         while True:
             if not self.wishlist:
                 return None
@@ -729,9 +690,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.emit("done")
 
     def cleanup(self):
-        """
-        Stop preview generation and cleanup object
-        """
+        """Stops preview generation and cleans the object."""
         self.stopGeneration()
         Zoomable.__del__(self)
 
@@ -752,9 +711,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
 
 class Thumbnail(Gtk.Image):
-    """
-    Simple widget representing a Thumbnail
-    """
+    """Simple widget representing a Thumbnail."""
+
     def __init__(self, width, height):
         Gtk.Image.__init__(self)
         self.width = width
@@ -767,12 +725,14 @@ CACHES = {}
 
 # pylint: disable=invalid-name
 def getThumbnailCache(obj):
-    """
-    Get a ThumbnailCache for @obj
+    """Gets a ThumbnailCache for the specified object.
 
     Args:
-      obj: The object for which to get a ThumbnailCache, it can be a string or
-           a GES.UriClipAsset
+        obj (str or GES.UriClipAsset): The object for which to get a cache,
+            it can be a string ora GES.UriClipAsset
+
+    Returns:
+        ThumbnailCache: The cache for the object.
     """
     if isinstance(obj, str):
         uri = obj
@@ -788,11 +748,11 @@ def getThumbnailCache(obj):
 
 
 class ThumbnailCache(Loggable):
-
-    """Caches thumbnails by key using LRU policy, implemented with heapq.
+    """Caches thumbnails by key using LRU policy.
 
     Uses a two stage caching mechanism. A limited number of elements are
-    held in memory, the rest is being cached on disk using an sqlite db."""
+    held in memory, the rest is being cached on disk in an SQLite db.
+    """
 
     def __init__(self, uri):
         Loggable.__init__(self)
@@ -807,8 +767,7 @@ class ThumbnailCache(Loggable):
                           Jpeg BLOB NOT NULL)")
 
     def copy(self, uri):
-        """
-        Copy @self to @uri
+        """Copies `self` to the specified `uri`.
 
         Args:
             uri (str): The place where to copy/save the ThumbnailCache
@@ -820,11 +779,10 @@ class ThumbnailCache(Loggable):
         os.symlink(self._dbfile, dbfile)
 
     def getImagesSize(self):
-        """
-        Get the image size
+        """Gets the image size.
+
         Returns:
-            int: The width of the images contained in the cache
-            int: The height of the images contained in the cache
+            List[int]: The width and height of the images in the cache.
         """
         self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
         row = self._cur.fetchone()
@@ -835,9 +793,7 @@ class ThumbnailCache(Loggable):
         return pixbuf.get_width(), pixbuf.get_height()
 
     def getPreviewThumbnail(self):
-        """
-        Get a thumbnail contained 'at the middle' of the cache
-        """
+        """Gets a thumbnail contained 'at the middle' of the cache."""
         self._cur.execute("SELECT Time FROM Thumbs")
         timestamps = self._cur.fetchall()
         if not timestamps:
@@ -881,9 +837,7 @@ class ThumbnailCache(Loggable):
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
 
     def commit(self):
-        """
-        Save the cache on disk (in the database)
-        """
+        """Saves the cache on disk (in the database)."""
         self.debug(
             'Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
@@ -893,9 +847,8 @@ class ThumbnailCache(Loggable):
 
 
 class PipelineCpuAdapter(Loggable):
+    """Pipeline manager modulating the rate of the provided pipeline.
 
-    """
-    This pipeline manager will modulate the rate of the provided pipeline.
     It is the responsibility of the caller to set the sync of the sink to True,
     disable QOS and provide a pipeline with a rate of 1.0.
     Doing otherwise would be cheating. Cheating is bad.
@@ -914,18 +867,16 @@ class PipelineCpuAdapter(Loggable):
         self._bus_cb_id = None
 
     def start(self):
-        """
-        Start modulating the rate on the controlled pipeline to
-        avoid using too much CPU
+        """Start modulating the rate on the controlled pipeline.
+
+        This avoid using too much CPU.
         """
         GLib.timeout_add(200, self._modulateRate)
         self._bus_cb_id = self.bus.connect("message", self._messageCb)
         self.done = False
 
     def stop(self):
-        """
-        Stop modulating the rate on the controlled pipeline
-        """
+        """Stops modulating the rate on the controlled pipeline."""
         if self._bus_cb_id is not None:
             self.bus.disconnect(self._bus_cb_id)
             self._bus_cb_id = None
@@ -933,9 +884,7 @@ class PipelineCpuAdapter(Loggable):
         self.done = True
 
     def _modulateRate(self):
-        """
-        Adapt the rate of audio playback (analysis) depending on CPU usage.
-        """
+        """Adapts the rate of audio analysis depending on CPU usage."""
         if self.done:
             return False
 
@@ -1000,9 +949,7 @@ class PipelineCpuAdapter(Loggable):
 
 
 def get_wavefile_location_for_uri(uri):
-    """
-    Compute the URI where the pickled wave file should be stored
-    """
+    """Computes the URI where the pickled wave file should be stored."""
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
@@ -1010,10 +957,7 @@ def get_wavefile_location_for_uri(uri):
 
 
 class AudioPreviewer(Previewer, Zoomable, Loggable):
-
-    """
-    Audio previewer based on the results from the "level" gstreamer element.
-    """
+    """Audio previewer using the results from the "level" GStreamer element."""
 
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
@@ -1053,9 +997,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._force_redraw = True
 
     def startLevelsDiscoveryWhenIdle(self):
-        """
-        Start processing waveform (whenever possible)
-        """
+        """Starts processing waveform (whenever possible)."""
         self.debug('Waiting for UI to become idle for: %s',
                    filename_from_uri(self._uri))
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
@@ -1219,8 +1161,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.emit("done")
 
     def cleanup(self):
-        """
-        Stop preview generation and cleanup object
-        """
+        """Stops preview generation and cleans the object."""
         self.stopGeneration()
         Zoomable.__del__(self)

@@ -66,14 +66,17 @@ def format_ns(timestamp):
 
 
 def call_false(function, *args, **kwargs):
-    """ Helper function for calling an arbitrary function once in the gobject
-        mainloop.  Any positional or keyword arguments after the function will
-        be provided to the function.
+    """Calls the specified function and returns False.
 
-    @param function: the function to call
-    @type function: callable({any args})
-    @returns: False
-    @rtype: bool
+    Helper function for calling an arbitrary function once in the gobject
+    mainloop.  Any positional or keyword arguments after the function will
+    be provided to the function.
+
+    Args:
+        function (function): The function to call.
+
+    Returns:
+        bool: False
     """
     function(*args, **kwargs)
     return False
@@ -97,9 +100,7 @@ def get_proxy_target(obj):
 # ------------------------------ URI helpers --------------------------------
 
 def isWritable(path):
-    """
-    Return whether the file/path is writable.
-    """
+    """Returns whether the file/path is writable."""
     try:
         if os.path.isdir(path):
             # The given path is an existing directory.
@@ -117,13 +118,12 @@ def isWritable(path):
 
 
 def uri_is_valid(uri):
-    """
-    Checks if the given uri is a valid uri (of type file://)
+    """Checks if the specified URI is usable (of type file://).
 
     Will also check if the size is valid (> 0).
 
-    @param uri: The location to check
-    @type uri: C{str}
+    Args:
+        uri (str): The location to check.
     """
     return (Gst.uri_is_valid(uri) and
             Gst.uri_get_protocol(uri) == "file" and
@@ -131,12 +131,13 @@ def uri_is_valid(uri):
 
 
 def uri_is_reachable(uri):
-    """
-    Check whether the given uri is reachable by GStreamer.
+    """Checks whether the specified URI is reachable by GStreamer.
 
-    @param uri: The location to check
-    @type uri: C{str}
-    @return: Whether the uri is reachable.
+    Args:
+        uri (str): The location to check.
+
+    Returns:
+        bool: True when the URI is reachable, False otherwise.
     """
     if not uri_is_valid(uri):
         raise NotImplementedError(
@@ -147,25 +148,26 @@ def uri_is_reachable(uri):
 
 
 def path_from_uri(raw_uri):
-    """
-    Return a path that can be used with Python's os.path.
-    """
+    """Returns a path that can be used with Python's os.path."""
     uri = urlparse(raw_uri)
     assert uri.scheme == "file"
     return unquote(uri.path)
 
 
 def filename_from_uri(uri):
-    """
-    Return a human-readable filename (excluding the path to the file) to be
-    used in UI elements or to shorten debug statements
+    """Returns a filename for display.
+
+    Excludes the path to the file.
+
+    Can be used in UI elements or to shorten debug statements.
     """
     return os.path.basename(path_from_uri(uri))
 
 
 def quote_uri(uri):
-    """
-    Encode a URI/path according to RFC 2396, without touching the file:/// part.
+    """Encodes a URI according to RFC 2396.
+
+    Does not touch the file:/// part.
     """
     # Split off the "file:///" part, if present.
     parts = urlsplit(uri, allow_fragments=False)
@@ -177,14 +179,11 @@ def quote_uri(uri):
 
 
 class PathWalker(Thread):
-
-    """
-    Thread for recursively searching in a list of directories
-    """
+    """Thread for recursively searching in a list of directories."""
 
     def __init__(self, paths, callback):
         Thread.__init__(self)
-        self.log("New PathWalker for %s" % paths)
+        self.log("New PathWalker for %s", paths)
         self.paths = paths
         self.callback = callback
         self.stopme = threading.Event()
@@ -209,7 +208,7 @@ class PathWalker(Thread):
 
 
 def hash_file(uri):
-    """Hashes the first 256KB of the specified file"""
+    """Hashes the first 256KB of the specified file."""
     sha256 = hashlib.sha256()
     with open(uri, "rb") as file:
         for _ in range(1024):
@@ -227,7 +226,8 @@ def quantize(input, interval):
 def binary_search(elements, value):
     """Returns the index of the element closest to value.
 
-    @param elements: A sorted list.
+    Args:
+        elements (List): A sorted list.
     """
     if not elements:
         return -1
@@ -247,9 +247,13 @@ def binary_search(elements, value):
 
 
 def show_user_manual(page=None):
-    """
-    Display the user manual with Yelp.
-    Optional: for contextual help, a page ID can be specified.
+    """Displays the user manual.
+
+    First tries with Yelp and then tries opening the online version.
+
+    Args:
+        page (Optional[str]): A page ID to display instead of the index page,
+            for contextual help.
     """
     def get_page_uri(uri, page):
         if page is not None:

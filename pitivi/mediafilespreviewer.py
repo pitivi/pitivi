@@ -69,12 +69,10 @@ ACCEPTABLE_TAGS = [
 
 
 class PreviewWidget(Gtk.Grid, Loggable):
+    """Widget for displaying a GStreamer sink with playback controls.
 
-    """
-    Widget for displaying a GStreamer sink with playback controls.
-
-    @ivar settings: The settings of the app.
-    @type settings: L{GlobalSettings}
+    Args:
+        settings (GlobalSettings): The settings of the app.
     """
 
     def __init__(self, settings, minimal=False):
@@ -173,9 +171,13 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.bbox.remove(self.b_zoom_in)
             self.bbox.remove(self.b_zoom_out)
 
-    def add_preview_request(self, dialogbox):
-        """add a preview request """
-        uri = dialogbox.get_preview_uri()
+    def update_preview_cb(self, file_chooser):
+        """Previews the URI of the specified file chooser.
+
+        Args:
+            file_chooser (Gtk.FileChooser): The file chooser providing the URI.
+        """
+        uri = file_chooser.get_preview_uri()
         if uri is None or not uri_is_valid(uri):
             return
         self.previewUri(uri)

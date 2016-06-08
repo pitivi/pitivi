@@ -70,10 +70,7 @@ _LEVEL_NAMES = ['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG']
 
 
 class TerminalController:
-
-    """
-    A class that can be used to portably generate formatted output to
-    a terminal.
+    """A class for generating formatted output to a terminal.
 
     `TerminalController` defines a set of instance variables whose
     values are initialized to the control sequence necessary to
@@ -81,13 +78,13 @@ class TerminalController:
     output to the terminal:
 
         >>> term = TerminalController()
-        >>> print 'This is '+term.GREEN+'green'+term.NORMAL
+        >>> print('This is '+term.GREEN+'green'+term.NORMAL)
 
     Alternatively, the `render()` method can used, which replaces
     '${action}' with the string required to perform 'action':
 
         >>> term = TerminalController()
-        >>> print term.render('This is ${GREEN}green${NORMAL}')
+        >>> print(term.render('This is ${GREEN}green${NORMAL}'))
 
     If the terminal doesn't support a given action, then the value of
     the corresponding instance variable will be set to ''.  As a
@@ -99,10 +96,15 @@ class TerminalController:
 
         >>> term = TerminalController()
         >>> if term.CLEAR_SCREEN:
-        ...     print 'This terminal supports clearning the screen.'
+        ...     print('This terminal supports clearning the screen.')
 
     Finally, if the width and height of the terminal are known, then
     they will be stored in the `COLS` and `LINES` attributes.
+
+    Args:
+        term_stream (Optional): The stream that will be used for terminal
+            output; if this stream is not a tty, then the terminal is
+            assumed to be a dumb terminal (i.e., have no capabilities).
     """
     # Cursor movement:
     BOL = ''             # : Move the cursor to the beginning of the line
@@ -148,13 +150,6 @@ class TerminalController:
     _ANSICOLORS = "BLACK RED GREEN YELLOW BLUE MAGENTA CYAN WHITE".split()
 
     def __init__(self, term_stream=sys.stdout):
-        """
-        Create a `TerminalController` and initialize its attributes
-        with appropriate values for the current terminal.
-        `term_stream` is the stream that will be used for terminal
-        output; if this stream is not a tty, then the terminal is
-        assumed to be a dumb terminal (i.e., have no capabilities).
-        """
         # Curses isn't available on all platforms
         try:
             import curses
@@ -211,10 +206,10 @@ class TerminalController:
         return re.sub(r'\$<\d+>[/*]?', '', cap.decode()).encode()
 
     def render(self, template):
-        """
-        Replace each $-substitutions in the given template string with
-        the corresponding terminal control string (if it's defined) or
-        '' (if it's not).
+        """Replaces each $-substitutions in the specified template string.
+
+        The placeholders are replaced with the corresponding terminal control
+        string (if it's defined) or '' (if it's not).
         """
         return re.sub(r'\$\$|\${\w+}', self._render_sub, template)
 
@@ -231,9 +226,9 @@ class TerminalController:
 
 
 class ProgressBar:
+    """A 3-line progress bar.
 
-    """
-    A 3-line progress bar, which looks like::
+    Looks like this:
 
                                 Header
         20% [===========----------------------------------]
@@ -242,6 +237,7 @@ class ProgressBar:
     The progress bar is colored, if the terminal supports color
     output; and adjusts to the width of the terminal.
     """
+
     BAR = '%3d%% ${GREEN}[${BOLD}%s%s${NORMAL}${GREEN}]${NORMAL}\n'
     HEADER = '${BOLD}${CYAN}%s${NORMAL}\n\n'
 
@@ -275,12 +271,13 @@ class ProgressBar:
 
 
 def getLevelName(level):
-    """
-    Return the name of a log level.
-    @param level: The level we want to know the name
-    @type level: int
-    @return: The name of the level
-    @rtype: str
+    """Returns the name of the specified log level.
+
+    Args:
+        level (int): The level we want to know the name.
+
+    Returns:
+        str: The name of the level.
     """
     assert isinstance(level, int) and level > 0 and level < 7, \
         TypeError("Bad debug level")
@@ -288,21 +285,22 @@ def getLevelName(level):
 
 
 def getLevelNames():
-    """
-    Return a list with the level names
-    @return: A list with the level names
-    @rtype: list of str
+    """Returns a list with the level names.
+
+    Returns:
+        List[str]: A list with the level names.
     """
     return _LEVEL_NAMES
 
 
 def getLevelInt(levelName):
-    """
-    Return the integer value of the levelName.
-    @param levelName: The string value of the level name
-    @type levelName: str
-    @return: The value of the level name we are interested in.
-    @rtype: int
+    """Returns the integer value of the levelName.
+
+    Args:
+        levelName (str): The string value of the level name.
+
+    Returns:
+        int: The value of the level name we are interested in.
     """
     assert isinstance(levelName, str) and levelName in getLevelNames(), \
         "Bad debug level name"
@@ -316,8 +314,8 @@ def getFormattedLevelName(level):
 
 
 def registerCategory(category):
-    """
-    Register a given category in the debug system.
+    """Registers the specified category in the debug system.
+
     A level will be assigned to it based on previous calls to setDebug.
     """
     # parse what level it is set to based on _DEBUG
@@ -352,11 +350,13 @@ def registerCategory(category):
 
 
 def getCategoryLevel(category):
-    """
-    @param category: string
+    """Gets the debug level at which the specified category is being logged.
 
-    Get the debug level at which this category is being logged, adding it
-    if it wasn't registered yet.
+    Registers the category and thus assigns a log level if it wasn't registered
+    yet.
+
+    Args:
+        category (string): The category we are interested in.
     """
     global _categories
     if category not in _categories:
@@ -365,10 +365,13 @@ def getCategoryLevel(category):
 
 
 def setLogSettings(state):
-    """Update the current log settings.
+    """Updates the current log settings.
+
     This can restore an old saved log settings object returned by
-    getLogSettings
-    @param state: the settings to set
+    getLogSettings.
+
+    Args:
+        state: The settings to set.
     """
 
     global _DEBUG
@@ -386,9 +389,12 @@ def setLogSettings(state):
 
 def getLogSettings():
     """Fetches the current log settings.
+
     The returned object can be sent to setLogSettings to restore the
     returned settings
-    @returns: the current settings
+
+    Returns:
+        The current settings.
     """
     return (_DEBUG,
             _categories,
@@ -419,18 +425,16 @@ def scrubFilename(filename):
 
 
 def getFileLine(where=-1):
-    """
-    Return the filename and line number for the given location.
+    """Returns the filename and line number for the specified location.
 
-    If where is a negative integer, look for the code entry in the current
-    stack that is the given number of frames above this module.
-    If where is a function, look for the code entry of the function.
+    Args:
+        where(int or function): If it's a (negative) integer, looks for
+            the code entry in the current stack that is the given number
+            of frames above this module.
+            If it's a function, look for the code entry of the function.
 
-    @param where: how many frames to go back up, or function
-    @type  where: int (negative) or function
-
-    @return: tuple of (file, line, function_name)
-    @rtype:  tuple of (str, int, str)
+    Returns:
+        str, int, str: file, line, function_name.
     """
     co = None
     lineno = None
@@ -462,9 +466,7 @@ def getFileLine(where=-1):
 
 
 def ellipsize(o):
-    """
-    Ellipsize the representation of the given object.
-    """
+    """Ellipsizes the representation of the given object."""
     r = repr(o)
     if len(r) < 800:
         return r
@@ -474,8 +476,8 @@ def ellipsize(o):
 
 
 def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
-    """
-    Helper function to create a format and args to use for logging.
+    """Creates a format and args to use for logging.
+
     This avoids needlessly interpolating variables.
     """
     debugArgs = startArgs[:]
@@ -494,22 +496,22 @@ def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
 
 
 def doLog(level, object, category, format, args, where=-1, filePath=None, line=None):
-    """
-    @param where:     what to log file and line number for;
-                      -1 for one frame above log.py; -2 and down for higher up;
-                      a function for a (future) code object
-    @type  where:     int or callable
-    @param filePath:  file to show the message as coming from, if caller
-                      knows best
-    @type  filePath:  str
-    @param line:      line to show the message as coming from, if caller
-                      knows best
-    @type  line:      int
+    """Logs something.
 
-    @return: dict of calculated variables, if they needed calculating.
-             currently contains file and line; this prevents us from
-             doing this work in the caller when it isn't needed because
-             of the debug level
+    Args:
+        where (int or function): What to log file and line number for;
+            -1 for one frame above log.py; -2 and down for higher up;
+            a function for a (future) code object.
+        filePath (Optional[str]): The file to show the message as coming from,
+            if caller knows best.
+        line (Optional[int]): The line to show the message as coming from,
+            if caller knows best.
+
+    Returns:
+        A dict of calculated variables, if they needed calculating.
+        currently contains file and line; this prevents us from
+        doing this work in the caller when it isn't needed because
+        of the debug level.
     """
     ret = {}
 
@@ -542,53 +544,49 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
 
 
 def errorObject(object, cat, format, *args):
-    """
-    Log a fatal error message in the given category.
-    This will also raise a L{SystemExit}.
+    """Logs a fatal error message in the specified category.
+
+    This will also raise a `SystemExit`.
     """
     doLog(ERROR, object, cat, format, args)
 
 
 def warningObject(object, cat, format, *args):
-    """
-    Log a warning message in the given category.
+    """Logs a warning message in the specified category.
+
     This is used for non-fatal problems.
     """
     doLog(WARN, object, cat, format, args)
 
 
 def fixmeObject(object, cat, format, *args):
-    """
-    Log a fixme message in the given category.
-    This is used for not implemented codepaths or known issues in the code
+    """Logs a fixme message in the specified category.
+
+    This is used for not implemented codepaths or known issues in the code.
     """
     doLog(FIXME, object, cat, format, args)
 
 
 def infoObject(object, cat, format, *args):
-    """
-    Log an informational message in the given category.
-    """
+    """Logs an informational message in the specified category."""
     doLog(INFO, object, cat, format, args)
 
 
 def debugObject(object, cat, format, *args):
-    """
-    Log a debug message in the given category.
-    """
+    """Logs a debug message in the specified category."""
     doLog(DEBUG, object, cat, format, args)
 
 
 def logObject(object, cat, format, *args):
-    """
-    Log a log message.  Used for debugging recurring events.
+    """Logs a log message.
+
+    Used for debugging recurring events.
     """
     doLog(LOG, object, cat, format, args)
 
 
 def safeprintf(file, format, *args):
-    """Write to a file object, ignoring errors.
-    """
+    """Writes to a file object, ignoring errors."""
     try:
         if args:
             file.write(format % args)
@@ -603,15 +601,16 @@ def safeprintf(file, format, *args):
 
 
 def printHandler(level, object, category, file, line, message):
-    """
-    A log handler that writes to stderr.
+    """Writes to stderr.
+
     The output will be different depending the value of "_enableCrackOutput";
     in Pitivi's case, that is True when the GST_DEBUG env var is defined.
 
-    @type level:    string
-    @type object:   string (or None)
-    @type category: string
-    @type message:  string
+    Args:
+        level (str):
+        object (str): Can be None.
+        category (str):
+        message (str):
     """
     global _outfile
 
@@ -671,10 +670,13 @@ def _preformatLevels(enableColorOutput):
 
 
 def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
-    """
-    Initialize the logging system and parse the environment variable
-    of the given name.
-    Needs to be called before starting the actual application.
+    """Initializes the logging system.
+
+    Needs to be called before using the log methods.
+
+    Args:
+        envVarName (str): The name of the environment variable with additional
+            settings.
     """
     global _initialized
     global _outfile
@@ -706,7 +708,10 @@ def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
 
 
 def setDebug(string):
-    """Set the DEBUG string.  This controls the log output."""
+    """Sets the DEBUG string.
+
+    This controls the log output.
+    """
     global _DEBUG
     global _ENV_VAR_NAME
     global _categories
@@ -720,30 +725,26 @@ def setDebug(string):
 
 
 def getDebug():
-    """
-    Returns the currently active DEBUG string.
-    @rtype: str
-    """
+    """Returns the currently active DEBUG string."""
     global _DEBUG
     return _DEBUG
 
 
 def setPackageScrubList(*packages):
-    """
-    Set the package names to scrub from filenames.
+    """Sets the package names to scrub from filenames.
+
     Filenames from these paths in log messages will be scrubbed to their
     relative file path instead of the full absolute path.
 
-    @type packages: list of str
+    Args:
+        *packages (List[str]): The packages names to scrub.
     """
     global _PACKAGE_SCRUB_LIST
     _PACKAGE_SCRUB_LIST = packages
 
 
 def reset():
-    """
-    Resets the logging system, removing all log handlers.
-    """
+    """Resets the logging system, removing all log handlers."""
     global _log_handlers, _log_handlers_limited, _initialized
 
     _log_handlers = []
@@ -752,16 +753,19 @@ def reset():
 
 
 def addLogHandler(func):
-    """
-    Add a custom log handler.
+    """Adds a custom log handler.
 
-    @param func: a function object with prototype (level, object, category,
-                 message) where level is either ERROR, WARN, INFO, DEBUG, or
-                 LOG, and the rest of the arguments are strings or None. Use
-                 getLevelName(level) to get a printable name for the log level.
-    @type func:  a callable function
+    The log handler receives all the log messages.
 
-    @raises TypeError: if func is not a callable
+    Args:
+        func (function): A function object with prototype
+            (level, object, category, message) where level is either
+            ERROR, WARN, INFO, DEBUG, or LOG, and the rest of the arguments are
+            strings or None. Use getLevelName(level) to get a printable name
+            for the log level.
+
+    Raises:
+        TypeError: When func is not a callable.
     """
 
     if not isinstance(func, collections.Callable):
@@ -772,16 +776,19 @@ def addLogHandler(func):
 
 
 def addLimitedLogHandler(func):
-    """
-    Add a custom log handler.
+    """Adds a custom limited log handler.
 
-    @param func: a function object with prototype (level, object, category,
-                 message) where level is either ERROR, WARN, INFO, DEBUG, or
-                 LOG, and the rest of the arguments are strings or None. Use
-                 getLevelName(level) to get a printable name for the log level.
-    @type func:  a callable function
+    The log handler receives only the messages passing the filter.
 
-    @raises TypeError: TypeError if func is not a callable
+    Args:
+        func (function): A function object with prototype
+            (level, object, category, message) where level is either
+            ERROR, WARN, INFO, DEBUG, or LOG, and the rest of the arguments are
+            strings or None. Use getLevelName(level) to get a printable name
+            for the log level.
+
+    Raises:
+        TypeError: When func is not a callable.
     """
     if not isinstance(func, collections.Callable):
         raise TypeError("func must be callable")
@@ -791,31 +798,19 @@ def addLimitedLogHandler(func):
 
 
 def removeLogHandler(func):
-    """
-    Remove a registered log handler.
+    """Removes a registered log handler.
 
-    @param func: a function object with prototype (level, object, category,
-                 message) where level is either ERROR, WARN, INFO, DEBUG, or
-                 LOG, and the rest of the arguments are strings or None. Use
-                 getLevelName(level) to get a printable name for the log level.
-    @type func:  a callable function
-
-    @raises ValueError: if func is not registered
+    Raises:
+        ValueError: When func is not registered.
     """
     _log_handlers.remove(func)
 
 
 def removeLimitedLogHandler(func):
-    """
-    Remove a registered limited log handler.
+    """Removes a registered limited log handler.
 
-    @param func: a function object with prototype (level, object, category,
-                 message) where level is either ERROR, WARN, INFO, DEBUG, or
-                 LOG, and the rest of the arguments are strings or None. Use
-                 getLevelName(level) to get a printable name for the log level.
-    @type func:  a callable function
-
-    @raises ValueError: if func is not registered
+    Raises:
+        ValueError: When func is not registered.
     """
     _log_handlers_limited.remove(func)
 
@@ -849,8 +844,9 @@ def log(cat, format, *args):
 
 
 def getExceptionMessage(exception, frame=-1, filename=None):
-    """
-    Return a short message based on an exception, useful for debugging.
+    """Returns a short message based on an exception.
+
+    Useful for debugging.
     Tries to find where the exception was triggered.
     """
     stack = traceback.extract_tb(sys.exc_info()[2])
@@ -870,10 +866,7 @@ def getExceptionMessage(exception, frame=-1, filename=None):
 
 
 def reopenOutputFiles():
-    """
-    Reopens the stdout and stderr output files, as set by
-    L{outputToFiles}.
-    """
+    """Reopens the stdout and stderr output files, as set by `outputToFiles`."""
     if not _stdout and not _stderr:
         debug('log', 'told to reopen log files, but log files not set')
         return
@@ -896,8 +889,7 @@ def reopenOutputFiles():
 
 
 def outputToFiles(stdout=None, stderr=None):
-    """
-    Redirect stdout and stderr to named files.
+    """Redirects stdout and stderr to the specified files.
 
     Records the file names so that a future call to reopenOutputFiles()
     can open the same files. Installs a SIGHUP handler that will reopen
@@ -931,93 +923,93 @@ def outputToFiles(stdout=None, stderr=None):
 
 
 class BaseLoggable(object):
+    """Base class for objects that want to be able to log messages.
 
-    """
-    Base class for objects that want to be able to log messages with
-    different level of severity.  The levels are, in order from least
+    The levels of severity for the messages are, in order from least
     to most: log, debug, info, warning, error.
 
-    @cvar logCategory: Implementors can provide a category to log their
-       messages under.
+    Attributes:
+        logCategory (str): The category under which the messages will be filed.
+            Can be used to set a display filter.
     """
 
-    def writeMarker(self, marker, level):
-        """
-        Sets a marker that written to the logs. Setting this
-        marker to multiple elements at a time helps debugging.
-        @param marker: A string write to the log.
-        @type marker: str
-        @param level: The log level. It can be log.ERROR, etc.
-        @type  level: int
-        """
-        logHandlers = {WARN: self.warning,
-                       INFO: self.info,
-                       DEBUG: self.debug,
-                       ERROR: self.error,
-                       LOG: self.log}
-        logHandler = logHandlers.get(level)
-        if logHandler:
-            logHandler('%s', marker)
-
     def error(self, *args):
-        """Log an error.  By default this will also raise an exception."""
+        """Logs an error.
+
+        By default this will also raise an exception.
+        """
         if _canShortcutLogging(self.logCategory, ERROR):
             return
         errorObject(self.logObjectName(),
                     self.logCategory, *self.logFunction(*args))
 
     def warning(self, *args):
-        """Log a warning.  Used for non-fatal problems."""
+        """Logs a warning.
+
+        Used for non-fatal problems.
+        """
         if _canShortcutLogging(self.logCategory, WARN):
             return
         warningObject(
             self.logObjectName(), self.logCategory, *self.logFunction(*args))
 
     def fixme(self, *args):
-        """Log a fixme.  Used for FIXMEs ."""
+        """Logs a fixme.
+
+        Used for FIXMEs.
+        """
         if _canShortcutLogging(self.logCategory, FIXME):
             return
         fixmeObject(self.logObjectName(),
                     self.logCategory, *self.logFunction(*args))
 
     def info(self, *args):
-        """Log an informational message.  Used for normal operation."""
+        """Logs an informational message.
+
+        Used for normal operation.
+        """
         if _canShortcutLogging(self.logCategory, INFO):
             return
         infoObject(self.logObjectName(),
                    self.logCategory, *self.logFunction(*args))
 
     def debug(self, *args):
-        """Log a debug message.  Used for debugging."""
+        """Logs a debug message.
+
+        Used for debugging.
+        """
         if _canShortcutLogging(self.logCategory, DEBUG):
             return
         debugObject(self.logObjectName(),
                     self.logCategory, *self.logFunction(*args))
 
     def log(self, *args):
-        """Log a log message.  Used for debugging recurring events."""
+        """Logs a log message.
+
+        Used for debugging recurring events.
+        """
         if _canShortcutLogging(self.logCategory, LOG):
             return
         logObject(self.logObjectName(),
                   self.logCategory, *self.logFunction(*args))
 
     def doLog(self, level, where, format, *args, **kwargs):
-        """
-        Log a message at the given level, with the possibility of going
+        """Logs a message at the specified level, with the possibility of going
         higher up in the stack.
 
-        @param level: log level
-        @type  level: int
-        @param where: how many frames to go back from the last log frame;
-                      or a function (to log for a future call)
-        @type  where: int (negative), or function
+        Args:
+            level (int): The log level.
+            where (int or function): How many frames to go back from
+                the last log frame, must be negative; or a function
+                (to log for a future call).
+            format (str): The string template for the message.
+            *args: The arguments used when converting the `format`
+                string template to the message.
+            **kwargs: The pre-calculated values from a previous doLog call.
 
-        @param kwargs: a dict of pre-calculated values from a previous
-                       doLog call
-
-        @return: a dict of calculated variables, to be reused in a
-                 call to doLog that should show the same location
-        @rtype:  dict
+        Returns:
+            dict: The calculated variables, to be reused in a
+                 call to doLog that should show the same location.
         """
         if _canShortcutLogging(self.logCategory, level):
             return {}
@@ -1026,11 +1018,14 @@ class BaseLoggable(object):
                      format, args, where=where, **kwargs)
 
     def logFunction(self, *args):
-        """Overridable log function.  Default just returns passed message."""
+        """Processes the arguments applied to the message template.
+
+        Default just returns the arguments unchanged.
+        """
         return args
 
     def logObjectName(self):
-        """Overridable object name function."""
+        """Gets the name of this object."""
         # cheat pychecker
         for name in ['logName', 'name']:
             if hasattr(self, name):

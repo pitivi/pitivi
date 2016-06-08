@@ -112,12 +112,10 @@ GlobalSettings.addConfigOption('timelineAutoRipple',
 
 
 class MainWindow(Gtk.ApplicationWindow, Loggable):
-
-    """
-    Pitivi's main window.
+    """Pitivi's main window.
 
     Attributes:
-        app (pitivi.application.Pitivi): The current app.
+        app (Pitivi): The app.
     """
 
     def __init__(self, app):
@@ -172,15 +170,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-    def showRenderDialog(self, project):
-        """
-        Shows the L{RenderDialog} for the given project Timeline.
-
-        @param project: The project
-        @type project: L{Project}
-        """
+    def showRenderDialog(self):
+        """Shows the RenderDialog for the current project."""
         from pitivi.render import RenderDialog
 
+        project = self.app.project_manager.current_project
         dialog = RenderDialog(self.app, project)
         dialog.window.connect("destroy", self._renderDialogDestroyCb)
         self.set_sensitive(False)
@@ -218,22 +212,18 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.timeline_ui.enableKeyboardAndMouseEvents()
 
     def _renderCb(self, unused_button):
-        self.showRenderDialog(self.app.project_manager.current_project)
+        self.showRenderDialog()
 
     def _createUi(self):
-        """
-        Create the graphical interface with the following hierarchy:
-        -- self.vpaned
-        ---- self.mainhpaned (upper half)
-        ------ self.secondaryhpaned (upper-left)
-        -------- Primary tabs
-        -------- Context tabs
-        ------ Viewer (upper-right)
-        ---- Timeline (bottom half)
+        """Creates the graphical interface.
 
-        In the window titlebar, there is also a HeaderBar widget.
+        The rough hierarchy is:
+        vpaned:
+        - mainhpaned(secondhpaned(main_tabs, context_tabs), viewer)
+        - timeline_ui
 
-        The full hierarchy is visible with accessibility tools like "sniff".
+        The full hierarchy can be admired by starting the GTK+ Inspector
+        with Ctrl+Shift+I.
         """
         self.set_icon_name("pitivi")
 
@@ -370,9 +360,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             self.settings.mainWindowVPanePosition = value
 
     def checkScreenConstraints(self):
-        """
-        Measure the approximate minimum size required by the main window
-        and shrink some widgets to fit smaller screen resolutions.
+        """Measures the approximate minimum size required by the main window.
+
+        Shrinks some widgets to fit better on smaller screen resolutions.
         """
         # This code works, but keep in mind get_preferred_size's output
         # is only an approximation. As of 2015, GTK still does not have
@@ -381,24 +371,20 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         min_size, natural_size = self.get_preferred_size()
         screen_width = self.get_screen().get_width()
         screen_height = self.get_screen().get_height()
-        self.debug("Minimum UI size is " +
-                str(min_size.width) + "x" + str(min_size.height))
-        self.debug("Screen size is " +
-                str(screen_width) + "x" + str(screen_height))
+        self.debug("Minimum UI size is %sx%s", min_size.width, min_size.height)
+        self.debug("Screen size is %sx%s", screen_width, screen_height)
         if min_size.width >= 0.9 * screen_width:
             self.medialibrary.activateCompactMode()
             self.viewer.activateCompactMode()
             min_size, natural_size = self.get_preferred_size()
-            self.info("Minimum UI size has been reduced to " +
-                   str(min_size.width) + "x" + str(min_size.height))
+            self.info("Minimum UI size has been reduced to %sx%s",
+                      min_size.width, min_size.height)
 
     def switchContextTab(self, ges_clip):
-        """
-        Switch the tab being displayed on the second set of tabs,
-        depending on the context.
+        """Activates the appropriate tab on the second set of tabs.
 
-        @param ges_clip: The clip which has been focused.
-        @type ges_clip: GES.SourceClip
+        Args:
+            ges_clip (GES.SourceClip): The clip which has been focused.
         """
         if isinstance(ges_clip, GES.TitleClip):
             page = 2
@@ -512,9 +498,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 # UI Callbacks
 
     def _configureCb(self, unused_widget, event):
-        """
-        Handle the main window being moved, resized or maximized
-        """
+        """Handles the main window being moved, resized or maximized."""
         # get_position() takes window manager decoration into account
         position = self.get_position()
         self.settings.mainWindowWidth = event.width
@@ -537,7 +521,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
 
     def _mediaLibraryPlayCb(self, unused_medialibrary, asset):
-        """
+        """Previews the specified asset.
+
         If the media library item to preview is an image, show it in the user's
         favorite image viewer. Else, preview the video/sound in Pitivi.
         """
@@ -724,9 +709,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 # Project management callbacks
 
     def _projectManagerNewProjectLoadedCb(self, project_manager, project):
-        """
-        @type project_manager: L{ProjectManager}
-        @type project: L{Project}
+        """Starts connecting the UI to the specified project.
+
+        Args:
+            project_manager (ProjectManager): The project manager.
+            project (Project): The project which has been loaded.
         """
         self.log("A new project has been loaded")
         self._connectToProject(project)
@@ -777,9 +764,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             project.uri = uri
 
     def _projectManagerClosingProjectCb(self, project_manager, project):
-        """
-        @type project_manager: L{ProjectManager}
-        @type project: L{Project}
+        """Investigates whether it's possible to close the specified project.
+
+        Args:
+            project_manager (ProjectManager): The project manager.
+            project (Project): The project which has been closed.
+
+        Returns:
+            bool: True when it's OK to close it, False when the user chooses
+                to cancel the closing operation.
         """
         if not project.hasUnsavedModifications():
             return True
@@ -861,11 +854,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         return res
 
     def _projectManagerProjectClosedCb(self, unused_project_manager, project):
-        """
-        This happens immediately when the user asks to load another project,
-        after the user confirmed that unsaved changes can be discarded but
-        before the filechooser to pick the new project to load appears...
-        We can then expect another project to be loaded soon afterwards.
+        """Starts disconnecting the UI from the specified project.
+
+        This happens when the user closes the app or asks to load another
+        project, immediately after the user confirmed that unsaved changes,
+        if any, can be discarded but before the filechooser to pick the next
+        project to load appears.
+
+        Args:
+            project (Project): The project which has been closed.
         """
 
         # We must disconnect from the project pipeline before it is released:
@@ -973,7 +970,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         previewer = PreviewWidget(self.settings)
         chooser.set_preview_widget(previewer)
         chooser.set_use_preview_label(False)
-        chooser.connect('update-preview', previewer.add_preview_request)
+        chooser.connect('update-preview', previewer.update_preview_cb)
         chooser.set_current_folder(self.settings.lastProjectFolder)
         # Use a Gtk FileFilter to only show files with the same extension
         # Note that splitext gives us the extension with the ".", no need to
@@ -1048,10 +1045,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 # Pitivi current project callbacks
 
     def _setProject(self, project):
-        """
-        Disconnect and reconnect callbacks to the new current project
+        """Disconnects and then reconnects callbacks to the specified project.
 
-        @type project: L{Project}
+        Args:
+            project (Project): The new current project.
         """
         if not project:
             self.warning("Current project instance does not exist")
@@ -1074,15 +1071,14 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 # Pitivi current project callbacks
 
     def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
-        """
-        When the project setting change, we reset the viewer aspect ratio
-        """
+        """Resets the viewer aspect ratio."""
         self.viewer.setDisplayAspectRatio(project.getDAR())
         self.viewer.timecode_entry.setFramerate(project.videorate)
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
-        """
-        When a clip is inserted into a blank timeline, enable the render button.
+        """Updates the render button.
+
+        This covers the case when a clip is inserted into a blank timeline.
         This callback is not triggered by loading a project.
         """
         duration = timeline.get_duration()
@@ -1186,9 +1182,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         return ret
 
     def _screenshotCb(self, unused_action):
-        """
-        Export a snapshot of the current frame as an image file.
-        """
+        """Exports a snapshot of the current frame as an image file."""
         foo = self._showSaveScreenshotDialog()
         if foo:
             path, mime = foo[0], foo[1]
@@ -1196,12 +1190,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                 -1, -1, mime, path)
 
     def _showSaveScreenshotDialog(self):
-        """
-        Show a filechooser dialog asking the user where to save the snapshot
-        of the current frame and what file type to use.
+        """Asks the user where to save the current frame.
 
-        Returns a list containing the full path and the mimetype if successful,
-        returns none otherwise.
+        Returns:
+            List[str]: The full path and the mimetype if successful, None otherwise.
         """
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
                                         transient_for=self, action=Gtk.FileChooserAction.SAVE)
@@ -1225,7 +1217,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             chosen_mime = chosen_format[0]
             uri = os.path.join(
                 chooser.get_current_folder(), chooser.get_filename())
-            ret = [uri + "." + chosen_ext, chosen_mime]
+            ret = ["%s.%s" % (uri, chosen_ext), chosen_mime]
         else:
             ret = None
         chooser.destroy()
@@ -1291,13 +1283,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
 
 class PreviewAssetWindow(Gtk.Window):
+    """Window for previewing a video or audio asset.
 
-    """
-    Window for previewing a video or audio asset.
-
-    @ivar asset: The asset to be previewed.
-    @type asset: L{GES.UriClipAsset}
-    @type main_window: L{MainWindow}
+    Args:
+        asset (GES.UriClipAsset): The asset to be previewed.
+        main_window (MainWindow): The main window.
     """
 
     def __init__(self, asset, main_window):
@@ -1318,9 +1308,7 @@ class PreviewAssetWindow(Gtk.Window):
         self.connect("key-press-event", self._keyPressCb)
 
     def preview(self):
-        """
-        Show the window and start the playback.
-        """
+        """Shows the window and starts the playback."""
         width, height = self._calculatePreviewWindowSize()
         self.resize(width, height)
         # Setting the position of the window only works if it's currently hidden

@@ -211,9 +211,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 self.__source.set(event.xdata, value)
 
     def toggle_keyframe(self, offset):
-        """
-        Set or unset the keyframe at the given offset.
-        """
+        """Sets or unsets the keyframe at the specified offset."""
         items = self.__source.get_all()
         if offset in (items[0].timestamp, items[-1].timestamp):
             return
@@ -231,10 +229,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__timeline.ges_timeline.get_parent().commit_timeline()
 
     def __gtkMotionEventCb(self, unused_widget, unused_event):
-        """
-        We need to do that here, because mpl's callbacks can't stop
-        signal propagation.
-        """
+        # We need to do this here, because Matplotlib's callbacks can't stop
+        # signal propagation.
         if self.handling_motion:
             return True
         return False
@@ -587,24 +583,29 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
     # Virtual methods
     def _getPreviewer(self):
-        """
-        Should return a GtkWidget offering a representation of the
-        medium (waveforms for audio, thumbnails for video ..).
+        """Gets a Gtk.Widget to be used as previewer.
+
         This previewer will be automatically scaled to the width and
         height of the TimelineElement.
+
+        Returns:
+            Gtk.Widget: The widget showing thumbnails, waveforms, etc.
         """
         return None
 
     def _getBackground(self):
-        """
-        Should return a GtkWidget with a unique background color.
+        """Gets a Gtk.Widget to be used as background.
+
+        Returns:
+            Gtk.Widget: The widget identifying the clip type.
         """
         return None
 
     def _getDefaultMixingProperty(self):
-        """
-        Should return a controllable GObject.ParamSpec allowing to mix
-        media on different layers.
+        """Gets the property controlled by default by the keyframes.
+
+        Returns:
+            GObject.ParamSpec: The param spec of the default property.
         """
         return None
 

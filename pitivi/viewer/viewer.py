@@ -61,10 +61,10 @@ GlobalSettings.addConfigOption("pointColor", section="viewer",
 
 
 class ViewerContainer(Gtk.Box, Loggable):
-    """
-    A wiget holding a viewer and the controls.
+    """Wiget holding a viewer and the controls.
 
-    @type pipeline: L{pitivi.utils.pipeline.SimplePipeline}
+    Attributes:
+        pipeline (SimplePipeline): The displayed pipeline.
     """
 
     __gtype_name__ = 'ViewerContainer'
@@ -103,14 +103,13 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.undock()
 
     def setPipeline(self, pipeline, position=None):
-        """
-        Set the Viewer to the given Pipeline.
+        """Sets the displayed pipeline.
 
         Properly switches the currently set action to that new Pipeline.
 
-        @param pipeline: The Pipeline to switch to.
-        @type pipeline: L{Pipeline}.
-        @param position: Optional position to seek to initially.
+        Args:
+            pipeline (Pipeline): The Pipeline to switch to.
+            position (Optional[int]): The position to seek to initially.
         """
         self._disconnectFromPipeline()
 
@@ -196,7 +195,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerY = event.y
 
     def _createUi(self):
-        """ Creates the Viewer GUI """
+        """Creates the Viewer GUI."""
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
         self.external_window = Gtk.Window()
@@ -409,8 +408,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.external_window.show()
 
     def _positionCb(self, unused_pipeline, position):
-        """
-        If the timeline position changed, update the viewer UI widgets.
+        """Updates the viewer UI widgets if the timeline position changed.
 
         This is meant to be called either by the gobject timer when playing,
         or by mainwindow's _timelineSeekCb when the timer is disabled.
@@ -418,9 +416,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.setWidgetValue(position, False)
 
     def clipTrimPreview(self, clip, position):
-        """
-        While a clip is being trimmed, show a live preview of it.
-        """
+        """Shows a live preview of a clip being trimmed."""
         if not hasattr(clip, "get_uri") or isinstance(clip, GES.TitleClip) or clip.props.is_image:
             self.log(
                 "%s is an image or has no URI, so not previewing trim" % clip)
@@ -443,9 +439,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self._lastClipTrimTime = cur_time
 
     def clipTrimPreviewFinished(self):
-        """
-        After trimming a clip, reset the project pipeline into the viewer.
-        """
+        """Switches back to the project pipeline following a clip trimming."""
         if self.pipeline is not self.app.project_manager.current_project.pipeline:
             self.pipeline.setState(Gst.State.NULL)
             # Using pipeline.getPosition() here does not work because for some
@@ -456,12 +450,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
-        """
-        When playback starts/stops, update the viewer widget,
-        play/pause button and (un)inhibit the screensaver.
-
-        This is meant to be called by mainwindow.
-        """
+        """Updates the widgets when the playback starts or stops."""
         if int(state) == int(Gst.State.PLAYING):
             st = Gst.Structure.new_empty("play")
             self.app.write_action(st)
@@ -482,8 +471,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):
-    """
-    Widget for displaying a video sink.
+    """Widget for displaying a video sink.
 
     Args:
         sink_widget (Gtk.Widget): The widget doing the real work.
@@ -518,9 +506,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
 
 class PlayPauseButton(Gtk.Button, Loggable):
-    """
-    Double state Gtk.Button which displays play/pause
-    """
+    """Double state Gtk.Button which displays play/pause."""
+
     __gsignals__ = {
         "play": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_BOOLEAN,))
     }

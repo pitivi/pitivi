@@ -72,8 +72,9 @@ class TrackElementPropertyChanged(UndoableAction):
 
 
 class TimelineElementObserver(Loggable):
-    """
-    Monitors the props of a GES.TimelineElement and all its children and reports UndoableActions.
+    """Monitors the props of an element and all its children.
+
+    Reports UndoableActions.
 
     Attributes:
         ges_timeline_element (GES.TimelineElement): The object to be monitored.
@@ -175,8 +176,7 @@ class EffectRemovedAction(TrackElementAction):
 
 
 class ControlSourceObserver(GObject.Object):
-    """
-    Monitors a control source's props and reports UndoableActions.
+    """Monitors a control source's props and reports UndoableActions.
 
     Attributes:
         control_source (GstController.TimedValueControlSource): The object to be
@@ -582,9 +582,7 @@ class TimelineObserver(Loggable):
             self.action_log.push(action)
 
     def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
-        """
-        This happens when an effect is (de)activated on a clip in the timeline.
-        """
+        """Handles an effect is (de)activated on a clip in the timeline."""
         action = ActivePropertyChanged(add_effect_action, active)
         self.action_log.push(action)
 

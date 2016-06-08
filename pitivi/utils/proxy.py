@@ -72,9 +72,8 @@ def createEncodingProfileSimple(container_caps, audio_caps, video_caps):
 
 
 class ProxyManager(GObject.Object, Loggable):
-    """
-    Transcodes assets and manages proxies
-    """
+    """Transcodes assets and manages proxies."""
+
     __gsignals__ = {
         "progress": (GObject.SIGNAL_RUN_LAST, None, (object, int, int)),
         "proxy-ready": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
@@ -205,8 +204,9 @@ class ProxyManager(GObject.Object, Loggable):
         return ".".join(proxy_asset.props.id.split(".")[:-3])
 
     def getProxyUri(self, asset):
-        """
-        Returns the URI of a possible proxy file. The name looks like:
+        """Returns the URI of a possible proxy file.
+
+        The name looks like:
             <filename>.<file_size>.<proxy_extension>
         """
         asset_file = Gio.File.new_for_uri(asset.get_id())

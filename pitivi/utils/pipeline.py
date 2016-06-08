@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-#
-#       pitivi/utils/pipeline.py
-#
+# -*- coding: utf-8 -*-
+# Pitivi video editor
 # Copyright (C) 2012 Thibault Saunier <thibault.saunier@collabora.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -20,9 +18,7 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
-"""
-High-level pipelines
-"""
+"""High-level pipelines."""
 import os
 
 from gi.repository import GES
@@ -58,21 +54,22 @@ class PipelineError(Exception):
 
 
 class SimplePipeline(GObject.Object, Loggable):
+    """High-level pipeline.
 
-    """
-    The Pipeline is only responsible for:
+    The `SimplePipeline` is responsible for:
      - State changes
      - Position seeking
-     - Position Querying
-       - Along with an periodic callback (optional)
+     - Position querying
+     - Along with an periodic callback (optional)
 
     Signals:
-     - C{state-change} : The state of the pipeline changed.
-     - C{position} : The current position of the pipeline changed.
-     - C{eos} : The Pipeline has finished playing.
-     - C{error} : An error happened.
+        state-change: The state of the pipeline changed.
+        position: The current position of the pipeline changed.
+        eos: The Pipeline has finished playing.
+        error: An error happened.
 
-    @type _pipeline: L{Gst.Pipeline}
+    Attributes:
+        _pipeline (Gst.Pipeline): The low-level pipeline.
     """
 
     __gsignals__ = PIPELINE_SIGNALS
@@ -122,14 +119,12 @@ class SimplePipeline(GObject.Object, Loggable):
         self._force_position_listener = force
 
     def release(self):
-        """
-        Release the L{Pipeline} and all used L{ObjectFactory} and
-        L{Action}s.
+        """Releases the low-level pipeline.
 
-        Call this method when the L{Pipeline} is no longer used. Forgetting to do
-        so will result in memory loss.
+        Call this method when this instance is no longer used. Forgetting to do
+        so will result in memory leaks.
 
-        @postcondition: The L{Pipeline} will no longer be usable.
+        The instance will no longer be usable.
         """
         self.deactivatePositionListener()
         self._bus.disconnect_by_func(self._busMessageCb)
@@ -150,11 +145,11 @@ class SimplePipeline(GObject.Object, Loggable):
             pass
 
     def setState(self, state):
-        """
-        Set the L{Pipeline} to the given state.
+        """Sets the low-level pipeline to the specified state.
 
-        @raises PipelineError: If the C{Gst.Pipeline} could not be changed to
-        the requested state.
+        Raises:
+            PipelineError: If the low-level pipeline could not be changed to
+                the requested state.
         """
         self.debug("state set to: %r", state)
         if state >= Gst.State.PAUSED:
@@ -177,14 +172,12 @@ class SimplePipeline(GObject.Object, Loggable):
                 "Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
 
     def getState(self):
-        """
-        Query the L{Pipeline} for the current state.
-
-        @see: L{setState}
+        """Queries the low-level pipeline for the current state.
 
         This will do an actual query to the underlying GStreamer Pipeline.
-        @return: The current state.
-        @rtype: C{State}
+
+        Returns:
+            State: The current state.
         """
         # No timeout
         change, state, pending = self._pipeline.get_state(timeout=0)
@@ -193,21 +186,15 @@ class SimplePipeline(GObject.Object, Loggable):
         return state
 
     def play(self):
-        """
-        Sets the L{Pipeline} to PLAYING
-        """
+        """Sets the state to Gst.State.PLAYING."""
         self.setState(Gst.State.PLAYING)
 
     def pause(self):
-        """
-        Sets the L{Pipeline} to PAUSED
-        """
+        """Sets the state to Gst.State.PAUSED."""
         self.setState(Gst.State.PAUSED)
 
     def stop(self):
-        """
-        Sets the L{Pipeline} to READY
-        """
+        """Sets the state to Gst.State.READY."""
         self.setState(Gst.State.READY)
 
     def playing(self):
@@ -222,12 +209,13 @@ class SimplePipeline(GObject.Object, Loggable):
     # Position and Seeking methods
 
     def getPosition(self, fails=True):
-        """
-        Get the current position of the L{Pipeline}.
+        """Gets the current position of the low-level pipeline.
 
-        @return: The current position or Gst.CLOCK_TIME_NONE
-        @rtype: L{long}
-        @raise PipelineError: If the position couldn't be obtained.
+        Returns:
+            int: The current position or Gst.CLOCK_TIME_NONE.
+
+        Raises:
+            PipelineError: If the position couldn't be obtained.
         """
         try:
             res, cur = self._pipeline.query_position(Gst.Format.TIME)
@@ -245,9 +233,7 @@ class SimplePipeline(GObject.Object, Loggable):
         return cur
 
     def getDuration(self):
-        """
-        Get the duration of the C{Pipeline}.
-        """
+        """Gets the duration of the low-level pipeline."""
         dur = self._getDuration()
         self.log("Got duration %s", format_ns(dur))
         if self._duration != dur:
@@ -256,17 +242,16 @@ class SimplePipeline(GObject.Object, Loggable):
         return dur
 
     def activatePositionListener(self, interval=DEFAULT_POSITION_LISTENNING_INTERVAL):
-        """
-        Activate the position listener.
+        """Activates the position listener.
 
-        When activated, the Pipeline will emit the 'position' signal at the
+        When activated, the instance will emit the `position` signal at the
         specified interval when it is the PLAYING or PAUSED state.
 
-        @see: L{deactivatePositionListener}
-        @param interval: Interval between position queries in milliseconds
-        @type interval: L{int} milliseconds
-        @return: Whether the position listener was activated or not
-        @rtype: L{bool}
+        Args:
+            interval (int): Interval between position queries in milliseconds.
+
+        Returns:
+            bool: Whether the position listener was activated.
         """
         if self._listening:
             return True
@@ -277,11 +262,7 @@ class SimplePipeline(GObject.Object, Loggable):
         return True
 
     def deactivatePositionListener(self):
-        """
-        De-activates the position listener.
-
-        @see: L{activatePositionListener}
-        """
+        """De-activates the position listener."""
         self._listenToPosition(False)
         self._listening = False
 
@@ -330,12 +311,13 @@ class SimplePipeline(GObject.Object, Loggable):
         self._waiting_for_async_done = True
 
     def simple_seek(self, position):
-        """
-        Seeks in the L{Pipeline} to the given position.
+        """Seeks in the low-level pipeline to the specified position.
 
-        @param position: Position to seek to
-        @type position: L{long}
-        @raise PipelineError: If seek failed
+        Args:
+            position (int): Position to seek to.
+
+        Raises:
+            PipelineError: When the seek fails.
         """
         if self._waiting_for_async_done is True:
             self._next_seek = position
@@ -506,10 +488,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
 
 class AssetPipeline(SimplePipeline):
-
-    """
-    Pipeline for playing a single clip.
-    """
+    """Pipeline for playing a single clip."""
 
     def __init__(self, clip=None, name=None):
         bPipeline = Gst.ElementFactory.make("playbin", name)
@@ -530,10 +509,7 @@ class AssetPipeline(SimplePipeline):
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
-
-    """
-    Helper to handle GES.Pipeline through the SimplePipeline API
-    """
+    """Helper to handle GES.Pipeline through the SimplePipeline API."""
 
     __gsignals__ = PIPELINE_SIGNALS
 
@@ -579,22 +555,14 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             raise PipelineError("Cannot set the timeline to the pipeline")
         self._timeline = timeline
 
-    def release(self):
-        """
-        Release the L{Pipeline} and all used L{ObjectFactory} and
-        L{Action}s.
-
-        Call this method when the L{Pipeline} is no longer used. Forgetting to do
-        so will result in memory loss.
-
-        @postcondition: The L{Pipeline} will no longer be usable.
-        """
-        SimplePipeline.release(self)
-
     def stepFrame(self, framerate, frames_offset):
-        """
-        Seek backwards or forwards a certain amount of frames (frames_offset).
+        """Seeks backwards or forwards the specified amount of frames.
+
         This clamps the playhead to the project frames.
+
+        Args:
+            frames_offsets (int): The number of frames to step. Negative number
+                for stepping backwards.
         """
         try:
             position = self.getPosition()

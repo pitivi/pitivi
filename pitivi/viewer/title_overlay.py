@@ -23,9 +23,8 @@ from pitivi.viewer.overlay import Overlay
 
 
 class TitleOverlay(Overlay):
-    """
-    Viewer overlays class for GESTitleSource
-    """
+    """Viewer overlays for GES.TitleSource."""
+
     def __init__(self, stack, source):
         Overlay.__init__(self, stack, source)
         self.__corners = []

@@ -40,14 +40,14 @@ def get_bool_env(var):
 
 
 def get_env_by_type(type_, var):
-    """
-    Returns the environment variable.
+    """Gets an environment variable.
 
-    @arg type_: The type of the variable
-    @type type_: C{type}
-    @arg var: The name of the environment variable.
-    @type var: C{str}
-    @returns: Contents of the environment variable, or C{None} if it doesn't exist.
+    Args:
+        type_ (type): The type of the variable.
+        var (str): The name of the environment variable.
+
+    Returns:
+        The contents of the environment variable, or None if it doesn't exist.
     """
     if var is None:
         return None
@@ -66,27 +66,21 @@ def get_dir(path, autocreate=True):
 
 
 def xdg_config_home(autocreate=True):
-    """
-    Get the directory for storing the user's pitivi configuration
-    """
+    """Gets the directory for storing the user's Pitivi configuration."""
     default = os.path.join(GLib.get_user_config_dir(), "pitivi")
     path = os.getenv("PITIVI_USER_CONFIG_DIR", default)
     return get_dir(path, autocreate)
 
 
 def xdg_data_home(autocreate=True):
-    """
-    Get the directory for storing the user's data: presets, plugins, etc.
-    """
+    """Gets the directory for storing the user's data: presets, plugins, etc."""
     default = os.path.join(GLib.get_user_data_dir(), "pitivi")
     path = os.getenv("PITIVI_USER_DATA_DIR", default)
     return get_dir(path, autocreate)
 
 
 def xdg_cache_home(autocreate=True):
-    """
-    Get the Pitivi cache directory
-    """
+    """Gets the Pitivi cache directory."""
     default = os.path.join(GLib.get_user_cache_dir(), "pitivi")
     path = os.getenv("PITIVI_USER_CACHE_DIR", default)
     return get_dir(path, autocreate)
@@ -97,8 +91,7 @@ class ConfigError(Exception):
 
 
 class Notification(object):
-
-    """A descriptor to help with the implementation of signals"""
+    """A descriptor which emits a signal when set."""
 
     def __init__(self, attrname):
         self.attrname = "_" + attrname
@@ -117,19 +110,18 @@ class Notification(object):
 
 
 class GlobalSettings(GObject.Object, Loggable):
+    """Pitivi app settings.
 
-    """
-    Pitivi app settings.
-
-    The settings object loads settings from different sources, currently:
+    Loads settings from different sources, currently:
     - the local configuration file,
     - environment variables.
 
     Modules declare which settings they wish to access by calling the
     addConfigOption() class method during initialization.
 
-    @cvar options: A dictionnary of available settings.
-    @cvar environment: A list of the controlled environment variables.
+    Attributes:
+        options (dict): The available settings.
+        environment (set): The controlled environment variables.
     """
 
     options = {}
@@ -146,10 +138,7 @@ class GlobalSettings(GObject.Object, Loggable):
         self._readSettingsFromEnvironmentVariables()
 
     def _readSettingsFromConfigurationFile(self):
-        """
-        Read the configuration from the user configuration file.
-        """
-
+        """Reads the settings from the user configuration file."""
         try:
             self._config.read(self.conf_file_path)
         except UnicodeDecodeError as e:
@@ -181,14 +170,13 @@ class GlobalSettings(GObject.Object, Loggable):
 
     @classmethod
     def readSettingSectionFromFile(self, cls, section):
-        """
-        Force reading a particular section of the settings file.
+        """Reads a particular section of the settings file.
 
-        Use this if you dynamically determine settings sections/keys at runtime
-        (like in tabsmanager.py). Otherwise, the settings file would be read
-        only once (at the initialization phase of your module) and your config
-        sections would never be read, and thus values would be reset to defaults
-        on every startup because GlobalSettings would think they don't exist.
+        Use this if you dynamically determine settings sections/keys at runtime.
+        Otherwise, the settings file would be read only once, at the
+        initialization phase of your module, and your config sections would
+        never be read, thus values would be reset to defaults on every startup
+        because GlobalSettings would think they don't exist.
         """
         if cls._config.has_section(section):
             for option in cls._config.options(section):
@@ -207,9 +195,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 setattr(cls, section + option, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        """
-        Override options values using their registered environment variables.
-        """
+        """Reads settings from their registered environment variables."""
         for section, attrname, typ, key, env, value in self.iterAllOptions():
             if not env:
                 # This option does not have an environment variable name.
@@ -234,17 +220,15 @@ class GlobalSettings(GObject.Object, Loggable):
             self.error("Failed to write to %s: %s", self.conf_file_path, e)
 
     def storeSettings(self):
-        """
-        Write settings to the user's local configuration file. Note that only
-        those settings which were added with a section and a key value are
+        """Writes settings to the user's local configuration file.
+
+        Only those settings which were added with a section and a key value are
         stored.
         """
         self._writeSettingsToConfigurationFile()
 
     def iterAllOptions(self):
-        """
-        Iterate over all registered options
-        """
+        """Iterates over all registered options."""
         for section, options in list(self.options.items()):
             for attrname, (typ, key, environment) in list(options.items()):
                 yield section, attrname, typ, key, environment, getattr(self, attrname)
@@ -253,39 +237,32 @@ class GlobalSettings(GObject.Object, Loggable):
         return getattr(self, attrname) == self.defaults[attrname]
 
     def setDefault(self, attrname):
-        """
-        Reset the specified setting to its default value.
-        """
+        """Resets the specified setting to its default value."""
         setattr(self, attrname, self.defaults[attrname])
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,
                         environment=None, default=None, notify=False,):
-        """
-        Add a configuration option.
+        """Adds a configuration option.
 
         This function should be called during module initialization, before
         the config file is actually read. By default, only options registered
         beforehand will be loaded.
-        See mainwindow.py and medialibrary.py for examples of usage.
 
         If you want to add configuration options after initialization,
-        use the readSettingSectionFromFile method to force reading later on.
-        See tabsmanager.py for an example of such a scenario.
+        use the `readSettingSectionFromFile` method to force reading later on.
 
-        @param attrname: the attribute of this class which represents the option
-        @type attrname: C{str}
-        @param type_: type of the attribute. Unnecessary if default is given.
-        @type type_: a builtin or class
-        @param section: The section of the config file under which this option is
-        saved. This section must have been added with addConfigSection(). Not
-        necessary if key is not given.
-        @param key: the key under which this option is to be saved. Can be none if
-        this option should not be saved.
-        @type key: C{str}
-        @param notify: whether or not this attribute should emit notification
-        signals when modified (default is False).
-        @type notify: C{boolean}
+        Args:
+            attrname (str): The attribute of this class for accessing the option.
+            type_ (Optional[type]): The type of the attribute. Unnecessary if a
+                `default` value is specified.
+            section (Optional[str]): The section of the config file under which
+                this option is saved. This section must have been added with
+                addConfigSection(). Not necessary if `key` is not given.
+            key (Optional[str]): The key under which this option is to be saved.
+                By default the option will not be saved.
+            notify (Optional[bool]): Whether this attribute should emit
+                signals when modified. By default signals are not emitted.
         """
         if section and section not in cls.options:
             raise ConfigError(
@@ -323,11 +300,13 @@ class GlobalSettings(GObject.Object, Loggable):
 
     @classmethod
     def addConfigSection(cls, section):
-        """
-        Add a section to the local config file.
+        """Adds a section to the local config file.
 
-        @param section: The section name. This section must not already exist.
-        @type section: C{str}
+        Args:
+            section (str): The section name.
+
+        Raises:
+            ConfigError: If the section already exists.
         """
         if section in cls.options:
             raise ConfigError("Duplicate Section \"%s\"." % section)
@@ -335,8 +314,14 @@ class GlobalSettings(GObject.Object, Loggable):
 
     @classmethod
     def notifiesConfigOption(cls, attrname):
-        """
-        Whether a changed signal is emitted for the specified setting.
+        """Checks whether a signal is emitted when the setting is changed.
+
+        Args:
+            attrname (str): The attribute name used to access the setting.
+
+        Returns:
+            bool: True when the setting emits a signal when changed,
+                False otherwise.
         """
         signal_name = Notification.signalName(attrname)
         return bool(GObject.signal_lookup(signal_name, cls))

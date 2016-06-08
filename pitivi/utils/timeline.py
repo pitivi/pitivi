@@ -35,23 +35,16 @@ UNSELECT = 1
 SELECT_ADD = 2
 
 
-# -------- Timeline Object management helper ---------#
-
 class TimelineError(Exception):
-
-    """Base Exception for errors happening in L{Timeline}s or L{Clip}s"""
+    """Base Exception for errors happening in `Timeline`s or `Clip`s."""
     pass
 
 
 class Selected(GObject.Object):
+    """Allows keeping track of the selection status for individual elements.
 
-    """
-    A simple class that let us emit a selected-changed signal
-    when needed, and that can be check directly to know if the
-    object is selected or not.
-
-    This is meant only for individual elements, do not confuse this with
-    utils.timeline's "Selection" class.
+    Signals:
+        selected-changed: Emitted when the selection is specified.
     """
 
     __gsignals__ = {
@@ -63,10 +56,7 @@ class Selected(GObject.Object):
         self._selected = False
 
     def __bool__(self):
-        """
-        checking a Selected object is the same as checking its _selected
-        property
-        """
+        """Checks whether it's selected."""
         return self._selected
 
     @property
@@ -80,15 +70,13 @@ class Selected(GObject.Object):
 
 
 class Selection(GObject.Object, Loggable):
+    """Manages a set of clips representing a selection.
 
-    """
-    A collection of L{GES.Clip}.
+    Attributes:
+        selected (List[GES.TrackElement]): Set of selected elements.
 
     Signals:
-     - C{selection-changed} : The contents of the L{GES.Selection} changed.
-
-    @ivar selected: Set of selected L{GES.TrackElement}
-    @type selected: C{list}
+        selection-changed: The contents of the selection changed.
     """
 
     __gsignals__ = {
@@ -101,16 +89,16 @@ class Selection(GObject.Object, Loggable):
         self.selected = set()
 
     def setSelection(self, objs, mode):
-        """
-        Update the current selection.
+        """Updates the current selection.
 
-        Depending on the value of C{mode}, the selection will be:
-         - L{SELECT} : set to the provided selection.
-         - L{UNSELECT} : the same minus the provided selection.
-         - L{SELECT_ADD} : extended with the provided selection.
-
-        @param objs: Timeline objects to update the selection with.
-        @param mode: The type of update to apply. Can be C{SELECT}, C{UNSELECT} or C{SELECT_ADD}
+        Args:
+            objs (List[GES.TrackElement]): Timeline objects to update the
+                selection with.
+            mode (SELECT or UNSELECT or SELECT_ADD): The type of update to
+                apply. The selection will be:
+                - `SELECT` : set to the provided selection.
+                - `UNSELECT` : the same minus the provided selection.
+                - `SELECT_ADD` : extended with the provided selection.
         """
         selection = set()
         for obj in objs:
@@ -157,8 +145,10 @@ class Selection(GObject.Object, Loggable):
         self.setSelection(objs, UNSELECT)
 
     def getSelectedTrackElements(self):
-        """
-        Returns the list of L{TrackElement} contained in this selection.
+        """Returns the list of elements contained in this selection.
+
+        Returns:
+            List[GES.TrackElement]
         """
         objects = []
         for clip in self.selected:
@@ -178,8 +168,10 @@ class Selection(GObject.Object, Loggable):
         return selected
 
     def getSelectedEffects(self):
-        """
-        Returns the list of L{GES.BaseEffect} contained in this selection.
+        """Returns the list of effects contained in this selection.
+
+        Returns:
+            List[GES.BaseEffect]
         """
         effects = []
         for clip in self.selected:
@@ -189,10 +181,10 @@ class Selection(GObject.Object, Loggable):
         return effects
 
     def getSingleClip(self, clip_type):
-        """
-        Returns the single-selected clip, if any.
+        """Returns the single-selected clip, if any.
 
-        @param clip_type: The class the clip must be an instance of.
+        Args:
+            clip_type (type): The class the clip must be an instance of.
         """
         if len(self.selected) == 1:
             clip = tuple(self.selected)[0]
@@ -207,40 +199,25 @@ class Selection(GObject.Object, Loggable):
         return iter(self.selected)
 
 
-# -----------------------------------------------------------------------------#
-# Timeline edition modes helper                         #
-
 class EditingContext(GObject.Object, Loggable):
+    """Encapsulates interactive editing.
 
-    """
-        Encapsulates interactive editing.
+    This is the main class for interactive editing.
+    Handles various timeline editing modes.
 
-        This is the main class for interactive edition.
+    Attributes:
+        focus (GES.Clip or GES.TrackElement): The Clip or TrackElement which is
+            to be the main target of interactive editing, such as the object
+            directly under the mouse pointer.
+        timeline (GES.Timeline): The timeline to edit.
+        edge (GES.Edge): The edge on which the editing will happen, this
+            parameter can be changed while still using the same context.
+        mode (GES.EditMode): The mode in which the editing will happen, this
+            parameter can be changed while still using the same context.
+        app (Pitivi): The app.
     """
 
     def __init__(self, focus, timeline, mode, edge, app, log_actions):
-        """
-        @param focus: the Clip or TrackElement which is to be the
-        main target of interactive editing, such as the object directly under the
-        mouse pointer
-        @type focus: L{GES.Clip} or L{GES.TrackElement}
-
-        @param timeline: the timeline to edit
-        @type timeline: instance of L{GES.Timeline}
-
-        @param edge: The edge on which the edition will happen, this parametter
-        can be change during the time using the same context.
-        @type edge: L{GES.Edge}
-
-        @param mode: The mode in which the edition will happen, this parametter
-        can be change during the time using the same context.
-        @type mode: L{GES.EditMode}
-
-        @param app: The Pitivi instance, for reporting actions.
-        @type app: L{Pitivi}
-
-        @returns: An instance of L{pitivi.utils.timeline.EditingContext}
-        """
         GObject.Object.__init__(self)
         Loggable.__init__(self)
         if isinstance(focus, GES.TrackElement):
@@ -274,8 +251,10 @@ class EditingContext(GObject.Object, Loggable):
         self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
 
     def setMode(self, mode):
-        """Set the current editing mode.
-        @param mode: the editing mode. Must be a GES.EditMode
+        """Sets the current editing mode.
+
+        Args:
+            mode (GES.EditMode): The editing mode.
         """
         self.mode = mode
 
@@ -309,10 +288,7 @@ class EditingContext(GObject.Object, Loggable):
 
 
 class Zoomable(object):
-
-    """
-    Interface for managing tranformation between timeline timestamps and UI
-    pixels.
+    """Base class for conversions between timeline timestamps and UI pixels.
 
     Complex Timeline interfaces v2 (01 Jul 2008)
 
@@ -405,24 +381,17 @@ class Zoomable(object):
 
     @classmethod
     def pixelToNs(cls, pixel):
-        """
-        Returns the pixel equivalent in nanoseconds according to the zoomratio
-        """
+        """Returns the duration equivalent of the specified pixel."""
         return int(pixel * Gst.SECOND / cls.zoomratio)
 
     @classmethod
     def pixelToNsAt(cls, pixel, ratio):
-        """
-        Returns the pixel equivalent in nanoseconds according to the zoomratio
-        """
+        """Returns the duration equivalent of the specified pixel."""
         return int(pixel * Gst.SECOND / ratio)
 
     @classmethod
     def nsToPixel(cls, duration):
-        """
-        Returns the pixel equivalent of the given duration, according to the
-        set zoom ratio
-        """
+        """Returns the pixel equivalent of the specified duration"""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:
@@ -431,10 +400,7 @@ class Zoomable(object):
 
     @classmethod
     def nsToPixelAccurate(cls, duration):
-        """
-        Returns the pixel equivalent of the given duration, according to the
-        set zoom ratio
-        """
+        """Returns the pixel equivalent of the specified duration."""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:

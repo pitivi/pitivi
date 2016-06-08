@@ -104,21 +104,15 @@ PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
 
 
 class Marquee(Gtk.Box, Loggable):
-    """
-    Marquee widget representing a selection area inside the timeline
-    it should be drawn on top of the timeline layout.
+    """Widget representing a selection area inside the timeline.
 
-    It provides an API that makes it easy to update its value directly
-    from Gdk.Event
+    Attributes:
+        timeline (Timeline): The timeline containing the marquee.
     """
 
     __gtype_name__ = "PitiviMarquee"
 
     def __init__(self, timeline):
-        """
-        @timeline: The #Timeline on which the marquee will
-                   be used
-        """
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
@@ -200,11 +194,11 @@ class Marquee(Gtk.Box, Loggable):
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
-    """
-    Contains the layer controls and the layers representation.
+    """Container for the the layers controls and representation.
 
-    @type parent: L{pitivi.timeline.timeline.TimelineContainer}
-    @type _project: L{pitivi.project.Project}
+    Attributes:
+        parent (TimelineContainer): The parent widget.
+        _project (Project): The project.
     """
 
     __gtype_name__ = "PitiviTimeline"
@@ -342,9 +336,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.current_group.props.serialize = False
 
     def setProject(self, project):
-        """
-        Connects to the GES.Timeline holding the project.
-        """
+        """Connects to the GES.Timeline holding the project."""
         if self.ges_timeline is not None:
             self.ges_timeline.disconnect_by_func(self._durationChangedCb)
             self.ges_timeline.disconnect_by_func(self._layerAddedCb)
@@ -382,13 +374,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.queue_draw()
 
     def scrollToPlayhead(self, align=None, when_not_in_view=False):
-        """
-        Scroll so that the playhead is in view.
+        """Scrolls so that the playhead is in view.
 
-        @param align: Where the playhead should be post-scroll.
-        @type align: L{Gtk.Align}
-        @param when_not_in_view: Whether to scroll only if the playhead is not
-                                 visible.
+        Args:
+            align (Optional[Gtk.Align]): Where the playhead should be
+                post-scroll.
+            when_not_in_view (Optional[bool]): When True, scrolls only if
+                the playhead is not in view.
         """
         self.debug("Scrolling to playhead")
         self.__setLayoutSize()
@@ -423,9 +415,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
-        """
-        Display or hide a snapping indicator line
-        """
+        """Displays or hides a snapping indicator line."""
         self.__snap_position = self.nsToPixel(position)
         self.queue_draw()
 
@@ -496,8 +486,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return self.nsToPixel(self.ges_timeline.props.duration) + space_at_the_end
 
     def _getParentOfType(self, widget, _type):
-        """
-        Get a clip from a child widget, if the widget is a child of the clip
+        """Gets a clip from a child widget.
+
+        Args:
+            widget (Gtk.Widget): A child of the clip.
+            _type (type): The type the clip should be.
         """
         if isinstance(widget, _type):
             return widget
@@ -511,10 +504,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return None
 
     def adjustCoords(self, coords=None, x=None, y=None):
-        """
-        Adjust coordinates passed as parametter that are raw
-        coordinates from the whole timeline into sensible
-        coordinates inside the visible area of the timeline.
+        """Adjusts timeline container coordinates to timeline view coordinates.
+
+        Args:
+            coords (Optional[List[int]]): The x and y to be adjusted.
+            x (Optional[int]): The x to be adjusted.
+            y (Optional[int]): The y to be adjusted.
+
+        Returns:
+            The specified coordinates adjusted for the visible area of the
+            timeline.
         """
         if coords:
             x = coords[0]
@@ -587,9 +586,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def get_sources_at_position(self, position):
-        """
-        Returns GES.VideoSource objects at current timeline position on all layers,
-        in layer order.
+        """Gets video sources at the current position on all layers.
+
+        Returns:
+            List[GES.VideoSource]: The found video sources.
         """
         sources = []
         for layer in self.ges_timeline.layers:
@@ -968,7 +968,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return [getattr(ges_layer.ui, sep_name), getattr(ges_layer.control_ui, sep_name)]
 
     def _get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
-        """ Used in the testsuite """
         ges_layers = self.ges_timeline.get_layers()
         if y < 20:
             # The cursor is at the top, above the first layer.
@@ -1024,7 +1023,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return ges_layer, separators
 
     def _setSeparatorsPrelight(self, light):
-        """ Used in the testsuite """
         for sep in self.__on_separators:
             if light:
                 set_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
@@ -1097,9 +1095,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return new_ges_layer
 
     def __update_layer(self, ges_layer):
-        """
-        Update the position child prop of the layer and layer control widgets.
-        """
+        """Updates the position child prop of the layer and layer control."""
         priority = ges_layer.props.priority
 
         layer_box = ges_layer.ui.get_parent()
@@ -1110,9 +1106,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                        priority)
 
     def __getDroppedLayer(self):
-        """
-        Create the layer for a clip dropped on a separator.
-        """
+        """Creates the layer for a clip dropped on a separator."""
         priority = self._on_layer.props.priority
         if self.__on_separators[0] == self._on_layer.ui.after_sep:
             priority = self._on_layer.props.priority + 1
@@ -1153,7 +1147,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
-    """Container for zoom box, ruler, timeline, scrollbars and toolbar."""
+    """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""
 
     def __init__(self, app):
         Zoomable.__init__(self)
@@ -1212,16 +1206,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project.pipeline.commit_timeline()
 
     def insertAssets(self, assets, position=None):
-        """
-        Add assets to the timeline and create clips on the longest layer.
-        """
+        """Creates clips out of the specified assets on the longest layer."""
         layer = self._getLongestLayer()
         self._insertClipsAndAssets(assets, position, layer)
 
     def insertClips(self, clips, position=None):
-        """
-        Add clips to the timeline on the first layer.
-        """
+        """Adds clips to the timeline on the first layer."""
         layers = self.ges_timeline.get_layers()
         layer = layers[0]
         self._insertClipsAndAssets(clips, position, layer)
@@ -1275,7 +1265,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return position
 
     def purgeAsset(self, asset_id):
-        """Remove all instances of an asset from the timeline."""
+        """Removes all instances of an asset from the timeline."""
         layers = self.ges_timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
@@ -1373,9 +1363,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.disconnect_by_func(self._ignoreAllEventsCb)
 
     def disableKeyboardAndMouseEvents(self):
-        """
-        A safety measure to prevent interacting with the timeline
-        """
+        """A safety measure to prevent interacting with the timeline."""
         self.info("Blocking timeline mouse and keyboard signals")
         self.timeline.connect("event", self._ignoreAllEventsCb)
 
@@ -1383,9 +1371,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return True
 
     def _getLongestLayer(self):
-        """
-        Return the longest layer.
-        """
+        """Returns the longest layer."""
         layers = self.ges_timeline.get_layers()
         if len(layers) == 1:
             return layers[0]
@@ -1498,9 +1484,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                    _("Add keyframe to the keyframe curve of selected clip"))
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
-        """
-        Set the zoom level so that the entire timeline is in view.
-        """
+        """Sets the zoom level so that the entire timeline is in view."""
         ruler_width = self.ruler.get_allocation().width
         duration = 0 if not self.ges_timeline else self.ges_timeline.get_duration()
         if not duration:
@@ -1662,7 +1646,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             progress_dialog.window.destroy()
 
     def _splitCb(self, unused_action, unused_parameter):
-        """
+        """Splits clips.
+
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
@@ -1696,9 +1681,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._splitElements()
 
     def _keyframe_cb(self, unused_action, unused_parameter):
-        """
-        Add or remove a keyframe at the current position of the selected clip.
-        """
+        """Toggles a keyframe on the selected clip."""
         ges_clip = self.timeline.selection.getSingleClip(GES.Clip)
         if ges_clip is None:
             return
@@ -1782,11 +1765,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Callbacks
     def _renderingSettingsChangedCb(self, project, item, value):
-        """
-        Called when any Project metadata changes, we filter out the one
-        we are interested in.
+        """Handles Project metadata changes.
 
-        if @item is None, it mean we called it ourself, and want to force
+        We filter out the one we are not interested in.
+
+        If `item` is None, it means we called it ourself, and want to force
         getting the project videorate value
         """
         if item == "videorate" or item is None:
@@ -1805,9 +1788,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectLoadedCb(self, unused_app, project):
-        """
-        When a project is loaded, we connect to its pipeline
-        """
+        """Connects to the project's pipeline."""
         assert self._project is project
         if self._project:
             self.ruler.setPipeline(self._project.pipeline)
@@ -1822,9 +1803,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectCreatedCb(self, unused_app, project):
-        """
-        When a project is created, we connect to it timeline
-        """
+        """Connects to the project's timeline."""
         if self._project:
             self._project.disconnect_by_func(self._renderingSettingsChangedCb)
             try:
@@ -1849,9 +1828,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoomFit()
 
     def _selectionChangedCb(self, selection):
-        """
-        The selected clips on the timeline have changed.
-        """
+        """Handles selection changing."""
         self.updateActions()
 
     def _gaplessmodeToggledCb(self, unused_action, unused_parameter):

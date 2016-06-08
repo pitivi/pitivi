@@ -237,8 +237,11 @@ class ThumbnailsDecorator(Loggable):
 
 
 class MediaLibraryWidget(Gtk.Box, Loggable):
+    """Widget for managing assets.
 
-    """ Widget for listing sources """
+    Attributes:
+        app (Pitivi): The app.
+    """
 
     __gsignals__ = {
         'play': (GObject.SignalFlags.RUN_LAST, None,
@@ -489,8 +492,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     @staticmethod
     def compare_basename(model, iter1, iter2, unused_user_data):
-        """
-        Compare the model elements identified by the L{Gtk.TreeIter} elements.
+        """Compares two model elements.
+
+        Args:
+            iter1 (Gtk.TreeIter): The iter identifying the first model element.
+            iter2 (Gtk.TreeIter): The iter identifying the second model element.
         """
         uri1 = model[iter1][COL_URI]
         uri2 = model[iter2][COL_URI]
@@ -533,10 +539,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._showImportSourcesDialog()
 
     def _removeAssetsCb(self, unused_action, unused_parameter):
-        """
-        Determine which clips are selected in the icon or list view,
-        and ask MediaLibrary to remove them from the project.
-        """
+        """Removes the selected assets from the project."""
         model = self.treeview.get_model()
         paths = self.getSelectedPaths()
         if not paths:
@@ -584,13 +587,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 self.iconview.grab_focus()
 
     def _setRowVisible(self, model, iter, data):
-        """
-        Toggle the visibility of a liststore row.
-        Used for the search box.
-        """
+        """Toggles the visibility of a liststore row."""
         text = data.get_text().lower()
         if not text:
-            return True  # Avoid silly warnings
+            # Avoid silly warnings.
+            return True
         # We must convert to markup form to be able to search for &, ', etc.
         text = GLib.markup_escape_text(text)
         return text in model.get_value(iter, COL_INFOTEXT).lower()
@@ -612,9 +613,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return icon
 
     def _connectToProject(self, project):
-        """
-        Connect signal handlers to a project.
-        """
+        """Connects signal handlers to the specified project."""
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-loading-progress", self._assetLoadingProgressCb)
         project.connect("asset-removed", self._assetRemovedCb)
@@ -623,9 +622,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project.connect("settings-set-from-imported-asset", self.__projectSettingsSetFromImportedAssetCb)
 
     def _setClipView(self, view_type):
-        """
-        Set which clip view to use when medialibrary is showing clips.
-        view_type: one of SHOW_TREEVIEW or SHOW_ICONVIEW
+        """Sets which clip view to use when medialibrary is showing clips.
+
+        Args:
+            view_type (int): One of SHOW_TREEVIEW or SHOW_ICONVIEW.
         """
         self.app.settings.lastClipView = view_type
         # Gather some info before switching views
@@ -665,7 +665,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return True
 
     def _showImportSourcesDialog(self):
-        """Pop up the "Import Sources" dialog box"""
+        """Pops up the "Import Sources" dialog box."""
         if self._importDialog:
             return
 
@@ -690,7 +690,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._importDialog.set_preview_widget(previewer)
         self._importDialog.set_use_preview_label(False)
         self._importDialog.connect(
-            'update-preview', previewer.add_preview_request)
+            'update-preview', previewer.update_preview_cb)
         # Filter for the "known good" formats by default
         filt_supported = Gtk.FileFilter()
         filt_supported.set_name(_("Supported file formats"))
@@ -706,26 +706,30 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._importDialog.show()
 
     def _getThumbnailInDir(self, dir, hash):
-        """
-        For a given thumbnail cache directory and file URI hash, see if there're
-        thumbnails available and return them in resolutions that pitivi expects.
+        """Gets pixbufs for the specified thumbnail.
 
-        The cache dirs might have resolutions of 256 and/or 128,
-        while we need 128 (for iconview) and 64 (for listview).
+        Args:
+            dir (str): The directory where the thumbnails can be found.
+            hash (str): The hash identifying the image.
+
+        Returns:
+            List[GdkPixbuf.Pixbuf]: The thumb_64 and thumb_128 if available,
+                None otherwise.
         """
-        path_256 = dir + "large/" + hash + ".png"
         path_128 = dir + "normal/" + hash + ".png"
         interpolation = GdkPixbuf.InterpType.BILINEAR
 
-        # First, try the 128 version since that's the native resolution we
-        # want:
+        # The cache dirs might have resolutions of 256 and/or 128,
+        # while we need 128 (for iconview) and 64 (for listview).
+        # First, try the 128 version since that's the native resolution we want.
         try:
             thumb_128 = GdkPixbuf.Pixbuf.new_from_file(path_128)
             w, h = thumb_128.get_width(), thumb_128.get_height()
             thumb_64 = thumb_128.scale_simple(w / 2, h / 2, interpolation)
             return thumb_64, thumb_128
         except GLib.GError:
-            # path_128 doesn't exist, try the 256 version
+            # path_128 doesn't exist, try the 256 version.
+            path_256 = dir + "large/" + hash + ".png"
             try:
                 thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
                 w, h = thumb_256.get_width(), thumb_256.get_height()
@@ -895,8 +899,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app.gui.timeline_ui.switchProxies(asset)
 
     def _assetAddedCb(self, unused_project, asset):
-        """ a file was added to the medialibrary """
-
+        """Checks whether the asset added to the project should be shown."""
         if asset in [row[COL_ASSET] for row in self.storemodel]:
             self.info("Asset %s already in!", asset.props.id)
             return
@@ -906,8 +909,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             asset.connect("notify::proxy", self.__assetProxiedCb)
             asset.connect("notify::proxy-target", self.__assetProxyingCb)
             if asset.get_proxy():
-                self.debug("Not adding asset %s "
-                           "as it is proxied by %s",
+                self.debug("Not adding asset %s, its proxy is used instead: %s",
                            asset.props.id,
                            asset.get_proxy().props.id)
                 return
@@ -921,9 +923,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.__removeAsset(asset)
 
     def __removeAsset(self, asset):
-        """ the given uri was removed from the medialibrary """
-        # find the good line in the storemodel and remove it
+        """Removes the specified asset."""
         uri = asset.get_id()
+        # Find the corresponding line in the storemodel and remove it.
         found = False
         for row in self.storemodel:
             if uri == row[COL_URI]:
@@ -932,7 +934,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 break
 
         if not found:
-            self.info("Trying to removed %s but that was not found"
+            self.info("Failed to remove %s as it was not found"
                       "in the liststore", uri)
 
     def _proxyingErrorCb(self, unused_project, asset):
@@ -940,8 +942,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._addAsset(asset)
 
     def _errorCreatingAssetCb(self, unused_project, error, id, type):
-        """ The given uri isn't a media file """
-
+        """Gathers asset loading errors."""
         if GObject.type_is_a(type, GES.UriClip):
             if self.app.proxy_manager.isProxyAsset(id):
                 self.debug("Error %s with a proxy"
@@ -1056,7 +1057,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._importDialog = None
 
     def _sourceIsUsed(self, asset):
-        """Check if a given URI is present in the timeline"""
+        """Checks whether the specified asset is present in the timeline."""
         layers = self._project.ges_timeline.get_layers()
         for layer in layers:
             for clip in layer.get_clips():
@@ -1065,9 +1066,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return False
 
     def _selectUnusedSources(self):
-        """
-        Select the assets not used by any clip in the project's timeline.
-        """
+        """Selects the assets not used by any clip in the project's timeline."""
         unused_sources_uris = []
         for asset in self._project.list_assets(GES.UriClip):
             if not self._sourceIsUsed(asset):
@@ -1105,9 +1104,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         infobar.hide()
 
     def _clipPropertiesCb(self, unused_widget=None):
-        """
-        Show the clip properties (resolution, framerate, audio channels...)
-        and allow setting them as the new project settings.
+        """Shows the clip properties in a dialog.
+
+        Allows selecting and applying them as the new project settings.
         """
         paths = self.getSelectedPaths()
         if not paths:
@@ -1131,9 +1130,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._import_warning_infobar.hide()
 
     def __showErrors(self):
-        """
-        Show a FileListErrorDialog to display import _errors.
-        """
+        """Shows a dialog with the import errors."""
         if len(self._errors) > 1:
             msgs = (_("Error while analyzing files"),
                     _("The following files can not be used with Pitivi."))
@@ -1372,10 +1369,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Some actions can only be done on a single item at a time:
         self._clipprops_button.set_sensitive(selected_count == 1)
 
-    def _itemOrRowActivatedCb(self, unused_view, path, *unused_column):
-        """
-        When an item is double-clicked, or
-        Space, Shift+Space, Return or Enter is pressed, preview the clip.
+    def _itemOrRowActivatedCb(self, unused_view, path, *unused_args):
+        """Plays the asset identified by the specified path.
+
+        This can happen when an item is double-clicked, or
+        Space, Shift+Space, Return or Enter is pressed.
         This method is the same for both iconview and treeview.
         """
         asset = self.modelFilter[path][COL_ASSET]
@@ -1515,7 +1513,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.dragged = False
 
     def getSelectedPaths(self):
-        """ Returns a list of selected treeview or iconview items """
+        """Gets which treeview or iconview items are selected.
+
+        Returns:
+            List[Gtk.TreePath]: The paths identifying the items.
+        """
         if self.clip_view == SHOW_TREEVIEW:
             return self._getSelectedPathsTreeView()
         elif self.clip_view == SHOW_ICONVIEW:
@@ -1531,7 +1533,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return paths
 
     def getSelectedItems(self):
-        """ Returns a list of selected items URIs """
+        """Gets the URIs of the selected items."""
         if self._draggedPaths:
             return [self.modelFilter[path][COL_URI]
                     for path in self._draggedPaths]
@@ -1539,7 +1541,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 for path in self.getSelectedPaths()]
 
     def getSelectedAssets(self):
-        """ Returns a list of selected items URIs """
+        """Gets the selected assets."""
         if self._draggedPaths:
             return [self.modelFilter[path][COL_ASSET]
                     for path in self._draggedPaths]

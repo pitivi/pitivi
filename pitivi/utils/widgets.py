@@ -16,11 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-A collection of helper classes and routines for:
-    * dynamically creating user interfaces
-    * Creating UI from GstElement-s
-"""
+"""Classes and routines for creating widgets from `Gst.Element`s."""
 import math
 import os
 import re
@@ -52,9 +48,7 @@ ZOOM_SLIDER_PADDING = SPACING * 4 / 5
 
 
 class DynamicWidget(object):
-
-    """An interface which provides a uniform way to get, set, and observe
-    widget properties"""
+    """Abstract widget providing a way to get, set and observe properties."""
 
     def __init__(self, default):
         self.default = default
@@ -77,7 +71,6 @@ class DynamicWidget(object):
 
 
 class DefaultWidget(Gtk.Label):
-
     """When all hope fails...."""
 
     def __init__(self, *unused, **unused_kwargs):
@@ -98,8 +91,8 @@ class DefaultWidget(Gtk.Label):
 
 
 class TextWidget(Gtk.Box, DynamicWidget):
+    """Widget for entering text.
 
-    """
     A Gtk.Entry which emits a "value-changed" signal only when its input is
     valid (matches the provided regex). If the input is invalid, a warning
     icon is displayed.
@@ -114,9 +107,6 @@ class TextWidget(Gtk.Box, DynamicWidget):
         "value-changed": (GObject.SignalFlags.RUN_LAST, None, (),),
         "activate": (GObject.SignalFlags.RUN_LAST, None, (),)
     }
-
-    __INVALID__ = Gdk.Color(0xFFFF, 0, 0)
-    __NORMAL__ = Gdk.Color(0, 0, 0)
 
     def __init__(self, matches=None, choices=None, default=None):
         if not default:
@@ -145,14 +135,14 @@ class TextWidget(Gtk.Box, DynamicWidget):
         self.last_valid = None
         self.valid = False
         self.send_signal = True
-        self.text.connect("changed", self._textChanged)
-        self.text.connect("activate", self._activateCb)
+        self.text.connect("changed", self.__text_changed_cb)
+        self.text.connect("activate", self.__activate_cb)
         if matches:
             if type(matches) is str:
                 self.matches = re.compile(matches)
             else:
                 self.matches = matches
-            self._textChanged(None)
+            self.__text_changed_cb(None)
 
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
@@ -170,7 +160,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
         for choice in choices:
             self.combo.append_text(choice)
 
-    def _textChanged(self, unused_widget):
+    def __text_changed_cb(self, unused_widget):
         text = self.text.get_text()
         if self.matches:
             if self._filter(text):
@@ -189,14 +179,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
 
         self.send_signal = True
 
-    def _activateCb(self, unused_widget):
-        """
-        Similar to _textChanged, to account for the case where we connect to
-        the "activate" signal instead of "text-changed".
-
-        We don't need to set the icons or anything like that, as _textChanged
-        does it already.
-        """
+    def __activate_cb(self, unused_widget):
         if self.matches and self.send_signal:
             self.emit("activate")
 
@@ -212,10 +195,16 @@ class TextWidget(Gtk.Box, DynamicWidget):
 
 
 class NumericWidget(Gtk.Box, DynamicWidget):
+    """Widget for entering a number.
 
-    """An horizontal Gtk.Scale and a Gtk.SpinButton which share an adjustment.
+    Contains both a Gtk.Scale and a Gtk.SpinButton for adjusting the value.
     The SpinButton is always displayed, while the Scale only appears if both
-    lower and upper bounds are defined"""
+    lower and upper bounds are defined.
+
+    Args:
+        upper (Optional[int]): The upper limit for this widget.
+        lower (Optional[int]): The lower limit for this widget.
+    """
 
     def __init__(self, upper=None, lower=None, default=None):
         Gtk.Box.__init__(self)
@@ -290,11 +279,11 @@ class NumericWidget(Gtk.Box, DynamicWidget):
 
 
 class TimeWidget(TextWidget, DynamicWidget):
+    """Widget for entering a time value.
 
+    Accepts timecode formats or a frame number (integer).
     """
-    A widget that contains a time in nanoseconds. Accepts timecode formats
-    or a frame number (integer).
-    """
+
     # The "frame number" match rule is ^([0-9]+)$ (with a + to require 1 digit)
     # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
     # Combining the two, we get:
@@ -351,8 +340,7 @@ class TimeWidget(TextWidget, DynamicWidget):
 
 
 class FractionWidget(TextWidget, DynamicWidget):
-
-    """A Gtk.ComboBoxEntry """
+    """Widget for entering a fraction."""
 
     fraction_regex = re.compile(
         "^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
@@ -437,8 +425,7 @@ class FractionWidget(TextWidget, DynamicWidget):
 
 
 class ToggleWidget(Gtk.CheckButton, DynamicWidget):
-
-    """A Gtk.CheckButton which supports the DynamicWidget interface."""
+    """Widget for entering an on/off value."""
 
     def __init__(self, default=None):
         Gtk.CheckButton.__init__(self)
@@ -455,10 +442,7 @@ class ToggleWidget(Gtk.CheckButton, DynamicWidget):
 
 
 class ChoiceWidget(Gtk.Box, DynamicWidget):
-
-    """Abstractly, represents a choice between a list of named values. The
-    association between value names and values is arbitrary. The current
-    implementation uses a Gtk.ComboBoxText for simplicity."""
+    """Widget for making a choice between a list of named values."""
 
     def __init__(self, choices, default=None):
         Gtk.Box.__init__(self)
@@ -500,15 +484,12 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
 
 
 class PathWidget(Gtk.FileChooserButton, DynamicWidget):
-
-    """A Gtk.FileChooserButton which supports the DynamicWidget interface."""
+    """Widget for entering a path."""
 
     __gtype_name__ = 'PathWidget'
 
     __gsignals__ = {
-        "value-changed": (GObject.SignalFlags.RUN_LAST,
-                          None,
-                          ()),
+        "value-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, action=Gtk.FileChooserAction.OPEN, default=None):
@@ -615,7 +596,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
     def deactivate_keyframe_toggle_buttons(self):
-        """Make sure the keyframe togglebuttons are deactivated."""
+        """Makes sure the keyframe togglebuttons are deactivated."""
         self.log("Deactivating all keyframe toggle buttons")
         for keyframe_button in self.__widgets_by_keyframe_button.keys():
             if keyframe_button.get_active():
@@ -627,7 +608,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
     def setElement(self, element, values={}, ignore=['name'],
                    with_reset_button=False):
-        """Set the element to be edited.
+        """Sets the element to be edited.
 
         Args:
             values (dict): The current values of the element props, by name.
@@ -641,8 +622,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.__add_widgets(values, with_reset_button)
 
     def __add_widgets(self, values, with_reset_button):
-        """
-        Prepare a Gtk.Grid containing the property widgets of an element.
+        """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
         A row is typically a label followed by the widget and a reset button.
@@ -765,18 +745,21 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                        keyframe_button)
         return button
 
-    def __set_keyframe_active(self, button, active):
+    def __set_keyframe_active(self, toggle_button, active):
+        """Updates the specified button without triggering signals.
+
+        Args:
+            toggle_button (Gtk.ToggleButton): The toggle button enabling controlling
+                the property by keyframes.
+            active (bool): The desired status of the `toggle_button`.
         """
-        This is meant for programmatically (un)pushing the provided keyframe
-        togglebutton, without triggering its signals.
-        """
-        self.log("Manually resetting the UI state of %s" % button)
-        button.handler_block_by_func(self.__keyframes_toggled_cb)
-        button.set_active(active)
-        button.handler_unblock_by_func(self.__keyframes_toggled_cb)
+        self.log("Manually resetting the UI state of %s", toggle_button)
+        toggle_button.handler_block_by_func(self.__keyframes_toggled_cb)
+        toggle_button.set_active(active)
+        toggle_button.handler_unblock_by_func(self.__keyframes_toggled_cb)
 
     def __display_controlled(self, toggle_button, controlled):
-        """Display whether the prop is keyframed."""
+        """Displays whether the prop is keyframed."""
         widget = self.__widgets_by_keyframe_button[toggle_button]
         # The displayed value means nothing if the prop is controlled.
         widget.set_sensitive(not controlled)
@@ -836,7 +819,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         return None
 
     def getSettings(self, with_default=False):
-        """Get a name/value dict with the properties."""
+        """Gets a name/value dict with the properties."""
         values = {}
         for prop, widget in self.properties.items():
             if not prop.flags & GObject.PARAM_WRITABLE:
@@ -847,7 +830,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         return values
 
     def _makePropertyWidget(self, prop, value=None):
-        """ Creates a Widget for the specified element property """
+        """Creates a widget for the specified element property."""
         type_name = GObject.type_name(prop.value_type.fundamental)
         if type_name == "gchararray":
             widget = TextWidget(default=prop.default_value)
@@ -883,8 +866,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
 
 class GstElementSettingsDialog(Loggable):
-    """Dialog window for viewing/modifying properties of a Gst.Element.
-    """
+    """Dialog window for viewing/modifying properties of a Gst.Element."""
 
     def __init__(self, elementfactory, properties, parent_window=None):
         Loggable.__init__(self)
@@ -934,7 +916,10 @@ class GstElementSettingsDialog(Loggable):
         self.window.show()
 
     def getSettings(self):
-        """ returns the property/value dictionnary of the selected settings """
+        """Gets the settings of the `element`.
+
+        Returns:
+            dict: A property name to value map."""
         return self.elementsettings.getSettings()
 
     def _resetValuesClickedCb(self, unused_button):
@@ -948,7 +933,6 @@ class GstElementSettingsDialog(Loggable):
 class BaseTabs(Gtk.Notebook):
 
     def __init__(self, app, hide_hpaned=False):
-        """ initialize """
         Gtk.Notebook.__init__(self)
         self.set_border_width(SPACING)
 
@@ -958,7 +942,7 @@ class BaseTabs(Gtk.Notebook):
         self._createUi()
 
     def _createUi(self):
-        """ set up the gui """
+        """Sets up the GUI."""
         settings = self.get_settings()
         settings.props.gtk_dnd_drag_threshold = 1
         self.set_tab_pos(Gtk.PositionType.TOP)
@@ -1029,11 +1013,10 @@ class BaseTabs(Gtk.Notebook):
 
 
 class ZoomBox(Gtk.Grid, Zoomable):
+    """Container holding the widgets for zooming.
 
-    """
-    Container holding the widgets for zooming.
-
-    @type timeline: TimelineContainer
+    Attributes:
+        timeline (TimelineContainer): The timeline container this belongs to.
     """
 
     def __init__(self, timeline):

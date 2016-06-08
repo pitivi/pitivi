@@ -28,10 +28,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class System(GObject.Object, Loggable):
-
-    """
-    A base class for systems in which Pitivi runs.
-    """
+    """A base class for systems in which Pitivi runs."""
 
     __gsignals__ = {
         'update-power-inhibition': (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -90,30 +87,35 @@ class System(GObject.Object, Loggable):
 
     # screensaver
     def inhibitScreensaver(self, key):
-        """increase screensaver inhibitor count
-        @arg key: C{str} a unique translated string, giving the reason for
-            inhibiting sleep
-        NOTE: it is safe to call this method with a key that is already
-            inhibited
+        """Increases the screensaver inhibitor count.
+
+        It is safe to call this method with a key that is already inhibited.
+
+        Args:
+            key (str): A unique translated string, giving the reason for
+                inhibiting sleep
         """
         self.info("Inhibiting the screensaver")
         self._inhibit(self._screensaver_keys, key)
 
     def uninhibitScreensaver(self, key):
-        """decrease screensaver inhibitor count
-        @arg key: C{str} a unique translated string, giving the reason for
-            inhibiting sleep
-        NOTE: it is safe to call this method with a key that is not inhibited.
+        """Decreases screensaver inhibitor count.
+
+        It is safe to call this method with a key that is not inhibited.
+
+        Args:
+            key (str): A unique translated string, giving the reason for
+                inhibiting sleep
         """
         self.info("Uninhibiting the screensaver")
         self._uninhibit(self._screensaver_keys, key)
 
     def screensaverIsInhibited(self, key=None):
-        """returns True if inhibited"""
+        """Checks whether inhibited."""
         return self._isInhibited(self._screensaver_keys, key)
 
     def getScreensaverInhibitors(self):
-        """returns a comma seperated string of screensaver inhibitor keys"""
+        """Returns a comma separated string of screensaver inhibitor keys."""
         return ", ".join(self._screensaver_keys)
 
     def screensaverIsBlockable(self):
@@ -121,30 +123,35 @@ class System(GObject.Object, Loggable):
 
     # Sleep
     def inhibitSleep(self, key):
-        """increase sleep inhibitor count
-        @arg key: C{str} a unique translated string, giving the reason for
-            inhibiting sleep
-        NOTE: it is safe to call this method with a key that is already
-            inhibited
+        """Increase the sleep inhibitor count.
+
+        It is safe to call this method with a key that is already inhibited.
+
+        Args:
+            key (str): A unique translated string, giving the reason for
+                inhibiting sleep
         """
         self.info("Inhibiting sleep")
         self._inhibit(self._sleep_keys, key)
 
     def uninhibitSleep(self, key):
-        """decrease sleep inhibitor count
-        @arg key: C{str} a unique translated string, giving the reason for
-            inhibiting sleep
-        NOTE: it is safe to call this method with a key that is not inhibited.
+        """Decreases sleep inhibitor count.
+
+        It is safe to call this method with a key that is not inhibited.
+
+        Args:
+            key (str): A unique translated string, giving the reason for
+                inhibiting sleep
         """
         self.info("Uninhibiting sleep")
         self._uninhibit(self._sleep_keys, key)
 
     def sleepIsInhibited(self, key=None):
-        """returns true if inhibited"""
+        """Returns whether inhibited."""
         return self._isInhibited(self._sleep_keys, key)
 
     def getSleepInhibitors(self):
-        """returns a comma seperated string of sleep inhibitor keys"""
+        """Returns a comma separated strinsg of sleep inhibitor keys."""
         return ", ".join(self._sleep_keys)
 
     def sleepIsBlockable(self):
@@ -156,26 +163,30 @@ class System(GObject.Object, Loggable):
         self.emit('update-power-inhibition')
 
     def desktopMessage(self, title, message, unused_icon=None):
-        """send a message to the desktop to be displayed to the user
-        @arg title: C{str} the title of the message
-        @arg message: C{str} the body of the message
-        @arg icon: C{str} icon to be shown with the message
+        """Sends a message to the desktop to be displayed to the user.
+
+        Args:
+            title (str): The title of the message.
+            message (str): The body of the message.
+            icon (str): The icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s", title, message)
         return None
 
     def getUniqueFilename(self, string):
-        """Get a filename which can only be obtained from the specified string.
-        @ivar string: the string to be translated.
-        @type string: str
-        @return: A filename which looks like the specified string.
+        """Gets a filename which can only be obtained from the specified string.
+
+        Args:
+            string (str): The string identifying the filename.
+
+        Returns:
+            str: A filename which looks like the specified string.
         """
         return string.replace("%", "%37").replace("/", "%47")
 
 
 class FreedesktopOrgSystem(System):
-
-    """provides messaging capabilites for desktops that implement fd.o specs"""
+    """Provides messaging capabilites for desktops that implement fd.o specs."""
 
     def __init__(self):
         System.__init__(self)
@@ -277,24 +288,21 @@ class GnomeSystem(FreedesktopOrgSystem):
 
 
 class DarwinSystem(System):
-
-    """Apple OS X"""
+    """Apple OS X."""
 
     def __init__(self):
         System.__init__(self)
 
 
 class WindowsSystem(System):
-
-    """Microsoft Windows"""
+    """Microsoft Windows."""
 
     def __init__(self):
         System.__init__(self)
 
 
 def get_system():
-    """
-    Create a System object.
+    """Creates a System object.
 
     Returns:
         System: A System object.

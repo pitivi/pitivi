@@ -17,10 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Effects global handling
- Note: Some effects are available through the frei0r
- library and the libavfilter0 library
+"""Effects categorization and management.
 
  There are different types of effects available:
   _ Simple Audio/Video Effects
@@ -134,6 +131,11 @@ ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
 class EffectInfo(object):
+    """Info for displaying and using an effect.
+
+    Attributes:
+        effect_name (str): The bin_description identifying the effect.
+    """
 
     def __init__(self, effect_name, media_type, categories,
                  human_name, description):
@@ -161,9 +163,11 @@ class EffectInfo(object):
 
 
 class EffectsManager(object):
+    """Keeps info about effects and their categories.
 
-    """
-    Info about effects.
+    Attributes:
+        video_effects (List[Gst.ElementFactory]): The available video effects.
+        audio_effects (List[Gst.ElementFactory]): The available audio effects.
     """
 
     def __init__(self):
@@ -215,31 +219,25 @@ class EffectsManager(object):
                                 description=factory.get_description())
             self._effects[name] = effect
 
-    def getAllAudioEffects(self):
-        """
-        @return: the list of available audio effects elements
-        """
-        return self.audio_effects
-
-    def getAllVideoEffects(self):
-        """
-        @return: the list of available video effects elements
-        """
-        return self.video_effects
-
     def getInfo(self, name):
-        """
-        @param name: The bin_description of the effect.
-        @type name: C{str}
-        @return: The l{EffectInfo} corresponding to the name or None
+        """Gets the info for an effect which can be applied.
+
+        Args:
+            name (str): The bin_description identifying the effect.
+
+        Returns:
+            EffectInfo: The info corresponding to the name, or None.
         """
         return self._effects.get(name)
 
     def _getEffectCategories(self, effect_name):
-        """
-        @param effect_name: the name of the effect for wich we want the category
-        @type effect_name: L{str}
-        @return: A C{list} of name C{str} of categories corresponding the effect
+        """Gets the categories to which the specified effect belongs.
+
+        Args:
+            effect_name (str): The bin_description identifying the effect.
+
+        Returns:
+            List[str]: The categories which contain the effect.
         """
         categories = []
         for category_name, effects in AUDIO_EFFECTS_CATEGORIES:
@@ -249,23 +247,18 @@ class EffectsManager(object):
             if effect_name in effects:
                 categories.append(category_name)
         if not categories:
-            uncategorized = _("Uncategorized")
-            categories.append(uncategorized)
+            categories.append(_("Uncategorized"))
         categories.insert(0, _("All effects"))
         return categories
 
     @property
     def video_categories(self):
-        """
-        Get all video effect categories names.
-        """
+        """Gets all video effect categories names."""
         return EffectsManager._getCategoriesNames(VIDEO_EFFECTS_CATEGORIES)
 
     @property
     def audio_categories(self):
-        """
-        Get all audio effect categories names.
-        """
+        """Gets all audio effect categories names."""
         return EffectsManager._getCategoriesNames(AUDIO_EFFECTS_CATEGORIES)
 
     @staticmethod
@@ -297,8 +290,7 @@ GlobalSettings.addConfigSection('effect-library')
 
 
 class EffectListWidget(Gtk.Box, Loggable):
-
-    """ Widget for listing effects """
+    """Widget for listing effects."""
 
     def __init__(self, instance):
         Gtk.Box.__init__(self)
@@ -405,8 +397,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         return "<b>%s</b>\n%s" % (escape(name), escape(desc))
 
     def _loadAvailableEffectsCb(self):
-        self._addFactories(self.app.effects.getAllVideoEffects(), VIDEO_EFFECT)
-        self._addFactories(self.app.effects.getAllAudioEffects(), AUDIO_EFFECT)
+        self._addFactories(self.app.effects.video_effects, VIDEO_EFFECT)
+        self._addFactories(self.app.effects.audio_effects, AUDIO_EFFECT)
         return False
 
     def _addFactories(self, elements, effectType):
@@ -488,8 +480,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         return self.storemodel[path][COL_ELEMENT_NAME]
 
     def _toggleViewTypeCb(self, widget):
-        """
-        Handle the switching of the view mode between video and audio.
+        """Switches the view mode between video and audio.
+
         This makes the two togglebuttons behave like a group of radiobuttons.
         """
         if widget is self.video_togglebutton:
@@ -502,7 +494,6 @@ class EffectListWidget(Gtk.Box, Loggable):
             self._effectType = VIDEO_EFFECT
         else:
             self._effectType = AUDIO_EFFECT
-
         self.populate_categories_widget()
         self.modelFilter.refilter()
 
@@ -531,11 +522,10 @@ PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
 
 class EffectsPropertiesManager:
+    """Provides and caches UIs for editing effects.
 
-    """
-    Provides and caches UIs for editing effects.
-
-    @type app: L{Pitivi}
+    Attributes:
+        app (Pitivi): The app.
     """
 
     def __init__(self, app):
@@ -544,10 +534,13 @@ class EffectsPropertiesManager:
         self.app = app
 
     def getEffectConfigurationUI(self, effect):
-        """Permit to get a configuration GUI for the effect
+        """Gets a configuration UI element for the effect.
 
-        @param effect: The effect for which we want the configuration UI
-        @type effect: C{Gst.Element}
+        Args:
+            effect (Gst.Element): The effect for which we want the UI.
+
+        Returns:
+            GstElementSettingsWidget: A container for configuring the effect.
         """
         if effect not in self.cache_dict:
             # Here we should handle special effects configuration UI

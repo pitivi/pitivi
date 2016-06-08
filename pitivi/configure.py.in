@@ -16,8 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Utilities for getting the location of various directories.
+"""Utilities for getting the location of various directories.
+
 Enables identical use for installed and uninstalled versions.
 """
 
@@ -30,9 +30,7 @@ def _get_root_dir():
 
 
 def in_devel():
-    """
-    Returns whether the app is run from a git checkout.
-    """
+    """Returns whether the app is run from a git checkout."""
     return os.environ.get("PITIVI_DEVELOPMENT", "0") != "0"
 
 if "APPDIR" in os.environ:
@@ -68,29 +66,29 @@ def get_data_dir():
 
 
 def get_pixmap_dir():
-    """ Returns the directory for program-only pixmaps """
+    """Returns our directory with pixmaps."""
     return os.path.join(get_data_dir(), 'pixmaps')
 
 
 def get_ui_dir():
-    """ Returns the directory for GtkBuilder/Glade files """
+    """Returns our directory with Gtk.Builder/Glade files."""
     return os.path.join(get_data_dir(), 'ui')
 
 
 def get_renderpresets_dir():
-    """ Returns the directory for Render Presets files """
+    """Returns our directory with Render Presets files."""
     return os.path.join(get_data_dir(), 'renderpresets')
 
 
 def get_audiopresets_dir():
-    """ Returns the directory for Audio Presets files """
+    """Returns our directory with Audio Presets files."""
     return os.path.join(get_data_dir(), 'audiopresets')
 
 
 def get_videopresets_dir():
-    """ Returns the directory for Video Presets files """
+    """Returns our directory with Video Presets files."""
     return os.path.join(get_data_dir(), 'videopresets')
 
 def get_gstpresets_dir():
-    """ Returns the directory for Video Presets files """
+    """Returns our directory with Gst Presets files."""
     return os.path.join(get_data_dir(), 'gstpresets')

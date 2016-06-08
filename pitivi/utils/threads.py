@@ -29,10 +29,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class Thread(threading.Thread, GObject.Object, Loggable):
-
-    """
-    Event-powered thread
-    """
+    """Event-powered thread."""
 
     __gsignals__ = {
         "done": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -44,36 +41,39 @@ class Thread(threading.Thread, GObject.Object, Loggable):
         Loggable.__init__(self)
 
     def stop(self):
-        """ stop the thread, do not override """
+        """Stops the thread, do not override."""
         self.abort()
         self.emit("done")
 
     def run(self):
-        """ thread processing """
+        """Runs the thread."""
         self.process()
         self.emit("done")
 
     def process(self):
-        """ Implement this in subclasses """
+        """Processes the thread.
+
+        Implement this in subclasses.
+        """
         raise NotImplementedError
 
     def abort(self):
-        """ Abort the thread. Subclass have to implement this method ! """
+        """Aborts the thread.
+
+        Subclass have to implement this method !
+        """
         pass
 
 
 class ThreadMaster(Loggable):
-
-    """
-    Controls all the threads existing in Pitivi.
-    """
+    """Threads controller."""
 
     def __init__(self):
         Loggable.__init__(self)
         self.threads = []
 
     def addThread(self, threadclass, *args):
-        """ Instantiate the specified Thread class and start it. """
+        """Instantiates the specified Thread class and starts it."""
         assert issubclass(threadclass, Thread)
         self.log("Adding thread of type %r", threadclass)
         thread = threadclass(*args)
@@ -88,7 +88,7 @@ class ThreadMaster(Loggable):
         self.threads.remove(thread)
 
     def stopAllThreads(self):
-        """ Stop all running Thread(s) controlled by this master """
+        """Stops all running Threads controlled by this master."""
         self.log("stopping all threads")
         joinedthreads = 0
         while joinedthreads < len(self.threads):

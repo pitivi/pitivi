@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Dialog box listing files which had errors, and the reasons.
-"""
+"""Assets discovery errors."""
 import os
 from gettext import gettext as _
 from urllib.parse import unquote
@@ -32,8 +30,7 @@ from pitivi.utils.loggable import Loggable
 
 
 class FileListErrorDialog(GObject.Object, Loggable):
-
-    """ Dialog box for showing errors in a list of files """
+    """Dialog for showing errors blocking importing media files."""
 
     __gsignals__ = {
         'close': (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -55,9 +52,11 @@ class FileListErrorDialog(GObject.Object, Loggable):
         self.errorvbox = self.builder.get_object("errorvbox")
 
     def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
-        """Add the given uri to the list of failed files. You can optionnaly
-        give a string identifying the reason why the file failed to be
-        discovered
+        """Adds the specified URI to the list of failures.
+
+        Args:
+            uri (str): The URI of the asset which cannot be imported.
+            reason (Optional[str]): The reason of the file discovery failure.
         """
         self.debug("Uri: %s, reason: %s, extra: %s", uri, reason, extra)
         exp = self.__createFileExpander(uri, reason, extra)
@@ -105,19 +104,19 @@ class FileListErrorDialog(GObject.Object, Loggable):
         return exp
 
     def isVisible(self):
-        """ returns True if this dialog is currently shown """
+        """Returns True if the dialog is currently shown."""
         return self.window.get_property("visible")
 
     def destroy(self):
-        """Destroy internal window"""
+        """Destroys the dialog."""
         self.window.destroy()
 
     # Callbacks from glade
 
     def _closeCb(self, unused_dialog):
-        """Emit the close signal"""
+        """Emits the `close` signal."""
         self.emit('close')
 
     def _responseCb(self, unused_dialog, response):
-        """Emit the response signal"""
+        """Emits the `response` signal."""
         self.emit('response', response)

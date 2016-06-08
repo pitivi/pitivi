@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-A helper object to work with Gtk.Notebook tabs
-"""
+"""Gtk.Notebook helpers."""
 from gi.repository import Gdk
 from gi.repository import Gtk
 
@@ -29,9 +27,12 @@ from pitivi.utils.ui import SPACING
 
 
 class BaseTabs(Gtk.Notebook, Loggable):
+    """Notebook which can detach its tabs to new windows.
 
-    """
-    @type app: Pitivi
+    Persists which of its tabs are detached.
+
+    Attributes:
+        app (Pitivi): The app.
     """
 
     def __init__(self, app):
@@ -40,7 +41,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         self.set_border_width(SPACING)
         self.set_scrollable(True)
         self.connect("create-window", self.__create_window_cb)
-        self.settings = app.settings  # To save/restore states of detached tabs
+        self.settings = app.settings
         notebook_widget_settings = self.get_settings()
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
 
@@ -113,7 +114,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         window.show_all()
         window.move(x, y)
         window.connect(
-            "configure-event", self._detached_window_configure_cb,
+            "configure-event", self.__detached_window_configure_cb,
             child_name)
         window.connect(
             "destroy", self.__detached_window_destroyed_cb, child,
@@ -121,13 +122,8 @@ class BaseTabs(Gtk.Notebook, Loggable):
 
         return notebook
 
-    def _detached_window_configure_cb(self, window, event, child_name):
-        """
-        When the user configures the detached window
-        (changes its size, position, etc.), save the settings.
-
-        The config key's name depends on the name (label) of the tab widget.
-        """
+    def __detached_window_configure_cb(self, window, event, child_name):
+        """Saves the position and size of the specified window."""
         # get_position() takes the window manager's decorations into account
         position = window.get_position()
         setattr(self.settings, child_name + "width", event.width)
@@ -136,10 +132,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         setattr(self.settings, child_name + "y", position[1])
 
     def _create_default_config(self, child_name):
-        """
-        If they do not exist already, create default settings
-        to save the state of a detachable widget.
-        """
+        """Creates default settings to save the state of a detachable widget."""
         try:
             GlobalSettings.addConfigSection(child_name)
         except ConfigError:

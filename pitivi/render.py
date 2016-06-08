@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Rendering-related utilities and classes
-"""
+"""Rendering-related classes and utilities."""
 import os
 import subprocess
 import time
@@ -47,30 +45,26 @@ from pitivi.utils.widgets import GstElementSettingsDialog
 
 
 class CachedEncoderList(object):
+    """Registry of avalaible Muxers, Audio encoders and Video Encoders.
 
-    """
-    Registry of avalaible Muxer/Audio encoder/Video Encoder. And
-    avalaible combinations of those.
-
-    You can acces directly the
-
-    @aencoders: List of avalaible audio encoders
-    @vencoders: List of avalaible video encoders
-    @muxers: List of avalaible muxers
-    @audio_combination: Dictionary from muxer names to compatible audio encoders ordered by Rank
-    @video_combination: Dictionary from muxer names to compatible video encoders ordered by Rank
-
+    Also keeps the avalaible combinations of those.
 
     It is a singleton.
+
+    Attributes:
+        aencoders (List[Gst.ElementFactory]): The avalaible audio encoders.
+        vencoders (List[Gst.ElementFactory]): The avalaible video encoders.
+        muxers (List[Gst.ElementFactory]): The avalaible muxers.
+        audio_combination (dict): Maps each muxer name to a list of compatible
+            audio encoders ordered by rank.
+        video_combination (dict): Maps each muxer name to a list of compatible
+            video encoders ordered by rank.
     """
 
     _instance = None
 
     def __new__(cls, *args, **kwargs):
-        """
-        Override the new method to return the singleton instance if available.
-        Otherwise, create one.
-        """
+        """Returns the singleton instance."""
         if not cls._instance:
             cls._instance = super(
                 CachedEncoderList, cls).__new__(cls, *args, **kwargs)
@@ -117,7 +111,7 @@ class CachedEncoderList(object):
             self.muxers.remove(muxer)
 
     def _findCompatibleEncoders(self, encoders, muxer, muxsinkcaps=[]):
-        """ returns the list of encoders compatible with the given muxer """
+        """Returns the list of encoders compatible with the specified muxer."""
         res = []
         if muxsinkcaps == []:
             muxsinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates()
@@ -131,8 +125,14 @@ class CachedEncoderList(object):
         return res
 
     def _canSinkCaps(self, muxer, ocaps, muxsinkcaps=[]):
-        """ returns True if the given caps intersect with some of the muxer's
-        sink pad templates' caps.
+        """Checks whether the muxer's receptors match the specified caps.
+
+        Args:
+            ocaps (Gst.Caps): The output caps to match.
+
+        Returns:
+            bool: True if any of the muxer's sink pad templates's caps intersect
+            the specified output caps.
         """
         # fast version
         if muxsinkcaps != []:
@@ -147,24 +147,18 @@ class CachedEncoderList(object):
                     return True
         return False
 
-    # sinkcaps = (x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == Gst.PadDirection.SINK)
-    # for x in sinkcaps:
-    #     if not x.intersect(ocaps).is_empty():
-    #         return True
-    # return False
-
     def _registryFeatureAddedCb(self, registry, feature):
         # TODO Check what feature has been added and update our lists
         pass
 
 
 def beautify_factoryname(factory):
+    """Returns a nice name for the specified Gst.ElementFactory instance.
+
+    Intended for removing redundant words and shorten the codec names.
     """
-    Returns a nice name for the specified Gst.ElementFactory instance.
-    This is intended to remove redundant words and shorten the codec names.
-    """
-    # only replace lowercase versions of "format", "video", "audio"
-    # otherwise they might be part of a trademark name
+    # Only replace lowercase versions of "format", "video", "audio"
+    # otherwise they might be part of a trademark name.
     words_to_remove = ["Muxer", "muxer", "Encoder", "encoder",
                        "format", "video", "audio", "instead",
                        # Incorrect naming for Sorenson Spark:
@@ -212,10 +206,13 @@ def extension_for_muxer(muxer):
 
 
 def factorylist(factories):
-    """Create a Gtk.ListStore() of sorted, beautified factory names.
+    """Creates a Gtk.ListStore() of sorted, beautified factory names.
 
-    @param factories: The factories available for creating the list.
-    @type factories: A sequence of Gst.ElementFactory instances.
+    Args:
+        factories (List[Gst.ElementFactory]): The factories for display.
+
+    Returns:
+        Gtk.ListStore: The model with to columns for name and factory.
     """
     columns = (str, object)
     data = [(beautify_factoryname(factory), factory)
@@ -292,7 +289,8 @@ class RenderingProgressDialog(GObject.Object):
             self._filesize_est_value_label.show()
 
     def _deleteEventCb(self, unused_dialog_widget, unused_event):
-        """If the user closes the window by pressing Escape, stop rendering"""
+        """Stops the rendering."""
+        # The user closed the window by pressing Escape.
         self.emit("cancel")
 
     def _cancelButtonClickedCb(self, unused_button):
@@ -312,22 +310,21 @@ class RenderingProgressDialog(GObject.Object):
 
 
 class RenderDialog(Loggable):
-
     """Render dialog box.
 
-    @type app: L{pitivi.application.Pitivi}
-    @ivar preferred_aencoder: The last audio encoder selected by the user.
-    @type preferred_aencoder: str
-    @ivar preferred_vencoder: The last video encoder selected by the user.
-    @type preferred_vencoder: str
-    @type project: L{pitivi.project.Project}
+    Args:
+        app (Pitivi): The app.
+        project (Project): The project to be rendered.
+
+    Attributes:
+        preferred_aencoder (str): The last audio encoder selected by the user.
+        preferred_vencoder (str): The last video encoder selected by the user.
     """
     INHIBIT_REASON = _("Currently rendering")
 
     _factory_formats = {}
 
     def __init__(self, app, project):
-
         from pitivi.preset import RenderPresetManager
 
         Loggable.__init__(self)
@@ -534,8 +531,7 @@ class RenderDialog(Loggable):
         self.muxercombobox.set_model(factorylist(CachedEncoderList().muxers))
 
     def _displaySettings(self):
-        """Display the settings that also change in the ProjectSettingsDialog.
-        """
+        """Displays the settings also in the ProjectSettingsDialog."""
         # Video settings
         set_combo_value(self.frame_rate_combo, self.project.videorate)
         # Audio settings
@@ -543,20 +539,17 @@ class RenderDialog(Loggable):
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
 
     def _displayRenderSettings(self):
-        """Display the settings which can be changed only in the RenderDialog.
-        """
+        """Displays the settings available only in the RenderDialog."""
         # Video settings
-        # note: this will trigger an update of the video resolution label
+        # This will trigger an update of the video resolution label.
         self.scale_spinbutton.set_value(self.project.render_scale)
         # Muxer settings
-        # note: this will trigger an update of the codec comboboxes
+        # This will trigger an update of the codec comboboxes.
         set_combo_value(self.muxercombobox,
                         Gst.ElementFactory.find(self.project.muxer))
 
     def _checkForExistingFile(self, *unused_args):
-        """
-        Display a warning icon and tooltip if the file path already exists.
-        """
+        """Displays a warning if the file path already exists."""
         path = self.filebutton.get_current_folder()
         if not path:
             # This happens when the window is initialized.
@@ -576,13 +569,14 @@ class RenderDialog(Loggable):
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
 
     def _getFilesizeEstimate(self):
-        """
-        Using the current render output's filesize and position in the timeline,
-        return a human-readable (ex: "14 MB") estimate of the final filesize.
+        """Estimates the final file size.
 
         Estimates in megabytes (over 30 MB) are rounded to the nearest 10 MB
         to smooth out small variations. You'd be surprised how imprecision can
         improve perceived accuracy.
+
+        Returns:
+            str: A human-readable (ex: "14 MB") estimate for the file size.
         """
         if not self.current_position or self.current_position == 0:
             return None
@@ -612,7 +606,7 @@ class RenderDialog(Loggable):
         self.fileentry.set_text(name)
 
     def updateAvailableEncoders(self):
-        """Update the encoder comboboxes to show the available encoders."""
+        """Updates the encoder comboboxes to show the available encoders."""
         encoders = CachedEncoderList()
         vencoder_model = factorylist(
             encoders.video_combination[self.project.muxer])
@@ -628,7 +622,7 @@ class RenderDialog(Loggable):
             self.audio_encoder_combo, self.preferred_aencoder)
 
     def _updateEncoderCombo(self, encoder_combo, preferred_encoder):
-        """Select the specified encoder for the specified encoder combo."""
+        """Selects the specified encoder for the specified encoder combo."""
         if preferred_encoder:
             # A preference exists, pick it if it can be found in
             # the current model of the combobox.
@@ -640,13 +634,11 @@ class RenderDialog(Loggable):
             encoder_combo.set_active(0)
 
     def _elementSettingsDialog(self, factory, settings_attr):
-        """Open a dialog to edit the properties for the specified factory.
+        """Opens a dialog to edit the properties for the specified factory.
 
-        @param factory: An element factory whose properties the user will edit.
-        @type factory: Gst.ElementFactory
-        @param settings_attr: The MultimediaSettings attribute holding
-        the properties.
-        @type settings_attr: str
+        Args:
+            factory (Gst.ElementFactory): The factory for editing.
+            settings_attr (str): The Project attribute holding the properties.
         """
         properties = getattr(self.project, settings_attr)
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
@@ -671,7 +663,7 @@ class RenderDialog(Loggable):
         dialog.destroy()
 
     def startAction(self):
-        """ Start the render process """
+        """Starts the render process."""
         self._pipeline.set_state(Gst.State.NULL)
         # FIXME: https://github.com/pitivi/gst-editing-services/issues/23
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
@@ -690,7 +682,7 @@ class RenderDialog(Loggable):
         self._destroyProgressWindow()
 
     def _shutDown(self):
-        """Shutdown the gstreamer pipeline and disconnect from its signals."""
+        """Shuts down the pipeline and disconnects from its signals."""
         self._is_rendering = False
         self._rendering_is_paused = False
         self._time_spent_paused = 0
@@ -714,7 +706,7 @@ class RenderDialog(Loggable):
         self.project.pipeline.togglePlayback()
 
     def _destroyProgressWindow(self):
-        """ Handle the completion or the cancellation of the render process. """
+        """Handles the completion or the cancellation of the render process."""
         self.progress.window.destroy()
         self.progress = None
         self.window.show()  # Show the rendering dialog again
@@ -788,10 +780,7 @@ class RenderDialog(Loggable):
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
-        """
-        The render button inside the render dialog has been clicked,
-        start the rendering process.
-        """
+        """Starts the rendering process."""
         self.__maybeUseSourceAsset()
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
@@ -917,10 +906,10 @@ class RenderDialog(Loggable):
                         self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
 
     def _updatePositionCb(self, unused_pipeline, position):
-        """
-        Unlike other progression indicator callbacks, this one occurs every time
-        the pipeline emits a position changed signal, which is *very* often.
-        This should only be used for a smooth progressbar/percentage, not text.
+        """Updates the progress bar and triggers the update of the file size.
+
+        This one occurs every time the pipeline emits a position changed signal,
+        which is *very* often.
         """
         self.current_position = position
         if not self.progress or not position:
@@ -939,17 +928,14 @@ class RenderDialog(Loggable):
                 self._timeEstimateTimer = GLib.timeout_add_seconds(
                     3, self._updateTimeEstimateCb)
 
-        # Filesize is trickier and needs more time to be meaningful:
+        # Filesize is trickier and needs more time to be meaningful.
         if not self._filesizeEstimateTimer and (fraction > 0.33 or timediff > 180):
             self._filesizeEstimateTimer = GLib.timeout_add_seconds(
                 5, self._updateFilesizeEstimateCb)
 
-    def _elementAddedCb(self, unused_bin, element):
-        """
-        Setting properties on Gst.Element-s has they are added to the
-        Gst.Encodebin
-        """
-        factory = element.get_factory()
+    def _elementAddedCb(self, unused_bin, gst_element):
+        """Sets properties on the specified Gst.Element."""
+        factory = gst_element.get_factory()
         settings = {}
         if factory == get_combo_value(self.video_encoder_combo):
             settings = self.project.vcodecsettings
@@ -957,7 +943,7 @@ class RenderDialog(Loggable):
             settings = self.project.acodecsettings
 
         for propname, value in settings.items():
-            element.set_property(propname, value)
+            gst_element.set_property(propname, value)
             self.debug("Setting %s to %s", propname, value)
 
     # Settings changed callbacks
@@ -1032,7 +1018,7 @@ class RenderDialog(Loggable):
         self._elementSettingsDialog(factory, 'acodecsettings')
 
     def _muxerComboChangedCb(self, muxer_combo):
-        """Handle the changing of the container format combobox."""
+        """Handles the changing of the container format combobox."""
         self.project.muxer = get_combo_value(muxer_combo).get_name()
 
         # Update the extension of the filename.

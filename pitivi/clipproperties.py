@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Widgets to control clips properties
-"""
+"""Widgets to control clips properties."""
 import os
 from gettext import gettext as _
 
@@ -50,15 +48,14 @@ from pitivi.utils.ui import SPACING
 
 
 class ClipPropertiesError(Exception):
-    """Base Exception for errors happening in L{ClipProperties}s or L{EffectProperties}s"""
     pass
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
-    """
-    Widget for configuring the selected clip.
+    """Widget for configuring the selected clip.
 
-    @type app: L{Pitivi}
+    Attributes:
+        app (Pitivi): The app.
     """
 
     def __init__(self, app):
@@ -91,9 +88,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         vbox.pack_start(self.effect_expander, False, False, 0)
 
     def createInfoBar(self, text):
-        """
-        Create an infobar that is added at the beginning of the window
-        """
+        """Creates an infobar to be displayed at the top."""
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
         infobar = Gtk.InfoBar()
@@ -105,11 +100,10 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
 
 # pylint: disable=too-many-instance-attributes
 class EffectProperties(Gtk.Expander, Loggable):
-    """
-    Widget for viewing a list of effects and configuring them.
+    """Widget for viewing a list of effects and configuring them.
 
-    @type app: C{Pitivi}
-    @type effects_properties_manager: C{EffectsPropertiesManager}
+    Attributes:
+        app (Pitivi): The app.
     """
 
     # pylint: disable=too-many-statements
@@ -148,14 +142,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
         # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
         class EffectsListStore(Gtk.ListStore, Gtk.TreeDragSource):
-            """
-            Just a work around!
-            """
+            """Just a work around!"""
             # pylint: disable=non-parent-init-called
             def __init__(self, *args):
                 Gtk.ListStore.__init__(self, *args)
-                # Simply set the source index on the storemodrel directly
-                # to avoid issues with the selection_data API
+                # Set the source index on the storemodel directly,
+                # to avoid issues with the selection_data API.
                 # FIXME: Work around
                 # https://bugzilla.gnome.org/show_bug.cgi?id=737587
                 self.source_index = None
@@ -336,12 +328,11 @@ class EffectProperties(Gtk.Expander, Loggable):
                 break
 
     def addEffectToCurrentSelection(self, factory_name):
-        """
-        Add an effect to the current selection
+        """Adds an effect to the current selection.
 
         Args:
-            factory_name (str): The name of the GstElementFactory to creaye the
-            effect from.
+            factory_name (str): The name of the GstElementFactory for creating
+                the effect.
         """
         if not self.clips or len(self.clips) > 1:
             return
@@ -433,9 +424,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     @staticmethod
     def calculateEffectPriority(source_index, drop_index, drop_pos):
-        """
-        Return where the effect from source_index will end up
-        """
+        """Calculates where the effect from source_index will end up."""
         if drop_pos in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE, Gtk.TreeViewDropPosition.INTO_OR_AFTER):
             return drop_index
         if drop_pos == Gtk.TreeViewDropPosition.BEFORE:
@@ -539,9 +528,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
 
 class TransformationProperties(Gtk.Expander, Loggable):
-    """
-    Widget for viewing and configuring speed
-    """
+    """Widget for configuring the placement and size of the clip."""
 
     __signals__ = {
         'selection-changed': []}
@@ -617,10 +604,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             spinbtn.set_value(value)
 
     def __setupSpinButton(self, widget_name, property_name):
-        """
-        Create a spinbutton widget and connect its signals to change property
-        values. While focused, disable the timeline actions' sensitivity.
-        """
+        """Creates a SpinButton for editing a property value."""
         spinbtn = self.builder.get_object(widget_name)
         spinbtn.connect("output", self._onValueChangedCb, property_name)
         disable_scroll(spinbtn)

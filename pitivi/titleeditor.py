@@ -39,12 +39,11 @@ DEFAULT_HALIGNMENT = GES.TextHAlign.CENTER
 
 
 class TitleEditor(Loggable):
+    """Widget for configuring a title.
 
-    """
-    Widget for configuring the selected title.
-
-    @type app: L{Pitivi}
-    @type _project: L{pitivi.project.Project}
+    Attributes:
+        app (Pitivi): The app.
+        _project (Project): The project.
     """
 
     def __init__(self, app):
@@ -154,10 +153,8 @@ class TitleEditor(Loggable):
         self.log("Source text updated to %s", text)
         self._setChildProperty("text", text)
 
-    def _updateSource(self, updated_obj):
-        """
-        Handle changes in one of the advanced property widgets at the bottom
-        """
+    def _update_source_cb(self, updated_obj):
+        """Handles changes in the advanced property widgets at the bottom."""
         if not self.source:
             # Nothing to update.
             return
@@ -183,10 +180,10 @@ class TitleEditor(Loggable):
         self.settings["x-absolute"].set_visible(visible)
 
     def set_source(self, source):
-        """
-        Set the clip to be edited with this editor.
+        """Sets the clip to be edited with this editor.
 
-        @type source: L{GES.TitleSource}
+        Args:
+            source (GES.TitleSource): The source of the clip.
         """
         self.debug("Source set to %s", source)
         if self._children_props_handler is not None:

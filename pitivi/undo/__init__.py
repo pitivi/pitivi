@@ -1,3 +1,0 @@
-"""
-Undo classes and functions
-"""

@@ -209,49 +209,6 @@ class TestLogSettings(unittest.TestCase):
         self.assertEqual(old, log.getLogSettings())
 
 
-class TestWriteMark(TestWithHandler):
-
-    def testWriteMarkInDebug(self):
-        loggable = log.Loggable()
-        log.setDebug("%d" % log.DEBUG)
-        log.addLogHandler(self.handler)
-        marker = 'test'
-        loggable.writeMarker(marker, log.DEBUG)
-        self.assertEqual(self.message, marker)
-
-    def testWriteMarkInWarn(self):
-        loggable = log.Loggable()
-        log.setDebug("%d" % log.WARN)
-        log.addLogHandler(self.handler)
-        marker = 'test'
-        loggable.writeMarker(marker, log.WARN)
-        self.assertEqual(self.message, marker)
-
-    def testWriteMarkInInfo(self):
-        loggable = log.Loggable()
-        log.setDebug("%d" % log.INFO)
-        log.addLogHandler(self.handler)
-        marker = 'test'
-        loggable.writeMarker(marker, log.INFO)
-        self.assertEqual(self.message, marker)
-
-    def testWriteMarkInLog(self):
-        loggable = log.Loggable()
-        log.setDebug("%d" % log.LOG)
-        log.addLogHandler(self.handler)
-        marker = 'test'
-        loggable.writeMarker(marker, log.LOG)
-        self.assertEqual(self.message, marker)
-
-    def testWriteMarkInError(self):
-        loggable = log.Loggable()
-        log.setDebug("%d" % log.ERROR)
-        log.addLogHandler(self.handler)
-        marker = 'test'
-        loggable.writeMarker(marker, log.ERROR)
-        self.assertEqual(self.message, marker)
-
-
 class TestLogNames(unittest.TestCase):
 
     def testGetLevelNames(self):

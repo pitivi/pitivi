@@ -37,24 +37,18 @@ class DeserializeException(Exception):
 
 
 class PresetManager(GObject.Object, Loggable):
-
     """Abstract class for storing a list of presets.
 
     Subclasses must provide a filename attribute.
 
-    @cvar filename: The name of the file where the presets will be stored.
-    @type filename: str
-
-    @ivar cur_preset: The currently selected preset. Note that a preset has to
-        be selected before it can be changed.
-    @type cur_preset: str
-    @ivar ordered: A list holding (name, preset_dict) tuples.
-    @type ordered: Gtk.ListStore
-    @ivar presets: A (name -> preset_dict) map.
-    @type presets: dict
-    @ivar widget_map: A (propname -> (setter_func, getter_func)) map.
-        These two functions are used when showing or saving a preset.
-    @type widget_map: dict
+    Attributes:
+        filename (str): The name of the file where the presets will be stored.
+        cur_preset (str): The currently selected preset. Note that a preset
+            has to be selected before it can be changed.
+        ordered (Gtk.ListStore): A list holding (name, preset_dict) tuples.
+        presets (dict): A (name -> preset_dict) map.
+        widget_map (dict): A (propname -> (setter_func, getter_func)) map.
+            These two functions are used when showing or saving a preset.
     """
 
     __gsignals__ = {
@@ -117,7 +111,7 @@ class PresetManager(GObject.Object, Loggable):
         button.set_popup(menu)
 
     def _presetChangedCb(self, combo):
-        """Handle the selection of a preset."""
+        """Handles the selection of a preset."""
         # Check whether the user selected a preset or editing the preset name.
         preset_name = combo.get_active_id()
         if preset_name:
@@ -193,7 +187,7 @@ class PresetManager(GObject.Object, Loggable):
                 self._addPreset(name, preset)
 
     def saveAll(self):
-        """Write changes to disk for all presets"""
+        """Writes changes to disk for all presets."""
         for preset_name, values in self.ordered:
             self._savePreset(preset_name)
 
@@ -217,7 +211,7 @@ class PresetManager(GObject.Object, Loggable):
         return os.path.join(self.user_path, file_name)
 
     def getNewPresetName(self):
-        """Get a unique name for a new preset."""
+        """Gets a unique name for a new preset."""
         name = _("New preset")
         i = 1
         while self.hasPreset(name):
@@ -226,12 +220,11 @@ class PresetManager(GObject.Object, Loggable):
         return name
 
     def createPreset(self, name, values=None):
-        """Create a preset, overwriting the preset with the same name if any.
+        """Creates a preset, overwriting the preset with the same name if any.
 
-        @param name: The name of the new preset.
-        @type name: str
-        @param values: The values of the new preset.
-        @type values: dict
+        Args:
+            name (str): The name of the new preset.
+            values (dict): The values of the new preset.
         """
         if not values:
             values = {}
@@ -246,7 +239,7 @@ class PresetManager(GObject.Object, Loggable):
         self.ordered.append((name, values))
 
     def _renameCurrentPreset(self, new_name):
-        """Change the name of the current preset."""
+        """Changes the name of the current preset."""
         old_name = self.cur_preset
         if old_name == new_name:
             # Nothing to do.
@@ -280,11 +273,11 @@ class PresetManager(GObject.Object, Loggable):
         return (row[0] for row in self.ordered)
 
     def getModel(self):
-        """Get the GtkModel used by the UI."""
+        """Gets the GtkModel used by the UI."""
         return self.ordered
 
     def updateValue(self, name, value):
-        """Update a value in the current preset, if any."""
+        """Updates a value in the current preset, if any."""
         if self.ignore_update_requests:
             # This is caused by restorePreset, nothing to do.
             return
@@ -292,14 +285,14 @@ class PresetManager(GObject.Object, Loggable):
             self.presets[self.cur_preset][name] = value
 
     def bindWidget(self, propname, setter_func, getter_func):
-        """Link the specified functions to the specified preset property."""
+        """Links the specified functions to the specified preset property."""
         self.widget_map[propname] = (setter_func, getter_func)
 
     def restorePreset(self, preset):
-        """Select a preset and copy the values from the preset to the widgets.
+        """Selects a preset and copies its values to the widgets.
 
-        @param preset: The name of the preset to be selected.
-        @type preset: str
+        Args:
+            preset (str): The name of the preset to be selected.
         """
         if preset is None:
             self.cur_preset = None
@@ -316,7 +309,7 @@ class PresetManager(GObject.Object, Loggable):
             self.ignore_update_requests = False
 
     def saveCurrentPreset(self, new_name=None):
-        """Update the current preset values from the widgets and save it."""
+        """Updates the current preset values from the widgets and saves it."""
         if new_name:
             self._renameCurrentPreset(new_name)
         values = self.presets[self.cur_preset]
@@ -324,12 +317,12 @@ class PresetManager(GObject.Object, Loggable):
         self._savePreset(self.cur_preset)
 
     def _updatePresetValues(self, values):
-        """Copy the values from the widgets to the specified values dict."""
+        """Copies the values from the widgets to the specified values dict."""
         for field, (setter, getter) in self.widget_map.items():
             values[field] = getter()
 
     def _isCurrentPresetChanged(self, name):
-        """Return whether the widgets values differ from those of the preset."""
+        """Returns whether the widgets values differ from the preset values."""
         if not self.cur_preset:
             # There is no preset selected, nothing to do.
             return False
@@ -375,10 +368,10 @@ class PresetManager(GObject.Object, Loggable):
         self.ordered.prepend((name, values))
 
     def isSaveButtonSensitive(self, name):
-        """Whether the Save button should be enabled.
+        """Checks whether the Save button should be enabled.
 
-        @param name: The new preset name.
-        @type name: str
+        Args:
+            name (str): The new preset name.
         """
         if self.cur_preset:
             return self._isCurrentPresetChanged(name)
@@ -390,13 +383,13 @@ class PresetManager(GObject.Object, Loggable):
         return False
 
     def isRemoveButtonSensitive(self):
-        """Whether the Remove button should be enabled"""
+        """Checks whether the Remove button should be enabled."""
         if not self.cur_preset:
             return False
         return True
 
     def isNewButtonSensitive(self):
-        """Whether the New button should be enabled"""
+        """Checks whether the New button should be enabled."""
         return bool(self.cur_preset)
 
     def _projectToPreset(self, project):

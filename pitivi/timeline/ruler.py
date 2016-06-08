@@ -83,15 +83,15 @@ SMALL_FONT_SIZE = 11
 
 
 class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
-
-    """
-    Widget for displaying the ruler.
+    """Widget for displaying the ruler.
 
     Displays a series of consecutive intervals. For each interval its beginning
     time is shown. If zoomed in enough, shows the frames in alternate colors.
 
-    @type timeline: L{pitivi.timeline.timeline.TimelineContainer}
-    @type _pipeline: L{pitivi.utils.pipeline.Pipeline}
+    Attributes:
+        timeline (TimelineContainer): The timeline container used to handle
+            scroll events.
+        _pipeline (Pipeline): The pipeline of the project.
     """
 
     def __init__(self, timeline, hadj):
@@ -227,9 +227,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.timeline.timeline.do_scroll_event(event)
 
     def setProjectFrameRate(self, rate):
-        """
-        Set the lowest scale based on project framerate
-        """
+        """Sets the lowest scale based on the specified project framerate."""
         self.frame_rate = rate
         self.ns_per_frame = float(Gst.SECOND / self.frame_rate)
         self.scales = (2 / rate, 5 / rate, 10 / rate) + SCALES
@@ -345,10 +343,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 context.set_font_size(NORMAL_FONT_SIZE)
 
     def drawFrameBoundaries(self, context):
-        """
-        Draw the alternating rectangles that represent the project frames at
-        high zoom levels. These are based on the framerate set in the project
-        settings, not the actual frames on a video codec level.
+        """Draws the alternating rectangles that represent the project frames.
+
+        These are drawn only at high zoom levels.
+
+        These are based on the project's framerate settings, not the actual
+        frames on the assets.
         """
         frame_width = self.nsToPixel(self.ns_per_frame)
         if not frame_width >= FRAME_MIN_WIDTH_PIXELS:
@@ -373,8 +373,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             frame_num += 1
 
     def drawPosition(self, context):
-        """
-        Draw the top part of the playhead.
+        """Draws the top part of the playhead.
 
         This should be in sync with the playhead drawn by the timeline.
         See Timeline.__draw_playhead().

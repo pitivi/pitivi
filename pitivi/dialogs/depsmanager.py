@@ -16,7 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-""" This module implements the notions of missing dependencies """
+"""Missing dependencies logic."""
 import os
 
 from gi.repository import Gtk
@@ -26,10 +26,7 @@ from pitivi.configure import get_ui_dir
 
 
 class DepsManager(object):
-
-    """Display a dialog listing missing soft dependencies.
-    The sane way to query and install is by using PackageKit's InstallResource()
-    """
+    """Manages a dialog listing missing soft dependencies."""
 
     def __init__(self, app, parent_window=None):
         self.app = app
@@ -54,11 +51,11 @@ class DepsManager(object):
         self.show()
 
     def _onCloseButtonClickedCb(self, unused_button):
-        """ Hide on close """
+        """Hides the dialog."""
         self.hide()
 
     def _onInstallButtonClickedCb(self, unused_button):
-        """ Hide on install and try to install dependencies """
+        """Hides on install and tries to install dependencies."""
         self.hide()
         # FIXME: this is not implemented properly.
         # Here is some partially working code:
@@ -84,10 +81,7 @@ class DepsManager(object):
         # TODO: catch exceptions/create callbacks to _installFailedCb
 
     def _setDepsLabel(self):
-        """
-        Set the contents of the label containing the list of
-        missing dependencies
-        """
+        """Updates the UI to display the list of missing dependencies."""
         label_contents = ""
         for depname, dep in missing_soft_deps.items():
             label_contents += "• %s (%s)\n" % (
@@ -95,13 +89,13 @@ class DepsManager(object):
         self.builder.get_object("pkg_list").set_text(label_contents)
 
     def show(self):
-        """Show internal window"""
+        """Shows the dialog."""
         self.window.show()
 
     def hide(self):
-        """Hide internal window"""
+        """Hides the dialog."""
         self.window.hide()
 
     def _installFailedCb(self, unused_exception):
-        """Handle the failure of installing packages."""
+        """Handles the failure of installing packages."""
         self.show()

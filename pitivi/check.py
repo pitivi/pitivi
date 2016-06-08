@@ -16,15 +16,10 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-This file is run by bin/pitivi on startup. Its purpose is to ensure that all
-the important dependencies for running the pitivi UI can be imported and satisfy
-our version number requirements.
+"""Logic for ensuring important dependencies satisfy minimum requirements.
 
 The checks here are supposed to take a negligible amount of time (< 0.2 seconds)
-and not impact startup. Module imports have no impact (they get imported later
-by the app anyway). For more complex checks, you can measure (with time.time()),
-when called from application.py instead of bin/pitivi, if it has an impact.
+and not impact startup.
 
 Package maintainers should look at the bottom section of this file.
 """
@@ -45,14 +40,14 @@ def _string_to_list(version):
 
 
 class Dependency(object):
+    """Represents a module or component requirement.
 
-    """
-    This abstract class represents a module or component requirement.
-    @param modulename: The string allowing for import or lookup of the component.
-    @param version_required_string: A string in the format X.Y.Z or None if no version
-      check is necessary.
-    @param additional_message: A string that will be displayed to the user to further
-      explain the purpose of the missing component.
+    Args:
+        modulename (str): The name identifying the component.
+        version_required_string (Optional[str]): The minimum required version,
+            if any, formatted like "X.Y.Z".
+        additional_message (Optional[str]): Message displayed to the user to
+            further explain the purpose of the missing component.
     """
 
     def __init__(self, modulename, version_required_string=None, additional_message=None):
@@ -64,8 +59,9 @@ class Dependency(object):
         self.additional_message = additional_message
 
     def check(self):
-        """
-        Sets the satisfied flag to True or False.
+        """Checks whether the dependency is satisfied.
+
+        Sets the `satisfied` field to True or False.
         """
         self.component = self._try_importing_component()
 
@@ -81,18 +77,23 @@ class Dependency(object):
                 self.satisfied = True
 
     def _try_importing_component(self):
-        """
-        Subclasses must implement that method to return an object
-        on which version will be inspectable.
-        Return None on failure to import.
+        """Performs the check.
+
+        Returns:
+            The dependent component.
         """
         raise NotImplementedError
 
     def _format_version(self, module):
-        """
-        Subclasses must return the version number split
-        in an iterable of ints.
-        For example "1.2.10" should return [1, 2, 10]
+        """Formats the version of the component.
+
+        Args:
+            module: The component returned by _try_importing_component.
+
+        Returns:
+            List[int]: The version number of the component.
+
+            For example "1.2.10" should return [1, 2, 10].
         """
         raise NotImplementedError
 
@@ -150,11 +151,6 @@ class ClassicDependency(Dependency):
 
 
 class GstPluginDependency(Dependency):
-
-    """
-    Don't call check on its instances before actually checking
-    Gst is importable.
-    """
 
     def _try_importing_component(self):
         try:
@@ -253,6 +249,7 @@ class GICheck(ClassicDependency):
 
 
 def check_requirements():
+    """Checks Pitivi's dependencies are satisfied."""
     hard_dependencies_satisfied = True
 
     for dependency in HARD_DEPENDENCIES:
@@ -307,8 +304,7 @@ def require_version(modulename, version):
 
 
 def initialize_modules():
-    """
-    Initialize the modules.
+    """Initializes the modules.
 
     This has to be done in a specific order otherwise the app
     crashes on some systems.
@@ -380,13 +376,11 @@ HARD_DEPENDENCIES = [GICheck("3.14.0"),
                      ClassicDependency("matplotlib"),
                      ]
 
-SOFT_DEPENDENCIES = \
-    (
-        ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
-        GIDependency("GnomeDesktop", "3.0", None, _("file thumbnails provided by GNOME's thumbnailers")),
-        GIDependency("Notify", "0.7", None, _("enables visual notifications when rendering is complete")),
-        GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
-        GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
-                                                     " Use to detect errors happening in GStreamer"
-                                                     " and recover from them")),
-    )
+SOFT_DEPENDENCIES = (
+    ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
+    GIDependency("GnomeDesktop", "3.0", None, _("file thumbnails provided by GNOME's thumbnailers")),
+    GIDependency("Notify", "0.7", None, _("enables visual notifications when rendering is complete")),
+    GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
+    GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
+                                                 " Use to detect errors happening in GStreamer"
+                                                 " and recover from them")))

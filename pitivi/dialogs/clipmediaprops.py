@@ -30,12 +30,13 @@ from pitivi.utils.ui import pixel_aspect_ratios
 
 
 class ClipMediaPropsDialog(object):
+    """Displays the properties of an asset.
 
-    """
-    Displays the properties of an asset, and allows applying them to a project.
+    Allows applying them to the project.
 
-    @type project: L{Project}
-    @type asset: L{GES.UriClipAsset}
+    Attributes:
+        project (Project): The project.
+        asset (GES.UriClipAsset): The displayed asset.
     """
 
     def __init__(self, project, asset):
@@ -73,7 +74,7 @@ class ClipMediaPropsDialog(object):
         self.video_header_label = builder.get_object("label2")
 
     def run(self):
-        """Set up widgets and run the dialog"""
+        """Sets up widgets and run the dialog."""
         # TODO: in "onApplyButtonClicked", we only use the first stream...
         # If we have multiple audio or video streams, we should reflect that
         # in the UI, instead of acting as if there was only one. But that means
@@ -137,7 +138,7 @@ class ClipMediaPropsDialog(object):
         self.dialog.run()
 
     def _applyButtonCb(self, unused_button):
-        """Apply widget values to the project"""
+        """Applies the widgets values to the project."""
         project = self.project
         if self.has_video:
             # This also handles the case where the video is a still image
@@ -160,7 +161,7 @@ class ClipMediaPropsDialog(object):
         self.dialog.destroy()
 
     def _cancelButtonCb(self, unused_button):
-        """Destroy the dialog"""
+        """Destroys the dialog."""
         self.dialog.destroy()
 
     def _keyPressCb(self, unused_widget, event):

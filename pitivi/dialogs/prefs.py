@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Dialog box for user preferences.
-"""
+"""User preferences."""
 import os
 from gettext import gettext as _
 
@@ -45,10 +43,7 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 
 
 class PreferencesDialog(Loggable):
-
-    """
-    Preferences for how the app works.
-    """
+    """Preferences for how the app works."""
 
     prefs = {}
     original_values = {}
@@ -84,31 +79,25 @@ class PreferencesDialog(Loggable):
         self.dialog.set_default_size(width, height)
 
     def run(self):
-        """Run the internal dialog"""
+        """Runs the dialog."""
         self.dialog.run()
 
 # Public API
 
     @classmethod
-    def addPreference(cls, attrname, label, description, section=None,
-                      widget_class=None, **args):
-        """
-        Add a user preference. The preferences dialog will try
-        to guess the appropriate widget to use based on the type of the
-        option, but you can override this by specifying a custom class.
+    def _add_preference(cls, attrname, label, description, section,
+                        widget_class, **args):
+        """Adds a user preference.
 
-        @param attrname: the id of the setting holding the preference
-        @type attrname: C{str}
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param : user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        @param widget_class: overrides auto-detected widget
-        @type widget_class: C{class}
+        Args:
+            attrname (str): The id of the setting holding the preference.
+            label (str): The user-visible name for this option.
+            description (str): The user-visible description explaining this
+                option. Ignored unless `label` is non-None.
+            section (str): The user-visible category to which this option
+                belongs. Ignored unless `label` is non-None.
+            widget_class (type): The class of the widget for displaying the
+                option.
         """
         if not section:
             section = "General"
@@ -118,143 +107,51 @@ class PreferencesDialog(Loggable):
 
     @classmethod
     def addPathPreference(cls, attrname, label, description, section=None):
-        """
-        Add an auto-generated user preference that will show up as a
-        Gtk.FileChooserButton.
-
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.PathWidget)
+        """Adds a user preference for a file path."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.PathWidget)
 
     @classmethod
     def addNumericPreference(cls, attrname, label, description, section=None,
                              upper=None, lower=None):
-        """
-        Add an auto-generated user preference that will show up as either a
-        Gtk.SpinButton or an horizontal Gtk.Scale, depending whether both the
-        upper and lower limits are set.
+        """Adds a user preference for a number.
 
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        @param upper: upper limit for this widget, or None
-        @type upper: C{number}
-        @param lower: lower limit for this widget, or None
-        @type lower: C{number}
+        Show up as either a Gtk.SpinButton or a horizontal Gtk.Scale, depending
+        whether both the upper and lower limits are set.
         """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.NumericWidget, upper=upper, lower=lower)
+        cls._add_preference(attrname, label, description, section,
+                            widgets.NumericWidget, upper=upper, lower=lower)
 
     @classmethod
     def addTextPreference(cls, attrname, label, description, section=None, matches=None):
-        """
-        Add an auto-generated user preference that will show up as either a
-        Gtk.SpinButton or an horizontal Gtk.Scale, depending on the upper and
-        lower limits
-
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.TextWidget, matches=matches)
+        """Adds a user preference for text."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.TextWidget, matches=matches)
 
     @classmethod
     def addChoicePreference(cls, attrname, label, description, choices, section=None):
-        """
-        Add an auto-generated user preference that will show up as either a
-        Gtk.ComboBox or a group of radio buttons, depending on the number of
-        choices.
-
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param choices: a sequence of (<label>, <value>) pairs
-        @type choices: C{[(str, pyobject), ...]}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.ChoiceWidget, choices=choices)
+        """Adds a user preference for text options."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.ChoiceWidget, choices=choices)
 
     @classmethod
     def addTogglePreference(cls, attrname, label, description, section=None):
-        """
-        Add an auto-generated user preference that will show up as a
-        Gtk.CheckButton.
-
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.ToggleWidget)
+        """Adds a user preference for an on/off option."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.ToggleWidget)
 
     @classmethod
     def addColorPreference(cls, attrname, label, description, section=None, value_type=int):
-        """
-        Add an auto-generated user preference for specifying colors. The
-        colors can be returned as either int, a string colorspec, or a
-        Gdk.Color object. See the Gdk.color_parse() function for info
-        on colorspecs.
-
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.ColorWidget, value_type=value_type)
+        """Adds a user preference for a color."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.ColorWidget, value_type=value_type)
 
     @classmethod
     def addFontPreference(cls, attrname, label, description, section=None):
-        """
-        Add an auto-generated user preference that will show up as a
-        font selector.
+        """Adds a user preference for a font."""
+        cls._add_preference(attrname, label, description, section,
+                            widgets.FontWidget)
 
-        @param label: user-visible name for this option
-        @type label: C{str}
-        @param description: a user-visible description documenting this option
-        (ignored unless prefs_label is non-null)
-        @type description: C{str}
-        @param section: user-visible category to which this option
-        belongs (ignored unless prefs_label is non-null)
-        @type section: C{str}
-        """
-        cls.addPreference(attrname, label, description, section,
-                          widgets.FontWidget)
-
-# Implementation
     def __fillContents(self):
         for section in sorted(self.prefs):
             options = self.prefs[section]
@@ -323,7 +220,7 @@ class PreferencesDialog(Loggable):
         self.factory_settings.set_sensitive(self._canReset())
 
     def _treeSelectionChangedCb(self, selection):
-        """ Update current when selection changed"""
+        """Updates current when selection changed."""
         model, _iter = selection.get_selected()
         section = self.sections[model[_iter][0]]
         if self._current != section:
@@ -339,18 +236,13 @@ class PreferencesDialog(Loggable):
         self.revert_button.set_sensitive(False)
 
     def _factorySettingsButtonCb(self, unused_button):
-        """
-        Reset all settings to the defaults
-        """
+        """Resets all settings to the defaults."""
         for section in self.prefs.values():
             for attrname in section:
                 self._resetOptionCb(self.resets[attrname], attrname)
 
     def _revertButtonCb(self, unused_button):
-        """
-        Resets all settings to the values from before the user opened the
-        preferences dialog.
-        """
+        """Resets all settings to the values when the dialog was opened."""
         for attrname, value in self.original_values.items():
             self.widgets[attrname].setWidgetValue(value)
             setattr(self.settings, attrname, value)
@@ -358,9 +250,7 @@ class PreferencesDialog(Loggable):
         self.factory_settings.set_sensitive(self._canReset())
 
     def _resetOptionCb(self, button, attrname):
-        """
-        Reset a particular setting to the factory default
-        """
+        """Resets a particular setting to the factory default."""
         if not self.settings.isDefault(attrname):
             self.settings.setDefault(attrname)
         self.widgets[attrname].setWidgetValue(getattr(self.settings, attrname))

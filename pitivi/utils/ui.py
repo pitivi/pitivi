@@ -17,9 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-UI constants and various functions and classes that help with UI drawing.
-"""
+"""UI constants and various functions and classes that help with UI drawing."""
 import decimal
 import os
 import urllib.error
@@ -207,7 +205,8 @@ def pack_color_64(red, green, blue, alpha=0xFFFF):
 def unpack_color(value):
     """Unpacks the specified RGBA value into four 16bit color values.
 
-    @param value: A 32bit or 64bit RGBA value.
+    Args:
+        value (int): A 32bit or 64bit RGBA value.
     """
     if not (value >> 32):
         return unpack_color_32(value)
@@ -250,10 +249,10 @@ def set_cairo_color(context, color):
 
 
 def beautify_asset(asset):
-    """
-    Formats the specified info for display.
+    """Formats the specified asset for display.
 
-    @type info: L{DiscovererInfo}
+    Args:
+        asset (GES.Asset): The asset to display.
     """
     ranks = {
         DiscovererVideoInfo: 0,
@@ -290,10 +289,10 @@ def beautify_asset(asset):
 
 
 def info_name(info):
-    """
-    Return a human-readable filename (without the path and quoting).
+    """Returns a human-readable filename (without the path and quoting).
 
-    @type info: L{GES.Asset} or L{DiscovererInfo}
+    Args:
+        info (GES.Asset or DiscovererInfo): The info to display.
     """
     if isinstance(info, GES.Asset):
         filename = urllib.parse.unquote(os.path.basename(get_proxy_target(info).get_id()))
@@ -346,10 +345,12 @@ def beautify_stream(stream):
 
 
 def time_to_string(value):
-    """
-    Converts the given time in nanoseconds to a human readable string
+    """Converts the specified time to a human readable string.
 
     Format HH:MM:SS.XXX
+
+    Args:
+        value (int): The time in nanoseconds.
     """
     if value == Gst.CLOCK_TIME_NONE:
         return "--:--:--.---"
@@ -364,8 +365,10 @@ def time_to_string(value):
 
 
 def beautify_length(length):
-    """
-    Converts the given time in nanoseconds to a human readable string
+    """Converts the specified duration to a human readable string.
+
+    Args:
+        length (int): The duration in nanoseconds.
     """
     sec = length / Gst.SECOND
     mins = int(sec / 60)
@@ -387,8 +390,7 @@ def beautify_length(length):
 
 
 def beautify_time_delta(seconds):
-    """
-    Converts the given time in seconds to a human-readable estimate.
+    """Converts the specified time to a human-readable estimate.
 
     This is intended for "Unsaved changes" and "Backup file found" dialogs.
     """
@@ -414,12 +416,12 @@ def beautify_time_delta(seconds):
     return ", ".join(parts)
 
 
-def beautify_ETA(length):
+def beautify_ETA(length_nanos):
+    """Converts the specified duration to a fuzzy estimate.
+
+    Intended for progress ETAs, not to indicate a clip's duration.
     """
-    Converts the given time in nanoseconds to a fuzzy estimate,
-    intended for progress ETAs, not to indicate a clip's duration.
-    """
-    sec = length / Gst.SECOND
+    sec = length_nanos / Gst.SECOND
     mins = sec / 60
     sec = int(sec % 60)
     hours = int(mins / 60)
@@ -440,10 +442,10 @@ def beautify_ETA(length):
 # -------------------- Gtk widget helpers ----------------------------------- #
 
 def clear_styles(widget):
-    """
-    Make sure the widget has no border, background or other decorations.
+    """Makes sure the widget has no border, background or other decorations.
 
-    @type widget: L{Gtk.Widget}
+    Args:
+        widget (Gtk.Widget): The widget to clean up.
     """
     style = widget.get_style_context()
     for css_class in style.list_classes():
@@ -472,10 +474,12 @@ def get_combo_value(combo):
 
 
 def get_value_from_model(model, key):
-    """
-    For a given key, search a gtk ListStore and return the value as a string.
+    """Searches a key in a model's second column.
 
-    If not found and the key is a gst fraction, return a beautified form.
+    Returns:
+        str: The first column element on the matching row. If no row matches,
+            and the key is a `Gst.Fraction`, returns a beautified form.
+            Otherwise returns the key.
     """
     for row in model:
         if row[1] == key:
@@ -511,9 +515,7 @@ def unset_children_state_recurse(widget, state):
 
 
 def disable_scroll(widget):
-    """
-    Make sure the specified widget does not react to scroll events.
-    """
+    """Makes sure the specified widget does not react to scroll events."""
     def scroll_event_cb(widget, unused_event):
         GObject.signal_stop_emission_by_name(widget, "scroll-event")
         return False

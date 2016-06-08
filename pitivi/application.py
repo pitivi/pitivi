@@ -53,9 +53,7 @@ from pitivi.utils.timeline import Zoomable
 
 
 class Pitivi(Gtk.Application, Loggable):
-
-    """
-    Pitivi's application.
+    """Pitivi's application.
 
     Attributes:
         action_log (UndoableActionLog): The undo/redo log for the current project.
@@ -227,11 +225,10 @@ class Pitivi(Gtk.Application, Loggable):
         return True
 
     def shutdown(self):
-        """
-        Close Pitivi.
+        """Closes the app.
 
-        @return: C{True} if Pitivi was successfully closed, else C{False}.
-        @rtype: C{bool}
+        Returns:
+            bool: True if successful, False otherwise.
         """
         self.debug("shutting down")
         # Refuse to close if we are not done with the current project.
@@ -298,9 +295,7 @@ class Pitivi(Gtk.Application, Loggable):
             self._scenario_file = None
 
     def _checkVersion(self):
-        """
-        Check online for release versions information.
-        """
+        """Checks online for new versions of the app."""
         self.info("Requesting version information async")
         giofile = Gio.File.new_for_uri(RELEASES_URL)
         giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
@@ -344,16 +339,12 @@ class Pitivi(Gtk.Application, Loggable):
             self.warning("Version info could not be read: %s", e)
 
     def isLatest(self):
-        """
-        Whether the app's version is the latest as far as we know.
-        """
+        """Whether the app's version is the latest as far as we know."""
         status = self._version_information.get("status")
         return status is None or status.upper() == "CURRENT"
 
     def getLatest(self):
-        """
-        Get the latest version of the app or None.
-        """
+        """Get the latest version of the app or None."""
         return self._version_information.get("current")
 
     def _quitCb(self, unused_action, unused_param):

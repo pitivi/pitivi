@@ -21,7 +21,6 @@ from math import pi
 
 import cairo
 import numpy
-from gi.repository import Gdk
 
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.misc import disconnectAllByFunc
@@ -108,8 +107,8 @@ class Handle:
         return self.__window_position.tolist()
 
     def get_source_position(self):
-        """
-        Returns a source translation when handles at TOP or LEFT are dragged.
+        """Returns a source translation when handles at TOP or LEFT are dragged.
+
         The user is not translating here, but scaling.
         This is needed to move the pivot point of the scale operation
         from the TOP LEFT corner to the CENTER.
@@ -299,9 +298,8 @@ class EdgeHandle(Handle):
 
 
 class MoveScaleOverlay(Overlay):
-    """
-    Viewer overlays class for GESVideoSource transformations
-    """
+    """Viewer overlays for GES.VideoSource transformations."""
+
     def __init__(self, stack, action_log, source):
         Overlay.__init__(self, stack, source)
 

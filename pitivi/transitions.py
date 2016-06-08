@@ -37,9 +37,7 @@ from pitivi.utils.ui import SPACING
 
 
 class TransitionsListWidget(Gtk.Box, Loggable):
-
-    """
-    Widget for configuring the selected transition.
+    """Widget for configuring the selected transition.
 
     @type app: L{Pitivi}
     """
@@ -198,10 +196,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.__updateBorderScale(widget == self.border_mode_loop)
 
     def __updateBorderScale(self, loop=False, border=None):
-        """
-        The "border" property in gstreamer is unlimited, but if you go over
-        25 thousand it "loops" the transition instead of smoothing it.
-        """
+        # The "border" property in gstreamer is unlimited, but if you go over
+        # 25 thousand it "loops" the transition instead of smoothing it.
         if border is not None:
             loop = border >= 50000
         if loop:
@@ -229,9 +225,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 # UI methods
 
     def _loadAvailableTransitionsCb(self):
-        """
-        Get the list of transitions from GES and load the associated thumbnails.
-        """
+        """Loads the transitions types and icons into the storemodel."""
         for trans_asset in GES.list_assets(GES.BaseTransitionClip):
             trans_asset.icon = self._getIcon(trans_asset.get_id())
             self.storemodel.append([trans_asset,
@@ -247,9 +241,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def activate(self, element):
-        """
-        Hide the infobar and show the transitions UI.
-        """
+        """Hides the infobar and shows the transitions UI."""
         if isinstance(element, GES.AudioTransition):
             return
         self.element = element
@@ -273,9 +265,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.infobar.hide()
 
     def __selectTransition(self, transition_asset):
-        """
-        For a given transition type, select it in the iconview if available.
-        """
+        """Selects the specified transition type in the iconview."""
         model = self.iconview.get_model()
         for row in model:
             if transition_asset == row[COL_TRANSITION_ASSET]:
@@ -284,9 +274,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
                 self.iconview.scroll_to_path(path, False, 0, 0)
 
     def deactivate(self):
-        """
-        Show the infobar and hide the transitions UI.
-        """
+        """Shows the infobar and hides the transitions UI."""
         self.__disconnectUi()
         self.iconview.unselect_all()
         self.iconview.hide()
@@ -295,11 +283,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.infobar.show()
 
     def _getIcon(self, transition_nick):
-        """
-        If available, return an icon pixbuf for a given transition nickname.
-        """
+        """Gets an icon pixbuf for the specified transition nickname."""
         name = transition_nick + ".png"
-        icon = None
         try:
             icon = GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(self._pixdir, name))
@@ -335,9 +320,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         return self.modelFilter[path[0]][COL_TRANSITION_ASSET]
 
     def _setRowVisible(self, model, iter, unused_data):
-        """
-        Filters the icon view depending on the search results
-        """
+        """Filters the icon view to show only the search results."""
         text = self.searchEntry.get_text().lower()
         return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
             text in model.get_value(iter, COL_NAME_TEXT).lower()

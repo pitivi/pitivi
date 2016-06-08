@@ -17,14 +17,11 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 # TODO reimplement after GES port
-"""
-Classes for automatic alignment of L{Clip}s
-"""
+"""Automatic alignment of `Clip`s."""
 import array
 import os
 import time
 
-from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 

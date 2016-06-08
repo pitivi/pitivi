@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Base classes for undo/redo.
-"""
+"""Undo/redo."""
 import contextlib
 
 from gi.repository import GObject
@@ -27,24 +25,20 @@ from pitivi.utils.loggable import Loggable
 
 
 class UndoError(Exception):
-    """
-    Base class for undo/redo exceptions.
-    """
+    """Base class for undo/redo exceptions."""
     pass
 
 
 class UndoWrongStateError(UndoError):
-    """
-    Exception related to the current state of the undo/redo stack.
-    """
+    """Exception related to the current state of the undo/redo stack."""
     pass
 
 
 class UndoableAction(GObject.Object, Loggable):
-    """
-    An action that can be undone.
-    In other words, when your object's state changes, create an UndoableAction
-    to allow reverting the change if needed later on.
+    """An action that can be undone.
+
+    When your object's state changes, create an UndoableAction to allow
+    reverting the change later on.
     """
 
     def __init__(self):
@@ -71,18 +65,14 @@ class SimpleUndoableAction(UndoableAction):
 
 
 class FinalizingAction:
-    """
-    Base class for actions to happen when an UndoableActionStack is
-    done or undone.
-    """
+    """Base class for actions applied when an undo or redo is performed."""
+
     def do(self):
         raise NotImplementedError()
 
 
 class UndoableActionStack(UndoableAction):
-    """
-    Simply a stack of UndoableAction objects.
-    """
+    """A stack of UndoableAction objects."""
 
     def __init__(self, action_group_name, finalizing_action=None):
         UndoableAction.__init__(self)
@@ -118,8 +108,7 @@ class UndoableActionStack(UndoableAction):
 
 
 class UndoableActionLog(GObject.Object, Loggable):
-    """
-    The undo/redo manager.
+    """The undo/redo manager.
 
     A separate instance should be created for each Project instance.
     """
@@ -145,16 +134,19 @@ class UndoableActionLog(GObject.Object, Loggable):
 
     @contextlib.contextmanager
     def started(self, action_group_name, finalizing_action=None):
-        """
-        Returns a context manager which commits the transaction at the end.
-        """
+        """Gets a context manager which commits the transaction at the end."""
         self.begin(action_group_name, finalizing_action)
         yield
         self.commit(action_group_name)
 
     def begin(self, action_group_name, finalizing_action=None):
-        """
-        Starts a transaction aka a high-level operation.
+        """Starts recording a high-level operation which later can be undone.
+
+        The recording can be stopped by calling the `commit` method or
+        canceled by calling the `rollback` method.
+
+        The operation will be composed of all the actions which have been
+        pushed and also of the committed sub-operations.
         """
         if self.running:
             self.debug("Abort because running")
@@ -167,9 +159,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("begin", stack)
 
     def push(self, action):
-        """
-        Adds an action to the current transaction.
-        """
+        """Adds an action to the current operation."""
         self.emit("pre-push", action)
 
         if self.running:
@@ -187,9 +177,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("push", stack, action)
 
     def rollback(self):
-        """
-        Forgets about the last started transaction.
-        """
+        """Forgets about the last started operation."""
         if self.running:
             self.debug("Ignore rollback because running")
             return
@@ -202,9 +190,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         stack.undo()
 
     def commit(self, action_group_name):
-        """
-        Commits the last started transaction.
-        """
+        """Commits the last started operation."""
         if self.running:
             self.debug("Ignore commit because running")
             return
@@ -229,9 +215,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("commit", stack)
 
     def undo(self):
-        """
-        Undo the last recorded operation.
-        """
+        """Undoes the last recorded operation."""
         if self.stacks:
             raise UndoWrongStateError("Recording a transaction", self.stacks)
         if not self.undo_stacks:
@@ -243,9 +227,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("move", stack)
 
     def redo(self):
-        """
-        Redo the last undone operation.
-        """
+        """Redoes the last undone operation."""
         if self.stacks:
             raise UndoWrongStateError("Recording a transaction", self.stacks)
         if not self.redo_stacks:
@@ -288,9 +270,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         return stack
 
     def is_in_transaction(self):
-        """
-        Whether currently recording an operation.
-        """
+        """Gets whether currently recording an operation."""
         return bool(self.stacks)
 
 
@@ -311,13 +291,10 @@ class MetaChangedAction(UndoableAction):
 
 
 class MetaContainerObserver(GObject.Object):
-    """
-    Monitors a MetaContainer's changes.
-
-    Args:
-        meta_container (GES.MetaContainer): The object to be monitored.
+    """Monitor for MetaContainer changes.
 
     Attributes:
+        meta_container (GES.MetaContainer): The object to be monitored.
         action_log (UndoableActionLog): The action log where to report actions.
     """
 
@@ -361,8 +338,7 @@ class PropertyChangedAction(UndoableAction):
 
 
 class GObjectObserver(GObject.Object):
-    """
-    Monitors a GObject.Object's props and reports UndoableActions.
+    """Monitor for GObject.Object's props, reporting UndoableActions.
 
     Attributes:
         gobject (GObject.Object): The object to be monitored.

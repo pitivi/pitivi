@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Base class for the video viewer overlays
-"""
+"""Video viewer overlays."""
 import numpy
 from gi.repository import GES
 from gi.repository import Gtk
@@ -28,9 +26,8 @@ from pitivi.utils.timeline import SELECT
 
 
 class Overlay(Gtk.DrawingArea, Loggable):
-    """
-    Abstract class for viewer overlays.
-    """
+    """Abstract class for viewer overlays."""
+
     def __init__(self, stack, source):
         Gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
@@ -73,9 +70,7 @@ class Overlay(Gtk.DrawingArea, Loggable):
         self.stack.hovered_overlay = self
 
     def unhover(self):
-        """
-        Mark @self as not over anymore
-        """
+        """Marks `self` as not over anymore."""
         self.stack.hovered_overlay = None
         self.queue_draw()
 

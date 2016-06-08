@@ -31,7 +31,6 @@ from pitivi.utils.misc import show_user_manual
 
 
 class StartUpWizard(object):
-
     """A Wizard displaying recent projects.
 
     Allows the user to:
@@ -48,7 +47,7 @@ class StartUpWizard(object):
         show_user_manual()
 
     def _cheatsheetCb(self, unused_button):
-        """Shows the shortcuts cheatsheet"""
+        """Shows the shortcuts cheatsheet."""
         show_shortcuts(self.app)
 
     def __init__(self, app):
@@ -92,33 +91,33 @@ class StartUpWizard(object):
                 "version-info-received", self._appVersionInfoReceivedCb)
 
     def _newProjectCb(self, unused_button):
-        """Handle a click on the New (Project) button."""
+        """Handles a click on the New (Project) button."""
         self.app.project_manager.newBlankProject()
 
     def _loadCb(self, unused_recent_chooser):
-        """
-        Handle choosing a project on the recent chooser.
+        """Handles choosing a project on the recent chooser.
+
         This calls the project manager to load the associated URI.
         """
         uri = self.recent_chooser.get_current_uri()
         self.app.project_manager.loadProject(uri)
 
     def _keyPressCb(self, unused_widget, event):
-        """Handle a key press event on the dialog."""
+        """Handles a key press event on the dialog."""
         if event.keyval == Gdk.KEY_Escape:
             # The user pressed "Esc".
             self.app.project_manager.newBlankProject()
 
     def _onBrowseButtonClickedCb(self, unused_button6):
-        """Handle a click on the Browse button."""
+        """Handles a click on the Browse button."""
         self.app.gui.openProject()
 
     def _onMissingDepsButtonClickedCb(self, unused_button):
-        """Handle a click on the Missing Deps button."""
+        """Handles a click on the Missing Deps button."""
         DepsManager(self.app, parent_window=self.window)
 
     def _deleteCb(self, unused_widget, unused_event):
-        """Handle a click on the X button of the dialog."""
+        """Handles a click on the X button of the dialog."""
         self.app.project_manager.newBlankProject()
         return True
 
@@ -138,11 +137,11 @@ class StartUpWizard(object):
         project_manager.disconnect_by_func(self._projectLoadingCb)
 
     def _projectLoadingCb(self, unused_project_manager, unused_uri):
-        """Handle the start of a project load operation."""
+        """Handles the start of a project load operation."""
         self.hide()
 
     def _appVersionInfoReceivedCb(self, app, unused_version_information):
-        """Handle version info"""
+        """Handles new version info."""
         if app.isLatest():
             # current version, don't show message
             return

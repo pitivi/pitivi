@@ -17,9 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Project related classes
-"""
+"""Project related classes."""
 import datetime
 import os
 import pwd
@@ -138,9 +136,7 @@ class ProjectManager(GObject.Object, Loggable):
         return False
 
     def _projectPipelineDiedCb(self, unused_pipeline):
-        """
-        Show an error dialog telling the user that everything went kaboom.
-        """
+        """Shows an dialog telling the user that everything went kaboom."""
         # GTK does not allow an empty string as the dialog title, so we use the
         # same translatable one as render.py's pipeline error message dialog:
         dialog = Gtk.Dialog(title=_("Sorry, something didn’t work right."),
@@ -206,10 +202,10 @@ class ProjectManager(GObject.Object, Loggable):
         self.app.shutdown()
 
     def loadProject(self, uri):
-        """
-        Load the given URI as a project. If a backup file exists, ask if it
-        should be loaded instead, and if so, force the user to use "Save as"
-        afterwards.
+        """Loads the specified URI as a project.
+
+        If a backup file exists, asks if it should be loaded instead, and if so,
+        forces the user to use "Save as" afterwards.
         """
         if self.current_project is not None and not self.closeRunningProject():
             return False
@@ -247,10 +243,10 @@ class ProjectManager(GObject.Object, Loggable):
         return True
 
     def _restoreFromBackupDialog(self, time_diff):
-        """
-        Ask if we need to load the autosaved project backup or not.
+        """Asks if we need to load the autosaved project backup.
 
-        @param time_diff: the difference, in seconds, between file mtimes
+        Args:
+            time_diff (int): The difference, in seconds, between file mtimes.
         """
         dialog = Gtk.Dialog(title="", transient_for=None)
         dialog.add_buttons(_("Ignore backup"), Gtk.ResponseType.REJECT,
@@ -304,19 +300,21 @@ class ProjectManager(GObject.Object, Loggable):
             return False
 
     def saveProject(self, uri=None, formatter_type=None, backup=False):
-        """
-        Save the current project. All arguments are optional, but the behavior
-        will differ depending on the combination of which ones are set.
+        """Saves the current project.
 
-        If a URI is specified, this means we want to save to a new (different)
-        location, so it will be used instead of the current project instance's
-        existing URI.
+        Args:
+            uri (Optional[str]): If a URI is specified, this means we want to
+                save to a new (different) location, so it will be used instead
+                of the current project's existing URI.
+            formatter_type (Optional[GES.Formatter]): The formatter to use for
+                serializing the project. If None, GES defaults to
+                GES.XmlFormatter.
+            backup (Optional[bool]): Whether to ignore the `uri` arg and save
+                the project to a special backup URI built out of the current
+                project's URI. Intended for automatic backup behind the scenes.
 
-        "backup=True" is for automatic backups: it ignores any "uri" arg, uses
-        the current project instance to save to a special URI behind the scenes.
-
-        "formatter_type" allows specifying a GES formatter type to use; if None,
-        GES will default to GES.XmlFormatter.
+        Returns:
+            bool: Whether the project has been saved successfully.
         """
         if self.disable_save is True and (backup is True or uri is None):
             self.log(
@@ -375,11 +373,8 @@ class ProjectManager(GObject.Object, Loggable):
         return saved
 
     def exportProject(self, project, uri):
-        """
-        Export a project to a *.tar archive which includes the project file
-        and all sources
-        """
-        # write project file to temporary file
+        """Exports a project and all its media files to a *.tar archive."""
+        # Save the project to a temporary file.
         project_name = project.name if project.name else _("project")
         asset = GES.Formatter.get_default()
         project_extension = asset.get_meta(GES.META_FORMATTER_EXTENSION)
@@ -438,9 +433,7 @@ class ProjectManager(GObject.Object, Loggable):
         return everything_ok
 
     def _allSourcesInHomedir(self, sources):
-        """
-        Checks if all sources are located in the users home directory
-        """
+        """Checks if all sources are located in the user's home directory."""
         homedir = os.path.expanduser("~")
 
         for source in sources:
@@ -450,7 +443,7 @@ class ProjectManager(GObject.Object, Loggable):
         return True
 
     def closeRunningProject(self):
-        """ close the current project """
+        """Closes the current project."""
         if self.current_project is None:
             self.warning(
                 "Trying to close a project that was already closed/didn't exist")
@@ -485,12 +478,16 @@ class ProjectManager(GObject.Object, Loggable):
         return True
 
     def newBlankProject(self, ignore_unsaved_changes=False):
-        """
-        Start up a new blank project.
+        """Creates a new blank project and sets it as the current project.
 
-        The ignore_unsaved_changes parameter is used in special cases to force
-        the creation of a new project without prompting the user about unsaved
-        changes. This is an "extreme" way to reset Pitivi's state.
+        Args:
+            ignore_unsaved_changes (Optional[bool]): If True, forces
+                the creation of a new project without prompting the user about
+                unsaved changes. This is an "extreme" way to reset Pitivi's
+                state.
+
+        Returns:
+            bool: Whether the project has been created successfully.
         """
         self.debug("New blank project")
         if self.current_project is not None:
@@ -520,9 +517,7 @@ class ProjectManager(GObject.Object, Loggable):
         return True
 
     def revertToSavedProject(self):
-        """
-        Discard all unsaved changes and reload current open project
-        """
+        """Discards all unsaved changes and reloads the current open project."""
         if self.current_project.uri is None or not self.current_project.hasUnsavedModifications():
             return True
         if not self.emit("reverting-to-saved", self.current_project):
@@ -568,12 +563,16 @@ class ProjectManager(GObject.Object, Loggable):
             self.debug('Removed backup file: %s', path)
 
     def _makeBackupURI(self, uri):
-        """
-        Returns a backup file URI (or path if the given arg is not a URI).
+        """Generates a corresponding backup URI or path.
+
         This does not guarantee that the backup file actually exists or that
         the file extension is actually a project file.
 
-        @Param the project file path or URI
+        Args:
+            uri (str): The project URI or file path.
+
+        Returns:
+            str: The backup version of the `uri`.
         """
         name, ext = os.path.splitext(uri)
         return name + ext + "~"
@@ -605,9 +604,14 @@ class Project(Loggable, GES.Project):
         pipeline (Pipeline): The timeline's pipeline.
         loaded (bool): Whether the project is fully loaded.
 
+    Args:
+        name (Optional[str]): The name of the new empty project.
+        uri (Optional[str]): The URI of the file where the project should
+            be loaded from.
+
     Signals:
-        project-changed: Modifications were made to the project
-        start-importing: Started to import files
+        project-changed: Modifications were made to the project.
+        start-importing: Started to import files.
     """
 
     __gsignals__ = {
@@ -627,12 +631,6 @@ class Project(Loggable, GES.Project):
     }
 
     def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
-        """
-        Args:
-            name (Optional[str]): The name of the new empty project.
-            uri (Optional[str]): The URI of the file where the project should
-                be loaded from.
-        """
         Loggable.__init__(self)
         GES.Project.__init__(self, uri=uri, extractable_type=GES.Timeline)
         self.log("name:%s, uri:%s", name, uri)
@@ -1069,10 +1067,7 @@ class Project(Loggable, GES.Project):
         self.app.proxy_manager.cancelJob(asset)
 
     def do_asset_added(self, asset):
-        """
-        When GES.Project emit "asset-added" this vmethod
-        get calls
-        """
+        """Handles `GES.Project::asset-added` emitted by self."""
         self._maybeInitSettingsFromAsset(asset)
         if asset and not GObject.type_is_a(asset.get_extractable_type(),
                                            GES.UriClip):
@@ -1095,7 +1090,7 @@ class Project(Loggable, GES.Project):
             self.__updateAssetLoadingProgress()
 
     def do_loading_error(self, error, asset_id, unused_type):
-        """ vmethod, get called on "asset-loading-error"""
+        """Handles `GES.Project::error-loading-asset` emitted by self."""
         if not self.loaded:
             self.info("Error loading asset %s while loading a project"
                       " not updating proxy creation progress", asset_id)
@@ -1115,8 +1110,7 @@ class Project(Loggable, GES.Project):
         self.__updateAssetLoadingProgress()
 
     def do_loaded(self, unused_timeline):
-        """ vmethod, get called on "loaded" """
-
+        """Handles `GES.Project::loaded` emitted by self."""
         if not self.ges_timeline:
             return
 
@@ -1166,9 +1160,9 @@ class Project(Loggable, GES.Project):
     # ------------------------------------------ #
 
     def finalize(self):
-        """
-        Disconnect all signals and everything so that the project won't
-        be doing anything after the call to the method.
+        """Disconnects all signals and everything.
+
+        Makes sure the project won't be doing anything after the call.
         """
         if self._scenario:
             self._scenario.disconnect_by_func(self._scenarioDoneCb)
@@ -1216,17 +1210,16 @@ class Project(Loggable, GES.Project):
         return DEFAULT_NAME == self.name
 
     def _commit(self):
-        """
-        Our override of the GES.Timeline.commit method, letting us
-        scenarialize the action in the scenarios.
+        """Logs the operation and commits.
+
+        To be used as a replacement for the GES.Timeline.commit method, allowing
+        to scenarialize the action in the scenarios.
         """
         self.app.write_action("commit")
         GES.Timeline.commit(self.ges_timeline)
 
     def createTimeline(self):
-        """
-        Load the project.
-        """
+        """Loads the project's timeline."""
         try:
             # The project is loaded from the file in this call.
             self.ges_timeline = self.extract()
@@ -1267,12 +1260,11 @@ class Project(Loggable, GES.Project):
         self.pipeline.flushSeek()
 
     def addUris(self, uris):
-        """
-        Add c{uris} asynchronously.
+        """Adds assets asynchronously.
 
-        The uris will be analyzed before being added, so only valid ones pass.
+        Args:
+            uris (List[str]): The URIs of the assets.
         """
-        # Do not try to reload URIS that we already have loaded
         self.app.action_log.begin("Adding assets")
         for uri in uris:
             self.create_asset(quote_uri(uri), GES.UriClip)
@@ -1322,10 +1314,11 @@ class Project(Loggable, GES.Project):
         return Gst.Fraction(self.videowidth, self.videoheight) * self.videopar
 
     def getVideoWidthAndHeight(self, render=False):
-        """ Returns the video width and height as a tuple
+        """Returns the video width and height as a tuple.
 
-        @param render: Whether to apply self.render_scale to the returned values
-        @type render: bool
+        Args:
+            render (bool): Whether to apply self.render_scale to the returned
+                values.
         """
         if render:
             if not self._has_rendering_values:
@@ -1341,7 +1334,11 @@ class Project(Loggable, GES.Project):
         return self.videowidth, self.videoheight
 
     def getVideoCaps(self, render=False):
-        """ Returns the GstCaps corresponding to the video settings """
+        """Gets the caps corresponding to the video settings.
+
+        Returns:
+            Gst.Caps: The video settings caps.
+        """
         videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
         vstr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
             videowidth, videoheight,
@@ -1352,16 +1349,18 @@ class Project(Loggable, GES.Project):
         return video_caps
 
     def getAudioCaps(self):
-        """ Returns the GstCaps corresponding to the audio settings """
+        """Gets the caps corresponding to the audio settings.
+
+        Returns:
+            Gst.Caps: The audio settings caps.
+        """
         astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         caps_str = "audio/x-raw,%s" % (astr)
         audio_caps = Gst.caps_from_string(caps_str)
         return audio_caps
 
     def setAudioProperties(self, nbchanns=-1, rate=-1):
-        """
-        Set the number of audio channels and the rate
-        """
+        """Sets the number of audio channels and the rate."""
         self.info("%d x %dHz %dbits", nbchanns, rate)
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
             self.audiochannels = nbchanns
@@ -1369,7 +1368,7 @@ class Project(Loggable, GES.Project):
             self.audiorate = rate
 
     def setEncoders(self, muxer="", vencoder="", aencoder=""):
-        """ Set the video/audio encoder and muxer """
+        """Sets the video and audio encoders and the muxer."""
         if not muxer == "" and not muxer == self.muxer:
             self.muxer = muxer
         if not vencoder == "" and not vencoder == self.vencoder:
@@ -1442,7 +1441,11 @@ class Project(Loggable, GES.Project):
             self.audiorate = 44100
 
     def _maybeInitSettingsFromAsset(self, asset):
-        """Update the project settings to match the specified asset."""
+        """Updates the project settings to match the specified asset.
+
+        Args:
+            asset (GES.UriClipAsset): The asset to copy the settings from.
+        """
         if not (self._has_default_video_settings or
                 self._has_default_audio_settings):
             # Both audio and video settings have been set already by the user.
@@ -1496,13 +1499,11 @@ class Project(Loggable, GES.Project):
 # ---------------------- UI classes ----------------------------------------- #
 
 class ProjectSettingsDialog(object):
-
-    """
-    UI for viewing and changing the project settings.
+    """Manager of a dialog for viewing and changing the project settings.
 
     Attributes:
         project (Project): The project who's settings are displayed.
-        app (pitivi.application.Pitivi): The current app.
+        app (Pitivi): The current app.
     """
 
     def __init__(self, parent_window, project, app):
@@ -1519,9 +1520,7 @@ class ProjectSettingsDialog(object):
         self.video_presets.disconnect_by_func(self.__videoPresetLoadedCb)
 
     def _createUi(self):
-        """
-        Initialize the static parts of the UI and set up various shortcuts
-        """
+        """Initializes the static parts of the UI."""
         self.builder = Gtk.Builder()
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "projectsettings.ui"))
@@ -1556,10 +1555,7 @@ class ProjectSettingsDialog(object):
                                    self.audio_preset_menubutton)
 
     def _setupUiConstraints(self):
-        """
-        Create dynamic widgets and
-        set up the relationships between various widgets
-        """
+        """Creates the dynamic widgets and connects other widgets."""
         # Add custom fraction widgets for DAR and PAR.
         aspect_ratio_grid = self.builder.get_object("aspect_ratio_grid")
         self.dar_fraction_widget = FractionWidget()
@@ -1832,7 +1828,7 @@ class ProjectSettingsDialog(object):
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
 
     def _responseCb(self, unused_widget, response):
-        """Handle the dialog being closed."""
+        """Handles the dialog being closed."""
         if response == Gtk.ResponseType.OK:
             self.updateProject()
         self.window.destroy()
