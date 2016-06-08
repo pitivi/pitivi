@@ -24,6 +24,9 @@ if __name__ == "__main__":
 
         if module["name"].startswith("gst"):
             module["sources"][0]["branch"] = gst_version
+            if gst_version != "master":
+                continue
+
         repo = os.path.join(basedir, module["name"])
         if not os.path.exists(os.path.join(repo, ".git")):
             print("-> Module: %s using online repo: %s" % (
