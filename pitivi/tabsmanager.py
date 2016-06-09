@@ -39,7 +39,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         Loggable.__init__(self)
         self.set_border_width(SPACING)
         self.set_scrollable(True)
-        self.connect("create-window", self._createWindowCb)
+        self.connect("create-window", self.__create_window_cb)
         self.settings = app.settings  # To save/restore states of detached tabs
         notebook_widget_settings = self.get_settings()
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
@@ -51,12 +51,15 @@ class BaseTabs(Gtk.Notebook, Loggable):
         self._set_child_properties(child, label)
         label.show()
 
-        self._createDefaultConfig(child_name)
+        self._create_default_config(child_name)
         docked = getattr(self.settings, child_name + "docked")
         if docked is False:
-            self.createWindow(child, created_by_signal=False)
-        # Wait till the tab or floating window is ready before showing
-        # contents:
+            # Restore a previously undocked state.
+            notebook = self._create_window(child)
+            original_position = self.page_num(child)
+            self.remove_page(original_position)
+            # Add the tab to the notebook in our newly created window.
+            notebook.append_page(child, Gtk.Label(label=child_name))
         child.show()
 
     def _set_child_properties(self, child, label):
@@ -75,22 +78,19 @@ class BaseTabs(Gtk.Notebook, Loggable):
         self.insert_page(child, label, original_position)
         self._set_child_properties(child, label)
 
-    def _createWindowCb(self, unused_from_notebook, child, unused_x, unused_y):
-        """
-        Callback that occurs when tearing off a tab to create a new window
-        """
-        # from_notebook == BaseTabs instance == self. It is a group of tabs.
-        # child is the widget inside the notebook's tab's content area.
-        # The return statement here is important to provide the notebook widget
-        # that gtk should insert into the window at the end:
-        return self.createWindow(child)
+    def __create_window_cb(self, unused_notebook, child, unused_x, unused_y):
+        """Creates a window for the detached page.
 
-    def createWindow(self, child, created_by_signal=True):
+        Args:
+            child (Gtk.Widget): The detached page.
+
+        Returns:
+            Gtk.Notebook: The notebook the page should be attached to.
         """
-        Create a window out of the tab. This can be called by _createWindowCb
-        or manually (to restore a previously undocked state) by specifying
-        created_by_signal=False.
-        """
+        return self._create_window(child)
+
+    def _create_window(self, child):
+        """Creates a separate window for the specified child."""
         original_position = self.page_num(child)
         child_name = self.get_tab_label(child).get_text()
         window = Gtk.Window()
@@ -119,13 +119,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
             "destroy", self.__detached_window_destroyed_cb, child,
             original_position, child_name)
 
-        if not created_by_signal:
-            # Delete the tab from the original notebook (since it was not
-            # torn off by GTK) and add its contents to our newly created window
-            self.remove_page(original_position)
-            notebook.append_page(child, Gtk.Label(label=child_name))
-        else:
-            return notebook
+        return notebook
 
     def _detached_window_configure_cb(self, window, event, child_name):
         """
@@ -141,7 +135,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         setattr(self.settings, child_name + "x", position[0])
         setattr(self.settings, child_name + "y", position[1])
 
-    def _createDefaultConfig(self, child_name):
+    def _create_default_config(self, child_name):
         """
         If they do not exist already, create default settings
         to save the state of a detachable widget.
