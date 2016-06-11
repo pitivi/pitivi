@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-06-01 20:20+0000\n"
-"PO-Revision-Date: 2016-06-04 10:11+0200\n"
+"POT-Creation-Date: 2016-06-04 11:25+0000\n"
+"PO-Revision-Date: 2016-06-11 07:57+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak <gnome-sk-list@gnome.org>\n"
 "Language: sk\n"
@@ -231,8 +231,8 @@ msgstr "Otvoriť projekt..."
 msgid "Save the current project under a new name or a different location"
 msgstr "Uloží aktuálny projekt s novým názvom alebo umiestnením"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1142
-#: ../pitivi/mainwindow.py:1200
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1134
+#: ../pitivi/mainwindow.py:1192
 msgid "Save As..."
 msgstr "Uložiť ako..."
 
@@ -388,8 +388,8 @@ msgstr "Štandard PAL"
 
 #: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingprogress.ui.h:4
 #: ../pitivi/mainwindow.py:671 ../pitivi/mainwindow.py:780
-#: ../pitivi/mainwindow.py:914 ../pitivi/mainwindow.py:1093
-#: ../pitivi/mainwindow.py:1145 ../pitivi/mainwindow.py:1202
+#: ../pitivi/mainwindow.py:914 ../pitivi/mainwindow.py:1085
+#: ../pitivi/mainwindow.py:1137 ../pitivi/mainwindow.py:1194
 #: ../pitivi/medialibrary.py:666
 msgid "Cancel"
 msgstr "Zrušiť"
@@ -978,8 +978,8 @@ msgstr "Znovu vykonať"
 
 # gtk button label
 #: ../pitivi/mainwindow.py:436 ../pitivi/mainwindow.py:774
-#: ../pitivi/mainwindow.py:1094 ../pitivi/mainwindow.py:1146
-#: ../pitivi/mainwindow.py:1203 ../pitivi/preset.py:112
+#: ../pitivi/mainwindow.py:1086 ../pitivi/mainwindow.py:1138
+#: ../pitivi/mainwindow.py:1195 ../pitivi/preset.py:112
 #: ../pitivi/project.py:159
 msgid "Save"
 msgstr "Uložiť"
@@ -1169,62 +1169,62 @@ msgstr ""
 "Pitivi momentálne nepodporuje nekompletné projekty."
 
 # action
-#: ../pitivi/mainwindow.py:1090
+#: ../pitivi/mainwindow.py:1082
 msgid "Export To..."
 msgstr "Exportovať do ..."
 
-#: ../pitivi/mainwindow.py:1105 ../pitivi/mainwindow.py:1155
-#: ../pitivi/mainwindow.py:1206 ../pitivi/mainwindow.py:1234
+#: ../pitivi/mainwindow.py:1097 ../pitivi/mainwindow.py:1147
+#: ../pitivi/mainwindow.py:1198 ../pitivi/mainwindow.py:1226
 #: ../pitivi/render.py:363
 msgid "Untitled"
 msgstr "Nepomenovaný"
 
-#: ../pitivi/mainwindow.py:1111
+#: ../pitivi/mainwindow.py:1103
 msgid "Tar archive"
 msgstr "Archív tar"
 
 # default format
-#: ../pitivi/mainwindow.py:1115 ../pitivi/mainwindow.py:1161
+#: ../pitivi/mainwindow.py:1107 ../pitivi/mainwindow.py:1153
 msgid "Detect automatically"
 msgstr "Rozpoznať automaticky"
 
-#: ../pitivi/mainwindow.py:1208
+#: ../pitivi/mainwindow.py:1200
 msgid "PNG image"
 msgstr "Obrázok PNG"
 
-#: ../pitivi/mainwindow.py:1209
+#: ../pitivi/mainwindow.py:1201
 msgid "JPEG image"
 msgstr "Obrázok JPEG"
 
 # action
-#: ../pitivi/mainwindow.py:1302
+#: ../pitivi/mainwindow.py:1294
 msgid "Preview"
 msgstr "Náhľad"
 
 # label
-#: ../pitivi/mediafilespreviewer.py:164
+#: ../pitivi/mediafilespreviewer.py:163
 msgid "Pitivi can not preview this file."
 msgstr "Pitivi nevie zobraziť náhľad tohto súboru."
 
 # button
-#: ../pitivi/mediafilespreviewer.py:165
+#: ../pitivi/mediafilespreviewer.py:164
 msgid "More info"
 msgstr "Viac informácií"
 
 # súčasť description
-#: ../pitivi/mediafilespreviewer.py:264
+#: ../pitivi/mediafilespreviewer.py:253
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Rozlíšenie</b>: %d×%d"
 
 # súčasť description
-#: ../pitivi/mediafilespreviewer.py:266 ../pitivi/mediafilespreviewer.py:283
+#: ../pitivi/mediafilespreviewer.py:255 ../pitivi/mediafilespreviewer.py:271
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Trvanie</b>: %s"
 
 # dialog title
-#: ../pitivi/mediafilespreviewer.py:444 ../pitivi/medialibrary.py:1128
+#: ../pitivi/mediafilespreviewer.py:445 ../pitivi/medialibrary.py:1128
 msgid "Error while analyzing a file"
 msgstr "Nastala chyba počas analyzovania súboru"
 
@@ -1593,23 +1593,23 @@ msgstr ""
 "Vytvoriť prechod prekrytím dvoch susedných klipov na rovnakej vrstve. "
 "Kliknutím na prechod na časovej ose môžete zmeniť jeho typ."
 
-#: ../pitivi/transitions.py:213
+#: ../pitivi/transitions.py:211
 msgid "Slow"
 msgstr "Pomalý"
 
-#: ../pitivi/transitions.py:215
+#: ../pitivi/transitions.py:213
 msgid "Fast"
 msgstr "Rýchly"
 
-#: ../pitivi/transitions.py:217
+#: ../pitivi/transitions.py:215
 msgid "Epileptic"
 msgstr "Epileptický"
 
-#: ../pitivi/transitions.py:221
+#: ../pitivi/transitions.py:219
 msgid "Sharp"
 msgstr "Ostrý"
 
-#: ../pitivi/transitions.py:223
+#: ../pitivi/transitions.py:221
 msgid "Smooth"
 msgstr "Plynulý"
 
@@ -1683,27 +1683,27 @@ msgstr "Vlastnosť nastavenia: %s"
 msgid "Audio crossfade"
 msgstr "Prelínanie zvuku"
 
-#: ../pitivi/timeline/layer.py:225
+#: ../pitivi/timeline/layer.py:237
 msgid "Move layer to top"
 msgstr "Presunúť vrstvu hore"
 
-#: ../pitivi/timeline/layer.py:231
+#: ../pitivi/timeline/layer.py:243
 msgid "Move layer up"
 msgstr "Presunúť vrstvu vyššie"
 
-#: ../pitivi/timeline/layer.py:237
+#: ../pitivi/timeline/layer.py:249
 msgid "Move layer down"
 msgstr "Presunúť vrstvu nižšie"
 
-#: ../pitivi/timeline/layer.py:243
+#: ../pitivi/timeline/layer.py:255
 msgid "Move layer to bottom"
 msgstr "Presunúť vrstvu dole"
 
-#: ../pitivi/timeline/layer.py:249
+#: ../pitivi/timeline/layer.py:261
 msgid "Delete layer"
 msgstr "Odstrániť vrstvu"
 
-#: ../pitivi/timeline/layer.py:400
+#: ../pitivi/timeline/layer.py:412
 #, python-format
 msgid "Layer %d"
 msgstr "Vrstva č. %d"
@@ -1810,11 +1810,11 @@ msgstr "Aplikácia %s zatiaľ nedokáže spracovať iné ako lokálne projekty"
 
 #: ../pitivi/utils/misc.py:279
 msgid ""
-"Failed to open the user manual. Make sure to have either the `yelp` gnome  "
-"documentaion viewer or a web browser installed"
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"documentation viewer or a web browser installed"
 msgstr ""
 "Zlyhalo otvorenie používateľskej príručky. Uistite sa, že máte nainštalovaný "
-"prehliadač dokumentov „yelp“ alebo webový prehliadač."
+"prehliadač dokumentov „yelp“ pre GNOME alebo webový prehliadač."
 
 #: ../pitivi/utils/misc.py:288
 msgid ""
