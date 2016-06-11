@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
+import tempfile
 from gettext import gettext as _
 from unittest import mock
 
@@ -149,6 +150,31 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.runCheckImport(["30fps_numeroted_frames_red.mkv"],
                             check_no_transcoding=True,
                             clean_proxies=False)
+
+    def testSaveProjectWithRemovedProxy(self):
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        self.runCheckImport([sample_name])
+
+        project = self.app.project_manager.current_project
+        asset = GES.UriClipAsset.request_sync(common.get_sample_uri(sample_name))
+        target = asset.get_proxy_target()
+        self.assertEqual(set(project.list_assets(GES.Extractable)), set([target, asset]))
+
+        # Remove the asset
+        self.medialibrary.remove_assets_action.emit("activate", None)
+
+        # Make sure that the project has not assets anymore
+        self.assertEqual(project.list_assets(GES.Extractable), [])
+
+        # Save the project and reload it, making sure there is no asset
+        # in that new project
+        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+        project.save(project.timeline, project_uri, None, True)
+
+        self._customSetUp(project_uri)
+        self.assertNotEqual(project, self.app.project_manager.current_project)
+        self.assertEqual(self.app.project_manager.current_project.list_assets(
+            GES.Extractable), [])
 
     def testNewlyImportedAssetSelected(self):
         self.runCheckImport(["30fps_numeroted_frames_red.mkv",
