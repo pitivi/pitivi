@@ -31,6 +31,7 @@ from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
+from pitivi.shortcutswindow import ShortcutsWindow
 from pitivi.timeline.elements import Clip
 from pitivi.timeline.elements import TransitionClip
 from pitivi.timeline.elements import TrimHandle
@@ -1423,55 +1424,71 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("timeline", group)
         self.toolbar.insert_action_group("timeline", group)
+        ShortcutsWindow.register_group("timeline", _("Timeline"))
 
         self.zoom_in_action = Gio.SimpleAction.new("zoom-in", None)
         self.zoom_in_action.connect("activate", self._zoomInCb)
         group.add_action(self.zoom_in_action)
         self.app.set_accels_for_action("timeline.zoom-in", ["<Control>plus",
-                                                            "<Control>equal",
-                                                            "<Control>KP_Add"])
+                                                            "<Control>equal"])
+        ShortcutsWindow.add_action("timeline.zoom-in", _("Zoom in"))
 
         self.zoom_out_action = Gio.SimpleAction.new("zoom-out", None)
         self.zoom_out_action.connect("activate", self._zoomOutCb)
         group.add_action(self.zoom_out_action)
-        self.app.set_accels_for_action("timeline.zoom-out", ["<Control>minus",
-                                                             "<Control>KP_Subtract"])
+        self.app.set_accels_for_action("timeline.zoom-out", ["<Control>minus"])
+        ShortcutsWindow.add_action("timeline.zoom-out", _("Zoom out"))
 
         self.zoom_fit_action = Gio.SimpleAction.new("zoom-fit", None)
         self.zoom_fit_action.connect("activate", self._zoomFitCb)
         group.add_action(self.zoom_fit_action)
         self.app.set_accels_for_action("timeline.zoom-fit", ["<Control>0"])
+        ShortcutsWindow.add_action("timeline.zoom-fit",
+                                   _("Adjust zoom to fit the project to the window"))
 
         # Clips actions.
         self.delete_action = Gio.SimpleAction.new("delete-selected-clips", None)
         self.delete_action.connect("activate", self._deleteSelected)
         group.add_action(self.delete_action)
-        self.app.set_accels_for_action("timeline.delete-selected-clips", ["Delete"])
+        self.app.set_accels_for_action("timeline.delete-selected-clips",
+                                       ["Delete"])
+        ShortcutsWindow.add_action("timeline.delete-selected-clips",
+                                   _("Delete selected clips"))
 
         self.group_action = Gio.SimpleAction.new("group-selected-clips", None)
         self.group_action.connect("activate", self._groupSelected)
         group.add_action(self.group_action)
-        self.app.set_accels_for_action("timeline.group-selected-clips", ["<Control>g"])
+        self.app.set_accels_for_action("timeline.group-selected-clips",
+                                       ["<Control>g"])
+        ShortcutsWindow.add_action("timeline.group-selected-clips",
+                                   _("Group selected clips together"))
 
         self.ungroup_action = Gio.SimpleAction.new("ungroup-selected-clips", None)
         self.ungroup_action.connect("activate", self._ungroupSelected)
         group.add_action(self.ungroup_action)
-        self.app.set_accels_for_action("timeline.ungroup-selected-clips", ["<Shift><Control>g"])
+        self.app.set_accels_for_action("timeline.ungroup-selected-clips",
+                                       ["<Shift><Control>g"])
+        ShortcutsWindow.add_action("timeline.ungroup-selected-clips",
+                                   _("Ungroup selected clips"))
 
         self.copy_action = Gio.SimpleAction.new("copy-selected-clips", None)
         self.copy_action.connect("activate", self.__copyClipsCb)
         group.add_action(self.copy_action)
-        self.app.set_accels_for_action("timeline.copy-selected-clips", ["<Control>c"])
+        self.app.set_accels_for_action("timeline.copy-selected-clips",
+                                       ["<Control>c"])
+        ShortcutsWindow.add_action("timeline.copy-selected-clips",
+                                   _("Copy selected clips"))
 
         self.paste_action = Gio.SimpleAction.new("paste-clips", None)
         self.paste_action.connect("activate", self.__pasteClipsCb)
         group.add_action(self.paste_action)
         self.app.set_accels_for_action("timeline.paste-clips", ["<Control>v"])
+        ShortcutsWindow.add_action("timeline.paste-clips",
+                                   _("Paste selected clips"))
 
         self.align_action = Gio.SimpleAction.new("align-selected-clips", None)
         self.align_action.connect("activate", self._alignSelectedCb)
         group.add_action(self.align_action)
-        self.app.set_accels_for_action("timeline.align-selected-clips", ["<Shift><Control>a"])
 
         self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
         self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
@@ -1482,17 +1499,23 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.play_action.connect("activate", self._playPauseCb)
         group.add_action(self.play_action)
         self.app.set_accels_for_action("timeline.play", ["space"])
+        ShortcutsWindow.add_action("timeline.play", _("Play"))
 
         self.split_action = Gio.SimpleAction.new("split-clips", None)
         self.split_action.connect("activate", self._splitCb)
         group.add_action(self.split_action)
         self.app.set_accels_for_action("timeline.split-clips", ["S"])
         self.split_action.set_enabled(True)
+        ShortcutsWindow.add_action("timeline.split-clips",
+                                   _("Split the clip at the position"))
 
         self.keyframe_action = Gio.SimpleAction.new("keyframe-selected-clips", None)
         self.keyframe_action.connect("activate", self._keyframe_cb)
         group.add_action(self.keyframe_action)
-        self.app.set_accels_for_action("timeline.keyframe-selected-clips", ["K"])
+        self.app.set_accels_for_action("timeline.keyframe-selected-clips",
+                                       ["K"])
+        ShortcutsWindow.add_action("timeline.keyframe-selected-clips",
+                                   _("Add keyframe to the keyframe curve of selected clip"))
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """

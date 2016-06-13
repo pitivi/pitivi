@@ -43,6 +43,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
+from pitivi.shortcutswindow import ShortcutsWindow
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
@@ -459,36 +460,45 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self._headerbar.pack_start(self.render_button)
 
     def _set_keyboard_shortcuts(self):
+        ShortcutsWindow.register_group("win", _("Project"))
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
         self.add_action(self.save_action)
         self.app.set_accels_for_action("win.save", ["<Control>s"])
         self.save_button.set_action_name("win.save")
+        ShortcutsWindow.add_action("win.save", _("Save the current project"))
 
         self.new_project_action = Gio.SimpleAction.new("new-project", None)
         self.new_project_action.connect("activate", self._newProjectMenuCb)
         self.add_action(self.new_project_action)
         self.app.set_accels_for_action("win.new-project", ["<Control>n"])
+        ShortcutsWindow.add_action("win.new-project", _("Create a new project"))
 
         self.open_project_action = Gio.SimpleAction.new("open-project", None)
         self.open_project_action.connect("activate", self._openProjectCb)
         self.add_action(self.open_project_action)
         self.app.set_accels_for_action("win.open-project", ["<Control>o"])
+        ShortcutsWindow.add_action("win.open-project", _("Open a project"))
 
         self.save_as_action = Gio.SimpleAction.new("save-as", None)
         self.save_as_action.connect("activate", self._saveProjectAsCb)
         self.add_action(self.save_as_action)
         self.app.set_accels_for_action("win.save-as", ["<Control><Shift>s"])
+        ShortcutsWindow.add_action("win.save-as",
+                                   _("Save the current project as"))
 
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self._userManualCb)
         self.add_action(self.help_action)
         self.app.set_accels_for_action("win.help", ["F1"])
+        ShortcutsWindow.add_action("win.help", _("Help"))
 
         self.menu_button_action = Gio.SimpleAction.new("menu-button", None)
         self.menu_button_action.connect("activate", self._menuCb)
         self.add_action(self.menu_button_action)
         self.app.set_accels_for_action("win.menu-button", ["F10"])
+        ShortcutsWindow.add_action("win.menu-button",
+                                   _("Show the menu button content"))
 
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
