@@ -399,6 +399,7 @@ then
       $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
       --env=GST_PLUGIN_SYSTEM_PATH= \
+      --env=GST_CHECKS=$GST_CHECKS \
       --env=GST_PRESET_PATH=/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/:$GST_PRESET_PATH \
       --env=GST_ENCODING_TARGET_PATH=/app/share/pitivi/gstpresets/:$GST_ENCODING_TARGET_PATH \
       --env=GST_DEBUG=$GST_DEBUG \
@@ -420,6 +421,7 @@ then
       $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
       --share=network \
       --env=GST_DEBUG=$GST_DEBUG \
+      --env=GST_CHECKS=$GST_CHECKS \
       --env=GST_PLUGIN_SYSTEM_PATH= \
       --env=GST_VALIDATE=$GST_VALIDATE \
       --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
