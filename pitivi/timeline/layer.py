@@ -183,7 +183,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerAddedCb)
         self.ges_timeline.disconnect_by_func(self.__timelineLayerRemovedCb)
-        super(LayerControls, self).__del__()
+        super().__del__()
 
     def __layer_rename_cb(self, unused_ges_layer, item, value):
         if not item == "video::name":

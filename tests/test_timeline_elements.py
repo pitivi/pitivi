@@ -21,10 +21,10 @@ from unittest import mock
 from gi.repository import GES
 
 from tests import common
-from tests import test_timeline_timeline
+from tests.test_timeline_timeline import BaseTestTimeline
 
 
-class TestKeyframeCurve(test_timeline_timeline.BaseTestTimeline):
+class TestKeyframeCurve(BaseTestTimeline):
 
     def test_keyframe_toggle(self):
         timeline = self.createTimeline()

@@ -447,57 +447,37 @@ class ControlSourceSetAction(SimpleUndoableAction):
         return st
 
 
-class TimelineObserver(Loggable):
-    """Monitors a project's timeline and reports UndoableActions.
+class LayerObserver(MetaContainerObserver, Loggable):
+    """Monitors a Layer and reports UndoableActions.
+
+    Args:
+        ges_layer (GES.Layer): The layer to observe.
 
     Attributes:
         action_log (UndoableActionLog): The action log where to report actions.
     """
 
-    def __init__(self, action_log):
+    def __init__(self, ges_layer, action_log):
+        MetaContainerObserver.__init__(self, ges_layer, action_log)
         Loggable.__init__(self)
         self.action_log = action_log
-        self.clip_property_trackers = {}
-        self.layer_observers = {}
-        self.keyframe_observers = {}
-        self.track_element_observers = {}
-        self._layers_priorities = {}
+        self.priority = ges_layer.props.priority
 
-    def startObserving(self, ges_timeline):
-        """Starts monitoring the specified timeline.
-
-        Args:
-            ges_timeline (GES.Timeline): The timeline to be monitored.
-        """
-        for ges_layer in ges_timeline.get_layers():
-            self._connect_to_layer(ges_layer)
-
-        ges_timeline.connect("layer-added", self._layerAddedCb)
-        ges_timeline.connect("layer-removed", self._layerRemovedCb)
-
-    def _connect_to_layer(self, ges_layer):
-        self._layers_priorities[ges_layer] = ges_layer.props.priority
         ges_layer.connect("clip-added", self._clipAddedCb)
         ges_layer.connect("clip-removed", self._clipRemovedCb)
-        ges_layer.connect("notify::priority", self._layer_moved_cb)
-        layer_observer = MetaContainerObserver(ges_layer, self.action_log)
-        self.layer_observers[ges_layer] = layer_observer
+        ges_layer.connect("notify::priority", self.__layer_moved_cb)
 
+        self.clip_observers = {}
         for ges_clip in ges_layer.get_clips():
             self._connectToClip(ges_clip)
 
-    def _disconnect_from_layer(self, ges_layer):
-        del self._layers_priorities[ges_layer]
-        ges_layer.disconnect_by_func(self._clipAddedCb)
-        ges_layer.disconnect_by_func(self._clipRemovedCb)
-        ges_layer.disconnect_by_func(self._layer_moved_cb)
-        self.layer_observers.pop(ges_layer).release()
+        self.keyframe_observers = {}
+        self.track_element_observers = {}
 
     def _connectToClip(self, ges_clip):
-        tracker = GObjectObserver(ges_clip,
-            ["start", "duration", "in-point", "priority"],
-            self.action_log)
-        self.clip_property_trackers[ges_clip] = tracker
+        props = ["start", "duration", "in-point", "priority"]
+        clip_observer = GObjectObserver(ges_clip, props, self.action_log)
+        self.clip_observers[ges_clip] = clip_observer
 
         ges_clip.connect("child-added", self._clipTrackElementAddedCb)
         ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
@@ -513,8 +493,8 @@ class TimelineObserver(Loggable):
 
         clip.disconnect_by_func(self._clipTrackElementAddedCb)
         clip.disconnect_by_func(self._clipTrackElementRemovedCb)
-        tracker = self.clip_property_trackers.pop(clip)
-        tracker.release()
+        clip_observer = self.clip_observers.pop(clip)
+        clip_observer.release()
 
     def _controlBindingAddedCb(self, track_element, binding):
         self._connectToControlSource(track_element, binding)
@@ -586,19 +566,42 @@ class TimelineObserver(Loggable):
         action = ActivePropertyChanged(add_effect_action, active)
         self.action_log.push(action)
 
-    def _layer_moved_cb(self, ges_layer, unused_param):
-        previous = self._layers_priorities[ges_layer]
+    def __layer_moved_cb(self, ges_layer, unused_param):
         current = ges_layer.props.priority
-        self._layers_priorities[ges_layer] = current
-        action = LayerMoved(ges_layer, previous, current)
+        action = LayerMoved(ges_layer, self.priority, current)
         self.action_log.push(action)
+        self.priority = current
 
-    def _layerAddedCb(self, ges_timeline, ges_layer):
+
+class TimelineObserver(Loggable):
+    """Monitors a project's timeline and reports UndoableActions.
+
+    Attributes:
+        ges_timeline (GES.Timeline): The timeline to be monitored.
+        action_log (UndoableActionLog): The action log where to report actions.
+    """
+
+    def __init__(self, ges_timeline, action_log):
+        Loggable.__init__(self)
+        self.ges_timeline = ges_timeline
+        self.action_log = action_log
+
+        self.layer_observers = {}
+        for ges_layer in ges_timeline.get_layers():
+            self._connect_to_layer(ges_layer)
+
+        ges_timeline.connect("layer-added", self.__layer_added_cb)
+        ges_timeline.connect("layer-removed", self.__layer_removed_cb)
+
+    def __layer_added_cb(self, ges_timeline, ges_layer):
         self._connect_to_layer(ges_layer)
-        action = LayerAdded(ges_timeline, ges_layer)
-        self.action_log.push(action)
 
-    def _layerRemovedCb(self, ges_timeline, ges_layer):
-        self._disconnect_from_layer(ges_layer)
+    def _connect_to_layer(self, ges_layer):
+        action = LayerAdded(self.ges_timeline, ges_layer)
+        self.action_log.push(action)
+        layer_observer = LayerObserver(ges_layer, self.action_log)
+        self.layer_observers[ges_layer] = layer_observer
+
+    def __layer_removed_cb(self, ges_timeline, ges_layer):
         action = LayerRemoved(ges_timeline, ges_layer)
         self.action_log.push(action)

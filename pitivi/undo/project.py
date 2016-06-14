@@ -77,8 +77,8 @@ class ProjectObserver(MetaContainerObserver):
         MetaContainerObserver.__init__(self, project, action_log)
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-removed", self._assetRemovedCb)
-        self.timeline_observer = TimelineObserver(action_log)
-        self.timeline_observer.startObserving(project.ges_timeline)
+        self.timeline_observer = TimelineObserver(project.ges_timeline,
+                                                  action_log)
 
     def _assetAddedCb(self, project, asset):
         action = AssetAddedAction(project, asset)
