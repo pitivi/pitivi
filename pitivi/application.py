@@ -40,7 +40,6 @@ from pitivi.settings import xdg_cache_home
 from pitivi.shortcutswindow import ShortcutsWindow
 from pitivi.shortcutswindow import show_shortcuts
 from pitivi.undo.project import ProjectObserver
-from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils import loggable
 from pitivi.utils.loggable import Loggable
@@ -81,6 +80,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager = ProjectManager(self)
 
         self.action_log = None
+        self.project_observer = None
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
@@ -279,10 +279,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("move", self._action_log_move_cb)
 
-        timeline_observer = TimelineObserver(self.action_log)
-        timeline_observer.startObserving(project.ges_timeline)
-
-        project_observer = ProjectObserver(project, self.action_log)
+        self.project_observer = ProjectObserver(project, self.action_log)
 
     def _projectClosed(self, unused_project_manager, project):
         if project.loaded:

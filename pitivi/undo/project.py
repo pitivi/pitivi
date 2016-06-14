@@ -19,6 +19,7 @@
 from gi.repository import GObject
 from gi.repository import Gst
 
+from pitivi.undo.timeline import TimelineObserver
 from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import UndoableAction
 
@@ -76,6 +77,8 @@ class ProjectObserver(MetaContainerObserver):
         MetaContainerObserver.__init__(self, project, action_log)
         project.connect("asset-added", self._assetAddedCb)
         project.connect("asset-removed", self._assetRemovedCb)
+        self.timeline_observer = TimelineObserver(action_log)
+        self.timeline_observer.startObserving(project.ges_timeline)
 
     def _assetAddedCb(self, project, asset):
         action = AssetAddedAction(project, asset)
