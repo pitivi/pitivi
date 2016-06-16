@@ -16,13 +16,16 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Accelerators info."""
 from gi.repository import Gtk
 
 from pitivi.utils.misc import show_user_manual
 
 
 class ShortcutsWindow(Gtk.ShortcutsWindow):
-    group_names = {}
+    """Dialog for displaying the accelerators."""
+
+    group_titles = {}
     group_actions = {}
     groups = []
 
@@ -34,15 +37,15 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         self.set_modal(True)
 
     def populate(self):
-        """Gathers the accelerators and creates the structure of the window."""
+        """Gathers the accelerators and populates the window."""
         section = Gtk.ShortcutsSection()
         section.show()
         for group_id in ShortcutsWindow.groups:
-            group = Gtk.ShortcutsGroup(title=ShortcutsWindow.group_names[group_id])
+            group = Gtk.ShortcutsGroup(title=ShortcutsWindow.group_titles[group_id])
             group.show()
-            for action, action_description in ShortcutsWindow.group_actions[group_id]:
+            for action, title in ShortcutsWindow.group_actions[group_id]:
                 accelerators = " ".join(self.app.get_accels_for_action(action))
-                short = Gtk.ShortcutsShortcut(title=action_description, accelerator=accelerators)
+                short = Gtk.ShortcutsShortcut(title=title, accelerator=accelerators)
                 short.show()
                 group.add(short)
             section.add(group)
@@ -51,21 +54,36 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         self.add(section)
 
     @classmethod
-    def add_action(cls, action, accel_description):
-        action_prefix = action.split(".")[0]
-        try:
-            cls.group_actions[action_prefix].append((action, accel_description))
-        except KeyError:
-            cls.group_actions[action_prefix] = [(action, accel_description)]
+    def add_action(cls, action, title, group=None):
+        """Adds an action to be displayed.
+
+        Args:
+            action (str): The name identifying the action, formatted like
+                "prefix.name".
+            title (str): The title of the action.
+            group (Optional[str]): The group id registered with `register_group`
+                to be used instead of the one extracted from `action`.
+        """
+        action_prefix = group or action.split(".")[0]
+        if action_prefix not in cls.group_actions:
+            cls.group_actions[action_prefix] = []
+        cls.group_actions[action_prefix].append((action, title))
 
     @classmethod
-    def register_group(cls, action_prefix, group_name):
+    def register_group(cls, action_prefix, title):
+        """Registers a group of shortcuts to be displayed.
+
+        Args:
+            action_prefix (str): The group id.
+            title (str): The title of the group.
+        """
         if action_prefix not in cls.groups:
             cls.groups.append(action_prefix)
-        cls.group_names[action_prefix] = group_name
+        cls.group_titles[action_prefix] = title
 
 
 def show_shortcuts(app):
+    """Shows the shortcuts window or the user manual page with the shortcuts."""
     if hasattr(Gtk, "ShortcutsWindow"):
         shortcuts_window = ShortcutsWindow(app)
         shortcuts_window.show()

@@ -491,14 +491,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.help_action.connect("activate", self._userManualCb)
         self.add_action(self.help_action)
         self.app.set_accels_for_action("win.help", ["F1"])
-        ShortcutsWindow.add_action("win.help", _("Help"))
+        ShortcutsWindow.add_action("win.help", _("Help"), group="app")
 
         self.menu_button_action = Gio.SimpleAction.new("menu-button", None)
         self.menu_button_action.connect("activate", self._menuCb)
         self.add_action(self.menu_button_action)
         self.app.set_accels_for_action("win.menu-button", ["F10"])
         ShortcutsWindow.add_action("win.menu-button",
-                                   _("Show the menu button content"))
+                                   _("Show the menu button content"),
+                                   group="app")
 
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
