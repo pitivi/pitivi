@@ -103,7 +103,6 @@
         <property name="tooltip_text" translatable="yes">Align clips based on their soundtracks</property>
         <property name="visible_horizontal">False</property>
         <property name="visible_vertical">False</property>
-        <property name="action_name">timeline.align-selected-clips</property>
         <property name="label" translatable="yes">Align</property>
         <property name="use_underline">True</property>
         <property name="icon_name">pitivi-align</property>

@@ -1486,10 +1486,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         ShortcutsWindow.add_action("timeline.paste-clips",
                                    _("Paste selected clips"))
 
-        self.align_action = Gio.SimpleAction.new("align-selected-clips", None)
-        self.align_action.connect("activate", self._alignSelectedCb)
-        group.add_action(self.align_action)
-
         self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
         self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
         group.add_action(self.gapless_action)
