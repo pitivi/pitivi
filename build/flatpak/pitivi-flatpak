@@ -22,7 +22,7 @@ APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
 BRANCH="master"
 
 # The URL of the bundle remote repository
-APPLICATION_XDG_APP_REPO=http://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi/
+APPLICATION_FLATPAK_REPO=http://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi/
 
 # The name to give to the repository if it is not registered in flatpak yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
@@ -72,7 +72,7 @@ fi
 # ------------------------------------------- #
 
 # Computation of actual variable values
-APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_XDG_APP_REPO" |awk '{ print $1 }'`
+APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_FLATPAK_REPO" |awk '{ print $1 }'`
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
 
@@ -83,9 +83,9 @@ REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 # ------------------------------------------- #
 
-XDG_APP_INSTALL="$FLATPAK install --user "
-XDG_APP_UPDATE="$FLATPAK update --user "
-XDG_APP_ADD_REMOTE="$FLATPAK remote-add --no-gpg-verify --user "
+FLATPAK_INSTALL="$FLATPAK install --user "
+FLATPAK_UPDATE="$FLATPAK update --user "
+FLATPAK_ADD_REMOTE="$FLATPAK remote-add --no-gpg-verify --user "
 
 # Some terminal output color values
 RED='\033[0;31m'
@@ -239,14 +239,14 @@ then
   if [ -z "$SDK_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME $SDK_VERSION"
-    $XDG_APP_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
-    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
+    $FLATPAK_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+    $FLATPAK_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
   if [ -z "$SDK_LOCAL_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME.Locale"
-    $XDG_APP_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale $SDK_VERSION || exit 1
+    $FLATPAK_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -254,13 +254,13 @@ if [ -z "$RUNTIME_INSTALLED" ]
 then
   echo "-> Installing $RUNTIME_NAME $SDK_VERSION $RUNTIME_INSTALLED"
 
-  $XDG_APP_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
-  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
+  $FLATPAK_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+  $FLATPAK_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
 fi
 if [ -z "$RUNTIME_LOCAL_INSTALLED" ]
 then
   echo "-> Installing $RUNTIME_NAME.Locale"
-  $XDG_APP_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
+  $FLATPAK_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 fi
 
 # Update runtimes if needed
@@ -268,18 +268,18 @@ if [ -n "$UPDATE" ]
 then
   echo "-> Updating $RUNTIME_NAME $SDK_VERSION"
 
-  $XDG_APP_UPDATE $RUNTIME_NAME $SDK_VERSION || exit 1
+  $FLATPAK_UPDATE $RUNTIME_NAME $SDK_VERSION || exit 1
 
   echo "-> Updating $RUNTIME_NAME.Locale"
-  $XDG_APP_UPDATE $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
+  $FLATPAK_UPDATE $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 
   if [ -n "$DEVEL" ]
   then
     echo "-> Updating $SDK_NAME $SDK_VERSION"
-    $XDG_APP_UPDATE $SDK_NAME $SDK_VERSION || exit 1
+    $FLATPAK_UPDATE $SDK_NAME $SDK_VERSION || exit 1
 
     echo "-> Updating $SDK_NAME.Locale $SDK_VERSION"
-    $XDG_APP_UPDATE $SDK_NAME.Locale $SDK_VERSION || exit 1
+    $FLATPAK_UPDATE $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -323,20 +323,20 @@ fi
 
 if [ -z $DEVEL ] || [ -z $BUILD ]
 then
-   $XDG_APP_ADD_REMOTE $APPLICATION_REPO_NAME $APPLICATION_XDG_APP_REPO > /dev/null 2>&1
+   $FLATPAK_ADD_REMOTE $APPLICATION_REPO_NAME $APPLICATION_FLATPAK_REPO > /dev/null 2>&1
 
    if [ -z "$APP_INSTALLED" ]
    then
      echo "Installing $APPLICATION_REF_NAME $BRANCH..."
 
-     $XDG_APP_INSTALL $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
+     $FLATPAK_INSTALL $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
    fi
 
    if [ -n "$UPDATE" ]
    then
      echo "-> Updating $APPLICATION_REF_NAME $BRANCH..."
 
-     $XDG_APP_UPDATE $APPLICATION_REF_NAME $BRANCH
+     $FLATPAK_UPDATE $APPLICATION_REF_NAME $BRANCH
    fi
 fi
 
@@ -374,16 +374,16 @@ then
     echo "-> Removing prefix $PREFIX"
     rm -Rf $PREFIX
 
-    XDG_APP_BUILD_OPTIONS=""
+    FLATPAK_BUILD_OPTIONS=""
     if [ -z $BUNDLE ]
     then
-      XDG_APP_BUILD_OPTIONS=" $XDG_APP_BUILD_OPTIONS --build-only"
+      FLATPAK_BUILD_OPTIONS=" $FLATPAK_BUILD_OPTIONS --build-only"
     fi
 
-    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $XDG_APP_BUILD_OPTIONS)"
+    echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $FLATPAK_BUILD_OPTIONS)"
     cd $SCRIPTDIR
-    echo "Building with: $FLATPAK_BUILDER $XDG_APP_BUILD_OPTIONS $PREFIX $JSON"
-    $FLATPAK_BUILDER --ccache $XDG_APP_BUILD_OPTIONS $PREFIX $JSON || exit 1
+    echo "Building with: $FLATPAK_BUILDER $FLATPAK_BUILD_OPTIONS $PREFIX $JSON"
+    $FLATPAK_BUILDER --ccache $FLATPAK_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
     if [ -z $BUNDLE ] || [ -n "$CHECK" ]
     then
