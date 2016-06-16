@@ -58,6 +58,17 @@ class BaseTestUndoTimeline(TestCase):
     def commit_cb(action_log, stack, stacks):
         stacks.append(stack)
 
+    def _wait_until_project_loaded(self):
+        # Run the mainloop so the project is set up properly so that
+        # the timeline creates transitions automatically.
+        mainloop = common.create_main_loop()
+
+        def projectLoadedCb(unused_project, unused_timeline):
+            mainloop.quit()
+        self.app.project_manager.current_project.connect("loaded", projectLoadedCb)
+        mainloop.run()
+        self.assertTrue(self.timeline.props.auto_transition)
+
 
 class TestTimelineObserver(BaseTestUndoTimeline):
 
@@ -303,6 +314,34 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(0, len([effect for effect in
                                  clip1.get_children(True)
                                  if isinstance(effect, GES.Effect)]))
+
+    def test_move_clip(self):
+        self._wait_until_project_loaded()
+
+        clip1 = GES.TitleClip()
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(10 * Gst.SECOND)
+        clip2 = GES.TitleClip()
+        clip2.set_start(5 * Gst.SECOND)
+        clip2.set_duration(10 * Gst.SECOND)
+
+        self.layer.add_clip(clip1)
+        self.assertEqual(len(self.layer.get_clips()), 1)
+        self.layer.add_clip(clip2)
+        self.assertEqual(len(self.layer.get_clips()), 3)
+
+        with self.action_log.started("move clip"):
+            clip2.set_start(20 * Gst.SECOND)
+        self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
+        self.assertEqual(len(self.layer.get_clips()), 2)
+
+        self.action_log.undo()
+        self.assertEqual(clip2.get_start(), 5 * Gst.SECOND)
+        self.assertEqual(len(self.layer.get_clips()), 3)
+
+        self.action_log.redo()
+        self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
+        self.assertEqual(len(self.layer.get_clips()), 2)
 
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
