@@ -23,6 +23,7 @@ BRANCH="master"
 
 # The URL of the bundle remote repository
 APPLICATION_FLATPAK_REPO=http://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi/
+APPLICATION_FLATPAK_REPO_FILE=https://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi.flatpakrepo
 
 # The name to give to the repository if it is not registered in flatpak yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
@@ -35,6 +36,7 @@ SDK_NAME=org.gnome.Sdk
 SDK_VERSION=3.20
 # The URL of the Sdk remote repository
 SDK_REPO=http://sdk.gnome.org/repo/
+SDK_REPO_FILE=https://sdk.gnome.org/gnome.flatpakrepo
 # The name to give to the repository if it is not registered in flatpak yet
 SDK_DEFAULT_REPO_NAME=gnome
 
@@ -45,29 +47,22 @@ GST_VERSION=master
 FLATPAK=flatpak
 FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
 FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
-which $FLATPAK > /dev/null 2>&1
+$FLATPAK remote-add --help |grep "\-\-from" > /dev/null 2>&1
 if [ ! $? -eq 0 ]
 then
-  FLATPAK=xdg-app
-  FLATPAK_REMOTE_LIST="$FLATPAK list-remotes"
-  which $FLATPAK > /dev/null 2>&1
-  if [ ! $? -eq 0 ]
-  then
-    printf "$RED \nYou need to install flatpak to be able to use the '$0' script.
+  printf "$RED \nYou need to install flatpak >= 0.6.4 to be able to use the '$0' script.
 
 You can find some informations about how to install it for your distribution at:
 
-  * http://flatpak.org/ $NC\n\n\n"
+* http://flatpak.org/ $NC\n\n\n"
 
-    if [ -n "$INSTALLER" ]
-    then
-      printf "\n\nYou can now exit that terminal."
-      read
-    fi
-    exit 1
+  if [ -n "$INSTALLER" ]
+  then
+    printf "\n\nYou can now exit that terminal."
+    read
   fi
+  exit 1
 fi
-
 
 # ------------------------------------------- #
 
@@ -85,7 +80,7 @@ REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 FLATPAK_INSTALL="$FLATPAK install --user "
 FLATPAK_UPDATE="$FLATPAK update --user "
-FLATPAK_ADD_REMOTE="$FLATPAK remote-add --no-gpg-verify --user "
+FLATPAK_ADD_REMOTE="$FLATPAK remote-add --user --from="
 
 # Some terminal output color values
 RED='\033[0;31m'
@@ -111,6 +106,7 @@ Options:
        --repo-commit-subject: The commit subject to be used when updating the ostree repository
        --repo-commit-body: The commit body to be used when updating the ostree repository
        --check: Run make check on pitivi (work only when --bundle is used)
+       --gpg-sign=KEYID: The GPG key to sign the commit with (work only when --bundle is used)
 
 You can find more information about flatpak at: http://flatpak.org/
 "
@@ -170,6 +166,10 @@ do
     GST_VERSION="${i#*=}"
     shift
     ;;
+    --gpg-sign=*)
+    GPG_KEY="${i#*=}"
+    shift
+    ;;
   esac
 done
 
@@ -198,16 +198,9 @@ then
   which $FLATPAK_BUILDER > /dev/null 2>&1
   if [ ! $? -eq 0 ]
   then
-    FLATPAK_BUILDER=xdg-app-builder
-    which $FLATPAK_BUILDER > /dev/null 2>&1
-    if [ ! $? -eq 0 ]
-    then
-      echo "You need to install flatpak-builder to use the $0 script for development.
-
-        flatpak-builder was introduced between the 0.4.5 and 0.4.6 flatpak releases.
+    echo "You need to install flatpak-builder to use the $0 script for development.
 "
-        exit 1
-    fi
+      exit 1
   fi
   DEVEL=true
 fi
@@ -239,7 +232,10 @@ then
   if [ -z "$SDK_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME $SDK_VERSION"
-    $FLATPAK_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+    TEMPFILE=$(mktemp)
+    echo "-> Adding repository '$SDK_REPO_NAME' from file: $SDK_REPO_FILE"
+    curl $SDK_REPO_FILE -Sso $TEMPFILE || exit 1
+    $FLATPAK_ADD_REMOTE$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
     $FLATPAK_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
@@ -252,9 +248,12 @@ fi
 
 if [ -z "$RUNTIME_INSTALLED" ]
 then
-  echo "-> Installing $RUNTIME_NAME $SDK_VERSION $RUNTIME_INSTALLED"
+  TEMPFILE=$(mktemp)
+  echo "-> Adding repository $SDK_REPO_NAME from file: $SDK_REPO_FILE"
+  curl $SDK_REPO_FILE -Sso $TEMPFILE || exit 1
+  $FLATPAK_ADD_REMOTE$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
 
-  $FLATPAK_ADD_REMOTE $SDK_REPO_NAME $SDK_REPO > /dev/null 2>&1
+  echo "-> Installing $RUNTIME_NAME $SDK_VERSION $RUNTIME_INSTALLED"
   $FLATPAK_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
 fi
 if [ -z "$RUNTIME_LOCAL_INSTALLED" ]
@@ -323,7 +322,11 @@ fi
 
 if [ -z $DEVEL ] || [ -z $BUILD ]
 then
-   $FLATPAK_ADD_REMOTE $APPLICATION_REPO_NAME $APPLICATION_FLATPAK_REPO > /dev/null 2>&1
+   TEMPFILE=$(mktemp)
+
+   echo "-> Adding repository $APPLICATION_REPO_NAME from file: $APPLICATION_FLATPAK_REPO_FILE"
+   curl $APPLICATION_FLATPAK_REPO_FILE -Sso $TEMPFILE || exit 1
+   $FLATPAK_ADD_REMOTE$TEMPFILE $APPLICATION_REPO_NAME > /dev/null 2>&1
 
    if [ -z "$APP_INSTALLED" ]
    then
@@ -446,8 +449,13 @@ then
       COMMIT_SUBJECT="Updating $APPLICATION_REF_NAME"
   fi
 
+  if [ -n "$GPG_KEY" ]
+  then
+      GPG="--gpg-sign=$GPG_KEY"
+  fi
+
   echo "-> Exporting repo $REPO $DEVELOPMENT_BRANCHNAME (args: --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT")"
-  $FLATPAK build-export --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
+  $FLATPAK build-export $GPG --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
   $FLATPAK build-update-repo --generate-static-deltas $REPO || exit 1
