@@ -463,6 +463,9 @@ class LayerObserver(MetaContainerObserver, Loggable):
         self.action_log = action_log
         self.priority = ges_layer.props.priority
 
+        self.keyframe_observers = {}
+        self.track_element_observers = {}
+
         ges_layer.connect("clip-added", self._clipAddedCb)
         ges_layer.connect("clip-removed", self._clipRemovedCb)
         ges_layer.connect("notify::priority", self.__layer_moved_cb)
@@ -470,9 +473,6 @@ class LayerObserver(MetaContainerObserver, Loggable):
         self.clip_observers = {}
         for ges_clip in ges_layer.get_clips():
             self._connectToClip(ges_clip)
-
-        self.keyframe_observers = {}
-        self.track_element_observers = {}
 
     def _connectToClip(self, ges_clip):
         props = ["start", "duration", "in-point", "priority"]
