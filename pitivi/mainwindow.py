@@ -437,11 +437,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.render_button.set_sensitive(False)  # The only one we have to set.
         self.render_button.connect("clicked", self._renderCb)
 
-        # TODO: Add these back once we revisit undo/redo T3360
-        if in_devel():
-            self._headerbar.pack_start(undo_button)
-            self._headerbar.pack_start(redo_button)
-            self._headerbar.pack_start(separator)
+        self._headerbar.pack_start(undo_button)
+        self._headerbar.pack_start(redo_button)
+        self._headerbar.pack_start(separator)
         self._headerbar.pack_start(self.save_button)
         self._headerbar.pack_start(self.render_button)
 

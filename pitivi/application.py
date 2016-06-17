@@ -27,7 +27,6 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.configure import in_devel
 from pitivi.configure import RELEASES_URL
 from pitivi.configure import VERSION
 from pitivi.dialogs.startupwizard import StartUpWizard
@@ -52,7 +51,7 @@ from pitivi.utils.timeline import Zoomable
 
 
 class Pitivi(Gtk.Application, Loggable):
-    """Pitivi's application.
+    """Hello world.
 
     Attributes:
         action_log (UndoableActionLog): The undo/redo log for the current project.
@@ -375,8 +374,6 @@ class Pitivi(Gtk.Application, Loggable):
 
     def _syncDoUndo(self):
         can_undo = self.action_log and bool(self.action_log.undo_stacks)
-        # TODO: Remove this once we revisit undo/redo T3360
-        can_undo = can_undo and in_devel()
         self.undo_action.set_enabled(bool(can_undo))
 
         can_redo = self.action_log and bool(self.action_log.redo_stacks)
