@@ -24,6 +24,7 @@ pitivi_PYTHON = \
 	project.py \
 	render.py \
 	settings.py \
+	shortcutswindow.py \
 	tabsmanager.py \
 	transitions.py \
 	titleeditor.py \
