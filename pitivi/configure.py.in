@@ -35,6 +35,7 @@ def in_devel():
 
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
+GITVERSION = '@GITVERSION@'
 VERSION = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
 APPURL = 'http://www.pitivi.org/'

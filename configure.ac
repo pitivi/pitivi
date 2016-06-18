@@ -32,6 +32,7 @@ AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 AC_CONFIG_MACRO_DIR([m4])
 
 AS_AC_EXPAND(LIBDIR, $libdir)
+AS_AC_EXPAND(GITVERSION, m4_esyscmd_s([git describe --always]))
 AC_MSG_NOTICE(Storing library files in $LIBDIR)
 
 AS_AC_EXPAND(DATADIR, $datadir)

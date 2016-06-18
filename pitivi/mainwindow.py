@@ -35,8 +35,8 @@ from pitivi.configure import APPNAME
 from pitivi.configure import APPURL
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
+from pitivi.configure import GITVERSION
 from pitivi.configure import in_devel
-from pitivi.configure import VERSION
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -603,13 +603,13 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         abt.set_website(APPURL)
 
         if in_devel():
-            version_str = _("Development version")
+            version_str = _("Development version: %s" % GITVERSION)
         elif not self.app.isLatest():
             version_str = _("Version %(cur_ver)s — %(new_ver)s is available" %
-                            {"cur_ver": VERSION,
+                            {"cur_ver": GITVERSION,
                              "new_ver": self.app.getLatest()})
         else:
-            version_str = _("Version %s" % VERSION)
+            version_str = _("Version %s" % GITVERSION)
         abt.set_version(version_str)
 
         comments = ["",
