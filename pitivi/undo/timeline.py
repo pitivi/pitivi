@@ -21,12 +21,16 @@ from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.undo import ExpandableUndoableAction
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import SimpleUndoableAction
 from pitivi.undo.undo import UndoableAction
 from pitivi.utils.loggable import Loggable
+
+
+TRANSITION_PROPS = ["border", "invert", "transition-type"]
 
 
 def child_property_name(pspec):
@@ -265,12 +269,19 @@ class ClipAdded(UndoableAction):
         return st
 
 
-class ClipRemoved(UndoableAction):
+class ClipRemoved(ExpandableUndoableAction):
 
     def __init__(self, layer, clip):
-        UndoableAction.__init__(self)
+        ExpandableUndoableAction.__init__(self)
         self.layer = layer
         self.clip = clip
+        self.transition_removed_actions = []
+
+    def expand(self, action):
+        if not isinstance(action, TransitionClipRemovedAction):
+            return False
+        self.transition_removed_actions.append(action)
+        return True
 
     def do(self):
         self.layer.remove_clip(self.clip)
@@ -280,6 +291,9 @@ class ClipRemoved(UndoableAction):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+        # Update the automatically created transitions.
+        for action in self.transition_removed_actions:
+            action.undo()
 
     def asScenarioAction(self):
         timeline = self.layer.get_timeline()
@@ -290,6 +304,57 @@ class ClipRemoved(UndoableAction):
         st = Gst.Structure.new_empty("remove-clip")
         st.set_value("name", self.clip.get_name())
         return st
+
+
+class TransitionClipRemovedAction(UndoableAction):
+
+    def __init__(self, ges_layer, ges_clip, track_element):
+        UndoableAction.__init__(self)
+        self.ges_layer = ges_layer
+        self.start = ges_clip.props.start
+        self.duration = ges_clip.props.duration
+        self.track_element = track_element
+
+        self.properties = []
+        for property_name in TRANSITION_PROPS:
+            field_name = property_name.replace("-", "_")
+            value = track_element.get_property(field_name)
+            self.properties.append((property_name, value))
+
+    @classmethod
+    def new(cls, ges_layer, ges_clip):
+        track_element = cls.get_video_element(ges_clip)
+        if not track_element:
+            return None
+        return cls(ges_layer, ges_clip, track_element)
+
+    @staticmethod
+    def get_video_element(ges_clip):
+        for track_element in ges_clip.get_children(True):
+            if isinstance(track_element, GES.VideoTransition):
+                return track_element
+        return None
+
+    def do(self):
+        # The transition is being removed, nothing to do.
+        pass
+
+    def undo(self):
+        # Search the transition clip created automatically to update it.
+        transition_clip = None
+        for ges_clip in self.ges_layer.get_clips():
+            if isinstance(ges_clip, GES.TransitionClip) and \
+                    ges_clip.props.start == self.start and \
+                    ges_clip.props.duration == self.duration:
+                # Got the transition clip, now find its video element, if any.
+                track_element = self.get_video_element(ges_clip)
+                if not track_element:
+                    # Probably the audio transition clip.
+                    continue
+                # Double lucky!
+                for prop_name, value in self.properties:
+                    track_element.set_property(prop_name, value)
+                break
 
 
 class LayerAdded(UndoableAction):
@@ -513,8 +578,8 @@ class LayerObserver(MetaContainerObserver, Loggable):
 
     def _connectToTrackElement(self, track_element):
         if isinstance(track_element, GES.VideoTransition):
-            props = ["border", "invert", "transition-type"]
-            observer = GObjectObserver(track_element, props, self.action_log)
+            observer = GObjectObserver(track_element, TRANSITION_PROPS,
+                                       self.action_log)
             self.track_element_observers[track_element] = observer
             return
 
@@ -558,6 +623,9 @@ class LayerObserver(MetaContainerObserver, Loggable):
     def _clipRemovedCb(self, layer, clip):
         self._disconnectFromClip(clip)
         if isinstance(clip, GES.TransitionClip):
+            action = TransitionClipRemovedAction.new(layer, clip)
+            if action:
+                self.action_log.push(action)
             return
         action = ClipRemoved(layer, clip)
         self.action_log.push(action)

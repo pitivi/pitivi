@@ -55,6 +55,22 @@ class UndoableAction(GObject.Object, Loggable):
         raise NotImplementedError()
 
 
+class ExpandableUndoableAction(GObject.Object, Loggable):
+    """An action which can include immediately following actions."""
+
+    def expand(self, action):
+        """Expands including the specified action.
+
+        Args:
+            action (UndoableAction): The action to include.
+
+        Returns:
+            bool: Whether the action has been included, in which case
+                it should not be used for anything else.
+        """
+        raise NotImplementedError()
+
+
 class SimpleUndoableAction(UndoableAction):
 
     def do(self):
@@ -85,6 +101,12 @@ class UndoableActionStack(UndoableAction):
         return "%s: %s" % (self.action_group_name, self.done_actions)
 
     def push(self, action):
+        if self.done_actions:
+            last_action = self.done_actions[-1]
+            if isinstance(last_action, ExpandableUndoableAction):
+                if last_action.expand(action):
+                    # The action has been included in the previous one.
+                    return
         self.done_actions.append(action)
 
     def _runAction(self, action_list, method_name):
@@ -222,6 +244,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             raise UndoWrongStateError("Nothing to undo")
 
         stack = self.undo_stacks.pop(-1)
+        self.debug("Undo %s", stack)
         self._run(stack.undo)
         self.redo_stacks.append(stack)
         self.emit("move", stack)
@@ -234,6 +257,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             raise UndoWrongStateError("Nothing to redo")
 
         stack = self.redo_stacks.pop(-1)
+        self.debug("Redo %s", stack)
         self._run(stack.do)
         self.undo_stacks.append(stack)
         self.emit("move", stack)

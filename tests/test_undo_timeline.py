@@ -383,6 +383,14 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(transition_element.get_transition_type(),
                          GES.VideoStandardTransitionType.BAR_WIPE_LR)
 
+        # Remove the clip and add it back. This recreates the transition clip.
+        with self.action_log.started("remove clip"):
+            self.layer.remove_clip(clip2)
+        self.action_log.undo()
+        transition_element = get_transition_element(self.layer)
+        self.assertEqual(transition_element.get_transition_type(),
+                         GES.VideoStandardTransitionType.BAR_WIPE_LR)
+
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
 
