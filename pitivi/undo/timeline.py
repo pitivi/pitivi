@@ -27,6 +27,7 @@ from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
 from pitivi.undo.undo import SimpleUndoableAction
 from pitivi.undo.undo import UndoableAction
+from pitivi.undo.undo import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
 
 
@@ -318,7 +319,7 @@ class TransitionClipRemovedAction(UndoableAction):
         self.properties = []
         for property_name in TRANSITION_PROPS:
             field_name = property_name.replace("-", "_")
-            value = track_element.get_property(field_name)
+            value = self.track_element.get_property(field_name)
             self.properties.append((property_name, value))
 
     @classmethod
@@ -352,6 +353,7 @@ class TransitionClipRemovedAction(UndoableAction):
                     # Probably the audio transition clip.
                     continue
                 # Double lucky!
+                UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
                 for prop_name, value in self.properties:
                     track_element.set_property(prop_name, value)
                 break

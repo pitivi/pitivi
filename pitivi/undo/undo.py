@@ -55,6 +55,41 @@ class UndoableAction(GObject.Object, Loggable):
         raise NotImplementedError()
 
 
+class UndoableAutomaticObjectAction(UndoableAction):
+    """An action on an automatically created object.
+
+    Attributes:
+        auto_object (object): The object which has been automatically created
+            and might become obsolete later.
+    """
+
+    __updates = {}
+
+    def __init__(self, auto_object):
+        UndoableAction.__init__(self)
+        self.__auto_object = auto_object
+
+    @property
+    def auto_object(self):
+        """The latest object which identifies the same thing as the original."""
+        return self.__updates.get(self.__auto_object, self.__auto_object)
+
+    @classmethod
+    def update_object(cls, auto_object, new_auto_object):
+        """Provides a replacement for an object.
+
+        Args:
+            auto_object (object): The object being replaced.
+            new_auto_object (object): The replacement.
+        """
+        cls.__updates[auto_object] = new_auto_object
+        others = [key
+                  for key, value in cls.__updates.items()
+                  if value == auto_object]
+        for other in others:
+            cls.__updates[other] = new_auto_object
+
+
 class ExpandableUndoableAction(GObject.Object, Loggable):
     """An action which can include immediately following actions."""
 
@@ -345,20 +380,19 @@ class MetaContainerObserver(GObject.Object):
         self.meta_container = None
 
 
-class PropertyChangedAction(UndoableAction):
+class PropertyChangedAction(UndoableAutomaticObjectAction):
 
     def __init__(self, gobject, field_name, old_value, new_value):
-        UndoableAction.__init__(self)
-        self.gobject = gobject
+        UndoableAutomaticObjectAction.__init__(self, gobject)
         self.field_name = field_name
         self.old_value = old_value
         self.new_value = new_value
 
     def do(self):
-        self.gobject.set_property(self.field_name, self.new_value)
+        self.auto_object.set_property(self.field_name, self.new_value)
 
     def undo(self):
-        self.gobject.set_property(self.field_name, self.old_value)
+        self.auto_object.set_property(self.field_name, self.old_value)
 
 
 class GObjectObserver(GObject.Object):
