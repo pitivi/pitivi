@@ -103,6 +103,9 @@ class TimelineElementObserver(Loggable):
 
     def _property_changed_cb(self, ges_timeline_element, unused_gst_element, pspec):
         prop_name = child_property_name(pspec)
+        if pspec.name in PROPS_TO_IGNORE:
+            return
+
         if ges_timeline_element.get_control_binding(prop_name):
             self.debug("Property %s controlled", prop_name)
             return
