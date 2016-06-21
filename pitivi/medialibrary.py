@@ -1345,6 +1345,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._draggedPaths = None
 
     def _treeViewButtonReleaseEventCb(self, treeview, event):
+        self._draggedPaths = None
         selection = self.treeview.get_selection()
         state = event.get_state() & (
             Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
@@ -1394,6 +1395,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return True
 
     def _iconViewButtonReleaseEventCb(self, iconview, event):
+        self._draggedPaths = None
+
         control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
         shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
         modifier_active = control_mask or shift_mask
