@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-18 15:22+0200\n"
-"PO-Revision-Date: 2016-06-18 15:23+0200\n"
+"POT-Creation-Date: 2016-06-21 17:00+0200\n"
+"PO-Revision-Date: 2016-06-21 17:01+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -600,7 +600,7 @@ msgid "Pause"
 msgstr "Wstrzymaj"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:536
-#: ../pitivi/timeline/timeline.py:1468
+#: ../pitivi/timeline/timeline.py:1464
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -980,8 +980,9 @@ msgid "Show the menu button content"
 msgstr "Wyświetlenie zawartości przycisku menu"
 
 #: ../pitivi/mainwindow.py:606
-msgid "Development version"
-msgstr "Wersja rozwojowa"
+#, python-format
+msgid "Development version: %s"
+msgstr "Wersja rozwojowa: %s"
 
 #: ../pitivi/mainwindow.py:608
 #, python-format
@@ -1654,7 +1655,7 @@ msgstr "Przenosi warstwę na dół"
 msgid "Delete layer"
 msgstr "Usuń warstwę"
 
-#: ../pitivi/timeline/layer.py:407
+#: ../pitivi/timeline/layer.py:403
 #, python-format
 msgid "Layer %d"
 msgstr "Warstwa %d"
@@ -1703,47 +1704,47 @@ msgstr ""
 "Czy kliknięcie lewym przyciskiem poza zaznaczaniem i modyfikowaniem klipów "
 "także przewija."
 
-#: ../pitivi/timeline/timeline.py:1397
+#: ../pitivi/timeline/timeline.py:1393
 msgid "Timeline"
 msgstr "Oś czasu"
 
-#: ../pitivi/timeline/timeline.py:1404
+#: ../pitivi/timeline/timeline.py:1400
 msgid "Zoom in"
 msgstr "Przybliżenie"
 
-#: ../pitivi/timeline/timeline.py:1410
+#: ../pitivi/timeline/timeline.py:1406
 msgid "Zoom out"
 msgstr "Oddalenie"
 
-#: ../pitivi/timeline/timeline.py:1417
+#: ../pitivi/timeline/timeline.py:1413
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Dopasowanie przybliżenia projektu do okna"
 
-#: ../pitivi/timeline/timeline.py:1426
+#: ../pitivi/timeline/timeline.py:1422
 msgid "Delete selected clips"
 msgstr "Usunięcie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1434
+#: ../pitivi/timeline/timeline.py:1430
 msgid "Group selected clips together"
 msgstr "Umieszczenie zaznaczonych klipów w grupie"
 
-#: ../pitivi/timeline/timeline.py:1442
+#: ../pitivi/timeline/timeline.py:1438
 msgid "Ungroup selected clips"
 msgstr "Rozgrupowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1450
+#: ../pitivi/timeline/timeline.py:1446
 msgid "Copy selected clips"
 msgstr "Skopiowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1457
+#: ../pitivi/timeline/timeline.py:1453
 msgid "Paste selected clips"
 msgstr "Wklejenie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1476
+#: ../pitivi/timeline/timeline.py:1472
 msgid "Split the clip at the position"
 msgstr "Przecięcie klipu w pozycji"
 
-#: ../pitivi/timeline/timeline.py:1484
+#: ../pitivi/timeline/timeline.py:1480
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Dodanie klatki kluczowej do krzywej klatek kluczowych zaznaczonego klipu"
