@@ -250,9 +250,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # A lot of operations go through these callbacks.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
-        self.connect("button-press-event", self._button_press_event_cb)
-        self.connect("button-release-event", self._button_release_event_cb)
-        self.connect("motion-notify-event", self._motion_notify_event_cb)
 
         self._layers = []
         # Whether the user is dragging a layer.
@@ -338,6 +335,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
         if self.ges_timeline is not None:
+            self.disconnect_by_func(self._button_press_event_cb)
+            self.disconnect_by_func(self._button_release_event_cb)
+            self.disconnect_by_func(self._motion_notify_event_cb)
+
             self.ges_timeline.disconnect_by_func(self._durationChangedCb)
             self.ges_timeline.disconnect_by_func(self._layerAddedCb)
             self.ges_timeline.disconnect_by_func(self._layerRemovedCb)
@@ -367,6 +368,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.ges_timeline.connect("layer-removed", self._layerRemovedCb)
         self.ges_timeline.connect("snapping-started", self._snapCb)
         self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
+
+        self.connect("button-press-event", self._button_press_event_cb)
+        self.connect("button-release-event", self._button_release_event_cb)
+        self.connect("motion-notify-event", self._motion_notify_event_cb)
 
         self.queue_draw()
 
@@ -1170,8 +1175,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._settings.connect("edgeSnapDeadbandChanged",
                                self._snapDistanceChangedCb)
 
-        self.app.project_manager.connect("new-project-created",
-                                         self._projectCreatedCb)
         self.app.project_manager.connect("new-project-loaded",
                                          self._projectLoadedCb)
 
@@ -1784,22 +1787,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _projectLoadedCb(self, unused_app, project):
-        """Connects to the project's pipeline."""
-        assert self._project is project
-        if self._project:
-            self.ruler.setPipeline(self._project.pipeline)
-
-            self.ruler.setProjectFrameRate(self._project.videorate)
-            self.ruler.zoomChanged()
-
-            self._renderingSettingsChangedCb(self._project, None, None)
-            self._setBestZoomRatio()
-            if self.ges_timeline:
-                self.ges_timeline.set_snapping_distance(
-                    Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
-
-    def _projectCreatedCb(self, unused_app, project):
-        """Connects to the project's timeline."""
+        """Connects to the project's timeline and pipeline."""
         if self._project:
             self._project.disconnect_by_func(self._renderingSettingsChangedCb)
             try:
@@ -1813,6 +1801,17 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.timeline._pipeline = None
 
         self.setProject(project)
+        if project:
+            self.ruler.setPipeline(project.pipeline)
+
+            self.ruler.setProjectFrameRate(project.videorate)
+            self.ruler.zoomChanged()
+
+            self._renderingSettingsChangedCb(project, None, None)
+            self._setBestZoomRatio()
+            if self.ges_timeline:
+                self.ges_timeline.set_snapping_distance(
+                    Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
     def _zoomInCb(self, unused_action, unused_parameter):
         Zoomable.zoomIn()

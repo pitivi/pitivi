@@ -243,7 +243,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview.connect("drag-leave", self._dragLeaveCb)
         self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        self.app.project_manager.connect(
+        self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
 
@@ -556,7 +556,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._initButtons()
         self.hide()
 
-        self.app.project_manager.connect(
+        self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
 
     def _newProjectLoadedCb(self, unused_app, project):

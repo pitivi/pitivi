@@ -62,7 +62,7 @@ class TitleEditor(Loggable):
         # Updates the UI.
         self.set_source(None)
 
-        self.app.project_manager.connect(
+        self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
 
     def _createUI(self):
