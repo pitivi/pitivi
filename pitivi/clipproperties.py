@@ -36,6 +36,7 @@ from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
@@ -92,6 +93,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
         infobar = Gtk.InfoBar()
+        fix_infobar(infobar)
         infobar.props.message_type = Gtk.MessageType.OTHER
         infobar.get_content_area().add(label)
         self.infobar_box.pack_start(infobar, False, False, 0)

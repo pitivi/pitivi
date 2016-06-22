@@ -58,6 +58,7 @@ from pitivi.utils.ui import beautify_asset
 from pitivi.utils.ui import beautify_ETA
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import FILE_TARGET_ENTRY
+from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import URI_TARGET_ENTRY
@@ -271,13 +272,16 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         builder.add_from_file(os.path.join(get_ui_dir(), "medialibrary.ui"))
         builder.connect_signals(self)
         self._welcome_infobar = builder.get_object("welcome_infobar")
+        fix_infobar(self._welcome_infobar)
         self._project_settings_set_infobar = Gtk.InfoBar()
         self._project_settings_set_infobar.hide()
         self._project_settings_set_infobar.set_message_type(Gtk.MessageType.OTHER)
         self._project_settings_set_infobar.set_show_close_button(True)
         self._project_settings_set_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
         self._project_settings_set_infobar.connect("response", self.__projectSettingsSetInfobarCb)
+        fix_infobar(self._project_settings_set_infobar)
         self._import_warning_infobar = builder.get_object("warning_infobar")
+        fix_infobar(self._import_warning_infobar)
         self._import_warning_infobar.hide()
         self._import_warning_infobar.connect("response", self.__warningInfobarCb)
         self._warning_label = builder.get_object("warning_label")

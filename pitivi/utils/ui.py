@@ -523,6 +523,15 @@ def disable_scroll(widget):
     widget.connect("scroll-event", scroll_event_cb)
 
 
+def fix_infobar(infobar):
+    # Work around https://bugzilla.gnome.org/show_bug.cgi?id=710888
+    def make_sure_revealer_does_nothing(widget):
+        if not isinstance(widget, Gtk.Revealer):
+            return
+        widget.set_transition_type(Gtk.RevealerTransitionType.NONE)
+    infobar.forall(make_sure_revealer_does_nothing)
+
+
 # ----------------------- encoding datas --------------------------------------- #
 # FIXME This should into a special file
 frame_rates = model((str, object), (

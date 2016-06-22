@@ -27,6 +27,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
@@ -100,6 +101,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.__updateBorderScale()
 
         self.infobar = Gtk.InfoBar()
+        fix_infobar(self.infobar)
         self.infobar.props.message_type = Gtk.MessageType.OTHER
         txtlabel = Gtk.Label()
         txtlabel.set_line_wrap(True)

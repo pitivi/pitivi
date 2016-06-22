@@ -28,6 +28,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.dialogs.depsmanager import DepsManager
 from pitivi.shortcutswindow import show_shortcuts
 from pitivi.utils.misc import show_user_manual
+from pitivi.utils.ui import fix_infobar
 
 
 class StartUpWizard(object):
@@ -83,6 +84,7 @@ class StartUpWizard(object):
 
         vbox = self.builder.get_object("topvbox")
         self.infobar = Gtk.InfoBar()
+        fix_infobar(self.infobar)
         vbox.pack_start(self.infobar, True, True, 0)
         if self.app.getLatest():
             self._appVersionInfoReceivedCb(self.app, None)

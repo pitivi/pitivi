@@ -28,6 +28,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
+from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
 
 
@@ -70,6 +71,7 @@ class TitleEditor(Loggable):
         builder.connect_signals(self)
         self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
+        fix_infobar(self.infobar)
         self.editing_box = builder.get_object("editing_box")
         self.textarea = builder.get_object("textview")
         toolbar = builder.get_object("toolbar")
