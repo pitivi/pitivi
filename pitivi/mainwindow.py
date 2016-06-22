@@ -495,14 +495,17 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
 # UI Callbacks
 
-    def _configureCb(self, unused_widget, event):
-        """Handles the main window being moved, resized or maximized."""
-        # get_position() takes window manager decoration into account
+    def _configureCb(self, unused_widget, unused_event):
+        """Saves the main window position and size."""
+        # Takes window manager decorations into account.
         position = self.get_position()
-        self.settings.mainWindowWidth = event.width
-        self.settings.mainWindowHeight = event.height
-        self.settings.mainWindowX = position[0]
-        self.settings.mainWindowY = position[1]
+        self.settings.mainWindowX = position.root_x
+        self.settings.mainWindowY = position.root_y
+
+        # Does not include the size of the window manager decorations.
+        size = self.get_size()
+        self.settings.mainWindowWidth = size.width
+        self.settings.mainWindowHeight = size.height
 
     def _deleteCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
