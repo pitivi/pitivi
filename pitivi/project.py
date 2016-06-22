@@ -1453,6 +1453,8 @@ class Project(Loggable, GES.Project):
         if not isinstance(asset, GES.UriClipAsset):
             # We are only interested in actual files, not in titles, for example.
             return
+
+        emit = False
         info = asset.get_info()
         video_streams = info.get_video_streams()
         if video_streams and self._has_default_video_settings:
@@ -1467,13 +1469,15 @@ class Project(Loggable, GES.Project):
                 self.videopar = Gst.Fraction(video.get_par_num(),
                                              video.get_par_denom())
                 self._has_default_video_settings = False
-                self.emit("settings-set-from-imported-asset", asset)
+                emit = True
         audio_streams = info.get_audio_streams()
         if audio_streams and self._has_default_audio_settings:
             audio = audio_streams[0]
             self.audiochannels = audio.get_channels()
             self.audiorate = audio.get_sample_rate()
             self._has_default_audio_settings = False
+            emit = True
+        if emit:
             self.emit("settings-set-from-imported-asset", asset)
 
     def _emitChange(self, signal, key, value):

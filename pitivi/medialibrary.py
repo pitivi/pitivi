@@ -989,9 +989,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._selectLastImportedUris()
 
     def __projectSettingsSetFromImportedAssetCb(self, unused_project, asset):
-        if self._project_settings_set_infobar.is_visible():
-            # One is enough.
-            return
         asset_path = path_from_uri(asset.get_id())
         file_name = os.path.basename(asset_path)
         message = _("The project settings have been set to match file '%s'") % file_name
