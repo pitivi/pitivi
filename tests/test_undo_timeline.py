@@ -355,7 +355,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
         clip2 = asset.extract()
         clip2.set_start(clip1.props.duration / 2)
         clip2.set_duration(10 * Gst.SECOND)
-        self.layer.add_clip(clip2)
+        with self.action_log.started("add second clip"):
+            self.layer.add_clip(clip2)
 
         def get_transition_element(ges_layer):
             for clip in self.layer.get_clips():
@@ -407,6 +408,25 @@ class TestLayerObserver(BaseTestUndoTimeline):
                              "The auto objects map in "
                              "UndoableAutomaticObjectAction is not updated when "
                              "undoing clip remove.")
+
+        for unused_repeat in range(4):
+            # Undo the transition change.
+            self.action_log.undo()
+            # Undo adding the second clip.
+            self.action_log.undo()
+            # Redo adding the second clip.
+            self.action_log.redo()
+            transition_element = get_transition_element(self.layer)
+            self.assertEqual(transition_element.get_transition_type(),
+                             GES.VideoStandardTransitionType.CROSSFADE)
+            # Redo the transition change.
+            self.action_log.redo()
+            transition_element = get_transition_element(self.layer)
+            self.assertEqual(transition_element.get_transition_type(),
+                             GES.VideoStandardTransitionType.BAR_WIPE_LR,
+                             "The auto objects map in "
+                             "UndoableAutomaticObjectAction is not updated when "
+                             "redoing clip add.")
 
 
 class TestControlSourceObserver(BaseTestUndoTimeline):

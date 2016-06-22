@@ -307,7 +307,57 @@ class ClipRemoved(ExpandableUndoableAction):
         return st
 
 
-class TransitionClipRemovedAction(UndoableAction):
+class TransitionClipAction(UndoableAction):
+
+    def __init__(self, ges_layer, ges_clip, track_element):
+        UndoableAction.__init__(self)
+        self.ges_layer = ges_layer
+        self.start = ges_clip.props.start
+        self.duration = ges_clip.props.duration
+        self.track_element = track_element
+
+    @staticmethod
+    def get_video_element(ges_clip):
+        for track_element in ges_clip.get_children(True):
+            if isinstance(track_element, GES.VideoTransition):
+                return track_element
+        return None
+
+    def find_video_transition(self):
+        for ges_clip in self.ges_layer.get_clips():
+            if isinstance(ges_clip, GES.TransitionClip) and \
+                    ges_clip.props.start == self.start and \
+                    ges_clip.props.duration == self.duration:
+                # Got the transition clip, now find its video element, if any.
+                track_element = TransitionClipAction.get_video_element(ges_clip)
+                if not track_element:
+                    # Probably the audio transition clip.
+                    continue
+                # Double lucky!
+                return track_element
+
+
+class TransitionClipAddedAction(TransitionClipAction):
+
+    @classmethod
+    def new(cls, ges_layer, ges_clip):
+        track_element = cls.get_video_element(ges_clip)
+        if not track_element:
+            return None
+        return cls(ges_layer, ges_clip, track_element)
+
+    def do(self):
+        """Searches the transition clip created automatically to update it."""
+        track_element = self.find_video_transition()
+        assert track_element
+        UndoableAutomaticObjectAction.update_object(self.track_element, track_element)
+
+    def undo(self):
+        # The transition is being removed, nothing to do.
+        pass
+
+
+class TransitionClipRemovedAction(TransitionClipAction):
 
     def __init__(self, ges_layer, ges_clip, track_element):
         UndoableAction.__init__(self)
@@ -328,13 +378,6 @@ class TransitionClipRemovedAction(UndoableAction):
         if not track_element:
             return None
         return cls(ges_layer, ges_clip, track_element)
-
-    @staticmethod
-    def get_video_element(ges_clip):
-        for track_element in ges_clip.get_children(True):
-            if isinstance(track_element, GES.VideoTransition):
-                return track_element
-        return None
 
     def do(self):
         # The transition is being removed, nothing to do.
@@ -580,6 +623,12 @@ class LayerObserver(MetaContainerObserver, Loggable):
 
     def _connectToTrackElement(self, track_element):
         if isinstance(track_element, GES.VideoTransition):
+            ges_clip = track_element.get_toplevel_parent()
+            ges_layer = ges_clip.props.layer
+            action = TransitionClipAddedAction(ges_layer, ges_clip,
+                                               track_element)
+            self.action_log.push(action)
+
             observer = GObjectObserver(track_element, TRANSITION_PROPS,
                                        self.action_log)
             self.track_element_observers[track_element] = observer
