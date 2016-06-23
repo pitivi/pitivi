@@ -372,7 +372,7 @@ then
   then
     # Update values in the json template
     JSON=$SCRIPTDIR/$APP_BUILD_NAME.json
-    $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH $GST_VERSION
+    $SCRIPTDIR/json-template-expander $SCRIPTDIR/$APPLICATION_NAME.template.json $JSON $LOCAL_REPOS_PATH $GST_VERSION $BRANCH
 
     echo "-> Removing prefix $PREFIX"
     rm -Rf $PREFIX

@@ -8,13 +8,21 @@ import sys
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("call with: %s <template_file> <outfile> <basedir> <gst-version> " %
+        print("call with: %s <template_file> <outfile> <basedir> <gst-version> <branchname>" %
               sys.argv[0])
 
     basedir = sys.argv[3]
     gst_version = sys.argv[4]
+    branchname = sys.argv[5]
     with open(sys.argv[1], "r") as tf:
         template = json.load(tf)
+
+    if branchname == "stable":
+        del template["desktop-file-name-prefix"]
+    elif branchname == "master":
+        template["desktop-file-name-prefix"] = "(Rolling)"
+    else:
+        template["desktop-file-name-prefix"] = branchname
 
     print("-> Generating %s against GStreamer %s" % (sys.argv[2], gst_version))
 
