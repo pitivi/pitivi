@@ -900,7 +900,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if not proxy:
             self._addAsset(asset)
 
-        self.app.gui.timeline_ui.switchProxies(asset)
+        if self._project.loaded:
+            self.app.gui.timeline_ui.switchProxies(asset)
 
     def _assetAddedCb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""
