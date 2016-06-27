@@ -319,9 +319,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.iconview_scrollwin.get_accessible().set_name(
             "media_iconview_scrollwindow")
 
-        # import sources dialogbox
-        self._importDialog = None
-
         # Filtering model for the search box.
         # Use this instead of using self.storemodel directly
         self.modelFilter = self.storemodel.filter_new()
@@ -650,7 +647,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.treeview_scrollwin.hide()
             self.iconview_scrollwin.show_all()
 
-    def __filter_proxies(self, filter_info):
+    def __filter_unsupported(self, filter_info):
         """Returns whether the specified item should be displayed."""
         if filter_info.mime_type not in SUPPORTED_MIMETYPES:
             return False
@@ -662,41 +659,39 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _showImportSourcesDialog(self):
         """Pops up the "Import Sources" dialog box."""
-        if self._importDialog:
-            return
-
-        self._importDialog = Gtk.FileChooserDialog()
-        self._importDialog.set_title(_("Select One or More Files"))
-        self._importDialog.set_action(Gtk.FileChooserAction.OPEN)
-        self._importDialog.set_icon_name("pitivi")
-        self._importDialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
-                                       _("Add"), Gtk.ResponseType.OK)
-        self._importDialog.props.extra_widget = FileChooserExtraWidget(self.app)
-        self._importDialog.set_default_response(Gtk.ResponseType.OK)
-        self._importDialog.set_select_multiple(True)
-        self._importDialog.set_modal(True)
-        self._importDialog.set_transient_for(self.app.gui)
-        self._importDialog.set_current_folder(
-            self.app.settings.lastImportFolder)
-        self._importDialog.connect('response', self._importDialogBoxResponseCb)
+        dialog = Gtk.FileChooserDialog()
+        dialog.set_title(_("Select One or More Files"))
+        dialog.set_action(Gtk.FileChooserAction.OPEN)
+        dialog.set_icon_name("pitivi")
+        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
+                           _("Add"), Gtk.ResponseType.OK)
+        dialog.props.extra_widget = FileChooserExtraWidget(self.app)
+        dialog.set_default_response(Gtk.ResponseType.OK)
+        dialog.set_select_multiple(True)
+        dialog.set_modal(True)
+        dialog.set_transient_for(self.app.gui)
+        dialog.set_current_folder(self.app.settings.lastImportFolder)
+        dialog.connect('response', self._importDialogBoxResponseCb)
         previewer = PreviewWidget(self.app.settings)
-        self._importDialog.set_preview_widget(previewer)
-        self._importDialog.set_use_preview_label(False)
-        self._importDialog.connect(
-            'update-preview', previewer.update_preview_cb)
+        dialog.set_preview_widget(previewer)
+        dialog.set_use_preview_label(False)
+        dialog.connect('update-preview', previewer.update_preview_cb)
+
         # Filter for the "known good" formats by default
-        filt_supported = Gtk.FileFilter()
-        filt_supported.set_name(_("Supported file formats"))
-        filt_supported.add_custom(Gtk.FileFilterFlags.URI |
-                                  Gtk.FileFilterFlags.MIME_TYPE,
-                                  self.__filter_proxies)
+        filter = Gtk.FileFilter()
+        filter.set_name(_("Supported file formats"))
+        filter.add_custom(Gtk.FileFilterFlags.URI |
+                          Gtk.FileFilterFlags.MIME_TYPE,
+                          self.__filter_unsupported)
+        dialog.add_filter(filter)
+
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
         default.add_pattern("*")
-        self._importDialog.add_filter(filt_supported)
-        self._importDialog.add_filter(default)
-        self._importDialog.show()
+        dialog.add_filter(default)
+
+        dialog.show()
 
     def _getThumbnailInDir(self, dir, hash):
         """Gets pixbufs for the specified thumbnail.
@@ -1042,10 +1037,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._project.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
-                self._importDialog = None
         else:
             dialogbox.destroy()
-            self._importDialog = None
 
     def _sourceIsUsed(self, asset):
         """Checks whether the specified asset is present in the timeline."""
