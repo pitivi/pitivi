@@ -32,9 +32,9 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
     def __init__(self, app):
         Gtk.ShortcutsWindow.__init__(self)
         self.app = app
-        self.populate()
-        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+        self.set_transient_for(self.app.gui)
         self.set_modal(True)
+        self.populate()
 
     def populate(self):
         """Gathers the accelerators and populates the window."""
