@@ -656,16 +656,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if filter_info.uri.endswith(".proxy.mkv"):
             return False
 
-        source_uri, size = os.path.splitext(filter_info.uri.replace(
-            ".proxy.mkv", ""))
-        if os.path.exists(source_uri):
-            sfile = Gio.File.new_for_uri(source_uri)
-            file_size = sfile.query_info(
-                Gio.FILE_ATTRIBUTE_STANDARD_SIZEi,
-                Gio.FileQueryInfoFlags.NONE, None).get_size()
-            if file_size == size:
-                return False
-
         return True
 
     def _showImportSourcesDialog(self):
