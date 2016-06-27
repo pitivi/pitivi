@@ -673,12 +673,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if self._importDialog:
             return
 
-        chooser_action = Gtk.FileChooserAction.OPEN
-        dialogtitle = _("Select One or More Files")
-
-        self._importDialog = Gtk.FileChooserDialog(
-            title=dialogtitle, transient_for=None, action=chooser_action)
-
+        self._importDialog = Gtk.FileChooserDialog()
+        self._importDialog.set_title(_("Select One or More Files"))
+        self._importDialog.set_action(Gtk.FileChooserAction.OPEN)
         self._importDialog.set_icon_name("pitivi")
         self._importDialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                                        _("Add"), Gtk.ResponseType.OK)
