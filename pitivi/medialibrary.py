@@ -54,6 +54,7 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import ProxyingStrategy
+from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
 from pitivi.utils.ui import beautify_ETA
 from pitivi.utils.ui import beautify_length
@@ -649,11 +650,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.treeview_scrollwin.hide()
             self.iconview_scrollwin.show_all()
 
-    def __filterProxies(self, filter_info):
+    def __filter_proxies(self, filter_info):
+        """Returns whether the specified item should be displayed."""
         if filter_info.mime_type not in SUPPORTED_MIMETYPES:
             return False
 
-        if filter_info.uri.endswith(".proxy.mkv"):
+        if ProxyManager.is_proxy_asset(filter_info.uri):
             return False
 
         return True
@@ -687,7 +689,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filt_supported.set_name(_("Supported file formats"))
         filt_supported.add_custom(Gtk.FileFilterFlags.URI |
                                   Gtk.FileFilterFlags.MIME_TYPE,
-                                  self.__filterProxies)
+                                  self.__filter_proxies)
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
         default.set_name(_("All files"))
@@ -759,7 +761,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         LARGE_SIZE = 96
         info = asset.get_info()
 
-        if self.app.proxy_manager.isProxyAsset(asset) and \
+        if self.app.proxy_manager.is_proxy_asset(asset) and \
                 not asset.props.proxy_target:
             self.info("%s is a proxy asset but has no target, "
                       "not displaying it.", asset.props.id)
@@ -936,7 +938,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _errorCreatingAssetCb(self, unused_project, error, id, type):
         """Gathers asset loading errors."""
         if GObject.type_is_a(type, GES.UriClip):
-            if self.app.proxy_manager.isProxyAsset(id):
+            if self.app.proxy_manager.is_proxy_asset(id):
                 self.debug("Error %s with a proxy"
                            ", not showing the error message", error)
                 return

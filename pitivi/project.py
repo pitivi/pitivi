@@ -1195,7 +1195,7 @@ class Project(Loggable, GES.Project):
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)
                 if delete_proxy_file:
-                    if not self.app.proxy_manager.isProxyAsset(asset):
+                    if not self.app.proxy_manager.is_proxy_asset(asset):
                         raise RuntimeError("Trying to remove proxy %s"
                                            " but it does not look like one!",
                                            asset.props.id)

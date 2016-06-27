@@ -94,6 +94,8 @@ class ProxyManager(GObject.Object, Loggable):
                 WHITELIST_FORMATS.append(createEncodingProfileSimple(
                     container, audio, video))
 
+    proxy_extension = "proxy.mkv"
+
     def __init__(self, app):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
@@ -103,7 +105,6 @@ class ProxyManager(GObject.Object, Loggable):
         self._total_transcoded_time = 0
         self._start_proxying_time = 0
         self._estimated_time = 0
-        self.proxy_extension = "proxy.mkv"
         self.__running_transcoders = []
         self.__pending_transcoders = []
 
@@ -185,16 +186,17 @@ class ProxyManager(GObject.Object, Loggable):
 
         return encoding_profile
 
-    def isProxyAsset(self, obj):
+    @classmethod
+    def is_proxy_asset(cls, obj):
         if isinstance(obj, GES.Asset):
             uri = obj.props.id
         else:
             uri = obj
 
-        return uri.endswith("." + self.proxy_extension)
+        return uri.endswith("." + cls.proxy_extension)
 
     def checkProxyLoadingSucceeded(self, proxy):
-        if self.isProxyAsset(proxy):
+        if self.is_proxy_asset(proxy):
             return True
 
         self.emit("error-preparing-asset", None, proxy, proxy.get_error())
@@ -242,7 +244,7 @@ class ProxyManager(GObject.Object, Loggable):
             return False
 
         if self.app.settings.proxyingStrategy == ProxyingStrategy.AUTOMATIC \
-                and not self.isProxyAsset(asset) and \
+                and not self.is_proxy_asset(asset) and \
                 self.isAssetFormatWellSupported(asset):
             return False
 
