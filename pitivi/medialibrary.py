@@ -1087,7 +1087,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.app.gui.showProjectSettingsDialog()
         infobar.hide()
 
-    def _clipPropertiesCb(self, unused_widget=None):
+    def _clipPropertiesCb(self, unused_widget):
         """Shows the clip properties in a dialog.
 
         Allows selecting and applying them as the new project settings.
