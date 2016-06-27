@@ -126,6 +126,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
         The instance will no longer be usable.
         """
+        self._removeWaitingForAsyncDoneTimeout()
         self.deactivatePositionListener()
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
@@ -446,6 +447,8 @@ class SimplePipeline(GObject.Object, Loggable):
         self.__waiting_for_async_done = value
 
     def _recover(self):
+        if not self._bus:
+            raise PipelineError("Should not try to recover after destroy")
         if self._attempted_recoveries > MAX_RECOVERIES:
             self.emit("died")
             self.error(
