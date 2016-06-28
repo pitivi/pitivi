@@ -135,9 +135,10 @@ class ClipMediaPropsDialog(object):
             self.video_header_label.set_markup("<b>" + _("Image:") + "</b>")
 
         self.dialog.connect("key-press-event", self._keyPressCb)
+        self.dialog.connect("response", self.__response_cb)
         self.dialog.run()
 
-    def _applyButtonCb(self, unused_button):
+    def _apply(self):
         """Applies the widgets values to the project."""
         project = self.project
         if self.has_video:
@@ -158,10 +159,10 @@ class ClipMediaPropsDialog(object):
                 project.audiochannels = audio.get_channels()
             if self.samplerate_checkbutton.get_active():
                 project.audiorate = audio.get_sample_rate()
-        self.dialog.destroy()
 
-    def _cancelButtonCb(self, unused_button):
-        """Destroys the dialog."""
+    def __response_cb(self, unused_dialog, response_id):
+        if response_id == 1:
+            self._apply()
         self.dialog.destroy()
 
     def _keyPressCb(self, unused_widget, event):
