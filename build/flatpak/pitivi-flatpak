@@ -22,8 +22,8 @@ APPLICATION_DESKTOP_NAME="(Daily) Pitivi"
 BRANCH="master"
 
 # The URL of the bundle remote repository
-APPLICATION_FLATPAK_REPO=http://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi/
-APPLICATION_FLATPAK_REPO_FILE=https://people.freedesktop.org/~tsaunier/flatpak-repos/pitivi.flatpakrepo
+APPLICATION_FLATPAK_REPO=http://flatpak.pitivi.org
+APPLICATION_FLATPAK_REPO_FILE=http://flatpak.pitivi.org/pitivi.flatpakrepo
 
 # The name to give to the repository if it is not registered in flatpak yet
 APPLICATION_DEFAULT_REPO_NAME=pitivi
@@ -46,7 +46,6 @@ GST_VERSION=master
 
 FLATPAK=flatpak
 FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
-FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
 $FLATPAK remote-add --help |grep "\-\-from" > /dev/null 2>&1
 if [ ! $? -eq 0 ]
 then
@@ -68,6 +67,14 @@ fi
 
 # Computation of actual variable values
 APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_FLATPAK_REPO" |awk '{ print $1 }'`
+$FLATPAK remote-list --user |grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
+# Update remote URL if needed
+if [ $? != 0 ] & [ -z $APPLICATION_REPO_NAME ]
+then
+  echo "-> Setting $APPLICATION_DEFAULT_REPO_NAME URL to $APPLICATION_FLATPAK_REPO"
+  $FLATPAK remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
+fi
+
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
 
