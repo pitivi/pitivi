@@ -47,6 +47,7 @@ class PreferencesDialog(Loggable):
 
     prefs = {}
     original_values = {}
+    section_names = {"behavior": _("Behavior")}
 
     def __init__(self, app):
         Loggable.__init__(self)
@@ -86,13 +87,13 @@ class PreferencesDialog(Loggable):
             label (str): The user-visible name for this option.
             description (str): The user-visible description explaining this
                 option. Ignored unless `label` is non-None.
-            section (str): The user-visible category to which this option
-                belongs. Ignored unless `label` is non-None.
+            section (str): The id of a preferences category.
+                See `PreferencesDialog.section_names` for valid ids.
             widget_class (type): The class of the widget for displaying the
                 option.
         """
-        if not section:
-            section = "General"
+        if section not in cls.section_names:
+            raise Exception("%s is not a valid section id" % section)
         if section not in cls.prefs:
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
@@ -203,7 +204,7 @@ class PreferencesDialog(Loggable):
                 widget.show()
                 revert.show()
             grid.show()
-            self.stack.add_titled(grid, section_id, section_id)
+            self.stack.add_titled(grid, section_id, self.section_names[section_id])
         self.factory_settings.set_sensitive(self._canReset())
 
     def _clearHistory(self):
