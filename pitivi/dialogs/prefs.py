@@ -61,22 +61,14 @@ class PreferencesDialog(Loggable):
         builder.add_from_file(os.path.join(get_ui_dir(), "preferences.ui"))
         builder.connect_signals(self)
         self.dialog = builder.get_object("dialog1")
-        self.model = builder.get_object("liststore1")
-        self.treeview = builder.get_object("treeview1")
-        self.contents = builder.get_object("box1")
+        self.sidebar = builder.get_object("sidebar")
+        self.stack = builder.get_object("stack")
         self.revert_button = builder.get_object("revertButton")
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        self.sections = {}
         self.__fillContents()
-        req = self.contents.get_preferred_size()[0]
-        min_width = req.width
-        min_height = req.height
-        width = max(min_width, self.settings.prefsDialogWidth)
-        height = max(min_height, self.settings.prefsDialogHeight)
         self.dialog.set_transient_for(app.gui)
-        self.dialog.set_default_size(width, height)
 
     def run(self):
         """Runs the dialog."""
@@ -153,14 +145,11 @@ class PreferencesDialog(Loggable):
                             widgets.FontWidget)
 
     def __fillContents(self):
-        for section in sorted(self.prefs):
-            options = self.prefs[section]
-            self.model.append((section,))
+        for section_id, options in sorted(self.prefs.items()):
             grid = Gtk.Grid()
             grid.set_border_width(SPACING)
             grid.props.column_spacing = SPACING
             grid.props.row_spacing = SPACING / 2
-            self.sections[section] = grid
 
             prefs = []
             for attrname in options:
@@ -213,21 +202,9 @@ class PreferencesDialog(Loggable):
                     grid.attach(revert, 2, y, 1, 1)
                 widget.show()
                 revert.show()
-
-            self.contents.pack_start(grid, False, False, 0)
-
-        self.treeview.get_selection().select_path((0,))
+            grid.show()
+            self.stack.add_titled(grid, section_id, section_id)
         self.factory_settings.set_sensitive(self._canReset())
-
-    def _treeSelectionChangedCb(self, selection):
-        """Updates current when selection changed."""
-        model, _iter = selection.get_selected()
-        section = self.sections[model[_iter][0]]
-        if self._current != section:
-            if self._current:
-                self._current.hide()
-            section.show()
-            self._current = section
 
     def _clearHistory(self):
         # Disable missing docstring
