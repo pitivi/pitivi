@@ -176,9 +176,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         project = self.app.project_manager.current_project
         dialog = RenderDialog(self.app, project)
-        dialog.window.connect("destroy", self._renderDialogDestroyCb)
-        self.set_sensitive(False)
-        self.timeline_ui.disableKeyboardAndMouseEvents()
         dialog.window.show()
 
     def _destroyedCb(self, unused_self):
@@ -206,10 +203,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.builder_handler_ids = None
         self.vpaned.remove(self.timeline_ui)
         self.timeline_ui.destroy()
-
-    def _renderDialogDestroyCb(self, unused_dialog):
-        self.set_sensitive(True)
-        self.timeline_ui.enableKeyboardAndMouseEvents()
 
     def _renderCb(self, unused_button):
         self.showRenderDialog()

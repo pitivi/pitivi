@@ -1362,18 +1362,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.show_all()
 
-    def enableKeyboardAndMouseEvents(self):
-        self.info("Unblocking timeline mouse and keyboard signals")
-        self.timeline.disconnect_by_func(self._ignoreAllEventsCb)
-
-    def disableKeyboardAndMouseEvents(self):
-        """A safety measure to prevent interacting with the timeline."""
-        self.info("Blocking timeline mouse and keyboard signals")
-        self.timeline.connect("event", self._ignoreAllEventsCb)
-
-    def _ignoreAllEventsCb(self, *unused_args):
-        return True
-
     def _getLongestLayer(self):
         """Returns the longest layer."""
         layers = self.ges_timeline.get_layers()
