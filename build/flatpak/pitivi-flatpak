@@ -97,23 +97,33 @@ NC='\033[0m'
 HELP="Helper script to work with flatpak for $APPLICATION_NAME
 
 Options:
---------
+=======
 
-  -d,  --devel:      Setup a devel environment, meaning that it et you in
-                     a bash environment ready to work on $APPLICATION_NAME, not that the environment
-          will be 'read only' and you will be only able to work on $APPLICATION_NAME
-          itself easily. To have more control, you should use the --build option.
-  -b,  --build:      Build $APPLICATION_NAME and its dependencies inside a flatpak environment.
+General:
+-------
   -u,  --update:     Update the runtime/sdk/app and rebuild the development environment if needed
   -n,  --no-update:  Do not update anything (By default we update bundles when not in development mode)
-       --bundle:     Create bundle repository in $REPO, implies --build
+
+Development:
+-----------
+  -d,  --devel:      Setup a devel environment, meaning that it et you in
+                     a bash environment ready to work on $APPLICATION_NAME, not that the environment
+                     will be 'read only' and you will be only able to work on $APPLICATION_NAME
+                     itself easily. To have more control, you should use the --build option.
+  -b,  --build:      Build $APPLICATION_NAME and its dependencies inside a flatpak environment.
   -b=, --branch=:    The flatpak branch to use (0.95, master...)
   -c,  --clean:      Clean previous builds and restart from scratch
        --use-remote: Build from the official repository (master branch)
-       --repo-commit-subject: The commit subject to be used when updating the ostree repository
-       --repo-commit-body: The commit body to be used when updating the ostree repository
-       --check: Run make check on pitivi (work only when --bundle is used)
-       --gpg-sign=KEYID: The GPG key to sign the commit with (work only when --bundle is used)
+
+Building bundle for distribution:
+--------------------------------
+       --bundle:                  Create bundle repository in $REPO, implies --build
+       --repo-commit-subject:     The commit subject to be used when updating the ostree repository
+       --repo-commit-body:        The commit body to be used when updating the ostree repository
+       --check:                   Run make check on Pitivi (work only when --bundle is used)
+       --gpg-sign=KEYID:          The GPG key to sign the commit with (work only when --bundle is used)
+       --generate-static-deltas:  Do not generate static deltas (check 'man flatpak-build-update-repo'
+                                  for more informations)
 
 You can find more information about flatpak at: http://flatpak.org/
 "
@@ -176,6 +186,10 @@ do
     ;;
     --gpg-sign=*)
     GPG_KEY="${i#*=}"
+    shift
+    ;;
+    --generate-static-deltas)
+    GENERATE_STATIC_DELTAS="--generate-static-deltas"
     shift
     ;;
   esac
@@ -466,7 +480,7 @@ then
   $FLATPAK build-export $GPG --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
-  $FLATPAK build-update-repo --generate-static-deltas $REPO || exit 1
+  $FLATPAK build-update-repo $GENERATE_STATIC_DELTAS $REPO || exit 1
 
   echo "DONE!"
 fi
