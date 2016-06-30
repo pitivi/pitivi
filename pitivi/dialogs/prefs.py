@@ -47,7 +47,7 @@ class PreferencesDialog(Loggable):
 
     prefs = {}
     original_values = {}
-    section_names = {"behavior": _("Behavior")}
+    section_names = {"timeline": _("Timeline")}
 
     def __init__(self, app):
         Loggable.__init__(self)

@@ -71,7 +71,7 @@ GlobalSettings.addConfigOption('edgeSnapDeadband',
                                notify=True)
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
-                                       section="behavior",
+                                       section="timeline",
                                        label=_("Snap distance"),
                                        description=_("Threshold (in pixels) at which two clips will snap together "
                                                      "when dragging or trimming."),
@@ -84,7 +84,7 @@ GlobalSettings.addConfigOption('imageClipLength',
                                notify=True)
 
 PreferencesDialog.addNumericPreference('imageClipLength',
-                                       section="behavior",
+                                       section=_("timeline"),
                                        label=_("Image clip duration"),
                                        description=_(
                                            "Default clip length (in milliseconds) of images when inserting on the timeline."),
@@ -97,7 +97,7 @@ GlobalSettings.addConfigOption('leftClickAlsoSeeks',
                                notify=True)
 
 PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
-                                      section="behavior",
+                                      section=_("timeline"),
                                       label=_("Left click also seeks"),
                                       description=_(
                                           "Whether left-clicking also seeks besides selecting and editing clips."))
