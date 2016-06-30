@@ -229,10 +229,10 @@ class PreferencesDialog(Loggable):
         button.set_sensitive(False)
         self.factory_settings.set_sensitive(self._canReset())
 
-    def _acceptButtonCb(self, unused_button):
+    def _response_cb(self, unused_button, unused_response_id):
         # Disable missing docstring
         # pylint: disable=C0111
-        self.dialog.hide()
+        self.dialog.destroy()
 
     def _valueChangedCb(self, unused_fake_widget, real_widget, attrname):
         # Disable missing docstring

@@ -8,6 +8,7 @@
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <signal name="configure-event" handler="_configureCb" swapped="no"/>
+    <signal name="response" handler="_response_cb" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -59,7 +60,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_acceptButtonCb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -182,9 +182,10 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">resetButton</action-widget>
-      <action-widget response="0">revertButton</action-widget>
       <action-widget response="0">acceptButton</action-widget>
     </action-widgets>
+    <child>
+      <placeholder/>
+    </child>
   </object>
 </interface>
