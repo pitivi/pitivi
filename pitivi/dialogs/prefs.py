@@ -46,7 +46,6 @@ class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
 
     prefs = {}
-    original_values = {}
     section_names = {"timeline": _("Timeline")}
 
     def __init__(self, app):
@@ -55,7 +54,7 @@ class PreferencesDialog(Loggable):
         self.settings = app.settings
         self.widgets = {}
         self.resets = {}
-        self._current = None
+        self.original_values = {}
 
         # Identify the widgets we'll need
         builder = Gtk.Builder()
@@ -207,12 +206,6 @@ class PreferencesDialog(Loggable):
             self.stack.add_titled(grid, section_id, self.section_names[section_id])
         self.factory_settings.set_sensitive(self._canReset())
 
-    def _clearHistory(self):
-        # Disable missing docstring
-        # pylint: disable=C0111
-        self.original_values = {}
-        self.revert_button.set_sensitive(False)
-
     def _factorySettingsButtonCb(self, unused_button):
         """Resets all settings to the defaults."""
         for section in self.prefs.values():
@@ -224,7 +217,8 @@ class PreferencesDialog(Loggable):
         for attrname, value in self.original_values.items():
             self.widgets[attrname].setWidgetValue(value)
             setattr(self.settings, attrname, value)
-        self._clearHistory()
+        self.original_values = {}
+        self.revert_button.set_sensitive(False)
         self.factory_settings.set_sensitive(self._canReset())
 
     def _resetOptionCb(self, button, attrname):
@@ -238,7 +232,6 @@ class PreferencesDialog(Loggable):
     def _acceptButtonCb(self, unused_button):
         # Disable missing docstring
         # pylint: disable=C0111
-        self._clearHistory()
         self.dialog.hide()
 
     def _valueChangedCb(self, unused_fake_widget, real_widget, attrname):
