@@ -8,7 +8,7 @@ dnl Note for packagers: see pitivi/check.py for the dependencies
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(Pitivi, 0.96,
+AC_INIT(Pitivi, 0.96.0.1,
     https://phabricator.freedesktop.org/tag/pitivi/,
     pitivi)
 

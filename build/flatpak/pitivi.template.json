@@ -354,7 +354,7 @@
                 {
                     "type": "git",
                     "url": "https://git.gnome.org/browse/pitivi",
-                    "branch": "0.96"
+                    "branch": "master"
                 }
             ]
         }
