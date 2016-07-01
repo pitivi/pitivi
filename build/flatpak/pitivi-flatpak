@@ -373,7 +373,7 @@ then
     if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
     then
       cd $APPLICATION_REPOSITORY
-      $FLATPAK run --branch=$BRANCH -d --command="./autogen.sh" $APPLICATION_REF_NAME
+      $FLATPAK run --branch=$BRANCH -d --command="./configure" $APPLICATION_REF_NAME
       $FLATPAK run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
     fi
 
@@ -414,7 +414,7 @@ then
     if [ -z $BUNDLE ] || [ -n "$CHECK" ]
     then
       echo "-> Building $APPLICATION_NAME from current repository"
-      cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./autogen.sh --prefix=/app || exit 1
+      cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./configure --prefix=/app --libdir=lib || exit 1
       $FLATPAK build --env=PYTHON=python3 $PREFIX make || exit 1
     fi
   fi

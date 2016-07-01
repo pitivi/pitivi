@@ -219,7 +219,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.29"],
+            "config-opts": ["--module=meson==0.32"],
             "sources": [
                 {
                     "type": "file",
@@ -334,22 +334,10 @@
             ]
         },
         {
-            "name": "gst-transcoder",
-            "config-opts": ["--libdir=lib"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/pitivi/gst-transcoder.git"
-                },
-                {
-                    "type": "file",
-                    "path": "gst-transcoder-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
             "name": "pitivi",
+            "build-options" : {
+              "build-args": ["--share=network"]
+            },
             "sources": [
                 {
                     "type": "git",

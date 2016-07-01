@@ -1,0 +1,65 @@
+#!/bin/sh
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+MESON=meson
+command -v $MESON > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    MESON=meson.py
+    command -v $MESON > /dev/null 2>&1
+    if [ $? != 0 ]
+    then
+        echo "You should install mesonbuild to build Pitivi: http://mesonbuild.com/"
+        echo "You can simply install it with:"
+        echo "    $ sudo pip3 install meson"
+
+        exit 1
+    fi
+fi
+
+NINJA=ninja
+command -v $NINJA > /dev/null 2>&1
+if [ $? != 0 ]
+then
+    NINJA=ninja-build
+    command -v $NINJA > /dev/null 2>&1
+    if [ $? != 0 ]
+    then
+      echo "You should install ninja-build to build pitivi: https://ninja-build.org/"
+      exit 1
+    fi
+fi
+
+# install pre-commit hook for doing clean commits
+rm -f .git/hooks/pre-commit
+ln -s ../../pre-commit.hook .git/hooks/pre-commit
+echo ""
+which pre-commit > /dev/null
+if [ $? -eq 0  ]; then
+  pre-commit install
+else
+  echo "Please install pre-commit from http://pre-commit.com/ before proposing patches"
+  echo ""
+fi
+
+BUILDDIR=mesonbuild
+rm -Rf $BUILDDIR > /dev/null 2>&1
+mkdir $BUILDDIR/ && cd $BUILDDIR && $MESON ../ $@
+
+cat <<EOF > $DIR/Makefile
+all:
+	cd $BUILDDIR && $NINJA
+
+install:
+	cd $BUILDDIR && DESTDIR="\${DESTDIR}" $NINJA install
+
+check:
+	cd $BUILDDIR && $NINJA test
+
+clean:
+	rm -Rf $BUILDDIR
+	rm Makefile
+
+EOF
+

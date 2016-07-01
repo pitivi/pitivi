@@ -1,0 +1,38 @@
+help_pages = [
+    'about.page',
+    'cheatsheet.page',
+    'codecscontainers.page',
+    'effects.page',
+    'gstreamer.page',
+    'importingmpegts.page',
+    'importing.page',
+    'index.page',
+    'keyframecurves.page',
+    'layers.page',
+    'license.page',
+    'mainwindow.page',
+    'medialibrary.page',
+    'movearoundtimeline.page',
+    'presets.page',
+    'rendering.page',
+    'savescreenshot.page',
+    'selectiongrouping.page',
+    'splitting.page',
+    'sysreq.page',
+    'transitions.page',
+    'trimming.page',
+    'usingclips.page',
+    'usingeffects.page',
+    'welcomedialog.page',
+    'workwithprojects.page'
+]
+
+subdir('C')
+subdir('cs')
+subdir('de')
+subdir('el')
+subdir('es')
+subdir('fr')
+subdir('sl')
+subdir('sv')
+subdir('uk')

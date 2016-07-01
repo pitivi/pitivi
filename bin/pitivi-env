@@ -16,7 +16,7 @@ export make="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make"
 export check="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make check"
 export minstall="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make install"
 export autogen="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./autogen.sh --prefix=/app --disable-gtk-doc"
-export configure="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./configure --prefix=/app --disable-gtk-doc"
+export configure="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./configure --prefix=/app"
 
 alias make=$make
 alias check=$check

@@ -38,6 +38,7 @@ CONFIGURED_LD_LIBRARY_PATH = '@CONFIGURED_LD_LIBRARY_PATH@'
 CONFIGURED_GST_PLUGIN_PATH = '@CONFIGURED_GST_PLUGIN_PATH@'
 LIBDIR = '@LIBDIR@'
 DATADIR = '@DATADIR@'
+BUILDDIR = '@BUILDDIR@'
 
 
 def _prepend_env_path(name, value):
@@ -59,8 +60,8 @@ def _add_pitivi_path():
     dir = os.path.dirname(os.path.abspath(__file__))
     if _in_devel():
         root = os.path.split(dir)[0]
-        sys.path.append(os.path.join(root, "pitivi", "coptimizations", ".libs"))
-        localedir = os.path.join(os.path.split(dir)[0], 'locale')
+        sys.path.append(BUILDDIR)
+        localedir = os.path.join(BUILDDIR, 'po')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
         localedir = os.path.join(DATADIR, "locale")
