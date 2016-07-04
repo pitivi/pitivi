@@ -10,6 +10,12 @@ gst_dep = dependency('gstreamer-1.0', version : '>= 1.8.2')
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
 
+gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1', required : false)
+if gst_transcoder_dep.found()
+else
+    subproject('gst-transcoder')
+endif
+
 pkgdatadir = get_option('datadir') + '/pitivi'
 
 GITVERSION = run_command('git', 'describe', '--always').stdout().strip()

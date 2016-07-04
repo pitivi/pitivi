@@ -1,0 +1,4 @@
+[wrap-git]
+directory=gst-transcoder
+url=https://github.com/pitivi/gst-transcoder
+revision=1.8.1
