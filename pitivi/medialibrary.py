@@ -846,25 +846,31 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if progress == 0:
             self._startImporting(project)
-        else:
-            if project.loaded:
-                num_proxying_files = [asset for asset in project.loading_assets if not asset.ready]
-                if estimated_time:
-                    self.__last_proxying_estimate_time = beautify_ETA(int(
-                        estimated_time * Gst.SECOND))
+            return
 
-                # Translators: this string indicates the estimated time
-                # remaining until an action (such as rendering) completes.
-                # The "%s" is an already-localized human-readable duration,
-                # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
-                # In some languages, "About %s left" can be expressed roughly as
-                # "There remains approximatively %s" (to handle gender and plurals)
-                progress_message = _("Transcoding %d assets: %d%% (About %s left)") % (
-                    len(num_proxying_files), progress,
-                    self.__last_proxying_estimate_time)
-                self._progressbar.set_text(progress_message)
-                self._last_imported_uris.update([asset.props.id for asset in
-                                                 project.loading_assets])
+        if project.loaded:
+            num_proxying_files = [asset
+                                  for asset in project.loading_assets
+                                  if not asset.ready]
+            if estimated_time:
+                self.__last_proxying_estimate_time = beautify_ETA(int(
+                    estimated_time * Gst.SECOND))
+
+            # Translators: this string indicates the estimated time
+            # remaining until an action (such as rendering) completes.
+            # The "%s" is an already-localized human-readable duration,
+            # such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+            # In some languages, "About %s left" can be expressed roughly as
+            # "There remains approximatively %s" (to handle gender and plurals)
+            template = ngettext("Transcoding %d asset: %d%% (About %s left)",
+                                "Transcoding %d assets: %d%% (About %s left)",
+                                len(num_proxying_files))
+            progress_message = template % (
+                len(num_proxying_files), progress,
+                self.__last_proxying_estimate_time)
+            self._progressbar.set_text(progress_message)
+            self._last_imported_uris.update([asset.props.id for asset in
+                                             project.loading_assets])
 
         if progress == 100:
             self._doneImporting()
