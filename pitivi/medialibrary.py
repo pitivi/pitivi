@@ -1217,6 +1217,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return None, None
 
         assets = self.getSelectedAssets()
+        if not assets:
+            return None, None
+
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
 
