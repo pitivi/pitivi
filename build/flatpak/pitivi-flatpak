@@ -44,9 +44,7 @@ GST_VERSION=master
 
 # ------------------------------------------- #
 
-FLATPAK=flatpak
-FLATPAK_REMOTE_LIST="$FLATPAK remote-list"
-$FLATPAK remote-add --help |grep "\-\-from" > /dev/null 2>&1
+flatpak remote-add --help |grep "\-\-from" > /dev/null 2>&1
 if [ ! $? -eq 0 ]
 then
   printf "$RED \nYou need to install flatpak >= 0.6.4 to be able to use the '$0' script.
@@ -66,29 +64,25 @@ fi
 # ------------------------------------------- #
 
 # Computation of actual variable values
-APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_FLATPAK_REPO" |awk '{ print $1 }'`
-$FLATPAK remote-list --user |grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
+APPLICATION_REPO_NAME=`flatpak remote-list --user -d | grep "$APPLICATION_FLATPAK_REPO" |awk '{ print $1 }'`
+flatpak remote-list --user |grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
 res=$?
 # Update remote URL if needed
 if [ $res != 0 ] && [ -n "$APPLICATION_REPO_NAME" ]
 then
   echo "-> Setting $APPLICATION_DEFAULT_REPO_NAME URL to $APPLICATION_FLATPAK_REPO"
-  $FLATPAK remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
+  flatpak remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
 fi
 
 APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
 SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
 
-SDK_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
+SDK_REPO_NAME=`flatpak remote-list --user -d | grep "$SDK_REPO" |awk '{ print $1 }'`
 SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
 
 REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 # ------------------------------------------- #
-
-FLATPAK_INSTALL="$FLATPAK install --user "
-FLATPAK_UPDATE="$FLATPAK update --user "
-FLATPAK_ADD_REMOTE="$FLATPAK remote-add --user --from="
 
 # Some terminal output color values
 RED='\033[0;31m'
@@ -202,12 +196,12 @@ then
     exit 0
 fi
 
-SDK_INSTALLED=`$FLATPAK list --runtime -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
-SDK_LOCAL_INSTALLED=`$FLATPAK list --runtime -d |grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
+SDK_INSTALLED=`flatpak list --runtime -d |grep "$SDK_NAME/.*/$SDK_VERSION"`
+SDK_LOCAL_INSTALLED=`flatpak list --runtime -d |grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
 
-RUNTIME_INSTALLED=`$FLATPAK list --runtime -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
-RUNTIME_LOCAL_INSTALLED=`$FLATPAK list --runtime -d |grep "$RUNTIME_NAME.Locale/.*/$SDK_VERSION"`
-APP_INSTALLED=`$FLATPAK list -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
+RUNTIME_INSTALLED=`flatpak list --runtime -d |grep "$RUNTIME_NAME/.*/$SDK_VERSION"`
+RUNTIME_LOCAL_INSTALLED=`flatpak list --runtime -d |grep "$RUNTIME_NAME.Locale/.*/$SDK_VERSION"`
+APP_INSTALLED=`flatpak list -d |grep "$APPLICATION_REF_NAME/.*/$BRANCH"`
 
 if [ -n "$BUNDLE" ]
 then
@@ -217,13 +211,12 @@ fi
 
 if [ -n "$BUILD" ]
 then
-  FLATPAK_BUILDER=flatpak-builder
-  which $FLATPAK_BUILDER > /dev/null 2>&1
+  which flatpak-builder > /dev/null 2>&1
   if [ ! $? -eq 0 ]
   then
     echo "You need to install flatpak-builder to use the $0 script for development.
 "
-      exit 1
+    exit 1
   fi
   DEVEL=true
 fi
@@ -250,7 +243,7 @@ then
 fi
 
 function run_in_sandbox {
-  $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
+  flatpak build --socket=x11 --socket=session-bus --socket=pulseaudio \
   --share=network \
   --env=GST_PLUGIN_SYSTEM_PATH= \
   --env=GST_CHECKS=$GST_CHECKS \
@@ -283,14 +276,14 @@ then
     TEMPFILE=$(mktemp)
     echo "-> Adding repository '$SDK_REPO_NAME' from file: $SDK_REPO_FILE"
     curl $SDK_REPO_FILE -Sso $TEMPFILE || exit 1
-    $FLATPAK_ADD_REMOTE$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
-    $FLATPAK_INSTALL $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
+    flatpak remote-add --user --from=$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
+    flatpak install --user $SDK_REPO_NAME $SDK_NAME $SDK_VERSION || exit 1
   fi
 
   if [ -z "$SDK_LOCAL_INSTALLED" ]
   then
     echo "-> Installing $SDK_NAME.Locale"
-    $FLATPAK_INSTALL $SDK_REPO_NAME $SDK_NAME.Locale $SDK_VERSION || exit 1
+    $flatpak install --user $SDK_REPO_NAME $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -299,15 +292,15 @@ then
   TEMPFILE=$(mktemp)
   echo "-> Adding repository $SDK_REPO_NAME from file: $SDK_REPO_FILE"
   curl $SDK_REPO_FILE -Sso $TEMPFILE || exit 1
-  $FLATPAK_ADD_REMOTE$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
+  flatpak remote-add --user --from=$TEMPFILE $SDK_REPO_NAME > /dev/null 2>&1
 
   echo "-> Installing $RUNTIME_NAME $SDK_VERSION $RUNTIME_INSTALLED"
-  $FLATPAK_INSTALL $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
+  flatpak install --user $SDK_REPO_NAME $RUNTIME_NAME $SDK_VERSION || exit 1
 fi
 if [ -z "$RUNTIME_LOCAL_INSTALLED" ]
 then
   echo "-> Installing $RUNTIME_NAME.Locale"
-  $FLATPAK_INSTALL $SDK_REPO_NAME $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
+  flatpak install --user $SDK_REPO_NAME $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 fi
 
 # Update runtimes if needed
@@ -315,18 +308,18 @@ if [ -n "$UPDATE" ]
 then
   echo "-> Updating $RUNTIME_NAME $SDK_VERSION"
 
-  $FLATPAK_UPDATE $RUNTIME_NAME $SDK_VERSION || exit 1
+  flatpak update --user $RUNTIME_NAME $SDK_VERSION || exit 1
 
   echo "-> Updating $RUNTIME_NAME.Locale"
-  $FLATPAK_UPDATE $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
+  flatpak update --user $RUNTIME_NAME.Locale $SDK_VERSION || exit 1
 
   if [ -n "$DEVEL" ]
   then
     echo "-> Updating $SDK_NAME $SDK_VERSION"
-    $FLATPAK_UPDATE $SDK_NAME $SDK_VERSION || exit 1
+    flatpak update --user $SDK_NAME $SDK_VERSION || exit 1
 
     echo "-> Updating $SDK_NAME.Locale $SDK_VERSION"
-    $FLATPAK_UPDATE $SDK_NAME.Locale $SDK_VERSION || exit 1
+    flatpak update --user $SDK_NAME.Locale $SDK_VERSION || exit 1
   fi
 fi
 
@@ -371,20 +364,20 @@ then
 
    echo "-> Adding repository $APPLICATION_REPO_NAME from file: $APPLICATION_FLATPAK_REPO_FILE"
    curl $APPLICATION_FLATPAK_REPO_FILE -Sso $TEMPFILE || exit 1
-   $FLATPAK_ADD_REMOTE$TEMPFILE $APPLICATION_REPO_NAME > /dev/null 2>&1
+   flatpak remote-add --user --from=$TEMPFILE $APPLICATION_REPO_NAME > /dev/null 2>&1
 
    if [ -z "$APP_INSTALLED" ]
    then
      echo "Installing $APPLICATION_REF_NAME $BRANCH..."
 
-     $FLATPAK_INSTALL $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
+     flatpak install --user $APPLICATION_REPO_NAME $APPLICATION_REF_NAME $BRANCH
    fi
 
    if [ -n "$UPDATE" ]
    then
      echo "-> Updating $APPLICATION_REF_NAME $BRANCH..."
 
-     $FLATPAK_UPDATE $APPLICATION_REF_NAME $BRANCH
+     flatpak update --user $APPLICATION_REF_NAME $BRANCH
    fi
 fi
 
@@ -401,7 +394,7 @@ then
     echo "Entering prebuilt environment "
     echo "=============================="
 
-    $FLATPAK run --branch=$BRANCH -d --command=$SCRIPTDIR/enter-env $APPLICATION_REF_NAME
+    flatpak run --branch=$BRANCH -d --command=$SCRIPTDIR/enter-env $APPLICATION_REF_NAME
     exit $?
   fi
 
@@ -428,8 +421,8 @@ then
 
     echo "-> Building $APPLICATION_NAME $DEVELOPMENT_BRANCHNAME from $JSON (options: $FLATPAK_BUILD_OPTIONS)"
     cd $SCRIPTDIR
-    echo "Building with: $FLATPAK_BUILDER $FLATPAK_BUILD_OPTIONS $PREFIX $JSON"
-    $FLATPAK_BUILDER --ccache $FLATPAK_BUILD_OPTIONS $PREFIX $JSON || exit 1
+    echo "Building with: flatpak-builder $FLATPAK_BUILD_OPTIONS $PREFIX $JSON"
+    flatpak-builder --ccache $FLATPAK_BUILD_OPTIONS $PREFIX $JSON || exit 1
 
     if [ -z $BUNDLE ] || [ -n "$CHECK" ]
     then
@@ -451,7 +444,7 @@ then
     run_in_sandbox "make check"
   fi
 else
-  $FLATPAK run org.pitivi.Pitivi
+  flatpak run org.pitivi.Pitivi
 fi
 
 
@@ -471,10 +464,10 @@ then
   fi
 
   echo "-> Exporting repo $REPO $DEVELOPMENT_BRANCHNAME (args: --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT")"
-  $FLATPAK build-export $GPG --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
+  flatpak build-export $GPG --body="$COMMIT_BODY" --subject="$COMMIT_SUBJECT" $REPO $PREFIX $DEVELOPMENT_BRANCHNAME || exit 1
 
   echo "Updating repo $REPO"
-  $FLATPAK build-update-repo $GENERATE_STATIC_DELTAS $REPO || exit 1
+  flatpak build-update-repo $GENERATE_STATIC_DELTAS $REPO || exit 1
 
   echo "DONE!"
 fi
