@@ -326,15 +326,10 @@ fi
 if [ -n "$BUILD" ] && [ -z "$BUNDLE" ]
 then
   cd $APPLICATION_REPOSITORY
-  DEVELOPMENT_BRANCHNAME=`git branch 2>&1 | grep \* | awk '{ print $2 }'`
+  # Either a branch name or "HEAD".
+  DEVELOPMENT_BRANCHNAME=`git rev-parse --abbrev-ref HEAD`
   cd - > /dev/null
-  if [ x$DEVELOPMENT_BRANCHNAME == 'x' ]
-  then
-    DEVELOPMENT_BRANCHNAME="master"
-    APP_BUILD_NAME=$APPLICATION_NAME
-  else
-    APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
-  fi
+  APP_BUILD_NAME="$APPLICATION_NAME-$DEVELOPMENT_BRANCHNAME"
   LOCAL_REPOS_PATH=$FLATPAK_ENVPATH
 else
   DEVELOPMENT_BRANCHNAME=${BRANCH:-master}
