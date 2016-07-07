@@ -68,8 +68,9 @@ fi
 # Computation of actual variable values
 APPLICATION_REPO_NAME=`$FLATPAK_REMOTE_LIST --user -d | grep "$APPLICATION_FLATPAK_REPO" |awk '{ print $1 }'`
 $FLATPAK remote-list --user |grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
+res=$?
 # Update remote URL if needed
-if [ $? != 0 ] & [ -z $APPLICATION_REPO_NAME ]
+if [ $res != 0 ] && [ -n "$APPLICATION_REPO_NAME" ]
 then
   echo "-> Setting $APPLICATION_DEFAULT_REPO_NAME URL to $APPLICATION_FLATPAK_REPO"
   $FLATPAK remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
