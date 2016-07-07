@@ -22,16 +22,55 @@ from gi.repository import Gtk
 from pitivi.utils.misc import show_user_manual
 
 
+class ShortcutsManager:
+    """Manager class storing the shortcuts from all across the app"""
+
+    def __init__(self, app):
+        self.app = app
+        self.groups = []
+        self.group_titles = {}
+        self.group_actions = {}
+
+    def add(self, action, accelerators, title=None, group=None):
+        """Adds an action to be displayed.
+
+        Args:
+            action (str): The name identifying the action, formatted like
+                "prefix.name".
+            accelerators ([str]): List of accelerators corresponding to the action
+            title (Optional(str)): The title of the action.
+            group (Optional[str]): The group id registered with `register_group`
+                to be used instead of the one extracted from `action`.
+        """
+        self.app.set_accels_for_action(action, accelerators)
+
+        if title:
+            action_prefix = group or action.split(".")[0]
+            if action_prefix not in self.group_actions:
+                self.group_actions[action_prefix] = []
+            self.group_actions[action_prefix].append((action, title))
+
+    def register_group(self, action_prefix, title):
+        """Registers a group of shortcuts to be displayed.
+
+        Args:
+            action_prefix (str): The group id.
+            title (str): The title of the group.
+        """
+        if action_prefix not in self.groups:
+            self.groups.append(action_prefix)
+        self.group_titles[action_prefix] = title
+
+
 class ShortcutsWindow(Gtk.ShortcutsWindow):
     """Dialog for displaying the accelerators."""
-
-    group_titles = {}
-    group_actions = {}
-    groups = []
 
     def __init__(self, app):
         Gtk.ShortcutsWindow.__init__(self)
         self.app = app
+        self.group_titles = self.app.shortcuts.group_titles
+        self.group_actions = self.app.shortcuts.group_actions
+        self.groups = self.app.shortcuts.groups
         self.set_transient_for(self.app.gui)
         self.set_modal(True)
         self.populate()
@@ -40,10 +79,10 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         """Gathers the accelerators and populates the window."""
         section = Gtk.ShortcutsSection()
         section.show()
-        for group_id in ShortcutsWindow.groups:
-            group = Gtk.ShortcutsGroup(title=ShortcutsWindow.group_titles[group_id])
+        for group_id in self.groups:
+            group = Gtk.ShortcutsGroup(title=self.group_titles[group_id])
             group.show()
-            for action, title in ShortcutsWindow.group_actions[group_id]:
+            for action, title in self.group_actions[group_id]:
                 accelerators = " ".join(self.app.get_accels_for_action(action))
                 short = Gtk.ShortcutsShortcut(title=title, accelerator=accelerators)
                 short.show()
@@ -52,34 +91,6 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         # Method below must be called after the section has been populated,
         # otherwise the shortcuts won't show up in search.
         self.add(section)
-
-    @classmethod
-    def add_action(cls, action, title, group=None):
-        """Adds an action to be displayed.
-
-        Args:
-            action (str): The name identifying the action, formatted like
-                "prefix.name".
-            title (str): The title of the action.
-            group (Optional[str]): The group id registered with `register_group`
-                to be used instead of the one extracted from `action`.
-        """
-        action_prefix = group or action.split(".")[0]
-        if action_prefix not in cls.group_actions:
-            cls.group_actions[action_prefix] = []
-        cls.group_actions[action_prefix].append((action, title))
-
-    @classmethod
-    def register_group(cls, action_prefix, title):
-        """Registers a group of shortcuts to be displayed.
-
-        Args:
-            action_prefix (str): The group id.
-            title (str): The title of the group.
-        """
-        if action_prefix not in cls.groups:
-            cls.groups.append(action_prefix)
-        cls.group_titles[action_prefix] = title
 
 
 def show_shortcuts(app):

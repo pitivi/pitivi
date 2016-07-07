@@ -31,7 +31,7 @@ from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.shortcutswindow import ShortcutsWindow
+from pitivi.shortcuts import ShortcutsWindow
 from pitivi.timeline.elements import Clip
 from pitivi.timeline.elements import TransitionClip
 from pitivi.timeline.elements import TrimHandle
@@ -1398,47 +1398,38 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("timeline", group)
         self.toolbar.insert_action_group("timeline", group)
-        ShortcutsWindow.register_group("timeline", _("Timeline"))
+        self.app.shortcuts.register_group("timeline", _("Timeline"))
 
         # Clips actions.
         self.delete_action = Gio.SimpleAction.new("delete-selected-clips", None)
         self.delete_action.connect("activate", self._deleteSelected)
         group.add_action(self.delete_action)
-        self.app.set_accels_for_action("timeline.delete-selected-clips",
-                                       ["Delete"])
-        ShortcutsWindow.add_action("timeline.delete-selected-clips",
-                                   _("Delete selected clips"))
+        self.app.shortcuts.add("timeline.delete-selected-clips", ["Delete"],
+                               _("Delete selected clips"))
 
         self.group_action = Gio.SimpleAction.new("group-selected-clips", None)
         self.group_action.connect("activate", self._groupSelected)
         group.add_action(self.group_action)
-        self.app.set_accels_for_action("timeline.group-selected-clips",
-                                       ["<Control>g"])
-        ShortcutsWindow.add_action("timeline.group-selected-clips",
-                                   _("Group selected clips together"))
+        self.app.shortcuts.add("timeline.group-selected-clips", ["<Control>g"],
+                               _("Group selected clips together"))
 
         self.ungroup_action = Gio.SimpleAction.new("ungroup-selected-clips", None)
         self.ungroup_action.connect("activate", self._ungroupSelected)
         group.add_action(self.ungroup_action)
-        self.app.set_accels_for_action("timeline.ungroup-selected-clips",
-                                       ["<Shift><Control>g"])
-        ShortcutsWindow.add_action("timeline.ungroup-selected-clips",
-                                   _("Ungroup selected clips"))
+        self.app.shortcuts.add("timeline.ungroup-selected-clips", ["<Shift><Control>g"],
+                               _("Ungroup selected clips"))
 
         self.copy_action = Gio.SimpleAction.new("copy-selected-clips", None)
         self.copy_action.connect("activate", self.__copyClipsCb)
         group.add_action(self.copy_action)
-        self.app.set_accels_for_action("timeline.copy-selected-clips",
-                                       ["<Control>c"])
-        ShortcutsWindow.add_action("timeline.copy-selected-clips",
-                                   _("Copy selected clips"))
+        self.app.shortcuts.add("timeline.copy-selected-clips", ["<Control>c"],
+                               _("Copy selected clips"))
 
         self.paste_action = Gio.SimpleAction.new("paste-clips", None)
         self.paste_action.connect("activate", self.__pasteClipsCb)
         group.add_action(self.paste_action)
-        self.app.set_accels_for_action("timeline.paste-clips", ["<Control>v"])
-        ShortcutsWindow.add_action("timeline.paste-clips",
-                                   _("Paste selected clips"))
+        self.app.shortcuts.add("timeline.paste-clips", ["<Control>v"],
+                               _("Paste selected clips"))
 
         self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
         self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
@@ -1448,82 +1439,70 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.split_action = Gio.SimpleAction.new("split-clips", None)
         self.split_action.connect("activate", self._splitCb)
         group.add_action(self.split_action)
-        self.app.set_accels_for_action("timeline.split-clips", ["S"])
         self.split_action.set_enabled(True)
-        ShortcutsWindow.add_action("timeline.split-clips",
-                                   _("Split the clip at the position"))
+        self.app.shortcuts.add("timeline.split-clips", ["S"],
+                               _("Split the clip at the position"))
 
         self.keyframe_action = Gio.SimpleAction.new("keyframe-selected-clips", None)
         self.keyframe_action.connect("activate", self._keyframe_cb)
         group.add_action(self.keyframe_action)
-        self.app.set_accels_for_action("timeline.keyframe-selected-clips",
-                                       ["K"])
-        ShortcutsWindow.add_action("timeline.keyframe-selected-clips",
-                                   _("Add keyframe to the keyframe curve of selected clip"))
+        self.app.shortcuts.add("timeline.keyframe-selected-clips", ["K"],
+                               _("Add keyframe to the keyframe curve of selected clip"))
 
         navigation_group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("navigation", navigation_group)
         self.toolbar.insert_action_group("navigation", navigation_group)
-        ShortcutsWindow.register_group("navigation", _("Timeline Navigation"))
+        self.app.shortcuts.register_group("navigation", _("Timeline Navigation"))
 
         self.zoom_in_action = Gio.SimpleAction.new("zoom-in", None)
         self.zoom_in_action.connect("activate", self._zoomInCb)
         navigation_group.add_action(self.zoom_in_action)
-        self.app.set_accels_for_action("navigation.zoom-in",
-                                       ["<Control>plus", "<Control>equal"])
-        ShortcutsWindow.add_action("navigation.zoom-in", _("Zoom in"))
+        self.app.shortcuts.add("navigation.zoom-in",
+                               ["<Control>plus", "<Control>equal"],
+                               _("Zoom in"))
 
         self.zoom_out_action = Gio.SimpleAction.new("zoom-out", None)
         self.zoom_out_action.connect("activate", self._zoomOutCb)
         navigation_group.add_action(self.zoom_out_action)
-        self.app.set_accels_for_action("navigation.zoom-out",
-                                       ["<Control>minus"])
-        ShortcutsWindow.add_action("navigation.zoom-out", _("Zoom out"))
+        self.app.shortcuts.add("navigation.zoom-out", ["<Control>minus"],
+                               _("Zoom out"))
 
         self.zoom_fit_action = Gio.SimpleAction.new("zoom-fit", None)
         self.zoom_fit_action.connect("activate", self._zoomFitCb)
         navigation_group.add_action(self.zoom_fit_action)
-        self.app.set_accels_for_action("navigation.zoom-fit", ["<Control>0"])
-        ShortcutsWindow.add_action("navigation.zoom-fit",
-                                   _("Adjust zoom to fit the project to the window"))
+        self.app.shortcuts.add("navigation.zoom-fit", ["<Control>0"],
+                               _("Adjust zoom to fit the project to the window"))
 
         self.play_action = Gio.SimpleAction.new("play", None)
         self.play_action.connect("activate", self._playPauseCb)
         navigation_group.add_action(self.play_action)
-        self.app.set_accels_for_action("navigation.play", ["space"])
-        ShortcutsWindow.add_action("navigation.play", _("Play"))
+        self.app.shortcuts.add("navigation.play", ["space"], _("Play"))
 
         self.backward_one_frame_action = Gio.SimpleAction.new("backward_one_frame", None)
         self.backward_one_frame_action.connect("activate", self._seek_backward_one_frame_cb)
         navigation_group.add_action(self.backward_one_frame_action)
-        self.app.set_accels_for_action("navigation.backward_one_frame",
-                                       ["Left"])
-        ShortcutsWindow.add_action("navigation.backward_one_frame",
-                                   _("Seek backward one frame"))
+        self.app.shortcuts.add("navigation.backward_one_frame", ["Left"],
+                               _("Seek backward one frame"))
 
         self.forward_one_frame_action = Gio.SimpleAction.new("forward_one_frame", None)
         self.forward_one_frame_action.connect("activate", self._seek_forward_one_frame_cb)
         navigation_group.add_action(self.forward_one_frame_action)
-        self.app.set_accels_for_action("navigation.forward_one_frame",
-                                       ["Right"])
-        ShortcutsWindow.add_action("navigation.forward_one_frame",
-                                   _("Seek forward one frame"))
+        self.app.shortcuts.add("navigation.forward_one_frame", ["Right"],
+                               _("Seek forward one frame"))
 
         self.backward_one_second_action = Gio.SimpleAction.new("backward_one_second", None)
         self.backward_one_second_action.connect("activate", self._seek_backward_one_second_cb)
         navigation_group.add_action(self.backward_one_second_action)
-        self.app.set_accels_for_action("navigation.backward_one_second",
-                                       ["<Shift>Left"])
-        ShortcutsWindow.add_action("navigation.backward_one_second",
-                                   _("Seek backward one second"))
+        self.app.shortcuts.add("navigation.backward_one_second",
+                               ["<Shift>Left"],
+                               _("Seek backward one second"))
 
         self.forward_one_second_action = Gio.SimpleAction.new("forward_one_second", None)
         self.forward_one_second_action.connect("activate", self._seek_forward_one_second_cb)
         navigation_group.add_action(self.forward_one_second_action)
-        self.app.set_accels_for_action("navigation.forward_one_second",
-                                       ["<Shift>Right"])
-        ShortcutsWindow.add_action("navigation.forward_one_second",
-                                   _("Seek forward one second"))
+        self.app.shortcuts.add("navigation.forward_one_second",
+                               ["<Shift>Right"],
+                               _("Seek forward one second"))
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """Sets the zoom level so that the entire timeline is in view."""

@@ -31,7 +31,7 @@ from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.effects import VIDEO_EFFECT
-from pitivi.shortcutswindow import ShortcutsWindow
+from pitivi.shortcuts import ShortcutsWindow
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll
@@ -225,15 +225,13 @@ class EffectProperties(Gtk.Expander, Loggable):
         effects_actions_group = Gio.SimpleActionGroup()
         self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
         buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
-        ShortcutsWindow.register_group("clipproperties-effects", _("Clip Effects"))
+        self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"))
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._removeEffectCb)
         effects_actions_group.add_action(self.remove_effect_action)
-        self.app.set_accels_for_action("clipproperties-effects.remove-effect",
-                                       ["Delete"])
-        ShortcutsWindow.add_action("clipproperties-effects.remove-effect",
-                                   _("Remove the selected effect"))
+        self.app.shortcuts.add("clipproperties-effects.remove-effect", ["Delete"],
+                               _("Remove the selected effect"))
         self.remove_effect_action.set_enabled(False)
         remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
 

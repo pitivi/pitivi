@@ -45,7 +45,7 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
-from pitivi.shortcutswindow import ShortcutsWindow
+from pitivi.shortcuts import ShortcutsWindow
 from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
@@ -429,23 +429,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         actions_group = Gio.SimpleActionGroup()
         self.insert_action_group("medialibrary", actions_group)
-        ShortcutsWindow.register_group("medialibrary", _("Media Library"))
+        self.app.shortcuts.register_group("medialibrary", _("Media Library"))
 
         self.remove_assets_action = Gio.SimpleAction.new("remove-assets", None)
         self.remove_assets_action.connect("activate", self._removeAssetsCb)
         actions_group.add_action(self.remove_assets_action)
-        self.app.set_accels_for_action("medialibrary.remove-assets",
-                                       ["<Control>Delete"])
-        ShortcutsWindow.add_action("medialibrary.remove-assets",
-                                   _("Remove the selected assets"))
+        self.app.shortcuts.add("medialibrary.remove-assets", ["<Control>Delete"],
+                               _("Remove the selected assets"))
 
         self.insert_at_end_action = Gio.SimpleAction.new("insert-assets-at-end", None)
         self.insert_at_end_action.connect("activate", self._insertEndCb)
         actions_group.add_action(self.insert_at_end_action)
-        self.app.set_accels_for_action("medialibrary.insert-assets-at-end",
-                                       ["Insert"])
-        ShortcutsWindow.add_action("medialibrary.insert-assets-at-end",
-                                   _("Insert selected assets at the end of the timeline"))
+        self.app.shortcuts.add("medialibrary.insert-assets-at-end", ["Insert"],
+                               _("Insert selected assets at the end of the timeline"))
 
         self._updateActions()
 

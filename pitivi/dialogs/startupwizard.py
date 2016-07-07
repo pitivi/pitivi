@@ -26,7 +26,7 @@ from gi.repository import Gtk
 from pitivi.check import missing_soft_deps
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.depsmanager import DepsManager
-from pitivi.shortcutswindow import show_shortcuts
+from pitivi.shortcuts import show_shortcuts
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ui import fix_infobar
 

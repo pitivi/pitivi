@@ -36,8 +36,8 @@ from pitivi.project import ProjectManager
 from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
-from pitivi.shortcutswindow import ShortcutsWindow
-from pitivi.shortcutswindow import show_shortcuts
+from pitivi.shortcuts import ShortcutsManager
+from pitivi.shortcuts import show_shortcuts
 from pitivi.undo.project import ProjectObserver
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils import loggable
@@ -91,6 +91,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._first_action = True
 
         Zoomable.app = self
+        self.shortcuts = ShortcutsManager(self)
 
     def write_action(self, action, properties={}):
         if self._scenario_file is None:
@@ -152,32 +153,28 @@ class Pitivi(Gtk.Application, Loggable):
         self._syncDoUndo()
 
     def _createActions(self):
-        ShortcutsWindow.register_group("app", _("General"))
+        self.shortcuts.register_group("app", _("General"))
         self.undo_action = Gio.SimpleAction.new("undo", None)
         self.undo_action.connect("activate", self._undoCb)
         self.add_action(self.undo_action)
-        self.set_accels_for_action("app.undo", ["<Control>z"])
-        ShortcutsWindow.add_action("app.undo", _("Undo the most recent action"))
+        self.shortcuts.add("app.undo", ["<Control>z"], _("Undo the most recent action"))
 
         self.redo_action = Gio.SimpleAction.new("redo", None)
         self.redo_action.connect("activate", self._redoCb)
         self.add_action(self.redo_action)
-        self.set_accels_for_action("app.redo", ["<Control><Shift>z"])
-        ShortcutsWindow.add_action("app.redo", _("Redo the most recent action"))
+        self.shortcuts.add("app.redo", ["<Control><Shift>z"],
+                           _("Redo the most recent action"))
 
         self.quit_action = Gio.SimpleAction.new("quit", None)
         self.quit_action.connect("activate", self._quitCb)
         self.add_action(self.quit_action)
-        self.set_accels_for_action("app.quit", ["<Control>q"])
-        ShortcutsWindow.add_action("app.quit", _("Quit"))
+        self.shortcuts.add("app.quit", ["<Control>q"], _("Quit"))
 
         self.show_shortcuts_action = Gio.SimpleAction.new("shortcuts_window", None)
         self.show_shortcuts_action.connect("activate", self._show_shortcuts_cb)
         self.add_action(self.show_shortcuts_action)
-        self.set_accels_for_action("app.shortcuts_window", ["<Control>F1",
-                                                            "<Control>question"])
-        ShortcutsWindow.add_action("app.shortcuts_window",
-                                   _("Show the Shortcuts Window"))
+        self.shortcuts.add("app.shortcuts_window", ["<Control>F1", "<Control>question"],
+                           _("Show the Shortcuts Window"))
 
     def do_activate(self):
         if self.gui:
