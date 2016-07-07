@@ -31,7 +31,6 @@ from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.effects import VIDEO_EFFECT
-from pitivi.shortcuts import ShortcutsWindow
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll

@@ -45,7 +45,6 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
-from pitivi.shortcuts import ShortcutsWindow
 from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc

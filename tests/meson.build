@@ -16,6 +16,7 @@ tests = [
     ['Test presets', 'test_preset.py'],
     ['Test the previewer', 'test_previewers.py'],
     ['Test the project', 'test_project.py'],
+    ['Test the keyboard shortcuts', 'test_shortcuts.py'],
     ['Test system integration', 'test_system.py'],
     ['Test graphical timeline elements', 'test_timeline_elements.py'],
     ['Test graphical layers', 'test_timeline_layer.py'],

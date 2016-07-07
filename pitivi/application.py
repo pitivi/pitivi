@@ -157,7 +157,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.undo_action = Gio.SimpleAction.new("undo", None)
         self.undo_action.connect("activate", self._undoCb)
         self.add_action(self.undo_action)
-        self.shortcuts.add("app.undo", ["<Control>z"], _("Undo the most recent action"))
+        self.shortcuts.add("app.undo", ["<Control>z"],
+                           _("Undo the most recent action"))
 
         self.redo_action = Gio.SimpleAction.new("redo", None)
         self.redo_action.connect("activate", self._redoCb)
@@ -173,7 +174,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.show_shortcuts_action = Gio.SimpleAction.new("shortcuts_window", None)
         self.show_shortcuts_action.connect("activate", self._show_shortcuts_cb)
         self.add_action(self.show_shortcuts_action)
-        self.shortcuts.add("app.shortcuts_window", ["<Control>F1", "<Control>question"],
+        self.shortcuts.add("app.shortcuts_window",
+                           ["<Control>F1", "<Control>question"],
                            _("Show the Shortcuts Window"))
 
     def do_activate(self):

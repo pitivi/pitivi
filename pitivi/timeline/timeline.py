@@ -31,7 +31,6 @@ from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
-from pitivi.shortcuts import ShortcutsWindow
 from pitivi.timeline.elements import Clip
 from pitivi.timeline.elements import TransitionClip
 from pitivi.timeline.elements import TrimHandle

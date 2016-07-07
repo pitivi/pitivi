@@ -43,7 +43,6 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
-from pitivi.shortcuts import ShortcutsWindow
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
@@ -441,9 +440,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
         self.add_action(self.save_action)
-        self.save_button.set_action_name("win.save")
         self.app.shortcuts.add("win.save", ["<Control>s"],
                                _("Save the current project"))
+        self.save_button.set_action_name("win.save")
 
         self.new_project_action = Gio.SimpleAction.new("new-project", None)
         self.new_project_action.connect("activate", self._newProjectMenuCb)
