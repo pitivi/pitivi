@@ -35,7 +35,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_ui_dir
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
-from pitivi.render import CachedEncoderList
+from pitivi.render import Encoders
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
@@ -1141,7 +1141,6 @@ class Project(Loggable, GES.Project):
         if self.scenario is not None:
             return
 
-        encoders = CachedEncoderList()
         # The project just loaded, we need to check the new
         # encoding profiles and make use of it now.
         container_profile = self.list_encoding_profiles()[0]
@@ -1150,7 +1149,7 @@ class Project(Loggable, GES.Project):
             # Project file, we just take it as our
             self.container_profile = container_profile
             self.muxer = self._getElementFactoryName(
-                encoders.muxers, container_profile)
+                Encoders().muxers, container_profile)
             if self.muxer is None:
                 self.muxer = DEFAULT_MUXER
             for profile in container_profile.get_profiles():
@@ -1162,7 +1161,7 @@ class Project(Loggable, GES.Project):
                     self._ensureVideoRestrictions()
 
                     self.vencoder = self._getElementFactoryName(
-                        encoders.vencoders, profile)
+                        Encoders().vencoders, profile)
                 elif isinstance(profile, GstPbutils.EncodingAudioProfile):
                     self.audio_profile = profile
                     if self.audio_profile.get_restriction() is None:
@@ -1170,7 +1169,7 @@ class Project(Loggable, GES.Project):
                             Gst.Caps("audio/x-raw"))
                     self._ensureAudioRestrictions()
                     self.aencoder = self._getElementFactoryName(
-                        encoders.aencoders, profile)
+                        Encoders().aencoders, profile)
                 else:
                     self.warning("We do not handle profile: %s", profile)
 

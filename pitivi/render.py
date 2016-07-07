@@ -44,21 +44,21 @@ from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
 
 
-class CachedEncoderList(object):
-    """Registry of avalaible Muxers, Audio encoders and Video Encoders.
+class Encoders(object):
+    """Registry of avalaible Muxers, Audio encoders and Video encoders.
 
     Also keeps the avalaible combinations of those.
 
-    It is a singleton.
+    It is a singleton. Use `Encoders()` to access the instance.
 
     Attributes:
+        muxers (List[Gst.ElementFactory]): The avalaible muxers.
         aencoders (List[Gst.ElementFactory]): The avalaible audio encoders.
         vencoders (List[Gst.ElementFactory]): The avalaible video encoders.
-        muxers (List[Gst.ElementFactory]): The avalaible muxers.
-        audio_combination (dict): Maps each muxer name to a list of compatible
-            audio encoders ordered by rank.
-        video_combination (dict): Maps each muxer name to a list of compatible
-            video encoders ordered by rank.
+        compatible_audio_encoders (dict): Maps each muxer name to a list of
+            compatible audio encoders ordered by rank.
+        compatible_video_encoders (dict): Maps each muxer name to a list of
+            compatible video encoders ordered by rank.
     """
 
     _instance = None
@@ -66,15 +66,14 @@ class CachedEncoderList(object):
     def __new__(cls, *args, **kwargs):
         """Returns the singleton instance."""
         if not cls._instance:
-            cls._instance = super(
-                CachedEncoderList, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(Encoders, cls).__new__(cls, *args, **kwargs)
             Gst.Registry.get().connect(
-                "feature-added", cls._instance._registryFeatureAddedCb)
-            cls._instance._buildEncoders()
-            cls._instance._buildCombinations()
+                "feature-added", cls._instance._registry_feature_added_cb)
+            cls._instance._load_encoders()
+            cls._instance._load_combinations()
         return cls._instance
 
-    def _buildEncoders(self):
+    def _load_encoders(self):
         self.aencoders = []
         self.vencoders = []
         self.muxers = Gst.ElementFactory.list_get_elements(
@@ -89,65 +88,49 @@ class CachedEncoderList(object):
             elif "Audio" in klist:
                 self.aencoders.append(fact)
 
-    def _buildCombinations(self):
-        self.audio_combination = {}
-        self.video_combination = {}
-        useless_muxers = set([])
+    def _load_combinations(self):
+        self.compatible_audio_encoders = {}
+        self.compatible_video_encoders = {}
+        useless_muxers = set()
         for muxer in self.muxers:
-            mux = muxer.get_name()
-            aencs = self._findCompatibleEncoders(self.aencoders, muxer)
-            vencs = self._findCompatibleEncoders(self.vencoders, muxer)
-            # only include muxers with audio and video
-
-            if aencs and vencs:
-                self.audio_combination[mux] = sorted(
-                    aencs, key=lambda x: - x.get_rank())
-                self.video_combination[mux] = sorted(
-                    vencs, key=lambda x: - x.get_rank())
-            else:
+            aencs = self._find_compatible_encoders(self.aencoders, muxer)
+            vencs = self._find_compatible_encoders(self.vencoders, muxer)
+            if not aencs or not vencs:
+                # The muxer is not compatible with no video encoder or
+                # with no audio encoder.
                 useless_muxers.add(muxer)
+                continue
+
+            muxer_name = muxer.get_name()
+            self.compatible_audio_encoders[muxer_name] = aencs
+            self.compatible_video_encoders[muxer_name] = vencs
 
         for muxer in useless_muxers:
             self.muxers.remove(muxer)
 
-    def _findCompatibleEncoders(self, encoders, muxer, muxsinkcaps=[]):
+    def _find_compatible_encoders(self, encoders, muxer):
         """Returns the list of encoders compatible with the specified muxer."""
         res = []
-        if muxsinkcaps == []:
-            muxsinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates()
-                           if x.direction == Gst.PadDirection.SINK]
+        sink_caps = [template.get_caps()
+                     for template in muxer.get_static_pad_templates()
+                     if template.direction == Gst.PadDirection.SINK]
         for encoder in encoders:
-            for tpl in encoder.get_static_pad_templates():
-                if tpl.direction == Gst.PadDirection.SRC:
-                    if self._canSinkCaps(muxer, tpl.get_caps(), muxsinkcaps):
-                        res.append(encoder)
-                        break
-        return res
+            for template in encoder.get_static_pad_templates():
+                if not template.direction == Gst.PadDirection.SRC:
+                    continue
+                if self._can_muxer_sink_caps(template.get_caps(), sink_caps):
+                    res.append(encoder)
+                    break
+        return sorted(res, key=lambda encoder: - encoder.get_rank())
 
-    def _canSinkCaps(self, muxer, ocaps, muxsinkcaps=[]):
-        """Checks whether the muxer's receptors match the specified caps.
-
-        Args:
-            ocaps (Gst.Caps): The output caps to match.
-
-        Returns:
-            bool: True if any of the muxer's sink pad templates's caps intersect
-            the specified output caps.
-        """
-        # fast version
-        if muxsinkcaps != []:
-            for c in muxsinkcaps:
-                if not c.intersect(ocaps).is_empty():
-                    return True
-            return False
-        # slower default
-        for x in muxer.get_static_pad_templates():
-            if x.direction == Gst.PadDirection.SINK:
-                if not x.get_caps().intersect(ocaps).is_empty():
-                    return True
+    def _can_muxer_sink_caps(self, output_caps, sink_caps):
+        """Checks whether the specified caps match the muxer's receptors."""
+        for caps in sink_caps:
+            if not caps.intersect(output_caps).is_empty():
+                return True
         return False
 
-    def _registryFeatureAddedCb(self, registry, feature):
+    def _registry_feature_added_cb(self, registry, feature):
         # TODO Check what feature has been added and update our lists
         pass
 
@@ -528,7 +511,7 @@ class RenderDialog(Loggable):
         self.frame_rate_combo.set_model(frame_rates)
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
-        self.muxercombobox.set_model(factorylist(CachedEncoderList().muxers))
+        self.muxercombobox.set_model(factorylist(Encoders().muxers))
 
     def _displaySettings(self):
         """Displays the settings also in the ProjectSettingsDialog."""
@@ -607,13 +590,12 @@ class RenderDialog(Loggable):
 
     def updateAvailableEncoders(self):
         """Updates the encoder comboboxes to show the available encoders."""
-        encoders = CachedEncoderList()
         vencoder_model = factorylist(
-            encoders.video_combination[self.project.muxer])
+            Encoders().compatible_video_encoders[self.project.muxer])
         self.video_encoder_combo.set_model(vencoder_model)
 
         aencoder_model = factorylist(
-            encoders.audio_combination[self.project.muxer])
+            Encoders().compatible_audio_encoders[self.project.muxer])
         self.audio_encoder_combo.set_model(aencoder_model)
 
         self._updateEncoderCombo(

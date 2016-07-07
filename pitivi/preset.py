@@ -492,13 +492,12 @@ class RenderPresetManager(PresetManager):
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        from pitivi.render import CachedEncoderList
-        cached_encs = CachedEncoderList()
-        if acodec not in [fact.get_name() for fact in cached_encs.aencoders]:
+        from pitivi.render import Encoders
+        if acodec not in [fact.get_name() for fact in Encoders().aencoders]:
             raise DeserializeException("Audio codec not available: %s" % acodec)
-        if vcodec not in [fact.get_name() for fact in cached_encs.vencoders]:
+        if vcodec not in [fact.get_name() for fact in Encoders().vencoders]:
             raise DeserializeException("Video codec not available: %s" % vcodec)
-        if container not in [fact.get_name() for fact in cached_encs.muxers]:
+        if container not in [fact.get_name() for fact in Encoders().muxers]:
             raise DeserializeException("Container not available: %s" % vcodec)
 
         try:
