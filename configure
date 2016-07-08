@@ -65,6 +65,9 @@ install:
 check:
 	cd $BUILDDIR && $NINJA test
 
+dist:
+	cd $BUILDDIR && $NINJA dist
+
 clean:
 	rm -Rf $BUILDDIR
 	rm Makefile

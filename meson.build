@@ -61,3 +61,13 @@ if not get_option('disable-help')
     subdir('help')
 endif
 subdir('tests')
+
+archiver = find_program('git-archive-all', required : false)
+if archiver.found()
+    run_target('dist', 'git-archive-all', '--prefix=pitivi',
+            'pitivi-' + meson.project_version() + '.tar.gz')
+else
+    message('git-archive-all not found, you will not be able to run `ninja dist`')
+    message('Install git-archive-all with pip:')
+    message('   $ pip install git-archive-all')
+endif
