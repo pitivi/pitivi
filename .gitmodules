@@ -1,0 +1,3 @@
+[submodule "subprojects/gst-transcoder"]
+	path = subprojects/gst-transcoder
+	url = https://github.com/pitivi/gst-transcoder

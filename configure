@@ -31,6 +31,14 @@ then
     fi
 fi
 
+# Make sure we have subprojects/gst-transcoder
+if test ! -f subprojects/gst-transcoder/meson.build;
+then
+  echo "+ Setting up subprojects/gst-transcoder/ submodule"
+  git submodule init
+fi
+git submodule update
+
 # install pre-commit hook for doing clean commits
 rm -f .git/hooks/pre-commit
 ln -s ../../pre-commit.hook .git/hooks/pre-commit
