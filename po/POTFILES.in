@@ -2,7 +2,7 @@
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
 data/pitivi.appdata.xml.in
-data/pitivi.desktop.in.in
+data/pitivi.desktop.in
 [type: gettext/glade]data/ui/alignmentprogress.ui
 [type: gettext/glade]data/ui/clipmediaprops.ui
 [type: gettext/glade]data/ui/cliptransformation.ui

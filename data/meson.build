@@ -9,7 +9,7 @@ install_subdir('gstpresets', install_dir: pkgdatadir)
 
 custom_target('pitivi.desktop',
     output : 'pitivi.desktop',
-    input : 'pitivi.desktop.in.in',
+    input : 'pitivi.desktop.in',
     command : [intltool_merge, '--desktop-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
     install_dir : get_option('datadir') + '/applications')
