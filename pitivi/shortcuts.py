@@ -17,8 +17,11 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Accelerators info."""
+import os.path
+
 from gi.repository import Gtk
 
+from pitivi.settings import xdg_config_home
 from pitivi.utils.misc import show_user_manual
 
 
@@ -30,6 +33,35 @@ class ShortcutsManager:
         self.groups = []
         self.group_titles = {}
         self.group_actions = {}
+        self.config_path = os.path.sep.join([xdg_config_home(),
+                                             "shortcuts.conf"])
+        self.__loaded = self.__load()
+
+    def __load(self):
+        """Loads the shortcuts from the config file and sets them.
+
+        Returns:
+            bool: Whether the config file exists.
+        """
+        if not os.path.isfile(self.config_path):
+            return False
+
+        for line in open(self.config_path, "r"):
+            action_name, accelerators = line.split(":", 1)
+            accelerators = accelerators.strip("\n").split(",")
+            self.app.set_accels_for_action(action_name, accelerators)
+        return True
+
+    def save(self):
+        """Saves the accelerators for each action to the config file.
+
+        Only the actions added using `add` with a title are considered.
+        """
+        with open(self.config_path, "w") as conf_file:
+            for unused_group_id, actions in self.group_actions.items():
+                for action, unused_title in actions:
+                    accels = ",".join(self.app.get_accels_for_action(action))
+                    conf_file.write(action + ":" + accels + "\n")
 
     def add(self, action, accelerators, title=None, group=None):
         """Adds an action to be displayed.
@@ -37,12 +69,16 @@ class ShortcutsManager:
         Args:
             action (str): The name identifying the action, formatted like
                 "prefix.name".
-            accelerators ([str]): List of accelerators corresponding to the action
+            accelerators ([str]): The default accelerators corresponding to
+                the action. They are set as the accelerators of the action
+                only if no accelerators have been loaded from the config file
+                initially, when the current manager instance has been created.
             title (Optional(str)): The title of the action.
             group (Optional[str]): The group id registered with `register_group`
-                to be used instead of the one extracted from `action`.
+                to be used instead of that extracted from `action`.
         """
-        self.app.set_accels_for_action(action, accelerators)
+        if not self.__loaded:
+            self.app.set_accels_for_action(action, accelerators)
 
         if title:
             action_prefix = group or action.split(".")[0]
