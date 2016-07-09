@@ -249,6 +249,31 @@ then
   fi
 fi
 
+function run_in_sandbox {
+  $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
+  --share=network \
+  --env=GST_PLUGIN_SYSTEM_PATH= \
+  --env=GST_CHECKS=$GST_CHECKS \
+  --env=GST_PRESET_PATH=/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/:$GST_PRESET_PATH \
+  --env=GST_ENCODING_TARGET_PATH=/app/share/pitivi/gstpresets/:$GST_ENCODING_TARGET_PATH \
+  --env=GST_DEBUG=$GST_DEBUG \
+  --env=GST_PLUGIN_SYSTEM_PATH= \
+  --env=GST_VALIDATE=$GST_VALIDATE \
+  --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
+  --env=PITIVI_DEBUG=$PITIVI_DEBUG \
+  --env=PITIVI_DEVELOPMENT=1 \
+  --env=DISPLAY=$DISPLAY \
+  --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
+  $PREFIX $SCRIPTDIR/enter-env "$@" || exit 1
+}
+
+function build_local_repo {
+  echo "-> Building $APPLICATION_NAME from current repository"
+  cd $APPLICATION_REPOSITORY
+  run_in_sandbox "./configure --prefix=/app --libdir=lib" || exit 1
+  run_in_sandbox make ||exit 1
+}
+
 # Install needed runtimes
 if [ -n "$DEVEL" ]
 then
@@ -372,9 +397,7 @@ then
   then
     if [ -z "$APP_INSTALLED" ] && [ -z "$USE_REMOTE" ]
     then
-      cd $APPLICATION_REPOSITORY
-      $FLATPAK run --branch=$BRANCH -d --command="./configure" $APPLICATION_REF_NAME
-      $FLATPAK run --branch=$BRANCH -d --command="make" $APPLICATION_REF_NAME
+      build_local_repo
     fi
 
     echo "=============================="
@@ -413,49 +436,22 @@ then
 
     if [ -z $BUNDLE ] || [ -n "$CHECK" ]
     then
-      echo "-> Building $APPLICATION_NAME from current repository"
-      cd $APPLICATION_REPOSITORY && $FLATPAK build --env=PYTHON=python3 $PREFIX ./configure --prefix=/app --libdir=lib || exit 1
-      $FLATPAK build --env=PYTHON=python3 $PREFIX make || exit 1
+      build_local_repo
     fi
   fi
 
   # Launch development environment if we are not updating it and not creating a bundle
-  if [ -z $BUNDLE ] && [ -z $UPDATE ]
+  if [ -z $BUNDLE ] && [ -z $UPDATE ] && [ -z $CHECK ]
   then
-      $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
-      --share=network \
-      --env=GST_PLUGIN_SYSTEM_PATH= \
-      --env=GST_CHECKS=$GST_CHECKS \
-      --env=GST_PRESET_PATH=/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/:$GST_PRESET_PATH \
-      --env=GST_ENCODING_TARGET_PATH=/app/share/pitivi/gstpresets/:$GST_ENCODING_TARGET_PATH \
-      --env=GST_DEBUG=$GST_DEBUG \
-      --env=GST_PLUGIN_SYSTEM_PATH= \
-      --env=GST_VALIDATE=$GST_VALIDATE \
-      --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
-      --env=PITIVI_DEBUG=$PITIVI_DEBUG \
-      --env=PITIVI_DEVELOPMENT=1 \
-      --env=DISPLAY=$DISPLAY \
-      --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
-      $PREFIX $SCRIPTDIR/enter-env "$@"
-
-    exit $exitcode
+    run_in_sandbox "$@"
   fi
 
   if [ -n "$CHECK" ]
   then
-      echo "Running tests with nosetests"
-      $FLATPAK build --socket=x11 --socket=session-bus --socket=pulseaudio \
-      --share=network \
-      --env=GST_DEBUG=$GST_DEBUG \
-      --env=GST_CHECKS=$GST_CHECKS \
-      --env=GST_PLUGIN_SYSTEM_PATH= \
-      --env=GST_VALIDATE=$GST_VALIDATE \
-      --env=GST_VALIDATE_LAUNCHER_DEBUG=$GST_VALIDATE_LAUNCHER_DEBUG \
-      --env=PITIVI_DEBUG=$PITIVI_DEBUG \
-      --env=PITIVI_DEVELOPMENT=1 \
-      --env=DISPLAY=$DISPLAY \
-      --env=GST_DEBUG_DUMP_DOT_DIR=$GST_DEBUG_DUMP_DOT_DIR \
-      $PREFIX $SCRIPTDIR/enter-env "nosetests --with-xunit $APPLICATION_REPOSITORY/tests/test_*.py"|| exit 1
+    run_in_sandbox "./configure --prefix=/app --libdir=lib -Denable-xunit=true"
+
+    echo "-> Running unit tests"
+    run_in_sandbox "make check"
   fi
 else
   $FLATPAK run org.pitivi.Pitivi

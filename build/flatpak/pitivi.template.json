@@ -357,6 +357,7 @@
         },
         {
             "name": "pitivi",
+            "config-opts": ["--libdir=lib", "--prefix=/app"],
             "build-options" : {
               "build-args": ["--share=network"]
             },

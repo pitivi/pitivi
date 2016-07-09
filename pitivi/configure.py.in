@@ -41,6 +41,7 @@ APPNAME = '@PACKAGE_NAME@'
 APPURL = 'http://www.pitivi.org/'
 RELEASES_URL = 'http://pitivi.org/releases.txt'
 APPMANUALURL_ONLINE = 'http://www.pitivi.org/manual'
+BUILDDIR = '@BUILDDIR@'
 
 
 if in_devel():
