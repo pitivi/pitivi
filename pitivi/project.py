@@ -59,9 +59,6 @@ from pitivi.utils.widgets import FractionWidget
 
 
 DEFAULT_NAME = _("New Project")
-DEFAULT_MUXER = "oggmux"
-DEFAULT_VIDEO_ENCODER = "theoraenc"
-DEFAULT_AUDIO_ENCODER = "vorbisenc"
 
 
 class ProjectManager(GObject.Object, Loggable):
@@ -671,8 +668,7 @@ class Project(Loggable, GES.Project):
         self.container_profile = \
             GstPbutils.EncodingContainerProfile.new("pitivi-profile",
                                                     _("Pitivi encoding profile"),
-                                                    Gst.Caps(
-                                                        "application/ogg"),
+                                                    Gst.Caps("application/ogg"),
                                                     None)
         self.video_profile = GstPbutils.EncodingVideoProfile.new(
             Gst.Caps("video/x-theora"), None, Gst.Caps("video/x-raw"), 0)
@@ -682,9 +678,9 @@ class Project(Loggable, GES.Project):
         self.container_profile.add_profile(self.audio_profile)
         self.add_encoding_profile(self.container_profile)
 
-        self.muxer = DEFAULT_MUXER
-        self.vencoder = DEFAULT_VIDEO_ENCODER
-        self.aencoder = DEFAULT_AUDIO_ENCODER
+        self.muxer = Encoders().default_muxer
+        self.vencoder = Encoders().default_video_encoder
+        self.aencoder = Encoders().default_audio_encoder
         self._ensureAudioRestrictions()
         self._ensureVideoRestrictions()
         has_default_settings = not bool(uri) and not bool(scenario)
@@ -1141,7 +1137,7 @@ class Project(Loggable, GES.Project):
             self.muxer = self._getElementFactoryName(
                 Encoders().muxers, container_profile)
             if self.muxer is None:
-                self.muxer = DEFAULT_MUXER
+                self.muxer = Encoders().default_muxer
             for profile in container_profile.get_profiles():
                 if isinstance(profile, GstPbutils.EncodingVideoProfile):
                     self.video_profile = profile

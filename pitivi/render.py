@@ -44,7 +44,7 @@ from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
 
 
-class Encoders(object):
+class Encoders(Loggable):
     """Registry of avalaible Muxers, Audio encoders and Video encoders.
 
     Also keeps the avalaible combinations of those.
@@ -59,6 +59,45 @@ class Encoders(object):
             compatible audio encoders ordered by rank.
         compatible_video_encoders (dict): Maps each muxer name to a list of
             compatible video encoders ordered by rank.
+        default_muxer (str): The factory name of the default muxer.
+        default_audio_encoder (str): The factory name of the default audio
+            encoder.
+        default_video_encoder (str): The factory name of the default video
+            encoder.
+    """
+
+    OGG = "oggmux"
+    MKV = "matroskamux"
+    MP4 = "mp4mux"
+    QUICKTIME = "qtmux"
+    WEBM = "webmmux"
+
+    AAC = "voaacenc"
+    AC3 = "avenc_ac3_fixed"
+    OPUS = "opusenc"
+    VORBIS = "vorbisenc"
+
+    JPEG = "jpegenc"
+    THEORA = "theoraenc"
+    VP8 = "vp8enc"
+    X264 = "x264enc"
+
+    SUPPORTED_ENCODERS_COMBINATIONS = [
+        (OGG, VORBIS, THEORA),
+        (OGG, OPUS, THEORA),
+        (WEBM, VORBIS, VP8),
+        (WEBM, OPUS, VP8),
+        (MP4, AAC, X264),
+        (MP4, AC3, X264),
+        (QUICKTIME, AAC, JPEG),
+        (MKV, OPUS, X264),
+        (MKV, VORBIS, X264),
+        (MKV, OPUS, JPEG),
+        (MKV, VORBIS, JPEG)]
+    """The combinations of muxers and encoders which are supported.
+
+    Mirror of GES_ENCODING_TARGET_COMBINATIONS from
+    https://cgit.freedesktop.org/gstreamer/gst-editing-services/tree/tests/validate/geslaunch.py
     """
 
     _instance = None
@@ -67,6 +106,9 @@ class Encoders(object):
         """Returns the singleton instance."""
         if not cls._instance:
             cls._instance = super(Encoders, cls).__new__(cls, *args, **kwargs)
+            # We have to initialize the instance here, otherwise
+            # __init__ is called every time we use Encoders().
+            Loggable.__init__(cls._instance)
             Gst.Registry.get().connect(
                 "feature-added", cls._instance._registry_feature_added_cb)
             cls._instance._load_encoders()
@@ -108,6 +150,10 @@ class Encoders(object):
         for muxer in useless_muxers:
             self.muxers.remove(muxer)
 
+        self.default_muxer, \
+            self.default_audio_encoder, \
+            self.default_video_encoder = self._pick_defaults()
+
     def _find_compatible_encoders(self, encoders, muxer):
         """Returns the list of encoders compatible with the specified muxer."""
         res = []
@@ -129,6 +175,25 @@ class Encoders(object):
             if not caps.intersect(output_caps).is_empty():
                 return True
         return False
+
+    def _pick_defaults(self):
+        """Picks the defaults for new projects.
+
+        Returns:
+            (str, str, str): The muxer, audio encoder, video encoder.
+        """
+        muxer_names = [fact.get_name() for fact in self.muxers]
+        aencoder_names = [fact.get_name() for fact in self.aencoders]
+        vencoder_names = [fact.get_name() for fact in self.vencoders]
+        for muxer, audio, video in self.SUPPORTED_ENCODERS_COMBINATIONS:
+            if muxer not in muxer_names or \
+                    audio not in aencoder_names or \
+                    video not in vencoder_names:
+                continue
+            self.info("Default encoders: %s, %s, %s", muxer, audio, video)
+            return muxer, audio, video
+        self.warning("No good combination of container and encoders available.")
+        return Encoders.OGG, Encoders.VORBIS, Encoders.THEORA
 
     def _registry_feature_added_cb(self, registry, feature):
         # TODO Check what feature has been added and update our lists
@@ -155,8 +220,12 @@ def beautify_factoryname(factory):
     return " ".join(word for word in name.split())
 
 
-def extension_for_muxer(muxer):
-    """Returns the file extension appropriate for the specified muxer."""
+def extension_for_muxer(muxer_name):
+    """Returns the file extension appropriate for the specified muxer.
+
+    Args:
+        muxer_name (str): The name of the muxer factory.
+    """
     exts = {
         "asfmux": "asf",
         "avimux": "avi",
@@ -185,7 +254,7 @@ def extension_for_muxer(muxer):
         "oggmux": "ogv",
         "qtmux": "mov",
         "webmmux": "webm"}
-    return exts.get(muxer)
+    return exts.get(muxer_name)
 
 
 def factorylist(factories):

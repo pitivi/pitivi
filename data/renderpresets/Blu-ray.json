@@ -9,5 +9,5 @@
     "framerate-denom": 1001.0,
     "width": 0,
     "depth": 16,
-    "acodec": "faac"
+    "acodec": "voaacenc"
 }
