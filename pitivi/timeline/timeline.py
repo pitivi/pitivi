@@ -1307,6 +1307,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         can_paste = bool(self.__copiedGroup)
         self.paste_action.set_enabled(can_paste)
         self.keyframe_action.set_enabled(selection_non_empty)
+        project_loaded = bool(self._project)
+        self.backward_one_frame_action.set_enabled(project_loaded)
+        self.forward_one_frame_action.set_enabled(project_loaded)
+        self.backward_one_second_action.set_enabled(project_loaded)
+        self.forward_one_second_action.set_enabled(project_loaded)
 
     # Internal API
 
@@ -1383,7 +1388,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return longest_layer
 
     def _createActions(self):
-        # The actions below are all added to this action group and they
+        # The actions below are added to this action group and thus
         # are accessible only to the self.timeline.layout and self.toolbar
         # widgets (and their children) using the "timeline" prefix.
         # When the action for an accelerator is searched, due to the "timeline"
@@ -1481,6 +1486,43 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                        ["K"])
         ShortcutsWindow.add_action("timeline.keyframe-selected-clips",
                                    _("Add keyframe to the keyframe curve of selected clip"))
+
+        navigation_group = Gio.SimpleActionGroup()
+        self.timeline.layout.insert_action_group("navigation", navigation_group)
+        self.toolbar.insert_action_group("navigation", navigation_group)
+        ShortcutsWindow.register_group("navigation", _("Timeline Navigation"))
+
+        self.backward_one_frame_action = Gio.SimpleAction.new("backward_one_frame", None)
+        self.backward_one_frame_action.connect("activate", self._seek_backward_one_frame_cb)
+        navigation_group.add_action(self.backward_one_frame_action)
+        self.app.set_accels_for_action("navigation.backward_one_frame",
+                                       ["Left"])
+        ShortcutsWindow.add_action("navigation.backward_one_frame",
+                                   _("Seek backward one frame"))
+
+        self.forward_one_frame_action = Gio.SimpleAction.new("forward_one_frame", None)
+        self.forward_one_frame_action.connect("activate", self._seek_forward_one_frame_cb)
+        navigation_group.add_action(self.forward_one_frame_action)
+        self.app.set_accels_for_action("navigation.forward_one_frame",
+                                       ["Right"])
+        ShortcutsWindow.add_action("navigation.forward_one_frame",
+                                   _("Seek forward one frame"))
+
+        self.backward_one_second_action = Gio.SimpleAction.new("backward_one_second", None)
+        self.backward_one_second_action.connect("activate", self._seek_backward_one_second_cb)
+        navigation_group.add_action(self.backward_one_second_action)
+        self.app.set_accels_for_action("navigation.backward_one_second",
+                                       ["<Shift>Left"])
+        ShortcutsWindow.add_action("navigation.backward_one_second",
+                                   _("Seek backward one second"))
+
+        self.forward_one_second_action = Gio.SimpleAction.new("forward_one_second", None)
+        self.forward_one_second_action.connect("activate", self._seek_forward_one_second_cb)
+        navigation_group.add_action(self.forward_one_second_action)
+        self.app.set_accels_for_action("navigation.forward_one_second",
+                                       ["<Shift>Right"])
+        ShortcutsWindow.add_action("navigation.forward_one_second",
+                                   _("Seek forward one second"))
 
     def _setBestZoomRatio(self, allow_zoom_in=False):
         """Sets the zoom level so that the entire timeline is in view."""
@@ -1730,29 +1772,27 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         elif event.keyval == Gdk.KEY_Control_L:
             self._controlMask = True
 
-        # Now the second (independent) part: framestepping and seeking
-        # shortcuts
-        if event.keyval == Gdk.KEY_Left:
-            if self._shiftMask:
-                self._project.pipeline.seekRelative(0 - Gst.SECOND)
-            else:
-                self._project.pipeline.stepFrame(self._framerate, -1)
-            self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
-            return True
-        elif event.keyval == Gdk.KEY_Right:
-            if self._shiftMask:
-                self._project.pipeline.seekRelative(Gst.SECOND)
-            else:
-                self._project.pipeline.stepFrame(self._framerate, 1)
-            self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
-            return True
-        return False
-
     def do_key_release_event(self, event):
         if event.keyval == Gdk.KEY_Shift_L:
             self._shiftMask = False
         elif event.keyval == Gdk.KEY_Control_L:
             self._controlMask = False
+
+    def _seek_backward_one_second_cb(self, unused_action, unused_parameter):
+        self._project.pipeline.seekRelative(0 - Gst.SECOND)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_forward_one_second_cb(self, unused_action, unused_parameter):
+        self._project.pipeline.seekRelative(Gst.SECOND)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_backward_one_frame_cb(self, unused_action, unused_parameter):
+        self._project.pipeline.stepFrame(self._framerate, -1)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_forward_one_frame_cb(self, unused_action, unused_parameter):
+        self._project.pipeline.stepFrame(self._framerate, 1)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def do_focus_in_event(self, unused_event):
         self.log("Timeline has grabbed focus")
