@@ -214,6 +214,28 @@
             ]
         },
         {
+            "name": "vo-aacenc",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/project/opencore-amr/vo-aacenc/vo-aacenc-0.1.3.tar.gz",
+                    "sha256": "e51a7477a359f18df7c4f82d195dab4e14e7414cbd48cf79cc195fc446850f36"
+                }
+            ]
+        },
+        {
+            "name": "x265",
+            "cmake": true,
+            "subdir":"source",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://bitbucket.org/multicoreware/x265/downloads/x265_1.9.tar.gz",
+                    "sha256": "3e4654133ed957a98708fdb4cb9a154d9e80922b84e26e43fc462a101c5b15c8"
+                }
+            ]
+        },
+        {
 
             "name": "meson",
             "build-options" : {
