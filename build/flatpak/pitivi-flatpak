@@ -44,46 +44,6 @@ GST_VERSION=master
 
 # ------------------------------------------- #
 
-flatpak remote-add --help | grep "\-\-from" > /dev/null 2>&1
-if [ ! $? -eq 0 ]
-then
-  printf "$RED \nYou need to install flatpak >= 0.6.4 to be able to use the '$0' script.
-
-You can find some informations about how to install it for your distribution at:
-
-* http://flatpak.org/ $NC\n\n\n"
-
-  if [ -n "$INSTALLER" ]
-  then
-    printf "\n\nYou can now exit that terminal."
-    read
-  fi
-  exit 1
-fi
-
-# ------------------------------------------- #
-
-# Computation of actual variable values
-APPLICATION_REPO_NAME=`flatpak remote-list --user -d | grep "$APPLICATION_FLATPAK_REPO" | awk '{ print $1 }'`
-flatpak remote-list --user | grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
-res=$?
-# Update remote URL if needed
-if [ $res != 0 ] && [ -n "$APPLICATION_REPO_NAME" ]
-then
-  echo "-> Setting $APPLICATION_DEFAULT_REPO_NAME URL to $APPLICATION_FLATPAK_REPO"
-  flatpak remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
-fi
-
-APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
-SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
-
-SDK_REPO_NAME=`flatpak remote-list --user -d | grep "$SDK_REPO" | awk '{ print $1 }'`
-SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
-
-REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
-
-# ------------------------------------------- #
-
 # Some terminal output color values
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -195,6 +155,46 @@ then
     echo "$HELP"
     exit 0
 fi
+
+# ------------------------------------------- #
+
+flatpak remote-add --help | grep "\-\-from" > /dev/null 2>&1
+if [ ! $? -eq 0 ]
+then
+  printf "$RED \nYou need to install flatpak >= 0.6.4 to be able to use the '$0' script.
+
+You can find some informations about how to install it for your distribution at:
+
+* http://flatpak.org/ $NC\n\n\n"
+
+  if [ -n "$INSTALLER" ]
+  then
+    printf "\n\nYou can now exit that terminal."
+    read
+  fi
+  exit 1
+fi
+
+# ------------------------------------------- #
+
+# Computation of actual variable values
+APPLICATION_REPO_NAME=`flatpak remote-list --user -d | grep "$APPLICATION_FLATPAK_REPO" | awk '{ print $1 }'`
+flatpak remote-list --user | grep $APPLICATION_DEFAULT_REPO_NAME > /dev/null 2>&1
+res=$?
+# Update remote URL if needed
+if [ $res != 0 ] && [ -n "$APPLICATION_REPO_NAME" ]
+then
+  echo "-> Setting $APPLICATION_DEFAULT_REPO_NAME URL to $APPLICATION_FLATPAK_REPO"
+  flatpak remote-modify --user $APPLICATION_DEFAULT_REPO_NAME --url=$APPLICATION_FLATPAK_REPO
+fi
+
+APPLICATION_REPO_NAME=${APPLICATION_REPO_NAME:-$APPLICATION_DEFAULT_REPO_NAME}
+SCRIPTDIR="$( cd "$( dirname "$(readlink -f ${BASH_SOURCE[0]})"  )" && pwd  )"
+
+SDK_REPO_NAME=`flatpak remote-list --user -d | grep "$SDK_REPO" | awk '{ print $1 }'`
+SDK_REPO_NAME=${SDK_REPO_NAME:-$SDK_DEFAULT_REPO_NAME}
+
+REPO=$FLATPAK_ENVPATH/flatpak-repos/$APPLICATION_NAME
 
 SDK_INSTALLED=`flatpak list --runtime -d | grep "$SDK_NAME/.*/$SDK_VERSION"`
 SDK_LOCAL_INSTALLED=`flatpak list --runtime -d | grep "$SDK_NAME.Locale/.*/$SDK_VERSION"`
