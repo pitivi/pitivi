@@ -27,7 +27,7 @@ $ source bin/pitivi-env
 Run `pitivi` while inside the environment to launch Pitivi. Next you should run the unittests.
 ```
 (ptv-flatpak) $ pitivi
-(ptv-flatpak) $ nosetests tests/test_*.py
+(ptv-flatpak) $ make check
 ```
 
 After you hack the source code simply run `pitivi` again to see how your changes work.
