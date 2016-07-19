@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR=$(cd "$(dirname "$0")" && pwd)
 
 MESON=meson
 command -v $MESON > /dev/null 2>&1
@@ -26,7 +26,7 @@ then
     command -v $NINJA > /dev/null 2>&1
     if [ $? != 0 ]
     then
-      echo "You should install ninja-build to build pitivi: https://ninja-build.org/"
+      echo "You should install ninja-build to build Pitivi: https://ninja-build.org/"
       exit 1
     fi
 fi
@@ -39,12 +39,13 @@ then
 fi
 git submodule update
 
-# install pre-commit hook for doing clean commits
+# Install the pre-commit hook for doing clean commits
 rm -f .git/hooks/pre-commit
 ln -s ../../pre-commit.hook .git/hooks/pre-commit
 echo ""
 which pre-commit > /dev/null
-if [ $? -eq 0  ]; then
+if [ $? -eq 0 ];
+then
   pre-commit install
 else
   echo "Please install pre-commit from http://pre-commit.com/ before proposing patches"
@@ -53,7 +54,7 @@ fi
 
 BUILDDIR=mesonbuild
 rm -Rf $BUILDDIR > /dev/null 2>&1
-mkdir $BUILDDIR/ && cd $BUILDDIR && $MESON ../ $@
+mkdir $BUILDDIR/ && cd $BUILDDIR && $MESON ../ "$@"
 
 cat <<EOF > $DIR/Makefile
 all:
