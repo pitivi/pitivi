@@ -83,7 +83,7 @@ GlobalSettings.addConfigOption('imageClipLength',
                                notify=True)
 
 PreferencesDialog.addNumericPreference('imageClipLength',
-                                       section=_("timeline"),
+                                       section="timeline",
                                        label=_("Image clip duration"),
                                        description=_(
                                            "Default clip length (in milliseconds) of images when inserting on the timeline."),
@@ -96,7 +96,7 @@ GlobalSettings.addConfigOption('leftClickAlsoSeeks',
                                notify=True)
 
 PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
-                                      section=_("timeline"),
+                                      section="timeline",
                                       label=_("Left click also seeks"),
                                       description=_(
                                           "Whether left-clicking also seeks besides selecting and editing clips."))
