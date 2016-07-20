@@ -33,6 +33,7 @@ class ShortcutsManager:
         self.groups = []
         self.group_titles = {}
         self.group_actions = {}
+        self.default_accelerators = {}
         self.config_path = os.path.sep.join([xdg_config_home(),
                                              "shortcuts.conf"])
         self.__loaded = self.__load()
@@ -77,6 +78,7 @@ class ShortcutsManager:
             group (Optional[str]): The group id registered with `register_group`
                 to be used instead of that extracted from `action`.
         """
+        self.default_accelerators[action] = accelerators
         if not self.__loaded:
             self.app.set_accels_for_action(action, accelerators)
 
@@ -96,6 +98,25 @@ class ShortcutsManager:
         if action_prefix not in self.groups:
             self.groups.append(action_prefix)
         self.group_titles[action_prefix] = title
+
+    def reset_accels(self, action=None):
+        """Resets accelerators to their default values.
+
+        Args:
+            action (Optional(str)): The action name.
+                If specified, reset the specified action's accelerators.
+                Otherwise reset accelerators for all actions.
+        """
+        if action:
+            self.app.set_accels_for_action(action, self.default_accelerators[action])
+            self.save()
+        else:
+            for action, accelerators in self.default_accelerators.items():
+                self.app.set_accels_for_action(action, accelerators)
+            try:
+                os.remove(self.config_path)
+            except FileNotFoundError:
+                pass
 
 
 class ShortcutsWindow(Gtk.ShortcutsWindow):

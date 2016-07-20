@@ -112,3 +112,36 @@ class TestShortcutsManager(TestCase):
                      mock.call("group.action2", ["<Shift>p", "<Control>m"]),
                      mock.call("group.action3", ["<Control><Shift>a", "a"])]
             app.set_accels_for_action.assert_has_calls(calls, any_order=True)
+
+    def test_reset_accels(self):
+        """Checks if accelerators have been reset to the default settings."""
+        app = mock.MagicMock()
+        with mock.patch("pitivi.shortcuts.xdg_config_home") as xdg_config_home,\
+                tempfile.TemporaryDirectory() as temp_dir,\
+                    mock.patch("os.remove") as os_remove_mock:
+            xdg_config_home.return_value = temp_dir
+            manager = ShortcutsManager(app)
+
+            # Set default shortcuts - they will be stored in self.defaults_accelerators.
+            manager.register_group("group", "Test group")
+            manager.add("group.action1", ["<Control>i"], "Action 1")
+            manager.add("group.action2", ["<Shift>p"], "Action 2")
+
+            # Test reset of a single action. The shortcuts are saved and no file removed.
+            # Only one call to set_accels_for_action() should be made.
+            app.reset_mock()
+            manager.save = mock.MagicMock()
+            manager.reset_accels(action="group.action1")
+            self.assertEqual(manager.save.call_count, 1)
+            self.assertEqual(os_remove_mock.call_count, 0)
+            self.assertEqual(app.set_accels_for_action.call_count, 1)
+
+            # Test reset of all actions. Nothing is saved and the file is removed.
+            # Both actions should have accelerators set.
+            app.reset_mock()
+            os_remove_mock.reset_mock()
+            manager.save.reset_mock()
+            manager.reset_accels()
+            self.assertEqual(manager.save.call_count, 0)
+            self.assertEqual(os_remove_mock.call_count, 1)
+            self.assertEqual(app.set_accels_for_action.call_count, 2)
