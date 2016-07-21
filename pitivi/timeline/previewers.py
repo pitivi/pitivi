@@ -893,11 +893,12 @@ class PipelineCpuAdapter(Loggable):
         if usage_percent >= WAVEFORMS_CPU_USAGE:
             if self.rate < 0.1:
                 if not self.ready:
-                    self.ready = True
-                    self.pipeline.set_state(Gst.State.READY)
-                    res, self.lastPos = self.pipeline.query_position(
+                    res, position = self.pipeline.query_position(
                         Gst.Format.TIME)
-                    assert res
+                    if res:
+                        self.lastPos = position
+                    self.pipeline.set_state(Gst.State.READY)
+                    self.ready = True
                 return True
 
             if self.rate > 0.0:
