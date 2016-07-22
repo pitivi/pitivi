@@ -946,14 +946,32 @@ class Project(Loggable, GES.Project):
                                      creation_progress, estimated_time):
         self.__updateAssetLoadingProgress(estimated_time)
 
-    def __updateAssetLoadingProgress(self, estimated_time=0):
-        num_loading_assets = len(self.loading_assets)
+    def __get_loading_project_progress(self):
+        """Computes current advancement of asset loading during project loading.
 
-        if num_loading_assets == 0:
-            self.app.action_log.commit("Adding assets")
-            self.emit("asset-loading-progress", 100, estimated_time)
-            return
+        Returns:
+            int: The current asset loading progress (in percent).
+        """
+        num_loaded = 0
+        all_ready = True
+        for asset in self.loading_assets:
+            if asset.creation_progress < 100:
+                all_ready = False
+            else:
+                asset.ready = True
+                num_loaded += 1
 
+        if all_ready:
+            return 100
+
+        return (num_loaded / len(self.loading_assets)) * 100
+
+    def __get_loading_assets_progress(self):
+        """Computes current advancement of asset loading.
+
+        Returns:
+            int: The current asset loading progress (in percent).
+        """
         total_import_duration = 0
         for asset in self.loading_assets:
             total_import_duration += asset.get_duration()
@@ -962,11 +980,11 @@ class Project(Loggable, GES.Project):
             self.info("No known duration yet")
             return
 
-        self.asset_loading_progress = 0
+        asset_loading_progress = 0
         all_ready = True
         for asset in self.loading_assets:
             asset_weight = asset.get_duration() / total_import_duration
-            self.asset_loading_progress += asset_weight * asset.creation_progress
+            asset_loading_progress += asset_weight * asset.creation_progress
 
             if asset.creation_progress < 100:
                 all_ready = False
@@ -975,12 +993,25 @@ class Project(Loggable, GES.Project):
                 asset.ready = True
 
         if all_ready:
-            self.asset_loading_progress = 100
+            asset_loading_progress = 100
+
+        return asset_loading_progress
+
+    def __updateAssetLoadingProgress(self, estimated_time=0):
+        if not self.loading_assets:
+            self.app.action_log.commit("Adding assets")
+            self.emit("asset-loading-progress", 100, estimated_time)
+            return
+
+        if not self.loaded:
+            self.asset_loading_progress = self.__get_loading_project_progress()
+        else:
+            self.asset_loading_progress = self.__get_loading_assets_progress()
 
         self.emit("asset-loading-progress", self.asset_loading_progress,
                   estimated_time)
 
-        if all_ready:
+        if self.asset_loading_progress == 100:
             self.info("No more loading assets")
             self.loading_assets = []
 
@@ -1050,13 +1081,7 @@ class Project(Loggable, GES.Project):
             # Progress == 0 means "starting to import"
             self.emit("asset-loading-progress", 0, 0)
 
-        if not self.loaded:
-            self.debug("Project still loading, not using proxies: "
-                       "%s", asset.props.id)
-            asset.creation_progress = 100
-        else:
-            asset.creation_progress = 0
-
+        asset.creation_progress = 0
         asset.error = None
         asset.ready = False
         asset.force_proxying = False
@@ -1091,22 +1116,16 @@ class Project(Loggable, GES.Project):
 
     def do_loading_error(self, error, asset_id, unused_type):
         """Handles `GES.Project::error-loading-asset` emitted by self."""
-        if not self.loaded:
-            self.info("Error loading asset %s while loading a project"
-                      " not updating proxy creation progress", asset_id)
-            self.__updateAssetLoadingProgress()
-            return
-
         asset = None
         for asset in self.loading_assets:
             if asset.get_id() == asset_id:
                 break
 
-        self.error("Could not load %s: %s -> %s" % (asset_id, error,
-                                                    asset))
+        self.error("Could not load %s: %s -> %s", asset_id, error, asset)
         asset.error = error
         asset.creation_progress = 100
-        self.loading_assets.remove(asset)
+        if self.loaded:
+            self.loading_assets.remove(asset)
         self.__updateAssetLoadingProgress()
 
     def do_loaded(self, unused_timeline):
