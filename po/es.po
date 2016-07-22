@@ -16,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-07-15 15:00+0000\n"
-"PO-Revision-Date: 2016-07-21 12:52+0200\n"
+"PO-Revision-Date: 2016-07-22 12:13+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -543,6 +543,11 @@ msgid ""
 "This option is a good trade of between quality of the rendered video and "
 "stability."
 msgstr ""
+"Usar archivos de proxy si están disponibles y el formato de medios del "
+"recurso fuente no está soportado oficialmente.\n"
+"\n"
+"Esta opción es intermedia entre la calidad del vídeo renderizado y la "
+"estabilidad."
 
 #: ../data/ui/renderingdialog.ui.h:35
 msgid "Always render from proxy files"
@@ -553,6 +558,8 @@ msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
+"Renderizar todos los vídeos de los recursos del proxy. Esto puede provocar "
+"algo de pérdida de calidad durante el proceso de renderizado."
 
 #: ../data/ui/renderingdialog.ui.h:37
 msgid "Never render from proxy files"
@@ -565,6 +572,10 @@ msgid ""
 "use of not officially supported media formats.\n"
 "<i>Use at your own risk!</i>"
 msgstr ""
+"Usar siempre recursos fuente para el renderizado. Esta es la mejor opción "
+"para la calidad del vídeo renderizado, pero puede encontrarse con algunos "
+"errores debido al uso de formatos de medios no soportados.\n"
+"<i>Úselo bajo su propia responsabilidad</i>"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -969,7 +980,7 @@ msgstr "Guardar el proyecto actual como"
 
 #: ../pitivi/mainwindow.py:475
 msgid "Show the menu button content"
-msgstr ""
+msgstr "Mostrar el contenido del botón del menú"
 
 #: ../pitivi/mainwindow.py:608
 #, python-format
@@ -1202,6 +1213,13 @@ msgid ""
 "<i>This is the only option officially supported by the Pitivi developers and "
 "thus is the safest.</i>"
 msgstr ""
+"Dejar que Pitivi decida cuándo crear archivos de proxy y cuándo no. La "
+"decisión se hará dependiendo del formato del archivo y de cómo se soporta. "
+"Por ejemplo, H.264, archivos FLAC contenidos en Quicktime no se pondrán el "
+"el proxy, pero AAC, H.264 contenido el MPEG-TS sí.\n"
+"\n"
+"<i>Esta es la única opción soportada oficialmente por los desarrolladores de "
+"Pitivi y por lo tanto la más segura.</i>"
 
 #: ../pitivi/medialibrary.py:145
 msgid "Create proxies for all files"
@@ -1211,6 +1229,8 @@ msgstr "Crear proxies para todos los archivos"
 msgid ""
 "Use proxies for every imported file whatever its current media format is."
 msgstr ""
+"Usar proxies para archivo importado, independientemente del fomato de medios "
+"actual."
 
 #: ../pitivi/medialibrary.py:150
 msgid "Do not use proxy files"
@@ -1233,16 +1253,14 @@ msgid "Duration"
 msgstr "Duración"
 
 #: ../pitivi/medialibrary.py:438
-#, fuzzy
 #| msgid "Remove the selected preset"
 msgid "Remove the selected assets"
-msgstr "Quitar el preajuste seleccionado"
+msgstr "Quitar los recursos seleccionados"
 
 #: ../pitivi/medialibrary.py:444
-#, fuzzy
 #| msgid "Insert the selected clips at the end of the timeline"
 msgid "Insert selected assets at the end of the timeline"
-msgstr "Insertar los vídeos seleccionados al final de la línea de tiempo"
+msgstr "Insertar los recursos seleccionados al final de la línea de tiempo"
 
 #: ../pitivi/medialibrary.py:659
 msgid "Select One or More Files"
@@ -1266,8 +1284,8 @@ msgstr "Formatos de archivo soportados"
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Transcodificando %d recurso: %d%% (Queda %s aprox.)"
+msgstr[1] "Transcodificando %d recursos: %d%% (Queda %s aprox.)"
 
 #: ../pitivi/medialibrary.py:959
 msgid "View error"
@@ -1303,12 +1321,11 @@ msgid "The following file can not be used with Pitivi."
 msgstr "El siguiente archivo no se puede usar con Pitivi."
 
 #: ../pitivi/medialibrary.py:1237
-#, fuzzy
 #| msgid "Loop over selected area"
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
-msgstr[0] "Circular sobre el área seleccionada"
-msgstr[1] "Circular sobre el área seleccionada"
+msgstr[0] "No usar proxy para el recurso seleccionado"
+msgstr[1] "No usar proxies para los recursos seleccionados"
 
 #: ../pitivi/medialibrary.py:1248
 msgid "Delete corresponding proxy file"
@@ -1317,12 +1334,11 @@ msgstr[0] "Eliminar el archivo de proxy correspondiente"
 msgstr[1] "Eliminar los archivos de proxy correspondientes"
 
 #: ../pitivi/medialibrary.py:1259
-#, fuzzy
 #| msgid "Loop over selected area"
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
-msgstr[0] "Circular sobre el área seleccionada"
-msgstr[1] "Circular sobre el área seleccionada"
+msgstr[0] "Usar proxy para el recurso seleccionado"
+msgstr[1] "Usar proxies para los recursos seleccionados"
 
 #: ../pitivi/preset.py:100
 msgid "Remove"
@@ -1486,7 +1502,7 @@ msgstr "«%s» ha terminado el renderizado."
 
 #: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
 msgid "Absolute"
-msgstr ""
+msgstr "Absoluto"
 
 #: ../pitivi/titleeditor.py:92
 msgid "Top"
@@ -1724,6 +1740,7 @@ msgstr "Cortar el vídeo en la posición"
 #: ../pitivi/timeline/timeline.py:1438
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
+"Añadir fotograma clave a la curva de fotogramas clave del vídeo seleccionado"
 
 #: ../pitivi/timeline/timeline.py:1443
 msgid "Timeline Navigation"
@@ -1817,6 +1834,8 @@ msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
 msgstr ""
+"Falló al abrir el manual del usuario. Asegúrese de que tiene instalado el "
+"visor de documentación de GNOME «yelp» o un navegador web."
 
 #: ../pitivi/utils/misc.py:292
 msgid ""
