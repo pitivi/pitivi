@@ -23,28 +23,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkListStore" id="model1">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Standard (4:3)</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model2">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Standard PAL</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkDialog" id="project-settings-dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -353,7 +331,6 @@
                                       <object class="GtkComboBox" id="dar_combo">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="model">model1</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="renderer1"/>
                                           <attributes>
@@ -370,7 +347,6 @@
                                       <object class="GtkComboBox" id="par_combo">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="model">model2</property>
                                         <child>
                                           <object class="GtkCellRendererText" id="renderer2"/>
                                           <attributes>

@@ -37,7 +37,7 @@ class TestRender(TestCase):
         """Checks we associate file extensions to the muxers of the presets."""
         with mock.patch("pitivi.preset.xdg_data_home") as xdg_data_home:
             xdg_data_home.return_value = "/pitivi-dir-which-does-not-exist"
-            preset_manager = RenderPresetManager(system=None)
+            preset_manager = RenderPresetManager(system=None, encoders=Encoders())
             preset_manager.loadAll()
             self.assertTrue(preset_manager.presets)
             for unused_name, preset in preset_manager.presets.items():

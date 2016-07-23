@@ -459,18 +459,21 @@ def model(columns, data):
     return ret
 
 
-def set_combo_value(combo, value, default_index=-1):
-    model = combo.props.model
-    for i, row in enumerate(model):
-        if row[1] == value:
-            combo.set_active(i)
-            return
-    combo.set_active(default_index)
+def set_combo_value(combo, value):
+    def select_specific_row(model, unused_path, iter_, unused_data):
+        if value == model.get_value(iter_, 1):
+            combo.set_active_iter(iter_)
+            return True
+        return False
+
+    combo.props.model.foreach(select_specific_row, None)
 
 
 def get_combo_value(combo):
-    active = combo.get_active()
-    return combo.props.model[active][1]
+    active_iter = combo.get_active_iter()
+    if not active_iter:
+        return None
+    return combo.props.model.get_value(active_iter, 1)
 
 
 def get_value_from_model(model, key):

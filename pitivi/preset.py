@@ -482,22 +482,22 @@ class AudioPresetManager(PresetManager):
 
 class RenderPresetManager(PresetManager):
 
-    def __init__(self, system):
+    def __init__(self, system, encoders):
         default_path = get_renderpresets_dir()
         user_path = os.path.join(xdg_data_home(), 'render_presets')
         PresetManager.__init__(self, default_path, user_path, system)
+        self.encoders = encoders
 
     def _deserializePreset(self, parser):
         container = parser["container"]
         acodec = parser["acodec"]
         vcodec = parser["vcodec"]
 
-        from pitivi.render import Encoders
-        if acodec not in [fact.get_name() for fact in Encoders().aencoders]:
+        if acodec not in [fact.get_name() for fact in self.encoders.aencoders]:
             raise DeserializeException("Audio codec not available: %s" % acodec)
-        if vcodec not in [fact.get_name() for fact in Encoders().vencoders]:
+        if vcodec not in [fact.get_name() for fact in self.encoders.vencoders]:
             raise DeserializeException("Video codec not available: %s" % vcodec)
-        if container not in [fact.get_name() for fact in Encoders().muxers]:
+        if container not in [fact.get_name() for fact in self.encoders.muxers]:
             raise DeserializeException("Container not available: %s" % vcodec)
 
         try:

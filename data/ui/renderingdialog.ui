@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.19.0 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -13,64 +13,6 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">help-contents</property>
-  </object>
-  <object class="GtkListStore" id="model1">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">MP4</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model2">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">H.264</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model3">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">29.97 fps</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model4">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">AC-3</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">AAC</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="model5">
-    <columns>
-      <!-- column-name gchararray -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">6 channels (5.1)</col>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="render-dialog">
     <property name="can_focus">False</property>
@@ -230,8 +172,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="model">model1</property>
-                        <property name="active">0</property>
                         <signal name="changed" handler="_muxerComboChangedCb" swapped="no"/>
                         <child>
                           <object class="GtkCellRendererText" id="renderer1"/>
@@ -476,7 +416,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="model">model2</property>
                             <signal name="changed" handler="_videoEncoderComboChangedCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer2"/>
@@ -514,7 +453,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="model">model3</property>
                             <signal name="changed" handler="_frameRateComboChangedCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer3"/>
@@ -613,7 +551,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="model">model5</property>
                             <signal name="changed" handler="_channelsComboChangedCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer5"/>
@@ -650,7 +587,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="model">model4</property>
                             <signal name="changed" handler="_audioEncoderChangedComboCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer4"/>
@@ -688,7 +624,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
-                            <property name="model">model5</property>
                             <signal name="changed" handler="_sampleRateComboChangedCb" swapped="no"/>
                             <child>
                               <object class="GtkCellRendererText" id="renderer6"/>
@@ -823,5 +758,8 @@ This option is a good trade-off between quality of the rendered video and stabil
       <action-widget response="0">closebutton</action-widget>
       <action-widget response="0">render_button</action-widget>
     </action-widgets>
+    <child>
+      <placeholder/>
+    </child>
   </object>
 </interface>
