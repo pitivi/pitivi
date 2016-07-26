@@ -19,16 +19,22 @@
 """Accelerators info."""
 import os.path
 
+from gi.repository import GObject
 from gi.repository import Gtk
 
 from pitivi.settings import xdg_config_home
 from pitivi.utils.misc import show_user_manual
 
 
-class ShortcutsManager:
+class ShortcutsManager(GObject.Object):
     """Manager storing the shortcuts from all across the app."""
 
+    __gsignals__ = {
+        "accel-changed": (GObject.SIGNAL_RUN_LAST, None, (str,))
+    }
+
     def __init__(self, app):
+        GObject.Object.__init__(self)
         self.app = app
         self.groups = []
         self.group_titles = {}
@@ -88,6 +94,17 @@ class ShortcutsManager:
                 self.group_actions[action_prefix] = []
             self.group_actions[action_prefix].append((action, title))
 
+    def set(self, action, accelerators):
+        """Sets accelerators for a shortcut.
+
+        Args:
+            action (str): The name identifying the action, formatted like
+                "prefix.name".
+            accelerators ([str]): The array containing accelerators to be set.
+        """
+        self.app.set_accels_for_action(action, accelerators)
+        self.emit("accel-changed", action)
+
     def register_group(self, action_prefix, title):
         """Registers a group of shortcuts to be displayed.
 
@@ -117,6 +134,7 @@ class ShortcutsManager:
                 os.remove(self.config_path)
             except FileNotFoundError:
                 pass
+        self.emit("accel-changed", action)
 
 
 class ShortcutsWindow(Gtk.ShortcutsWindow):
