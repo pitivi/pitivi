@@ -664,11 +664,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                     self.debug(
                         "Could not get value for property: %s", prop.name)
             else:
-                if not values:
+                if prop.name not in values.keys():
                     # Use the default value.
                     prop_value = self.element.get_property(prop.name)
                 else:
-                    prop_value = values.get(prop.name)
+                    prop_value = values[prop.name]
 
             widget = self._makePropertyWidget(prop, prop_value)
             if isinstance(widget, ToggleWidget):
