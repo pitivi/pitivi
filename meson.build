@@ -1,9 +1,9 @@
 project('pitivi', 'c', version: '0.96.0.1')
 
-python = find_program('python3', required : true)
-intltool_merge = find_program('intltool-merge', required : true)
-itstool = find_program('itstool', required : true)
-msgfmt = find_program('msgfmt', required : true)
+python = find_program('python3')
+intltool_merge = find_program('intltool-merge')
+itstool = find_program('itstool')
+msgfmt = find_program('msgfmt')
 
 python_dep = dependency('python3', version : '>= 3.3')
 gst_dep = dependency('gstreamer-1.0', version : '>= 1.8.2')
