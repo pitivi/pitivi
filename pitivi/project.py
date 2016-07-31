@@ -876,17 +876,10 @@ class Project(Loggable, GES.Project):
     @aencoder.setter
     def aencoder(self, value):
         if self.audio_profile.get_preset_name() != value and value:
-            feature = Gst.Registry.get().lookup_feature(value)
-            if feature is None:
-                self.error("%s not in registry", value)
-            else:
-                for template in feature.get_static_pad_templates():
-                    if template.name_template == "src":
-                        audiotype = template.get_caps()[0].to_string()
-                        break
-                self.audio_profile.set_format(Gst.Caps(audiotype))
+            caps = self._get_caps_from_feature(value)
+            if caps:
+                self.audio_profile.set_format(caps)
             self.audio_profile.set_preset_name(value)
-
             self._emitChange("rendering-settings-changed", "aencoder", value)
 
     @property
@@ -896,18 +889,10 @@ class Project(Loggable, GES.Project):
     @vencoder.setter
     def vencoder(self, value):
         if self.video_profile.get_preset_name() != value and value:
-            feature = Gst.Registry.get().lookup_feature(value)
-            if feature is None:
-                self.error("%s not in registry", value)
-            else:
-                for template in feature.get_static_pad_templates():
-                    if template.name_template == "src":
-                        videotype = template.get_caps()[0].to_string()
-                        break
-                self.video_profile.set_format(Gst.Caps(videotype))
-
+            caps = self._get_caps_from_feature(value)
+            if caps:
+                self.video_profile.set_format(caps)
             self.video_profile.set_preset_name(value)
-
             self._emitChange("rendering-settings-changed", "vencoder", value)
 
     @property
@@ -917,18 +902,23 @@ class Project(Loggable, GES.Project):
     @muxer.setter
     def muxer(self, value):
         if self.container_profile.get_preset_name() != value and value:
-            feature = Gst.Registry.get().lookup_feature(value)
-            if feature is None:
-                self.error("%s not in registry", value)
-            else:
-                for template in feature.get_static_pad_templates():
-                    if template.name_template == "src":
-                        muxertype = template.get_caps()[0].to_string()
-                        break
-                self.container_profile.set_format(Gst.Caps(muxertype))
+            caps = self._get_caps_from_feature(value)
+            if caps:
+                self.container_profile.set_format(caps)
             self.container_profile.set_preset_name(value)
-
             self._emitChange("rendering-settings-changed", "muxer", value)
+
+    def _get_caps_from_feature(self, name):
+        """Gets the caps for the source static pad template of a feature."""
+        feature = Gst.Registry.get().lookup_feature(name)
+        if not feature:
+            self.error("%s not in registry", name)
+            return None
+        for template in feature.get_static_pad_templates():
+            if template.name_template == "src":
+                return Gst.Caps(template.get_caps()[0].to_string())
+        self.error("%s has no source static pad templates", name)
+        return None
 
     @property
     def render_scale(self):
