@@ -38,8 +38,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/ninja-build/ninja/releases/download/v1.6.0/ninja-linux.zip",
-                    "sha256": "846ebceec3f71bb32d145482e5ce62c6731449ab399d3202b47baf8ae63a9a52"
+                    "url": "https://github.com/ninja-build/ninja/releases/download/v1.7.1/ninja-linux.zip",
+                    "sha256": "eb541331792ac75ade60a7c0d7737a4851f2a131e0143b38c059dbfe731fb5a4"
                 },
                 {
                     "type": "file",
@@ -241,7 +241,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.32"],
+            "config-opts": ["--module=meson==0.33"],
             "sources": [
                 {
                     "type": "file",
