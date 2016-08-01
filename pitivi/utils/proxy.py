@@ -350,7 +350,15 @@ class ProxyManager(GObject.Object, Loggable):
 
         self.__emitProgress(asset, asset.creation_progress)
 
-    def __assetQueued(self, asset):
+    def is_asset_queued(self, asset):
+        """Returns whether the specified asset is queued for transcoding.
+
+        Args:
+            asset (GES.Asset): The asset to check.
+
+        Returns:
+            bool: True iff the asset is being transcoded or pending.
+        """
         all_transcoders = self.__running_transcoders + self.__pending_transcoders
         for transcoder in all_transcoders:
             if asset.props.id == transcoder.props.src_uri:
@@ -393,7 +401,7 @@ class ProxyManager(GObject.Object, Loggable):
             self.__pending_transcoders.append(transcoder)
 
     def cancelJob(self, asset):
-        if not self.__assetQueued(asset):
+        if not self.is_asset_queued(asset):
             return
 
         for transcoder in self.__running_transcoders:
@@ -433,7 +441,7 @@ class ProxyManager(GObject.Object, Loggable):
             self.emit("proxy-ready", asset, None)
             return True
 
-        if self.__assetQueued(asset):
+        if self.is_asset_queued(asset):
             return True
 
         proxy_uri = self.getProxyUri(asset)

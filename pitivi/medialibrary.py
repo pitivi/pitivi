@@ -185,22 +185,22 @@ class ThumbnailsDecorator(Loggable):
             EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
 
-    def __init__(self, thumbs, asset):
+    def __init__(self, thumbs, asset, proxy_manager):
         Loggable.__init__(self)
-        self.src_64 = thumbs[0]
-        self.src_128 = thumbs[1]
-
+        self.src_64, self.src_128 = thumbs
         self.__asset = asset
+        self.proxy_manager = proxy_manager
         self.decorate()
 
     def __setState(self):
         asset = self.__asset
         target = asset.get_proxy_target()
         if target and not target.get_error():
+            # The asset is a proxy.
             self.state = self.PROXIED
         elif asset.proxying_error:
             self.state = self.ASSET_PROXYING_ERROR
-        elif not asset.creation_progress == 100:
+        elif self.proxy_manager.is_asset_queued(asset):
             self.state = self.IN_PROGRESS
         else:
             self.state = self.NO_PROXY
@@ -214,10 +214,8 @@ class ThumbnailsDecorator(Loggable):
 
         self.thumb_64 = self.src_64.copy()
         self.thumb_128 = self.src_128.copy()
-        for i, thumb in enumerate([self.thumb_64, self.thumb_128]):
-            emblems = self.EMBLEMS[self.state]
-            src = emblems[i]
-
+        for thumb, src in zip([self.thumb_64, self.thumb_128],
+                              self.EMBLEMS[self.state]):
             # We need to set dest_y == offset_y for the source image
             # not to be cropped, that API is weird.
             if thumb.get_height() < src.get_height():
@@ -808,7 +806,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             thumb_64 = self._getIcon("audio-x-generic")
             thumb_128 = self._getIcon("audio-x-generic", None, LARGE_SIZE)
 
-        thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset)
+        thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset,
+                                               self.app.proxy_manager)
         if info.get_duration() == Gst.CLOCK_TIME_NONE:
             duration = ''
         else:
