@@ -26,9 +26,7 @@ py_fill_surface (PyObject * self, PyObject * args)
   float currentPixel;
   int samplesInAccum;
   float x = 0.;
-  float lastX = 0.;
   double accum;
-  double lastAccum = 0.;
 
   if (!PyArg_ParseTuple (args, "O!ii", &PyList_Type, &samples, &width, &height))
     return NULL;
@@ -66,11 +64,9 @@ py_fill_surface (PyObject * self, PyObject * args)
     if (currentPixel > 1.0) {
       accum /= samplesInAccum;
       cairo_line_to (ctx, x, height - accum);
-      lastAccum = accum;
       accum = 0;
       currentPixel -= 1.0;
       samplesInAccum = 0;
-      lastX = x;
     }
     x += pixelsPerSample;
   }
