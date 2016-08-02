@@ -11,7 +11,6 @@
     "rename-appdata-file": "pitivi.appdata.xml",
     "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
-    "desktop-file-name-prefix": "(Daily) ",
     "copy-icon": true,
     "build-options" : {
         "cflags": "-O0 -g",

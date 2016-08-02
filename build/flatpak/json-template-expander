@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Script for creating a Flatpak manifest out of a template."""
+# pylint: disable=invalid-name
 
 import json
 import os
@@ -6,11 +8,8 @@ import subprocess
 import sys
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 5:
-        print("call with: %s <template_file> <outfile> <basedir> <gst-version> <branchname>" %
-              sys.argv[0])
-
+def generate():
+    """Creates the manifest file."""
     basedir = sys.argv[3]
     gst_version = sys.argv[4]
     branchname = sys.argv[5]
@@ -20,9 +19,9 @@ if __name__ == "__main__":
     if branchname == "stable":
         del template["desktop-file-name-prefix"]
     elif branchname == "master":
-        template["desktop-file-name-prefix"] = "(Rolling)"
+        template["desktop-file-name-prefix"] = "(Rolling) "
     else:
-        template["desktop-file-name-prefix"] = branchname
+        template["desktop-file-name-prefix"] = "(%s) " % branchname
 
     print("-> Generating %s against GStreamer %s" % (sys.argv[2], gst_version))
 
@@ -54,3 +53,11 @@ if __name__ == "__main__":
 
     with open(sys.argv[2], "w") as of:
         print(json.dumps(template, indent=4), file=of)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 5:
+        print("call with: %s <template_file> <outfile> <basedir> <gst-version> <branchname>" %
+              sys.argv[0])
+        exit(1)
+
+    generate()
