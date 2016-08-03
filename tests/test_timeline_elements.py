@@ -145,3 +145,47 @@ class TestVideoSourceScaling(BaseTestTimeline):
             "posy": 140}
         self.assertEqual(video_source.ui.default_position,
                          expected_default_position)
+
+    def test_rotation(self):
+        timeline = self.createTimeline()
+        project = timeline.app.project_manager.current_project
+
+        clip = self.addClipsSimple(timeline, 1)[0]
+
+        video_source = clip.find_track_element(None, GES.VideoUriSource)
+        sinfo = video_source.get_asset().get_stream_info()
+
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(sinfo.get_width(), 960)
+        self.assertEqual(sinfo.get_height(), 400)
+        self.assertEqual(width, 960)
+        self.assertEqual(height, 400)
+
+        videoflip = GES.Effect.new("videoflip")
+        videoflip.set_child_property("method", 1)  # clockwise
+
+        clip.add(videoflip)
+        # The video is flipped 90 degrees
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(width, 167)
+        self.assertEqual(height, 400)
+
+        videoflip.props.active = False
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(width, 960)
+        self.assertEqual(height, 400)
+
+        videoflip.props.active = True
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(width, 167)
+        self.assertEqual(height, 400)
+
+        clip.remove(videoflip)
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(width, 960)
+        self.assertEqual(height, 400)

@@ -634,11 +634,33 @@ class VideoSource(TimelineElement):
         project.connect("video-size-changed",
                         self._project_video_size_changed_cb)
 
+        self.__videoflip = None
         self.__retrieve_project_size()
         self.default_position = self._get_default_position()
 
         if project.loaded:
             self.__apply_default_position()
+
+        parent = element.get_parent()
+        parent.connect("child-added", self.__parent_child_added_cb)
+        parent.connect("child-removed", self.__parent_child_removed_cb)
+
+    def __parent_child_added_cb(self, parent, child):
+        project = self.timeline.app.project_manager.current_project
+        self.__apply_new_size_if_needed(project)
+
+    def __parent_child_removed_cb(self, parent, child):
+        project = self.timeline.app.project_manager.current_project
+        if child == self.__videoflip:
+            self.__videoflip = None
+            self.__apply_new_size_if_needed(project)
+            misc.disconnectAllByFunc(child, self.__videoflip_changed_cb)
+
+    def __videoflip_changed_cb(self, unused_child=None,
+                               unused_element=None,
+                               unused_pspec=None):
+        project = self.timeline.app.project_manager.current_project
+        self.__apply_new_size_if_needed(project)
 
     def __retrieve_project_size(self):
         project = self.timeline.app.project_manager.current_project
@@ -647,6 +669,9 @@ class VideoSource(TimelineElement):
         self._project_height = project.videoheight
 
     def _project_video_size_changed_cb(self, project):
+        self.__apply_new_size_if_needed(project)
+
+    def __apply_new_size_if_needed(self, project):
         using_defaults = True
         for name, default_value in self.default_position.items():
             res, value = self._ges_elem.get_child_property(name)
@@ -672,6 +697,29 @@ class VideoSource(TimelineElement):
         video_source = self._ges_elem
         sinfo = video_source.get_asset().get_stream_info()
 
+        asset_width = sinfo.get_width()
+        asset_height = sinfo.get_height()
+        parent = video_source.get_parent()
+        if not self.__videoflip:
+            for track_element in parent.find_track_elements(
+                    None, GES.TrackType.VIDEO, GES.BaseEffect):
+
+                res, videoflip, unused_pspec = track_element.lookup_child(
+                    "GstVideoFlip::method")
+                if res:
+                    self.__videoflip = track_element
+                    track_element.connect("deep-notify",
+                                          self.__videoflip_changed_cb)
+                    track_element.connect("notify::active",
+                                          self.__videoflip_changed_cb)
+
+        if self.__videoflip:
+            res, method = self.__videoflip.get_child_property("method")
+            assert res
+            if "clockwise" in method.value_nick and self.__videoflip.props.active:
+                asset_width = sinfo.get_height()
+                asset_height = sinfo.get_width()
+
         # Find the biggest size of the video inside the
         # final view (project size) keeping the aspect ratio
         scale = max(self._project_width / asset_width,
@@ -681,9 +729,6 @@ class VideoSource(TimelineElement):
             # But make sure it is never bigger than the project!
             scale = min(self._project_width / asset_width,
                         self._project_height / asset_height)
-
-        asset_width = sinfo.get_width()
-        asset_height = sinfo.get_height()
 
         width = asset_width * scale
         height = asset_height * scale
