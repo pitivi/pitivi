@@ -618,8 +618,84 @@ class VideoBackground(Gtk.Box):
 
 
 class VideoSource(TimelineElement):
+    """Widget representing a GES.VideoSource.
+
+    Attributes:
+        default_position (dict): The default position (x, y, width, height)
+                                 of the VideoSource.
+    """
 
     __gtype_name__ = "PitiviVideoSource"
+
+    def __init__(self, element, timeline):
+        super().__init__(element, timeline)
+
+        project = self.timeline.app.project_manager.current_project
+        project.connect("video-size-changed",
+                        self._project_video_size_changed_cb)
+
+        self.__retrieve_project_size()
+        self.default_position = self._get_default_position()
+
+        if project.loaded:
+            self.__apply_default_position()
+
+    def __retrieve_project_size(self):
+        project = self.timeline.app.project_manager.current_project
+
+        self._project_width = project.videowidth
+        self._project_height = project.videoheight
+
+    def _project_video_size_changed_cb(self, project):
+        using_defaults = True
+        for name, default_value in self.default_position.items():
+            res, value = self._ges_elem.get_child_property(name)
+            assert res
+            if value != default_value:
+                using_defaults = False
+                break
+
+        self.__retrieve_project_size()
+        self.default_position = self._get_default_position()
+        if using_defaults:
+            self.debug("Applying default position")
+            self.__apply_default_position()
+        else:
+            self.debug("Not using defaults")
+
+    def __apply_default_position(self):
+        video_source = self._ges_elem
+        for name, value in self.default_position.items():
+            video_source.set_child_property(name, value)
+
+    def _get_default_position(self):
+        video_source = self._ges_elem
+        sinfo = video_source.get_asset().get_stream_info()
+
+        # Find the biggest size of the video inside the
+        # final view (project size) keeping the aspect ratio
+        scale = max(self._project_width / asset_width,
+                    self._project_height / asset_height)
+        if asset_width * scale > self._project_width or \
+                asset_height * scale > self._project_height:
+            # But make sure it is never bigger than the project!
+            scale = min(self._project_width / asset_width,
+                        self._project_height / asset_height)
+
+        asset_width = sinfo.get_width()
+        asset_height = sinfo.get_height()
+
+        width = asset_width * scale
+        height = asset_height * scale
+        x = max(0, (self._project_width - width) / 2)
+        y = max(0, (self._project_height - height) / 2)
+
+        self.debug("video scale is %f -> %dx%d", scale, width, height)
+
+        return {"posx": round(x),
+                "posy": round(y),
+                "width": round(width),
+                "height": round(height)}
 
     def _getBackground(self):
         return VideoBackground()
@@ -633,6 +709,12 @@ class TitleSource(VideoSource):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
+
+    def _get_default_position(self):
+        return {"posx": 0,
+                "posy": 0,
+                "width": self._project_width,
+                "height": self._project_height}
 
 
 class VideoUriSource(VideoSource):

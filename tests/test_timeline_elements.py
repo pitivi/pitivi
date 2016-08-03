@@ -89,3 +89,59 @@ class TestKeyframeCurve(BaseTestTimeline):
         # Make sure this does not raise any exception
         timeline = self.createTimeline()
         timeline.parent._keyframe_cb(None, None)
+
+
+class TestVideoSourceScaling(BaseTestTimeline):
+    def test_video_source_scaling(self):
+        timeline = self.createTimeline()
+        project = timeline.app.project_manager.current_project
+
+        clip = self.addClipsSimple(timeline, 1)[0]
+
+        video_source = clip.find_track_element(None, GES.VideoUriSource)
+        sinfo = video_source.get_asset().get_stream_info()
+
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(sinfo.get_width(), 960)
+        self.assertEqual(sinfo.get_height(), 400)
+        self.assertEqual(project.videowidth, sinfo.get_width())
+        self.assertEqual(project.videoheight, sinfo.get_height())
+        self.assertEqual(project.videowidth, width)
+        self.assertEqual(project.videoheight, height)
+
+        project.videowidth = sinfo.get_width() * 2
+        project.videoheight = sinfo.get_height() * 2
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(project.videowidth, width)
+        self.assertEqual(project.videoheight, height)
+
+        project.videowidth = 150
+        project.videoheight = 200
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+
+        expected_width = project.videowidth
+        expected_height = int(sinfo.get_height() * (project.videowidth / sinfo.get_width()))
+        self.assertEqual(width, expected_width)
+        self.assertEqual(height, expected_height)
+
+        video_source.set_child_property("posx", 50)
+        width = video_source.get_child_property("width")[1]
+        height = video_source.get_child_property("height")[1]
+        self.assertEqual(width, expected_width)
+        self.assertEqual(height, expected_height)
+
+        project.videowidth = 1920
+        project.videoheight = 1080
+        self.assertEqual(width, expected_width)
+        self.assertEqual(height, expected_height)
+
+        expected_default_position = {
+            "width": 1920,
+            "height": 800,
+            "posx": 0,
+            "posy": 140}
+        self.assertEqual(video_source.ui.default_position,
+                         expected_default_position)

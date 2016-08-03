@@ -45,7 +45,8 @@ class BaseTestTimeline(common.TestCase):
         timeline_container.setProject(project)
 
         timeline = timeline_container.timeline
-        timeline.get_parent = mock.MagicMock()
+        timeline.app.project_manager.current_project = project
+        timeline.get_parent = mock.MagicMock(return_value=timeline_container)
 
         timeline.app.settings.leftClickAlsoSeeks = False
 

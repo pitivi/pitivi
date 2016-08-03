@@ -541,7 +541,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.source = None
         self._selected_clip = None
         self.spin_buttons = {}
-        self.default_values = {}
         self.set_label(_("Transformation"))
 
         self.builder = Gtk.Builder()
@@ -577,7 +576,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
     def _defaultValuesCb(self, unused_widget):
         for name, spinbtn in list(self.spin_buttons.items()):
-            spinbtn.set_value(self.default_values[name])
+            spinbtn.set_value(self.source.ui.default_position[name])
 
     def __sourcePropertyChangedCb(self, unused_source, unused_element, param):
         try:
@@ -594,12 +593,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         for name, spinbtn in list(self.spin_buttons.items()):
             res, value = self.source.get_child_property(name)
             assert res
-            if name == "width":
-                self.default_values[name] = self._project.videowidth
-            elif name == "height":
-                self.default_values[name] = self._project.videoheight
-            else:
-                self.default_values[name] = 0
             spinbtn.set_value(value)
 
     def __setupSpinButton(self, widget_name, property_name):

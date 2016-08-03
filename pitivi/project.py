@@ -509,6 +509,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.pipeline.connect("died", self._projectPipelineDiedCb)
         project.setModificationState(False)
         self.emit("new-project-loaded", self.current_project)
+        project.loaded = True
         self.time_loaded = time.time()
 
         return True
@@ -587,6 +588,7 @@ class ProjectManager(GObject.Object, Loggable):
             self.debug("Project is obsolete %s", project.props.uri)
             return
         self.emit("new-project-loaded", project)
+        project.loaded = True
         self.time_loaded = time.time()
 
 
@@ -1122,7 +1124,6 @@ class Project(Loggable, GES.Project):
         self._ensureTracks()
         self.ges_timeline.props.auto_transition = True
         self._ensureLayer()
-        self.loaded = True
 
         if self.scenario is not None:
             return
