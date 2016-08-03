@@ -53,6 +53,8 @@ from pitivi.utils.widgets import GstElementSettingsWidget
 
 AUDIO_EFFECTS_CATEGORIES = ()
 
+ALLOWED_ONLY_ONCE_EFFECTS = ['videoflip']
+
 VIDEO_EFFECTS_CATEGORIES = (
     (_("Colors"), (
         # Mostly "serious" stuff that relates to correction/adjustments

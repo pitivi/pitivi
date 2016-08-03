@@ -27,6 +27,7 @@ from gi.repository import Gtk
 from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
+from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
 from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
@@ -308,9 +309,19 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def addEffectToClip(self, clip, factory_name, priority=None):
         """Adds the specified effect if it can be applied to the clip."""
+        if factory_name in ALLOWED_ONLY_ONCE_EFFECTS:
+            for effect in clip.find_track_elements(None, GES.TrackType.VIDEO,
+                                                   GES.BaseEffect):
+                for elem in effect.get_nleobject().iterate_recurse():
+                    if elem.get_factory().get_name() == factory_name:
+                        self.error("Not adding %s as it would be duplicate"
+                                   " and this is not allowed.", factory_name)
+                        # TODO Let the user know about why it did not work.
+                        return effect
 
         model = self.treeview.get_model()
         media_type = self.app.effects.getInfo(factory_name).media_type
+
         for track_element in clip.get_children(False):
             track_type = track_element.get_track_type()
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
@@ -325,6 +336,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                         clip.set_top_effect_priority(effect, priority)
                 pipeline.commit_timeline()
                 break
+        return None
 
     def addEffectToCurrentSelection(self, factory_name):
         """Adds an effect to the current selection.
