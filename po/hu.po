@@ -5,23 +5,23 @@
 # Attila Hammer <hammera at pickup dot hu>, 2010, 2014.
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2011, 2012, 2014, 2015, 2016.
 # Marton Kun-Szabo <kunszabomarton at hotmail dot com>, 2010.
-# Balázs Úr <urbalazs at gmail dot com>, 2013, 2014, 2015.
+# Balázs Úr <urbalazs at gmail dot com>, 2013, 2014, 2015, 2016.
 # Meskó Balázs <meskobalazs at gmail dot com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-07-29 14:32+0000\n"
-"PO-Revision-Date: 2016-07-31 16:57+0200\n"
-"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
+"POT-Creation-Date: 2016-08-01 17:08+0000\n"
+"PO-Revision-Date: 2016-08-05 00:09+0200\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <openscope at gmail dot com>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1
 msgid "Pitivi"
@@ -104,7 +104,7 @@ msgstr "Automatikus igazítás kezdése"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Automatikus igazítás elvégzése</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:926
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1039
 msgid "Estimating..."
 msgstr "Becslés…"
 
@@ -124,7 +124,7 @@ msgstr "_Alkalmazás projektre"
 msgid "Size (pixels):"
 msgstr "Méret (képpont):"
 
-#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:26
+#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:20
 msgid "Frame rate:"
 msgstr "Képkockasebesség:"
 
@@ -137,13 +137,13 @@ msgstr "Képpontméretarány:"
 msgid "Video:"
 msgstr "Videó:"
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:17
-#: ../data/ui/renderingdialog.ui.h:28
+#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:15
+#: ../data/ui/renderingdialog.ui.h:22
 msgid "Channels:"
 msgstr "Csatornák:"
 
-#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:18
-#: ../data/ui/renderingdialog.ui.h:29
+#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:16
+#: ../data/ui/renderingdialog.ui.h:23
 msgid "Sample rate:"
 msgstr "Mintavételezési gyakoriság:"
 
@@ -208,7 +208,7 @@ msgstr "A(z) <element> tulajdonságai"
 msgid "Reset all"
 msgstr "Összes alaphelyzetbe"
 
-#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:5
+#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:3
 msgid "OK"
 msgstr "OK"
 
@@ -259,7 +259,7 @@ msgstr "Jelenlegi képkocka exportálása…"
 msgid "Edit the project settings"
 msgstr "A projekt beállításainak szerkesztése"
 
-#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:3
+#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:1
 #: ../pitivi/medialibrary.py:280
 msgid "Project Settings"
 msgstr "Projektbeállítások"
@@ -349,7 +349,7 @@ msgstr ""
 "Minden beállítás visszaállítása a korábbi (a Beállítások ablak megnyitása "
 "előtti) értékére"
 
-#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:2
 #: ../data/ui/renderingprogress.ui.h:6
 msgid "Close"
 msgstr "Bezárás"
@@ -358,15 +358,7 @@ msgstr "Bezárás"
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Néhány változtatás nem lép életbe a Pitivi újraindításáig"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:582
-msgid "Standard (4:3)"
-msgstr "Standard (4:3)"
-
-#: ../data/ui/projectsettings.ui.h:2
-msgid "Standard PAL"
-msgstr "Standard PAL"
-
-#: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingprogress.ui.h:4
+#: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:4
 #: ../pitivi/mainwindow.py:669 ../pitivi/mainwindow.py:786
 #: ../pitivi/mainwindow.py:924 ../pitivi/mainwindow.py:1094
 #: ../pitivi/mainwindow.py:1146 ../pitivi/mainwindow.py:1199
@@ -374,173 +366,155 @@ msgstr "Standard PAL"
 msgid "Cancel"
 msgstr "Mégse"
 
-#: ../data/ui/projectsettings.ui.h:6 ../data/ui/renderingdialog.ui.h:16
+#: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingdialog.ui.h:10
 msgid "Preset:"
 msgstr "Előbeállítás:"
 
-#: ../data/ui/projectsettings.ui.h:7
+#: ../data/ui/projectsettings.ui.h:5
 msgid "Size:"
 msgstr "Méret:"
 
-#: ../data/ui/projectsettings.ui.h:8
+#: ../data/ui/projectsettings.ui.h:6
 msgid "pixels"
 msgstr "képpont"
 
-#: ../data/ui/projectsettings.ui.h:9
+#: ../data/ui/projectsettings.ui.h:7
 msgid "Link"
 msgstr "Összekapcsolás"
 
-#: ../data/ui/projectsettings.ui.h:10
+#: ../data/ui/projectsettings.ui.h:8
 msgid "Aspect Ratio:"
 msgstr "Méretarány:"
 
 #. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
-#: ../data/ui/projectsettings.ui.h:12
+#: ../data/ui/projectsettings.ui.h:10
 msgid "Display aspect ratio"
 msgstr "Kijelző-méretarány"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:12
 msgid "Pixel aspect ratio"
 msgstr "Képpontméretarány"
 
-#: ../data/ui/projectsettings.ui.h:15
+#: ../data/ui/projectsettings.ui.h:13
 msgid "Frame Rate:"
 msgstr "Képkockasebesség:"
 
-#: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:27
+#: ../data/ui/projectsettings.ui.h:14 ../data/ui/renderingdialog.ui.h:21
 #: ../pitivi/effects.py:179
 msgid "Video"
 msgstr "Videó"
 
-#: ../data/ui/projectsettings.ui.h:19 ../data/ui/renderingdialog.ui.h:30
+#: ../data/ui/projectsettings.ui.h:17 ../data/ui/renderingdialog.ui.h:24
 #: ../pitivi/effects.py:179
 msgid "Audio"
 msgstr "Hang"
 
-#: ../data/ui/projectsettings.ui.h:20
+#: ../data/ui/projectsettings.ui.h:18
 msgid "Author:"
 msgstr "Szerző:"
 
-#: ../data/ui/projectsettings.ui.h:21
+#: ../data/ui/projectsettings.ui.h:19
 msgid "Project title:"
 msgstr "Projekt címe:"
 
-#: ../data/ui/projectsettings.ui.h:22
+#: ../data/ui/projectsettings.ui.h:20
 msgid "Year:"
 msgstr "Év:"
 
-#: ../data/ui/projectsettings.ui.h:23
+#: ../data/ui/projectsettings.ui.h:21
 msgid "1900"
 msgstr "1900"
 
-#: ../data/ui/projectsettings.ui.h:24
+#: ../data/ui/projectsettings.ui.h:22
 msgid "Info"
 msgstr "Információk"
 
-#: ../data/ui/renderingdialog.ui.h:1
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/renderingdialog.ui.h:2
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/renderingdialog.ui.h:3
-msgid "29.97 fps"
-msgstr "29.97 fps"
-
-#: ../data/ui/renderingdialog.ui.h:4
-msgid "AC-3"
-msgstr "AC-3"
-
-#: ../data/ui/renderingdialog.ui.h:5
-msgid "AAC"
-msgstr "AAC"
-
-#: ../data/ui/renderingdialog.ui.h:6
-msgid "6 channels (5.1)"
-msgstr "6 csatorna (5.1)"
-
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:426
+#: ../data/ui/renderingdialog.ui.h:1 ../pitivi/mainwindow.py:426
 msgid "Render"
 msgstr "Renderelés"
 
-#: ../data/ui/renderingdialog.ui.h:9
+#: ../data/ui/renderingdialog.ui.h:3
 msgid "Folder"
 msgstr "Mappa"
 
-#: ../data/ui/renderingdialog.ui.h:10
+#: ../data/ui/renderingdialog.ui.h:4
 msgid "Folder:"
 msgstr "Mappa:"
 
-#: ../data/ui/renderingdialog.ui.h:11
+#: ../data/ui/renderingdialog.ui.h:5
 msgid "File name:"
 msgstr "Fájlnév:"
 
-#: ../data/ui/renderingdialog.ui.h:12
+#: ../data/ui/renderingdialog.ui.h:6
 msgid "File name"
 msgstr "Fájlnév"
 
-#: ../data/ui/renderingdialog.ui.h:13
+#: ../data/ui/renderingdialog.ui.h:7
 msgid "Container format:"
 msgstr "Konténerformátum:"
 
-#: ../data/ui/renderingdialog.ui.h:14
+#: ../data/ui/renderingdialog.ui.h:8
 msgid "Container format"
 msgstr "Konténerformátum"
 
-#: ../data/ui/renderingdialog.ui.h:15 ../data/ui/startupwizard.ui.h:5
+#: ../data/ui/renderingdialog.ui.h:9 ../data/ui/startupwizard.ui.h:5
 #: ../pitivi/mainwindow.py:468
 msgid "Help"
 msgstr "Súgó"
 
-#: ../data/ui/renderingdialog.ui.h:17
+#: ../data/ui/renderingdialog.ui.h:11
 msgid "Scale:"
 msgstr "Méretezés:"
 
-#: ../data/ui/renderingdialog.ui.h:18
+#: ../data/ui/renderingdialog.ui.h:12
 msgid "1.0"
 msgstr "1.0"
 
-#: ../data/ui/renderingdialog.ui.h:19
+#: ../data/ui/renderingdialog.ui.h:13
 msgid "Scale"
 msgstr "Méretezés"
 
-#: ../data/ui/renderingdialog.ui.h:20
+#: ../data/ui/renderingdialog.ui.h:14
 msgid "1000 x 1000"
 msgstr "1000 x 1000"
 
-#: ../data/ui/renderingdialog.ui.h:21
+#: ../data/ui/renderingdialog.ui.h:15
 msgid "Height"
 msgstr "Magasság"
 
-#: ../data/ui/renderingdialog.ui.h:22
+#: ../data/ui/renderingdialog.ui.h:16
 msgid "Project Settings..."
 msgstr "Projektbeállítások…"
 
-#: ../data/ui/renderingdialog.ui.h:23
+#: ../data/ui/renderingdialog.ui.h:17
 msgid "Advanced..."
 msgstr "Speciális…"
 
-#: ../data/ui/renderingdialog.ui.h:24
+#: ../data/ui/renderingdialog.ui.h:18
 msgid "Codec:"
 msgstr "Kodek:"
 
-#: ../data/ui/renderingdialog.ui.h:25
+#: ../data/ui/renderingdialog.ui.h:19
 msgid "Framerate"
 msgstr "Képkockasebesség"
 
-#: ../data/ui/renderingdialog.ui.h:31
+#: ../data/ui/renderingdialog.ui.h:25
 msgid "Automatically render from proxy files"
 msgstr "Automatikus renderelés a segédfájlokból"
 
-#: ../data/ui/renderingdialog.ui.h:32
+#: ../data/ui/renderingdialog.ui.h:26
+#| msgid ""
+#| "Use proxy files if they are available and the source asset media format "
+#| "is not officially supported.\n"
+#| "\n"
+#| "This option is a good trade of between quality of the rendered video and "
+#| "stability."
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
 "\n"
-"This option is a good trade of between quality of the rendered video and "
+"This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
 "A segédfájlok használata, ha elérhetőek, és a forrás médiaformátuma "
@@ -549,11 +523,11 @@ msgstr ""
 "Ez a beállítás egy jó kompromisszum a renderelt videó minősége és a "
 "stabilitás között."
 
-#: ../data/ui/renderingdialog.ui.h:35
+#: ../data/ui/renderingdialog.ui.h:29
 msgid "Always render from proxy files"
 msgstr "Mindig a segédfájlokból rendereljen"
 
-#: ../data/ui/renderingdialog.ui.h:36
+#: ../data/ui/renderingdialog.ui.h:30
 msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
@@ -561,11 +535,11 @@ msgstr ""
 "Minden klip renderelése a segédfájlokból. Némi minőségromlás történhet a "
 "renderelési folyamat során."
 
-#: ../data/ui/renderingdialog.ui.h:37
+#: ../data/ui/renderingdialog.ui.h:31
 msgid "Never render from proxy files"
 msgstr "Soha ne rendereljen segédfájlokból"
 
-#: ../data/ui/renderingdialog.ui.h:38
+#: ../data/ui/renderingdialog.ui.h:32
 msgid ""
 "Always use source assets for rendering. It is the best choice for the "
 "quality of the rendered video, but you might hit some bugs because of the "
@@ -941,7 +915,7 @@ msgstr "Újra"
 #: ../pitivi/mainwindow.py:418 ../pitivi/mainwindow.py:780
 #: ../pitivi/mainwindow.py:1095 ../pitivi/mainwindow.py:1147
 #: ../pitivi/mainwindow.py:1200 ../pitivi/preset.py:106
-#: ../pitivi/project.py:159
+#: ../pitivi/project.py:156
 msgid "Save"
 msgstr "Mentés"
 
@@ -1054,7 +1028,7 @@ msgstr "Minden támogatott formátum"
 msgid "Unable to save project \"%s\""
 msgstr "Nem menthető a(z) „%s” projekt"
 
-#: ../pitivi/mainwindow.py:782 ../pitivi/project.py:158
+#: ../pitivi/mainwindow.py:782 ../pitivi/project.py:155
 msgid "Save as..."
 msgstr "Mentés másként…"
 
@@ -1144,7 +1118,7 @@ msgstr "Exportálás ide…"
 
 #: ../pitivi/mainwindow.py:1106 ../pitivi/mainwindow.py:1156
 #: ../pitivi/mainwindow.py:1203 ../pitivi/mainwindow.py:1231
-#: ../pitivi/render.py:360
+#: ../pitivi/render.py:426
 msgid "Untitled"
 msgstr "Névtelen"
 
@@ -1349,11 +1323,11 @@ msgstr "Új projekt"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:142 ../pitivi/render.py:650
+#: ../pitivi/project.py:139 ../pitivi/render.py:763
 msgid "Sorry, something didn’t work right."
 msgstr "Elnézést, valami nem működött rendesen."
 
-#: ../pitivi/project.py:145
+#: ../pitivi/project.py:142
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1379,11 +1353,11 @@ msgstr ""
 "Mielőtt bezárja a Pitivi-t, mentheti a jelenlegi projektfájl módosításait, "
 "vagy mentheti más fájlként."
 
-#: ../pitivi/project.py:160
+#: ../pitivi/project.py:157
 msgid "Close Pitivi"
 msgstr "Pitivi bezárása"
 
-#: ../pitivi/project.py:230
+#: ../pitivi/project.py:227
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1393,15 +1367,15 @@ msgstr ""
 "médiafájlt próbált hozzáadni a projektjéhez, akkor használja inkább az "
 "„Importálás” gombot."
 
-#: ../pitivi/project.py:252
+#: ../pitivi/project.py:249
 msgid "Ignore backup"
 msgstr "Biztonsági mentés mellőzése"
 
-#: ../pitivi/project.py:253
+#: ../pitivi/project.py:250
 msgid "Restore from backup"
 msgstr "Helyreállítás mentésből"
 
-#: ../pitivi/project.py:269
+#: ../pitivi/project.py:266
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1414,20 +1388,20 @@ msgstr ""
 "\n"
 "Szeretné inkább ezt betölteni?"
 
-#: ../pitivi/project.py:345
+#: ../pitivi/project.py:342
 msgid "You do not have permissions to write to this folder."
 msgstr "Nincs jogosultsága ebbe a mappába írni."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:378
+#: ../pitivi/project.py:375
 msgid "project"
 msgstr "projekt"
 
-#: ../pitivi/project.py:673
+#: ../pitivi/project.py:670
 msgid "Pitivi encoding profile"
 msgstr "Pitivi kódolás profil"
 
-#: ../pitivi/render.py:271
+#: ../pitivi/render.py:337
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Renderelés — %d%% kész"
@@ -1438,20 +1412,27 @@ msgstr "Renderelés — %d%% kész"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: ../pitivi/render.py:280
+#: ../pitivi/render.py:346
 #, python-format
 msgid "About %s left"
 msgstr "Körülbelül %s van hátra"
 
-#: ../pitivi/render.py:323
+#: ../pitivi/render.py:389
 msgid "Currently rendering"
 msgstr "Jelenleg renderelés alatt"
 
-#: ../pitivi/render.py:560
+#. Translators: This item appears in a combobox's popup and
+#. contains as children the unsupported (but still available)
+#. muxers and encoders.
+#: ../pitivi/render.py:626
+msgid "Unsupported"
+msgstr "Nem támogatott"
+
+#: ../pitivi/render.py:660
 msgid "A file name is required."
 msgstr "Fájlnév szükséges."
 
-#: ../pitivi/render.py:562
+#: ../pitivi/render.py:662
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1459,18 +1440,18 @@ msgstr ""
 "Ez a fájl már létezik.\n"
 "Ha nem szeretné felülírni, akkor válasszon másik fájlnevet vagy mappát."
 
-#: ../pitivi/render.py:592
+#: ../pitivi/render.py:692
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:597
+#: ../pitivi/render.py:697
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:651
+#: ../pitivi/render.py:764
 msgid ""
 "An error occurred while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. The GStreamer error "
@@ -1480,11 +1461,11 @@ msgstr ""
 "hibaelhárítási útmutatónkat, vagy küldjön egy hibajelentést. A GStreamer "
 "hiba a következő volt:"
 
-#: ../pitivi/render.py:875 ../pitivi/render.py:876 ../pitivi/render.py:882
+#: ../pitivi/render.py:988 ../pitivi/render.py:989 ../pitivi/render.py:995
 msgid "Render complete"
 msgstr "Renderelés kész"
 
-#: ../pitivi/render.py:880
+#: ../pitivi/render.py:993
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s” befejezte a renderelést."
@@ -1663,10 +1644,6 @@ msgid ""
 msgstr ""
 "Küszöbszint (képpontban), amelynél két klip össze lesz illesztve húzáskor "
 "vagy vágáskor."
-
-#: ../pitivi/timeline/timeline.py:86 ../pitivi/timeline/timeline.py:99
-msgid "timeline"
-msgstr "idővonal"
 
 #: ../pitivi/timeline/timeline.py:87
 msgid "Image clip duration"
@@ -1882,118 +1859,122 @@ msgstr[0] "%d nap"
 msgstr[1] "%d nap"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:539 ../pitivi/utils/ui.py:540
-#: ../pitivi/utils/ui.py:541 ../pitivi/utils/ui.py:543
+#: ../pitivi/utils/ui.py:542 ../pitivi/utils/ui.py:543
 #: ../pitivi/utils/ui.py:544 ../pitivi/utils/ui.py:546
 #: ../pitivi/utils/ui.py:547 ../pitivi/utils/ui.py:549
-#: ../pitivi/utils/ui.py:550
+#: ../pitivi/utils/ui.py:550 ../pitivi/utils/ui.py:552
+#: ../pitivi/utils/ui.py:553
 #, python-format
 msgid "%d fps"
 msgstr "%d fps"
 
-#: ../pitivi/utils/ui.py:542
+#: ../pitivi/utils/ui.py:545
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f fps"
 
-#: ../pitivi/utils/ui.py:545 ../pitivi/utils/ui.py:548
+#: ../pitivi/utils/ui.py:548 ../pitivi/utils/ui.py:551
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f fps"
 
-#: ../pitivi/utils/ui.py:554 ../pitivi/utils/ui.py:555
-#: ../pitivi/utils/ui.py:556 ../pitivi/utils/ui.py:558
-#: ../pitivi/utils/ui.py:559
+#: ../pitivi/utils/ui.py:557 ../pitivi/utils/ui.py:558
+#: ../pitivi/utils/ui.py:559 ../pitivi/utils/ui.py:561
+#: ../pitivi/utils/ui.py:562
 #, python-format
 msgid "%d kHz"
 msgstr "%d kHz"
 
-#: ../pitivi/utils/ui.py:557
+#: ../pitivi/utils/ui.py:560
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
-#: ../pitivi/utils/ui.py:562
+#: ../pitivi/utils/ui.py:565
 msgid "6 Channels (5.1)"
 msgstr "6 csatorna (5.1)"
 
-#: ../pitivi/utils/ui.py:563
+#: ../pitivi/utils/ui.py:566
 msgid "4 Channels (4.0)"
 msgstr "4 csatorna (4.0)"
 
-#: ../pitivi/utils/ui.py:564
+#: ../pitivi/utils/ui.py:567
 msgid "Stereo"
 msgstr "Sztereó"
 
-#: ../pitivi/utils/ui.py:565
+#: ../pitivi/utils/ui.py:568
 msgid "Mono"
 msgstr "Mono"
 
-#: ../pitivi/utils/ui.py:570
+#: ../pitivi/utils/ui.py:573
 msgid "Square"
 msgstr "Négyzet"
 
-#: ../pitivi/utils/ui.py:571
+#: ../pitivi/utils/ui.py:574
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:572
+#: ../pitivi/utils/ui.py:575
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:573
+#: ../pitivi/utils/ui.py:576
 msgid "480p Wide"
 msgstr "480p széles"
 
-#: ../pitivi/utils/ui.py:574
+#: ../pitivi/utils/ui.py:577
 msgid "480i Wide"
 msgstr "480i széles"
 
-#: ../pitivi/utils/ui.py:575
+#: ../pitivi/utils/ui.py:578
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:576
+#: ../pitivi/utils/ui.py:579
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:577
+#: ../pitivi/utils/ui.py:580
 msgid "576p Wide"
 msgstr "576p széles"
 
-#: ../pitivi/utils/ui.py:578
+#: ../pitivi/utils/ui.py:581
 msgid "576i Wide"
 msgstr "576i széles"
 
-#: ../pitivi/utils/ui.py:583
+#: ../pitivi/utils/ui.py:585
+msgid "Standard (4:3)"
+msgstr "Standard (4:3)"
+
+#: ../pitivi/utils/ui.py:586
 msgid "DV (15:11)"
 msgstr "DV (15:11)"
 
-#: ../pitivi/utils/ui.py:584
+#: ../pitivi/utils/ui.py:587
 msgid "DV Widescreen (16:9)"
 msgstr "DV szélesvásznú (16:9)"
 
-#: ../pitivi/utils/ui.py:585
+#: ../pitivi/utils/ui.py:588
 msgid "Cinema (1.37)"
 msgstr "Mozi (1.37)"
 
-#: ../pitivi/utils/ui.py:586
+#: ../pitivi/utils/ui.py:589
 msgid "Cinema (1.66)"
 msgstr "Mozi (1.66)"
 
-#: ../pitivi/utils/ui.py:587
+#: ../pitivi/utils/ui.py:590
 msgid "Cinema (1.85)"
 msgstr "Mozi (1.85)"
 
-#: ../pitivi/utils/ui.py:588
+#: ../pitivi/utils/ui.py:591
 msgid "Anamorphic (2.35)"
 msgstr "Anamorfikus (2.35)"
 
-#: ../pitivi/utils/ui.py:589
+#: ../pitivi/utils/ui.py:592
 msgid "Anamorphic (2.39)"
 msgstr "Anamorfikus (2.39)"
 
-#: ../pitivi/utils/ui.py:590
+#: ../pitivi/utils/ui.py:593
 msgid "Anamorphic (2.4)"
 msgstr "Anamorfikus (2.4)"
 
@@ -2033,6 +2014,30 @@ msgstr "%s megjelenítve"
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanomásodperc megjelenítve, mert képesek vagyunk rá"
+
+#~ msgid "Standard PAL"
+#~ msgstr "Standard PAL"
+
+#~ msgid "MP4"
+#~ msgstr "MP4"
+
+#~ msgid "H.264"
+#~ msgstr "H.264"
+
+#~ msgid "29.97 fps"
+#~ msgstr "29.97 fps"
+
+#~ msgid "AC-3"
+#~ msgstr "AC-3"
+
+#~ msgid "AAC"
+#~ msgstr "AAC"
+
+#~ msgid "6 channels (5.1)"
+#~ msgstr "6 csatorna (5.1)"
+
+#~ msgid "timeline"
+#~ msgstr "idővonal"
 
 #~ msgid "Section"
 #~ msgstr "Szakasz"
