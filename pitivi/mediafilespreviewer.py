@@ -194,13 +194,12 @@ class PreviewWidget(Gtk.Grid, Loggable):
             asset = GES.Asset.request_finish(res)
         except GLib.Error as error:
             self.log("Failed discovering %s: %s", uri, error.message)
-            self.error_message = error.message
-            self._show_error(uri)
+            self._show_error(error.message)
             return
 
         self.log("Discovered %s", uri)
-        self.error_message = None
-        self._show_preview(uri, asset.get_info())
+        if not self._show_preview(uri, asset.get_info()):
+            return
         if self.play_on_discover:
             self.play_on_discover = False
             self.play()
@@ -216,8 +215,13 @@ class PreviewWidget(Gtk.Grid, Loggable):
             if video.is_image():
                 self.current_preview_type = 'image'
                 self.preview_video.hide()
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file(
-                    Gst.uri_get_location(uri))
+                path = Gst.uri_get_location(uri)
+                try:
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+                except GLib.Error as error:
+                    self.debug("Failed loading image because: %s", error)
+                    self._show_error(error.message)
+                    return False
                 pixbuf_w = pixbuf.get_width()
                 pixbuf_h = pixbuf.get_height()
                 w, h = self.__get_best_size(pixbuf_w, pixbuf_h)
@@ -260,7 +264,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.preview_video.hide()
             audio = info.get_audio_streams()
             if not audio:
-                return
+                self.debug("Audio has no streams")
+                return False
 
             audio = audio[0]
             self.pos_adj.props.upper = duration
@@ -279,8 +284,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.b_zoom_in.hide()
             self.b_zoom_out.hide()
             self.bbox.show()
+        return True
 
-    def _show_error(self, unused_uri):
+    def _show_error(self, error_message):
+        self.error_message = error_message
         self.l_error.show()
         self.b_details.show()
 
