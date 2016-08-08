@@ -61,7 +61,7 @@ subdir('tests')
 
 archiver = find_program('git-archive-all', required : false)
 if archiver.found()
-    run_target('dist', 'git-archive-all', '--prefix=pitivi',
+    run_target('dist', 'git-archive-all', '--prefix=pitivi-' + meson.project_version(),
             'pitivi-' + meson.project_version() + '.tar.gz')
 else
     message('git-archive-all not found, you will not be able to run `ninja dist`')
