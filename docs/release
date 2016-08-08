@@ -9,22 +9,22 @@ Note on version numbers:
 
 Pre-requisites:
  * 'make check' passes
- * 'make distcheck' passes
+ * 'make dist' passes
  * Do a test installation and make sure all files are properly dist-ed/install-ed
  * No 'blocker' tasks against the upcoming milestone in phabricator
 
 
 Preparing:
     Pre-releases:
-     * Bump nano number up in configure.ac (ex: 0.15.91 -> 0.15.92)
+     * Bump version number up in meson.build (ex: 0.96.0.1 -> 0.97)
      * Update the dependencies' version numbers in pitivi/check.py
-     * Re-autogen
+     * Re configure
      * Make sure pre-requisites are still valid
      * Commit
 
     Releases (major or bugfixes):
-     * Bump minor number up in configure.ac and remove the nano (ex: 0.15.92 -> 0.16)
-     * Re-autogen
+     * Bump minor number up in meson.build and remove the nano (ex: 0.15.92 -> 0.16)
+     * Re-configure
      * Make sure pre-requisites are still valid
      * Update the following files:
        * pitivi/check.py: dependencies' version numbers

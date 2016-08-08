@@ -1,67 +1,35 @@
-0.95 Release "Enfant suisse"
-----------------------------
-This is the fifth release for the new version of Pitivi based on GES,
-the GStreamer Editing Services library. This is a incremental bugfixing release.
+0.97 Release
+------------
 
-Detailed release notes for 0.95 are on http://wiki.pitivi.org/wiki/0.95
+This is the seventh release for the new version of Pitivi based on GES,
+the GStreamer Editing Services library. This is an incremental bugfixing release.
 
 == Requirements ==
 
-For this release, we depend on GStreamer, GSt-Python, GES 1.6
+For this release, we depend on GStreamer, GSt-Python, GES 1.8.2
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
 See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
-
 == Contributors for this release ==
 
-In Pitivi:
-
-  213  Thibault Saunier
-  100  Alexandru Băluț
-   18  Mathieu Duponchelle
-   17  Jean-François Fortin Tam
-   14  Piotr Drąg (translations)
-    7  Dušan Kazik (translations)
-    7  Marek Černocký (translations)
-    4  Daniel Mustieles (translations)
-    4  Josef Andersson (translations)
-    2  Balázs Úr (translations)
-    2  Gábor Kelemen (translations)
-    2  Inaki Larranaga Murgoitio (translations)
-    2  Lubosz Sarnecki
-    1  Aurimas Černius (translations)
-    1  Cheng-Chia Tseng (translations)
-    1  Christian Kirbach (translations)
-    1  Jiri Grönroos (translations)
-    1  Jordi Mas (translations)
-    1  Luke Faraone
-    1  Rafael Fontenelle (translations)
-    1  Samir Ribic (translations)
-    1  Tiago S (translations)
-    1  Wim Taymans
-    1  Мирослав Николић (translations)
-
-
-In GES:
-
-  244  Thibault Saunier
-  108  Mathieu Duponchelle
-   28  Tim-Philipp Müller
-   13  Justin Kim
-    8  Luis de Bethencourt
-    7  Sebastian Dröge
-    7  Stefan Sauer
-    4  Edward Hervey
-    2  Joris Valette
-    1  Jan Schmidt
-    1  Nicolas Dufresne
-
+21	Thibault Saunier
+20	Alexandru Băluț
+6	Jakub Brindza
+4	Piotr Drąg (translator)
+2	Daniel Mustieles (translator)
+2	Dušan Kazik (translator)
+1	Balázs Meskó (translator)
+1	Laudivan Freire de Almeida (translator)
+1	Lubosz Sarnecki
+1	Mahmoud Khalil
+1	Rafael Fontenelle (translator)
+1	Tiago Santos (translator)
 
 == Download ==
 
   Pitivi source tarballs are available on the GNOME FTP servers:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.95
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.97
 
   See the website for distribution-specific packages.
 
@@ -75,4 +43,4 @@ In GES:
 
 == Bugs Fixed ==
 
-See https://phabricator.freedesktop.org/maniphest/query/iwzeFEu9xmQG/#R
+See https://phabricator.freedesktop.org/maniphest/query/HD7bqxcGZ0WM/#R
