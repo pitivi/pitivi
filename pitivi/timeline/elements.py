@@ -34,9 +34,13 @@ from matplotlib.figure import Figure
 from pitivi import configure
 from pitivi.timeline import previewers
 from pitivi.utils import misc
-from pitivi.utils import timeline as timelineUtils
 from pitivi.utils import ui
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.timeline import SELECT
+from pitivi.utils.timeline import SELECT_ADD
+from pitivi.utils.timeline import Selected
+from pitivi.utils.timeline import UNSELECT
+from pitivi.utils.timeline import Zoomable
 
 KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
@@ -392,7 +396,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         return event.xdata
 
 
-class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
+class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
         # Signal the keyframes curve are being hovered
         "curve-enter": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -402,14 +406,14 @@ class TimelineElement(Gtk.Layout, timelineUtils.Zoomable, Loggable):
 
     def __init__(self, element, timeline):
         Gtk.Layout.__init__(self)
-        timelineUtils.Zoomable.__init__(self)
+        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.set_name(element.get_name())
 
         self.timeline = timeline
         self._ges_elem = element
-        self._ges_elem.selected = timelineUtils.Selected()
+        self._ges_elem.selected = Selected()
         self._ges_elem.selected.connect(
             "selected-changed", self.__selectedChangedCb)
 
@@ -860,13 +864,13 @@ class TrimHandle(Gtk.EventBox, Loggable):
             self.props.window.set_cursor(NORMAL_CURSOR)
 
 
-class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
+class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviClip"
 
     def __init__(self, layer, ges_clip):
         Gtk.EventBox.__init__(self)
-        timelineUtils.Zoomable.__init__(self)
+        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         name = ges_clip.get_name()
@@ -880,7 +884,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
 
         self.ges_clip = ges_clip
         self.ges_clip.ui = self
-        self.ges_clip.selected = timelineUtils.Selected()
+        self.ges_clip.selected = Selected()
 
         self._audioSource = None
         self._videoSource = None
@@ -923,7 +927,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
         if target.name() == ui.EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
             self.timeline.resetSelectionGroup()
-            self.timeline.selection.setSelection([self.ges_clip], timelineUtils.SELECT)
+            self.timeline.selection.setSelection([self.ges_clip], SELECT)
             self.app.gui.switchContextTab(self.ges_clip)
 
             self.app.gui.clipconfig.effect_expander.addEffectToClip(self.ges_clip,
@@ -1034,16 +1038,16 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             return False
 
         # TODO : Let's be more specific, masks etc ..
-        mode = timelineUtils.SELECT
+        mode = SELECT
         if self.timeline.parent._controlMask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
-                mode = timelineUtils.SELECT_ADD
+                mode = SELECT_ADD
                 self.timeline.current_group.add(
                     self.ges_clip.get_toplevel_parent())
             else:
                 self.timeline.current_group.remove(
                     self.ges_clip.get_toplevel_parent())
-                mode = timelineUtils.UNSELECT
+                mode = UNSELECT
         elif not self.get_state_flags() & Gtk.StateFlags.SELECTED:
             self.timeline.resetSelectionGroup()
             self.timeline.current_group.add(
@@ -1125,7 +1129,7 @@ class Clip(Gtk.EventBox, timelineUtils.Zoomable, Loggable):
             child.ui.connect("curve-leave", self.__curveLeaveCb)
 
     def _childAdded(self, clip, child):
-        child.selected = timelineUtils.Selected()
+        child.selected = Selected()
         child.ui = None
 
     def __curveEnterCb(self, unused_keyframe_curve):
