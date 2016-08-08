@@ -89,4 +89,5 @@ def configure_meson():
 
 if __name__ == "__main__":
     configure_meson()
-    install_pre_commit_hook()
+    if os.path.exists(os.path.join(ROOTDIR, ".git")):
+        install_pre_commit_hook()
