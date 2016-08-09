@@ -1,4 +1,8 @@
-runtests = find_program('nosetests')
+runtests = find_program('nosetests3', required : false)
+# On some distros it doesn't have the '3' suffix
+if not runtests.found()
+    runtests = find_program('nosetests')
+endif
 
 testdir = '@0@'.format(meson.current_source_dir())
 
