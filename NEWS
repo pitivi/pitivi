@@ -1,12 +1,25 @@
 2016 August 8th - Pitivi 0.97
 
   Fifth beta and 7th release of the new version of Pitivi based on GES.
-  All the improvements from 0.91, 0.92, 0.93 and 0.94, 0.95, 0.96 plus:
+  All the improvements from 0.91, 0.92, 0.93, 0.94, 0.95 and 0.96 plus:
 
   * The rendering dialog has been reworked to clearly state what encoders and muxer are
     officially supported (and the GES integration tests have been added to check those)
   * The build system has been ported to Meson and gst-transcoder is now a subproject
   * Usual bug fixes
+
+2016 June 30th - Pitivi 0.96
+
+  Fourth beta and 6th release of the new version of Pitivi based on GES.
+  All the improvements from 0.91, 0.92, 0.93, 0.94 and 0.95 plus:
+
+  * Proxy editing
+  * The clip graphical transformation box has been reimplemented
+  * Some timeline behaviour enhancements
+  * Project settings are now automatically computed if possible (still letting the user full control if he wants)
+  * New project settings and rendering UI
+  * Keyboard shortcuts window
+  * The undo/redo removal has been undone
 
 2015 November 19th - Pitivi 0.95
 
