@@ -51,7 +51,7 @@ def install_pre_commit_hook():
                os.path.join(ROOTDIR, ".git", "pre-commit"))
     try:
         subprocess.check_call(["pre-commit", "install"])
-    except FileNotFoundError:
+    except (FileNotFoundError, subprocess.CalledProcessError):
         print("Please install pre-commit from http://pre-commit.com/ before"
               " proposing patches")
 

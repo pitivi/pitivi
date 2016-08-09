@@ -15,7 +15,13 @@ gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1',
 
 pkgdatadir = get_option('datadir') + '/pitivi'
 
-GITVERSION = run_command('git', 'describe', '--always').stdout().strip()
+git = find_program('git', required : false)
+if git.found()
+    GITVERSION = run_command(git, 'describe', '--always').stdout().strip()
+else
+    GITVERSION = ''
+endif
+
 cdata = configuration_data()
 cdata.set('CONFIGURED_PYTHONPATH', '')
 cdata.set('CONFIGURED_GI_TYPELIB_PATH', '')
