@@ -12,11 +12,11 @@ export FLATPAK_ENVPATH=$(realpath $SCRIPTDIR/../../)
 export CURRENT_GST=$FLATPAK_ENVPATH
 export MYPITIVI=$FLATPAK_ENVPATH
 
-export make="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make"
-export check="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make check"
-export minstall="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b make install"
-export autogen="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./autogen.sh --prefix=/app --disable-gtk-doc"
-export configure="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b ./configure --prefix=/app"
+export make="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make"
+export check="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make check"
+export minstall="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make install"
+export autogen="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d ./autogen.sh --prefix=/app --disable-gtk-doc"
+export configure="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d ./configure --prefix=/app"
 
 alias make=$make
 alias check=$check
@@ -24,7 +24,7 @@ alias minstall=$minstall
 alias autogen=$autogen
 alias configure=$configure
 
-alias ptvenv="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b"
+alias ptvenv="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up environment if needed..."
 ptvenv "echo"
@@ -32,10 +32,10 @@ if [ "$?" = "0" ];
 then
     for i in `ptvenv ls /app/bin/`;
     do
-        alias $i="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b $i"
+        alias $i="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d $i"
     done
 
-    alias pitivi="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -b $FLATPAK_ENVPATH/pitivi/bin/pitivi"
+    alias pitivi="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d $FLATPAK_ENVPATH/pitivi/bin/pitivi"
 
     export PS1="(ptv-flatpak) $PS1"
     export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
