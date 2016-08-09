@@ -22,8 +22,9 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.utils import ui
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import unset_children_state_recurse
 
 
 # Selection modes
@@ -120,23 +121,30 @@ class Selection(GObject.Object, Loggable):
             return
         self.selected = selection
 
-        for obj in old_selection - self.selected:
-            obj.selected.selected = False
+        for obj, selected in self.__get_selection_changes(old_selection):
+            obj.selected.selected = selected
             if obj.ui:
-                ui.unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
+                if selected:
+                    set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
+                else:
+                    unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
             for element in obj.get_children(False):
-                if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
-                    element.selected.selected = False
+                if isinstance(obj, GES.BaseEffect) or\
+                        isinstance(obj, GES.TextOverlay):
+                    continue
+                element.selected.selected = selected
 
-        for obj in self.selected - old_selection:
-            obj.selected.selected = True
-            if not hasattr(obj, "ui") or not obj.ui:
-                continue
-            ui.set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
-            for element in obj.get_children(False):
-                if not isinstance(element, GES.BaseEffect) and not isinstance(element, GES.TextOverlay):
-                    element.selected.selected = True
         self.emit("selection-changed")
+
+    def __get_selection_changes(self, old_selection):
+        for obj in old_selection - self.selected:
+            yield obj, False
+
+        # Announce all selected objects that they are selected, even if
+        # they were already selected. This allows them to update based on
+        # the current selection.
+        for obj in self.selected:
+            yield obj, True
 
     def select(self, objs):
         self.setSelection(objs, SELECT)

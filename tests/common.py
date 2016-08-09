@@ -62,7 +62,6 @@ def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
 
 
 def create_pitivi_mock(**settings):
-
     app = mock.MagicMock()
 
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
@@ -248,5 +247,5 @@ def clean_proxy_samples():
 def create_test_clip(clip_type):
     clip = clip_type()
     clip.selected = Selected()
-
+    clip.ui = None
     return clip

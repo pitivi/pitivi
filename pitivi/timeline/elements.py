@@ -288,9 +288,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.handling_motion = True
 
     def __mplMotionEventCb(self, event):
-        if not self.props.visible:
-            return
-
         if event.ydata is not None and event.xdata is not None:
             # The mouse event is in the figure boundaries.
             if self.__offset is not None:
@@ -515,9 +512,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                                     self.__keyframePlotChangedCb)
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
-        self.add(self.keyframe_curve)
         self.keyframe_curve.set_size_request(self.__width, self.__height)
-        self.keyframe_curve.props.visible = bool(self._ges_elem.selected)
+        self.keyframe_curve.show()
+        self.__update_keyframe_curve_visibility()
         self.queue_draw()
 
     def __createControlBinding(self, element):
@@ -541,46 +538,31 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         if binding.props.name == self.__controlledProperty.name:
             self.__createKeyframeCurve(binding)
 
-    def __showKeyframes(self):
-        if self.timeline.app.project_manager.current_project.pipeline.getState() == Gst.State.PLAYING:
-            return False
-
-        if not self.keyframe_curve:
-            return False
-
-        # We do not show keyframes while a clip is being moved on the timeline
-        if self.timeline.draggingElement and not self.keyframe_curve.handling_motion:
-            return False
-
-        # We do not show keyframes when there are several clips selected
-        if len(self.timeline.selection) > 1:
-            return False
-
-        return self._ges_elem.selected
-
     def do_draw(self, cr):
         self.propagate_draw(self.__background, cr)
 
         if self.__previewer:
             self.propagate_draw(self.__previewer, cr)
 
-        if self.__showKeyframes():
-            self.propagate_draw(self.keyframe_curve, cr)
-
-    def do_show_all(self):
-        for child in self.get_children():
-            if bool(self._ges_elem.selected) or child != self.keyframe_curve:
-                child.show_all()
-
-        self.show()
+        if self.keyframe_curve and self.keyframe_curve.is_drawable():
+            project = self.timeline.app.project_manager.current_project
+            if project.pipeline.getState() != Gst.State.PLAYING:
+                self.propagate_draw(self.keyframe_curve, cr)
 
     # Callbacks
-    def __selectedChangedCb(self, unused_ges_elem, selected):
+    def __selectedChangedCb(self, unused_selected, selected):
         if self.keyframe_curve:
-            self.keyframe_curve.props.visible = selected
+            self.__update_keyframe_curve_visibility()
 
         if self.__previewer:
             self.__previewer.setSelected(selected)
+
+    def __update_keyframe_curve_visibility(self):
+        """Updates the keyframes widget visibility by adding or removing it."""
+        if self._ges_elem.selected and len(self.timeline.selection) == 1:
+            self.add(self.keyframe_curve)
+        else:
+            self.remove(self.keyframe_curve)
 
     def __keyframePlotChangedCb(self, unused_curve):
         self.queue_draw()
