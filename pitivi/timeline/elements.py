@@ -95,7 +95,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__source.connect("value-changed", self.__controlSourceChangedCb)
         self.__propertyName = binding.props.name
         self.__paramspec = binding.pspec
-        self.__resetTooltip()
         self.get_style_context().add_class("KeyframeCurve")
 
         self.__ylim_min, self.__ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
@@ -298,7 +297,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
                 self.__source.set(keyframe_ts, ydata)
                 self.__offset = keyframe_ts
-                self.__setTooltip(event)
+                self.__update_tooltip(event)
                 hovering = True
             elif self.__clicked_line:
                 self.__dragged = True
@@ -315,7 +314,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         if hovering:
             cursor = DRAG_CURSOR
-            self.__setTooltip(event)
+            self.__update_tooltip(event)
             if not self.__hovered:
                 self.emit("enter")
                 self.__hovered = True
@@ -323,7 +322,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             cursor = NORMAL_CURSOR
             if self.__hovered:
                 self.emit("leave")
-                self.__resetTooltip()
+                self.__update_tooltip(None)
                 self.__hovered = False
 
         self.__timeline.get_window().set_cursor(cursor)
@@ -353,21 +352,26 @@ class KeyframeCurve(FigureCanvas, Loggable):
             else:
                 self.__keyframe_removed = False
 
-    def __setTooltip(self, event):
-        if event.xdata:
+    def __update_tooltip(self, event):
+        """Sets or clears the tooltip showing info about the hovered line."""
+        markup = None
+        if event:
+            if not event.xdata:
+                return
             xdata = max(self.__line_xs[0], min(event.xdata, self.__line_xs[-1]))
             res, value = self.__source.control_source_get_value(xdata)
             assert res
             pmin = self.__paramspec.minimum
             pmax = self.__paramspec.maximum
             value = value * (pmax - pmin) + pmin
-            self.set_tooltip_markup(_("Property: %s\nTimestamp: %s\nValue: %s")
-                                    % (self.__propertyName,
-                                       Gst.TIME_ARGS(xdata),
-                                       "{:.3f}".format(value)))
-
-    def __resetTooltip(self):
-        self.set_tooltip_markup(_("Setting property: %s") % self.__propertyName)
+            # Translators: This is a tooltip for a clip's keyframe curve,
+            # showing what the keyframe curve affects, the timestamp at
+            # the mouse cursor location, and the value at that timestamp.
+            markup = _("Property: %s\nTimestamp: %s\nValue: %s") % (
+                self.__propertyName,
+                Gst.TIME_ARGS(xdata),
+                "{:.3f}".format(value))
+        self.set_tooltip_markup(markup)
 
     def __computeKeyframeNewTimestamp(self, event):
         # The user can not change the timestamp of the first
