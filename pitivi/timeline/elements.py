@@ -700,7 +700,7 @@ class VideoSource(TimelineElement):
         asset_width = sinfo.get_width()
         asset_height = sinfo.get_height()
         parent = video_source.get_parent()
-        if not self.__videoflip:
+        if parent and not self.__videoflip:
             for track_element in parent.find_track_elements(
                     None, GES.TrackType.VIDEO, GES.BaseEffect):
 
