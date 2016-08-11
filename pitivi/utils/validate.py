@@ -73,7 +73,7 @@ if GstValidate:
                     gi.require_version('Wnck', '3.0')
                     from gi.repository import Wnck
                     Wnck.Screen.get_default().connect("window-opened", self._windowOpenedCb)
-                except ImportError:
+                except (ImportError, ValueError):
                     print("Wnck not present on the system,"
                           " not checking the sink does not open a new window")
                     pass
