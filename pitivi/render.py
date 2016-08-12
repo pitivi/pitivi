@@ -115,8 +115,6 @@ class Encoders(Loggable):
             # We have to initialize the instance here, otherwise
             # __init__ is called every time we use Encoders().
             Loggable.__init__(cls._instance)
-            Gst.Registry.get().connect(
-                "feature-added", cls._instance._registry_feature_added_cb)
             cls._instance._load_encoders()
             cls._instance._load_combinations()
         return cls._instance
@@ -219,10 +217,6 @@ class Encoders(Loggable):
         return factory in self.supported_muxers or\
             factory in self.supported_aencoders or\
             factory in self.supported_vencoders
-
-    def _registry_feature_added_cb(self, registry, feature):
-        # TODO Check what feature has been added and update our lists
-        pass
 
 
 def beautify_factory_name(factory):
