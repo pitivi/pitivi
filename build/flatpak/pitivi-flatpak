@@ -422,6 +422,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         if self.bundle:
             self.update_bundle()
+            return
 
         if not self.devel:
             self.install_all()
