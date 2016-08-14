@@ -22,11 +22,19 @@ else
     GITVERSION = ''
 endif
 
+
+geteenvvar = find_program('getenvvar.py')
 cdata = configuration_data()
-cdata.set('CONFIGURED_PYTHONPATH', '')
-cdata.set('CONFIGURED_GI_TYPELIB_PATH', '')
-cdata.set('CONFIGURED_LD_LIBRARY_PATH', '')
-cdata.set('CONFIGURED_GST_PLUGIN_PATH', '')
+cdata.set('CONFIGURED_PYTHONPATH',
+          run_command(geteenvvar, 'PYTHONPATH').stdout().strip())
+cdata.set('CONFIGURED_GI_TYPELIB_PATH',
+          run_command(geteenvvar, 'GI_TYPELIB_PATH').stdout().strip())
+cdata.set('CONFIGURED_LD_LIBRARY_PATH',
+          run_command(geteenvvar, 'LD_LIBRARY_PATH').stdout().strip())
+cdata.set('CONFIGURED_GST_PLUGIN_PATH',
+          run_command(geteenvvar, 'GST_PLUGIN_PATH').stdout().strip())
+cdata.set('CONFIGURED_GST_PLUGIN_SYSTEM_PATH',
+          run_command(geteenvvar, 'GST_PLUGIN_SYSTEM_PATH').stdout().strip())
 cdata.set('LIBDIR', get_option('prefix') + '/' + get_option('libdir'))
 cdata.set('DATADIR', get_option('prefix') + '/' + get_option('datadir'))
 cdata.set('PACKAGE_NAME', 'Pitivi')

@@ -16,7 +16,8 @@
         "cflags": "-O0 -g",
         "cxxflags": "-O0 -g",
         "env": {
-          "PYTHON": "python3"
+          "PYTHON": "python3",
+          "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/"
         },
         "strip": false,
         "no-debuginfo": true
