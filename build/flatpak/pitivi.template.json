@@ -132,11 +132,11 @@
             ]
         },
         {
-            "name": "nose",
-            "config-opts": ["--module=nose==1.3.7"],
+            "name": "nose2",
             "build-options" : {
               "build-args": ["--share=network"]
             },
+            "config-opts": ["--module=nose2==0.6.5"],
             "sources": [
                 {
                     "type": "file",
