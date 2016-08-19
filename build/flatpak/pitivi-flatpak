@@ -299,7 +299,7 @@ class FlatpakPackage(FlatpakObject):
 
         self.flatpak("run", "--branch=" + self.branch, self.name, *args,
                      show_output=True,
-                     comment="Running %s" % self.name)
+                     comment="Running %s (%s)" % (self.name, self.branch))
 
 
 class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
@@ -390,7 +390,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.sdk = FlatpakPackage(
             "org.gnome.Sdk", SDK_BRANCH, self.sdk_repo, "x86_64")
         self.app = FlatpakPackage(
-            "org.pitivi.Pitivi", PITIVI_BRANCH, self.app_repo, "x86_64")
+            "org.pitivi.Pitivi", self.branch, self.app_repo, "x86_64")
         self.packs = [self.runtime, self.locale]
 
         self.args = args

@@ -18,5 +18,4 @@ echo "=============================="
 echo "Entering own built environment"
 echo "=============================="
 
-cd $PITIVI_DIR
 bash --rcfile $RCFILE
