@@ -653,7 +653,7 @@ msgid ""
 "When enabled, adjacent clips automatically move to fill gaps."
 msgstr ""
 "Mode sense espais\n"
-"Si s'habilitat, les seqüències adjacents es mouen automàticament per omplir "
+"Si s'habilita, les seqüències adjacents es mouen automàticament per omplir "
 "els espais."
 
 #: ../data/ui/timelinetoolbar.ui.h:15
@@ -1002,7 +1002,7 @@ msgstr ""
 "Pau Iranzo <paugnu@gmail.com>, 2010\n"
 "Joan Duran <jodufi@gmail.com>, 2011, 2012\n"
 "Pere Orga <pere@orga.cat>, 2012\n"
-"Jordi Mas i Hernàndez <jmas@softcaatala.org>, 2016"
+"Jordi Mas i Hernàndez <jmas@softcatala.org>, 2016"
 
 #. The user has not made a decision, don't do anything
 #: ../pitivi/mainwindow.py:669
@@ -1485,7 +1485,7 @@ msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
 msgstr ""
-"Per crear una transició feu que dos seqüències adjacents de la mateixa capa "
+"Per crear una transició feu que dues seqüències adjacents de la mateixa capa "
 "estiguin superposades. Feu clic a la transició en la línia de temps per "
 "canviar-ne el tipus de transició."
 
