@@ -1251,7 +1251,7 @@ msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "Prekodiram %d vrednost: %d%% (preostalo vreme: %s)"
 msgstr[1] "Prekodiram %d vrednosti: %d%% (preostalo vreme: %s)"
 msgstr[2] "Prekodiram %d vrednosti: %d%% (preostalo vreme: %s)"
-msgstr[3] "Prekodiram jednu vrednost %d%% (preostalo vreme: %s)"
+msgstr[3] "Prekodiram %d vrednost %d%% (preostalo vreme: %s)"
 
 #: ../pitivi/medialibrary.py:957
 msgid "View error"
