@@ -33,7 +33,6 @@ from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import EffectAddedAction
 from pitivi.undo.undo import PropertyChangedAction
-from pitivi.utils.ui import CONTROL_WIDTH
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -687,7 +686,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 def translate_coordinates(widget, x, y):
                     return x, y
                 timeline_ui.translate_coordinates = translate_coordinates
-                timeline_ui._drag_motion_cb(None, None, CONTROL_WIDTH, LAYER_HEIGHT * 2, 0)
+                timeline_ui._drag_motion_cb(None, None, 0, LAYER_HEIGHT * 2, 0)
                 self.assertFalse(timeline_ui.drag_get_data.called)
                 self.assertIsNotNone(timeline_ui.draggingElement)
                 self.assertTrue(timeline_ui.dropping_clips)

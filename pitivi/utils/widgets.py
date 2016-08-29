@@ -35,7 +35,6 @@ from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.ui import CONTROL_WIDTH
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import pack_color_32
 from pitivi.utils.ui import pack_color_64
@@ -1064,7 +1063,6 @@ class ZoomBox(Gtk.Grid, Zoomable):
 
         self.set_hexpand(False)
         self.set_column_spacing(ZOOM_SLIDER_PADDING)
-        self.set_size_request(CONTROL_WIDTH, -1)
         self.show_all()
 
     def _zoomAdjustmentChangedCb(self, adjustment):

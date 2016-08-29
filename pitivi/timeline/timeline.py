@@ -47,7 +47,6 @@ from pitivi.utils.timeline import TimelineError
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import alter_style_class
 from pitivi.utils.ui import clear_styles
-from pitivi.utils.ui import CONTROL_WIDTH
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import EXPANDED_SIZE
 from pitivi.utils.ui import LAYER_HEIGHT
@@ -202,7 +201,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviTimeline"
 
-    def __init__(self, container, app):
+    def __init__(self, container, app, size_group=None):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -235,6 +234,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.__layers_controls_vbox.props.hexpand = False
         self.__layers_controls_vbox.props.valign = Gtk.Align.START
+        if size_group:
+            size_group.add_widget(self.__layers_controls_vbox)
 
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
@@ -300,6 +301,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-drop", self._drag_drop_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
+
+    @property
+    def controls_width(self):
+        return self.__layers_controls_vbox.get_allocated_width()
 
     def sendFakeEvent(self, event, event_widget=None):
         # Member usefull for testsing
@@ -453,12 +458,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__draw_snap_indicator(cr)
 
     def __draw_vertical_bar(self, cr, xpos, width, color):
-        hadj_position = self.hadj.get_value()
-        layer_controls_width = self.__layers_controls_vbox.get_allocated_width()
-        xpos = xpos + layer_controls_width - hadj_position
-        if xpos < layer_controls_width:
+        xpos -= self.hadj.get_value()
+        if xpos < 0:
             return
 
+        xpos += self.controls_width
         height = self.get_allocated_height()
         cr.set_line_width(width)
         cr.move_to(xpos, 0)
@@ -525,7 +529,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         if x is not None:
             x += self.hadj.props.value
-            x -= CONTROL_WIDTH
+            x -= self.controls_width
 
         if y is not None:
             y += self.vadj.props.value
@@ -564,7 +568,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.parent.scroll_up()
         elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
                                   Gdk.ModifierType.MOD1_MASK):
-            x -= CONTROL_WIDTH
+            x -= self.controls_width
             # Figure out first where to scroll at the end
             if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 # The time at the mouse cursor.
@@ -713,7 +717,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _seek(self, event):
         event_widget = self.get_event_widget(event)
         x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
-        x -= CONTROL_WIDTH
+        x -= self.controls_width
         x += self.hadj.get_value()
         position = max(0, self.pixelToNs(x))
         self._project.pipeline.simple_seek(position)
@@ -1050,7 +1054,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                   not self.dropping_clips)
 
         x, y = event_widget.translate_coordinates(self, x, y)
-        x -= CONTROL_WIDTH
+        x -= self.controls_width
         x += self.hadj.get_value()
         y += self.vadj.get_value()
 
@@ -1315,9 +1319,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Internal API
 
     def _createUi(self):
-        self.zoomBox = ZoomBox(self)
+        left_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        zoom_box = ZoomBox(self)
+        left_size_group.add_widget(zoom_box)
 
-        self.timeline = Timeline(self, self.app)
+        self.timeline = Timeline(self, self.app, left_size_group)
         self.hadj = self.timeline.layout.get_hadjustment()
         self.vadj = self.timeline.layout.get_vadjustment()
 
@@ -1345,7 +1351,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, hscrollbar,
             "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
-        self.attach(self.zoomBox, 0, 0, 1, 1)
+        self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(vscrollbar, 2, 1, 1, 1)
@@ -1711,7 +1717,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def transposeXY(self, x, y):
         height = self.ruler.get_allocation().height
         x += self.timeline.get_scroll_point().x
-        return x - CONTROL_WIDTH, y - height
+        return x - self.timeline.controls_width, y - height
 
     # Zoomable
 

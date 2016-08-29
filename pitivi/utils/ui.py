@@ -49,7 +49,6 @@ from pitivi.utils.misc import path_from_uri
 
 # Dimensions in pixels
 EXPANDED_SIZE = 65
-CONTROL_WIDTH = 240
 
 PADDING = 6
 SPACING = 10

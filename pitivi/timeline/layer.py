@@ -110,7 +110,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline = self.ges_layer.get_timeline()
         self.app = app
 
-        self.props.width_request = ui.CONTROL_WIDTH
         # Half the height because we display only the video strip when empty.
         self.props.height_request = ui.LAYER_HEIGHT / 2 + ui.PADDING * 3
         self.props.hexpand = True
@@ -128,8 +127,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         hbox.pack_start(self.sep, False, False, 0)
 
         self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
-        self.before_sep.props.width_request = self.props.width_request - 1
-        self.before_sep.props.vexpand = False
         vbox.pack_start(self.before_sep, False, False, 0)
 
         name_row = Gtk.Box()
@@ -162,8 +159,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         vbox.pack_start(space, False, False, 0)
 
         self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
-        self.after_sep.props.width_request = self.props.width_request - 1
-        self.after_sep.props.vexpand = False
         vbox.pack_start(self.after_sep, False, False, 0)
 
         self.ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)

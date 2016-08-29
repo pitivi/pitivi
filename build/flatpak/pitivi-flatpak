@@ -508,6 +508,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         for envvar in [
                 "GST_CHECKS", "GST_DEBUG", "GST_VALIDATE", "GST_VALIDATE_LAUNCHER_DEBUG",
                 "PITIVI_DEBUG", "PITIVI_DEVELOPMENT", "DISPLAY", "GST_DEBUG_DUMP_DOT_DIR",
+                "LANG",
                 ("GST_PLUGIN_SYSTEM_PATH", "/app/lib/gstreamer-1.0/"),
                 ("GST_PRESET_PATH",
                  "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"),
