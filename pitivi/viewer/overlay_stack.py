@@ -45,9 +45,9 @@ class OverlayStack(Gtk.Overlay, Loggable):
                         Gdk.EventMask.LEAVE_NOTIFY_MASK |
                         Gdk.EventMask.ALL_EVENTS_MASK)
         self.add(sink_widget)
-        self.connect("size-allocate", self.__on_size_allocate)
 
-    def __on_size_allocate(self, widget, rectangle):
+    def do_size_allocate(self, rectangle):
+        """Handles size allocation."""
         self.window_size = numpy.array([rectangle.width,
                                         rectangle.height])
         for overlay in self.__overlays.values():

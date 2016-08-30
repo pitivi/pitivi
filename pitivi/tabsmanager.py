@@ -40,7 +40,6 @@ class BaseTabs(Gtk.Notebook, Loggable):
         Loggable.__init__(self)
         self.set_border_width(SPACING)
         self.set_scrollable(True)
-        self.connect("create-window", self.__create_window_cb)
         self.settings = app.settings
         notebook_widget_settings = self.get_settings()
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
@@ -79,8 +78,8 @@ class BaseTabs(Gtk.Notebook, Loggable):
         self.insert_page(child, label, original_position)
         self._set_child_properties(child, label)
 
-    def __create_window_cb(self, unused_notebook, child, unused_x, unused_y):
-        """Creates a window for the detached page.
+    def do_create_window(self, child, unused_x, unused_y):
+        """Handles the detachment of a page.
 
         Args:
             child (Gtk.Widget): The detached page.

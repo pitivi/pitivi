@@ -519,12 +519,12 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.add(self.image)
         self.playing = False
         self.setPlay()
-        self.connect('clicked', self._clickedCb)
 
     def set_sensitive(self, value):
         Gtk.Button.set_sensitive(self, value)
 
-    def _clickedCb(self, unused):
+    def do_clicked(self):
+        """Handles the click events to toggle playback."""
         self.playing = not self.playing
         self.emit("play", self.playing)
 

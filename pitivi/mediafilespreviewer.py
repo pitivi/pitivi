@@ -80,8 +80,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
         Loggable.__init__(self)
 
         self.log("Init PreviewWidget")
-        self.connect('destroy', self._destroy_cb)
-
         self.settings = settings
         self.error_message = None
 
@@ -455,7 +453,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
         dialog.run()
         dialog.destroy()
 
-    def _destroy_cb(self, widget):
+    def do_destroy(self):
+        """Handles the destruction of the widget."""
         self.player.release()
         self.is_playing = False
 
