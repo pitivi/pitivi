@@ -328,16 +328,10 @@ class LayerLayout(Gtk.Layout, Loggable):
         if self._changed:
             self._children.sort(key=lambda clip: clip.z_order)
             for child in self._children:
-
                 if isinstance(child, elements.TransitionClip):
                     window = child.get_window()
                     window.raise_()
             self._changed = False
-
-        self.props.width = max(self.timeline.layout.get_allocation().width,
-                               Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
-        self.props.width_request = max(self.timeline.layout.get_allocation().width,
-                                       Zoomable.nsToPixel(self.timeline.ges_timeline.props.duration))
 
         for child in self._children:
             self.propagate_draw(child, cr)
