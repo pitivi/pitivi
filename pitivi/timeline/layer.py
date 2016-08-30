@@ -22,7 +22,6 @@ from gettext import gettext as _
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
-from gi.repository import GObject
 from gi.repository import Gtk
 
 from pitivi.timeline import elements
@@ -30,33 +29,6 @@ from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils import ui
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
-
-
-class TwoStateButton(Gtk.Button):
-    """Button with two states and according labels/images."""
-
-    __gsignals__ = {
-        "changed-state": (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,),)
-    }
-
-    def __init__(self, state1="", state2=""):
-        Gtk.Button.__init__(self)
-        self.set_relief(Gtk.ReliefStyle.NONE)
-        self.connect("clicked", self._clickedCb)
-
-        self.set_states(state1, state2)
-        self._state = True
-
-        self.set_label(self.states[self._state])
-
-    def set_states(self, state1, state2):
-        self.states = {True: state1, False: state2}
-
-    def _clickedCb(self, unused_widget):
-        self._state = not self._state
-
-        self.set_label(self.states[self._state])
-        self.emit("changed-state", self._state)
 
 
 class SpacedSeparator(Gtk.EventBox):
