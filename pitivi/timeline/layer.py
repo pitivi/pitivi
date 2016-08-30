@@ -99,6 +99,7 @@ class SpacedSeparator(Gtk.EventBox):
 
 
 class LayerControls(Gtk.EventBox, Loggable):
+    """Container with widgets for controlling a layer."""
 
     __gtype_name__ = 'PitiviLayerControls'
 
@@ -286,7 +287,7 @@ class LayerControls(Gtk.EventBox, Loggable):
 
 
 class LayerLayout(Gtk.Layout, Loggable):
-    """Displays the clips of a layer."""
+    """Container for the clips of a layer."""
 
     __gtype_name__ = "PitiviLayerLayout"
 
@@ -338,6 +339,7 @@ class LayerLayout(Gtk.Layout, Loggable):
 
 
 class Layer(Gtk.EventBox, Zoomable, Loggable):
+    """Container for a layer plus decorations (separators)."""
 
     __gtype_name__ = "PitiviLayer"
 
