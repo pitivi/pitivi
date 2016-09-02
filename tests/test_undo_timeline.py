@@ -81,23 +81,23 @@ class TestTimelineObserver(BaseTestUndoTimeline):
 
         self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
         self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
-                        list(range(3)))
+                         list(range(3)))
 
         with self.action_log.started("layer removed"):
             self.timeline.remove_layer(layer2)
 
         self.assertEqual([layer1, layer3], self.timeline.get_layers())
         self.assertEqual([l.props.priority for l in [layer1, layer3]],
-                        list(range(2)))
+                         list(range(2)))
 
         self.action_log.undo()
         self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
         self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
-                        list(range(3)))
+                         list(range(3)))
         self.action_log.redo()
         self.assertEqual([layer1, layer3], self.timeline.get_layers())
         self.assertEqual([l.props.priority for l in [layer1, layer3]],
-                        list(range(2)))
+                         list(range(2)))
 
 
 class TestLayerObserver(BaseTestUndoTimeline):
@@ -191,7 +191,9 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertFalse(clip1 in self.getTimelineClips())
 
-    def testUngroup(self):
+    def test_ungroup_group_clip(self):
+        # This test is in TestLayerObserver because the relevant operations
+        # recorded are clip-added and clip-removed.
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip1 = asset.extract()
@@ -219,6 +221,14 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(1, len(timeline_clips))
         self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
         self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
+
+        self.action_log.redo()
+        timeline_clips = list(self.getTimelineClips())
+        self.assertEqual(2, len(timeline_clips), timeline_clips)
+        self.assertEqual(5 * Gst.SECOND, timeline_clips[0].get_start())
+        self.assertEqual(0.5 * Gst.SECOND, timeline_clips[0].get_duration())
+        self.assertEqual(5 * Gst.SECOND, timeline_clips[1].get_start())
+        self.assertEqual(0.5 * Gst.SECOND, timeline_clips[1].get_duration())
 
     def testSplitClip(self):
         clip = GES.TitleClip()
