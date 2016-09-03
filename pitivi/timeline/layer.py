@@ -232,7 +232,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         with self.app.action_log.started("delete layer",
                                          CommitTimelineFinalizingAction(pipeline)):
             self.ges_timeline.remove_layer(self.ges_layer)
-        pipeline.commit_timeline()
 
     def __move_layer_cb(self, unused_simple_action, unused_parameter, step):
         index = self.ges_layer.get_priority()

@@ -590,5 +590,4 @@ class EffectsPropertiesManager:
             with self.app.action_log.started("Effect property change",
                                              CommitTimelineFinalizingAction(pipeline)):
                 effect.set_child_property(prop.name, value)
-            pipeline.commit_timeline()
             self._current_element_values[prop.name] = value

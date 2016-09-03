@@ -299,12 +299,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._removeEffect(effect)
 
     def _removeEffect(self, effect):
-        pipeline = self._project.ges_timeline.get_parent()
-        with self.app.action_log.started("remove effect", CommitTimelineFinalizingAction(pipeline)):
+        pipeline = self._project.pipeline
+        with self.app.action_log.started("remove effect",
+                                         CommitTimelineFinalizingAction(pipeline)):
             self.__remove_configuration_widget()
             self.effects_properties_manager.cleanCache(effect)
             effect.get_parent().remove(effect)
-            pipeline.commit_timeline()
         self._updateTreeview()
 
     def addEffectToClip(self, clip, factory_name, priority=None):
@@ -327,14 +327,13 @@ class EffectProperties(Gtk.Expander, Loggable):
             if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
                     track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
                 # Actually add the effect
-                pipeline = self._project.ges_timeline.get_parent()
+                pipeline = self._project.pipeline
                 with self.app.action_log.started("add effect",
                                                  CommitTimelineFinalizingAction(pipeline)):
                     effect = GES.Effect.new(bin_description=factory_name)
                     clip.add(effect)
                     if priority is not None and priority < len(model):
                         clip.set_top_effect_priority(effect, priority)
-                pipeline.commit_timeline()
                 break
         return None
 
@@ -428,7 +427,6 @@ class EffectProperties(Gtk.Expander, Loggable):
                                          CommitTimelineFinalizingAction(pipeline)):
             clip.set_top_effect_priority(effect, drop_index)
 
-        pipeline.commit_timeline()
         new_path = Gtk.TreePath.new()
         new_path.append_index(drop_index)
         self.__updateAll(path=new_path)
@@ -623,9 +621,9 @@ class TransformationProperties(Gtk.Expander, Loggable):
         res, cvalue = self.source.get_child_property(prop)
         assert res
         if value != cvalue:
-            with self.app.action_log.started("Transformation property change"):
+            with self.app.action_log.started("Transformation property change",
+                                             CommitTimelineFinalizingAction(self._project.pipeline)):
                 self.source.set_child_property(prop, value)
-            self._project.pipeline.commit_timeline()
             self.app.gui.viewer.overlay_stack.update(self.source)
 
     def __setSource(self, source):
