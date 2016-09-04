@@ -790,11 +790,11 @@ class TimelineObserver(Loggable):
         # simplifies the logic.
 
     def __layer_added_cb(self, ges_timeline, ges_layer):
+        action = LayerAdded(self.ges_timeline, ges_layer)
+        self.action_log.push(action)
         self._connect_to_layer(ges_layer)
 
     def _connect_to_layer(self, ges_layer):
-        action = LayerAdded(self.ges_timeline, ges_layer)
-        self.action_log.push(action)
         layer_observer = LayerObserver(ges_layer, self.action_log)
         self.layer_observers[ges_layer] = layer_observer
 
