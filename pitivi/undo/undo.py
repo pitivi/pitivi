@@ -220,7 +220,7 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("pre-push", action)
 
         if self.running:
-            self.debug("Ignore push because running")
+            self.debug("Ignore push because running: %s", action)
             return
 
         try:

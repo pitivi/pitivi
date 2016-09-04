@@ -28,6 +28,7 @@ from gi.repository import Gtk
 
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.timeline import Timeline
+from pitivi.timeline.timeline import TimelineContainer
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
@@ -47,6 +48,15 @@ class BaseTestUndoTimeline(TestCase):
         self.timeline = self.app.project_manager.current_project.ges_timeline
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
+
+    def setup_timeline_container(self):
+        project = self.app.project_manager.current_project
+        self.timeline_container = TimelineContainer(self.app)
+        self.timeline_container.setProject(project)
+
+        timeline = self.timeline_container.timeline
+        timeline.app.project_manager.current_project = project
+        timeline.get_parent = mock.MagicMock(return_value=self.timeline_container)
 
     def getTimelineClips(self):
         for layer in self.timeline.layers:
@@ -98,6 +108,51 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertEqual([layer1, layer3], self.timeline.get_layers())
         self.assertEqual([l.props.priority for l in [layer1, layer3]],
                          list(range(2)))
+
+    def test_group_ungroup_clips(self):
+        self.setup_timeline_container()
+
+        clip1 = common.create_test_clip(GES.TitleClip)
+        clip1.set_start(0 * Gst.SECOND)
+        clip1.set_duration(1 * Gst.SECOND)
+
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        clip2 = asset.extract()
+
+        self.layer.add_clip(clip1)
+        self.layer.add_clip(clip2)
+        # The selection does not care about GES.Groups, only about GES.Clips.
+        self.timeline_container.timeline.selection.select([clip1, clip2])
+
+        self.timeline_container.group_action.activate(None)
+        self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
+        self.assertEqual(clip1.get_parent(), clip2.get_parent())
+
+        self.timeline_container.ungroup_action.activate(None)
+        self.assertIsNone(clip1.get_parent())
+        self.assertIsNone(clip2.get_parent())
+
+        for i in range(4):
+            # Undo ungrouping.
+            self.action_log.undo()
+            self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
+            self.assertEqual(clip1.get_parent(), clip2.get_parent())
+
+            # Undo grouping.
+            self.action_log.undo()
+            self.assertIsNone(clip1.get_parent())
+            self.assertIsNone(clip2.get_parent())
+
+            # Redo grouping.
+            self.action_log.redo()
+            self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
+            self.assertEqual(clip1.get_parent(), clip2.get_parent())
+
+            # Redo ungrouping.
+            self.action_log.redo()
+            self.assertIsNone(clip1.get_parent())
+            self.assertIsNone(clip2.get_parent())
 
 
 class TestLayerObserver(BaseTestUndoTimeline):

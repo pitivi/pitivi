@@ -318,7 +318,7 @@ class TransitionClipAction(UndoableAction):
 
     @staticmethod
     def get_video_element(ges_clip):
-        for track_element in ges_clip.get_children(True):
+        for track_element in ges_clip.get_children(recursive=True):
             if isinstance(track_element, GES.VideoTransition):
                 return track_element
         return None
@@ -385,7 +385,6 @@ class TransitionClipRemovedAction(TransitionClipAction):
 
     def undo(self):
         # Search the transition clip created automatically to update it.
-        transition_clip = None
         for ges_clip in self.ges_layer.get_clips():
             if isinstance(ges_clip, GES.TransitionClip) and \
                     ges_clip.props.start == self.start and \
@@ -591,7 +590,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
         ges_clip.connect("child-added", self._clipTrackElementAddedCb)
         ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
 
-        for track_element in ges_clip.get_children(True):
+        for track_element in ges_clip.get_children(recursive=True):
             self._connectToTrackElement(track_element)
 
         if isinstance(ges_clip, GES.TransitionClip):
@@ -605,7 +604,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
         ges_clip.disconnect_by_func(self._clipTrackElementAddedCb)
         ges_clip.disconnect_by_func(self._clipTrackElementRemovedCb)
 
-        for child in ges_clip.get_children(True):
+        for child in ges_clip.get_children(recursive=True):
             self._disconnectFromTrackElement(child)
 
         if isinstance(ges_clip, GES.TransitionClip):
@@ -706,6 +705,62 @@ class LayerObserver(MetaContainerObserver, Loggable):
         self.priority = current
 
 
+class TimelineElementAddedToGroup(UndoableAction):
+
+    def __init__(self, ges_group, ges_timeline_element):
+        UndoableAction.__init__(self)
+        self.ges_group = ges_group
+        self.ges_timeline_element = ges_timeline_element
+
+    def do(self):
+        self.ges_group.add(self.ges_timeline_element)
+
+    def undo(self):
+        self.ges_group.remove(self.ges_timeline_element)
+
+
+class TimelineElementRemovedFromGroup(UndoableAction):
+
+    def __init__(self, ges_group, ges_timeline_element):
+        UndoableAction.__init__(self)
+        self.ges_group = ges_group
+        self.ges_timeline_element = ges_timeline_element
+
+    def do(self):
+        self.ges_group.remove(self.ges_timeline_element)
+
+    def undo(self):
+        self.ges_group.add(self.ges_timeline_element)
+
+
+class GroupObserver(Loggable):
+    """Monitors a Group and reports UndoableActions.
+
+    Args:
+        ges_group (GES.Group): The group to observe.
+
+    Attributes:
+        action_log (UndoableActionLog): The action log where to report actions.
+    """
+
+    def __init__(self, ges_group, action_log):
+        Loggable.__init__(self)
+        self.log("INIT %s", ges_group)
+        self.ges_group = ges_group
+        self.action_log = action_log
+
+        ges_group.connect_after("child-added", self.__child_added_cb)
+        ges_group.connect("child-removed", self.__child_removed_cb)
+
+    def __child_added_cb(self, ges_group, ges_timeline_element):
+        action = TimelineElementAddedToGroup(ges_group, ges_timeline_element)
+        self.action_log.push(action)
+
+    def __child_removed_cb(self, ges_group, ges_timeline_element):
+        action = TimelineElementRemovedFromGroup(ges_group, ges_timeline_element)
+        self.action_log.push(action)
+
+
 class TimelineObserver(Loggable):
     """Monitors a project's timeline and reports UndoableActions.
 
@@ -720,11 +775,19 @@ class TimelineObserver(Loggable):
         self.action_log = action_log
 
         self.layer_observers = {}
+        self.group_observers = {}
         for ges_layer in ges_timeline.get_layers():
             self._connect_to_layer(ges_layer)
 
         ges_timeline.connect("layer-added", self.__layer_added_cb)
         ges_timeline.connect("layer-removed", self.__layer_removed_cb)
+
+        for ges_group in ges_timeline.get_groups():
+            self._connect_to_group(ges_group)
+
+        ges_timeline.connect("group-added", self.__group_added_cb)
+        # We don't care about the group-removed signal because this greatly
+        # simplifies the logic.
 
     def __layer_added_cb(self, ges_timeline, ges_layer):
         self._connect_to_layer(ges_layer)
@@ -738,3 +801,22 @@ class TimelineObserver(Loggable):
     def __layer_removed_cb(self, ges_timeline, ges_layer):
         action = LayerRemoved(ges_timeline, ges_layer)
         self.action_log.push(action)
+
+    def _connect_to_group(self, ges_group):
+        if not ges_group.props.serialize:
+            return
+
+        # A group is added when it gets its first element, thus
+        # when undoing/redoing a group can be added multiple times.
+        # This is the only complexity caused by the fact that we keep alive
+        # all the GroupObservers which have been created.
+        if ges_group not in self.group_observers:
+            group_observer = GroupObserver(ges_group, self.action_log)
+            self.group_observers[ges_group] = group_observer
+
+    def __group_added_cb(self, unused_ges_timeline, ges_group):
+        self._connect_to_group(ges_group)
+        # This should be a single clip.
+        for ges_clip in ges_group.get_children(recursive=False):
+            action = TimelineElementAddedToGroup(ges_group, ges_clip)
+            self.action_log.push(action)

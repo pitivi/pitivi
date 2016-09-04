@@ -331,7 +331,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
         if self.current_group:
-            GES.Container.ungroup(self.current_group, False)
+            self.current_group.ungroup(recursive=False)
 
         self.current_group = GES.Group()
         self.current_group.props.serialize = False
@@ -1400,13 +1400,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                _("Delete selected clips"))
 
         self.group_action = Gio.SimpleAction.new("group-selected-clips", None)
-        self.group_action.connect("activate", self._groupSelected)
+        self.group_action.connect("activate", self._group_selected_cb)
         group.add_action(self.group_action)
         self.app.shortcuts.add("timeline.group-selected-clips", ["<Control>g"],
                                _("Group selected clips together"))
 
         self.ungroup_action = Gio.SimpleAction.new("ungroup-selected-clips", None)
-        self.ungroup_action.connect("activate", self._ungroupSelected)
+        self.ungroup_action.connect("activate", self._ungroup_selected_cb)
         group.add_action(self.ungroup_action)
         self.app.shortcuts.add("timeline.ungroup-selected-clips", ["<Shift><Control>g"],
                                _("Ungroup selected clips"))
@@ -1577,7 +1577,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.timeline.selection.setSelection([], SELECT)
 
-    def _ungroupSelected(self, unused_action, unused_parameter):
+    def _ungroup_selected_cb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
             self.info("No ges_timeline set yet!")
             return
@@ -1588,12 +1588,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 toplevel = obj.get_toplevel_parent()
                 if toplevel == self.timeline.current_group:
                     for child in toplevel.get_children(False):
-                        child.ungroup(False)
+                        child.ungroup(recursive=False)
 
         self.timeline.resetSelectionGroup()
         self.timeline.selection.setSelection([], SELECT)
 
-    def _groupSelected(self, unused_action, unused_parameter):
+    def _group_selected_cb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
             self.info("No timeline set yet?")
             return
