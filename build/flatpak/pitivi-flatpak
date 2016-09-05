@@ -480,7 +480,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
             builder_args = ["flatpak-builder",
                             "--ccache", self.prefix, self.json]
-            if self.bundle:
+            if not self.bundle:
                 builder_args.append("--build-only")
 
             message("Building Pitivi %s", self.branch)
