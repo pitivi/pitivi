@@ -441,26 +441,26 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
         self.add_action(self.save_action)
-        self.app.shortcuts.add("win.save", ["<Control>s"],
+        self.app.shortcuts.add("win.save", ["<Primary>s"],
                                _("Save the current project"))
         self.save_button.set_action_name("win.save")
 
         self.new_project_action = Gio.SimpleAction.new("new-project", None)
         self.new_project_action.connect("activate", self._newProjectMenuCb)
         self.add_action(self.new_project_action)
-        self.app.shortcuts.add("win.new-project", ["<Control>n"],
+        self.app.shortcuts.add("win.new-project", ["<Primary>n"],
                                _("Create a new project"))
 
         self.open_project_action = Gio.SimpleAction.new("open-project", None)
         self.open_project_action.connect("activate", self._openProjectCb)
         self.add_action(self.open_project_action)
-        self.app.shortcuts.add("win.open-project", ["<Control>o"],
+        self.app.shortcuts.add("win.open-project", ["<Primary>o"],
                                _("Open a project"))
 
         self.save_as_action = Gio.SimpleAction.new("save-as", None)
         self.save_as_action.connect("activate", self._saveProjectAsCb)
         self.add_action(self.save_as_action)
-        self.app.shortcuts.add("win.save-as", ["<Control><Shift>s"],
+        self.app.shortcuts.add("win.save-as", ["<Primary><Shift>s"],
                                _("Save the current project as"))
 
         self.help_action = Gio.SimpleAction.new("help", None)
@@ -478,7 +478,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         import_asset_action = Gio.SimpleAction.new("import-asset", None)
         import_asset_action.connect("activate", self.__import_asset_cb)
         self.add_action(import_asset_action)
-        self.app.shortcuts.add("win.import-asset", ["<Control>i"],
+        self.app.shortcuts.add("win.import-asset", ["<Primary>i"],
                                _("Add media files to your project"))
 
     def __import_asset_cb(self, unusdaction, unusedparam):

@@ -40,20 +40,20 @@ class TestShortcutsManager(TestCase):
         self.assertListEqual(manager.groups, ["alpha_group", "beta_group"])
 
         # Test grouping using the stripping away group name from action name
-        manager.add("alpha_group.first", ["<Control>A"], "First action")
+        manager.add("alpha_group.first", ["<Primary>A"], "First action")
         self.assertIn(("alpha_group.first", "First action"),
                       manager.group_actions["alpha_group"])
-        manager.add("alpha_group.second", ["<Control>B"], "Second action")
+        manager.add("alpha_group.second", ["<Primary>B"], "Second action")
         self.assertIn(("alpha_group.second", "Second action"),
                       manager.group_actions["alpha_group"])
-        manager.add("beta_group.first", ["<Control>C"], "First beta action")
+        manager.add("beta_group.first", ["<Primary>C"], "First beta action")
         self.assertIn(("beta_group.first", "First beta action"),
                       manager.group_actions["beta_group"])
 
         # Test grouping using the group optional argument
         # if group parameter is set, the action prefix can be anything,
         # it should be disregarded in favour of the group value.
-        manager.add("anything.third_action", ["<Control>D"], "Third action",
+        manager.add("anything.third_action", ["<Primary>D"], "Third action",
                     group="beta_group")
         self.assertIn(("anything.third_action", "Third action"),
                       manager.group_actions["beta_group"])
@@ -68,7 +68,7 @@ class TestShortcutsManager(TestCase):
             # Test the add is calling set_accels_for_action(),
             # since there is no shortcuts.conf in the directory.
             manager.register_group("general", "General group")
-            manager.add("prefix.action1", ["<Control>P"], "Action one")
+            manager.add("prefix.action1", ["<Primary>P"], "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
 
             # Create the temporary shortcuts.conf file
@@ -77,7 +77,7 @@ class TestShortcutsManager(TestCase):
             manager2 = ShortcutsManager(app)
             manager2.register_group("other", "Other group")
 
-            manager2.add("prefix.action4", ["<Control>W"],
+            manager2.add("prefix.action4", ["<Primary>W"],
                          "Action addition not invoking set_accels_for_action")
             # No. of calls to set_accels_for_action should be unchanged now
             # because calling set_accels_for_action isn't allowed with .conf existing
@@ -95,22 +95,22 @@ class TestShortcutsManager(TestCase):
 
             # Set default shortcuts
             manager.register_group("group", "Test group")
-            manager.add("group.action1", ["<Control>i"], "Action 1")
-            manager.add("group.action2", ["<Shift>p", "<Control>m"], "Action 2")
-            manager.add("group.action3", ["<Control><Shift>a", "a"], "Action 3")
+            manager.add("group.action1", ["<Primary>i"], "Action 1")
+            manager.add("group.action2", ["<Shift>p", "<Primary>m"], "Action 2")
+            manager.add("group.action3", ["<Primary><Shift>a", "a"], "Action 3")
 
             # After saving the shortcuts, the accels should be set when
             # initializing a ShortcutsManger.
-            app.get_accels_for_action.side_effect = [(["<Control>i"]),
-                                                     (["<Shift>p", "<Control>m"]),
-                                                     (["<Control><Shift>a", "a"])]
+            app.get_accels_for_action.side_effect = [(["<Primary>i"]),
+                                                     (["<Shift>p", "<Primary>m"]),
+                                                     (["<Primary><Shift>a", "a"])]
             manager.save()
             app.reset_mock()
             unused_manager2 = ShortcutsManager(app)
             self.assertEqual(app.set_accels_for_action.call_count, 3)
-            calls = [mock.call("group.action1", ["<Control>i"]),
-                     mock.call("group.action2", ["<Shift>p", "<Control>m"]),
-                     mock.call("group.action3", ["<Control><Shift>a", "a"])]
+            calls = [mock.call("group.action1", ["<Primary>i"]),
+                     mock.call("group.action2", ["<Shift>p", "<Primary>m"]),
+                     mock.call("group.action3", ["<Primary><Shift>a", "a"])]
             app.set_accels_for_action.assert_has_calls(calls, any_order=True)
 
     def test_reset_accels(self):
@@ -124,7 +124,7 @@ class TestShortcutsManager(TestCase):
 
             # Set default shortcuts - they will be stored in self.defaults_accelerators.
             manager.register_group("group", "Test group")
-            manager.add("group.action1", ["<Control>i"], "Action 1")
+            manager.add("group.action1", ["<Primary>i"], "Action 1")
             manager.add("group.action2", ["<Shift>p"], "Action 2")
 
             # Test reset of a single action. The shortcuts are saved and no file removed.
