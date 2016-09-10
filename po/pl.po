@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-21 16:13+0200\n"
-"PO-Revision-Date: 2016-08-21 16:14+0200\n"
+"POT-Creation-Date: 2016-09-10 18:40+0200\n"
+"PO-Revision-Date: 2016-09-10 18:41+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -38,8 +38,8 @@ msgid ""
 msgstr ""
 "Edytor plików wideo przeznaczony dla hobbistów i zawodowców, oferujący "
 "użyteczność, wydajność i jakość. Integrując się ze środowiskiem GNOME "
-"i innymi programami, program Pitivi posiada prosty, lecz jednocześnie "
-"oferujący wiele możliwości interfejs użytkownika."
+"i innymi programami, program Pitivi ma prosty, lecz jednocześnie oferujący "
+"wiele możliwości interfejs użytkownika."
 
 #: ../data/pitivi.appdata.xml.in.h:4
 msgid ""
@@ -118,7 +118,7 @@ msgstr "_Zastosuj do projektu"
 
 #: ../data/ui/clipmediaprops.ui.h:4
 msgid "Size (pixels):"
-msgstr "Rozmiar (w pikselach):"
+msgstr "Rozmiar (w pikselach):"
 
 #: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:20
 msgid "Frame rate:"
@@ -322,7 +322,7 @@ msgid ""
 "\"Import\" button."
 msgstr ""
 "Można dodać multimedia do projektu przeciągając pliki i katalogi tutaj lub "
-"używając przycisku „Zaimportuj”."
+"za pomocą przycisku „Zaimportuj”."
 
 #: ../data/ui/preferences.ui.h:2
 msgid "Reset to Factory Settings"
@@ -578,7 +578,7 @@ msgstr "Witamy"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
-msgstr "Podwójne kliknięcie na projekcie wczyta go:"
+msgstr "Podwójne kliknięcie projektu wczyta go:"
 
 #: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:94
 msgid "New"
@@ -1179,8 +1179,8 @@ msgid ""
 "thus is the safest.</i>"
 msgstr ""
 "Pozostawienie decyzji o utworzeniu plików pośrednich programowi Pitivi. "
-"Zostanie ona podjęta w oparciu o format pliku oraz stopniu jego obsługi. Na "
-"przykład formaty H.264 i FLAC zawarte w kontenerze QuickTime nie będą "
+"Zostanie ona podjęta na podstawie formatu pliku oraz stopnia jego obsługi. "
+"Na przykład formaty H.264 i FLAC zawarte w kontenerze QuickTime nie będą "
 "używały plików pośrednich, a formaty AAC i H.264 zawarte w kontenerze MPEG-"
 "TS będą.\n"
 "\n"
@@ -1519,7 +1519,7 @@ msgid ""
 "Click the transition on the timeline to change the transition type."
 msgstr ""
 "Tworzy przejście przez nałożenie dwóch sąsiednich klipów na tej samej "
-"warstwie. Kliknięcie na przejściu na osi czasu zmieni jego typ."
+"warstwie. Kliknięcie przejścia na osi czasu zmieni jego typ."
 
 #: ../pitivi/transitions.py:238
 msgid "Slow"
@@ -1654,7 +1654,7 @@ msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
-"Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
+"Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
 "czasu."
 
 #: ../pitivi/timeline/timeline.py:100
