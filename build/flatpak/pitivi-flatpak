@@ -314,7 +314,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.app = None
 
         self.packs = []
-        self.update = False
+        self.update = True
         self.devel = False
         self.json = None
         self.args = []
@@ -366,7 +366,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def exit(self, exitcode):
         if self.installer:
-            input("Failure installing %s press <enter> to continue" % self.name)  # pylint: disable=bad-builtin
+            input("Failure installing %s press <enter> to continue" % self.name)
 
         exit(exitcode)
 
@@ -550,15 +550,13 @@ if __name__ == "__main__":
         prog="pitivi-flatpak")
 
     general = parser.add_argument_group("General")
-    general.add_argument("-u", "--update", dest="update",
-                         action="store_true",
-                         default=True,
+    general.add_argument("--noupdate", dest="update",
+                         action="store_false",
                          help="Update the runtime/sdk/app and rebuild the development environment if needed")
 
     # Only used by the installer to keep the Terminal window open on exit.
     general.add_argument("--installer", dest="installer",
-                         action="store_true",
-                         default=False)
+                         action="store_true")
 
     devel = parser.add_argument_group("Development")
     devel.add_argument("-d", "--devel", dest="devel",
@@ -594,9 +592,9 @@ if __name__ == "__main__":
         help="The GPG key to sign the commit with (work only when --bundle is used)")
     bundling.add_argument(
         "--generate-static-deltas", dest="generate_static_deltas",
-        action="store_true", default=False,
+        action="store_true",
         help="Generate static deltas (check 'man flatpak-build-update-repo'"
-        " for more informations")
+        " for more information)")
 
     app_flatpak = PitiviFlatpak()
     flatpak_args = parser.parse_known_args(namespace=app_flatpak)[1]
