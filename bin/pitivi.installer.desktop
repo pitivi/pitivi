@@ -4,4 +4,4 @@ Type=Application
 Terminal=true
 Name=Pitivi flatpak installer and updater
 Icon=pitivi
-Exec=bash -c "cd `dirname %k`; echo 'Getting installation script from https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak'; wget https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak -P /tmp/ -O pitivi-flatpak > /dev/null 2>&1; chmod +x pitivi-flatpak; ./pitivi-flatpak --update --installer"
+Exec=bash -c "cd `dirname %k`; echo 'Getting installation script from https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak'; wget https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak -P /tmp/ -O pitivi-flatpak > /dev/null 2>&1; chmod +x pitivi-flatpak; ./pitivi-flatpak --update --branch=stable --installer"
