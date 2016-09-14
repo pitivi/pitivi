@@ -314,7 +314,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.app = None
 
         self.packs = []
-        self.update = True
+        self.update = False
         self.devel = False
         self.json = None
         self.args = []
@@ -550,8 +550,8 @@ if __name__ == "__main__":
         prog="pitivi-flatpak")
 
     general = parser.add_argument_group("General")
-    general.add_argument("--noupdate", dest="update",
-                         action="store_false",
+    general.add_argument("--update", dest="update",
+                         action="store_true",
                          help="Update the runtime/sdk/app and rebuild the development environment if needed")
 
     # Only used by the installer to keep the Terminal window open on exit.
