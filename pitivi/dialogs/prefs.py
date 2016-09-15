@@ -430,7 +430,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.preferences = pref_dialog
         self.customised_item = customised_item
         self.shortcut_changed = False
-        self.valid_shortcut = False
 
         # Initialise all potential widgets used in the dialog.
         self.accelerator_label = Gtk.Label()
@@ -494,8 +493,7 @@ class CustomShortcutDialog(Gtk.Dialog):
 
         self.conflicting_action = self.app.shortcuts.get_conflicting_action(
             self.customised_item.action_name, custom_keyval, custom_mask)
-        self.valid_shortcut = valid and not self.conflicting_action
-        if self.valid_shortcut:
+        if valid and not self.conflicting_action:
             self.toggle_apply_accel_buttons(custom_keyval, custom_mask)
         else:
             if valid and not equal_accelerators:
@@ -506,10 +504,10 @@ class CustomShortcutDialog(Gtk.Dialog):
                                                % title)
 
         # Set visibility according to the booleans set above.
-        self.apply_button.set_visible(self.valid_shortcut)
-        self.conflict_label.set_visible(not self.valid_shortcut and valid and
+        self.apply_button.set_visible(valid and not bool(self.conflicting_action))
+        self.conflict_label.set_visible(valid and bool(self.conflicting_action) and
                                         not equal_accelerators)
-        self.replace_button.set_visible(not self.valid_shortcut and valid and
+        self.replace_button.set_visible(valid and bool(self.conflicting_action) and
                                         not equal_accelerators)
         self.currently_used.set_visible(equal_accelerators)
         self.invalid_used.set_visible(not valid)
