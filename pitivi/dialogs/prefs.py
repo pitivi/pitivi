@@ -441,14 +441,12 @@ class CustomShortcutDialog(Gtk.Dialog):
 
         # Setup the widgets used in the dialog.
         self.apply_button = self.add_button(_("Apply"), Gtk.ResponseType.OK)
-        self.apply_button.connect("clicked", self.__apply_accel_setting_cb)
         self.apply_button.get_style_context()\
             .add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
         self.apply_button.set_tooltip_text(_("Apply the accelerator to this"
                                              " shortcut."))
         self.apply_button.hide()
         self.replace_button = self.add_button(_("Replace"), Gtk.ResponseType.OK)
-        self.replace_button.connect("clicked", self.__replace_accelerators_cb)
         self.replace_button.get_style_context().\
             add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
         self.replace_button.set_tooltip_text(_("Remove this accelerator from where "
@@ -527,20 +525,17 @@ class CustomShortcutDialog(Gtk.Dialog):
                 return True
         return False
 
-    def __replace_accelerators_cb(self, unused_parameter):
-        """Disables the accelerator in its previous use, set for this action."""
-        conflicting_accels = self.app.get_accels_for_action(self.conflicting_action)
-        if len(conflicting_accels) > 1:
-            self.app.shortcuts.set(self.conflicting_action,
-                                   conflicting_accels[1:])
-        else:
-            self.app.shortcuts.set(self.conflicting_action, [])
-        self.__apply_accel_setting_cb(unused_parameter)
-        self.destroy()
+    def do_response(self, response):
+        """Handles the user's response."""
+        if response == Gtk.ResponseType.OK:
+            if self.conflicting_action:
+                # Disable the accelerator in its previous use, set for this action.
+                accels = self.app.get_accels_for_action(self.conflicting_action)
+                accels.remove(self.accelerator)
+                self.app.shortcuts.set(self.conflicting_action, accels)
 
-    def __apply_accel_setting_cb(self, unused_parameter):
-        """Sets the user's preferred settings and closes the dialog."""
-        customised_action = self.customised_item.action_name
-        self.app.shortcuts.set(customised_action, [self.accelerator])
-        self.app.shortcuts.save()
+            # Apply the custom accelerator to the shortcut.
+            action = self.customised_item.action_name
+            self.app.shortcuts.set(action, [self.accelerator])
+            self.app.shortcuts.save()
         self.destroy()
