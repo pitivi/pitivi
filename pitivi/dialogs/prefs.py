@@ -434,7 +434,14 @@ class CustomShortcutDialog(Gtk.Dialog):
         # Initialise all potential widgets used in the dialog.
         self.accelerator_label = Gtk.Label()
         self.currently_used = Gtk.Label()
+        self.currently_used.set_text(_("This is the currently set accelerator"
+                                       " for this shortcut.\n You may want to"
+                                       " change it to something else."))
         self.invalid_used = Gtk.Label()
+        self.invalid_used.set_text(_("The accelerator you are trying to set"
+                                     " might interfere with typing.\n"
+                                     " Try using Control, Shift or Alt"
+                                     " with some other key, please."))
         self.conflicting_action = None
         self.conflict_label = Gtk.Label()
         self.apply_button = Gtk.Button()
@@ -479,17 +486,7 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
                                           % accelerator)
         equal_accelerators = self.check_equal_to_set(custom_keyval, custom_mask)
-        if equal_accelerators:
-                self.currently_used.set_markup(_("This is the currently set accelerator "
-                                                 "for this shortcut.\n You may want to "
-                                                 "change it to something else."))
-
         valid = Gtk.accelerator_valid(custom_keyval, custom_mask)
-        if not valid:
-            self.invalid_used.set_markup(_("The accelerator you are trying to set "
-                                           "might interfere with typing.\n "
-                                           "Try using Control, Shift or Alt "
-                                           "with some other key, please."))
 
         self.conflicting_action = self.app.shortcuts.get_conflicting_action(
             self.customised_item.action_name, custom_keyval, custom_mask)
