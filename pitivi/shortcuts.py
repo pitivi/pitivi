@@ -39,6 +39,7 @@ class ShortcutsManager(GObject.Object):
         self.group_titles = {}
         self.group_actions = {}
         self.default_accelerators = {}
+        self.titles = {}
         self.config_path = os.path.sep.join([xdg_config_home(),
                                              "shortcuts.conf"])
         self.__loaded = self.__load()
@@ -84,6 +85,7 @@ class ShortcutsManager(GObject.Object):
                 to be used instead of that extracted from `action`.
         """
         self.default_accelerators[action] = accelerators
+        self.titles[action] = title
         if not self.__loaded:
             self.app.set_accels_for_action(action, accelerators)
 
@@ -115,6 +117,30 @@ class ShortcutsManager(GObject.Object):
         """
         accelerators = self.app.get_accels_for_action(action)
         return set(accelerators) != set(self.default_accelerators[action])
+
+    def get_conflicting_action(self, action, keyval, mask):
+        """Looks for a conflicting action using the specified accelerator.
+
+        If an accelerator is used by another action in the same group or
+        in the "win" and "app" global groups, it is not clear which of them
+        will trigger when the accelerator is pressed.
+
+        Args:
+            action (str): The "prefix.name" identifying the action for which
+                the accelerator will be set if there is no conflict.
+            keyval (int): The key value of the accelerator.
+            mask (int): The mask value of the accelerator.
+
+        Returns:
+            str: The name of the conflicting action using the accelerator, or None.
+        """
+        group_name = action.split(".")[0]
+        for group in {group_name, "app", "win"}:
+            for action, unused_title in self.group_actions[group]:
+                for accel in self.app.get_accels_for_action(action):
+                    if (keyval, mask) == Gtk.accelerator_parse(accel):
+                        return action
+        return None
 
     def register_group(self, action_prefix, title):
         """Registers a group of shortcuts to be displayed.

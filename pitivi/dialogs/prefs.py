@@ -437,7 +437,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.currently_used = Gtk.Label()
         self.invalid_used = Gtk.Label()
         self.conflicting_action = None
-        self.conflicting_action_name = None
         self.conflict_label = Gtk.Label()
         self.apply_button = Gtk.Button()
         self.replace_button = Gtk.Button()
@@ -493,16 +492,18 @@ class CustomShortcutDialog(Gtk.Dialog):
                                            "Try using Control, Shift or Alt "
                                            "with some other key, please."))
 
-        already_used = self.verify_already_used(custom_keyval, custom_mask)
-        self.valid_shortcut = valid and not already_used
+        self.conflicting_action = self.app.shortcuts.get_conflicting_action(
+            self.customised_item.action_name, custom_keyval, custom_mask)
+        self.valid_shortcut = valid and not self.conflicting_action
         if self.valid_shortcut:
             self.toggle_apply_accel_buttons(custom_keyval, custom_mask)
         else:
             if valid and not equal_accelerators:
                 self.toggle_conflict_buttons(custom_keyval, custom_mask)
+                title = self.app.shortcuts.titles[self.conflicting_action]
                 self.conflict_label.set_markup(_("This shortcut is already used for <b>"
                                                  "%s</b>.\nDo you want to replace it?")
-                                               % self.conflicting_action_name)
+                                               % title)
 
         # Set visibility according to the booleans set above.
         self.apply_button.set_visible(self.valid_shortcut)
@@ -512,26 +513,6 @@ class CustomShortcutDialog(Gtk.Dialog):
                                         not equal_accelerators)
         self.currently_used.set_visible(equal_accelerators)
         self.invalid_used.set_visible(not valid)
-
-    def verify_already_used(self, keyval, mask):
-        """Checks if the customised accelerator is not already used for another action.
-
-        Compare the customised accelerator to other accelerators in the same group
-        of actions as well as actions in the 'win' and 'app' groups, because these
-        would get affected if identical accelerator were set to some other action in a
-        container.
-        """
-        customised_action = self.customised_item.action_name
-        group_name = customised_action.split(".")[0]
-        groups_to_check = set([group_name, "app", "win"])
-        for group in groups_to_check:
-            for action, title in self.app.shortcuts.group_actions[group]:
-                for accel in self.app.get_accels_for_action(action):
-                    if (keyval, mask) == Gtk.accelerator_parse(accel):
-                        self.conflicting_action = action
-                        self.conflicting_action_name = title
-                        return True
-        return False
 
     def check_equal_to_set(self, keyval, mask):
         """Checks if the customised accelerator is not already set for the action."""
