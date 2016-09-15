@@ -105,6 +105,18 @@ class ShortcutsManager(GObject.Object):
         self.app.set_accels_for_action(action, accelerators)
         self.emit("accel-changed", action)
 
+    def is_changed(self, action):
+        """Checks whether the accelerators for an action have been changed.
+
+        Args:
+            action (str): The "prefix.name" identifying the action.
+
+        Returns:
+            bool: True iff the current accelerators are not the default ones.
+        """
+        accelerators = self.app.get_accels_for_action(action)
+        return set(accelerators) != set(self.default_accelerators[action])
+
     def register_group(self, action_prefix, title):
         """Registers a group of shortcuts to be displayed.
 

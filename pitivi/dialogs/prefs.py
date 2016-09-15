@@ -255,13 +255,12 @@ class PreferencesDialog(Loggable):
 
     def _create_widget_func(self, item, user_data):
         """Generates and fills up the contents for the model."""
-        defaults = self.app.shortcuts.default_accelerators
-        accel_changed = item.get_accel(formatted=False) not in defaults[item.action_name]
+        accel_changed = self.app.shortcuts.is_changed(item.action_name)
 
         title_label = Gtk.Label()
         accel_label = Gtk.Label()
         title_label.set_text(item.title)
-        accel_label.set_text(item.get_accel(formatted=True))
+        accel_label.set_text(item.get_accel())
         if not accel_changed:
             accel_label.set_state_flags(Gtk.StateFlags.INSENSITIVE, True)
         title_label.props.xalign = 0
@@ -410,19 +409,15 @@ class ModelItem(GObject.Object):
         self.action_name = action_name
         self.title = title
 
-    def get_accel(self, formatted=True):
+    def get_accel(self):
         """Returns the corresponding accelerator in a viewable format."""
         try:
             accels = self.app.get_accels_for_action(self.action_name)[0]
         except IndexError:
             accels = ""
 
-        if formatted:
-            keyval, mods = Gtk.accelerator_parse(accels)
-            accelerator = Gtk.accelerator_get_label(keyval, mods)
-            return accelerator
-        else:
-            return accels
+        keyval, mods = Gtk.accelerator_parse(accels)
+        return Gtk.accelerator_get_label(keyval, mods)
 
 
 class CustomShortcutDialog(Gtk.Dialog):
