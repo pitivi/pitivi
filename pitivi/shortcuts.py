@@ -127,6 +127,7 @@ class ShortcutsManager(GObject.Object):
         if action:
             self.app.set_accels_for_action(action, self.default_accelerators[action])
             self.save()
+            self.emit("accel-changed", action)
         else:
             for action, accelerators in self.default_accelerators.items():
                 self.app.set_accels_for_action(action, accelerators)
@@ -134,7 +135,7 @@ class ShortcutsManager(GObject.Object):
                 os.remove(self.config_path)
             except FileNotFoundError:
                 pass
-        self.emit("accel-changed", action)
+            self.emit("accel-changed", None)
 
 
 class ShortcutsWindow(Gtk.ShortcutsWindow):

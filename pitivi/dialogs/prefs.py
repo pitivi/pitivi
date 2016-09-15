@@ -54,7 +54,7 @@ class PreferencesDialog(Loggable):
     def __init__(self, app):
         Loggable.__init__(self)
         self.app = app
-        self.app.shortcuts.connect("accel-changed", self.__do_accel_changed_cb)
+        self.app.shortcuts.connect("accel-changed", self.__accel_changed_cb)
 
         self.settings = app.settings
         self.widgets = {}
@@ -76,11 +76,6 @@ class PreferencesDialog(Loggable):
         self.__add_settings_sections()
         self.__add_shortcuts_section()
         self.dialog.set_transient_for(app.gui)
-
-    def __do_accel_changed_cb(self, shortcuts_manager, action_name):
-        if action_name:
-            index = self.action_ids[action_name]
-            self.list_store.emit("items-changed", index, 1, 1)
 
     def run(self):
         """Runs the dialog."""
@@ -330,11 +325,23 @@ class PreferencesDialog(Loggable):
         """Resets the accelerator to the default value."""
         self.app.shortcuts.reset_accels(item.action_name)
 
+    def __accel_changed_cb(self, shortcuts_manager, action_name):
+        """Handles the changing of a shortcut's accelerator."""
+        if action_name:
+            index = self.action_ids[action_name]
+            count = 1
+        else:
+            # All items changed.
+            index = 0
+            count = self.list_store.get_n_items()
+        self.list_store.emit("items-changed", index, count, count)
+
     def _factorySettingsButtonCb(self, unused_button):
         """Resets all settings to the defaults."""
         for section in self.prefs.values():
             for attrname in section:
                 self._resetOptionCb(self.resets[attrname], attrname)
+        self.app.shortcuts.reset_accels()
 
     def _revertButtonCb(self, unused_button):
         """Resets all settings to the values when the dialog was opened."""
