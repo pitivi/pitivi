@@ -68,7 +68,6 @@ class PreferencesDialog(Loggable):
         builder.connect_signals(self)
         self.dialog = builder.get_object("dialog1")
         self.sidebar = builder.get_object("sidebar")
-        self.sidebar.set_size_request(205, -1)
         self.stack = builder.get_object("stack")
         self.revert_button = builder.get_object("revertButton")
         self.factory_settings = builder.get_object("resetButton")
