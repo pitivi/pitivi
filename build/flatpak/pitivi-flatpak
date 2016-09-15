@@ -347,14 +347,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def check_flatpak(self):
         try:
-            version = subprocess.check_output(
-                ["flatpak", "--version"]).decode("utf-8").split(
-                    " ")[1].strip("\n")
-
-            if version < FLATPAK_REQ:
-                message("\n%sFlatpak %s required %s found. Please update and try again%s\n", Colors.FAIL,
-                        FLATPAK_REQ, version, Colors.ENDC)
-                self.exit(1)
+            output = subprocess.check_output(["flatpak", "--version"])
         except FileNotFoundError:
             message("\n%sYou need to install flatpak >= %s"
                     " to be able to use the '%s' script.\n\n"
@@ -362,6 +355,16 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                     " how to install it for your distribution at:\n"
                     "    * http://flatpak.org/%s\n", Colors.FAIL,
                     FLATPAK_REQ, sys.argv[0], Colors.ENDC)
+            self.exit(1)
+
+        def comparable_version(version):
+            return [int(number) for number in version.split(".")]
+
+        version = output.decode("utf-8").split(" ")[1].strip("\n")
+        if comparable_version(version) < comparable_version(FLATPAK_REQ):
+            message("\n%sFlatpak %s required but %s found."
+                    " Please update and try again%s\n", Colors.FAIL,
+                    FLATPAK_REQ, version, Colors.ENDC)
             self.exit(1)
 
     def exit(self, exitcode):
