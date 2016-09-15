@@ -80,12 +80,7 @@ class PreferencesDialog(Loggable):
     def __do_accel_changed_cb(self, shortcuts_manager, action_name):
         if action_name:
             index = self.action_ids[action_name]
-            title = self.list_store.get_item(index).title
-            updated_item = ModelItem(self.app, action_name, title)
-            self.list_store.remove(index)
-            self.list_store.insert(index, updated_item)
             self.list_store.emit("items-changed", index, 1, 1)
-            self.content_box.get_row_at_index(index).show()
 
     def run(self):
         """Runs the dialog."""
@@ -332,14 +327,8 @@ class PreferencesDialog(Loggable):
             row.set_header(header_box)
 
     def __reset_accelerator_cb(self, unused_button, item):
-        """Resets the accelerator and updates the displayed value to default."""
+        """Resets the accelerator to the default value."""
         self.app.shortcuts.reset_accels(item.action_name)
-        # Update the row's accelerator value.
-        for index in range(self.list_store.get_n_items()):
-            if self.list_store.get_item(index) == item:
-                self.list_store.remove(index)
-                self.list_store.insert(index, ModelItem(self.app, item.action_name,
-                                                        item.title))
 
     def _factorySettingsButtonCb(self, unused_button):
         """Resets all settings to the defaults."""
