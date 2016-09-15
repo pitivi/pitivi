@@ -251,7 +251,7 @@ class PreferencesDialog(Loggable):
         index = row.get_index()
         item = self.list_store.get_item(index)
         customsation_dialog = CustomShortcutDialog(self.app, self.dialog, item)
-        customsation_dialog.show_all()
+        customsation_dialog.show()
 
     def _create_widget_func(self, item, user_data):
         """Generates and fills up the contents for the model."""
@@ -440,11 +440,28 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.conflicting_action = None
 
         # Setup the widgets used in the dialog.
+        self.apply_button = self.add_button(_("Apply"), Gtk.ResponseType.OK)
+        self.apply_button.connect("clicked", self.__apply_accel_setting_cb)
+        self.apply_button.get_style_context()\
+            .add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        self.apply_button.set_tooltip_text(_("Apply the accelerator to this"
+                                             " shortcut."))
+        self.apply_button.hide()
+        self.replace_button = self.add_button(_("Replace"), Gtk.ResponseType.OK)
+        self.replace_button.connect("clicked", self.__replace_accelerators_cb)
+        self.replace_button.get_style_context().\
+            add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
+        self.replace_button.set_tooltip_text(_("Remove this accelerator from where "
+                                               "it was used previously and set it for "
+                                               "this shortcut."))
+        self.replace_button.hide()
+
         prompt_label = Gtk.Label()
         prompt_label.set_markup(_("Enter new shortcut for <b>%s</b>,\nor press Esc to "
                                   "cancel.") % customised_item.title)
         prompt_label.props.margin_top = PADDING * 3
         prompt_label.props.margin_bottom = PADDING * 3
+        prompt_label.show()
         self.accelerator_label = Gtk.Label()
         self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
                                           % customised_item.get_accel())
@@ -459,8 +476,6 @@ class CustomShortcutDialog(Gtk.Dialog):
                                      " Try using Control, Shift or Alt"
                                      " with some other key, please."))
         self.conflict_label = Gtk.Label()
-        self.apply_button = Gtk.Button()
-        self.replace_button = Gtk.Button()
 
         content_area = self.get_content_area()
         content_area.add(prompt_label)
@@ -471,33 +486,32 @@ class CustomShortcutDialog(Gtk.Dialog):
 
     def do_key_press_event(self, event):
         """Decides if the pressed accel combination is valid and sets widget visibility."""
-        custom_keyval = event.keyval
-        custom_mask = event.state
+        keyval = event.keyval
+        mask = event.state
 
-        if custom_keyval == Gdk.KEY_Escape:
+        if keyval == Gdk.KEY_Escape:
             self.destroy()
             return
 
-        accelerator = Gtk.accelerator_get_label(custom_keyval, custom_mask)
+        self.accelerator = Gtk.accelerator_name(keyval, mask)
+
+        accelerator = Gtk.accelerator_get_label(keyval, mask)
         self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
                                           % accelerator)
-        equal_accelerators = self.check_equal_to_set(custom_keyval, custom_mask)
-        valid = Gtk.accelerator_valid(custom_keyval, custom_mask)
+        equal_accelerators = self.check_equal_to_set(keyval, mask)
+        valid = Gtk.accelerator_valid(keyval, mask)
 
         self.conflicting_action = self.app.shortcuts.get_conflicting_action(
-            self.customised_item.action_name, custom_keyval, custom_mask)
-        if valid and not self.conflicting_action:
-            self.toggle_apply_accel_buttons(custom_keyval, custom_mask)
-        else:
-            if valid and not equal_accelerators:
-                self.toggle_conflict_buttons(custom_keyval, custom_mask)
-                title = self.app.shortcuts.titles[self.conflicting_action]
-                self.conflict_label.set_markup(_("This shortcut is already used for <b>"
-                                                 "%s</b>.\nDo you want to replace it?")
-                                               % title)
+            self.customised_item.action_name, keyval, mask)
+        if valid and self.conflicting_action:
+            title = self.app.shortcuts.titles[self.conflicting_action]
+            self.conflict_label.set_markup(_("This shortcut is already used for <b>"
+                                             "%s</b>.\nDo you want to replace it?")
+                                           % title)
 
         # Set visibility according to the booleans set above.
         self.apply_button.set_visible(valid and not bool(self.conflicting_action))
+        self.accelerator_label.set_visible(valid)
         self.conflict_label.set_visible(valid and bool(self.conflicting_action) and
                                         not equal_accelerators)
         self.replace_button.set_visible(valid and bool(self.conflicting_action) and
@@ -513,30 +527,7 @@ class CustomShortcutDialog(Gtk.Dialog):
                 return True
         return False
 
-    def toggle_conflict_buttons(self, keyval, mask):
-        """Shows the buttons viewed when a conflicting accel is pressed."""
-        if self.conflicting_action and self.replace_button.get_visible() is False:
-            self.replace_button = self.add_button(_("Replace"), Gtk.ResponseType.OK)
-            self.replace_button.connect("clicked", self.__replace_accelerators_cb,
-                                        keyval, mask)
-            self.replace_button.get_style_context().\
-                add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-            self.replace_button.set_tooltip_text(_("Remove this accelerator from where "
-                                                 "it was used previously and set it for "
-                                                   "this shortcut."))
-
-    def toggle_apply_accel_buttons(self, keyval, mask):
-        """Shows the buttons viewed when a valid accel is pressed."""
-        if not self.apply_button.get_visible():
-            self.apply_button = self.add_button(_("Apply"), Gtk.ResponseType.OK)
-            self.apply_button.connect("clicked",
-                                      self.__apply_accel_setting_cb, keyval, mask)
-            self.apply_button.get_style_context()\
-                .add_class(Gtk.STYLE_CLASS_SUGGESTED_ACTION)
-            self.apply_button.set_tooltip_text(_("Apply the accelerator to this"
-                                                 "shortcut."))
-
-    def __replace_accelerators_cb(self, unused_parameter, keyval, mask):
+    def __replace_accelerators_cb(self, unused_parameter):
         """Disables the accelerator in its previous use, set for this action."""
         conflicting_accels = self.app.get_accels_for_action(self.conflicting_action)
         if len(conflicting_accels) > 1:
@@ -544,13 +535,12 @@ class CustomShortcutDialog(Gtk.Dialog):
                                    conflicting_accels[1:])
         else:
             self.app.shortcuts.set(self.conflicting_action, [])
-        self.__apply_accel_setting_cb(unused_parameter, keyval, mask)
+        self.__apply_accel_setting_cb(unused_parameter)
         self.destroy()
 
-    def __apply_accel_setting_cb(self, unused_parameter, keyval, mask):
+    def __apply_accel_setting_cb(self, unused_parameter):
         """Sets the user's preferred settings and closes the dialog."""
         customised_action = self.customised_item.action_name
-        new_accelerator = Gtk.accelerator_name(keyval, mask)
-        self.app.shortcuts.set(customised_action, [new_accelerator])
+        self.app.shortcuts.set(customised_action, [self.accelerator])
         self.app.shortcuts.save()
         self.destroy()
