@@ -36,7 +36,6 @@ class ShortcutsManager(GObject.Object):
     def __init__(self, app):
         GObject.Object.__init__(self)
         self.app = app
-        self.groups = []
         self.group_titles = {}
         self.group_actions = {}
         self.default_accelerators = {}
@@ -124,8 +123,7 @@ class ShortcutsManager(GObject.Object):
             action_prefix (str): The group id.
             title (str): The title of the group.
         """
-        if action_prefix not in self.groups:
-            self.groups.append(action_prefix)
+        assert action_prefix not in self.group_titles
         self.group_titles[action_prefix] = title
 
     def reset_accels(self, action=None):
@@ -164,7 +162,7 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         """Gathers the accelerators and populates the window."""
         section = Gtk.ShortcutsSection()
         section.show()
-        for group_id in self.app.shortcuts.groups:
+        for group_id in self.app.shortcuts.group_titles:
             group = Gtk.ShortcutsGroup(title=self.app.shortcuts.group_titles[group_id])
             group.show()
             for action, title in self.app.shortcuts.group_actions[group_id]:

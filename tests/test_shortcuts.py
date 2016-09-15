@@ -35,9 +35,9 @@ class TestShortcutsManager(TestCase):
 
         # Test register_group method
         manager.register_group("alpha_group", "The very first test group")
-        self.assertListEqual(manager.groups, ["alpha_group"])
+        with self.assertRaises(AssertionError):
+            manager.register_group("alpha_group", "")
         manager.register_group("beta_group", "Another test group")
-        self.assertListEqual(manager.groups, ["alpha_group", "beta_group"])
 
         # Test grouping using the stripping away group name from action name
         manager.add("alpha_group.first", ["<Primary>A"], "First action")
@@ -118,7 +118,7 @@ class TestShortcutsManager(TestCase):
         app = mock.MagicMock()
         with mock.patch("pitivi.shortcuts.xdg_config_home") as xdg_config_home,\
                 tempfile.TemporaryDirectory() as temp_dir,\
-                    mock.patch("os.remove") as os_remove_mock:
+                mock.patch("os.remove") as os_remove_mock:
             xdg_config_home.return_value = temp_dir
             manager = ShortcutsManager(app)
 
