@@ -429,10 +429,26 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.app = app
         self.preferences = pref_dialog
         self.customised_item = customised_item
-        self.shortcut_changed = False
 
-        # Initialise all potential widgets used in the dialog.
+        self.set_title(_("Set shortcut"))
+        self.set_size_request(500, 300)
+        self.set_transient_for(self.preferences)
+        self.get_titlebar().set_decoration_layout('close:')
+        self.add_events(Gdk.EventMask.KEY_PRESS_MASK)
+
+        self.shortcut_changed = False
+        self.conflicting_action = None
+
+        # Setup the widgets used in the dialog.
+        prompt_label = Gtk.Label()
+        prompt_label.set_markup(_("Enter new shortcut for <b>%s</b>,\nor press Esc to "
+                                  "cancel.") % customised_item.title)
+        prompt_label.props.margin_top = PADDING * 3
+        prompt_label.props.margin_bottom = PADDING * 3
         self.accelerator_label = Gtk.Label()
+        self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
+                                          % customised_item.get_accel())
+        self.accelerator_label.props.margin_bottom = PADDING
         self.currently_used = Gtk.Label()
         self.currently_used.set_text(_("This is the currently set accelerator"
                                        " for this shortcut.\n You may want to"
@@ -442,31 +458,11 @@ class CustomShortcutDialog(Gtk.Dialog):
                                      " might interfere with typing.\n"
                                      " Try using Control, Shift or Alt"
                                      " with some other key, please."))
-        self.conflicting_action = None
         self.conflict_label = Gtk.Label()
         self.apply_button = Gtk.Button()
         self.replace_button = Gtk.Button()
 
-        self.set_size_request(500, 300)
-        self.set_transient_for(self.preferences)
-        self.get_titlebar().set_decoration_layout('close:')
-        self.add_events(Gdk.EventMask.KEY_PRESS_MASK)
-        self.display_customisation_dialog(customised_item)
-        self.replace_button.set_visible(False)
-
-    def display_customisation_dialog(self, customised_item):
-        """Populates the dialog with relevant information and displays it."""
-        self.set_title(_("Set shortcut"))
         content_area = self.get_content_area()
-        prompt_label = Gtk.Label()
-        prompt_label.set_markup(_("Enter new shortcut for <b>%s</b>,\nor press Esc to "
-                                  "cancel.") % customised_item.title)
-        prompt_label.props.margin_top = PADDING * 3
-        prompt_label.props.margin_bottom = PADDING * 3
-        self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
-                                          % customised_item.get_accel())
-        self.accelerator_label.props.margin_bottom = PADDING
-
         content_area.add(prompt_label)
         content_area.add(self.accelerator_label)
         content_area.add(self.conflict_label)
