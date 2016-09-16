@@ -431,7 +431,13 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.customised_item = customised_item
 
         self.set_title(_("Set shortcut"))
+        # Set a minimum size.
         self.set_size_request(500, 300)
+        # Set a maximum size.
+        geometry = Gdk.Geometry()
+        geometry.max_width = self.get_size_request()[0]
+        geometry.max_height = -1
+        self.set_geometry_hints(None, geometry, Gdk.WindowHints.MAX_SIZE)
         self.set_transient_for(self.preferences)
         self.get_titlebar().set_decoration_layout('close:')
         self.add_events(Gdk.EventMask.KEY_PRESS_MASK)
@@ -454,25 +460,28 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.replace_button.hide()
 
         prompt_label = Gtk.Label()
-        prompt_label.set_markup(_("Enter new shortcut for <b>%s</b>,\nor press Esc to "
-                                  "cancel.") % customised_item.title)
+        prompt_label.set_markup(
+            _("Enter new shortcut for <b>%s</b>, or press Esc to cancel.")
+            % customised_item.title)
+        prompt_label.props.wrap = True
         prompt_label.props.margin_bottom = PADDING * 3
         prompt_label.show()
         self.accelerator_label = Gtk.Label()
         self.accelerator_label.props.margin_bottom = PADDING
-        self.invalid_used = Gtk.Label()
-        self.invalid_used.set_text(_("The accelerator you are trying to set"
-                                     " might interfere with typing.\n"
-                                     " Try using Control, Shift or Alt"
-                                     " with some other key, please."))
+        self.invalid_label = Gtk.Label()
+        self.invalid_label.set_text(
+            _("The accelerator you are trying to set might interfere with typing."
+              " Try using Control, Shift or Alt with some other key, please."))
+        self.invalid_label.props.wrap = True
         self.conflict_label = Gtk.Label()
+        self.conflict_label.props.wrap = True
 
         content_area = self.get_content_area()
         content_area.props.margin = PADDING * 3
         content_area.add(prompt_label)
         content_area.add(self.accelerator_label)
         content_area.add(self.conflict_label)
-        content_area.add(self.invalid_used)
+        content_area.add(self.invalid_label)
 
     def do_key_press_event(self, event):
         """Handles key press events and detects valid accelerators."""
@@ -494,16 +503,17 @@ class CustomShortcutDialog(Gtk.Dialog):
             self.customised_item.action_name, keyval, mask)
         if valid and self.conflicting_action:
             title = self.app.shortcuts.titles[self.conflicting_action]
-            self.conflict_label.set_markup(_("This shortcut is already used for <b>"
-                                             "%s</b>.\nDo you want to replace it?")
-                                           % title)
+            self.conflict_label.set_markup(
+                _("This key combination is already used by <b>%s</b>."
+                  " Press Replace to use it for <b>%s</b> instead.")
+                % (title, self.customised_item.title))
 
         # Set visibility according to the booleans set above.
         self.apply_button.set_visible(valid and not bool(self.conflicting_action))
         self.accelerator_label.set_visible(valid)
         self.conflict_label.set_visible(valid and bool(self.conflicting_action))
         self.replace_button.set_visible(valid and bool(self.conflicting_action))
-        self.invalid_used.set_visible(not valid)
+        self.invalid_label.set_visible(not valid)
 
     def do_response(self, response):
         """Handles the user's response."""
