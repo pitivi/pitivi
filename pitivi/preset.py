@@ -30,6 +30,7 @@ from pitivi.configure import get_renderpresets_dir
 from pitivi.configure import get_videopresets_dir
 from pitivi.settings import xdg_data_home
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import alter_style_class
 
 
 class DeserializeException(Exception):
@@ -80,10 +81,7 @@ class PresetManager(GObject.Object, Loggable):
         combo.connect("changed", self._presetChangedCb)
 
         entry = combo.get_child()
-        style_context = entry.get_style_context()
-        style_provider = Gtk.CssProvider()
-        style_provider.load_from_data("GtkEntry.unsaved {font-style:italic;}".encode('UTF-8'))
-        style_context.add_provider(style_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        alter_style_class("GtkEntry.unsaved", entry, "font-style:italic;")
 
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
