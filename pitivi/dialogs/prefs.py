@@ -430,7 +430,7 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.preferences = pref_dialog
         self.customised_item = customised_item
 
-        self.set_title(_("Set shortcut"))
+        self.set_title(_("Set Shortcut"))
         # Set a minimum size.
         self.set_size_request(500, 300)
         # Set a maximum size.
