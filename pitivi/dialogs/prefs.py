@@ -436,7 +436,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.get_titlebar().set_decoration_layout('close:')
         self.add_events(Gdk.EventMask.KEY_PRESS_MASK)
 
-        self.shortcut_changed = False
         self.conflicting_action = None
 
         # Setup the widgets used in the dialog.
