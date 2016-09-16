@@ -224,7 +224,7 @@ class PreferencesDialog(Loggable):
         index = 0
         for group, actions in shortcuts_manager.group_actions.items():
             for action, title in actions:
-                item = ModelItem(self.app, action, title)
+                item = ModelItem(self.app, action, title, group)
                 self.list_store.append(item)
                 self.action_ids[action] = index
                 index += 1
@@ -294,20 +294,17 @@ class PreferencesDialog(Loggable):
 
     def _add_header_func(self, row, before, unused_user_data):
         """Adds a header for a new section in the model."""
-        if before:
-            row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
-
-        shortcuts_manager = self.app.shortcuts
-        curr_prefix = self.list_store.get_item(row.get_index()).action_name.split(".")[0]
+        group = self.list_store.get_item(row.get_index()).group
         try:
-            prev_prefix = self.list_store.get_item(row.get_index() - 1).action_name.split(".")[0]
+            prev_group = self.list_store.get_item(row.get_index() - 1).group
         except OverflowError:
-            prev_prefix = None
+            prev_group = None
 
-        if prev_prefix != curr_prefix:
+        if prev_group != group:
             header = Gtk.Label()
             header.set_use_markup(True)
-            header.set_markup("<b>%s</b>" % shortcuts_manager.group_titles[curr_prefix])
+            group_title = self.app.shortcuts.group_titles[group]
+            header.set_markup("<b>%s</b>" % group_title)
             header_box = Gtk.Box()
             header_box.add(header)
             header_box.props.margin_top = PADDING
@@ -319,6 +316,8 @@ class PreferencesDialog(Loggable):
             #                                      Gdk.RGBA(.4, .4, .4, .4))
             header_box.show_all()
             row.set_header(header_box)
+        else:
+            row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
 
     def __reset_accelerator_cb(self, unused_button, item):
         """Resets the accelerator to the default value."""
@@ -403,11 +402,12 @@ class PreferencesDialog(Loggable):
 class ModelItem(GObject.Object):
     """Holds the data of a keyboard shortcut for a Gio.ListStore."""
 
-    def __init__(self, app, action_name, title):
+    def __init__(self, app, action_name, title, group):
         GObject.Object.__init__(self)
         self.app = app
         self.action_name = action_name
         self.title = title
+        self.group = group
 
     def get_accel(self):
         """Returns the corresponding accelerator in a viewable format."""
