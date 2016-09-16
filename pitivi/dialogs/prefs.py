@@ -464,10 +464,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
                                           % customised_item.get_accel())
         self.accelerator_label.props.margin_bottom = PADDING
-        self.currently_used = Gtk.Label()
-        self.currently_used.set_text(_("This is the currently set accelerator"
-                                       " for this shortcut.\n You may want to"
-                                       " change it to something else."))
         self.invalid_used = Gtk.Label()
         self.invalid_used.set_text(_("The accelerator you are trying to set"
                                      " might interfere with typing.\n"
@@ -479,11 +475,10 @@ class CustomShortcutDialog(Gtk.Dialog):
         content_area.add(prompt_label)
         content_area.add(self.accelerator_label)
         content_area.add(self.conflict_label)
-        content_area.add(self.currently_used)
         content_area.add(self.invalid_used)
 
     def do_key_press_event(self, event):
-        """Decides if the pressed accel combination is valid and sets widget visibility."""
+        """Handles key press events and detects valid accelerators."""
         keyval = event.keyval
         mask = event.state
 
@@ -496,7 +491,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         accelerator = Gtk.accelerator_get_label(keyval, mask)
         self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
                                           % accelerator)
-        equal_accelerators = self.check_equal_to_set(keyval, mask)
         valid = Gtk.accelerator_valid(keyval, mask)
 
         self.conflicting_action = self.app.shortcuts.get_conflicting_action(
@@ -510,20 +504,9 @@ class CustomShortcutDialog(Gtk.Dialog):
         # Set visibility according to the booleans set above.
         self.apply_button.set_visible(valid and not bool(self.conflicting_action))
         self.accelerator_label.set_visible(valid)
-        self.conflict_label.set_visible(valid and bool(self.conflicting_action) and
-                                        not equal_accelerators)
-        self.replace_button.set_visible(valid and bool(self.conflicting_action) and
-                                        not equal_accelerators)
-        self.currently_used.set_visible(equal_accelerators)
+        self.conflict_label.set_visible(valid and bool(self.conflicting_action))
+        self.replace_button.set_visible(valid and bool(self.conflicting_action))
         self.invalid_used.set_visible(not valid)
-
-    def check_equal_to_set(self, keyval, mask):
-        """Checks if the customised accelerator is not already set for the action."""
-        action = self.customised_item.action_name
-        for accel in self.app.get_accels_for_action(action):
-            if (keyval, mask) == Gtk.accelerator_parse(accel):
-                return True
-        return False
 
     def do_response(self, response):
         """Handles the user's response."""

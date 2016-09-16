@@ -136,10 +136,12 @@ class ShortcutsManager(GObject.Object):
         """
         group_name = action.split(".")[0]
         for group in {group_name, "app", "win"}:
-            for action, unused_title in self.group_actions[group]:
-                for accel in self.app.get_accels_for_action(action):
+            for neighbor_action, unused_title in self.group_actions[group]:
+                if neighbor_action == action:
+                    continue
+                for accel in self.app.get_accels_for_action(neighbor_action):
                     if (keyval, mask) == Gtk.accelerator_parse(accel):
-                        return action
+                        return neighbor_action
         return None
 
     def register_group(self, action_prefix, title):
