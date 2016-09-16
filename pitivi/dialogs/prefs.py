@@ -461,8 +461,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         prompt_label.props.margin_bottom = PADDING * 3
         prompt_label.show()
         self.accelerator_label = Gtk.Label()
-        self.accelerator_label.set_markup("<span size='20000'><b>%s</b></span>"
-                                          % customised_item.get_accel())
         self.accelerator_label.props.margin_bottom = PADDING
         self.invalid_used = Gtk.Label()
         self.invalid_used.set_text(_("The accelerator you are trying to set"
