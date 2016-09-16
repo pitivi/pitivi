@@ -29,6 +29,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import alter_style_class
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
@@ -306,17 +307,18 @@ class PreferencesDialog(Loggable):
             header.set_use_markup(True)
             group_title = self.app.shortcuts.group_titles[group]
             header.set_markup("<b>%s</b>" % group_title)
-            header_box = Gtk.Box()
-            header_box.add(header)
-            header_box.props.margin_top = PADDING
-            header_box.props.margin_bottom = PADDING
-            header_box.props.margin_left = PADDING * 2
-            header_box.props.margin_right = PADDING * 2
-            # COMMENTED OUT UNTIL I FIND OUT HOW TO DO IT:
-            # header_box.override_background_color(Gtk.StateType.NORMAL,
-            #                                      Gdk.RGBA(.4, .4, .4, .4))
-            header_box.show_all()
-            row.set_header(header_box)
+            header.props.margin_top = PADDING * 3
+            header.props.margin_bottom = PADDING
+            header.props.margin_left = PADDING * 2
+            header.props.margin_right = PADDING * 2
+            header.props.xalign = 0
+            alter_style_class("group_title", header, "font-size: small;")
+            header.get_style_context().add_class("group_title")
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            box.add(header)
+            box.get_style_context().add_class("background")
+            box.show_all()
+            row.set_header(box)
         else:
             row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
 
