@@ -456,7 +456,6 @@ class CustomShortcutDialog(Gtk.Dialog):
         prompt_label = Gtk.Label()
         prompt_label.set_markup(_("Enter new shortcut for <b>%s</b>,\nor press Esc to "
                                   "cancel.") % customised_item.title)
-        prompt_label.props.margin_top = PADDING * 3
         prompt_label.props.margin_bottom = PADDING * 3
         prompt_label.show()
         self.accelerator_label = Gtk.Label()
@@ -469,6 +468,7 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.conflict_label = Gtk.Label()
 
         content_area = self.get_content_area()
+        content_area.props.margin = PADDING * 3
         content_area.add(prompt_label)
         content_area.add(self.accelerator_label)
         content_area.add(self.conflict_label)
