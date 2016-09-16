@@ -426,7 +426,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         actions_group = Gio.SimpleActionGroup()
         self.insert_action_group("medialibrary", actions_group)
-        self.app.shortcuts.register_group("medialibrary", _("Media Library"))
+        self.app.shortcuts.register_group("medialibrary", _("Media Library"), position=50)
 
         self.remove_assets_action = Gio.SimpleAction.new("remove-assets", None)
         self.remove_assets_action.connect("activate", self._removeAssetsCb)

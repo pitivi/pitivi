@@ -153,7 +153,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._syncDoUndo()
 
     def _createActions(self):
-        self.shortcuts.register_group("app", _("General"))
+        self.shortcuts.register_group("app", _("General"), position=10)
         self.undo_action = Gio.SimpleAction.new("undo", None)
         self.undo_action.connect("activate", self._undoCb)
         self.add_action(self.undo_action)

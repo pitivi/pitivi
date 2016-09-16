@@ -34,10 +34,11 @@ class TestShortcutsManager(TestCase):
         manager = ShortcutsManager(app)
 
         # Test register_group method
-        manager.register_group("alpha_group", "The very first test group")
+        manager.register_group("alpha_group", "One", position=20)
         with self.assertRaises(AssertionError):
-            manager.register_group("alpha_group", "")
-        manager.register_group("beta_group", "Another test group")
+            manager.register_group("alpha_group", "", position=0)
+        manager.register_group("beta_group", "Two", position=10)
+        self.assertEqual(manager.groups, ["beta_group", "alpha_group"])
 
         # Test grouping using the stripping away group name from action name
         manager.add("alpha_group.first", ["<Primary>A"], "First action")
@@ -67,7 +68,7 @@ class TestShortcutsManager(TestCase):
             manager = ShortcutsManager(app)
             # Test the add is calling set_accels_for_action(),
             # since there is no shortcuts.conf in the directory.
-            manager.register_group("general", "General group")
+            manager.register_group("general", "General group", position=0)
             manager.add("prefix.action1", ["<Primary>P"], "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
 
@@ -75,7 +76,7 @@ class TestShortcutsManager(TestCase):
             # and test that add is not calling set_accels_for_action()
             open(os.path.sep.join([temp_dir, "shortcuts.conf"]), "w").close()
             manager2 = ShortcutsManager(app)
-            manager2.register_group("other", "Other group")
+            manager2.register_group("other", "Other group", position=0)
 
             manager2.add("prefix.action4", ["<Primary>W"],
                          "Action addition not invoking set_accels_for_action")
@@ -94,7 +95,7 @@ class TestShortcutsManager(TestCase):
             self.assertEqual(app.set_accels_for_action.call_count, 0)
 
             # Set default shortcuts
-            manager.register_group("group", "Test group")
+            manager.register_group("group", "Test group", position=0)
             manager.add("group.action1", ["<Primary>i"], "Action 1")
             manager.add("group.action2", ["<Shift>p", "<Primary>m"], "Action 2")
             manager.add("group.action3", ["<Primary><Shift>a", "a"], "Action 3")
@@ -123,7 +124,7 @@ class TestShortcutsManager(TestCase):
             manager = ShortcutsManager(app)
 
             # Set default shortcuts - they will be stored in self.defaults_accelerators.
-            manager.register_group("group", "Test group")
+            manager.register_group("group", "Test group", position=0)
             manager.add("group.action1", ["<Primary>i"], "Action 1")
             manager.add("group.action2", ["<Shift>p"], "Action 2")
 

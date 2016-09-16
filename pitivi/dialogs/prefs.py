@@ -222,7 +222,8 @@ class PreferencesDialog(Loggable):
         self.content_box = Gtk.ListBox()
         self.list_store = Gio.ListStore.new(ModelItem)
         index = 0
-        for group, actions in shortcuts_manager.group_actions.items():
+        for group in shortcuts_manager.groups:
+            actions = shortcuts_manager.group_actions[group]
             for action, title in actions:
                 item = ModelItem(self.app, action, title, group)
                 self.list_store.append(item)

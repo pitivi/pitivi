@@ -26,7 +26,7 @@ from pitivi.settings import xdg_config_home
 from pitivi.utils.misc import show_user_manual
 
 
-class ShortcutsManager(GObject.Object):
+class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-attributes
     """Manager storing the shortcuts from all across the app."""
 
     __gsignals__ = {
@@ -36,6 +36,7 @@ class ShortcutsManager(GObject.Object):
     def __init__(self, app):
         GObject.Object.__init__(self)
         self.app = app
+        self.__groups = []
         self.group_titles = {}
         self.group_actions = {}
         self.default_accelerators = {}
@@ -43,6 +44,11 @@ class ShortcutsManager(GObject.Object):
         self.config_path = os.path.sep.join([xdg_config_home(),
                                              "shortcuts.conf"])
         self.__loaded = self.__load()
+
+    @property
+    def groups(self):
+        """The group ids ordered as they should be displayed."""
+        return [item[1] for item in self.__groups]
 
     def __load(self):
         """Loads the shortcuts from the config file and sets them.
@@ -144,15 +150,18 @@ class ShortcutsManager(GObject.Object):
                         return neighbor_action
         return None
 
-    def register_group(self, action_prefix, title):
+    def register_group(self, action_prefix, title, position):
         """Registers a group of shortcuts to be displayed.
 
         Args:
             action_prefix (str): The group id.
             title (str): The title of the group.
+            position (int): The position used to sort the groups for display.
         """
         assert action_prefix not in self.group_titles
         self.group_titles[action_prefix] = title
+        self.__groups.append((position, action_prefix))
+        self.__groups.sort()
 
     def reset_accels(self, action=None):
         """Resets accelerators to their default values.
@@ -190,7 +199,7 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
         """Gathers the accelerators and populates the window."""
         section = Gtk.ShortcutsSection()
         section.show()
-        for group_id in self.app.shortcuts.group_titles:
+        for group_id in self.app.shortcuts.groups:
             group = Gtk.ShortcutsGroup(title=self.app.shortcuts.group_titles[group_id])
             group.show()
             for action, title in self.app.shortcuts.group_actions[group_id]:

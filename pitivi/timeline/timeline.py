@@ -1390,7 +1390,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("timeline", group)
         self.toolbar.insert_action_group("timeline", group)
-        self.app.shortcuts.register_group("timeline", _("Timeline"))
+        self.app.shortcuts.register_group("timeline", _("Timeline"), position=30)
 
         # Clips actions.
         self.delete_action = Gio.SimpleAction.new("delete-selected-clips", None)
@@ -1444,7 +1444,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         navigation_group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("navigation", navigation_group)
         self.toolbar.insert_action_group("navigation", navigation_group)
-        self.app.shortcuts.register_group("navigation", _("Timeline Navigation"))
+        self.app.shortcuts.register_group("navigation", _("Timeline Navigation"), position=40)
 
         self.zoom_in_action = Gio.SimpleAction.new("zoom-in", None)
         self.zoom_in_action.connect("activate", self._zoomInCb)

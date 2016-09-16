@@ -225,7 +225,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         effects_actions_group = Gio.SimpleActionGroup()
         self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
         buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
-        self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"))
+        self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"), position=60)
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
         self.remove_effect_action.connect("activate", self._removeEffectCb)

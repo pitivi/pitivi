@@ -437,7 +437,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self._headerbar.pack_start(self.render_button)
 
     def _set_keyboard_shortcuts(self):
-        self.app.shortcuts.register_group("win", _("Project"))
+        self.app.shortcuts.register_group("win", _("Project"), position=20)
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
         self.add_action(self.save_action)
