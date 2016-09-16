@@ -288,7 +288,7 @@ class PreferencesDialog(Loggable):
         contents_box = Gtk.Box()
         contents_box.pack_start(title_label, True, True, 0)
         contents_box.pack_start(accel_label, True, False, 0)
-        contents_box.pack_start(button, True, True, 0)
+        contents_box.pack_start(button, False, False, 0)
 
         return contents_box
 
