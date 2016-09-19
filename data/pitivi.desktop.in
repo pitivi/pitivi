@@ -10,3 +10,4 @@ Icon=pitivi
 Categories=GNOME;GTK;AudioVideo;Video;AudioVideoEditing;
 MimeType=text/x-xges;text/x-xptv;
 StartupNotify=true
+Keywords=video;film;movie;editor;
