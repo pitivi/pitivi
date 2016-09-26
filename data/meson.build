@@ -17,6 +17,6 @@ custom_target('pitivi.desktop',
 custom_target('pitivi.appdata.xml',
     output : 'pitivi.appdata.xml',
     input : 'pitivi.appdata.xml.in',
-    command : [intltool_merge, '--desktop-style', podir, '@INPUT@', '@OUTPUT@'],
+    command : [intltool_merge, '--xml-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
     install_dir : get_option('datadir') + '/appdata')
