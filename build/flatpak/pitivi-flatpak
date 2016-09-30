@@ -455,7 +455,6 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         except subprocess.CalledProcessError:
             self.exit(1)
 
-        message("Updating repo %s", self.repodir)
         update_repo_args = ["flatpak", "build-update-repo"]
 
         if self.generate_static_deltas:
@@ -463,6 +462,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         update_repo_args.append(self.repodir)
 
+        message("Updating repo '%s'", "'".join(update_repo_args))
         try:
             subprocess.check_call(update_repo_args)
         except subprocess.CalledProcessError:
