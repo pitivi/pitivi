@@ -530,6 +530,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 "GST_VALIDATE",
                 "GST_VALIDATE_LAUNCHER_DEBUG",
                 "GTK_DEBUG",
+                "GTK_THEME",
                 "LANG",
                 "PITIVI_DEBUG",
                 "PITIVI_DEVELOPMENT"]:
