@@ -1303,7 +1303,7 @@ class PreviewAssetWindow(Gtk.Window):
 
         self._previewer = PreviewWidget(main_window.settings, minimal=True)
         self.add(self._previewer)
-        self._previewer.previewUri(self._asset.get_id())
+        self._previewer.preview_uri(self._asset.get_id())
         self._previewer.show()
 
         self.connect("focus-out-event", self._leavePreviewCb)

@@ -169,6 +169,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.bbox.remove(self.b_zoom_in)
             self.bbox.remove(self.b_zoom_out)
 
+        self.clear_preview()
+
     def update_preview_cb(self, file_chooser):
         """Previews the URI of the specified file chooser.
 
@@ -178,9 +180,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
         uri = file_chooser.get_preview_uri()
         if uri is None or not uri_is_valid(uri):
             return
-        self.previewUri(uri)
+        self.preview_uri(uri)
 
-    def previewUri(self, uri):
+    def preview_uri(self, uri):
         self.log("Preview request for %s", uri)
         self.clear_preview()
         self.current_selected_uri = uri
