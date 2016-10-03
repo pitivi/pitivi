@@ -269,8 +269,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.put(self.__marquee, 0, 0)
 
         # Clip editing.
+        # Which clip is being edited.
         self.draggingElement = None
+        # Which handle of the draggingElement has been clicked, if any.
+        # If set, it means we are in a trim operation.
         self.__clickedHandle = None
+        # The GES object for controlling the operation.
         self.editing_context = None
         # Whether draggingElement really got dragged.
         self.__got_dragged = False
@@ -1122,7 +1126,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.editing_context:
             self._snapEndedCb()
 
-            if self.__on_separators and self.__got_dragged:
+            if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 layer = self.__getDroppedLayer()
                 self.editing_context.editTo(self.editing_context.new_position,
                                             layer.get_priority())

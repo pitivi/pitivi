@@ -35,6 +35,7 @@ THICK = ui.LAYER_HEIGHT
 
 
 class BaseTestTimeline(common.TestCase):
+
     def createTimeline(self):
         app = common.create_pitivi_mock()
         project_manager = ProjectManager(app)
@@ -63,6 +64,7 @@ class BaseTestTimeline(common.TestCase):
 
 
 class TestLayers(BaseTestTimeline):
+
     def testDraggingLayer(self):
         self.checkGetLayerAt([THIN, THIN, THIN], 1, True,
                              [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2])
@@ -158,6 +160,7 @@ class TestLayers(BaseTestTimeline):
 
 
 class TestGrouping(BaseTestTimeline):
+
     def groupClips(self, num_clips):
         timeline = self.createTimeline()
         timeline.app.settings.leftClickAlsoSeeks = False
@@ -296,6 +299,7 @@ class TestGrouping(BaseTestTimeline):
 
 
 class TestCopyPaste(BaseTestTimeline):
+
     def copyClips(self, num_clips):
         timeline = self.createTimeline()
 
@@ -338,3 +342,37 @@ class TestCopyPaste(BaseTestTimeline):
         self.assertEqual(len(copied_clips), 2)
         self.assertEqual(copied_clips[0].props.start, position)
         self.assertEqual(copied_clips[1].props.start, position + 10)
+
+
+class TestEditing(BaseTestTimeline):
+
+    def test_trimming_on_layer_separator(self):
+        # Create a clip
+        timeline = self.createTimeline()
+        clip, = self.addClipsSimple(timeline, 1)
+        layer = clip.get_layer()
+
+        # Click the right trim handle of the clip.
+        with mock.patch.object(timeline, 'get_event_widget') as get_event_widget:
+            event = mock.Mock()
+            event.get_button.return_value = True, 1
+            get_event_widget.return_value = clip.ui.rightHandle
+            timeline._button_press_event_cb(None, event)
+            self.assertIsNotNone(timeline.draggingElement)
+
+            # Drag it to the left, on the separator below.
+            event = mock.Mock()
+            event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
+            with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
+                translate_coordinates.return_value = (0, 0)
+                with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
+                    _get_layer_at.return_value = layer, [layer.ui.after_sep]
+                    timeline._motion_notify_event_cb(None, event)
+            self.assertTrue(timeline.got_dragged)
+
+        # Release the mouse button.
+        event = mock.Mock()
+        event.get_button.return_value = True, 1
+        timeline._button_release_event_cb(None, event)
+        self.assertEqual(len(timeline.ges_timeline.get_layers()), 1,
+                         "No new layer should have been created")
