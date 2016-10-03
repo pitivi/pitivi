@@ -29,6 +29,7 @@ from gi.repository import Gst
 
 from pitivi.project import Project
 from pitivi.project import ProjectManager
+from pitivi.utils.misc import path_from_uri
 from tests import common
 
 
@@ -272,10 +273,10 @@ class TestProjectManager(TestCase):
         # Save the backup
         self.assertTrue(self.manager.saveProject(
             self.manager.current_project, backup=True))
-        self.assertTrue(uri_is_reachable(backup_uri))
+        self.assertTrue(os.path.isfile(path_from_uri(backup_uri)))
 
         self.manager.closeRunningProject()
-        self.assertFalse(uri_is_reachable(backup_uri),
+        self.assertFalse(os.path.isfile(path_from_uri(backup_uri)),
                          "Backup file not deleted when project closed")
 
 
