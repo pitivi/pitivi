@@ -178,7 +178,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
             file_chooser (Gtk.FileChooser): The file chooser providing the URI.
         """
         uri = file_chooser.get_preview_uri()
-        if uri is None or not uri_is_valid(uri):
+        previewable = uri and uri_is_valid(uri)
+        if not previewable:
+            self.clear_preview()
             return
         self.preview_uri(uri)
 
