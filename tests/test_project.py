@@ -29,7 +29,6 @@ from gi.repository import Gst
 
 from pitivi.project import Project
 from pitivi.project import ProjectManager
-from pitivi.utils.misc import uri_is_reachable
 from tests import common
 
 
@@ -227,14 +226,14 @@ class TestProjectManager(TestCase):
 
             # Save the project.
             self.assertTrue(self.manager.saveProject(uri=uri, backup=False))
-            self.assertTrue(uri_is_reachable(uri))
+            self.assertTrue(os.path.isfile(path))
 
             # Wait a bit.
             time.sleep(0.1)
 
             # Save the project at a new location.
             self.assertTrue(self.manager.saveProject(uri2, backup=False))
-            self.assertTrue(uri_is_reachable(uri2))
+            self.assertTrue(os.path.isfile(path2))
 
             # Make sure the old path and the new path have different mtimes.
             mtime = os.path.getmtime(path)

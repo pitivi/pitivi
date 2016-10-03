@@ -130,23 +130,6 @@ def uri_is_valid(uri):
             len(os.path.basename(Gst.uri_get_location(uri))) > 0)
 
 
-def uri_is_reachable(uri):
-    """Checks whether the specified URI is reachable by GStreamer.
-
-    Args:
-        uri (str): The location to check.
-
-    Returns:
-        bool: True when the URI is reachable, False otherwise.
-    """
-    if not uri_is_valid(uri):
-        raise NotImplementedError(
-            # Translators: "non local" means the project is not stored
-            # on a local filesystem
-            _("%s doesn't yet handle non-local projects") % APPNAME)
-    return os.path.isfile(Gst.uri_get_location(uri))
-
-
 def path_from_uri(raw_uri):
     """Returns a path that can be used with Python's os.path."""
     uri = urlparse(raw_uri)
