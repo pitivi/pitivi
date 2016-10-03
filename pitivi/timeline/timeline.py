@@ -278,9 +278,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.editing_context = None
         # Whether draggingElement really got dragged.
         self.__got_dragged = False
+        # The x of the event which starts the drag operation.
         self.__drag_start_x = 0
-        self.__on_separators = []
+        # The current layer on which the operation is performed.
         self._on_layer = None
+        # The one or two separators immediately above or below _on_layer
+        # on which the operation will be performed.
+        # Implies a new layer will be created.
+        self.__on_separators = []
 
         # Drag & dropping assets from outside.
 
@@ -1077,7 +1082,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.current_group.props.height > 1):
             # When dragging clips from more than one layer, do not allow
             # them to be dragged between layers to create a new layer.
-            on_separators = []
+            self.__on_separators = []
         self._setSeparatorsPrelight(True)
 
         priority = self._on_layer.props.priority

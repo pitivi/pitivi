@@ -661,15 +661,13 @@ class TestGObjectObserver(BaseTestUndoTimeline):
 class TestDragDropUndo(BaseTestUndoTimeline):
 
     def test_clip_dragged_to_create_layer(self):
+        self.setup_timeline_container()
+        timeline_ui = self.timeline_container.timeline
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
 
         clip = GES.TitleClip()
         self.layer.add_clip(clip)
-
-        timeline_ui = Timeline(None, self.app)
-        timeline_ui.setProject(self.app.project_manager.current_project)
-        timeline_ui.get_parent = mock.MagicMock()
 
         # Drag a clip on a separator to create a layer.
         timeline_ui.get_event_widget = mock.Mock(return_value=clip.ui)
@@ -709,19 +707,15 @@ class TestDragDropUndo(BaseTestUndoTimeline):
 
     def test_media_library_asset_dragged_on_separator(self):
         """Simulate dragging an asset from the media library to the timeline."""
+        self.setup_timeline_container()
+        timeline_ui = self.timeline_container.timeline
         project = self.app.project_manager.current_project
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
 
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         self.assertTrue(project.add_asset(asset))
-
-        timeline_ui = Timeline(container=None, app=self.app)
-        timeline_ui.setProject(project)
-        timeline_ui.get_parent = mock.MagicMock()
-        timeline_ui.parent = mock.MagicMock()
-
-        layers = self.timeline.get_layers()
-        self.assertEqual(len(layers), 1)
 
         # Events emitted while dragging an asset on a separator in the timeline:
         # motion, receive, motion, leave, drop.

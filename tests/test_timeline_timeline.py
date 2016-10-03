@@ -161,10 +161,8 @@ class TestLayers(BaseTestTimeline):
 
 class TestGrouping(BaseTestTimeline):
 
-    def groupClips(self, num_clips):
-        timeline = self.createTimeline()
+    def group_clips(self, timeline, clips):
         timeline.app.settings.leftClickAlsoSeeks = False
-        clips = self.addClipsSimple(timeline, num_clips)
 
         # Press <ctrl> so selecting in ADD mode
         timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
@@ -196,16 +194,18 @@ class TestGrouping(BaseTestTimeline):
             self.assertTrue(clip.selected.selected)
 
         group = clips[0].get_parent()
-        self.assertEqual(len(group.get_children(False)), num_clips)
-
-        return timeline
+        self.assertEqual(len(group.get_children(False)), len(clips))
 
     def testGroup(self):
-        self.groupClips(2)
+        timeline = self.createTimeline()
+        clips = self.addClipsSimple(timeline, 2)
+        self.group_clips(timeline, clips)
 
     def testGroupSelection(self):
         num_clips = 2
-        timeline = self.groupClips(num_clips)
+        timeline = self.createTimeline()
+        clips = self.addClipsSimple(timeline, num_clips)
+        self.group_clips(timeline, clips)
         layer = timeline.ges_timeline.get_layers()[0]
         clips = layer.get_clips()
         self.assertEqual(len(clips), num_clips)
@@ -220,7 +220,9 @@ class TestGrouping(BaseTestTimeline):
 
     def testGroupUngroup(self):
         num_clips = 2
-        timeline = self.groupClips(num_clips)
+        timeline = self.createTimeline()
+        clips = self.addClipsSimple(timeline, num_clips)
+        self.group_clips(timeline, clips)
 
         self.assertEqual(len(timeline.selection.selected), num_clips)
 
@@ -296,6 +298,44 @@ class TestGrouping(BaseTestTimeline):
 
         self.assertEqual(aclip._audioSource, atrackelem)
         self.assertEqual(vclip._videoSource, vtrackelem)
+
+    def test_dragging_group_on_separator(self):
+        # Create two clips on different layers and group them.
+        timeline = self.createTimeline()
+        clip1, = self.addClipsSimple(timeline, 1)
+        layer1 = clip1.get_layer()
+
+        # Add another clip on a new layer.
+        clip2, = self.addClipsSimple(timeline, 1)
+        self.assertEqual(len(timeline.ges_timeline.get_layers()), 2)
+
+        self.group_clips(timeline, [clip1, clip2])
+
+        # Click the first clip in the group.
+        with mock.patch.object(timeline, 'get_event_widget') as get_event_widget:
+            event = mock.Mock()
+            event.x = 0
+            event.get_button.return_value = True, 1
+            get_event_widget.return_value = clip1.ui
+            timeline._button_press_event_cb(None, event)
+            self.assertIsNotNone(timeline.draggingElement)
+
+            # Move it to the right, on the separator below.
+            event = mock.Mock()
+            event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
+            with mock.patch.object(clip1.ui, "translate_coordinates") as translate_coordinates:
+                translate_coordinates.return_value = (40, 0)
+                with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
+                    _get_layer_at.return_value = layer1, [layer1.ui.after_sep]
+                    timeline._motion_notify_event_cb(None, event)
+            self.assertTrue(timeline.got_dragged)
+
+        # Release the mouse button.
+        event = mock.Mock()
+        event.get_button.return_value = True, 1
+        timeline._button_release_event_cb(None, event)
+        self.assertEqual(len(timeline.ges_timeline.get_layers()), 2,
+                         "No new layer should have been created")
 
 
 class TestCopyPaste(BaseTestTimeline):
