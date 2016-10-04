@@ -152,16 +152,17 @@ class UndoableActionStack(UndoableAction):
     def do(self):
         self._runAction(self.undone_actions, "do")
         self.done_actions = self.undone_actions[::-1]
-
-        if self.finalizing_action:
-            self.finalizing_action.do()
+        self.finish_operation()
 
     def undo(self):
         self._runAction(self.done_actions, "undo")
         self.undone_actions = self.done_actions[::-1]
+        self.finish_operation()
 
-        if self.finalizing_action:
-            self.finalizing_action.do()
+    def finish_operation(self):
+        if not self.finalizing_action:
+            return
+        self.finalizing_action.do()
 
 
 class UndoableActionLog(GObject.Object, Loggable):
@@ -261,6 +262,7 @@ class UndoableActionLog(GObject.Object, Loggable):
             return
         if not self.stacks:
             self.undo_stacks.append(stack)
+            stack.finish_operation()
         else:
             self.stacks[-1].push(stack)
 

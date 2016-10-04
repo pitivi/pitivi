@@ -201,6 +201,17 @@ class TestUndoableActionLog(TestCase):
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
+    def test_finalizing_action(self):
+        action1 = mock.Mock()
+        action2 = mock.Mock()
+        with self.log.started("one", finalizing_action=action1):
+            self.log.push(mock.Mock())
+            with self.log.started("two", finalizing_action=action2):
+                self.log.push(mock.Mock())
+        action1.do.assert_called_once_with()
+        # For now, we call the finalizing action only for the top stack.
+        action2.do.assert_not_called()
+
     def testRollback(self):
         """
         Test a rollback.
