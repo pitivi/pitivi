@@ -2,7 +2,7 @@
     "app-id": "org.pitivi.Pitivi",
     "version": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.20",
+    "runtime-version": "3.22",
     "finish-args": ["--command=pitivi",
                     "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",

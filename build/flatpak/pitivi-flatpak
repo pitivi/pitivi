@@ -30,7 +30,7 @@ import tempfile
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
-SDK_BRANCH = "3.20"
+SDK_BRANCH = "3.22"
 PITIVI_BRANCH = "master"
 FLATPAK_REQ = "0.6.4"
 
