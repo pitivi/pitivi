@@ -18,11 +18,11 @@
 # Boston, MA 02110-1301, USA.
 """Rendering-related classes and utilities."""
 import os
-import subprocess
 import time
 from gettext import gettext as _
 
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
@@ -366,7 +366,8 @@ class RenderingProgressDialog(GObject.Object):
         self.main_render_dialog.window.show()
 
     def _playRenderedFileButtonClickedCb(self, unused_button):
-        subprocess.Popen(["xdg-open", self.main_render_dialog.outfile])
+        uri = Gst.filename_to_uri(self.main_render_dialog.outfile)
+        Gio.AppInfo.launch_default_for_uri(uri, None)
 
 
 class RenderDialog(Loggable):

@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
-import subprocess
 from gettext import gettext as _
 from hashlib import md5
 from time import time
@@ -530,7 +529,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         # to do a better job (sizing, zooming, metadata, editing, etc.)
         # than the user's favorite image viewer.
         if asset.is_image():
-            subprocess.call(['xdg-open', str(path_from_uri(asset.get_id()))])
+            Gio.AppInfo.launch_default_for_uri(asset.get_id(), None)
         else:
             preview_window = PreviewAssetWindow(asset, self)
             preview_window.preview()
