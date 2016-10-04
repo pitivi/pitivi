@@ -1336,7 +1336,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.vadj = self.timeline.layout.get_vadjustment()
 
         vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
+        vscrollbar.get_style_context().add_class("background")
         hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
+        hscrollbar.get_style_context().add_class("background")
 
         self.ruler = ScaleRuler(self, self.hadj)
         self.ruler.props.hexpand = True
@@ -1351,13 +1353,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.gapless_button = builder.get_object("gapless_button")
         self.gapless_button.set_active(self._autoripple_active)
-
-        alter_style_class(
-            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, vscrollbar,
-            "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
-        alter_style_class(
-            ".%s.trough" % Gtk.STYLE_CLASS_SCROLLBAR, hscrollbar,
-            "border: alpha (@base_color, 0.0); background: alpha (@base_color, 0.0);")
 
         self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
