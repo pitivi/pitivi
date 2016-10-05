@@ -59,6 +59,10 @@ SNAPBAR_WIDTH = 5
 SNAPBAR_COLOR = (127, 153, 204)
 LAYER_HEIGHT = 130
 
+SMALL_THUMB_WIDTH = 64
+# 128 is the normal size for thumbnails, but for *icons* it looks insane.
+LARGE_THUMB_WIDTH = 96
+
 # Drag and drop
 FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)

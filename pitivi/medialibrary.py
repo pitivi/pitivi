@@ -58,6 +58,8 @@ from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import FILE_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
+from pitivi.utils.ui import LARGE_THUMB_WIDTH
+from pitivi.utils.ui import SMALL_THUMB_WIDTH
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import URI_TARGET_ENTRY
 
@@ -168,7 +170,9 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
             self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
 
 
-class ThumbnailsDecorator(Loggable):
+class AssetThumbnail(Loggable):
+    """Provider of decorated thumbnails for an asset."""
+
     EMBLEMS = {}
     PROXIED = "asset-proxied"
     NO_PROXY = "no-proxy"
@@ -177,18 +181,122 @@ class ThumbnailsDecorator(Loggable):
 
     DEFAULT_ALPHA = 255
 
+    icons_by_name = {}
+
     for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR]:
         EMBLEMS[status] = []
         for size in [32, 64]:
             EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
 
-    def __init__(self, thumbs, asset, proxy_manager):
+    def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
-        self.src_64, self.src_128 = thumbs
         self.__asset = asset
+        self.src_small, self.src_large = self.__get_thumbnails()
         self.proxy_manager = proxy_manager
         self.decorate()
+
+    def __get_thumbnails(self):
+        """Gets the base source thumbnails.
+
+        Returns:
+            List[GdkPixbuf.Pixbuf]: The small thumbnail and the large thumbnail
+            to be decorated.
+        """
+        video_streams = [
+            stream_info
+            for stream_info in self.__asset.get_info().get_stream_list()
+            if isinstance(stream_info, GstPbutils.DiscovererVideoInfo)]
+        if video_streams:
+            # Check if the files have thumbnails in the user's cache directory.
+            # https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DIRECTORY
+            real_uri = get_proxy_target(self.__asset).props.id
+            quoted_uri = quote_uri(real_uri)
+            thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
+            small_thumb, large_thumb = (None, None)
+            try:
+                thumb_dir = os.path.join(os.environ["XDG_CACHE_HOME"], "thumbnail")
+                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
+                    thumb_dir, thumbnail_hash)
+            except KeyError:
+                pass
+            if not small_thumb:
+                thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
+                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
+                    thumb_dir, thumbnail_hash)
+            if not small_thumb:
+                # Older version of the spec also mentioned $HOME/.thumbnails
+                thumb_dir = os.path.expanduser("~/.thumbnails/")
+                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
+                    thumb_dir, thumbnail_hash)
+
+            if not small_thumb:
+                if self.__asset.is_image():
+                    small_thumb, large_thumb = self.__get_icons("image-x-generic")
+                else:
+                    # Build or reuse a ThumbnailCache.
+                    thumb_cache = ThumbnailCache.get(self.__asset)
+                    small_thumb = thumb_cache.getPreviewThumbnail()
+                    if not small_thumb:
+                        small_thumb, large_thumb = self.__get_icons("video-x-generic")
+                    else:
+                        large_thumb = small_thumb.scale_simple(
+                            128, small_thumb.get_height() * 2,
+                            GdkPixbuf.InterpType.BILINEAR)
+        else:
+            small_thumb, large_thumb = self.__get_icons("audio-x-generic")
+        return small_thumb, large_thumb
+
+    def __get_thumbnail_in_dir(self, dir, hash):
+        """Gets pixbufs for the specified thumbnail.
+
+        Args:
+            dir (str): The directory where the thumbnails can be found.
+            hash (str): The hash identifying the image.
+
+        Returns:
+            List[GdkPixbuf.Pixbuf]: The small thumbnail and the large thumbnail
+            if available, otherwise (None, None).
+        """
+        path_128 = dir + "normal/" + hash + ".png"
+        interpolation = GdkPixbuf.InterpType.BILINEAR
+
+        # The cache dirs might have resolutions of 256 and/or 128,
+        # while we need 128 (for iconview) and 64 (for listview).
+        # First, try the 128 version since that's the native resolution we want.
+        try:
+            large_thumb = GdkPixbuf.Pixbuf.new_from_file(path_128)
+            w, h = large_thumb.get_width(), large_thumb.get_height()
+            small_thumb = large_thumb.scale_simple(w / 2, h / 2, interpolation)
+            return small_thumb, large_thumb
+        except GLib.GError:
+            # path_128 doesn't exist, try the 256 version.
+            path_256 = dir + "large/" + hash + ".png"
+            try:
+                thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
+                w, h = thumb_256.get_width(), thumb_256.get_height()
+                large_thumb = thumb_256.scale_simple(w / 2, h / 2, interpolation)
+                small_thumb = thumb_256.scale_simple(w / 4, h / 4, interpolation)
+                return small_thumb, large_thumb
+            except GLib.GError:
+                return None, None
+
+    @classmethod
+    def __get_icons(cls, icon_name):
+        if icon_name not in cls.icons_by_name:
+            small_icon = cls.__get_icon(icon_name, SMALL_THUMB_WIDTH)
+            large_icon = cls.__get_icon(icon_name, LARGE_THUMB_WIDTH)
+            cls.icons_by_name[icon_name] = (small_icon, large_icon)
+        return cls.icons_by_name[icon_name]
+
+    @classmethod
+    def __get_icon(cls, icon_name, size):
+        icon_theme = Gtk.IconTheme.get_default()
+        try:
+            icon = icon_theme.load_icon(icon_name, size, 0)
+        except GLib.Error:
+            icon = icon_theme.load_icon("dialog-question", size, 0)
+        return icon
 
     def __setState(self):
         asset = self.__asset
@@ -206,13 +314,13 @@ class ThumbnailsDecorator(Loggable):
     def decorate(self):
         self.__setState()
         if self.state == self.NO_PROXY:
-            self.thumb_64 = self.src_64
-            self.thumb_128 = self.src_128
+            self.small_thumb = self.src_small
+            self.large_thumb = self.src_large
             return
 
-        self.thumb_64 = self.src_64.copy()
-        self.thumb_128 = self.src_128.copy()
-        for thumb, src in zip([self.thumb_64, self.thumb_128],
+        self.small_thumb = self.src_small.copy()
+        self.large_thumb = self.src_large.copy()
+        for thumb, src in zip([self.small_thumb, self.large_thumb],
                               self.EMBLEMS[self.state]):
             # We need to set dest_y == offset_y for the source image
             # not to be cropped, that API is weird.
@@ -577,14 +685,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         text = GLib.markup_escape_text(text)
         return text in model.get_value(iter, COL_INFOTEXT).lower()
 
-    def _getIcon(self, icon_name, size):
-        icontheme = Gtk.IconTheme.get_default()
-        try:
-            icon = icontheme.load_icon(icon_name, size, 0)
-        except GLib.Error:
-            icon = icontheme.load_icon("dialog-question", size, 0)
-        return icon
-
     def _connectToProject(self, project):
         """Connects signal handlers to the specified project."""
         project.connect("asset-added", self._assetAddedCb)
@@ -664,45 +764,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         dialog.show()
 
-    def _getThumbnailInDir(self, dir, hash):
-        """Gets pixbufs for the specified thumbnail.
-
-        Args:
-            dir (str): The directory where the thumbnails can be found.
-            hash (str): The hash identifying the image.
-
-        Returns:
-            List[GdkPixbuf.Pixbuf]: The thumb_64 and thumb_128 if available,
-                None otherwise.
-        """
-        path_128 = dir + "normal/" + hash + ".png"
-        interpolation = GdkPixbuf.InterpType.BILINEAR
-
-        # The cache dirs might have resolutions of 256 and/or 128,
-        # while we need 128 (for iconview) and 64 (for listview).
-        # First, try the 128 version since that's the native resolution we want.
-        try:
-            thumb_128 = GdkPixbuf.Pixbuf.new_from_file(path_128)
-            w, h = thumb_128.get_width(), thumb_128.get_height()
-            thumb_64 = thumb_128.scale_simple(w / 2, h / 2, interpolation)
-            return thumb_64, thumb_128
-        except GLib.GError:
-            # path_128 doesn't exist, try the 256 version.
-            path_256 = dir + "large/" + hash + ".png"
-            try:
-                thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
-                w, h = thumb_256.get_width(), thumb_256.get_height()
-                thumb_128 = thumb_256.scale_simple(w / 2, h / 2, interpolation)
-                thumb_64 = thumb_256.scale_simple(w / 4, h / 4, interpolation)
-                return thumb_64, thumb_128
-            except GLib.GError:
-                return None, None
-
     def _addAsset(self, asset):
-        # 128 is the normal size for thumbnails, but for *icons* it looks
-        # insane
-        SMALL_SIZE = 48
-        LARGE_SIZE = 96
         info = asset.get_info()
 
         if self.app.proxy_manager.is_proxy_asset(asset) and \
@@ -713,59 +775,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.debug("Adding asset %s", asset.props.id)
 
-        # The code below tries to read existing thumbnails from the freedesktop
-        # thumbnails directory (~/.thumbnails). The filenames are simply
-        # the file URI hashed with md5, so we can retrieve them easily.
-        video_streams = [
-            stream_info for stream_info in info.get_stream_list()
-            if isinstance(stream_info, GstPbutils.DiscovererVideoInfo)]
-        real_uri = get_proxy_target(asset).props.id
-        if video_streams:
-            # From the freedesktop spec: "if the environment variable
-            # $XDG_CACHE_HOME is set and not blank then the directory
-            # $XDG_CACHE_HOME/thumbnails will be used, otherwise
-            # $HOME/.cache/thumbnails will be used."
-            # Older version of the spec also mentioned $HOME/.thumbnails
-            quoted_uri = quote_uri(real_uri)
-            thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
-            try:
-                thumb_dir = os.path.join(os.environ["XDG_CACHE_HOME"], "thumbnail")
-                thumb_64, thumb_128 = self._getThumbnailInDir(
-                    thumb_dir, thumbnail_hash)
-            except KeyError:
-                thumb_64, thumb_128 = (None, None)
-            if thumb_64 is None:
-                thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
-                thumb_64, thumb_128 = self._getThumbnailInDir(
-                    thumb_dir, thumbnail_hash)
-            if thumb_64 is None:
-                thumb_dir = os.path.expanduser("~/.thumbnails/")
-                thumb_64, thumb_128 = self._getThumbnailInDir(
-                    thumb_dir, thumbnail_hash)
-            if thumb_64 is None:
-                if asset.is_image():
-                    thumb_64 = self._getIcon("image-x-generic", SMALL_SIZE)
-                    thumb_128 = self._getIcon("image-x-generic", LARGE_SIZE)
-                else:
-                    thumb_cache = ThumbnailCache.get(asset)
-                    thumb_64 = thumb_cache.getPreviewThumbnail()
-                    if not thumb_64:
-                        thumb_64 = self._getIcon("video-x-generic", SMALL_SIZE)
-                        thumb_128 = self._getIcon("video-x-generic", LARGE_SIZE)
-                    else:
-                        thumb_128 = thumb_64.scale_simple(
-                            128, thumb_64.get_height() * 2,
-                            GdkPixbuf.InterpType.BILINEAR)
-        else:
-            thumb_64 = self._getIcon("audio-x-generic", SMALL_SIZE)
-            thumb_128 = self._getIcon("audio-x-generic", LARGE_SIZE)
-
-        thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset,
-                                               self.app.proxy_manager)
+        thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
         duration = beautify_length(info.get_duration())
         name = info_name(asset)
-        self.pending_rows.append((thumbs_decorator.thumb_64,
-                                  thumbs_decorator.thumb_128,
+        self.pending_rows.append((thumbs_decorator.small_thumb,
+                                  thumbs_decorator.large_thumb,
                                   beautify_asset(asset),
                                   asset,
                                   asset.props.id,
