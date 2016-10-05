@@ -21,7 +21,10 @@ from unittest import TestCase
 
 from gi.repository import Gst
 
-from pitivi.check import *  # noqa
+from pitivi.check import CairoDependency
+from pitivi.check import ClassicDependency
+from pitivi.check import GstDependency
+from pitivi.check import GtkDependency
 from pitivi.utils.ui import beautify_length
 
 second = Gst.SECOND
@@ -31,25 +34,28 @@ hour = minute * 60
 
 class TestBeautifyLength(TestCase):
 
-    def testBeautifySeconds(self):
+    def test_beautify_seconds(self):
         self.assertEqual(beautify_length(second), "1 second")
         self.assertEqual(beautify_length(second * 2), "2 seconds")
 
-    def testBeautifyMinutes(self):
+    def test_beautify_minutes(self):
         self.assertEqual(beautify_length(minute), "1 minute")
         self.assertEqual(beautify_length(minute * 2), "2 minutes")
 
-    def testBeautifyHours(self):
+    def test_beautify_hours(self):
         self.assertEqual(beautify_length(hour), "1 hour")
         self.assertEqual(beautify_length(hour * 2), "2 hours")
 
-    def testBeautifyMinutesAndSeconds(self):
+    def test_beautify_minutes_and_seconds(self):
         self.assertEqual(beautify_length(minute + second),
                          "1 minute, 1 second")
 
-    def testBeautifyHoursAndMinutes(self):
+    def test_beautify_hours_and_minutes(self):
         self.assertEqual(beautify_length(hour + minute + second),
                          "1 hour, 1 minute")
+
+    def test_beautify_nothing(self):
+        self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
 
 
 class TestDependencyChecks(TestCase):

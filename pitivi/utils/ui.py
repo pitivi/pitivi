@@ -353,6 +353,7 @@ def time_to_string(value):
     """
     if value == Gst.CLOCK_TIME_NONE:
         return "--:--:--.---"
+
     ms = value / Gst.MSECOND
     sec = ms / 1000
     ms = ms % 1000
@@ -369,6 +370,9 @@ def beautify_length(length):
     Args:
         length (int): The duration in nanoseconds.
     """
+    if length == Gst.CLOCK_TIME_NONE:
+        return ""
+
     sec = length / Gst.SECOND
     mins = int(sec / 60)
     sec = int(sec % 60)

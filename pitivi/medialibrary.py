@@ -808,10 +808,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset,
                                                self.app.proxy_manager)
-        if info.get_duration() == Gst.CLOCK_TIME_NONE:
-            duration = ''
-        else:
-            duration = beautify_length(info.get_duration())
+        duration = beautify_length(info.get_duration())
         name = info_name(asset)
         self.pending_rows.append((thumbs_decorator.thumb_64,
                                   thumbs_decorator.thumb_128,
