@@ -18,14 +18,16 @@
 # Boston, MA 02110-1301, USA.
 import os
 import pickle
+import tempfile
 from unittest import mock
+from unittest import TestCase
 
 from gi.repository import GES
 from gi.repository import Gst
 
 from pitivi.timeline.previewers import get_wavefile_location_for_uri
-from pitivi.timeline.previewers import getThumbnailCache
 from pitivi.timeline.previewers import THUMB_HEIGHT
+from pitivi.timeline.previewers import ThumbnailCache
 from tests import common
 from tests.test_media_library import BaseTestMediaLibrary
 
@@ -46,7 +48,7 @@ class TestPreviewers(BaseTestMediaLibrary):
         sample_uri = common.get_sample_uri(sample_name)
         asset = GES.UriClipAsset.request_sync(sample_uri)
 
-        thumb_cache = getThumbnailCache(asset)
+        thumb_cache = ThumbnailCache.get(asset)
         width, height = thumb_cache.getImagesSize()
         self.assertEqual(height, THUMB_HEIGHT)
         self.assertTrue(thumb_cache[0] is not None)
@@ -59,3 +61,19 @@ class TestPreviewers(BaseTestMediaLibrary):
             samples = pickle.load(fsamples)
 
         self.assertTrue(bool(samples))
+
+
+class TestThumbnailCache(TestCase):
+
+    def test_get(self):
+        with self.assertRaises(ValueError):
+            ThumbnailCache.get(1)
+        with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_config_home,\
+                tempfile.TemporaryDirectory() as temp_dir:
+            xdg_config_home.return_value = temp_dir
+            sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+            cache = ThumbnailCache.get(sample_uri)
+            self.assertIsNotNone(cache)
+
+            asset = GES.UriClipAsset.request_sync(sample_uri)
+            self.assertEqual(ThumbnailCache.get(asset), cache)

@@ -141,7 +141,7 @@ class ThumbnailBin(PreviewerBin):
     def do_set_property(self, prop, value):
         if prop.name == 'uri':
             self.uri = value
-            self.thumb_cache = getThumbnailCache(value)
+            self.thumb_cache = ThumbnailCache.get(self.uri)
         else:
             raise AttributeError('unknown property %s' % prop.name)
 
@@ -387,7 +387,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
-        self.thumb_cache = getThumbnailCache(self.uri)
+        self.thumb_cache = ThumbnailCache.get(self.uri)
         self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
 
         self.cpu_usage_tracker = CPUUsageTracker()
@@ -720,39 +720,15 @@ class Thumbnail(Gtk.Image):
         self.props.width_request = self.width
         self.props.height_request = self.height
 
-CACHES = {}
-
-
-# pylint: disable=invalid-name
-def getThumbnailCache(obj):
-    """Gets a ThumbnailCache for the specified object.
-
-    Args:
-        obj (str or GES.UriClipAsset): The object for which to get a cache,
-            it can be a string ora GES.UriClipAsset
-
-    Returns:
-        ThumbnailCache: The cache for the object.
-    """
-    if isinstance(obj, str):
-        uri = obj
-    elif isinstance(obj, GES.UriClipAsset):
-        uri = get_proxy_target(obj).props.id
-
-    if uri in CACHES:
-        return CACHES[uri]
-    else:
-        cache = ThumbnailCache(uri)
-        CACHES[uri] = cache
-        return cache
-
 
 class ThumbnailCache(Loggable):
-    """Caches thumbnails by key using LRU policy.
+    """Caches an asset's thumbnails by key, using LRU policy.
 
     Uses a two stage caching mechanism. A limited number of elements are
     held in memory, the rest is being cached on disk in an SQLite db.
     """
+
+    caches_by_uri = {}
 
     def __init__(self, uri):
         Loggable.__init__(self)
@@ -765,6 +741,28 @@ class ThumbnailCache(Loggable):
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
                           (Time INTEGER NOT NULL PRIMARY KEY,\
                           Jpeg BLOB NOT NULL)")
+
+    @classmethod
+    def get(cls, obj):
+        """Gets a ThumbnailCache for the specified object.
+
+        Args:
+            obj (str or GES.UriClipAsset): The object for which to get a cache,
+                it can be a string representing a URI, or a GES.UriClipAsset.
+
+        Returns:
+            ThumbnailCache: The cache for the object.
+        """
+        if isinstance(obj, str):
+            uri = obj
+        elif isinstance(obj, GES.UriClipAsset):
+            uri = get_proxy_target(obj).props.id
+        else:
+            raise ValueError("Unhandled type: %s" % type(obj))
+
+        if uri not in cls.caches_by_uri:
+            cls.caches_by_uri[uri] = ThumbnailCache(uri)
+        return cls.caches_by_uri[uri]
 
     def copy(self, uri):
         """Copies `self` to the specified `uri`.
@@ -863,7 +861,7 @@ class PipelineCpuAdapter(Loggable):
         self.rate = 1.0
         self.done = False
         self.ready = False
-        self.lastPos = 0
+        self.last_pos = 0
         self._bus_cb_id = None
 
     def start(self):
@@ -896,7 +894,7 @@ class PipelineCpuAdapter(Loggable):
                     res, position = self.pipeline.query_position(
                         Gst.Format.TIME)
                     if res:
-                        self.lastPos = position
+                        self.last_pos = position
                     self.pipeline.set_state(Gst.State.READY)
                     self.ready = True
                 return True
@@ -943,7 +941,7 @@ class PipelineCpuAdapter(Loggable):
                                        Gst.Format.TIME,
                                        Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
                                        Gst.SeekType.SET,
-                                       self.lastPos,
+                                       self.last_pos,
                                        Gst.SeekType.NONE,
                                        -1)
                     self.ready = False

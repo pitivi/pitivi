@@ -45,7 +45,7 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.previewers import getThumbnailCache
+from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import get_proxy_target
@@ -792,7 +792,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     thumb_128 = self._getIcon(
                         "image-x-generic", None, LARGE_SIZE)
                 else:
-                    thumb_cache = getThumbnailCache(asset)
+                    thumb_cache = ThumbnailCache.get(asset)
                     thumb_64 = thumb_cache.getPreviewThumbnail()
                     if not thumb_64:
                         thumb_64 = self._getIcon("video-x-generic")
