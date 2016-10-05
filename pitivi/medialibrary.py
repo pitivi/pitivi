@@ -591,20 +591,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         text = GLib.markup_escape_text(text)
         return text in model.get_value(iter, COL_INFOTEXT).lower()
 
-    def _getIcon(self, iconname, alternate=None, size=48):
+    def _getIcon(self, icon_name, size):
         icontheme = Gtk.IconTheme.get_default()
-        pixdir = get_pixmap_dir()
-        icon = None
         try:
-            icon = icontheme.load_icon(iconname, size, 0)
-        except:
-            # empty except clause is bad but load_icon raises Gio.Error.
-            # Right, *gio*.
-            if alternate:
-                icon = GdkPixbuf.Pixbuf.new_from_file(
-                    os.path.join(pixdir, alternate))
-            else:
-                icon = icontheme.load_icon("dialog-question", size, 0)
+            icon = icontheme.load_icon(icon_name, size, 0)
+        except GLib.Error:
+            icon = icontheme.load_icon("dialog-question", size, 0)
         return icon
 
     def _connectToProject(self, project):
@@ -746,6 +738,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _addAsset(self, asset):
         # 128 is the normal size for thumbnails, but for *icons* it looks
         # insane
+        SMALL_SIZE = 48
         LARGE_SIZE = 96
         info = asset.get_info()
 
@@ -788,23 +781,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     thumb_dir, thumbnail_hash)
             if thumb_64 is None:
                 if asset.is_image():
-                    thumb_64 = self._getIcon("image-x-generic")
-                    thumb_128 = self._getIcon(
-                        "image-x-generic", None, LARGE_SIZE)
+                    thumb_64 = self._getIcon("image-x-generic", SMALL_SIZE)
+                    thumb_128 = self._getIcon("image-x-generic", LARGE_SIZE)
                 else:
                     thumb_cache = ThumbnailCache.get(asset)
                     thumb_64 = thumb_cache.getPreviewThumbnail()
                     if not thumb_64:
-                        thumb_64 = self._getIcon("video-x-generic")
-                        thumb_128 = self._getIcon("video-x-generic",
-                                                  None, LARGE_SIZE)
+                        thumb_64 = self._getIcon("video-x-generic", SMALL_SIZE)
+                        thumb_128 = self._getIcon("video-x-generic", LARGE_SIZE)
                     else:
                         thumb_128 = thumb_64.scale_simple(
                             128, thumb_64.get_height() * 2,
                             GdkPixbuf.InterpType.BILINEAR)
         else:
-            thumb_64 = self._getIcon("audio-x-generic")
-            thumb_128 = self._getIcon("audio-x-generic", None, LARGE_SIZE)
+            thumb_64 = self._getIcon("audio-x-generic", SMALL_SIZE)
+            thumb_128 = self._getIcon("audio-x-generic", LARGE_SIZE)
 
         thumbs_decorator = ThumbnailsDecorator([thumb_64, thumb_128], asset,
                                                self.app.proxy_manager)
