@@ -729,7 +729,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             quoted_uri = quote_uri(real_uri)
             thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
             try:
-                thumb_dir = os.environ['XDG_CACHE_HOME']
+                thumb_dir = os.path.join(os.environ["XDG_CACHE_HOME"], "thumbnail")
                 thumb_64, thumb_128 = self._getThumbnailInDir(
                     thumb_dir, thumbnail_hash)
             except KeyError:
