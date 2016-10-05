@@ -240,8 +240,11 @@ class AssetThumbnail(Loggable):
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
                     else:
+                        width = small_thumb.props.width
+                        height = small_thumb.props.height
                         large_thumb = small_thumb.scale_simple(
-                            128, small_thumb.get_height() * 2,
+                            LARGE_THUMB_WIDTH,
+                            LARGE_THUMB_WIDTH * height / width,
                             GdkPixbuf.InterpType.BILINEAR)
         else:
             small_thumb, large_thumb = self.__get_icons("audio-x-generic")
