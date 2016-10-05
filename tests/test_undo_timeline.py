@@ -583,7 +583,7 @@ class TestTimelineElementObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertEqual(source.get_child_property("text")[1], "pigs fly!")
 
-    def testChangeEffectProperty(self):
+    def test_add_effect_change_property(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
@@ -607,16 +607,32 @@ class TestTimelineElementObserver(BaseTestUndoTimeline):
 
         with self.action_log.started("change child property"):
             effect1.set_child_property("scratch-lines", 0)
-
         self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
+
+        # Undo effect property change.
         self.action_log.undo()
         self.assertEqual(effect1.get_child_property("scratch-lines")[1], 7)
+
+        # Redo effect property change.
         self.action_log.redo()
         self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
+
+        # Undo effect property change.
         self.action_log.undo()
         self.assertTrue(effect1 in clip1.get_children(True))
+
+        # Undo effect add.
         self.action_log.undo()
         self.assertFalse(effect1 in clip1.get_children(True))
+
+        # Redo effect add.
+        self.action_log.redo()
+        self.assertTrue(effect1 in clip1.get_children(True))
+        self.assertEqual(effect1.get_child_property("scratch-lines")[1], 7)
+
+        # Redo effect property change.
+        self.action_log.redo()
+        self.assertEqual(effect1.get_child_property("scratch-lines")[1], 0)
 
 
 class TestGObjectObserver(BaseTestUndoTimeline):

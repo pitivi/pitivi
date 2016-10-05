@@ -130,7 +130,6 @@ class TrackElementAction(UndoableAction):
         UndoableAction.__init__(self)
         self.clip = clip
         self.track_element = track_element
-        self.asset = track_element.get_asset()
         self.track_element_props = []
         for prop in self.track_element.list_children_properties():
             if not prop.flags & GObject.PARAM_WRITABLE or \
@@ -142,13 +141,12 @@ class TrackElementAction(UndoableAction):
             self.track_element_props.append((prop_name, value))
 
     def add(self):
-        self.track_element = self.clip.add_asset(self.asset)
+        assert self.clip.add(self.track_element)
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
 
     def remove(self):
         self.clip.remove(self.track_element)
-        self.track_element = None
 
 
 class EffectAddedAction(TrackElementAction):
