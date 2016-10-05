@@ -19,7 +19,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
-import threading
 import time
 from gettext import gettext as _
 from gettext import ngettext
@@ -38,7 +37,6 @@ from gi.repository import GstPbutils
 from gi.repository import Gtk
 from gi.repository import Pango
 
-from pitivi.check import missing_soft_deps
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
@@ -254,7 +252,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.app = app
         self._errors = []
-        self._missing_thumbs = []
         self._project = None
         self._draggedPaths = None
         self.dragged = False
@@ -456,8 +453,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.pack_start(self.treeview_scrollwin, True, True, 0)
         self.pack_start(self._progressbar, False, False, 0)
 
-        self.thumbnailer = MediaLibraryWidget._getThumbnailer()
-
     def finalize(self):
         self.debug("Finalizing %s", self)
 
@@ -475,15 +470,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             disconnectAllByFunc(asset, self.__assetProxyingCb)
 
         self.__disconnectFromProject()
-
-    @staticmethod
-    def _getThumbnailer():
-        if "GnomeDesktop" in missing_soft_deps:
-            return None
-        from gi.repository import GnomeDesktop
-        # We need to instanciate the thumbnail factory on the main thread...
-        size_normal = GnomeDesktop.DesktopThumbnailSize.NORMAL
-        return GnomeDesktop.DesktopThumbnailFactory.new(size_normal)
 
     @staticmethod
     def compare_basename(model, iter1, iter2, unused_user_data):
@@ -712,29 +698,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             except GLib.GError:
                 return None, None
 
-    def _generateThumbnails(self, uri):
-        if not self.thumbnailer:
-            return None
-        # This way of getting the mimetype feels awfully convoluted but
-        # seems to be the proper/reliable way in a GNOME context
-        asset_file = Gio.file_new_for_uri(uri)
-        info = asset_file.query_info(attributes="standard::*",
-                                     flags=Gio.FileQueryInfoFlags.NONE,
-                                     cancellable=None)
-        mime = Gio.content_type_get_mime_type(info.get_content_type())
-        mtime = os.path.getmtime(path_from_uri(uri))
-        if not self.thumbnailer.can_thumbnail(uri, mime, mtime):
-            self.debug("Thumbnailer says it can't thumbnail %s", uri)
-            return None
-        pixbuf_128 = self.thumbnailer.generate_thumbnail(uri, mime)
-        if not pixbuf_128:
-            self.debug("Thumbnailer failed thumbnailing %s", uri)
-            return None
-        self.thumbnailer.save_thumbnail(pixbuf_128, uri, mtime)
-        pixbuf_64 = pixbuf_128.scale_simple(
-            64, 64, GdkPixbuf.InterpType.BILINEAR)
-        return pixbuf_128, pixbuf_64
-
     def _addAsset(self, asset):
         # 128 is the normal size for thumbnails, but for *icons* it looks
         # insane
@@ -955,14 +918,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._warning_label.set_text(text)
             self._import_warning_infobar.show_all()
 
-        missing_thumbs = self._missing_thumbs
-        self._missing_thumbs = []
-        if missing_thumbs:
-            self.info("Generating missing thumbnails: %d", len(missing_thumbs))
-            self._thumbs_process = threading.Thread(
-                target=MediaLibraryWidget._generateThumbnailsThread, args=(self, missing_thumbs))
-            self._thumbs_process.start()
-
         self._selectLastImportedUris()
 
     def __projectSettingsSetFromImportedAssetCb(self, unused_project, asset):
@@ -982,28 +937,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return
         self._selectSources(self._last_imported_uris)
         self._last_imported_uris = set()
-
-    def _generateThumbnailsThread(self, missing_thumbs):
-        for uri in missing_thumbs:
-            thumbnails = self._generateThumbnails(uri)
-            if not thumbnails:
-                continue
-            pixbuf_128, pixbuf_64 = thumbnails
-            # Search through the model for the row corresponding to the asset.
-            found = False
-            for row in self.storemodel:
-                if uri == row[COL_URI]:
-                    found = True
-                    # Finally, show the new pixbuf in the UI
-                    if pixbuf_128:
-                        row[COL_ICON_128] = pixbuf_128
-                    if pixbuf_64:
-                        row[COL_ICON_64] = pixbuf_64
-                    break
-            if not found:
-                # Can happen if the user removed the asset in the meanwhile.
-                self.log(
-                    "%s needed a thumbnail, but vanished from storemodel", uri)
 
     # Error Dialog Box callbacks
 
