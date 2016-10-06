@@ -1686,11 +1686,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _playPauseCb(self, unused_action, unused_parameter):
         self._project.pipeline.togglePlayback()
 
-    def transposeXY(self, x, y):
-        height = self.ruler.get_allocation().height
-        x += self.timeline.get_scroll_point().x
-        return x - self.timeline.controls_width, y - height
-
     # Zoomable
 
     def zoomChanged(self):
