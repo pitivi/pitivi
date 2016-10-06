@@ -210,11 +210,7 @@ class AssetThumbnail(Loggable):
         if video_streams:
             # Check if the files have thumbnails in the user's cache directory.
             real_uri = get_proxy_target(self.__asset).props.id
-            quoted_uri = quote_uri(real_uri)
-            thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
-            thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnail")
-            small_thumb, large_thumb = self.__get_thumbnail_in_dir(
-                thumb_dir, thumbnail_hash)
+            small_thumb, large_thumb = self.__get_thumbnails_from_xdg_cache(real_uri)
             if not small_thumb:
                 if self.__asset.is_image():
                     small_thumb, large_thumb = self.__get_icons("image-x-generic")
@@ -240,18 +236,22 @@ class AssetThumbnail(Loggable):
             small_thumb, large_thumb = self.__get_icons("audio-x-generic")
         return small_thumb, large_thumb
 
-    def __get_thumbnail_in_dir(self, dir, hash):
-        """Gets pixbufs for the specified thumbnail.
+    def __get_thumbnails_from_xdg_cache(self, real_uri):
+        """Gets pixbufs for the specified thumbnail from the user's cache dir.
+
+        Looks for thumbnails according to the [Thumbnail Managing Standard](https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DIRECTORY).
 
         Args:
-            dir (str): The directory where the thumbnails can be found.
-            hash (str): The hash identifying the image.
+            real_uri (str): The URI of the asset.
 
         Returns:
-            List[GdkPixbuf.Pixbuf]: The small thumbnail and the large thumbnail
-            if available, otherwise (None, None).
+            List[GdkPixbuf.Pixbuf]: The small thumbnail and the large thumbnail,
+            if available in the user's cache directory, otherwise (None, None).
         """
-        path_128 = dir + "normal/" + hash + ".png"
+        quoted_uri = quote_uri(real_uri)
+        thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
+        thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnail")
+        path_128 = thumb_dir + "normal/" + thumbnail_hash + ".png"
         interpolation = GdkPixbuf.InterpType.BILINEAR
 
         # The cache dirs might have resolutions of 256 and/or 128,
@@ -264,7 +264,7 @@ class AssetThumbnail(Loggable):
             return small_thumb, large_thumb
         except GLib.GError:
             # path_128 doesn't exist, try the 256 version.
-            path_256 = dir + "large/" + hash + ".png"
+            path_256 = thumb_dir + "large/" + thumbnail_hash + ".png"
             try:
                 thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
                 w, h = thumb_256.get_width(), thumb_256.get_height()
