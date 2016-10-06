@@ -45,7 +45,6 @@ from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import TimelineError
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import alter_style_class
 from pitivi.utils.ui import clear_styles
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import EXPANDED_SIZE
@@ -754,8 +753,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for layer in self._layers:
             layer.updatePosition()
 
-        self.queue_draw()
-
     def __createClips(self, x, y):
         x = self.adjustCoords(x=x)
 
@@ -959,7 +956,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     # Interface Zoomable
     def zoomChanged(self):
         self.updatePosition()
-        x = max(0, self.nsToPixel(self.__last_position))
         self.queue_draw()
 
     def __getEditingMode(self):
@@ -1143,7 +1139,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__clickedHandle = None
         self.__got_dragged = False
         self.editing_context = None
-        self.queue_draw()
 
         for layer in self.ges_timeline.get_layers():
             layer.ui.checkMediaTypes()
@@ -1343,7 +1338,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ruler = ScaleRuler(self, self.hadj)
         self.ruler.props.hexpand = True
         self.ruler.setProjectFrameRate(24.)
-        self.ruler.hide()
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "timelinetoolbar.ui"))
