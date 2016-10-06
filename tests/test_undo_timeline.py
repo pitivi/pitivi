@@ -167,7 +167,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         timeline_ui.setProject(self.app.project_manager.current_project)
 
         # Click and drag a layer control box to move the layer.
-        with mock.patch.object(timeline_ui, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
             event.get_button.return_value = True, 1
 
@@ -687,19 +687,23 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.layer.add_clip(clip)
 
         # Drag a clip on a separator to create a layer.
-        timeline_ui.get_event_widget = mock.Mock(return_value=clip.ui)
-        event = mock.Mock()
-        event.x = 0
-        event.get_button.return_value = True, 1
-        timeline_ui._button_press_event_cb(None, event)
+        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+            get_event_widget.return_value = clip.ui
 
-        def translate_coordinates(widget, x, y):
-            return x, y
-        clip.ui.translate_coordinates = translate_coordinates
-        event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
-        event.x = 1
-        event.y = LAYER_HEIGHT * 2
-        timeline_ui._motion_notify_event_cb(None, event)
+            event = mock.Mock()
+            event.x = 0
+            event.get_button.return_value = True, 1
+            timeline_ui._button_press_event_cb(None, event)
+
+            def translate_coordinates(widget, x, y):
+                return x, y
+            clip.ui.translate_coordinates = translate_coordinates
+            event = mock.Mock()
+            event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
+            event.x = 1
+            event.y = LAYER_HEIGHT * 2
+            event.get_button.return_value = True, 1
+            timeline_ui._motion_notify_event_cb(None, event)
 
         timeline_ui._button_release_event_cb(None, event)
 

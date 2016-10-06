@@ -26,7 +26,6 @@ import tempfile
 import unittest
 from unittest import mock
 
-from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -39,7 +38,6 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.timeline import Selected
-from pitivi.utils.validate import Event
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
@@ -179,17 +177,18 @@ class TestCase(unittest.TestCase, Loggable):
         self._result = result
         unittest.TestCase.run(self, result)
 
-    def toggleClipSelection(self, ges_clip, expect_selected):
-        '''
-        Toggle selection state of @ges_clip.
-        '''
+    def toggle_clip_selection(self, ges_clip, expect_selected):
+        """Toggles the selection state of @ges_clip."""
         selected = bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
         self.assertEqual(ges_clip.selected.selected, selected)
 
-        ges_clip.ui.sendFakeEvent(
-            Event(Gdk.EventType.BUTTON_PRESS, button=1), ges_clip.ui)
-        ges_clip.ui.sendFakeEvent(
-            Event(Gdk.EventType.BUTTON_RELEASE, button=1), ges_clip.ui)
+        # Simulate a click on the clip.
+        event = mock.Mock()
+        event.get_button.return_value = (True, 1)
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = ges_clip.ui
+            ges_clip.ui.timeline._button_press_event_cb(None, event)
+        ges_clip.ui._button_release_event_cb(None, event)
 
         self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)

@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 import locale
 import subprocess
+from unittest import mock
 
 import gi
 from gi.repository import Gdk
@@ -26,9 +27,7 @@ from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.utils import timeline as timelineUtils
-from pitivi.utils import ui
-
+from pitivi.utils.timeline import Zoomable
 
 CAT = "validate"
 
@@ -47,16 +46,16 @@ has_validate = False
 
 def Event(event_type, **kwargs):
     event_types_constructors = {
-        Gdk.EventType.BUTTON_PRESS: Gdk.EventButton.new,
-        Gdk.EventType.BUTTON_RELEASE: Gdk.EventButton.new,
-        Gdk.EventType.MOTION_NOTIFY: Gdk.EventMotion.new
+        Gdk.EventType.BUTTON_PRESS: Gdk.EventButton,
+        Gdk.EventType.BUTTON_RELEASE: Gdk.EventButton,
+        Gdk.EventType.KEY_PRESS: Gdk.EventKey,
+        Gdk.EventType.KEY_RELEASE: Gdk.EventKey,
+        Gdk.EventType.MOTION_NOTIFY: Gdk.EventMotion
     }
 
-    try:
-        event = event_types_constructors[event_type](event_type)
-    except KeyError:
-        event = Gdk.Event.new(event_type)
-
+    constructor = event_types_constructors[event_type]
+    event = constructor()
+    event.type = event_type
     for arg, value in kwargs.items():
         setattr(event, arg, value)
 
@@ -220,11 +219,11 @@ def _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_pr
 
     if next_action is None or need_release:
         scenario.dragging = False
-        event = Gdk.EventButton.new(Gdk.EventType.BUTTON_RELEASE)
-        event.button = 1
-        event.x = timelineUtils.Zoomable.nsToPixelAccurate(position)
-        event.y = y
-        container.ui.sendFakeEvent(event, container.ui)
+        x = Zoomable.nsToPixelAccurate(position)
+        event = Event(Gdk.EventType.BUTTON_RELEASE, button=1, x=x, y=y)
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = container.ui
+            container.ui._button_release_event_cb(None, event)
 
         if layer_prio > 0 and container.get_layer().get_priority() != layer_prio:
             scenario.report_simple(GLib.quark_from_string("scenario::execution-error"),
@@ -238,18 +237,17 @@ def _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_pr
 
 def cleanEditModes(timeline, scenario):
     if scenario.last_mode == GES.EditMode.EDIT_RIPPLE:
-        timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L))
+        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L)
+        timeline.ui.get_parent().do_key_release_event(event)
     elif scenario.last_mode == GES.EditMode.EDIT_ROLL:
-        timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
+        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
+        timeline.ui.get_parent().do_key_release_event(event)
 
     scenario.last_mode = None
 
 
 def setEditingMode(timeline, scenario, action):
-    try:
-        mode = scenario.last_mode
-        mode
-    except AttributeError:
+    if not hasattr(scenario, "last_mode"):
         scenario.last_mode = None
 
     try:
@@ -262,16 +260,16 @@ def setEditingMode(timeline, scenario, action):
         mode = GES.EditMode.EDIT_NORMAL
 
     if mode == GES.EditMode.EDIT_RIPPLE:
-        timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Shift_L))
+        timeline.ui.get_parent().do_key_press_event(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Shift_L))
 
         if scenario.last_mode == GES.EditMode.EDIT_ROLL:
-            timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
+            timeline.ui.get_parent().do_key_release_event(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
 
     elif mode == GES.EditMode.EDIT_ROLL:
-        timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L))
+        timeline.ui.do_key_press_event(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L))
 
         if scenario.last_mode == GES.EditMode.EDIT_RIPPLE:
-            timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L))
+            timeline.ui.do_key_release_event(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L))
     else:
         cleanEditModes(timeline, scenario)
 
@@ -332,25 +330,26 @@ def editContainer(scenario, action):
 
     if not hasattr(scenario, "dragging") or scenario.dragging is False \
             or scenario.last_edge != edge:
-        widget = container.ui
         event_widget = container.ui
         if isinstance(container, GES.SourceClip):
             if edge == GES.Edge.EDGE_START:
                 event_widget = container.ui.leftHandle
-                event = timeline
             elif edge == GES.Edge.EDGE_END:
                 event_widget = container.ui.rightHandle
-                event = timeline
 
         scenario.dragging = True
         event = Event(Gdk.EventType.BUTTON_PRESS, button=1, y=y)
-        widget.sendFakeEvent(event, event_widget)
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = event_widget
+            timeline.ui._button_press_event_cb(event_widget, event)
 
     event = Event(Gdk.EventType.MOTION_NOTIFY, button=1,
-                  x=timelineUtils.Zoomable.nsToPixelAccurate(position) -
-                  container_ui.translate_coordinates(timeline.ui, 0, 0)[0] + ui.CONTROL_WIDTH,
+                  x=Zoomable.nsToPixelAccurate(position) -
+                  container_ui.translate_coordinates(timeline.ui, 0, 0)[0] + timeline.ui.controls_width,
                   y=y, state=Gdk.ModifierType.BUTTON1_MASK)
-    container.ui.sendFakeEvent(event, container.ui)
+    with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+        get_event_widget.return_value = container.ui
+        timeline.ui._motion_notify_event_cb(None, event)
 
     GstValidate.print_action(action, "Editing %s to %s in %s mode, edge: %s "
                              "with new layer prio: %d\n" % (action.structure["container-name"],
@@ -384,14 +383,14 @@ def zoom(scenario, action):
     GstValidate.print_action(action, action.type.replace('-', ' ') + "\n")
 
     {"zoom-fit": timeline.parent.zoomFit,
-     "zoom-out": timelineUtils.Zoomable.zoomOut,
-     "zoom-in": timelineUtils.Zoomable.zoomIn}[action.type]()
+     "zoom-out": Zoomable.zoomOut,
+     "zoom-in": Zoomable.zoomIn}[action.type]()
 
     return True
 
 
 def setZoomLevel(scenario, action):
-    timelineUtils.Zoomable.setZoomLevel(action.structure["level"])
+    Zoomable.setZoomLevel(action.structure["level"])
 
     return True
 
@@ -446,11 +445,13 @@ def select_clips(scenario, action):
         if clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
             should_select = False
 
-        timeline.ui.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
-                                        keyval=Gdk.KEY_Control_L))
+        event = Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L)
+        timeline.ui.get_parent().do_key_press_event(event)
 
-    event = Gdk.EventButton.new(Gdk.EventType.BUTTON_RELEASE)
-    clip.ui.sendFakeEvent(event, clip.ui)
+    event = Event(Gdk.EventType.BUTTON_RELEASE, button=1)
+    with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+        get_event_widget.return_value = clip.ui
+        clip.ui._button_release_event_cb(None, event)
 
     selection = action.structure["selection"]
     if not selection:
@@ -478,7 +479,8 @@ def select_clips(scenario, action):
                                                " but it is" % (selection, clip.get_name()))
 
     if mode == "ctrl":
-        timeline.ui.sendFakeEvent(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
+        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
+        timeline.ui.get_parent().do_key_release_event(event)
 
     return 1
 
@@ -522,7 +524,7 @@ def init():
 
         GstValidate.register_action_type("set-state", "pitivi",
                                          set_state, None,
-                                         "Pitivi override for the pause action",
+                                         "Pitivi override for the set-state action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("edit-container", "pitivi",

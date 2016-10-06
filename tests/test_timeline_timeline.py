@@ -25,7 +25,6 @@ from gi.repository import Gtk
 from pitivi.project import ProjectManager
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils import ui
-from pitivi.utils.validate import Event
 from tests import common
 
 
@@ -165,12 +164,13 @@ class TestGrouping(BaseTestTimeline):
         timeline.app.settings.leftClickAlsoSeeks = False
 
         # Press <ctrl> so selecting in ADD mode
-        timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
-                                     keyval=Gdk.KEY_Control_L))
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        timeline.parent.do_key_press_event(event)
 
         # Select the 2 clips
         for clip in clips:
-            self.toggleClipSelection(clip, expect_selected=True)
+            self.toggle_clip_selection(clip, expect_selected=True)
 
         before_grouping_timeline_group = timeline.current_group
 
@@ -211,7 +211,7 @@ class TestGrouping(BaseTestTimeline):
         self.assertEqual(len(clips), num_clips)
 
         # Deselect one grouped clip clips
-        self.toggleClipSelection(clips[0], expect_selected=False)
+        self.toggle_clip_selection(clips[0], expect_selected=False)
 
         # Make sure all the clips have been deselected
         for clip in clips:
@@ -239,7 +239,7 @@ class TestGrouping(BaseTestTimeline):
 
         timeline = self.createTimeline()
         clips = self.addClipsSimple(timeline, 1)
-        self.toggleClipSelection(clips[0], expect_selected=True)
+        self.toggle_clip_selection(clips[0], expect_selected=True)
 
         timeline.ges_timeline.get_asset().pipeline.getPosition = mock.Mock(return_value=position)
         layer = timeline.ges_timeline.get_layers()[0]
@@ -254,11 +254,11 @@ class TestGrouping(BaseTestTimeline):
         self.assertTrue(clips[0].selected.selected)
         self.assertFalse(clips[1].selected.selected)
 
-        timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
-                                     keyval=Gdk.KEY_Control_L))
-        self.toggleClipSelection(clips[1], expect_selected=True)
-        timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_RELEASE,
-                                     keyval=Gdk.KEY_Control_L))
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        timeline.parent.do_key_press_event(event)
+        self.toggle_clip_selection(clips[1], expect_selected=True)
+        timeline.parent.do_key_release_event(event)
 
         for clip in clips:
             self.assertTrue(clip.selected.selected)
@@ -266,13 +266,13 @@ class TestGrouping(BaseTestTimeline):
         # Group the two parts
         timeline.parent.group_action.emit("activate", None)
 
-        self.toggleClipSelection(clips[1], expect_selected=True)
+        self.toggle_clip_selection(clips[1], expect_selected=True)
 
     def testUngroupClip(self):
         timeline = self.createTimeline()
         ges_clip, = self.addClipsSimple(timeline, 1)
 
-        self.toggleClipSelection(ges_clip, expect_selected=True)
+        self.toggle_clip_selection(ges_clip, expect_selected=True)
 
         timeline.parent.ungroup_action.emit("activate", None)
         layer = timeline.ges_timeline.get_layers()[0]
@@ -312,7 +312,7 @@ class TestGrouping(BaseTestTimeline):
         self.group_clips(timeline, [clip1, clip2])
 
         # Click the first clip in the group.
-        with mock.patch.object(timeline, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
             event.x = 0
             event.get_button.return_value = True, 1
@@ -346,12 +346,13 @@ class TestCopyPaste(BaseTestTimeline):
         clips = self.addClipsSimple(timeline, num_clips)
 
         # Press <ctrl> so selecting in ADD mode
-        timeline.sendFakeEvent(Event(event_type=Gdk.EventType.KEY_PRESS,
-                                     keyval=Gdk.KEY_Control_L))
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        timeline.parent.do_key_press_event(event)
 
         # Select the 2 clips
         for clip in clips:
-            self.toggleClipSelection(clip, expect_selected=True)
+            self.toggle_clip_selection(clip, expect_selected=True)
 
         self.assertTrue(timeline.parent.copy_action.props.enabled)
         self.assertFalse(timeline.parent.paste_action.props.enabled)
@@ -393,7 +394,7 @@ class TestEditing(BaseTestTimeline):
         layer = clip.get_layer()
 
         # Click the right trim handle of the clip.
-        with mock.patch.object(timeline, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip.ui.rightHandle

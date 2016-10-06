@@ -887,7 +887,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.__connectToChild(child)
 
         # Connect to Widget signals.
-        self.connect("button-release-event", self.__buttonReleaseEventCb)
+        self.connect("button-release-event", self._button_release_event_cb)
         self.connect("event", self._eventCb)
 
         # Connect to GES signals.
@@ -1005,17 +1005,11 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for handle in self.handles:
             handle.shrink()
 
-    def sendFakeEvent(self, event, event_widget):
-        if event.type == Gdk.EventType.BUTTON_RELEASE:
-            self.__buttonReleaseEventCb(event_widget, event)
-
-        self.timeline.sendFakeEvent(event, event_widget)
-
     def do_draw(self, cr):
         self.updatePosition()
         Gtk.EventBox.do_draw(self, cr)
 
-    def __buttonReleaseEventCb(self, unused_widget, event):
+    def _button_release_event_cb(self, unused_widget, event):
         if self.timeline.got_dragged:
             # This means a drag & drop operation just finished and
             # this button-release-event should be ignored.

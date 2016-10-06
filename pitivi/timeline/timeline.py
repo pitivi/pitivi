@@ -128,15 +128,16 @@ class Marquee(Gtk.Box, Loggable):
         self.set_visible(False)
 
     def setStartPosition(self, event):
-        event_widget = self._timeline.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
         x, y = event_widget.translate_coordinates(self._timeline, event.x, event.y)
 
         self.start_x, self.start_y = self._timeline.adjustCoords(x=x, y=y)
 
     def move(self, event):
-        event_widget = self._timeline.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
 
-        x, y = self._timeline.adjustCoords(coords=event_widget.translate_coordinates(self._timeline, event.x, event.y))
+        coords = event_widget.translate_coordinates(self._timeline, event.x, event.y)
+        x, y = self._timeline.adjustCoords(coords=coords)
 
         start_x = min(x, self.start_x)
         start_y = min(y, self.start_y)
@@ -245,7 +246,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
         self.get_accessible().set_name("timeline canvas")
-        self.__fake_event_widget = None
 
         # A lot of operations go through these callbacks.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
@@ -313,28 +313,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     @property
     def controls_width(self):
         return self.__layers_controls_vbox.get_allocated_width()
-
-    def sendFakeEvent(self, event, event_widget=None):
-        # Member usefull for testsing
-        self.__fake_event_widget = event_widget
-
-        self.info("Faking %s", event)
-        if event.type == Gdk.EventType.BUTTON_PRESS:
-            self._button_press_event_cb(self, event)
-        elif event.type == Gdk.EventType.BUTTON_RELEASE:
-            self._button_release_event_cb(self, event)
-        elif event.type == Gdk.EventType.MOTION_NOTIFY:
-            self._motion_notify_event_cb(self, event)
-        else:
-            self.parent.sendFakeEvent(event)
-
-        self.__fake_event_widget = None
-
-    def get_event_widget(self, event):
-        if self.__fake_event_widget:
-            return self.__fake_event_widget
-
-        return Gtk.get_event_widget(event)
 
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
@@ -567,7 +545,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.error("Could not handle %s scroll event", direction)
                 return False
 
-        event_widget = self.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
         x, y = event_widget.translate_coordinates(self, event.x, event.y)
         if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
             if delta_y > 0:
@@ -628,7 +606,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.debug("PRESSED %s", event)
         self.app.gui.focusTimeline()
 
-        event_widget = self.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
 
         res, button = event.get_button()
         if res and button == 1:
@@ -702,10 +680,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return False
 
             if self.got_dragged or self.__drag_start_x != event.x:
-                self.__dragUpdate(self.get_event_widget(event), event.x, event.y)
+                self.__dragUpdate(Gtk.get_event_widget(event), event.x, event.y)
                 self.got_dragged = True
         elif self.__moving_layer:
-            event_widget = self.get_event_widget(event)
+            event_widget = Gtk.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
             layer, unused_on_sep = self._get_layer_at(
                 y, prefer_ges_layer=self.__moving_layer,
@@ -723,7 +701,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return False
 
     def _seek(self, event):
-        event_widget = self.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
         x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
         x -= self.controls_width
         x += self.hadj.get_value()
@@ -1723,13 +1701,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoomed_fitted = False
 
     # Gtk widget virtual methods
-
-    def sendFakeEvent(self, event):
-        self.info("Faking %s", event)
-        if event.type == Gdk.EventType.KEY_PRESS:
-            self.do_key_press_event(event)
-        elif event.type == Gdk.EventType.KEY_RELEASE:
-            self.do_key_release_event(event)
 
     def do_key_press_event(self, event):
         # This is used both for changing the selection modes and for affecting
