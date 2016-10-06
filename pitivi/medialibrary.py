@@ -209,27 +209,12 @@ class AssetThumbnail(Loggable):
             if isinstance(stream_info, GstPbutils.DiscovererVideoInfo)]
         if video_streams:
             # Check if the files have thumbnails in the user's cache directory.
-            # https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DIRECTORY
             real_uri = get_proxy_target(self.__asset).props.id
             quoted_uri = quote_uri(real_uri)
             thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
-            small_thumb, large_thumb = (None, None)
-            try:
-                thumb_dir = os.path.join(os.environ["XDG_CACHE_HOME"], "thumbnail")
-                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
-                    thumb_dir, thumbnail_hash)
-            except KeyError:
-                pass
-            if not small_thumb:
-                thumb_dir = os.path.expanduser("~/.cache/thumbnails/")
-                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
-                    thumb_dir, thumbnail_hash)
-            if not small_thumb:
-                # Older version of the spec also mentioned $HOME/.thumbnails
-                thumb_dir = os.path.expanduser("~/.thumbnails/")
-                small_thumb, large_thumb = self.__get_thumbnail_in_dir(
-                    thumb_dir, thumbnail_hash)
-
+            thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnail")
+            small_thumb, large_thumb = self.__get_thumbnail_in_dir(
+                thumb_dir, thumbnail_hash)
             if not small_thumb:
                 if self.__asset.is_image():
                     small_thumb, large_thumb = self.__get_icons("image-x-generic")
