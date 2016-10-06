@@ -231,7 +231,7 @@ class AssetThumbnail(Loggable):
                             LARGE_THUMB_WIDTH,
                             LARGE_THUMB_WIDTH * height / width,
                             GdkPixbuf.InterpType.BILINEAR)
-                        if large_thumb.props.width > SMALL_THUMB_WIDTH:
+                        if width > SMALL_THUMB_WIDTH:
                             small_thumb = small_thumb.scale_simple(
                                 SMALL_THUMB_WIDTH,
                                 SMALL_THUMB_WIDTH * height / width,
