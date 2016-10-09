@@ -30,8 +30,15 @@ import tempfile
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
-SDK_BRANCH = "3.22"
+# The default branch is master because the script is used most often
+# for development.
 PITIVI_BRANCH = "master"
+# To see the existing branches, run:
+# flatpak remote-ls pitivi --user -d
+SDK_BRANCH = {"0.96": "3.20",
+              "0.97.1": "3.20",
+              "stable": "3.20",
+              "master": "3.22"}
 FLATPAK_REQ = "0.6.4"
 
 
@@ -395,12 +402,13 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             FlatpakRepo("pitivi",
                         url="http://flatpak.pitivi.org/",
                         repo_file="http://flatpak.pitivi.org/pitivi.flatpakrepo"))
+        sdk_branch = SDK_BRANCH[self.branch]
         self.runtime = FlatpakPackage(
-            "org.gnome.Platform", SDK_BRANCH, self.sdk_repo, "x86_64")
+            "org.gnome.Platform", sdk_branch, self.sdk_repo, "x86_64")
         self.locale = FlatpakPackage(
-            "org.gnome.Platform.Locale", SDK_BRANCH, self.sdk_repo, "x86_64")
+            "org.gnome.Platform.Locale", sdk_branch, self.sdk_repo, "x86_64")
         self.sdk = FlatpakPackage(
-            "org.gnome.Sdk", SDK_BRANCH, self.sdk_repo, "x86_64")
+            "org.gnome.Sdk", sdk_branch, self.sdk_repo, "x86_64")
         self.app = FlatpakPackage(
             "org.pitivi.Pitivi", self.branch, self.app_repo, "x86_64")
         self.packs = [self.runtime, self.locale]
