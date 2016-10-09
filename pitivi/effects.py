@@ -317,6 +317,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         # Store
         self.storemodel = Gtk.ListStore(
             str, str, int, object, str, GdkPixbuf.Pixbuf)
+        self.storemodel.set_sort_column_id(
+            COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
         self.view = Gtk.TreeView(model=self.storemodel)
         self.view.props.headers_visible = False
@@ -415,8 +417,6 @@ class EffectListWidget(Gtk.Box, Loggable):
                                     effect_info.categories,
                                     name,
                                     effect_info.icon])
-        self.storemodel.set_sort_column_id(
-            COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
     def populate_categories_widget(self):
         self.categoriesWidget.get_model().clear()
