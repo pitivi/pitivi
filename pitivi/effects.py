@@ -321,14 +321,13 @@ class EffectListWidget(Gtk.Box, Loggable):
         self.storemodel.set_sort_column_id(
             COL_NAME_TEXT, Gtk.SortType.ASCENDING)
 
-        self.view = Gtk.TreeView(model=self.storemodel)
+        # Create the filter for searching the storemodel.
+        self.model_filter = self.storemodel.filter_new()
+        self.model_filter.set_visible_func(self._setRowVisible, data=None)
+
+        self.view = Gtk.TreeView(model=self.model_filter)
         self.view.props.headers_visible = False
         self.view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-
-        # Create the filterModel for searching the storemodel
-        self.modelFilter = self.storemodel.filter_new()
-        self.modelFilter.set_visible_func(self._setRowVisible, data=None)
-        self.view.set_model(self.modelFilter)
 
         icon_col = Gtk.TreeViewColumn()
         icon_col.set_spacing(SPACING)
@@ -479,7 +478,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         if self._draggedItems:
             return self._draggedItems
         model, rows = self.view.get_selection().get_selected_rows()
-        path = self.modelFilter.convert_path_to_child_path(rows[0])
+        path = self.model_filter.convert_path_to_child_path(rows[0])
         return self.storemodel[path][COL_ELEMENT_NAME]
 
     def _toggleViewTypeCb(self, widget):
@@ -498,13 +497,13 @@ class EffectListWidget(Gtk.Box, Loggable):
         else:
             self._effectType = AUDIO_EFFECT
         self.populate_categories_widget()
-        self.modelFilter.refilter()
+        self.model_filter.refilter()
 
     def _categoryChangedCb(self, unused_combobox):
-        self.modelFilter.refilter()
+        self.model_filter.refilter()
 
     def _searchEntryChangedCb(self, unused_entry):
-        self.modelFilter.refilter()
+        self.model_filter.refilter()
 
     def _searchEntryIconClickedCb(self, entry, unused, unused1):
         entry.set_text("")
