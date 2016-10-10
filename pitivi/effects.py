@@ -178,8 +178,9 @@ class EffectsManager(object):
         self.audio_effects = []
         self._effects = {}
 
-        uselessWords = [_("Video"), _("Audio"), _("Audio").lower(), _("effect")]
-        uselessRe = re.compile(" |".join(uselessWords))
+        useless_words = ["Video", "Audio", "audio", "effect",
+                         _("Video"), _("Audio"), _("Audio").lower(), _("effect")]
+        uselessRe = re.compile(" |".join(useless_words))
 
         factories = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
         longnames = set()
