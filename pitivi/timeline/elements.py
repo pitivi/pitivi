@@ -31,16 +31,20 @@ from gi.repository import Gtk
 from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 from matplotlib.figure import Figure
 
-from pitivi import configure
-from pitivi.timeline import previewers
-from pitivi.utils import misc
-from pitivi.utils import ui
+from pitivi.configure import get_pixmap_dir
+from pitivi.timeline.previewers import AudioPreviewer
+from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import filename_from_uri
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import set_children_state_recurse
+from pitivi.utils.ui import unset_children_state_recurse
 
 KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
@@ -163,9 +167,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.mpl_connect('motion_notify_event', self.__mplMotionEventCb)
 
     def release(self):
-        misc.disconnectAllByFunc(self, self.__heightRequestCb)
-        misc.disconnectAllByFunc(self, self.__gtkMotionEventCb)
-        misc.disconnectAllByFunc(self, self.__controlSourceChangedCb)
+        disconnectAllByFunc(self, self.__heightRequestCb)
+        disconnectAllByFunc(self, self.__gtkMotionEventCb)
+        disconnectAllByFunc(self, self.__controlSourceChangedCb)
 
     # Private methods
     def __computeYlim(self):
@@ -644,7 +648,7 @@ class VideoSource(TimelineElement):
         if child == self.__videoflip:
             self.__videoflip = None
             self.__apply_new_size_if_needed(project)
-            misc.disconnectAllByFunc(child, self.__videoflip_changed_cb)
+            disconnectAllByFunc(child, self.__videoflip_changed_cb)
 
     def __videoflip_changed_cb(self, unused_child=None,
                                unused_element=None,
@@ -761,7 +765,7 @@ class VideoUriSource(VideoSource):
         self.get_style_context().add_class("VideoUriSource")
 
     def _getPreviewer(self):
-        previewer = previewers.VideoPreviewer(self._ges_elem)
+        previewer = VideoPreviewer(self._ges_elem)
         previewer.get_style_context().add_class("VideoUriSource")
 
         return previewer
@@ -788,7 +792,7 @@ class AudioUriSource(TimelineElement):
         self.get_style_context().add_class("AudioUriSource")
 
     def _getPreviewer(self):
-        previewer = previewers.AudioPreviewer(self._ges_elem)
+        previewer = AudioPreviewer(self._ges_elem)
         previewer.get_style_context().add_class("AudioUriSource")
         previewer.startLevelsDiscoveryWhenIdle()
 
@@ -836,7 +840,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
         Gtk.EventBox.do_draw(self, cr)
         if TrimHandle.PIXBUF is None:
             TrimHandle.PIXBUF = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
+                os.path.join(get_pixmap_dir(), "trimbar-focused.png"))
         Gdk.cairo_set_source_pixbuf(cr, TrimHandle.PIXBUF, 10, 10)
 
     def enlarge(self):
@@ -896,7 +900,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.ges_clip.connect_after("child-removed", self._childRemovedCb)
 
         # To be able to receive effects dragged on clips.
-        self.drag_dest_set(0, [ui.EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
         self.connect("drag-drop", self.__dragDropCb)
 
     @property
@@ -910,7 +914,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if not target:
             return False
 
-        if target.name() == ui.EFFECT_TARGET_ENTRY.target:
+        if target.name() == EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
             self.timeline.resetSelectionGroup()
             self.timeline.selection.setSelection([self.ges_clip], SELECT)
@@ -1064,11 +1068,11 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for child in self.ges_clip.get_children(True):
             self.__disconnectFromChild(child)
 
-        misc.disconnectAllByFunc(self.ges_clip, self._startChangedCb)
-        misc.disconnectAllByFunc(self.ges_clip, self._durationChangedCb)
-        misc.disconnectAllByFunc(self.ges_clip, self._layerChangedCb)
-        misc.disconnectAllByFunc(self.ges_clip, self._childAddedCb)
-        misc.disconnectAllByFunc(self.ges_clip, self._childRemovedCb)
+        disconnectAllByFunc(self.ges_clip, self._startChangedCb)
+        disconnectAllByFunc(self.ges_clip, self._durationChangedCb)
+        disconnectAllByFunc(self.ges_clip, self._layerChangedCb)
+        disconnectAllByFunc(self.ges_clip, self._childAddedCb)
+        disconnectAllByFunc(self.ges_clip, self._childRemovedCb)
 
     def __showHandles(self):
         for handle in self.handles:
@@ -1082,12 +1086,12 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline._scrubbing):
-            ui.set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL):
-            ui.unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
+            unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.shrink()
 
@@ -1162,10 +1166,10 @@ class UriClip(SourceClip):
         SourceClip.__init__(self, layer, ges_clip)
         self.props.has_tooltip = True
 
-        self.set_tooltip_markup(misc.filename_from_uri(ges_clip.get_uri()))
+        self.set_tooltip_markup(filename_from_uri(ges_clip.get_uri()))
 
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
-        tooltip.set_markup(misc.filename_from_uri(
+        tooltip.set_markup(filename_from_uri(
             self.ges_clip.get_asset().props.id))
 
         return True
