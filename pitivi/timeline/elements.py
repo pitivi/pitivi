@@ -925,7 +925,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.timeline.cleanDropData()
             success = True
 
-        Gtk.drag_finish(context, success, True, timestamp)
+        Gtk.drag_finish(context, success, False, timestamp)
 
         return success
 
