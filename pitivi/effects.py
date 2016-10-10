@@ -436,7 +436,6 @@ class EffectListWidget(Gtk.Box, Loggable):
     def _dndDragDataGetCb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
         data = bytes(self.getSelectedEffect(), "UTF-8")
         selection_data.set(drag_context.list_targets()[0], 0, data)
-        return True
 
     def _rowUnderMouseSelected(self, view, event):
         result = view.get_path_at_pos(int(event.x), int(event.y))
