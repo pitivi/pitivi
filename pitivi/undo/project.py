@@ -16,6 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
 
@@ -81,9 +82,13 @@ class ProjectObserver(MetaContainerObserver):
                                                   action_log)
 
     def _assetAddedCb(self, project, asset):
+        if not isinstance(asset, GES.UriClipAsset):
+            return
         action = AssetAddedAction(project, asset)
         self.action_log.push(action)
 
     def _assetRemovedCb(self, project, asset):
+        if not isinstance(asset, GES.UriClipAsset):
+            return
         action = AssetRemovedAction(project, asset)
         self.action_log.push(action)

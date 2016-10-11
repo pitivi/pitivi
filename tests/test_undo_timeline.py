@@ -203,19 +203,14 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertEqual(layer._nameIfSet(), "Beautiful name")
 
-    def testAddClip(self):
-        stacks = []
-        self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
-
+    def test_add_clip(self):
         clip1 = GES.TitleClip()
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
-        self.assertEqual(1, len(stacks))
-        stack = stacks[0]
-        self.assertEqual(2, len(stack.done_actions), stack.done_actions)
+        stack, = self.action_log.undo_stacks
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
-        self.assertTrue(isinstance(stack.done_actions[1], AssetAddedAction))
         self.assertTrue(clip1 in self.getTimelineClips())
 
         self.action_log.undo()
@@ -422,8 +417,14 @@ class TestLayerObserver(BaseTestUndoTimeline):
         with self.action_log.started("add second clip"):
             self.layer.add_clip(clip2)
 
+        # Make sure the transition asset is ignored.
+        stack, = self.action_log.undo_stacks
+        for action in stack.done_actions:
+            self.assertNotIsInstance(action, AssetAddedAction,
+                                     stack.done_actions)
+
         def get_transition_element(ges_layer):
-            for clip in self.layer.get_clips():
+            for clip in ges_layer.get_clips():
                 if isinstance(clip, GES.TransitionClip):
                     for element in clip.get_children(False):
                         if isinstance(element, GES.VideoTransition):
