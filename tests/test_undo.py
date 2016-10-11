@@ -19,6 +19,9 @@
 from unittest import mock
 from unittest import TestCase
 
+from gi.repository import GES
+
+from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import UndoableAction
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.undo.undo import UndoableActionStack
@@ -362,3 +365,27 @@ class TestUndoableActionLog(TestCase):
         order.assert_has_calls([mock.call.action3.undo(),
                                 mock.call.action2.undo(),
                                 mock.call.action1.undo()])
+
+
+class TestGObjectObserver(TestCase):
+
+    def test_property_change(self):
+        action_log = UndoableActionLog()
+        action_log.begin("complex stuff")
+        stack, = action_log.stacks
+
+        clip = GES.TitleClip()
+        unused_observer = GObjectObserver(clip, ["start"], action_log)
+
+        self.assertEqual(len(stack.done_actions), 0)
+        clip.props.start = 2
+        self.assertEqual(len(stack.done_actions), 1)
+
+        clip.props.start = 2
+        self.assertEqual(len(stack.done_actions), 1)
+
+        clip.props.start = 4
+        self.assertEqual(len(stack.done_actions), 2)
+        action = stack.done_actions[-1]
+        self.assertEqual(action.old_value, 2)
+        self.assertEqual(action.new_value, 4)

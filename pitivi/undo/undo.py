@@ -427,6 +427,8 @@ class GObjectObserver(GObject.Object):
     def _property_changed_cb(self, gobject, pspec, property_name, field_name):
         old_value = self.properties[property_name]
         property_value = gobject.get_property(field_name)
+        if old_value == property_value:
+            return
         self.properties[property_name] = property_value
         action = PropertyChangedAction(gobject, field_name,
                                        old_value, property_value)
