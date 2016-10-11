@@ -864,10 +864,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._addAsset(asset)
 
     def _assetRemovedCb(self, unused_project, asset):
-        self.debug("%s Disconnecting %s - %s", self, asset, asset.props.id)
-        asset.disconnect_by_func(self.__assetProxiedCb)
-        asset.disconnect_by_func(self.__assetProxyingCb)
-        self.__removeAsset(asset)
+        if isinstance(asset, GES.UriClipAsset):
+            self.debug("Disconnecting %s - %s", asset, asset.props.id)
+            asset.disconnect_by_func(self.__assetProxiedCb)
+            asset.disconnect_by_func(self.__assetProxyingCb)
+            self.__removeAsset(asset)
 
     def __removeAsset(self, asset):
         """Removes the specified asset."""
