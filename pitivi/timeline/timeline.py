@@ -165,7 +165,7 @@ class Marquee(Gtk.Box, Loggable):
             List[GES.Clip]: The clips under the marquee.
         """
         x = self._timeline.layout.child_get_property(self, "x")
-        res = []
+        res = set()
 
         w = self.props.width_request
         for layer in self._timeline.ges_timeline.get_layers():
@@ -179,14 +179,14 @@ class Marquee(Gtk.Box, Loggable):
 
                 toplevel = clip.get_toplevel_parent()
                 if isinstance(toplevel, GES.Group) and toplevel != self._timeline.current_group:
-                    res.extend([c for c in clip.get_toplevel_parent().get_children(True)
+                    res.update([c for c in toplevel.get_children(True)
                                 if isinstance(c, GES.Clip)])
                 else:
-                    res.append(clip)
+                    res.add(clip)
 
         self.debug("Result is %s", res)
 
-        return tuple(set(res))
+        return tuple(res)
 
     def contains(self, clip, marquee_start, marquee_width):
         if clip.ui is None:
