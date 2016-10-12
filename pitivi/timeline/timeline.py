@@ -114,30 +114,41 @@ class Marquee(Gtk.Box, Loggable):
         Loggable.__init__(self)
 
         self._timeline = timeline
-        self.start_x = None
-        self.start_y = None
-        self.set_visible(False)
+        self.hide()
 
         self.get_style_context().add_class("Marquee")
 
     def hide(self):
+        """Hides and resets the widget."""
         self.start_x = None
         self.start_y = None
         self.props.height_request = -1
         self.props.width_request = -1
         self.set_visible(False)
 
-    def setStartPosition(self, event):
-        event_widget = Gtk.get_event_widget(event)
-        x, y = event_widget.translate_coordinates(self._timeline, event.x, event.y)
+    def set_start_position(self, event):
+        """Sets the first corner of the marquee.
 
-        self.start_x, self.start_y = self._timeline.adjustCoords(x=x, y=y)
+        Args:
+            event (Gdk.EventButton): The button pressed event which might
+                start a select operation.
+        """
+        event_widget = Gtk.get_event_widget(event)
+        self.start_x, self.start_y = event_widget.translate_coordinates(
+            self._timeline.layers_vbox, event.x, event.y)
 
     def move(self, event):
-        event_widget = Gtk.get_event_widget(event)
+        """Sets the second corner of the marquee.
 
-        coords = event_widget.translate_coordinates(self._timeline, event.x, event.y)
-        x, y = self._timeline.adjustCoords(coords=coords)
+        Also makes the marquee visible.
+
+        Args:
+            event (Gdk.EventMotion): The motion event which contains
+                the coordinates of the second corner.
+        """
+        event_widget = Gtk.get_event_widget(event)
+        x, y = event_widget.translate_coordinates(
+            self._timeline.layers_vbox, event.x, event.y)
 
         start_x = min(x, self.start_x)
         start_y = min(y, self.start_y)
@@ -147,8 +158,13 @@ class Marquee(Gtk.Box, Loggable):
         self.props.height_request = abs(self.start_y - y)
         self.set_visible(True)
 
-    def findSelected(self):
-        x, y = self._timeline.layout.child_get(self, "x", "y")
+    def find_clips(self):
+        """Finds the clips which intersect the marquee.
+
+        Returns:
+            List[GES.Clip]: The clips under the marquee.
+        """
+        x = self._timeline.layout.child_get_property(self, "x")
         res = []
 
         w = self.props.width_request
@@ -158,13 +174,15 @@ class Marquee(Gtk.Box, Loggable):
                 continue
 
             for clip in layer.get_clips():
-                if self.contains(clip, x, w):
-                    toplevel = clip.get_toplevel_parent()
-                    if isinstance(toplevel, GES.Group) and toplevel != self._timeline.current_group:
-                        res.extend([c for c in clip.get_toplevel_parent().get_children(True)
-                                    if isinstance(c, GES.Clip)])
-                    else:
-                        res.append(clip)
+                if not self.contains(clip, x, w):
+                    continue
+
+                toplevel = clip.get_toplevel_parent()
+                if isinstance(toplevel, GES.Group) and toplevel != self._timeline.current_group:
+                    res.extend([c for c in clip.get_toplevel_parent().get_children(True)
+                                if isinstance(c, GES.Clip)])
+                else:
+                    res.append(clip)
 
         self.debug("Result is %s", res)
 
@@ -174,7 +192,7 @@ class Marquee(Gtk.Box, Loggable):
         if clip.ui is None:
             return False
 
-        child_start = clip.ui.get_parent().child_get(clip.ui, "x")[0]
+        child_start = clip.ui.get_parent().child_get_property(clip.ui, "x")
         child_end = child_start + clip.ui.get_allocation().width
 
         marquee_end = marquee_start + marquee_width
@@ -221,11 +239,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout = Gtk.Layout()
         self.layout.props.can_focus = True
         self.layout.props.can_default = True
-        self.__layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.__layers_vbox.get_style_context().add_class("LayersBox")
-        self.__layers_vbox.props.width_request = self.get_allocated_width()
-        self.__layers_vbox.props.height_request = self.get_allocated_height()
-        self.layout.put(self.__layers_vbox, 0, 0)
+        self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.layers_vbox.get_style_context().add_class("LayersBox")
+        self.layers_vbox.props.width_request = self.get_allocated_width()
+        self.layers_vbox.props.height_request = self.get_allocated_height()
+        self.layout.put(self.layers_vbox, 0, 0)
         self.hadj = self.layout.get_hadjustment()
         self.vadj = self.layout.get_vadjustment()
         hbox.pack_end(self.layout, False, True, 0)
@@ -430,7 +448,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if self.draggingElement:
                 width = max(width, self.layout.props.width)
 
-            self.__layers_vbox.props.width_request = width
+            self.layers_vbox.props.width_request = width
             self.layout.set_size(width, len(self.ges_timeline.get_layers()) * 200)
 
     def do_size_allocate(self, request):
@@ -496,36 +514,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             parent = parent.get_parent()
         return None
-
-    def adjustCoords(self, coords=None, x=None, y=None):
-        """Adjusts timeline container coordinates to timeline view coordinates.
-
-        Args:
-            coords (Optional[List[int]]): The x and y to be adjusted.
-            x (Optional[int]): The x to be adjusted.
-            y (Optional[int]): The y to be adjusted.
-
-        Returns:
-            The specified coordinates adjusted for the visible area of the
-            timeline.
-        """
-        if coords:
-            x = coords[0]
-            y = coords[1]
-
-        if x is not None:
-            x += self.hadj.props.value
-            x -= self.controls_width
-
-        if y is not None:
-            y += self.vadj.props.value
-
-            if x is None:
-                return y
-        else:
-            return x
-
-        return x, y
 
     # Gtk events management
 
@@ -643,7 +631,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     self.app.action_log.begin("move layer",
                                               CommitTimelineFinalizingAction(self._project.pipeline))
                 else:
-                    self.__marquee.setStartPosition(event)
+                    self.__marquee.set_start_position(event)
 
         self._scrubbing = res and button == 3
         if self._scrubbing:
@@ -736,7 +724,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _selectUnderMarquee(self):
         self.resetSelectionGroup()
         if self.__marquee.props.width_request > 0:
-            clips = self.__marquee.findSelected()
+            clips = self.__marquee.find_clips()
             for clip in clips:
                 self.current_group.add(clip.get_toplevel_parent())
         else:
@@ -750,7 +738,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             layer.updatePosition()
 
     def __createClips(self, x, y):
-        x = self.adjustCoords(x=x)
+        x += self.hadj.props.value
+        x -= self.controls_width
 
         placement = 0
         self.draggingElement = None
@@ -917,7 +906,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer_box.pack_start(layer, True, True, 0)
         layer_box.pack_start(layer.after_sep, False, False, 0)
         layer_box.show_all()
-        self.__layers_vbox.pack_start(layer_box, True, True, 0)
+        self.layers_vbox.pack_start(layer_box, True, True, 0)
 
         ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
 
@@ -935,7 +924,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _removeLayer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
-        self.__layers_vbox.remove(ges_layer.ui.get_parent())
+        self.layers_vbox.remove(ges_layer.ui.get_parent())
         self.__layers_controls_vbox.remove(ges_layer.control_ui)
         ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
 
@@ -1104,7 +1093,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         priority = ges_layer.props.priority
 
         layer_box = ges_layer.ui.get_parent()
-        self.__layers_vbox.child_set_property(layer_box, "position", priority)
+        self.layers_vbox.child_set_property(layer_box, "position", priority)
 
         self.__layers_controls_vbox.child_set_property(ges_layer.control_ui,
                                                        "position",

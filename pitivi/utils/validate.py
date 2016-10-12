@@ -29,6 +29,7 @@ from gi.repository import Gtk
 
 from pitivi.utils.timeline import Zoomable
 
+
 CAT = "validate"
 
 
@@ -345,7 +346,7 @@ def editContainer(scenario, action):
 
     event = Event(Gdk.EventType.MOTION_NOTIFY, button=1,
                   x=Zoomable.nsToPixelAccurate(position) -
-                  container_ui.translate_coordinates(timeline.ui, 0, 0)[0] + timeline.ui.controls_width,
+                  container_ui.translate_coordinates(timeline.ui.layers_vbox, 0, 0)[0],
                   y=y, state=Gdk.ModifierType.BUTTON1_MASK)
     with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
         get_event_widget.return_value = container.ui
