@@ -129,6 +129,19 @@ BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
 
 BLACKLISTED_PLUGINS = []
 
+HIDDEN_EFFECTS = [
+    # Overlaying an image onto a video stream can already be done.
+    "gdkpixbufoverlay"]
+
+GlobalSettings.addConfigSection('effect-library')
+
+(COL_NAME_TEXT,
+ COL_DESC_TEXT,
+ COL_EFFECT_TYPE,
+ COL_EFFECT_CATEGORIES,
+ COL_ELEMENT_NAME,
+ COL_ICON) = list(range(6))
+
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
@@ -276,20 +289,6 @@ class EffectsManager(object):
 
 
 # ----------------------- UI classes to manage effects -------------------------#
-
-HIDDEN_EFFECTS = [
-    # Overlaying an image onto a video stream can already be done.
-    "gdkpixbufoverlay",
-    "frei0r-filter-scale0tilt"]
-
-GlobalSettings.addConfigSection('effect-library')
-
-(COL_NAME_TEXT,
- COL_DESC_TEXT,
- COL_EFFECT_TYPE,
- COL_EFFECT_CATEGORIES,
- COL_ELEMENT_NAME,
- COL_ICON) = list(range(6))
 
 
 class EffectListWidget(Gtk.Box, Loggable):
