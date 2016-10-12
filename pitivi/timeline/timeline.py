@@ -1260,10 +1260,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.write_action("zoom-fit", {"optional-action-type": True})
 
         self._setBestZoomRatio(allow_zoom_in=True)
-        self.hadj.set_value(0)
+        self.timeline.hadj.set_value(0)
 
     def scrollToPixel(self, x):
-        if x > self.hadj.props.upper:
+        if x > self.timeline.hadj.props.upper:
             # We can't scroll yet, because the canvas needs to be updated
             GLib.idle_add(self._scrollToPixel, x)
         else:
@@ -1305,12 +1305,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         left_size_group.add_widget(zoom_box)
 
         self.timeline = Timeline(self, self.app, left_size_group)
-        self.hadj = self.timeline.layout.get_hadjustment()
-        self.vadj = self.timeline.layout.get_vadjustment()
 
-        vscrollbar = Gtk.VScrollbar(adjustment=self.vadj)
+        vscrollbar = Gtk.VScrollbar(adjustment=self.timeline.vadj)
         vscrollbar.get_style_context().add_class("background")
-        hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
+        hscrollbar = Gtk.HScrollbar(adjustment=self.timeline.hadj)
         hscrollbar.get_style_context().add_class("background")
 
         self.ruler = ScaleRuler(self)
@@ -1507,35 +1505,34 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoomed_fitted = True
 
     def scroll_left(self):
-        # This method can be a callback for our events, or called by ruler.py
-        self.hadj.set_value(self.hadj.get_value() -
-                            self.hadj.props.page_size ** (2.0 / 3.0))
+        hadj = self.timeline.hadj
+        hadj.set_value(hadj.get_value() - hadj.props.page_size ** (2 / 3))
 
     def scroll_right(self):
-        # This method can be a callback for our events, or called by ruler.py
-        self.hadj.set_value(self.hadj.get_value() +
-                            self.hadj.props.page_size ** (2.0 / 3.0))
+        hadj = self.timeline.hadj
+        hadj.set_value(hadj.get_value() + hadj.props.page_size ** (2 / 3))
 
     def scroll_up(self):
-        self.vadj.set_value(self.vadj.get_value() -
-                            self.vadj.props.page_size ** (2.0 / 3.0))
+        vadj = self.timeline.vadj
+        vadj.set_value(vadj.get_value() - vadj.props.page_size ** (2 / 3))
 
     def scroll_down(self):
-        self.vadj.set_value(self.vadj.get_value() +
-                            self.vadj.props.page_size ** (2.0 / 3.0))
+        vadj = self.timeline.vadj
+        vadj.set_value(vadj.get_value() + vadj.props.page_size ** (2 / 3))
 
     def _scrollToPixel(self, x):
-        self.log("Scroll to: %s %s %s", x, self.hadj.props.lower, self.hadj.props.upper)
-        if x > self.hadj.props.upper:
+        hadj = self.timeline.hadj
+        self.log("Scroll to: %s %s %s", x, hadj.props.lower, hadj.props.upper)
+        if x > hadj.props.upper:
             self.warning(
                 "Position %s is bigger than the hscrollbar's upper bound (%s) - is the position really in pixels?",
-                x, self.hadj.props.upper)
-        elif x < self.hadj.props.lower:
+                x, hadj.props.upper)
+        elif x < hadj.props.lower:
             self.warning(
                 "Position %s is smaller than the hscrollbar's lower bound (%s)",
-                x, self.hadj.props.lower)
+                x, hadj.props.lower)
 
-        self.hadj.set_value(x)
+        hadj.set_value(x)
 
         self.timeline.updatePosition()
         self.timeline.queue_draw()
