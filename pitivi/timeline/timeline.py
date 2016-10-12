@@ -1313,7 +1313,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         hscrollbar = Gtk.HScrollbar(adjustment=self.hadj)
         hscrollbar.get_style_context().add_class("background")
 
-        self.ruler = ScaleRuler(self, self.hadj)
+        self.ruler = ScaleRuler(self)
         self.ruler.props.hexpand = True
         self.ruler.setProjectFrameRate(24.)
 

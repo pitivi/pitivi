@@ -94,7 +94,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         _pipeline (Pipeline): The pipeline of the project.
     """
 
-    def __init__(self, timeline, hadj):
+    def __init__(self, timeline):
         Gtk.DrawingArea.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -102,8 +102,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.timeline = timeline
         self._pipeline = None
-        self.hadj = hadj
-        hadj.connect("value-changed", self._hadjValueChangedCb)
+        hadj = timeline.timeline.hadj
+        hadj.connect("value-changed", self._hadj_value_changed_cb)
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
                         Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK |
                         Gdk.EventMask.SCROLL_MASK)
@@ -120,8 +120,9 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.scales = SCALES
 
-    def _hadjValueChangedCb(self, unused_arg):
-        self.pixbuf_offset = self.hadj.get_value()
+    def _hadj_value_changed_cb(self, hadj):
+        """Handles the adjustment value change."""
+        self.pixbuf_offset = hadj.get_value()
         self.queue_draw()
 
 # Zoomable interface override
