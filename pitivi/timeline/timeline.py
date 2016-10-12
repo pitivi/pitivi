@@ -549,13 +549,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         x, y = event_widget.translate_coordinates(self, event.x, event.y)
         if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
             if delta_y > 0:
-                self.parent.scroll_down()
+                # Scroll down.
+                self.__scroll_adjustment(self.vadj, 1)
             elif delta_y < 0:
-                self.parent.scroll_up()
+                # Scroll up.
+                self.__scroll_adjustment(self.vadj, -1)
         elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
                                   Gdk.ModifierType.MOD1_MASK):
+            # Zoom.
             x -= self.controls_width
-            # Figure out first where to scroll at the end
+            # Figure out first where to scroll at the end.
             if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 # The time at the mouse cursor.
                 position = self.pixelToNs(x + self.hadj.get_value())
@@ -573,11 +576,26 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.hadj.set_value(self.nsToPixel(position) - x)
         else:
             if delta_y > 0:
-                self.parent.scroll_right()
+                # Scroll right.
+                self.__scroll_adjustment(self.hadj, 1)
             else:
-                self.parent.scroll_left()
+                # Scroll left.
+                self.__scroll_adjustment(self.hadj, -1)
 
         return False
+
+    def __scroll_adjustment(self, adj, factor):
+        """Changes the adjustment's value depending on the page size.
+
+        The delta is the page_size of adj to the power of 2/3, for example:
+        f(200) = 34, f(600) = 71, f(1000) = 100.
+
+        Args:
+            adj (Gtk.Adjustment): The adjustment to be changed.
+            factor (int): Factor applied to the delta. -1 to scroll up/left,
+                1 to scroll down/right.
+        """
+        adj.set_value(adj.get_value() + factor * adj.props.page_size ** (2 / 3))
 
     def get_sources_at_position(self, position):
         """Gets video sources at the current position on all layers.
@@ -1503,22 +1521,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # Only do this at the very end, after updating the other widgets.
         self.log("Setting 'zoomed_fitted' to True")
         self.zoomed_fitted = True
-
-    def scroll_left(self):
-        hadj = self.timeline.hadj
-        hadj.set_value(hadj.get_value() - hadj.props.page_size ** (2 / 3))
-
-    def scroll_right(self):
-        hadj = self.timeline.hadj
-        hadj.set_value(hadj.get_value() + hadj.props.page_size ** (2 / 3))
-
-    def scroll_up(self):
-        vadj = self.timeline.vadj
-        vadj.set_value(vadj.get_value() - vadj.props.page_size ** (2 / 3))
-
-    def scroll_down(self):
-        vadj = self.timeline.vadj
-        vadj.set_value(vadj.get_value() + vadj.props.page_size ** (2 / 3))
 
     def _scrollToPixel(self, x):
         hadj = self.timeline.hadj
