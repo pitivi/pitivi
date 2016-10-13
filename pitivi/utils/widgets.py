@@ -1075,7 +1075,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
             self.timeline.timeline.scrollToPlayhead()
 
     def _zoomFitCb(self, unused_button):
-        self.timeline.zoomFit()
+        self.timeline.timeline.set_best_zoom_ratio()
 
     def _zoomSliderScrollCb(self, unused, event):
         delta = 0

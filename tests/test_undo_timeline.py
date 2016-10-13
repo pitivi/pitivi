@@ -82,7 +82,7 @@ class BaseTestUndoTimeline(TestCase):
 class TestTimelineObserver(BaseTestUndoTimeline):
 
     def test_layer_removed(self):
-        timeline_ui = Timeline(container=None, app=None)
+        timeline_ui = Timeline(app=None)
         timeline_ui.setProject(self.app.project_manager.current_project)
 
         layer1 = self.layer
@@ -163,7 +163,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         layer3 = self.timeline.append_layer()
         self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
 
-        timeline_ui = Timeline(container=None, app=self.app)
+        timeline_ui = Timeline(app=self.app)
         timeline_ui.setProject(self.app.project_manager.current_project)
 
         # Click and drag a layer control box to move the layer.

@@ -58,5 +58,5 @@ class TestLayer(common.TestCase):
         video_clip = GES.UriClipAsset.request_sync(png).extract()
         self.assertTrue(ges_layer.add_clip(video_clip))
         self.assertEqual(len(ges_layer.get_clips()), 1)
-        timeline = Timeline(container=None, app=None)
+        timeline = Timeline(app=None)
         layer = Layer(ges_layer, timeline)

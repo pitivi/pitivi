@@ -265,18 +265,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """Container for the the layers controls and representation.
 
     Attributes:
-        parent (TimelineContainer): The parent widget.
         _project (Project): The project.
     """
 
     __gtype_name__ = "PitiviTimeline"
 
-    def __init__(self, container, app, size_group=None):
+    def __init__(self, app, size_group=None):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        self.parent = container
         self.app = app
         self._project = None
         self.ges_timeline = None
@@ -319,6 +317,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # A lot of operations go through these callbacks.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
+
+        # Whether the entire timeline content is in view and
+        # it should be kept that way if it makes sense.
+        self.zoomed_fitted = True
 
         self._layers = []
         # Whether the user is dragging a layer.
@@ -854,7 +856,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _drag_drop_cb(self, unused_widget, context, x, y, timestamp):
         # Same as in insertEnd: this value changes during insertion, snapshot
         # it
-        zoom_was_fitted = self.parent.zoomed_fitted
+        zoom_was_fitted = self.zoomed_fitted
 
         target = self.drag_dest_find_target(context, None).name()
         success = True
@@ -875,7 +877,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                         layer.add_clip(clip)
 
                 if zoom_was_fitted:
-                    self.parent._setBestZoomRatio()
+                    self.set_best_zoom_ratio()
+
                 self.dragEnd()
         else:
             success = False
@@ -961,8 +964,49 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     # Interface Zoomable
     def zoomChanged(self):
+        if not self.ges_timeline:
+            # Probably the app starts and there is no project/timeline yet.
+            return
+
+        self.ges_timeline.set_snapping_distance(
+            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband))
+        self.zoomed_fitted = False
+
         self.updatePosition()
         self.queue_draw()
+
+    def set_best_zoom_ratio(self, allow_zoom_in=False):
+        """Sets the zoom level so that the entire timeline is in view."""
+        duration = 0 if not self.ges_timeline else self.ges_timeline.get_duration()
+        if not duration:
+            return
+
+        # Add Gst.SECOND - 1 to the timeline duration to make sure the
+        # last second of the timeline will be in view.
+        timeline_duration = duration + Gst.SECOND - 1
+        timeline_duration_s = int(timeline_duration / Gst.SECOND)
+        self.debug("Adjusting zoom for a timeline duration of %s secs",
+                   timeline_duration_s)
+
+        zoom_ratio = self.layout.get_allocation().width / timeline_duration_s
+        nearest_zoom_level = Zoomable.computeZoomLevel(zoom_ratio)
+        if nearest_zoom_level >= Zoomable.getCurrentZoomLevel():
+            # This means if we continue we'll zoom in.
+            if not allow_zoom_in:
+                # For example when the user zoomed out and is adding clips
+                # to the timeline, zooming in would be confusing.
+                self.log("The entire timeline is already visible")
+                return
+
+        Zoomable.setZoomLevel(nearest_zoom_level)
+        self.ges_timeline.set_snapping_distance(
+            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband))
+
+        # Only do this at the very end, after updating the other widgets.
+        self.log("Setting 'zoomed_fitted' to True")
+        self.zoomed_fitted = True
+
+        self.hadj.set_value(0)
 
     def __getEditingMode(self):
         if not self.editing_context:
@@ -1174,10 +1218,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._shiftMask = False
         self._controlMask = False
 
-        # Whether the entire content is in the timeline view, in which case
-        # it should be kept that way if it makes sense.
-        self.zoomed_fitted = True
-
         self._project = None
         self.ges_timeline = None
         self.__copiedGroup = None
@@ -1234,9 +1274,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         # We need to snapshot this value, because we only do the zoom fit at the
         # end of clip insertion, but inserting multiple clips eventually changes
-        # the value of self.zoomed_fitted as clips get progressively
-        # inserted...
-        zoom_was_fitted = self.zoomed_fitted
+        # the value of zoomed_fitted as clips get progressively inserted.
+        zoom_was_fitted = self.timeline.zoomed_fitted
 
         initial_position = self.__getInsertPosition(position)
         clip_position = initial_position
@@ -1265,7 +1304,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 clip_position += duration
 
         if zoom_was_fitted:
-            self._setBestZoomRatio()
+            self.timeline.set_best_zoom_ratio()
         else:
             self.scrollToPixel(Zoomable.nsToPixel(initial_position))
 
@@ -1284,12 +1323,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 if asset_id == clip.get_id():
                     layer.remove_clip(clip)
         self._project.pipeline.commit_timeline()
-
-    def zoomFit(self):
-        self.app.write_action("zoom-fit", {"optional-action-type": True})
-
-        self._setBestZoomRatio(allow_zoom_in=True)
-        self.timeline.hadj.set_value(0)
 
     def scrollToPixel(self, x):
         if x > self.timeline.hadj.props.upper:
@@ -1333,7 +1366,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         zoom_box = ZoomBox(self)
         left_size_group.add_widget(zoom_box)
 
-        self.timeline = Timeline(self, self.app, left_size_group)
+        self.timeline = Timeline(self.app, left_size_group)
 
         vscrollbar = Gtk.VScrollbar(adjustment=self.timeline.vadj)
         vscrollbar.get_style_context().add_class("background")
@@ -1499,40 +1532,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                ["<Shift>Right"],
                                _("Seek forward one second"))
 
-    def _setBestZoomRatio(self, allow_zoom_in=False):
-        """Sets the zoom level so that the entire timeline is in view."""
-        ruler_width = self.ruler.get_allocation().width
-        duration = 0 if not self.ges_timeline else self.ges_timeline.get_duration()
-        if not duration:
-            return
-
-        # Add Gst.SECOND - 1 to the timeline duration to make sure the
-        # last second of the timeline will be in view.
-        timeline_duration = duration + Gst.SECOND - 1
-        timeline_duration_s = int(timeline_duration / Gst.SECOND)
-        self.debug(
-            "Adjusting zoom for a timeline duration of %s secs", timeline_duration_s)
-
-        ideal_zoom_ratio = float(ruler_width) / timeline_duration_s
-        nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
-        if nearest_zoom_level >= Zoomable.getCurrentZoomLevel():
-            # This means if we continue we'll zoom in.
-            if not allow_zoom_in:
-                # For example when the user zoomed out and is adding clips
-                # to the timeline, zooming in would be confusing.
-                self.log(
-                    "Zoom not changed because the entire timeline is already visible")
-
-                return
-
-        Zoomable.setZoomLevel(nearest_zoom_level)
-        self.ges_timeline.set_snapping_distance(
-            Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
-
-        # Only do this at the very end, after updating the other widgets.
-        self.log("Setting 'zoomed_fitted' to True")
-        self.zoomed_fitted = True
-
     def _scrollToPixel(self, x):
         hadj = self.timeline.hadj
         self.log("Scroll to: %s %s %s", x, hadj.props.lower, hadj.props.upper)
@@ -1696,15 +1695,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _playPauseCb(self, unused_action, unused_parameter):
         self._project.pipeline.togglePlayback()
 
-    # Zoomable
-
-    def zoomChanged(self):
-        if self.ges_timeline:
-            # zoomChanged might be called various times before the UI is ready
-            self.ges_timeline.set_snapping_distance(
-                Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
-        self.zoomed_fitted = False
-
     # Gtk widget virtual methods
 
     def do_key_press_event(self, event):
@@ -1791,7 +1781,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.zoomChanged()
 
             self._renderingSettingsChangedCb(project, None, None)
-            self._setBestZoomRatio()
+            self.timeline.set_best_zoom_ratio()
             if self.ges_timeline:
                 self.ges_timeline.set_snapping_distance(
                     Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
@@ -1803,7 +1793,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Zoomable.zoomOut()
 
     def _zoomFitCb(self, unused_action, unused_parameter):
-        self.zoomFit()
+        self.app.write_action("zoom-fit", {"optional-action-type": True})
+
+        self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 
     def _selectionChangedCb(self, selection):
         """Handles selection changing."""

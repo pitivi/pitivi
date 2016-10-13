@@ -1023,7 +1023,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         # TODO : Let's be more specific, masks etc ..
         mode = SELECT
-        if self.timeline.parent._controlMask:
+        if self.timeline.get_parent()._controlMask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
                 mode = SELECT_ADD
                 self.timeline.current_group.add(

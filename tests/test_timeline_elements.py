@@ -20,19 +20,21 @@ from unittest import mock
 
 from gi.repository import GES
 
-from tests import common
+from tests.common import create_test_clip
+from tests.common import create_timeline_container
 from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
 
     def test_keyframe_toggle(self):
-        timeline = self.createTimeline()
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
         pipeline = timeline._project.pipeline
         self.addClipsSimple(timeline, 2)
         ges_layer = timeline.ges_timeline.get_layers()[0]
         # For variety, add TitleClip to the list of clips.
-        ges_clip = common.create_test_clip(GES.TitleClip)
+        ges_clip = create_test_clip(GES.TitleClip)
         ges_clip.props.duration = 4.5
         ges_layer.add_clip(ges_clip)
 
@@ -52,7 +54,7 @@ class TestKeyframeCurve(BaseTestTimeline):
             for offset in offsets:
                 position = start + offset
                 pipeline.getPosition = mock.Mock(return_value=position)
-                timeline.parent._keyframe_cb(None, None)
+                timeline_container._keyframe_cb(None, None)
                 values = [item.timestamp for item in control_source.get_all()]
                 self.assertIn(offset, values)
 
@@ -60,7 +62,7 @@ class TestKeyframeCurve(BaseTestTimeline):
             for offset in offsets:
                 position = start + offset
                 pipeline.getPosition = mock.Mock(return_value=position)
-                timeline.parent._keyframe_cb(None, None)
+                timeline_container._keyframe_cb(None, None)
                 values = [item.timestamp for item in control_source.get_all()]
                 self.assertNotIn(offset, values)
 
@@ -71,7 +73,7 @@ class TestKeyframeCurve(BaseTestTimeline):
                 pipeline.getPosition = mock.Mock(return_value=position)
                 values = [item.timestamp for item in control_source.get_all()]
                 self.assertIn(offset, values)
-                timeline.parent._keyframe_cb(None, None)
+                timeline_container._keyframe_cb(None, None)
                 values = [item.timestamp for item in control_source.get_all()]
                 self.assertIn(offset, values)
 
@@ -80,20 +82,22 @@ class TestKeyframeCurve(BaseTestTimeline):
                 position = min(max(0, start + offset),
                                timeline.ges_timeline.props.duration)
                 pipeline.getPosition = mock.Mock(return_value=position)
-                timeline.parent._keyframe_cb(None, None)
+                timeline_container._keyframe_cb(None, None)
                 values = [item.timestamp for item in control_source.get_all()]
                 self.assertEqual(values, [0, ges_clip.props.duration])
 
     def test_no_clip_selected(self):
         # When no clip is selected, pressing key should yield no action.
         # Make sure this does not raise any exception
-        timeline = self.createTimeline()
-        timeline.parent._keyframe_cb(None, None)
+        timeline_container = create_timeline_container()
+        timeline_container._keyframe_cb(None, None)
 
 
 class TestVideoSourceScaling(BaseTestTimeline):
+
     def test_video_source_scaling(self):
-        timeline = self.createTimeline()
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
         project = timeline.app.project_manager.current_project
 
         clip = self.addClipsSimple(timeline, 1)[0]
@@ -147,8 +151,8 @@ class TestVideoSourceScaling(BaseTestTimeline):
                          expected_default_position)
 
     def test_rotation(self):
-        timeline = self.createTimeline()
-        project = timeline.app.project_manager.current_project
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
 
         clip = self.addClipsSimple(timeline, 1)[0]
 

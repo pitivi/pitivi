@@ -371,19 +371,19 @@ def editContainer(scenario, action):
 #     return True
 
 
-def splitClip(scenario, action):
+def split_clip(scenario, action):
     timeline = scenario.pipeline.props.timeline.ui
-    timeline.parent._splitCb(None)
+    timeline.get_parent()._splitCb(None, None)
 
     return True
 
 
 def zoom(scenario, action):
-    timeline = scenario.pipeline.props.timeline.ui
+    timeline = scenario.pipeline.props.timeline
 
     GstValidate.print_action(action, action.type.replace('-', ' ') + "\n")
 
-    {"zoom-fit": timeline.parent.zoomFit,
+    {"zoom-fit": timeline.ui.set_best_zoom_ratio,
      "zoom-out": Zoomable.zoomOut,
      "zoom-in": Zoomable.zoomIn}[action.type]()
 
@@ -534,7 +534,7 @@ def init():
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("split-clip", "pitivi",
-                                         splitClip, None,
+                                         split_clip, None,
                                          "Split a clip",
                                          GstValidate.ActionTypeFlags.NONE)
 

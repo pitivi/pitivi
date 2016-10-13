@@ -34,6 +34,7 @@ from pitivi import check
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
@@ -84,6 +85,24 @@ def create_pitivi(**settings):
     app.gui = mock.Mock()
     app.settings = __create_settings(**settings)
     return app
+
+
+def create_timeline_container():
+    app = create_pitivi_mock()
+    project_manager = ProjectManager(app)
+    project_manager.newBlankProject()
+    project = project_manager.current_project
+
+    timeline_container = TimelineContainer(app)
+    timeline_container.setProject(project)
+
+    timeline = timeline_container.timeline
+    timeline.app.project_manager.current_project = project
+    timeline.get_parent = mock.MagicMock(return_value=timeline_container)
+
+    timeline.app.settings.leftClickAlsoSeeks = False
+
+    return timeline_container
 
 
 def create_main_loop():
