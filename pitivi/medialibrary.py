@@ -369,13 +369,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         builder.connect_signals(self)
         self._welcome_infobar = builder.get_object("welcome_infobar")
         fix_infobar(self._welcome_infobar)
-        self._project_settings_set_infobar = Gtk.InfoBar()
-        self._project_settings_set_infobar.hide()
-        self._project_settings_set_infobar.set_message_type(Gtk.MessageType.OTHER)
-        self._project_settings_set_infobar.set_show_close_button(True)
-        self._project_settings_set_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
-        self._project_settings_set_infobar.connect("response", self.__projectSettingsSetInfobarCb)
-        fix_infobar(self._project_settings_set_infobar)
+        self._project_settings_infobar = Gtk.InfoBar()
+        self._project_settings_infobar.hide()
+        self._project_settings_infobar.set_message_type(Gtk.MessageType.OTHER)
+        self._project_settings_infobar.set_show_close_button(True)
+        self._project_settings_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
+        self._project_settings_infobar.connect("response", self.__projectSettingsSetInfobarCb)
+        self._project_settings_label = Gtk.Label()
+        self._project_settings_label.set_line_wrap(True)
+        self._project_settings_label.show()
+        content_area = self._project_settings_infobar.get_content_area()
+        content_area.add(self._project_settings_label)
+
+        fix_infobar(self._project_settings_infobar)
         self._import_warning_infobar = builder.get_object("warning_infobar")
         fix_infobar(self._import_warning_infobar)
         self._import_warning_infobar.hide()
@@ -548,7 +554,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Add all the child widgets.
         self.pack_start(toolbar, False, False, 0)
         self.pack_start(self._welcome_infobar, False, False, 0)
-        self.pack_start(self._project_settings_set_infobar, False, False, 0)
+        self.pack_start(self._project_settings_infobar, False, False, 0)
         self.pack_start(self._import_warning_infobar, False, False, 0)
         self.pack_start(self.iconview_scrollwin, True, True, 0)
         self.pack_start(self.treeview_scrollwin, True, True, 0)
@@ -932,13 +938,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         asset_path = path_from_uri(asset.get_id())
         file_name = os.path.basename(asset_path)
         message = _("The project settings have been set to match file '%s'") % file_name
-        label = Gtk.Label(message)
-        label.set_line_wrap(True)
-        content_area = self._project_settings_set_infobar.get_content_area()
-        for widget in content_area.get_children():
-            content_area.remove(widget)
-        content_area.add(label)
-        self._project_settings_set_infobar.show_all()
+        self._project_settings_label.set_text(message)
+        self._project_settings_infobar.show()
 
     def _selectLastImportedUris(self):
         if not self._last_imported_uris:
@@ -1357,7 +1358,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _projectClosedCb(self, unused_project_manager, unused_project):
         self.__disconnectFromProject()
-        self._project_settings_set_infobar.hide()
+        self._project_settings_infobar.hide()
         self.storemodel.clear()
         self._project = None
 
