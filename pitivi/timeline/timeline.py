@@ -534,7 +534,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return False
 
         event_widget = Gtk.get_event_widget(event)
-        x, y = event_widget.translate_coordinates(self, event.x, event.y)
         if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
             if delta_y > 0:
                 # Scroll down.
@@ -545,22 +544,24 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
                                   Gdk.ModifierType.MOD1_MASK):
             # Zoom.
-            x -= self.controls_width
+            x, unused_y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
             # Figure out first where to scroll at the end.
             if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 # The time at the mouse cursor.
-                position = self.pixelToNs(x + self.hadj.get_value())
+                position = self.pixelToNs(x)
             else:
                 # The time at the playhead.
                 position = self.__last_position
             if delta_y > 0:
                 Zoomable.zoomOut()
-            elif delta_y < 0:
+            else:
                 Zoomable.zoomIn()
             self.__setLayoutSize()
             if delta_y:
+                # The zoom level changed.
                 self.queue_draw()
-                # Scroll so position is at the current mouse cursor position.
+                # Scroll so position remains in place.
+                x, unused_y = event_widget.translate_coordinates(self.layout, event.x, event.y)
                 self.hadj.set_value(self.nsToPixel(position) - x)
         else:
             if delta_y > 0:
@@ -686,7 +687,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return False
 
             if self.got_dragged or self.__drag_start_x != event.x:
-                self.__dragUpdate(Gtk.get_event_widget(event), event.x, event.y)
+                event_widget = Gtk.get_event_widget(event)
+                x, y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
+                self.__drag_update(x, y)
                 self.got_dragged = True
         elif self.__moving_layer:
             event_widget = Gtk.get_event_widget(event)
@@ -708,9 +711,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _seek(self, event):
         event_widget = Gtk.get_event_widget(event)
-        x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
-        x -= self.controls_width
-        x += self.hadj.get_value()
+        x, unused_y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
         position = max(0, self.pixelToNs(x))
         self._project.pipeline.simple_seek(position)
 
@@ -737,10 +738,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for layer in self._layers:
             layer.updatePosition()
 
-    def __createClips(self, x, y):
-        x += self.hadj.props.value
-        x -= self.controls_width
+    def __create_clips(self, x, y):
+        """Creates the clips for an asset drag operation.
 
+        Args:
+            x (int): The x coordinate relative to the layers box.
+            y (int): The y coordinate relative to the layers box.
+        """
         placement = 0
         self.draggingElement = None
         self.resetSelectionGroup()
@@ -782,7 +786,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return True
 
-    def _drag_motion_cb(self, unused_widget, context, x, y, timestamp):
+    def _drag_motion_cb(self, widget, context, x, y, timestamp):
         target = self.drag_dest_find_target(context, None)
         if not target:
             Gdk.drag_status(context, 0, timestamp)
@@ -793,10 +797,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Ask for the details.
             self.drag_get_data(context, target, timestamp)
         elif target.name() == URI_TARGET_ENTRY.target:
+            x, y = widget.translate_coordinates(self.layers_vbox, x, y)
             if not self.dropping_clips:
                 # The preview clips have not been created yet.
-                self.__createClips(x, y)
-            self.__dragUpdate(self, x, y)
+                self.__create_clips(x, y)
+            self.__drag_update(x, y)
 
         Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
         return True
@@ -1023,7 +1028,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 unset_children_state_recurse(sep, Gtk.StateFlags.PRELIGHT)
 
-    def __dragUpdate(self, event_widget, x, y):
+    def __drag_update(self, x, y):
+        """Updates a clip or asset drag operation.
+
+        Args:
+            x (int): The x coordinate relative to the layers box.
+            y (int): The y coordinate relative to the layers box.
+        """
         if not self.draggingElement:
             return
 
@@ -1042,11 +1053,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                   dragging_edge,
                                                   self.app,
                                                   not self.dropping_clips)
-
-        x, y = event_widget.translate_coordinates(self, x, y)
-        x -= self.controls_width
-        x += self.hadj.get_value()
-        y += self.vadj.get_value()
 
         mode = self.__getEditingMode()
         self.editing_context.setMode(mode)

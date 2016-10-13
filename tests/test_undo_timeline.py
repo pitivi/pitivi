@@ -766,7 +766,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 def translate_coordinates(widget, x, y):
                     return x, y
                 timeline_ui.translate_coordinates = translate_coordinates
-                timeline_ui._drag_motion_cb(None, None, 0, LAYER_HEIGHT * 2, 0)
+                timeline_ui._drag_motion_cb(timeline_ui, None, 0, LAYER_HEIGHT * 2, 0)
                 self.assertFalse(timeline_ui.drag_get_data.called)
                 self.assertIsNotNone(timeline_ui.draggingElement)
                 self.assertTrue(timeline_ui.dropping_clips)
