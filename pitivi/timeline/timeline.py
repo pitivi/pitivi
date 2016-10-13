@@ -209,6 +209,58 @@ class Marquee(Gtk.Box, Loggable):
         return False
 
 
+class LayersLayout(Gtk.Layout, Zoomable, Loggable):
+    """Layout for displaying scrollable layers, the playhead, snap indicator.
+
+    Attributes:
+        snap_position (int): The time where the snapbar should appear.
+        playhead_position (int): The time where the playhead should appear.
+    """
+
+    def __init__(self):
+        Gtk.Layout.__init__(self)
+        Zoomable.__init__(self)
+        Loggable.__init__(self)
+
+        self.snap_position = 0
+        self.playhead_position = 0
+
+    def do_draw(self, cr):
+        Gtk.Layout.do_draw(self, cr)
+
+        self.__draw_playhead(cr)
+        self.__draw_snap_indicator(cr)
+
+    def __draw_playhead(self, cr):
+        """Draws the playhead line."""
+        offset = self.get_hadjustment().get_value()
+        position = max(0, self.playhead_position)
+        x = self.nsToPixel(position) - offset
+        self.__draw_vertical_bar(cr, x, PLAYHEAD_WIDTH, PLAYHEAD_COLOR)
+
+    def __draw_snap_indicator(self, cr):
+        """Draws a snapping indicator line."""
+        offset = self.get_hadjustment().get_value()
+        x = self.nsToPixel(self.snap_position) - offset
+        if x <= 0:
+            return
+
+        self.__draw_vertical_bar(cr, x, SNAPBAR_WIDTH, SNAPBAR_COLOR)
+
+    def __draw_vertical_bar(self, cr, xpos, width, color):
+        if xpos < 0:
+            return
+
+        # Add 0.5 so the line is sharp, xpos represents the center of the line.
+        xpos += 0.5
+        height = self.get_allocated_height()
+        cr.set_line_width(width)
+        cr.move_to(xpos, 0)
+        set_cairo_color(cr, color)
+        cr.line_to(xpos, height)
+        cr.stroke()
+
+
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """Container for the the layers controls and representation.
 
@@ -236,7 +288,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # Stuff the layers representation in a Layout so we can have other
         # widgets there, see below.
-        self.layout = Gtk.Layout()
+        self.layout = LayersLayout()
         self.layout.props.can_focus = True
         self.layout.props.can_default = True
         self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -246,7 +298,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.put(self.layers_vbox, 0, 0)
         self.hadj = self.layout.get_hadjustment()
         self.vadj = self.layout.get_vadjustment()
-        hbox.pack_end(self.layout, False, True, 0)
+        hbox.pack_end(self.layout, True, True, 0)
 
         # Stuff the layers controls in a Viewport so it can be scrolled.
         self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -275,8 +327,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
-
-        self.__snap_position = 0
 
         # Clip selection.
         self.selection = Selection()
@@ -327,10 +377,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-drop", self._drag_drop_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
-
-    @property
-    def controls_width(self):
-        return self.__layers_controls_vbox.get_allocated_width()
 
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
@@ -418,23 +464,25 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return
 
         self.__last_position = position
+        self.layout.playhead_position = position
+        self.layout.queue_draw()
         layout_width = self.layout.get_allocation().width
-        x = max(0, self.nsToPixel(self.__last_position))
-        if pipeline.playing() and x - self.hadj.get_value() > layout_width - 100:
+        x = self.nsToPixel(self.__last_position) - self.hadj.get_value()
+        if pipeline.playing() and x > layout_width - 100:
             self.scrollToPlayhead(Gtk.Align.START)
         if not pipeline.playing():
             self.update_visible_overlays()
-        self.queue_draw()
 
     # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
-        """Displays or hides a snapping indicator line."""
-        self.__snap_position = self.nsToPixel(position)
-        self.queue_draw()
+        """Handles a clip snap update operation."""
+        self.layout.snap_position = position
+        self.layout.queue_draw()
 
     def _snapEndedCb(self, *unused_args):
-        self.__snap_position = 0
-        self.queue_draw()
+        """Handles a clip snap end."""
+        self.layout.snap_position = 0
+        self.layout.queue_draw()
 
     # Gtk.Widget virtual methods implementation
     def do_get_preferred_height(self):
@@ -454,38 +502,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def do_size_allocate(self, request):
         self.__setLayoutSize()
         Gtk.EventBox.do_size_allocate(self, request)
-
-    def do_draw(self, cr):
-        Gtk.EventBox.do_draw(self, cr)
-
-        self.__draw_playhead(cr)
-        self.__draw_snap_indicator(cr)
-
-    def __draw_vertical_bar(self, cr, xpos, width, color):
-        xpos -= self.hadj.get_value()
-        if xpos < 0:
-            return
-
-        xpos += self.controls_width
-        height = self.get_allocated_height()
-        cr.set_line_width(width)
-        cr.move_to(xpos, 0)
-        set_cairo_color(cr, color)
-        cr.line_to(xpos, height)
-        cr.stroke()
-
-    def __draw_snap_indicator(self, cr):
-        if self.__snap_position <= 0:
-            return
-
-        self.__draw_vertical_bar(cr, self.__snap_position, SNAPBAR_WIDTH,
-                                 SNAPBAR_COLOR)
-
-    def __draw_playhead(self, cr):
-        position = max(0, self.nsToPixel(self.__last_position))
-
-        self.__draw_vertical_bar(cr, position + 0.5, PLAYHEAD_WIDTH,
-                                 PLAYHEAD_COLOR)
 
     # ------------- #
     # util methods  #
@@ -1753,7 +1769,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ges_timeline.set_snapping_distance(
                 Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
 
-    def _projectLoadedCb(self, unused_app, project):
+    def _projectLoadedCb(self, unused_project_manager, project):
         """Connects to the project's timeline and pipeline."""
         if self._project:
             self._project.disconnect_by_func(self._renderingSettingsChangedCb)
