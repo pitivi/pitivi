@@ -291,8 +291,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.props.can_default = True
         self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.layers_vbox.get_style_context().add_class("LayersBox")
-        self.layers_vbox.props.width_request = self.get_allocated_width()
-        self.layers_vbox.props.height_request = self.get_allocated_height()
         self.layout.put(self.layers_vbox, 0, 0)
         self.hadj = self.layout.get_hadjustment()
         self.vadj = self.layout.get_vadjustment()
