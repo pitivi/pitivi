@@ -40,13 +40,9 @@ class SpacedSeparator(Gtk.EventBox):
     def __init__(self, position):
         Gtk.EventBox.__init__(self)
 
-        self.box = Gtk.Box()
-        self.box.set_orientation(Gtk.Orientation.VERTICAL)
-        self.add(self.box)
         self.__position = position
 
         self.get_style_context().add_class("SpacedSeparator")
-        self.box.get_style_context().add_class("SpacedSeparator")
         self._update()
 
     def do_state_flags_changed(self, old_flags):
