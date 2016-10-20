@@ -90,10 +90,10 @@ class LayerControls(Gtk.EventBox, Loggable):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         hbox.pack_start(vbox, True, True, 0)
 
-        self.sep = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-        self.sep.props.margin_top = ui.PADDING / 2
-        self.sep.props.margin_bottom = ui.PADDING / 2
-        hbox.pack_start(self.sep, False, False, 0)
+        rightside_separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
+        rightside_separator.props.margin_top = ui.PADDING / 2
+        rightside_separator.props.margin_bottom = ui.PADDING / 2
+        hbox.pack_start(rightside_separator, False, False, 0)
 
         self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
         vbox.pack_start(self.before_sep, False, False, 0)
