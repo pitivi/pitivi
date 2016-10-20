@@ -21,13 +21,14 @@ from unittest import mock
 from gi.repository import GES
 
 from pitivi.timeline.layer import Layer
-from pitivi.timeline.timeline import Timeline
-from tests import common
+from tests.common import create_timeline_container
+from tests.common import get_sample_uri
+from tests.common import TestCase
 
 
-class TestLayerControl(common.TestCase):
+class TestLayerControl(TestCase):
 
-    def testName(self):
+    def test_name(self):
         timeline = mock.MagicMock()
         ges_layer = GES.Layer()
         layer = Layer(ges_layer, timeline)
@@ -50,13 +51,18 @@ class TestLayerControl(common.TestCase):
         self.assertEqual(layer.getName(), "Layer 0x")
 
 
-class TestLayer(common.TestCase):
+class TestLayer(TestCase):
 
-    def testCheckMediaTypesWhenNoUI(self):
+    def test_check_media_types_when_no_control_ui(self):
         ges_layer = GES.Layer()
-        png = common.get_sample_uri("flat_colour1_640x480.png")
+        png = get_sample_uri("flat_colour1_640x480.png")
         video_clip = GES.UriClipAsset.request_sync(png).extract()
         self.assertTrue(ges_layer.add_clip(video_clip))
         self.assertEqual(len(ges_layer.get_clips()), 1)
-        timeline = Timeline(app=None)
-        layer = Layer(ges_layer, timeline)
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
+        # This will add widgets for the clips in ges_layer and
+        # the layer will use checkMediaTypes which updates the
+        # height of layer.control_ui, which now it should not be set.
+        self.assertFalse(hasattr(ges_layer, "control_ui"))
+        unused_layer = Layer(ges_layer, timeline)

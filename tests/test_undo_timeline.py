@@ -82,8 +82,7 @@ class BaseTestUndoTimeline(TestCase):
 class TestTimelineObserver(BaseTestUndoTimeline):
 
     def test_layer_removed(self):
-        timeline_ui = Timeline(app=None)
-        timeline_ui.setProject(self.app.project_manager.current_project)
+        self.setup_timeline_container()
 
         layer1 = self.layer
         layer2 = self.timeline.append_layer()

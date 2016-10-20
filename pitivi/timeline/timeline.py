@@ -380,6 +380,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("drag-drop", self._drag_drop_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
 
+        self.app.settings.connect("edgeSnapDeadbandChanged",
+                                  self.__snap_distance_changed_cb)
+
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
         if self.current_group:
@@ -475,7 +478,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if not pipeline.playing():
             self.update_visible_overlays()
 
-    # snapping indicator
     def _snapCb(self, unused_timeline, unused_obj1, unused_obj2, position):
         """Handles a clip snap update operation."""
         self.layout.snap_position = position
@@ -485,6 +487,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """Handles a clip snap end."""
         self.layout.snap_position = 0
         self.layout.queue_draw()
+
+    def update_snapping_distance(self):
+        """Updates the snapping distance of self.ges_timeline."""
+        self.ges_timeline.set_snapping_distance(
+            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband))
+
+    def __snap_distance_changed_cb(self, unused_settings):
+        """Handles the change of the snapping distance by the user."""
+        self.update_snapping_distance()
 
     # Gtk.Widget virtual methods implementation
     def do_get_preferred_height(self):
@@ -968,8 +979,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Probably the app starts and there is no project/timeline yet.
             return
 
-        self.ges_timeline.set_snapping_distance(
-            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband))
+        self.update_snapping_distance()
         self.zoomed_fitted = False
 
         self.updatePosition()
@@ -999,8 +1009,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return
 
         Zoomable.setZoomLevel(nearest_zoom_level)
-        self.ges_timeline.set_snapping_distance(
-            Zoomable.pixelToNs(self.app.settings.edgeSnapDeadband))
+        self.update_snapping_distance()
 
         # Only do this at the very end, after updating the other widgets.
         self.log("Setting 'zoomed_fitted' to True")
@@ -1224,9 +1233,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._createUi()
         self._createActions()
-
-        self._settings.connect("edgeSnapDeadbandChanged",
-                               self._snapDistanceChangedCb)
 
         self.app.project_manager.connect("new-project-loaded",
                                          self._projectLoadedCb)
@@ -1754,11 +1760,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if item == "width" or item == "height" or item == "videorate":
             project.update_restriction_caps()
 
-    def _snapDistanceChangedCb(self, unused_settings):
-        if self.ges_timeline:
-            self.ges_timeline.set_snapping_distance(
-                Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
-
     def _projectLoadedCb(self, unused_project_manager, project):
         """Connects to the project's timeline and pipeline."""
         if self._project:
@@ -1782,9 +1783,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self._renderingSettingsChangedCb(project, None, None)
             self.timeline.set_best_zoom_ratio()
-            if self.ges_timeline:
-                self.ges_timeline.set_snapping_distance(
-                    Zoomable.pixelToNs(self._settings.edgeSnapDeadband))
+            self.timeline.update_snapping_distance()
 
     def _zoomInCb(self, unused_action, unused_parameter):
         Zoomable.zoomIn()
