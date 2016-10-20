@@ -273,18 +273,6 @@ class LayerLayout(Gtk.Layout, Loggable):
         self.props.hexpand = True
         self.get_style_context().add_class("LayerLayout")
 
-    def do_add(self, widget):
-        self._children.append(widget)
-        self._children.sort(key=lambda clip: clip.z_order)
-        Gtk.Layout.do_add(self, widget)
-        self._changed = True
-
-        for child in self._children:
-            if isinstance(child, elements.TransitionClip):
-                window = child.get_window()
-                if window is not None:
-                    window.raise_()
-
     def do_remove(self, widget):
         self._children.remove(widget)
         self._changed = True
