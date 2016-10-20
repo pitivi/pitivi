@@ -715,10 +715,8 @@ class Thumbnail(Gtk.Image):
 
     def __init__(self, width, height):
         Gtk.Image.__init__(self)
-        self.width = width
-        self.height = height
-        self.props.width_request = self.width
-        self.props.height_request = self.height
+        self.props.width_request = width
+        self.props.height_request = height
 
 
 class ThumbnailCache(Loggable):
