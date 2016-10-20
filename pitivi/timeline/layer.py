@@ -30,6 +30,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PADDING
+from pitivi.utils.ui import SEPARATOR_HEIGHT
 
 
 class SpacedSeparator(Gtk.EventBox):
@@ -38,33 +39,11 @@ class SpacedSeparator(Gtk.EventBox):
     Inherits from EventBox since we want to change background color.
     """
 
-    def __init__(self, position):
+    def __init__(self):
         Gtk.EventBox.__init__(self)
 
-        self.__position = position
-
         self.get_style_context().add_class("SpacedSeparator")
-        self._update()
-
-    def do_state_flags_changed(self, old_flags):
-        self._update()
-        Gtk.EventBox.do_state_flags_changed(self, old_flags)
-
-    def _update(self):
-        HIGLIGHTED_PADDING = 3
-        total_height = PADDING + HIGLIGHTED_PADDING
-        if not self.get_state_flags() & Gtk.StateFlags.PRELIGHT:
-            self.props.height_request = 1
-            self.props.margin_bottom = (total_height - 1) / 2
-            self.props.margin_top = (total_height - 1) / 2
-        else:
-            self.props.height_request = PADDING
-            if self.__position == Gtk.PositionType.TOP:
-                self.props.margin_bottom = HIGLIGHTED_PADDING
-                self.props.margin_top = 0
-            else:
-                self.props.margin_bottom = 0
-                self.props.margin_top = HIGLIGHTED_PADDING
+        self.props.height_request = SEPARATOR_HEIGHT
 
 
 class LayerControls(Gtk.EventBox, Loggable):
@@ -81,7 +60,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app = app
 
         # Half the height because we display only the video strip when empty.
-        self.props.height_request = LAYER_HEIGHT / 2 + PADDING * 3
+        self.props.height_request = LAYER_HEIGHT / 2
         self.props.hexpand = True
         self.props.valign = Gtk.Align.FILL
 
@@ -92,16 +71,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         hbox.pack_start(vbox, True, True, 0)
 
         rightside_separator = Gtk.Separator.new(Gtk.Orientation.VERTICAL)
-        rightside_separator.props.margin_top = PADDING / 2
-        rightside_separator.props.margin_bottom = PADDING / 2
         hbox.pack_start(rightside_separator, False, False, 0)
-
-        self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
-        vbox.pack_start(self.before_sep, False, False, 0)
 
         name_row = Gtk.Box()
         name_row.set_orientation(Gtk.Orientation.HORIZONTAL)
         name_row.props.spacing = PADDING
+        name_row.props.margin_top = PADDING
         name_row.props.margin_left = PADDING
         name_row.props.margin_right = PADDING
         vbox.pack_start(name_row, False, False, 0)
@@ -127,9 +102,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         space = Gtk.Label()
         space.props.vexpand = True
         vbox.pack_start(space, False, False, 0)
-
-        self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
-        vbox.pack_start(self.after_sep, False, False, 0)
 
         self.ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
         self.ges_timeline.connect("layer-added", self.__timelineLayerAddedCb)
@@ -242,7 +214,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
     def update(self, media_types):
-        self.props.height_request = self.ges_layer.ui.props.height_request + PADDING * 3
+        self.props.height_request = self.ges_layer.ui.props.height_request
 
         if media_types & GES.TrackType.VIDEO:
             icon = "video-x-generic"
@@ -295,7 +267,7 @@ class LayerLayout(Gtk.Layout, Loggable):
 
 
 class Layer(Gtk.EventBox, Zoomable, Loggable):
-    """Container for a layer plus decorations (separators)."""
+    """Container for a layer."""
 
     __gtype_name__ = "PitiviLayer"
 
@@ -324,9 +296,6 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         for clip in ges_layer.get_clips():
             self._addClip(clip)
 
-        self.before_sep = SpacedSeparator(Gtk.PositionType.TOP)
-        self.after_sep = SpacedSeparator(Gtk.PositionType.BOTTOM)
-
     def setName(self, name):
         self.ges_layer.set_meta("video::name", name)
 
@@ -351,8 +320,9 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         return name
 
     def release(self):
-        for clip in self.ges_layer.get_clips():
-            self._removeClip(clip)
+        self._layout.disconnect_by_func(self.__childWidgetRemovedCb)
+        for ges_clip in self.ges_layer.get_clips():
+            self._removeClip(ges_clip)
         self.ges_layer.disconnect_by_func(self._clipAddedCb)
         self.ges_layer.disconnect_by_func(self._clipRemovedCb)
 
@@ -433,7 +403,7 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         self._layout.remove(ges_clip.ui)
         self.timeline.selection.unselect([ges_clip])
 
-    def __childWidgetRemovedCb(self, layout, clip):
+    def __childWidgetRemovedCb(self, unused_layer_layout, clip):
         ges_clip = clip.ges_clip
         if self.timeline.draggingElement is None:
             ges_clip.ui.release()

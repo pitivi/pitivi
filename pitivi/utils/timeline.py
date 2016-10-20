@@ -266,8 +266,15 @@ class EditingContext(GObject.Object, Loggable):
         """
         self.mode = mode
 
-    def editTo(self, position, priority):
+    def edit_to(self, position, layer):
+        """Updates the position and priority of the edited clip or element.
+
+        Args:
+            position (int): The time in nanoseconds.
+            layer (GES.Layer): The layer on which it should be placed.
+        """
         position = max(0, position)
+        priority = layer.props.priority
         if self.edge in [GES.Edge.EDGE_START, GES.Edge.EDGE_END]:
             priority = -1
         else:

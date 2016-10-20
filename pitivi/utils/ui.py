@@ -58,6 +58,8 @@ PLAYHEAD_COLOR = (255, 0, 0)
 SNAPBAR_WIDTH = 5
 SNAPBAR_COLOR = (127, 153, 204)
 LAYER_HEIGHT = 130
+# The space between two layers.
+SEPARATOR_HEIGHT = PADDING
 
 SMALL_THUMB_WIDTH = 64
 # 128 is the normal size for thumbnails, but for *icons* it looks insane.

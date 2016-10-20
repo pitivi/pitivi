@@ -22,13 +22,13 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gtk
 
-from pitivi.utils import ui
+from pitivi.utils.ui import LAYER_HEIGHT
+from pitivi.utils.ui import SEPARATOR_HEIGHT
 from tests import common
 from tests.common import create_timeline_container
 
-SEPARATOR_HEIGHT = 4
-THIN = ui.LAYER_HEIGHT / 2
-THICK = ui.LAYER_HEIGHT
+THIN = LAYER_HEIGHT / 2
+THICK = LAYER_HEIGHT
 
 
 class BaseTestTimeline(common.TestCase):
@@ -79,6 +79,7 @@ class TestLayers(BaseTestTimeline):
         timeline_container = create_timeline_container()
         timeline = timeline_container.timeline
 
+        # Allocate layers
         y = 0
         for priority, height in enumerate(heights):
             ges_layer = timeline.createLayer(priority=priority)
@@ -139,6 +140,105 @@ class TestLayers(BaseTestTimeline):
         timeline._setSeparatorsPrelight(False)
         self.assertEqual(len(timeline.__on_separators), 1,
                          "The separators must be forgotten only in dragEnd()")
+
+    def test_create_layer(self):
+        self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
+        self.check_create_layer([0, 1, 1, 1], [0, 3, 2, 1])
+        self.check_create_layer([0, 1, 1, 2], [0, 3, 1, 2])
+        self.check_create_layer([0, 1, 0, 2], [1, 3, 0, 2])
+        self.check_create_layer([0, 1, 2, 3], [0, 1, 2, 3])
+
+    def check_create_layer(self, start_priorities, expected_priorities):
+        timeline = create_timeline_container().timeline
+        ges_layers = []
+        for priority in start_priorities:
+            ges_layer = timeline.createLayer(priority)
+            self.assertEqual(ges_layer.props.priority, priority)
+            ges_layers.append(ges_layer)
+        self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
+
+    def check_priorities_and_positions(self, timeline, ges_layers,
+                                       expected_priorities):
+        layers_vbox = timeline.layers_vbox
+
+        # Check the layers priorities.
+        priorities = [ges_layer.props.priority for ges_layer in ges_layers]
+        self.assertListEqual(priorities, expected_priorities)
+
+        # Check the positions of the Layer widgets.
+        positions = [layers_vbox.child_get_property(ges_layer.ui, "position")
+                     for ges_layer in ges_layers]
+        expected_positions = [priority * 2 + 1
+                              for priority in expected_priorities]
+        self.assertListEqual(positions, expected_positions, layers_vbox.get_children())
+
+        # Check the positions of the LayerControl widgets.
+        controls_vbox = timeline._layers_controls_vbox
+        positions = [controls_vbox.child_get_property(ges_layer.control_ui, "position")
+                     for ges_layer in ges_layers]
+        self.assertListEqual(positions, expected_positions)
+
+        # Check the number of the separators.
+        count = len(ges_layers) + 1
+        self.assertEqual(len(timeline._separators), count)
+        controls_separators, layers_separators = list(zip(*timeline._separators))
+
+        # Check the positions of the LayerControl separators.
+        expected_positions = [2 * index for index in range(count)]
+        positions = [layers_vbox.child_get_property(separator, "position")
+                     for separator in layers_separators]
+        self.assertListEqual(positions, expected_positions)
+
+        # Check the positions of the Layer separators.
+        positions = [controls_vbox.child_get_property(separator, "position")
+                     for separator in controls_separators]
+        self.assertListEqual(positions, expected_positions)
+
+    def test_remove_layer(self):
+        self.check_remove_layer([0, 0, 0, 0])
+        self.check_remove_layer([0, 0, 1, 0])
+        self.check_remove_layer([0, 1, 0, 0])
+        self.check_remove_layer([0, 2, 1, 0])
+        self.check_remove_layer([1, 0, 1, 0])
+        self.check_remove_layer([2, 2, 0, 0])
+        self.check_remove_layer([3, 2, 1, 0])
+
+    def check_remove_layer(self, removal_order):
+        timeline = create_timeline_container().timeline
+
+        # Add layers to remove them later.
+        ges_layers = []
+        for priority in range(len(removal_order)):
+            ges_layer = timeline.createLayer(priority)
+            ges_layers.append(ges_layer)
+
+        # Remove the layers in the specified order.
+        for priority in removal_order:
+            ges_layer = ges_layers[priority]
+            self.assertTrue(timeline.ges_timeline.remove_layer(ges_layer))
+            ges_layers.remove(ges_layer)
+            self.check_priorities_and_positions(timeline, ges_layers, list(range(len(ges_layers))))
+
+    def test_move_layer(self):
+        self.check_move_layer(0, 0, [0, 1, 2, 3, 4])
+        self.check_move_layer(0, 1, [1, 0, 2, 3, 4])
+        self.check_move_layer(0, 4, [4, 0, 1, 2, 3])
+        self.check_move_layer(2, 0, [1, 2, 0, 3, 4])
+        self.check_move_layer(2, 3, [0, 1, 3, 2, 4])
+        self.check_move_layer(4, 0, [1, 2, 3, 4, 0])
+        self.check_move_layer(4, 3, [0, 1, 2, 4, 3])
+
+    def check_move_layer(self, from_priority, to_priority, expected_priorities):
+        timeline = create_timeline_container().timeline
+
+        # Add layers to move them later.
+        ges_layers = []
+        for priority in range(len(expected_priorities)):
+            ges_layer = timeline.createLayer(priority)
+            ges_layers.append(ges_layer)
+
+        timeline.moveLayer(ges_layers[from_priority], to_priority)
+        self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
 
 
 class TestGrouping(BaseTestTimeline):
@@ -316,7 +416,7 @@ class TestGrouping(BaseTestTimeline):
             with mock.patch.object(clip1.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (40, 0)
                 with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer1, [layer1.ui.after_sep]
+                    _get_layer_at.return_value = layer1, timeline._separators[1]
                     timeline._motion_notify_event_cb(None, event)
             self.assertTrue(timeline.got_dragged)
 
@@ -400,7 +500,7 @@ class TestEditing(BaseTestTimeline):
             with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
                 with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer, [layer.ui.after_sep]
+                    _get_layer_at.return_value = layer, timeline._separators[1]
                     timeline._motion_notify_event_cb(None, event)
             self.assertTrue(timeline.got_dragged)
 

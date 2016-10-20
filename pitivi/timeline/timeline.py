@@ -36,6 +36,7 @@ from pitivi.timeline.elements import TransitionClip
 from pitivi.timeline.elements import TrimHandle
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import LayerControls
+from pitivi.timeline.layer import SpacedSeparator
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
@@ -51,6 +52,7 @@ from pitivi.utils.ui import EXPANDED_SIZE
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
+from pitivi.utils.ui import SEPARATOR_HEIGHT
 from pitivi.utils.ui import set_cairo_color
 from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import SNAPBAR_COLOR
@@ -297,15 +299,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         hbox.pack_end(self.layout, True, True, 0)
 
         # Stuff the layers controls in a Viewport so it can be scrolled.
-        self.__layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.__layers_controls_vbox.props.hexpand = False
-        self.__layers_controls_vbox.props.valign = Gtk.Align.START
+        self._layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._layers_controls_vbox.props.hexpand = False
+        self._layers_controls_vbox.props.valign = Gtk.Align.START
         if size_group:
-            size_group.add_widget(self.__layers_controls_vbox)
+            size_group.add_widget(self._layers_controls_vbox)
 
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
-        viewport.add(self.__layers_controls_vbox)
+        viewport.add(self._layers_controls_vbox)
         clear_styles(viewport)
         hbox.pack_start(viewport, False, False, 0)
 
@@ -321,6 +323,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.zoomed_fitted = True
 
         self._layers = []
+        # A list of (controls separator, layers separator) tuples.
+        self._separators = []
         # Whether the user is dragging a layer.
         self.__moving_layer = None
 
@@ -349,7 +353,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__drag_start_x = 0
         # The current layer on which the operation is performed.
         self._on_layer = None
-        # The one or two separators immediately above or below _on_layer
+        # The separators immediately above or below _on_layer
         # on which the operation will be performed.
         # Implies a new layer will be created.
         self.__on_separators = []
@@ -876,7 +880,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 with self.app.action_log.started("add clip",
                                                  CommitTimelineFinalizingAction(pipeline)):
                     if self.__on_separators:
-                        created_layer = self.__getDroppedLayer()
+                        priority = self.separator_priority(self.__on_separators[1])
+                        created_layer = self.createLayer(priority)
                     else:
                         created_layer = None
                     for layer, clip in self.__last_clips_on_leave:
@@ -914,62 +919,87 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._addLayer(ges_layer)
 
     def moveLayer(self, ges_layer, index):
-        layers = self.ges_timeline.get_layers()
-        layer = layers.pop(ges_layer.get_priority())
-        layers.insert(index, layer)
-
-        for i, layer in enumerate(layers):
-            layer.set_priority(i)
+        self.debug("Moving layer %s to %s", ges_layer.props.priority, index)
+        ges_layers = self.ges_timeline.get_layers()
+        ges_layer = ges_layers.pop(ges_layer.props.priority)
+        ges_layers.insert(index, ges_layer)
+        for i, ges_layer in enumerate(ges_layers):
+            if ges_layer.props.priority != i:
+                ges_layer.props.priority = i
 
     def _addLayer(self, ges_layer):
         layer = Layer(ges_layer, self)
         ges_layer.ui = layer
+
+        if not self._separators:
+            # Make sure the first layer has separators above it.
+            self.__add_separators()
         self._layers.append(layer)
 
         control = LayerControls(ges_layer, self.app)
         control.show_all()
-        self.__layers_controls_vbox.pack_start(control, False, False, 0)
+        self._layers_controls_vbox.pack_start(control, False, False, 0)
         ges_layer.control_ui = control
         # Check the media types so the controls are set up properly.
         layer.checkMediaTypes()
 
-        layer_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        layer_box.get_style_context().add_class("LayerBox")
-        layer_box.pack_start(layer.before_sep, False, False, 0)
-        layer_box.pack_start(layer, True, True, 0)
-        layer_box.pack_start(layer.after_sep, False, False, 0)
-        layer_box.show_all()
-        self.layers_vbox.pack_start(layer_box, True, True, 0)
+        self.layers_vbox.pack_start(layer, False, False, 0)
+        layer.show()
+
+        self.__add_separators()
 
         ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
 
-    def __layerPriorityChangedCb(self, ges_layer, pspec):
-        self.__update_layers()
+    def __add_separators(self):
+        """Adds separators to separate layers."""
+        controls_separator = SpacedSeparator()
+        controls_separator.show()
+        self._layers_controls_vbox.pack_start(controls_separator, False, False, 0)
 
-    def __update_layers(self, reset=False):
+        separator = SpacedSeparator()
+        separator.show()
+        self.layers_vbox.pack_start(separator, False, False, 0)
+
+        self._separators.append((controls_separator, separator))
+
+    def __layerPriorityChangedCb(self, ges_layer, pspec):
+        ges_layers = self.ges_timeline.get_layers()
+        priorities = [ges_layer.props.priority for ges_layer in ges_layers]
+        if priorities != list(range(len(priorities))):
+            self.debug("Layers still being shuffled, not updating widgets: %s", priorities)
+            return
         self._layers.sort(key=lambda layer: layer.ges_layer.props.priority)
-        self.debug("Reseting layers priorities")
+        self.debug("Updating layers widgets positions")
         for i, layer in enumerate(self._layers):
-            ges_layer = layer.ges_layer
-            if reset:
-                ges_layer.props.priority = i
-            self.__update_layer(ges_layer)
+            self.__update_layer(layer.ges_layer)
 
     def _removeLayer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
-        self.layers_vbox.remove(ges_layer.ui.get_parent())
-        self.__layers_controls_vbox.remove(ges_layer.control_ui)
+        self.layers_vbox.remove(ges_layer.ui)
+        self._layers_controls_vbox.remove(ges_layer.control_ui)
         ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
+
+        # Remove extra separators.
+        controls_separator, separator = self._separators.pop()
+        self.layers_vbox.remove(separator)
+        self._layers_controls_vbox.remove(controls_separator)
 
         self._layers.remove(ges_layer.ui)
         ges_layer.ui.release()
         ges_layer.ui = None
         ges_layer.control_ui = None
 
-        self.__update_layers(True)
-
-    def _layerRemovedCb(self, unused_ges_timeline, ges_layer):
+    def _layerRemovedCb(self, ges_timeline, ges_layer):
         self._removeLayer(ges_layer)
+        removed_priority = ges_layer.props.priority
+        for priority, ges_layer in enumerate(ges_timeline.get_layers()):
+            if priority >= removed_priority:
+                ges_layer.props.priority -= 1
+
+    def separator_priority(self, separator):
+        position = self.layers_vbox.child_get_property(separator, "position")
+        assert position % 2 == 0
+        return int(position / 2)
 
     # Interface Zoomable
     def zoomChanged(self):
@@ -1030,16 +1060,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
-    def _get_separators(self, ges_layer, sep_name):
-        return [getattr(ges_layer.ui, sep_name), getattr(ges_layer.control_ui, sep_name)]
-
     def _get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
         ges_layers = self.ges_timeline.get_layers()
-        if y < 20:
+        if y < SEPARATOR_HEIGHT:
             # The cursor is at the top, above the first layer.
             self.debug("Returning very first layer")
             ges_layer = ges_layers[0]
-            separators = self._get_separators(ges_layer, "before_sep")
+            separators = self._separators[0]
             return ges_layer, separators
 
         # This means if an asset is dragged directly on a separator,
@@ -1068,13 +1095,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                         return prefer_ges_layer, []
                 return ges_layer, []
 
-            separators = self._get_separators(ges_layer, "after_sep")
+            # Check if there are more layers.
             try:
                 next_ges_layer = ges_layers[i + 1]
             except IndexError:
-                # The cursor is below the last layer.
+                # Nope, the cursor is below the last layer.
                 self.debug("Returning very last layer")
-                return ges_layer, separators
+                return ges_layer, self._separators[i + 1]
 
             if ges_layer == prefer_ges_layer:
                 # Choose a layer as close to prefer_ges_layer as possible.
@@ -1082,9 +1109,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if layer_y + layer_height <= y < next_ges_layer.ui.get_allocation().y:
                 # The cursor is between this layer and the one below.
-                separators.extend(self._get_separators(next_ges_layer, "before_sep"))
                 if prefer_after:
                     ges_layer = next_ges_layer
+                separators = self._separators[i + 1]
                 self.debug("Returning layer %s, separators: %s", ges_layer, separators)
                 return ges_layer, separators
 
@@ -1139,10 +1166,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__on_separators = []
         self._setSeparatorsPrelight(True)
 
-        priority = self._on_layer.props.priority
-        self.editing_context.editTo(position, priority)
+        self.editing_context.edit_to(position, self._on_layer)
 
     def createLayer(self, priority):
+        """Adds a new layer to the GES timeline."""
+        self.debug("Creating layer: priority = %s", priority)
         new_ges_layer = GES.Layer.new()
         new_ges_layer.props.priority = priority
         self.ges_timeline.add_layer(new_ges_layer)
@@ -1162,33 +1190,31 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         return new_ges_layer
 
     def __update_layer(self, ges_layer):
-        """Updates the position child prop of the layer and layer control."""
-        priority = ges_layer.props.priority
+        """Sets the position of the layer and its controls in their parent."""
+        position = ges_layer.props.priority * 2 + 1
 
-        layer_box = ges_layer.ui.get_parent()
-        self.layers_vbox.child_set_property(layer_box, "position", priority)
+        # Update the position of the LayerControls and Layer widgets and
+        # also the position of the separators below them.
+        controls_separator, layers_separator = self._separators[ges_layer.props.priority + 1]
+        self.layers_vbox.child_set_property(ges_layer.ui, "position", position)
+        self.layers_vbox.child_set_property(layers_separator, "position", position + 1)
 
-        self.__layers_controls_vbox.child_set_property(ges_layer.control_ui,
-                                                       "position",
-                                                       priority)
-
-    def __getDroppedLayer(self):
-        """Creates the layer for a clip dropped on a separator."""
-        priority = self._on_layer.props.priority
-        if self.__on_separators[0] == self._on_layer.ui.after_sep:
-            priority = self._on_layer.props.priority + 1
-
-        self.createLayer(max(0, priority))
-        return self.ges_timeline.get_layers()[priority]
+        self._layers_controls_vbox.child_set_property(ges_layer.control_ui,
+                                                      "position",
+                                                      position)
+        self._layers_controls_vbox.child_set_property(controls_separator,
+                                                      "position",
+                                                      position + 1)
 
     def dragEnd(self):
         if self.editing_context:
             self._snapEndedCb()
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
-                layer = self.__getDroppedLayer()
-                self.editing_context.editTo(self.editing_context.new_position,
-                                            layer.get_priority())
+                priority = self.separator_priority(self.__on_separators[1])
+                layer = self.createLayer(priority)
+                position = self.editing_context.new_position
+                self.editing_context.edit_to(position, layer)
             self.layout.props.width = self._timelineLengthInPixels()
 
             self.editing_context.finish()
