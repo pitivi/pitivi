@@ -17,9 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-The GES GstValidate default testsuite
-"""
+"""The Pitivi GstValidate testsuite."""
 import os
 
 
@@ -27,10 +25,10 @@ TEST_MANAGER = "pitivi"
 
 
 def setup_tests(test_manager, options):
-    print("Setting up Pitivi default tests")
-    options.pitivi_scenario_paths = [os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))),
-                                                  "scenarios")]
-    options.add_paths(os.path.abspath(os.path.join(os.path.dirname(__file__),
-                      "..", "samples")))
+    path = os.path.abspath(os.path.dirname(__file__))
+    print("Setting up Pitivi integration tests in %s" % path)
+    options.pitivi_scenario_paths = [os.path.join(path, "scenarios")]
+    options.add_paths(os.path.join(path, os.path.pardir, "samples"))
+    options.pitivi_executable = os.path.join(path, "..", "..", "bin", "pitivi")
     test_manager.register_defaults()
     return True

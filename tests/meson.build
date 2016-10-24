@@ -38,6 +38,6 @@ if runtests.found()
             args = args + ['--plugin', 'nose2.plugins.junitxml', '--config', meson.current_build_dir() + '/' + xunitfile + '.cfg']
         endif
 
-        test(i.get(0), runtests, args: args + ['tests.' + i.get(1)])
+        test(i.get(0), runtests, args : args + ['tests.' + i.get(1)])
     endforeach
 endif

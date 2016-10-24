@@ -72,6 +72,7 @@ if not get_option('disable-help')
     subdir('help')
 endif
 subdir('tests')
+subdir('tests/validate-tests')
 
 archiver = find_program('git-archive-all', required : false)
 if archiver.found()

@@ -536,6 +536,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 ("GST_PRESET_PATH",
                  "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"),
                 "GST_VALIDATE",
+                "GST_VALIDATE_APPS_DIR",
                 "GST_VALIDATE_LAUNCHER_DEBUG",
                 "GTK_DEBUG",
                 "GTK_THEME",

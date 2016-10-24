@@ -18,6 +18,9 @@ install:
 check:
 \tcd %(build_dir)s && %(ninja)s test
 
+validate:
+\tcd %(build_dir)s && %(ninja)s validate
+
 dist:
 \tcd %(build_dir)s && %(ninja)s dist
 

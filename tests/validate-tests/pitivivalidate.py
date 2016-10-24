@@ -18,7 +18,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
-import sys
 from urllib import unquote
 
 import urlparse
@@ -28,10 +27,6 @@ from baseclasses import ScenarioManager
 from baseclasses import TestsManager
 
 Pitivi_DURATION_TOLERANCE = utils.GST_SECOND / 2
-
-PITIVI_COMMAND = "pitivi"
-if "win32" in sys.platform:
-    PITIVI_COMMAND += ".exe"
 
 
 def quote_uri(uri):
@@ -47,9 +42,8 @@ def quote_uri(uri):
 
 class PitiviTest(GstValidateTest):
 
-    def __init__(self, classname, options, reporter, scenario,
-                 combination=None):
-        super(PitiviTest, self).__init__(PITIVI_COMMAND, classname, options, reporter,
+    def __init__(self, executable, classname, options, reporter, scenario):
+        super(PitiviTest, self).__init__(executable, classname, options, reporter,
                                          scenario=None)
         self._scenario = scenario
 
@@ -88,10 +82,10 @@ class PitiviTestsManager(TestsManager):
         group = parser.add_argument_group("Pitivi specific option group"
                                           " and behaviours",
                                           description="")
+        group.add_argument("--pitivi-executable", dest="pitivi_executable",
+                           default=os.path.join("..", "..", "bin", "pitivi"),
+                           help="Path to the pitivi executable")
         group.add_argument("--pitivi-scenarios-paths", dest="pitivi_scenario_paths",
-                           default=os.path.join(os.path.basename(__file__),
-                                                "pitivi",
-                                                "pitivi scenarios"),
                            help="Paths in which to look for scenario files")
 
     def set_settings(self, options, args, reporter):
@@ -106,23 +100,23 @@ class PitiviTestsManager(TestsManager):
     def list_tests(self):
         return self.tests
 
-    def register_defaults(self):
-        scenarios = list()
+    def find_scenarios(self):
         for path in self.options.pitivi_scenario_paths:
             for root, dirs, files in os.walk(path):
-                for f in files:
-                    if not f.endswith(".scenario"):
+                for file in files:
+                    if not file.endswith(".scenario"):
                         continue
-                    scenarios.append(os.path.join(path, root, f))
+                    yield os.path.join(path, root, file)
 
-        for scenario_name in scenarios:
+    def register_defaults(self):
+        for scenario_name in self.find_scenarios():
             scenario = self._scenarios.get_scenario(scenario_name)
             if scenario is None:
                 continue
 
-            classname = "pitivi.%s" % (scenario.name)
-            self.add_test(PitiviTest(classname,
+            classname = "pitivi.%s" % scenario.name
+            self.add_test(PitiviTest(self.options.pitivi_executable,
+                                     classname,
                                      self.options,
                                      self.reporter,
-                                     scenario=scenario)
-                          )
+                                     scenario=scenario))
