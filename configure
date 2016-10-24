@@ -10,20 +10,20 @@ PROJECTNAME = "Pitivi"
 
 ROOTDIR = os.path.abspath(os.path.dirname(__file__))
 MAKEFILE_TMPL = """all:
-%(tab)scd %(build_dir)s && %(ninja)s
+\tcd %(build_dir)s && %(ninja)s
 
 install:
-%(tab)scd %(build_dir)s && DESTDIR="${DESTDIR}" %(ninja)s install
+\tcd %(build_dir)s && DESTDIR="${DESTDIR}" %(ninja)s install
 
 check:
-%(tab)scd %(build_dir)s && %(ninja)s test
+\tcd %(build_dir)s && %(ninja)s test
 
 dist:
-%(tab)scd %(build_dir)s && %(ninja)s dist
+\tcd %(build_dir)s && %(ninja)s dist
 
 clean:
-%(tab)srm -Rf %(build_dir)s
-%(tab)srm Makefile
+\trm -Rf %(build_dir)s
+\trm Makefile
 """
 
 
@@ -84,8 +84,7 @@ def configure_meson():
     with open(os.path.join(ROOTDIR, "Makefile"), "w") as makefile:
         makefile.write(MAKEFILE_TMPL %
                        {"build_dir": build_dir,
-                        "ninja": ninja,
-                        "tab": "	"})
+                        "ninja": ninja})
 
 if __name__ == "__main__":
     configure_meson()
