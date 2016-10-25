@@ -1,16 +1,19 @@
 #!/bin/bash
 
+# Script which must be sourced to setup the development environment.
+
 # This has to be the first command because BASH_SOURCE[0] gets changed.
 SCRIPT=${BASH_SOURCE[0]:-$0}
 
 [[ "${BASH_SOURCE[0]}" == "$0" ]] \
-    && printf "This script should not be executed but sourced like:\n    $ source $0\n" \
+    && echo "This script should not be executed but sourced like:" \
+    && echo "    $ source $0" \
+    && echo \
     && exit 1
 
 SCRIPTDIR=$(dirname $(realpath $SCRIPT))
 export FLATPAK_ENVPATH=$(realpath $SCRIPTDIR/../../)
 export CURRENT_GST=$FLATPAK_ENVPATH
-export MYPITIVI=$FLATPAK_ENVPATH
 
 export make="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make"
 export check="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make check"
