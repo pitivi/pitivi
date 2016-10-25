@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
-#
-# Copyright (c) 2013,Thibault Saunier <thibault.saunier@collabora.com>
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# Pitivi video editor
+# Copyright (c) 2013, Thibault Saunier <thibault.saunier@collabora.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -45,9 +46,9 @@ def quote_uri(uri):
 
 
 class PitiviTest(GstValidateTest):
+
     def __init__(self, classname, options, reporter, scenario,
                  combination=None):
-
         super(PitiviTest, self).__init__(PITIVI_COMMAND, classname, options, reporter,
                                          scenario=None)
         self._scenario = scenario

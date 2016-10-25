@@ -1,6 +1,7 @@
-# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
-#
-# Copyright (c) 2014,Thibault Saunier <thibault.saunier@collabora.com>
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# Pitivi video editor
+# Copyright (c) 2014, Thibault Saunier <thibault.saunier@collabora.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
