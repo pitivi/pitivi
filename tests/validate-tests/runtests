@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+"""Wrapper script for running the Pitivi integration tests."""
+
 import os
+import subprocess
 import sys
 
 GST_VALIDATE_LAUNCHER_COMMAND = "gst-validate-launcher"
@@ -10,8 +13,10 @@ if (os.system(GST_VALIDATE_LAUNCHER_COMMAND + " -h > %s 2>&1" % os.devnull) != 0
           " before running the testsuite")
     sys.exit(127)
 
-sys.exit(os.system("GST_VALIDATE_APPS_DIR=%s %s %s %s"
-         % (os.path.abspath(os.path.join(os.path.dirname(__file__))),
-            GST_VALIDATE_LAUNCHER_COMMAND,
-            os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__))), "pitivi.py"),
-            ' '.join(sys.argv[1:]))))
+path = os.path.abspath(os.path.join(os.path.dirname(__file__)))  # pylint: disable=invalid-name
+# Path to scan for GstValidate TestsManager subclasses.
+os.environ["GST_VALIDATE_APPS_DIR"] = path
+testsuite = os.path.join(path, "pitivi.py")  # pylint: disable=invalid-name
+command = [GST_VALIDATE_LAUNCHER_COMMAND, testsuite]  # pylint: disable=invalid-name
+command.extend(sys.argv[1:])
+sys.exit(subprocess.call(command))
