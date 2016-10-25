@@ -519,49 +519,42 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             self.run_in_sandbox(*self.args, exit_on_failure=True)
 
     def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None):
-        env_args = ["flatpak", "build", "--socket=x11",
-                    "--socket=session-bus", "--socket=pulseaudio",
-                    "--share=network", "--env=PITIVI_DEVELOPMENT=1",
-                    "--env=CC=ccache gcc",
-                    "--env=CXX=ccache g++"]
+        flatpak_command = ["flatpak", "build", "--socket=x11",
+                           "--socket=session-bus", "--socket=pulseaudio",
+                           "--share=network", "--env=PITIVI_DEVELOPMENT=1",
+                           "--env=CC=ccache gcc",
+                           "--env=CXX=ccache g++"]
 
-        for envvar in [
-                "DISPLAY",
-                "GST_CHECKS",
-                "GST_DEBUG",
-                "GST_DEBUG_DUMP_DOT_DIR",
-                ("GST_ENCODING_TARGET_PATH",
-                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"),
-                ("GST_PLUGIN_SYSTEM_PATH", "/app/lib/gstreamer-1.0/"),
-                ("GST_PRESET_PATH",
-                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"),
-                "GST_VALIDATE",
-                "GST_VALIDATE_APPS_DIR",
-                "GST_VALIDATE_LAUNCHER_DEBUG",
-                "GTK_DEBUG",
-                "GTK_THEME",
-                "LANG",
-                "PITIVI_DEBUG",
-                "PITIVI_DEVELOPMENT"]:
-            if not isinstance(envvar, str):
-                value = envvar[1] + ":" + os.environ.get(envvar[0], "")
-                envvar = envvar[0]
-            else:
-                value = os.environ.get(envvar)
+        # The forwarded environment variables.
+        forwarded = {}
+        for envvar, value in os.environ.items():
+            if envvar.split("_")[0] in ("GST", "GTK", "PITIVI") or \
+                    envvar in ["DISPLAY", "LANG"]:
+                forwarded[envvar] = value
 
-            if value:
-                env_args.append("--env=%s=%s" % (envvar, value))
+        prefixes = {
+            "GST_ENCODING_TARGET_PATH":
+                "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
+            "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
+            "GST_PRESET_PATH":
+                "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"}
+        for envvar, path in prefixes.items():
+            value = forwarded.get(envvar, "")
+            forwarded[envvar] = "%s:%s" % (path, value)
 
-        env_args.append(self.prefix)
+        for envvar, value in forwarded.items():
+            flatpak_command.append("--env=%s=%s" % (envvar, value))
+
+        flatpak_command.append(self.prefix)
 
         if args:
-            env_args.extend(args)
+            flatpak_command.extend(args)
         else:
-            env_args.append(os.path.join(self.scriptdir, "enter-env"))
+            flatpak_command.append(os.path.join(self.scriptdir, "enter-env"))
 
         message("Running in sandbox: %s", ' '.join(args))
         try:
-            subprocess.check_call(env_args, cwd=cwd)
+            subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
             if exit_on_failure:
                 self.exit(e.returncode)
