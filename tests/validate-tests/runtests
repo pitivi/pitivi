@@ -8,9 +8,12 @@ import sys
 
 GST_VALIDATE_LAUNCHER_COMMAND = "gst-validate-launcher"
 
-if (os.system(GST_VALIDATE_LAUNCHER_COMMAND + " -h > %s 2>&1" % os.devnull) != 0):
-    print("Make sure to install gst-validate: http://cgit.freedesktop.org/gstreamer/gst-devtools/tree/validate/"
-          " before running the testsuite")
+try:
+    subprocess.check_call("which %s" % GST_VALIDATE_LAUNCHER_COMMAND, shell=True)
+except subprocess.CalledProcessError as e:
+    print("ERROR: Cannot find %s: %s" % (GST_VALIDATE_LAUNCHER_COMMAND, e))
+    print("Make sure to install gst-devtools:")
+    print("    http://cgit.freedesktop.org/gstreamer/gst-devtools/tree/validate/")
     sys.exit(127)
 
 path = os.path.abspath(os.path.join(os.path.dirname(__file__)))  # pylint: disable=invalid-name
