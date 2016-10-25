@@ -349,8 +349,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         self.build_name = self.name
         if os.path.exists(os.path.join(self.topdir, ".git")):
+            devnull = open(os.devnull)
             try:
-                devnull = open(os.devnull)
                 self.build_name = self.name + "." + subprocess.check_output(
                     "git rev-parse --abbrev-ref HEAD".split(
                         " "), stderr=devnull,
