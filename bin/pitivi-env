@@ -15,30 +15,34 @@ SCRIPTDIR=$(dirname $(realpath $SCRIPT))
 export FLATPAK_ENVPATH=$(realpath $SCRIPTDIR/../../)
 export CURRENT_GST=$FLATPAK_ENVPATH
 
-export make="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make"
-export check="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make check"
-export minstall="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d make install"
-export autogen="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d ./autogen.sh --prefix=/app --disable-gtk-doc"
-export configure="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d ./configure --prefix=/app"
-
-alias make=$make
-alias check=$check
-alias minstall=$minstall
-alias autogen=$autogen
-alias configure=$configure
-
+# Use ptvenv for running commands in the sandbox.
 alias ptvenv="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up environment if needed..."
 ptvenv "echo"
 if [ "$?" = "0" ];
 then
+    # Set up environment variables and aliases so configuring, building, etc.
+    # takes place in the sandbox.
+    export make="ptvenv make"
+    export check="ptvenv make check"
+    export minstall="ptvenv make install"
+    export autogen="ptvenv ./autogen.sh --prefix=/app --disable-gtk-doc"
+    export configure="ptvenv ./configure --prefix=/app"
+
+    alias make=$make
+    alias check=$check
+    alias minstall=$minstall
+    alias autogen=$autogen
+    alias configure=$configure
+
+    # Prefer to run the binaries in the sandbox. For example "python3".
     for i in `ptvenv ls /app/bin/`;
     do
-        alias $i="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d $i"
+        alias $i="ptvenv $i"
     done
 
-    alias pitivi="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d $FLATPAK_ENVPATH/pitivi/bin/pitivi"
+    alias pitivi="ptvenv $FLATPAK_ENVPATH/pitivi/bin/pitivi"
 
     export PS1="(ptv-flatpak) $PS1"
     export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
