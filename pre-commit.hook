@@ -70,8 +70,8 @@ tests/test_undo_timeline.py
 tests/test_utils.py
 tests/test_utils_timeline.py
 tests/test_widgets.py
-tests/validate-tests/pitivi.py
-tests/validate-tests/pitivivalidate.py
+tests/validate-tests/manager.py
+tests/validate-tests/suite.py
 win32/configure.py
 win32/pitivi
 "

@@ -21,14 +21,17 @@
 import os
 
 
+# Instruct GstValidate to use the test manager with name == "pitivi".
 TEST_MANAGER = "pitivi"
 
 
 def setup_tests(test_manager, options):
+    """Sets up the specified test manager."""
     path = os.path.abspath(os.path.dirname(__file__))
     print("Setting up Pitivi integration tests in %s" % path)
     options.pitivi_scenario_paths = [os.path.join(path, "scenarios")]
     options.add_paths(os.path.join(path, os.path.pardir, "samples"))
     options.pitivi_executable = os.path.join(path, "..", "..", "bin", "pitivi")
     test_manager.register_defaults()
+    # Everything went fine.
     return True

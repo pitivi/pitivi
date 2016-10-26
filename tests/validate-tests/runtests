@@ -19,7 +19,7 @@ except subprocess.CalledProcessError as e:
 path = os.path.abspath(os.path.join(os.path.dirname(__file__)))  # pylint: disable=invalid-name
 # Path to scan for GstValidate TestsManager subclasses.
 os.environ["GST_VALIDATE_APPS_DIR"] = path
-testsuite = os.path.join(path, "pitivi.py")  # pylint: disable=invalid-name
+testsuite = os.path.join(path, "suite.py")  # pylint: disable=invalid-name
 command = [GST_VALIDATE_LAUNCHER_COMMAND, testsuite]  # pylint: disable=invalid-name
 command.extend(sys.argv[1:])
 sys.exit(subprocess.call(command))

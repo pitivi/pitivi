@@ -17,6 +17,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""The Pitivi GstValidate tests manager and friends."""
 import os
 from urllib import unquote
 
@@ -26,13 +27,9 @@ from baseclasses import GstValidateTest
 from baseclasses import ScenarioManager
 from baseclasses import TestsManager
 
-Pitivi_DURATION_TOLERANCE = utils.GST_SECOND / 2
-
 
 def quote_uri(uri):
-    """
-    Encode a URI/path according to RFC 2396, without touching the file:/// part.
-    """
+    """Encodes a URI/path according to RFC 2396."""
     # Split off the "file:///" part, if present.
     parts = urlparse.urlsplit(uri, allow_fragments=False)
     # Make absolutely sure the string is unquoted before quoting again!
@@ -41,6 +38,7 @@ def quote_uri(uri):
 
 
 class PitiviTest(GstValidateTest):
+    """A scenario to be run as a test."""
 
     def __init__(self, executable, classname, options, reporter, scenario):
         super(PitiviTest, self).__init__(executable, classname, options, reporter,
@@ -48,6 +46,7 @@ class PitiviTest(GstValidateTest):
         self._scenario = scenario
 
     def set_sample_paths(self):
+        """Passes the media paths as optional flags."""
         paths = self.options.paths
 
         if not isinstance(paths, list):
@@ -59,26 +58,29 @@ class PitiviTest(GstValidateTest):
             self.add_arguments("--ges-sample-path-recurse", quote_uri(path))
 
     def build_arguments(self):
+        """Prepares the arguments for the executable used to run the test."""
         GstValidateTest.build_arguments(self)
 
         self.set_sample_paths()
+        # Pass the path to the scenario file as a positional argument.
         self.add_arguments(self._scenario.path)
 
 
 class PitiviTestsManager(TestsManager):
+
     name = "pitivi"
+    """The name identifying this test manager class."""
 
     _scenarios = ScenarioManager()
 
-    def __init__(self):
-        super(PitiviTestsManager, self).__init__()
-
     def init(self):
+        """Initializes the manager."""
         self.fixme("Implement init checking")
 
         return True
 
     def add_options(self, parser):
+        """Adds options to the specified ArgumentParser."""
         group = parser.add_argument_group("Pitivi specific option group"
                                           " and behaviours",
                                           description="")
@@ -89,8 +91,9 @@ class PitiviTestsManager(TestsManager):
                            help="Paths in which to look for scenario files")
 
     def set_settings(self, options, args, reporter):
+        """Configures the manager based on the specified options."""
         TestsManager.set_settings(self, options, args, reporter)
-        self._scenarios.config = self.options
+        PitiviTestsManager._scenarios.config = self.options
 
         try:
             os.makedirs(utils.url2path(options.dest)[0])
@@ -98,19 +101,22 @@ class PitiviTestsManager(TestsManager):
             pass
 
     def list_tests(self):
+        """Lists the tests in the order they have been added."""
         return self.tests
 
     def find_scenarios(self):
+        """Yields paths to the found scenario files."""
         for path in self.options.pitivi_scenario_paths:
-            for root, dirs, files in os.walk(path):
+            for root, unused_dirs, files in os.walk(path):
                 for file in files:
                     if not file.endswith(".scenario"):
                         continue
                     yield os.path.join(path, root, file)
 
     def register_defaults(self):
+        """Adds the available scenario files as tests."""
         for scenario_name in self.find_scenarios():
-            scenario = self._scenarios.get_scenario(scenario_name)
+            scenario = PitiviTestsManager._scenarios.get_scenario(scenario_name)
             if scenario is None:
                 continue
 
