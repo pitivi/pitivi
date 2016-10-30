@@ -89,12 +89,13 @@ class TestLayers(BaseTestTimeline):
             ges_layer.ui.set_allocation(rect)
             y += height + SEPARATOR_HEIGHT
 
-        ges_layers = [layer.ges_layer for layer in timeline._layers]
+        ges_layers = timeline.ges_timeline.get_layers()
         if preferred is None:
             preferred_ges_layer = None
         else:
             preferred_ges_layer = ges_layers[preferred]
-        h = [layer.get_allocation().height for layer in timeline._layers]
+        # The heights of the layers.
+        h = [ges_layer.ui.get_allocation().height for ges_layer in ges_layers]
         s = SEPARATOR_HEIGHT
 
         def assertLayerAt(ges_layer, y):

@@ -322,7 +322,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # it should be kept that way if it makes sense.
         self.zoomed_fitted = True
 
-        self._layers = []
         # A list of (controls separator, layers separator) tuples.
         self._separators = []
         # Whether the user is dragging a layer.
@@ -500,10 +499,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.update_snapping_distance()
 
     # Gtk.Widget virtual methods implementation
-    def do_get_preferred_height(self):
-        natural_height = max(1, len(self._layers)) * (LAYER_HEIGHT + 20)
 
-        return LAYER_HEIGHT, natural_height
+    def do_get_preferred_height(self):
+        minimum = SEPARATOR_HEIGHT + LAYER_HEIGHT + SEPARATOR_HEIGHT
+        if not self.ges_timeline:
+            count = 0
+        else:
+            count = len(self.ges_timeline.get_layers())
+        count = max(1, count)
+        natural = SEPARATOR_HEIGHT + count * (LAYER_HEIGHT + SEPARATOR_HEIGHT)
+        return minimum, natural
 
     def __setLayoutSize(self):
         if self.ges_timeline:
@@ -766,8 +771,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__marquee.hide()
 
     def updatePosition(self):
-        for layer in self._layers:
-            layer.updatePosition()
+        for ges_layer in self.ges_timeline.get_layers():
+            ges_layer.ui.updatePosition()
 
     def __create_clips(self, x, y):
         """Creates the clips for an asset drag operation.
@@ -934,7 +939,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if not self._separators:
             # Make sure the first layer has separators above it.
             self.__add_separators()
-        self._layers.append(layer)
 
         control = LayerControls(ges_layer, self.app)
         control.show_all()
@@ -968,10 +972,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if priorities != list(range(len(priorities))):
             self.debug("Layers still being shuffled, not updating widgets: %s", priorities)
             return
-        self._layers.sort(key=lambda layer: layer.ges_layer.props.priority)
         self.debug("Updating layers widgets positions")
-        for i, layer in enumerate(self._layers):
-            self.__update_layer(layer.ges_layer)
+        for i, ges_layer in enumerate(self.ges_timeline.get_layers()):
+            self.__update_layer(ges_layer)
 
     def _removeLayer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
@@ -984,7 +987,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layers_vbox.remove(separator)
         self._layers_controls_vbox.remove(controls_separator)
 
-        self._layers.remove(ges_layer.ui)
         ges_layer.ui.release()
         ges_layer.ui = None
         ges_layer.control_ui = None
@@ -1212,9 +1214,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
-                layer = self.createLayer(priority)
+                ges_layer = self.createLayer(priority)
                 position = self.editing_context.new_position
-                self.editing_context.edit_to(position, layer)
+                self.editing_context.edit_to(position, ges_layer)
             self.layout.props.width = self._timelineLengthInPixels()
 
             self.editing_context.finish()
@@ -1224,8 +1226,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__got_dragged = False
         self.editing_context = None
 
-        for layer in self.ges_timeline.get_layers():
-            layer.ui.checkMediaTypes()
+        for ges_layer in self.ges_timeline.get_layers():
+            ges_layer.ui.checkMediaTypes()
 
         self._setSeparatorsPrelight(False)
         self.__on_separators = []
