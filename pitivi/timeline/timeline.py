@@ -315,7 +315,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.props.expand = True
         self.get_accessible().set_name("timeline canvas")
 
-        # A lot of operations go through these callbacks.
+        # A window is needed to receive BUTTON_* events. This is the reason why
+        # Timeline is a Gtk.EventBox subclass and not directly a Gtk.Box,
+        # see `hbox` above.
+        assert self.get_has_window()
+        # A lot of operations go through the handlers of these events.
         self.add_events(Gdk.EventType.BUTTON_PRESS | Gdk.EventType.BUTTON_RELEASE)
 
         # Whether the entire timeline content is in view and
