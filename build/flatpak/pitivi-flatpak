@@ -227,7 +227,7 @@ class FlatpakRepos(FlatpakObject):
             else:
                 return None
         else:
-            self.flatpak("remote-add", repo.name, "--from=" +
+            self.flatpak("remote-add", repo.name, "--from" +
                          repo.repo_file.name,
                          comment="Adding repo %s" % repo.name)
 
