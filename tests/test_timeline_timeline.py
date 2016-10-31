@@ -160,7 +160,7 @@ class TestLayers(BaseTestTimeline):
 
     def check_priorities_and_positions(self, timeline, ges_layers,
                                        expected_priorities):
-        layers_vbox = timeline.layers_vbox
+        layers_vbox = timeline.layout.layers_vbox
 
         # Check the layers priorities.
         priorities = [ges_layer.props.priority for ges_layer in ges_layers]

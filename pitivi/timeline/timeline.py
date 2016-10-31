@@ -105,8 +105,8 @@ PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
 class Marquee(Gtk.Box, Loggable):
     """Widget representing a selection area inside the timeline.
 
-    Attributes:
-        timeline (Timeline): The timeline containing the marquee.
+    Args:
+        timeline (Timeline): The timeline indirectly containing the marquee.
     """
 
     __gtype_name__ = "PitiviMarquee"
@@ -137,7 +137,7 @@ class Marquee(Gtk.Box, Loggable):
         """
         event_widget = Gtk.get_event_widget(event)
         self.start_x, self.start_y = event_widget.translate_coordinates(
-            self._timeline.layers_vbox, event.x, event.y)
+            self._timeline.layout.layers_vbox, event.x, event.y)
 
     def move(self, event):
         """Sets the second corner of the marquee.
@@ -150,7 +150,7 @@ class Marquee(Gtk.Box, Loggable):
         """
         event_widget = Gtk.get_event_widget(event)
         x, y = event_widget.translate_coordinates(
-            self._timeline.layers_vbox, event.x, event.y)
+            self._timeline.layout.layers_vbox, event.x, event.y)
 
         start_x = min(x, self.start_x)
         start_y = min(y, self.start_y)
@@ -214,18 +214,28 @@ class Marquee(Gtk.Box, Loggable):
 class LayersLayout(Gtk.Layout, Zoomable, Loggable):
     """Layout for displaying scrollable layers, the playhead, snap indicator.
 
+    Args:
+        timeline (Timeline): The timeline indirectly containing the layout.
+
     Attributes:
         snap_position (int): The time where the snapbar should appear.
         playhead_position (int): The time where the playhead should appear.
     """
 
-    def __init__(self):
+    def __init__(self, timeline):
         Gtk.Layout.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.snap_position = 0
         self.playhead_position = 0
+
+        self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.layers_vbox.get_style_context().add_class("LayersBox")
+        self.put(self.layers_vbox, 0, 0)
+
+        self.marquee = Marquee(timeline)
+        self.put(self.marquee, 0, 0)
 
     def do_draw(self, cr):
         Gtk.Layout.do_draw(self, cr)
@@ -286,19 +296,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
-        # Stuff the layers representation in a Layout so we can have other
-        # widgets there, see below.
-        self.layout = LayersLayout()
+        self.layout = LayersLayout(self)
         self.layout.props.can_focus = True
         self.layout.props.can_default = True
-        self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.layers_vbox.get_style_context().add_class("LayersBox")
-        self.layout.put(self.layers_vbox, 0, 0)
         self.hadj = self.layout.get_hadjustment()
         self.vadj = self.layout.get_vadjustment()
         hbox.pack_end(self.layout, True, True, 0)
 
-        # Stuff the layers controls in a Viewport so it can be scrolled.
         self._layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._layers_controls_vbox.props.hexpand = False
         self._layers_controls_vbox.props.valign = Gtk.Align.START
@@ -339,8 +343,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.selection = Selection()
         self.current_group = None
         self.resetSelectionGroup()
-        self.__marquee = Marquee(self)
-        self.layout.put(self.__marquee, 0, 0)
 
         # Clip editing.
         # Which clip is being edited.
@@ -520,7 +522,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if self.draggingElement:
                 width = max(width, self.layout.props.width)
 
-            self.layers_vbox.props.width_request = width
+            self.layout.layers_vbox.props.width_request = width
             self.layout.set_size(width, len(self.ges_timeline.get_layers()) * 200)
 
     def do_size_allocate(self, request):
@@ -584,7 +586,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
                                   Gdk.ModifierType.MOD1_MASK):
             # Zoom.
-            x, unused_y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
+            x, unused_y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
             # Figure out first where to scroll at the end.
             if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
                 # The time at the mouse cursor.
@@ -672,7 +674,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     self.app.action_log.begin("move layer",
                                               CommitTimelineFinalizingAction(self._project.pipeline))
                 else:
-                    self.__marquee.set_start_position(event)
+                    self.layout.marquee.set_start_position(event)
 
         self._scrubbing = res and button == 3
         if self._scrubbing:
@@ -728,7 +730,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.got_dragged or self.__drag_start_x != event.x:
                 event_widget = Gtk.get_event_widget(event)
-                x, y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
+                x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
                 self.__drag_update(x, y)
                 self.got_dragged = True
         elif self.__moving_layer:
@@ -740,8 +742,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if layer != self.__moving_layer:
                 priority = layer.get_priority()
                 self.moveLayer(self.__moving_layer, priority)
-        elif self.__marquee.start_x:
-            self.__marquee.move(event)
+        elif self.layout.marquee.start_x:
+            self.layout.marquee.move(event)
         elif self._scrubbing:
             self._seek(event)
         elif self._scrolling:
@@ -751,7 +753,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _seek(self, event):
         event_widget = Gtk.get_event_widget(event)
-        x, unused_y = event_widget.translate_coordinates(self.layers_vbox, event.x, event.y)
+        x, unused_y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
         position = max(0, self.pixelToNs(x))
         self._project.pipeline.simple_seek(position)
 
@@ -764,15 +766,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _selectUnderMarquee(self):
         self.resetSelectionGroup()
-        if self.__marquee.props.width_request > 0:
-            clips = self.__marquee.find_clips()
+        if self.layout.marquee.props.width_request > 0:
+            clips = self.layout.marquee.find_clips()
             for clip in clips:
                 self.current_group.add(clip.get_toplevel_parent())
         else:
             clips = []
         self.selection.setSelection(clips, SELECT)
 
-        self.__marquee.hide()
+        self.layout.marquee.hide()
 
     def updatePosition(self):
         for ges_layer in self.ges_timeline.get_layers():
@@ -837,7 +839,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Ask for the details.
             self.drag_get_data(context, target, timestamp)
         elif target.name() == URI_TARGET_ENTRY.target:
-            x, y = widget.translate_coordinates(self.layers_vbox, x, y)
+            x, y = widget.translate_coordinates(self.layout.layers_vbox, x, y)
             if not self.dropping_clips:
                 # The preview clips have not been created yet.
                 self.__create_clips(x, y)
@@ -951,7 +953,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Check the media types so the controls are set up properly.
         layer.checkMediaTypes()
 
-        self.layers_vbox.pack_start(layer, False, False, 0)
+        self.layout.layers_vbox.pack_start(layer, False, False, 0)
         layer.show()
 
         self.__add_separators()
@@ -966,7 +968,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         separator = SpacedSeparator()
         separator.show()
-        self.layers_vbox.pack_start(separator, False, False, 0)
+        self.layout.layers_vbox.pack_start(separator, False, False, 0)
 
         self._separators.append((controls_separator, separator))
 
@@ -982,13 +984,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _removeLayer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
-        self.layers_vbox.remove(ges_layer.ui)
+        self.layout.layers_vbox.remove(ges_layer.ui)
         self._layers_controls_vbox.remove(ges_layer.control_ui)
         ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
 
         # Remove extra separators.
         controls_separator, separator = self._separators.pop()
-        self.layers_vbox.remove(separator)
+        self.layout.layers_vbox.remove(separator)
         self._layers_controls_vbox.remove(controls_separator)
 
         ges_layer.ui.release()
@@ -1003,7 +1005,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 ges_layer.props.priority -= 1
 
     def separator_priority(self, separator):
-        position = self.layers_vbox.child_get_property(separator, "position")
+        position = self.layout.layers_vbox.child_get_property(separator, "position")
         assert position % 2 == 0
         return int(position / 2)
 
@@ -1202,15 +1204,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Update the position of the LayerControls and Layer widgets and
         # also the position of the separators below them.
         controls_separator, layers_separator = self._separators[ges_layer.props.priority + 1]
-        self.layers_vbox.child_set_property(ges_layer.ui, "position", position)
-        self.layers_vbox.child_set_property(layers_separator, "position", position + 1)
+        vbox = self.layout.layers_vbox
+        vbox.child_set_property(ges_layer.ui, "position", position)
+        vbox.child_set_property(layers_separator, "position", position + 1)
 
-        self._layers_controls_vbox.child_set_property(ges_layer.control_ui,
-                                                      "position",
-                                                      position)
-        self._layers_controls_vbox.child_set_property(controls_separator,
-                                                      "position",
-                                                      position + 1)
+        vbox = self._layers_controls_vbox
+        vbox.child_set_property(ges_layer.control_ui, "position", position)
+        vbox.child_set_property(controls_separator, "position", position + 1)
 
     def dragEnd(self):
         if self.editing_context:
