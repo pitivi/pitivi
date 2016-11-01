@@ -123,7 +123,7 @@ class TestMainWindow(common.TestCase):
         """
         self.__loading_failure(has_proxy=False)
 
-    def test_loading_project_wth_proxy(self):
+    def test_loading_project_with_proxy(self):
         """
         Test loading failure with proxies
         """

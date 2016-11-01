@@ -227,6 +227,8 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
+        self._timeline = timeline
+
         self.snap_position = 0
         self.playhead_position = 0
 
@@ -237,7 +239,16 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         self.marquee = Marquee(timeline)
         self.put(self.marquee, 0, 0)
 
+        self.layers_vbox.connect("size-allocate", self.__size_allocate_cb)
+
+    def zoomChanged(self):
+        # The width of the area/workspace changes when the zoom level changes.
+        self.update_width()
+        # Required so the playhead is redrawn.
+        self.queue_draw()
+
     def do_draw(self, cr):
+        """Draws the children and indicators."""
         Gtk.Layout.do_draw(self, cr)
 
         self.__draw_playhead(cr)
@@ -271,6 +282,26 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         set_cairo_color(cr, color)
         cr.line_to(xpos, height)
         cr.stroke()
+
+    def update_width(self):
+        """Updates the width of the area and the width of the layers_vbox."""
+        ges_timeline = self._timeline.ges_timeline
+        view_width = self.get_allocated_width()
+        space_at_the_end = view_width * 2 / 3
+        duration = 0 if not ges_timeline else ges_timeline.props.duration
+        width = self.nsToPixel(duration) + space_at_the_end
+        width = max(view_width, width)
+
+        self.log("Updating the width_request of the layers_vbox: %s", width)
+        # This triggers a renegotiation of the size, meaning
+        # layers_vbox's "size-allocate" will be emitted, see __size_allocate_cb.
+        self.layers_vbox.props.width_request = width
+
+    def __size_allocate_cb(self, unused_widget, allocation):
+        """Sets the size of the scrollable area to fit the layers_vbox."""
+        self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
+        self.props.width = allocation.width
+        self.props.height = allocation.height
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
@@ -439,10 +470,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("button-release-event", self._button_release_event_cb)
         self.connect("motion-notify-event", self._motion_notify_event_cb)
 
-        self.queue_draw()
+        self.layout.update_width()
 
     def _durationChangedCb(self, ges_timeline, pspec):
-        self.queue_draw()
+        self.layout.update_width()
 
     def scrollToPlayhead(self, align=None, when_not_in_view=False):
         """Scrolls so that the playhead is in view.
@@ -454,7 +485,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 the playhead is not in view.
         """
         self.debug("Scrolling to playhead")
-        self.__setLayoutSize()
         layout_width = self.layout.get_allocation().width
         if when_not_in_view:
             x = self.nsToPixel(self.__last_position) - self.hadj.get_value()
@@ -516,28 +546,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         natural = SEPARATOR_HEIGHT + count * (LAYER_HEIGHT + SEPARATOR_HEIGHT)
         return minimum, natural
 
-    def __setLayoutSize(self):
-        if self.ges_timeline:
-            width = self._timelineLengthInPixels()
-            if self.draggingElement:
-                width = max(width, self.layout.props.width)
-
-            self.layout.layers_vbox.props.width_request = width
-            self.layout.set_size(width, len(self.ges_timeline.get_layers()) * 200)
-
-    def do_size_allocate(self, request):
-        self.__setLayoutSize()
-        Gtk.EventBox.do_size_allocate(self, request)
-
     # ------------- #
     # util methods  #
     # ------------- #
-    def _timelineLengthInPixels(self):
-        if self.ges_timeline is None:
-            return 100
-
-        space_at_the_end = self.layout.get_allocation().width * 2 / 3
-        return self.nsToPixel(self.ges_timeline.props.duration) + space_at_the_end
 
     def _getParentOfType(self, widget, _type):
         """Gets a clip from a child widget.
@@ -598,13 +609,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 Zoomable.zoomOut()
             else:
                 Zoomable.zoomIn()
-            self.__setLayoutSize()
-            if delta_y:
-                # The zoom level changed.
-                self.queue_draw()
-                # Scroll so position remains in place.
-                x, unused_y = event_widget.translate_coordinates(self.layout, event.x, event.y)
-                self.hadj.set_value(self.nsToPixel(position) - x)
+            # Scroll so position remains in place.
+            x, unused_y = event_widget.translate_coordinates(self.layout, event.x, event.y)
+            self.hadj.set_value(self.nsToPixel(position) - x)
         else:
             if delta_y > 0:
                 # Scroll right.
@@ -1019,7 +1026,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.zoomed_fitted = False
 
         self.updatePosition()
-        self.queue_draw()
 
     def set_best_zoom_ratio(self, allow_zoom_in=False):
         """Sets the zoom level so that the entire timeline is in view."""
@@ -1221,7 +1227,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 ges_layer = self.createLayer(priority)
                 position = self.editing_context.new_position
                 self.editing_context.edit_to(position, ges_layer)
-            self.layout.props.width = self._timelineLengthInPixels()
 
             self.editing_context.finish()
 
@@ -1235,8 +1240,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._setSeparatorsPrelight(False)
         self.__on_separators = []
-
-        self.queue_draw()
 
     def __endMovingLayer(self):
         self.app.action_log.commit("move layer")
@@ -1583,7 +1586,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         hadj.set_value(x)
 
         self.timeline.updatePosition()
-        self.timeline.queue_draw()
         return False
 
     def _deleteSelected(self, unused_action, unused_parameter):
