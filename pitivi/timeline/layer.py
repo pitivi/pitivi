@@ -226,53 +226,13 @@ class LayerControls(Gtk.EventBox, Loggable):
         # TODO: Use media_types to determine which controls to show.
 
 
-class LayerLayout(Gtk.Layout, Loggable):
-    """Container for the clips of a layer."""
-
-    __gtype_name__ = "PitiviLayerLayout"
-
-    def __init__(self, timeline):
-        Gtk.Layout.__init__(self)
-        Loggable.__init__(self)
-
-        self._children = []
-        self._changed = False
-        self.timeline = timeline
-
-        self.props.hexpand = True
-        self.get_style_context().add_class("LayerLayout")
-
-    def do_remove(self, widget):
-        self._children.remove(widget)
-        self._changed = True
-        Gtk.Layout.do_remove(self, widget)
-
-    def put(self, child, x, y):
-        self._children.append(child)
-        self._children.sort(key=lambda clip: clip.z_order)
-        Gtk.Layout.put(self, child, x, y)
-        self._changed = True
-
-    def do_draw(self, cr):
-        if self._changed:
-            self._children.sort(key=lambda clip: clip.z_order)
-            for child in self._children:
-                if isinstance(child, elements.TransitionClip):
-                    window = child.get_window()
-                    window.raise_()
-            self._changed = False
-
-        for child in self._children:
-            self.propagate_draw(child, cr)
-
-
-class Layer(Gtk.EventBox, Zoomable, Loggable):
-    """Container for a layer."""
+class Layer(Gtk.Layout, Zoomable, Loggable):
+    """Container for the clips widgets of a layer."""
 
     __gtype_name__ = "PitiviLayer"
 
     def __init__(self, ges_layer, timeline):
-        Gtk.EventBox.__init__(self)
+        Gtk.Layout.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -281,20 +241,22 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         self.timeline = timeline
         self.app = timeline.app
 
+        self._children = []
+        self._changed = False
+
         self.ges_layer.connect("clip-added", self._clipAddedCb)
         self.ges_layer.connect("clip-removed", self._clipRemovedCb)
 
+        # The layer is always the width of the Timeline which contains it.
+        self.props.hexpand = True
         # FIXME Make the layer height user setable with 'Paned'
         self.props.height_request = LAYER_HEIGHT / 2
         self.props.valign = Gtk.Align.START
 
-        self._layout = LayerLayout(self.timeline)
-        self._layout.connect("remove", self.__childWidgetRemovedCb)
-        self.add(self._layout)
-
         self.media_types = GES.TrackType(0)
         for clip in ges_layer.get_clips():
-            self._addClip(clip)
+            self._add_clip(clip)
+        self.checkMediaTypes()
 
     def setName(self, name):
         self.ges_layer.set_meta("video::name", name)
@@ -320,9 +282,8 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         return name
 
     def release(self):
-        self._layout.disconnect_by_func(self.__childWidgetRemovedCb)
         for ges_clip in self.ges_layer.get_clips():
-            self._removeClip(ges_clip)
+            self._remove_clip(ges_clip)
         self.ges_layer.disconnect_by_func(self._clipAddedCb)
         self.ges_layer.disconnect_by_func(self._clipRemovedCb)
 
@@ -361,36 +322,38 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
         if old_media_types != self.media_types:
             self.updatePosition()
 
-    def move(self, child, x, y):
-        self._layout.move(child, x, y)
-
     def _childAddedToClipCb(self, ges_clip, child):
         self.checkMediaTypes()
 
     def _childRemovedFromClipCb(self, ges_clip, child):
         self.checkMediaTypes()
 
-    def _clipAddedCb(self, layer, ges_clip):
-        self._addClip(ges_clip)
+    def _clipAddedCb(self, unused_ges_layer, ges_clip):
+        self._add_clip(ges_clip)
+        self.checkMediaTypes()
 
-    def _addClip(self, ges_clip):
+    def _add_clip(self, ges_clip):
         ui_type = elements.GES_TYPE_UI_TYPE.get(ges_clip.__gtype__, None)
         if ui_type is None:
             self.error("Implement UI for type %s?", ges_clip.__gtype__)
             return
 
-        clip = ui_type(self, ges_clip)
+        widget = ui_type(self, ges_clip)
 
-        self._layout.put(clip, self.nsToPixel(ges_clip.props.start), 0)
-        self.show_all()
+        self._children.append(widget)
+        self._children.sort(key=lambda clip: clip.z_order)
+        self.put(widget, self.nsToPixel(ges_clip.props.start), 0)
+        self._changed = True
+        widget.show_all()
+
         ges_clip.connect_after("child-added", self._childAddedToClipCb)
         ges_clip.connect_after("child-removed", self._childRemovedFromClipCb)
+
+    def _clipRemovedCb(self, unused_ges_layer, ges_clip):
+        self._remove_clip(ges_clip)
         self.checkMediaTypes()
 
-    def _clipRemovedCb(self, ges_layer, ges_clip):
-        self._removeClip(ges_clip)
-
-    def _removeClip(self, ges_clip):
+    def _remove_clip(self, ges_clip):
         if not ges_clip.ui:
             return
 
@@ -399,21 +362,30 @@ class Layer(Gtk.EventBox, Zoomable, Loggable):
             self.error("Implement UI for type %s?", ges_clip.__gtype__)
             return
 
+        self.remove(ges_clip.ui)
+        self._children.remove(ges_clip.ui)
+        self._changed = True
         ges_clip.ui.release()
-        self._layout.remove(ges_clip.ui)
-        self.timeline.selection.unselect([ges_clip])
-
-    def __childWidgetRemovedCb(self, unused_layer_layout, clip):
-        ges_clip = clip.ges_clip
-        if self.timeline.draggingElement is None:
-            ges_clip.ui.release()
-            ges_clip.ui = None
+        ges_clip.ui = None
 
         ges_clip.disconnect_by_func(self._childAddedToClipCb)
         ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
-        self.checkMediaTypes()
+
+        self.timeline.selection.unselect([ges_clip])
 
     def updatePosition(self):
         for ges_clip in self.ges_layer.get_clips():
             if hasattr(ges_clip, "ui"):
                 ges_clip.ui.updatePosition()
+
+    def do_draw(self, cr):
+        if self._changed:
+            self._children.sort(key=lambda clip: clip.z_order)
+            for child in self._children:
+                if isinstance(child, elements.TransitionClip):
+                    window = child.get_window()
+                    window.raise_()
+            self._changed = False
+
+        for child in self._children:
+            self.propagate_draw(child, cr)
