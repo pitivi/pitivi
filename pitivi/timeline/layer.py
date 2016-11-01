@@ -59,8 +59,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline = self.ges_layer.get_timeline()
         self.app = app
 
-        # Half the height because we display only the video strip when empty.
-        self.props.height_request = LAYER_HEIGHT / 2
         self.props.hexpand = True
         self.props.valign = Gtk.Align.FILL
 
@@ -249,8 +247,6 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
 
         # The layer is always the width of the Timeline which contains it.
         self.props.hexpand = True
-        # FIXME Make the layer height user setable with 'Paned'
-        self.props.height_request = LAYER_HEIGHT / 2
         self.props.valign = Gtk.Align.START
 
         self.media_types = GES.TrackType(0)
