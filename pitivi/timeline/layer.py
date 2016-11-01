@@ -59,9 +59,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_timeline = self.ges_layer.get_timeline()
         self.app = app
 
-        self.props.hexpand = True
-        self.props.valign = Gtk.Align.FILL
-
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
 
