@@ -162,7 +162,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         layer3 = self.timeline.append_layer()
         self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
 
-        timeline_ui = Timeline(app=self.app)
+        timeline_ui = Timeline(app=self.app, size_group=mock.Mock())
         timeline_ui.setProject(self.app.project_manager.current_project)
 
         # Click and drag a layer control box to move the layer.

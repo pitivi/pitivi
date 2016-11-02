@@ -313,7 +313,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     __gtype_name__ = "PitiviTimeline"
 
-    def __init__(self, app, size_group=None):
+    def __init__(self, app, size_group):
         Gtk.EventBox.__init__(self)
         Zoomable.__init__(self)
         Loggable.__init__(self)
@@ -337,8 +337,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._layers_controls_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._layers_controls_vbox.props.hexpand = False
         self._layers_controls_vbox.props.valign = Gtk.Align.START
-        if size_group:
-            size_group.add_widget(self._layers_controls_vbox)
+        size_group.add_widget(self._layers_controls_vbox)
 
         # Stuff the layers controls in a viewport so it can be scrolled.
         viewport = Gtk.Viewport(vadjustment=self.vadj)
