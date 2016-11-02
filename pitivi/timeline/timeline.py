@@ -1436,11 +1436,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(self.toolbar, 3, 1, 1, 1)
 
-        min_height = (self.ruler.get_size_request()[1] +
-                      (EXPANDED_SIZE + SPACING) * 2 +
-                      # Some more.
-                      EXPANDED_SIZE)
-        self.set_size_request(-1, min_height)
         self.set_margin_top(SPACING)
 
         self.show_all()
