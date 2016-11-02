@@ -339,11 +339,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._layers_controls_vbox.props.valign = Gtk.Align.START
         size_group.add_widget(self._layers_controls_vbox)
 
-        # Stuff the layers controls in a viewport so it can be scrolled.
-        viewport = Gtk.Viewport(vadjustment=self.vadj)
-        viewport.add(self._layers_controls_vbox)
-        clear_styles(viewport)
-        hbox.pack_start(viewport, False, False, 0)
+        # Stuff the layers controls in a ScrolledWindow so they can be scrolled.
+        # Use self.layout's hadj to scroll the controls in sync with the layers.
+        scrolled_window = Gtk.ScrolledWindow(vadjustment=self.vadj)
+        scrolled_window.props.propagate_natural_width = True
+        scrolled_window.props.vscrollbar_policy = Gtk.PolicyType.EXTERNAL
+        scrolled_window.add(self._layers_controls_vbox)
+        hbox.pack_start(scrolled_window, False, False, 0)
 
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
