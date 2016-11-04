@@ -241,7 +241,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.33"],
+            "config-opts": ["--module=meson==0.35.1"],
             "sources": [
                 {
                     "type": "file",
