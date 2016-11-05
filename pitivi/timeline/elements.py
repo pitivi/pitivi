@@ -1102,9 +1102,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     def __disconnectFromChild(self, child):
         if child.ui:
-            if hasattr(child.ui, "__clip_curve_enter_id") and child.ui.__clip_curve_enter_id:
-                child.ui.disconnect_by_func(child.ui.__clip_curve_enter_id)
-                child.ui.disconnect_by_func(child.ui.__clip_curve_leave_id)
             child.ui.release()
 
     def __connectToChild(self, child):
