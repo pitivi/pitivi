@@ -905,7 +905,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     @property
     def layer(self):
-        return self.ges_clip.get_layer().ui
+        ges_layer = self.ges_clip.props.layer
+        return ges_layer.ui if ges_layer else None
 
     def __dragDropCb(self, unused_widget, context, x, y, timestamp):
         success = False
@@ -929,26 +930,10 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         return success
 
-    def __computeHeightAndY(self):
-        parent = self.get_parent()
-        parent_height = parent.get_allocated_height()
-
-        y = 0
-        height = parent_height
-        has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
-        has_audio = self.ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
-        if not has_video or not has_audio:
-            if self.layer and self.layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
-                height = parent_height / 2
-                if not has_video:
-                    y = height
-
-        return height, y
-
     def updatePosition(self):
-        parent = self.get_parent()
-
-        if not parent or not self.layer:
+        layer = self.layer
+        if not layer or layer != self.get_parent():
+            # Things are not settled yet.
             return
 
         start = self.ges_clip.props.start
@@ -958,17 +943,26 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         # int(pixels_float). In that case, the rounding can add up and a pixel
         # might be lost if we ignore the start of the clip.
         width = self.nsToPixel(start + duration) - x
-        parent_height = parent.get_allocated_height()
 
-        height, y = self.__computeHeightAndY()
+        parent_height = layer.get_allocated_height()
+        y = 0
+        height = parent_height
+        has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
+        has_audio = self.ges_clip.find_track_elements(None, GES.TrackType.AUDIO, GObject.TYPE_NONE)
+        if not has_video or not has_audio:
+            if layer.media_types == (GES.TrackType.AUDIO | GES.TrackType.VIDEO):
+                height = parent_height / 2
+                if not has_video:
+                    y = height
+
         if self.__force_position_update or \
                 x != self._current_x or \
                 y != self._current_y or \
-                width != self._curent_width \
-                or parent_height != self._current_parent_height or \
-                parent != self._current_parent:
+                width != self._curent_width or \
+                parent_height != self._current_parent_height or \
+                layer != self._current_parent:
 
-            self.layer.move(self, x, y)
+            layer.move(self, x, y)
             self.set_size_request(width, height)
 
             elements = self._elements_container.get_children()
@@ -979,8 +973,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self._current_x = x
             self._current_y = y
             self._curent_width = width
-            self._current_parent_height = parent.get_allocated_height()
-            self._current_parent = parent
+            self._current_parent_height = parent_height
+            self._current_parent = layer
 
     def _setupWidget(self):
         pass
