@@ -7,6 +7,7 @@ if runtests.found()
         ['Test clipproperties', 'test_clipproperties'],
         ['Test common utilities', 'test_common'],
         ['Test logging subsystem', 'test_log'],
+        ['Test effects', 'test_effects'],
         ['Test the main window', 'test_mainwindow'],
         ['Test the media library', 'test_media_library'],
         ['Test the misc utilities', 'test_misc'],

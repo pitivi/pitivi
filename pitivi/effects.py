@@ -164,7 +164,6 @@ class EffectInfo(object):
     @property
     def icon(self):
         pixdir = os.path.join(get_pixmap_dir(), "effects")
-        icon = None
         try:
             # We can afford to scale the images here, the impact is negligible
             icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
@@ -175,6 +174,22 @@ class EffectInfo(object):
             icon = GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(pixdir, "defaultthumbnail.svg"))
         return icon
+
+    @property
+    def bin_description(self):
+        """Gets the bin description which defines this effect."""
+        if self.effect_name.startswith("gl"):
+            return "glupload ! %s ! gldownload" % self.effect_name
+        else:
+            return self.effect_name
+
+    @staticmethod
+    def name_from_bin_description(bin_description):
+        """Gets the name of the effect defined by the `bin_description`."""
+        if bin_description.startswith("glupload"):
+            return bin_description.split("!")[1].strip()
+        else:
+            return bin_description
 
 
 class EffectsManager(object):
@@ -235,15 +250,16 @@ class EffectsManager(object):
                                 description=factory.get_description())
             self._effects[name] = effect
 
-    def getInfo(self, name):
+    def getInfo(self, bin_description):
         """Gets the info for an effect which can be applied.
 
         Args:
-            name (str): The bin_description identifying the effect.
+            bin_description (str): The bin_description defining the effect.
 
         Returns:
             EffectInfo: The info corresponding to the name, or None.
         """
+        name = EffectInfo.name_from_bin_description(bin_description)
         return self._effects.get(name)
 
     def _getEffectCategories(self, effect_name):

@@ -320,7 +320,8 @@ class EffectProperties(Gtk.Expander, Loggable):
                         return effect
 
         model = self.treeview.get_model()
-        media_type = self.app.effects.getInfo(factory_name).media_type
+        effect_info = self.app.effects.getInfo(factory_name)
+        media_type = effect_info.media_type
 
         for track_element in clip.get_children(False):
             track_type = track_element.get_track_type()
@@ -330,7 +331,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                 pipeline = self._project.pipeline
                 with self.app.action_log.started("add effect",
                                                  CommitTimelineFinalizingAction(pipeline)):
-                    effect = GES.Effect.new(bin_description=factory_name)
+                    effect = GES.Effect.new(effect_info.bin_description)
                     clip.add(effect)
                     if priority is not None and priority < len(model):
                         clip.set_top_effect_priority(effect, priority)
