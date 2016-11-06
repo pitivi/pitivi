@@ -1228,9 +1228,6 @@ class TransitionClip(Clip):
             self.__has_video = True
             child.selected.connect("selected-changed", self._selectedChangedCb, child)
 
-    def do_draw(self, cr):
-        Clip.do_draw(self, cr)
-
     def _selectedChangedCb(self, unused_child, selected, child):
         if selected:
             self.app.gui.trans_list.activate(child)
