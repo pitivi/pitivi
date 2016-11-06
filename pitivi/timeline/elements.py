@@ -944,7 +944,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         # might be lost if we ignore the start of the clip.
         width = self.nsToPixel(start + duration) - x
 
-        parent_height = layer.get_allocated_height()
+        parent_height = layer.props.height_request
         y = 0
         height = parent_height
         has_video = self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO, GObject.TYPE_NONE)
@@ -999,9 +999,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for handle in self.handles:
             handle.shrink()
 
-    def do_draw(self, cr):
+    def do_map(self):
+        Gtk.EventBox.do_map(self)
         self.updatePosition()
-        Gtk.EventBox.do_draw(self, cr)
 
     def _button_release_event_cb(self, unused_widget, event):
         if self.timeline.got_dragged:
@@ -1117,6 +1117,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.__force_position_update = True
         self._childAdded(clip, child)
         self.__connectToChild(child)
+        self.updatePosition()
 
     def _childRemoved(self, clip, child):
         pass
@@ -1125,6 +1126,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.__force_position_update = True
         self.__disconnectFromChild(child)
         self._childRemoved(clip, child)
+        self.updatePosition()
 
 
 class SourceClip(Clip):

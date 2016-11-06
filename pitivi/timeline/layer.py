@@ -332,10 +332,10 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
             return
 
         widget = ui_type(self, ges_clip)
-
         self._children.append(widget)
         self._children.sort(key=lambda clip: clip.z_order)
         self.put(widget, self.nsToPixel(ges_clip.props.start), 0)
+        widget.updatePosition()
         self._changed = True
         widget.show_all()
 
