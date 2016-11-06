@@ -523,7 +523,6 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.keyframe_curve.set_size_request(self.__width, self.__height)
         self.keyframe_curve.show()
         self.__update_keyframe_curve_visibility()
-        self.queue_draw()
 
     def __createControlBinding(self, element):
         if self.__controlledProperty:
