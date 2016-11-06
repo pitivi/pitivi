@@ -79,8 +79,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
             YLIM_OVERRIDES[pspec] = values
 
     __gsignals__ = {
-        # Signal our values changed, and a redraw will be needed
-        "plot-changed": (GObject.SIGNAL_RUN_LAST, None, ()),
         # Signal the keyframes or the curve are being hovered
         "enter": (GObject.SIGNAL_RUN_LAST, None, ()),
         # Signal the keyframes or the curve are not being hovered anymore
@@ -205,7 +203,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__keyframes.set_offsets(arr)
         self.__line.set_xdata(self.__line_xs)
         self.__line.set_ydata(self.__line_ys)
-        self.emit("plot-changed")
+        self.queue_draw()
 
     def __maybeCreateKeyframe(self, event):
         line_contains = self.__line.contains(event)[0]
@@ -490,8 +488,6 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             # Nothing to remove.
             return
 
-        self.keyframe_curve.disconnect_by_func(
-            self.__keyframePlotChangedCb)
         self.keyframe_curve.disconnect_by_func(self.__curveEnterCb)
         self.keyframe_curve.disconnect_by_func(self.__curveLeaveCb)
         self.remove(self.keyframe_curve)
@@ -516,8 +512,6 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         self.__removeKeyframes()
         self.keyframe_curve = KeyframeCurve(self.timeline, binding)
-        self.keyframe_curve.connect("plot-changed",
-                                    self.__keyframePlotChangedCb)
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
         self.keyframe_curve.set_size_request(self.__width, self.__height)
@@ -570,9 +564,6 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.add(self.keyframe_curve)
         else:
             self.remove(self.keyframe_curve)
-
-    def __keyframePlotChangedCb(self, unused_curve):
-        self.queue_draw()
 
     # Virtual methods
     def _getPreviewer(self):
