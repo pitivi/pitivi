@@ -32,21 +32,25 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.settings import get_dir
+from pitivi.settings import xdg_cache_home
+from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import binary_search
+from pitivi.utils.misc import filename_from_uri
+from pitivi.utils.misc import get_proxy_target
+from pitivi.utils.misc import hash_file
+from pitivi.utils.misc import quantize
+from pitivi.utils.misc import quote_uri
+from pitivi.utils.system import CPUUsageTracker
+from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import EXPANDED_SIZE
+
 # Our C module optimizing waveforms rendering
 try:
     from . import renderer
 except ImportError:
     # Running uninstalled?
     import renderer
-
-# pylint: disable=ungrouped-imports
-from pitivi.settings import get_dir, xdg_cache_home
-from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import binary_search, filename_from_uri, quantize
-from pitivi.utils.misc import quote_uri, hash_file, get_proxy_target
-from pitivi.utils.system import CPUUsageTracker
-from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import EXPANDED_SIZE
 
 
 WAVEFORMS_CPU_USAGE = 30
