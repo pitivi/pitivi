@@ -356,9 +356,11 @@ class Zoomable(object):
 
     @classmethod
     def setZoomRatio(cls, ratio):
+        ratio = min(max(cls.min_zoom, ratio), cls.max_zoom)
         if cls.zoomratio != ratio:
-            cls.zoomratio = min(cls.max_zoom, max(cls.min_zoom, ratio))
-            cls._zoomChanged()
+            cls.zoomratio = ratio
+            for inst in cls._instances:
+                inst.zoomChanged()
 
     @classmethod
     def setZoomLevel(cls, level):
@@ -419,11 +421,6 @@ class Zoomable(object):
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
         return ((float(duration) / Gst.SECOND) * cls.zoomratio)
-
-    @classmethod
-    def _zoomChanged(cls):
-        for inst in cls._instances:
-            inst.zoomChanged()
 
     def zoomChanged(self):
         pass
