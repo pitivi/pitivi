@@ -973,7 +973,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         overlay = Gtk.Overlay()
         self.add(overlay)
 
-        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 2)
+        self._elements_container = Gtk.Box.new(Gtk.Orientation.VERTICAL, 0)
         overlay.add_overlay(self._elements_container)
 
         self.leftHandle = TrimHandle(self, GES.Edge.EDGE_START)
