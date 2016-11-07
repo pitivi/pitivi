@@ -490,9 +490,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             # started this job.
             return
 
-        # self.props.width_request = self.nsToPixel(self.ges_elem.get_asset().get_filesource_asset().props.duration)
-        # self.props.width = self.nsToPixel(self.ges_elem.get_asset().get_filesource_asset().props.duration)
-
         self.debug(
             'Now generating thumbnails for: %s', filename_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
@@ -1035,10 +1032,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
         self.becomeControlled()
-
-    # pylint: disable=arguments-differ
-    def set_size(self, unused_width, unused_height):
-        self._force_redraw = True
 
     def zoomChanged(self):
         self._force_redraw = True
