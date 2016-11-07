@@ -446,7 +446,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def release(self):
         if self.__previewer:
-            self.__previewer.cleanup()
+            self.__previewer.release()
 
     # Public API
     def setSize(self, width, height):

@@ -54,7 +54,7 @@ except ImportError:
 
 
 WAVEFORMS_CPU_USAGE = 30
-SAMPLE_DURATION = 10000000
+SAMPLE_DURATION = Gst.SECOND / 100
 
 # A little lower as it's more fluctuating
 THUMBNAILS_CPU_USAGE = 20
@@ -693,7 +693,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.pipeline = None
         self.emit("done")
 
-    def cleanup(self):
+    def release(self):
         """Stops preview generation and cleans the object."""
         self.stopGeneration()
         Zoomable.__del__(self)
@@ -1161,7 +1161,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.emit("done")
 
-    def cleanup(self):
+    def release(self):
         """Stops preview generation and cleans the object."""
         self.stopGeneration()
         Zoomable.__del__(self)
