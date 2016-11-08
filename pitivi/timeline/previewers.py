@@ -151,7 +151,7 @@ class ThumbnailBin(PreviewerBin):
 
 
 class TeedThumbnailBin(ThumbnailBin):
-    """Bin to generate and save thumbnails to as SQLite database."""
+    """Bin to generate and save thumbnails to an SQLite database."""
 
     def __init__(self):
         ThumbnailBin.__init__(
@@ -356,6 +356,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     Attributes:
         ges_elem (GES.TrackElement): The previewed element.
+        thumbs (dict): Maps (quantized) times to Thumbnail objects.
+        thumb_cache (ThumbnailCache): The pixmaps persistent cache.
     """
 
     # We could define them in Previewer, but for some reason they are ignored.
@@ -389,7 +391,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
 
-        # Maps (quantized) times to Thumbnail objects
         self.thumbs = {}
         self.thumb_cache = ThumbnailCache.get(self.uri)
         self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
@@ -398,11 +399,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.interval = 500  # Every 0.5 second, reevaluate the situation
 
         # Connect signals and fire things up
-        self.ges_elem.connect("notify::in-point", self._inpointChangedCb)
+        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
 
         self.pipeline = None
         self.gdkpixbufsink = None
-        self.__last_rectangle = Gdk.Rectangle()
         self.becomeControlled()
 
         self.connect("notify::height-request", self._heightChangedCb)
@@ -501,12 +501,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self._checkCPU()
 
-        if self.ges_elem.props.in_point != 0:
-            adj = self.get_hadjustment()
-            adj.props.page_size = 1.0
-            adj.props.value = Zoomable.nsToPixel(self.ges_elem.props.in_point)
-
-        # self._addVisibleThumbnails()
         # Save periodically to avoid the common situation where the user exits
         # the app before a long clip has been fully thumbnailed.
         # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
@@ -563,40 +557,40 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # make sure that we don't show thumbnails more often than thumb_period
         return max(thumb_duration, self.thumb_period)
 
-    def _remove_all_children(self):
-        for child in self.get_children():
-            self.remove(child)
-
-    def _addVisibleThumbnails(self, rect):
-        """Gets the thumbnails for the currently visible clip portion."""
+    def _update_thumbnails(self):
+        """Updates the thumbnails for the currently visible clip portion."""
         if self.thumb_width is None:
             return False
 
-        self.thumbs = {}
+        thumbs = {}
         self.wishlist = []
-
         thumb_duration = self._get_thumb_duration()
-
-        element_left = self.pixelToNs(rect.x) + self.ges_elem.props.in_point
-        element_right = element_left + self.pixelToNs(rect.width)
-        element_left = quantize(element_left, thumb_duration)
-
-        for current_time in range(element_left, element_right, thumb_duration):
-            thumb = Thumbnail(self.thumb_width, self.thumb_height)
-            x = Zoomable.nsToPixel(current_time) - self.nsToPixel(self.ges_elem.props.in_point)
+        element_left = quantize(self.ges_elem.props.in_point, thumb_duration)
+        element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
+        for position in range(element_left, element_right, thumb_duration):
+            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
             y = (self.props.height_request - self.thumb_height) / 2
-            self.put(thumb, x, y)
+            try:
+                thumb = self.thumbs.pop(position)
+                self.move(thumb, x, y)
+            except KeyError:
+                thumb = Thumbnail(self.thumb_width, self.thumb_height)
+                self.put(thumb, x, y)
 
-            self.thumbs[current_time] = thumb
+            thumbs[position] = thumb
             if self.__image_pixbuf:
+                # The thumbnail is fixed, probably it's an image clip.
                 thumb.set_from_pixbuf(self.__image_pixbuf)
                 thumb.set_visible(True)
-            elif current_time in self.thumb_cache:
-                pixbuf = self.thumb_cache[current_time]
+            elif position in self.thumb_cache:
+                pixbuf = self.thumb_cache[position]
                 thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
             else:
-                self.wishlist.append(current_time)
+                self.wishlist.append(position)
+        for thumb in self.thumbs.values():
+            self.remove(thumb)
+        self.thumbs = thumbs
 
         return True
 
@@ -609,32 +603,29 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             if wish in self.queue:
                 return wish
 
-    def _setThumbnail(self, time, pixbuf):
-        # Q: Is "time" guaranteed to be nanosecond precise?
-        # A: Not always.
-        # => __tim says: "that's how it should be"
-        # => also see gst-plugins-good/tests/icles/gdkpixbufsink-test
-        # => Daniel: It is *not* nanosecond precise when we remove the videorate
-        #            element from the pipeline
-        # => thiblahute: not the case with mpegts
-        if time in self.thumbs:
-            thumb = self.thumbs[time]
+    def _set_pixbuf(self, position, pixbuf):
+        """Sets the pixbuf for the thumbnail at the specified position."""
+        if position in self.thumbs:
+            thumb = self.thumbs[position]
         else:
+            # The pixbufs we get from gdkpixbufsink are not always
+            # exactly the ones requested, the reported position can differ.
+            # Try to find the closest thumbnail for the specified position.
             sorted_times = sorted(self.thumbs.keys())
-            index = binary_search(sorted_times, time)
-            time = sorted_times[index]
-            thumb = self.thumbs[time]
+            index = binary_search(sorted_times, position)
+            position = sorted_times[index]
+            thumb = self.thumbs[position]
 
         thumb.set_from_pixbuf(pixbuf)
-        if time in self.queue:
-            self.queue.remove(time)
-        self.thumb_cache[time] = pixbuf
+        if position in self.queue:
+            self.queue.remove(position)
+        self.thumb_cache[position] = pixbuf
         self.queue_draw()
 
     # Interface (Zoomable)
 
     def zoomChanged(self):
-        self._remove_all_children()
+        self._update_thumbnails()
 
     # Callbacks
 
@@ -646,7 +637,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             if struct_name == "preroll-pixbuf":
                 stream_time = struct.get_value("stream-time")
                 pixbuf = struct.get_value("pixbuf")
-                self._setThumbnail(stream_time, pixbuf)
+                self._set_pixbuf(stream_time, pixbuf)
         elif message.type == Gst.MessageType.ASYNC_DONE and \
                 message.src == self.pipeline:
             self._checkCPU()
@@ -659,12 +650,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             return True
         return False
 
-    def _heightChangedCb(self, unused_widget, unused_value):
-        self._remove_all_children()
+    def _heightChangedCb(self, unused_widget, unused_param_spec):
+        self._update_thumbnails()
 
-    def _inpointChangedCb(self, unused_b_element, unused_value):
-        self.get_hadjustment().set_value(Zoomable.nsToPixel(
-            self.ges_elem.props.in_point))
+    def _inpoint_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
+        self._update_thumbnails()
 
     def setSelected(self, selected):
         if selected:
@@ -694,21 +684,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Stops preview generation and cleans the object."""
         self.stopGeneration()
         Zoomable.__del__(self)
-
-    # pylint: disable=arguments-differ
-    def do_draw(self, context):
-        res, rect = Gdk.cairo_get_clip_rectangle(context)
-        assert res
-        if self.__last_rectangle.x != rect.x or \
-                self.__last_rectangle.y != rect.y or \
-                self.__last_rectangle.width != rect.width or \
-                self.__last_rectangle.height != rect.height:
-            if self._addVisibleThumbnails(rect):
-                self.__last_rectangle = rect
-            else:
-                self.__last_rectangle = Gdk.Rectangle()
-
-        Gtk.Layout.do_draw(self, context)
 
 
 class Thumbnail(Gtk.Image):
