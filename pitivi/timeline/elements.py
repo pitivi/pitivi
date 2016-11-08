@@ -873,7 +873,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.__force_position_update = True
 
         for child in self.ges_clip.get_children(False):
-            self._childAdded(self.ges_clip, child)
+            self._childAdded(child)
             self.__connectToChild(child)
 
         # Connect to Widget signals.
@@ -1093,7 +1093,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             child.ui.connect("curve-enter", self.__curveEnterCb)
             child.ui.connect("curve-leave", self.__curveLeaveCb)
 
-    def _childAdded(self, clip, child):
+    def _childAdded(self, child):
         child.selected = Selected()
         child.ui = None
 
@@ -1105,17 +1105,17 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
     def _childAddedCb(self, clip, child):
         self.__force_position_update = True
-        self._childAdded(clip, child)
+        self._childAdded(child)
         self.__connectToChild(child)
         self.updatePosition()
 
-    def _childRemoved(self, clip, child):
+    def _childRemoved(self, child):
         pass
 
     def _childRemovedCb(self, clip, child):
         self.__force_position_update = True
         self.__disconnectFromChild(child)
-        self._childRemoved(clip, child)
+        self._childRemoved(child)
         self.updatePosition()
 
 
@@ -1130,7 +1130,7 @@ class SourceClip(Clip):
 
         self.get_style_context().add_class("Clip")
 
-    def _childRemoved(self, clip, child):
+    def _childRemoved(self, child):
         if child.ui is not None:
             self._elements_container.remove(child.ui)
             child.ui = None
@@ -1149,8 +1149,8 @@ class UriClip(SourceClip):
 
         return True
 
-    def _childAdded(self, clip, child):
-        SourceClip._childAdded(self, clip, child)
+    def _childAdded(self, child):
+        SourceClip._childAdded(self, child)
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.AUDIO:
@@ -1168,8 +1168,8 @@ class UriClip(SourceClip):
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
-    def _childAdded(self, clip, child):
-        SourceClip._childAdded(self, clip, child)
+    def _childAdded(self, child):
+        SourceClip._childAdded(self, child)
 
         if isinstance(child, GES.Source):
             if child.get_track_type() == GES.TrackType.VIDEO:
@@ -1209,8 +1209,8 @@ class TransitionClip(Clip):
 
         return True
 
-    def _childAdded(self, clip, child):
-        Clip._childAdded(self, clip, child)
+    def _childAdded(self, child):
+        Clip._childAdded(self, child)
 
         if isinstance(child, GES.VideoTransition):
             self.z_order = 1
