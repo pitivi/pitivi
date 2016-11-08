@@ -247,8 +247,8 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self.props.valign = Gtk.Align.START
 
         self.media_types = GES.TrackType(0)
-        for clip in ges_layer.get_clips():
-            self._add_clip(clip)
+        for ges_clip in ges_layer.get_clips():
+            self._add_clip(ges_clip)
         self.checkMediaTypes()
 
     def setName(self, name):

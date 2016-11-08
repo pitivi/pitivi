@@ -872,9 +872,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self._setupWidget()
         self.__force_position_update = True
 
-        for child in self.ges_clip.get_children(False):
-            self._childAdded(child)
-            self.__connectToChild(child)
+        for ges_timeline_element in self.ges_clip.get_children(False):
+            self._add_child(ges_timeline_element)
+            self.__connect_to_child(ges_timeline_element)
 
         # Connect to Widget signals.
         self.connect("button-release-event", self._button_release_event_cb)
@@ -886,8 +886,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.ges_clip.connect("notify::duration", self._durationChangedCb)
         self.ges_clip.connect("notify::layer", self._layerChangedCb)
 
-        self.ges_clip.connect_after("child-added", self._childAddedCb)
-        self.ges_clip.connect_after("child-removed", self._childRemovedCb)
+        self.ges_clip.connect_after("child-added", self._child_added_cb)
+        self.ges_clip.connect_after("child-removed", self._child_removed_cb)
 
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
@@ -1049,8 +1049,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         disconnectAllByFunc(self.ges_clip, self._startChangedCb)
         disconnectAllByFunc(self.ges_clip, self._durationChangedCb)
         disconnectAllByFunc(self.ges_clip, self._layerChangedCb)
-        disconnectAllByFunc(self.ges_clip, self._childAddedCb)
-        disconnectAllByFunc(self.ges_clip, self._childRemovedCb)
+        disconnectAllByFunc(self.ges_clip, self._child_added_cb)
+        disconnectAllByFunc(self.ges_clip, self._child_removed_cb)
 
     def __showHandles(self):
         for handle in self.handles:
@@ -1088,14 +1088,10 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if child.ui:
             child.ui.release()
 
-    def __connectToChild(self, child):
+    def __connect_to_child(self, child):
         if child.ui:
             child.ui.connect("curve-enter", self.__curveEnterCb)
             child.ui.connect("curve-leave", self.__curveLeaveCb)
-
-    def _childAdded(self, child):
-        child.selected = Selected()
-        child.ui = None
 
     def __curveEnterCb(self, unused_keyframe_curve):
         self.__hideHandles()
@@ -1103,19 +1099,23 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def __curveLeaveCb(self, unused_keyframe_curve):
         self.__showHandles()
 
-    def _childAddedCb(self, clip, child):
+    def _add_child(self, ges_timeline_element):
+        ges_timeline_element.selected = Selected()
+        ges_timeline_element.ui = None
+
+    def _child_added_cb(self, unused_ges_clip, ges_timeline_element):
         self.__force_position_update = True
-        self._childAdded(child)
-        self.__connectToChild(child)
+        self._add_child(ges_timeline_element)
+        self.__connect_to_child(ges_timeline_element)
         self.updatePosition()
 
-    def _childRemoved(self, child):
+    def _remove_child(self, ges_timeline_element):
         pass
 
-    def _childRemovedCb(self, clip, child):
+    def _child_removed_cb(self, unused_ges_clip, ges_timeline_element):
         self.__force_position_update = True
-        self.__disconnectFromChild(child)
-        self._childRemoved(child)
+        self.__disconnectFromChild(ges_timeline_element)
+        self._remove_child(ges_timeline_element)
         self.updatePosition()
 
 
@@ -1130,10 +1130,10 @@ class SourceClip(Clip):
 
         self.get_style_context().add_class("Clip")
 
-    def _childRemoved(self, child):
-        if child.ui is not None:
-            self._elements_container.remove(child.ui)
-            child.ui = None
+    def _remove_child(self, ges_timeline_element):
+        if ges_timeline_element.ui:
+            self._elements_container.remove(ges_timeline_element.ui)
+            ges_timeline_element.ui = None
 
 
 class UriClip(SourceClip):
@@ -1149,34 +1149,38 @@ class UriClip(SourceClip):
 
         return True
 
-    def _childAdded(self, child):
-        SourceClip._childAdded(self, child)
+    def _add_child(self, ges_timeline_element):
+        SourceClip._add_child(self, ges_timeline_element)
 
-        if isinstance(child, GES.Source):
-            if child.get_track_type() == GES.TrackType.AUDIO:
-                self._audioSource = AudioUriSource(child, self.timeline)
-                child.ui = self._audioSource
-                self._elements_container.pack_end(self._audioSource, True, False, 0)
-                self._audioSource.set_visible(True)
-            elif child.get_track_type() == GES.TrackType.VIDEO:
-                self._videoSource = VideoUriSource(child, self.timeline)
-                child.ui = self._videoSource
-                self._elements_container.pack_start(self._videoSource, True, False, 0)
-                self._videoSource.set_visible(True)
+        if not isinstance(ges_timeline_element, GES.Source):
+            return
+
+        if ges_timeline_element.get_track_type() == GES.TrackType.AUDIO:
+            self._audioSource = AudioUriSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self._audioSource
+            self._elements_container.pack_end(self._audioSource, True, False, 0)
+            self._audioSource.set_visible(True)
+        elif ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
+            self._videoSource = VideoUriSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self._videoSource
+            self._elements_container.pack_start(self._videoSource, True, False, 0)
+            self._videoSource.set_visible(True)
 
 
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
-    def _childAdded(self, child):
-        SourceClip._childAdded(self, child)
+    def _add_child(self, ges_timeline_element):
+        SourceClip._add_child(self, ges_timeline_element)
 
-        if isinstance(child, GES.Source):
-            if child.get_track_type() == GES.TrackType.VIDEO:
-                self._videoSource = TitleSource(child, self.timeline)
-                child.ui = self._videoSource
-                self._elements_container.pack_start(self._videoSource, True, False, 0)
-                self._videoSource.set_visible(True)
+        if not isinstance(ges_timeline_element, GES.Source):
+            return
+
+        if ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
+            self._videoSource = TitleSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self._videoSource
+            self._elements_container.pack_start(self._videoSource, True, False, 0)
+            self._videoSource.set_visible(True)
 
 
 class TransitionClip(Clip):
@@ -1209,18 +1213,20 @@ class TransitionClip(Clip):
 
         return True
 
-    def _childAdded(self, child):
-        Clip._childAdded(self, child)
+    def _add_child(self, ges_timeline_element):
+        Clip._add_child(self, ges_timeline_element)
 
-        if isinstance(child, GES.VideoTransition):
-            self.z_order = 1
-            self.set_sensitive(True)
-            self.__has_video = True
-            child.selected.connect("selected-changed", self._selectedChangedCb, child)
+        if not isinstance(ges_timeline_element, GES.VideoTransition):
+            return
 
-    def _selectedChangedCb(self, unused_child, selected, child):
+        self.z_order = 1
+        self.set_sensitive(True)
+        self.__has_video = True
+        ges_timeline_element.selected.connect("selected-changed", self._selectedChangedCb, ges_timeline_element)
+
+    def _selectedChangedCb(self, unused_selected, selected, ges_timeline_element):
         if selected:
-            self.app.gui.trans_list.activate(child)
+            self.app.gui.trans_list.activate(ges_timeline_element)
         else:
             self.app.gui.trans_list.deactivate()
 
