@@ -388,7 +388,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         exit(exitcode)
 
-    def clean_args(self, args):
+    def clean_args(self):
         self.check_flatpak()
 
         repos = FlatpakRepos()
@@ -412,7 +412,6 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             "org.pitivi.Pitivi", self.branch, self.app_repo, "x86_64")
         self.packs = [self.runtime, self.locale]
 
-        self.args = args
         if self.bundle:
             self.build = True
 
@@ -568,6 +567,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             m.update()
 
 if __name__ == "__main__":
+    app_flatpak = PitiviFlatpak()
+
     parser = argparse.ArgumentParser(
         prog="pitivi-flatpak")
 
@@ -579,6 +580,11 @@ if __name__ == "__main__":
     # Only used by the installer to keep the Terminal window open on exit.
     general.add_argument("--installer", dest="installer",
                          action="store_true")
+
+    general.add_argument("args",
+                         nargs=argparse.REMAINDER,
+                         help="Arguments passed when starting %s or, if -d is "
+                              "passed, the command to run" % app_flatpak.name)
 
     devel = parser.add_argument_group("Development")
     devel.add_argument("-d", "--devel", dest="devel",
@@ -618,7 +624,6 @@ if __name__ == "__main__":
         help="Generate static deltas (check 'man flatpak-build-update-repo'"
         " for more information)")
 
-    app_flatpak = PitiviFlatpak()
-    flatpak_args = parser.parse_known_args(namespace=app_flatpak)[1]
-    app_flatpak.clean_args(flatpak_args)
+    parser.parse_args(namespace=app_flatpak)
+    app_flatpak.clean_args()
     app_flatpak.run()
