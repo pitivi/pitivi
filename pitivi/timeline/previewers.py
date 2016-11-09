@@ -964,9 +964,13 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self._force_redraw = True
 
-        self.ges_elem.connect("notify::in-point", self._inpointChangedCb)
+        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
+        self.connect("notify::height-request", self._height_changed_cb)
 
-    def _inpointChangedCb(self, unused_b_element, unused_value):
+    def _inpoint_changed_cb(self, unused_b_element, unused_value):
+        self._force_redraw = True
+
+    def _height_changed_cb(self, unused_widget, unused_param_spec):
         self._force_redraw = True
 
     def startLevelsDiscoveryWhenIdle(self):
