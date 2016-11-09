@@ -1408,9 +1408,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline = Timeline(self.app, left_size_group)
 
-        vscrollbar = Gtk.VScrollbar(adjustment=self.timeline.vadj)
+        vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
+                                   adjustment=self.timeline.vadj)
         vscrollbar.get_style_context().add_class("background")
-        hscrollbar = Gtk.HScrollbar(adjustment=self.timeline.hadj)
+        hscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.HORIZONTAL,
+                                   adjustment=self.timeline.hadj)
         hscrollbar.get_style_context().add_class("background")
 
         self.ruler = ScaleRuler(self)
