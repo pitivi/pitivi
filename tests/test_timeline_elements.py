@@ -17,9 +17,12 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import mock
+from unittest import TestCase
 
+from gi.overrides import GObject
 from gi.repository import GES
 
+from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from tests.common import create_test_clip
 from tests.common import create_timeline_container
 from tests.test_timeline_timeline import BaseTestTimeline
@@ -193,3 +196,12 @@ class TestVideoSourceScaling(BaseTestTimeline):
         height = video_source.get_child_property("height")[1]
         self.assertEqual(width, 960)
         self.assertEqual(height, 400)
+
+
+class TestClip(TestCase):
+
+    def test_clip_subclasses(self):
+        for gtype, widget_class in GES_TYPE_UI_TYPE.items():
+            ges_object = GObject.new(gtype)
+            widget = widget_class(mock.Mock(), ges_object)
+            self.assertEqual(ges_object.ui, widget, widget_class)

@@ -1143,8 +1143,6 @@ class UriClip(SourceClip):
         SourceClip.__init__(self, layer, ges_clip)
         self.props.has_tooltip = True
 
-        self.set_tooltip_markup(filename_from_uri(ges_clip.get_uri()))
-
     def do_query_tooltip(self, x, y, keyboard_mode, tooltip):
         tooltip.set_markup(filename_from_uri(
             self.ges_clip.get_asset().props.id))
