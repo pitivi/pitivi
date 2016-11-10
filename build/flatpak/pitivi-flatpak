@@ -51,15 +51,23 @@ class Colors:  # pylint: disable=too-few-public-methods
     ENDC = "\033[0m"
 
 
-def message(str_format, *args):
-    if args:
-        print(str_format % args)
-    else:
-        print(str_format)
+class Console:  # pylint: disable=too-few-public-methods
 
-    # Flush so that messages are printed at the right time
-    # as we use many subprocesses.
-    sys.stdout.flush()
+    quiet = False
+
+    @classmethod
+    def message(cls, str_format, *args):
+        if cls.quiet:
+            return
+
+        if args:
+            print(str_format % args)
+        else:
+            print(str_format)
+
+        # Flush so that messages are printed at the right time
+        # as we use many subprocesses.
+        sys.stdout.flush()
 
 
 def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
@@ -81,7 +89,8 @@ def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
     else:
         template["desktop-file-name-prefix"] = "(%s) " % branchname
 
-    message("-> Generating %s against GStreamer %s", outfile, gst_version)
+    Console.message("-> Generating %s against GStreamer %s",
+                    outfile, gst_version)
 
     for module in template["modules"]:
         if module["sources"][0]["type"] != "git":
@@ -94,8 +103,8 @@ def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
 
         repo = os.path.join(basedir, module["name"])
         if not os.path.exists(os.path.join(repo, ".git")):
-            message("-> Module: %s using online repo: %s",
-                    module["name"], module["sources"][0]["url"])
+            Console.message("-> Module: %s using online repo: %s",
+                            module["name"], module["sources"][0]["url"])
             continue
 
         branch = subprocess.check_output(
@@ -104,8 +113,8 @@ def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
                 "utf-8").split(" ")[1].strip("\n")
 
         repo = "file://" + repo
-        message("-> Module: %s repo: %s branch: %s",
-                module["name"], repo, branch)
+        Console.message("-> Module: %s repo: %s branch: %s",
+                        module["name"], repo, branch)
         module["sources"][0]["url"] = repo
         module["sources"][0]["branch"] = branch
 
@@ -120,7 +129,7 @@ class FlatpakObject:  # pylint: disable=too-few-public-methods
 
     def flatpak(self, command, *args, show_output=False, comment=None):
         if comment:
-            message(comment)
+            Console.message(comment)
 
         command = ["flatpak", command]
         if self.user:
@@ -201,7 +210,7 @@ class FlatpakRepos(FlatpakObject):
                 desc += elem
 
             if not url:
-                message("No valid URI found for: %s", repo)
+                Console.message("No valid URI found for: %s", repo)
                 continue
 
             self.repos[name] = FlatpakRepo(name, desc, url, repos=self)
@@ -364,12 +373,12 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         try:
             output = subprocess.check_output(["flatpak", "--version"])
         except FileNotFoundError:
-            message("\n%sYou need to install flatpak >= %s"
-                    " to be able to use the '%s' script.\n\n"
-                    "You can find some informations about"
-                    " how to install it for your distribution at:\n"
-                    "    * http://flatpak.org/%s\n", Colors.FAIL,
-                    FLATPAK_REQ, sys.argv[0], Colors.ENDC)
+            Console.message("\n%sYou need to install flatpak >= %s"
+                            " to be able to use the '%s' script.\n\n"
+                            "You can find some informations about"
+                            " how to install it for your distribution at:\n"
+                            "    * http://flatpak.org/%s\n", Colors.FAIL,
+                            FLATPAK_REQ, sys.argv[0], Colors.ENDC)
             self.exit(1)
 
         def comparable_version(version):
@@ -377,9 +386,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         version = output.decode("utf-8").split(" ")[1].strip("\n")
         if comparable_version(version) < comparable_version(FLATPAK_REQ):
-            message("\n%sFlatpak %s required but %s found."
-                    " Please update and try again%s\n", Colors.FAIL,
-                    FLATPAK_REQ, version, Colors.ENDC)
+            Console.message("\n%sFlatpak %s required but %s found."
+                            " Please update and try again%s\n", Colors.FAIL,
+                            FLATPAK_REQ, version, Colors.ENDC)
             self.exit(1)
 
     def exit(self, exitcode):
@@ -389,6 +398,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         exit(exitcode)
 
     def clean_args(self):
+        Console.quiet = self.quiet
+
         self.check_flatpak()
 
         repos = FlatpakRepos()
@@ -462,9 +473,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         if self.commit_body:
             build_export_args.append("--body=%s" % self.commit_body)
 
-        message('-> Exporting repo %s %s (args: --body="%s" --subject="%s")',
-                self.repodir, self.branch, self.commit_body,
-                self.commit_subject)
+        Console.message('-> Exporting repo %s %s (--body="%s" --subject="%s")',
+                        self.repodir, self.branch, self.commit_body,
+                        self.commit_subject)
         try:
             subprocess.check_call(build_export_args)
         except subprocess.CalledProcessError:
@@ -477,7 +488,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         update_repo_args.append(self.repodir)
 
-        message("Updating repo '%s'", "'".join(update_repo_args))
+        Console.message("Updating repo '%s'", "'".join(update_repo_args))
         try:
             subprocess.check_call(update_repo_args)
         except subprocess.CalledProcessError:
@@ -501,7 +512,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             if not self.bundle:
                 builder_args.append("--build-only")
 
-            message("Building Pitivi %s", self.branch)
+            Console.message("Building Pitivi %s", self.branch)
             subprocess.check_call(builder_args)
 
             configure_args = ["./configure", "--prefix=/app", "--libdir=lib"]
@@ -550,7 +561,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         else:
             flatpak_command.append(os.path.join(self.scriptdir, "enter-env"))
 
-        message("Running in sandbox: %s", ' '.join(args))
+        Console.message("Running in sandbox: %s", ' '.join(args))
         try:
             subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
@@ -566,6 +577,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         for m in self.packs:
             m.update()
 
+
 if __name__ == "__main__":
     app_flatpak = PitiviFlatpak()
 
@@ -576,11 +588,12 @@ if __name__ == "__main__":
     general.add_argument("--update", dest="update",
                          action="store_true",
                          help="Update the runtime/sdk/app and rebuild the development environment if needed")
-
-    # Only used by the installer to keep the Terminal window open on exit.
     general.add_argument("--installer", dest="installer",
-                         action="store_true")
-
+                         action="store_true",
+                         help="Wait for Enter to be pressed when the script exits because something failed")
+    general.add_argument("-q", "--quiet", dest="quiet",
+                         action="store_true",
+                         help="Do not print anything")
     general.add_argument("args",
                          nargs=argparse.REMAINDER,
                          help="Arguments passed when starting %s or, if -d is "

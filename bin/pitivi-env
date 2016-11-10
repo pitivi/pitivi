@@ -19,7 +19,7 @@ export CURRENT_GST=$FLATPAK_ENVPATH
 alias ptvenv="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up environment if needed..."
-ptvenv "echo"
+$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -q -d echo
 if [ "$?" = "0" ];
 then
     # Set up environment variables and aliases so configuring, building, etc.
@@ -37,7 +37,7 @@ then
     alias configure=$configure
 
     # Prefer to run the binaries in the sandbox. For example "python3".
-    for i in `ptvenv ls /app/bin/`;
+    for i in `$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
     do
         alias $i="ptvenv $i"
     done
