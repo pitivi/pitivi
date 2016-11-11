@@ -93,7 +93,7 @@ class Pitivi(Gtk.Application, Loggable):
         Zoomable.app = self
         self.shortcuts = ShortcutsManager(self)
 
-    def write_action(self, action, properties={}):
+    def write_action(self, action, **kwargs):
         if self._scenario_file is None:
             return
 
@@ -113,7 +113,8 @@ class Pitivi(Gtk.Application, Loggable):
         if not isinstance(action, Gst.Structure):
             structure = Gst.Structure.new_empty(action)
 
-            for key, value in properties.items():
+            for key, value in kwargs.items():
+                key = key.replace("_", "-")
                 structure[key] = value
 
             action = structure
@@ -266,7 +267,7 @@ class Pitivi(Gtk.Application, Loggable):
             with open(project_path) as project:
                 content = project.read().replace("\n", "")
                 self.write_action("load-project",
-                                  {"serialized-content": content})
+                                  serialized_content=content)
 
     def _newProjectLoadingCb(self, unused_project_manager, project):
         self._setScenarioFile(project.get_uri())

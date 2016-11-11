@@ -1701,9 +1701,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             if start < position and end > position:
                 clip.get_layer().splitting_object = True
 
-                self.app.write_action("split-clip", {
-                    "clip-name": clip.get_name(),
-                    "position": float(position / Gst.SECOND)})
+                self.app.write_action("split-clip",
+                    clip_name=clip.get_name(),
+                    position=float(position / Gst.SECOND))
 
                 clip.split(position)
                 clip.get_layer().splitting_object = False
@@ -1823,7 +1823,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Zoomable.zoomOut()
 
     def _zoomFitCb(self, unused_action, unused_parameter):
-        self.app.write_action("zoom-fit", {"optional-action-type": True})
+        self.app.write_action("zoom-fit", optional_action_type=True)
 
         self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 

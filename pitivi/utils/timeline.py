@@ -284,12 +284,12 @@ class EditingContext(GObject.Object, Loggable):
         self.new_priority = priority
 
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
-        self.app.write_action("edit-container", {
-            "container-name": self.focus.get_name(),
-            "position": float(position / Gst.SECOND),
-            "edit-mode": self.mode.value_nick,
-            "edge": self.edge.value_nick,
-            "new-layer-priority": int(priority)})
+        self.app.write_action("edit-container",
+            container_name=self.focus.get_name(),
+            position=float(position / Gst.SECOND),
+            edit_mode=self.mode.value_nick,
+            edge=self.edge.value_nick,
+            new_layer_priority=int(priority))
 
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
@@ -374,14 +374,12 @@ class Zoomable(object):
     @classmethod
     def zoomIn(cls):
         cls.setZoomLevel(cls._cur_zoom + 1)
-        cls.app.write_action("zoom-in",
-                             {"optional-action-type": True})
+        cls.app.write_action("zoom-in", optional_action_type=True)
 
     @classmethod
     def zoomOut(cls):
         cls.setZoomLevel(cls._cur_zoom - 1)
-        cls.app.write_action("zoom-out",
-                             {"optional-action-type": True})
+        cls.app.write_action("zoom-out", optional_action_type=True)
 
     @classmethod
     def computeZoomRatio(cls, x):

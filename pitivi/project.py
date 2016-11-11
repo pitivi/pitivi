@@ -1258,9 +1258,10 @@ class Project(Loggable, GES.Project):
                 track.set_restriction_caps(caps)
 
         if self.app:
-            self.app.write_action("set-track-restriction-caps", {
-                "caps": caps.to_string(),
-                "track-type": GES.TrackType.VIDEO.value_nicks[0]})
+            self.app.write_action(
+                "set-track-restriction-caps",
+                caps=caps.to_string(),
+                track_type=GES.TrackType.VIDEO.value_nicks[0])
 
         self.pipeline.flushSeek()
 
