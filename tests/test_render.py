@@ -18,14 +18,18 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the render module."""
 from unittest import mock
-from unittest import TestCase
+
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
 
 from pitivi.preset import RenderPresetManager
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
+from tests import common
 
 
-class TestRender(TestCase):
+class TestRender(common.TestCase):
     """Tests for functions."""
 
     def test_extensions_supported(self):
@@ -43,3 +47,31 @@ class TestRender(TestCase):
             for unused_name, preset in preset_manager.presets.items():
                 muxer = preset["container"]
                 self.assertIsNotNone(extension_for_muxer(muxer), preset)
+
+    def test_launching_rendering(self):
+        """"Checks no exception is raised when clicking the render button."""
+        timeline_container = common.create_timeline_container()
+        app = timeline_container.app
+        project = app.project_manager.current_project
+
+        mainloop = common.create_main_loop()
+        def asset_added_cb(project, asset):
+            mainloop.quit()
+
+        project.connect("asset-added", asset_added_cb)
+        uris = [common.get_sample_uri("tears_of_steel.webm")]
+        project.addUris(uris)
+        mainloop.run()
+
+        layer, = project.ges_timeline.get_layers()
+        layer.add_asset(project.list_assets(GES.UriClip)[0],
+                        0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.UNKNOWN)
+
+        from pitivi.render import RenderDialog, RenderingProgressDialog
+
+        with mock.patch.object(Gtk.Builder, "__new__"):
+            dialog = RenderDialog(app, project)
+        with mock.patch.object(dialog, "startAction"):
+            with mock.patch.object(RenderingProgressDialog, "__new__"):
+                with mock.patch.object(dialog, "_pipeline"):
+                    dialog._renderButtonClickedCb(None)

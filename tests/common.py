@@ -100,6 +100,7 @@ def create_timeline_container():
     timeline.app.project_manager.current_project = project
     timeline.get_parent = mock.MagicMock(return_value=timeline_container)
 
+    app.gui.timeline_ui = timeline_container
     timeline.app.settings.leftClickAlsoSeeks = False
 
     return timeline_container

@@ -15,6 +15,7 @@ if runtests.found()
         ['Test presets', 'test_preset'],
         ['Test the previewer', 'test_previewers'],
         ['Test the project', 'test_project'],
+        ['Test rendering', 'test_render'],
         ['Test the keyboard shortcuts', 'test_shortcuts'],
         ['Test system integration', 'test_system'],
         ['Test graphical timeline elements', 'test_timeline_elements'],
@@ -25,7 +26,7 @@ if runtests.found()
         ['Test undo/redo in the timeline', 'test_undo_timeline'],
         ['Test utilities', 'test_utils'],
         ['Test the timeline utilities', 'test_utils_timeline'],
-        ['Test our compound widget', 'test_widgets']
+        ['Test our compound widget', 'test_widgets'],
     ]
 
     foreach i: tests
