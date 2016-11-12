@@ -636,4 +636,4 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
     def _rendering(self):
         mask = GES.PipelineFlags.RENDER | GES.PipelineFlags.SMART_RENDER
-        return self._pipeline.get_mode() & mask
+        return self._pipeline.get_mode() & mask != 0
