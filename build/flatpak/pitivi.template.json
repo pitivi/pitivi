@@ -6,6 +6,7 @@
     "finish-args": ["--command=pitivi",
                     "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",
+                    "--talk-name=org.freedesktop.Notifications",
                     "--filesystem=host"],
     "sdk": "org.gnome.Sdk",
     "rename-appdata-file": "pitivi.appdata.xml",
