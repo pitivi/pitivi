@@ -141,7 +141,7 @@ def stop(scenario, action):
 
 def positionChangedCb(pipeline, position, scenario, action,
                       wanted_position):
-    if pipeline._waiting_for_async_done:
+    if pipeline._busy_async:
         return
 
     if pipeline._next_seek:

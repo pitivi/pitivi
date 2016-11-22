@@ -26,6 +26,7 @@ from gi.repository import Gst
 
 from pitivi.utils.pipeline import MAX_RECOVERIES
 from pitivi.utils.pipeline import Pipeline
+from pitivi.utils.pipeline import SimplePipeline
 from tests import common
 
 
@@ -71,3 +72,62 @@ class TestPipeline(common.TestCase):
             set_state.assert_not_called()
         self.assertTrue(pipeline_died_cb.called)
         self.assertEqual(pipe._attempted_recoveries, MAX_RECOVERIES)
+
+    def test_async_done_not_received(self):
+        """Checks the recovery when the ASYNC_DONE message timed out."""
+        ges_timeline = GES.Timeline()
+        self.assertTrue(ges_timeline.add_track(GES.VideoTrack.new()))
+        ges_layer = ges_timeline.append_layer()
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        ges_clip = asset.extract()
+        self.assertTrue(ges_layer.add_clip(ges_clip))
+        self.assertFalse(ges_timeline.is_empty())
+
+        pipe = Pipeline(app=common.create_pitivi_mock())
+
+        pipe.set_timeline(ges_timeline)
+        self.assertFalse(pipe._busy_async)
+        self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
+
+        # Pretend waiting for async-done timed out.
+        # We mock set_state because we don't actually care about the state,
+        # and setting the state to PAUSED could show a video window.
+        with mock.patch.object(pipe, "set_state"):
+            pipe._async_done_not_received_cb()
+        # Make sure the pipeline started a watchdog timer waiting for async-done
+        # as part of setting the state from NULL to PAUSED.
+        self.assertTrue(pipe._busy_async)
+        self.assertEqual(pipe._attempted_recoveries, 1)
+        self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.STARTED_RECOVERING)
+
+        # Pretend the state changed to READY.
+        message = mock.Mock()
+        message.type = Gst.MessageType.STATE_CHANGED
+        message.src = pipe._pipeline
+        message.parse_state_changed.return_value = (Gst.State.NULL, Gst.State.READY, Gst.State.PAUSED)
+        pipe._busMessageCb(None, message)
+
+        # Pretend the state changed to PAUSED.
+        message.parse_state_changed.return_value = (Gst.State.READY, Gst.State.PAUSED, Gst.State.VOID_PENDING)
+        self.assertEqual(pipe._next_seek, None)
+        pipe._busMessageCb(None, message)
+        self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.SEEKED_AFTER_RECOVERING)
+        self.assertTrue(pipe._busy_async)
+        # The pipeline should have tried to seek back to the last position.
+        self.assertEqual(pipe._next_seek, 0)
+
+        # Pretend the state change async operation finished.
+        message.type = Gst.MessageType.ASYNC_DONE
+        pipe._busMessageCb(None, message)
+        self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
+        # Should still be busy because of seeking to _next_seek.
+        self.assertTrue(pipe._busy_async)
+        self.assertIsNone(pipe._next_seek)
+
+        # Pretend the seek async operation finished.
+        message.type = Gst.MessageType.ASYNC_DONE
+        pipe._busMessageCb(None, message)
+        self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
+        self.assertFalse(pipe._busy_async)
+        self.assertIsNone(pipe._next_seek)

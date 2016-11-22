@@ -94,7 +94,6 @@ class SimplePipeline(GObject.Object, Loggable):
         self._last_position = int(0 * Gst.SECOND)
         self._recovery_state = self.RecoveryState.NOT_RECOVERING
         self._attempted_recoveries = 0
-        self._waiting_for_async_done = False
         self._next_seek = None
         self._timeout_async_id = 0
         self._force_position_listener = False
@@ -150,9 +149,10 @@ class SimplePipeline(GObject.Object, Loggable):
 
         Raises:
             PipelineError: If the low-level pipeline could not be changed to
-                the requested state.
+                the requested state. In this case the state is set to
+                Gst.State.NULL
         """
-        self.debug("state set to: %r", state)
+        self.debug("Setting state to: %r", state)
         if state >= Gst.State.PAUSED:
             cstate = self.getState()
             if cstate < Gst.State.PAUSED:
@@ -299,16 +299,34 @@ class SimplePipeline(GObject.Object, Loggable):
         return False
 
     def _removeWaitingForAsyncDoneTimeout(self):
-        if self._timeout_async_id:
-            GLib.source_remove(self._timeout_async_id)
+        if not self._busy_async:
+            return
+        GLib.source_remove(self._timeout_async_id)
         self._timeout_async_id = 0
 
     def _addWaitingForAsyncDoneTimeout(self, timeout=WATCHDOG_TIMEOUT):
         self._removeWaitingForAsyncDoneTimeout()
-
         self._timeout_async_id = GLib.timeout_add_seconds(timeout,
                                                           self._async_done_not_received_cb)
-        self._waiting_for_async_done = True
+
+    @property
+    def _busy_async(self):
+        """Gets whether the pipeline is busy in the background.
+
+        The following operations are performed in the background:
+        - State changing from READY to PAUSED. For example a pipeline in
+          NULL set to PLAYING, goes through each intermediary state
+          including READY to PAUSED, so we consider it ASYNC.
+        - Seeking.
+        - Committing, but only if the timeline is not empty at the time of the commit.
+
+        When the pipeline is working in the background, no seek nor commit
+        should be performed.
+
+        Returns:
+            bool: True iff the pipeline is busy.
+        """
+        return bool(self._timeout_async_id)
 
     def simple_seek(self, position):
         """Seeks in the low-level pipeline to the specified position.
@@ -319,7 +337,7 @@ class SimplePipeline(GObject.Object, Loggable):
         Raises:
             PipelineError: When the seek fails.
         """
-        if self._waiting_for_async_done is True:
+        if self._busy_async:
             self._next_seek = position
             self.info("Setting next seek to %s", self._next_seek)
             return
@@ -336,7 +354,6 @@ class SimplePipeline(GObject.Object, Loggable):
                                   position,
                                   Gst.SeekType.NONE,
                                   -1)
-
         if not res:
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
@@ -360,11 +377,10 @@ class SimplePipeline(GObject.Object, Loggable):
             self.pause()
             self.emit('eos')
         elif message.type == Gst.MessageType.STATE_CHANGED:
-            prev, new, pending = message.parse_state_changed()
-
             if message.src == self._pipeline:
+                prev, new, pending = message.parse_state_changed()
                 self.debug(
-                    "Pipeline change state prev: %r, new: %r, pending: %r", prev, new, pending)
+                    "Pipeline changed state. prev: %r, new: %r, pending: %r", prev, new, pending)
 
                 emit_state_change = pending == Gst.State.VOID_PENDING
                 if prev == Gst.State.READY and new == Gst.State.PAUSED:
@@ -408,12 +424,12 @@ class SimplePipeline(GObject.Object, Loggable):
             self.debug("Duration might have changed, querying it")
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
+            self.debug("Async done, ready for action")
             self.emit("async-done")
             self._removeWaitingForAsyncDoneTimeout()
             if self._recovery_state == self.RecoveryState.SEEKED_AFTER_RECOVERING:
                 self._recovery_state = self.RecoveryState.NOT_RECOVERING
                 self._attempted_recoveries = 0
-            self._waiting_for_async_done = False
             self.__emitPosition()
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek)
@@ -436,14 +452,6 @@ class SimplePipeline(GObject.Object, Loggable):
             self.emit("position", position)
 
         return position
-
-    @property
-    def _waiting_for_async_done(self):
-        return self.__waiting_for_async_done
-
-    @_waiting_for_async_done.setter
-    def _waiting_for_async_done(self, value):
-        self.__waiting_for_async_done = value
 
     def _recover(self):
         if not self._bus:
@@ -615,8 +623,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             SimplePipeline._busMessageCb(self, bus, message)
 
     def commit_timeline(self):
-        if self._waiting_for_async_done and not self._was_empty\
-                and not self.props.timeline.is_empty():
+        is_empty = self.props.timeline.is_empty()
+        if self._busy_async and not self._was_empty and not is_empty:
             self._commit_wanted = True
             self._was_empty = False
             self.debug("commit wanted")
@@ -624,7 +632,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self._addWaitingForAsyncDoneTimeout()
             self.props.timeline.commit()
             self.debug("Commiting right now")
-            self._was_empty = self.props.timeline.is_empty()
+            self._was_empty = is_empty
 
     def setState(self, state):
         SimplePipeline.setState(self, state)
