@@ -673,7 +673,7 @@ class RenderDialog(Loggable):
         Returns:
             str: A human-readable (ex: "14 MB") estimate for the file size.
         """
-        if not self.current_position or self.current_position == 0:
+        if not self.current_position:
             return None
 
         current_filesize = os.stat(path_from_uri(self.outfile)).st_size
@@ -945,21 +945,22 @@ class RenderDialog(Loggable):
     # Periodic (timer) callbacks
     def _updateTimeEstimateCb(self):
         if self._rendering_is_paused:
-            return True  # Do nothing until we resume rendering
-        elif self._is_rendering:
-            timediff = time.time() - \
-                self._time_started - self._time_spent_paused
-            length = self.project.ges_timeline.props.duration
-            totaltime = (timediff * float(length) /
-                         float(self.current_position)) - timediff
-            time_estimate = beautify_ETA(int(totaltime * Gst.SECOND))
-            if time_estimate:
-                self.progress.updateProgressbarETA(time_estimate)
+            # Do nothing until we resume rendering
+            return True
+        if self._is_rendering:
+            if self.current_position:
+                timediff = time.time() - self._time_started - self._time_spent_paused
+                length = self.project.ges_timeline.props.duration
+                estimated_time = timediff * length / self.current_position
+                remaining_time = estimated_time - timediff
+                estimate = beautify_ETA(int(remaining_time * Gst.SECOND))
+                if estimate:
+                    self.progress.updateProgressbarETA(estimate)
             return True
         else:
             self._timeEstimateTimer = None
             self.debug("Stopping the ETA timer")
-            return False  # Stop the timer
+            return False
 
     def _updateFilesizeEstimateCb(self):
         if self._rendering_is_paused:
