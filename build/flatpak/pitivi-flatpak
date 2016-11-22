@@ -360,10 +360,11 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         if os.path.exists(os.path.join(self.topdir, ".git")):
             devnull = open(os.devnull)
             try:
-                self.build_name = self.name + "." + subprocess.check_output(
-                    "git rev-parse --abbrev-ref HEAD".split(
-                        " "), stderr=devnull,
+                branch = subprocess.check_output(
+                    "git rev-parse --abbrev-ref HEAD".split(" "),
+                    stderr=devnull,
                     cwd=self.topdir).decode("utf-8").strip("\n")
+                self.build_name = self.name + "." + branch
             except subprocess.CalledProcessError:
                 pass
             finally:
@@ -497,9 +498,13 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
     def setup_dev_env(self):
         self.install_all()
 
-        if not os.path.exists(self.prefix) or self.update:
-            if os.path.exists(self.prefix):
-                shutil.rmtree(self.prefix)
+        if os.path.exists(self.prefix) and self.update:
+            Console.message("Removing prefix %s", self.prefix)
+            shutil.rmtree(self.prefix)
+
+        if not os.path.exists(self.prefix):
+            Console.message("Building Pitivi %s and dependencies in %s",
+                            self.branch, self.prefix)
 
             json_template = os.path.join(
                 self.scriptdir, "%s.template.json" % self.name.lower())
@@ -512,7 +517,12 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             if not self.bundle:
                 builder_args.append("--build-only")
 
-            Console.message("Building Pitivi %s", self.branch)
+            try:
+                subprocess.check_call(["flatpak-builder", "--version"])
+            except FileNotFoundError:
+                Console.message("\n%sYou need to install flatpak-builder%s\n",
+                                Colors.FAIL, Colors.ENDC)
+                self.exit(1)
             subprocess.check_call(builder_args)
 
             configure_args = ["./configure", "--prefix=/app", "--libdir=lib"]
@@ -523,6 +533,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                                 cwd=self.topdir)
             self.run_in_sandbox("make", exit_on_failure=True,
                                 cwd=self.topdir)
+        else:
+            Console.message("Using Pitivi prefix in %s", self.prefix)
 
         if not self.check and not self.update:
             self.run_in_sandbox(*self.args, exit_on_failure=True)
