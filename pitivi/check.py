@@ -267,25 +267,25 @@ def check_requirements():
         dependency.check()
         if not dependency.satisfied:
             missing_soft_deps[dependency.modulename] = dependency
-            print((_("Missing soft dependency:")))
+            print(_("Missing soft dependency:"))
             print(dependency)
 
     if not hard_dependencies_satisfied:
         return False
 
     if not _check_gst_python():
-        print((_("ERROR — Could not create a Gst.Fraction — "
-              "this means gst-python is not installed correctly.")))
+        print(_("ERROR — Could not create a Gst.Fraction — "
+                "this means gst-python is not installed correctly."))
         return False
 
     if not _check_audiosinks():
-        print((_("Could not create audio output sink. "
-                 "Make sure you have a valid one (pulsesink, alsasink or osssink).")))
+        print(_("Could not create audio output sink. "
+                "Make sure you have a valid one (pulsesink, alsasink or osssink)."))
         return False
 
     if not _check_videosink():
-        print((_("Could not create video output sink. "
-                 "Make sure you have a gtksink available.")))
+        print(_("Could not create video output sink. "
+                "Make sure you have a gtksink available."))
         return False
 
     return True
@@ -297,9 +297,8 @@ def require_version(modulename, version):
     try:
         gi.require_version(modulename, version)
     except ValueError:
-        print((_("Could not import '%s'. "
-                 "Make sure you have it available."
-                 % modulename)))
+        print(_("Could not import '%s'. Make sure you have it available.")
+              % modulename)
         exit(1)
 
 
@@ -312,8 +311,8 @@ def initialize_modules():
     try:
         import gi
     except ImportError:
-        print((_("Could not import 'gi'. "
-                 "Make sure you have pygobject available.")))
+        print(_("Could not import 'gi'. "
+                "Make sure you have pygobject available."))
         exit(1)
 
     require_version("Gtk", GTK_API_VERSION)
@@ -377,9 +376,13 @@ HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      ]
 
 SOFT_DEPENDENCIES = (
-    ClassicDependency("pycanberra", None, _("enables sound notifications when rendering is complete")),
-    GIDependency("Notify", "0.7", None, _("enables visual notifications when rendering is complete")),
-    GstPluginDependency("libav", None, _("additional multimedia codecs through the GStreamer Libav library")),
-    GstPluginDependency("debugutilsbad", None, _("enables a watchdog in the GStreamer pipeline."
-                                                 " Use to detect errors happening in GStreamer"
-                                                 " and recover from them")))
+    ClassicDependency("pycanberra", None,
+                      _("enables sound notifications when rendering is complete")),
+    GIDependency("Notify", "0.7", None,
+                 _("enables visual notifications when rendering is complete")),
+    GstPluginDependency("libav", None,
+                        _("additional multimedia codecs through the GStreamer Libav library")),
+    GstPluginDependency("debugutilsbad", None,
+                        _("enables a watchdog in the GStreamer pipeline."
+                          " Use to detect errors happening in GStreamer"
+                          " and recover from them")))
