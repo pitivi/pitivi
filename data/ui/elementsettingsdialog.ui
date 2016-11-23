@@ -5,7 +5,7 @@
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
-    <property name="title" translatable="yes">Properties for &lt;element&gt;</property>
+    <property name="title" translatable="no">Properties for &lt;element&gt;</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">

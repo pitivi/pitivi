@@ -92,11 +92,6 @@
                     <property name="hexpand">True</property>
                     <property name="action">select-folder</property>
                     <signal name="current-folder-changed" handler="_checkForExistingFile" swapped="no"/>
-                    <child internal-child="accessible">
-                      <object class="AtkObject" id="filebutton-atkobject">
-                        <property name="AtkObject::accessible-name" translatable="yes">Folder</property>
-                      </object>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -139,11 +134,6 @@
                     <property name="can_focus">True</property>
                     <property name="activates_default">True</property>
                     <signal name="changed" handler="_checkForExistingFile" swapped="no"/>
-                    <child internal-child="accessible">
-                      <object class="AtkObject" id="fileentry-atkobject">
-                        <property name="AtkObject::accessible-name" translatable="yes">File name</property>
-                      </object>
-                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -178,11 +168,6 @@
                           <attributes>
                             <attribute name="text">0</attribute>
                           </attributes>
-                        </child>
-                        <child internal-child="accessible">
-                          <object class="AtkObject" id="muxercombobox-atkobject">
-                            <property name="AtkObject::accessible-name" translatable="yes">Container format</property>
-                          </object>
                         </child>
                       </object>
                       <packing>
@@ -333,7 +318,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="halign">start</property>
                                 <property name="invisible_char">•</property>
-                                <property name="text" translatable="yes">1.0</property>
+                                <property name="text" translatable="no">1.0</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="adjustment">adjustment1</property>
@@ -358,7 +343,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">1000 x 1000</property>
+                                <property name="label" translatable="no">1000 x 1000</property>
                                 <property name="width_chars">12</property>
                                 <property name="xalign">0</property>
                                 <child internal-child="accessible">

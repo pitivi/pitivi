@@ -258,7 +258,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="constrain_sar_button">
-                                    <property name="label" translatable="yes">Link</property>
+                                    <property name="label" translatable="yes" comments="When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.">Link</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
@@ -454,7 +454,7 @@
                   <object class="GtkLabel" id="label6">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Video</property>
+                    <property name="label" translatable="yes" comments="The title of the section with the video settings">Video</property>
                   </object>
                 </child>
               </object>
@@ -635,7 +635,7 @@
                   <object class="GtkLabel" id="label12">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Audio</property>
+                    <property name="label" translatable="yes" comments="The title of the section with the audio settings">Audio</property>
                   </object>
                 </child>
               </object>
@@ -730,7 +730,7 @@
                             <property name="halign">start</property>
                             <property name="max_length">4</property>
                             <property name="invisible_char">●</property>
-                            <property name="text" translatable="yes">1900</property>
+                            <property name="text" translatable="no">1900</property>
                             <property name="adjustment">adjustment3</property>
                             <property name="numeric">True</property>
                             <property name="value">1900</property>
@@ -748,7 +748,7 @@
                   <object class="GtkLabel" id="label7">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Info</property>
+                    <property name="label" translatable="yes" comments="The title of the section with the name, author, year fields">Info</property>
                   </object>
                 </child>
               </object>
