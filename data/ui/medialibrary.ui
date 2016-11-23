@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.19.0 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkToolbar" id="medialibrary_toolbar">
@@ -121,7 +121,6 @@
             <property name="secondary_icon_name">edit-clear-symbolic</property>
             <property name="primary_icon_tooltip_text" translatable="yes" comments="This is used as a toolbar button tooltip. Here, &quot;select&quot; means &quot;find&quot; rather than &quot;choose&quot;. It is not the user who selects, but rather the user requesting the application to select the relevant items.">Select clips that have not been used in the project</property>
             <property name="secondary_icon_tooltip_text" translatable="yes">Show all clips</property>
-            <property name="secondary_icon_tooltip_markup" translatable="yes">Show all clips</property>
             <property name="placeholder_text" translatable="yes">Search...</property>
             <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
             <signal name="icon-release" handler="_searchEntryIconClickedCb" swapped="no"/>
@@ -175,9 +174,6 @@
         <property name="position">1</property>
       </packing>
     </child>
-    <action-widgets>
-      <action-widget response="-5">view_error_button</action-widget>
-    </action-widgets>
     <child internal-child="content_area">
       <object class="GtkBox" id="infobar-content_area3">
         <property name="can_focus">False</property>
@@ -203,6 +199,9 @@
         <property name="position">0</property>
       </packing>
     </child>
+    <action-widgets>
+      <action-widget response="-5">view_error_button</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkInfoBar" id="welcome_infobar">
     <property name="visible">True</property>
