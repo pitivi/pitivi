@@ -192,43 +192,40 @@ def _check_audiosinks():
     from gi.repository import Gst
     # Yes, this can still fail, if PulseAudio is non-responsive for example.
     sink = Gst.ElementFactory.make("autoaudiosink", None)
-    if not sink:
+    return sink
+
+
+def _using_broadway_display():
+    from gi.repository import Gdk
+    from gi.repository import GObject
+    try:
+        gdk_broadway_display_type = GObject.type_from_name("GdkBroadwayDisplay")
+    except RuntimeError:
         return False
-    return True
+    display = Gdk.Display.get_default()
+    return GObject.type_is_a(display.__gtype__, gdk_broadway_display_type)
 
 
 def _check_videosink():
     from gi.repository import Gst
-    from gi.repository import Gdk
-    from gi.repository import GObject
     global videosink_factory
 
-    try:
-        # If using GdkBroadwayDisplay make sure not to try to use gtkglsink
-        # as it would segfault right away.
-        if GObject.type_is_a(Gdk.Display.get_default().__gtype__,
-                             GObject.type_from_name("GdkBroadwayDisplay")):
-            videosink_factory = Gst.ElementFactory.find("gtksink")
-            return True
-    except RuntimeError:
-        pass
-
-    if "gtkglsink" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
+    # If using GdkBroadwayDisplay make sure not to try to use gtkglsink
+    # as it would segfault right away.
+    if not videosink_factory and \
+            not _using_broadway_display() and \
+            "gtkglsink" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
         sink = Gst.ElementFactory.make("gtkglsink", None)
-        if not sink:
-            videosink_factory = sink.get_factory()
-        elif sink.set_state(Gst.State.READY) == Gst.StateChangeReturn.SUCCESS:
-            videosink_factory = sink.get_factory()
-            sink.set_state(Gst.State.NULL)
-        else:
-            videosink_factory = Gst.ElementFactory.find("gtksink")
-    else:
+        if sink:
+            res = sink.set_state(Gst.State.READY)
+            if res == Gst.StateChangeReturn.SUCCESS:
+                videosink_factory = sink.get_factory()
+                sink.set_state(Gst.State.NULL)
+
+    if not videosink_factory:
         videosink_factory = Gst.ElementFactory.find("gtksink")
 
-    if videosink_factory:
-        return True
-
-    return False
+    return videosink_factory
 
 
 def _check_gst_python():
