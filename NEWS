@@ -1,3 +1,9 @@
+2016 December 5th - Pitivi 0.98
+
+  * Customizable keyboard shortcuts
+  * Used the warnings printed by GTK 3.22 to fix issues in the timeline widget
+  * Lots of bug fixing, mostly on the timeline
+
 2016 August 8th - Pitivi 0.97
 
   Fifth beta and 7th release of the new version of Pitivi based on GES.
