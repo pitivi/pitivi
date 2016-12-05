@@ -6,7 +6,7 @@ the GStreamer Editing Services library. This is an incremental bugfixing release
 
 == Requirements ==
 
-For this release, we depend on GStreamer, GSt-Python, GES 1.8.2
+For this release, we depend on GStreamer, Gst-Python, GES 1.10.2.
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
 See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
