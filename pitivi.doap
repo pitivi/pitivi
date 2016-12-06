@@ -33,4 +33,11 @@ we would recommend building from version control.
       <gnome:userid>tsaunier</gnome:userid>
     </foaf:Person>
   </maintainer>
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Alexandru Băluț</foaf:name>
+      <foaf:mbox rdf:resource="mailto:alexandru.balut@gmail.com" />
+      <gnome:userid>alexbalut</gnome:userid>
+    </foaf:Person>
+  </maintainer>
 </Project>
