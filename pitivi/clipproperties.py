@@ -447,12 +447,15 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _effectActiveToggleCb(self, cellrenderertoggle, path):
         _iter = self.storemodel.get_iter(path)
-        tck_effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
-        with self.app.action_log.started("change active state"):
-            tck_effect.props.active = not tck_effect.props.active
-            cellrenderertoggle.set_active(tck_effect.is_active())
-            self._updateTreeview()
-            self._project.ges_timeline.commit()
+        effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
+        pipeline = self._project.ges_timeline.get_parent()
+        with self.app.action_log.started("change active state",
+                                         CommitTimelineFinalizingAction(pipeline)):
+            effect.props.active = not effect.props.active
+        # This is not strictly necessary, but makes sure
+        # the UI reflects the current status.
+        cellrenderertoggle.set_active(effect.is_active())
+        self._updateTreeview()
 
     def _expandedCb(self, unused_expander, unused_params):
         self.__updateAll()
