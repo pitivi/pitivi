@@ -51,7 +51,7 @@ class TestPipeline(common.TestCase):
         self.assertEqual(pipe._attempted_recoveries, 0)
         self.assertFalse(pipeline_died_cb.called)
 
-        for i in range(MAX_RECOVERIES + 1):
+        for i in range(MAX_RECOVERIES):
             with mock.patch.object(pipe, "set_state") as set_state:
                 set_state.return_value = Gst.StateChangeReturn.SUCCESS
                 self.post_fake_error_message(pipe)
@@ -65,4 +65,4 @@ class TestPipeline(common.TestCase):
             self.post_fake_error_message(pipe)
             set_state.assert_not_called()
         self.assertTrue(pipeline_died_cb.called)
-        self.assertEqual(pipe._attempted_recoveries, MAX_RECOVERIES + 1)
+        self.assertEqual(pipe._attempted_recoveries, MAX_RECOVERIES)

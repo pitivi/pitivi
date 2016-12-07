@@ -449,7 +449,7 @@ class SimplePipeline(GObject.Object, Loggable):
     def _recover(self):
         if not self._bus:
             raise PipelineError("Should not try to recover after destroy")
-        if self._attempted_recoveries > MAX_RECOVERIES:
+        if self._attempted_recoveries == MAX_RECOVERIES:
             self.emit("died")
             self.error(
                 "Pipeline error detected multiple times in a row, not resetting anymore")
