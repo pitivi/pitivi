@@ -474,6 +474,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         if self.commit_body:
             build_export_args.append("--body=%s" % self.commit_body)
 
+        build_export_args.append(self.branch)
+
         Console.message('-> Exporting repo %s %s (--body="%s" --subject="%s")',
                         self.repodir, self.branch, self.commit_body,
                         self.commit_subject)
