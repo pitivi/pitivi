@@ -381,7 +381,7 @@ class SimplePipeline(GObject.Object, Loggable):
                         if self._attempted_recoveries == MAX_RECOVERIES:
                             self._recovery_state = self.RecoveryState.NOT_RECOVERING
                             self._attempted_recoveries = 0
-                            self.error("Too many tries to seek back to right position"
+                            self.error("Too many tries to seek back to right position, "
                                        "not trying again, and going back to 0 instead")
                         else:
                             self._recovery_state = self.RecoveryState.SEEKED_AFTER_RECOVERING
@@ -472,7 +472,7 @@ class SimplePipeline(GObject.Object, Loggable):
         return False
 
     def _handleErrorMessage(self, error, detail, source):
-        self.error("error from %s: %s (%s)" % (source, error, detail))
+        self.error("error from %s: %s (%s)", source, error, detail)
         self.emit('error', error.message, detail)
 
     def _getDuration(self):

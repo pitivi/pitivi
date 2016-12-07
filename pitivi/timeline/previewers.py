@@ -1050,8 +1050,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                 Gst.debug_bin_to_dot_file_with_ts(self.pipeline,
                                                   Gst.DebugGraphDetails.ALL,
                                                   "error-generating-waveforms")
-                self.error("Issue during waveforms generation: %s"
-                           "Abandonning", message.parse_error())
+                self.error("Aborting due to waveforms generation issue: %s",
+                           message.parse_error())
 
         elif message.type == Gst.MessageType.STATE_CHANGED:
             prev, new, unused_pending_state = message.parse_state_changed()

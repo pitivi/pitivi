@@ -1658,8 +1658,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
-            self.error(
-                "Trying to use the autoalign feature with an empty timeline")
             return
 
         progress_dialog = AlignmentProgressDialog(self.app)
