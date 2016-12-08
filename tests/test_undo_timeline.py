@@ -78,6 +78,11 @@ class BaseTestUndoTimeline(TestCase):
         mainloop.run()
         self.assertTrue(self.timeline.props.auto_transition)
 
+    def assert_effect_count(self, clip, count):
+        effects = [effect for effect in clip.get_children(True)
+                   if isinstance(effect, GES.Effect)]
+        self.assertEqual(len(effects), count)
+
 
 class TestTimelineObserver(BaseTestUndoTimeline):
 
@@ -358,20 +363,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         with self.action_log.started("remove effect"):
             clip1.remove(effect1)
-
-        self.assertEqual(0, len([effect for effect in
-                                 clip1.get_children(True)
-                                 if isinstance(effect, GES.Effect)]))
+        self.assert_effect_count(clip1, 0)
 
         self.action_log.undo()
-        self.assertEqual(1, len([effect for effect in
-                                 clip1.get_children(True)
-                                 if isinstance(effect, GES.Effect)]))
+        self.assert_effect_count(clip1, 1)
 
         self.action_log.redo()
-        self.assertEqual(0, len([effect for effect in
-                                 clip1.get_children(True)
-                                 if isinstance(effect, GES.Effect)]))
+        self.assert_effect_count(clip1, 0)
 
     def test_move_clip(self):
         self._wait_until_project_loaded()
@@ -672,6 +670,53 @@ class TestGObjectObserver(BaseTestUndoTimeline):
         self.assertEqual(10, clip1.get_priority())
         self.action_log.redo()
         self.assertEqual(20, clip1.get_priority())
+
+    def test_effect_toggling(self):
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        effect1 = GES.Effect.new("agingtv")
+        with self.action_log.started("add effect"):
+            clip1.add(effect1)
+        self.assertTrue(effect1.props.active)
+        self.assert_effect_count(clip1, 1)
+
+        with self.action_log.started("toggle effect"):
+            effect1.props.active = False
+        self.assertFalse(effect1.props.active)
+
+        with self.action_log.started("remove effect"):
+            clip1.remove(effect1)
+        self.assert_effect_count(clip1, 0)
+
+        # Undo effect removing.
+        self.action_log.undo()
+        self.assert_effect_count(clip1, 1)
+
+        # Undo effect toggling.
+        self.action_log.undo()
+        self.assertTrue(effect1.props.active)
+
+        # Redo effect toggling.
+        self.action_log.redo()
+        self.assertFalse(effect1.props.active)
+
+        # Undo effect toggling.
+        self.action_log.undo()
+        self.assertTrue(effect1.props.active)
+
+        # Undo effect add.
+        self.action_log.undo()
+        self.assertFalse(effect1 in clip1.get_children(True))
+
+        # Redo effect add.
+        self.action_log.redo()
+        self.assertTrue(effect1 in clip1.get_children(True))
+        self.assertTrue(effect1.props.active)
+
+        # Redo effect toggling.
+        self.action_log.redo()
+        self.assertFalse(effect1.props.active)
 
 
 class TestDragDropUndo(BaseTestUndoTimeline):

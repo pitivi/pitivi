@@ -124,6 +124,24 @@ class TimelineElementObserver(Loggable):
         self.action_log.push(action)
 
 
+class TrackElementObserver(TimelineElementObserver):
+    """Monitors the props of a track element.
+
+    Reports UndoableActions.
+
+    Args:
+        ges_track_element (GES.TrackElement): The object to be monitored.
+    """
+
+    def __init__(self, ges_track_element, action_log):
+        TimelineElementObserver.__init__(self, ges_track_element, action_log)
+        self.gobject_observer = GObjectObserver(ges_track_element, ("active",), action_log)
+
+    def release(self):
+        TimelineElementObserver.release(self)
+        self.gobject_observer.release()
+
+
 class TrackElementAction(UndoableAction):
 
     def __init__(self, clip, track_element):
@@ -525,22 +543,6 @@ class KeyframeChangedAction(UndoableAction):
         self.control_source.set(time, value)
 
 
-class ActivePropertyChanged(UndoableAction):
-
-    def __init__(self, effect_action, active):
-        UndoableAction.__init__(self)
-        self.effect_action = effect_action
-        self.active = not active
-
-    def do(self):
-        self.effect_action.track_element.active = self.active
-        self.active = not self.active
-
-    def undo(self):
-        self.effect_action.track_element.active = self.active
-        self.active = not self.active
-
-
 class ControlSourceSetAction(SimpleUndoableAction):
 
     def __init__(self, action_info):
@@ -637,7 +639,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
                               self._controlBindingAddedCb)
         if isinstance(track_element, GES.BaseEffect) or \
                 isinstance(track_element, GES.VideoSource):
-            observer = TimelineElementObserver(track_element, self.action_log)
+            observer = TrackElementObserver(track_element, self.action_log)
             self.track_element_observers[track_element] = observer
 
     def _disconnectFromTrackElement(self, track_element):
@@ -690,11 +692,6 @@ class LayerObserver(MetaContainerObserver, Loggable):
         if isinstance(ges_track_element, GES.BaseEffect):
             action = EffectRemovedAction(clip, ges_track_element)
             self.action_log.push(action)
-
-    def _trackElementActiveChangedCb(self, track_element, active, add_effect_action):
-        """Handles an effect is (de)activated on a clip in the timeline."""
-        action = ActivePropertyChanged(add_effect_action, active)
-        self.action_log.push(action)
 
     def __layer_moved_cb(self, ges_layer, unused_param):
         current = ges_layer.props.priority
