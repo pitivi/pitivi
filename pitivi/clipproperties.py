@@ -120,7 +120,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self._project = None
         self._selection = None
-        self.selected_effects = []
         self.clips = []
         self._effect_config_ui = None
         self.effects_properties_manager = EffectsPropertiesManager(app)
@@ -253,15 +252,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         if project:
             self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
-            self.selected_effects = self._selection.getSelectedEffects()
         self.__updateAll()
 
     def _selectionChangedCb(self, selection):
         for clip in self.clips:
             clip.disconnect_by_func(self._trackElementAddedCb)
             clip.disconnect_by_func(self._trackElementRemovedCb)
-
-        self.selected_effects = selection.getSelectedEffects()
 
         if selection:
             self.clips = list(selection.selected)
@@ -276,8 +272,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _trackElementAddedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
-            selec = self._selection.getSelectedEffects()
-            self.selected_effects = selec
             self.__updateAll()
             for path, row in enumerate(self.storemodel):
                 if row[COL_TRACK_EFFECT] == track_element:
@@ -286,8 +280,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _trackElementRemovedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
-            selec = self._selection.getSelectedEffects()
-            self.selected_effects = selec
             self.__updateAll()
 
     def _removeEffectCb(self, unused_action, unused_param):

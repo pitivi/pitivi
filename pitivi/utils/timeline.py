@@ -175,19 +175,6 @@ class Selection(GObject.Object, Loggable):
 
         return selected
 
-    def getSelectedEffects(self):
-        """Returns the list of effects contained in this selection.
-
-        Returns:
-            List[GES.BaseEffect]
-        """
-        effects = []
-        for clip in self.selected:
-            for element in clip.get_children(False):
-                if isinstance(element, GES.BaseEffect):
-                    effects.append(element)
-        return effects
-
     def getSingleClip(self, clip_type):
         """Returns the single-selected clip, if any.
 
