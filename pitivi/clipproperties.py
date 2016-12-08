@@ -106,6 +106,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     Attributes:
         app (Pitivi): The app.
+        clip (GES.Clip): The clip being configured.
     """
 
     # pylint: disable=too-many-statements
@@ -120,7 +121,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self._project = None
         self._selection = None
-        self.clips = []
+        self.clip = None
         self._effect_config_ui = None
         self.effects_properties_manager = EffectsPropertiesManager(app)
         self.clip_properties = clip_properties
@@ -255,19 +256,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.__updateAll()
 
     def _selectionChangedCb(self, selection):
-        for clip in self.clips:
-            clip.disconnect_by_func(self._trackElementAddedCb)
-            clip.disconnect_by_func(self._trackElementRemovedCb)
+        if self.clip:
+            self.clip.disconnect_by_func(self._trackElementAddedCb)
+            self.clip.disconnect_by_func(self._trackElementRemovedCb)
 
-        if selection:
-            self.clips = list(selection.selected)
-            for clip in self.clips:
-                clip.connect("child-added", self._trackElementAddedCb)
-                clip.connect("child-removed", self._trackElementRemovedCb)
-            self.show()
-        else:
-            self.clips = []
-            self.hide()
+        clips = list(selection.selected)
+        self.clip = clips[0] if len(clips) == 1 else None
+        if self.clip:
+            self.clip.connect("child-added", self._trackElementAddedCb)
+            self.clip.connect("child-removed", self._trackElementRemovedCb)
         self.__updateAll()
 
     def _trackElementAddedCb(self, unused_clip, track_element):
@@ -337,12 +334,11 @@ class EffectProperties(Gtk.Expander, Loggable):
             factory_name (str): The name of the GstElementFactory for creating
                 the effect.
         """
-        if not self.clips or len(self.clips) > 1:
+        if not self.clip:
             return
-        clip = self.clips[0]
         # Checking that this effect can be applied on this track object
         # Which means, it has the corresponding media_type
-        self.addEffectToClip(clip, factory_name)
+        self.addEffectToClip(self.clip, factory_name)
 
     # pylint: disable=too-many-arguments
     def _dragMotionCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
@@ -357,23 +353,22 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     # pylint: disable=too-many-arguments
     def _dragDataReceivedCb(self, treeview, drag_context, x, y, selection_data, unused_info, timestamp):
-        if not self.clips or len(self.clips) > 1:
+        if not self.clip:
             # Indicate that a drop will not be accepted.
             Gdk.drag_status(drag_context, 0, timestamp)
             return
-        clip = self.clips[0]
         dest_row = treeview.get_dest_row_at_pos(x, y)
         if drag_context.get_suggested_action() == Gdk.DragAction.COPY:
             # An effect dragged probably from the effects list.
             factory_name = str(selection_data.get_data(), "UTF-8")
             drop_index = self.__get_new_effect_index(dest_row)
-            self.addEffectToClip(clip, factory_name, drop_index)
+            self.addEffectToClip(self.clip, factory_name, drop_index)
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
             # An effect dragged from the same treeview to change its position.
             # Source
             source_index, drop_index = self.__get_move_indexes(
                 dest_row, treeview.get_model())
-            self.__move_effect(clip, source_index, drop_index)
+            self.__move_effect(self.clip, source_index, drop_index)
 
         drag_context.finish(True, False, timestamp)
 
@@ -466,7 +461,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         return True
 
     def __updateAll(self, path=None):
-        if len(self.clips) == 1:
+        if self.clip:
             self.show()
             self._infobar.hide()
             self._updateTreeview()
@@ -480,8 +475,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _updateTreeview(self):
         self.storemodel.clear()
-        clip = self.clips[0]
-        for effect in clip.get_top_effects():
+        for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
             effect_info = self.app.effects.getInfo(effect.props.bin_description)
