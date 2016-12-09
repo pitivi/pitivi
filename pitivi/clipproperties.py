@@ -27,11 +27,8 @@ from gi.repository import Gtk
 from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
-from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
-from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
-from pitivi.effects import VIDEO_EFFECT
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import disable_scroll
@@ -296,50 +293,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect.get_parent().remove(effect)
         self._updateTreeview()
 
-    def addEffectToClip(self, clip, factory_name, priority=None):
-        """Adds the specified effect if it can be applied to the clip."""
-        if factory_name in ALLOWED_ONLY_ONCE_EFFECTS:
-            for effect in clip.find_track_elements(None, GES.TrackType.VIDEO,
-                                                   GES.BaseEffect):
-                for elem in effect.get_nleobject().iterate_recurse():
-                    if elem.get_factory().get_name() == factory_name:
-                        self.error("Not adding %s as it would be duplicate"
-                                   " and this is not allowed.", factory_name)
-                        # TODO Let the user know about why it did not work.
-                        return effect
-
-        model = self.treeview.get_model()
-        effect_info = self.app.effects.getInfo(factory_name)
-        media_type = effect_info.media_type
-
-        for track_element in clip.get_children(False):
-            track_type = track_element.get_track_type()
-            if track_type == GES.TrackType.AUDIO and media_type == AUDIO_EFFECT or \
-                    track_type == GES.TrackType.VIDEO and media_type == VIDEO_EFFECT:
-                # Actually add the effect
-                pipeline = self._project.pipeline
-                with self.app.action_log.started("add effect",
-                                                 CommitTimelineFinalizingAction(pipeline)):
-                    effect = GES.Effect.new(effect_info.bin_description)
-                    clip.add(effect)
-                    if priority is not None and priority < len(model):
-                        clip.set_top_effect_priority(effect, priority)
-                break
-        return None
-
-    def addEffectToCurrentSelection(self, factory_name):
-        """Adds an effect to the current selection.
-
-        Args:
-            factory_name (str): The name of the GstElementFactory for creating
-                the effect.
-        """
-        if not self.clip:
-            return
-        # Checking that this effect can be applied on this track object
-        # Which means, it has the corresponding media_type
-        self.addEffectToClip(self.clip, factory_name)
-
     # pylint: disable=too-many-arguments
     def _dragMotionCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
         self.debug(
@@ -362,7 +315,13 @@ class EffectProperties(Gtk.Expander, Loggable):
             # An effect dragged probably from the effects list.
             factory_name = str(selection_data.get_data(), "UTF-8")
             drop_index = self.__get_new_effect_index(dest_row)
-            self.addEffectToClip(self.clip, factory_name, drop_index)
+            effect_info = self.app.effects.getInfo(factory_name)
+            pipeline = self._project.pipeline
+            with self.app.action_log.started("add effect",
+                                             CommitTimelineFinalizingAction(pipeline)):
+                effect = self.clip.ui.add_effect(effect_info)
+                if effect:
+                    self.clip.set_top_effect_priority(effect, drop_index)
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
             # An effect dragged from the same treeview to change its position.
             # Source

@@ -32,8 +32,12 @@ from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as Figur
 from matplotlib.figure import Figure
 
 from pitivi.configure import get_pixmap_dir
+from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
+from pitivi.effects import AUDIO_EFFECT
+from pitivi.effects import VIDEO_EFFECT
 from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import VideoPreviewer
+from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import filename_from_uri
@@ -911,14 +915,42 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.timeline.selection.setSelection([self.ges_clip], SELECT)
             self.app.gui.switchContextTab(self.ges_clip)
 
-            self.app.gui.clipconfig.effect_expander.addEffectToClip(self.ges_clip,
-                                                                    self.timeline.dropData)
+            effect_info = self.app.effects.getInfo(self.timeline.dropData)
+            pipeline = self.timeline.ges_timeline.get_parent()
+            with self.app.action_log.started("add effect",
+                                             CommitTimelineFinalizingAction(pipeline)):
+                self.add_effect(effect_info)
             self.timeline.cleanDropData()
             success = True
 
         Gtk.drag_finish(context, success, False, timestamp)
 
         return success
+
+    def add_effect(self, effect_info):
+        """Adds the specified effect if it can be applied to the clip.
+
+        Args:
+            effect_info (EffectInfo): The effect to add.
+        """
+        factory_name = effect_info.effect_name
+        if factory_name in ALLOWED_ONLY_ONCE_EFFECTS:
+            for effect in self.find_track_elements(None, GES.TrackType.VIDEO,
+                                                   GES.BaseEffect):
+                for elem in effect.get_nleobject().iterate_recurse():
+                    if elem.get_factory().get_name() == factory_name:
+                        self.error("Not adding %s as it would be duplicate"
+                                   " and this is not allowed.", factory_name)
+                        # TODO Let the user know about why it did not work.
+                        return effect
+
+        for track_element in self.ges_clip.get_children(False):
+            if effect_info.good_for_track_element(track_element):
+                # Actually add the effect
+                effect = GES.Effect.new(effect_info.bin_description)
+                self.ges_clip.add(effect)
+                return effect
+        return None
 
     def updatePosition(self):
         layer = self.layer

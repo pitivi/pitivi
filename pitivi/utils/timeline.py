@@ -175,7 +175,7 @@ class Selection(GObject.Object, Loggable):
 
         return selected
 
-    def getSingleClip(self, clip_type):
+    def getSingleClip(self, clip_type=GES.SourceClip):
         """Returns the single-selected clip, if any.
 
         Args:

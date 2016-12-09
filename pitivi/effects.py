@@ -34,6 +34,7 @@ from gettext import gettext as _
 
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -190,6 +191,23 @@ class EffectInfo(object):
             return bin_description.split("!")[1].strip()
         else:
             return bin_description
+
+    def good_for_track_element(self, track_element):
+        """Checks the effect is compatible with the specified track element.
+
+        Args:
+            track_element (GES.TrackElement): The track element to check against.
+
+        Returns:
+            bool: Whether it makes sense to apply the effect to the track element.
+        """
+        track_type = track_element.get_track_type()
+        if track_type == GES.TrackType.AUDIO:
+            return self.media_type == AUDIO_EFFECT
+        elif track_type == GES.TrackType.VIDEO:
+            return self.media_type == VIDEO_EFFECT
+        else:
+            return False
 
 
 class EffectsManager(object):
@@ -483,10 +501,20 @@ class EffectListWidget(Gtk.Box, Loggable):
         return True
 
     def _addSelectedEffect(self):
+        """Adds the selected effect to the single selected clip, if any."""
         effect = self.getSelectedEffect()
-        if not effect:
+        effect_info = self.app.effects.getInfo(effect)
+        if not effect_info:
             return
-        self.app.gui.clipconfig.effect_expander.addEffectToCurrentSelection(effect)
+        timeline = self.app.gui.timeline_ui.timeline
+        clip = timeline.selection.getSingleClip()
+        if not clip:
+            return
+        pipeline = timeline.ges_timeline.get_parent()
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        with self.app.action_log.started("add effect",
+                                         CommitTimelineFinalizingAction(pipeline)):
+            clip.ui.add_effect(effect_info)
 
     def getSelectedEffect(self):
         if self._draggedItems:

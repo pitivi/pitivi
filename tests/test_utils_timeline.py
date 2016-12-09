@@ -61,16 +61,21 @@ class TestSelection(TestCase):
         clip2 = common.create_test_clip(GES.TitleClip)
 
         # Selection empty.
-        self.assertFalse(selection.getSingleClip(GES.TitleClip))
+        self.assertIsNone(selection.getSingleClip())
+        self.assertIsNone(selection.getSingleClip(GES.UriClip))
+        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
 
-        # Selection contains only a non-requested-type clip.
         selection.setSelection([clip1], SELECT)
-        self.assertFalse(selection.getSingleClip(GES.TitleClip))
+        self.assertEqual(selection.getSingleClip(), clip1)
+        self.assertEqual(selection.getSingleClip(GES.UriClip), clip1)
+        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
 
-        # Selection contains only requested-type clip.
         selection.setSelection([clip2], SELECT)
-        self.assertEqual(clip2, selection.getSingleClip(GES.TitleClip))
+        self.assertEqual(selection.getSingleClip(), clip2)
+        self.assertIsNone(selection.getSingleClip(GES.UriClip))
+        self.assertEqual(selection.getSingleClip(GES.TitleClip), clip2)
 
-        # Selection contains more than one clip.
         selection.setSelection([clip1, clip2], SELECT)
-        self.assertFalse(selection.getSingleClip(GES.UriClip))
+        self.assertIsNone(selection.getSingleClip())
+        self.assertIsNone(selection.getSingleClip(GES.UriClip))
+        self.assertIsNone(selection.getSingleClip(GES.TitleClip))
