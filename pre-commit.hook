@@ -61,7 +61,6 @@ tests/test_preset.py
 tests/test_previewers.py
 tests/test_project.py
 tests/test_system.py
-tests/test_timeline_elements.py
 tests/test_timeline_layer.py
 tests/test_timeline_timeline.py
 tests/test_undo.py

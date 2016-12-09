@@ -16,6 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the timeline.elements module."""
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 from unittest import TestCase
 
@@ -29,8 +31,10 @@ from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
+    """Tests for the KeyframeCurve class."""
 
     def test_keyframe_toggle(self):
+        """Checks keyframes toggling at the playhead position."""
         timeline_container = create_timeline_container()
         timeline = timeline_container.timeline
         pipeline = timeline._project.pipeline
@@ -90,15 +94,17 @@ class TestKeyframeCurve(BaseTestTimeline):
                 self.assertEqual(values, [0, ges_clip.props.duration])
 
     def test_no_clip_selected(self):
-        # When no clip is selected, pressing key should yield no action.
-        # Make sure this does not raise any exception
+        """Checks nothing happens when no clip is selected."""
         timeline_container = create_timeline_container()
+        # Make sure this does not raise any exception
         timeline_container._keyframe_cb(None, None)
 
 
-class TestVideoSourceScaling(BaseTestTimeline):
+class TestVideoSource(BaseTestTimeline):
+    """Tests for the VideoSource class."""
 
     def test_video_source_scaling(self):
+        """Checks the size of the scaled clips."""
         timeline_container = create_timeline_container()
         timeline = timeline_container.timeline
         project = timeline.app.project_manager.current_project
@@ -154,6 +160,7 @@ class TestVideoSourceScaling(BaseTestTimeline):
                          expected_default_position)
 
     def test_rotation(self):
+        """Checks the size of the clips flipped 90 degrees."""
         timeline_container = create_timeline_container()
         timeline = timeline_container.timeline
 
@@ -199,8 +206,10 @@ class TestVideoSourceScaling(BaseTestTimeline):
 
 
 class TestClip(TestCase):
+    """Tests for the Clip class."""
 
     def test_clip_subclasses(self):
+        """Checks the constructors of the Clip class."""
         for gtype, widget_class in GES_TYPE_UI_TYPE.items():
             ges_object = GObject.new(gtype)
             widget = widget_class(mock.Mock(), ges_object)

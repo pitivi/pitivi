@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the render module."""
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.repository import GES
@@ -49,13 +50,14 @@ class TestRender(common.TestCase):
                 self.assertIsNotNone(extension_for_muxer(muxer), preset)
 
     def test_launching_rendering(self):
-        """"Checks no exception is raised when clicking the render button."""
+        """Checks no exception is raised when clicking the render button."""
         timeline_container = common.create_timeline_container()
         app = timeline_container.app
         project = app.project_manager.current_project
 
         mainloop = common.create_main_loop()
-        def asset_added_cb(project, asset):
+
+        def asset_added_cb(project, asset):  # pylint: disable=missing-docstring
             mainloop.quit()
 
         project.connect("asset-added", asset_added_cb)
