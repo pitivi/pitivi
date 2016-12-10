@@ -256,24 +256,41 @@ class EffectProperties(Gtk.Expander, Loggable):
         if self.clip:
             self.clip.disconnect_by_func(self._trackElementAddedCb)
             self.clip.disconnect_by_func(self._trackElementRemovedCb)
+            for track_element in self.clip.get_children(recursive=True):
+                if isinstance(track_element, GES.BaseEffect):
+                    self._disconnect_from_track_element(track_element)
 
         clips = list(selection.selected)
         self.clip = clips[0] if len(clips) == 1 else None
         if self.clip:
             self.clip.connect("child-added", self._trackElementAddedCb)
             self.clip.connect("child-removed", self._trackElementRemovedCb)
+            for track_element in self.clip.get_children(recursive=True):
+                if isinstance(track_element, GES.BaseEffect):
+                    self._connect_to_track_element(track_element)
         self.__updateAll()
 
     def _trackElementAddedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
+            self._connect_to_track_element(track_element)
             self.__updateAll()
             for path, row in enumerate(self.storemodel):
                 if row[COL_TRACK_EFFECT] == track_element:
                     self.treeview_selection.select_path(path)
                     break
 
+    def _connect_to_track_element(self, track_element):
+        track_element.connect("notify::active", self._notify_active_cb)
+
+    def _disconnect_from_track_element(self, track_element):
+        track_element.disconnect_by_func(self._notify_active_cb)
+
+    def _notify_active_cb(self, unused_track_element, unused_param_spec):
+        self._updateTreeview()
+
     def _trackElementRemovedCb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
+            self._disconnect_from_track_element(track_element)
             self.__updateAll()
 
     def _removeEffectCb(self, unused_action, unused_param):
@@ -401,7 +418,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         # This is not strictly necessary, but makes sure
         # the UI reflects the current status.
         cellrenderertoggle.set_active(effect.is_active())
-        self._updateTreeview()
 
     def _expandedCb(self, unused_expander, unused_params):
         self.__updateAll()
