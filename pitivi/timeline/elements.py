@@ -509,10 +509,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             val = float(self.__controlledProperty.default_value) / \
                 (self.__controlledProperty.maximum -
                  self.__controlledProperty.minimum)
-            source.set(self._ges_elem.props.in_point, val)
-            source.set(
-                self._ges_elem.props.duration + self._ges_elem.props.in_point,
-                val)
+            inpoint = self._ges_elem.props.in_point
+            assert source.set(inpoint, val)
+            assert source.set(inpoint + self._ges_elem.props.duration, val)
 
         self.__removeKeyframes()
         self.keyframe_curve = KeyframeCurve(self.timeline, binding)

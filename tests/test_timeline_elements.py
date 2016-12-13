@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the timeline.elements module."""
-# pylint: disable=protected-access,no-self-use
+# pylint: disable=protected-access,no-self-use,too-many-locals
 from unittest import mock
 from unittest import TestCase
 
@@ -37,61 +37,77 @@ class TestKeyframeCurve(BaseTestTimeline):
         """Checks keyframes toggling at the playhead position."""
         timeline_container = create_timeline_container()
         timeline = timeline_container.timeline
-        pipeline = timeline._project.pipeline
-        self.addClipsSimple(timeline, 2)
-        ges_layer = timeline.ges_timeline.get_layers()[0]
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip1 = self.add_clip(ges_layer, 0)
+        ges_clip2 = self.add_clip(ges_layer, 10)
+        ges_clip3 = self.add_clip(ges_layer, 20, inpoint=100)
         # For variety, add TitleClip to the list of clips.
-        ges_clip = create_test_clip(GES.TitleClip)
-        ges_clip.props.duration = 4.5
-        ges_layer.add_clip(ges_clip)
+        ges_clip4 = create_test_clip(GES.TitleClip)
+        ges_clip4.props.start = 30
+        ges_clip4.props.duration = 4.5
+        ges_layer.add_clip(ges_clip4)
 
-        for ges_clip in ges_layer.get_clips():
-            start = ges_clip.props.start
-            offsets = list(range(1, int(ges_clip.props.duration)))
-            timeline.selection.select([ges_clip])
+        self.check_keyframe_toggle(ges_clip1, timeline_container)
+        self.check_keyframe_toggle(ges_clip2, timeline_container)
+        self.check_keyframe_toggle(ges_clip3, timeline_container)
+        self.check_keyframe_toggle(ges_clip4, timeline_container)
 
-            ges_video_source = None
-            for child in ges_clip.get_children(recursive=False):
-                if isinstance(child, GES.VideoSource):
-                    ges_video_source = child
-            binding = ges_video_source.get_control_binding("alpha")
-            control_source = binding.props.control_source
+    def check_keyframe_toggle(self, ges_clip, timeline_container):
+        """Checks keyframes toggling on the specified clip."""
+        timeline = timeline_container.timeline
+        pipeline = timeline._project.pipeline
 
-            # Test adding of keyframes.
-            for offset in offsets:
-                position = start + offset
-                pipeline.getPosition = mock.Mock(return_value=position)
-                timeline_container._keyframe_cb(None, None)
-                values = [item.timestamp for item in control_source.get_all()]
-                self.assertIn(offset, values)
+        start = ges_clip.props.start
+        inpoint = ges_clip.props.in_point
+        duration = ges_clip.props.duration
+        offsets = (1, int(duration / 2), int(duration) - 1)
+        timeline.selection.select([ges_clip])
 
-            # Test removing of keyframes.
-            for offset in offsets:
-                position = start + offset
-                pipeline.getPosition = mock.Mock(return_value=position)
-                timeline_container._keyframe_cb(None, None)
-                values = [item.timestamp for item in control_source.get_all()]
-                self.assertNotIn(offset, values)
+        ges_video_source = None
+        for child in ges_clip.get_children(recursive=False):
+            if isinstance(child, GES.VideoSource):
+                ges_video_source = child
+        binding = ges_video_source.get_control_binding("alpha")
+        control_source = binding.props.control_source
 
-            # Make sure the keyframes at the start and end of the clip
-            # cannot be toggled.
-            for offset in [0, ges_clip.props.duration]:
-                position = start + offset
-                pipeline.getPosition = mock.Mock(return_value=position)
-                values = [item.timestamp for item in control_source.get_all()]
-                self.assertIn(offset, values)
-                timeline_container._keyframe_cb(None, None)
-                values = [item.timestamp for item in control_source.get_all()]
-                self.assertIn(offset, values)
+        values = [item.timestamp for item in control_source.get_all()]
+        self.assertEqual(values, [inpoint, inpoint + duration])
 
-            # Test out of clip range.
-            for offset in [-1, ges_clip.props.duration + 1]:
-                position = min(max(0, start + offset),
-                               timeline.ges_timeline.props.duration)
-                pipeline.getPosition = mock.Mock(return_value=position)
-                timeline_container._keyframe_cb(None, None)
-                values = [item.timestamp for item in control_source.get_all()]
-                self.assertEqual(values, [0, ges_clip.props.duration])
+        # Add keyframes.
+        for offset in offsets:
+            position = start + offset
+            pipeline.getPosition = mock.Mock(return_value=position)
+            timeline_container._keyframe_cb(None, None)
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertIn(inpoint + offset, values)
+
+        # Remove keyframes.
+        for offset in offsets:
+            position = start + offset
+            pipeline.getPosition = mock.Mock(return_value=position)
+            timeline_container._keyframe_cb(None, None)
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertNotIn(inpoint + offset, values, offset)
+
+        # Make sure the keyframes at the start and end of the clip
+        # cannot be toggled.
+        for offset in [0, duration]:
+            position = start + offset
+            pipeline.getPosition = mock.Mock(return_value=position)
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertIn(inpoint + offset, values)
+            timeline_container._keyframe_cb(None, None)
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertIn(inpoint + offset, values)
+
+        # Test out of clip range.
+        for offset in [-1, duration + 1]:
+            position = min(max(0, start + offset),
+                           timeline.ges_timeline.props.duration)
+            pipeline.getPosition = mock.Mock(return_value=position)
+            timeline_container._keyframe_cb(None, None)
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertEqual(values, [inpoint, inpoint + duration])
 
     def test_no_clip_selected(self):
         """Checks nothing happens when no clip is selected."""

@@ -1724,6 +1724,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         offset = self._project.pipeline.getPosition() - ges_clip.props.start
         if offset <= 0 or offset >= ges_clip.props.duration:
             return
+        offset += ges_clip.props.in_point
 
         for ges_track_element in ges_track_elements:
             keyframe_curve = ges_track_element.ui.keyframe_curve

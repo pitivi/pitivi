@@ -32,18 +32,24 @@ THICK = LAYER_HEIGHT
 
 
 class BaseTestTimeline(common.TestCase):
+    """Test case with tools for setting up a timeline."""
 
-    def addClipsSimple(self, timeline, num_clips):
-        layer = timeline.ges_timeline.append_layer()
+    def add_clip(self, layer, start, inpoint=0, duration=10):
+        """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
-        clips = [layer.add_asset(asset, i * 10, 0, 10, GES.TrackType.UNKNOWN)
-                 for i in range(num_clips)]
+        return layer.add_asset(asset, start, inpoint, duration, GES.TrackType.UNKNOWN)
+
+    def addClipsSimple(self, timeline, num_clips):
+        """Creates a number of clips on a new layer."""
+        layer = timeline.ges_timeline.append_layer()
+        clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
         self.assertEqual(len(clips), num_clips)
         return clips
 
 
 class TestLayers(BaseTestTimeline):
+    """Tests for the layers."""
 
     def testDraggingLayer(self):
         self.checkGetLayerAt([THIN, THIN, THIN], 1, True,
