@@ -477,14 +477,14 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         sink_widget (Gtk.Widget): The widget doing the real work.
     """
 
-    def __init__(self, sink_widget):
+    def __init__(self, widget):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
-        self.add(sink_widget)
+        self.add(widget)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!

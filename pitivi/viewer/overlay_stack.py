@@ -27,6 +27,8 @@ from pitivi.viewer.title_overlay import TitleOverlay
 
 
 class OverlayStack(Gtk.Overlay, Loggable):
+    """Manager for the viewer overlays."""
+
     def __init__(self, app, sink_widget):
         Gtk.Overlay.__init__(self)
         Loggable.__init__(self)
