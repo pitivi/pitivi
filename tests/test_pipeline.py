@@ -16,6 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the utils.pipeline module."""
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.repository import GES
@@ -28,9 +30,11 @@ from tests import common
 
 
 class TestPipeline(common.TestCase):
+    """Tests for the Pipeline class."""
 
     @staticmethod
     def post_fake_error_message(pipeline):
+        """Simulates an error message on the specified Pipeline."""
         message = mock.Mock()
         message.type = Gst.MessageType.ERROR
         error = GLib.Error.new_literal(Gst.core_error_quark(),
@@ -39,6 +43,7 @@ class TestPipeline(common.TestCase):
         pipeline._busMessageCb(None, message)
 
     def test_recovery(self):
+        """Checks the recovery mechanism."""
         pipe = Pipeline(common.create_pitivi_mock())
         pipe.set_timeline(GES.Timeline())
 
