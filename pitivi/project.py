@@ -1237,10 +1237,8 @@ class Project(Loggable, GES.Project):
 
         self.ges_timeline.commit = self._commit
         self.pipeline = Pipeline(self.app)
-        try:
-            self.pipeline.set_timeline(self.ges_timeline)
-        except PipelineError as e:
-            self.warning("Failed to set the pipeline's timeline: %s", e)
+        if not self.pipeline.set_timeline(self.ges_timeline):
+            self.warning("Failed to set the pipeline's timeline: %s", self.ges_timeline)
             return False
 
         return True

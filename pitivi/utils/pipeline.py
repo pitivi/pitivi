@@ -494,8 +494,8 @@ class AssetPipeline(SimplePipeline):
     """Pipeline for playing a single clip."""
 
     def __init__(self, clip=None, name=None):
-        bPipeline = Gst.ElementFactory.make("playbin", name)
-        SimplePipeline.__init__(self, bPipeline)
+        ges_pipeline = Gst.ElementFactory.make("playbin", name)
+        SimplePipeline.__init__(self, ges_pipeline)
 
         self.create_sink()
 
@@ -525,8 +525,6 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self._was_empty = False
         self._commit_wanted = False
 
-        self._timeline = None
-
         if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
             if watchdog:
@@ -545,18 +543,13 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         return GES.Pipeline.set_mode(self, mode)
 
     def _getDuration(self):
-        return self._timeline.get_duration()
+        return self.props.timeline.get_duration()
 
     def do_change_state(self, state):
         if state == Gst.StateChange.PAUSED_TO_READY:
             self._removeWaitingForAsyncDoneTimeout()
 
         return GES.Pipeline.do_change_state(self, state)
-
-    def set_timeline(self, timeline):
-        if not GES.Pipeline.set_timeline(self, timeline):
-            raise PipelineError("Cannot set the timeline to the pipeline")
-        self._timeline = timeline
 
     def stepFrame(self, framerate, frames_offset):
         """Seeks backwards or forwards the specified amount of frames.
@@ -587,7 +580,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         self.simple_seek(new_pos)
 
     def simple_seek(self, position):
-        if self._timeline.is_empty():
+        if self.props.timeline.is_empty():
             # Nowhere to seek.
             return
 
@@ -617,29 +610,26 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 self._commit_wanted:
             self.debug("Commiting now that ASYNC is DONE")
             self._addWaitingForAsyncDoneTimeout()
-            self._timeline.commit()
+            self.props.timeline.commit()
             self._commit_wanted = False
         else:
             SimplePipeline._busMessageCb(self, bus, message)
 
     def commit_timeline(self):
         if self._waiting_for_async_done and not self._was_empty\
-                and not self._timeline.is_empty():
+                and not self.props.timeline.is_empty():
             self._commit_wanted = True
             self._was_empty = False
             self.debug("commit wanted")
         else:
             self._addWaitingForAsyncDoneTimeout()
-            self._timeline.commit()
+            self.props.timeline.commit()
             self.debug("Commiting right now")
-            if self._timeline.is_empty():
-                self._was_empty = True
-            else:
-                self._was_empty = False
+            self._was_empty = self.props.timeline.is_empty()
 
     def setState(self, state):
         SimplePipeline.setState(self, state)
-        if state >= Gst.State.PAUSED and self._timeline.is_empty():
+        if state >= Gst.State.PAUSED and self.props.timeline.is_empty():
             self.debug("No ASYNC_DONE will be emited on empty timelines")
             self._was_empty = True
             self._removeWaitingForAsyncDoneTimeout()
