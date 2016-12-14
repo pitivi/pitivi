@@ -700,6 +700,59 @@ class RenderDialog(Loggable):
             name = basename
         self.fileentry.set_text(name)
 
+    def _update_valid_restriction_values(self, caps, combo, caps_template,
+                               model, value,
+                               caps_template_expander=None):
+        def caps_template_expander_func(caps_template, value):
+            return caps_template % value
+
+        if not caps_template_expander:
+            caps_template_expander = caps_template_expander_func
+
+        model_headers = [model.get_column_type(i) for i in range(model.get_n_columns())]
+        reduced_model = Gtk.ListStore(*model_headers)
+        for name, value in dict(model).items():
+            ecaps = Gst.Caps(caps_template_expander(caps_template, value))
+            if not caps.intersect(ecaps).is_empty():
+                reduced_model.append((name, value))
+
+        combo.set_model(reduced_model)
+
+        set_combo_value(combo, value)
+        if get_combo_value(combo) != value:
+            combo.set_active(len(reduced_model) - 1)
+            self.warning("%s in %s not supported, setting: %s",
+                value, caps_template, get_combo_value(combo))
+
+    def _update_valid_audio_restrictions(self, factory):
+        template = [t for t in factory.get_static_pad_templates()
+                    if t.direction == Gst.PadDirection.SINK][0]
+
+        caps = template.static_caps.get()
+        self._update_valid_restriction_values(caps, self.sample_rate_combo,
+                                              "audio/x-raw,rate=(int)%d",
+                                              audio_rates,
+                                              self.project.audiorate)
+
+        self._update_valid_restriction_values(caps, self.channels_combo,
+                                              "audio/x-raw,channels=(int)%d",
+                                              audio_channels,
+                                              self.project.audiochannels)
+
+    def _update_valid_video_restrictions(self, factory):
+        def fraction_expander_func(caps_template, value):
+            return caps_template % (value.num, value.denom)
+
+        template = [t for t in factory.get_static_pad_templates()
+                    if t.direction == Gst.PadDirection.SINK][0]
+
+        caps = template.static_caps.get()
+        self._update_valid_restriction_values(
+            caps, self.frame_rate_combo,
+            "video/x-raw,framerate=(GstFraction)%d/%d", frame_rates,
+            self.project.framerate,
+            caps_template_expander=fraction_expander_func)
+
     def updateAvailableEncoders(self):
         """Updates the encoder comboboxes to show the available encoders."""
         self.muxer_combo_changing = True
@@ -1105,6 +1158,7 @@ class RenderDialog(Loggable):
             # The user directly changed the video encoder combo.
             self.debug("User chose a video encoder: %s", name)
             self.preferred_vencoder = name
+        self._update_valid_video_restrictions(factory)
 
     def _videoSettingsButtonClickedCb(self, unused_button):
         factory = get_combo_value(self.video_encoder_combo)
@@ -1124,6 +1178,7 @@ class RenderDialog(Loggable):
             # The user directly changed the audio encoder combo.
             self.debug("User chose an audio encoder: %s", name)
             self.preferred_aencoder = name
+        self._update_valid_audio_restrictions(factory)
 
     def _audioSettingsButtonClickedCb(self, unused_button):
         factory = get_combo_value(self.audio_encoder_combo)
