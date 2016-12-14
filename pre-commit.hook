@@ -53,7 +53,6 @@ tests/test_clipproperties.py
 tests/test_common.py
 tests/test_log.py
 tests/test_media_library.py
-tests/test_misc.py
 tests/test_prefs.py
 tests/test_preset.py
 tests/test_previewers.py

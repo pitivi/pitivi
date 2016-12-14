@@ -520,7 +520,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                            [URI_TARGET_ENTRY, FILE_TARGET_ENTRY],
                            Gdk.DragAction.COPY)
         self.drag_dest_add_uri_targets()
-        self.connect("drag_data_received", self._dndDataReceivedCb)
+        self.connect("drag_data_received", self._drag_data_received_cb)
 
         self._setupViewAsDragAndDropSource(self.treeview)
         self._setupViewAsDragAndDropSource(self.iconview)
@@ -1362,54 +1362,29 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.storemodel.clear()
         self._project = None
 
-    def _addUris(self, uris):
-        if self._project:
-            self._project.addUris(uris)
+    def __paths_walked_cb(self, uris):
+        """Handles the end of the path walking when importing files and dirs."""
+        if not uris:
+            return
+        if not self._project:
+            self.warning("Cannot add URIs, project missing")
+        self._last_imported_uris = set(uris)
+        assets = self._project.assetsForUris(uris)
+        if assets:
+            # All the files have already been added.
+            self._selectLastImportedUris()
         else:
-            self.warning(
-                "Adding uris to project, but the project has changed in the meantime")
-        return False
+            self._project.addUris(uris)
 
-    # Drag and Drop
-    def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
-                           unused_y, selection, targettype, unused_time):
+    def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
+                               unused_y, selection, targettype, unused_time):
+        """Handles data being dragged onto self."""
         self.debug("targettype: %d, selection.data: %r",
                    targettype, selection.get_data())
-
-        directories = []
-        filenames = []
-
         uris = selection.get_uris()
-        # Filter out the empty uris.
-        uris = [x for x in uris if x]
-        for raw_uri in uris:
-            # Strip out NULL chars first.
-            raw_uri = raw_uri.strip('\x00')
-            uri = urlparse(raw_uri)
-            if uri.scheme == 'file':
-                path = unquote(uri.path)
-                if os.path.isfile(path):
-                    filenames.append(raw_uri)
-                elif os.path.isdir(path):
-                    directories.append(raw_uri)
-                else:
-                    self.warning("Unusable file: %s, %s", raw_uri, path)
-            else:
-                self.fixme(
-                    "Importing remote files is not implemented: %s", raw_uri)
-
-        if directories:
-            # Recursively import from folders that were dragged into the
-            # library
-            self.app.threads.addThread(PathWalker, directories, self._addUris)
-        if filenames:
-            self._last_imported_uris.update(filenames)
-            assets = self._project.assetsForUris(list(self._last_imported_uris))
-            if assets:
-                # All the files have already been added.
-                self._selectLastImportedUris()
-            else:
-                self._project.addUris(filenames)
+        # Scan in the background what was dragged and
+        # import whatever can be imported.
+        self.app.threads.addThread(PathWalker, uris, self.__paths_walked_cb)
 
     # Used with TreeView and IconView
     def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):

@@ -164,27 +164,43 @@ def quote_uri(uri):
 class PathWalker(Thread):
     """Thread for recursively searching in a list of directories."""
 
-    def __init__(self, paths, callback):
+    def __init__(self, uris, callback):
         Thread.__init__(self)
-        self.log("New PathWalker for %s", paths)
-        self.paths = paths
+        self.log("New PathWalker for %s", uris)
+        self.uris = uris
         self.callback = callback
         self.stopme = threading.Event()
 
+    def _scan(self, uris):
+        """Scans the URIs and yields the file URIs."""
+        for uri in uris:
+            if self.stopme.is_set():
+                return
+            url = urlparse(uri)
+            if not url.scheme == 'file':
+                self.fixme("Unsupported URI: %s", uri)
+                continue
+            path = unquote(url.path)
+            if os.path.isfile(path):
+                yield uri
+            elif os.path.isdir(path):
+                yield from self._scan_dir(path)
+            else:
+                self.warning("Unusable, not a file nor a dir: %s, %s", uri, path)
+
+    def _scan_dir(self, folder):
+        """Scans the folder recursively and yields the URIs of the files."""
+        self.log("Scanning folder %s", folder)
+        for path, dirs, files in os.walk(folder):
+            if self.stopme.is_set():
+                return
+            for afile in files:
+                yield Gst.filename_to_uri(os.path.join(path, afile))
+
     def process(self):
-        for folder in self.paths:
-            self.log("folder %s" % folder)
-            if folder.startswith("file://"):
-                folder = unquote(folder[len("file://"):])
-            for path, dirs, files in os.walk(folder):
-                if self.stopme.isSet():
-                    return
-                uris = []
-                for afile in files:
-                    uris.append(quote_uri("file://%s" %
-                                          os.path.join(path, afile)))
-                if uris:
-                    GLib.idle_add(self.callback, uris)
+        uris = list(self._scan(self.uris))
+        if uris:
+            GLib.idle_add(self.callback, uris)
 
     def abort(self):
         self.stopme.set()

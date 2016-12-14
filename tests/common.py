@@ -248,9 +248,8 @@ def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
 
 
 def get_sample_uri(sample):
-    assets_dir = os.path.dirname(os.path.abspath(__file__))
-
-    return "file://%s" % os.path.join(assets_dir, "samples", sample)
+    tests_dir = os.path.dirname(os.path.abspath(__file__))
+    return Gst.filename_to_uri(os.path.join(tests_dir, "samples", sample))
 
 
 def clean_proxy_samples():
