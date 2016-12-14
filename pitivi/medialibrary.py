@@ -807,9 +807,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return
 
         if project.loaded:
-            num_proxying_files = [asset
-                                  for asset in project.loading_assets
-                                  if not asset.ready]
+            proxying_files = [asset
+                              for asset in project.loading_assets
+                              if not asset.ready]
             if estimated_time:
                 self.__last_proxying_estimate_time = beautify_ETA(int(
                     estimated_time * Gst.SECOND))
@@ -822,9 +822,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             # "There remains approximatively %s" (to handle gender and plurals)
             template = ngettext("Transcoding %d asset: %d%% (About %s left)",
                                 "Transcoding %d assets: %d%% (About %s left)",
-                                len(num_proxying_files))
+                                len(proxying_files))
             progress_message = template % (
-                len(num_proxying_files), progress,
+                len(proxying_files), progress,
                 self.__last_proxying_estimate_time)
             self._progressbar.set_text(progress_message)
             self._last_imported_uris.update([asset.props.id for asset in
@@ -1066,7 +1066,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         else:
             self._setClipView(SHOW_ICONVIEW)
 
-    def __getPathUnderMouse(self, view, event):
+    def __get_path_under_mouse(self, view, event):
+        """Gets the path of the item under the mouse cursor.
+
+        Returns:
+            Gtk.TreePath: The item at the current mouse position, if any.
+        """
         if isinstance(view, Gtk.TreeView):
             path = None
             tup = view.get_path_at_pos(int(event.x), int(event.y))
@@ -1076,30 +1081,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         elif isinstance(view, Gtk.IconView):
             return view.get_path_at_pos(int(event.x), int(event.y))
         else:
-            raise RuntimeError(
-                "Unknown media library view type: %s" % type(view))
+            raise RuntimeError("Unknown view type: %s" % type(view))
 
     def _rowUnderMouseSelected(self, view, event):
-        path = self.__getPathUnderMouse(view, event)
+        path = self.__get_path_under_mouse(view, event)
+        if not path:
+            return False
         if isinstance(view, Gtk.TreeView):
-            path = None
-            tup = view.get_path_at_pos(int(event.x), int(event.y))
-            if tup:
-                path, column, x, y = tup
-            if path:
-                selection = view.get_selection()
-
-                return selection.path_is_selected(path) and selection.count_selected_rows() > 0
+            tree_selection = view.get_selection()
+            return tree_selection.path_is_selected(path)
         elif isinstance(view, Gtk.IconView):
-            path = view.get_path_at_pos(int(event.x), int(event.y))
-            if path:
-                selection = view.get_selected_items()
-                return view.path_is_selected(path) and len(selection)
+            return view.path_is_selected(path)
         else:
-            raise RuntimeError(
-                "Unknown media library view type: %s" % type(view))
-
-        return False
+            raise RuntimeError("Unknown view type: %s" % type(view))
 
     def _viewGetFirstSelected(self):
         paths = self.getSelectedPaths()
@@ -1131,9 +1125,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         elif self.clip_view == SHOW_ICONVIEW:
             self.iconview.unselect_all()
 
-    def __stopUsingProxyCb(self,
-                           unused_action,
-                           unused_parameter):
+    def __stopUsingProxyCb(self, unused_action, unused_parameter):
         self._project.disableProxiesForAssets(self.getSelectedAssets())
 
     def __useProxiesCb(self, unused_action, unused_parameter):
@@ -1198,7 +1190,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return False
 
         if not self._rowUnderMouseSelected(view, event):
-            path = self.__getPathUnderMouse(view, event)
+            path = self.__get_path_under_mouse(view, event)
             if path:
                 if isinstance(view, Gtk.IconView):
                     view.unselect_all()
