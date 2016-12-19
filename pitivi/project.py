@@ -1093,10 +1093,10 @@ class Project(Loggable, GES.Project):
 
         if self.loaded:
             if not asset.get_proxy_target() in self.list_assets(GES.Extractable):
-                self.app.proxy_manager.addJob(asset, asset.force_proxying)
+                self.app.proxy_manager.add_job(asset, asset.force_proxying)
         else:
-            self.debug("Project still loading, not using proxies: "
-                       "%s", asset.props.id)
+            self.debug("Project still loading, not using proxies: %s",
+                       asset.props.id)
             asset.creation_progress = 100
             self.__updateAssetLoadingProgress()
 

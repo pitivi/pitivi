@@ -426,7 +426,12 @@ class ProxyManager(GObject.Object, Loggable):
 
         return
 
-    def addJob(self, asset, force_proxying=False):
+    def add_job(self, asset, force_proxying=False):
+        """Adds a transcoding job for the specified asset if needed.
+
+        Args:
+            asset (GES.Asset): The asset to be transcoded.
+        """
         self.debug("Maybe create a proxy for %s (strategy: %s)",
                    asset.get_id(), self.app.settings.proxyingStrategy)
 
@@ -439,10 +444,10 @@ class ProxyManager(GObject.Object, Loggable):
             # Make sure to notify we do not need a proxy for
             # that asset.
             self.emit("proxy-ready", asset, None)
-            return True
+            return
 
         if self.is_asset_queued(asset):
-            return True
+            return
 
         proxy_uri = self.getProxyUri(asset)
         if Gio.File.new_for_uri(proxy_uri).query_exists(None):
@@ -452,7 +457,7 @@ class ProxyManager(GObject.Object, Loggable):
                                     proxy_uri, None,
                                     self.__assetLoadedCb, asset,
                                     None)
-            return True
+            return
 
         self.__createTranscoder(asset)
-        return True
+        return
