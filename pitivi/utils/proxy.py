@@ -422,24 +422,21 @@ class ProxyManager(GObject.Object, Loggable):
 
         return
 
-    def add_job(self, asset, force_proxying=False):
+    def add_job(self, asset):
         """Adds a transcoding job for the specified asset if needed.
 
         Args:
             asset (GES.Asset): The asset to be transcoded.
         """
+        force_proxying = asset.force_proxying
         self.debug("Maybe create a proxy for %s (strategy: %s, force: %s)",
                    asset.get_id(), self.app.settings.proxyingStrategy,
                    force_proxying)
 
         if not force_proxying and not self.__assetNeedsTranscoding(asset):
-            self.debug("Not proxying asset (settings.proxyingStrategy: %s,"
-                       " proxy support forced: %s disabled: %s)",
-                       self.app.settings.proxyingStrategy,
-                       force_proxying, self.proxyingUnsupported)
-
-            # Make sure to notify we do not need a proxy for
-            # that asset.
+            self.debug("Not proxying asset (disabled: %s)",
+                       self.proxyingUnsupported)
+            # Make sure to notify we do not need a proxy for that asset.
             self.emit("proxy-ready", asset, None)
             return
 
@@ -448,8 +445,7 @@ class ProxyManager(GObject.Object, Loggable):
 
         proxy_uri = self.getProxyUri(asset)
         if Gio.File.new_for_uri(proxy_uri).query_exists(None):
-            self.debug("Using proxy already generated: %s",
-                       proxy_uri)
+            self.debug("Using proxy already generated: %s", proxy_uri)
             GES.Asset.request_async(GES.UriClip,
                                     proxy_uri, None,
                                     self.__assetLoadedCb, asset,
