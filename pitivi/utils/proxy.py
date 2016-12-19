@@ -226,17 +226,13 @@ class ProxyManager(GObject.Object, Loggable):
 
         return False
 
-    def __assetNeedsTranscoding(self, asset, force_proxying=False):
+    def __assetNeedsTranscoding(self, asset):
         if self.proxyingUnsupported:
             self.info("No proxying supported")
             return False
 
         if asset.is_image():
             return False
-
-        if force_proxying:
-            self.info("Forcing proxy creation")
-            return True
 
         if self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
             self.debug("Not proxying anything. %s",
@@ -432,10 +428,11 @@ class ProxyManager(GObject.Object, Loggable):
         Args:
             asset (GES.Asset): The asset to be transcoded.
         """
-        self.debug("Maybe create a proxy for %s (strategy: %s)",
-                   asset.get_id(), self.app.settings.proxyingStrategy)
+        self.debug("Maybe create a proxy for %s (strategy: %s, force: %s)",
+                   asset.get_id(), self.app.settings.proxyingStrategy,
+                   force_proxying)
 
-        if not self.__assetNeedsTranscoding(asset, force_proxying):
+        if not force_proxying and not self.__assetNeedsTranscoding(asset):
             self.debug("Not proxying asset (settings.proxyingStrategy: %s,"
                        " proxy support forced: %s disabled: %s)",
                        self.app.settings.proxyingStrategy,
