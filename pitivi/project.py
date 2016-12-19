@@ -1063,15 +1063,19 @@ class Project(Loggable, GES.Project):
             # Ignore for example the assets producing GES.TitleClips.
             return
 
-        if not self.loading_assets:
-            # Progress == 0 means "starting to import"
-            self.emit("asset-loading-progress", 0, 0)
+        self._prepare_asset_processing(asset)
 
+    def _prepare_asset_processing(self, asset):
         asset.creation_progress = 0
         asset.error = None
         asset.ready = False
         asset.force_proxying = False
         asset.proxying_error = None
+
+        if not self.loading_assets:
+            # Progress == 0 means "starting to import"
+            self.emit("asset-loading-progress", 0, 0)
+
         self.loading_assets.append(asset)
 
     def do_asset_removed(self, asset):
@@ -1184,19 +1188,18 @@ class Project(Loggable, GES.Project):
         if originals:
             self.app.action_log.begin("Adding assets")
             for asset in originals:
-                # Add and remove the asset to
-                # trigger the proxy creation code path
-                self.remove_asset(asset)
-                self.emit("asset-loading", asset)
+                self._prepare_asset_processing(asset)
                 asset.force_proxying = True
-                self.add_asset(asset)
+                self.app.proxy_manager.add_job(asset)
 
     def disableProxiesForAssets(self, assets, delete_proxy_file=False):
         for asset in assets:
             proxy_target = asset.get_proxy_target()
             if proxy_target:
+                # The asset is a proxy for the proxy_target original asset.
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)
+                proxy_target.force_proxying = False
                 if delete_proxy_file:
                     if not self.app.proxy_manager.is_proxy_asset(asset):
                         raise RuntimeError("Trying to remove proxy %s"
