@@ -640,7 +640,6 @@ class Project(Loggable, GES.Project):
         self.at_least_one_asset_missing = False
         self.app = app
         self.loading_assets = []
-        self.asset_loading_progress = 100
         self.app.proxy_manager.connect("progress", self.__assetTranscodingProgressCb)
         self.app.proxy_manager.connect("error-preparing-asset",
                                        self.__proxyErrorCb)
@@ -992,14 +991,13 @@ class Project(Loggable, GES.Project):
             return
 
         if not self.loaded:
-            self.asset_loading_progress = self.__get_loading_project_progress()
+            progress = self.__get_loading_project_progress()
         else:
-            self.asset_loading_progress = self.__get_loading_assets_progress()
+            progress = self.__get_loading_assets_progress()
 
-        self.emit("asset-loading-progress", self.asset_loading_progress,
-                  estimated_time)
+        self.emit("asset-loading-progress", progress, estimated_time)
 
-        if self.asset_loading_progress == 100:
+        if progress == 100:
             self.info("No more loading assets")
             self.loading_assets = []
 
