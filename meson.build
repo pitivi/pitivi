@@ -1,4 +1,4 @@
-project('pitivi', 'c', version: '0.98')
+project('pitivi', 'c', version : '0.98', meson_version : '>= 0.36.0')
 
 python = find_program('python3')
 intltool_merge = find_program('intltool-merge')
@@ -13,7 +13,7 @@ pycairo_dep = dependency('py3cairo')
 gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1',
     fallback : ['gst-transcoder', 'gst_transcoder_dep'])
 
-pkgdatadir = get_option('datadir') + '/pitivi'
+pkgdatadir = join_paths(get_option('datadir'), meson.project_name())
 
 git = find_program('git', required : false)
 if git.found()
@@ -35,8 +35,8 @@ cdata.set('CONFIGURED_GST_PLUGIN_PATH',
           run_command(geteenvvar, 'GST_PLUGIN_PATH').stdout().strip())
 cdata.set('CONFIGURED_GST_PLUGIN_SYSTEM_PATH',
           run_command(geteenvvar, 'GST_PLUGIN_SYSTEM_PATH').stdout().strip())
-cdata.set('LIBDIR', get_option('prefix') + '/' + get_option('libdir'))
-cdata.set('DATADIR', get_option('prefix') + '/' + get_option('datadir'))
+cdata.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir'))
+cdata.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir'))
 cdata.set('PACKAGE_NAME', 'Pitivi')
 cdata.set('PACKAGE', 'pitivi')
 cdata.set('GITVERSION', GITVERSION)
