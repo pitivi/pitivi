@@ -148,7 +148,7 @@ class TestUndoableActionLog(TestCase):
         self.assertTrue(self.log.is_in_transaction())
 
         self.assertEqual(self.log.undo_stacks, [])
-        self.log.push(mock.Mock())
+        self.log.push(mock.Mock(spec=UndoableAction))
         self.log.commit("meh")
         self.assertEqual(len(self.signals), 3)
         name, (stack, action) = self.signals[1]
@@ -184,7 +184,7 @@ class TestUndoableActionLog(TestCase):
         self.assertTrue(self.log.is_in_transaction())
 
         self.assertEqual(self.log.undo_stacks, [])
-        self.log.push(mock.Mock())
+        self.log.push(mock.Mock(spec=UndoableAction))
         self.log.commit("nested")
         self.assertEqual(len(self.signals), 4)
         name, (stack, action) = self.signals[2]
@@ -208,9 +208,9 @@ class TestUndoableActionLog(TestCase):
         action1 = mock.Mock()
         action2 = mock.Mock()
         with self.log.started("one", finalizing_action=action1):
-            self.log.push(mock.Mock())
+            self.log.push(mock.Mock(spec=UndoableAction))
             with self.log.started("two", finalizing_action=action2):
-                self.log.push(mock.Mock())
+                self.log.push(mock.Mock(spec=UndoableAction))
         action1.do.assert_called_once_with()
         # For now, we call the finalizing action only for the top stack.
         action2.do.assert_not_called()

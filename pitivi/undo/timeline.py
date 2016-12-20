@@ -21,11 +21,11 @@ from gi.repository import GObject
 from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
+from pitivi.undo.undo import Action
 from pitivi.undo.undo import ExpandableUndoableAction
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
-from pitivi.undo.undo import SimpleUndoableAction
 from pitivi.undo.undo import UndoableAction
 from pitivi.undo.undo import UndoableAutomaticObjectAction
 from pitivi.utils.loggable import Loggable
@@ -543,10 +543,10 @@ class KeyframeChangedAction(UndoableAction):
         self.control_source.set(time, value)
 
 
-class ControlSourceSetAction(SimpleUndoableAction):
+class ControlSourceSetAction(Action):
 
     def __init__(self, action_info):
-        SimpleUndoableAction.__init__(self)
+        Action.__init__(self)
         self.action_info = action_info
 
     def asScenarioAction(self):

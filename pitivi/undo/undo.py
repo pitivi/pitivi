@@ -34,24 +34,28 @@ class UndoWrongStateError(UndoError):
     pass
 
 
-class UndoableAction(GObject.Object, Loggable):
+class Action(GObject.Object, Loggable):
+    """Something which might worth logging in a scenario."""
+
+    def __init__(self):
+        GObject.Object.__init__(self)
+        Loggable.__init__(self)
+
+    def asScenarioAction(self):
+        raise NotImplementedError()
+
+
+class UndoableAction(Action):
     """An action that can be undone.
 
     When your object's state changes, create an UndoableAction to allow
     reverting the change later on.
     """
 
-    def __init__(self):
-        GObject.Object.__init__(self)
-        Loggable.__init__(self)
-
     def do(self):
         raise NotImplementedError()
 
     def undo(self):
-        raise NotImplementedError()
-
-    def asScenarioAction(self):
         raise NotImplementedError()
 
 
@@ -90,7 +94,7 @@ class UndoableAutomaticObjectAction(UndoableAction):
             cls.__updates[other] = new_auto_object
 
 
-class ExpandableUndoableAction(GObject.Object, Loggable):
+class ExpandableUndoableAction(UndoableAction):
     """An action which can include immediately following actions."""
 
     def expand(self, action):
@@ -104,15 +108,6 @@ class ExpandableUndoableAction(GObject.Object, Loggable):
                 it should not be used for anything else.
         """
         raise NotImplementedError()
-
-
-class SimpleUndoableAction(UndoableAction):
-
-    def do(self):
-        pass
-
-    def undo(self):
-        pass
 
 
 class FinalizingAction:
@@ -217,8 +212,18 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("begin", stack)
 
     def push(self, action):
-        """Adds an action to the current operation."""
+        """Reports a change.
+
+        Args:
+            action (Action): The action representing the change.
+                If it's an UndoableAction, it's added to the current
+                operation, if any.
+        """
         self.emit("pre-push", action)
+
+        if not isinstance(action, UndoableAction):
+            # Nothing else to do with it.
+            return
 
         if self.running:
             self.debug("Ignore push because running: %s", action)

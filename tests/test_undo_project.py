@@ -48,19 +48,19 @@ class TestProjectUndo(TestCase):
         self.assertFalse(self.action_log.undo_stacks)
 
     def test_asset_added(self):
+        uris = [common.get_sample_uri("tears_of_steel.webm")]
         mainloop = common.create_main_loop()
 
-        def commit_cb(unused_action_log, stack):
-            self.assertEqual(stack.action_group_name, "Adding assets")
-            mainloop.quit()
-
-        self.action_log.connect("commit", commit_cb)
-
         def loaded_cb(unused_project, unused_timeline):
-            uris = [common.get_sample_uri("tears_of_steel.webm")]
             self.project.addUris(uris)
 
         self.project.connect_after("loaded", loaded_cb)
+
+        def progress_cb(unused_project, progress, unused_estimated_time):
+            if progress == 100:
+                mainloop.quit()
+
+        self.project.connect_after("asset-loading-progress", progress_cb)
 
         mainloop.run()
 
@@ -75,17 +75,19 @@ class TestProjectUndo(TestCase):
         uris = [common.get_sample_uri("tears_of_steel.webm")]
         mainloop = common.create_main_loop()
 
-        def commit_cb(unused_action_log, stack):
-            self.assertEqual(stack.action_group_name, "Adding assets")
-            mainloop.quit()
-        self.action_log.connect("commit", commit_cb)
-
         def loaded_cb(unused_project, unused_timeline):
+            # The new project has been loaded, add some assets.
             self.project.addUris(uris)
         self.project.connect_after("loaded", loaded_cb)
 
+        def progress_cb(unused_project, progress, unused_estimated_time):
+            if progress == 100:
+                # The assets have been loaded.
+                mainloop.quit()
+        self.project.connect_after("asset-loading-progress", progress_cb)
+
         mainloop.run()
-        self.action_log.disconnect_by_func(commit_cb)
+        self.project.disconnect_by_func(progress_cb)
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
 
         # Make sure the asset is not a proxy.
@@ -101,18 +103,22 @@ class TestProjectUndo(TestCase):
         self.app.proxy_manager.connect("error-preparing-asset", error_cb)
 
         def proxy_ready_cb(proxy_manager, asset, proxy):
-            uris.remove(asset.props.id)
-            if not uris:
-                mainloop.quit()
+            mainloop.quit()
         self.app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
         self.project.use_proxies_for_assets(assets)
         mainloop.run()
 
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 2)
+
+        # Undo proxying.
         self.action_log.undo()
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
+
+        # Redo proxying.
         self.action_log.redo()
+        # Wait for the proxy to be signalled as ready.
+        mainloop.run()
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 2)
 
     def test_project_settings(self):

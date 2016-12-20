@@ -36,6 +36,8 @@ from pitivi.configure import get_ui_dir
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.render import Encoders
+from pitivi.undo.project import AssetAddedIntention
+from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
@@ -986,7 +988,6 @@ class Project(Loggable, GES.Project):
 
     def __updateAssetLoadingProgress(self, estimated_time=0):
         if not self.loading_assets:
-            self.app.action_log.commit("Adding assets")
             self.emit("asset-loading-progress", 100, estimated_time)
             return
 
@@ -1181,16 +1182,17 @@ class Project(Loggable, GES.Project):
     def use_proxies_for_assets(self, assets):
         originals = []
         for asset in assets:
-            proxy_target = asset.get_proxy_target()
-            if not proxy_target:
+            if not asset.get_proxy_target():
                 # The asset is not a proxy.
                 originals.append(asset)
         if originals:
-            self.app.action_log.begin("Adding assets")
-            for asset in originals:
-                self._prepare_asset_processing(asset)
-                asset.force_proxying = True
-                self.app.proxy_manager.add_job(asset)
+            with self.app.action_log.started("Proxying assets"):
+                for asset in originals:
+                    action = AssetProxiedIntention(asset, self, self.app.proxy_manager)
+                    self.app.action_log.push(action)
+                    self._prepare_asset_processing(asset)
+                    asset.force_proxying = True
+                    self.app.proxy_manager.add_job(asset)
 
     def disable_proxies_for_assets(self, assets, delete_proxy_file=False):
         for asset in assets:
@@ -1210,9 +1212,6 @@ class Project(Loggable, GES.Project):
             else:
                 # The asset is an original which is not being proxied.
                 self.app.proxy_manager.cancel_job(asset)
-
-        if assets:
-            self.setModificationState(True)
 
     def hasDefaultName(self):
         return DEFAULT_NAME == self.name
@@ -1272,9 +1271,12 @@ class Project(Loggable, GES.Project):
         Args:
             uris (List[str]): The URIs of the assets.
         """
-        self.app.action_log.begin("Adding assets")
-        for uri in uris:
-            self.create_asset(quote_uri(uri), GES.UriClip)
+        with self.app.action_log.started("Adding assets"):
+            for uri in uris:
+                if self.create_asset(quote_uri(uri), GES.UriClip):
+                    # The asset was not already part of the project.
+                    action = AssetAddedIntention(self, uri)
+                    self.app.action_log.push(action)
 
     def assetsForUris(self, uris):
         assets = []
