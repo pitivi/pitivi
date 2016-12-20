@@ -35,8 +35,8 @@ cdata.set('CONFIGURED_GST_PLUGIN_PATH',
           run_command(geteenvvar, 'GST_PLUGIN_PATH').stdout().strip())
 cdata.set('CONFIGURED_GST_PLUGIN_SYSTEM_PATH',
           run_command(geteenvvar, 'GST_PLUGIN_SYSTEM_PATH').stdout().strip())
-cdata.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir'))
-cdata.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir'))
+cdata.set('LIBDIR', join_paths(get_option('prefix'), get_option('libdir')))
+cdata.set('DATADIR', join_paths(get_option('prefix'), get_option('datadir')))
 cdata.set('PACKAGE_NAME', 'Pitivi')
 cdata.set('PACKAGE', 'pitivi')
 cdata.set('GITVERSION', GITVERSION)

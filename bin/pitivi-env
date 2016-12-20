@@ -35,6 +35,7 @@ then
     alias minstall=$minstall
     alias autogen=$autogen
     alias configure=$configure
+    alias ninja="$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -q -d ninja"
 
     # Prefer to run the binaries in the sandbox. For example "python3".
     for i in `$FLATPAK_ENVPATH/pitivi/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;

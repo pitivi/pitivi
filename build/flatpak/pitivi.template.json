@@ -35,21 +35,6 @@
             ]
         },
         {
-            "name": "ninja",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/ninja-build/ninja/releases/download/v1.7.1/ninja-linux.zip",
-                    "sha256": "eb541331792ac75ade60a7c0d7737a4851f2a131e0143b38c059dbfe731fb5a4"
-                },
-                {
-                    "type": "file",
-                    "path": "ninja-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
             "name": "x264",
             "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
             "sources": [
@@ -68,20 +53,6 @@
               "env": {"ARCHFLAGS": "-arch x86_64"}
             },
             "config-opts": ["--module=numpy==1.10.1"],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "setuptools",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=setuptools==19.7"],
             "sources": [
                 {
                     "type": "file",
@@ -242,7 +213,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.35.1"],
+            "config-opts": ["--module=meson==0.37.0"],
             "sources": [
                 {
                     "type": "file",
