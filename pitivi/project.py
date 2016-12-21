@@ -1178,7 +1178,7 @@ class Project(Loggable, GES.Project):
         self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingCancelledCb)
         self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
 
-    def useProxiesForAssets(self, assets):
+    def use_proxies_for_assets(self, assets):
         originals = []
         for asset in assets:
             proxy_target = asset.get_proxy_target()
@@ -1192,7 +1192,7 @@ class Project(Loggable, GES.Project):
                 asset.force_proxying = True
                 self.app.proxy_manager.add_job(asset)
 
-    def disableProxiesForAssets(self, assets, delete_proxy_file=False):
+    def disable_proxies_for_assets(self, assets, delete_proxy_file=False):
         for asset in assets:
             proxy_target = asset.get_proxy_target()
             if proxy_target:

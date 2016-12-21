@@ -106,7 +106,7 @@ class TestProjectUndo(TestCase):
                 mainloop.quit()
         self.app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
-        self.project.useProxiesForAssets(assets)
+        self.project.use_proxies_for_assets(assets)
         mainloop.run()
 
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 2)

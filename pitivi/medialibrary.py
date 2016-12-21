@@ -1126,13 +1126,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.iconview.unselect_all()
 
     def __stopUsingProxyCb(self, unused_action, unused_parameter):
-        self._project.disableProxiesForAssets(self.getSelectedAssets())
+        self._project.disable_proxies_for_assets(self.getSelectedAssets())
 
     def __useProxiesCb(self, unused_action, unused_parameter):
-        self._project.useProxiesForAssets(self.getSelectedAssets())
+        self._project.use_proxies_for_assets(self.getSelectedAssets())
 
     def __deleteProxiesCb(self, unused_action, unused_parameter):
-        self._project.disableProxiesForAssets(self.getSelectedAssets(), delete_proxy_file=True)
+        self._project.disable_proxies_for_assets(self.getSelectedAssets(),
+                                                 delete_proxy_file=True)
 
     def __createMenuModel(self):
         if self.app.proxy_manager.proxyingUnsupported:

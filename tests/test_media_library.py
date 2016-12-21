@@ -118,7 +118,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
 class TestMediaLibrary(BaseTestMediaLibrary):
 
-    def stopUsingProxies(self, delete_proxies=False):
+    def stop_using_proxies(self, delete_proxies=False):
         sample_name = "30fps_numeroted_frames_red.mkv"
         self.runCheckImport([sample_name])
 
@@ -127,7 +127,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
         self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
 
-        self.app.project_manager.current_project.disableProxiesForAssets(
+        self.app.project_manager.current_project.disable_proxies_for_assets(
             [proxy], delete_proxies)
         self.assertEqual(len(self.medialibrary.storemodel),
                          len(self.samples))
@@ -183,11 +183,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertEqual(len(list(self.medialibrary.getSelectedPaths())),
                          len(self.samples))
 
-    def testStopUsingProxies(self, delete_proxies=False):
-        self.stopUsingProxies()
+    def test_stop_using_proxies(self):
+        self.stop_using_proxies()
 
-    def testDeleteProxy(self):
-        self.stopUsingProxies(True)
+    def test_delete_proxy(self):
+        self.stop_using_proxies(delete_proxies=True)
 
         asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
         proxy_uri = self.app.proxy_manager.getProxyUri(asset)
@@ -201,7 +201,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertIsNone(asset.get_proxy())
 
         # And let's recreate the proxy file.
-        self.app.project_manager.current_project.useProxiesForAssets([asset])
+        self.app.project_manager.current_project.use_proxies_for_assets([asset])
         self.assertEqual(asset.creation_progress, 0)
 
         # Check that the info column notifies the user about progress
