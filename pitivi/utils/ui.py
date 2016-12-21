@@ -266,8 +266,9 @@ def beautify_asset(asset):
             return len(ranks)
 
     info = asset.get_info()
-    info.get_stream_list().sort(key=stream_sort_key)
-    for stream in info.get_stream_list():
+    streams = info.get_stream_list()
+    streams.sort(key=stream_sort_key)
+    for stream in streams:
         try:
             beautified_string = beautify_stream(stream)
         except NotImplementedError:
