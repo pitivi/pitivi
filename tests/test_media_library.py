@@ -201,12 +201,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertIsNone(asset.get_proxy())
 
         # And let's recreate the proxy file.
-        self.app.project_manager.current_project.useProxiesForAssets(
-            [asset])
+        self.app.project_manager.current_project.useProxiesForAssets([asset])
         self.assertEqual(asset.creation_progress, 0)
 
         # Check that the info column notifies the user about progress
-        self.assertTrue(_("Proxy creation progress: ") in
+        self.assertTrue("Proxy creation progress:" in
                         self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
 
         # Run the mainloop and let _progressBarCb stop it when the proxy is

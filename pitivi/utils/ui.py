@@ -250,6 +250,9 @@ def beautify_asset(asset):
     Args:
         asset (GES.Asset): The asset to display.
     """
+    uri = get_proxy_target(asset).props.id
+    res = ["<b>" + path_from_uri(uri) + "</b>"]
+
     ranks = {
         DiscovererVideoInfo: 0,
         DiscovererAudioInfo: 1,
@@ -263,9 +266,7 @@ def beautify_asset(asset):
             return len(ranks)
 
     info = asset.get_info()
-    uri = get_proxy_target(asset).props.id
     info.get_stream_list().sort(key=stream_sort_key)
-    nice_streams_txts = []
     for stream in info.get_stream_list():
         try:
             beautified_string = beautify_stream(stream)
@@ -273,15 +274,12 @@ def beautify_asset(asset):
             doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
             continue
         if beautified_string:
-            nice_streams_txts.append(beautified_string)
-
-    res = "<b>" + path_from_uri(uri) + "</b>\n" + "\n".join(nice_streams_txts)
+            res.append(beautified_string)
 
     if asset.creation_progress < 100:
-        res += _("\n<b>Proxy creation progress: ") + \
-            "</b>%d%%" % asset.creation_progress
+        res.append(_("<b>Proxy creation progress:</b> %d%%") % asset.creation_progress)
 
-    return res
+    return "\n".join(res)
 
 
 def info_name(info):
