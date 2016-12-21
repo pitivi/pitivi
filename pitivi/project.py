@@ -1079,7 +1079,7 @@ class Project(Loggable, GES.Project):
         self.loading_assets.append(asset)
 
     def do_asset_removed(self, asset):
-        self.app.proxy_manager.cancelJob(asset)
+        self.app.proxy_manager.cancel_job(asset)
 
     def do_asset_added(self, asset):
         """Handles `GES.Project::asset-added` emitted by self."""
@@ -1207,7 +1207,7 @@ class Project(Loggable, GES.Project):
                                            asset.props.id)
                     os.remove(Gst.uri_get_location(asset.props.id))
             else:
-                self.app.proxy_manager.cancelJob(asset)
+                self.app.proxy_manager.cancel_job(asset)
 
         if assets:
             self.setModificationState(True)

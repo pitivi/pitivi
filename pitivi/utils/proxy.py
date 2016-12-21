@@ -396,31 +396,34 @@ class ProxyManager(GObject.Object, Loggable):
         else:
             self.__pending_transcoders.append(transcoder)
 
-    def cancelJob(self, asset):
+    def cancel_job(self, asset):
+        """Cancels the transcoding job for the specified asset, if any.
+
+        Args:
+            asset (GES.Asset): The original asset.
+        """
         if not self.is_asset_queued(asset):
             return
 
         for transcoder in self.__running_transcoders:
             if asset.props.id == transcoder.props.src_uri:
-                self.__running_transcoders.remove(transcoder)
                 self.info("Cancelling running transcoder %s %s",
                           transcoder.props.src_uri,
                           transcoder.__grefcount__)
+                self.__running_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
                 return
 
         for transcoder in self.__pending_transcoders:
             if asset.props.id == transcoder.props.src_uri:
+                self.info("Cancelling pending transcoder %s",
+                          transcoder.props.src_uri)
                 # Removing the transcoder from the list
                 # will lead to its destruction (only reference)
                 # here, which means it will be stopped.
                 self.__pending_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
-                self.info("Cancelling pending transcoder %s",
-                          transcoder.props.src_uri)
                 return
-
-        return
 
     def add_job(self, asset):
         """Adds a transcoding job for the specified asset if needed.
@@ -428,19 +431,16 @@ class ProxyManager(GObject.Object, Loggable):
         Args:
             asset (GES.Asset): The asset to be transcoded.
         """
-        force_proxying = asset.force_proxying
-        self.debug("Maybe create a proxy for %s (strategy: %s, force: %s)",
-                   asset.get_id(), self.app.settings.proxyingStrategy,
-                   force_proxying)
+        if self.is_asset_queued(asset):
+            self.log("Asset already queued for proxying: %s", asset)
+            return
 
+        force_proxying = asset.force_proxying
         if not force_proxying and not self.__assetNeedsTranscoding(asset):
-            self.debug("Not proxying asset (disabled: %s)",
+            self.debug("Not proxying asset (proxying disabled: %s)",
                        self.proxyingUnsupported)
             # Make sure to notify we do not need a proxy for that asset.
             self.emit("proxy-ready", asset, None)
-            return
-
-        if self.is_asset_queued(asset):
             return
 
         proxy_uri = self.getProxyUri(asset)
@@ -452,5 +452,8 @@ class ProxyManager(GObject.Object, Loggable):
                                     None)
             return
 
+        self.debug("Creating a proxy for %s (strategy: %s, force: %s)",
+                   asset.get_id(), self.app.settings.proxyingStrategy,
+                   force_proxying)
         self.__createTranscoder(asset)
         return
