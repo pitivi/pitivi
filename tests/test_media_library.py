@@ -127,8 +127,10 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
         self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
 
-        self.app.project_manager.current_project.disable_proxies_for_assets(
-            [proxy], delete_proxies)
+        project = self.app.project_manager.current_project
+        self.assertIn(proxy, project.list_assets(GES.UriClip))
+        project.disable_proxies_for_assets([proxy], delete_proxies)
+        self.assertNotIn(proxy, project.list_assets(GES.UriClip))
         self.assertEqual(len(self.medialibrary.storemodel),
                          len(self.samples))
 

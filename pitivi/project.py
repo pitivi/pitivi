@@ -1199,6 +1199,7 @@ class Project(Loggable, GES.Project):
                 # The asset is a proxy for the proxy_target original asset.
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)
+                self.remove_asset(asset)
                 proxy_target.force_proxying = False
                 if delete_proxy_file:
                     if not self.app.proxy_manager.is_proxy_asset(asset):
@@ -1207,6 +1208,7 @@ class Project(Loggable, GES.Project):
                                            asset.props.id)
                     os.remove(Gst.uri_get_location(asset.props.id))
             else:
+                # The asset is an original which is not being proxied.
                 self.app.proxy_manager.cancel_job(asset)
 
         if assets:
