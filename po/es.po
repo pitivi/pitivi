@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: http://wiki.pitivi.org/wiki/Bug_reporting\n"
-"POT-Creation-Date: 2016-12-19 15:04+0000\n"
-"PO-Revision-Date: 2016-12-21 10:23+0100\n"
+"POT-Creation-Date: 2016-12-21 09:33+0000\n"
+"PO-Revision-Date: 2016-12-22 15:32+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -485,12 +485,6 @@ msgid "Automatically render from proxy files"
 msgstr "Renderizar automáticamente desde archivos de proxy"
 
 #: ../data/ui/renderingdialog.ui.h:21
-#| msgid ""
-#| "Use proxy files if they are available and the source asset media format "
-#| "is not officially supported.\n"
-#| "\n"
-#| "This option is a good trade of between quality of the rendered video and "
-#| "stability."
 msgid ""
 "Use proxy files if they are available and the source asset media format is "
 "not officially supported.\n"
@@ -1571,7 +1565,7 @@ msgstr ""
 "Hora: %s\n"
 "Valor: %s"
 
-#: ../pitivi/timeline/elements.py:1243
+#: ../pitivi/timeline/elements.py:1242
 msgid "Audio crossfade"
 msgstr "Fundido de sonido"
 
@@ -1738,17 +1732,14 @@ msgid "Reset to default value"
 msgstr "Restablecer al valor predeterminado"
 
 #: ../pitivi/dialogs/prefs.py:250
-#| msgid "Keyboard Shortcuts"
 msgid "Shortcuts"
 msgstr "Atajos"
 
 #: ../pitivi/dialogs/prefs.py:280
-#| msgid "Reset all settings to their default values"
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Restablecer el atajo al acelerador predeterminado"
 
 #: ../pitivi/dialogs/prefs.py:436
-#| msgid "Keyboard Shortcuts"
 msgid "Set Shortcut"
 msgstr "Establecer atajo"
 
@@ -1770,17 +1761,21 @@ msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
 msgstr ""
+"Quite este acelerador de donde se usara anteriormente y establézcalo a este "
+"atajo."
 
 #: ../pitivi/dialogs/prefs.py:467
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr ""
+msgstr "Introduzca el nuevo atajo para <b>%s</b> o pulse Esc para cancelar."
 
 #: ../pitivi/dialogs/prefs.py:476
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
 msgstr ""
+"El acelerador que intenta establecer puede interferir al escribir. Pruebe a "
+"usar Ctrl, Mayús o Alt junto con alguna otra tecla."
 
 #: ../pitivi/dialogs/prefs.py:510
 #, python-format
@@ -1788,6 +1783,8 @@ msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
 "for <b>%s</b> instead."
 msgstr ""
+"Esta combinación de teclas ya la está usando <b>%s</b>. Pulse Reemplazar "
+"para usarla para <b>%s</b> en su lugar."
 
 #: ../pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
