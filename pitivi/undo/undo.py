@@ -118,13 +118,20 @@ class FinalizingAction:
 
 
 class UndoableActionStack(UndoableAction):
-    """A stack of UndoableAction objects."""
+    """A stack of UndoableAction objects.
+
+    Attributes:
+        action_group_name (str): The name of the operation.
+        done_actions (List[UndoableAction]): The UndoableActions pushed in
+            the stack.
+        finalizing_action (FinalizingAction): The action to be performed
+            at the end of undoing or redoing the stacked actions.
+    """
 
     def __init__(self, action_group_name, finalizing_action=None):
         UndoableAction.__init__(self)
         self.action_group_name = action_group_name
         self.done_actions = []
-        self.undone_actions = []
         self.finalizing_action = finalizing_action
 
     def __repr__(self):
@@ -139,20 +146,17 @@ class UndoableActionStack(UndoableAction):
                     return
         self.done_actions.append(action)
 
-    def _runAction(self, action_list, method_name):
-        for action in action_list[::-1]:
+    def _run_action(self, actions, method_name):
+        for action in actions:
             method = getattr(action, method_name)
             method()
+        self.finish_operation()
 
     def do(self):
-        self._runAction(self.undone_actions, "do")
-        self.done_actions = self.undone_actions[::-1]
-        self.finish_operation()
+        self._run_action(self.done_actions, "do")
 
     def undo(self):
-        self._runAction(self.done_actions, "undo")
-        self.undone_actions = self.done_actions[::-1]
-        self.finish_operation()
+        self._run_action(self.done_actions[::-1], "undo")
 
     def finish_operation(self):
         if not self.finalizing_action:
