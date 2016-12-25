@@ -83,6 +83,14 @@ class BaseTestUndoTimeline(TestCase):
                    if isinstance(effect, GES.Effect)]
         self.assertEqual(len(effects), count)
 
+    def get_transition_element(self, ges_layer):
+        """"Gets the first found GES.VideoTransition clip."""
+        for clip in ges_layer.get_clips():
+            if isinstance(clip, GES.TransitionClip):
+                for element in clip.get_children(False):
+                    if isinstance(element, GES.VideoTransition):
+                        return element
+
 
 class TestTimelineObserver(BaseTestUndoTimeline):
 
@@ -399,7 +407,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(clip2.get_start(), 20 * Gst.SECOND)
         self.assertEqual(len(self.layer.get_clips()), 2)
 
-    def test_transitions(self):
+    def test_transition_type(self):
+        """Checks the transitions keep their type."""
         self._wait_until_project_loaded()
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
@@ -420,15 +429,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.assertNotIsInstance(action, AssetAddedAction,
                                      stack.done_actions)
 
-        def get_transition_element(ges_layer):
-            for clip in ges_layer.get_clips():
-                if isinstance(clip, GES.TransitionClip):
-                    for element in clip.get_children(False):
-                        if isinstance(element, GES.VideoTransition):
-                            return element
-            self.fail("Cannot find video transition")
-
-        transition_element = get_transition_element(self.layer)
+        transition_element = self.get_transition_element(self.layer)
         self.assertEqual(transition_element.get_transition_type(),
                          GES.VideoStandardTransitionType.CROSSFADE)
 
@@ -437,11 +438,12 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.assertEqual(transition_element.get_transition_type(),
                          GES.VideoStandardTransitionType.BAR_WIPE_LR)
 
-        # Try to undo/redo
+        # Undo setting the transition type.
         self.action_log.undo()
         self.assertEqual(transition_element.get_transition_type(),
                          GES.VideoStandardTransitionType.CROSSFADE)
 
+        # Redo setting the transition type.
         self.action_log.redo()
         self.assertEqual(transition_element.get_transition_type(),
                          GES.VideoStandardTransitionType.BAR_WIPE_LR)
@@ -452,19 +454,19 @@ class TestLayerObserver(BaseTestUndoTimeline):
             with self.action_log.started("remove clip"):
                 self.layer.remove_clip(clip2)
             self.action_log.undo()
-            transition_element = get_transition_element(self.layer)
+            transition_element = self.get_transition_element(self.layer)
             self.assertEqual(transition_element.get_transition_type(),
                              GES.VideoStandardTransitionType.BAR_WIPE_LR)
 
             # Undo a transition change operation done on a now obsolete
             # transition clip.
             self.action_log.undo()
-            transition_element = get_transition_element(self.layer)
+            transition_element = self.get_transition_element(self.layer)
             self.assertEqual(transition_element.get_transition_type(),
                              GES.VideoStandardTransitionType.CROSSFADE)
 
             self.action_log.redo()
-            transition_element = get_transition_element(self.layer)
+            transition_element = self.get_transition_element(self.layer)
             self.assertEqual(transition_element.get_transition_type(),
                              GES.VideoStandardTransitionType.BAR_WIPE_LR,
                              "The auto objects map in "
@@ -478,17 +480,41 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.action_log.undo()
             # Redo adding the second clip.
             self.action_log.redo()
-            transition_element = get_transition_element(self.layer)
+            transition_element = self.get_transition_element(self.layer)
             self.assertEqual(transition_element.get_transition_type(),
                              GES.VideoStandardTransitionType.CROSSFADE)
             # Redo the transition change.
             self.action_log.redo()
-            transition_element = get_transition_element(self.layer)
+            transition_element = self.get_transition_element(self.layer)
             self.assertEqual(transition_element.get_transition_type(),
                              GES.VideoStandardTransitionType.BAR_WIPE_LR,
                              "The auto objects map in "
                              "UndoableAutomaticObjectAction is not updated when "
                              "redoing clip add.")
+
+    def test_transition_found(self):
+        self._wait_until_project_loaded()
+        uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        asset = GES.UriClipAsset.request_sync(uri)
+
+        clip1 = asset.extract()
+        clip1.set_start(0)
+        self.layer.add_clip(clip1)
+
+        clip2 = asset.extract()
+        clip2.set_start(clip1.props.duration)
+        self.layer.add_clip(clip2)
+
+        self.assertIsNone(self.get_transition_element(self.layer))
+        with self.action_log.started("move clip1"):
+            clip1.edit([], -1, GES.EditMode.EDIT_NORMAL, GES.Edge.EDGE_NONE, clip1.props.duration / 2)
+        self.assertIsNotNone(self.get_transition_element(self.layer))
+
+        self.action_log.undo()
+        self.assertIsNone(self.get_transition_element(self.layer))
+
+        self.action_log.redo()
+        self.assertIsNotNone(self.get_transition_element(self.layer))
 
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
