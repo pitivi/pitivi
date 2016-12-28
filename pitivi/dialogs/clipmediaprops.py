@@ -109,7 +109,7 @@ class ClipMediaPropsDialog(object):
                 else:
                     foo = str(framerate_num) + "/" + str(framerate_denom)
                     # Translators: a label showing an invalid framerate value
-                    self.frame_rate.set_text(_("invalid (%s fps)" % foo))
+                    self.frame_rate.set_text(_("invalid (%s fps)") % foo)
                     self.framerate_checkbutton.set_active(False)
                     # For consistency, insensitize the checkbox AND value
                     # labels

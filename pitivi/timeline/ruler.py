@@ -221,7 +221,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         human_time = beautify_length(position)
         cur_frame = int(position / self.ns_per_frame) + 1
-        self.set_tooltip_text(human_time + "\n" + _("Frame #%d" % cur_frame))
+        self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
         return False
 
     def do_scroll_event(self, event):

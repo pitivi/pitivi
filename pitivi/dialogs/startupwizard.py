@@ -160,7 +160,7 @@ class StartUpWizard(object):
 
         # increment counter, create infobar and show info
         self.app.settings.displayCounter = self.app.settings.displayCounter + 1
-        text = _("Pitivi %s is available." % latest_version)
+        text = _("Pitivi %s is available.") % latest_version
         label = Gtk.Label(label=text)
         self.infobar.get_content_area().add(label)
         self.infobar.set_message_type(Gtk.MessageType.INFO)

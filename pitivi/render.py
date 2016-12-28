@@ -683,12 +683,12 @@ class RenderDialog(Loggable):
         # If it's in the giga range (10⁹) instead of mega (10⁶), use 2 decimals
         if estimated_size > 10e8:
             gigabytes = estimated_size / (10 ** 9)
-            return _("%.2f GB" % gigabytes)
+            return _("%.2f GB") % gigabytes
         else:
             megabytes = int(estimated_size / (10 ** 6))
             if megabytes > 30:
                 megabytes = int(round(megabytes, -1))  # -1 means round to 10
-            return _("%d MB" % megabytes)
+            return _("%d MB") % megabytes
 
     def updateFilename(self, basename):
         """Updates the filename UI element to show the specified file name."""
@@ -1042,7 +1042,7 @@ class RenderDialog(Loggable):
             self.progress.setFilesizeEstimate(None)
             if not self.progress.window.is_active():
                 notification = _(
-                    '"%s" has finished rendering.' % self.fileentry.get_text())
+                    '"%s" has finished rendering.') % self.fileentry.get_text()
                 self.notification = self.app.system.desktopMessage(
                     _("Render complete"), notification, "pitivi")
             self._maybe_play_finished_sound()

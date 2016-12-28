@@ -267,8 +267,8 @@ class ProjectManager(GObject.Object, Loggable):
 
         message = _("An autosaved version of your project file was found. "
                     "It is %s newer than the saved project.\n\n"
-                    "Would you like to load it instead?"
-                    % beautify_time_delta(time_diff))
+                    "Would you like to load it instead?") % \
+            beautify_time_delta(time_diff)
         primary.props.label = message
 
         # put the text in a vbox

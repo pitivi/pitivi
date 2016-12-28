@@ -604,15 +604,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         abt.set_website(APPURL)
 
         if in_devel():
-            version_str = _("Development version: %s" % GITVERSION)
+            version_str = _("Development version: %s") % GITVERSION
         elif not self.app.isLatest():
-            version_str = _("Version %(cur_ver)s — %(new_ver)s is available" %
-                            {"cur_ver": GITVERSION,
-                             "new_ver": self.app.getLatest()})
+            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
+                {"cur_ver": GITVERSION,
+                 "new_ver": self.app.getLatest()}
         elif GITVERSION:
-            version_str = _("Version %s" % GITVERSION)
+            version_str = _("Version %s") % GITVERSION
         else:
-            version_str = _("Version %s" % VERSION)
+            version_str = _("Version %s") % VERSION
         abt.set_version(version_str)
 
         comments = ["",
@@ -646,6 +646,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                      "Or you can run: git shortlog -s -n")
                    % "http://ohloh.net/p/pitivi/contributors", ]
         abt.set_authors(authors)
+        # Translators: See
+        # https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+        # for details on how this is used.
         translators = _("translator-credits")
         if translators != "translator-credits":
             abt.set_translator_credits(translators)
@@ -812,12 +815,12 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             last_saved = max(
                 os.path.getmtime(path), project_manager.time_loaded)
             time_delta = time() - last_saved
-            secondary.props.label = _("If you don't save, "
-                                      "the changes from the last %s will be lost."
-                                      % beautify_time_delta(time_delta))
+            message = _("If you don't save, "
+                        "the changes from the last %s will be lost.") % \
+                beautify_time_delta(time_delta)
         else:
-            secondary.props.label = _("If you don't save, "
-                                      "your changes will be lost.")
+            message = _("If you don't save, your changes will be lost.")
+        secondary.props.label = message
 
         # put the text in a vbox
         vbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
@@ -952,13 +955,13 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         if asset.get_duration() == Gst.CLOCK_TIME_NONE:
             # The file is probably an image, not video or audio.
             text = _('The following file has moved: "<b>%s</b>"'
-                     '\nPlease specify its new location:'
-                     % info_name(asset))
+                     '\nPlease specify its new location:') % \
+                info_name(asset)
         else:
             length = beautify_length(asset.get_duration())
             text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
-                     '\nPlease specify its new location:'
-                     % (info_name(asset), length))
+                     '\nPlease specify its new location:') % \
+                (info_name(asset), length)
 
         label = Gtk.Label()
         label.set_markup(text)
@@ -980,7 +983,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         filter_ = Gtk.FileFilter()
         # Translators: this is a format filter in a filechooser. Ex: "AVI
         # files"
-        filter_.set_name(_("%s files" % extension))
+        filter_.set_name(_("%s files") % extension)
         filter_.add_pattern("*%s" % extension.lower())
         filter_.add_pattern("*%s" % extension.upper())
         default = Gtk.FileFilter()
@@ -1010,8 +1013,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                 # You have to do this *after* successfully creating a blank project,
                 # or the startupwizard will still be connected to that signal too.
                 reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                           'Pitivi does not currently support partial projects.'
-                           % info_name(asset))
+                           'Pitivi does not currently support partial projects.') % \
+                    info_name(asset)
                 project_manager.emit("new-project-failed", project.uri, reason)
 
         dialog.destroy()
