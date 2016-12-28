@@ -1035,7 +1035,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def __warningInfobarCb(self, infobar, response_id):
         if response_id == Gtk.ResponseType.OK:
-            self.__showErrors()
+            self.__show_errors()
         self._resetErrorList()
         infobar.hide()
 
@@ -1043,15 +1043,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._errors = []
         self._import_warning_infobar.hide()
 
-    def __showErrors(self):
+    def __show_errors(self):
         """Shows a dialog with the import errors."""
-        if len(self._errors) > 1:
-            msgs = (_("Error while analyzing files"),
-                    _("The following files can not be used with Pitivi."))
-        else:
-            msgs = (_("Error while analyzing a file"),
-                    _("The following file can not be used with Pitivi."))
-        error_dialogbox = FileListErrorDialog(*msgs)
+        title = ngettext("Error while analyzing a file",
+                         "Error while analyzing files",
+                         len(self._errors))
+        headline = ngettext("The following file can not be used with Pitivi.",
+                            "The following files can not be used with Pitivi.",
+                            len(self._errors))
+        error_dialogbox = FileListErrorDialog(title, headline)
         error_dialogbox.connect("close", self._errorDialogBoxCloseCb)
         error_dialogbox.connect("response", self._errorDialogBoxResponseCb)
 
