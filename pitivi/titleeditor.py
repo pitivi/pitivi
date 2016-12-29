@@ -220,6 +220,8 @@ class TitleEditor(Loggable):
         assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
         # Select it so the Title editor becomes active.
         self._selection.setSelection([clip], SELECT)
+        self.app.gui.timeline_ui.timeline.resetSelectionGroup()
+        self.app.gui.timeline_ui.timeline.current_group.add(clip)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
