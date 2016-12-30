@@ -35,6 +35,26 @@
             ]
         },
         {
+            "name": "sound-theme-freedesktop",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://anongit.freedesktop.org/git/sound-theme-freedesktop.git",
+                    "branch": "0.8"
+                }
+            ]
+        },
+        {
+            "name": "gsound",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.gnome.org/browse/gsound",
+                    "branch": "1.0.2"
+                }
+            ]
+        },
+        {
             "name": "x264",
             "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
             "sources": [

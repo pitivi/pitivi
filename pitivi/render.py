@@ -885,13 +885,17 @@ class RenderDialog(Loggable):
     def destroy(self):
         self.window.destroy()
 
-    @staticmethod
-    def _maybePlayFinishedSound():
-        if "pycanberra" in missing_soft_deps:
+    def _maybe_play_finished_sound(self):
+        """Plays a sound to signal the render operation is done."""
+        if "GSound" in missing_soft_deps:
             return
-        import pycanberra
-        canberra = pycanberra.Canberra()
-        canberra.play(1, pycanberra.CA_PROP_EVENT_ID, "complete-media", None)
+        from gi.repository import GSound
+        sound_context = GSound.Context()
+        try:
+            sound_context.init()
+            sound_context.play_simple({GSound.ATTR_EVENT_ID: "complete"})
+        except GLib.Error as e:
+            self.warning("GSound failed to play: %s", e)
 
     def __maybeUseSourceAsset(self):
         if self.__always_use_proxies.get_active():
@@ -1042,7 +1046,7 @@ class RenderDialog(Loggable):
                     '"%s" has finished rendering.' % self.fileentry.get_text())
                 self.notification = self.app.system.desktopMessage(
                     _("Render complete"), notification, "pitivi")
-            self._maybePlayFinishedSound()
+            self._maybe_play_finished_sound()
             self.progress.play_rendered_file_button.show()
             self.progress.close_button.show()
             self.progress.cancel_button.hide()

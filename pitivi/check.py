@@ -373,8 +373,8 @@ HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      ]
 
 SOFT_DEPENDENCIES = (
-    ClassicDependency("pycanberra", None,
-                      _("enables sound notifications when rendering is complete")),
+    GIDependency("GSound", "1.0", None,
+                 _("enables sound notifications when rendering is complete")),
     GIDependency("Notify", "0.7", None,
                  _("enables visual notifications when rendering is complete")),
     GstPluginDependency("libav", None,
