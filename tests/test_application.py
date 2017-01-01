@@ -16,64 +16,54 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the application module."""
+# pylint: disable=missing-docstring,protected-access,no-self-use
+from unittest import mock
+
 from pitivi import application
 from pitivi import configure
 from tests import common
 
 
-class MockGioFile(object):
-
-    def load_contents_finish(self, result):
-        return (True, result)
-
-
 class TestPitivi(common.TestCase):
 
-    def testVersionInfo(self):
+    def call_version_info_received(self, version_info):
         app = application.Pitivi()
-        app._checkVersion()
+        giofile = mock.Mock()
+        giofile.load_contents_finish.return_value = (True, version_info)
+        app._version_info_received_cb(giofile, result=None, user_data=None)
+        return app
+
+    def test_version_info(self):
+        app = application.Pitivi()
         self.assertTrue(app.isLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "invalid", None)
+        app = self.call_version_info_received("invalid")
         self.assertTrue(app.isLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(
-            MockGioFile(), "%s=CURRENT" % configure.VERSION, None)
-        self.assertTrue(app.isLatest())
-        self.assertEqual(configure.VERSION, app.getLatest())
-
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(
-            MockGioFile(), "%s=current\n0=supported" % configure.VERSION, None)
+        app = self.call_version_info_received(
+            "%s=CURRENT" % configure.VERSION)
         self.assertTrue(app.isLatest())
         self.assertEqual(configure.VERSION, app.getLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "999.0=CURRENT", None)
+        app = self.call_version_info_received(
+            "%s=current\n0=supported" % configure.VERSION)
+        self.assertTrue(app.isLatest())
+        self.assertEqual(configure.VERSION, app.getLatest())
+
+        app = self.call_version_info_received("999.0=CURRENT")
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(
-            MockGioFile(), "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION, None)
+        app = self.call_version_info_received(
+            "999.0=CURRENT\n%s=SUPPORTED" % configure.VERSION)
         self.assertFalse(app.isLatest())
         self.assertEqual("999.0", app.getLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "0.91=current", None)
+        app = self.call_version_info_received("0.91=current")
         self.assertTrue(app.isLatest())
         self.assertEqual("0.91", app.getLatest())
 
-        app = application.Pitivi()
-        app._checkVersion()
-        app._versionInfoReceivedCb(MockGioFile(), "0.100000000=current", None)
+        app = self.call_version_info_received("0.100000000=current")
         self.assertFalse(app.isLatest())
         self.assertEqual("0.100000000", app.getLatest())

@@ -48,7 +48,6 @@ pitivi/viewer/overlay_stack.py
 pitivi/viewer/title_overlay.py
 pitivi/viewer/viewer.py
 tests/common.py
-tests/test_application.py
 tests/test_check.py
 tests/test_clipproperties.py
 tests/test_common.py

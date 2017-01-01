@@ -294,9 +294,9 @@ class Pitivi(Gtk.Application, Loggable):
         """Checks online for new versions of the app."""
         self.info("Requesting version information async")
         giofile = Gio.File.new_for_uri(RELEASES_URL)
-        giofile.load_contents_async(None, self._versionInfoReceivedCb, None)
+        giofile.load_contents_async(None, self._version_info_received_cb, None)
 
-    def _versionInfoReceivedCb(self, giofile, result, user_data):
+    def _version_info_received_cb(self, giofile, result, user_data):
         try:
             raw = giofile.load_contents_finish(result)[1]
             if not isinstance(raw, str):
