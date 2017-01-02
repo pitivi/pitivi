@@ -390,7 +390,6 @@ class RenderDialog(Loggable):
 
         self.app = app
         self.project = project
-        self.system = app.system
         self._pipeline = self.project.pipeline
 
         self.outfile = None
@@ -1060,16 +1059,16 @@ class RenderDialog(Loggable):
             self._showRenderErrorDialog(error, details)
 
         elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
-            prev, state, pending = message.parse_state_changed()
             if message.src == self._pipeline:
-                state_really_changed = pending == Gst.State.VOID_PENDING
-                if state_really_changed:
+                prev, state, pending = message.parse_state_changed()
+                if pending == Gst.State.VOID_PENDING:
+                    # State will not change further.
                     if state == Gst.State.PLAYING:
-                        self.debug(
-                            "Rendering started/resumed, inhibiting sleep")
-                        self.system.inhibitSleep(RenderDialog.INHIBIT_REASON)
+                        self.debug("Inhibiting sleep when rendering")
+                        self.app.simple_inhibit(RenderDialog.INHIBIT_REASON,
+                                                Gtk.ApplicationInhibitFlags.SUSPEND)
                     else:
-                        self.system.uninhibitSleep(RenderDialog.INHIBIT_REASON)
+                        self.app.simple_uninhibit(RenderDialog.INHIBIT_REASON)
 
     def _updatePositionCb(self, unused_pipeline, position):
         """Updates the progress bar and triggers the update of the file size.

@@ -67,3 +67,44 @@ class TestPitivi(common.TestCase):
         app = self.call_version_info_received("0.100000000=current")
         self.assertFalse(app.isLatest())
         self.assertEqual("0.100000000", app.getLatest())
+
+    def test_inhibition(self):
+        app = application.Pitivi()
+
+        # Check simple_inhibit.
+        with mock.patch.object(app, "inhibit") as inhibit_mock:
+            inhibit_mock.return_value = 1
+            app.simple_inhibit("reason1", "flags1")
+            inhibit_mock.return_value = 2
+            app.simple_inhibit("reason2", "flags2")
+            self.assertEqual(inhibit_mock.call_count, 2)
+
+            inhibit_mock.reset_mock()
+            app.simple_inhibit("reason1", "flags1.1")
+            self.assertFalse(inhibit_mock.called)
+
+        # Check simple_uninhibit.
+        with mock.patch.object(app, "uninhibit") as uninhibit_mock:
+            uninhibit_mock.reset_mock()
+            app.simple_uninhibit("reason1")
+            uninhibit_mock.assert_called_once_with(1)
+
+            uninhibit_mock.reset_mock()
+            app.simple_uninhibit("reason1")
+            self.assertFalse(uninhibit_mock.called)
+
+            uninhibit_mock.reset_mock()
+            app.simple_uninhibit("reason2")
+            uninhibit_mock.assert_called_once_with(2)
+
+            uninhibit_mock.reset_mock()
+            app.simple_uninhibit("reason2")
+            self.assertFalse(uninhibit_mock.called)
+
+            app.simple_uninhibit("reason3")
+            self.assertFalse(uninhibit_mock.called)
+
+        # Check again simple_inhibit.
+        with mock.patch.object(app, "inhibit") as inhibit_mock:
+            app.simple_inhibit("reason1", "flags1")
+            self.assertTrue(inhibit_mock.called)

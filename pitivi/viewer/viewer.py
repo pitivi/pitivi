@@ -80,7 +80,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
-        self.system = app.system
 
         Loggable.__init__(self)
         self.log("New ViewerContainer")
@@ -451,23 +450,23 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
         """Updates the widgets when the playback starts or stops."""
-        if int(state) == int(Gst.State.PLAYING):
+        if state == Gst.State.PLAYING:
             st = Gst.Structure.new_empty("play")
             self.app.write_action(st)
             self.playpause_button.setPause()
-            self.system.inhibitScreensaver(self.INHIBIT_REASON)
-        elif int(state) == int(Gst.State.PAUSED):
-            if old_state != int(Gst.State.PAUSED):
-                st = Gst.Structure.new_empty("pause")
-                if old_state == int(Gst.State.PLAYING):
-                    st.set_value("playback_time", float(self.pipeline.getPosition()) /
-                                 Gst.SECOND)
-                self.app.write_action(st)
-
-            self.playpause_button.setPlay()
-            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
+            self.app.simple_inhibit(ViewerContainer.INHIBIT_REASON,
+                                    Gtk.ApplicationInhibitFlags.IDLE)
         else:
-            self.system.uninhibitScreensaver(self.INHIBIT_REASON)
+            if state == Gst.State.PAUSED:
+                if old_state != Gst.State.PAUSED:
+                    st = Gst.Structure.new_empty("pause")
+                    if old_state == Gst.State.PLAYING:
+                        st.set_value("playback_time",
+                                     self.pipeline.getPosition() / Gst.SECOND)
+                    self.app.write_action(st)
+
+                self.playpause_button.setPlay()
+            self.app.simple_uninhibit(ViewerContainer.INHIBIT_REASON)
 
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):

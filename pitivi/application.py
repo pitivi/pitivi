@@ -84,6 +84,7 @@ class Pitivi(Gtk.Application, Loggable):
 
         self.gui = None
         self.__welcome_wizard = None
+        self.__inhibit_cookies = {}
 
         self._version_information = {}
 
@@ -387,3 +388,36 @@ class Pitivi(Gtk.Application, Loggable):
         # In the tests we do not want to create any gui
         if self.gui is not None:
             self.gui.showProjectStatus()
+
+    def simple_inhibit(self, reason, flags):
+        """Informs the session manager about actions to be inhibited.
+
+        Keeps track of the reasons received. A specific reason should always
+        be accompanied by the same flags. Calling the method a second time
+        with the same reason has no effect unless `simple_uninhibit` has been
+        called in the meanwhile.
+
+        Args:
+            reason (str): The reason for which to perform the inhibition.
+            flags (Gtk.ApplicationInhibitFlags): What should be inhibited.
+        """
+        if reason in self.__inhibit_cookies:
+            self.debug("Inhibit reason already active: %s", reason)
+            return
+        self.debug("Inhibiting %s for %s", flags, reason)
+        cookie = self.inhibit(self.gui, flags, reason)
+        self.__inhibit_cookies[reason] = cookie
+
+    def simple_uninhibit(self, reason):
+        """Informs the session manager that an inhibition is not needed anymore.
+
+        Args:
+            reason (str): The reason which is not valid anymore.
+        """
+        try:
+            cookie = self.__inhibit_cookies.pop(reason)
+        except KeyError:
+            self.debug("Inhibit reason not active: %s", reason)
+            return
+        self.debug("Uninhibiting %s", reason)
+        self.uninhibit(cookie)
