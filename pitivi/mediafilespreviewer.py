@@ -75,7 +75,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         settings (GlobalSettings): The settings of the app.
     """
 
-    def __init__(self, settings, minimal=False):
+    def __init__(self, settings, minimal=False, discover_sync=False):
         Gtk.Grid.__init__(self)
         Loggable.__init__(self)
 
@@ -170,6 +170,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.bbox.remove(self.b_zoom_out)
 
         self.clear_preview()
+        self._discover_sync = discover_sync
 
     def update_preview_cb(self, file_chooser):
         """Previews the URI of the specified file chooser.
@@ -188,12 +189,18 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.log("Preview request for %s", uri)
         self.clear_preview()
         self.current_selected_uri = uri
-        GES.UriClipAsset.new(uri, None, self.__asset_loaded_cb)
 
-    def __asset_loaded_cb(self, source, res):
-        uri = source.get_id()
+        if not self._discover_sync:
+            GES.UriClipAsset.new(uri, None, self.__asset_loaded_cb)
+        else:
+            self._handle_new_asset(uri=uri)
+
+    def _handle_new_asset(self, async_result=None, uri=None):
         try:
-            asset = GES.Asset.request_finish(res)
+            if uri:
+                asset = GES.UriClipAsset.request_sync(uri)
+            else:
+                asset = GES.Asset.request_finish(async_result)
         except GLib.Error as error:
             self.log("Failed discovering %s: %s", uri, error.message)
             self._show_error(error.message)
@@ -205,6 +212,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if self.play_on_discover:
             self.play_on_discover = False
             self.play()
+
+    def __asset_loaded_cb(self, source, res):
+        self._handle_new_asset(async_result=res)
 
     def _show_preview(self, uri, info):
         self.log("Show preview for %s", uri)

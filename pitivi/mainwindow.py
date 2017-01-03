@@ -971,7 +971,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)
-        previewer = PreviewWidget(self.settings)
+        previewer = PreviewWidget(self.settings, discover_sync=True)
         chooser.set_preview_widget(previewer)
         chooser.set_use_preview_label(False)
         chooser.connect('update-preview', previewer.update_preview_cb)

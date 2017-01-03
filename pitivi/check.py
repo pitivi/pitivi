@@ -327,6 +327,9 @@ def initialize_modules():
     from pitivi.configure import get_audiopresets_dir, get_videopresets_dir
     Gst.init(None)
 
+    if not os.environ.get("GES_DISCOVERY_TIMEOUT"):
+        os.environ["GES_DISCOVERY_TIMEOUT"] = "5"
+
     require_version("GES", GST_API_VERSION)
     from gi.repository import GES
     res, sys.argv = GES.init_check(sys.argv)
