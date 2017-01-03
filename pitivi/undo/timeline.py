@@ -55,6 +55,12 @@ class TrackElementPropertyChanged(UndoableAction):
         self.old_value = old_value
         self.new_value = new_value
 
+    def __repr__(self):
+        return "<TrackElementPropertyChanged %s.%s: %s -> %s>" % (self.track_element,
+                                                                  self.property_name,
+                                                                  self.old_value,
+                                                                  self.new_value)
+
     def do(self):
         self.track_element.set_child_property(
             self.property_name, self.new_value)
@@ -72,7 +78,6 @@ class TrackElementPropertyChanged(UndoableAction):
                 isinstance(self.new_value, GObject.GEnum):
             value = int(self.new_value)
         st['value'] = value
-
         return st
 
 
@@ -118,6 +123,10 @@ class TimelineElementObserver(Loggable):
         old_value = self._properties[prop_name]
         res, new_value = ges_timeline_element.get_child_property(prop_name)
         assert res, prop_name
+        if old_value == new_value:
+            # Nothing to see here.
+            return
+
         action = TrackElementPropertyChanged(
             ges_timeline_element, prop_name, old_value, new_value)
         self._properties[prop_name] = new_value
