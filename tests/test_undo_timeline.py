@@ -32,7 +32,7 @@ from pitivi.timeline.timeline import TimelineContainer
 from pitivi.undo.project import AssetAddedAction
 from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
-from pitivi.undo.timeline import EffectAddedAction
+from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
@@ -166,6 +166,41 @@ class TestTimelineObserver(BaseTestUndoTimeline):
             self.assertIsNone(clip1.get_parent())
             self.assertIsNone(clip2.get_parent())
 
+    def test_ungroup_group_clip(self):
+        self.setup_timeline_container()
+        timeline = self.timeline_container.timeline
+
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        clip = asset.extract()
+        self.layer.add_clip(clip)
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 1, clips)
+        self.assertEqual(len(clips[0].get_children(False)), 2)
+
+        timeline.selection.select([clip])
+        timeline.resetSelectionGroup()
+        timeline.current_group.add(clip)
+        self.timeline_container.ungroup_action.activate(None)
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 2, clips)
+        self.assertEqual(len(clips[0].get_children(False)), 1)
+        self.assertEqual(len(clips[1].get_children(False)), 1)
+
+        for i in range(2):
+            # Undo ungrouping.
+            self.action_log.undo()
+            clips = list(self.getTimelineClips())
+            self.assertEqual(len(clips), 1, clips)
+            self.assertEqual(len(clips[0].get_children(False)), 2)
+
+            # Redo ungrouping.
+            self.action_log.redo()
+            clips = list(self.getTimelineClips())
+            self.assertEqual(len(clips), 2, clips)
+            self.assertEqual(len(clips[0].get_children(False)), 1)
+            self.assertEqual(len(clips[1].get_children(False)), 1)
+
 
 class TestLayerObserver(BaseTestUndoTimeline):
 
@@ -221,7 +256,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.layer.add_clip(clip1)
 
         stack, = self.action_log.undo_stacks
-        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
+        self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
         self.assertTrue(clip1 in self.getTimelineClips())
 
@@ -332,7 +367,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, EffectAddedAction))
+        self.assertTrue(isinstance(action, TrackElementAdded))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in
@@ -362,7 +397,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, EffectAddedAction))
+        self.assertTrue(isinstance(action, TrackElementAdded))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in
@@ -622,7 +657,7 @@ class TestTimelineElementObserver(BaseTestUndoTimeline):
         stack = stacks[0]
         self.assertEqual(1, len(stack.done_actions), stack.done_actions)
         action = stack.done_actions[0]
-        self.assertTrue(isinstance(action, EffectAddedAction))
+        self.assertTrue(isinstance(action, TrackElementAdded))
 
         self.assertTrue(effect1 in clip1.get_children(True))
         self.assertEqual(1, len([effect for effect in

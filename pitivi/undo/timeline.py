@@ -176,7 +176,10 @@ class TrackElementAction(UndoableAction):
         self.clip.remove(self.track_element)
 
 
-class EffectAddedAction(TrackElementAction):
+class TrackElementAdded(TrackElementAction):
+
+    def __repr__(self):
+        return "<TrackElementAdded %s, %s>" % (self.clip, self.track_element)
 
     def do(self):
         self.add()
@@ -188,12 +191,16 @@ class EffectAddedAction(TrackElementAction):
         st = Gst.Structure.new_empty("container-add-child")
         st["container-name"] = self.clip.get_name()
         st["asset-id"] = self.track_element.get_id()
-        st["child-type"] = GObject.type_name(
-            self.track_element.get_asset().get_extractable_type())
+        asset = self.track_element.get_asset()
+        if asset:
+            st["child-type"] = GObject.type_name(asset.get_extractable_type())
         return st
 
 
-class EffectRemovedAction(TrackElementAction):
+class TrackElementRemoved(TrackElementAction):
+
+    def __repr__(self):
+        return "<TrackElementRemoved %s, %s>" % (self.clip, self.track_element)
 
     def do(self):
         self.remove()
@@ -267,6 +274,9 @@ class ClipAdded(UndoableAction):
         self.layer = layer
         self.clip = clip
 
+    def __repr__(self):
+        return "<ClipAdded %s>" % self.clip
+
     def do(self):
         self.clip.set_name(None)
         self.layer.add_clip(self.clip)
@@ -302,6 +312,9 @@ class ClipRemoved(ExpandableUndoableAction):
         self.layer = layer
         self.clip = clip
         self.transition_removed_actions = []
+
+    def __repr__(self):
+        return "<ClipRemoved %s>" % self.clip
 
     def expand(self, action):
         if not isinstance(action, TransitionClipRemovedAction):
@@ -691,16 +704,14 @@ class LayerObserver(MetaContainerObserver, Loggable):
 
     def _clipTrackElementAddedCb(self, clip, ges_track_element):
         self._connectToTrackElement(ges_track_element)
-        if isinstance(ges_track_element, GES.BaseEffect):
-            action = EffectAddedAction(clip, ges_track_element)
-            self.action_log.push(action)
+        action = TrackElementAdded(clip, ges_track_element)
+        self.action_log.push(action)
 
     def _clipTrackElementRemovedCb(self, clip, ges_track_element):
         self.debug("%s REMOVED from %s", ges_track_element, clip)
         self._disconnectFromTrackElement(ges_track_element)
-        if isinstance(ges_track_element, GES.BaseEffect):
-            action = EffectRemovedAction(clip, ges_track_element)
-            self.action_log.push(action)
+        action = TrackElementRemoved(clip, ges_track_element)
+        self.action_log.push(action)
 
     def __layer_moved_cb(self, ges_layer, unused_param):
         current = ges_layer.props.priority
