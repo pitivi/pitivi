@@ -710,11 +710,14 @@ class RenderDialog(Loggable):
 
         model_headers = [model.get_column_type(i) for i in range(model.get_n_columns())]
         reduced_model = Gtk.ListStore(*model_headers)
+        reduced = []
         for name, value in dict(model).items():
             ecaps = Gst.Caps(caps_template_expander(caps_template, value))
             if not caps.intersect(ecaps).is_empty():
-                reduced_model.append((name, value))
+                reduced.append((name, value))
 
+        for v in sorted(reduced, key=lambda v: float(v[1])):
+            reduced_model.append(v)
         combo.set_model(reduced_model)
 
         set_combo_value(combo, value)
