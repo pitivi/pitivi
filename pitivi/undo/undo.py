@@ -58,6 +58,18 @@ class UndoableAction(Action):
     def undo(self):
         raise NotImplementedError()
 
+    def expand(self, action):
+        """Allows the action to expand by including the specified action.
+
+        Args:
+            action (UndoableAction): The action to include.
+
+        Returns:
+            bool: Whether the action has been included, in which case
+                it should not be used for anything else.
+        """
+        return False
+
 
 class UndoableAutomaticObjectAction(UndoableAction):
     """An action on an automatically created object.
@@ -94,22 +106,6 @@ class UndoableAutomaticObjectAction(UndoableAction):
             cls.__updates[other] = new_auto_object
 
 
-class ExpandableUndoableAction(UndoableAction):
-    """An action which can include immediately following actions."""
-
-    def expand(self, action):
-        """Expands including the specified action.
-
-        Args:
-            action (UndoableAction): The action to include.
-
-        Returns:
-            bool: Whether the action has been included, in which case
-                it should not be used for anything else.
-        """
-        raise NotImplementedError()
-
-
 class FinalizingAction:
     """Base class for actions applied when an undo or redo is performed."""
 
@@ -140,10 +136,9 @@ class UndoableActionStack(UndoableAction):
     def push(self, action):
         if self.done_actions:
             last_action = self.done_actions[-1]
-            if isinstance(last_action, ExpandableUndoableAction):
-                if last_action.expand(action):
-                    # The action has been included in the previous one.
-                    return
+            if last_action.expand(action):
+                # The action has been included in the previous one.
+                return
         self.done_actions.append(action)
 
     def _run_action(self, actions, method_name):

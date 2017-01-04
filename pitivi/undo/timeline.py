@@ -22,7 +22,6 @@ from gi.repository import Gst
 
 from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.undo import Action
-from pitivi.undo.undo import ExpandableUndoableAction
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
@@ -267,24 +266,41 @@ class ControlSourceObserver(GObject.Object):
         self.action_log.push(action)
 
 
-class ClipAdded(UndoableAction):
+class ClipAction(UndoableAction):
 
     def __init__(self, layer, clip):
         UndoableAction.__init__(self)
         self.layer = layer
         self.clip = clip
 
+    def add(self):
+        self.clip.set_name(None)
+        children = self.clip.get_children(False)
+        self.layer.add_clip(self.clip)
+        # GES adds children if the clip had none. Make sure they are removed.
+        for child in self.clip.get_children(False):
+            if child not in children:
+                self.clip.remove(child)
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+
+    def _child_added_cb(self, clip, track_element):
+        clip.remove(track_element)
+
+    def remove(self):
+        self.layer.remove_clip(self.clip)
+        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+
+
+class ClipAdded(ClipAction):
+
     def __repr__(self):
         return "<ClipAdded %s>" % self.clip
 
     def do(self):
-        self.clip.set_name(None)
-        self.layer.add_clip(self.clip)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+        self.add()
 
     def undo(self):
-        self.layer.remove_clip(self.clip)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+        self.remove()
 
     def asScenarioAction(self):
         timeline = self.layer.get_timeline()
@@ -305,12 +321,10 @@ class ClipAdded(UndoableAction):
         return st
 
 
-class ClipRemoved(ExpandableUndoableAction):
+class ClipRemoved(ClipAction):
 
     def __init__(self, layer, clip):
-        ExpandableUndoableAction.__init__(self)
-        self.layer = layer
-        self.clip = clip
+        ClipAction.__init__(self, layer, clip)
         self.transition_removed_actions = []
 
     def __repr__(self):
@@ -323,13 +337,10 @@ class ClipRemoved(ExpandableUndoableAction):
         return True
 
     def do(self):
-        self.layer.remove_clip(self.clip)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+        self.remove()
 
     def undo(self):
-        self.clip.set_name(None)
-        self.layer.add_clip(self.clip)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+        self.add()
         # Update the automatically created transitions.
         for action in self.transition_removed_actions:
             action.undo()
@@ -727,6 +738,9 @@ class TimelineElementAddedToGroup(UndoableAction):
         self.ges_group = ges_group
         self.ges_timeline_element = ges_timeline_element
 
+    def __repr__(self):
+        return "<TimelineElementAddedToGroup %s, %s>" % (self.ges_group, self.ges_timeline_element)
+
     def do(self):
         self.ges_group.add(self.ges_timeline_element)
 
@@ -740,6 +754,9 @@ class TimelineElementRemovedFromGroup(UndoableAction):
         UndoableAction.__init__(self)
         self.ges_group = ges_group
         self.ges_timeline_element = ges_timeline_element
+
+    def __repr__(self):
+        return "<TimelineElementRemovedFromGroup %s, %s>" % (self.ges_group, self.ges_timeline_element)
 
     def do(self):
         self.ges_group.remove(self.ges_timeline_element)
@@ -819,7 +836,7 @@ class TimelineObserver(Loggable):
 
     def _connect_to_group(self, ges_group):
         if not ges_group.props.serialize:
-            return
+            return False
 
         # A group is added when it gets its first element, thus
         # when undoing/redoing a group can be added multiple times.
@@ -828,9 +845,12 @@ class TimelineObserver(Loggable):
         if ges_group not in self.group_observers:
             group_observer = GroupObserver(ges_group, self.action_log)
             self.group_observers[ges_group] = group_observer
+        return True
 
     def __group_added_cb(self, unused_ges_timeline, ges_group):
-        self._connect_to_group(ges_group)
+        if not self._connect_to_group(ges_group):
+            return
+
         # This should be a single clip.
         for ges_clip in ges_group.get_children(recursive=False):
             action = TimelineElementAddedToGroup(ges_group, ges_clip)

@@ -187,7 +187,23 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertEqual(len(clips[0].get_children(False)), 1)
         self.assertEqual(len(clips[1].get_children(False)), 1)
 
+        timeline.selection.select(clips)
+        timeline.resetSelectionGroup()
+        for clip in clips:
+            timeline.current_group.add(clip)
+        self.timeline_container.group_action.activate(None)
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 1, clips)
+        self.assertEqual(len(clips[0].get_children(False)), 2)
+
         for i in range(2):
+            # Undo grouping.
+            self.action_log.undo()
+            clips = list(self.getTimelineClips())
+            self.assertEqual(len(clips), 2, clips)
+            self.assertEqual(len(clips[0].get_children(False)), 1)
+            self.assertEqual(len(clips[1].get_children(False)), 1)
+
             # Undo ungrouping.
             self.action_log.undo()
             clips = list(self.getTimelineClips())
@@ -200,6 +216,12 @@ class TestTimelineObserver(BaseTestUndoTimeline):
             self.assertEqual(len(clips), 2, clips)
             self.assertEqual(len(clips[0].get_children(False)), 1)
             self.assertEqual(len(clips[1].get_children(False)), 1)
+
+            # Redo grouping.
+            self.action_log.redo()
+            clips = list(self.getTimelineClips())
+            self.assertEqual(len(clips), 1, clips)
+            self.assertEqual(len(clips[0].get_children(False)), 2)
 
 
 class TestLayerObserver(BaseTestUndoTimeline):

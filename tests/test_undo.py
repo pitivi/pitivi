@@ -63,7 +63,9 @@ class TestUndoableActionStack(TestCase):
         """
         stack = UndoableActionStack("meh")
         action1 = mock.Mock(spec=UndoableAction)
+        action1.expand.return_value = False
         action2 = mock.Mock(spec=UndoableAction)
+        action2.expand.return_value = False
         action2.undo.side_effect = UndoError("meh")
         action3 = mock.Mock(spec=UndoableAction)
         stack.push(action1)
@@ -284,6 +286,7 @@ class TestUndoableActionLog(TestCase):
 
         # push two actions
         action1 = mock.Mock(spec=UndoableAction)
+        action1.expand.return_value = False
         self.log.push(action1)
         self.assertEqual(len(self.signals), 2)
         name, (stack, signalAction) = self.signals[1]
@@ -342,8 +345,11 @@ class TestUndoableActionLog(TestCase):
         """
         order = mock.Mock()
         order.action1 = mock.Mock(spec=UndoableAction)
+        order.action1.expand.return_value = False
         order.action2 = mock.Mock(spec=UndoableAction)
+        order.action2.expand.return_value = False
         order.action3 = mock.Mock(spec=UndoableAction)
+        order.action3.expand.return_value = False
 
         with self.log.started("meh"):
             self.log.push(order.action1)
