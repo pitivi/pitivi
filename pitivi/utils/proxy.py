@@ -104,7 +104,6 @@ class ProxyManager(GObject.Object, Loggable):
         self._total_time_to_transcode = 0
         self._total_transcoded_time = 0
         self._start_proxying_time = 0
-        self._estimated_time = 0
         self.__running_transcoders = []
         self.__pending_transcoders = []
 
@@ -324,15 +323,14 @@ class ProxyManager(GObject.Object, Loggable):
     def __emitProgress(self, asset, progress):
         if self._total_transcoded_time:
             time_spent = time.time() - self._start_proxying_time
-            self._estimated_time = max(
+            estimated_time = max(
                 0, (time_spent * self._total_time_to_transcode /
                     self._total_transcoded_time) - time_spent)
         else:
-            self._estimated_time = 0
+            estimated_time = 0
 
         asset.creation_progress = progress
-        self.emit("progress", asset, asset.creation_progress,
-                  self._estimated_time)
+        self.emit("progress", asset, asset.creation_progress, estimated_time)
 
     def __proxyingPositionChangedCb(self, transcoder, position, asset):
         # Do not set to >= 100 as we need to notify about the proxy first
