@@ -42,6 +42,7 @@ from pitivi.utils.ui import frame_rates
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
+from pitivi.utils.widgets import TextWidget
 
 
 class Encoders(Loggable):
@@ -560,8 +561,13 @@ class RenderDialog(Loggable):
         self.filebutton = builder.get_object("filebutton")
         self.fileentry = builder.get_object("fileentry")
         self.resolution_label = builder.get_object("resolution_label")
-        self.presets_combo = builder.get_object("presets_combo")
         self.preset_menubutton = builder.get_object("preset_menubutton")
+
+        text_widget = TextWidget(matches=r'^[a-z][a-z-0-9-]+$', combobox=True)
+        self.presets_combo = text_widget.combo
+        preset_table = builder.get_object("preset_table")
+        preset_table.attach(text_widget, 1, 0, 1, 1)
+        text_widget.show()
 
         self.video_output_checkbutton.props.active = self.project.video_profile.is_enabled()
         self.audio_output_checkbutton.props.active = self.project.audio_profile.is_enabled()

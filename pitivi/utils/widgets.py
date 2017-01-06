@@ -46,10 +46,11 @@ from pitivi.utils.ui import unpack_color
 ZOOM_SLIDER_PADDING = SPACING * 4 / 5
 
 
-class DynamicWidget(object):
+class DynamicWidget(Loggable):
     """Abstract widget providing a way to get, set and observe properties."""
 
     def __init__(self, default):
+        super().__init__()
         self.default = default
 
     def connectValueChanged(self, callback, *args):
@@ -107,7 +108,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
         "activate": (GObject.SignalFlags.RUN_LAST, None, (),)
     }
 
-    def __init__(self, matches=None, choices=None, default=None):
+    def __init__(self, matches=None, choices=None, default=None, combobox=False):
         if not default:
             # In the case of text widgets, a blank default is an empty string
             default = ""
@@ -126,6 +127,11 @@ class TextWidget(Gtk.Box, DynamicWidget):
             self.pack_start(self.combo, expand=False, fill=False, padding=0)
             for choice in choices:
                 self.combo.append_text(choice)
+        elif combobox:
+            self.combo = Gtk.ComboBox.new_with_entry()
+            self.text = self.combo.get_child()
+            self.combo.show()
+            self.pack_start(self.combo, expand=False, fill=False, padding=0)
         else:
             self.text = Gtk.Entry()
             self.text.show()
