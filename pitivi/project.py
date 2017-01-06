@@ -1131,37 +1131,71 @@ class Project(Loggable, GES.Project):
         if self.scenario is not None:
             return
 
-        # The project just loaded, we need to check the new
-        # encoding profiles and make use of it now.
-        container_profile = self.list_encoding_profiles()[0]
-        if container_profile is not self.container_profile:
-            # The encoding profile might have been reset from the
-            # Project file, we just take it as our
-            self.container_profile = container_profile
-            self.muxer = self._getElementFactoryName(
-                Encoders().muxers, container_profile)
-            if self.muxer is None:
-                self.muxer = Encoders().default_muxer
-            for profile in container_profile.get_profiles():
-                if isinstance(profile, GstPbutils.EncodingVideoProfile):
-                    self.video_profile = profile
-                    if self.video_profile.get_restriction() is None:
-                        self.video_profile.set_restriction(
-                            Gst.Caps("video/x-raw"))
-                    self._ensureVideoRestrictions()
+        profiles = self.list_encoding_profiles()
+        if profiles:
+            # The project just loaded, check the new
+            # encoding profile and make use of it now.
+            self.set_container_profile(profiles[0], reset_all=True)
 
-                    self.vencoder = self._getElementFactoryName(
-                        Encoders().vencoders, profile)
-                elif isinstance(profile, GstPbutils.EncodingAudioProfile):
-                    self.audio_profile = profile
-                    if self.audio_profile.get_restriction() is None:
-                        self.audio_profile.set_restriction(
-                            Gst.Caps("audio/x-raw"))
-                    self._ensureAudioRestrictions()
-                    self.aencoder = self._getElementFactoryName(
-                        Encoders().aencoders, profile)
-                else:
-                    self.warning("We do not handle profile: %s", profile)
+    def set_container_profile(self, container_profile, reset_all=False):
+        """Sets @container_profile as new profile if usable.
+
+        Attributes:
+            profile (Gst.EncodingProfile): The Gst.EncodingContainerProfile to use
+            reset_all (bool): Do not use restrictions from the previously set profile
+        """
+        if container_profile == self.container_profile:
+            return False
+
+        previous_audio_rest = None
+        previous_video_rest = None
+        if not reset_all and self.container_profile:
+            if self.audio_profile:
+                previous_audio_rest = self.audio_profile.get_restriction()
+            if self.video_profile:
+                previous_video_rest = self.video_profile.get_restriction()
+
+        muxer = self._getElementFactoryName(
+            Encoders().muxers, container_profile)
+        if muxer is None:
+            muxer = Encoders().default_muxer
+        container_profile.set_preset_name(muxer)
+
+        video_profile = audio_profile = vencoder = aencoder = None
+        for profile in container_profile.get_profiles():
+            if isinstance(profile, GstPbutils.EncodingVideoProfile):
+                video_profile = profile
+                if profile.get_restriction() is None:
+                    profile.set_restriction(Gst.Caps("video/x-raw"))
+
+                self._ensureVideoRestrictions(profile, previous_video_rest)
+                vencoder = self._getElementFactoryName(Encoders().vencoders, profile)
+                if vencoder:
+                    profile.set_preset_name(vencoder)
+            elif isinstance(profile, GstPbutils.EncodingAudioProfile):
+                audio_profile = profile
+                if profile.get_restriction() is None:
+                    profile.set_restriction(Gst.Caps("audio/x-raw"))
+
+                self._ensureAudioRestrictions(profile, previous_audio_rest)
+                aencoder = self._getElementFactoryName(Encoders().aencoders, profile)
+                if aencoder:
+                    profile.set_preset_name(aencoder)
+            else:
+                self.warning("We do not handle profile: %s", profile)
+
+        if not aencoder:
+            self.error("Can't use profile, no audio encoder found.")
+            return False
+        if not vencoder:
+            self.error("Can't use profile, no video encoder found.")
+            return False
+
+        self.container_profile = container_profile
+        self.video_profile = video_profile
+        self.audio_profile = audio_profile
+
+        return True
 
     # ------------------------------------------ #
     # Our API                                    #
@@ -1433,21 +1467,42 @@ class Project(Loggable, GES.Project):
         if not self.ges_timeline.get_layers():
             self.ges_timeline.append_layer()
 
-    def _ensureVideoRestrictions(self):
-        if self.videowidth is None:
-            self.videowidth = 720
-        if self.videoheight is None:
-            self.videoheight = 576
-        if self.videorate is None:
-            self.videorate = Gst.Fraction(25, 1)
-        if self.videopar is None:
-            self.videopar = Gst.Fraction(1, 1)
+    def _ensureRestrictions(self, profile, values, ref_restrictions=None):
+        """Make sure restriction values defined in @values are set on @profile.
 
-    def _ensureAudioRestrictions(self):
-        if not self.audiochannels:
-            self.audiochannels = 2
-        if not self.audiorate:
-            self.audiorate = 44100
+        Attributes:
+            profile (Gst.EncodingProfile): The Gst.EncodingProfile to use
+            values (dict): A key value dict to use to set restriction values
+            ref_restrictions (Gst.Caps): Reuse values from those caps instead
+                                         of @values if available.
+
+        """
+        self.debug("Ensuring %s", profile.get_restriction().to_string())
+        for fieldname, value in values:
+            # Only consider the first GstStructure
+            # FIXME Figure out everywhere how to be smarter.
+            cvalue = profile.get_restriction()[0][fieldname]
+            if cvalue is None:
+                if ref_restrictions and ref_restrictions[0][fieldname]:
+                    value = ref_restrictions[0][fieldname]
+                res = Project._set_restriction(profile, fieldname, value)
+
+    def _ensureVideoRestrictions(self, profile=None, ref_restrictions=None):
+        values = [
+            ("width", 720),
+            ("height", 576),
+            ("framerate", Gst.Fraction(25, 1)),
+            ("pixel-aspect-ratio", Gst.Fraction(1, 1))
+        ]
+        if not profile:
+            profile = self.video_profile
+        self._ensureRestrictions(profile, values, ref_restrictions)
+
+    def _ensureAudioRestrictions(self, profile=None, ref_restrictions=None):
+        if not profile:
+            profile = self.audio_profile
+        return self._ensureRestrictions(profile,
+            [("channels", 2), ("rate", 44100)], ref_restrictions)
 
     def _maybeInitSettingsFromAsset(self, asset):
         """Updates the project settings to match the specified asset.
