@@ -23,6 +23,6 @@ help/index.cache
 
 # xdg-app/flatpak
 .bashrc
-build/flatpak/.flatpak-builder
+*.flatpak-builder/
 build/flatpak/Pitivi.*.json
 build/devel/
