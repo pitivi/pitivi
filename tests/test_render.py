@@ -24,9 +24,10 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.preset import RenderPresetManager
+from pitivi.preset import EncodingTargetManager
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
+from pitivi.utils.ui import get_combo_value
 from tests import common
 
 
@@ -40,20 +41,25 @@ class TestRender(common.TestCase):
 
     def test_extensions_presets(self):
         """Checks we associate file extensions to the muxers of the presets."""
+        project = self.create_simple_project()
         with mock.patch("pitivi.preset.xdg_data_home") as xdg_data_home:
             xdg_data_home.return_value = "/pitivi-dir-which-does-not-exist"
-            preset_manager = RenderPresetManager(system=None, encoders=Encoders())
+            preset_manager = EncodingTargetManager(project.app)
             preset_manager.loadAll()
             self.assertTrue(preset_manager.presets)
-            for unused_name, preset in preset_manager.presets.items():
-                muxer = preset["container"]
-                self.assertIsNotNone(extension_for_muxer(muxer), preset)
+            for unused_name, container_profile in preset_manager.presets.items():
+                # Preset name is only set when the project loads it
+                project.set_container_profile(container_profile)
+                muxer = container_profile.get_preset_name()
+                self.assertIsNotNone(extension_for_muxer(muxer), container_profile)
 
-    def test_launching_rendering(self):
-        """Checks no exception is raised when clicking the render button."""
+    def create_simple_project(self):
+        """Create a Project with a layer a clip."""
         timeline_container = common.create_timeline_container()
         app = timeline_container.app
         project = app.project_manager.current_project
+        if not project.ges_timeline.get_layers():
+            project.ges_timeline.append_layer()
 
         mainloop = common.create_main_loop()
 
@@ -69,11 +75,108 @@ class TestRender(common.TestCase):
         layer.add_asset(project.list_assets(GES.UriClip)[0],
                         0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.UNKNOWN)
 
-        from pitivi.render import RenderDialog, RenderingProgressDialog
+        return project
 
-        with mock.patch.object(Gtk.Builder, "__new__"):
-            dialog = RenderDialog(app, project)
+    def create_rendering_dialog(self, project):
+        """Create a RenderingDialog ready for testing"""
+        from pitivi.render import RenderDialog
+
+        class MockedBuilder(Gtk.Builder):
+            """Specialized builder suitable for RenderingDialog testing."""
+
+            # pylint: disable=arguments-differ
+            def get_object(self, name):
+                """Get @name widget or a MagicMock for render dialog window."""
+                if name == "render-dialog":
+                    return mock.MagicMock()
+
+                return super().get_object(name)
+
+        with mock.patch.object(Gtk.Builder, "__new__", return_value=MockedBuilder()):
+            return RenderDialog(project.app, project)
+
+    def test_launching_rendering(self):
+        """Checks no exception is raised when clicking the render button."""
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+
+        from pitivi.render import RenderingProgressDialog
         with mock.patch.object(dialog, "startAction"):
             with mock.patch.object(RenderingProgressDialog, "__new__"):
                 with mock.patch.object(dialog, "_pipeline"):
-                    dialog._renderButtonClickedCb(None)
+                    return dialog._renderButtonClickedCb(None)
+
+    # pylint: disable=too-many-locals
+    def test_loading_preset(self):
+        """Check preset values are properly exposed in the UI."""
+        def find_preset_row_index(combo, name):
+            """Finds @name in @combo."""
+            for i, row in enumerate(combo.get_model()):
+                if row[0] == name:
+                    return i
+
+            return None
+
+        def preset_changed_cb(combo, changed):
+            """Callback for the 'combo::changed' signal."""
+            changed.append(1)
+
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+
+        preset_combo = dialog.render_presets.combo
+        changed = []
+        preset_combo.connect("changed", preset_changed_cb, changed)
+
+        test_data = [
+            ("test", {'aencoder': "vorbisenc",
+                      'vencoder': "theoraenc",
+                      'muxer': "oggmux"}),
+            ("test_ogg-vp8-opus", {
+                "aencoder": "opusenc",
+                "vencoder": "vp8enc",
+                "muxer": "oggmux"}),
+            ("test_fullhd", {
+                "aencoder": "vorbisenc",
+                "vencoder": "theoraenc",
+                "muxer": "oggmux",
+                "videowidth": 1920,
+                "videoheight": 1080,
+                "videorate": Gst.Fraction(120, 1)}),
+            ("test_ogg-vp8-opus", {
+                "aencoder": "opusenc",
+                "vencoder": "vp8enc",
+                "muxer": "oggmux"}),
+            ("test_fullhd", {
+                "aencoder": "vorbisenc",
+                "vencoder": "theoraenc",
+                "muxer": "oggmux",
+                "videowidth": 1920,
+                "videoheight": 1080,
+                "videorate": Gst.Fraction(120, 1)}),
+        ]
+
+        attr_dialog_widget_map = {
+            "videorate": dialog.frame_rate_combo,
+            "aencoder": dialog.audio_encoder_combo,
+            "vencoder": dialog.video_encoder_combo,
+            "muxer": dialog.muxer_combo,
+        }
+
+        for preset_name, values in test_data:
+            i = find_preset_row_index(preset_combo, preset_name)
+            self.assertNotEqual(i, None)
+
+            del changed[:]
+            preset_combo.set_active(i)
+            self.assertEqual(changed, [1], "Preset %s" % preset_name)
+
+            for attr, val in values.items():
+                combo = attr_dialog_widget_map.get(attr)
+                if combo:
+                    combo_value = get_combo_value(combo)
+                    if isinstance(combo_value, Gst.ElementFactory):
+                        combo_value = combo_value.get_name()
+                    self.assertEqual(combo_value, val, preset_name)
+
+                self.assertEqual(getattr(project, attr), val)

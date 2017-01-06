@@ -30,7 +30,7 @@ from gi.repository import Gtk
 
 from pitivi import configure
 from pitivi.check import missing_soft_deps
-from pitivi.preset import RenderPresetManager
+from pitivi.preset import EncodingTargetManager
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
@@ -40,6 +40,7 @@ from pitivi.utils.ui import audio_rates
 from pitivi.utils.ui import beautify_ETA
 from pitivi.utils.ui import frame_rates
 from pitivi.utils.ui import get_combo_value
+from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.widgets import TextWidget
@@ -408,8 +409,8 @@ class RenderDialog(Loggable):
         # {object: sigId}
         self._gstSigId = {}
 
-        self.render_presets = RenderPresetManager(self.app.system, Encoders())
-        self.render_presets.loadAll()
+        self.render_presets = EncodingTargetManager(project)
+        self.render_presets.connect('profile-selected', self._encoding_profile_selected_cb)
 
         # Whether encoders changing are a result of changing the muxer.
         self.muxer_combo_changing = False
@@ -421,6 +422,8 @@ class RenderDialog(Loggable):
             self.updateFilename(_("Untitled"))
         else:
             self.updateFilename(self.project.name)
+
+        self._setting_encoding_profile = False
 
         # We store these so that when the user tries various container formats,
         # (AKA muxers) we select these a/v encoders, if they are compatible with
@@ -438,7 +441,7 @@ class RenderDialog(Loggable):
 
         self.window.connect("delete-event", self._deleteEventCb)
         self.project.connect(
-            "rendering-settings-changed", self._settingsChanged)
+            "rendering-settings-changed", self._settings_changed_cb)
 
         # Monitor changes
 
@@ -459,39 +462,46 @@ class RenderDialog(Loggable):
         self.wg.addEdge(self.channels_combo, self.preset_menubutton)
         self.wg.addEdge(self.sample_rate_combo, self.preset_menubutton)
 
-        # Bind widgets to RenderPresetsManager
-        self.render_presets.bindWidget(
-            "container",
-            lambda x: self.muxer_setter(self.muxer_combo, x),
-            lambda: get_combo_value(self.muxer_combo).get_name())
-        self.render_presets.bindWidget(
-            "acodec",
-            lambda x: self.acodec_setter(self.audio_encoder_combo, x),
-            lambda: get_combo_value(self.audio_encoder_combo).get_name())
-        self.render_presets.bindWidget(
-            "vcodec",
-            lambda x: self.vcodec_setter(self.video_encoder_combo, x),
-            lambda: get_combo_value(self.video_encoder_combo).get_name())
-        self.render_presets.bindWidget(
-            "sample-rate",
-            lambda x: self.sample_rate_setter(self.sample_rate_combo, x),
-            lambda: get_combo_value(self.sample_rate_combo))
-        self.render_presets.bindWidget(
-            "channels",
-            lambda x: self.channels_setter(self.channels_combo, x),
-            lambda: get_combo_value(self.channels_combo))
-        self.render_presets.bindWidget(
-            "frame-rate",
-            lambda x: self.framerate_setter(self.frame_rate_combo, x),
-            lambda: get_combo_value(self.frame_rate_combo))
-        self.render_presets.bindWidget(
-            "height",
-            lambda x: setattr(self.project, "videoheight", x),
-            lambda: 0)
-        self.render_presets.bindWidget(
-            "width",
-            lambda x: setattr(self.project, "videowidth", x),
-            lambda: 0)
+    def _encoding_profile_selected_cb(self, unused_target, encoding_profile):
+        self._set_encoding_profile(encoding_profile)
+
+    def _set_encoding_profile(self, encoding_profile, recursing=False):
+        old_profile = self.project.container_profile
+
+        def rollback(self):
+            if recursing:
+                return
+
+            self._set_encoding_profile(old_profile, True)
+
+        def factory(x):
+            return Encoders().factories_by_name.get(getattr(self.project, x))
+
+        self.project.set_container_profile(encoding_profile)
+        self._setting_encoding_profile = True
+
+        if not set_combo_value(self.muxer_combo, factory('muxer')):
+            return rollback()
+
+        self.updateAvailableEncoders()
+        for i, (combo, value) in enumerate([
+                (self.audio_encoder_combo, factory('aencoder')),
+                (self.video_encoder_combo, factory('vencoder')),
+                (self.sample_rate_combo, self.project.audiorate),
+                (self.channels_combo, self.project.audiochannels),
+                (self.frame_rate_combo, self.project.videorate)]):
+            if value is None:
+                self.error("%d - Got no value for combo %s... rolling back",
+                           i, combo)
+                return rollback(self)
+
+            if not set_combo_value(combo, value):
+                self.error("%d - Could not set value %s for combo %s... rolling back",
+                           i, value, combo)
+                return rollback(self)
+
+        self.updateResolution()
+        self._setting_encoding_profile = False
 
     def _updatePresetMenuButton(self, unused_source, unused_target):
         self.render_presets.updateMenuActions()
@@ -582,12 +592,13 @@ class RenderDialog(Loggable):
         self.__never_use_proxies.props.group = self.__automatically_use_proxies
 
         self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
+        self.render_presets.loadAll()
 
         icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
         self.window.set_icon_from_file(icon)
         self.window.set_transient_for(self.app.gui)
 
-    def _settingsChanged(self, unused_project, unused_key, unused_value):
+    def _settings_changed_cb(self, unused_project, key, value):
         self.updateResolution()
 
     def __initialize_muxers_model(self):
@@ -998,6 +1009,7 @@ class RenderDialog(Loggable):
 
     def _closeButtonClickedCb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
+        self.project.disconnect_by_func(self._settings_changed_cb)
         self.destroy()
 
     def _deleteEventCb(self, unused_window, unused_event):
@@ -1159,10 +1171,14 @@ class RenderDialog(Loggable):
         self.render_button.set_sensitive(video_enabled or audio_enabled)
 
     def _frameRateComboChangedCb(self, combo):
+        if self._setting_encoding_profile:
+            return
         framerate = get_combo_value(combo)
         self.project.videorate = framerate
 
     def _videoEncoderComboChangedCb(self, combo):
+        if self._setting_encoding_profile:
+            return
         factory = get_combo_value(combo)
         name = factory.get_name()
         self.project.vencoder = name
@@ -1173,16 +1189,24 @@ class RenderDialog(Loggable):
         self._update_valid_video_restrictions(factory)
 
     def _videoSettingsButtonClickedCb(self, unused_button):
+        if self._setting_encoding_profile:
+            return
         factory = get_combo_value(self.video_encoder_combo)
         self._elementSettingsDialog(factory, 'vcodecsettings')
 
     def _channelsComboChangedCb(self, combo):
+        if self._setting_encoding_profile:
+            return
         self.project.audiochannels = get_combo_value(combo)
 
     def _sampleRateComboChangedCb(self, combo):
+        if self._setting_encoding_profile:
+            return
         self.project.audiorate = get_combo_value(combo)
 
     def _audioEncoderChangedComboCb(self, combo):
+        if self._setting_encoding_profile:
+            return
         factory = get_combo_value(combo)
         name = factory.get_name()
         self.project.aencoder = name
@@ -1198,6 +1222,8 @@ class RenderDialog(Loggable):
 
     def _muxerComboChangedCb(self, combo):
         """Handles the changing of the container format combobox."""
+        if self._setting_encoding_profile:
+            return
         factory = get_combo_value(combo)
         self.project.muxer = factory.get_name()
 

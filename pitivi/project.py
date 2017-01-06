@@ -879,6 +879,8 @@ class Project(Loggable, GES.Project):
             if caps:
                 self.audio_profile.set_format(caps)
             self.audio_profile.set_preset_name(value)
+            # Gst.Preset can be set exclusively through EncodingTagets for now.
+            self.audio_profile.set_preset(None)
             self._emitChange("rendering-settings-changed", "aencoder", value)
 
     @property
@@ -892,6 +894,8 @@ class Project(Loggable, GES.Project):
             if caps:
                 self.video_profile.set_format(caps)
             self.video_profile.set_preset_name(value)
+            # Gst.Preset can be set exclusively through EncodingTagets for now.
+            self.video_profile.set_preset(None)
             self._emitChange("rendering-settings-changed", "vencoder", value)
 
     @property

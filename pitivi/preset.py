@@ -23,6 +23,7 @@ from gettext import gettext as _
 from gi.repository import Gio
 from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.configure import get_audiopresets_dir
@@ -56,7 +57,7 @@ class PresetManager(GObject.Object, Loggable):
         "preset-loaded": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, default_path, user_path, system):
+    def __init__(self, default_path=None, user_path=None, system=None):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
 
@@ -111,12 +112,15 @@ class PresetManager(GObject.Object, Loggable):
     def _presetChangedCb(self, combo):
         """Handles the selection of a preset."""
         # Check whether the user selected a preset or editing the preset name.
+        self.select_preset(combo)
+        self.updateMenuActions()
+
+    def select_preset(self, combo):
         preset_name = combo.get_active_id()
         if preset_name:
             # The user selected a preset.
             self.restorePreset(preset_name)
             self.emit("preset-loaded")
-        self.updateMenuActions()
 
     def _addPresetCb(self, unused_action, unused_param):
         preset_name = self.getNewPresetName()
@@ -131,8 +135,6 @@ class PresetManager(GObject.Object, Loggable):
     def _savePresetCb(self, unused_action, unused_param):
         entry = self.combo.get_child()
         preset_name = entry.get_text()
-        if not self.cur_preset:
-            self.createPreset(preset_name)
         self.saveCurrentPreset(preset_name)
         self.updateMenuActions()
 
@@ -308,6 +310,9 @@ class PresetManager(GObject.Object, Loggable):
 
     def saveCurrentPreset(self, new_name=None):
         """Updates the current preset values from the widgets and saves it."""
+
+        if not self.cur_preset:
+            self.createPreset(preset_name)
         if new_name:
             self._renameCurrentPreset(new_name)
         values = self.presets[self.cur_preset]
@@ -478,60 +483,77 @@ class AudioPresetManager(PresetManager):
             "sample-rate": project.audiorate}
 
 
-class RenderPresetManager(PresetManager):
+class EncodingTargetManager(PresetManager):
+    """Manager of EncodingTargets used as render presets.
 
-    def __init__(self, system, encoders):
-        default_path = get_renderpresets_dir()
-        user_path = os.path.join(xdg_data_home(), 'render_presets')
-        PresetManager.__init__(self, default_path, user_path, system)
-        self.encoders = encoders
+    Uses the GstEncodingTarget API to discover and access the EncodingProfiles.
 
-    def _deserializePreset(self, parser):
-        container = parser["container"]
-        acodec = parser["acodec"]
-        vcodec = parser["vcodec"]
+    Attributes:
+        _project (Project): The project.
+    """
 
-        if acodec not in [fact.get_name() for fact in self.encoders.aencoders]:
-            raise DeserializeException("Audio codec not available: %s" % acodec)
-        if vcodec not in [fact.get_name() for fact in self.encoders.vencoders]:
-            raise DeserializeException("Video codec not available: %s" % vcodec)
-        if container not in [fact.get_name() for fact in self.encoders.muxers]:
-            raise DeserializeException("Container not available: %s" % vcodec)
+    __gsignals__ = {
+        "profile-selected": (GObject.SignalFlags.RUN_LAST, None, (GstPbutils.EncodingProfile,)),
+    }
 
-        try:
-            width = parser["width"]
-            height = parser["height"]
-        except:
-            width = 0
-            height = 0
+    def __init__(self, project):
+        PresetManager.__init__(self)
+        self._project = project
 
-        framerate_num = parser["framerate-num"]
-        framerate_denom = parser["framerate-denom"]
-        framerate = Gst.Fraction(framerate_num, framerate_denom)
+    def _add_target(self, target):
+        profiles = target.get_profiles()
+        for profile in profiles:
+            name = target.get_name().split(';')[0]
+            if len(profiles) != 1 and profile.get_name().lower() != 'default':
+                name += '_' + profile.get_name()
 
-        channels = parser["channels"]
-        sample_rate = parser["sample-rate"]
+            self._addPreset(name, profile)
 
-        return {
-            "container": container,
-            "acodec": acodec,
-            "vcodec": vcodec,
-            "width": width,
-            "height": height,
-            "frame-rate": framerate,
-            "channels": channels,
-            "sample-rate": sample_rate,
-        }
+    def loadAll(self):
+        """Loads profiles from GstEncodingTarget and add them to self.combo.
 
-    def _serializePreset(self, preset):
-        return {
-            "container": str(preset["container"]),
-            "acodec": str(preset["acodec"]),
-            "vcodec": str(preset["vcodec"]),
-            "width": int(preset["width"]),
-            "height": int(preset["height"]),
-            "framerate-num": preset["frame-rate"].num,
-            "framerate-denom": preset["frame-rate"].denom,
-            "channels": preset["channels"],
-            "sample-rate": int(preset["sample-rate"]),
-        }
+        Override from PresetManager
+        """
+        for target in GstPbutils.encoding_list_all_targets():
+            if target.get_category() != GstPbutils.ENCODING_CATEGORY_FILE_EXTENSION:
+                self._add_target(target)
+
+    def saveCurrentPreset(self, new_name):
+        """PresetManager override, saves currently selected profile on disk.
+
+        Override from PresetManager
+
+        Args:
+            new_name (str): The name to save current Gst.EncodingProfile as.
+        """
+        if not self.combo.get_parent().valid:
+            self.error("Current encoding target name is not valid")
+            return
+
+        target = GstPbutils.EncodingTarget.new(new_name, "user-defined",
+                                               new_name,
+                                               [self._project.container_profile])
+        target.save()
+
+        self._add_target(target)
+
+    def select_preset(self, combo):
+        """Selects preset from currently active row in @combo.
+
+        Override from PresetManager
+
+        Args:
+            combo (str): The Gtk.ComboBox to retrieve selected GstEncodingProfile from.
+        """
+        active_iter = combo.get_active_iter()
+        if active_iter:
+            # The user selected a preset.
+            profile = combo.props.model.get_value(active_iter, 1)
+            self.emit("profile-selected", profile)
+
+    def restorePreset(self, values):
+        """Raises NotImplemented as it does not make sense for that class.
+
+        Override from PresetManager
+        """
+        raise NotImplementedError

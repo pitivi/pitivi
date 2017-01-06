@@ -1,0 +1,61 @@
+[GStreamer Encoding Target]
+name=test
+category=test
+description=Just a test
+
+[profile-default]
+name=default
+description=Test ogg container
+type=container
+format=application/ogg
+
+[streamprofile-default-0]
+parent=default
+type=audio
+format=audio/x-vorbis
+preset_name='vorbisenc'
+
+[streamprofile-default-1]
+parent=default
+type=video
+format=video/x-theora
+preset_name='theoraenc'
+
+[profile-ogg-vp8-opus]
+name=ogg-vp8-opus
+description=Test ogg container
+type=container
+format=application/ogg
+
+[streamprofile-ogg-vp8-opus-0]
+parent=ogg-vp8-opus
+type=audio
+format=audio/x-opus
+preset_name='opusenc'
+
+
+[streamprofile-ogg-vp8-opus-1]
+parent=ogg-vp8-opus
+type=video
+preset_name='vp8enc'
+format=video/x-vp8
+
+[profile-fullhd]
+name=fullhd
+description=Test full HD videos
+type=container
+format=application/ogg
+
+[streamprofile-fullhd-0]
+parent=fullhd
+type=audio
+format=audio/x-vorbis
+preset_name='vorbisenc'
+
+
+[streamprofile-fullhd-1]
+parent=fullhd
+type=video
+format=video/x-theora
+preset_name='theoraenc'
+restriction=video/x-raw,width=1920,height=1080,framerate=120/1

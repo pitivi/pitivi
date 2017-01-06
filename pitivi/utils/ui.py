@@ -43,6 +43,7 @@ from gi.repository.GstPbutils import DiscovererVideoInfo
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import doLog
 from pitivi.utils.loggable import ERROR
+from pitivi.utils.loggable import INFO
 from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import path_from_uri
 
@@ -460,13 +461,24 @@ def model(columns, data):
 
 
 def set_combo_value(combo, value):
-    def select_specific_row(model, unused_path, iter_, unused_data):
-        if value == model.get_value(iter_, 1):
+    def select_specific_row(model, unused_path, iter_, found):
+        model_value = model.get_value(iter_, 1)
+        if value == model_value:
             combo.set_active_iter(iter_)
+            found.append(1)
             return True
         return False
 
-    combo.props.model.foreach(select_specific_row, None)
+    found = []
+    combo.props.model.foreach(select_specific_row, found)
+
+    if len(found) != 1:
+        doLog(INFO, None, "utils",
+              "Could not set value %s, possible values: %s",
+              (value, [v[0] for v in combo.props.model]))
+        return False
+
+    return True
 
 
 def get_combo_value(combo):

@@ -51,7 +51,8 @@ def setup():
                        GI_TYPELIB_PATH=subproject_paths,
                        GST_PRESET_PATH=[os.path.join(pitivi_dir, "data", "videopresets"),
                                         os.path.join(pitivi_dir, "data", "audiopresets")],
-                       GST_ENCODING_TARGET_PATH=[os.path.join(pitivi_dir, "data", "encoding-profiles")])
+                       GST_ENCODING_TARGET_PATH=[os.path.join(pitivi_dir, "tests", "test-encoding-targets"),
+                                                 os.path.join(pitivi_dir, "data", "encoding-profiles")])
     os.environ.setdefault('PITIVI_TOP_LEVEL_DIR', pitivi_dir)
 
     # Make sure the modules are initialized correctly.
