@@ -749,7 +749,7 @@ class RenderDialog(Loggable):
         self._update_valid_restriction_values(
             caps, self.frame_rate_combo,
             "video/x-raw,framerate=(GstFraction)%d/%d", frame_rates,
-            self.project.framerate,
+            self.project.videorate,
             caps_template_expander=fraction_expander_func)
 
     def updateAvailableEncoders(self):
