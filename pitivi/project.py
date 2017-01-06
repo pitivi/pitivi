@@ -1505,6 +1505,19 @@ class Project(Loggable, GES.Project):
                                                    False)
         if factories:
             factories.sort(key=lambda x: - x.get_rank())
+            preset = profile.get_preset()
+            # Make sure that if a #Gst.Preset is set we find an
+            # element that can handle that preset.
+            if preset:
+                for factory in factories:
+                    elem = factory.create()
+                    if isinstance(elem, Gst.Preset):
+                        if elem.load_preset(preset):
+                            return factory.get_name()
+                self.error("Could not find any element with preset %s",
+                           preset)
+                return None
+
             return factories[0].get_name()
         return None
 
