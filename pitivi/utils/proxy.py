@@ -101,8 +101,10 @@ class ProxyManager(GObject.Object, Loggable):
         Loggable.__init__(self)
 
         self.app = app
+        # Total time to transcode in seconds.
         self._total_time_to_transcode = 0
-        self._total_transcoded_time = 0
+        # Transcoded time per asset in seconds.
+        self._transcoded_durations = {}
         self._start_proxying_time = 0
         self.__running_transcoders = []
         self.__pending_transcoders = []
@@ -316,31 +318,33 @@ class ProxyManager(GObject.Object, Loggable):
             self.__startTranscoder(self.__pending_transcoders.pop())
         except IndexError:
             if not self.__running_transcoders:
-                self._total_transcoded_time = 0
+                self._transcoded_durations = {}
                 self._total_time_to_transcode = 0
                 self._start_proxying_time = 0
 
-    def __emitProgress(self, asset, progress):
-        if self._total_transcoded_time:
+    def __emitProgress(self, asset, creation_progress):
+        """Handles the transcoding progress of the specified asset."""
+        if self._transcoded_durations:
             time_spent = time.time() - self._start_proxying_time
-            estimated_time = max(
-                0, (time_spent * self._total_time_to_transcode /
-                    self._total_transcoded_time) - time_spent)
+            transcoded_seconds = sum(self._transcoded_durations.values())
+            remaining_seconds = max(0, self._total_time_to_transcode - transcoded_seconds)
+            estimated_time = remaining_seconds * time_spent / transcoded_seconds
         else:
             estimated_time = 0
 
-        asset.creation_progress = progress
+        asset.creation_progress = creation_progress
         self.emit("progress", asset, asset.creation_progress, estimated_time)
 
     def __proxyingPositionChangedCb(self, transcoder, position, asset):
-        # Do not set to >= 100 as we need to notify about the proxy first
-        self._total_transcoded_time -= (asset.creation_progress * (asset.get_duration() /
-                                                                   Gst.SECOND)) / 100
-        self._total_transcoded_time += position / Gst.SECOND
+        self._transcoded_durations[asset] = position / Gst.SECOND
 
-        if transcoder.props.duration:
-            asset.creation_progress = max(
-                0, min(99, (position / transcoder.props.duration) * 100))
+        duration = transcoder.props.duration
+        if duration <= 0 or duration == Gst.CLOCK_TIME_NONE:
+            duration = asset.props.duration
+        if duration > 0 and duration != Gst.CLOCK_TIME_NONE:
+            creation_progress = 100 * position / duration
+            # Do not set to >= 100 as we need to notify about the proxy first.
+            asset.creation_progress = max(0, min(creation_progress, 99))
 
         self.__emitProgress(asset, asset.creation_progress)
 
