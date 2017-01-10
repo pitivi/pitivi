@@ -62,6 +62,17 @@ from pitivi.utils.widgets import FractionWidget
 
 DEFAULT_NAME = _("New Project")
 
+# This is a dictionary to allow adding special restrictions when using a specific
+# encoder element.
+# For example x264enc can't encode frame with odd size if its input format is not Y444
+# so in that case we make sure to force Y444 as x264enc input format.
+ENCODERS_RESTRICTIONS_SETTER = {
+    # To avoid restriction of size in x264enc, make sure that the encoder
+    # input color space is Y444 so that we do not have any restriction
+    "x264enc": lambda project, profile: project._set_restriction(
+        profile, "format", "Y444")
+}
+
 
 class ProjectManager(GObject.Object, Loggable):
     """The project manager.
@@ -883,6 +894,14 @@ class Project(Loggable, GES.Project):
             self.audio_profile.set_preset(None)
             self._emitChange("rendering-settings-changed", "aencoder", value)
 
+    def _enforce_video_encoder_restrictions(self, encoder, profile=None):
+        """Enforces @encoder specific restrictions."""
+        if not profile:
+            profile = self.video_profile
+        restriction_setter = ENCODERS_RESTRICTIONS_SETTER.get(encoder)
+        if restriction_setter:
+            restriction_setter(self, profile)
+
     @property
     def vencoder(self):
         return self.video_profile.get_preset_name()
@@ -896,6 +915,7 @@ class Project(Loggable, GES.Project):
             self.video_profile.set_preset_name(value)
             # Gst.Preset can be set exclusively through EncodingTagets for now.
             self.video_profile.set_preset(None)
+            self._enforce_video_encoder_restrictions(value)
             self._emitChange("rendering-settings-changed", "vencoder", value)
 
     @property
@@ -1490,6 +1510,10 @@ class Project(Loggable, GES.Project):
                 if ref_restrictions and ref_restrictions[0][fieldname]:
                     value = ref_restrictions[0][fieldname]
                 res = Project._set_restriction(profile, fieldname, value)
+
+        encoder = profile.get_preset_name()
+        if encoder:
+            self._enforce_video_encoder_restrictions(encoder, profile)
 
     def _ensureVideoRestrictions(self, profile=None, ref_restrictions=None):
         values = [

@@ -19,16 +19,28 @@
 """Tests for the render module."""
 # pylint: disable=protected-access,no-self-use
 from unittest import mock
+from unittest import skipUnless
 
 from gi.repository import GES
 from gi.repository import Gst
+from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.preset import EncodingTargetManager
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
 from pitivi.utils.ui import get_combo_value
+from pitivi.utils.ui import set_combo_value
 from tests import common
+
+
+def factory_exists(*factories):
+    """Checks if @factories exists."""
+    for factory in factories:
+        if not Gst.ElementFactory.find(factory):
+            return False, "%s not present on the system" % (factory)
+
+    return True, ""
 
 
 class TestRender(common.TestCase):
@@ -54,7 +66,7 @@ class TestRender(common.TestCase):
                 self.assertIsNotNone(extension_for_muxer(muxer), container_profile)
 
     def create_simple_project(self):
-        """Create a Project with a layer a clip."""
+        """Creates a Project with a layer a clip."""
         timeline_container = common.create_timeline_container()
         app = timeline_container.app
         project = app.project_manager.current_project
@@ -78,7 +90,7 @@ class TestRender(common.TestCase):
         return project
 
     def create_rendering_dialog(self, project):
-        """Create a RenderingDialog ready for testing"""
+        """Creates a RenderingDialog ready for testing"""
         from pitivi.render import RenderDialog
 
         class MockedBuilder(Gtk.Builder):
@@ -106,9 +118,35 @@ class TestRender(common.TestCase):
                 with mock.patch.object(dialog, "_pipeline"):
                     return dialog._renderButtonClickedCb(None)
 
+    @skipUnless(*factory_exists("x264enc", "matroskamux"))
+    def test_encoder_restrictions(self):
+        """Checks the mechanism to respect encoder specific restrictions."""
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+
+        # Explicitly set the encoder
+        self.assertTrue(set_combo_value(dialog.muxer_combo,
+                                        Gst.ElementFactory.find("matroskamux")))
+        self.assertTrue(set_combo_value(dialog.video_encoder_combo,
+                                        Gst.ElementFactory.find("x264enc")))
+        self.assertEqual(project.video_profile.get_restriction()[0]["format"],
+                         "Y444")
+
+        # Set encoding profile
+        if getattr(GstPbutils.EncodingProfile, "copy"):  # Available only in > 1.11
+            profile = project.container_profile.copy()
+            vprofile, = [p for p in profile.get_profiles()
+                         if isinstance(p, GstPbutils.EncodingVideoProfile)]
+            vprofile.set_restriction(Gst.Caps('video/x-raw'))
+            project.set_container_profile(profile)
+            self.assertEqual(project.video_profile.get_restriction()[0]["format"],
+                             "Y444")
+
     # pylint: disable=too-many-locals
+    @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
+                                "opusenc", "vp8enc"))
     def test_loading_preset(self):
-        """Check preset values are properly exposed in the UI."""
+        """Checks preset values are properly exposed in the UI."""
         def find_preset_row_index(combo, name):
             """Finds @name in @combo."""
             for i, row in enumerate(combo.get_model()):

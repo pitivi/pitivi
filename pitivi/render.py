@@ -40,7 +40,6 @@ from pitivi.utils.ui import audio_rates
 from pitivi.utils.ui import beautify_ETA
 from pitivi.utils.ui import frame_rates
 from pitivi.utils.ui import get_combo_value
-from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.widgets import TextWidget
