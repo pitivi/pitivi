@@ -233,7 +233,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.37.0"],
+            "config-opts": ["--module=meson==0.37.1"],
             "sources": [
                 {
                     "type": "file",
