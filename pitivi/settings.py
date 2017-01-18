@@ -265,21 +265,18 @@ class GlobalSettings(GObject.Object, Loggable):
                 signals when modified. By default signals are not emitted.
         """
         if section and section not in cls.options:
-            raise ConfigError(
-                "You must add the section \"%s\" first." % section)
+            raise ConfigError("You must add the section `%s` first" % section)
         if key and not section:
-            raise ConfigError(
-                "You must specify a section for key \"%s\"" % key)
+            raise ConfigError("You must specify a section for key `%s`" % key)
         if section and key in cls.options[section]:
-            raise ConfigError("Option \"%s\" is already in use.")
+            raise ConfigError("Key `%s` is already in use" % key)
         if hasattr(cls, attrname):
-            raise ConfigError("Settings attribute \"%s\" is already in use.")
+            raise ConfigError("Attribute `%s` is already in use" % attrname)
         if environment and environment in cls.environment:
-            raise ConfigError("Settings environment varaible \"%s\" is"
-                              "already in use.")
+            raise ConfigError("Env var `%s` is already in use" % environment)
         if not type_ and default is None:
-            raise ConfigError("Settings attribute \"%s\" has must have a"
-                              " type or a default." % attrname)
+            raise ConfigError("Attribute `%s` must have a type or a default" %
+                              attrname)
         if not type_:
             type_ = type(default)
         if notify:
