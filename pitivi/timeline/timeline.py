@@ -29,6 +29,7 @@ from gi.repository import Gtk
 from pitivi.autoaligner import AlignmentProgressDialog
 from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
+from pitivi.configure import in_devel
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.elements import Clip
@@ -1070,7 +1071,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             is_handle = self.editing_context.edge != GES.Edge.EDGE_NONE
 
         parent = self.get_parent()
-        if parent._shiftMask or self.app.settings.timelineAutoRipple:
+        autoripple_active = self.app.settings.timelineAutoRipple and in_devel()
+        if parent._shiftMask or autoripple_active:
             return GES.EditMode.EDIT_RIPPLE
         if is_handle and parent._controlMask:
             return GES.EditMode.EDIT_ROLL
@@ -1444,6 +1446,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.set_margin_top(SPACING)
 
         self.show_all()
+        if not in_devel():
+            self.gapless_button.hide()
 
     def _getLongestLayer(self):
         """Returns the longest layer."""
@@ -1502,9 +1506,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.paste-clips", ["<Primary>v"],
                                _("Paste selected clips"))
 
-        self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
-        self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
-        group.add_action(self.gapless_action)
+        if in_devel():
+            self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
+            self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
+            group.add_action(self.gapless_action)
 
         # Playhead actions.
         self.split_action = Gio.SimpleAction.new("split-clips", None)
