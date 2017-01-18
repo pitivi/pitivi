@@ -46,9 +46,7 @@ from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import TimelineError
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import clear_styles
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
-from pitivi.utils.ui import EXPANDED_SIZE
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PLAYHEAD_COLOR
 from pitivi.utils.ui import PLAYHEAD_WIDTH
@@ -100,6 +98,11 @@ PreferencesDialog.addTogglePreference('leftClickAlsoSeeks',
                                       label=_("Left click also seeks"),
                                       description=_(
                                           "Whether left-clicking also seeks besides selecting and editing clips."))
+
+GlobalSettings.addConfigOption("timelineAutoRipple",
+                               section="user-interface",
+                               key="timeline-autoripple",
+                               default=False)
 
 
 class Marquee(Gtk.Box, Loggable):
@@ -1067,7 +1070,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             is_handle = self.editing_context.edge != GES.Edge.EDGE_NONE
 
         parent = self.get_parent()
-        if parent._shiftMask or parent._autoripple_active:
+        if parent._shiftMask or self.app.settings.timelineAutoRipple:
             return GES.EditMode.EDIT_RIPPLE
         if is_handle and parent._controlMask:
             return GES.EditMode.EDIT_ROLL
@@ -1257,7 +1260,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.app = app
         self._settings = self.app.settings
-        self._autoripple_active = self._settings.timelineAutoRipple
         self._shiftMask = False
         self._controlMask = False
 
@@ -1427,7 +1429,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.toolbar.get_accessible().set_name("timeline toolbar")
 
         self.gapless_button = builder.get_object("gapless_button")
-        self.gapless_button.set_active(self._autoripple_active)
+        self.gapless_button.set_active(self._settings.timelineAutoRipple)
 
         self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
@@ -1501,7 +1503,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                _("Paste selected clips"))
 
         self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
-        self.gapless_action.connect("activate", self._gaplessmodeToggledCb)
+        self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
         group.add_action(self.gapless_action)
 
         # Playhead actions.
@@ -1833,7 +1835,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """Handles selection changing."""
         self.updateActions()
 
-    def _gaplessmodeToggledCb(self, unused_action, unused_parameter):
-        self._autoripple_active = self.gapless_button.get_active()
-        self.info("Automatic ripple: %s", self._autoripple_active)
-        self._settings.timelineAutoRipple = self._autoripple_active
+    def _gaplessmode_toggled_cb(self, unused_action, unused_parameter):
+        self._settings.timelineAutoRipple = self.gapless_button.get_active()
+        self.info("Automatic ripple: %s", self._settings.timelineAutoRipple)

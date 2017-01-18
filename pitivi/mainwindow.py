@@ -104,10 +104,6 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                section='version',
                                key='last-current-version',
                                default='')
-GlobalSettings.addConfigOption('timelineAutoRipple',
-                               section='user-interface',
-                               key='timeline-autoripple',
-                               default=False)
 
 
 class MainWindow(Gtk.ApplicationWindow, Loggable):
