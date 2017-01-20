@@ -11,16 +11,16 @@ SCRIPT=${BASH_SOURCE[0]:-$0}
     && echo \
     && exit 1
 
-SCRIPTDIR=$(dirname $(realpath $SCRIPT))
-export FLATPAK_ENVPATH=$(realpath $SCRIPTDIR/../../)
+SCRIPT_DIR=$(dirname $(realpath $SCRIPT))
+PITIVI_REPO_DIR=$(realpath $SCRIPT_DIR/..)
+export FLATPAK_ENVPATH=$(realpath $PITIVI_REPO_DIR/..)
 export CURRENT_GST=$FLATPAK_ENVPATH
-PITIVI_INSTALL_PATH=$(realpath $SCRIPTDIR/../)
 
 # Use ptvenv for running commands in the sandbox.
-alias ptvenv="$PITIVI_INSTALL_PATH/build/flatpak/pitivi-flatpak -d"
+alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up environment if needed..."
-$PITIVI_INSTALL_PATH/build/flatpak/pitivi-flatpak -q -d echo
+$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d echo
 if [ "$?" = "0" ];
 then
     # Set up environment variables and aliases so configuring, building, etc.
@@ -36,15 +36,15 @@ then
     alias minstall=$minstall
     alias autogen=$autogen
     alias configure=$configure
-    alias ninja="$PITIVI_INSTALL_PATH/build/flatpak/pitivi-flatpak -q -d ninja"
+    alias ninja="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ninja"
 
     # Prefer to run the binaries in the sandbox. For example "python3".
-    for i in `$PITIVI_INSTALL_PATH/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
+    for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
     do
         alias $i="ptvenv $i"
     done
 
-    alias pitivi="ptvenv $PITIVI_INSTALL_PATH/bin/pitivi"
+    alias pitivi="ptvenv $PITIVI_REPO_DIR/bin/pitivi"
 
     export PS1="(ptv-flatpak) $PS1"
     export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
