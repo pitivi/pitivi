@@ -1342,6 +1342,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 else:
                     raise TimelineError("Cannot insert: %s" % type(obj))
                 clip_position += duration
+        self.app.gui.focusTimeline()
 
         if zoom_was_fitted:
             self.timeline.set_best_zoom_ratio()
