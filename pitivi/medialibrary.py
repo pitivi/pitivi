@@ -213,7 +213,22 @@ class AssetThumbnail(Loggable):
             small_thumb, large_thumb = self.__get_thumbnails_from_xdg_cache(real_uri)
             if not small_thumb:
                 if self.__asset.is_image():
-                    small_thumb, large_thumb = self.__get_icons("image-x-generic")
+                    path = Gst.uri_get_location(real_uri)
+                    try:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_file(path)
+                        width = pixbuf.props.width
+                        height = pixbuf.props.height
+                        small_thumb = pixbuf.scale_simple(
+                            SMALL_THUMB_WIDTH,
+                            SMALL_THUMB_WIDTH * height / width,
+                            GdkPixbuf.InterpType.BILINEAR)
+                        large_thumb = pixbuf.scale_simple(
+                            LARGE_THUMB_WIDTH,
+                            LARGE_THUMB_WIDTH * height / width,
+                            GdkPixbuf.InterpType.BILINEAR)
+                    except GLib.Error as error:
+                        self.debug("Failed loading thumbnail because: %s", error)
+                        small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
                     thumb_cache = ThumbnailCache.get(self.__asset)
