@@ -1151,7 +1151,7 @@ class RenderDialog(Loggable):
 
     def _frameRateComboChangedCb(self, combo):
         framerate = get_combo_value(combo)
-        self.project.framerate = framerate
+        self.project.videorate = framerate
 
     def _videoEncoderComboChangedCb(self, combo):
         factory = get_combo_value(combo)
