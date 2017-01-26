@@ -6,6 +6,7 @@ import glob
 import os
 import sys
 import unittest
+from tempfile import mkdtemp
 
 
 def get_pitivi_dir():
@@ -29,7 +30,11 @@ def _prepend_env_paths(**args):
 
 def setup():
     """Sets paths and initializes modules, to be able to run the tests."""
-    res = True
+    # Make sure xdg_*_home return temp dirs, to avoid touching
+    # the config files of the developer.
+    os.environ['XDG_DATA_HOME'] = mkdtemp()
+    os.environ['XDG_CONFIG_HOME'] = mkdtemp()
+    os.environ['XDG_CACHE_HOME'] = mkdtemp()
 
     # Make available to configure.py the top level dir.
     pitivi_dir = get_pitivi_dir()
