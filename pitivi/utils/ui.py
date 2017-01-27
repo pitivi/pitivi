@@ -251,7 +251,8 @@ def beautify_asset(asset):
         asset (GES.Asset): The asset to display.
     """
     uri = get_proxy_target(asset).props.id
-    res = ["<b>" + path_from_uri(uri) + "</b>"]
+    path = path_from_uri(uri)
+    res = ["<b>" + GLib.markup_escape_text(path) + "</b>"]
 
     ranks = {
         DiscovererVideoInfo: 0,
