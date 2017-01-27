@@ -417,8 +417,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
             pixbuf = pixbuf.scale_simple(
                 int(w), int(h), GdkPixbuf.InterpType.BILINEAR)
 
-            w = max(w, self.settings.FCpreviewWidth)
-            h = max(h, self.settings.FCpreviewHeight)
             self.preview_image.set_size_request(int(w), int(h))
             self.preview_image.set_from_pixbuf(pixbuf)
             self.preview_image.show()
