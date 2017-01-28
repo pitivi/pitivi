@@ -20,7 +20,8 @@ export CURRENT_GST=$FLATPAK_ENVPATH
 alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up environment if needed..."
-$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d echo
+# This builds the local flatpak repo if it is not yet built.
+$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d echo Prefix ready
 if [ "$?" = "0" ];
 then
     # Set up environment variables and aliases so configuring, building, etc.
