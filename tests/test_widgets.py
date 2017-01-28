@@ -18,9 +18,12 @@
 # Boston, MA 02110-1301, USA.
 from unittest import TestCase
 
+from gi.repository import Gst
+
 from pitivi.utils.widgets import ChoiceWidget
 from pitivi.utils.widgets import ColorWidget
 from pitivi.utils.widgets import FontWidget
+from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.widgets import NumericWidget
 from pitivi.utils.widgets import PathWidget
 from pitivi.utils.widgets import TextWidget
@@ -58,3 +61,18 @@ class TestWidgets(TestCase):
         widget = TextWidget("^\d+$", ("12", "14"))
         bad_value = "non-digits"
         self.assertNotEqual(bad_value, widget.getWidgetValue())
+
+
+class TestFractionWidget(TestCase):
+
+    def test_widget_text(self):
+        widget = FractionWidget()
+        widget.setWidgetValue(Gst.Fraction(1000000, 1))
+        self.assertEqual(widget.text.get_text(), "1000000:1")
+        widget.setWidgetValue(Gst.Fraction(7504120000000001, 4503600000000002))
+        self.assertEqual(widget.text.get_text(), "7504120000000001:4503600000000002")
+
+    def test_widget_text_magic_M(self):
+        widget = FractionWidget()
+        widget.setWidgetValue(Gst.Fraction(1000000000, 1001))
+        self.assertEqual(widget.text.get_text(), "1000000M")
