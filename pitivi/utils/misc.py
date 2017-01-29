@@ -142,9 +142,14 @@ def filename_from_uri(uri):
 
     Excludes the path to the file.
 
-    Can be used in UI elements or to shorten debug statements.
+    Can be used in UI elements.
+
+    Returns:
+        str: The markup escaped filename
     """
-    return os.path.basename(path_from_uri(uri))
+    base_name = os.path.basename(path_from_uri(uri))
+    safe_base_name = GLib.markup_escape_text(base_name)
+    return safe_base_name
 
 
 def quote_uri(uri):

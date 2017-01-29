@@ -39,6 +39,7 @@ from pitivi.utils.misc import binary_search
 from pitivi.utils.misc import filename_from_uri
 from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import hash_file
+from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.system import CPUUsageTracker
@@ -467,12 +468,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.interval *= 0.9
             self.log(
                 'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"',
-                self.interval, filename_from_uri(self.uri))
+                self.interval, path_from_uri(self.uri))
         else:
             self.interval *= 1.1
             self.log(
                 'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"',
-                self.interval, filename_from_uri(self.uri))
+                self.interval, path_from_uri(self.uri))
         self.cpu_usage_tracker.reset()
         self._thumb_cb_id = GLib.timeout_add(self.interval,
                                              self._create_next_thumb,
@@ -480,7 +481,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def _startThumbnailingWhenIdle(self):
         self.debug(
-            'Waiting for UI to become idle for: %s', filename_from_uri(self.uri))
+            'Waiting for UI to become idle for: %s', path_from_uri(self.uri))
         GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
@@ -491,7 +492,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             return
 
         self.debug(
-            'Now generating thumbnails for: %s', filename_from_uri(self.uri))
+            'Now generating thumbnails for: %s', path_from_uri(self.uri))
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of: %s", self.uri)
@@ -526,7 +527,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.queue.remove(wish)
         else:
             time = self.queue.pop(0)
-        self.log('Creating thumb for "%s"' % filename_from_uri(self.uri))
+        self.log('Creating thumb for "%s"', path_from_uri(self.uri))
         # append the time to the end of the queue so that if this seek fails
         # another try will be started later
         self.queue.append(time)
@@ -976,7 +977,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
     def startLevelsDiscoveryWhenIdle(self):
         """Starts processing waveform (whenever possible)."""
         self.debug('Waiting for UI to become idle for: %s',
-                   filename_from_uri(self._uri))
+                   path_from_uri(self._uri))
         GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
@@ -992,7 +993,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     def _launchPipeline(self):
         self.debug(
-            'Now generating waveforms for: %s', filename_from_uri(self._uri))
+            'Now generating waveforms for: %s', path_from_uri(self._uri))
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
                                          self._uri + " ! waveformbin name=wave"
                                          " ! fakesink qos=false name=faked")
