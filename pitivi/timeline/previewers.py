@@ -36,7 +36,6 @@ from pitivi.settings import get_dir
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import binary_search
-from pitivi.utils.misc import filename_from_uri
 from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
@@ -708,7 +707,6 @@ class ThumbnailCache(Loggable):
     def __init__(self, uri):
         Loggable.__init__(self)
         self._filehash = hash_file(Gst.uri_get_location(uri))
-        self._filename = filename_from_uri(uri)
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
         self._db = sqlite3.connect(self._dbfile)
@@ -811,8 +809,6 @@ class ThumbnailCache(Loggable):
 
     def commit(self):
         """Saves the cache on disk (in the database)."""
-        self.debug(
-            'Saving thumbnail cache file to disk for: %s', self._filename)
         self._db.commit()
         self.log("Saved thumbnail cache file: %s" % self._filehash)
 
