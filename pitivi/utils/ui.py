@@ -539,18 +539,18 @@ def fix_infobar(infobar):
 # FIXME This should into a special file
 frame_rates = model((str, object), (
     # Translators: fps is for frames per second
-    (_("%d fps") % 12, Gst.Fraction(12.0, 1.0)),
-    (_("%d fps") % 15, Gst.Fraction(15.0, 1.0)),
-    (_("%d fps") % 20, Gst.Fraction(20.0, 1.0)),
-    (_("%.3f fps") % 23.976, Gst.Fraction(24000.0, 1001.0)),
-    (_("%d fps") % 24, Gst.Fraction(24.0, 1.0)),
-    (_("%d fps") % 25, Gst.Fraction(25.0, 1.0)),
-    (_("%.2f fps") % 29.97, Gst.Fraction(30000.0, 1001.0)),
-    (_("%d fps") % 30, Gst.Fraction(30.0, 1.0)),
-    (_("%d fps") % 50, Gst.Fraction(50.0, 1.0)),
-    (_("%.2f fps") % 59.94, Gst.Fraction(60000.0, 1001.0)),
-    (_("%d fps") % 60, Gst.Fraction(60.0, 1.0)),
-    (_("%d fps") % 120, Gst.Fraction(120.0, 1.0)),
+    (_("%d fps") % 12, Gst.Fraction(12, 1)),
+    (_("%d fps") % 15, Gst.Fraction(15, 1)),
+    (_("%d fps") % 20, Gst.Fraction(20, 1)),
+    (_("%.3f fps") % 23.976, Gst.Fraction(24000, 1001)),
+    (_("%d fps") % 24, Gst.Fraction(24, 1)),
+    (_("%d fps") % 25, Gst.Fraction(25, 1)),
+    (_("%.2f fps") % 29.97, Gst.Fraction(30000, 1001)),
+    (_("%d fps") % 30, Gst.Fraction(30, 1)),
+    (_("%d fps") % 50, Gst.Fraction(50, 1)),
+    (_("%.2f fps") % 59.94, Gst.Fraction(60000, 1001)),
+    (_("%d fps") % 60, Gst.Fraction(60, 1)),
+    (_("%d fps") % 120, Gst.Fraction(120, 1)),
 ))
 
 audio_rates = model((str, int), (
