@@ -206,12 +206,12 @@ class TitleEditor(Loggable):
             self.editing_box.hide()
 
     def _createCb(self, unused_button):
-        clip = GES.TitleClip()
-        clip.set_duration(int(Gst.SECOND * 5))
-        self.app.gui.timeline_ui.insertClips([clip])
+        title_clip = GES.TitleClip()
+        title_clip.set_duration(Gst.SECOND * 5)
+        self.app.gui.timeline_ui.insert_clips_on_first_layer([title_clip])
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
-        source = clip.get_children(False)[0]
+        source = title_clip.get_children(False)[0]
         assert source.set_child_property("text", "")
         assert source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR)
         assert source.set_child_property("color", FOREGROUND_DEFAULT_COLOR)
@@ -219,9 +219,9 @@ class TitleEditor(Loggable):
         assert source.set_child_property("valignment", DEFAULT_VALIGNMENT)
         assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
         # Select it so the Title editor becomes active.
-        self._selection.setSelection([clip], SELECT)
+        self._selection.setSelection([title_clip], SELECT)
         self.app.gui.timeline_ui.timeline.resetSelectionGroup()
-        self.app.gui.timeline_ui.timeline.current_group.add(clip)
+        self.app.gui.timeline_ui.timeline.current_group.add(title_clip)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:

@@ -235,6 +235,48 @@ class TestTimelineObserver(BaseTestUndoTimeline):
             self.assertEqual(len(clips), 1, clips)
             self.assertEqual(len(clips[0].get_children(False)), 2)
 
+    def test_insert_on_first_layer(self):
+        self.setup_timeline_container()
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        clip1 = asset.extract()
+        self.timeline_container.insert_clips_on_first_layer(clips=[clip1], position=0)
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 1, clips)
+
+        # Undo insert on first layer
+        self.action_log.undo()
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 0, clips)
+
+        # Redo insert on first layer
+        self.action_log.redo()
+        clips = list(self.getTimelineClips())
+        self.assertEqual(len(clips), 1, clips)
+
+        # Insert new clip to create a layer
+        clip2 = common.create_test_clip(GES.TitleClip)
+        clip2.set_start(0 * Gst.SECOND)
+        clip2.set_duration(1 * Gst.SECOND)
+        self.timeline_container.insert_clips_on_first_layer(clips=[clip2], position=0)
+        layers = self.timeline.get_layers()
+        self.check_layers([layers[0], self.layer])
+        self.assertEqual(layers[0].get_clips(), [clip2])
+        self.assertEqual(layers[1].get_clips(), [clip1])
+
+        # Undo insert to create a layer
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.check_layers([self.layer])
+        self.assertEqual(layers[0].get_clips(), [clip1])
+
+        # Redo insert to create a layer
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.check_layers([layers[0], self.layer])
+        self.assertEqual(layers[0].get_clips(), [clip2])
+        self.assertEqual(layers[1].get_clips(), [clip1])
+
 
 class TestLayerObserver(BaseTestUndoTimeline):
 

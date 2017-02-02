@@ -1305,11 +1305,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         layer = self._getLongestLayer()
         self._insertClipsAndAssets(assets, position, layer)
 
-    def insertClips(self, clips, position=None):
+    def insert_clips_on_first_layer(self, clips, position=None):
         """Adds clips to the timeline on the first layer."""
-        layers = self.ges_timeline.get_layers()
-        layer = layers[0]
-        self._insertClipsAndAssets(clips, position, layer)
+        with self.app.action_log.started("insert on first layer",
+                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+            layers = self.ges_timeline.get_layers()
+            first_layer = layers[0]
+            start = self.__getInsertPosition(position)
+            end = start + sum([clip.get_duration() for clip in clips])
+            intersecting_clips = first_layer.get_clips_in_interval(start, end)
+            if intersecting_clips:
+                first_layer = self.timeline.create_layer(0)
+            self._insertClipsAndAssets(clips, start, first_layer)
 
     def _insertClipsAndAssets(self, objs, position, layer):
         if self.ges_timeline is None:
