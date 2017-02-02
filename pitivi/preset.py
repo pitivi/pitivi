@@ -29,6 +29,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_audiopresets_dir
 from pitivi.configure import get_renderpresets_dir
 from pitivi.configure import get_videopresets_dir
+from pitivi.settings import xdg_config_home
 from pitivi.settings import xdg_data_home
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import alter_style_class
@@ -345,6 +346,7 @@ class PresetManager(GObject.Object, Loggable):
                 self._markRemoved(name)
             else:
                 os.remove(filepath)
+
         self.cur_preset = None
         self._forgetPreset(name)
 
@@ -499,6 +501,13 @@ class EncodingTargetManager(PresetManager):
     def __init__(self, project):
         PresetManager.__init__(self)
         self._project = project
+        self._removed_file_list = os.path.join(xdg_data_home(),
+                                               'hidden_encoding_profiles.json')
+        try:
+            with open(self._removed_file_list) as f:
+                self._removed_profiles = json.loads(f.read())
+        except FileNotFoundError:
+            self._removed_profiles = []
 
     def _add_target(self, target):
         profiles = target.get_profiles()
@@ -507,6 +516,10 @@ class EncodingTargetManager(PresetManager):
             if len(profiles) != 1 and profile.get_name().lower() != 'default':
                 name += '_' + profile.get_name()
 
+            if name in self._removed_profiles:
+                continue
+
+            self.presets[name] = profile
             self._addPreset(name, profile)
 
     def loadAll(self):
@@ -518,7 +531,21 @@ class EncodingTargetManager(PresetManager):
             if target.get_category() != GstPbutils.ENCODING_CATEGORY_FILE_EXTENSION:
                 self._add_target(target)
 
-    def saveCurrentPreset(self, new_name):
+    def createPreset(self, name, values=None):
+        self.saveCurrentPreset(name, validate_name=False)
+
+    def getNewPresetName(self):
+        """Gets a unique name for a new preset."""
+        # Translators: This must contain exclusively low case alphanum and '-'
+        name = _("new-profile")
+        i = 1
+        while self.hasPreset(name):
+            # Translators: This must contain exclusively low case alphanum and '-'
+            name = _("new-profile-%d") % i
+            i += 1
+        return name
+
+    def saveCurrentPreset(self, new_name, validate_name=True):
         """PresetManager override, saves currently selected profile on disk.
 
         Override from PresetManager
@@ -526,9 +553,13 @@ class EncodingTargetManager(PresetManager):
         Args:
             new_name (str): The name to save current Gst.EncodingProfile as.
         """
-        if not self.combo.get_parent().valid:
+        if validate_name and not self.combo.get_parent().valid:
             self.error("Current encoding target name is not valid")
             return
+
+        if new_name in self._removed_profiles:
+            self._removed_profiles.remove(new_name)
+            self._save_removed_profiles()
 
         target = GstPbutils.EncodingTarget.new(new_name, "user-defined",
                                                new_name,
@@ -536,6 +567,7 @@ class EncodingTargetManager(PresetManager):
         target.save()
 
         self._add_target(target)
+        self.combo.set_active(len(self.combo.props.model) - 1)
 
     def select_preset(self, combo):
         """Selects preset from currently active row in @combo.
@@ -546,10 +578,24 @@ class EncodingTargetManager(PresetManager):
             combo (str): The Gtk.ComboBox to retrieve selected GstEncodingProfile from.
         """
         active_iter = combo.get_active_iter()
+        name = None
         if active_iter:
             # The user selected a preset.
+            name = combo.props.model.get_value(active_iter, 0)
             profile = combo.props.model.get_value(active_iter, 1)
             self.emit("profile-selected", profile)
+        self.cur_preset = name
+
+    def _save_removed_profiles(self):
+        with open(self._removed_file_list, 'w') as f:
+            json.dump(self._removed_profiles, f)
+
+    def removeCurrentPreset(self):
+        self._removed_profiles.append(self.cur_preset)
+        self._save_removed_profiles()
+        self._forgetPreset(self.cur_preset)
+        self.combo.get_parent().setWidgetValue(self.getNewPresetName())
+        self.cur_preset = None
 
     def restorePreset(self, values):
         """Raises NotImplemented as it does not make sense for that class.

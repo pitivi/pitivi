@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the render module."""
 # pylint: disable=protected-access,no-self-use
+# pylint: disable=too-many-locals
 from unittest import mock
 from unittest import skipUnless
 
@@ -41,6 +42,15 @@ def factory_exists(*factories):
             return False, "%s not present on the system" % (factory)
 
     return True, ""
+
+
+def find_preset_row_index(combo, name):
+    """Finds @name in @combo."""
+    for i, row in enumerate(combo.get_model()):
+        if row[0] == name:
+            return i
+
+    return None
 
 
 class TestRender(common.TestCase):
@@ -142,19 +152,10 @@ class TestRender(common.TestCase):
             self.assertEqual(project.video_profile.get_restriction()[0]["format"],
                              "Y444")
 
-    # pylint: disable=too-many-locals
     @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
                                 "opusenc", "vp8enc"))
     def test_loading_preset(self):
         """Checks preset values are properly exposed in the UI."""
-        def find_preset_row_index(combo, name):
-            """Finds @name in @combo."""
-            for i, row in enumerate(combo.get_model()):
-                if row[0] == name:
-                    return i
-
-            return None
-
         def preset_changed_cb(combo, changed):
             """Callback for the 'combo::changed' signal."""
             changed.append(1)
@@ -218,3 +219,33 @@ class TestRender(common.TestCase):
                     self.assertEqual(combo_value, val, preset_name)
 
                 self.assertEqual(getattr(project, attr), val)
+
+    @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
+                                "opusenc", "vp8enc"))
+    def test_remove_profile(self):
+        """Tests removing EncodingProfile and re-saving it."""
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+        preset_combo = dialog.render_presets.combo
+        i = find_preset_row_index(preset_combo, 'test')
+        self.assertIsNotNone(i)
+        preset_combo.set_active(i)
+
+        # Check the 'test' profile is selected
+        active_iter = preset_combo.get_active_iter()
+        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
+
+        # Remove current profile and verify it has been removed
+        dialog.render_presets.action_remove.activate()
+        profile_names = [i[0] for i in preset_combo.props.model]
+        active_iter = preset_combo.get_active_iter()
+        self.assertEqual(active_iter, None)
+
+        # Re save the current EncodingProfile calling it the same as before.
+        preset_combo.get_child().set_text("test")
+        self.assertTrue(dialog.render_presets.action_save.get_enabled())
+        dialog.render_presets.action_save.activate(None)
+        self.assertEqual([i[0] for i in preset_combo.props.model],
+                         profile_names + ['test'])
+        active_iter = preset_combo.get_active_iter()
+        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
