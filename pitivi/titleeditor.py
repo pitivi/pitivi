@@ -25,12 +25,26 @@ from gi.repository import Gtk
 from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
 
+GlobalSettings.addConfigOption('titleClipLength',
+                               section="user-interface",
+                               key="title-clip-length",
+                               default=5000,
+                               notify=True)
+
+PreferencesDialog.addNumericPreference('titleClipLength',
+                                       section="timeline",
+                                       label=_("Title clip duration"),
+                                       description=_(
+                                           "Default clip length (in milliseconds) of titles when inserting on the timeline."),
+                                       lower=1)
 
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
@@ -207,7 +221,8 @@ class TitleEditor(Loggable):
 
     def _createCb(self, unused_button):
         title_clip = GES.TitleClip()
-        title_clip.set_duration(Gst.SECOND * 5)
+        duration = self.app.settings.titleClipLength * Gst.MSECOND
+        title_clip.set_duration(duration)
         self.app.gui.timeline_ui.insert_clips_on_first_layer([title_clip])
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
