@@ -255,6 +255,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.set_tooltip_text(
             _('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
+        self.timecode_entry.connect("key_press_event", self._entry_key_press_event_cb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
 
         self.undock_button = Gtk.ToolButton()
@@ -294,6 +295,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         nanoseconds = self.timecode_entry.getWidgetValue()
         self.app.project_manager.current_project.pipeline.simple_seek(nanoseconds)
         self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _entry_key_press_event_cb(self, widget, event):
+        """Handles the key press events in the timecode_entry widget."""
+        if event.keyval == Gdk.KEY_Escape:
+            self.app.gui.focusTimeline()
 
     # Active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):

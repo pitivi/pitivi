@@ -302,6 +302,7 @@ class TimeWidget(TextWidget, DynamicWidget):
         TextWidget.__init__(self, self.VALID_REGEX)
         TextWidget.set_width_chars(self, 10)
         self._framerate = None
+        self.text.connect("focus-out-event", self._focus_out_cb)
 
     def getWidgetValue(self):
         timecode = TextWidget.getWidgetValue(self)
@@ -326,10 +327,16 @@ class TimeWidget(TextWidget, DynamicWidget):
         return int(nanosecs)
 
     def setWidgetValue(self, timeNanos, send_signal=True):
+        self.default = timeNanos
         timecode = time_to_string(timeNanos)
         if timecode.startswith("0:"):
             timecode = timecode[2:]
         TextWidget.setWidgetValue(self, timecode, send_signal=send_signal)
+
+    def _focus_out_cb(self, widget, event):
+        """Reset the text to display the current position of the playhead."""
+        if self.default is not None:
+            self.setWidgetValue(self.default)
 
     def connectActivateEvent(self, activateCb):
         return self.connect("activate", activateCb)
