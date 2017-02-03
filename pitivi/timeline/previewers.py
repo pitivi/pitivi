@@ -274,6 +274,10 @@ class WaveformPreviewer(PreviewerBin):
         if proxy:
             proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
             self.debug("symlinking %s and %s", self.wavefile, proxy_wavefile)
+            try:
+                os.remove(proxy_wavefile)
+            except FileNotFoundError:
+                pass
             os.symlink(self.wavefile, proxy_wavefile)
 
 
@@ -405,6 +409,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.thumbs = {}
         self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._ensure_proxy_thumbnails_cache()
         self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
 
         self.cpu_usage_tracker = CPUUsageTracker()
@@ -681,6 +686,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._setupPipeline()
         self._startThumbnailingWhenIdle()
 
+    def _ensure_proxy_thumbnails_cache(self):
+        """Ensures that both the target asset and the proxy assets have caches"""
+        asset_uri = quote_uri(self.ges_elem.get_parent().get_asset().props.id)
+        if self.uri != asset_uri:
+            self.thumb_cache.copy(asset_uri)
+
     def stopGeneration(self):
         if self._thumb_cb_id:
             GLib.source_remove(self._thumb_cb_id)
@@ -690,6 +701,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.pipeline.set_state(Gst.State.NULL)
             self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
             self.pipeline = None
+
+        self._ensure_proxy_thumbnails_cache()
         self.emit("done")
 
     def release(self):
@@ -759,6 +772,10 @@ class ThumbnailCache(Loggable):
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         dbfile = os.path.join(thumbs_cache_dir, filehash)
 
+        try:
+            os.remove(dbfile)
+        except FileNotFoundError:
+            pass
         os.symlink(self._dbfile, dbfile)
 
     def getImagesSize(self):
@@ -1025,7 +1042,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._force_redraw = True
 
     def _prepareSamples(self):
-        self._wavebin.finalize()
+        self._wavebin.finalize(proxy=get_proxy_target(self.ges_elem))
         self.samples = self._wavebin.samples
 
     def _startRendering(self):
