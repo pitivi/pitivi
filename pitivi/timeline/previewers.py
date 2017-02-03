@@ -194,6 +194,7 @@ class WaveformPreviewer(PreviewerBin):
         self.samples = []
         self.n_samples = 0
         self.duration = 0
+        self.prev_pos = 0
 
     def do_get_property(self, prop):
         if prop.name == 'uri':
@@ -239,9 +240,21 @@ class WaveformPreviewer(PreviewerBin):
                 for i, val in enumerate(peaks):
                     if val < 0:
                         val = 10 ** (val / 20) * 100
-                        self.peaks[i][pos] = val
                     else:
-                        self.peaks[i][pos] = self.peaks[i][pos - 1]
+                        val = self.peaks[i][pos - 1]
+
+                    # Linearly joins values between to known samples
+                    # values
+                    unknowns = range(self.prev_pos + 1, pos)
+                    if len(unknowns):
+                        prev_val = self.peaks[i][self.prev_pos]
+                        linear_const = (val - prev_val) / len(unknowns)
+                        for temppos in unknowns:
+                            self.peaks[i][temppos] = self.peaks[i][temppos - 1] + linear_const
+
+                    self.peaks[i][pos] = val
+
+                self.prev_pos = pos
 
         return Gst.Bin.do_post_message(self, message)
 
@@ -250,8 +263,7 @@ class WaveformPreviewer(PreviewerBin):
         if not self.passthrough and self.peaks:
             # Let's go mono.
             if len(self.peaks) > 1:
-                samples = (
-                    numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
+                samples = (numpy.array(self.peaks[0]) + numpy.array(self.peaks[1])) / 2
             else:
                 samples = numpy.array(self.peaks[0])
 
