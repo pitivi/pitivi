@@ -231,7 +231,7 @@
                           <object class="GtkLabel" id="label6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Horizontal alignment:</property>
+                            <property name="label" translatable="yes">Horizontal:</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -243,7 +243,7 @@
                           <object class="GtkLabel" id="label2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Vertical alignment:</property>
+                            <property name="label" translatable="yes">Vertical:</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -317,7 +317,7 @@
                   <object class="GtkLabel" id="label7">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Advanced positioning</property>
+                    <property name="label" translatable="yes">Alignment</property>
                     <property name="xalign">0</property>
                   </object>
                 </child>
