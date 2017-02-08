@@ -265,8 +265,8 @@ class AssetThumbnail(Loggable):
         """
         quoted_uri = quote_uri(real_uri)
         thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
-        thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnail")
-        path_128 = thumb_dir + "normal/" + thumbnail_hash + ".png"
+        thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnails")
+        path_128 = os.path.join(thumb_dir, "normal", thumbnail_hash + ".png")
         interpolation = GdkPixbuf.InterpType.BILINEAR
 
         # The cache dirs might have resolutions of 256 and/or 128,
@@ -279,7 +279,7 @@ class AssetThumbnail(Loggable):
             return small_thumb, large_thumb
         except GLib.GError:
             # path_128 doesn't exist, try the 256 version.
-            path_256 = thumb_dir + "large/" + thumbnail_hash + ".png"
+            path_256 = os.path.join(thumb_dir, "large", thumbnail_hash + ".png")
             try:
                 thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
                 w, h = thumb_256.get_width(), thumb_256.get_height()
