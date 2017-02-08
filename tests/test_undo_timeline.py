@@ -37,6 +37,7 @@ from pitivi.undo.undo import PropertyChangedAction
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
+from tests.test_timeline_timeline import TestLayers
 
 
 class BaseTestUndoTimeline(TestCase):
@@ -91,6 +92,10 @@ class BaseTestUndoTimeline(TestCase):
                     if isinstance(element, GES.VideoTransition):
                         return element
 
+    def check_layers(self, layers):
+        self.assertEqual(self.timeline.get_layers(), layers)
+        TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
+
 
 class TestTimelineObserver(BaseTestUndoTimeline):
 
@@ -100,26 +105,28 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         layer1 = self.layer
         layer2 = self.timeline.append_layer()
         layer3 = self.timeline.append_layer()
+        self.check_layers([layer1, layer2, layer3])
+        self.check_removal(self.timeline.get_layers())
 
-        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
-        self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
-                         list(range(3)))
+    def check_removal(self, ges_layers):
+        for ges_layer in ges_layers:
+            remaining_layers = list(ges_layers)
+            remaining_layers.remove(ges_layer)
 
-        with self.action_log.started("layer removed"):
-            self.timeline.remove_layer(layer2)
+            with self.action_log.started("layer removed"):
+                self.timeline.remove_layer(ges_layer)
+            self.check_layers(remaining_layers)
 
-        self.assertEqual([layer1, layer3], self.timeline.get_layers())
-        self.assertEqual([l.props.priority for l in [layer1, layer3]],
-                         list(range(2)))
+            self.action_log.undo()
+            self.check_layers(ges_layers)
 
-        self.action_log.undo()
-        self.assertEqual([layer1, layer2, layer3], self.timeline.get_layers())
-        self.assertEqual([l.props.priority for l in [layer1, layer2, layer3]],
-                         list(range(3)))
-        self.action_log.redo()
-        self.assertEqual([layer1, layer3], self.timeline.get_layers())
-        self.assertEqual([l.props.priority for l in [layer1, layer3]],
-                         list(range(2)))
+            self.action_log.redo()
+            self.check_layers(remaining_layers)
+
+            self.check_removal(remaining_layers)
+
+            self.action_log.undo()
+            self.check_layers(ges_layers)
 
     def test_group_ungroup_clips(self):
         self.setup_timeline_container()
@@ -250,13 +257,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
                     timeline_ui._motion_notify_event_cb(None, event=event)
 
             timeline_ui._button_release_event_cb(None, event=event)
-        self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
+        self.check_layers([layer2, layer3, layer1])
 
         self.action_log.undo()
-        self.assertEqual(self.timeline.get_layers(), [layer1, layer2, layer3])
+        self.check_layers([layer1, layer2, layer3])
 
         self.action_log.redo()
-        self.assertEqual(self.timeline.get_layers(), [layer2, layer3, layer1])
+        self.check_layers([layer2, layer3, layer1])
 
     def test_layer_renamed(self):
         layer = Layer(self.layer, timeline=mock.Mock())

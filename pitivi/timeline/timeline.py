@@ -442,7 +442,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.disconnect_by_func(self._motion_notify_event_cb)
 
             self.ges_timeline.disconnect_by_func(self._durationChangedCb)
-            self.ges_timeline.disconnect_by_func(self._layerAddedCb)
+            self.ges_timeline.disconnect_by_func(self._layer_added_cb)
             self.ges_timeline.disconnect_by_func(self._layerRemovedCb)
             self.ges_timeline.disconnect_by_func(self._snapCb)
             self.ges_timeline.disconnect_by_func(self._snapEndedCb)
@@ -463,10 +463,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.ges_timeline.ui = self
 
         for ges_layer in self.ges_timeline.get_layers():
-            self._addLayer(ges_layer)
+            self._add_layer(ges_layer)
 
         self.ges_timeline.connect("notify::duration", self._durationChangedCb)
-        self.ges_timeline.connect("layer-added", self._layerAddedCb)
+        self.ges_timeline.connect("layer-added", self._layer_added_cb)
         self.ges_timeline.connect("layer-removed", self._layerRemovedCb)
         self.ges_timeline.connect("snapping-started", self._snapCb)
         self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
@@ -938,8 +938,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dropDataReady = True
 
     # Handle layers
-    def _layerAddedCb(self, timeline, ges_layer):
-        self._addLayer(ges_layer)
+    def _layer_added_cb(self, unused_ges_timeline, ges_layer):
+        self._add_layer(ges_layer)
+        self.__update_layers()
 
     def moveLayer(self, ges_layer, index):
         self.debug("Moving layer %s to %s", ges_layer.props.priority, index)
@@ -950,7 +951,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if ges_layer.props.priority != i:
                 ges_layer.props.priority = i
 
-    def _addLayer(self, ges_layer):
+    def _add_layer(self, ges_layer):
+        """Adds widgets for controlling and showing the specified layer."""
         layer = Layer(ges_layer, self)
         ges_layer.ui = layer
 
@@ -970,7 +972,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.__add_separators()
 
-        ges_layer.connect("notify::priority", self.__layerPriorityChangedCb)
+        ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
 
     def __add_separators(self):
         """Adds separators to separate layers."""
@@ -984,7 +986,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._separators.append((controls_separator, separator))
 
-    def __layerPriorityChangedCb(self, ges_layer, pspec):
+    def __layer_priority_changed_cb(self, unused_ges_layer, unused_pspec):
+        """Handles the changing of a layer's priority."""
+        self.__update_layers()
+
+    def __update_layers(self):
+        """Updates the layer widgets if their priorities are in good order."""
         ges_layers = self.ges_timeline.get_layers()
         priorities = [ges_layer.props.priority for ges_layer in ges_layers]
         if priorities != list(range(len(priorities))):
@@ -998,7 +1005,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.info("Removing layer: %s", ges_layer.props.priority)
         self.layout.layers_vbox.remove(ges_layer.ui)
         self._layers_controls_vbox.remove(ges_layer.control_ui)
-        ges_layer.disconnect_by_func(self.__layerPriorityChangedCb)
+        ges_layer.disconnect_by_func(self.__layer_priority_changed_cb)
 
         # Remove extra separators.
         controls_separator, separator = self._separators.pop()
