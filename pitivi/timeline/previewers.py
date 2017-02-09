@@ -687,10 +687,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._startThumbnailingWhenIdle()
 
     def _ensure_proxy_thumbnails_cache(self):
-        """Ensures that both the target asset and the proxy assets have caches"""
-        asset_uri = quote_uri(self.ges_elem.get_parent().get_asset().props.id)
-        if self.uri != asset_uri:
-            self.thumb_cache.copy(asset_uri)
+        """Ensures that both the target asset and the proxy assets have caches."""
+        uri = self.ges_elem.props.uri
+        if self.uri != uri:
+            self.thumb_cache.copy(uri)
 
     def stopGeneration(self):
         if self._thumb_cb_id:
