@@ -1042,7 +1042,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._force_redraw = True
 
     def _prepareSamples(self):
-        self._wavebin.finalize(proxy=get_proxy_target(self.ges_elem))
+        proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
+        self._wavebin.finalize(proxy=proxy)
         self.samples = self._wavebin.samples
 
     def _startRendering(self):
