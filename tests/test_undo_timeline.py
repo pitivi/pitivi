@@ -18,6 +18,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import mock
+from unittest import skip
 from unittest import TestCase
 
 from gi.repository import Gdk
@@ -813,7 +814,7 @@ class TestGObjectObserver(BaseTestUndoTimeline):
 
 class TestDragDropUndo(BaseTestUndoTimeline):
 
-    def test_clip_dragged_to_create_layer(self):
+    def test_clip_dragged_to_create_layer_below(self):
         self.setup_timeline_container()
         timeline_ui = self.timeline_container.timeline
         layers = self.timeline.get_layers()
@@ -861,6 +862,55 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
+
+    @skip("segfaults, see T7704")
+    def test_clip_dragged_to_create_layer_above(self):
+        self.setup_timeline_container()
+        timeline_ui = self.timeline_container.timeline
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+
+        clip = GES.TitleClip()
+        self.layer.add_clip(clip)
+
+        # Drag a clip on a separator to create a layer.
+        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+            get_event_widget.return_value = clip.ui
+
+            event = mock.Mock()
+            event.x = 0
+            event.get_button.return_value = True, 1
+            timeline_ui._button_press_event_cb(None, event)
+
+            def translate_coordinates(widget, x, y):
+                return x, y
+            clip.ui.translate_coordinates = translate_coordinates
+            event = mock.Mock()
+            event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
+            event.x = 1
+            event.y = -1
+            event.get_button.return_value = True, 1
+            timeline_ui._motion_notify_event_cb(None, event)
+
+        timeline_ui._button_release_event_cb(None, event)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[1], self.layer)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
+
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
 
     def test_media_library_asset_dragged_on_separator(self):
         """Simulate dragging an asset from the media library to the timeline."""
