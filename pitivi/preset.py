@@ -27,7 +27,6 @@ from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.configure import get_audiopresets_dir
-from pitivi.configure import get_renderpresets_dir
 from pitivi.configure import get_videopresets_dir
 from pitivi.settings import xdg_config_home
 from pitivi.settings import xdg_data_home

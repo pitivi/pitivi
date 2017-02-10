@@ -2,7 +2,6 @@ subdir('icons')
 
 install_subdir('pixmaps', install_dir: pkgdatadir)
 install_subdir('ui', install_dir: pkgdatadir)
-install_subdir('renderpresets', install_dir: pkgdatadir)
 install_subdir('audiopresets', install_dir: pkgdatadir)
 install_subdir('videopresets', install_dir: pkgdatadir)
 install_subdir('gstpresets', install_dir: pkgdatadir)

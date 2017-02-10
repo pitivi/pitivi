@@ -71,11 +71,6 @@ def get_ui_dir():
     return os.path.join(get_data_dir(), 'ui')
 
 
-def get_renderpresets_dir():
-    """Returns our directory with Render Presets files."""
-    return os.path.join(get_data_dir(), 'renderpresets')
-
-
 def get_audiopresets_dir():
     """Returns our directory with Audio Presets files."""
     return os.path.join(get_data_dir(), 'audiopresets')
