@@ -252,6 +252,37 @@ class TestLayers(BaseTestTimeline):
 
 class TestGrouping(BaseTestTimeline):
 
+    def __check_can_group_ungroup(self, timeline_container, can_group, can_ungroup):
+        self.assertEqual(can_group, timeline_container.group_action.props.enabled)
+        self.assertEqual(can_ungroup, timeline_container.ungroup_action.props.enabled)
+
+    def test_can_group_ungroup(self):
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
+        self.__check_can_group_ungroup(timeline_container, False, False)
+        ges_clip, = self.addClipsSimple(timeline, 1)
+        self.toggle_clip_selection(ges_clip, expect_selected=True)
+        self.__check_can_group_ungroup(timeline_container, False, True)
+
+        timeline_container.ungroup_action.emit("activate", None)
+        self.__check_can_group_ungroup(timeline_container, False, False)
+
+        layer, = timeline.ges_timeline.get_layers()
+        ges_clip0, ges_clip1 = layer.get_clips()
+        self.toggle_clip_selection(ges_clip0, expect_selected=True)
+        self.__check_can_group_ungroup(timeline_container, False, False)
+
+        # Press <ctrl> so selecting in ADD mode
+        event = mock.Mock()
+        event.keyval = Gdk.KEY_Control_L
+        timeline_container.do_key_press_event(event)
+
+        self.toggle_clip_selection(ges_clip1, expect_selected=True)
+        self.__check_can_group_ungroup(timeline_container, True, False)
+
+        timeline_container.group_action.emit("activate", None)
+        self.__check_can_group_ungroup(timeline_container, False, True)
+
     def group_clips(self, timeline_container, clips):
         timeline = timeline_container.timeline
         timeline.app.settings.leftClickAlsoSeeks = False
