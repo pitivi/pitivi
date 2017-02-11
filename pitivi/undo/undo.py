@@ -403,6 +403,14 @@ class PropertyChangedAction(UndoableAutomaticObjectAction):
     def undo(self):
         self.auto_object.set_property(self.field_name, self.old_value)
 
+    def expand(self, action):
+        if not isinstance(action, PropertyChangedAction) or \
+                self.auto_object != action.auto_object or \
+                self.field_name != action.field_name:
+            return False
+        self.new_value = action.new_value
+        return True
+
 
 class GObjectObserver(GObject.Object):
     """Monitor for GObject.Object's props, reporting UndoableActions.

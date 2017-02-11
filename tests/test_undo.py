@@ -22,6 +22,7 @@ from unittest import TestCase
 from gi.repository import GES
 
 from pitivi.undo.undo import GObjectObserver
+from pitivi.undo.undo import PropertyChangedAction
 from pitivi.undo.undo import UndoableAction
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.undo.undo import UndoableActionStack
@@ -381,6 +382,7 @@ class TestGObjectObserver(TestCase):
         stack, = action_log.stacks
 
         clip = GES.TitleClip()
+        clip.props.start = 1
         unused_observer = GObjectObserver(clip, ["start"], action_log)
 
         self.assertEqual(len(stack.done_actions), 0)
@@ -391,7 +393,25 @@ class TestGObjectObserver(TestCase):
         self.assertEqual(len(stack.done_actions), 1)
 
         clip.props.start = 4
-        self.assertEqual(len(stack.done_actions), 2)
+        self.assertEqual(len(stack.done_actions), 1)
         action = stack.done_actions[-1]
-        self.assertEqual(action.old_value, 2)
+        self.assertEqual(action.old_value, 1)
         self.assertEqual(action.new_value, 4)
+
+
+class TestPropertyChangedAction(TestCase):
+
+    def test_expand(self):
+        stack = UndoableActionStack("good one!")
+        gobject = mock.Mock()
+        stack.push(PropertyChangedAction(gobject, "field", 5, 7))
+        stack.push(PropertyChangedAction(gobject, "field", 11, 13))
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
+        self.assertEqual(stack.done_actions[0].old_value, 5)
+        self.assertEqual(stack.done_actions[0].new_value, 13)
+
+        stack.push(PropertyChangedAction(gobject, "field2", 0, 1))
+        self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
+
+        stack.push(PropertyChangedAction(mock.Mock(), "field", 0, 1))
+        self.assertEqual(len(stack.done_actions), 3, stack.done_actions)
