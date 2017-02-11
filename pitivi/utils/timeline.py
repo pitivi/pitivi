@@ -88,6 +88,8 @@ class Selection(GObject.Object, Loggable):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.selected = set()
+        self.can_group = False
+        self.can_ungroup = False
 
     def setSelection(self, objs, mode):
         """Updates the current selection.
@@ -133,8 +135,22 @@ class Selection(GObject.Object, Loggable):
                         isinstance(obj, GES.TextOverlay):
                     continue
                 element.selected.selected = selected
-
+        self.set_can_group_ungroup()
         self.emit("selection-changed")
+
+    def set_can_group_ungroup(self):
+        containers = set()
+        for obj in self.selected:
+            toplevel = obj.get_toplevel_parent()
+            if not toplevel.props.serialize:
+                for child in toplevel.get_children(False):
+                    containers.add(child)
+            else:
+                containers.add(toplevel)
+            if len(containers) > 1:
+                break
+        self.can_group = len(containers) > 1
+        self.can_ungroup = len(self.getSelectedTrackElements()) > 1
 
     def __get_selection_changes(self, old_selection):
         for obj in old_selection - self.selected:

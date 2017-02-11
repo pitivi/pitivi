@@ -78,3 +78,21 @@ class TestSelection(common.TestCase):
         self.assertIsNone(selection.getSingleClip())
         self.assertIsNone(selection.getSingleClip(GES.UriClip))
         self.assertIsNone(selection.getSingleClip(GES.TitleClip))
+
+    def test_can_group_ungroup(self):
+        clip1 = common.create_test_clip(GES.UriClip)
+        clip2 = common.create_test_clip(GES.UriClip)
+        selection = Selection()
+        self.assertFalse(selection)
+
+        selection.setSelection([clip1], SELECT)
+        self.assertFalse(selection.can_ungroup)
+        self.assertFalse(selection.can_group)
+
+        selection.setSelection([clip2], SELECT_ADD)
+        self.assertTrue(selection.can_group)
+        self.assertFalse(selection.can_ungroup)
+
+        selection.setSelection([], SELECT)
+        self.assertFalse(selection.can_group)
+        self.assertFalse(selection.can_ungroup)
