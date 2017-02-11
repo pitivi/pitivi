@@ -32,6 +32,48 @@ Run `pitivi` while inside the environment to launch Pitivi. Next you should run 
 
 After you hack the source code simply run `pitivi` again to see how your changes work.
 
+### Development Workflow
+
+We use [Phabricator tasks](https://phabricator.freedesktop.org/tag/pitivi/) to track all bugs and feature requests; feel free to open a task if you have found a bug or
+wish to see a feature implemented if it doesn't exist already.
+You can even subscribe to tasks on Phabricator to keep yourself updated with their progress.
+If you're a newcomer wanting to contribute, you can start with tasks tagged [Pitivi tasks for newcomers](https://phabricator.freedesktop.org/tag/pitivi_tasks_for_newcomers/) to get involved.
+
+To fix a task, it's best to get in touch with us on our IRC channel `#pitivi` on Freenode, to see if it's still meaningful, then if all is well:
+
+1. Assign the task to yourself in Phabricator.
+2. Create a new branch with a meaningful name. Make sure to set its [remote-tracking branch](https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches/), as it determines the default commit range to attach.
+For example, if you're going to work on task [T7674](https://phabricator.freedesktop.org/T7674/), the branch could be called T7674-import-img or
+T7674-fix-import, i.e. `git checkout -b T7674-import-img origin/master`.
+3. Once you have made your changes, you need to create a commit. Follow the [GNOME guidelines](https://wiki.gnome.org/Newcomers/CodeContributionWorkflow#Commit_guidelines)
+for creating commits.
+
+    Be aware that when you create a commit, `pre-commit` is executed to perform checks on the changes and in some cases it does
+some automatic fixes. When this happens, make sure those are included in the commit you want to create.
+4. Now you're all set to push your first diff!
+
+    ```
+    $ git-phab attach --task TXXXX
+    ```
+
+Optionally, you can set git-phab to automatically push your WIP branches to a personal remote repository:
+
+1. Add your cloned remote Pitivi repository as a remote to your local repository:
+
+    ```
+    $ git remote add github https://github.com/NICK/pitivi.git
+    $ git remote set-url github https://github.com/NICK/pitivi.git
+    $ git remote set-url --push github git@github.com:NICK/pitivi.git
+    $ git remote show github | grep URL
+      Fetch URL: https://github.com/NICK/pitivi.git
+      Push  URL: git@github.com:NICK/pitivi.git
+    ```
+2. Set git-phab remote to your cloned remote Pitivi repository:
+
+    ```
+    $ git config phab.remote github
+    ```
+
 ### Update the environment
 
 To update the dependencies installed in the dev env run:
