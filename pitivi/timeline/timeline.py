@@ -443,11 +443,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.ges_timeline.disconnect_by_func(self._durationChangedCb)
             self.ges_timeline.disconnect_by_func(self._layer_added_cb)
-            self.ges_timeline.disconnect_by_func(self._layerRemovedCb)
+            self.ges_timeline.disconnect_by_func(self._layer_removed_cb)
             self.ges_timeline.disconnect_by_func(self._snapCb)
             self.ges_timeline.disconnect_by_func(self._snapEndedCb)
             for ges_layer in self.ges_timeline.get_layers():
-                self._removeLayer(ges_layer)
+                self._remove_layer(ges_layer)
 
             self.ges_timeline.ui = None
             self.ges_timeline = None
@@ -467,7 +467,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.ges_timeline.connect("notify::duration", self._durationChangedCb)
         self.ges_timeline.connect("layer-added", self._layer_added_cb)
-        self.ges_timeline.connect("layer-removed", self._layerRemovedCb)
+        self.ges_timeline.connect("layer-removed", self._layer_removed_cb)
         self.ges_timeline.connect("snapping-started", self._snapCb)
         self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
 
@@ -998,10 +998,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.debug("Layers still being shuffled, not updating widgets: %s", priorities)
             return
         self.debug("Updating layers widgets positions")
-        for i, ges_layer in enumerate(self.ges_timeline.get_layers()):
+        for ges_layer in self.ges_timeline.get_layers():
             self.__update_layer(ges_layer)
 
-    def _removeLayer(self, ges_layer):
+    def _remove_layer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
         self.layout.layers_vbox.remove(ges_layer.ui)
         self._layers_controls_vbox.remove(ges_layer.control_ui)
@@ -1016,12 +1016,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         ges_layer.ui = None
         ges_layer.control_ui = None
 
-    def _layerRemovedCb(self, ges_timeline, ges_layer):
-        self._removeLayer(ges_layer)
-        removed_priority = ges_layer.props.priority
-        for priority, ges_layer in enumerate(ges_timeline.get_layers()):
-            if priority >= removed_priority:
-                ges_layer.props.priority -= 1
+    def _layer_removed_cb(self, unused_ges_timeline, ges_layer):
+        self._remove_layer(ges_layer)
+        self.__update_layers()
 
     def separator_priority(self, separator):
         position = self.layout.layers_vbox.child_get_property(separator, "position")

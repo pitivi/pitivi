@@ -478,6 +478,9 @@ class LayerRemoved(UndoableAction):
         self.ges_timeline = ges_timeline
         self.ges_layer = ges_layer
 
+    def __repr__(self):
+        return "<LayerRemoved %s>" % self.ges_layer
+
     def do(self):
         self.ges_timeline.remove_layer(self.ges_layer)
         self.ges_timeline.get_asset().pipeline.commit_timeline()
@@ -498,6 +501,11 @@ class LayerMoved(UndoableAction):
         self.ges_layer = ges_layer
         self.old_priority = old_priority
         self.priority = priority
+
+    def __repr__(self):
+        return "<LayerMoved %s: %s -> %s>" % (self.ges_layer,
+                                              self.old_priority,
+                                              self.priority)
 
     def do(self):
         self.ges_layer.props.priority = self.priority

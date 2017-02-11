@@ -202,27 +202,29 @@ class TestLayers(BaseTestTimeline):
         self.assertListEqual(positions, expected_positions)
 
     def test_remove_layer(self):
-        self.check_remove_layer([0, 0, 0, 0])
-        self.check_remove_layer([0, 0, 1, 0])
-        self.check_remove_layer([0, 1, 0, 0])
-        self.check_remove_layer([0, 2, 1, 0])
-        self.check_remove_layer([1, 0, 1, 0])
-        self.check_remove_layer([2, 2, 0, 0])
-        self.check_remove_layer([3, 2, 1, 0])
+        self.check_remove_layer([0, 0, 0])
+        self.check_remove_layer([0, 0, 1])
+        self.check_remove_layer([0, 1, 0])
+        self.check_remove_layer([0, 2, 1])
+        self.check_remove_layer([1, 0, 1])
+        self.check_remove_layer([2, 2, 0])
+        self.check_remove_layer([3, 2, 1])
 
     def check_remove_layer(self, removal_order):
         timeline = create_timeline_container().timeline
 
         # Add layers to remove them later.
         ges_layers = []
-        for priority in range(len(removal_order)):
+        # Pitivi doesn't support removing the last remaining layer,
+        # that's why we create an extra layer.
+        for priority in range(len(removal_order) + 1):
             ges_layer = timeline.createLayer(priority)
             ges_layers.append(ges_layer)
 
-        # Remove the layers in the specified order.
+        # Remove layers one by one in the specified order.
         for priority in removal_order:
             ges_layer = ges_layers[priority]
-            self.assertTrue(timeline.ges_timeline.remove_layer(ges_layer))
+            ges_layer.control_ui.delete_layer_action.activate(None)
             ges_layers.remove(ges_layer)
             self.check_priorities_and_positions(timeline, ges_layers, list(range(len(ges_layers))))
 

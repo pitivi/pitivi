@@ -112,12 +112,14 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.check_removal(self.timeline.get_layers())
 
     def check_removal(self, ges_layers):
+        if len(ges_layers) == 1:
+            # We don't support removing the last remaining layer.
+            return
         for ges_layer in ges_layers:
             remaining_layers = list(ges_layers)
             remaining_layers.remove(ges_layer)
 
-            with self.action_log.started("layer removed"):
-                self.timeline.remove_layer(ges_layer)
+            ges_layer.control_ui.delete_layer_action.activate(None)
             self.check_layers(remaining_layers)
 
             self.action_log.undo()
@@ -847,6 +849,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
         self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
 
@@ -854,12 +857,14 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
         self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
         self.action_log.redo()
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
         self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
 
@@ -897,18 +902,21 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
         self.assertEqual(layers[1], self.layer)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
         self.assertEqual(layers[1].get_clips(), [])
 
         self.action_log.undo()
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
         self.action_log.redo()
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
         self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
         self.assertEqual(layers[1].get_clips(), [])
 

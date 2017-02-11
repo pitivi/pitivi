@@ -150,7 +150,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         last = priority == layers_count - 1
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
-        self.__delete_layer_action.props.enabled = layers_count > 1
+        self.delete_layer_action.props.enabled = layers_count > 1
 
     def __updateName(self):
         self.name_entry.set_text(self.ges_layer.ui.getName())
@@ -183,8 +183,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         action_group.add_action(action)
         menu_model.append(_("Move layer to bottom"), "layer.%s" % action.get_name().replace(" ", "."))
 
-        self.__delete_layer_action = Gio.SimpleAction.new("delete-layer", None)
-        action = self.__delete_layer_action
+        self.delete_layer_action = Gio.SimpleAction.new("delete-layer", None)
+        action = self.delete_layer_action
         action.connect("activate", self.__delete_layer_cb)
         action_group.add_action(action)
         menu_model.append(_("Delete layer"), "layer.%s" % action.get_name())
@@ -196,6 +196,10 @@ class LayerControls(Gtk.EventBox, Loggable):
         with self.app.action_log.started("delete layer",
                                          CommitTimelineFinalizingAction(pipeline)):
             self.ges_timeline.remove_layer(self.ges_layer)
+            removed_priority = self.ges_layer.props.priority
+            for ges_layer in self.ges_timeline.get_layers():
+                if ges_layer.props.priority > removed_priority:
+                    ges_layer.props.priority -= 1
 
     def __move_layer_cb(self, unused_simple_action, unused_parameter, step):
         index = self.ges_layer.get_priority()
