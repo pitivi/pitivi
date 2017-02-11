@@ -988,7 +988,7 @@ class RenderDialog(Loggable):
                     self._factory_formats[encoder_string] = fmt
                     break
 
-        self.app.gui.timeline_ui.timeline.set_best_zoom_ratio()
+        self.app.gui.timeline_ui.timeline.set_best_zoom_ratio(allow_zoom_in=True)
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
             self.outfile, self.project.container_profile)

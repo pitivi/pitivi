@@ -1054,7 +1054,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         zoom_ratio = self.layout.get_allocation().width / timeline_duration_s
         nearest_zoom_level = Zoomable.computeZoomLevel(zoom_ratio)
-        if nearest_zoom_level >= Zoomable.getCurrentZoomLevel():
+        if nearest_zoom_level >= Zoomable.getCurrentZoomLevel() and not allow_zoom_in:
             # This means if we continue we'll zoom in.
             if not allow_zoom_in:
                 # For example when the user zoomed out and is adding clips
@@ -1538,20 +1538,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.register_group("navigation", _("Timeline Navigation"), position=40)
 
         self.zoom_in_action = Gio.SimpleAction.new("zoom-in", None)
-        self.zoom_in_action.connect("activate", self._zoomInCb)
+        self.zoom_in_action.connect("activate", self._zoom_in_cb)
         navigation_group.add_action(self.zoom_in_action)
         self.app.shortcuts.add("navigation.zoom-in",
                                ["<Primary>plus", "<Primary>equal"],
                                _("Zoom in"))
 
         self.zoom_out_action = Gio.SimpleAction.new("zoom-out", None)
-        self.zoom_out_action.connect("activate", self._zoomOutCb)
+        self.zoom_out_action.connect("activate", self._zoom_out_cb)
         navigation_group.add_action(self.zoom_out_action)
         self.app.shortcuts.add("navigation.zoom-out", ["<Primary>minus"],
                                _("Zoom out"))
 
         self.zoom_fit_action = Gio.SimpleAction.new("zoom-fit", None)
-        self.zoom_fit_action.connect("activate", self._zoomFitCb)
+        self.zoom_fit_action.connect("activate", self._zoom_fit_cb)
         navigation_group.add_action(self.zoom_fit_action)
         self.app.shortcuts.add("navigation.zoom-fit", ["<Primary>0"],
                                _("Adjust zoom to fit the project to the window"))
@@ -1829,16 +1829,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.zoomChanged()
 
             self._renderingSettingsChangedCb(project, None, None)
-            self.timeline.set_best_zoom_ratio()
+            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
 
-    def _zoomInCb(self, unused_action, unused_parameter):
+    def _zoom_in_cb(self, unused_action, unused_parameter):
         Zoomable.zoomIn()
 
-    def _zoomOutCb(self, unused_action, unused_parameter):
+    def _zoom_out_cb(self, unused_action, unused_parameter):
         Zoomable.zoomOut()
 
-    def _zoomFitCb(self, unused_action, unused_parameter):
+    def _zoom_fit_cb(self, unused_action, unused_parameter):
         self.app.write_action("zoom-fit", optional_action_type=True)
 
         self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
