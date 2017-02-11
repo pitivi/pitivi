@@ -189,9 +189,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertEqual(len(clips), 1, clips)
         self.assertEqual(len(clips[0].get_children(False)), 2)
 
-        timeline.selection.select([clip])
-        timeline.resetSelectionGroup()
-        timeline.current_group.add(clip)
+        common.TestCase.toggle_clip_selection(self, clips[0], True)
         self.timeline_container.ungroup_action.activate(None)
         clips = list(self.getTimelineClips())
         self.assertEqual(len(clips), 2, clips)

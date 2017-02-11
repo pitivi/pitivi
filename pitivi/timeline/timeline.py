@@ -1416,11 +1416,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.setProject(self._project)
 
     def updateActions(self):
-        selection_non_empty = bool(self.timeline.selection)
+        selection = self.timeline.selection
+        selection_non_empty = bool(selection)
         self.delete_action.set_enabled(selection_non_empty)
         self.delete_and_shift_action.set_enabled(selection_non_empty)
-        self.group_action.set_enabled(selection_non_empty)
-        self.ungroup_action.set_enabled(selection_non_empty)
+        self.group_action.set_enabled(selection.can_group)
+        self.ungroup_action.set_enabled(selection.can_ungroup and not selection.can_group)
         self.copy_action.set_enabled(selection_non_empty)
         can_paste = bool(self.__copied_group)
         self.paste_action.set_enabled(can_paste)
@@ -1613,6 +1614,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                ["<Shift>Right"],
                                _("Seek forward one second"))
 
+        self.updateActions()
+
     def _scrollToPixel(self, x):
         hadj = self.timeline.hadj
         self.log("Scroll to: %s %s %s", x, hadj.props.lower, hadj.props.upper)
@@ -1729,6 +1732,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             if new_group:
                 self.timeline.current_group.add(new_group)
+
+            # timeline.selection doesn't change during grouping,
+            # we need to manually update group actions.
+            self.timeline.selection.set_can_group_ungroup()
+            self.updateActions()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
         if self.timeline.current_group:
