@@ -37,7 +37,6 @@ from pitivi.undo.undo import PropertyChangedAction
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
-from tests.test_timeline_timeline import TestLayers
 
 
 class BaseTestUndoTimeline(TestCase):
@@ -94,6 +93,9 @@ class BaseTestUndoTimeline(TestCase):
 
     def check_layers(self, layers):
         self.assertEqual(self.timeline.get_layers(), layers)
+        # Import TestLayers locally, otherwise its tests are discovered and
+        # run twice.
+        from tests.test_timeline_timeline import TestLayers
         TestLayers.check_priorities_and_positions(self, self.timeline.ui, layers, list(range(len(layers))))
 
 
