@@ -88,7 +88,7 @@ class TestLayers(BaseTestTimeline):
         # Allocate layers
         y = 0
         for priority, height in enumerate(heights):
-            ges_layer = timeline.createLayer(priority=priority)
+            ges_layer = timeline.create_layer(priority=priority)
             rect = Gdk.Rectangle()
             rect.y = y
             rect.height = height
@@ -159,7 +159,7 @@ class TestLayers(BaseTestTimeline):
         timeline = create_timeline_container().timeline
         ges_layers = []
         for priority in start_priorities:
-            ges_layer = timeline.createLayer(priority)
+            ges_layer = timeline.create_layer(priority)
             self.assertEqual(ges_layer.props.priority, priority)
             ges_layers.append(ges_layer)
         self.check_priorities_and_positions(timeline, ges_layers, expected_priorities)
@@ -218,7 +218,7 @@ class TestLayers(BaseTestTimeline):
         # Pitivi doesn't support removing the last remaining layer,
         # that's why we create an extra layer.
         for priority in range(len(removal_order) + 1):
-            ges_layer = timeline.createLayer(priority)
+            ges_layer = timeline.create_layer(priority)
             ges_layers.append(ges_layer)
 
         # Remove layers one by one in the specified order.
@@ -243,7 +243,7 @@ class TestLayers(BaseTestTimeline):
         # Add layers to move them later.
         ges_layers = []
         for priority in range(len(expected_priorities)):
-            ges_layer = timeline.createLayer(priority)
+            ges_layer = timeline.create_layer(priority)
             ges_layers.append(ges_layer)
 
         timeline.moveLayer(ges_layers[from_priority], to_priority)

@@ -904,7 +904,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                  CommitTimelineFinalizingAction(pipeline)):
                     if self.__on_separators:
                         priority = self.separator_priority(self.__on_separators[1])
-                        created_layer = self.createLayer(priority)
+                        created_layer = self.create_layer(priority)
                     else:
                         created_layer = None
                     for layer, clip in self.__last_clips_on_leave:
@@ -1000,6 +1000,21 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.debug("Updating layers widgets positions")
         for ges_layer in self.ges_timeline.get_layers():
             self.__update_layer(ges_layer)
+
+    def __update_layer(self, ges_layer):
+        """Sets the position of the layer and its controls in their parent."""
+        position = ges_layer.props.priority * 2 + 1
+
+        # Update the position of the LayerControls and Layer widgets and
+        # also the position of the separators below them.
+        controls_separator, layers_separator = self._separators[ges_layer.props.priority + 1]
+        vbox = self.layout.layers_vbox
+        vbox.child_set_property(ges_layer.ui, "position", position)
+        vbox.child_set_property(layers_separator, "position", position + 1)
+
+        vbox = self._layers_controls_vbox
+        vbox.child_set_property(ges_layer.control_ui, "position", position)
+        vbox.child_set_property(controls_separator, "position", position + 1)
 
     def _remove_layer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
@@ -1192,41 +1207,20 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.editing_context.edit_to(position, self._on_layer)
 
-    def createLayer(self, priority):
+    def create_layer(self, priority):
         """Adds a new layer to the GES timeline."""
         self.debug("Creating layer: priority = %s", priority)
+        ges_layers = self.ges_timeline.get_layers()
+        assert 0 <= priority <= len(ges_layers)
         new_ges_layer = GES.Layer.new()
         new_ges_layer.props.priority = priority
         self.ges_timeline.add_layer(new_ges_layer)
 
-        ges_layers = self.ges_timeline.get_layers()
-        if priority < len(ges_layers):
-            for ges_layer in ges_layers:
-                if ges_layer == new_ges_layer:
-                    continue
-
-                if ges_layer.get_priority() >= priority:
-                    ges_layer.props.priority += 1
-                    self.__update_layer(ges_layer)
-
-        self.__update_layer(new_ges_layer)
+        for ges_layer in ges_layers:
+            if priority <= ges_layer.get_priority():
+                ges_layer.props.priority += 1
 
         return new_ges_layer
-
-    def __update_layer(self, ges_layer):
-        """Sets the position of the layer and its controls in their parent."""
-        position = ges_layer.props.priority * 2 + 1
-
-        # Update the position of the LayerControls and Layer widgets and
-        # also the position of the separators below them.
-        controls_separator, layers_separator = self._separators[ges_layer.props.priority + 1]
-        vbox = self.layout.layers_vbox
-        vbox.child_set_property(ges_layer.ui, "position", position)
-        vbox.child_set_property(layers_separator, "position", position + 1)
-
-        vbox = self._layers_controls_vbox
-        vbox.child_set_property(ges_layer.control_ui, "position", position)
-        vbox.child_set_property(controls_separator, "position", position + 1)
 
     def dragEnd(self):
         if self.editing_context:
@@ -1234,7 +1228,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
-                ges_layer = self.createLayer(priority)
+                ges_layer = self.create_layer(priority)
                 position = self.editing_context.new_position
                 self.editing_context.edit_to(position, ges_layer)
 
