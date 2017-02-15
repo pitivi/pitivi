@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 import os
 from gettext import gettext as _
-from hashlib import md5
 from time import time
 from urllib.parse import unquote
 
@@ -40,6 +39,7 @@ from pitivi.configure import VERSION
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
+from pitivi.medialibrary import AssetThumbnail
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
@@ -934,16 +934,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         hbox.set_spacing(SPACING)
 
-        # Check if we have a thumbnail available.
-        # This can happen if the file was moved or deleted by an application
-        # that does not manage Freedesktop thumbnails. The user is in luck!
-        # This is based on medialibrary's addDiscovererInfo method.
-        thumbnail_hash = md5(uri.encode()).hexdigest()
-        thumb_dir = os.path.expanduser("~/.thumbnails/normal/")
-        thumb_path_normal = thumb_dir + thumbnail_hash + ".png"
-        if os.path.exists(thumb_path_normal):
+        small_thumb, large_thumb = AssetThumbnail.get_thumbnails_from_xdg_cache(uri)
+        if large_thumb:
             self.debug("A thumbnail file was found for %s", uri)
-            thumbnail = Gtk.Image.new_from_file(thumb_path_normal)
+            thumbnail = Gtk.Image.new_from_pixbuf(large_thumb)
             thumbnail.set_padding(0, SPACING)
             hbox.pack_start(thumbnail, False, False, 0)
 

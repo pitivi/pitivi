@@ -210,7 +210,7 @@ class AssetThumbnail(Loggable):
         if video_streams:
             # Check if the files have thumbnails in the user's cache directory.
             real_uri = get_proxy_target(self.__asset).props.id
-            small_thumb, large_thumb = self.__get_thumbnails_from_xdg_cache(real_uri)
+            small_thumb, large_thumb = self.get_thumbnails_from_xdg_cache(real_uri)
             if not small_thumb:
                 if self.__asset.is_image():
                     path = Gst.uri_get_location(real_uri)
@@ -251,7 +251,8 @@ class AssetThumbnail(Loggable):
             small_thumb, large_thumb = self.__get_icons("audio-x-generic")
         return small_thumb, large_thumb
 
-    def __get_thumbnails_from_xdg_cache(self, real_uri):
+    @staticmethod
+    def get_thumbnails_from_xdg_cache(real_uri):
         """Gets pixbufs for the specified thumbnail from the user's cache dir.
 
         Looks for thumbnails according to the [Thumbnail Managing Standard](https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DIRECTORY).
