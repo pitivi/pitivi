@@ -233,7 +233,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=meson==0.37.1"],
+            "config-opts": ["--module=meson==0.38.1"],
             "sources": [
                 {
                     "type": "file",
@@ -265,7 +265,60 @@
             ]
         },
         {
+            "name": "ffmpeg",
+            "config-opts": [
+                "--disable-static",
+                "--disable-avdevice",
+                "--disable-postproc",
+                "--disable-programs",
+                "--disable-ffserver",
+                "--disable-ffplay",
+                "--disable-ffprobe",
+                "--disable-ffmpeg",
+                "--disable-encoder=flac",
+                "--disable-protocols",
+                "--disable-devices",
+                "--disable-network",
+                "--disable-hwaccels",
+                "--disable-dxva2",
+                "--disable-vdpau",
+                "--disable-filters",
+                "--disable-doc",
+                "--disable-vda",
+                "--disable-d3d11va",
+                "--disable-dxva2",
+                "--disable-audiotoolbox",
+                "--disable-videotoolbox",
+                "--disable-vaapi",
+                "--disable-crystalhd",
+                "--disable-mediacodec",
+                "--disable-nvenc",
+                "--disable-mmal",
+                "--disable-omx",
+                "--disable-omx-rpi",
+                "--disable-cuda",
+                "--disable-cuvid",
+                "--disable-libmfx",
+                "--disable-libnpp",
+                "--disable-iconv",
+                "--disable-jni",
+                "--enable-optimizations",
+                "--enable-gpl",
+                "--enable-shared"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.ffmpeg.org/ffmpeg.git",
+                    "branch": "68ed682710f1cb1f4fdd1fd0447f402d6feabd01"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -275,6 +328,9 @@
         },
         {
             "name": "gst-plugins-base",
+            "buildsystem": "meson",
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "builddir": true,
             "sources": [
                 {
                     "type": "git",
@@ -284,6 +340,9 @@
         },
         {
             "name": "gst-plugins-good",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -293,6 +352,9 @@
         },
         {
             "name": "gst-plugins-ugly",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -302,6 +364,9 @@
         },
         {
             "name": "gst-plugins-bad",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -311,6 +376,9 @@
         },
         {
             "name": "gst-libav",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -320,7 +388,9 @@
         },
         {
             "name": "gst-python",
-            "config-opts": ["--with-pygi-overrides-dir=/app/lib/python3.4/site-packages/gi/overrides/"],
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Dpygi-overrides-dir=/app/lib/python3.4/site-packages/gi/overrides/", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -330,7 +400,10 @@
         },
         {
             "name": "gst-devtools",
-            "config-opts": ["--validate", "--disable-gtk-doc"],
+            "config-opts": [],
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -340,6 +413,9 @@
         },
         {
             "name": "gst-editing-services",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -349,6 +425,8 @@
         },
         {
             "name": "pitivi",
+            "buildsystem": "meson",
+            "builddir": true,
             "config-opts": ["--libdir=lib", "--prefix=/app"],
             "build-options" : {
               "build-args": ["--share=network"]

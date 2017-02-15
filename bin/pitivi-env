@@ -26,18 +26,11 @@ if [ "$?" = "0" ];
 then
     # Set up environment variables and aliases so configuring, building, etc.
     # takes place in the sandbox.
-    export make="ptvenv make"
-    export check="ptvenv make check"
-    export minstall="ptvenv make install"
-    export autogen="ptvenv ./autogen.sh --prefix=/app --disable-gtk-doc"
-    export configure="ptvenv ./configure --prefix=/app"
-
-    alias make=$make
-    alias check=$check
-    alias minstall=$minstall
-    alias autogen=$autogen
-    alias configure=$configure
     alias ninja="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ninja"
+    alias meson="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d meson"
+    alias setup="mkdir mesonbuild; ptvenv meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true"
+    alias build="ptvenv ninja -C mesonbuild/"
+    alias binstall="ptvenv ninja -C mesonbuild/ install"
 
     # Prefer to run the binaries in the sandbox. For example "python3".
     for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
