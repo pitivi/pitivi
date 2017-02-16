@@ -25,4 +25,5 @@ help/index.cache
 .bashrc
 *.flatpak-builder/
 build/flatpak/Pitivi.*.json
+build/flatpak/pyvenv/*
 build/devel/

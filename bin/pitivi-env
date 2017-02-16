@@ -47,6 +47,7 @@ then
 
     alias pitivi="ptvenv $PITIVI_REPO_DIR/bin/pitivi"
 
+    source $PITIVI_REPO_DIR/build/flatpak/pyvenv/bin/activate
     export PS1="(ptv-flatpak) $PS1"
     export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
 

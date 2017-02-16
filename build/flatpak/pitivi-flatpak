@@ -26,6 +26,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import venv
 
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
@@ -538,6 +539,20 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                                 cwd=self.topdir)
         else:
             Console.message("Using Pitivi prefix in %s", self.prefix)
+
+        venv_path = os.path.join(self.scriptdir, "pyvenv")
+        activate_script = os.path.join(venv_path, "bin", "activate")
+        if not os.path.isdir(venv_path):
+            print("Installing development tools in a virtual env.")
+            venv.create(venv_path, with_pip=True)
+            subprocess.check_call(
+                "source %s && pip install pre-commit git-phab" % (
+                    activate_script), shell=True)
+
+        if self.update:
+            subprocess.check_call(
+                "source %s && pip install -U pre-commit git-phab" % (
+                    activate_script), shell=True)
 
         if not self.check and not self.update:
             self.run_in_sandbox(*self.args, exit_on_failure=True)
