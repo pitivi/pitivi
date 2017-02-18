@@ -85,14 +85,13 @@ GlobalSettings.addConfigOption('lastClipView',
 
 STORE_MODEL_STRUCTURE = (
     GdkPixbuf.Pixbuf, GdkPixbuf.Pixbuf,
-    str, object, str, str, str, object)
+    str, object, str, str, object)
 
 (COL_ICON_64,
  COL_ICON_128,
  COL_INFOTEXT,
  COL_ASSET,
  COL_URI,
- COL_LENGTH,
  COL_SEARCH_TEXT,
  COL_THUMB_DECORATOR) = list(range(len(STORE_MODEL_STRUCTURE)))
 
@@ -462,6 +461,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.treeview.append_column(pixbufcol)
         pixcell = Gtk.CellRendererPixbuf()
         pixcell.props.xpad = 6
+        pixcell.set_alignment(0, 0)
         pixbufcol.pack_start(pixcell, True)
         pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON_64)
 
@@ -473,16 +473,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         namecol.set_min_width(150)
         txtcell = Gtk.CellRendererText()
         txtcell.set_property("ellipsize", Pango.EllipsizeMode.START)
+        txtcell.set_alignment(0, 0)
         namecol.pack_start(txtcell, True)
         namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
-
-        namecol = Gtk.TreeViewColumn(_("Duration"))
-        namecol.set_expand(False)
-        self.treeview.append_column(namecol)
-        txtcell = Gtk.CellRendererText()
-        txtcell.set_property("yalign", 0.0)
-        namecol.pack_start(txtcell, True)
-        namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
         # IconView
         self.iconview = Gtk.IconView(model=self.modelFilter)
@@ -790,14 +783,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.debug("Adding asset %s", asset.props.id)
 
         thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-        duration = beautify_length(info.get_duration())
         name = info_name(asset)
         self.pending_rows.append((thumbs_decorator.small_thumb,
                                   thumbs_decorator.large_thumb,
                                   beautify_asset(asset),
                                   asset,
                                   asset.props.id,
-                                  duration,
                                   name,
                                   thumbs_decorator))
         self._flushPendingRows()

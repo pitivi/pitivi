@@ -279,6 +279,10 @@ def beautify_asset(asset):
         if beautified_string:
             res.append(beautified_string)
 
+    duration = beautify_length(asset.get_duration())
+    if duration:
+        res.append (_("<b>Duration:</b> %s" % duration))
+
     if asset.creation_progress < 100:
         res.append(_("<b>Proxy creation progress:</b> %d%%") % asset.creation_progress)
 
