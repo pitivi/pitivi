@@ -59,6 +59,7 @@ from pitivi.utils.ui import FILE_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
 from pitivi.utils.ui import LARGE_THUMB_WIDTH
+from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SMALL_THUMB_WIDTH
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import URI_TARGET_ENTRY
@@ -460,7 +461,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         pixbufcol.set_spacing(SPACING)
         self.treeview.append_column(pixbufcol)
         pixcell = Gtk.CellRendererPixbuf()
-        pixcell.props.xpad = 6
+        pixcell.props.xpad = PADDING
+        pixcell.props.ypad = PADDING
         pixcell.set_alignment(0, 0)
         pixbufcol.pack_start(pixcell, True)
         pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON_64)
@@ -490,8 +492,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
-        self.iconview.props.item_padding = 3
-        self.iconview.props.margin = 3
+        self.iconview.props.item_padding = PADDING / 2
+        self.iconview.props.margin = PADDING / 2
         self.iconview_cursor_pos = None
 
         cell = Gtk.CellRendererPixbuf()
