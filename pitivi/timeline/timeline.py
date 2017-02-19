@@ -1214,11 +1214,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         assert 0 <= priority <= len(ges_layers)
         new_ges_layer = GES.Layer.new()
         new_ges_layer.props.priority = priority
-        self.ges_timeline.add_layer(new_ges_layer)
 
         for ges_layer in ges_layers:
             if priority <= ges_layer.get_priority():
                 ges_layer.props.priority += 1
+
+        self.ges_timeline.add_layer(new_ges_layer)
 
         return new_ges_layer
 

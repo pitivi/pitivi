@@ -868,7 +868,6 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
 
-    @skip("segfaults, see T7704")
     def test_clip_dragged_to_create_layer_above(self):
         self.setup_timeline_container()
         timeline_ui = self.timeline_container.timeline
@@ -915,7 +914,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.action_log.redo()
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
-        self.assertEqual(layers[0], self.layer)
+        self.assertEqual(layers[1], self.layer)
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
         self.assertEqual(layers[1].get_clips(), [])
