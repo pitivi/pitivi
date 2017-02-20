@@ -50,10 +50,11 @@ from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
-from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import beautify_missing_asset
 from pitivi.utils.ui import beautify_time_delta
 from pitivi.utils.ui import clear_styles
 from pitivi.utils.ui import info_name
+from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import TIMELINE_CSS
 from pitivi.viewer.viewer import ViewerContainer
@@ -929,35 +930,42 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.set_transient_for(self)
         dialog.set_default_response(Gtk.ResponseType.OK)
 
-        # This box will contain the label and optionally a thumbnail
+        # This box will contain widgets with details about the missing file.
+        vbox = Gtk.Box()
+        vbox.set_orientation(Gtk.Orientation.VERTICAL)
+
+        label_start = Gtk.Label()
+        label_start.set_markup(_("The following file could not be found:"))
+        label_start.set_xalign(0)
+        vbox.pack_start(label_start, False, False, 0)
+
         hbox = Gtk.Box()
         hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        hbox.set_spacing(SPACING)
+        hbox.set_margin_top(PADDING)
+        hbox.set_spacing(PADDING * 2)
+
+        label_asset_info = Gtk.Label()
+        label_asset_info.set_markup(beautify_missing_asset(asset))
+        label_asset_info.set_xalign(0)
+        label_asset_info.set_yalign(0)
+        hbox.pack_start(label_asset_info, False, False, 0)
 
         small_thumb, large_thumb = AssetThumbnail.get_thumbnails_from_xdg_cache(uri)
         if large_thumb:
             self.debug("A thumbnail file was found for %s", uri)
             thumbnail = Gtk.Image.new_from_pixbuf(large_thumb)
-            thumbnail.set_padding(0, SPACING)
-            hbox.pack_start(thumbnail, False, False, 0)
+            hbox.pack_end(thumbnail, False, False, 0)
 
-        # TODO: display the filesize to help the user identify the file
-        if asset.get_duration() == Gst.CLOCK_TIME_NONE:
-            # The file is probably an image, not video or audio.
-            text = _('The following file has moved: "<b>%s</b>"'
-                     '\nPlease specify its new location:') % \
-                info_name(asset)
-        else:
-            length = beautify_length(asset.get_duration())
-            text = _('The following file has moved: "<b>%s</b>" (duration: %s)'
-                     '\nPlease specify its new location:') % \
-                (info_name(asset), length)
+        vbox.pack_start(hbox, False, False, 0)
 
-        label = Gtk.Label()
-        label.set_markup(text)
-        hbox.pack_start(label, False, False, 0)
-        dialog.get_content_area().pack_start(hbox, False, False, 0)
-        hbox.show_all()
+        label_end = Gtk.Label()
+        label_end.set_markup(_("Please specify its new location:"))
+        label_end.set_xalign(0)
+        label_end.set_margin_top(PADDING)
+        vbox.pack_start(label_end, False, False, 0)
+
+        dialog.get_content_area().pack_start(vbox, False, False, 0)
+        vbox.show_all()
 
         chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
         chooser.set_select_multiple(False)

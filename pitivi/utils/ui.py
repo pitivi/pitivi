@@ -281,10 +281,32 @@ def beautify_asset(asset):
 
     duration = beautify_length(asset.get_duration())
     if duration:
-        res.append (_("<b>Duration:</b> %s" % duration))
+        res.append(_("<b>Duration:</b> %s") % duration)
 
     if asset.creation_progress < 100:
         res.append(_("<b>Proxy creation progress:</b> %d%%") % asset.creation_progress)
+
+    return "\n".join(res)
+
+
+def beautify_missing_asset(asset):
+    """Formats the specified missing asset for display.
+
+    Args:
+        asset (GES.Asset): The asset to display.
+    """
+    uri = asset.get_id()
+    path = path_from_uri(uri)
+    res = [_("<b>Path</b>: %s") % GLib.markup_escape_text(path)]
+
+    duration = beautify_length(asset.get_duration())
+    if duration:
+        res.append(_("<b>Duration</b>: %s") % duration)
+
+    size = asset.get_meta("file-size")
+    if size:
+        file_size = GLib.format_size_full(size, GLib.FormatSizeFlags.LONG_FORMAT)
+        res.append(_("<b>Size</b>: %s") % file_size)
 
     return "\n".join(res)
 
