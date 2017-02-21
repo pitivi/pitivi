@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Pitivi video editor
 # Copyright (c) 2013, Thibault Saunier <thibault.saunier@collabora.com>
@@ -19,19 +19,19 @@
 # Boston, MA 02110-1301, USA.
 """The Pitivi GstValidate tests manager and friends."""
 import os
-from urllib import unquote
+import urllib.parse
+from urllib.parse import unquote
 
-import urlparse
-import utils
-from baseclasses import GstValidateTest
-from baseclasses import ScenarioManager
-from baseclasses import TestsManager
+from launcher import utils
+from launcher.baseclasses import GstValidateTest
+from launcher.baseclasses import ScenarioManager
+from launcher.baseclasses import TestsManager
 
 
 def quote_uri(uri):
     """Encodes a URI/path according to RFC 2396."""
     # Split off the "file:///" part, if present.
-    parts = urlparse.urlsplit(uri, allow_fragments=False)
+    parts = urllib.parse.urlsplit(uri, allow_fragments=False)
     # Make absolutely sure the string is unquoted before quoting again!
     raw_path = unquote(parts.path)
     return utils.path2url(raw_path)
