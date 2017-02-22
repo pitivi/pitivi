@@ -585,6 +585,40 @@ class TestLayerObserver(BaseTestUndoTimeline):
         self.action_log.redo()
         self.assertIsNotNone(self.get_transition_element(self.layer))
 
+    def test_paste_undo(self):
+        """Checks a paste operation can be undone."""
+        self.setup_timeline_container()
+        timeline = self.timeline_container.timeline
+        project = timeline.ges_timeline.get_asset()
+
+        # Create test clip
+        clip = common.create_test_clip(GES.TitleClip)
+        clip.props.start = 0
+        clip.props.duration = 10
+        self.layer.add_clip(clip)
+        self.assertEqual(len(self.layer.get_clips()), 1)
+
+        # Select the test clip
+        event = mock.Mock()
+        event.get_button.return_value = (True, 1)
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = clip.ui
+            clip.ui.timeline._button_press_event_cb(None, event)
+        clip.ui._button_release_event_cb(None, event)
+
+        self.timeline_container.copy_action.emit("activate", None)
+
+        position = 10
+        project.pipeline.getPosition = mock.Mock(return_value=position)
+        self.timeline_container.paste_action.emit("activate", None)
+        self.assertEqual(len(self.layer.get_clips()), 2)
+
+        self.action_log.undo()
+        self.assertEqual(len(self.layer.get_clips()), 1)
+
+        self.action_log.redo()
+        self.assertEqual(len(self.layer.get_clips()), 2)
+
 
 class TestControlSourceObserver(BaseTestUndoTimeline):
 
