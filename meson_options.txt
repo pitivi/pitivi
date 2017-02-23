@@ -1,2 +1,1 @@
-option('enable-xunit', type : 'boolean', value : false)
 option('disable-help', type : 'boolean', value : false)

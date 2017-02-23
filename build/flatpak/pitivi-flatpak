@@ -530,9 +530,6 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             subprocess.check_call(builder_args)
 
             configure_args = ["./configure", "--prefix=/app", "--libdir=lib"]
-            if self.check:
-                configure_args.append("-Denable-xunit=true")
-
             self.run_in_sandbox(*configure_args, exit_on_failure=True,
                                 cwd=self.topdir)
             self.run_in_sandbox("make", exit_on_failure=True,
@@ -576,7 +573,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
             "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
             "GST_PRESET_PATH":
-                "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/"}
+                "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
+        }
         for envvar, path in prefixes.items():
             value = forwarded.get(envvar, "")
             forwarded[envvar] = "%s:%s" % (path, value)
