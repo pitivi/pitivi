@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-19 20:10+0100\n"
-"PO-Revision-Date: 2017-02-19 20:11+0100\n"
+"POT-Creation-Date: 2017-02-26 21:30+0100\n"
+"PO-Revision-Date: 2017-02-26 21:32+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -546,7 +546,7 @@ msgid "Pause"
 msgstr "Wstrzymaj"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1562
+#: ../pitivi/timeline/timeline.py:1554
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -1263,21 +1263,25 @@ msgstr[0] "Następujący plik nie może być używany w programie Pitivi."
 msgstr[1] "Następujące pliki nie mogą być używane w programie Pitivi."
 msgstr[2] "Następujące pliki nie mogą być używane w programie Pitivi."
 
-#: ../pitivi/medialibrary.py:1167
+#: ../pitivi/medialibrary.py:1169
+msgid "Open containing folder"
+msgstr "Otwórz katalog zawierający"
+
+#: ../pitivi/medialibrary.py:1181
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
 msgstr[0] "Bez używania pliku pośredniego dla zaznaczonego zasobu"
 msgstr[1] "Bez używania plików pośrednich dla zaznaczonych zasobów"
 msgstr[2] "Bez używania plików pośrednich dla zaznaczonych zasobów"
 
-#: ../pitivi/medialibrary.py:1178
+#: ../pitivi/medialibrary.py:1192
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Usunięcie odpowiedniego pliku pośredniego"
 msgstr[1] "Usunięcie odpowiednich plików pośrednich"
 msgstr[2] "Usunięcie odpowiednich plików pośrednich"
 
-#: ../pitivi/medialibrary.py:1189
+#: ../pitivi/medialibrary.py:1203
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
 msgstr[0] "Użycie pliku pośredniego dla zaznaczonego zasobu"
@@ -1577,7 +1581,7 @@ msgstr "Zakończ tryb pełnoekranowy"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: ../pitivi/timeline/elements.py:376
+#: ../pitivi/timeline/elements.py:368
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1588,7 +1592,7 @@ msgstr ""
 "Czas: %s\n"
 "Wartość: %s"
 
-#: ../pitivi/timeline/elements.py:1242
+#: ../pitivi/timeline/elements.py:1234
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
@@ -1612,7 +1616,7 @@ msgstr "Przenosi warstwę na dół"
 msgid "Delete layer"
 msgstr "Usuń warstwę"
 
-#: ../pitivi/timeline/layer.py:274
+#: ../pitivi/timeline/layer.py:278
 #, python-format
 msgid "Layer %d"
 msgstr "Warstwa %d"
@@ -1656,68 +1660,68 @@ msgstr ""
 "Czy kliknięcie lewym przyciskiem poza zaznaczaniem i modyfikowaniem klipów "
 "także przewija."
 
-#: ../pitivi/timeline/timeline.py:1483 ../pitivi/dialogs/prefs.py:53
+#: ../pitivi/timeline/timeline.py:1475 ../pitivi/dialogs/prefs.py:53
 msgid "Timeline"
 msgstr "Oś czasu"
 
-#: ../pitivi/timeline/timeline.py:1490
+#: ../pitivi/timeline/timeline.py:1482
 msgid "Delete selected clips"
 msgstr "Usunięcie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1496
+#: ../pitivi/timeline/timeline.py:1488
 msgid "Group selected clips together"
 msgstr "Umieszczenie zaznaczonych klipów w grupie"
 
-#: ../pitivi/timeline/timeline.py:1502
+#: ../pitivi/timeline/timeline.py:1494
 msgid "Ungroup selected clips"
 msgstr "Rozgrupowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1508
+#: ../pitivi/timeline/timeline.py:1500
 msgid "Copy selected clips"
 msgstr "Skopiowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1514
+#: ../pitivi/timeline/timeline.py:1506
 msgid "Paste selected clips"
 msgstr "Wklejenie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1527
+#: ../pitivi/timeline/timeline.py:1519
 msgid "Split the clip at the position"
 msgstr "Przecięcie klipu w pozycji"
 
-#: ../pitivi/timeline/timeline.py:1533
+#: ../pitivi/timeline/timeline.py:1525
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Dodanie klatki kluczowej do krzywej klatek kluczowych zaznaczonego klipu"
 
-#: ../pitivi/timeline/timeline.py:1538
+#: ../pitivi/timeline/timeline.py:1530
 msgid "Timeline Navigation"
 msgstr "Nawigacja na osi czasu"
 
-#: ../pitivi/timeline/timeline.py:1545
+#: ../pitivi/timeline/timeline.py:1537
 msgid "Zoom in"
 msgstr "Przybliżenie"
 
-#: ../pitivi/timeline/timeline.py:1551
+#: ../pitivi/timeline/timeline.py:1543
 msgid "Zoom out"
 msgstr "Oddalenie"
 
-#: ../pitivi/timeline/timeline.py:1557
+#: ../pitivi/timeline/timeline.py:1549
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Dopasowanie przybliżenia projektu do okna"
 
-#: ../pitivi/timeline/timeline.py:1568
+#: ../pitivi/timeline/timeline.py:1560
 msgid "Seek backward one frame"
 msgstr "Przejście do tyłu o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1574
+#: ../pitivi/timeline/timeline.py:1566
 msgid "Seek forward one frame"
 msgstr "Przejście naprzód o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1581
+#: ../pitivi/timeline/timeline.py:1573
 msgid "Seek backward one second"
 msgstr "Przejście do tyłu o jedną sekundę"
 
-#: ../pitivi/timeline/timeline.py:1588
+#: ../pitivi/timeline/timeline.py:1580
 msgid "Seek forward one second"
 msgstr "Przejście naprzód o jedną sekundę"
 
