@@ -393,12 +393,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 return event.xdata
 
             i = values.index(kf)
-            if event.xdata > self.__offset:
-                if values[i + 1].timestamp < event.xdata:
-                    return max(0, values[i + 1].timestamp - 1)
-            else:
-                if i > 1 and values[i - 1].timestamp > event.xdata:
-                    return values[i - 1].timestamp + 1
+            keyframe_timestamp = int(event.xdata)
+            if keyframe_timestamp <= values[i - 1].timestamp:
+                keyframe_timestamp = values[i - 1].timestamp + 1
+            if keyframe_timestamp >= values[i + 1].timestamp:
+                keyframe_timestamp = values[i + 1].timestamp - 1
+            return keyframe_timestamp
 
         return event.xdata
 
