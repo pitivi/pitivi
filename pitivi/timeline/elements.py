@@ -157,9 +157,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__hovered = False
 
-        # Whether a keyframe has just been removed.
-        self.__keyframe_removed = False
-
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
         self.connect("event", self._eventCb)
         self.connect("notify::height-request", self.__heightRequestCb)
@@ -268,7 +265,6 @@ class KeyframeCurve(FigureCanvas, Loggable):
                     return
                 # A keyframe has been double-clicked, remove it.
                 self.debug("Removing keyframe at timestamp %lf", offset)
-                self.__keyframe_removed = True
                 with self.__timeline.app.action_log.started("Remove keyframe"):
                     self.__source.unset(offset)
             else:
@@ -344,19 +340,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.debug("Line released")
             self.__timeline.app.action_log.commit("Move keyframe curve segment")
 
+            if not self.__dragged:
+                # The keyframe line was clicked, but not dragged
+                assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
+                self.__maybeCreateKeyframe(event)
+
         self.handling_motion = False
         self.__offset = None
         self.__clicked_line = ()
-
-        if self.__dragged:
-            # The keyframe or keyframe line has already been dragged.
-            self.__dragged = False
-        else:
-            assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
-            if not self.__keyframe_removed:
-                self.__maybeCreateKeyframe(event)
-            else:
-                self.__keyframe_removed = False
+        self.__dragged = False
 
     def __update_tooltip(self, event):
         """Sets or clears the tooltip showing info about the hovered line."""
