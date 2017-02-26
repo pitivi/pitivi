@@ -1144,6 +1144,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disable_proxies_for_assets(self.getSelectedAssets(),
                                                  delete_proxy_file=True)
 
+    def __open_containing_folder_cb(self, unused_action, unused_parameter):
+        assets = self.getSelectedAssets()
+        if len(assets) != 1:
+            return
+        parent_path = os.path.dirname(path_from_uri(assets[0].get_id()))
+        Gio.AppInfo.launch_default_for_uri(Gst.filename_to_uri(parent_path), None)
+
     def __createMenuModel(self):
         if self.app.proxy_manager.proxyingUnsupported:
             return None, None
@@ -1154,6 +1161,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         action_group = Gio.SimpleActionGroup()
         menu_model = Gio.Menu()
+
+        if len(assets) == 1:
+            action = Gio.SimpleAction.new("open-folder", None)
+            action.connect("activate", self.__open_containing_folder_cb)
+            action_group.insert(action)
+            text = _("Open containing folder")
+            menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
         proxies = [asset.get_proxy_target() for asset in assets
                    if asset.get_proxy_target()]
