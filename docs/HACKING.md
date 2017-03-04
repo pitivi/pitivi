@@ -132,7 +132,7 @@ gives a weird "shape" to the code.
 ### Names
 The function names, method names and other class attributes should be
 small_caps_with_underscore. For example:
-``` lang=python
+``` python
 def some_function():
     return ""
 
@@ -149,7 +149,7 @@ class MyClass:
 
 To illustrate how private a method or other class field is, prepend
 one or two underscores:
-``` lang=python
+``` python
   class MyClass:
 
      def public_method(self):
@@ -167,7 +167,7 @@ The most common place where this would happen is in callbacks from
 gobject signals. For example, below we don't use the second argument,
 but we do use `pad`.
 
-``` lang=python
+``` python
      def __pad_added_cb(self, unused_element, pad):
         self.do_something_with(pad)
 ```
@@ -177,7 +177,7 @@ The name of a callback method should:
   - be prepended with two underscores since it's private
   - be appended with `cb`
 
-``` lang=python
+``` python
   class MyClass:
 
      def some_method(self):

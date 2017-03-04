@@ -1,0 +1,24 @@
+@require(assets_path)
+
+<nav class="navbar navbar-fixed-top navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-wrapper" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+            <div>
+                <a href="Main_Page.html" class="hotdoc-navbar-brand">
+                    <img src="@assets_path/images/favicon.png" alt="Home"> Pitivi
+                </a>
+            </div>
+		</div>
+		<div class="navbar-collapse collapse" id="navbar-wrapper">
+			<ul class="nav navbar-nav" id="menu">
+				@include("navbar_links.html")
+			</ul>
+		</div>
+	</div>
+</nav>

@@ -27,3 +27,5 @@ help/index.cache
 build/flatpak/Pitivi.*.json
 build/flatpak/pyvenv/*
 build/devel/
+docs/output/*
+docs/hotdoc-private-Pitivi-1.0/*

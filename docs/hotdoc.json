@@ -1,0 +1,11 @@
+{
+    "extra_assets": [ "images/" ],
+    "include_directories": [ "design/", "attic/" ],
+    "index": "index.md",
+    "output": "output",
+    "project_name": "Pitivi",
+    "project_version": "1.0",
+    "sitemap": "sitemap.txt",
+    "syntax_highlighting_activate": true,
+    "html_extra_theme": "extra"
+}
