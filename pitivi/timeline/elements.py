@@ -111,8 +111,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__line_xs = []
         self.__line_ys = []
 
-        # axisbg to None for transparency
-        self.__ax = figure.add_axes([0, 0, 1, 1], axisbg='None')
+        # facecolor to None for transparency
+        self.__ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
         # Clear the Axes object.
         self.__ax.cla()
 

@@ -72,7 +72,7 @@
               "cflags": "-O0 -g  -L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.4m/",
               "env": {"ARCHFLAGS": "-arch x86_64"}
             },
-            "config-opts": ["--module=numpy==1.10.1"],
+            "config-opts": ["--module=numpy==1.12.1"],
             "sources": [
                 {
                     "type": "file",
@@ -114,7 +114,7 @@
             "build-options" : {
               "build-args": ["--share=network"]
             },
-            "config-opts": ["--module=matplotlib==1.5.1"],
+            "config-opts": ["--module=matplotlib==2.0.0"],
             "sources": [
                 {
                     "type": "file",
