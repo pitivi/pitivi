@@ -292,11 +292,10 @@ class SimplePipeline(GObject.Object, Loggable):
             GLib.source_remove(self._listeningSigId)
             self._listeningSigId = 0
 
-    def _asyncDoneNotReceivedCb(self):
+    def _async_done_not_received_cb(self):
         self.error("we didn't get async done, this is a bug")
-        self._recover()
-        # Source is being removed
         self._removeWaitingForAsyncDoneTimeout()
+        self._recover()
         return False
 
     def _removeWaitingForAsyncDoneTimeout(self):
@@ -308,7 +307,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._removeWaitingForAsyncDoneTimeout()
 
         self._timeout_async_id = GLib.timeout_add_seconds(timeout,
-                                                          self._asyncDoneNotReceivedCb)
+                                                          self._async_done_not_received_cb)
         self._waiting_for_async_done = True
 
     def simple_seek(self, position):
@@ -410,6 +409,7 @@ class SimplePipeline(GObject.Object, Loggable):
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
             self.emit("async-done")
+            self._removeWaitingForAsyncDoneTimeout()
             if self._recovery_state == self.RecoveryState.SEEKED_AFTER_RECOVERING:
                 self._recovery_state = self.RecoveryState.NOT_RECOVERING
                 self._attempted_recoveries = 0
@@ -418,7 +418,6 @@ class SimplePipeline(GObject.Object, Loggable):
             if self._next_seek is not None:
                 self.simple_seek(self._next_seek)
                 self._next_seek = None
-            self._removeWaitingForAsyncDoneTimeout()
         else:
             self.log("%s [%r]", message.type, message.src)
 
