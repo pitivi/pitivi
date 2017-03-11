@@ -152,6 +152,10 @@ class ClassicDependency(Dependency):
 
 class GstPluginDependency(Dependency):
 
+    def __init__(self, *args, **kwargs):
+        self.__extra_modulenames = kwargs.pop("extra_modulenames", [])
+        super().__init__(*args, **kwargs)
+
     def _try_importing_component(self):
         try:
             from gi.repository import Gst
@@ -161,6 +165,12 @@ class GstPluginDependency(Dependency):
 
         registry = Gst.Registry.get()
         plugin = registry.find_plugin(self.modulename)
+        if not plugin and self.__extra_modulenames:
+            for module in self.__extra_modulenames:
+                plugin = registry.find_plugin(module)
+                if plugin:
+                    return plugin
+
         return plugin
 
     def _format_version(self, plugin):
@@ -372,7 +382,10 @@ HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      GtkDependency("Gtk", GTK_API_VERSION, "3.20.0"),
                      ClassicDependency("numpy"),
                      GIDependency("Gio", "2.0"),
-                     GstPluginDependency("gtk", "1.10.2"),
+                     # TODO Remove extra_modules when we depend
+                     # on Gst 1.12
+                     GstPluginDependency("gtk", "1.10.2",
+                                         extra_modulenames=["gstgtk"]),
                      GstPluginDependency("gdkpixbuf", "1.10.2"),
                      ClassicDependency("matplotlib"),
                      ]
