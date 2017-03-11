@@ -371,7 +371,8 @@ HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      GtkDependency("Gtk", GTK_API_VERSION, "3.20.0"),
                      ClassicDependency("numpy"),
                      GIDependency("Gio", "2.0"),
-                     GstPluginDependency("gstgtk", "1.10.2"),
+                     GstPluginDependency("gtk", "1.10.2"),
+                     GstPluginDependency("gdkpixbuf", "1.10.2"),
                      ClassicDependency("matplotlib"),
                      ]
 
