@@ -91,7 +91,8 @@ class SimplePipeline(GObject.Object, Loggable):
         self._listeningInterval = DEFAULT_POSITION_LISTENNING_INTERVAL
         self._listeningSigId = 0
         self._duration = Gst.CLOCK_TIME_NONE
-        self._last_position = int(0 * Gst.SECOND)
+        # The last known position.
+        self._last_position = 0 * Gst.SECOND
         self._recovery_state = self.RecoveryState.NOT_RECOVERING
         self._attempted_recoveries = 0
         self._next_seek = None
@@ -224,7 +225,9 @@ class SimplePipeline(GObject.Object, Loggable):
             self.handleException(e)
             raise PipelineError("Couldn't get position")
 
-        if not res:
+        if res:
+            self._last_position = cur
+        else:
             if fails:
                 raise PipelineError("Position not available")
 
@@ -275,8 +278,7 @@ class SimplePipeline(GObject.Object, Loggable):
                 self.warning("Could not get position because: %s", e)
             else:
                 if position != Gst.CLOCK_TIME_NONE:
-                    self.emit('position', position)
-                    self._last_position = position
+                    self.emit("position", position)
         finally:
             return True
 
@@ -358,7 +360,6 @@ class SimplePipeline(GObject.Object, Loggable):
             raise PipelineError(self.get_name() + " seek failed: " + str(position))
 
         self._addWaitingForAsyncDoneTimeout()
-        self._last_position = position
 
         self.debug("seeking successful")
         self.emit('position', position)
