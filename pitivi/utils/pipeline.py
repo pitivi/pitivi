@@ -95,6 +95,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._last_position = 0 * Gst.SECOND
         self._recovery_state = self.RecoveryState.NOT_RECOVERING
         self._attempted_recoveries = 0
+        # The position where the user intends to seek.
         self._next_seek = None
         self._timeout_async_id = 0
         self._force_position_listener = False
@@ -344,11 +345,11 @@ class SimplePipeline(GObject.Object, Loggable):
             self.info("Setting next seek to %s", self._next_seek)
             return
 
-        self.debug("position: %s", format_ns(position))
+        self._next_seek = None
 
         # clamp between [0, duration]
         position = max(0, min(position, self.getDuration()))
-
+        self.debug("Seeking to position: %s", format_ns(position))
         res = self._pipeline.seek(1.0,
                                   Gst.Format.TIME,
                                   Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
@@ -361,7 +362,6 @@ class SimplePipeline(GObject.Object, Loggable):
 
         self._addWaitingForAsyncDoneTimeout()
 
-        self.debug("seeking successful")
         self.emit('position', position)
 
     def seekRelative(self, time_delta):
@@ -400,10 +400,12 @@ class SimplePipeline(GObject.Object, Loggable):
                             self.error("Too many tries to seek back to right position, "
                                        "not trying again, and going back to 0 instead")
                         else:
+                            self.info("Performing seek after pipeline recovery")
                             self._recovery_state = self.RecoveryState.SEEKED_AFTER_RECOVERING
-                            self.simple_seek(self._last_position)
-                            self.info(
-                                "Seeked back to the last position after pipeline recovery")
+                            position = self._last_position
+                            if self._next_seek is not None:
+                                position = self._next_seek
+                            self.simple_seek(position)
                     self._listenToPosition(self._force_position_listener)
                 elif prev == Gst.State.PAUSED and new == Gst.State.PLAYING:
                     self._listenToPosition(True)
@@ -433,8 +435,8 @@ class SimplePipeline(GObject.Object, Loggable):
                 self._attempted_recoveries = 0
             self.__emitPosition()
             if self._next_seek is not None:
+                self.info("Performing seek after ASYNC_DONE")
                 self.simple_seek(self._next_seek)
-                self._next_seek = None
         else:
             self.log("%s [%r]", message.type, message.src)
 
