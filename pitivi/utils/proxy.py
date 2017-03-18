@@ -50,6 +50,10 @@ GlobalSettings.addConfigOption('numTranscodingJobs',
                                section='proxy',
                                key='num-proxying-jobs',
                                default=4)
+GlobalSettings.addConfigOption("max_cpu_usage",
+                               section="proxy",
+                               key="max-cpu-usage",
+                               default=10)
 
 
 ENCODING_FORMAT_PRORES = "prores-opus-in-matroska.gep"
@@ -386,7 +390,7 @@ class ProxyManager(GObject.Object, Loggable):
         transcoder.props.pipeline.props.video_filter = thumbnailbin
         transcoder.props.pipeline.props.audio_filter = waveformbin
 
-        transcoder.set_cpu_usage(10)
+        transcoder.set_cpu_usage(self.app.settings.max_cpu_usage)
         transcoder.connect("position-updated",
                            self.__proxyingPositionChangedCb,
                            asset)
