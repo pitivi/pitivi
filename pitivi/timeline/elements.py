@@ -356,7 +356,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if event:
             if not event.xdata:
                 return
-            xdata = max(self.__line_xs[0], min(event.xdata, self.__line_xs[-1]))
+            if self.__offset is not None:
+                xdata = self.__offset
+            else:
+                xdata = max(self.__line_xs[0], min(event.xdata, self.__line_xs[-1]))
             res, value = self.__source.control_source_get_value(xdata)
             assert res
             pmin = self.__paramspec.minimum
