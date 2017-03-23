@@ -1,8 +1,5 @@
 # UI Implementation
 
-For the previous design document, see [Obsolete: Advanced UI
-Implementation](Obsolete:_Advanced_UI_Implementation.md)
-
 This document **does not reflect the existing codebase**, but rather a
 road map for future development, and a general introduction to the
 PiTiVi design philosophy.

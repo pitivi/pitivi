@@ -161,5 +161,5 @@ See [Past GSoCs] for details on what the previous GSoC students did.
   [GES]: GES.md
   [Pitivi]: http://www.pitivi.org/manual/mainwindow.html
   [Pitivi tasks for newcomers]: https://phabricator.freedesktop.org/tag/pitivi_tasks_for_newcomers/
-  [roadmap]: roadmap.md
+  [roadmap]: Roadmap.md
   [Past GSoCs]: Past_GSoCs.md

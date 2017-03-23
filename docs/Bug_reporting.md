@@ -94,11 +94,15 @@ flatpak install --user $GNOME_REPO org.gnome.Sdk.Debug 3.22
 
 Start a shell in the Pitivi bundle environment
 
-`flatpak run -d --command=bash org.pitivi.Pitivi`
+```
+flatpak run -d --command=bash org.pitivi.Pitivi
+```
 
 Start Pitivi inside gdb
 
-`gdb python3 -ex 'run /app/bin/pitivi`'
+```
+gdb python3 -ex 'run /app/bin/pitivi
+```
 
 When Pitivi crashes, run `bt full` to get the backtrace. When Pitivi
 freezes, press Ctrl+Z and run `thread apply all bt` to get the
@@ -118,14 +122,17 @@ commands that can be particularly useful in Pitivi's context.
 When you want to “attach” to an existing Python process (useful for
 deadlocks, where the application will be hung instead of crashed):
 
-`gdb python3 THE_PITIVI_PROCESS_NUMBER`
+```
+gdb python3 THE_PITIVI_PROCESS_NUMBER
+```
 
 When you want to run Pitivi entirely in gdb from the start:
 
-`gdb python3`\
-`set pagination 0  # avoids the need to press Enter to “scroll”`
-
-`run /usr/bin/pitivi  # the version installed system-wide`
+```
+gdb python3 $(which pitivi)
+set pagination 0  # avoids the need to press Enter to “scroll”
+run
+```
 
 When Pitivi crashes, run `bt full` to get the backtrace. When Pitivi
 freezes, press Ctrl+Z and run `thread apply all bt` to get the
@@ -144,17 +151,23 @@ there are five levels: ( <span style="color:red;">ERROR</span>,
 <span style="color:cyan;">LOG</span> ) = range(1, 7). As such, if you
 want to see errors and warnings only, you launch
 
-`PITIVI_DEBUG=2 bin/pitivi`
+```
+PITIVI_DEBUG=2 bin/pitivi
+```
 
 ...and if you want to see everything you do
 
-`PITIVI_DEBUG=6 bin/pitivi`
+```
+PITIVI_DEBUG=6 bin/pitivi
+```
 
 If that's “too much” and you want to focus on particular parts of the
 code, you can do so. For example, you can get output from the `Timeline`
 and `MediaLibraryWidget` classes only:
 
-`PITIVI_DEBUG=`**`timeline`**`:6,`**`medialibrarywidget`**`:6 bin/pitivi`
+```
+PITIVI_DEBUG=timeline:6,medialibrarywidget:6 bin/pitivi
+```
 
 Here are various examples of commands you can use to generate detailed
 debug logs that include not only Pitivi's debug output, but also
@@ -162,16 +175,22 @@ GStreamer's:
 
 A basic log can be obtained by running:
 
-`PITIVI_DEBUG=*:5 GST_DEBUG=2 bin/pitivi > debug.log 2>&1`
+```
+PITIVI_DEBUG=*:5 GST_DEBUG=2 bin/pitivi > debug.log 2>&1
+```
 
 To get debugging information from Non-Linear Engine, you could use:
 
-`PITIVI_DEBUG=5 GST_DEBUG=3,nle*:5,python:5 bin/pitivi > debug.log 2>&1`
+```
+PITIVI_DEBUG=5 GST_DEBUG=3,nle*:5,python:5 bin/pitivi > debug.log 2>&1
+```
 
 The information most likely to be useful would probably be the debug
 info from [GES](GES.md) in addition to Pitivi's:
 
-`PITIVI_DEBUG=5 GST_DEBUG=ges:5 bin/pitivi > debug.log 2>&1;`
+```
+PITIVI_DEBUG=5 GST_DEBUG=ges:5 bin/pitivi > debug.log 2>&1;
+```
 
 Some additional tips:
 
@@ -188,7 +207,9 @@ you can profile Pitivi itself, with this command (and yes,
 variable of
 [bin/pitivi](https://git.gnome.org/browse/pitivi/tree/bin/pitivi.in):
 
-`JUMP_THROUGH_HOOPS=1 python3 -m cProfile -s time -o pitivi_performance.profile bin/pitivi`
+```
+JUMP_THROUGH_HOOPS=1 python3 -m cProfile -s time -o pitivi_performance.profile bin/pitivi
+```
 
 The resulting `pitivi_performance.profile` file can then be processed
 to create a visual representation of where the most time was spent and

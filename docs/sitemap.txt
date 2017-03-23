@@ -1,4 +1,4 @@
-Main_Page.md
+index.md
 	Install_with_flatpak.md
 	Bug_reporting.md
 	HACKING.md

@@ -39,7 +39,7 @@ The following documents are supposed to be read in order:
 
 Yet more historical pages that predated this redesign initiative:
 
--   [UI Implementation](UI_Implementation.md)
+-   [UI Implementation](design/UI_Implementation.md)
 -   [Multi-Layer Editing](Multi-Layer_Editing.md)
 -   [Plugins](Plugins.md)
 -   [2008 Plugin Interface
