@@ -9,16 +9,20 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-            <div>
-                <a href="Main_Page.html" class="hotdoc-navbar-brand">
-                    <img src="@assets_path/images/favicon.png" alt="Home"> Pitivi
-                </a>
-            </div>
+			<a href="https://gstreamer.freedesktop.org/" class="hotdoc-navbar-brand">
+				<img src="@assets_path/images/favicon.png" alt="Home"> Pitivi
+			</a>
 		</div>
 		<div class="navbar-collapse collapse" id="navbar-wrapper">
 			<ul class="nav navbar-nav" id="menu">
 				@include("navbar_links.html")
 			</ul>
+			<form action="" class="navbar-form navbar-right">
+				<div class="form-group has-feedback">
+					<input type="text" class="form-control" name="search" id="sidenav-lookup-field" placeholder="search" disabled="disabled">
+					<span class="glyphicon glyphicon-search form-control-feedback"></span>
+				</div>
+			</form>
 		</div>
 	</div>
 </nav>
