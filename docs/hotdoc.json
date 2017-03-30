@@ -7,5 +7,6 @@
     "project_version": "1.0",
     "sitemap": "sitemap.txt",
     "syntax_highlighting_activate": true,
-    "html_extra_theme": "extra"
+    "html_extra_theme": "extra",
+    "git_upload_repository": "git@github.com:pitivi/pitivi.github.io.git"
 }
