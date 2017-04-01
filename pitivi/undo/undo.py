@@ -438,6 +438,9 @@ class MetaChangedAction(UndoableAutomaticObjectAction):
         self.old_value = current_value
         self.new_value = new_value
 
+    def __repr__(self):
+        return "<MetaChangedAction %s.%s: %s -> %s>" % (self.auto_object, self.item, self.old_value, self.new_value)
+
     def do(self):
         self.auto_object.set_meta(self.item, self.new_value)
 
