@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-05 09:05+0100\n"
-"PO-Revision-Date: 2017-03-05 09:07+0100\n"
+"POT-Creation-Date: 2017-04-02 09:54+0200\n"
+"PO-Revision-Date: 2017-04-02 09:55+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -546,7 +546,7 @@ msgid "Pause"
 msgstr "Wstrzymaj"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1554
+#: ../pitivi/timeline/timeline.py:1561
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -718,15 +718,15 @@ msgstr ""
 "— %s w wersji %s jest zainstalowane, ale program Pitivi wymaga co najmniej "
 "wersji %s"
 
-#: ../pitivi/check.py:258
+#: ../pitivi/check.py:268
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "BŁĄD — brak następujących twardych zależności:"
 
-#: ../pitivi/check.py:267
+#: ../pitivi/check.py:277
 msgid "Missing soft dependency:"
 msgstr "Brakujące miękkie zależności:"
 
-#: ../pitivi/check.py:274
+#: ../pitivi/check.py:284
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -734,7 +734,7 @@ msgstr ""
 "BŁĄD — nie można utworzyć Gst.Fraction — oznacza to, że gst-python nie jest "
 "poprawnie zainstalowane."
 
-#: ../pitivi/check.py:279
+#: ../pitivi/check.py:289
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -742,36 +742,36 @@ msgstr ""
 "Nie można utworzyć odpływu wyjścia dźwięku. Proszę się upewnić, że istnieje "
 "prawidłowy odpływ (pulsesink, alsasink lub osssink)."
 
-#: ../pitivi/check.py:284
+#: ../pitivi/check.py:294
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Nie można utworzyć odpływu wyjścia obrazu. Proszę się upewnić, że odpływ "
 "gtksink jest dostępny."
 
-#: ../pitivi/check.py:297
+#: ../pitivi/check.py:307
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Nie można zaimportować „%s”. Proszę się upewnić, że jest dostępne."
 
-#: ../pitivi/check.py:311
+#: ../pitivi/check.py:321
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Nie można zaimportować „gi”. Proszę się upewnić, że PyGObject jest dostępne."
 
-#: ../pitivi/check.py:380
+#: ../pitivi/check.py:394
 msgid "enables sound notifications when rendering is complete"
 msgstr "włącza powiadomienia dźwiękowe po ukończeniu renderowania"
 
-#: ../pitivi/check.py:382
+#: ../pitivi/check.py:396
 msgid "enables visual notifications when rendering is complete"
 msgstr "włącza powiadomienia po ukończeniu renderowania"
 
-#: ../pitivi/check.py:384
+#: ../pitivi/check.py:398
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatkowe kodeki multimedialne przez libav biblioteki GStreamer"
 
-#: ../pitivi/check.py:386
+#: ../pitivi/check.py:400
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1289,7 +1289,7 @@ msgstr "Nowe ustawienie"
 #: ../pitivi/preset.py:218
 #, python-format
 msgid "New preset %d"
-msgstr "Nowe ustawienie %d"
+msgstr "%d. nowe ustawienie"
 
 #. Translators: This must contain exclusively low case alphanum and '-'
 #: ../pitivi/preset.py:539
@@ -1429,13 +1429,13 @@ msgstr ""
 #: ../pitivi/render.py:702
 #, python-format
 msgid "%.2f GB"
-msgstr "%.2f GB"
+msgstr "%.2f GB"
 
 #. -1 means round to 10
 #: ../pitivi/render.py:707
 #, python-format
 msgid "%d MB"
-msgstr "%d MB"
+msgstr "%d MB"
 
 #: ../pitivi/render.py:830
 msgid ""
@@ -1456,31 +1456,43 @@ msgstr "Ukończono renderowanie"
 msgid "\"%s\" has finished rendering."
 msgstr "Ukończono renderowanie „%s”."
 
-#: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
+#: ../pitivi/titleeditor.py:44
+msgid "Title clip duration"
+msgstr "Czas trwania klipu tytułowego"
+
+#: ../pitivi/titleeditor.py:46
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr ""
+"Domyślna długość klipów (w milisekundach) tytułów podczas wstawiania do osi "
+"czasu."
+
+#: ../pitivi/titleeditor.py:105 ../pitivi/titleeditor.py:112
 msgid "Absolute"
 msgstr "Bezwzględne"
 
-#: ../pitivi/titleeditor.py:92
+#: ../pitivi/titleeditor.py:106
 msgid "Top"
 msgstr "Góra"
 
-#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:107 ../pitivi/titleeditor.py:114
 msgid "Center"
 msgstr "Środek"
 
-#: ../pitivi/titleeditor.py:94
+#: ../pitivi/titleeditor.py:108
 msgid "Bottom"
 msgstr "Dół"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:109
 msgid "Baseline"
 msgstr "Linia podstawowa"
 
-#: ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:113
 msgid "Left"
 msgstr "Lewo"
 
-#: ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:115
 msgid "Right"
 msgstr "Prawo"
 
@@ -1571,7 +1583,7 @@ msgstr "Zakończ tryb pełnoekranowy"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: ../pitivi/timeline/elements.py:368
+#: ../pitivi/timeline/elements.py:371
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1582,7 +1594,7 @@ msgstr ""
 "Czas: %s\n"
 "Wartość: %s"
 
-#: ../pitivi/timeline/elements.py:1234
+#: ../pitivi/timeline/elements.py:1237
 msgid "Audio crossfade"
 msgstr "Przenikanie dźwięku"
 
@@ -1609,12 +1621,12 @@ msgstr "Usuń warstwę"
 #: ../pitivi/timeline/layer.py:278
 #, python-format
 msgid "Layer %d"
-msgstr "Warstwa %d"
+msgstr "%d. warstwa"
 
 #: ../pitivi/timeline/ruler.py:224
 #, python-format
 msgid "Frame #%d"
-msgstr "Klatka #%d"
+msgstr "%d. klatka"
 
 #: ../pitivi/timeline/timeline.py:73
 msgid "Snap distance"
@@ -1637,7 +1649,7 @@ msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
-"Domyślna długość klipu (w milisekundach) obrazów podczas wstawiania do osi "
+"Domyślna długość klipów (w milisekundach) obrazów podczas wstawiania do osi "
 "czasu."
 
 #: ../pitivi/timeline/timeline.py:99
@@ -1650,68 +1662,68 @@ msgstr ""
 "Czy kliknięcie lewym przyciskiem poza zaznaczaniem i modyfikowaniem klipów "
 "także przewija."
 
-#: ../pitivi/timeline/timeline.py:1475 ../pitivi/dialogs/prefs.py:53
+#: ../pitivi/timeline/timeline.py:1482 ../pitivi/dialogs/prefs.py:53
 msgid "Timeline"
 msgstr "Oś czasu"
 
-#: ../pitivi/timeline/timeline.py:1482
+#: ../pitivi/timeline/timeline.py:1489
 msgid "Delete selected clips"
 msgstr "Usunięcie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1488
+#: ../pitivi/timeline/timeline.py:1495
 msgid "Group selected clips together"
 msgstr "Umieszczenie zaznaczonych klipów w grupie"
 
-#: ../pitivi/timeline/timeline.py:1494
+#: ../pitivi/timeline/timeline.py:1501
 msgid "Ungroup selected clips"
 msgstr "Rozgrupowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1500
+#: ../pitivi/timeline/timeline.py:1507
 msgid "Copy selected clips"
 msgstr "Skopiowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1506
+#: ../pitivi/timeline/timeline.py:1513
 msgid "Paste selected clips"
 msgstr "Wklejenie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1519
+#: ../pitivi/timeline/timeline.py:1526
 msgid "Split the clip at the position"
 msgstr "Przecięcie klipu w pozycji"
 
-#: ../pitivi/timeline/timeline.py:1525
+#: ../pitivi/timeline/timeline.py:1532
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Dodanie klatki kluczowej do krzywej klatek kluczowych zaznaczonego klipu"
 
-#: ../pitivi/timeline/timeline.py:1530
+#: ../pitivi/timeline/timeline.py:1537
 msgid "Timeline Navigation"
 msgstr "Nawigacja na osi czasu"
 
-#: ../pitivi/timeline/timeline.py:1537
+#: ../pitivi/timeline/timeline.py:1544
 msgid "Zoom in"
 msgstr "Przybliżenie"
 
-#: ../pitivi/timeline/timeline.py:1543
+#: ../pitivi/timeline/timeline.py:1550
 msgid "Zoom out"
 msgstr "Oddalenie"
 
-#: ../pitivi/timeline/timeline.py:1549
+#: ../pitivi/timeline/timeline.py:1556
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Dopasowanie przybliżenia projektu do okna"
 
-#: ../pitivi/timeline/timeline.py:1560
+#: ../pitivi/timeline/timeline.py:1567
 msgid "Seek backward one frame"
 msgstr "Przejście do tyłu o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1566
+#: ../pitivi/timeline/timeline.py:1573
 msgid "Seek forward one frame"
 msgstr "Przejście naprzód o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1573
+#: ../pitivi/timeline/timeline.py:1580
 msgid "Seek backward one second"
 msgstr "Przejście do tyłu o jedną sekundę"
 
-#: ../pitivi/timeline/timeline.py:1580
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Seek forward one second"
 msgstr "Przejście naprzód o jedną sekundę"
 
@@ -1719,7 +1731,7 @@ msgstr "Przejście naprzód o jedną sekundę"
 #: ../pitivi/dialogs/clipmediaprops.py:112
 #, python-format
 msgid "invalid (%s fps)"
-msgstr "nieprawidłowe (%s FPS)"
+msgstr "nieprawidłowe (%s FPS)"
 
 #: ../pitivi/dialogs/clipmediaprops.py:135
 msgid "Image:"
@@ -1860,17 +1872,16 @@ msgstr "<b>Rozmiar</b>: %s"
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] ""
-"<b>Dźwięk:</b> %d kanał o częstotliwości %d <i>Hz</i> (%d <i>bity</i>)"
+msgstr[0] "<b>Dźwięk:</b> %d kanał o częstotliwości %d <i>Hz</i> (%d <i>b</i>)"
 msgstr[1] ""
-"<b>Dźwięk:</b> %d kanały o częstotliwości %d <i>Hz</i> (%d <i>bity</i>)"
+"<b>Dźwięk:</b> %d kanały o częstotliwości %d <i>Hz</i> (%d <i>b</i>)"
 msgstr[2] ""
-"<b>Dźwięk:</b> %d kanałów o częstotliwości %d <i>Hz</i> (%d <i>bity</i>)"
+"<b>Dźwięk:</b> %d kanałów o częstotliwości %d <i>Hz</i> (%d <i>b</i>)"
 
 #: ../pitivi/utils/ui.py:345
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
-msgstr "<b>Wideo:</b> %d×%d <i>pikseli</i> o %.2f<i>FPS</i>"
+msgstr "<b>Wideo:</b> %d×%d <i>pikseli</i> o %.3f <i>FPS</i>"
 
 #: ../pitivi/utils/ui.py:353
 #, python-format
@@ -1920,17 +1931,17 @@ msgstr[2] "%d dni"
 #: ../pitivi/utils/ui.py:591
 #, python-format
 msgid "%d fps"
-msgstr "%d FPS"
+msgstr "%d FPS"
 
 #: ../pitivi/utils/ui.py:583
 #, python-format
 msgid "%.3f fps"
-msgstr "%.3f FPS"
+msgstr "%.3f FPS"
 
 #: ../pitivi/utils/ui.py:586 ../pitivi/utils/ui.py:589
 #, python-format
 msgid "%.2f fps"
-msgstr "%.2f FPS"
+msgstr "%.2f FPS"
 
 #: ../pitivi/utils/ui.py:595 ../pitivi/utils/ui.py:596
 #: ../pitivi/utils/ui.py:597 ../pitivi/utils/ui.py:598
@@ -1938,12 +1949,12 @@ msgstr "%.2f FPS"
 #: ../pitivi/utils/ui.py:602 ../pitivi/utils/ui.py:603
 #, python-format
 msgid "%d kHz"
-msgstr "%d kHz"
+msgstr "%d kHz"
 
 #: ../pitivi/utils/ui.py:601
 #, python-format
 msgid "%.1f kHz"
-msgstr "%.1f kHz"
+msgstr "%.1f kHz"
 
 #: ../pitivi/utils/ui.py:606
 msgid "6 Channels (5.1)"
@@ -2068,4 +2079,4 @@ msgstr "Wyświetlone: %s"
 #: ../pitivi/utils/widgets.py:1126
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
-msgstr "Wyświetlone nanosekundy: %d"
+msgstr "Wyświetlone: %d ns"
