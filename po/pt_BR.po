@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://wiki.pitivi.org/wiki/Bug_reporting\n"
-"POT-Creation-Date: 2017-03-02 21:42+0000\n"
-"PO-Revision-Date: 2017-03-26 00:06-0200\n"
+"POT-Creation-Date: 2017-04-01 18:23+0000\n"
+"PO-Revision-Date: 2017-04-02 17:59-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -556,7 +556,7 @@ msgid "Pause"
 msgstr "Pausar"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1554
+#: ../pitivi/timeline/timeline.py:1561
 msgid "Play"
 msgstr "Reproduzir"
 
@@ -725,16 +725,16 @@ msgstr "- %s não encontrado no sistema"
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- %s versão %s está instalada, mas Pitivi requer pelo menos %s"
 
-#: ../pitivi/check.py:258
+#: ../pitivi/check.py:268
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ERRO - As seguintes dependências rígidas não foram correspondidas:"
 
 # Confirmar tradução para soft
-#: ../pitivi/check.py:267
+#: ../pitivi/check.py:277
 msgid "Missing soft dependency:"
 msgstr "Dependências leves faltantes:"
 
-#: ../pitivi/check.py:274
+#: ../pitivi/check.py:284
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -742,7 +742,7 @@ msgstr ""
 "ERRO — Não foi possível criar um Gst.Fraction — isso significa que gst-"
 "python não está instalado corretamente."
 
-#: ../pitivi/check.py:279
+#: ../pitivi/check.py:289
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -750,38 +750,38 @@ msgstr ""
 "Não foi possível criar um assento de saída de áudio. Certifique-se de que "
 "você tem uma válida (pulsesink, alsasink ou osssink)."
 
-#: ../pitivi/check.py:284
+#: ../pitivi/check.py:294
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Não foi possível criar uma assento de saída de áudio. Certifique-se de que "
 "um gtksink está disponível."
 
-#: ../pitivi/check.py:297
+#: ../pitivi/check.py:307
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr ""
 "Não foi possível importar \"%s\". Certifique-se de que ele está disponível."
 
-#: ../pitivi/check.py:311
+#: ../pitivi/check.py:321
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Não foi possível importar \"gi\". Certifique-se de que pyobject está "
 "disponível."
 
-#: ../pitivi/check.py:380
+#: ../pitivi/check.py:394
 msgid "enables sound notifications when rendering is complete"
 msgstr "habilita notificações de som quando a renderização é finalizada"
 
-#: ../pitivi/check.py:382
+#: ../pitivi/check.py:396
 msgid "enables visual notifications when rendering is complete"
 msgstr "habilita notificações visuais quando a renderização é finalizada"
 
-#: ../pitivi/check.py:384
+#: ../pitivi/check.py:398
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "codecs multimídia adicionais através da biblioteca GStreamer Libav"
 
-#: ../pitivi/check.py:386
+#: ../pitivi/check.py:400
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1060,15 +1060,10 @@ msgid "Locate missing file..."
 msgstr "Localizar o arquivo que falta..."
 
 #: ../pitivi/mainwindow.py:938
-#| msgid "The following file can not be used with Pitivi."
-#| msgid_plural "The following files can not be used with Pitivi."
 msgid "The following file could not be found:"
 msgstr "O seguinte arquivo não pode ser localizado:"
 
 #: ../pitivi/mainwindow.py:962
-#| msgid ""
-#| "The following file has moved: \"<b>%s</b>\"\n"
-#| "Please specify its new location:"
 msgid "Please specify its new location:"
 msgstr "Por favor, especifique seu novo local:"
 
@@ -1467,31 +1462,47 @@ msgstr "Renderização completa"
 msgid "\"%s\" has finished rendering."
 msgstr "A renderização de \"%s\" foi finalizada."
 
-#: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
+#: ../pitivi/titleeditor.py:44
+#| msgid "Image clip duration"
+msgid "Title clip duration"
+msgstr "Duração do clipe de título"
+
+#: ../pitivi/titleeditor.py:46
+#| msgid ""
+#| "Default clip length (in milliseconds) of images when inserting on the "
+#| "timeline."
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr ""
+"Comprimento padrão do clipe (em milissegundos) de títulos quando inserida na "
+"linha de tempo."
+
+#: ../pitivi/titleeditor.py:105 ../pitivi/titleeditor.py:112
 msgid "Absolute"
 msgstr "Absoluto"
 
-#: ../pitivi/titleeditor.py:92
+#: ../pitivi/titleeditor.py:106
 msgid "Top"
 msgstr "Cima"
 
-#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:107 ../pitivi/titleeditor.py:114
 msgid "Center"
 msgstr "Centro"
 
-#: ../pitivi/titleeditor.py:94
+#: ../pitivi/titleeditor.py:108
 msgid "Bottom"
 msgstr "Baixo"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:109
 msgid "Baseline"
 msgstr "Linha de base"
 
-#: ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:113
 msgid "Left"
 msgstr "Esquerda"
 
-#: ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:115
 msgid "Right"
 msgstr "Direita"
 
@@ -1582,7 +1593,7 @@ msgstr "Sair do modo de tela cheia"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: ../pitivi/timeline/elements.py:368
+#: ../pitivi/timeline/elements.py:371
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1593,7 +1604,7 @@ msgstr ""
 "Marca de tempo: %s\n"
 "Valor: %s"
 
-#: ../pitivi/timeline/elements.py:1234
+#: ../pitivi/timeline/elements.py:1237
 msgid "Audio crossfade"
 msgstr "Fade cruzado de áudio"
 
@@ -1661,68 +1672,68 @@ msgstr ""
 "Se clique com botão esquerdo do mouse também busca, além de selecionar e "
 "editar clipes."
 
-#: ../pitivi/timeline/timeline.py:1475 ../pitivi/dialogs/prefs.py:53
+#: ../pitivi/timeline/timeline.py:1482 ../pitivi/dialogs/prefs.py:53
 msgid "Timeline"
 msgstr "Linha de tempo"
 
-#: ../pitivi/timeline/timeline.py:1482
+#: ../pitivi/timeline/timeline.py:1489
 msgid "Delete selected clips"
 msgstr "Excluir selecionados"
 
-#: ../pitivi/timeline/timeline.py:1488
+#: ../pitivi/timeline/timeline.py:1495
 msgid "Group selected clips together"
 msgstr "Agrupar clipes selecionados em conjunto"
 
-#: ../pitivi/timeline/timeline.py:1494
+#: ../pitivi/timeline/timeline.py:1501
 msgid "Ungroup selected clips"
 msgstr "Desagrupar clipes selecionados"
 
-#: ../pitivi/timeline/timeline.py:1500
+#: ../pitivi/timeline/timeline.py:1507
 msgid "Copy selected clips"
 msgstr "Copiar clipes selecionados"
 
-#: ../pitivi/timeline/timeline.py:1506
+#: ../pitivi/timeline/timeline.py:1513
 msgid "Paste selected clips"
 msgstr "Colar clipes selecionados"
 
-#: ../pitivi/timeline/timeline.py:1519
+#: ../pitivi/timeline/timeline.py:1526
 msgid "Split the clip at the position"
 msgstr "Dividir clipes na posição indicada"
 
-#: ../pitivi/timeline/timeline.py:1525
+#: ../pitivi/timeline/timeline.py:1532
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Adicionar quadro-chave para a curva de quadro-chave do clipe selecionado"
 
-#: ../pitivi/timeline/timeline.py:1530
+#: ../pitivi/timeline/timeline.py:1537
 msgid "Timeline Navigation"
 msgstr "Navegação pela linha do tempo"
 
-#: ../pitivi/timeline/timeline.py:1537
+#: ../pitivi/timeline/timeline.py:1544
 msgid "Zoom in"
 msgstr "Ampliar"
 
-#: ../pitivi/timeline/timeline.py:1543
+#: ../pitivi/timeline/timeline.py:1550
 msgid "Zoom out"
 msgstr "Reduzir"
 
-#: ../pitivi/timeline/timeline.py:1549
+#: ../pitivi/timeline/timeline.py:1556
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Ajustar o zoom para caber o projeto na janela"
 
-#: ../pitivi/timeline/timeline.py:1560
+#: ../pitivi/timeline/timeline.py:1567
 msgid "Seek backward one frame"
 msgstr "Buscar para trás um quadro"
 
-#: ../pitivi/timeline/timeline.py:1566
+#: ../pitivi/timeline/timeline.py:1573
 msgid "Seek forward one frame"
 msgstr "Buscar para frente um quadro"
 
-#: ../pitivi/timeline/timeline.py:1573
+#: ../pitivi/timeline/timeline.py:1580
 msgid "Seek backward one second"
 msgstr "Buscar para trás um segundo"
 
-#: ../pitivi/timeline/timeline.py:1580
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Seek forward one second"
 msgstr "Buscar para frente um segundo"
 
@@ -1851,7 +1862,6 @@ msgstr "Erro ao decodificar uma mensagem"
 
 #: ../pitivi/utils/ui.py:284
 #, python-format
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Duração:</b> %s"
 
@@ -1862,13 +1872,11 @@ msgstr "<b>Progresso de criação de intermediários:</b> %d%%"
 
 #: ../pitivi/utils/ui.py:300
 #, python-format
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Path</b>: %s"
 msgstr "<b>Caminho</b>: %s"
 
 #: ../pitivi/utils/ui.py:309
 #, python-format
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Size</b>: %s"
 msgstr "<b>Tamanho</b>: %s"
 
