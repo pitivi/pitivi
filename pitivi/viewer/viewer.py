@@ -110,6 +110,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             pipeline (Pipeline): The Pipeline to switch to.
             position (Optional[int]): The position to seek to initially.
         """
+        self.debug("Setting pipeline: %r", pipeline)
         self._disconnectFromPipeline()
 
         if self.target:
@@ -117,7 +118,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             if parent:
                 parent.remove(self.target)
 
-        self.debug("New pipeline: %r", pipeline)
         self.pipeline = pipeline
         if position:
             self.pipeline.simple_seek(position)
@@ -140,8 +140,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         if self.docked:
             self.pack_start(self.target, True, True, 0)
-            screen = Gdk.Screen.get_default()
-            height = screen.get_height()
             # Force the AspectFrame to be tall (and wide) enough to look good.
             # TODO: review this code to create a smarter algorithm.
             if not self._compactMode:
@@ -159,11 +157,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.target.show_all()
 
     def _disconnectFromPipeline(self):
-        self.debug("Previous pipeline: %r", self.pipeline)
         if self.pipeline is None:
             # silently return, there's nothing to disconnect from
             return
 
+        self.debug("Disconnecting from: %r", self.pipeline)
         self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
@@ -446,13 +444,13 @@ class ViewerContainer(Gtk.Box, Loggable):
     def clipTrimPreviewFinished(self):
         """Switches back to the project pipeline following a clip trimming."""
         if self.pipeline is not self.app.project_manager.current_project.pipeline:
+            self.debug("Going back to the project's pipeline")
             self.pipeline.setState(Gst.State.NULL)
             # Using pipeline.getPosition() here does not work because for some
             # reason it's a bit off, that's why we need self._oldTimelinePos.
             self.setPipeline(
                 self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
             self._oldTimelinePos = None
-            self.debug("Back to the project's pipeline")
 
     def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
         """Updates the widgets when the playback starts or stops."""
