@@ -378,6 +378,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.docked = True
         self.settings.viewerDocked = True
 
+        position = None
         if self.pipeline:
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
@@ -391,7 +392,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.show()
 
         self.external_window.hide()
-        if position:
+        if self.pipeline:
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
 
