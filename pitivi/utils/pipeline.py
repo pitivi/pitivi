@@ -626,11 +626,15 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             SimplePipeline._busMessageCb(self, bus, message)
 
     def commit_timeline(self):
+        if self.getState() == Gst.State.NULL:
+            # No need to commit. NLE will do it automatically when
+            # changing state from READY to PAUSED.
+            return
         is_empty = self.props.timeline.is_empty()
         if self._busy_async and not self._was_empty and not is_empty:
             self._commit_wanted = True
             self._was_empty = False
-            self.debug("commit wanted")
+            self.log("commit wanted")
         else:
             self._addWaitingForAsyncDoneTimeout()
             self.props.timeline.commit()
