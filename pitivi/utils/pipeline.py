@@ -340,7 +340,7 @@ class SimplePipeline(GObject.Object, Loggable):
         Raises:
             PipelineError: When the seek fails.
         """
-        if self._busy_async:
+        if self._busy_async or self.getState() < Gst.State.PAUSED:
             self._next_seek = position
             self.info("Setting next seek to %s", self._next_seek)
             return

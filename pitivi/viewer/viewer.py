@@ -119,9 +119,6 @@ class ViewerContainer(Gtk.Box, Loggable):
                 parent.remove(self.target)
 
         self.pipeline = pipeline
-        if position:
-            self.pipeline.simple_seek(position)
-
         self.pipeline.connect("state-change", self._pipelineStateChangedCb)
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
@@ -130,6 +127,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__createNewViewer()
         self._setUiActive()
 
+        if position:
+            self.pipeline.simple_seek(position)
         self.pipeline.pause()
 
     def __createNewViewer(self):
