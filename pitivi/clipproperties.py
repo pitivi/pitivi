@@ -304,7 +304,8 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _removeEffect(self, effect):
         pipeline = self._project.pipeline
         with self.app.action_log.started("remove effect",
-                                         CommitTimelineFinalizingAction(pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
             self.__remove_configuration_widget()
             self.effects_properties_manager.cleanCache(effect)
             effect.get_parent().remove(effect)
@@ -335,7 +336,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect_info = self.app.effects.getInfo(factory_name)
             pipeline = self._project.pipeline
             with self.app.action_log.started("add effect",
-                                             CommitTimelineFinalizingAction(pipeline)):
+                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             toplevel=True):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
                     self.clip.set_top_effect_priority(effect, drop_index)
@@ -388,7 +390,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = effects[source_index]
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("move effect",
-                                         CommitTimelineFinalizingAction(pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
             clip.set_top_effect_priority(effect, drop_index)
 
         new_path = Gtk.TreePath.new()
@@ -413,7 +416,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
         pipeline = self._project.ges_timeline.get_parent()
         with self.app.action_log.started("change active state",
-                                         CommitTimelineFinalizingAction(pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
             effect.props.active = not effect.props.active
         # This is not strictly necessary, but makes sure
         # the UI reflects the current status.
@@ -587,7 +591,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         assert res
         if value != cvalue:
             with self.app.action_log.started("Transformation property change",
-                                             CommitTimelineFinalizingAction(self._project.pipeline)):
+                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             toplevel=True):
                 self.source.set_child_property(prop, value)
             self.app.gui.viewer.overlay_stack.update(self.source)
 

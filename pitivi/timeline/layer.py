@@ -128,7 +128,8 @@ class LayerControls(Gtk.EventBox, Loggable):
         if name == current_name:
             return
 
-        with self.app.action_log.started("change layer name"):
+        with self.app.action_log.started("change layer name",
+                                         toplevel=True):
             self.ges_layer.ui.setName(name)
 
     def __layerPriorityChangedCb(self, unused_ges_layer, unused_pspec):
@@ -194,7 +195,8 @@ class LayerControls(Gtk.EventBox, Loggable):
     def __delete_layer_cb(self, unused_action, unused_parameter):
         pipeline = self.ges_timeline.get_asset().pipeline
         with self.app.action_log.started("delete layer",
-                                         CommitTimelineFinalizingAction(pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
             self.ges_timeline.remove_layer(self.ges_layer)
             removed_priority = self.ges_layer.props.priority
             for ges_layer in self.ges_timeline.get_layers():

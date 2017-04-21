@@ -1923,7 +1923,8 @@ class ProjectSettingsDialog(object):
         self.year_spinbutton.get_adjustment().set_value(year)
 
     def updateProject(self):
-        with self.app.action_log.started("change project settings"):
+        with self.app.action_log.started("change project settings",
+                                         toplevel=True):
             self.project.name = self.title_entry.get_text()
             self.project.author = self.author_entry.get_text()
             self.project.year = str(self.year_spinbutton.get_value_as_int())

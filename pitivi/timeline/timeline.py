@@ -684,7 +684,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 if layer_controls:
                     self.__moving_layer = layer_controls.ges_layer
                     self.app.action_log.begin("move layer",
-                                              CommitTimelineFinalizingAction(self._project.pipeline))
+                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                              toplevel=True)
                 else:
                     self.layout.marquee.set_start_position(event)
 
@@ -901,7 +902,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             if self.__last_clips_on_leave:
                 pipeline = self._project.pipeline
                 with self.app.action_log.started("add clip",
-                                                 CommitTimelineFinalizingAction(pipeline)):
+                                                 finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                                 toplevel=True):
                     if self.__on_separators:
                         priority = self.separator_priority(self.__on_separators[1])
                         created_layer = self.create_layer(priority)
@@ -1308,7 +1310,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def insert_clips_on_first_layer(self, clips, position=None):
         """Adds clips to the timeline on the first layer."""
         with self.app.action_log.started("insert on first layer",
-                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
             layers = self.ges_timeline.get_layers()
             first_layer = layers[0]
             start = self.__getInsertPosition(position)
@@ -1331,7 +1333,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         clip_position = initial_position
 
         with self.app.action_log.started("add asset",
-                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
             for obj in objs:
                 if isinstance(obj, GES.Clip):
                     obj.set_start(clip_position)
@@ -1606,7 +1608,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
             with self.app.action_log.started("delete clip",
-                                             CommitTimelineFinalizingAction(self._project.pipeline)):
+                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             toplevel=True):
                 for clip in self.timeline.selection:
                     layer = clip.get_layer()
                     if isinstance(clip, GES.TransitionClip):
@@ -1621,7 +1624,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
 
         with self.app.action_log.started("ungroup",
-                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             for obj in self.timeline.selection:
                 toplevel = obj.get_toplevel_parent()
                 if toplevel == self.timeline.current_group:
@@ -1637,7 +1641,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
 
         with self.app.action_log.started("group",
-                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             containers = set()
             new_group = None
             for obj in self.timeline.selection:
@@ -1668,7 +1673,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
 
         with self.app.action_log.started("paste",
-                                         CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             save = self.__copiedGroup.copy(True)
             position = self._project.pipeline.getPosition()
             self.__copiedGroup.paste(position)
@@ -1680,7 +1686,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         progress_dialog = AlignmentProgressDialog(self.app)
         progress_dialog.window.show()
-        self.app.action_log.begin("align")
+        self.app.action_log.begin("align", toplevel=True)
 
         def alignedCb():  # Called when alignment is complete
             self.app.action_log.commit()
@@ -1701,7 +1707,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
-        with self.app.action_log.started("split clip"):
+        with self.app.action_log.started("split clip", toplevel=True):
             self._splitElements(self.timeline.selection.selected)
 
     def _splitElements(self, clips=None):

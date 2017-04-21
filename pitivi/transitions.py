@@ -161,7 +161,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         if child:
             if not self.container_focused:
                 self.container_focused = True
-                action_log.begin("Change transaction")
+                action_log.begin("Change transaction", toplevel=True)
         else:
             if self.container_focused:
                 self.container_focused = False

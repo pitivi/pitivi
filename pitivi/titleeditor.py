@@ -116,7 +116,8 @@ class TitleEditor(Loggable):
             self.settings["halignment"].append(en, n)
 
     def _setChildProperty(self, name, value):
-        with self.app.action_log.started("Title %s change" % name):
+        with self.app.action_log.started("Title change property",
+                                         toplevel=True):
             self._setting_props = True
             try:
                 assert self.source.set_child_property(name, value)

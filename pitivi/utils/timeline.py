@@ -236,8 +236,10 @@ class EditingContext(GObject.Object, Loggable):
         from pitivi.undo.timeline import CommitTimelineFinalizingAction
         self.__log_actions = log_actions
         if log_actions:
-            self.app.action_log.begin("move-clip", CommitTimelineFinalizingAction(
-                self.timeline.get_asset().pipeline))
+            self.app.action_log.begin("move-clip",
+                                      finalizing_action=CommitTimelineFinalizingAction(
+                                          self.timeline.get_asset().pipeline),
+                                      toplevel=True)
 
     def finish(self):
         if self.__log_actions:

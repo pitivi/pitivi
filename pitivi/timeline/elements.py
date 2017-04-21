@@ -213,7 +213,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
             res, value = self.__source.control_source_get_value(event.xdata)
             assert res
             self.debug("Create keyframe at (%lf, %lf)", event.xdata, value)
-            with self.__timeline.app.action_log.started("Keyframe added"):
+            with self.__timeline.app.action_log.started("Keyframe added",
+                                                        toplevel=True):
                 self.__source.set(event.xdata, value)
 
     def toggle_keyframe(self, offset):
@@ -265,11 +266,13 @@ class KeyframeCurve(FigureCanvas, Loggable):
                     return
                 # A keyframe has been double-clicked, remove it.
                 self.debug("Removing keyframe at timestamp %lf", offset)
-                with self.__timeline.app.action_log.started("Remove keyframe"):
+                with self.__timeline.app.action_log.started("Remove keyframe",
+                                                            toplevel=True):
                     self.__source.unset(offset)
             else:
                 # Remember the clicked frame for drag&drop.
-                self.__timeline.app.action_log.begin("Move keyframe")
+                self.__timeline.app.action_log.begin("Move keyframe",
+                                                     toplevel=True)
                 self.__offset = offset
                 self.handling_motion = True
             return
@@ -278,7 +281,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if result[0]:
             # The line has been clicked.
             self.debug("The keyframe curve has been clicked")
-            self.__timeline.app.action_log.begin("Move keyframe curve segment")
+            self.__timeline.app.action_log.begin("Move keyframe curve segment",
+                                                 toplevel=True)
             x = event.xdata
             offsets = self.__keyframes.get_offsets()
             keyframes = offsets[:, 0]
@@ -912,7 +916,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             effect_info = self.app.effects.getInfo(self.timeline.dropData)
             pipeline = self.timeline.ges_timeline.get_parent()
             with self.app.action_log.started("add effect",
-                                             CommitTimelineFinalizingAction(pipeline)):
+                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             toplevel=True):
                 self.add_effect(effect_info)
             self.timeline.cleanDropData()
             success = True

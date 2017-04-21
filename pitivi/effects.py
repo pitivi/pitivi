@@ -513,7 +513,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         pipeline = timeline.ges_timeline.get_parent()
         from pitivi.undo.timeline import CommitTimelineFinalizingAction
         with self.app.action_log.started("add effect",
-                                         CommitTimelineFinalizingAction(pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
             clip.ui.add_effect(effect_info)
 
     def getSelectedEffect(self):
@@ -630,6 +631,7 @@ class EffectsPropertiesManager:
 
             pipeline = self.app.project_manager.current_project.pipeline
             with self.app.action_log.started("Effect property change",
-                                             CommitTimelineFinalizingAction(pipeline)):
+                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             toplevel=True):
                 effect.set_child_property(prop.name, value)
             self._current_element_values[prop.name] = value

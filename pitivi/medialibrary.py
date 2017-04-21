@@ -648,7 +648,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         rows = [Gtk.TreeRowReference.new(model, path)
                 for path in paths]
 
-        with self.app.action_log.started("remove asset from media library"):
+        with self.app.action_log.started("remove asset from media library",
+                                         toplevel=True):
             for row in rows:
                 asset = model[row.get_path()][COL_ASSET]
                 target = asset.get_proxy_target()

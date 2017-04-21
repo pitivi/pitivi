@@ -413,8 +413,9 @@ class MoveScaleOverlay(Overlay):
         self.__clicked_handle = None
 
         self.__action_log.begin("Video position change",
-                                CommitTimelineFinalizingAction(
-                                    self._source.get_timeline().get_parent()))
+                                finalizing_action=CommitTimelineFinalizingAction(
+                                    self._source.get_timeline().get_parent()),
+                                toplevel=True)
         if self.hovered_handle:
             self.hovered_handle.on_click()
             self.__clicked_handle = self.hovered_handle

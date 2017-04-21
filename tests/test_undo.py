@@ -373,6 +373,21 @@ class TestUndoableActionLog(TestCase):
                                 mock.call.action2.undo(),
                                 mock.call.action1.undo()])
 
+    def test_toplevel_operation(self):
+        """Checks the toplevel operations nesting."""
+        self.log.begin("one", toplevel=False)
+        self.log.commit("one")
+
+        self.log.begin("two", toplevel=True)
+        self.log.commit("two")
+
+        self.log.begin("three")
+        self.assertRaises(UndoWrongStateError,
+                          self.log.begin,
+                          "four", toplevel=True)
+        self.log.begin("nested1")
+        self.log.begin("nested2", toplevel=False)
+
 
 class TestGObjectObserver(TestCase):
 

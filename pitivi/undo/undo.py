@@ -185,13 +185,13 @@ class UndoableActionLog(GObject.Object, Loggable):
         self._checkpoint = self._takeSnapshot()
 
     @contextlib.contextmanager
-    def started(self, action_group_name, finalizing_action=None):
+    def started(self, action_group_name, **kwargs):
         """Gets a context manager which commits the transaction at the end."""
-        self.begin(action_group_name, finalizing_action)
+        self.begin(action_group_name, **kwargs)
         yield
         self.commit(action_group_name)
 
-    def begin(self, action_group_name, finalizing_action=None):
+    def begin(self, action_group_name, finalizing_action=None, toplevel=False):
         """Starts recording a high-level operation which later can be undone.
 
         The recording can be stopped by calling the `commit` method or
@@ -203,6 +203,9 @@ class UndoableActionLog(GObject.Object, Loggable):
         if self.running:
             self.debug("Abort because running")
             return
+
+        if toplevel and self.is_in_transaction():
+            raise UndoWrongStateError("Toplevel operation started as suboperation", self.stacks)
 
         stack = UndoableActionStack(action_group_name, finalizing_action)
         self.stacks.append(stack)
