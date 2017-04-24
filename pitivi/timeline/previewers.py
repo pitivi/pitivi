@@ -33,6 +33,7 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.settings import get_dir
+from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import binary_search
@@ -70,6 +71,13 @@ PREVIEW_GENERATOR_SIGNALS = {
 }
 
 THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+
+GlobalSettings.addConfigSection("previewers")
+
+GlobalSettings.addConfigOption("previewers_max_cpu",
+                               section="previewers",
+                               key="max-cpu-usage",
+                               default=90)
 
 
 class PreviewerBin(Gst.Bin, Loggable):
@@ -843,109 +851,6 @@ class ThumbnailCache(Loggable):
         return False
 
 
-class PipelineCpuAdapter(Loggable):
-    """Pipeline manager modulating the rate of the provided pipeline.
-
-    It is the responsibility of the caller to set the sync of the sink to True,
-    disable QOS and provide a pipeline with a rate of 1.0.
-    Doing otherwise would be cheating. Cheating is bad.
-    """
-
-    def __init__(self, pipeline):
-        Loggable.__init__(self)
-        self.pipeline = pipeline
-        self.bus = self.pipeline.get_bus()
-
-        self.cpu_usage_tracker = CPUUsageTracker()
-        self.rate = 1.0
-        self.done = False
-        self.ready = False
-        self.last_pos = 0
-        self._bus_cb_id = None
-
-    def start(self):
-        """Start modulating the rate on the controlled pipeline.
-
-        This avoid using too much CPU.
-        """
-        GLib.timeout_add(200, self._modulateRate)
-        self._bus_cb_id = self.bus.connect("message", self.__bus_message_cb)
-        self.done = False
-
-    def stop(self):
-        """Stops modulating the rate on the controlled pipeline."""
-        if self._bus_cb_id is not None:
-            self.bus.disconnect(self._bus_cb_id)
-            self._bus_cb_id = None
-        self.pipeline = None
-        self.done = True
-
-    def _modulateRate(self):
-        """Adapts the rate of audio analysis depending on CPU usage."""
-        if self.done:
-            return False
-
-        usage_percent = self.cpu_usage_tracker.usage()
-        self.cpu_usage_tracker.reset()
-        if usage_percent >= WAVEFORMS_CPU_USAGE:
-            if self.rate < 0.1:
-                if not self.ready:
-                    res, position = self.pipeline.query_position(
-                        Gst.Format.TIME)
-                    if res:
-                        self.last_pos = position
-                    self.pipeline.set_state(Gst.State.READY)
-                    self.ready = True
-                return True
-
-            if self.rate > 0.0:
-                self.rate *= 0.9
-                self.log(
-                    'Pipeline rate slowed down (-10%%) to %.3f' % self.rate)
-        else:
-            self.rate *= 1.1
-            self.log('Pipeline rate sped up (+10%%) to %.3f' % self.rate)
-
-        if not self.ready:
-            res, position = self.pipeline.query_position(Gst.Format.TIME)
-            assert res
-        else:
-            # This to avoid going back and forth from READY to PAUSED
-            if self.rate > 0.5:
-                # The message handler will unset ready and seek correctly.
-                self.pipeline.set_state(Gst.State.PAUSED)
-            return True
-
-        self.pipeline.set_state(Gst.State.PAUSED)
-        self.pipeline.seek(self.rate,
-                           Gst.Format.TIME,
-                           Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                           Gst.SeekType.SET,
-                           position,
-                           Gst.SeekType.NONE,
-                           -1)
-        self.pipeline.set_state(Gst.State.PLAYING)
-        self.ready = False
-        # Keep the glib timer running:
-        return True
-
-    def __bus_message_cb(self, unused_bus, message):
-        if not self.ready:
-            return
-        if message.type == Gst.MessageType.STATE_CHANGED:
-            prev, new, unused_pending_state = message.parse_state_changed()
-            if message.src == self.pipeline:
-                if prev == Gst.State.READY and new == Gst.State.PAUSED:
-                    self.pipeline.seek(1.0,
-                                       Gst.Format.TIME,
-                                       Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                                       Gst.SeekType.SET,
-                                       self.last_pos,
-                                       Gst.SeekType.NONE,
-                                       -1)
-                    self.ready = False
-
-
 def get_wavefile_location_for_uri(uri):
     """Computes the URI where the pickled wave file should be stored."""
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
@@ -1094,8 +999,12 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                 # In case we failed previously, we won't modulate next time
                 elif not self.adapter and prev == Gst.State.PAUSED and \
                         new == Gst.State.PLAYING and self._num_failures == 0:
-                    self.adapter = PipelineCpuAdapter(self.pipeline)
-                    self.adapter.start()
+                    # This line is necessary so we can instantiate GstTranscoder's
+                    # GstCpuThrottlingClock below.
+                    Gst.ElementFactory.make("uritranscodebin", None)
+                    clock = GObject.new(GObject.type_from_name("GstCpuThrottlingClock"))
+                    clock.props.cpu_usage = self.app.settings.previewers_max_cpu
+                    self.pipeline.use_clock(clock)
 
     # pylint: disable=no-self-use
     def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
