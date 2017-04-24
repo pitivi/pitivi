@@ -243,10 +243,9 @@ class WaveformPreviewer(PreviewerBin):
                     else:
                         val = self.peaks[i][pos - 1]
 
-                    # Linearly joins values between to known samples
-                    # values
+                    # Linearly joins values between to known samples values.
                     unknowns = range(self.prev_pos + 1, pos)
-                    if len(unknowns):
+                    if unknowns:
                         prev_val = self.peaks[i][self.prev_pos]
                         linear_const = (val - prev_val) / len(unknowns)
                         for temppos in unknowns:
@@ -422,7 +421,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.gdkpixbufsink = None
         self.becomeControlled()
 
-        self.connect("notify::height-request", self._heightChangedCb)
+        self.connect("notify::height-request", self._height_changed_cb)
 
     # Internal API
     def _setupPipeline(self):
@@ -462,7 +461,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.thumb_width = 16 * self.thumb_height / 9
 
         decode = self.pipeline.get_by_name("decode")
-        decode.connect("autoplug-select", self._autoplugSelectCb)
+        decode.connect("autoplug-select", self._autoplug_select_cb)
 
         # pop all messages from the bus so we won't be flooded with messages
         # from the prerolling phase
@@ -470,7 +469,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             continue
         # add a message handler that listens for the created pixbufs
         self.pipeline.get_bus().add_signal_watch()
-        self.pipeline.get_bus().connect("message", self.__bus_message_handler)
+        self.pipeline.get_bus().connect("message", self.__bus_message_cb)
 
     def _checkCPU(self):
         """Adjusts when the next thumbnail is generated.
@@ -560,8 +559,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.log("Periodic thumbnail autosave")
             self.thumb_cache.commit()
             return True
-        else:
-            return False  # Stop the timer
+        # Stop the timer
+        return False
 
     def _get_thumb_duration(self):
         thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
@@ -646,7 +645,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     # Callbacks
 
-    def __bus_message_handler(self, unused_bus, message):
+    def __bus_message_cb(self, unused_bus, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
             struct = message.get_structure()
@@ -661,13 +660,13 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         return Gst.BusSyncReply.PASS
 
     # pylint: disable=no-self-use
-    def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
+    def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug audio decoders / parsers.
         if "Audio" in factory.get_klass():
             return True
         return False
 
-    def _heightChangedCb(self, unused_widget, unused_param_spec):
+    def _height_changed_cb(self, unused_widget, unused_param_spec):
         self._update_thumbnails()
 
     def _inpoint_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
@@ -870,7 +869,7 @@ class PipelineCpuAdapter(Loggable):
         This avoid using too much CPU.
         """
         GLib.timeout_add(200, self._modulateRate)
-        self._bus_cb_id = self.bus.connect("message", self._messageCb)
+        self._bus_cb_id = self.bus.connect("message", self.__bus_message_cb)
         self.done = False
 
     def stop(self):
@@ -930,7 +929,7 @@ class PipelineCpuAdapter(Loggable):
         # Keep the glib timer running:
         return True
 
-    def _messageCb(self, unused_bus, message):
+    def __bus_message_cb(self, unused_bus, message):
         if not self.ready:
             return
         if message.type == Gst.MessageType.STATE_CHANGED:
@@ -1029,7 +1028,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._wavebin.props.uri = asset.get_id()
         self._wavebin.props.duration = asset.get_duration()
         decode = self.pipeline.get_by_name("decode")
-        decode.connect("autoplug-select", self._autoplugSelectCb)
+        decode.connect("autoplug-select", self._autoplug_select_cb)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
@@ -1099,7 +1098,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                     self.adapter.start()
 
     # pylint: disable=no-self-use
-    def _autoplugSelectCb(self, unused_decode, unused_pad, unused_caps, factory):
+    def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
         # Don't plug video decoders / parsers.
         if "Video" in factory.get_klass():
             return True
