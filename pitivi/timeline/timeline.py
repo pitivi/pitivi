@@ -452,6 +452,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.ges_timeline.ui = None
             self.ges_timeline = None
 
+        if self._project:
+            self._project.pipeline.disconnect_by_func(self._positionCb)
         self._project = project
         if self._project:
             self._project.pipeline.connect('position', self._positionCb)
