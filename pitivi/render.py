@@ -467,7 +467,7 @@ class RenderDialog(Loggable):
     def _set_encoding_profile(self, encoding_profile, recursing=False):
         old_profile = self.project.container_profile
 
-        def rollback(self):
+        def rollback():
             if recursing:
                 return
 
@@ -480,7 +480,8 @@ class RenderDialog(Loggable):
         self._setting_encoding_profile = True
 
         if not set_combo_value(self.muxer_combo, factory('muxer')):
-            return rollback()
+            rollback()
+            return
 
         self.updateAvailableEncoders()
         for i, (combo, value) in enumerate([
@@ -492,12 +493,14 @@ class RenderDialog(Loggable):
             if value is None:
                 self.error("%d - Got no value for combo %s... rolling back",
                            i, combo)
-                return rollback(self)
+                rollback()
+                return
 
             if not set_combo_value(combo, value):
                 self.error("%d - Could not set value %s for combo %s... rolling back",
                            i, value, combo)
-                return rollback(self)
+                rollback()
+                return
 
         self.updateResolution()
         self._setting_encoding_profile = False
