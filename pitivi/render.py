@@ -719,7 +719,7 @@ class RenderDialog(Loggable):
         self.fileentry.set_text(name)
 
     def _update_valid_restriction_values(self, caps, combo, caps_template,
-                               model, value,
+                               model, combo_value,
                                caps_template_expander=None):
         def caps_template_expander_func(caps_template, value):
             return caps_template % value
@@ -739,11 +739,11 @@ class RenderDialog(Loggable):
             reduced_model.append(v)
         combo.set_model(reduced_model)
 
-        set_combo_value(combo, value)
+        set_combo_value(combo, combo_value)
         if get_combo_value(combo) != value:
             combo.set_active(len(reduced_model) - 1)
             self.warning("%s in %s not supported, setting: %s",
-                value, caps_template, get_combo_value(combo))
+                         combo_value, caps_template, get_combo_value(combo))
 
     def _update_valid_audio_restrictions(self, factory):
         template = [t for t in factory.get_static_pad_templates()
