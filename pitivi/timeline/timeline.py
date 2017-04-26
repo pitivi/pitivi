@@ -1396,8 +1396,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ges_timeline = None
 
         self.timeline.setProject(self._project)
-        self.timeline.selection.connect(
-            "selection-changed", self._selectionChangedCb)
 
     def updateActions(self):
         selection_non_empty = bool(self.timeline.selection)
@@ -1458,6 +1456,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.show_all()
         if not in_devel():
             self.gapless_button.hide()
+
+        self.timeline.selection.connect(
+            "selection-changed", self.__selection_changed_cb)
 
     def _getLongestLayer(self):
         """Returns the longest layer."""
@@ -1854,7 +1855,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 
-    def _selectionChangedCb(self, selection):
+    def __selection_changed_cb(self, unused_selection):
         """Handles selection changing."""
         self.updateActions()
 
