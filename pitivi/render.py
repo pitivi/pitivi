@@ -740,7 +740,7 @@ class RenderDialog(Loggable):
         combo.set_model(reduced_model)
 
         set_combo_value(combo, combo_value)
-        if get_combo_value(combo) != value:
+        if get_combo_value(combo) != combo_value:
             combo.set_active(len(reduced_model) - 1)
             self.warning("%s in %s not supported, setting: %s",
                          combo_value, caps_template, get_combo_value(combo))
