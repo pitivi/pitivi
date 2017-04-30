@@ -1,8 +1,8 @@
 {
     "app-id": "org.pitivi.Pitivi",
-    "version": "master",
+    "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.22",
+    "runtime-version": "3.24",
     "finish-args": ["--command=pitivi",
                     "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
                     "--talk-name=ca.desrt.dconf",
@@ -228,45 +228,8 @@
             ]
         },
         {
-
-            "name": "meson",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=meson==0.38.1"],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "yelp-xsl",
-            "cleanup-platform": [ "*"  ],
-            "config-opts": ["--disable-doc"],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "git://git.gnome.org/yelp-xsl",
-                    "branch": "3.20.1"
-                }
-            ]
-        },
-        {
-            "name": "yelp",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://git.gnome.org/browse/yelp",
-                    "branch": "3.20.1"
-                }
-            ]
-        },
-        {
             "name": "ffmpeg",
-            "config-opts": [
+            "config-opts": [ /* From https://phabricator.freedesktop.org/diffusion/GSTLIBAV/browse/master/configure.ac;4b1c9ef6ace06ae82a08e28a1a1ef0e2278f9655$362 */
                 "--disable-static",
                 "--disable-avdevice",
                 "--disable-postproc",
@@ -310,7 +273,7 @@
                 {
                     "type": "git",
                     "url": "https://git.ffmpeg.org/ffmpeg.git",
-                    "branch": "68ed682710f1cb1f4fdd1fd0447f402d6feabd01"
+                    "branch": "1968a1e" /* From submodule https://github.com/GStreamer/gst-libav/tree/master/gst-libs/ext */
                 }
             ]
         },
@@ -390,7 +353,7 @@
             "name": "gst-python",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Dpygi-overrides-dir=/app/lib/python3.4/site-packages/gi/overrides/", "--libdir=lib"],
+            "config-opts": ["-Dpygi-overrides-dir=/app/lib/python3.5/site-packages/gi/overrides/", "--libdir=lib"],
             "sources": [
                 {
                     "type": "git",
@@ -420,6 +383,18 @@
                 {
                     "type": "git",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
+                }
+            ]
+        },
+        {
+            "name": "gst-transcoder",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_doc=true", "--libdir=lib"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/pitivi/gst-transcoder"
                 }
             ]
         },
