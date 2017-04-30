@@ -451,8 +451,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             self.setup_dev_env()
 
         if self.check:
-            self.run_in_sandbox("make", "check",
-                                exit_on_failure=True,
+            self.run_in_sandbox("gst-validate-launcher",
+                                os.path.join(self.topdir, "tests/run_testsuite.py"),
+                                "--xunit-file", "xunit.xml", exit_on_failure=True,
                                 cwd=self.topdir)
 
         if self.bundle:
