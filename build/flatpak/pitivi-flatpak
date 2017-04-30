@@ -505,11 +505,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
     def setup_dev_env(self):
         self.install_all()
 
-        if os.path.exists(self.prefix) and self.update:
-            Console.message("Removing prefix %s", self.prefix)
-            shutil.rmtree(self.prefix)
-
-        if not os.path.exists(self.prefix):
+        if not os.path.exists(self.prefix) or self.update:
             Console.message("Building Pitivi %s and dependencies in %s",
                             self.branch, self.prefix)
 
@@ -519,7 +515,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                              self.local_repos_path, self.gst_version,
                              self.branch)
 
-            builder_args = ["flatpak-builder",
+            builder_args = ["flatpak-builder", "--force-clean",
                             "--ccache", self.prefix, self.json]
             if not self.bundle:
                 builder_args.append("--build-only")
@@ -530,7 +526,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 Console.message("\n%sYou need to install flatpak-builder%s\n",
                                 Colors.FAIL, Colors.ENDC)
                 self.exit(1)
-            subprocess.check_call(builder_args)
+            subprocess.check_call(builder_args, cwd=self.scriptdir)
 
             configure_args = ["./configure", "--prefix=/app", "--libdir=lib"]
             self.run_in_sandbox(*configure_args, exit_on_failure=True,
