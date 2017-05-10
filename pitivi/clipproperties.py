@@ -299,7 +299,15 @@ class EffectProperties(Gtk.Expander, Loggable):
             # Cannot remove nothing,
             return
         effect = self.storemodel.get_value(selected[1], COL_TRACK_EFFECT)
+        selection_path = self.storemodel.get_path(selected[1])
+        # Preserve selection in the tree view.
+        next_selection_index = selection_path.get_indices()[0]
+        effect_count = self.storemodel.iter_n_children()
+        if effect_count - 1 == next_selection_index:
+            next_selection_index -= 1
         self._removeEffect(effect)
+        if next_selection_index >= 0:
+            self.treeview_selection.select_path(next_selection_index)
 
     def _removeEffect(self, effect):
         pipeline = self._project.pipeline
