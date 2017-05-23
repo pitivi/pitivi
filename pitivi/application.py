@@ -32,6 +32,7 @@ from pitivi.configure import VERSION
 from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import MainWindow
+from pitivi.pluginmanager import PluginManager
 from pitivi.project import ProjectManager
 from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
@@ -144,6 +145,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.effects = EffectsManager()
         self.proxy_manager = ProxyManager(self)
         self.system = get_system()
+        self.plugin_manager = PluginManager(self)
 
         self.project_manager.connect(
             "new-project-loading", self._newProjectLoadingCb)

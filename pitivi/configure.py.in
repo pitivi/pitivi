@@ -22,6 +22,7 @@ Enables identical use for installed and uninstalled versions.
 """
 
 import os.path
+from gi.repository import GLib
 
 
 # Again, mostly the same thing as in bin/pitivi.in and pitivi/utils/misc.py:
@@ -83,3 +84,12 @@ def get_videopresets_dir():
 def get_gstpresets_dir():
     """Returns our directory with Gst Presets files."""
     return os.path.join(get_data_dir(), 'gstpresets')
+
+def get_plugins_dir():
+    """Returns our default directory to store official plugins."""
+    return os.path.join(_get_root_dir(), 'plugins')
+
+def get_user_plugins_dir():
+    """Returns our default directory to store non-official plugins."""
+    user_data_dir = GLib.get_user_data_dir()
+    return os.path.join(user_data_dir, 'pitivi', 'plugins')
