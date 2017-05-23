@@ -480,6 +480,19 @@
             ]
         },
         {
+            "name": "libpeas",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/libpeas"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/bugzilla-bug-660014-patch-355096.patch"
+                }
+            ]
+        },
+        {
             "name": "pitivi",
             "buildsystem": "meson",
             "builddir": true,
