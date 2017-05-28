@@ -19,6 +19,7 @@
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
+from gi.repository import GstController
 
 from pitivi.effects import PROPS_TO_IGNORE
 from pitivi.undo.undo import Action
@@ -584,21 +585,53 @@ class KeyframeChangedAction(UndoableAction):
         self.control_source.set(time, value)
 
 
-class ControlSourceSetAction(Action):
+class ControlSourceSetAction(UndoableAction):
 
-    def __init__(self, action_info):
-        Action.__init__(self)
-        self.action_info = action_info
+    def __init__(self, track_element, binding):
+        UndoableAction.__init__(self)
+        self.track_element = track_element
+        self.control_source = binding.props.control_source
+        self.property_name = binding.props.name
+        self.binding_type = "direct-absolute" if binding.props.absolute else "direct"
+
+    def do(self):
+        self.track_element.set_control_source(self.control_source,
+                                              self.property_name, self.binding_type)
+
+    def undo(self):
+        assert self.track_element.remove_control_binding(self.property_name)
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("set-control-source")
-        for key, value in self.action_info.items():
-            st.set_value(key, value)
-        st.set_value("binding-type", "direct")
+        st.set_value("element-name", self.track_element.get_name())
+        st.set_value("property-name", self.property_name)
+        st.set_value("binding-type", self.binding_type)
         st.set_value("source-type", "interpolation")
         st.set_value("interpolation-mode", "linear")
         return st
 
+
+class ControlSourceRemoveAction(UndoableAction):
+
+    def __init__(self, track_element, binding):
+        UndoableAction.__init__(self)
+        self.track_element = track_element
+        self.control_source = binding.props.control_source
+        self.property_name = binding.props.name
+        self.binding_type = "direct-absolute" if binding.props.absolute else "direct"
+
+    def do(self):
+        assert self.track_element.remove_control_binding(self.property_name)
+
+    def undo(self):
+        self.track_element.set_control_source(self.control_source,
+                                              self.property_name, self.binding_type)
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("remove-control-source")
+        st.set_value("element-name", self.track_element.get_name())
+        st.set_value("property-name", self.property_name)
+        return st
 
 class LayerObserver(MetaContainerObserver, Loggable):
     """Monitors a Layer and reports UndoableActions.
@@ -654,11 +687,14 @@ class LayerObserver(MetaContainerObserver, Loggable):
         clip_observer = self.clip_observers.pop(ges_clip)
         clip_observer.release()
 
-    def _controlBindingAddedCb(self, track_element, binding):
+    def _control_binding_added_cb(self, track_element, binding):
         self._connectToControlSource(track_element, binding)
-        action_info = {"element-name": track_element.get_name(),
-                       "property-name": binding.props.name}
-        action = ControlSourceSetAction(action_info)
+        action = ControlSourceSetAction(track_element, binding)
+        self.action_log.push(action)
+
+    def _control_binding_removed_cb(self, track_element, binding):
+        self._disconnectFromControlSource(binding)
+        action = ControlSourceRemoveAction(track_element, binding)
         self.action_log.push(action)
 
     def _connectToTrackElement(self, track_element):
@@ -677,13 +713,18 @@ class LayerObserver(MetaContainerObserver, Loggable):
         for prop, binding in track_element.get_all_control_bindings().items():
             self._connectToControlSource(track_element, binding)
         track_element.connect("control-binding-added",
-                              self._controlBindingAddedCb)
+                              self._control_binding_added_cb)
+        track_element.connect("control-binding-removed",
+                              self._control_binding_removed_cb)
         if isinstance(track_element, GES.BaseEffect) or \
                 isinstance(track_element, GES.VideoSource):
             observer = TrackElementObserver(track_element, self.action_log)
             self.track_element_observers[track_element] = observer
 
     def _disconnectFromTrackElement(self, track_element):
+        if not isinstance(track_element, GES.VideoTransition):
+            track_element.disconnect_by_func(self._control_binding_added_cb)
+            track_element.disconnect_by_func(self._control_binding_removed_cb)
         for prop, binding in track_element.get_all_control_bindings().items():
             self._disconnectFromControlSource(binding)
         observer = self.track_element_observers.pop(track_element, None)
@@ -695,9 +736,10 @@ class LayerObserver(MetaContainerObserver, Loggable):
         control_source = binding.props.control_source
         action_info = {"element-name": track_element.get_name(),
                        "property-name": binding.props.name}
-        observer = ControlSourceObserver(control_source, self.action_log,
-                                         action_info)
-        self.keyframe_observers[control_source] = observer
+        if control_source not in self.keyframe_observers:
+            observer = ControlSourceObserver(control_source, self.action_log,
+                                             action_info)
+            self.keyframe_observers[control_source] = observer
 
     def _disconnectFromControlSource(self, binding):
         control_source = binding.props.control_source
