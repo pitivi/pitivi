@@ -94,11 +94,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         FigureCanvas.__init__(self, figure)
         Loggable.__init__(self)
 
-        self.__timeline = timeline
+        self._timeline = timeline
         self.__source = binding.props.control_source
-        self.__source.connect("value-added", self.__controlSourceChangedCb)
-        self.__source.connect("value-removed", self.__controlSourceChangedCb)
-        self.__source.connect("value-changed", self.__controlSourceChangedCb)
+        self._connect_sources()
         self.__propertyName = binding.props.name
         self.__paramspec = binding.pspec
         self.get_style_context().add_class("KeyframeCurve")
@@ -108,8 +106,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         # Curve values, basically separating source.get_values() timestamps
         # and values.
-        self.__line_xs = []
-        self.__line_ys = []
+        self._line_xs = []
+        self._line_ys = []
 
         # facecolor to None for transparency
         self._ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
@@ -143,7 +141,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                                     alpha=KEYFRAME_LINE_ALPHA,
                                     c=KEYFRAME_LINE_COLOR,
                                     linewidth=KEYFRAME_LINE_HEIGHT, zorder=1)[0]
-        self.__updatePlots()
+        self._update_plots()
 
         # Drag and drop logic
         # Whether the clicked keyframe or line has been dragged.
@@ -168,7 +166,37 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def release(self):
         disconnectAllByFunc(self, self.__heightRequestCb)
         disconnectAllByFunc(self, self.__gtkMotionEventCb)
-        disconnectAllByFunc(self, self.__controlSourceChangedCb)
+        disconnectAllByFunc(self, self._controlSourceChangedCb)
+
+    def _connect_sources(self):
+        self.__source.connect("value-added", self._controlSourceChangedCb)
+        self.__source.connect("value-removed", self._controlSourceChangedCb)
+        self.__source.connect("value-changed", self._controlSourceChangedCb)
+
+    def _update_plots(self):
+        values = self.__source.get_all()
+        if len(values) < 2:
+            # No plot for less than two points.
+            return
+
+        self._line_xs = []
+        self._line_ys = []
+        for value in values:
+            self._line_xs.append(value.timestamp)
+            self._line_ys.append(value.value)
+
+        self._populate_lines()
+
+    def _populate_lines(self):
+        self._ax.set_xlim(self._line_xs[0], self._line_xs[-1])
+        self.__computeYlim()
+
+        arr = numpy.array((self._line_xs, self._line_ys))
+        arr = arr.transpose()
+        self.__keyframes.set_offsets(arr)
+        self.__line.set_xdata(self._line_xs)
+        self.__line.set_ydata(self._line_ys)
+        self.queue_draw()
 
     # Private methods
     def __computeYlim(self):
@@ -184,38 +212,35 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def __heightRequestCb(self, unused_self, unused_pspec):
         self.__computeYlim()
 
-    def __updatePlots(self):
-        values = self.__source.get_all()
-        if len(values) < 2:
-            # No plot for less than two points.
-            return
-
-        self.__line_xs = []
-        self.__line_ys = []
-        for value in values:
-            self.__line_xs.append(value.timestamp)
-            self.__line_ys.append(value.value)
-
-        self._ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
-        self.__computeYlim()
-
-        arr = numpy.array((self.__line_xs, self.__line_ys))
-        arr = arr.transpose()
-        self.__keyframes.set_offsets(arr)
-        self.__line.set_xdata(self.__line_xs)
-        self.__line.set_ydata(self.__line_ys)
-        self.queue_draw()
-
     def __maybeCreateKeyframe(self, event):
         line_contains = self.__line.contains(event)[0]
         keyframe_existed = self.__keyframes.contains(event)[0]
         if line_contains and not keyframe_existed:
-            res, value = self.__source.control_source_get_value(event.xdata)
-            assert res
-            self.debug("Create keyframe at (%lf, %lf)", event.xdata, value)
-            with self.__timeline.app.action_log.started("Keyframe added",
-                                                        toplevel=True):
-                self.__source.set(event.xdata, value)
+            self._create_keyframe(event.xdata)
+
+    def _create_keyframe(self, timestamp):
+        res, value = self.__source.control_source_get_value(timestamp)
+        assert res
+        self.debug("Create keyframe at (%lf, %lf)", timestamp, value)
+        with self._timeline.app.action_log.started("Keyframe added",
+                                                   toplevel=True):
+            self.__source.set(timestamp, value)
+
+    def _remove_keyframe(self, timestamp):
+        self.debug("Removing keyframe at timestamp %lf", timestamp)
+        with self._timeline.app.action_log.started("Remove keyframe",
+                                                   toplevel=True):
+            self.__source.unset(timestamp)
+
+    def _move_keyframe(self, source_timestamp, dest_timestamp, dest_value):
+        self.__source.unset(source_timestamp)
+        self.__source.set(dest_timestamp, dest_value)
+
+    def _move_keyframe_line(self, line, y_dest_value, y_start_value):
+        delta = y_dest_value - y_start_value
+        for offset, value in line:
+            value = max(self.__ylim_min, min(value + delta, self.__ylim_max))
+            self.__source.set(offset, value)
 
     def toggle_keyframe(self, offset):
         """Sets or unsets the keyframe at the specified offset."""
@@ -231,9 +256,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__source.set(offset, value)
 
     # Callbacks
-    def __controlSourceChangedCb(self, unused_control_source, unused_timed_value):
-        self.__updatePlots()
-        self.__timeline.ges_timeline.get_parent().commit_timeline()
+    def _controlSourceChangedCb(self, unused_control_source, unused_timed_value):
+        self._update_plots()
+        self._timeline.ges_timeline.get_parent().commit_timeline()
 
     def __gtkMotionEventCb(self, unused_widget, unused_event):
         # We need to do this here, because Matplotlib's callbacks can't stop
@@ -245,7 +270,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def _eventCb(self, unused_element, event):
         if event.type == Gdk.EventType.LEAVE_NOTIFY:
             cursor = NORMAL_CURSOR
-            self.__timeline.get_window().set_cursor(cursor)
+            self._timeline.get_window().set_cursor(cursor)
         return False
 
     def _mpl_button_press_event_cb(self, event):
@@ -268,18 +293,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 # Rollback the last operation if it is "Move keyframe".
                 # This is needed because a double-click also triggers a
                 # BUTTON_PRESS event which starts a "Move keyframe" operation
-                self.__timeline.app.action_log.try_rollback("Move keyframe")
+                self._timeline.app.action_log.try_rollback("Move keyframe")
                 self.__offset = None
 
                 # A keyframe has been double-clicked, remove it.
-                self.debug("Removing keyframe at timestamp %lf", offset)
-                with self.__timeline.app.action_log.started("Remove keyframe",
-                                                            toplevel=True):
-                    self.__source.unset(offset)
+                self._remove_keyframe(offset)
             else:
                 # Remember the clicked frame for drag&drop.
-                self.__timeline.app.action_log.begin("Move keyframe",
-                                                     toplevel=True)
+                self._timeline.app.action_log.begin("Move keyframe",
+                                                    toplevel=True)
                 self.__offset = offset
                 self.handling_motion = True
             return
@@ -288,8 +310,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if result[0]:
             # The line has been clicked.
             self.debug("The keyframe curve has been clicked")
-            self.__timeline.app.action_log.begin("Move keyframe curve segment",
-                                                 toplevel=True)
+            self._timeline.app.action_log.begin("Move keyframe curve segment",
+                                                toplevel=True)
             x = event.xdata
             offsets = self.__keyframes.get_offsets()
             keyframes = offsets[:, 0]
@@ -305,20 +327,16 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if self.__offset is not None:
                 self.__dragged = True
                 keyframe_ts = self.__computeKeyframeNewTimestamp(event)
-                self.__source.unset(int(self.__offset))
-
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
-                self.__source.set(keyframe_ts, ydata)
+
+                self._move_keyframe(int(self.__offset), keyframe_ts, ydata)
                 self.__offset = keyframe_ts
-                self.__update_tooltip(event)
+                self._update_tooltip(event)
                 hovering = True
             elif self.__clicked_line:
                 self.__dragged = True
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
-                delta = ydata - self.__ydata_drag_start
-                for offset, value in self.__clicked_line:
-                    value = max(self.__ylim_min, min(value + delta, self.__ylim_max))
-                    self.__source.set(offset, value)
+                self._move_keyframe_line(self.__clicked_line, ydata, self.__ydata_drag_start)
                 hovering = True
             else:
                 hovering = self.__line.contains(event)[0]
@@ -327,7 +345,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         if hovering:
             cursor = DRAG_CURSOR
-            self.__update_tooltip(event)
+            self._update_tooltip(event)
             if not self.__hovered:
                 self.emit("enter")
                 self.__hovered = True
@@ -335,21 +353,38 @@ class KeyframeCurve(FigureCanvas, Loggable):
             cursor = NORMAL_CURSOR
             if self.__hovered:
                 self.emit("leave")
-                self.__update_tooltip(None)
+                self._update_tooltip(None)
                 self.__hovered = False
 
-        self.__timeline.get_window().set_cursor(cursor)
+        self._timeline.get_window().set_cursor(cursor)
 
     def _mpl_button_release_event_cb(self, event):
         if event.button != 1:
             return
 
+        # In order to make sure we seek to the exact position where we added a
+        # new keyframe, we don't use matplotlib's event.xdata, but rather
+        # compute it the same way we do for the seek logic.
+        event_widget = Gtk.get_event_widget(event.guiEvent)
+        x, unused_y = event_widget.translate_coordinates(self._timeline.layout.layers_vbox,
+                                                         event.x, event.y)
+        ges_clip = self._timeline.selection.getSingleClip(GES.Clip)
+        event.xdata = Zoomable.pixelToNs(x) - ges_clip.props.start + ges_clip.props.in_point
+
         if self.__offset is not None:
+            # If dragging a keyframe, make sure the keyframe ends up exactly
+            # where the mouse was released. Otherwise, the playhead will not
+            # seek exactly on the keyframe.
+            if self.__dragged:
+                if event.ydata is not None:
+                    keyframe_ts = self.__computeKeyframeNewTimestamp(event)
+                    ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
+                    self._move_keyframe(int(self.__offset), keyframe_ts, ydata)
             self.debug("Keyframe released")
-            self.__timeline.app.action_log.commit("Move keyframe")
+            self._timeline.app.action_log.commit("Move keyframe")
         elif self.__clicked_line:
             self.debug("Line released")
-            self.__timeline.app.action_log.commit("Move keyframe curve segment")
+            self._timeline.app.action_log.commit("Move keyframe curve segment")
 
             if not self.__dragged:
                 # The keyframe line was clicked, but not dragged
@@ -361,7 +396,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__clicked_line = ()
         self.__dragged = False
 
-    def __update_tooltip(self, event):
+    def _update_tooltip(self, event):
         """Sets or clears the tooltip showing info about the hovered line."""
         markup = None
         if event:
@@ -370,7 +405,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             if self.__offset is not None:
                 xdata = self.__offset
             else:
-                xdata = max(self.__line_xs[0], min(event.xdata, self.__line_xs[-1]))
+                xdata = max(self._line_xs[0], min(event.xdata, self._line_xs[-1]))
             res, value = self.__source.control_source_get_value(xdata)
             assert res
             pmin = self.__paramspec.minimum
@@ -408,6 +443,72 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         return event.xdata
 
+
+class MultipleKeyframeCurve(KeyframeCurve):
+    """Keyframe curve which controls multiple properties at once."""
+
+    def __init__(self, timeline, bindings):
+        self.__bindings = bindings
+
+        super().__init__(timeline, bindings[0])
+
+    def _connect_sources(self):
+        for binding in self.__bindings:
+            source = binding.props.control_source
+            source.connect("value-added", self._controlSourceChangedCb)
+            source.connect("value-removed", self._controlSourceChangedCb)
+            source.connect("value-changed", self._controlSourceChangedCb)
+
+    def _update_plots(self):
+        timestamps = []
+        for binding in self.__bindings:
+            ts = [value.timestamp for value in binding.props.control_source.get_all()]
+            timestamps.extend(ts)
+        timestamps = sorted(list(set(timestamps)))
+
+        if len(timestamps) < 2:
+            # No plot for less than two points.
+            return
+
+        self._line_xs = []
+        self._line_ys = []
+        for timestamp in timestamps:
+            self._line_xs.append(timestamp)
+            self._line_ys.append(0.5)
+
+        self._populate_lines()
+
+    def _create_keyframe(self, timestamp):
+        with self._timeline.app.action_log.started("Add keyframe",
+                                                   toplevel=True):
+            for binding in self.__bindings:
+                binding.props.control_source.set(timestamp, binding.get_value(timestamp))
+
+    def _remove_keyframe(self, timestamp):
+        with self._timeline.app.action_log.started("Remove keyframe",
+                                                   toplevel=True):
+            for binding in self.__bindings:
+                binding.props.control_source.unset(timestamp)
+
+    def _move_keyframe(self, source_timestamp, dest_timestamp, unused_dest_value):
+        if source_timestamp == dest_timestamp:
+            return
+
+        for binding in self.__bindings:
+            dest_value = binding.get_value(source_timestamp)
+            binding.props.control_source.set(dest_timestamp, dest_value)
+            binding.props.control_source.unset(source_timestamp)
+
+    def _move_keyframe_line(self, line, y_dest_value, y_start_value):
+        pass
+
+    def _update_tooltip(self, event):
+        markup = None
+        if event:
+            if not event.xdata:
+                return
+            markup = _("Timestamp: %s") % Gst.TIME_ARGS(event.xdata)
+        self.set_tooltip_markup(markup)
 
 class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
@@ -477,12 +578,17 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def showKeyframes(self, ges_elem, prop):
         self.__setKeyframes(ges_elem, prop)
-        self.__create_keyframe_curve(ges_elem)
+        binding = ges_elem.get_control_binding(prop.name)
+        self.__create_keyframe_curve([binding])
 
     def showDefaultKeyframes(self, lazy_render=False):
         self.__setKeyframes(self._ges_elem, self._getDefaultMixingProperty())
         if not lazy_render:
             self.__create_keyframe_curve()
+
+    def showMultipleKeyframes(self, bindings):
+        self.__controlledProperty = None
+        self.__create_keyframe_curve(bindings)
 
     def __setKeyframes(self, ges_elem, prop):
         self.__removeKeyframes()
@@ -523,14 +629,17 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             assert source.set(inpoint, val)
             assert source.set(inpoint + self._ges_elem.props.duration, val)
 
-    def __create_keyframe_curve(self, ges_elem=None):
+    def __create_keyframe_curve(self, bindings=[]):
         """Creates required keyframe curve."""
         self.__removeKeyframes()
-        if not ges_elem:
-            ges_elem = self._ges_elem
+        if not bindings:
+            bindings = [self._ges_elem.get_control_binding(self.__controlledProperty.name)]
 
-        binding = ges_elem.get_control_binding(self.__controlledProperty.name)
-        self.keyframe_curve = KeyframeCurve(self.timeline, binding)
+        if len(bindings) == 1:
+            self.keyframe_curve = KeyframeCurve(self.timeline, bindings[0])
+        else:
+            self.keyframe_curve = MultipleKeyframeCurve(self.timeline, bindings)
+
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
         self.keyframe_curve.set_size_request(self.__width, self.__height)

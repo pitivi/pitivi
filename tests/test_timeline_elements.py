@@ -24,10 +24,13 @@ from unittest import TestCase
 from gi.overrides import GObject
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
 from matplotlib.backend_bases import MouseEvent
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
+from pitivi.utils.timeline import Zoomable
 from tests.common import create_test_clip
 from tests.common import create_timeline_container
 from tests.test_timeline_timeline import BaseTestTimeline
@@ -42,13 +45,13 @@ class TestKeyframeCurve(BaseTestTimeline):
         timeline_container.app.action_log = UndoableActionLog()
         timeline = timeline_container.timeline
         ges_layer = timeline.ges_timeline.append_layer()
-        ges_clip1 = self.add_clip(ges_layer, 0)
-        ges_clip2 = self.add_clip(ges_layer, 10)
-        ges_clip3 = self.add_clip(ges_layer, 20, inpoint=100)
+        ges_clip1 = self.add_clip(ges_layer, 0, duration=2*Gst.SECOND)
+        ges_clip2 = self.add_clip(ges_layer, 10, duration=2*Gst.SECOND)
+        ges_clip3 = self.add_clip(ges_layer, 20, inpoint=100, duration=2*Gst.SECOND)
         # For variety, add TitleClip to the list of clips.
         ges_clip4 = create_test_clip(GES.TitleClip)
         ges_clip4.props.start = 30
-        ges_clip4.props.duration = 4.5
+        ges_clip4.props.duration = int(0.9 * Gst.SECOND)
         ges_layer.add_clip(ges_clip4)
 
         self.check_keyframe_toggle(ges_clip1, timeline_container)
@@ -56,10 +59,8 @@ class TestKeyframeCurve(BaseTestTimeline):
         self.check_keyframe_toggle(ges_clip3, timeline_container)
         self.check_keyframe_toggle(ges_clip4, timeline_container)
 
-        self.check_keyframe_ui_toggle(ges_clip1, timeline_container)
-        self.check_keyframe_ui_toggle(ges_clip2, timeline_container)
-        self.check_keyframe_ui_toggle(ges_clip3, timeline_container)
-        self.check_keyframe_ui_toggle(ges_clip4, timeline_container)
+        for ges_clip in [ges_clip1, ges_clip2, ges_clip3, ges_clip4]:
+            self.check_keyframe_ui_toggle(ges_clip, timeline_container)
 
     def check_keyframe_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling on the specified clip."""
@@ -122,9 +123,12 @@ class TestKeyframeCurve(BaseTestTimeline):
         """Checks keyframes toggling by click events."""
         timeline = timeline_container.timeline
 
+        start = ges_clip.props.start
+        start_px = Zoomable.nsToPixel(start)
         inpoint = ges_clip.props.in_point
         duration = ges_clip.props.duration
-        offsets = (1, int(duration / 2), int(duration) - 1)
+        duration_px = Zoomable.nsToPixel(duration)
+        offsets_px = (1, int(duration_px / 2), int(duration_px) - 1)
         timeline.selection.select([ges_clip])
 
         ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
@@ -135,29 +139,9 @@ class TestKeyframeCurve(BaseTestTimeline):
         values = [item.timestamp for item in control_source.get_all()]
         self.assertEqual(values, [inpoint, inpoint + duration])
 
-        # Add keyframes.
-        for offset in offsets:
-            xdata, ydata = inpoint + offset, 1
-            x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
-
-            event = MouseEvent(
-                name = "button_press_event",
-                canvas = keyframe_curve,
-                x = x,
-                y = y,
-                button = 1
-            )
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-            keyframe_curve._mpl_button_press_event_cb(event)
-            event.name = "button_release_event"
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
-            keyframe_curve._mpl_button_release_event_cb(event)
-
-            values = [item.timestamp for item in control_source.get_all()]
-            self.assertIn(inpoint + offset, values)
-
-        # Remove keyframes.
-        for offset in offsets:
+        # Add keyframes by simulating mouse clicks.
+        for offset_px in offsets_px:
+            offset = Zoomable.pixelToNs(start_px + offset_px) - start
             xdata, ydata = inpoint + offset, 1
             x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
 
@@ -168,19 +152,50 @@ class TestKeyframeCurve(BaseTestTimeline):
                 y=y,
                 button=1
             )
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-            keyframe_curve._mpl_button_press_event_cb(event)
-            event.name = "button_release_event"
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
-            keyframe_curve._mpl_button_release_event_cb(event)
-            event.name = "button_press_event"
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
-            keyframe_curve._mpl_button_press_event_cb(event)
-            event.guiEvent = Gdk.Event.new(Gdk.EventType._2BUTTON_PRESS)
-            keyframe_curve._mpl_button_press_event_cb(event)
-            event.name = "button_release_event"
-            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
-            keyframe_curve._mpl_button_release_event_cb(event)
+            keyframe_curve.translate_coordinates = \
+                mock.Mock(return_value=(start_px+offset_px, None))
+
+            with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+                get_event_widget.return_value = keyframe_curve
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                keyframe_curve._mpl_button_press_event_cb(event)
+                event.name = "button_release_event"
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+                keyframe_curve._mpl_button_release_event_cb(event)
+
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertIn(inpoint + offset, values)
+
+        # Remove keyframes by simulating mouse double-clicks.
+        for offset_px in offsets_px:
+            offset = Zoomable.pixelToNs(start_px + offset_px) - start
+            xdata, ydata = inpoint + offset, 1
+            x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
+
+            event = MouseEvent(
+                name="button_press_event",
+                canvas=keyframe_curve,
+                x=x,
+                y=y,
+                button=1
+            )
+            keyframe_curve.translate_coordinates = \
+                mock.Mock(return_value=(start_px + offset_px, None))
+            with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+                get_event_widget.return_value = keyframe_curve
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                keyframe_curve._mpl_button_press_event_cb(event)
+                event.name = "button_release_event"
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+                keyframe_curve._mpl_button_release_event_cb(event)
+                event.name = "button_press_event"
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                keyframe_curve._mpl_button_press_event_cb(event)
+                event.guiEvent = Gdk.Event.new(Gdk.EventType._2BUTTON_PRESS)
+                keyframe_curve._mpl_button_press_event_cb(event)
+                event.name = "button_release_event"
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+                keyframe_curve._mpl_button_release_event_cb(event)
 
             values = [item.timestamp for item in control_source.get_all()]
             self.assertNotIn(inpoint + offset, values)

@@ -864,7 +864,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 # The preview clips have not been created yet.
                 self.__create_clips(x, y)
             self.__drag_update(x, y)
-
         Gdk.drag_status(context, Gdk.DragAction.COPY, timestamp)
         return True
 
