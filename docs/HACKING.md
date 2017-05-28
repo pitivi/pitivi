@@ -14,7 +14,7 @@ for yours so we can make a list here).
 
 Create a development environment folder and get the [Pitivi source code](https://git.gnome.org/browse/pitivi/tree/) into it:
 ```
-$ mkdir pitivi-dev && cd pitivi-dev
+$ mkdir -p pitivi-dev && cd pitivi-dev
 $ git clone https://git.gnome.org/browse/pitivi
 $ cd pitivi/
 ```
