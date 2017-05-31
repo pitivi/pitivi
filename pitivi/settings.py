@@ -137,6 +137,32 @@ class GlobalSettings(GObject.Object, Loggable):
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
 
+    def _read_value(self, section, key, type_):
+        if type_ == int:
+            try:
+                value = self._config.getint(section, key)
+            except ValueError:
+                # In previous configurations we incorrectly stored
+                # ints using float values.
+                value = int(self._config.getfloat(section, key))
+        elif type_ == float:
+            value = self._config.getfloat(section, key)
+        elif type_ == bool:
+            value = self._config.getboolean(section, key)
+        elif type_ == list:
+            tmp_value = self._config.get(section, key)
+            value = [token.strip() for token in tmp_value.split("\n") if token]
+        else:
+            value = self._config.get(section, key)
+        return value
+
+    def _write_value(self, section, key, value):
+        if type(value) == list:
+            value = "\n" + "\n".join(value)
+            self._config.set(section, key, value)
+        else:
+            self._config.set(section, key, str(value))
+
     def _readSettingsFromConfigurationFile(self):
         """Reads the settings from the user configuration file."""
         try:
@@ -153,19 +179,7 @@ class GlobalSettings(GObject.Object, Loggable):
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
-                if typ == int or typ == int:
-                    try:
-                        value = self._config.getint(section, key)
-                    except ValueError:
-                        # In previous configurations we incorrectly stored
-                        # ints using float values.
-                        value = int(self._config.getfloat(section, key))
-                elif typ == float:
-                    value = self._config.getfloat(section, key)
-                elif typ == bool:
-                    value = self._config.getboolean(section, key)
-                else:
-                    value = self._config.get(section, key)
+                value = self._read_value(section, key, typ)
                 setattr(self, attrname, value)
 
     @classmethod
@@ -210,7 +224,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 self._config.add_section(section)
             if key:
                 if value is not None:
-                    self._config.set(section, key, str(value))
+                    self._write_value(section, key, value)
                 else:
                     self._config.remove_option(section, key)
         try:
