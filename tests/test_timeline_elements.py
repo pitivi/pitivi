@@ -22,9 +22,12 @@ from unittest import mock
 from unittest import TestCase
 
 from gi.overrides import GObject
+from gi.repository import Gdk
 from gi.repository import GES
+from matplotlib.backend_bases import MouseEvent
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
+from pitivi.undo.undo import UndoableActionLog
 from tests.common import create_test_clip
 from tests.common import create_timeline_container
 from tests.test_timeline_timeline import BaseTestTimeline
@@ -36,6 +39,7 @@ class TestKeyframeCurve(BaseTestTimeline):
     def test_keyframe_toggle(self):
         """Checks keyframes toggling at the playhead position."""
         timeline_container = create_timeline_container()
+        timeline_container.app.action_log = UndoableActionLog()
         timeline = timeline_container.timeline
         ges_layer = timeline.ges_timeline.append_layer()
         ges_clip1 = self.add_clip(ges_layer, 0)
@@ -51,6 +55,11 @@ class TestKeyframeCurve(BaseTestTimeline):
         self.check_keyframe_toggle(ges_clip2, timeline_container)
         self.check_keyframe_toggle(ges_clip3, timeline_container)
         self.check_keyframe_toggle(ges_clip4, timeline_container)
+
+        self.check_keyframe_ui_toggle(ges_clip1, timeline_container)
+        self.check_keyframe_ui_toggle(ges_clip2, timeline_container)
+        self.check_keyframe_ui_toggle(ges_clip3, timeline_container)
+        self.check_keyframe_ui_toggle(ges_clip4, timeline_container)
 
     def check_keyframe_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling on the specified clip."""
@@ -108,6 +117,73 @@ class TestKeyframeCurve(BaseTestTimeline):
             timeline_container._keyframe_cb(None, None)
             values = [item.timestamp for item in control_source.get_all()]
             self.assertEqual(values, [inpoint, inpoint + duration])
+
+    def check_keyframe_ui_toggle(self, ges_clip, timeline_container):
+        """Checks keyframes toggling by click events."""
+        timeline = timeline_container.timeline
+
+        inpoint = ges_clip.props.in_point
+        duration = ges_clip.props.duration
+        offsets = (1, int(duration / 2), int(duration) - 1)
+        timeline.selection.select([ges_clip])
+
+        ges_video_source = ges_clip.find_track_element(None, GES.VideoSource)
+        binding = ges_video_source.get_control_binding("alpha")
+        control_source = binding.props.control_source
+        keyframe_curve = ges_video_source.ui.keyframe_curve
+
+        values = [item.timestamp for item in control_source.get_all()]
+        self.assertEqual(values, [inpoint, inpoint + duration])
+
+        # Add keyframes.
+        for offset in offsets:
+            xdata, ydata = inpoint + offset, 1
+            x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
+
+            event = MouseEvent(
+                name = "button_press_event",
+                canvas = keyframe_curve,
+                x = x,
+                y = y,
+                button = 1
+            )
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            keyframe_curve._mpl_button_press_event_cb(event)
+            event.name = "button_release_event"
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            keyframe_curve._mpl_button_release_event_cb(event)
+
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertIn(inpoint + offset, values)
+
+        # Remove keyframes.
+        for offset in offsets:
+            xdata, ydata = inpoint + offset, 1
+            x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
+
+            event = MouseEvent(
+                name="button_press_event",
+                canvas=keyframe_curve,
+                x=x,
+                y=y,
+                button=1
+            )
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            keyframe_curve._mpl_button_press_event_cb(event)
+            event.name = "button_release_event"
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            keyframe_curve._mpl_button_release_event_cb(event)
+            event.name = "button_press_event"
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            keyframe_curve._mpl_button_press_event_cb(event)
+            event.guiEvent = Gdk.Event.new(Gdk.EventType._2BUTTON_PRESS)
+            keyframe_curve._mpl_button_press_event_cb(event)
+            event.name = "button_release_event"
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            keyframe_curve._mpl_button_release_event_cb(event)
+
+            values = [item.timestamp for item in control_source.get_all()]
+            self.assertNotIn(inpoint + offset, values)
 
     def test_no_clip_selected(self):
         """Checks nothing happens when no clip is selected."""

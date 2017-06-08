@@ -254,6 +254,16 @@ class UndoableActionLog(GObject.Object, Loggable):
         self.emit("rollback", stack)
         stack.undo()
 
+    def try_rollback(self, action_group_name):
+        """Do rollback if the last started operation is @action_group_name."""
+        try:
+            last_operation = self._get_last_stack().action_group_name
+        except UndoWrongStateError:
+            return
+
+        if last_operation == action_group_name:
+            self.rollback()
+
     def commit(self, action_group_name):
         """Commits the last started operation."""
         if self.running:

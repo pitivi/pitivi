@@ -112,15 +112,15 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.__line_ys = []
 
         # facecolor to None for transparency
-        self.__ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
+        self._ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
         # Clear the Axes object.
-        self.__ax.cla()
+        self._ax.cla()
 
         # FIXME: drawing a grid and ticks would be nice, but
         # matplotlib is too slow for now.
-        self.__ax.grid(False)
+        self._ax.grid(False)
 
-        self.__ax.tick_params(axis='both',
+        self._ax.tick_params(axis='both',
                               which='both',
                               bottom='off',
                               top='off',
@@ -132,14 +132,14 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         # The PathCollection object holding the keyframes dots.
         sizes = [50]
-        self.__keyframes = self.__ax.scatter([], [], marker='D', s=sizes,
+        self.__keyframes = self._ax.scatter([], [], marker='D', s=sizes,
                                              c=KEYFRAME_NODE_COLOR, zorder=2)
 
         # matplotlib weirdness, simply here to avoid a warning ..
         self.__keyframes.set_picker(True)
 
         # The Line2D object holding the lines between keyframes.
-        self.__line = self.__ax.plot([], [],
+        self.__line = self._ax.plot([], [],
                                      alpha=KEYFRAME_LINE_ALPHA,
                                      c=KEYFRAME_LINE_COLOR,
                                      linewidth=KEYFRAME_LINE_HEIGHT, zorder=1)[0]
@@ -161,9 +161,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self.connect("event", self._eventCb)
         self.connect("notify::height-request", self.__heightRequestCb)
 
-        self.mpl_connect('button_press_event', self.__mplButtonPressEventCb)
-        self.mpl_connect('button_release_event', self.__mplButtonReleaseEventCb)
-        self.mpl_connect('motion_notify_event', self.__mplMotionEventCb)
+        self.mpl_connect('button_press_event', self._mpl_button_press_event_cb)
+        self.mpl_connect('button_release_event', self._mpl_button_release_event_cb)
+        self.mpl_connect('motion_notify_event', self._mpl_motion_event_cb)
 
     def release(self):
         disconnectAllByFunc(self, self.__heightRequestCb)
@@ -179,7 +179,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         ylim_min = -(KEYFRAME_LINE_HEIGHT / height)
         ylim_max = (self.__ylim_max * height) / (height - KEYFRAME_LINE_HEIGHT)
-        self.__ax.set_ylim(ylim_min, ylim_max)
+        self._ax.set_ylim(ylim_min, ylim_max)
 
     def __heightRequestCb(self, unused_self, unused_pspec):
         self.__computeYlim()
@@ -196,7 +196,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__line_xs.append(value.timestamp)
             self.__line_ys.append(value.value)
 
-        self.__ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
+        self._ax.set_xlim(self.__line_xs[0], self.__line_xs[-1])
         self.__computeYlim()
 
         arr = numpy.array((self.__line_xs, self.__line_ys))
@@ -248,7 +248,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__timeline.get_window().set_cursor(cursor)
         return False
 
-    def __mplButtonPressEventCb(self, event):
+    def _mpl_button_press_event_cb(self, event):
         if event.button != 1:
             return
 
@@ -264,6 +264,13 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 if index == 0 or index == len(offsets) - 1:
                     # It's an edge keyframe. These should not be removed.
                     return
+
+                # Rollback the last operation if it is "Move keyframe".
+                # This is needed because a double-click also triggers a
+                # BUTTON_PRESS event which starts a "Move keyframe" operation
+                self.__timeline.app.action_log.try_rollback("Move keyframe")
+                self.__offset = None
+
                 # A keyframe has been double-clicked, remove it.
                 self.debug("Removing keyframe at timestamp %lf", offset)
                 with self.__timeline.app.action_log.started("Remove keyframe",
@@ -292,7 +299,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self.__ydata_drag_start = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
             self.handling_motion = True
 
-    def __mplMotionEventCb(self, event):
+    def _mpl_motion_event_cb(self, event):
         if event.ydata is not None and event.xdata is not None:
             # The mouse event is in the figure boundaries.
             if self.__offset is not None:
@@ -333,7 +340,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__timeline.get_window().set_cursor(cursor)
 
-    def __mplButtonReleaseEventCb(self, event):
+    def _mpl_button_release_event_cb(self, event):
         if event.button != 1:
             return
 
