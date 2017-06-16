@@ -18,7 +18,11 @@ You can run the unit tests with:
 
 If you want to run only one particular unit test, use:
 
-`nose2 tests test_project.TestProjectManager.testLoadProjectFailedUnknownFormat`
+`gst-validate-launcher tests/run_testsuite.py -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat`
+
+Listing tests:
+
+`gst-validate-launcher tests/run_testsuite.py -L`
 
 ### Writing unit tests
 
