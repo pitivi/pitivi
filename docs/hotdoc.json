@@ -8,5 +8,6 @@
     "sitemap": "sitemap.txt",
     "syntax_highlighting_activate": true,
     "html_extra_theme": "extra",
-    "git_upload_repository": "git@github.com:pitivi/pitivi.github.io.git"
+    "git_upload_repository": "git@github.com:pitivi/pitivi.github.io.git",
+    "html_theme": "https://github.com/thiblahute/hotdoc-gnome-theme/releases/download/0.2/hotdoc-gnome-theme-0.2.tar.xz?sha256=3f14c75686403e592c4088187207ec3f57c023b12a8de2cc40f04274bb5bcafe"
 }
