@@ -561,16 +561,16 @@ class TransformationProperties(Gtk.Expander, Loggable):
         clear_button = self.builder.get_object("clear_button")
         clear_button.connect("clicked", self._defaultValuesCb)
 
-        self.__activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
-        self.__activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
+        self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
+        self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
 
-        self.__next_keyframe_btn = self.builder.get_object("next_keyframe_button")
-        self.__next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
-        self.__next_keyframe_btn.set_sensitive(False)
+        self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
+        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
+        self._next_keyframe_btn.set_sensitive(False)
 
-        self.__prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
-        self.__prev_keyframe_btn.connect("clicked", self.__go_to_keyframe, False)
-        self.__prev_keyframe_btn.set_sensitive(False)
+        self._prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
+        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe, False)
+        self._prev_keyframe_btn.set_sensitive(False)
 
         self.__setup_spin_button("xpos_spinbtn", "posx")
         self.__setup_spin_button("ypos_spinbtn", "posy")
@@ -617,29 +617,29 @@ class TransformationProperties(Gtk.Expander, Loggable):
         pipeline.simple_seek(seekval)
 
     def __show_keyframes_toggled_cb(self, unused_button):
-        if self.__activate_keyframes_btn.props.active:
+        if self._activate_keyframes_btn.props.active:
             self.__set_control_bindings()
         self.__update_keyframes_ui()
 
     def __update_keyframes_ui(self):
         if self.__source_uses_keyframes():
-            self.__activate_keyframes_btn.props.label = "◆"
+            self._activate_keyframes_btn.props.label = "◆"
         else:
-            self.__activate_keyframes_btn.props.label = "◇"
-            self.__activate_keyframes_btn.props.active = False
+            self._activate_keyframes_btn.props.label = "◇"
+            self._activate_keyframes_btn.props.active = False
 
-        if not self.__activate_keyframes_btn.props.active:
-            self.__prev_keyframe_btn.set_sensitive(False)
-            self.__next_keyframe_btn.set_sensitive(False)
+        if not self._activate_keyframes_btn.props.active:
+            self._prev_keyframe_btn.set_sensitive(False)
+            self._next_keyframe_btn.set_sensitive(False)
             if self.__source_uses_keyframes():
-                self.__activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
             else:
-                self.__activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
+                self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
             self.source.ui_element.showDefaultKeyframes()
         else:
-            self.__prev_keyframe_btn.set_sensitive(True)
-            self.__next_keyframe_btn.set_sensitive(True)
-            self.__activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
+            self._prev_keyframe_btn.set_sensitive(True)
+            self._next_keyframe_btn.set_sensitive(True)
+            self._activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
             self.source.ui_element.showMultipleKeyframes(
                 list(self.__control_bindings.values()))
 
