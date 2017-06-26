@@ -816,8 +816,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 pass
         self.source = source
         if self.source:
-            self._update_spin_buttons()
             self.__update_control_bindings()
+            self._update_spin_buttons()
             self.__update_keyframes_ui()
             self.source.connect("deep-notify", self.__source_property_changed_cb)
             self.source.connect("control-binding-added", self._control_bindings_changed)
