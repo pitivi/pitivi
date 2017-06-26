@@ -531,6 +531,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.source = None
         self._selected_clip = None
         self.spin_buttons = {}
+        self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
 
         self.builder = Gtk.Builder()
@@ -737,13 +738,17 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         try:
             spin = self.spin_buttons[param.name]
+            spin_handler_id = self.spin_buttons_handler_ids[param.name]
         except KeyError:
             return
 
         res, value = self.__get_source_property(param.name)
         assert res
         if spin.get_value() != value:
-            spin.set_value(value)
+            # Make sure self._onValueChangedCb doesn't get called here. If that
+            # happens, we might have unintended keyframes added.
+            with spin.handler_block(spin_handler_id):
+                spin.set_value(value)
 
     def _control_bindings_changed(self, unused_track_element, unused_binding):
         if self.__own_bindings_change:
@@ -755,9 +760,11 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
     def _update_spin_buttons(self):
         for name, spinbtn in list(self.spin_buttons.items()):
+            spin_handler_id = self.spin_buttons_handler_ids[name]
             res, value = self.source.get_child_property(name)
             assert res
-            spinbtn.set_value(value)
+            with spinbtn.handler_block(spin_handler_id):
+                spinbtn.set_value(value)
 
     def __set_prop(self, prop, value):
         assert self.source
@@ -789,9 +796,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
         spinbtn = self.builder.get_object(widget_name)
-        spinbtn.connect("value-changed", self._onValueChangedCb, property_name)
+        handler_id = spinbtn.connect("value-changed", self._onValueChangedCb, property_name)
         disable_scroll(spinbtn)
         self.spin_buttons[property_name] = spinbtn
+        self.spin_buttons_handler_ids[property_name] = handler_id
 
     def _onValueChangedCb(self, spinbtn, prop):
         if not self.source:
