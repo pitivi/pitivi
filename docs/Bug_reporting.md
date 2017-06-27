@@ -82,23 +82,29 @@ it would be good to provide a **stack trace**.
 
 ### When running with Flatpak
 
-Make sure you have the GNOME Sdk and Debug symbols installed:
+1. Make sure you have the GNOME Sdk and Debug symbols installed:
 
 ```
-GNOME_REPO=$(flatpak remote-list --user -d | grep "http://sdk.gnome.org/repo/" | awk '{ print $1 }') && \
-flatpak install --user $GNOME_REPO org.gnome.Sdk 3.20; \
-flatpak install --user $GNOME_REPO org.gnome.Sdk.Debug 3.20; \
-flatpak install --user $GNOME_REPO org.gnome.Sdk 3.22; \
-flatpak install --user $GNOME_REPO org.gnome.Sdk.Debug 3.22
+GNOME_REPO=$(flatpak info org.gnome.Platform//3.24 | grep Origin | awk '{ print $2 }')
+for i in $(flatpak list | grep org.pitivi.Pitivi | awk '{ print $1 }'); do
+  flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
+  flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk.Debug/)
+done
 ```
 
-Start a shell in the Pitivi bundle environment
+2. Start a shell in the Pitivi bundle environment
+
+(If developping pitivi, make sure to be in the environment before running)
 
 ```
-flatpak run -d --command=bash org.pitivi.Pitivi
+if type ptvenv; then
+  ptvenv
+else
+  flatpak run -d --command=bash org.pitivi.Pitivi
+fi
 ```
 
-Start Pitivi inside gdb
+3. Start Pitivi inside gdb
 
 ```
 gdb python3 -ex 'run /app/bin/pitivi
