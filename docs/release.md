@@ -1,3 +1,8 @@
+---
+title: Releasing
+short_description: How to make a release
+...
+
 # How to make a release
 
 See also https://live.gnome.org/MaintainersCorner/Releasing
@@ -25,8 +30,8 @@ Most of the steps below should be done in the [development environment](HACKING.
    * `$ configure` is all green
 
  4. Make sure the tests pass
-   * `$ make check`
-   * `$ make validate`
+   * `$ ninja test`
+   <!-- * `$ make validate` FIXME! -->
 
  5. Update the following files:
    * [meson.build](../meson.build):
