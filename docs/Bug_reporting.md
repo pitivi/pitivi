@@ -88,7 +88,9 @@ it would be good to provide a **stack trace**.
 GNOME_REPO=$(flatpak info org.gnome.Platform//3.24 | grep Origin | awk '{ print $2 }')
 for i in $(flatpak list | grep org.pitivi.Pitivi | awk '{ print $1 }'); do
   flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
+  flatpak update --user $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
   flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk.Debug/)
+  flatpak update --user $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk.Debug/)
 done
 ```
 
