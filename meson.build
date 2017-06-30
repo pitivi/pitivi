@@ -1,4 +1,4 @@
-project('pitivi', 'c', version: '0.98')
+project('pitivi', 'c', version: '0.98.1')
 
 python = find_program('python3')
 intltool_merge = find_program('intltool-merge')
