@@ -24,6 +24,7 @@ import numpy
 
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.pipeline import PipelineError
 from pitivi.viewer.overlay import Overlay
 
 
@@ -327,15 +328,55 @@ class MoveScaleOverlay(Overlay):
         self._source.connect("deep-notify", self.__source_property_changed_cb)
         self.update_from_source()
 
+    def __get_source_property(self, prop):
+        if self.__source_property_keyframed(prop):
+            binding = self._source.get_control_binding(prop)
+            res, position = self.__get_pipeline_position()
+            if res:
+                start = self._source.props.start
+                in_point = self._source.props.in_point
+                duration = self._source.props.duration
+                # If the position is outside of the clip, take the property
+                # value at the start/end (whichever is closer) of the clip.
+                source_position = max(0, min(position - start, duration - 1)) + in_point
+                value = binding.get_value(source_position)
+                res = value is not None
+                return res, value
+
+        return self._source.get_child_property(prop)
+
+    def __set_source_property(self, prop, value):
+        if self.__source_property_keyframed(prop):
+            control_source = self._source.get_control_binding(prop).props.control_source
+            res, timestamp = self.__get_pipeline_position()
+            if not res:
+                return
+            source_timestamp = timestamp - self._source.props.start + self._source.props.in_point
+            control_source.set(source_timestamp, value)
+        else:
+            self._source.set_child_property(prop, value)
+
+    def __source_property_keyframed(self, prop):
+        binding = self._source.get_control_binding(prop)
+        return binding is not None
+
+    def __get_pipeline_position(self):
+        pipeline = self.stack.app.project_manager.current_project.pipeline
+        try:
+            position = pipeline.getPosition()
+            return True, position
+        except PipelineError:
+            return False, None
+
     def __get_source_position(self):
-        res_x, x = self._source.get_child_property("posx")
-        res_y, y = self._source.get_child_property("posy")
+        res_x, x = self.__get_source_property("posx")
+        res_y, y = self.__get_source_property("posy")
         assert res_x and res_y
         return numpy.array([x, y])
 
     def __get_source_size(self):
-        res_x, x = self._source.get_child_property("width")
-        res_y, y = self._source.get_child_property("height")
+        res_x, x = self.__get_source_property("width")
+        res_y, y = self.__get_source_property("height")
         assert res_x and res_y
         return numpy.array([x, y])
 
@@ -343,12 +384,12 @@ class MoveScaleOverlay(Overlay):
         return self.__get_source_position() / self.project_size
 
     def __set_source_position(self, position):
-        self._source.set_child_property("posx", int(position[0]))
-        self._source.set_child_property("posy", int(position[1]))
+        self.__set_source_property("posx", int(position[0]))
+        self.__set_source_property("posy", int(position[1]))
 
     def __set_source_size(self, size):
-        self._source.set_child_property("width", int(size[0]))
-        self._source.set_child_property("height", int(size[1]))
+        self.__set_source_property("width", int(size[0]))
+        self.__set_source_property("height", int(size[1]))
 
     def __get_size(self):
         return numpy.array([self.__get_width(), self.__get_height()])
