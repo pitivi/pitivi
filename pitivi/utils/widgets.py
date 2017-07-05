@@ -813,7 +813,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             props = GObject.list_properties(self.element)
         return [prop for prop in props if prop.name not in self.ignore]
 
-    def add_widgets(self, values={}, with_reset_button=False):
+    def add_widgets(self, create_property_widget, values={}, with_reset_button=False):
         """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
@@ -822,6 +822,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         If there are no properties, returns a "No properties" label.
 
         Args:
+            create_property_widget (function): The function that gets the widget for an effect property.
             values (dict): The current values of the element props, by name.
                 If empty, the default values will be used.
             with_reset_button (bool): Whether to show a reset button for each
@@ -869,7 +870,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 else:
                     prop_value = values[prop.name]
 
-            prop_widget = self._makePropertyWidget(prop, prop_value)
+            prop_widget = create_property_widget(self, prop, prop_value)
             element_name = None
             if isinstance(self.element, Gst.Element):
                 element_name = self.element.get_factory().get_name()
@@ -1038,7 +1039,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 values[prop.name] = value
         return values
 
-    def _makePropertyWidget(self, prop, value=None):
+    def make_property_widget(self, prop, value=None):
         """Creates a widget for the specified element property."""
         type_name = GObject.type_name(prop.value_type.fundamental)
         if type_name == "gchararray":

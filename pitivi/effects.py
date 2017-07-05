@@ -583,15 +583,23 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
     __gsignals__ = {
         "create_widget": (GObject.SIGNAL_RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
                           create_widget_accumulator),
+        "create_property_widget": (
+            GObject.SIGNAL_RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
+            create_widget_accumulator),
     }
 
     def do_create_widget(self, effect_widget, effect):
         """Creates a widget if the `create_widget` handlers did not."""
         effect_name = effect.get_property("bin-description")
         self.log('UI is being auto-generated for "%s"', effect_name)
-        effect_widget.add_widgets(with_reset_button=True)
+        effect_widget.add_widgets(create_property_widget=self.create_property_widget, with_reset_button=True)
         self._postConfiguration(effect, effect_widget)
         return None
+
+    def do_create_property_widget(self, effect_widget, effect, prop, prop_value):
+        """Creates a widget if the `create_property_widget` handlers did not."""
+        widget = effect_widget.make_property_widget(prop, prop_value)
+        return widget
 
     def __init__(self, app):
         GObject.Object.__init__(self)
@@ -659,3 +667,8 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
                                              toplevel=True):
                 effect.set_child_property(prop.name, value)
             self._current_element_values[prop.name] = value
+
+    def create_property_widget(self, element_settings_widget, prop, prop_value):
+        prop_widget = self.emit("create_property_widget", element_settings_widget, element_settings_widget.element,
+                                prop, prop_value)
+        return prop_widget
