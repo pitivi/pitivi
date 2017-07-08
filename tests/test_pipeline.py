@@ -117,9 +117,11 @@ class TestPipeline(common.TestCase):
         # The pipeline should have tried to seek back to the last position.
         self.assertEqual(pipe._next_seek, 0)
 
-        # Pretend the state change async operation finished.
+        # Pretend the state change (to PAUSED) async operation succeeded.
         message.type = Gst.MessageType.ASYNC_DONE
-        pipe._busMessageCb(None, message)
+        with mock.patch.object(pipe, "get_state") as get_state:
+            get_state.return_value = (0, Gst.State.PAUSED, 0)
+            pipe._busMessageCb(None, message)
         self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
         # Should still be busy because of seeking to _next_seek.
         self.assertTrue(pipe._busy_async)
