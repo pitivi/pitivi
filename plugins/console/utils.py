@@ -52,7 +52,7 @@ def display_autocompletion(last_obj, matches, text_buffer,
     if len(matches) == 1:
         tokens = matches[0].split(last_obj)
         if len(tokens) >= 1:
-            print(tokens[1], end="")
+            text_buffer.insert(text_buffer.get_end_iter(), tokens[1])
     elif len(matches) > 1:
         if new_command.startswith(old_command):
             # Complete the rest of the command if they have a common prefix.
@@ -66,15 +66,18 @@ def display_autocompletion(last_obj, matches, text_buffer,
 class FakeOut(TextIOBase):
     """Replacement for sys.stdout/err which redirects writes."""
 
-    def __init__(self, buf):
+    def __init__(self, buf, fn, tag):
         TextIOBase.__init__(self)
         self.buf = buf
+        self.tag = tag
+        # pylint: disable=invalid-name
+        self.fn = fn
 
     def write(self, string):
-        self.buf.write(string)
+        self.buf.write(string, self.tag)
 
     def writelines(self, lines):
-        self.buf.write(lines)
+        self.buf.write(lines, self.tag)
 
 
 class ConsoleHistory(GObject.Object):
@@ -129,18 +132,24 @@ class ConsoleHistory(GObject.Object):
 
 
 class ConsoleBuffer(Gtk.TextBuffer):
+    # pylint: disable=too-many-instance-attributes
 
     AFTER_PROMPT_MARK = "after-prompt"
+    BEFORE_PROMPT_MARK = "before-prompt"
 
     def __init__(self, namespace):
         Gtk.TextBuffer.__init__(self)
 
+        self.create_mark(self.BEFORE_PROMPT_MARK, self.get_end_iter(), True)
         self.insert_at_cursor(sys.ps1)
         self.create_mark(self.AFTER_PROMPT_MARK, self.get_end_iter(), True)
 
         self.prompt = sys.ps1
-        self._stdout = FakeOut(self)
-        self._stderr = FakeOut(self)
+        self.normal = self.create_tag("normal")
+        self.error = self.create_tag("error")
+        self.command = self.create_tag("command")
+        self._stdout = FakeOut(self, sys.stdout.fileno(), self.normal)
+        self._stderr = FakeOut(self, sys.stdout.fileno(), self.error)
         self._console = code.InteractiveConsole(namespace)
 
         self.history = ConsoleHistory()
@@ -153,7 +162,11 @@ class ConsoleBuffer(Gtk.TextBuffer):
         """Process the current input command line executing it if complete."""
         cmd = self.get_command_line()
         self.history.add(cmd)
+        before_prompt_mark = self.get_mark(self.BEFORE_PROMPT_MARK)
         after_prompt_mark = self.get_mark(self.AFTER_PROMPT_MARK)
+
+        before_prompt_iter = self.get_iter_at_mark_name(self.BEFORE_PROMPT_MARK)
+        self.apply_tag(self.command, before_prompt_iter, self.get_end_iter())
 
         with swap_std(self._stdout, self._stderr):
             print()
@@ -164,6 +177,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
         else:
             self.prompt = sys.ps1
 
+        self.move_mark(before_prompt_mark, self.get_end_iter())
         self.insert(self.get_end_iter(), self.prompt)
         self.move_mark(after_prompt_mark, self.get_end_iter())
         self.place_cursor(self.get_end_iter())
@@ -180,9 +194,12 @@ class ConsoleBuffer(Gtk.TextBuffer):
         pos_iter = self.get_iter_at_mark_name("insert")
         return pos_iter.compare(after_prompt_iter) != -1
 
-    def write(self, text):
+    def write(self, text, tag=None):
         """Writes a text to the buffer."""
-        self.insert(self.get_end_iter(), text)
+        if tag is None:
+            self.insert(self.get_end_iter(), text)
+        else:
+            self.insert_with_tags(self.get_end_iter(), text, tag)
 
     def get_iter_at_mark_name(self, mark_name):
         """Gets an iterator with the position of the specified mark."""
