@@ -28,6 +28,7 @@ from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Pango
 from utils import display_autocompletion
 from utils import FakeOut
 from utils import get_iter_at_mark
@@ -89,8 +90,10 @@ class ConsoleWidget(Gtk.ScrolledWindow):
     it is integrated with.
     """
 
+    # pylint: disable=too-many-instance-attributes
     DEFAULT_PS1 = ">>> "
     DEFAULT_PS2 = "... "
+    MARK_BEFORE_PROMPT = "before-prompt"
     MARK_AFTER_PROMPT = "after-prompt"
 
     def __init__(self, namespace):
@@ -103,12 +106,16 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         sys.ps1 = self.DEFAULT_PS1
         sys.ps2 = self.DEFAULT_PS2
         buf = self._view.get_buffer()
+        buf.create_mark(self.MARK_BEFORE_PROMPT, buf.get_end_iter(), True)
         buf.insert_at_cursor(sys.ps1)
         buf.create_mark(self.MARK_AFTER_PROMPT, buf.get_end_iter(), True)
 
         self.prompt = sys.ps1
-        self._stdout = FakeOut(self)
-        self._stderr = FakeOut(self)
+        self.normal = buf.create_tag("normal")
+        self.error = buf.create_tag("error")
+        self.command = buf.create_tag("command")
+        self._stdout = FakeOut(self, self.normal, sys.stdout.fileno())
+        self._stderr = FakeOut(self, self.error, sys.stdout.fileno())
 
         self._console = InteractiveConsole(namespace)
         self._history = ConsoleHistory(self)
@@ -119,11 +126,20 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         buf.connect("mark-set", self.__mark_set_cb)
         buf.connect("insert-text", self.__insert_text_cb)
 
-    def scroll_to_end(self):
-        """Scrolls the view to the end."""
-        end_iter = self._view.get_buffer().get_end_iter()
-        self._view.scroll_to_iter(end_iter, 0.0, False, 0.5, 0.5)
-        return False
+        # Font color and style.
+        self._provider = Gtk.CssProvider()
+        self._css_values = {
+            "textview": {
+                "font-family": None,
+                "font-size": None,
+                "font-style": None,
+                "font-variant": None,
+                "font-weight": None
+            },
+            "textview > *": {
+                "color": None
+            }
+        }
 
     def get_command_line(self):
         """Gets the last command line after the prompt.
@@ -136,6 +152,52 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         end_iter = buf.get_end_iter()
         return buf.get_text(after_prompt_iter, end_iter, False)
 
+    def scroll_to_end(self):
+        """Scrolls the view to the end."""
+        end_iter = self._view.get_buffer().get_end_iter()
+        self._view.scroll_to_iter(end_iter, 0.0, False, 0.5, 0.5)
+        return False
+
+    def set_font(self, font_desc):
+        """Sets the font.
+
+        Args:
+            font (str): a PangoFontDescription as a string.
+        """
+        pango_font_desc = Pango.FontDescription.from_string(font_desc)
+        self._css_values["textview"]["font-family"] = pango_font_desc.get_family()
+        self._css_values["textview"]["font-size"] = "%dpt" % int(pango_font_desc.get_size() / Pango.SCALE)
+        self._css_values["textview"]["font-style"] = pango_font_desc.get_style().value_nick
+        self._css_values["textview"]["font-variant"] = pango_font_desc.get_variant().value_nick
+        self._css_values["textview"]["font-weight"] = int(pango_font_desc.get_weight())
+        self._apply_css()
+        self.error.set_property("font", font_desc)
+        self.command.set_property("font", font_desc)
+        self.normal.set_property("font", font_desc)
+
+    def set_color(self, color):
+        """Sets the color.
+
+        Args:
+            color (Gdk.RGBA): a color.
+        """
+        self._css_values["textview > *"]["color"] = color.to_string()
+        self._apply_css()
+
+    def _apply_css(self):
+        css = ""
+        for css_klass, props in self._css_values.items():
+            css += "%s {" % css_klass
+            for prop, value in props.items():
+                if value is not None:
+                    css += "%s: %s;" % (prop, value)
+            css += "} "
+        css = css.encode("UTF-8")
+        self._provider.load_from_data(css)
+        Gtk.StyleContext.add_provider(self._view.get_style_context(),
+                                      self._provider,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
     def set_command_line(self, cmd):
         """Inserts a command line after the prompt."""
         buf = self._view.get_buffer()
@@ -144,10 +206,13 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         buf.delete(after_prompt_iter, end_iter)
         buf.insert(buf.get_end_iter(), cmd)
 
-    def write(self, text):
+    def write(self, text, tag=None):
         """Writes a text to the text view's buffer."""
         buf = self._view.get_buffer()
-        buf.insert(buf.get_end_iter(), text)
+        if tag is None:
+            buf.insert(buf.get_end_iter(), text)
+        else:
+            buf.insert_with_tags(buf.get_end_iter(), text, tag)
         GLib.idle_add(self.scroll_to_end)
 
     def __key_press_event_cb(self, view, event):
@@ -267,9 +332,13 @@ class ConsoleWidget(Gtk.ScrolledWindow):
 
     def _process_command_line(self, cmd):
         buf = self._view.get_buffer()
+        before_prompt_mark = buf.get_mark(self.MARK_BEFORE_PROMPT)
         after_prompt_mark = buf.get_mark(self.MARK_AFTER_PROMPT)
 
         self._history.add(cmd)
+
+        before_prompt_iter = get_iter_at_mark(buf, self.MARK_BEFORE_PROMPT)
+        buf.apply_tag(self.command, before_prompt_iter, buf.get_end_iter())
 
         with swap_std(self._stdout, self._stderr):
             print()
@@ -280,6 +349,7 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         else:
             self.prompt = sys.ps1
 
+        buf.move_mark(before_prompt_mark, buf.get_end_iter())
         buf.insert(buf.get_end_iter(), self.prompt)
         buf.move_mark(after_prompt_mark, buf.get_end_iter())
         buf.place_cursor(get_iter_at_mark(buf, self.MARK_AFTER_PROMPT))
