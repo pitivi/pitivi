@@ -555,42 +555,18 @@ class PathWidget(Gtk.FileChooserButton, DynamicWidget):
 
 class ColorWidget(Gtk.ColorButton, DynamicWidget):
 
-    def __init__(self, value_type=str, default=None):
+    def __init__(self, default=None):
         Gtk.ColorButton.__init__(self)
         DynamicWidget.__init__(self, default)
-        self.value_type = value_type
-        self.set_use_alpha(True)
 
     def connectValueChanged(self, callback, *args):
         self.connect("color-set", callback, *args)
 
     def setWidgetValue(self, value):
-        type_ = type(value)
-        alpha = 0xFFFF
-
-        if type_ is str:
-            color = Gdk.Color(value)
-        elif (type_ is int) or (type_ is int):
-            red, green, blue, alpha = unpack_color(value)
-            color = Gdk.Color(red, green, blue)
-        elif type_ is Gdk.Color:
-            color = value
-        else:
-            raise TypeError("%r is not something we can convert to a color" %
-                            value)
-        self.set_color(color)
-        self.set_alpha(alpha)
+        self.set_rgba(value)
 
     def getWidgetValue(self):
-        color = self.get_color()
-        alpha = self.get_alpha()
-        if self.value_type is int:
-            return pack_color_32(color.red, color.green, color.blue, alpha)
-        if self.value_type is int:
-            return pack_color_64(color.red, color.green, color.blue, alpha)
-        elif self.value_type is Gdk.Color:
-            return color
-        return color.to_string()
+        return self.get_rgba()
 
 
 class FontWidget(Gtk.FontButton, DynamicWidget):
