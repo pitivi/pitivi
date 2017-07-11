@@ -24,10 +24,49 @@ from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
 from gi.repository import Peas
+from utils import Namespace
 from widgets import ConsoleWidget
 
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.settings import ConfigError
+
+
+class PitiviNamespace(Namespace):
+    """A class to define public objects in the namespace."""
+
+    def __init__(self, app):
+        Namespace.__init__(self)
+        self._app = app
+
+    @property
+    @Namespace.shortcut
+    def app(self):
+        """Gets the Pitivi instance."""
+        return self._app
+
+    @property
+    @Namespace.shortcut
+    def plugin_manager(self):
+        """Gets the Plugin Manager of the Pitivi instance."""
+        return self._app.plugin_manager
+
+    @property
+    @Namespace.shortcut
+    def timeline(self):
+        """Gets the GES.Timeline of the current project."""
+        return self._app.gui.timeline_ui.timeline.ges_timeline
+
+    @property
+    @Namespace.shortcut
+    def shortcuts(self):
+        """Gets the available methods in the namespace."""
+        print(_("These are the available methods or attributes."))
+        print()
+        for attr in self.get_shortcuts():
+            print(" - %s" % attr)
+        print()
+        print(_("Type \"{help}(<shortcut_command>)\" for more information.")
+              .format(help="help"))
 
 
 class Console(GObject.GObject, Peas.Activatable):
@@ -44,6 +83,9 @@ class Console(GObject.GObject, Peas.Activatable):
     DEFAULT_COMMAND_COLOR = Gdk.RGBA(0.2, 0.39, 0.64, 1.0)
     DEFAULT_NORMAL_COLOR = Gdk.RGBA(0.05, 0.5, 0.66, 1.0)
     DEFAULT_FONT = Pango.FontDescription.from_string("Monospace Regular 12")
+    _WELCOME_MESSAGE = _("{name} {version}\n\n"
+                         "Type \"{shortcuts}\" to list available methods.\n"
+                         "For more information, visit {help_uri}\n\n")
 
     def __init__(self):
         GObject.GObject.__init__(self)
@@ -143,9 +185,15 @@ class Console(GObject.GObject, Peas.Activatable):
         self.menu_item = None
 
     def _setup_dialog(self):
-        namespace = {"app": self.app}
+        namespace = PitiviNamespace(self.app)
         self.window = Gtk.Window()
-        self.terminal = ConsoleWidget(namespace)
+        console_plugin_info = self.app.plugin_manager.get_plugin_info("console")
+        welcome_message = Console._WELCOME_MESSAGE.format(
+            name=console_plugin_info.get_name(),
+            shortcuts=PitiviNamespace.shortcuts.fget.__name__,
+            version=console_plugin_info.get_version() or "",
+            help_uri=console_plugin_info.get_help_uri())
+        self.terminal = ConsoleWidget(namespace, welcome_message)
 
         self._init_colors()
         self.terminal.set_font(self.app.settings.consoleFont)

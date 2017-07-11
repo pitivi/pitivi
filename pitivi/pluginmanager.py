@@ -93,6 +93,33 @@ class PluginManager(Loggable):
             return PluginType.SYSTEM
         return PluginType.USER
 
+    def get_extension(self, module_name):
+        """Gets the extensions added to the Pitivi Plugin Manager.
+
+        Args:
+            module_name (str): The option that belongs to the `section`.
+        Returns:
+            The extension if exists. Otherwise, `None`.
+        """
+        for plugin in self.plugins:
+            if plugin.get_module_name() == module_name:
+                return self.extension_set.get_extension(plugin)
+        return None
+
+    def get_plugin_info(self, module_name):
+        """Gets the plugin info given a `name`.
+
+        Args:
+            module_name (str): The module name as registered in the .plugin file.
+        Returns:
+            Peas.PluginInfo: The plugin info if it exists. Otherwise, returns
+                             `None`.
+        """
+        for plugin_info in self.plugins:
+            if plugin_info.get_module_name() == module_name:
+                return plugin_info
+        return None
+
     def _load_plugins(self):
         """Loads plugins from settings."""
         plugin_names = self.app.settings.ActivePlugins
