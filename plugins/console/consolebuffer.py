@@ -77,12 +77,8 @@ class ConsoleBuffer(Gtk.TextBuffer):
     AFTER_PROMPT_MARK = "after-prompt"
     BEFORE_PROMPT_MARK = "before-prompt"
 
-    def __init__(self, namespace):
+    def __init__(self, namespace, welcome_message=""):
         Gtk.TextBuffer.__init__(self)
-
-        self.create_mark(self.BEFORE_PROMPT_MARK, self.get_end_iter(), True)
-        self.insert_at_cursor(sys.ps1)
-        self.create_mark(self.AFTER_PROMPT_MARK, self.get_end_iter(), True)
 
         self.prompt = sys.ps1
         self.normal = self.create_tag("normal")
@@ -91,6 +87,11 @@ class ConsoleBuffer(Gtk.TextBuffer):
         self._stdout = FakeOut(self, sys.stdout.fileno(), self.normal)
         self._stderr = FakeOut(self, sys.stdout.fileno(), self.error)
         self._console = code.InteractiveConsole(namespace)
+
+        self.insert_with_tags(self.get_end_iter(), welcome_message, self.normal)
+        self.create_mark(self.BEFORE_PROMPT_MARK, self.get_end_iter(), True)
+        self.insert_at_cursor(sys.ps1)
+        self.create_mark(self.AFTER_PROMPT_MARK, self.get_end_iter(), True)
 
         self.history = ConsoleHistory()
         namespace["__history__"] = self.history
