@@ -96,7 +96,7 @@ class ConsoleWidget(Gtk.ScrolledWindow):
     MARK_BEFORE_PROMPT = "before-prompt"
     MARK_AFTER_PROMPT = "after-prompt"
 
-    def __init__(self, namespace):
+    def __init__(self, namespace, welcome_message=None):
         Gtk.ScrolledWindow.__init__(self)
         self._view = Gtk.TextView()
         self._view.set_editable(True)
@@ -106,9 +106,6 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         sys.ps1 = self.DEFAULT_PS1
         sys.ps2 = self.DEFAULT_PS2
         buf = self._view.get_buffer()
-        buf.create_mark(self.MARK_BEFORE_PROMPT, buf.get_end_iter(), True)
-        buf.insert_at_cursor(sys.ps1)
-        buf.create_mark(self.MARK_AFTER_PROMPT, buf.get_end_iter(), True)
 
         self.prompt = sys.ps1
         self.normal = buf.create_tag("normal")
@@ -116,6 +113,13 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         self.command = buf.create_tag("command")
         self._stdout = FakeOut(self, self.normal, sys.stdout.fileno())
         self._stderr = FakeOut(self, self.error, sys.stdout.fileno())
+
+        if welcome_message is not None:
+            buf.insert_with_tags(buf.get_end_iter(), welcome_message,
+                                 self.normal)
+        buf.create_mark(self.MARK_BEFORE_PROMPT, buf.get_end_iter(), True)
+        buf.insert_at_cursor(sys.ps1)
+        buf.create_mark(self.MARK_AFTER_PROMPT, buf.get_end_iter(), True)
 
         self._console = InteractiveConsole(namespace)
         self._history = ConsoleHistory(self)
