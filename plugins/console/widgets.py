@@ -33,10 +33,10 @@ class ConsoleWidget(Gtk.ScrolledWindow):
     it is integrated with.
     """
 
-    def __init__(self, namespace):
+    def __init__(self, namespace, welcome_message=""):
         Gtk.ScrolledWindow.__init__(self)
         self._view = Gtk.TextView()
-        buf = ConsoleBuffer(namespace)
+        buf = ConsoleBuffer(namespace, welcome_message)
         self._view.set_buffer(buf)
         self._view.set_editable(True)
         self.add(self._view)
