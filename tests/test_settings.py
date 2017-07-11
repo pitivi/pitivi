@@ -22,6 +22,8 @@ import os
 import tempfile
 from unittest import mock
 
+from gi.repository import Gdk
+
 from pitivi.settings import ConfigError
 from pitivi.settings import GlobalSettings
 from tests import common
@@ -95,12 +97,15 @@ class TestGlobalSettings(common.TestCase):
                                        key="option-d", default=[])
         GlobalSettings.addConfigOption("section1OptionE", section="section-1",
                                        key="option-e", default=["foo"])
+        GlobalSettings.addConfigOption("section1OptionF", section="section-1",
+                                       key="option-f", default=Gdk.RGBA())
 
         self.assertEqual(GlobalSettings.section1OptionA, 50)
         self.assertEqual(GlobalSettings.section1OptionB, False)
         self.assertEqual(GlobalSettings.section1OptionC, "")
         self.assertEqual(GlobalSettings.section1OptionD, [])
         self.assertEqual(GlobalSettings.section1OptionE, ["foo"])
+        self.assertEqual(GlobalSettings.section1OptionF, Gdk.RGBA())
 
         conf_file_content = ("[section-1]\n"
                              "option-a = 10\n"
@@ -110,7 +115,8 @@ class TestGlobalSettings(common.TestCase):
                              "option-e=\n"
                              "     elmo\n"
                              "          knows\n"
-                             "     where you live\n")
+                             "     where you live\n"
+                             "option-f=rgba(51,102,255,0.4)")
 
         with mock.patch("pitivi.settings.xdg_config_home") as xdg_config_home,\
                 tempfile.TemporaryDirectory() as temp_dir:
@@ -129,6 +135,7 @@ class TestGlobalSettings(common.TestCase):
             "where you live"
         ]
         self.assertEqual(settings.section1OptionE, expected_e_value)
+        self.assertEqual(settings.section1OptionF, Gdk.RGBA(0.2, 0.4, 1.0, 0.4))
 
     def test_write_config_file(self):
         GlobalSettings.addConfigSection("section-new")
