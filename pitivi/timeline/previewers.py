@@ -926,6 +926,12 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
                                          self._uri + " ! waveformbin name=wave"
                                          " ! fakesink qos=false name=faked")
+        # This line is necessary so we can instantiate GstTranscoder's
+        # GstCpuThrottlingClock below.
+        Gst.ElementFactory.make("uritranscodebin", None)
+        clock = GObject.new(GObject.type_from_name("GstCpuThrottlingClock"))
+        clock.props.cpu_usage = self.app.settings.previewers_max_cpu
+        self.pipeline.use_clock(clock)
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
         self._wavebin = self.pipeline.get_by_name("wave")
@@ -983,28 +989,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                                                   "error-generating-waveforms")
                 self.error("Aborting due to waveforms generation issue: %s",
                            message.parse_error())
-
-        elif message.type == Gst.MessageType.STATE_CHANGED:
-            prev, new, unused_pending_state = message.parse_state_changed()
-            if message.src == self.pipeline:
-                if prev == Gst.State.READY and new == Gst.State.PAUSED:
-                    self.pipeline.seek(1.0,
-                                       Gst.Format.TIME,
-                                       Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                                       Gst.SeekType.SET,
-                                       0,
-                                       Gst.SeekType.NONE,
-                                       -1)
-
-                # In case we failed previously, we won't modulate next time
-                elif not self.adapter and prev == Gst.State.PAUSED and \
-                        new == Gst.State.PLAYING and self._num_failures == 0:
-                    # This line is necessary so we can instantiate GstTranscoder's
-                    # GstCpuThrottlingClock below.
-                    Gst.ElementFactory.make("uritranscodebin", None)
-                    clock = GObject.new(GObject.type_from_name("GstCpuThrottlingClock"))
-                    clock.props.cpu_usage = self.app.settings.previewers_max_cpu
-                    self.pipeline.use_clock(clock)
 
     # pylint: disable=no-self-use
     def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
@@ -1064,7 +1048,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         if self.pipeline:
             self.pipeline.set_state(Gst.State.NULL)
-            self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+            self.pipeline.get_bus().disconnect_by_func(self._busMessageCb)
+            self.pipeline = None
 
         self.emit("done")
 
