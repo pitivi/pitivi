@@ -58,6 +58,20 @@ def _in_devel():
 
 
 def _add_pitivi_path():
+    try:
+        import gi.overrides
+    except ImportError:
+        print(_("Could not import 'gi'. "
+                "Make sure you have pygobject available."))
+        exit(1)
+
+    # Let Gst overrides from our prefix take precedence over any
+    # other, making sure they are used. This allows us to ensure that
+    # Gst overrides from gst-python are used when within flatpak
+    local_overrides = os.path.join(LIBDIR, "python" + sys.version[:3],
+                                   "site-packages", "gi", "overrides")
+    gi.overrides.__path__.insert(0, local_overrides)
+
     dir = os.path.dirname(os.path.abspath(__file__))
     if _in_devel():
         root = os.path.split(dir)[0]

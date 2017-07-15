@@ -8,6 +8,8 @@ import sys
 import unittest
 from tempfile import mkdtemp
 
+import gi.overrides
+
 
 def get_pitivi_dir():
     """Gets the pitivi root directory."""
@@ -41,6 +43,14 @@ def setup():
     sys.path.insert(0, pitivi_dir)
 
     from pitivi import configure
+
+    # Let Gst overrides from our prefix take precedence over any
+    # other, making sure they are used. This allows us to ensure that
+    # Gst overrides from gst-python are used when within flatpak
+    local_overrides = os.path.join(configure.LIBDIR,
+                                   "python" + sys.version[:3],
+                                   "site-packages", "gi", "overrides")
+    gi.overrides.__path__.insert(0, local_overrides)
 
     # Make available the compiled C code.
     sys.path.append(configure.BUILDDIR)
