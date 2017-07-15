@@ -985,6 +985,10 @@ class RenderDialog(Loggable):
             for struct in factory.get_static_pad_templates():
                 if struct.direction == Gst.PadDirection.SINK:
                     caps = Gst.Caps.from_string(struct.get_caps().to_string())
+                    # FIXME HACK! - remove once https://bugzilla.gnome.org/show_bug.cgi?id=784960
+                    # is fixed.
+                    caps.mini_object.refcount += 1
+
                     fixed = caps.fixate()
                     fmt = fixed.get_structure(0).get_value("format")
                     self.project.setVideoRestriction("format", fmt)
