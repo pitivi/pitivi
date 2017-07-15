@@ -19,6 +19,8 @@
 """Tests for the render module."""
 # pylint: disable=protected-access,no-self-use
 # pylint: disable=too-many-locals
+import os
+import tempfile
 from unittest import mock
 from unittest import skipUnless
 
@@ -42,6 +44,14 @@ def factory_exists(*factories):
             return False, "%s not present on the system" % (factory)
 
     return True, ""
+
+
+def encoding_target_exists(tname):
+    """Checks if a GstEncodingTarget called @name exists."""
+    for target in GstPbutils.encoding_list_all_targets():
+        if tname in target.get_name().split(";"):
+            return True, ""
+    return False, "EncodingTarget %s not present on the system" % tname
 
 
 def find_preset_row_index(combo, name):
@@ -147,7 +157,7 @@ class TestRender(common.TestCase):
             profile = project.container_profile.copy()
             vprofile, = [p for p in profile.get_profiles()
                          if isinstance(p, GstPbutils.EncodingVideoProfile)]
-            vprofile.set_restriction(Gst.Caps('video/x-raw'))
+            vprofile.set_restriction(Gst.Caps("video/x-raw"))
             project.set_container_profile(profile)
             self.assertEqual(project.video_profile.get_restriction()[0]["format"],
                              "Y444")
@@ -157,7 +167,7 @@ class TestRender(common.TestCase):
     def test_loading_preset(self):
         """Checks preset values are properly exposed in the UI."""
         def preset_changed_cb(combo, changed):
-            """Callback for the 'combo::changed' signal."""
+            """Callback for the "combo::changed" signal."""
             changed.append(1)
 
         project = self.create_simple_project()
@@ -249,3 +259,56 @@ class TestRender(common.TestCase):
                          profile_names + ['test'])
         active_iter = preset_combo.get_active_iter()
         self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
+
+    def check_simple_rendering_profile(self, profile_name):
+        """Checks that rendering with the specified profile works."""
+
+        project = self.create_simple_project()
+        dialog = self.create_rendering_dialog(project)
+
+        # Select wanted profile
+        preset_combo = dialog.render_presets.combo
+        if profile_name:
+            i = find_preset_row_index(preset_combo, profile_name)
+            self.assertIsNotNone(i)
+            preset_combo.set_active(i)
+        from pitivi.render import RenderingProgressDialog
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Start rendering
+            with mock.patch.object(dialog.filebutton, "get_uri",
+                                   return_value=Gst.filename_to_uri(temp_dir)):
+                with mock.patch.object(dialog.fileentry, "get_text", return_value="outfile"):
+                    with mock.patch.object(RenderingProgressDialog, "__new__"):
+                        dialog._renderButtonClickedCb(None)
+
+            message = dialog._pipeline.get_bus().timed_pop_filtered(
+                10 * Gst.SECOND,
+                Gst.MessageType.EOS | Gst.MessageType.ERROR)
+            Gst.debug_bin_to_dot_file_with_ts(
+                dialog._pipeline, Gst.DebugGraphDetails.ALL,
+                "test_rendering_with_profile.dot")
+
+            result_file = Gst.filename_to_uri(os.path.join(temp_dir, "outfile"))
+            struct = message.get_structure() if message else None
+            self.assertEqual(message.type, Gst.MessageType.EOS,
+                             struct.to_string() if struct else message)
+            asset = GES.UriClipAsset.request_sync(result_file)
+            # FIXME Check more things?
+            self.assertIsNotNone(asset)
+
+    @skipUnless(*encoding_target_exists("youtube"))
+    # pylint: disable=invalid-name
+    def test_rendering_with_youtube_profile(self):
+        """Tests rendering a simple timeline with the youtube profile."""
+        self.check_simple_rendering_profile("youtube")
+
+    @skipUnless(*encoding_target_exists("dvd"))
+    def test_rendering_with_dvd_profile(self):
+        """Tests rendering a simple timeline with the DVD profile."""
+        self.check_simple_rendering_profile("dvd")
+
+    # pylint: disable=invalid-name
+    def test_rendering_with_default_profile(self):
+        """Tests rendering a simple timeline with the default profile."""
+        self.check_simple_rendering_profile(None)

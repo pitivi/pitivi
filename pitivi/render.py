@@ -476,7 +476,7 @@ class RenderDialog(Loggable):
         def factory(x):
             return Encoders().factories_by_name.get(getattr(self.project, x))
 
-        self.project.set_container_profile(encoding_profile)
+        self.project.set_container_profile(encoding_profile, reset_all=True)
         self._setting_encoding_profile = True
 
         if not set_combo_value(self.muxer_combo, factory('muxer')):

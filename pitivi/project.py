@@ -1529,8 +1529,19 @@ class Project(Loggable, GES.Project):
     def _ensureAudioRestrictions(self, profile=None, ref_restrictions=None):
         if not profile:
             profile = self.audio_profile
-        return self._ensureRestrictions(profile,
-            [("channels", 2), ("rate", 44100)], ref_restrictions)
+        defaults = [["channels", 2], ["rate", 44100]]
+        for fv in defaults:
+            field, value = fv
+            fvalue = profile.get_format()[0][field]
+            if isinstance(fvalue, Gst.ValueList) and value not in fvalue.array:
+                fv[1] = fvalue.array[0]
+            elif isinstance(fvalue, range) and value not in fvalue:
+                fv[1] = fvalue[0]
+            else:
+                self.warning("How should we handle ensuring restriction caps"
+                             " compatibility for field %s with format value: %s",
+                             field, fvalue)
+        return self._ensureRestrictions(profile, defaults, ref_restrictions)
 
     def _maybeInitSettingsFromAsset(self, asset):
         """Updates the project settings to match the specified asset.
