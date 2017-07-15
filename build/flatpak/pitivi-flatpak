@@ -504,9 +504,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             self.exit(1)
 
     def setup_dev_env(self):
-        self.install_all()
-
         if not os.path.exists(self.prefix) or self.update:
+            self.install_all()
             Console.message("Building Pitivi %s and dependencies in %s",
                             self.branch, self.prefix)
 
@@ -570,7 +569,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         prefixes = {
             "GST_ENCODING_TARGET_PATH":
-                "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
+                "/app/share/gstreamer-1.0/encoding-profiles/:/app/share/pitivi/encoding-profiles/",
             "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
             "GST_PRESET_PATH":
                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
