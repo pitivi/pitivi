@@ -971,6 +971,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.debug("response: %r", response)
         if response == Gtk.ResponseType.OK:
             lastfolder = dialogbox.get_current_folder()
+            # get_current_folder() is None if file was chosen from 'Recents'
+            if not lastfolder:
+                lastfolder = GLib.path_get_dirname(dialogbox.get_filename())
             self.app.settings.lastImportFolder = lastfolder
             dialogbox.props.extra_widget.saveValues()
             filenames = dialogbox.get_uris()
