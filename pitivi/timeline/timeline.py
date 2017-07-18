@@ -375,6 +375,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
+        self.__next_seek_position = None
 
         # Clip selection.
         self.selection = Selection()
@@ -670,6 +671,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         sources = self.get_sources_at_position(self.__last_position)
         self.app.gui.viewer.overlay_stack.set_current_sources(sources)
 
+    def set_next_seek_position(self, next_seek_position):
+        """Sets the position the playhead seeks to on the next button-release.
+
+        Args:
+            next_seek_position (int): the position to seek to
+        """
+        self.__next_seek_position = next_seek_position
+
     def _button_press_event_cb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
         self.app.gui.focusTimeline()
@@ -727,7 +736,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._scrolling = False
 
         if allow_seek and res and (button == 1 and self.app.settings.leftClickAlsoSeeks):
-            self._seek(event)
+            if self.__next_seek_position is not None:
+                self._project.pipeline.simple_seek(self.__next_seek_position)
+                self.__next_seek_position = None
+            else:
+                self._seek(event)
 
         self._snapEndedCb()
         self.update_visible_overlays()

@@ -38,6 +38,7 @@ from pitivi.effects import VIDEO_EFFECT
 from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
+from pitivi.utils import pipeline
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import filename_from_uri
@@ -54,6 +55,8 @@ KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
 KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
 KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87" # "Tango" dark sky blue
+HOVERED_KEYFRAME_NODE_COLOR = "#3465A4" # "Tango" medium sky blue
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -130,11 +133,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         # The PathCollection object holding the keyframes dots.
         sizes = [50]
-        self.__keyframes = self._ax.scatter([], [], marker='D', s=sizes,
-                                            c=KEYFRAME_NODE_COLOR, zorder=2)
+        self._keyframes = self._ax.scatter([], [], marker='D', s=sizes,
+                                           c=KEYFRAME_NODE_COLOR, zorder=2)
 
         # matplotlib weirdness, simply here to avoid a warning ..
-        self.__keyframes.set_picker(True)
+        self._keyframes.set_picker(True)
 
         # The Line2D object holding the lines between keyframes.
         self.__line = self._ax.plot([], [],
@@ -145,9 +148,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         # Drag and drop logic
         # Whether the clicked keyframe or line has been dragged.
-        self.__dragged = False
+        self._dragged = False
         # The inpoint of the clicked keyframe.
-        self.__offset = None
+        self._offset = None
         # The (offset, value) of both keyframes of the clicked keyframe line.
         self.__clicked_line = ()
         # Whether the mouse events go to the keyframes logic.
@@ -193,7 +196,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         arr = numpy.array((self._line_xs, self._line_ys))
         arr = arr.transpose()
-        self.__keyframes.set_offsets(arr)
+        self._keyframes.set_offsets(arr)
         self.__line.set_xdata(self._line_xs)
         self.__line.set_ydata(self._line_ys)
         self.queue_draw()
@@ -214,7 +217,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     def __maybeCreateKeyframe(self, event):
         line_contains = self.__line.contains(event)[0]
-        keyframe_existed = self.__keyframes.contains(event)[0]
+        keyframe_existed = self._keyframes.contains(event)[0]
         if line_contains and not keyframe_existed:
             self._create_keyframe(event.xdata)
 
@@ -277,11 +280,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if event.button != 1:
             return
 
-        result = self.__keyframes.contains(event)
+        result = self._keyframes.contains(event)
         if result[0]:
             # A keyframe has been clicked.
             keyframe_index = result[1]['ind'][0]
-            offsets = self.__keyframes.get_offsets()
+            offsets = self._keyframes.get_offsets()
             offset = offsets[keyframe_index][0]
 
             if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS:
@@ -294,7 +297,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 # This is needed because a double-click also triggers a
                 # BUTTON_PRESS event which starts a "Move keyframe" operation
                 self._timeline.app.action_log.try_rollback("Move keyframe")
-                self.__offset = None
+                self._offset = None
 
                 # A keyframe has been double-clicked, remove it.
                 self._remove_keyframe(offset)
@@ -302,7 +305,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
                 # Remember the clicked frame for drag&drop.
                 self._timeline.app.action_log.begin("Move keyframe",
                                                     toplevel=True)
-                self.__offset = offset
+                self._offset = offset
                 self.handling_motion = True
             return
 
@@ -313,7 +316,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             self._timeline.app.action_log.begin("Move keyframe curve segment",
                                                 toplevel=True)
             x = event.xdata
-            offsets = self.__keyframes.get_offsets()
+            offsets = self._keyframes.get_offsets()
             keyframes = offsets[:, 0]
             right = numpy.searchsorted(keyframes, x)
             # Remember the clicked line for drag&drop.
@@ -324,17 +327,17 @@ class KeyframeCurve(FigureCanvas, Loggable):
     def _mpl_motion_event_cb(self, event):
         if event.ydata is not None and event.xdata is not None:
             # The mouse event is in the figure boundaries.
-            if self.__offset is not None:
-                self.__dragged = True
+            if self._offset is not None:
+                self._dragged = True
                 keyframe_ts = self.__computeKeyframeNewTimestamp(event)
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
 
-                self._move_keyframe(int(self.__offset), keyframe_ts, ydata)
-                self.__offset = keyframe_ts
+                self._move_keyframe(int(self._offset), keyframe_ts, ydata)
+                self._offset = keyframe_ts
                 self._update_tooltip(event)
                 hovering = True
             elif self.__clicked_line:
-                self.__dragged = True
+                self._dragged = True
                 ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
                 self._move_keyframe_line(self.__clicked_line, ydata, self.__ydata_drag_start)
                 hovering = True
@@ -371,30 +374,30 @@ class KeyframeCurve(FigureCanvas, Loggable):
         ges_clip = self._timeline.selection.getSingleClip(GES.Clip)
         event.xdata = Zoomable.pixelToNs(x) - ges_clip.props.start + ges_clip.props.in_point
 
-        if self.__offset is not None:
+        if self._offset is not None:
             # If dragging a keyframe, make sure the keyframe ends up exactly
             # where the mouse was released. Otherwise, the playhead will not
             # seek exactly on the keyframe.
-            if self.__dragged:
+            if self._dragged:
                 if event.ydata is not None:
                     keyframe_ts = self.__computeKeyframeNewTimestamp(event)
                     ydata = max(self.__ylim_min, min(event.ydata, self.__ylim_max))
-                    self._move_keyframe(int(self.__offset), keyframe_ts, ydata)
+                    self._move_keyframe(int(self._offset), keyframe_ts, ydata)
             self.debug("Keyframe released")
             self._timeline.app.action_log.commit("Move keyframe")
         elif self.__clicked_line:
             self.debug("Line released")
             self._timeline.app.action_log.commit("Move keyframe curve segment")
 
-            if not self.__dragged:
+            if not self._dragged:
                 # The keyframe line was clicked, but not dragged
                 assert event.guiEvent.type == Gdk.EventType.BUTTON_RELEASE
                 self.__maybeCreateKeyframe(event)
 
         self.handling_motion = False
-        self.__offset = None
+        self._offset = None
         self.__clicked_line = ()
-        self.__dragged = False
+        self._dragged = False
 
     def _update_tooltip(self, event):
         """Sets or clears the tooltip showing info about the hovered line."""
@@ -402,8 +405,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         if event:
             if not event.xdata:
                 return
-            if self.__offset is not None:
-                xdata = self.__offset
+            if self._offset is not None:
+                xdata = self._offset
             else:
                 xdata = max(self._line_xs[0], min(event.xdata, self._line_xs[-1]))
             res, value = self.__source.control_source_get_value(xdata)
@@ -424,12 +427,12 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # The user can not change the timestamp of the first
         # and last keyframes.
         values = self.__source.get_all()
-        if self.__offset in (values[0].timestamp, values[-1].timestamp):
-            return self.__offset
+        if self._offset in (values[0].timestamp, values[-1].timestamp):
+            return self._offset
 
-        if event.xdata != self.__offset:
+        if event.xdata != self._offset:
             try:
-                kf = next(kf for kf in values if kf.timestamp == int(self.__offset))
+                kf = next(kf for kf in values if kf.timestamp == int(self._offset))
             except StopIteration:
                 return event.xdata
 
@@ -449,8 +452,23 @@ class MultipleKeyframeCurve(KeyframeCurve):
 
     def __init__(self, timeline, bindings):
         self.__bindings = bindings
-
         super().__init__(timeline, bindings[0])
+
+        self._timeline = timeline
+        self._project = timeline.app.project_manager.current_project
+        self._project.pipeline.connect("position", self._position_cb)
+
+        sizes = [80]
+        self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
+                                                    c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
+        self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
+                                                    c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
+        self.__update_selected_keyframe()
+        self.__hovered_keyframe.set_visible(False)
+
+    def release(self):
+        super().release()
+        self._project.pipeline.disconnect_by_func(self._position_cb)
 
     def _connect_sources(self):
         for binding in self.__bindings:
@@ -501,6 +519,73 @@ class MultipleKeyframeCurve(KeyframeCurve):
 
     def _move_keyframe_line(self, line, y_dest_value, y_start_value):
         pass
+
+    def _mpl_button_release_event_cb(self, event):
+        if event.button == 1:
+            if self._offset is not None and not self._dragged:
+                # A keyframe was clicked but not dragged, so we
+                # should select it by seeking to its position.
+                source = self._timeline.selection.getSingleClip()
+                assert source
+                position = int(self._offset) - source.props.in_point + source.props.start
+
+                if self._timeline.app.settings.leftClickAlsoSeeks:
+                    self._timeline.set_next_seek_position(position)
+                else:
+                    self._project.pipeline.simple_seek(position)
+
+        super()._mpl_button_release_event_cb(event)
+
+    def _mpl_motion_event_cb(self, event):
+        super()._mpl_motion_event_cb(event)
+
+        result = self._keyframes.contains(event)
+        if result[0]:
+            # A keyframe is hovered
+            keyframe_index = result[1]['ind'][0]
+            offset = self._keyframes.get_offsets()[keyframe_index][0]
+            self.__show_special_keyframe(self.__hovered_keyframe, offset)
+        else:
+            self.__hide_special_keyframe(self.__hovered_keyframe)
+
+    def __show_special_keyframe(self, keyframe, offset):
+        offsets = numpy.array([[offset, 0.5]])
+        keyframe.set_offsets(offsets)
+        keyframe.set_visible(True)
+        self.queue_draw()
+
+    def __hide_special_keyframe(self, keyframe):
+        keyframe.set_visible(False)
+        self.queue_draw()
+
+    def _controlSourceChangedCb(self, control_source, timed_value):
+        super()._controlSourceChangedCb(control_source, timed_value)
+        self.__update_selected_keyframe()
+        self.__hide_special_keyframe(self.__hovered_keyframe)
+
+    def _position_cb(self, unused_pipeline, unused_position):
+        self.__update_selected_keyframe()
+
+    def __update_selected_keyframe(self):
+        try:
+            position = self._project.pipeline.getPosition()
+        except pipeline.PipelineError:
+            self.warning("Could not get pipeline position")
+            return
+
+        source = self._timeline.selection.getSingleClip()
+        if source is None:
+            return
+        source_position = position - source.props.start + source.props.in_point
+
+        offsets = self._keyframes.get_offsets()
+        keyframes = offsets[:, 0]
+
+        index = numpy.searchsorted(keyframes, source_position)
+        if 0 <= index < len(keyframes) and keyframes[index] == source_position:
+            self.__show_special_keyframe(self.__selected_keyframe, source_position)
+        else:
+            self.__hide_special_keyframe(self.__selected_keyframe)
 
     def _update_tooltip(self, event):
         markup = None
