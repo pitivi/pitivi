@@ -38,7 +38,7 @@ class PitiviTest(Test):
     """A launcher.Test subclass for our unit tests."""
     def build_arguments(self):
         """Builds subprocess arguments."""
-        self.add_arguments('-m', 'unittest', self.classname)
+        self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))
 
 
 def setup_tests(test_manager, options):
