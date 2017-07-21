@@ -302,7 +302,7 @@ class AssetThumbnail(Loggable):
     def __get_icon(cls, icon_name, size):
         icon_theme = Gtk.IconTheme.get_default()
         try:
-            icon = icon_theme.load_icon(icon_name, size, 0)
+            icon = icon_theme.load_icon(icon_name, size, Gtk.IconLookupFlags.FORCE_SIZE)
         except GLib.Error:
             icon = icon_theme.load_icon("dialog-question", size, 0)
         return icon
