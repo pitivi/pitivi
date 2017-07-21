@@ -217,6 +217,9 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertEqual(asset.creation_progress, 100)
         self.assertEqual(asset.get_proxy(), proxy)
 
+    def test_supported_out_of_container_audio(self):
+        self.runCheckImport(["mp3_sample.mp3"], check_no_transcoding=True)
+
     def testMissingUriDisplayed(self):
         with common.created_project_file() as uri:
             self._customSetUp(project_uri=uri)
