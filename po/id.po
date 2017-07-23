@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: pitivi 0.98.x\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
 "POT-Creation-Date: 2017-07-03 14:01+0000\n"
-"PO-Revision-Date: 2017-07-23 09:59+0700\n"
+"PO-Revision-Date: 2017-07-23 10:09+0700\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
@@ -23,10 +23,8 @@ msgid "Pitivi"
 msgstr "Pitivi"
 
 #: ../data/pitivi.appdata.xml.in.h:2 ../data/pitivi.desktop.in.h:3
-#, fuzzy
 msgid "Create and edit your own movies"
-msgstr ""
-"Suatu antarmuka pengguna untuk menyunting aksi kontekstual Anda sendiri"
+msgstr "Buat dan sunting filmmu sendiri"
 
 #: ../data/pitivi.appdata.xml.in.h:3
 msgid ""
@@ -45,46 +43,47 @@ msgid ""
 msgstr ""
 
 #: ../data/pitivi.appdata.xml.in.h:5
-#, fuzzy
 msgid "Some other features include:"
-msgstr "Sertakan semua catatan tertaut lain"
+msgstr "Fitur lain termasuk:"
 
 #: ../data/pitivi.appdata.xml.in.h:6
 msgid ""
 "Accepts any file formats supported by the GStreamer multimedia framework"
 msgstr ""
+"Menerima sebarang format berkas yang didukung oleh framework multimedia "
+"GStreamer"
 
 #: ../data/pitivi.appdata.xml.in.h:7
 msgid ""
 "Can animate hundreds of special effects and filters with keyframable "
 "properties"
 msgstr ""
+"Dapat menganimasikan ratusan efek khusus dan menyaring dengan properti yang "
+"dapat di-keyframe-kan"
 
 #: ../data/pitivi.appdata.xml.in.h:8
 msgid "Ability to set custom aspect ratios, framerates and rendering presets"
-msgstr ""
+msgstr "Kemampuan menata rasio aspek, laju bingkai, dan perenderan ubahan"
 
 #: ../data/pitivi.appdata.xml.in.h:9
 msgid "Easy to use crossfades and SMPTE transitions"
-msgstr ""
+msgstr "Transisi SMPTE dan pudar silang yang mudah dipakai"
 
 #: ../data/pitivi.appdata.xml.in.h:10
 msgid "Multihead-friendly with detachable user interface components"
 msgstr ""
 
 #: ../data/pitivi.appdata.xml.in.h:11
-#, fuzzy
 msgid "The Pitivi Team"
-msgstr "Pitivi"
+msgstr "Tim Pitivi"
 
 #: ../data/pitivi.desktop.in.h:2
-#, fuzzy
 msgid "Video Editor"
-msgstr "Penyunting"
+msgstr "Penyunting Video"
 
 #: ../data/pitivi.desktop.in.h:4
 msgid "video;film;movie;editor;"
-msgstr ""
+msgstr "video;film;movie;editor;"
 
 #: ../data/ui/alignmentprogress.ui.h:1
 #, fuzzy
@@ -96,39 +95,33 @@ msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr ""
 
 #: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1035
-#, fuzzy
 msgid "Estimating..."
-msgstr "Memperkirakan…"
+msgstr "Memperkirakan..."
 
 #: ../data/ui/clipmediaprops.ui.h:1
-#, fuzzy
 msgid "Clip Properties"
-msgstr "Properti"
+msgstr "Properti Klip"
 
 #: ../data/ui/clipmediaprops.ui.h:2
 msgid "_Cancel"
 msgstr "_Batal"
 
 #: ../data/ui/clipmediaprops.ui.h:3
-#, fuzzy
 msgid "_Apply to project"
-msgstr "Projek"
+msgstr "Ter_apkan ke projek"
 
 #: ../data/ui/clipmediaprops.ui.h:4
-#, fuzzy
 msgid "Size (pixels):"
-msgstr "Ukuran dalam piksel:"
+msgstr "Ukuran (piksel):"
 
 #: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:15
-#, fuzzy
 msgid "Frame rate:"
-msgstr "_Laju:"
+msgstr "Laju bingkai:"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
 #: ../data/ui/clipmediaprops.ui.h:7
-#, fuzzy
 msgid "Pixel aspect ratio:"
-msgstr "Rasio _Aspek"
+msgstr "Rasio aspek piksel:"
 
 #: ../data/ui/clipmediaprops.ui.h:8
 msgid "Video:"
@@ -165,9 +158,8 @@ msgid "Height:"
 msgstr "Tinggi:"
 
 #: ../data/ui/depsmanager.ui.h:1
-#, fuzzy
 msgid "Missing Dependencies"
-msgstr "abaikan kebergantungan sistem yang hilang"
+msgstr "Kurang Kebergantungan"
 
 #: ../data/ui/depsmanager.ui.h:2
 msgid "Install"
@@ -178,21 +170,20 @@ msgid ""
 "To enable additional features, please install the following packages and "
 "restart Pitivi:"
 msgstr ""
+"Untuk memfungsikan fitur-fitur tambahan, harap pasang paket-paket berikut "
+"dan jalanlan ulang Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
-#, fuzzy
 msgid "Show video effects"
-msgstr "Video:"
+msgstr "Tampilkan efek video"
 
 #: ../data/ui/effectslibrary.ui.h:2
-#, fuzzy
 msgid "Show audio effects"
-msgstr "Audio:"
+msgstr "Tampilkan efek audio"
 
 #: ../data/ui/effectslibrary.ui.h:3
-#, fuzzy
 msgid "Clear the current search"
-msgstr "Bersihkan pilihan kini"
+msgstr "Bersihkan pencarian saat ini"
 
 #: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
 #: ../pitivi/transitions.py:76
@@ -200,27 +191,24 @@ msgid "Search..."
 msgstr "Cari..."
 
 #: ../data/ui/elementsettingsdialog.ui.h:1
-#, fuzzy
 msgid "Reset all"
-msgstr "_Reset Semua"
+msgstr "Reset semua"
 
 #: ../data/ui/elementsettingsdialog.ui.h:2 ../data/ui/projectsettings.ui.h:3
 msgid "OK"
 msgstr "OK"
 
 #: ../data/ui/mainmenubutton.ui.h:1
-#, fuzzy
 msgid "New project"
-msgstr "Proyek Baru"
+msgstr "Projek baru"
 
 #: ../data/ui/mainmenubutton.ui.h:2
-#, fuzzy
 msgid "Open project..."
-msgstr "Buka Pr_oyek"
+msgstr "Buka projek..."
 
 #: ../data/ui/mainmenubutton.ui.h:3
 msgid "Save the current project under a new name or a different location"
-msgstr ""
+msgstr "Simpan projek saat ini dengan nama baru atau pada lokasi berbeda"
 
 #: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1145
 #: ../pitivi/mainwindow.py:1199
@@ -228,43 +216,37 @@ msgid "Save As..."
 msgstr "Simpan Sebagai..."
 
 #: ../data/ui/mainmenubutton.ui.h:5
-#, fuzzy
 msgid "Reload the current project"
-msgstr "Atur Projek _Kini"
+msgstr "Muat ulang projek saat ini"
 
 #: ../data/ui/mainmenubutton.ui.h:6
-#, fuzzy
 msgid "Revert to saved version"
-msgstr "Kembalikan berkas ke versi tersimpan"
+msgstr "Kembalikan ke versi tersimpan"
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
-msgstr ""
+msgstr "Mengekspor projek saat ini dan semua medianya ke dalam arsip .tar"
 
 #: ../data/ui/mainmenubutton.ui.h:8
-#, fuzzy
 msgid "Export as Archive..."
-msgstr "Ekspor"
+msgstr "Ekspor sebagai Arsip..."
 
 #: ../data/ui/mainmenubutton.ui.h:9
 msgid "Export the frame at the current playhead position as an image file."
-msgstr ""
+msgstr "Ekspor bingkai pada posisi putar saat ini sebagai berkas citra."
 
 #: ../data/ui/mainmenubutton.ui.h:10
-#, fuzzy
 msgid "Export current frame..."
-msgstr "Ekspor"
+msgstr "Ekspor bingkai saat ini..."
 
 #: ../data/ui/mainmenubutton.ui.h:11
-#, fuzzy
 msgid "Edit the project settings"
-msgstr "Sunting pengaturan preferensi:"
+msgstr "Sunting pengaturan projek"
 
 #: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:1
 #: ../pitivi/medialibrary.py:376
-#, fuzzy
 msgid "Project Settings"
-msgstr "_Pengaturan"
+msgstr "Pengaturan Projek"
 
 #: ../data/ui/mainmenubutton.ui.h:13 ../data/ui/preferences.ui.h:1
 msgid "Preferences"
@@ -275,9 +257,8 @@ msgid "Keyboard Shortcuts"
 msgstr "Pintasan Papan Tik"
 
 #: ../data/ui/mainmenubutton.ui.h:15
-#, fuzzy
 msgid "User Manual"
-msgstr "Manual pengguna:"
+msgstr "Manual Pengguna"
 
 #: ../data/ui/mainmenubutton.ui.h:16
 msgid "About"
@@ -285,7 +266,7 @@ msgstr "Tentang"
 
 #: ../data/ui/medialibrary.ui.h:1 ../pitivi/mainwindow.py:481
 msgid "Add media files to your project"
-msgstr ""
+msgstr "Tambahkan berkas media ke projek Anda"
 
 #: ../data/ui/medialibrary.ui.h:2
 msgid "Import"
@@ -293,57 +274,52 @@ msgstr "Impor"
 
 #: ../data/ui/medialibrary.ui.h:3
 msgid "Remove selected clips from the project"
-msgstr ""
+msgstr "Hapus klip-klip yang dipilih dari projek"
 
 #: ../data/ui/medialibrary.ui.h:4
-#, fuzzy
 msgid "_Remove from Project"
-msgstr "Hapus dari Daftar Putar"
+msgstr "Hapus dari P_rojek"
 
 #: ../data/ui/medialibrary.ui.h:5
-#, fuzzy
 msgid "Clip properties..."
-msgstr "~Galeri Klip Seni"
+msgstr "Properti klip..."
 
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
-msgstr ""
+msgstr "Sisipkan klip-klip yang dipilih di akhir alur waktu"
 
 #: ../data/ui/medialibrary.ui.h:7
-#, fuzzy
 msgid "Insert at _End of Timeline"
-msgstr "insert"
+msgstr "Sisipkan di Ak_hir Lini Masa"
 
 #: ../data/ui/medialibrary.ui.h:8
-#, fuzzy
 msgid "Show clips as a detailed list"
-msgstr "Tampilkan informasi proposal terrinci"
+msgstr "Tampilkan klip sebagai sebuah daftar rinci"
 
 #. This is used as a toolbar button tooltip. Here, "select" means "find" rather than "choose". It is not the user who selects, but rather the user requesting the application to select the relevant items.
 #: ../data/ui/medialibrary.ui.h:10
 msgid "Select clips that have not been used in the project"
-msgstr ""
+msgstr "Pilih klip-klip yang belum dipakai di dalam projek"
 
 #: ../data/ui/medialibrary.ui.h:11
-#, fuzzy
 msgid "Show all clips"
-msgstr "Tampilkan semua aplikasi"
+msgstr "Tampilkan semua klip"
 
 #: ../data/ui/medialibrary.ui.h:13
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
 msgstr ""
+"Tambahkan media ke projek Anda dengan menyeret berkas dan folder ke sini "
+"atau memakai tombol \"Impor\"."
 
 #: ../data/ui/preferences.ui.h:2
-#, fuzzy
 msgid "Reset to Factory Settings"
-msgstr "Reset tampilan Anda ke bawaan pabrik."
+msgstr "Reset ke Pengaturan Pabrik"
 
 #: ../data/ui/preferences.ui.h:3
-#, fuzzy
 msgid "Reset all settings to their default values"
-msgstr "Reset ke nilai-nilai baku"
+msgstr "Reset semua pengaturan ke nilai baku mereka"
 
 #: ../data/ui/preferences.ui.h:4
 msgid "Revert"
@@ -363,6 +339,7 @@ msgstr "Tutup"
 #: ../data/ui/preferences.ui.h:7
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr ""
+"Beberapa perubahan tidak akan berdampak sampai Anda menjalankan ulang Pitivi"
 
 #: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:4
 #: ../pitivi/mainwindow.py:671 ../pitivi/mainwindow.py:788
@@ -373,9 +350,8 @@ msgid "Cancel"
 msgstr "Batal"
 
 #: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingdialog.ui.h:7
-#, fuzzy
 msgid "Preset:"
-msgstr "Prasetel %s"
+msgstr "Pratata:"
 
 #: ../data/ui/projectsettings.ui.h:5
 msgid "Size:"
@@ -391,26 +367,22 @@ msgid "Link"
 msgstr "Taut"
 
 #: ../data/ui/projectsettings.ui.h:9
-#, fuzzy
 msgid "Aspect Ratio:"
-msgstr "Rasio _Aspek"
+msgstr "Rasio Aspek:"
 
 #. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
 #: ../data/ui/projectsettings.ui.h:11
-#, fuzzy
 msgid "Display aspect ratio"
-msgstr "Rasio _Aspek"
+msgstr "Rasio aspek tampilan"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
 #: ../data/ui/projectsettings.ui.h:13
-#, fuzzy
 msgid "Pixel aspect ratio"
-msgstr "Rasio _Aspek"
+msgstr "Rasio aspek piksel"
 
 #: ../data/ui/projectsettings.ui.h:14
-#, fuzzy
 msgid "Frame Rate:"
-msgstr "_Laju:"
+msgstr "Laju Bingkai:"
 
 #. The title of the section with the video settings
 #: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:16
@@ -429,9 +401,8 @@ msgid "Author:"
 msgstr "Penulis:"
 
 #: ../data/ui/projectsettings.ui.h:22
-#, fuzzy
 msgid "Project title:"
-msgstr "Gelar"
+msgstr "Judul projek:"
 
 #: ../data/ui/projectsettings.ui.h:23
 msgid "Year:"
@@ -443,23 +414,20 @@ msgid "Info"
 msgstr "Info"
 
 #: ../data/ui/renderingdialog.ui.h:1 ../pitivi/mainwindow.py:426
-#, fuzzy
 msgid "Render"
-msgstr "_Render"
+msgstr "Render"
 
 #: ../data/ui/renderingdialog.ui.h:3
 msgid "Folder:"
 msgstr "Folder:"
 
 #: ../data/ui/renderingdialog.ui.h:4
-#, fuzzy
 msgid "File name:"
-msgstr "~Nama Berkas"
+msgstr "Nama berkas:"
 
 #: ../data/ui/renderingdialog.ui.h:5
-#, fuzzy
 msgid "Container format:"
-msgstr "format pembatasan"
+msgstr "Format wadah:"
 
 #: ../data/ui/renderingdialog.ui.h:6 ../data/ui/startupwizard.ui.h:5
 #: ../pitivi/mainwindow.py:468
@@ -467,9 +435,8 @@ msgid "Help"
 msgstr "Bantuan"
 
 #: ../data/ui/renderingdialog.ui.h:8
-#, fuzzy
 msgid "Scale:"
-msgstr "_Skala"
+msgstr "Skala:"
 
 #: ../data/ui/renderingdialog.ui.h:9
 msgid "Scale"
@@ -480,28 +447,24 @@ msgid "Height"
 msgstr "Tinggi"
 
 #: ../data/ui/renderingdialog.ui.h:11
-#, fuzzy
 msgid "Project Settings..."
-msgstr "_Pengaturan"
+msgstr "Pengaturan Projek..."
 
 #: ../data/ui/renderingdialog.ui.h:12
-#, fuzzy
 msgid "Advanced..."
-msgstr "Tingk_at lanjut..."
+msgstr "Tingkat Lanjut..."
 
 #: ../data/ui/renderingdialog.ui.h:13
-#, fuzzy
 msgid "Codec:"
-msgstr "codec"
+msgstr "Kodek:"
 
 #: ../data/ui/renderingdialog.ui.h:14
 msgid "Framerate"
 msgstr "Laju frame"
 
 #: ../data/ui/renderingdialog.ui.h:20
-#, fuzzy
 msgid "Automatically render from proxy files"
-msgstr "Apakah menghapus berkas-berkas lama dari tong sampah secara otomatis"
+msgstr "Secara otomatis render dari berkas proksi"
 
 #: ../data/ui/renderingdialog.ui.h:21
 msgid ""
@@ -511,10 +474,15 @@ msgid ""
 "This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
+"Gunakan berkas proksi bila mereka tersedia dan format media aset sumber "
+"tidak didukung secara resmi.\n"
+"\n"
+"Opsi ini adalah trade-off yang baik antara kualitas dari video yang dirender "
+"dan stabilitas."
 
 #: ../data/ui/renderingdialog.ui.h:24
 msgid "Always render from proxy files"
-msgstr ""
+msgstr "Selalu render dari berkas proksi"
 
 #: ../data/ui/renderingdialog.ui.h:25
 msgid ""
@@ -524,7 +492,7 @@ msgstr ""
 
 #: ../data/ui/renderingdialog.ui.h:26
 msgid "Never render from proxy files"
-msgstr ""
+msgstr "Jangan pernah render dari berkas proksi"
 
 #: ../data/ui/renderingdialog.ui.h:27
 msgid ""
@@ -535,9 +503,8 @@ msgid ""
 msgstr ""
 
 #: ../data/ui/renderingprogress.ui.h:1
-#, fuzzy
 msgid "Rendering"
-msgstr "Merender keping-keping bagi kertas dan tinta yang dipilih."
+msgstr "Perenderan"
 
 #: ../data/ui/renderingprogress.ui.h:2
 msgid ""
@@ -560,9 +527,8 @@ msgid "Initializing..."
 msgstr "Menginisialisasi..."
 
 #: ../data/ui/renderingprogress.ui.h:8
-#, fuzzy
 msgid "Estimated filesize:"
-msgstr "Mode tampilan ukuran berkas"
+msgstr "Perkiraan ukuran berkas:"
 
 #: ../data/ui/startupwizard.ui.h:1
 msgid "Welcome"
@@ -570,74 +536,67 @@ msgstr "Selamat Datang"
 
 #: ../data/ui/startupwizard.ui.h:2
 msgid "Double-click a project below to load it:"
-msgstr ""
+msgstr "Klik ganda suatu projek di bawah untuk memuatnya:"
 
 #: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:92
 msgid "New"
 msgstr "Baru"
 
 #: ../data/ui/startupwizard.ui.h:4
-#, fuzzy
 msgid "Browse projects..."
-msgstr "Telusur"
+msgstr "Ramban projek..."
 
 #: ../data/ui/startupwizard.ui.h:6
 msgid "Keyboard shortcuts"
 msgstr "Pintasan papan tik"
 
 #: ../data/ui/startupwizard.ui.h:7
-#, fuzzy
 msgid "Missing dependencies..."
-msgstr "abaikan kebergantungan sistem yang hilang"
+msgstr "Kurang kebergantungan..."
 
 #: ../data/ui/timelinetoolbar.ui.h:1
 msgid "Split clips at playhead position"
-msgstr ""
+msgstr "Belah klip pada posisi pemutaran"
 
 #: ../data/ui/timelinetoolbar.ui.h:2
 msgid "Split"
 msgstr "Belah"
 
 #: ../data/ui/timelinetoolbar.ui.h:3
-#, fuzzy
 msgid "Delete clips"
-msgstr "Banyaknya klip multimedia dalam dokumen."
+msgstr "Hapus klip"
 
 #: ../data/ui/timelinetoolbar.ui.h:4
 msgid "Delete"
 msgstr "Hapus"
 
 #: ../data/ui/timelinetoolbar.ui.h:5
-#, fuzzy
 msgid "Group clips"
-msgstr "Ke~lompok..."
+msgstr "Kelompokkan klip"
 
 #: ../data/ui/timelinetoolbar.ui.h:6
 msgid "Group"
 msgstr "Grup"
 
 #: ../data/ui/timelinetoolbar.ui.h:7
-#, fuzzy
 msgid "Ungroup clips"
-msgstr "Pisahkan Kel~ompok..."
+msgstr "Pecahkan kelompok klip"
 
 #: ../data/ui/timelinetoolbar.ui.h:8
 msgid "Ungroup"
 msgstr "Lepaskan kelompok"
 
 #: ../data/ui/timelinetoolbar.ui.h:9
-#, fuzzy
 msgid "Copy clips"
-msgstr "Banyaknya klip multimedia dalam dokumen."
+msgstr "Salin klip"
 
 #: ../data/ui/timelinetoolbar.ui.h:10
-#, fuzzy
 msgid "Paste clips"
-msgstr "Banyaknya klip multimedia dalam dokumen."
+msgstr "Tempel klip"
 
 #: ../data/ui/timelinetoolbar.ui.h:11
 msgid "Align clips based on their soundtracks"
-msgstr ""
+msgstr "Ratakan klip berdasarkan trek suara mereka"
 
 #: ../data/ui/timelinetoolbar.ui.h:12
 msgid "Align"
@@ -663,19 +622,16 @@ msgid "Select a title clip to edit or create a new one."
 msgstr ""
 
 #: ../data/ui/titleeditor.ui.h:3
-#, fuzzy
 msgid "Choose a font"
-msgstr "Pilih Fonta Catatan"
+msgstr "Pilih sebuah fonta"
 
 #: ../data/ui/titleeditor.ui.h:4
-#, fuzzy
 msgid "Text color"
-msgstr "Warna Teks"
+msgstr "Warna teks"
 
 #: ../data/ui/titleeditor.ui.h:5
-#, fuzzy
 msgid "Pick a text color"
-msgstr "Pilih warna"
+msgstr "Pilih warna teks"
 
 #: ../data/ui/titleeditor.ui.h:6
 msgid "Background color"
@@ -686,101 +642,99 @@ msgid "Pick a background color"
 msgstr "Pilih warna latar"
 
 #: ../data/ui/titleeditor.ui.h:8
-#, fuzzy
 msgid "Horizontal alignment:"
-msgstr "Perataan Horisontal:"
+msgstr "Perataan horisontal:"
 
 #: ../data/ui/titleeditor.ui.h:9
-#, fuzzy
 msgid "Vertical alignment:"
-msgstr "Perataan baku vertikal"
+msgstr "Perataan vertikal:"
 
 #: ../data/ui/titleeditor.ui.h:10
-#, fuzzy
 msgid "Advanced positioning"
-msgstr "Tingk_at lanjut..."
+msgstr "Pengaturan posisi tingkat lanjut"
 
 #: ../pitivi/application.py:157
 msgid "General"
 msgstr "Umum"
 
 #: ../pitivi/application.py:162
-#, fuzzy
 msgid "Undo the most recent action"
-msgstr "Batalkan langkah terakhir Anda"
+msgstr "Batalkan langkah terakhir"
 
 #: ../pitivi/application.py:168
-#, fuzzy
 msgid "Redo the most recent action"
-msgstr "Batalkan langkah terakhir Anda"
+msgstr "Jadikan lagi langkah terakhir"
 
 #: ../pitivi/application.py:173
 msgid "Quit"
 msgstr "Keluar"
 
 #: ../pitivi/application.py:180
-#, fuzzy
 msgid "Show the Shortcuts Window"
-msgstr "Gagal mendapat jendela pintasan!"
+msgstr "Tampilkan Jendela Pintasan"
 
 #. Translators: %s is a Python module name or another os component
 #: ../pitivi/check.py:109
-#, fuzzy, python-format
+#, python-format
 msgid "- %s not found on the system"
-msgstr "Objek \"%s\", \"%s\" tidak ditemukan"
+msgstr "- %s tidak ditemukan pada sistem"
 
 #. Translators: %s is a Python module name or another os component
 #: ../pitivi/check.py:112
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
-msgstr ""
+msgstr "- %s versi %s terpasang tapi Pitivi memerlukan paling tidak versi %s"
 
 #: ../pitivi/check.py:271
 msgid "ERROR - The following hard dependencies are unmet:"
-msgstr ""
+msgstr "KESALAHAN - Kebergantungan kuat berikut tak terpenuhi:"
 
 #: ../pitivi/check.py:280
-#, fuzzy
 msgid "Missing soft dependency:"
-msgstr "tanda pisah"
+msgstr "Kurang kebergantungan lunak:"
 
 #: ../pitivi/check.py:287
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
 msgstr ""
+"KESALAHAN — Tidak bisa membuat suatu Gst.Fraction — ini berarti gst-python "
+"tidak terpasang secara benar."
 
 #: ../pitivi/check.py:292
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
 msgstr ""
+"Tidak bisa membuat muara keluaran audio. Pastikan bahwa Anda punya yang "
+"valid (pulsesink, alsasink, atau osssink)."
 
 #: ../pitivi/check.py:297
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
+"Tidak bisa membuat muara keluaran video. Pastikan bahwa Anda punya gtksink."
 
 #: ../pitivi/check.py:310
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
-msgstr ""
+msgstr "Tidak bisa mengimpor '%s'. Pastikan bahwa itu tersedia."
 
 #: ../pitivi/check.py:325
 msgid "Could not import 'gi'. Make sure you have pygobject available."
-msgstr ""
+msgstr "Tidak bisa mengimpor 'gi'. Pastikan bahwa pygobject tersedia."
 
 #: ../pitivi/check.py:394
 msgid "enables sound notifications when rendering is complete"
-msgstr ""
+msgstr "memfungsikan pemberitahuan suara ketika perenderan selesai"
 
 #: ../pitivi/check.py:395
 msgid "enables visual notifications when rendering is complete"
-msgstr ""
+msgstr "memfungsikan pemberitahuan visual ketika perenderan selesai"
 
 #: ../pitivi/check.py:396
 msgid "additional multimedia codecs through the GStreamer Libav library"
-msgstr ""
+msgstr "kodek multimedia tambahan melalui pustaka GStreamer Libav"
 
 #: ../pitivi/check.py:397
 msgid ""
@@ -793,9 +747,8 @@ msgid "Effects"
 msgstr "Efek"
 
 #: ../pitivi/clipproperties.py:140
-#, fuzzy
 msgid "Remove effect"
-msgstr "Efek"
+msgstr "Hapus efek"
 
 #: ../pitivi/clipproperties.py:175
 msgid "Active"
@@ -806,28 +759,24 @@ msgid "Type"
 msgstr "Tipe"
 
 #: ../pitivi/clipproperties.py:187
-#, fuzzy
 msgid "Effect name"
-msgstr "Efek"
+msgstr "Nama efek"
 
 #: ../pitivi/clipproperties.py:209
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 
 #: ../pitivi/clipproperties.py:228
-#, fuzzy
 msgid "Clip Effects"
-msgstr "~Galeri Klip Seni"
+msgstr "Efek Klip"
 
 #: ../pitivi/clipproperties.py:234
-#, fuzzy
 msgid "Remove the selected effect"
-msgstr "Hapus tag yang dipilih"
+msgstr "Hapus efek yang dipilih"
 
 #: ../pitivi/clipproperties.py:555
-#, fuzzy
 msgid "Transformation"
-msgstr "Matriks Transformasi"
+msgstr "Transformasi"
 
 #: ../pitivi/effects.py:59
 msgid "Colors"
@@ -841,12 +790,11 @@ msgstr "Matikan pengkomposisian"
 #: ../pitivi/effects.py:83
 #, fuzzy
 msgid "Noise & blur"
-msgstr "Ka_bur"
+msgstr "Derau & kabur"
 
 #: ../pitivi/effects.py:89
-#, fuzzy
 msgid "Analysis"
-msgstr "~Analysis of Variance (ANOVA)..."
+msgstr "Analisis"
 
 #: ../pitivi/effects.py:97
 msgid "Geometry"
@@ -871,24 +819,20 @@ msgid "Uncategorized"
 msgstr "Tanpa kategori"
 
 #: ../pitivi/effects.py:283 ../pitivi/effects.py:300
-#, fuzzy
 msgid "All effects"
-msgstr "Efek"
+msgstr "Semua efek"
 
 #: ../pitivi/mainwindow.py:262 ../pitivi/medialibrary.py:533
-#, fuzzy
 msgid "Media Library"
-msgstr "~Media"
+msgstr "Pustaka Media"
 
 #: ../pitivi/mainwindow.py:264
-#, fuzzy
 msgid "Effect Library"
-msgstr "Perpustakaan"
+msgstr "Pustaka Efek"
 
 #: ../pitivi/mainwindow.py:275
-#, fuzzy
 msgid "Clip"
-msgstr "~Galeri Klip Seni"
+msgstr "Klip"
 
 #: ../pitivi/mainwindow.py:277
 msgid "Transition"
@@ -922,38 +866,34 @@ msgid "Project"
 msgstr "Projek"
 
 #: ../pitivi/mainwindow.py:444
-#, fuzzy
 msgid "Save the current project"
-msgstr "Atur Projek _Kini"
+msgstr "Simpan projek sekarang"
 
 #: ../pitivi/mainwindow.py:451
 msgid "Create a new project"
 msgstr "Membuat projek baru"
 
 #: ../pitivi/mainwindow.py:457
-#, fuzzy
 msgid "Open a project"
-msgstr "Buka Pr_oyek"
+msgstr "Buka projek"
 
 #: ../pitivi/mainwindow.py:463
-#, fuzzy
 msgid "Save the current project as"
-msgstr "Atur Projek _Kini"
+msgstr "Simpan projek sekarang sebagai"
 
 #: ../pitivi/mainwindow.py:474
-#, fuzzy
 msgid "Show the menu button content"
-msgstr "Lokasi isi menu"
+msgstr "Tampilkan isi tombol menu"
 
 #: ../pitivi/mainwindow.py:607
-#, fuzzy, python-format
+#, python-format
 msgid "Development version: %s"
-msgstr "versi pengembangan"
+msgstr "Versi pengembangan: %s"
 
 #: ../pitivi/mainwindow.py:609
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
-msgstr ""
+msgstr "Versi %(cur_ver)s — %(new_ver)s tersedia"
 
 #: ../pitivi/mainwindow.py:613 ../pitivi/mainwindow.py:615
 #, python-format
@@ -961,14 +901,12 @@ msgid "Version %s"
 msgstr "Versi %s"
 
 #: ../pitivi/mainwindow.py:624
-#, fuzzy
 msgid "Current maintainers:"
-msgstr "Pemelihara"
+msgstr "Pemelihara saat ini:"
 
 #: ../pitivi/mainwindow.py:630
-#, fuzzy
 msgid "Past maintainers:"
-msgstr "Pemelihara"
+msgstr "Pemelihara terdahulu:"
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
@@ -1006,9 +944,8 @@ msgid "Open"
 msgstr "Buka"
 
 #: ../pitivi/mainwindow.py:688
-#, fuzzy
 msgid "All supported formats"
-msgstr "Semua format palet yang didukung"
+msgstr "Semua format yang didukung"
 
 #: ../pitivi/mainwindow.py:746
 #, fuzzy, python-format
@@ -1397,7 +1334,7 @@ msgstr "<b>Perenderan HTML</b>"
 #: ../pitivi/render.py:621
 #, fuzzy
 msgid "Unsupported"
-msgstr "Ruas tak didukung"
+msgstr "Tak didukung"
 
 #: ../pitivi/render.py:655
 #, fuzzy
@@ -1441,7 +1378,7 @@ msgstr "Selesai mencetak."
 #: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
 #, fuzzy
 msgid "Absolute"
-msgstr "URI basis tidak absolut"
+msgstr "Absolut"
 
 #: ../pitivi/titleeditor.py:92
 msgid "Top"
@@ -1502,7 +1439,7 @@ msgstr ""
 #: ../pitivi/transitions.py:246
 #, fuzzy
 msgid "Sharp"
-msgstr "s sharp"
+msgstr "Tajam"
 
 #: ../pitivi/transitions.py:248
 msgid "Smooth"
@@ -1759,7 +1696,7 @@ msgstr "Tata ulang pintasan ke nilai baku"
 #: ../pitivi/dialogs/prefs.py:436
 #, fuzzy
 msgid "Set Shortcut"
-msgstr "Pintasan:"
+msgstr "Atur Pintasan"
 
 #. Setup the widgets used in the dialog.
 #: ../pitivi/dialogs/prefs.py:451
