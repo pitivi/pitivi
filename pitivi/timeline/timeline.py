@@ -1753,9 +1753,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
         offset += ges_clip.props.in_point
 
-        for ges_track_element in ges_track_elements:
-            keyframe_curve = ges_track_element.ui.keyframe_curve
-            keyframe_curve.toggle_keyframe(offset)
+        with self.app.action_log.started("Toggle keyframe", toplevel=True):
+            for ges_track_element in ges_track_elements:
+                keyframe_curve = ges_track_element.ui.keyframe_curve
+                keyframe_curve.toggle_keyframe(offset)
 
     def _playPauseCb(self, unused_action, unused_parameter):
         self._project.pipeline.togglePlayback()
