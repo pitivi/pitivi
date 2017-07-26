@@ -506,6 +506,7 @@ class RenderDialog(Loggable):
                 return
 
         self.updateResolution()
+        self.project.add_encoding_profile(self.project.container_profile)
         self._setting_encoding_profile = False
 
     def _updatePresetMenuButton(self, unused_source, unused_target):
