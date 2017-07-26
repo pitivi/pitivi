@@ -487,6 +487,8 @@ class RenderDialog(Loggable):
             return
 
         self.updateAvailableEncoders()
+        self._update_valid_audio_restrictions(Gst.ElementFactory.find(self.project.aencoder))
+        self._update_valid_video_restrictions(Gst.ElementFactory.find(self.project.vencoder))
         for i, (combo, name, value) in enumerate([
                 (self.audio_encoder_combo, "aencoder", factory("aencoder")),
                 (self.video_encoder_combo, "vencoder", factory("vencoder")),
