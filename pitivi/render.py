@@ -79,7 +79,10 @@ class Encoders(Loggable):
     QUICKTIME = "qtmux"
     WEBM = "webmmux"
 
-    AAC = "voaacenc"
+    if Gst.ElementFactory.find("fdkaacenc"):
+        AAC = "fdkaacenc"
+    else:
+        AAC = "voaacenc"
     AC3 = "avenc_ac3_fixed"
     OPUS = "opusenc"
     VORBIS = "vorbisenc"

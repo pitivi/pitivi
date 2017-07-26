@@ -278,6 +278,18 @@
             ]
         },
         {
+            "name": "fdkaac",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/mstorsjo/fdk-aac.git",
+                    "branch": "v0.1.5",
+                    "commit": "74c1a2a4f831285cbd93ec1427f1670d3c5c5e52"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
