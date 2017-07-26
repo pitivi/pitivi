@@ -306,3 +306,90 @@ def unicode_error_dialog():
     dialog.set_title(_("Error while decoding a string"))
     dialog.run()
     dialog.destroy()
+
+
+def intersect(v1, v2):
+    s = Gst.Structure('t', t=v1).intersect(Gst.Structure('t', t=v2))
+    if s:
+        return s['t']
+
+    return None
+
+
+def fixate_caps_with_default_values(template, restrictions, default_values,
+                                    prev_vals=None):
+    """Fixates @template taking into account other restriction values.
+
+    The resulting caps will only contain the fields from @default_values,
+    @restrictions and @prev_vals
+
+    Args:
+        template (Gst.Caps) : The pad template to fixate.
+        restrictions (Gst.Caps): Restriction caps to be used to fixate
+            @template. This is the minimum requested
+            restriction. Can be None
+        default_values (dict) : Dictionary containing the minimal fields
+            to be fixated and some default values (can be ranges).
+        prev_vals (Optional[Gst.Caps]) : Some values that were previously
+            used, and should be kept instead of the default values if possible.
+
+    Returns:
+        Gst.Caps: The caps resulting from the previously defined operations.
+    """
+    res = Gst.Caps.new_empty()
+    fields = set(default_values.keys())
+    if restrictions:
+        for struct in restrictions:
+            fields.update(struct.keys())
+
+        log.debug("utils", "Intersect template %s with the restriction %s",
+                  template, restrictions)
+        tmp = template.intersect(restrictions)
+
+        if not tmp:
+            log.warning("utils",
+                        "No common format between template %s and restrictions %s",
+                        template, restrictions)
+        else:
+            template = tmp
+
+    for struct in template:
+        struct = struct.copy()
+        for field in fields:
+            prev_val = None
+            default_val = default_values.get(field)
+            if prev_vals and prev_vals[0].has_field(field):
+                prev_val = prev_vals[0][field]
+
+            if not struct.has_field(field):
+                if prev_val:
+                    struct[field] = prev_val
+                elif default_val:
+                    struct[field] = default_val
+            else:
+                v = None
+                struct_val = struct[field]
+                if prev_val:
+                    v = intersect(struct_val, prev_val)
+                    if v is not None:
+                        struct[field] = v
+                if v is None and default_val:
+                    v = intersect(struct_val, default_val)
+                    if v is not None:
+                        struct[field] = v
+                else:
+                    log.info("utils", "Field %s from %s is plainly fixated",
+                             field, struct)
+
+        struct = struct.copy()
+        for key in struct.keys():
+            if key not in fields:
+                struct.remove_field(key)
+
+        log.debug("utils", "Adding %s to resulting caps", struct)
+        res.append_structure(struct)
+
+    res.mini_object.refcount += 1
+    res = res.fixate()
+    log.debug("utils", "Fixated %s", res)
+    return res

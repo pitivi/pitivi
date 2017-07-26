@@ -272,8 +272,12 @@ class TestRender(common.TestCase):
             i = find_preset_row_index(preset_combo, profile_name)
             self.assertIsNotNone(i)
             preset_combo.set_active(i)
-        from pitivi.render import RenderingProgressDialog
 
+        self.render(dialog)
+
+    def render(self, dialog):
+        """Renders pipeline from @dialog."""
+        from pitivi.render import RenderingProgressDialog
         with tempfile.TemporaryDirectory() as temp_dir:
             # Start rendering
             with mock.patch.object(dialog.filebutton, "get_uri",

@@ -479,7 +479,7 @@ class RenderDialog(Loggable):
         def factory(x):
             return Encoders().factories_by_name.get(getattr(self.project, x))
 
-        self.project.set_container_profile(encoding_profile, reset_all=True)
+        self.project.set_container_profile(encoding_profile)
         self._setting_encoding_profile = True
 
         if not set_combo_value(self.muxer_combo, factory('muxer')):
@@ -487,15 +487,15 @@ class RenderDialog(Loggable):
             return
 
         self.updateAvailableEncoders()
-        for i, (combo, value) in enumerate([
-                (self.audio_encoder_combo, factory('aencoder')),
-                (self.video_encoder_combo, factory('vencoder')),
-                (self.sample_rate_combo, self.project.audiorate),
-                (self.channels_combo, self.project.audiochannels),
-                (self.frame_rate_combo, self.project.videorate)]):
+        for i, (combo, name, value) in enumerate([
+                (self.audio_encoder_combo, "aencoder", factory("aencoder")),
+                (self.video_encoder_combo, "vencoder", factory("vencoder")),
+                (self.sample_rate_combo, "audiorate", self.project.audiorate),
+                (self.channels_combo, "audiochannels", self.project.audiochannels),
+                (self.frame_rate_combo, "videorate", self.project.videorate)]):
             if value is None:
-                self.error("%d - Got no value for combo %s... rolling back",
-                           i, combo)
+                self.error("%d - Got no value for %s (%s)... rolling back",
+                           i, name, combo)
                 rollback()
                 return
 

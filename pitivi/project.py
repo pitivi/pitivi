@@ -39,6 +39,7 @@ from pitivi.render import Encoders
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
@@ -1171,14 +1172,6 @@ class Project(Loggable, GES.Project):
         if container_profile == self.container_profile:
             return False
 
-        previous_audio_rest = None
-        previous_video_rest = None
-        if not reset_all and self.container_profile:
-            if self.audio_profile:
-                previous_audio_rest = self.audio_profile.get_restriction()
-            if self.video_profile:
-                previous_video_rest = self.video_profile.get_restriction()
-
         muxer = self._getElementFactoryName(
             Encoders().muxers, container_profile)
         if muxer is None:
@@ -1192,7 +1185,7 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("video/x-raw"))
 
-                self._ensureVideoRestrictions(profile, previous_video_rest)
+                self._ensureVideoRestrictions(profile)
                 vencoder = self._getElementFactoryName(Encoders().vencoders, profile)
                 if vencoder:
                     profile.set_preset_name(vencoder)
@@ -1201,7 +1194,7 @@ class Project(Loggable, GES.Project):
                 if profile.get_restriction() is None:
                     profile.set_restriction(Gst.Caps("audio/x-raw"))
 
-                self._ensureAudioRestrictions(profile, previous_audio_rest)
+                self._ensureAudioRestrictions(profile)
                 aencoder = self._getElementFactoryName(Encoders().aencoders, profile)
                 if aencoder:
                     profile.set_preset_name(aencoder)
@@ -1491,57 +1484,82 @@ class Project(Loggable, GES.Project):
         if not self.ges_timeline.get_layers():
             self.ges_timeline.append_layer()
 
-    def _ensureRestrictions(self, profile, values, ref_restrictions=None):
-        """Make sure restriction values defined in @values are set on @profile.
+    def _ensureRestrictions(self, profile, defaults, ref_restrictions=None,
+                            prev_vals=None):
+        """Make sure restriction values defined in @defaults are set on @profile.
 
         Attributes:
             profile (Gst.EncodingProfile): The Gst.EncodingProfile to use
-            values (dict): A key value dict to use to set restriction values
+            defaults (dict): A key value dict to use to set restriction defaults
             ref_restrictions (Gst.Caps): Reuse values from those caps instead
                                          of @values if available.
 
         """
-        self.debug("Ensuring %s", profile.get_restriction().to_string())
-        for fieldname, value in values:
-            # Only consider the first GstStructure
-            # FIXME Figure out everywhere how to be smarter.
-            cvalue = profile.get_restriction()[0][fieldname]
-            if cvalue is None:
-                if ref_restrictions and ref_restrictions[0][fieldname]:
-                    value = ref_restrictions[0][fieldname]
-                res = Project._set_restriction(profile, fieldname, value)
+        encoder = None
+        if isinstance(profile, GstPbutils.EncodingAudioProfile):
+            facttype = Gst.ELEMENT_FACTORY_TYPE_AUDIO_ENCODER
+        else:
+            facttype = Gst.ELEMENT_FACTORY_TYPE_VIDEO_ENCODER
 
-        encoder = profile.get_preset_name()
-        if encoder:
-            self._enforce_video_encoder_restrictions(encoder, profile)
+        ebin = Gst.ElementFactory.make('encodebin', None)
+        ebin.props.profile = profile
+        for element in ebin.iterate_recurse():
+            if element.get_factory().list_is_type(facttype):
+                encoder = element
+                break
 
-    def _ensureVideoRestrictions(self, profile=None, ref_restrictions=None):
-        values = [
-            ("width", 720),
-            ("height", 576),
-            ("framerate", Gst.Fraction(25, 1)),
-            ("pixel-aspect-ratio", Gst.Fraction(1, 1))
-        ]
+        encoder_sinkcaps = encoder.sinkpads[0].get_pad_template().get_caps().copy()
+        self.debug("%s - Ensuring %s\n  defaults: %s\n  ref_restrictions: %s\n  prev_vals: %s)",
+                   encoder, encoder_sinkcaps, defaults, ref_restrictions,
+                   prev_vals)
+        restriction = fixate_caps_with_default_values(encoder_sinkcaps,
+                                                      ref_restrictions,
+                                                      defaults,
+                                                      prev_vals)
+        assert(restriction)
+        preset_name = encoder.get_factory().get_name()
+        profile.set_restriction(restriction)
+        profile.set_preset_name(preset_name)
+
+        self._enforce_video_encoder_restrictions(preset_name, profile)
+        self.info("Fully set restriction: %s", profile.get_restriction().to_string())
+
+    def _ensureVideoRestrictions(self, profile=None):
+        defaults = {
+            "width": 720,
+            "height": 576,
+            "framerate": Gst.Fraction(25, 1),
+            "pixel-aspect-ratio": Gst.Fraction(1, 1)
+        }
+
+        prev_vals = None
+        if self.video_profile:
+            prev_vals = self.video_profile.get_restriction().copy()
+
+        ref_restrictions = None
         if not profile:
             profile = self.video_profile
-        self._ensureRestrictions(profile, values, ref_restrictions)
+        else:
+            ref_restrictions = profile.get_restriction()
 
-    def _ensureAudioRestrictions(self, profile=None, ref_restrictions=None):
+        self._ensureRestrictions(profile, defaults, ref_restrictions,
+                                 prev_vals)
+
+    def _ensureAudioRestrictions(self, profile=None):
+        ref_restrictions = None
         if not profile:
             profile = self.audio_profile
-        defaults = [["channels", 2], ["rate", 44100]]
-        for fv in defaults:
-            field, value = fv
-            fvalue = profile.get_format()[0][field]
-            if isinstance(fvalue, Gst.ValueList) and value not in fvalue.array:
-                fv[1] = fvalue.array[0]
-            elif isinstance(fvalue, range) and value not in fvalue:
-                fv[1] = fvalue[0]
-            else:
-                self.warning("How should we handle ensuring restriction caps"
-                             " compatibility for field %s with format value: %s",
-                             field, fvalue)
-        return self._ensureRestrictions(profile, defaults, ref_restrictions)
+        else:
+            ref_restrictions = profile.get_restriction()
+
+        defaults = {"channels": Gst.IntRange(range(1, 2147483647)),
+                    "rate": Gst.IntRange(range(8000, GLib.MAXINT))}
+        prev_vals = None
+        if self.audio_profile:
+            prev_vals = self.audio_profile.get_restriction().copy()
+
+        return self._ensureRestrictions(profile, defaults, ref_restrictions,
+                                        prev_vals)
 
     def _maybeInitSettingsFromAsset(self, asset):
         """Updates the project settings to match the specified asset.
