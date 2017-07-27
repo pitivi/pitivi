@@ -553,10 +553,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None
+        if self._project:
+            self._project.pipeline.disconnect_by_func(self._position_cb)
+
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
+            self._project.pipeline.connect("position", self._position_cb)
 
     def _initButtons(self):
         clear_button = self.builder.get_object("clear_button")
@@ -735,14 +739,27 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         return self.source.get_child_property(prop)
 
+    def _position_cb(self, unused_pipeline, unused_position):
+        if not self.__source_uses_keyframes():
+            return
+        for prop in ["posx", "posy", "width", "height"]:
+            self.__update_spin_btn(prop)
+        # Keep the overlay stack in sync with the spin buttons values
+        self.app.gui.viewer.overlay_stack.update(self.source)
+
     def __source_property_changed_cb(self, unused_source, unused_element, param):
+        self.__update_spin_btn(param.name)
+
+    def __update_spin_btn(self, prop):
+        assert self.source
+
         try:
-            spin = self.spin_buttons[param.name]
-            spin_handler_id = self.spin_buttons_handler_ids[param.name]
+            spin = self.spin_buttons[prop]
+            spin_handler_id = self.spin_buttons_handler_ids[prop]
         except KeyError:
             return
 
-        res, value = self.__get_source_property(param.name)
+        res, value = self.__get_source_property(prop)
         assert res
         if spin.get_value() != value:
             # Make sure self._onValueChangedCb doesn't get called here. If that
@@ -757,14 +774,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__update_control_bindings()
         self.__update_keyframes_ui()
-
-    def _update_spin_buttons(self):
-        for name, spinbtn in list(self.spin_buttons.items()):
-            spin_handler_id = self.spin_buttons_handler_ids[name]
-            res, value = self.source.get_child_property(name)
-            assert res
-            with spinbtn.handler_block(spin_handler_id):
-                spinbtn.set_value(value)
 
     def __set_prop(self, prop, value):
         assert self.source
@@ -825,7 +834,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.source = source
         if self.source:
             self.__update_control_bindings()
-            self._update_spin_buttons()
+            for prop in self.spin_buttons:
+                self.__update_spin_btn(prop)
             self.__update_keyframes_ui()
             self.source.connect("deep-notify", self.__source_property_changed_cb)
             self.source.connect("control-binding-added", self._control_bindings_changed)
