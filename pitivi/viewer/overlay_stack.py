@@ -34,6 +34,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         Loggable.__init__(self)
         self.__overlays = {}
         self.__visible_overlays = []
+        self.__hide_all_overlays = False
         self.app = app
         self.window_size = numpy.array([1, 1])
         self.click_position = None
@@ -122,11 +123,12 @@ class OverlayStack(Gtk.Overlay, Loggable):
             overlay = self.__overlay_for_source(source)
             self.__visible_overlays.append(overlay)
         # check if viewer should be visible
-        for source, overlay in self.__overlays.items():
-            if source in sources:
-                overlay.show()
-            else:
-                overlay.hide()
+        if not self.__hide_all_overlays:
+            for source, overlay in self.__overlays.items():
+                if source in sources:
+                    overlay.show()
+                else:
+                    overlay.hide()
 
     def update(self, source):
         self.__overlays[source].update_from_source()
@@ -134,6 +136,18 @@ class OverlayStack(Gtk.Overlay, Loggable):
     def select(self, source):
         self.selected_overlay = self.__overlay_for_source(source)
         self.selected_overlay.queue_draw()
+
+    def hide_overlays(self):
+        if not self.__hide_all_overlays:
+            for overlay in self.__visible_overlays:
+                overlay.hide()
+            self.__hide_all_overlays = True
+
+    def show_overlays(self):
+        if self.__hide_all_overlays:
+            for overlay in self.__visible_overlays:
+                overlay.show()
+            self.__hide_all_overlays = False
 
     def set_cursor(self, name):
         cursor = None

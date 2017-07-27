@@ -460,6 +460,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.playpause_button.setPause()
             self.app.simple_inhibit(ViewerContainer.INHIBIT_REASON,
                                     Gtk.ApplicationInhibitFlags.IDLE)
+            self.overlay_stack.hide_overlays()
         else:
             if state == Gst.State.PAUSED:
                 if old_state != Gst.State.PAUSED:
@@ -470,6 +471,7 @@ class ViewerContainer(Gtk.Box, Loggable):
                     self.app.write_action(st)
 
                 self.playpause_button.setPlay()
+            self.overlay_stack.show_overlays()
             self.app.simple_uninhibit(ViewerContainer.INHIBIT_REASON)
 
 
