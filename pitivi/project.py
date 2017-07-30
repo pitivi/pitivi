@@ -667,7 +667,7 @@ class Project(Loggable, GES.Project):
         self.loaded = False
         self.at_least_one_asset_missing = False
         self.app = app
-        self.loading_assets = []
+        self.loading_assets = set()
         self.app.proxy_manager.connect("progress", self.__assetTranscodingProgressCb)
         self.app.proxy_manager.connect("error-preparing-asset",
                                        self.__proxyErrorCb)
@@ -1042,7 +1042,7 @@ class Project(Loggable, GES.Project):
 
         if progress == 100:
             self.info("No more loading assets")
-            self.loading_assets = []
+            self.loading_assets = set()
 
     def __assetTranscodingCancelledCb(self, unused_proxy_manager, asset):
         self.__setProxy(asset, None)
@@ -1089,12 +1089,12 @@ class Project(Loggable, GES.Project):
         asset.set_proxy(proxy)
         try:
             self.loading_assets.remove(asset)
-        except ValueError:
+        except KeyError:
             pass
 
         if proxy:
             self.add_asset(proxy)
-            self.loading_assets.append(proxy)
+            self.loading_assets.add(proxy)
 
         self.__updateAssetLoadingProgress()
 
@@ -1119,7 +1119,7 @@ class Project(Loggable, GES.Project):
             # Progress == 0 means "starting to import"
             self.emit("asset-loading-progress", 0, 0)
 
-        self.loading_assets.append(asset)
+        self.loading_assets.add(asset)
 
     def do_asset_removed(self, asset):
         self.app.proxy_manager.cancel_job(asset)
