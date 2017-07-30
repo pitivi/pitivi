@@ -45,6 +45,12 @@ monitor = None
 has_validate = False
 
 
+# FIXME Remove when we have a hard dep on Gst 1.14.
+def get_pipeline(scenario):
+    return getattr(scenario, "pipeline",
+                   scenario.get_pipeline())
+
+
 def Event(event_type, **kwargs):
     event_types_constructors = {
         Gdk.EventType.BUTTON_PRESS: Gdk.EventButton,
@@ -122,7 +128,7 @@ def stop(scenario, action):
         GstValidate.execute_action(GstValidate.get_action_type(action.type).overriden_type,
                                    action)
 
-        timeline = scenario.pipeline.props.timeline
+        timeline = get_pipeline(scenario).props.timeline
         project = timeline.get_asset()
 
         if project:
@@ -162,8 +168,8 @@ def positionChangedCb(pipeline, position, scenario, action,
 def seek(scenario, action):
     res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
                                                       "start")
-    scenario.pipeline.simple_seek(wanted_position)
-    scenario.pipeline.connect("position", positionChangedCb, scenario,
+    get_pipeline(scenario).simple_seek(wanted_position)
+    get_pipeline(scenario).connect("position", positionChangedCb, scenario,
                               action, wanted_position)
 
     return GstValidate.ActionReturn.ASYNC
@@ -278,7 +284,7 @@ def setEditingMode(timeline, scenario, action):
 
 
 def editContainer(scenario, action):
-    timeline = scenario.pipeline.props.timeline
+    timeline = get_pipeline(scenario).props.timeline
     container = timeline.get_element(action.structure["container-name"])
 
     if container is None:
@@ -372,14 +378,14 @@ def editContainer(scenario, action):
 
 
 def split_clip(scenario, action):
-    timeline = scenario.pipeline.props.timeline.ui
+    timeline = get_pipeline(scenario).props.timeline.ui
     timeline.get_parent()._splitCb(None, None)
 
     return True
 
 
 def zoom(scenario, action):
-    timeline = scenario.pipeline.props.timeline
+    timeline = get_pipeline(scenario).props.timeline
 
     GstValidate.print_action(action, action.type.replace('-', ' ') + "\n")
 
@@ -397,7 +403,7 @@ def setZoomLevel(scenario, action):
 
 
 def add_layer(scenario, action):
-    timeline = scenario.pipeline.props.timeline
+    timeline = get_pipeline(scenario).props.timeline
     if len(timeline.get_layers()) == 0:
         GstValidate.print_action(action, "Adding first layer\n")
         timeline.append_layer()
@@ -428,7 +434,7 @@ def remove_clip(scenario, action):
 
 def select_clips(scenario, action):
     should_select = True
-    timeline = scenario.pipeline.props.timeline
+    timeline = get_pipeline(scenario).props.timeline
     clip = timeline.get_element(action.structure["clip-name"])
 
     if clip is None:
