@@ -36,12 +36,12 @@ from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import binary_search
-from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.pipeline import MAX_BRINGING_TO_PAUSED_DURATION
+from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE

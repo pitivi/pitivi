@@ -687,6 +687,17 @@ class Project(Loggable, GES.Project):
         self.nb_remaining_file_to_import = 0
         self.nb_imported_files = 0
 
+        # Main assets that were proxied when saving the project but
+        # whose proxies had been deleted from the filesystem. The
+        # proxy files are being regenerated.
+        self.__deleted_proxy_files = set()
+
+        # List of proxy assets uris that were deleted on the filesystem
+        # and we are waiting for the main asset (ie. the file from
+        # which the proxy was generated) to be loaded before we can try to
+        # regenerate the proxy.
+        self.__awaited_deleted_proxy_targets = set()
+
         # Project property default values
         self.register_meta(GES.MetaFlag.READWRITE, "name", name)
         self.register_meta(GES.MetaFlag.READWRITE, "author", "")
@@ -980,6 +991,10 @@ class Project(Loggable, GES.Project):
     def __get_loading_project_progress(self):
         """Computes current advancement of asset loading during project loading.
 
+        During project loading we keep all loading assets to keep track of real advancement
+        during the whole process, whereas while adding new assets, they get removed from
+        the `loading_assets` list once the proxy is ready.
+
         Returns:
             int: The current asset loading progress (in percent).
         """
@@ -989,7 +1004,11 @@ class Project(Loggable, GES.Project):
             if asset.creation_progress < 100:
                 all_ready = False
             else:
-                asset.ready = True
+                # Check that we are not recreating deleted proxy
+                proxy_uri = self.app.proxy_manager.getProxyUri(asset)
+                if proxy_uri and proxy_uri not in self.__deleted_proxy_files and \
+                        asset.props.id not in self.__awaited_deleted_proxy_targets:
+                    asset.ready = True
                 num_loaded += 1
 
         if all_ready:
@@ -1077,10 +1096,16 @@ class Project(Loggable, GES.Project):
         self.__updateAssetLoadingProgress()
 
     def __proxyReadyCb(self, unused_proxy_manager, asset, proxy):
+        if proxy and proxy.props.id in self.__deleted_proxy_files:
+            self.info("Recreated proxy is now ready, stop having"
+                      " its target as a proxy.")
+            proxy.unproxy(asset)
+
         self.__setProxy(asset, proxy)
 
     def __setProxy(self, asset, proxy):
         asset.creation_progress = 100
+        asset.ready = True
         if proxy:
             proxy.ready = False
             proxy.error = None
@@ -1107,6 +1132,33 @@ class Project(Loggable, GES.Project):
             return
 
         self._prepare_asset_processing(asset)
+
+    def __regenerate_missing_proxy(self, asset):
+        self.info("Re generating deleted proxy file %s.", asset.props.id)
+        GES.Asset.needs_reload(GES.UriClip, asset.props.id)
+        self._prepare_asset_processing(asset)
+        asset.force_proxying = True
+        self.app.proxy_manager.add_job(asset)
+        self.__updateAssetLoadingProgress()
+
+    def do_missing_uri(self, error, asset):
+        if self.app.proxy_manager.is_proxy_asset(asset):
+            self.debug("Missing proxy file: %s", asset.props.id)
+            target_uri = self.app.proxy_manager.getTargetUri(asset)
+
+            GES.Asset.needs_reload(GES.UriClip, asset.props.id)
+            # Check if the target has already been loaded.
+            target = [asset for asset in self.list_assets(GES.UriClip) if
+                      asset.props.id == target_uri]
+            if target:
+                self.__regenerate_missing_proxy(target[0])
+            else:
+                self.__awaited_deleted_proxy_targets.add(target_uri)
+
+            self.__deleted_proxy_files.add(asset.props.id)
+            return target_uri
+
+        return GES.Project.do_missing_uri(self, error, asset)
 
     def _prepare_asset_processing(self, asset):
         asset.creation_progress = 0
@@ -1138,12 +1190,19 @@ class Project(Loggable, GES.Project):
                        " it must not be proxied", asset.get_id())
             return
 
+        if asset.props.id in self.__awaited_deleted_proxy_targets:
+            self.__regenerate_missing_proxy(asset)
+            self.__awaited_deleted_proxy_targets.remove(asset.props.id)
+        elif asset.props.id in self.__deleted_proxy_files:
+            self.info("Deleted proxy file %s now ready again.", asset.props.id)
+            self.__deleted_proxy_files.remove(asset.props.id)
+
         if self.loaded:
             if not asset.get_proxy_target() in self.list_assets(GES.Extractable):
                 self.app.proxy_manager.add_job(asset)
         else:
             self.debug("Project still loading, not using proxies: %s",
-                       asset.props.id)
+                    asset.props.id)
             asset.creation_progress = 100
             self.__updateAssetLoadingProgress()
 
@@ -1169,6 +1228,15 @@ class Project(Loggable, GES.Project):
         self._ensureTracks()
         self.ges_timeline.props.auto_transition = True
         self._ensureLayer()
+
+        if self.uri:
+            self.loading_assets = set([asset for asset in self.loading_assets if
+                                       self.app.proxy_manager.is_asset_queued(asset)])
+
+            if self.loading_assets:
+                self.debug("The following assets are still being transcoded: %s."
+                           " (They must be proxied assets with missing/deleted"
+                           " proxy files).", self.loading_assets)
 
         if self.scenario is not None:
             return
@@ -1250,7 +1318,13 @@ class Project(Loggable, GES.Project):
     def use_proxies_for_assets(self, assets):
         originals = []
         for asset in assets:
-            if not asset.get_proxy_target():
+            if not self.app.proxy_manager.is_proxy_asset(asset):
+                target = asset.get_proxy_target()
+                if target and target.props.id == self.app.proxy_manager.getProxyUri(asset):
+                    self.info("Missing proxy needs to be recreated after cancelling"
+                              " its recreation")
+                    target.unproxy(asset)
+
                 # The asset is not a proxy.
                 originals.append(asset)
         if originals:
@@ -1264,8 +1338,8 @@ class Project(Loggable, GES.Project):
 
     def disable_proxies_for_assets(self, assets, delete_proxy_file=False):
         for asset in assets:
-            proxy_target = asset.get_proxy_target()
-            if proxy_target:
+            if self.app.proxy_manager.is_proxy_asset(asset):
+                proxy_target = asset.get_proxy_target()
                 # The asset is a proxy for the proxy_target original asset.
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)

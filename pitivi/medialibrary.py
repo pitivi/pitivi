@@ -46,10 +46,10 @@ from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
-from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
@@ -310,7 +310,8 @@ class AssetThumbnail(Loggable):
     def __setState(self):
         asset = self.__asset
         target = asset.get_proxy_target()
-        if target and not target.get_error():
+        if self.proxy_manager.is_proxy_asset(asset) and target \
+                and not target.get_error():
             # The asset is a proxy.
             self.state = self.PROXIED
         elif asset.proxying_error:
@@ -809,17 +810,24 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _assetLoadingProgressCb(self, project, progress, estimated_time):
         self._progressbar.set_fraction(progress / 100)
 
+        proxying_files = []
         for row in self.storemodel:
-            row[COL_INFOTEXT] = beautify_asset(row[COL_ASSET])
+            asset = row[COL_ASSET]
+            row[COL_INFOTEXT] = beautify_asset(asset)
+
+            if not asset.ready:
+                proxying_files.append(asset)
+                if row[COL_THUMB_DECORATOR].state != AssetThumbnail.IN_PROGRESS:
+                    thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+                    row[COL_ICON_64] = thumbs_decorator.small_thumb
+                    row[COL_ICON_128] = thumbs_decorator.large_thumb
+                    row[COL_THUMB_DECORATOR] = thumbs_decorator
 
         if progress == 0:
             self._startImporting(project)
             return
 
         if project.loaded:
-            proxying_files = [asset
-                              for asset in project.loading_assets
-                              if not asset.ready]
             if estimated_time:
                 self.__last_proxying_estimate_time = beautify_ETA(int(
                     estimated_time * Gst.SECOND))
@@ -844,7 +852,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._doneImporting()
 
     def __assetProxyingCb(self, proxy, unused_pspec):
-        self.debug("Proxy is %s", proxy.props.id)
+        if not self.app.proxy_manager.is_proxy_asset(proxy):
+            self.info("Proxy is not a proxy in our terms (handling deleted proxy"
+                      " files while loading a project?) - ignore it")
+
+            return
+
+        self.debug("Proxy is %s - %s", proxy.props.id,
+                   proxy.get_proxy_target())
         self.__removeAsset(proxy)
 
         if proxy.get_proxy_target() is not None:
@@ -1174,7 +1189,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
         proxies = [asset.get_proxy_target() for asset in assets
-                   if asset.get_proxy_target()]
+                   if self.app.proxy_manager.is_proxy_asset(asset)]
         in_progress = [asset.creation_progress for asset in assets
                        if asset.creation_progress < 100]
 

@@ -235,9 +235,15 @@ class ProxyManager(GObject.Object, Loggable):
             <filename>.<file_size>.<proxy_extension>
         """
         asset_file = Gio.File.new_for_uri(asset.get_id())
-        file_size = asset_file.query_info(Gio.FILE_ATTRIBUTE_STANDARD_SIZE,
-                                          Gio.FileQueryInfoFlags.NONE,
-                                          None).get_size()
+        try:
+            file_size = asset_file.query_info(Gio.FILE_ATTRIBUTE_STANDARD_SIZE,
+                                              Gio.FileQueryInfoFlags.NONE,
+                                              None).get_size()
+        except GLib.Error as err:
+            if err.matches(Gio.io_error_quark(), Gio.IOErrorEnum.NOT_FOUND):
+                return None
+            else:
+                raise
 
         return "%s.%s.%s" % (asset.get_id(), file_size, self.proxy_extension)
 
@@ -358,6 +364,10 @@ class ProxyManager(GObject.Object, Loggable):
         self.emit("progress", asset, asset.creation_progress, estimated_time)
 
     def __proxyingPositionChangedCb(self, transcoder, position, asset):
+        if transcoder not in self.__running_transcoders:
+            self.info("Position changed after job cancelled!")
+            return
+
         self._transcoded_durations[asset] = position / Gst.SECOND
 
         duration = transcoder.props.duration
@@ -481,3 +491,19 @@ class ProxyManager(GObject.Object, Loggable):
                    force_proxying)
         self.__createTranscoder(asset)
         return
+
+
+def get_proxy_target(obj):
+    if isinstance(obj, GES.UriClip):
+        asset = obj.get_asset()
+    elif isinstance(obj, GES.TrackElement):
+        asset = obj.get_parent().get_asset()
+    else:
+        asset = obj
+
+    if ProxyManager.is_proxy_asset(asset):
+        target = asset.get_proxy_target()
+        if target and target.get_error() is None:
+            asset = target
+
+    return asset

@@ -27,9 +27,11 @@ from unittest import TestCase
 from gi.repository import GES
 from gi.repository import Gst
 
+from pitivi import medialibrary
 from pitivi.project import Project
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import path_from_uri
+from pitivi.utils.proxy import ProxyingStrategy
 from tests import common
 
 
@@ -341,6 +343,134 @@ class TestProjectLoading(common.TestCase):
         mainloop.run()
 
         self.assertEqual(len(assets), 1, assets)
+
+    def load_project_with_missing_proxy(self):
+        """Loads a project with missing proxies."""
+        uris = [common.get_sample_uri("1sec_simpsons_trailer.mp4")]
+        proxy_uri = uris[0] + ".232417.proxy.mkv"
+        PROJECT_STR = """<ges version='0.3'>
+  <project properties='properties;' metadatas='metadatas, name=(string)&quot;New\ Project&quot;, author=(string)Unknown, render-scale=(double)100;'>
+    <encoding-profiles>
+    </encoding-profiles>
+    <ressources>
+      <asset id='%(uri)s' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)1228000000;' metadatas='metadatas, audio-codec=(string)&quot;MPEG-4\ AAC\ audio&quot;, maximum-bitrate=(uint)130625, bitrate=(uint)130625, datetime=(datetime)2007-02-19T05:03:04Z, encoder=(string)Lavf54.6.100, container-format=(string)&quot;ISO\ MP4/M4A&quot;, video-codec=(string)&quot;H.264\ /\ AVC&quot;, file-size=(guint64)232417;'  proxy-id='file:///home/thiblahute/devel/pitivi/flatpak/pitivi/tests/samples/1sec_simpsons_trailer.mp4.232417.proxy.mkv' />
+      <asset id='%(proxy_uri)s' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)1228020833;' metadatas='metadatas, container-format=(string)Matroska, audio-codec=(string)Opus, language-code=(string)en, encoder=(string)Lavf54.6.100, bitrate=(uint)64000, video-codec=(string)&quot;Motion\ JPEG&quot;, file-size=(guint64)4695434;' />
+    </ressources>
+    <timeline properties='properties, auto-transition=(boolean)true, snapping-distance=(guint64)0;' metadatas='metadatas, duration=(guint64)0;'>
+      <track caps='video/x-raw(ANY)' track-type='4' track-id='0' properties='properties, async-handling=(boolean)false, message-forward=(boolean)true, caps=(string)&quot;video/x-raw\(ANY\)&quot;, restriction-caps=(string)&quot;video/x-raw\,\ width\=\(int\)720\,\ height\=\(int\)576\,\ framerate\=\(fraction\)25/1&quot;, mixing=(boolean)true;' metadatas='metadatas;'/>
+      <track caps='audio/x-raw(ANY)' track-type='2' track-id='1' properties='properties, async-handling=(boolean)false, message-forward=(boolean)true, caps=(string)&quot;audio/x-raw\(ANY\)&quot;, restriction-caps=(string)&quot;audio/x-raw\,\ format\=\(string\)S32LE\,\ channels\=\(int\)2\,\ rate\=\(int\)44100\,\ layout\=\(string\)interleaved&quot;, mixing=(boolean)true;' metadatas='metadatas;'/>
+      <layer priority='0' properties='properties, auto-transition=(boolean)true;' metadatas='metadatas, volume=(float)1;'>
+        <clip id='0' asset-id='%(proxy_uri)s' type-name='GESUriClip' layer-priority='0' track-types='6' start='0' duration='1228000000' inpoint='0' rate='0' properties='properties, name=(string)uriclip0, mute=(boolean)false, is-image=(boolean)false;' >
+          <source track-id='1' children-properties='properties, GstVolume::mute=(boolean)false, GstVolume::volume=(double)1;'>
+            <binding type='direct' source_type='interpolation' property='volume' mode='1' track_id='1' values =' 0:0.10000000000000001  1228000000:0.10000000000000001 '/>
+          </source>
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)1, GstDeinterlace::fields=(int)0, GstFramePositioner::height=(int)720, GstDeinterlace::mode=(int)0, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstDeinterlace::tff=(int)0, GstFramePositioner::width=(int)1280;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  1228000000:1 '/>
+          </source>
+        </clip>
+      </layer>
+      <groups>
+      </groups>
+    </timeline>
+</project>
+</ges>""" % {"uri": uris[0], "proxy_uri": proxy_uri}
+        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
+        proxy_manager = app.proxy_manager
+        project_manager = app.project_manager
+
+        mainloop = common.create_main_loop()
+
+        unused, xges_path = tempfile.mkstemp(suffix=".xges")
+        proj_uri = "file://" + os.path.abspath(xges_path)
+        app.project_manager.saveProject(uri=proj_uri)
+        medialib = medialibrary.MediaLibraryWidget(app)
+
+        with open(proj_uri[len("file://"):], "w") as f:
+            f.write(PROJECT_STR)
+
+        # Remove proxy
+        common.clean_proxy_samples()
+
+        def closing_project_cb(*args, **kwargs):
+            # Do not ask whether to save project on closing.
+            return True
+
+        def proxy_ready_cb(proxy_manager, asset, proxy):
+            self.assertEqual(proxy.props.id, proxy_uri)
+            mainloop.quit()
+
+        project_manager.connect("closing-project", closing_project_cb)
+        proxy_manager.connect_after("proxy-ready", proxy_ready_cb)
+
+        app.project_manager.loadProject(proj_uri)
+        return mainloop, app, medialib, proxy_uri
+
+    def test_load_project_with_missing_proxy(self):
+        """Checks loading a project with missing proxies."""
+        mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+        mainloop.run()
+        self.assertEqual(len(medialib.storemodel), 1)
+        self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
+                         proxy_uri)
+        self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
+                         medialibrary.AssetThumbnail.PROXIED)
+
+    def test_load_project_with_missing_proxy_progress_tracking(self):
+        """Checks progress tracking of loading project with missing proxies."""
+        from gi.repository import GstTranscoder
+
+        # Disable proxy generation by not making it start ever.
+        # This way we are sure it will not finish before we test
+        # the state while it is being rebuilt.
+        with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
+            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+            uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+
+            app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
+            mainloop.run()
+
+            self.assertEqual(len(medialib.storemodel), 1)
+            self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
+                             uri)
+            self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
+                             medialibrary.AssetThumbnail.IN_PROGRESS)
+
+    def test_load_project_with_missing_proxy_stop_generating_and_proxy(self):
+        """Checks cancelling creation of a missing proxies and forcing it again."""
+        from gi.repository import GstTranscoder
+
+        # Disable proxy generation by not making it start ever.
+        # This way we are sure it will not finish before we test
+        # stop generating the proxy and restart it.
+        with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
+            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+            uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+
+            app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
+            mainloop.run()
+            asset = medialib.storemodel[0][medialibrary.COL_ASSET]
+            app.project_manager.current_project.disable_proxies_for_assets([asset])
+
+            row, = medialib.storemodel
+            asset = row[medialibrary.COL_ASSET]
+            self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
+            self.assertEqual(asset.props.id, uri)
+            self.assertEqual(asset.ready, True)
+            self.assertEqual(asset.creation_progress, 100)
+            self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
+                             medialibrary.AssetThumbnail.NO_PROXY)
+
+        app.project_manager.current_project.use_proxies_for_assets([asset])
+        mainloop.run()
+
+        row, = medialib.storemodel
+        asset = row[medialibrary.COL_ASSET]
+        self.assertEqual(medialib._progressbar.is_visible(), False)
+        self.assertEqual(asset.props.id, proxy_uri)
+        self.assertEqual(asset.ready, True)
+        self.assertEqual(asset.creation_progress, 100)
+        self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
+                         medialibrary.AssetThumbnail.PROXIED)
 
 
 class TestProjectSettings(common.TestCase):

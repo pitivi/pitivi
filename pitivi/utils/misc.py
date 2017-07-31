@@ -82,21 +82,6 @@ def call_false(function, *args, **kwargs):
     return False
 
 
-def get_proxy_target(obj):
-    if isinstance(obj, GES.UriClip):
-        asset = obj.get_asset()
-    elif isinstance(obj, GES.TrackElement):
-        asset = obj.get_parent().get_asset()
-    else:
-        asset = obj
-
-    target = asset.get_proxy_target()
-    if target and target.get_error() is None:
-        asset = target
-
-    return asset
-
-
 # ------------------------------ URI helpers --------------------------------
 
 def isWritable(path):

@@ -44,8 +44,8 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import doLog
 from pitivi.utils.loggable import ERROR
 from pitivi.utils.loggable import INFO
-from pitivi.utils.misc import get_proxy_target
 from pitivi.utils.misc import path_from_uri
+from pitivi.utils.proxy import get_proxy_target
 
 
 # Dimensions in pixels
