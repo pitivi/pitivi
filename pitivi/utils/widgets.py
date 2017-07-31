@@ -33,6 +33,7 @@ from gi.repository import Pango
 
 from pitivi.configure import get_ui_dir
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import is_valid_file
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import disable_scroll
@@ -588,6 +589,52 @@ class FontWidget(Gtk.FontButton, DynamicWidget):
         return self.get_font_name()
 
 
+class InputValidationWidget(Gtk.Box, DynamicWidget):
+    """Widget for validating the input of another widget.
+
+    It shows a warning sign if the input is not valid and rolls back to
+    the default widget value (which should always be valid).
+
+    Args:
+        widget (DynamicWidget): widget whose input needs validation.
+        validation_function (function): function which receives the input of the
+            widget and returns True iff the input is valid.
+    """
+
+    def __init__(self, widget, validation_function):
+        Gtk.Box.__init__(self)
+        DynamicWidget.__init__(self, widget.default)
+        self._widget = widget
+        self._validation_function = validation_function
+        self._warning_sign = Gtk.Image.new_from_icon_name("dialog-warning", 3)
+
+        self.set_orientation(Gtk.Orientation.HORIZONTAL)
+        self.pack_start(self._widget, expand=False, fill=False, padding=0)
+        self.pack_start(self._warning_sign, expand=False, fill=False, padding=SPACING)
+        self._warning_sign.set_no_show_all(True)
+
+        self._widget.connectValueChanged(self._widget_value_changed_cb)
+
+    def connectValueChanged(self, callback, *args):
+        return self._widget.connectValueChanged(callback, args)
+
+    def setWidgetValue(self, value):
+        self._widget.setWidgetValue(value)
+
+    def getWidgetValue(self):
+        value = self._widget.getWidgetValue()
+        if self._validation_function(value):
+            return value
+        return self.getWidgetDefault()
+
+    def _widget_value_changed_cb(self, unused_widget):
+        value = self._widget.getWidgetValue()
+        if self._validation_function(value):
+            self._warning_sign.hide()
+        else:
+            self._warning_sign.show()
+
+
 class GstElementSettingsWidget(Gtk.Box, Loggable):
     """Widget to modify the properties of a Gst.Element.
 
@@ -597,6 +644,12 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         controllable (bool): Whether the properties being controlled by
             keyframes is allowed.
     """
+
+    # Dictionary that maps tuples of (element_name, property_name) to a
+    # validation function.
+    INPUT_VALIDATION_FUNCTIONS = {
+        ("x264enc", "multipass-cache-file"): is_valid_file
+    }
 
     def __init__(self, controllable=True):
         Gtk.Box.__init__(self)
@@ -682,9 +735,19 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 else:
                     prop_value = values[prop.name]
 
-            widget = self._makePropertyWidget(prop, prop_value)
-            if isinstance(widget, ToggleWidget):
-                widget.set_label(prop.nick)
+            prop_widget = self._makePropertyWidget(prop, prop_value)
+            element_name = None
+            if isinstance(self.element, Gst.Element):
+                element_name = self.element.get_factory().get_name()
+            try:
+                validation_func = self.INPUT_VALIDATION_FUNCTIONS[(element_name, prop.name)]
+                widget = InputValidationWidget(prop_widget, validation_func)
+                self.debug("Input validation widget created for (%s, %s)", element_name, prop.name)
+            except KeyError:
+                widget = prop_widget
+
+            if isinstance(prop_widget, ToggleWidget):
+                prop_widget.set_label(prop.nick)
                 grid.attach(widget, 0, y, 2, 1)
             else:
                 text = _("%(preference_label)s:") % {"preference_label": prop.nick}
@@ -698,11 +761,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
             self.properties[prop] = widget
 
-            if not self.__controllable or isinstance(widget, DefaultWidget):
+            if not self.__controllable or isinstance(prop_widget, DefaultWidget):
                 continue
 
             keyframe_button = None
-            if not isinstance(widget, (ToggleWidget, ChoiceWidget)):
+            if not isinstance(prop_widget, (ToggleWidget, ChoiceWidget)):
                 res, element, pspec = self.element.lookup_child(prop.name)
                 assert res
                 binding = GstController.DirectControlBinding.new(
@@ -779,7 +842,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         toggle_button.set_label("◆" if controlled else "◇")
 
     def __keyframes_toggled_cb(self, keyframe_button, prop):
-        widget = self.__widgets_by_keyframe_button[keyframe_button]
         self.log("keyframes togglebutton clicked for %s", prop)
         active = keyframe_button.get_active()
         # Now change the state of the *other* togglebuttons.
