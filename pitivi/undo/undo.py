@@ -188,8 +188,15 @@ class UndoableActionLog(GObject.Object, Loggable):
     def started(self, action_group_name, **kwargs):
         """Gets a context manager which commits the transaction at the end."""
         self.begin(action_group_name, **kwargs)
-        yield
-        self.commit(action_group_name)
+        try:
+            yield
+        except:
+            self.warning("An exception occurred while recording a "
+                         "high-level operation. Rolling back.")
+            self.rollback()
+            raise
+        else:
+            self.commit(action_group_name)
 
     def begin(self, action_group_name, finalizing_action=None, toplevel=False):
         """Starts recording a high-level operation which later can be undone.

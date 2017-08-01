@@ -388,6 +388,24 @@ class TestUndoableActionLog(TestCase):
         self.log.begin("nested1")
         self.log.begin("nested2", toplevel=False)
 
+    def test_failing_operation_rollback(self):
+        """Checks that failing operations are rolled back."""
+        action = mock.Mock(spec=UndoableAction)
+
+        class WatchingError(Exception):
+            pass
+
+        with self.assertRaises(WatchingError):
+            with self.log.started("failing_op"):
+                self.log.push(action)
+                raise WatchingError()
+
+        # Check the rollback happened
+        self.assertEqual(action.do.call_count, 0)
+        self.assertEqual(action.undo.call_count, 1)
+        # Check the undo and redo stacks are empty
+        self.assertEqual(len(self.log.undo_stacks), 0)
+        self.assertEqual(len(self.log.redo_stacks), 0)
 
 class TestGObjectObserver(TestCase):
 
