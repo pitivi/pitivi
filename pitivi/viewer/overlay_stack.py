@@ -70,13 +70,12 @@ class OverlayStack(Gtk.Overlay, Loggable):
     def do_event(self, event):
         if event.type == Gdk.EventType.BUTTON_RELEASE:
             cursor_position = numpy.array([event.x, event.y])
-            # reset the cursor if we are outside of the viewer
             self.click_position = None
-            if (cursor_position < numpy.zeros(2)).any() or (cursor_position > self.window_size).any():
-                self.reset_cursor()
-                return
             if self.selected_overlay:
                 self.selected_overlay.on_button_release(cursor_position)
+            # reset the cursor if we are outside of the viewer
+            if (cursor_position < numpy.zeros(2)).any() or (cursor_position > self.window_size).any():
+                self.reset_cursor()
         elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             # If we have a click position, the user is dragging, so we don't want to lose focus and return
             if isinstance(self.click_position, numpy.ndarray):
