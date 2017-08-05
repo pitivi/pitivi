@@ -370,8 +370,7 @@ class RenderingProgressDialog(GObject.Object):
         self.main_render_dialog.window.show()
 
     def _playRenderedFileButtonClickedCb(self, unused_button):
-        uri = Gst.filename_to_uri(self.main_render_dialog.outfile)
-        Gio.AppInfo.launch_default_for_uri(uri, None)
+        Gio.AppInfo.launch_default_for_uri(self.main_render_dialog.outfile, None)
 
 
 class RenderDialog(Loggable):
