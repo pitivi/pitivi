@@ -24,7 +24,6 @@ Most of the steps below should be done in the [development environment](HACKING.
 
  3. Check your local repository:
    * Make sure your sandbox is using the latest GStreamer release: `$ ptvenv --update --gst-version=<gst-version>`
-   * Install git-archive-all in your sandbox to be able to create the archive to be distributed: `$ build/flatpak/py-configure --module=git-archive-all && make install`
    * Check `$ git status` does not show any change
    * Check `$ ptvenv ./configure` is all green
 

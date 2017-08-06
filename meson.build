@@ -1,4 +1,4 @@
-project('pitivi', 'c', version : '0.98', meson_version : '>= 0.36.0')
+project('pitivi', 'c', version : '0.98', meson_version : '>= 0.41.0')
 
 python = find_program('python3')
 intltool_merge = find_program('intltool-merge')
@@ -73,17 +73,3 @@ if not get_option('disable-help')
 endif
 subdir('tests')
 subdir('tests/validate-tests')
-
-archiver = find_program('git-archive-all', required : false)
-if archiver.found()
-    prefix = 'pitivi-' + meson.project_version()
-    archive = 'pitivi-' + meson.project_version() + '.tar.gz'
-    run_target('dist', command : ['git-archive-all', '--prefix=' + prefix, archive])
-else
-    message('git-archive-all not found, you will not be able to run `ninja dist`')
-    message('Install git-archive-all:')
-    message('  - with pip:')
-    message('    $ pip3 install git-archive-all')
-    message('  - in the sandbox:')
-    message('    (ptv-flatpak) $ build/flatpak/py-configure --module=git-archive-all && make install')
-endif
