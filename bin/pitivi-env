@@ -16,23 +16,38 @@ PITIVI_REPO_DIR=$(realpath $SCRIPT_DIR/..)
 export FLATPAK_ENVPATH=$(realpath $PITIVI_REPO_DIR/..)
 export CURRENT_GST=$FLATPAK_ENVPATH
 
-# Use ptvenv for running commands in the sandbox.
+# Use ptvenv for entering or running commands in the sandbox.
 alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
 
-echo "-> Setting up environment if needed..."
+echo "-> Setting up the prefix for the sandbox..."
 # This builds the local flatpak repo if it is not yet built.
-$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d echo Prefix ready
+ptvenv echo Prefix ready
 if [ "$?" = "0" ];
 then
     # Set up environment variables and aliases so configuring, building, etc.
     # takes place in the sandbox.
-    alias ninja="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ninja"
-    alias meson="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d meson"
+
+    # Meson sets up the build directory where ninja works.
+    # Consider using `setup` instead of `meson`, see below.
+    alias meson="ptvenv meson"
+
+    # Normally, Pitivi's mesonbuild/ directory is created when
+    # initializing or updating (recreating) the Flatpak sandbox.
+    # The initialization happens above, look for `ptvenv echo`.
+    # The updating happens when you run `ptvenv --update`.
+    # You can also create it manually if you deleted it by mistake.
+    # This should also be used when building dependent projects
+    # such as GES, etc.
     alias setup="mkdir mesonbuild; ptvenv meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true"
+
+    # Ninja builds the buildable parts of the project.
+    alias ninja="ptvenv ninja"
+
+    # We could get rid of these, but some devs like them.
     alias build="ptvenv ninja -C mesonbuild/"
     alias binstall="ptvenv ninja -C mesonbuild/ install"
 
-    # Prefer to run the binaries in the sandbox. For example "python3".
+    # Prefer to run some binaries in the sandbox. For example "python3".
     for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
     do
         alias $i="ptvenv $i"

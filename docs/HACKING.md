@@ -2,35 +2,55 @@
 
 ## The Pitivi development environment
 
-### Setup Pitivi
-
 The official way of getting your environment up and running is by using
-[flatpak](http://flatpak.org/).
-
-You first need to [get flatpak](http://flatpak.org/getting.html)
-making sure you also install flatpak-builder, which might be provided by an
+[flatpak](http://flatpak.org/). For this you need to
+[install flatpak](http://flatpak.org/getting.html) on your system,
+along with flatpak-builder, which might be provided by an
 additional package on some distributions (please tell us if it is the case
 for yours so we can make a list here).
 
+
+### Setting up the development environment
+
 Create a development environment folder and get the [Pitivi source code](https://git.gnome.org/browse/pitivi/tree/) into it:
 ```
-$ mkdir pitivi-dev && cd pitivi-dev
+$ mkdir pitivi-dev
+$ cd pitivi-dev
 $ git clone https://git.gnome.org/browse/pitivi
-$ cd pitivi/
 ```
 
-Finally to enter the dev env you just need to run:
+When you hack on Pitivi, enter the development environment to get:
+- a [Flatpak sandbox](http://docs.flatpak.org/en/latest/working-with-the-sandbox.html)
+for the dependencies, in `pitivi-dev/pitivi-prefix`
+- a [Python virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
+with development tools, such as
+[git-phab](https://phabricator.freedesktop.org/diffusion/GITPHAB/#description) and
+[pre-commit](http://pre-commit.com),
+in `pitivi-dev/pitivi/build/flatpak/pyvenv`
+- the [Meson build directory](http://mesonbuild.com/Quick-guide.html),
+in `pitivi-dev/pitivi/mesonbuild`
+- some aliases for the build tools, such as `ninja`, so they are executed in the sandbox.
 ```
-$ source bin/pitivi-env
+$ cd pitivi-dev/pitivi && source bin/pitivi-env
+-> Setting up the prefix for the sandbox...
+Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
+[prefix being built, if not already...]
+Running in sandbox: echo Prefix ready
+Prefix ready
+```
+Note: This can take a while when creating the sandbox from scratch.
+
+Run the [unittests](Testing.md):
+```
+(ptv-flatpak) $ ninja -C mesonbuild/ test
+Running in sandbox: ninja -C mesonbuild/ test
 ```
 
-Run `pitivi` while inside the environment to launch Pitivi. Next you should run the unittests.
+Hack away, and check the effect of you changes by simply running:
 ```
 (ptv-flatpak) $ pitivi
-(ptv-flatpak) $ make check
 ```
 
-After you hack the source code simply run `pitivi` again to see how your changes work.
 
 ### Development Workflow
 
@@ -42,7 +62,7 @@ If you're a newcomer wanting to contribute, you can start with tasks tagged [Pit
 To fix a task, it's best to get in touch with us on our IRC channel `#pitivi` on Freenode, to see if it's still meaningful, then if all is well:
 
 1. Assign the task to yourself in Phabricator.
-2. Create a new branch with a meaningful name. Make sure to set its [remote-tracking branch](https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches/), as it determines the default commit range to attach.
+2. Create a new branch with a relevant name. Make sure to set its [remote-tracking branch](https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches/), as it determines the default commit range to attach.
 For example, if you're going to work on task [T7674](https://phabricator.freedesktop.org/T7674/), the branch could be called T7674-import-img or
 T7674-fix-import, i.e. `git checkout -b T7674-import-img origin/master`.
 3. Once you have made your changes, you need to create a commit. Follow the [GNOME guidelines](https://wiki.gnome.org/Newcomers/CodeContributionWorkflow#Commit_guidelines)
@@ -50,10 +70,11 @@ for creating commits.
 
     Be aware that when you create a commit, `pre-commit` is executed to perform checks on the changes and in some cases it does
 some automatic fixes. When this happens, make sure those are included in the commit you want to create.
-4. Now you're all set to push your first diff!
+4. Now you're all set to push your first diff to
+[Phabricator](https://phabricator.freedesktop.org/tag/pitivi) for review!
 
     ```
-    $ git-phab attach --task TXXXX
+    (ptv-flatpak) $ git-phab attach --task TXXXX
     ```
 
 Optionally, you can set git-phab to automatically push your WIP branches to a personal remote repository:
@@ -74,41 +95,79 @@ Optionally, you can set git-phab to automatically push your WIP branches to a pe
     $ git config phab.remote github
     ```
 
-### Update the environment
 
-To update the dependencies installed in the dev env run:
+### Building the C parts
+
+Select parts of Pitivi are written in C and need to be built when changed,
+such as the audio envelope renderer for the audio clips. Build them with:
+```
+(ptv-flatpak) $ ninja -C mesonbuild/
+Running in sandbox: ninja -C mesonbuild/
+```
+
+
+### Updating the development environment
+
+To update the dependencies installed in the sandbox, run:
 ```
 (ptv-flatpak) $ ptvenv --update
 ```
 
-That will actually clean the prefix, update all dependencies from their
+That will actually recreate the prefix, update all dependencies from their
 git repos and tarballs as defined in the [flatpak manifest](https://git.gnome.org/browse/pitivi/tree/build/flatpak/pitivi.template.json) (located
 at build/flatpak/pitivi.template.json)
 
-### Work on some Pitivi dependencies in the development environment
+
+### Working on Pitivi dependencies (Meson)
 
 If you have to work on say, [GStreamer Editing Services](https://gstreamer.freedesktop.org/modules/gst-editing-services.html)
-you can clone it into your `pitivi-dev` folder:
+which is built using the Meson build system, first clone it into your
+`pitivi-dev` folder:
 ```
 (ptv-flatpak) $ git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services
 ```
 
-Install it in the sandbox by running in the dev env:
+Prepare its build directory. Once it has been set up, you won't have to
+run `meson` again for this build directory.
 ```
-(ptv-flatpak) $ autogen
-(ptv-flatpak) $ make install
+(ptv-flatpak) $ setup
+Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
+Running in sandbox: meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true
 ```
 
-`autogen` is an alias which runs `./autogen.sh` with the right arguments
-for the flatpak sandbox.
-`make` is also an alias which runs the real `make` inside the sandbox,
-thus `make install` will install your changes in the sandbox.
+Build and install it in the sandbox:
+```
+(ptv-flatpak) $ ninja -C mesonbuild/ install
+Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
+Running in sandbox: ninja -C mesonbuild/ install
+```
 
-NOTE: When updating the environment, it will use your
-local dependencies repositories instead of remote
-repositories, which means you have to update them yourself.
+In the `(ptv-flatpak)` development environment `meson` and `ninja` are
+aliases which run meson and ninja in the flatpak sandbox.
+
+NOTE: When updating the environment with `ptvenv --update`,
+it will use your local dependencies repositories it finds in the
+`pitivi-dev` folder, instead of the default remote repositories.
+This means you have to update them yourself.
 Also beware that it will not take into account not committed
 changes.
+
+
+### Working on Pitivi dependencies (Autotools, Make, etc)
+
+If the project you are working on is built with other tools, make sure
+they are run in the sandbox by using `ptvenv`. For example:
+
+```
+(ptv-flatpak) $ cd pitivi-dev/frei0r-plugins-1.4
+(ptv-flatpak) $ ptvenv ./autogen.sh
+Running in sandbox: ./autogen.sh
+(ptv-flatpak) $ ptvenv ./configure
+Running in sandbox: ./configure
+(ptv-flatpak) $ ptvenv make
+Running in sandbox: make
+```
+
 
 ## Coding Style Guide
 
