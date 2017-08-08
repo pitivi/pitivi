@@ -705,6 +705,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self._thumb_cb_id = None
 
         if self.pipeline:
+            self.pipeline.get_bus().remove_signal_watch()
             self.pipeline.set_state(Gst.State.NULL)
             self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
             self.pipeline = None
