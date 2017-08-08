@@ -386,22 +386,20 @@ def initialize_modules():
 # a specific version requirement, they have the "None" value.
 
 GST_API_VERSION = "1.0"
+GST_VERSION = "1.12.2"
 GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
 HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      CairoDependency("1.10.0"),
-                     GstDependency("Gst", GST_API_VERSION, "1.10.2"),
-                     GstDependency("GES", GST_API_VERSION, "1.10.2"),
+                     GstDependency("Gst", GST_API_VERSION, GST_VERSION),
+                     GstDependency("GES", GST_API_VERSION, GST_VERSION),
                      GIDependency("GstTranscoder", GST_API_VERSION),
                      GIDependency("GstVideo", GST_API_VERSION),
                      GtkDependency("Gtk", GTK_API_VERSION, "3.20.0"),
                      ClassicDependency("numpy"),
                      GIDependency("Gio", "2.0"),
-                     # TODO Remove extra_modules when we depend
-                     # on Gst 1.12
-                     GstPluginDependency("gtk", "1.10.2",
-                                         extra_modulenames=["gstgtk"]),
-                     GstPluginDependency("gdkpixbuf", "1.10.2"),
+                     GstPluginDependency("gtk", GST_VERSION),
+                     GstPluginDependency("gdkpixbuf", GST_VERSION),
                      ClassicDependency("matplotlib"),
                      ]
 
