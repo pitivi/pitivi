@@ -1,10 +1,12 @@
 {
     "app-id": "org.pitivi.Pitivi",
-    "branch": "master",
+    "branch": "1.0",
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.24",
     "finish-args": ["--command=pitivi",
-                    "--share=ipc", "--socket=x11", "--socket=session-bus", "--socket=pulseaudio",
+                    "--socket=x11",
+                    "--socket=pulseaudio",
+                    "--socket=wayland",
                     "--talk-name=ca.desrt.dconf",
                     "--talk-name=org.freedesktop.Notifications",
                     "--filesystem=host", "--device=dri"],
@@ -13,7 +15,7 @@
     "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
     "copy-icon": true,
-    "build-options" : {
+    "build-options": {
         "cflags": "-O0 -g",
         "cxxflags": "-O0 -g",
         "env": {
@@ -26,59 +28,108 @@
     },
     "modules": [
         {
-            "name": "yasm",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz",
-                    "sha256": "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f"
-                }
-            ]
-        },
-        {
-            "name": "sound-theme-freedesktop",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://anongit.freedesktop.org/git/sound-theme-freedesktop.git",
-                    "branch": "0.8"
-                }
-            ]
-        },
-        {
-            "name": "gsound",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://git.gnome.org/browse/gsound",
-                    "branch": "1.0.2"
-                }
-            ]
-        },
-        {
-            "name": "x264",
-            "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2",
-                    "sha256": "5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18"
-                }
-            ]
-        },
-        {
             "name": "numpy",
-            "build-options" : {
-              "build-args": ["--share=network"],
-              "cflags": "-O0 -g  -L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.4m/",
-              "env": {"ARCHFLAGS": "-arch x86_64"}
-            },
-            "config-opts": ["--module=numpy==1.12.1"],
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "mkdir -p /app/lib/python3.5/site-packages",
+               "CFLAGS='-L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.5m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
+            ],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/05/84/0feb999c05f252af50a5fbc463268044feda92cdaad8cb0d0a6073d76057/numpy-1.13.0.zip#md5=fd044f0b8079abeaf5e6d2e93b2c1d03",
+                    "sha256": "dcff367b725586830ff0e20b805c7654c876c2d4585c0834a6049502b9d6cf7e"
+                }
+            ]
+        },
+        {
+            "name": "pyparsing",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/3c/ec/a94f8cf7274ea60b5413df054f82a8980523efd712ec55a59e7c3357cf7c/pyparsing-2.2.0.tar.gz#md5=0214e42d63af850256962b6744c948d9",
+                    "sha256": "0832bcf47acd283788593e7a0f542407bd9550a55a8a8435214a1960e04bcb04"
+                }
+            ]
+        },
+        {
+            "name": "pytz",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/a4/09/c47e57fc9c7062b4e83b075d418800d322caa87ec0ac21e6308bd3a2d519/pytz-2017.2.zip#md5=",
+                    "sha256": "f5c056e8f62d45ba8215e5cb8f50dfccb198b4b9fbea8500674f3443e4689589"
+                }
+            ]
+        },
+        {
+            "name": "six",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz#md5=34eed507548117b2ab523ab14b2f8b55",
+                    "sha256": "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
+                }
+            ]
+        },
+        {
+            "name": "Cycler",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/c2/4b/137dea450d6e1e3d474e1d873cd1d4f7d3beed7e0dc973b06e8e10d32488/cycler-0.10.0.tar.gz#md5=4cb42917ac5007d1cdff6cccfe2d016b",
+                    "sha256": "cd7b2d1018258d7247a71425e9f26463dfb444d411c39569972f4ce586b0c9d8"
+                }
+            ]
+        },
+        {
+            "name": "python-dateutil",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/51/fc/39a3fbde6864942e8bb24c93663734b74e281b984d1b8c4f95d64b0c21f6/python-dateutil-2.6.0.tar.gz#md5=6e38f91e8c94c15a79ce22768dfeca87",
+                    "sha256": "62a2f8df3d66f878373fd0072eacf4ee52194ba302e00082828e0d263b0418d2"
+                }
+            ]
+        },
+        {
+            "name": "matplotlib",
+            "buildsystem": "simple",
+            "ensure-writable": ["easy-install.pth"],
+            "build-commands": [
+               "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pypi.python.org/packages/f5/f0/9da3ef24ea7eb0ccd12430a261b66eca36b924aeef06e17147f9f9d7d310/matplotlib-2.0.2.tar.gz",
+                    "sha256": "0ffbc44faa34a8b1704bc108c451ecf87988f900ef7ce757b8e2e84383121ff1"
                 }
             ]
         },
@@ -88,34 +139,6 @@
               "build-args": ["--share=network"]
             },
             "config-opts": ["--module=ipdb==0.8.1"],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "pre-commit",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=pre-commit==0.8.0"],
-            "sources": [
-                {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
-                }
-            ]
-        },
-        {
-            "name": "matplotlib",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=matplotlib==2.0.0"],
             "sources": [
                 {
                     "type": "file",
@@ -139,30 +162,35 @@
             ]
         },
         {
-            "name": "pep8",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=pep8==1.6.2"],
+            "name": "sound-theme-freedesktop",
+            "ensure-writable": ["easy-install.pth"],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
+                    "type": "git",
+                    "url": "https://anongit.freedesktop.org/git/sound-theme-freedesktop.git",
+                    "branch": "0.8"
                 }
             ]
         },
         {
-            "name": "python-dbus",
-            "build-options" : {
-              "build-args": ["--share=network"]
-            },
-            "config-opts": ["--module=dbus-python==1.2.4"],
+            "name": "gsound",
+            "ensure-writable": ["easy-install.pth"],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "py-configure",
-                    "dest-filename": "configure"
+                    "type": "git",
+                    "url": "https://git.gnome.org/browse/gsound",
+                    "branch": "1.0.2"
+                }
+            ]
+        },
+        {
+            "name": "x264",
+            "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.videolan.org/pub/x264/snapshots/x264-snapshot-20140212-2245-stable.tar.bz2",
+                    "sha256": "5d98e9e4faf6dd55e7193ed379aff477b8acbda6777758956ef7e5f05067be18"
                 }
             ]
         },
@@ -314,6 +342,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gstreamer"
                 }
             ]
@@ -326,6 +355,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-base"
                 }
             ]
@@ -338,6 +368,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-good"
                 }
             ]
@@ -350,6 +381,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly"
                 }
             ]
@@ -362,7 +394,12 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-bad"
+                },
+                {
+                    "type": "patch",
+                    "path": "bad/0001-compositor-Add-support-for-crossfade-blending.patch"
                 }
             ]
         },
@@ -374,6 +411,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
                 }
             ]
@@ -386,6 +424,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-python"
                 }
             ]
@@ -399,6 +438,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-devtools"
                 }
             ]
@@ -423,7 +463,16 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
+                },
+                {
+                    "type": "patch",
+                    "path": "ges/0001-video-transition-Make-use-of-the-new-compositor-cros.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "ges/0002-transition-Fix-usage-of-transition-types-crossfade.patch"
                 }
             ]
         },
@@ -435,6 +484,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "https://github.com/pitivi/gst-transcoder"
                 }
             ]
@@ -443,15 +493,14 @@
             "name": "pitivi",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["--libdir=lib", "--prefix=/app"],
-            "build-options" : {
+            "build-options": {
               "build-args": ["--share=network"]
             },
             "sources": [
                 {
                     "type": "git",
                     "url": "https://git.gnome.org/browse/pitivi",
-                    "branch": "master"
+                    "branch": "1.0"
                 }
             ]
         }
