@@ -121,11 +121,11 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self._ax.grid(False)
 
         self._ax.tick_params(axis='both',
-                              which='both',
-                              bottom='off',
-                              top='off',
-                              right='off',
-                              left='off')
+                             which='both',
+                             bottom='off',
+                             top='off',
+                             right='off',
+                             left='off')
 
         # This seems to also be necessary for transparency ..
         figure.patch.set_visible(False)
@@ -133,16 +133,16 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # The PathCollection object holding the keyframes dots.
         sizes = [50]
         self.__keyframes = self._ax.scatter([], [], marker='D', s=sizes,
-                                             c=KEYFRAME_NODE_COLOR, zorder=2)
+                                            c=KEYFRAME_NODE_COLOR, zorder=2)
 
         # matplotlib weirdness, simply here to avoid a warning ..
         self.__keyframes.set_picker(True)
 
         # The Line2D object holding the lines between keyframes.
         self.__line = self._ax.plot([], [],
-                                     alpha=KEYFRAME_LINE_ALPHA,
-                                     c=KEYFRAME_LINE_COLOR,
-                                     linewidth=KEYFRAME_LINE_HEIGHT, zorder=1)[0]
+                                    alpha=KEYFRAME_LINE_ALPHA,
+                                    c=KEYFRAME_LINE_COLOR,
+                                    linewidth=KEYFRAME_LINE_HEIGHT, zorder=1)[0]
         self.__updatePlots()
 
         # Drag and drop logic
