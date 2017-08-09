@@ -81,7 +81,7 @@ def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
         pass
 
     with open(json_template, "r") as tf:
-        txt = re.sub('/\*[^*]*\*+(?:[^/*][^*]*\*+)*/', '', tf.read())
+        txt = re.sub(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/", "", tf.read())
 
     template = json.loads(txt)
     if branchname == "stable":
@@ -571,6 +571,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             "GST_ENCODING_TARGET_PATH":
                 "/app/share/gstreamer-1.0/encoding-profiles/:/app/share/pitivi/encoding-profiles/",
             "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
+            "FREI0R_PATH": "/app/lib/frei0r-1/",
             "GST_PRESET_PATH":
                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
         }

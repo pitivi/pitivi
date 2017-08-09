@@ -18,7 +18,8 @@
         "cxxflags": "-O0 -g",
         "env": {
           "PYTHON": "python3",
-          "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/"
+          "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
+          "FREI0R_PATH": "/app/lib/frei0r-1/"
         },
         "strip": false,
         "no-debuginfo": true
