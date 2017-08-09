@@ -506,7 +506,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.keyframe_curve = None
 
     # Private methods
-    def __createKeyframeCurve(self, binding):
+    def __ensure_keyframes(self, binding):
+        """Ensures that we have at least 2 keyframes (at inpoint and end)."""
         source = binding.props.control_source
         values = source.get_all()
 
@@ -519,7 +520,10 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             assert source.set(inpoint, val)
             assert source.set(inpoint + self._ges_elem.props.duration, val)
 
+    def __create_keyframe_curve(self):
+        """Creates required keyframe curve."""
         self.__removeKeyframes()
+        binding = self._ges_elem.get_control_binding(self.__controlledProperty.name)
         self.keyframe_curve = KeyframeCurve(self.timeline, binding)
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
@@ -528,6 +532,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.__update_keyframe_curve_visibility()
 
     def __createControlBinding(self, element):
+        """Creates the required ControlBinding and keyframes."""
         if self.__controlledProperty:
             element.connect("control-binding-added",
                             self.__controlBindingAddedCb)
@@ -535,7 +540,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                 element.get_control_binding(self.__controlledProperty.name)
 
             if binding:
-                self.__createKeyframeCurve(binding)
+                self.__ensure_keyframes(binding)
 
                 return
 
@@ -546,7 +551,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def __controlBindingAddedCb(self, unused_ges_elem, binding):
         if binding.props.name == self.__controlledProperty.name:
-            self.__createKeyframeCurve(binding)
+            self.__ensure_keyframes(binding)
 
     def do_draw(self, cr):
         self.propagate_draw(self.__background, cr)
@@ -561,6 +566,9 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     # Callbacks
     def __selectedChangedCb(self, unused_selected, selected):
+        if not self.keyframe_curve and self.__controlledProperty:
+            self.__create_keyframe_curve()
+
         if self.keyframe_curve:
             self.__update_keyframe_curve_visibility()
 
