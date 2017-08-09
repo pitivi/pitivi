@@ -250,3 +250,29 @@ The name of a callback method should:
 You can guess the order of the imported modules by looking at some py files.
 The pre-commit hook has authority in this case as it will reorder the imports
 if the order is not good.
+
+## Profiling Pitivi
+
+To profile a pitivi run, simply set the PITIVI_PROFILING environment variable to 1, like so:
+
+```
+$ PITIVI_PROFILING=1 pitivi
+```
+
+A file named `pitivi-runstats` will be created in the current directory, a handy tool to examine it is `gprof2dot.py`, install it with:
+
+```
+$ pip install gprof2dot
+```
+
+Then run:
+
+```
+$ gprof2dot -f pstats pitivi-runstats | dot -Tsvg -o profile.svg
+```
+
+You can then inspect the call tree profile with your preferred image viewer:
+
+```
+$ xdg-open profile.svg
+```
