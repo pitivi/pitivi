@@ -558,7 +558,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                            "--socket=session-bus", "--socket=pulseaudio",
                            "--share=network", "--env=PITIVI_DEVELOPMENT=1",
                            "--env=CC=ccache gcc",
-                           "--env=CXX=ccache g++"]
+                           "--env=CXX=ccache g++", "--device=dri"]
 
         # The forwarded environment variables.
         forwarded = {}
