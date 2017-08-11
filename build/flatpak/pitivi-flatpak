@@ -227,7 +227,7 @@ class FlatpakRepos(FlatpakObject):
         for name, tmprepo in self.repos.items():
             if repo.url == tmprepo.url:
                 return tmprepo
-            elif repo.name == name:
+            if repo.name == name:
                 same_name = tmprepo
 
         if same_name:
@@ -446,7 +446,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             self.update_all()
 
         if self.devel:
-            self.setup_dev_env()
+            self.setup_sandbox()
 
         if self.check:
             self.run_in_sandbox("gst-validate-launcher",
@@ -464,7 +464,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def update_bundle(self):
         if not os.path.exists(self.prefix):
-            self.setup_dev_env()
+            self.setup_sandbox()
 
         if not os.path.exists(self.repodir):
             os.mkdir(self.repodir)
@@ -501,7 +501,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         except subprocess.CalledProcessError:
             self.exit(1)
 
-    def setup_dev_env(self):
+    def setup_sandbox(self):
+        """Creates the sandbox."""
         if not os.path.exists(self.prefix) or self.update:
             self.install_all()
             Console.message("Building Pitivi %s and dependencies in %s",
@@ -526,10 +527,13 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 self.exit(1)
             subprocess.check_call(builder_args, cwd=self.scriptdir)
 
-            configure_args = ["./configure", "--prefix=/app", "--libdir=lib"]
-            self.run_in_sandbox(*configure_args, exit_on_failure=True,
+            meson_args = ["meson", "mesonbuild/", "--prefix=/app",
+                          "--libdir=lib", "-Ddisable_gtkdoc=true",
+                          "-Ddisable_doc=true"]
+            self.run_in_sandbox(*meson_args, exit_on_failure=True,
                                 cwd=self.topdir)
-            self.run_in_sandbox("make", exit_on_failure=True,
+            ninja_args = ["ninja", "-C", "mesonbuild/"]
+            self.run_in_sandbox(*ninja_args, exit_on_failure=True,
                                 cwd=self.topdir)
         else:
             Console.message("Using Pitivi prefix in %s", self.prefix)

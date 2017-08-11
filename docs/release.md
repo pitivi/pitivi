@@ -25,7 +25,6 @@ Most of the steps below should be done in the [development environment](HACKING.
  3. Check your local repository:
    * Make sure your sandbox is using the latest GStreamer release: `$ ptvenv --update --gst-version=<gst-version>`
    * Check `$ git status` does not show any change
-   * Check `$ ptvenv ./configure` is all green
 
  4. Make sure the tests pass:
   ```
@@ -57,7 +56,7 @@ If there are new maintainers.
  $ cd /tmp
  $ asp checkout pitivi
  $ cd /tmp/pitivi/repos/community-x86_64/
- $ rm -rf .git  # Without this, ./configure is confused re version number.
+ $ rm -rf .git  # Required to get the version number correctly.
  $ cp .../pitivi-X.YY.Z.tar.gz .
  $ vim PKGBUILD
  ... Update "pkgver",
