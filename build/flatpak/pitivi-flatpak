@@ -231,20 +231,18 @@ class FlatpakRepos(FlatpakObject):
                 same_name = tmprepo
 
         if same_name:
-            if override:
-                self.flatpak("remote-modify", repo.name, "--url=" + repo.url,
-                             comment="Setting repo %s URL from %s to %s"
-                             % (repo.name, same_name.url, repo.url))
-                same_name.url = repo.url
-
-                return same_name
-            else:
+            if not override:
                 return None
-        else:
-            self.flatpak("remote-add", repo.name, "--from",
-                         repo.repo_file.name,
-                         comment="Adding repo %s" % repo.name)
 
+            self.flatpak("remote-modify", repo.name, "--url=" + repo.url,
+                         comment="Setting repo %s URL from %s to %s"
+                         % (repo.name, same_name.url, repo.url))
+            same_name.url = repo.url
+            return same_name
+
+        self.flatpak("remote-add", repo.name, "--from",
+                     repo.repo_file.name,
+                     comment="Adding repo %s" % repo.name)
         repo.repos = self
         return repo
 
@@ -542,13 +540,13 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             print("Installing development tools in a virtual env.")
             venv.create(venv_path, with_pip=True)
             subprocess.check_call(
-                "source %s && pip install pre-commit git-phab" % (
-                    activate_script), shell=True)
+                ". %s && pip install pre-commit git-phab" % activate_script,
+                shell=True)
 
         if self.update:
             subprocess.check_call(
-                "source %s && pip install -U pre-commit git-phab" % (
-                    activate_script), shell=True)
+                ". %s && pip install -U pre-commit git-phab" % activate_script,
+                shell=True)
 
         if not self.check and not self.update:
             self.run_in_sandbox(*self.args, exit_on_failure=True)
