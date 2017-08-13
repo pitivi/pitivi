@@ -527,11 +527,15 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 self.exit(1)
             subprocess.check_call(builder_args, cwd=self.scriptdir)
 
-            meson_args = ["meson", "mesonbuild/", "--prefix=/app",
-                          "--libdir=lib", "-Ddisable_gtkdoc=true",
-                          "-Ddisable_doc=true"]
-            self.run_in_sandbox(*meson_args, exit_on_failure=True,
-                                cwd=self.topdir)
+            if not os.path.isdir("mesonbuild/"):
+                # Create the build directory.
+                meson_args = ["meson", "mesonbuild/", "--prefix=/app",
+                              "--libdir=lib", "-Ddisable_gtkdoc=true",
+                              "-Ddisable_doc=true"]
+                self.run_in_sandbox(*meson_args, exit_on_failure=True,
+                                    cwd=self.topdir)
+
+            # Build the buildable parts of Pitivi.
             ninja_args = ["ninja", "-C", "mesonbuild/"]
             self.run_in_sandbox(*ninja_args, exit_on_failure=True,
                                 cwd=self.topdir)
