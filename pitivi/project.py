@@ -1346,10 +1346,6 @@ class Project(Loggable, GES.Project):
                 self.remove_asset(asset)
                 proxy_target.force_proxying = False
                 if delete_proxy_file:
-                    if not self.app.proxy_manager.is_proxy_asset(asset):
-                        raise RuntimeError("Trying to remove proxy %s"
-                                           " but it does not look like one!",
-                                           asset.props.id)
                     os.remove(Gst.uri_get_location(asset.props.id))
             else:
                 # The asset is an original which is not being proxied.
