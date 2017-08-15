@@ -342,8 +342,8 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
         for struct in restrictions:
             fields.update(struct.keys())
 
-        log.debug("utils", "Intersect template %s with the restriction %s",
-                  template, restrictions)
+        log.log("utils", "Intersect template %s with the restriction %s",
+                template, restrictions)
         tmp = template.intersect(restrictions)
 
         if not tmp:
@@ -378,8 +378,8 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
                     if v is not None:
                         struct[field] = v
                 else:
-                    log.info("utils", "Field %s from %s is plainly fixated",
-                             field, struct)
+                    log.debug("utils", "Field %s from %s is plainly fixated",
+                              field, struct)
 
         struct = struct.copy()
         for key in struct.keys():

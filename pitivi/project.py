@@ -30,6 +30,7 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import GstPbutils
+from gi.repository import GstVideo
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
@@ -45,7 +46,6 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.misc import unicode_error_dialog
 from pitivi.utils.pipeline import Pipeline
-from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import audio_channels
 from pitivi.utils.ui import audio_rates
@@ -73,6 +73,20 @@ ENCODERS_RESTRICTIONS_SETTER = {
     "x264enc": lambda project, profile: project._set_restriction(
         profile, "format", "Y444")
 }
+
+ALL_RAW_VIDEO_FORMATS = []
+# Starting at 2 as 0 is UNKNOWN and 1 is ENCODED.
+# We want to make sure we do not try to force ENCODED
+# format (as it won't be possible as we have a compositor
+# in the pipeline) but we enforce a same VideoFormat is
+# used during the whole encoding process.
+for i in range(2, GLib.MAXINT):
+    try:
+        vformat = GstVideo.VideoFormat(i)
+        ALL_RAW_VIDEO_FORMATS.append(
+            GstVideo.VideoFormat.to_string(vformat))
+    except ValueError:
+        break
 
 
 class ProjectManager(GObject.Object, Loggable):
@@ -777,6 +791,9 @@ class Project(Loggable, GES.Project):
 
     # Encoding related properties
     def set_rendering(self, rendering):
+        self._ensureAudioRestrictions()
+        self._ensureVideoRestrictions()
+
         video_restrictions = self.video_profile.get_restriction().copy_nth(0)
         video_restrictions_struct = video_restrictions[0]
 
@@ -1529,18 +1546,24 @@ class Project(Loggable, GES.Project):
             "width": 720,
             "height": 576,
             "framerate": Gst.Fraction(25, 1),
-            "pixel-aspect-ratio": Gst.Fraction(1, 1)
+            "pixel-aspect-ratio": Gst.Fraction(1, 1),
+            "format": Gst.ValueArray(ALL_RAW_VIDEO_FORMATS),
+
         }
 
         prev_vals = None
         if self.video_profile:
             prev_vals = self.video_profile.get_restriction().copy()
 
-        ref_restrictions = None
         if not profile:
             profile = self.video_profile
+            ref_restrictions = Gst.Caps("video/x-raw")
         else:
             ref_restrictions = profile.get_restriction()
+
+        for struct in ref_restrictions:
+            if not struct["format"]:
+                struct["format"] = Gst.ValueArray(ALL_RAW_VIDEO_FORMATS)
 
         self._ensureRestrictions(profile, defaults, ref_restrictions,
                                  prev_vals)

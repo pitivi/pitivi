@@ -979,27 +979,6 @@ class RenderDialog(Loggable):
         # Hide the rendering settings dialog while rendering
         self.window.hide()
 
-        encoder_string = self.project.vencoder
-        try:
-            fmt = self._factory_formats[encoder_string]
-            self.project.video_profile.get_restriction()[0]["format"] = fmt
-        except KeyError:
-            # Now find a format to set on the restriction caps.
-            # The reason is we can't send different formats on the encoders.
-            factory = Encoders().factories_by_name.get(self.project.vencoder)
-            for struct in factory.get_static_pad_templates():
-                if struct.direction == Gst.PadDirection.SINK:
-                    caps = Gst.Caps.from_string(struct.get_caps().to_string())
-                    # FIXME HACK! - remove once https://bugzilla.gnome.org/show_bug.cgi?id=784960
-                    # is fixed.
-                    caps.mini_object.refcount += 1
-
-                    fixed = caps.fixate()
-                    fmt = fixed.get_structure(0).get_value("format")
-                    self.project.setVideoRestriction("format", fmt)
-                    self._factory_formats[encoder_string] = fmt
-                    break
-
         self.app.gui.timeline_ui.timeline.set_best_zoom_ratio(allow_zoom_in=True)
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
