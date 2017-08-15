@@ -79,3 +79,11 @@ If a new version is fetched, it will be made current.
 If your software manager doesn't allow this yet, run the command below:
 
 ` $ flatpak --user uninstall org.pitivi.Pitivi stable`
+
+## Install GStreamer vaapi support
+
+In the sandbox gstreamer-vaapi is installed but it requires the
+org.freedesktop.Platform.VAAPI.Intel extension to be installed.
+
+As the support is experimental, you need to set PITIVI_UNSTABLE_FEATURES
+to enable them: `flatpak run --env=PITIVI_UNSTABLE_FEATURES=vaapi org.pitivi.Pitivi`.

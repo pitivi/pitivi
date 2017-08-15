@@ -404,6 +404,18 @@
             ]
         },
         {
+            "name": "gstreamer-vaapi",
+            "buildsystem": "meson",
+            "builddir": true,
+            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/gstreamer/gstreamer-vaapi"
+                }
+            ]
+        },
+        {
             "name": "gst-editing-services",
             "buildsystem": "meson",
             "builddir": true,

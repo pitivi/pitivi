@@ -238,6 +238,19 @@ def _check_videosink():
     return videosink_factory
 
 
+def _check_vaapi():
+    from gi.repository import Gst
+    if "vaapi" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
+        print("Vaapi decoders enabled.")
+        return
+
+    for feature in Gst.Registry.get().get_feature_list_by_plugin("vaapi"):
+        if isinstance(feature, Gst.ElementFactory):
+            klass = feature.get_klass()
+            if "Decoder" in klass and "Video" in klass:
+                feature.set_rank(Gst.Rank.MARGINAL)
+
+
 def _check_gst_python():
     from gi.repository import Gst
     try:
@@ -294,6 +307,8 @@ def check_requirements():
         print(_("Could not create video output sink. "
                 "Make sure you have a gtksink available."))
         return False
+
+    _check_vaapi()
 
     return True
 
