@@ -54,6 +54,7 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 
 class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
+    _instance = None
     prefs = {}
     section_names = {
         "timeline": _("Timeline"),
@@ -63,6 +64,7 @@ class PreferencesDialog(Loggable):
 
     def __init__(self, app):
         Loggable.__init__(self)
+
         self.app = app
 
         self.app.shortcuts.connect("accel-changed", self.__accel_changed_cb)
@@ -94,7 +96,9 @@ class PreferencesDialog(Loggable):
 
     def run(self):
         """Runs the dialog."""
+        PreferencesDialog._instance = self
         self.dialog.run()
+        PreferencesDialog._instance = None
 
 # Public API
     @property
@@ -110,6 +114,16 @@ class PreferencesDialog(Loggable):
             title (str): The title of the new `section`.
         """
         cls.section_names[section] = title
+
+    @classmethod
+    def remove_section(cls, section):
+        if cls._instance is not None:
+            cls._instance._remove_page(section)
+        try:
+            del cls.section_names[section]
+            del cls.prefs[section]
+        except KeyError:
+            pass
 
     @classmethod
     def _add_preference(cls, attrname, label, description, section,
@@ -133,6 +147,9 @@ class PreferencesDialog(Loggable):
         if section not in cls.prefs:
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
+        if cls._instance is not None:
+            cls._instance._remove_page(section)
+            cls._instance.add_settings_page(section)
 
     @classmethod
     def addPathPreference(cls, attrname, label, description, section=None):
@@ -186,6 +203,15 @@ class PreferencesDialog(Loggable):
         if section not in self.section_names:
             raise Exception("%s is not a valid section id" % section)
         self.stack.add_titled(widget, section, self.section_names[section])
+
+    def _remove_page(self, section):
+        if section in self.section_names:
+            widget = self.stack.get_child_by_name(section)
+            if widget is not None:
+                self.stack.remove(widget)
+                widget.destroy()
+        else:
+            self.log("No widget associated to section '%s' found", section)
 
     def add_settings_page(self, section_id):
         """Adds a page for the preferences in the specified section."""
