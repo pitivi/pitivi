@@ -24,45 +24,42 @@ from pitivi.dialogs.prefs import PreferencesDialog
 class PreferencesDialogTest(unittest.TestCase):
 
     def testNumeric(self):
-        section = list(PreferencesDialog.section_names.keys())[0]
         PreferencesDialog.addNumericPreference('numericPreference1',
                                                label="Open Range",
-                                               section=section,
+                                               section="timeline",
                                                description="This option has no upper bound",
                                                lower=-10)
         self.assertTrue(
-            'numericPreference1' in PreferencesDialog.prefs[section])
+            'numericPreference1' in PreferencesDialog.prefs["timeline"])
 
         PreferencesDialog.addNumericPreference('numericPreference2',
                                                label="Closed Range",
-                                               section=section,
+                                               section="timeline",
                                                description="This option has both upper and lower bounds",
                                                lower=-10,
                                                upper=10000)
 
     def testText(self):
-        section = list(PreferencesDialog.section_names.keys())[0]
         PreferencesDialog.addTextPreference('textPreference1',
                                             label="Unfiltered",
-                                            section=section,
+                                            section="timeline",
                                             description="Anything can go in this box")
 
         PreferencesDialog.addTextPreference('textPreference2',
                                             label="Numbers only",
-                                            section=section,
+                                            section="timeline",
                                             description="This input validates its input with a regex",
                                             matches=r"^-?\d+(\.\d+)?$")
 
     def testOther(self):
-        section = list(PreferencesDialog.section_names.keys())[0]
         PreferencesDialog.addPathPreference('aPathPreference',
                                             label="Test Path",
-                                            section=section,
+                                            section="timeline",
                                             description="Test the path widget")
 
         PreferencesDialog.addChoicePreference('aChoicePreference',
                                               label="Swallow Velocity",
-                                              section=section,
+                                              section="timeline",
                                               description="What is the airspeed velocity of a coconut-laden swallow?",
                                               choices=(
                                                   ("42 Knots", 32),
@@ -71,7 +68,7 @@ class PreferencesDialogTest(unittest.TestCase):
 
         PreferencesDialog.addChoicePreference('aLongChoicePreference',
                                               label="Favorite Color",
-                                              section=section,
+                                              section="timeline",
                                               description="What is the color of the parrot's plumage?",
                                               choices=(
                                                   ("Mauve", "Mauve"),
@@ -83,10 +80,10 @@ class PreferencesDialogTest(unittest.TestCase):
 
         PreferencesDialog.addTogglePreference('aTogglePreference',
                                               label="Test Toggle",
-                                              section=section,
+                                              section="timeline",
                                               description="Test the toggle widget")
 
         PreferencesDialog.addFontPreference('aFontPreference',
                                             label="Foo Font",
-                                            section=section,
+                                            section="timeline",
                                             description="Test the font widget")

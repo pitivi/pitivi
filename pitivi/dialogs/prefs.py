@@ -17,19 +17,24 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """User preferences."""
+import itertools
 import os
 from gettext import gettext as _
+from threading import Timer
 
 from gi.repository import Gdk
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Peas
 
 from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import alter_style_class
+from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
@@ -50,11 +55,16 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
     prefs = {}
-    section_names = {"timeline": _("Timeline")}
+    section_names = {
+        "timeline": _("Timeline"),
+        "_plugins": _("Plugins"),
+        "_shortcuts": _("Shortcuts")
+    }
 
     def __init__(self, app):
         Loggable.__init__(self)
         self.app = app
+
         self.app.shortcuts.connect("accel-changed", self.__accel_changed_cb)
 
         self.settings = app.settings
@@ -74,8 +84,12 @@ class PreferencesDialog(Loggable):
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        self.__add_settings_sections()
+        for section_id in self.settings_sections:
+            self.add_settings_page(section_id)
+        self.factory_settings.set_sensitive(self._canReset())
+
         self.__add_shortcuts_section()
+        self.__add_plugin_manager_section()
         self.dialog.set_transient_for(app.gui)
 
     def run(self):
@@ -83,6 +97,19 @@ class PreferencesDialog(Loggable):
         self.dialog.run()
 
 # Public API
+    @property
+    def settings_sections(self):
+        return [section for section in PreferencesDialog.section_names if not section.startswith("_")]
+
+    @classmethod
+    def add_section(cls, section, title):
+        """Adds a new valid section.
+
+        Args:
+            section (str): The id of a preferences category.
+            title (str): The title of the new `section`.
+        """
+        cls.section_names[section] = title
 
     @classmethod
     def _add_preference(cls, attrname, label, description, section,
@@ -101,6 +128,8 @@ class PreferencesDialog(Loggable):
         """
         if section not in cls.section_names:
             raise Exception("%s is not a valid section id" % section)
+        if section.startswith("_"):
+            raise Exception("Cannot add preferences to reserved sections")
         if section not in cls.prefs:
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
@@ -152,74 +181,85 @@ class PreferencesDialog(Loggable):
         cls._add_preference(attrname, label, description, section,
                             widgets.FontWidget)
 
-    def __add_settings_sections(self):
-        """Adds sections for the preferences which have been registered."""
-        for section_id, options in sorted(self.prefs.items()):
-            grid = Gtk.Grid()
-            grid.set_border_width(SPACING)
-            grid.props.column_spacing = SPACING
-            grid.props.row_spacing = SPACING / 2
+    def _add_page(self, section, widget):
+        """Adds a widget to the internal stack."""
+        if section not in self.section_names:
+            raise Exception("%s is not a valid section id" % section)
+        self.stack.add_titled(widget, section, self.section_names[section])
 
-            prefs = []
-            for attrname in options:
-                label, description, widget_class, args = options[attrname]
-                widget = widget_class(**args)
-                widget.setWidgetValue(getattr(self.settings, attrname))
-                widget.connectValueChanged(
-                    self._valueChangedCb, widget, attrname)
-                widget.set_tooltip_text(description)
-                self.widgets[attrname] = widget
-                # Add a semicolon, except for checkbuttons.
-                if isinstance(widget, widgets.ToggleWidget):
-                    widget.set_label(label)
-                    label_widget = None
-                else:
-                    # Translators: This adds a semicolon to an already
-                    # translated name of a preference.
-                    label = _("%(preference_label)s:") % {"preference_label": label}
-                    label_widget = Gtk.Label(label=label)
-                    label_widget.set_tooltip_text(description)
-                    label_widget.set_alignment(1.0, 0.5)
-                    label_widget.show()
-                icon = Gtk.Image()
-                icon.set_from_icon_name(
-                    "edit-clear-all-symbolic", Gtk.IconSize.MENU)
-                revert = Gtk.Button()
-                revert.add(icon)
-                revert.set_tooltip_text(_("Reset to default value"))
-                revert.set_relief(Gtk.ReliefStyle.NONE)
-                revert.set_sensitive(not self.settings.isDefault(attrname))
-                revert.connect("clicked", self._resetOptionCb, attrname)
-                revert.show_all()
-                self.resets[attrname] = revert
-                row_widgets = (label_widget, widget, revert)
-                # Construct the prefs list so that it can be sorted.
-                # Make sure the L{ToggleWidget}s appear at the end.
-                prefs.append((label_widget is None, label, row_widgets))
+    def add_settings_page(self, section_id):
+        """Adds a page for the preferences in the specified section."""
+        options = self.prefs[section_id]
 
-            # Sort widgets: I think we only want to sort by the non-localized
-            # names, so options appear in the same place across locales ...
-            # but then I may be wrong
-            for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
-                label, widget, revert = row_widgets
-                if not label:
-                    grid.attach(widget, 0, y, 2, 1)
-                    grid.attach(revert, 2, y, 1, 1)
-                else:
-                    grid.attach(label, 0, y, 1, 1)
-                    grid.attach(widget, 1, y, 1, 1)
-                    grid.attach(revert, 2, y, 1, 1)
-                widget.show()
-                revert.show()
-            grid.show()
-            self.stack.add_titled(grid, section_id, self.section_names[section_id])
-        self.factory_settings.set_sensitive(self._canReset())
+        grid = Gtk.Grid()
+        grid.set_border_width(SPACING)
+        grid.props.column_spacing = SPACING
+        grid.props.row_spacing = SPACING / 2
+
+        prefs = []
+        for attrname in options:
+            label, description, widget_class, args = options[attrname]
+            widget = widget_class(**args)
+            widget.setWidgetValue(getattr(self.settings, attrname))
+            widget.connectValueChanged(
+                self._valueChangedCb, widget, attrname)
+            widget.set_tooltip_text(description)
+            self.widgets[attrname] = widget
+            # Add a semicolon, except for checkbuttons.
+            if isinstance(widget, widgets.ToggleWidget):
+                widget.set_label(label)
+                label_widget = None
+            else:
+                # Translators: This adds a semicolon to an already
+                # translated name of a preference.
+                label = _("%(preference_label)s:") % {"preference_label": label}
+                label_widget = Gtk.Label(label=label)
+                label_widget.set_tooltip_text(description)
+                label_widget.set_alignment(1.0, 0.5)
+                label_widget.show()
+            icon = Gtk.Image()
+            icon.set_from_icon_name(
+                "edit-clear-all-symbolic", Gtk.IconSize.MENU)
+            revert = Gtk.Button()
+            revert.add(icon)
+            revert.set_tooltip_text(_("Reset to default value"))
+            revert.set_relief(Gtk.ReliefStyle.NONE)
+            revert.set_sensitive(not self.settings.isDefault(attrname))
+            revert.connect("clicked", self._resetOptionCb, attrname)
+            revert.show_all()
+            self.resets[attrname] = revert
+            row_widgets = (label_widget, widget, revert)
+            # Construct the prefs list so that it can be sorted.
+            # Make sure the L{ToggleWidget}s appear at the end.
+            prefs.append((label_widget is None, label, row_widgets))
+
+        # Sort widgets: I think we only want to sort by the non-localized
+        # names, so options appear in the same place across locales ...
+        # but then I may be wrong
+        for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
+            label, widget, revert = row_widgets
+            if not label:
+                grid.attach(widget, 0, y, 2, 1)
+                grid.attach(revert, 2, y, 1, 1)
+            else:
+                grid.attach(label, 0, y, 1, 1)
+                grid.attach(widget, 1, y, 1, 1)
+                grid.attach(revert, 2, y, 1, 1)
+            widget.show()
+            revert.show()
+        grid.show()
+        self._add_page(section_id, grid)
+
+    def __add_plugin_manager_section(self):
+        page = PluginPreferencesPage(self.app, self)
+        page.show_all()
+        self._add_page("_plugins", page)
 
     def __add_shortcuts_section(self):
         """Adds a section with keyboard shortcuts."""
         shortcuts_manager = self.app.shortcuts
-        self.description_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
-        self.accel_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        self.description_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
+        self.accel_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
         self.content_box = Gtk.ListBox()
         self.list_store = Gio.ListStore.new(ModelItem)
         index = 0
@@ -247,7 +287,7 @@ class PreferencesDialog(Loggable):
         outside_box.add(scrolled_window)
         outside_box.show_all()
 
-        self.stack.add_titled(outside_box, "shortcuts", _("Shortcuts"))
+        self._add_page("_shortcuts", outside_box)
 
     def __row_activated_cb(self, list_box, row):
         index = row.get_index()
@@ -532,3 +572,222 @@ class CustomShortcutDialog(Gtk.Dialog):
             self.app.shortcuts.set(action, [self.accelerator])
             self.app.shortcuts.save()
         self.destroy()
+
+
+class PluginPreferencesRow(Gtk.ListBoxRow):
+    """A row in the plugins list allowing activating and deactivating a plugin."""
+
+    def __init__(self, model):
+        Gtk.Bin.__init__(self)
+        self.plugin_info = model.plugin_info
+
+        self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.add(self._container)
+
+        self._title_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._title_label = Gtk.Label(self.plugin_info.get_name())
+        self._description_label = Gtk.Label()
+
+        description = self.plugin_info.get_description()
+        if not description:
+            description = _("No description available.")
+            self._description_label.set_markup(
+                "<span style=\"italic\">%s</span>" % description)
+        else:
+            self._description_label.set_text(description)
+
+        self.switch = Gtk.Switch()
+        self.switch_handler_id = None
+
+        # Pack widgets.
+        self._title_box.pack_start(self._title_label, True, True, 0)
+        self._title_box.pack_start(self._description_label, True, True, 0)
+        self._container.pack_start(self._title_box, True, True, 0)
+        self._container.pack_end(self.switch, False, False, 0)
+
+        # Widgets' design.
+        self._container.props.margin_left = PADDING * 2
+        self._container.props.margin_right = PADDING * 2
+        self._container.props.margin_top = PADDING
+        self._container.props.margin_bottom = PADDING
+        self._title_label.props.xalign = 0
+        self._description_label.props.xalign = 0
+        self._description_label.get_style_context().add_class("dim-label")
+        self.switch.props.margin_left = PADDING
+
+
+class PluginItem(GObject.Object):
+    """Holds the data of a plugin info for a Gio.ListStore."""
+
+    def __init__(self, app, plugin_info):
+        GObject.Object.__init__(self)
+        self.app = app
+        self.plugin_info = plugin_info
+
+
+class PluginManagerStore(Gio.ListStore):
+    """Stores the models for available plugins."""
+
+    def __init__(self):
+        Gio.ListStore.__init__(self)
+        self.app = None
+        self.preferences_dialog = None
+
+    @classmethod
+    def new(cls, app, preferences_dialog):
+        obj = PluginManagerStore()
+        obj.app = app
+        obj.preferences_dialog = preferences_dialog
+        # FIXME
+        # For some reason this property cannot be set at construct time
+        # with GObject.Object.new.
+        obj.set_property("item-type", PluginItem)
+        obj.reload()
+        return obj
+
+    def reload(self):
+        self.remove_all()
+        for plugin_info in self.app.plugin_manager.engine.get_plugin_list():
+            item = PluginItem(self.app, plugin_info)
+            self.append(item)
+
+
+class PluginsBox(Gtk.ListBox):
+
+    def __init__(self, list_store):
+        Gtk.ListBox.__init__(self)
+        self.app = list_store.app
+        self.list_store = list_store
+        self.title_size_group = None
+        self.switch_size_group = None
+
+        self.set_header_func(self._add_header_func, None)
+        self.bind_model(self.list_store, self._create_widget_func, None)
+
+        self.props.margin = PADDING * 3
+
+        # Activate the plugins' switches for plugins that are already loaded.
+        loaded_plugins = self.app.plugin_manager.engine.get_loaded_plugins()
+        for row in self.get_children():
+            if row.plugin_info.get_module_name() in loaded_plugins:
+                row.switch.set_active(True)
+
+        self.app.plugin_manager.engine.connect_after("load-plugin",
+                                                     self.__load_plugin_cb)
+        self.app.plugin_manager.engine.connect_after("unload-plugin",
+                                                     self.__unload_plugin_cb)
+
+    def get_row(self, module_name):
+        """Gets the PluginPreferencesRow linked to a given module name."""
+        for row in self.get_children():
+            if row.plugin_info.get_module_name() == module_name:
+                return row
+        return None
+
+    def _create_widget_func(self, item, unused_user_data):
+        row = PluginPreferencesRow(item)
+        row.switch_handler_id = row.switch.connect("notify::active",
+                                                   self.__switch_active_cb,
+                                                   row.plugin_info)
+        return row
+
+    def __switch_active_cb(self, switch, unused_pspec, plugin_info):
+        engine = self.app.plugin_manager.engine
+        if switch.get_active():
+            if not engine.load_plugin(plugin_info):
+                stack = self.list_store.preferences_dialog.stack
+                preferences_page = stack.get_child_by_name("_plugins")
+                msg = _("Unable to load the plugin '{module_name}'").format(
+                    module_name=plugin_info.get_module_name())
+                preferences_page.show_infobar(msg, Gtk.MessageType.WARNING)
+                switch.set_active(False)
+        else:
+            self.app.plugin_manager.engine.unload_plugin(plugin_info)
+
+    def __load_plugin_cb(self, engine, plugin_info):
+        """Handles the activation of one of the available plugins."""
+        row = self.get_row(plugin_info.get_module_name())
+        if row is not None and row.switch_handler_id is not None:
+            with row.switch.handler_block(row.switch_handler_id):
+                row.switch.set_active(True)
+
+    def __unload_plugin_cb(self, engine, plugin_info):
+        """Handles the deactivation of one of the available plugins."""
+        row = self.get_row(plugin_info.get_module_name())
+        if row is not None and row.switch_handler_id is not None:
+            with row.switch.handler_block(row.switch_handler_id):
+                row.switch.set_active(False)
+
+    def _add_header_func(self, row, before, unused_user_data):
+        """Adds a header for a new section in the model."""
+        if row.get_index() == 0:
+            header = Gtk.Label()
+            header.set_use_markup(True)
+
+            group_title = _("Plugins")
+            header.set_markup("<b>%s</b>" % group_title)
+            header.props.margin_top = PADDING * 3
+            header.props.margin_bottom = PADDING
+            header.props.margin_left = PADDING * 2
+            header.props.margin_right = PADDING * 2
+            header.props.xalign = 0
+            alter_style_class("group_title", header, "font-size: small;")
+            header.get_style_context().add_class("group_title")
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+            box.add(header)
+            box.get_style_context().add_class("background")
+            box.show_all()
+            row.set_header(box)
+
+
+class PluginPreferencesPage(Gtk.ScrolledWindow):
+    """The page that displays the list of available plugins."""
+
+    INFOBAR_TIMEOUT_SECONDS = 5
+
+    def __init__(self, app, preferences_dialog):
+        Gtk.ScrolledWindow.__init__(self)
+        list_store = PluginManagerStore.new(app, preferences_dialog)
+
+        viewport = Gtk.Viewport()
+        self._wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        plugins_box = PluginsBox(list_store)
+        viewport.add(self._wrapper_box)
+
+        self._infobar_revealer = Gtk.Revealer()
+        self._infobar = Gtk.InfoBar()
+        fix_infobar(self._infobar)
+        self._infobar_label = Gtk.Label()
+        self._setup_infobar()
+
+        self.add_with_viewport(viewport)
+        self.set_min_content_height(500)
+        self.set_min_content_width(600)
+
+        self._wrapper_box.pack_start(self._infobar_revealer, False, False, 0)
+        self._wrapper_box.pack_start(plugins_box, False, False, 0)
+
+        # Helpers
+        self._infobar_timer = None
+
+    def _setup_infobar(self):
+        self._infobar_revealer.add(self._infobar)
+        self._infobar_label.set_line_wrap(True)
+        self._infobar.get_content_area().add(self._infobar_label)
+
+    def show_infobar(self, text, message_type, auto_hide=True):
+        """Sets a text and a message type to the infobar to display it."""
+        self._infobar.set_message_type(message_type)
+        self._infobar_label.set_text(text)
+        self._infobar_revealer.set_reveal_child(True)
+        if auto_hide:
+            if self._infobar_timer is not None:
+                self._infobar_timer.cancel()
+            self._infobar_timer = Timer(self.INFOBAR_TIMEOUT_SECONDS,
+                                        self.hide_infobar)
+            self._infobar_timer.start()
+
+    def hide_infobar(self):
+        """Hides the info bar."""
+        self._infobar_revealer.set_reveal_child(False)
+        self._infobar_timer = None
