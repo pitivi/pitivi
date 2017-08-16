@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.98.x\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-07-03 14:01+0000\n"
-"PO-Revision-Date: 2017-07-23 10:09+0700\n"
+"POT-Creation-Date: 2017-08-04 22:56+0000\n"
+"PO-Revision-Date: 2017-08-16 20:11+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "X-Generator: Poedit 1.8.11\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
@@ -33,6 +33,10 @@ msgid ""
 "integrates well with other applications and sports a beautiful user "
 "interface designed to be powerful yet easy to learn."
 msgstr ""
+"Pitivi adalah penyunting video yang bertujuan menarik para penggemar maupun "
+"profesional, dengan fokus yang kuat pada efisiensi, kualitas, dan kegunaan. "
+"Ini terintegrasi secara baik dengan aplikasi lain dan menyajikan antarmuka "
+"pengguna yang indah, yang dirancang untuk kuat namun mudah dipelajari."
 
 #: ../data/pitivi.appdata.xml.in.h:4
 msgid ""
@@ -41,6 +45,11 @@ msgid ""
 "review your scenes. Pitivi's ripple and roll editing features allow spending "
 "more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
+"Dengan alur kerja penyuntingan non-modal, alur waktu yang bebas laju bingkau "
+"dan berpusat playhead, Pitivi memungkinkan Anda dengan cepat dan akurat "
+"memangkas, memecah, dan meninjau skenario Anda. Fitur penyuntingan 'ripple "
+"and roll' Pitivi memungkinkan lebih banyak waktu untuk bercerita dan sedikit "
+"waktu untuk \"menggeser-geser klip\"."
 
 #: ../data/pitivi.appdata.xml.in.h:5
 msgid "Some other features include:"
@@ -72,6 +81,8 @@ msgstr "Transisi SMPTE dan pudar silang yang mudah dipakai"
 #: ../data/pitivi.appdata.xml.in.h:10
 msgid "Multihead-friendly with detachable user interface components"
 msgstr ""
+"Mendukung tampilan ganda dengan komponen antarmuka pengguna yang dapat "
+"dilepas"
 
 #: ../data/pitivi.appdata.xml.in.h:11
 msgid "The Pitivi Team"
@@ -86,13 +97,12 @@ msgid "video;film;movie;editor;"
 msgstr "video;film;movie;editor;"
 
 #: ../data/ui/alignmentprogress.ui.h:1
-#, fuzzy
 msgid "Auto-Alignment Starting"
-msgstr "memulai"
+msgstr "Awalan Rata Otomatis"
 
 #: ../data/ui/alignmentprogress.ui.h:2
 msgid "<b><big>Performing Auto-Alignment</big></b>"
-msgstr ""
+msgstr "<b><big>Melakukan Perataan Otomatis</big></b>"
 
 #: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1035
 msgid "Estimating..."
@@ -130,7 +140,7 @@ msgstr "Video:"
 #: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:17
 #: ../data/ui/renderingdialog.ui.h:17
 msgid "Channels:"
-msgstr "Kanal"
+msgstr "Kanal:"
 
 #: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:18
 #: ../data/ui/renderingdialog.ui.h:18
@@ -330,6 +340,8 @@ msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
 msgstr ""
+"Memulihkan semua setelan ke nilai-nilai sebelumnya (sebelum Anda membuka "
+"dialog preferensi)"
 
 #: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:2
 #: ../data/ui/renderingprogress.ui.h:6
@@ -489,6 +501,8 @@ msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
+"Merender semua klip yang disinggahkan dari aset singgahan. Mungkin ada "
+"kehilangan kualitas selama proses perenderan."
 
 #: ../data/ui/renderingdialog.ui.h:26
 msgid "Never render from proxy files"
@@ -501,6 +515,10 @@ msgid ""
 "use of not officially supported media formats.\n"
 "<i>Use at your own risk!</i>"
 msgstr ""
+"Selalu gunakan aset sumber untuk perenderan. Ini adalah pilihan terbaik bagi "
+"kualitas video yang dirender, namun Anda mungkin menemukan beberapa bug "
+"karena penggunaan format media yang tidak didukung secara resmi.\n"
+"<i>Gunakan ini dengan risiko Anda tanggung sendiri!</i>"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -512,6 +530,9 @@ msgid ""
 "the image resolution, your computer's processing power, applied effects and "
 "the length of your movie.</small>"
 msgstr ""
+"<small>Proses ini mungkin memakan waktu lama tergantung pada codec yang "
+"dipilih, resolusi gambar, kekuatan pemrosesan komputer, efek yang "
+"diterapkan, dan panjang film Anda.</small>"
 
 #: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer/viewer.py:544
 msgid "Pause"
@@ -607,11 +628,13 @@ msgid ""
 "Toggle gapless mode\n"
 "When enabled, adjacent clips automatically move to fill gaps."
 msgstr ""
+"Menjungkitkan mode tanpa jeda\n"
+"Ketika difungsikan, klip-klip yang bersebelahan otomatis digeser untuk "
+"mengisi celah."
 
 #: ../data/ui/timelinetoolbar.ui.h:15
-#, fuzzy
 msgid "Gapless mode"
-msgstr "_Mode:"
+msgstr "Mode tanpa jeda"
 
 #: ../data/ui/titleeditor.ui.h:1
 msgid "Create"
@@ -619,7 +642,7 @@ msgstr "Buat"
 
 #: ../data/ui/titleeditor.ui.h:2
 msgid "Select a title clip to edit or create a new one."
-msgstr ""
+msgstr "Pilih suatu klip judul yang akan disunting atau buat baru."
 
 #: ../data/ui/titleeditor.ui.h:3
 msgid "Choose a font"
@@ -741,6 +764,8 @@ msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
 msgstr ""
+"memfungsikan suatu watchdong dalam pipeline GStreamer. Digunakan untuk "
+"mendeteksi kesalahan yang terjadi dalam GStreamer dan memulihkannya"
 
 #: ../pitivi/clipproperties.py:115
 msgid "Effects"
@@ -764,7 +789,7 @@ msgstr "Nama efek"
 
 #: ../pitivi/clipproperties.py:209
 msgid "Select a clip on the timeline to configure its associated effects"
-msgstr ""
+msgstr "Pilih suatu klip pada alur waktu untuk menata efek-efek terkaitnya"
 
 #: ../pitivi/clipproperties.py:228
 msgid "Clip Effects"
@@ -783,12 +808,10 @@ msgid "Colors"
 msgstr "Warna"
 
 #: ../pitivi/effects.py:76
-#, fuzzy
 msgid "Compositing"
-msgstr "Matikan pengkomposisian"
+msgstr "Pengkompositan"
 
 #: ../pitivi/effects.py:83
-#, fuzzy
 msgid "Noise & blur"
 msgstr "Derau & kabur"
 
@@ -801,7 +824,6 @@ msgid "Geometry"
 msgstr "Geometri"
 
 #: ../pitivi/effects.py:108
-#, fuzzy
 msgid "Fancy"
 msgstr "Kesukaan"
 
@@ -859,7 +881,7 @@ msgstr "Simpan"
 
 #: ../pitivi/mainwindow.py:428
 msgid "Export your project as a finished movie"
-msgstr ""
+msgstr "Ekspor proyek Anda sebagai sebuah film yang selesai"
 
 #: ../pitivi/mainwindow.py:439
 msgid "Project"
@@ -921,6 +943,13 @@ msgid ""
 "\n"
 "Out of respect for our contributors, we point you instead to:\n"
 msgstr ""
+"Para penyumbang:\n"
+"Suatu daftar yang ditulis tangan di sini akan...\n"
+"• terlalu panjang,\n"
+"• sering sekali kedaluwarsa,\n"
+"• tidak menunjukkan kepantasan relatifnya.\n"
+"\n"
+"Untuk menghormati para penyumbang kami, kami arahkan saja ke:\n"
 
 #. Translators: keep the %s at the end of the 1st line
 #: ../pitivi/mainwindow.py:645
@@ -929,6 +958,8 @@ msgid ""
 "The list of contributors on Ohloh %s\n"
 "Or you can run: git shortlog -s -n"
 msgstr ""
+"Daftar para penyumbang pada Ohloh %s\n"
+"Atau Anda dapat menjalankan: git shortlog -s -n"
 
 #: ../pitivi/mainwindow.py:649
 msgid "translator-credits"
@@ -948,54 +979,49 @@ msgid "All supported formats"
 msgstr "Semua format yang didukung"
 
 #: ../pitivi/mainwindow.py:746
-#, fuzzy, python-format
+#, python-format
 msgid "Unable to save project \"%s\""
-msgstr "Tak bisa menyimpan koneksi: %s"
+msgstr "Tidak bisa menyimpan proyek \"%s\""
 
 #: ../pitivi/mainwindow.py:784 ../pitivi/project.py:155
 msgid "Save as..."
 msgstr "Simpan Sebagai..."
 
 #: ../pitivi/mainwindow.py:787
-#, fuzzy
 msgid "Close without saving"
-msgstr "Tutup tanpa Menyimpan"
+msgstr "Tutup tanpa menyimpan"
 
 #: ../pitivi/mainwindow.py:802
-#, fuzzy
 msgid "Save changes to the current project before closing?"
-msgstr "Simpan perubahan ke dokumen sebelum menutup?"
+msgstr "Simpan perubahan ke proyek ini sebelum menutup?"
 
 #: ../pitivi/mainwindow.py:815
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
-msgstr ""
+msgstr "Jika Anda tidak menyimpan, perubahan dari %s terakhir akan hilang."
 
 #: ../pitivi/mainwindow.py:819
-#, fuzzy
 msgid "If you don't save, your changes will be lost."
-msgstr "Bila Anda tidak menyimpan, perubahan ke berkas akan hilang selamanya."
+msgstr "Jika tidak disimpan, maka perubahan yang telah dibuat akan hilang."
 
 #: ../pitivi/mainwindow.py:887
-#, fuzzy
 msgid "Revert to saved project version?"
-msgstr "Kembalikan berkas ke versi tersimpan"
+msgstr "Kembalikan ke versi proyek yang tersimpan?"
 
 #: ../pitivi/mainwindow.py:892
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
+"Ini akan memuat ulang proyek saat ini. Semua perubahan yang belum disipan "
+"akan hilang."
 
 #: ../pitivi/mainwindow.py:907
-#, fuzzy, python-format
+#, python-format
 msgid "Unable to load project \"%s\""
-msgstr ""
-"Gagal memuat gambar:\n"
-"(%s)"
+msgstr "Tidak bisa memuat proyek \"%s\""
 
 #: ../pitivi/mainwindow.py:922
-#, fuzzy
 msgid "Locate missing file..."
-msgstr "berkas plugin \"%s\" kurang"
+msgstr "Temukan berkas yang hilang..."
 
 #. The file is probably an image, not video or audio.
 #: ../pitivi/mainwindow.py:954
@@ -1004,6 +1030,8 @@ msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
 msgstr ""
+"Berkas berikut telah dipindah: \"<b>%s</b>\"\n"
+"Harap masukkan lokasi barunya:"
 
 #: ../pitivi/mainwindow.py:959
 #, python-format
@@ -1011,6 +1039,8 @@ msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
 "Please specify its new location:"
 msgstr ""
+"Berkas berikut telah dipindah: \"<b>%s</b>\" (durasi: %s)\n"
+"Harap masukkan lokasi barunya:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
@@ -1033,6 +1063,9 @@ msgid ""
 "\n"
 "Pitivi does not currently support partial projects."
 msgstr ""
+"Tidak ada berkas pengganti yang disediakan untuk \"<i>%s</i>\".\n"
+"\n"
+"Pitivi saat ini tidak mendukung proyek parsial."
 
 #: ../pitivi/mainwindow.py:1093
 msgid "Export To..."
@@ -1065,38 +1098,34 @@ msgid "Preview"
 msgstr "Pratinjau"
 
 #: ../pitivi/mediafilespreviewer.py:159
-#, fuzzy
 msgid "Pitivi can not preview this file."
-msgstr "Versi dari format berkas pratinjau"
+msgstr "Pitivi tidak bisa mempratinjau berkas ini."
 
 #: ../pitivi/mediafilespreviewer.py:160
-#, fuzzy
 msgid "More info"
-msgstr "Info"
+msgstr "Info lebih jauh"
 
 #: ../pitivi/mediafilespreviewer.py:261
-#, fuzzy, python-format
+#, python-format
 msgid "<b>Resolution</b>: %d×%d"
-msgstr "<b>%d</b>"
+msgstr "<b>Resolusi</b>: %d×%d"
 
 #: ../pitivi/mediafilespreviewer.py:263 ../pitivi/mediafilespreviewer.py:280
-#, fuzzy, python-format
+#, python-format
 msgid "<b>Duration</b>: %s"
-msgstr "<b>%s</b>"
+msgstr "<b>Durasi</b>: %s"
 
 #: ../pitivi/mediafilespreviewer.py:456 ../pitivi/medialibrary.py:1052
-#, fuzzy
 msgid "Error while analyzing a file"
-msgstr "Kesalahan struktur berkas saat diimpor."
+msgstr "Galat saat menganalisis sebuah berkas"
 
 #: ../pitivi/medialibrary.py:127
-#, fuzzy
 msgid "Close after importing files"
-msgstr "Setelah mengimpor dari suatu perangkat:"
+msgstr "Tutup setelah mengimpor berkas"
 
 #: ../pitivi/medialibrary.py:132
 msgid "Create proxies when the media format is not supported officially"
-msgstr ""
+msgstr "Buat proksi ketika format media tidak didukung secara resmi"
 
 #: ../pitivi/medialibrary.py:134
 msgid ""
@@ -1108,21 +1137,29 @@ msgid ""
 "<i>This is the only option officially supported by the Pitivi developers and "
 "thus is the safest.</i>"
 msgstr ""
+"Biarkan Pitivi menentukan kapan membuat berkas proksi dan kapan tidak. "
+"Keputusan akan dibuat bergantung kepada format berkas, dan seberapa baik itu "
+"didukung. Sebagai contoh berkas FLAC, H.264 yang dimuat dalam QuickTime "
+"tidak akan diproksi, tapi AAC, H.264 yang dimuat dalam MPEG-TS akan "
+"diproksi.\n"
+"\n"
+"<i>Ini satu-satunya opsi yang secara resmi didukung oleh para pengembang "
+"Pitivi dan paling aman.</i>"
 
 #: ../pitivi/medialibrary.py:144
-#, fuzzy
 msgid "Create proxies for all files"
-msgstr "Membuat dan hapus berkas"
+msgstr "Buat proksi untuk semua berkas"
 
 #: ../pitivi/medialibrary.py:146
 msgid ""
 "Use proxies for every imported file whatever its current media format is."
 msgstr ""
+"Gunakan proksi untuk setiap berkas yang diimpor apapun format medianya saat "
+"ini."
 
 #: ../pitivi/medialibrary.py:149
-#, fuzzy
 msgid "Do not use proxy files"
-msgstr "(Usang) Apakah memakai http-proxy"
+msgstr "Jangan pakai berkas proksi"
 
 #: ../pitivi/medialibrary.py:364 ../pitivi/medialibrary.py:910
 msgid "Unknown"
@@ -1141,27 +1178,24 @@ msgid "Duration"
 msgstr "Durasi"
 
 #: ../pitivi/medialibrary.py:539
-#, fuzzy
 msgid "Remove the selected assets"
-msgstr "Aset"
+msgstr "Hapus yang aset yang dipilih"
 
 #: ../pitivi/medialibrary.py:545
 msgid "Insert selected assets at the end of the timeline"
-msgstr ""
+msgstr "Sisipkan aset yang dipilih di akhir alur waktu"
 
 #: ../pitivi/medialibrary.py:733
-#, fuzzy
 msgid "Select One or More Files"
-msgstr "Hapus satu berkas atau lebih"
+msgstr "Pilih Satu Berkas atau Lebih"
 
 #: ../pitivi/medialibrary.py:737
 msgid "Add"
 msgstr "Tambah"
 
 #: ../pitivi/medialibrary.py:752
-#, fuzzy
 msgid "Supported file formats"
-msgstr "Semua format palet yang didukung"
+msgstr "Format berkas yang didukung"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1173,67 +1207,64 @@ msgstr "Semua format palet yang didukung"
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
-msgstr[0] ""
+msgstr[0] "Men-transcode %d aset: %d%% (Sekitar %s tersisa)"
 
 #: ../pitivi/medialibrary.py:922
 msgid "View error"
 msgid_plural "View errors"
-msgstr[0] ""
+msgstr[0] "Tilik gagalt"
 
 #. Translators: {0:d} is just like %d (integer number variable)
 #: ../pitivi/medialibrary.py:924
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
-msgstr[0] ""
+msgstr[0] "{0:d} galat terjadi ketika mengimpor."
 
 #: ../pitivi/medialibrary.py:940
 #, python-format
 msgid "The project settings have been set to match file '%s'"
-msgstr ""
+msgstr "Setelan proyek telah ditata agar cocok dengan berkas '%s'"
 
 #: ../pitivi/medialibrary.py:1049
-#, fuzzy
 msgid "Error while analyzing files"
-msgstr "Galat sewaktu memindahkan berkas ke tempat sampah."
+msgstr "Galat saat menganalisis berkas-berkas"
 
 #: ../pitivi/medialibrary.py:1050
 msgid "The following files can not be used with Pitivi."
-msgstr ""
+msgstr "Berkas-berkas berikut tidak dapat dipakai dengan Pitivi."
 
 #: ../pitivi/medialibrary.py:1053
-#, fuzzy
 msgid "The following file can not be used with Pitivi."
-msgstr "Berkas dan query tak dapat dipakai bersama"
+msgstr "Berkas berikut tidak dapat dipakai dengan Pitivi."
 
 #: ../pitivi/medialibrary.py:1165
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
-msgstr[0] ""
+msgstr[0] "Jangan gunakan proksi untuk aset yang dipilih"
 
 #: ../pitivi/medialibrary.py:1176
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
-msgstr[0] ""
+msgstr[0] "Hapus berkas proksi yang terkait"
 
 #: ../pitivi/medialibrary.py:1187
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
-msgstr[0] ""
+msgstr[0] "Gunakan proksi untuk aset yang dipilih"
 
 #: ../pitivi/preset.py:98
 msgid "Remove"
 msgstr "Buang"
 
 #: ../pitivi/preset.py:213
-#, fuzzy
 msgid "New preset"
-msgstr "Prasetel Alat _Baru"
+msgstr "Prasetel baru"
 
 #: ../pitivi/preset.py:216
-#, fuzzy, python-format
+#, python-format
 msgid "New preset %d"
-msgstr "Prasetel Alat _Baru"
+msgstr "Prasetel baru %d"
 
 #: ../pitivi/project.py:61
 msgid "New Project"
@@ -1243,7 +1274,7 @@ msgstr "Proyek Baru"
 #. same translatable one as render.py's pipeline error message dialog:
 #: ../pitivi/project.py:139 ../pitivi/render.py:758
 msgid "Sorry, something didn’t work right."
-msgstr ""
+msgstr "Maaf, ada yang tidak bekerja dengan benar."
 
 #: ../pitivi/project.py:142
 msgid ""
@@ -1259,11 +1290,21 @@ msgid ""
 "Before closing Pitivi, you can save changes to the existing project file or "
 "as a separate project file."
 msgstr ""
+"Pitivi mendeteksi suatu masalah backend yang serius dan tidak dapat pulih "
+"darinya, bahkan setelah mencoba berkali-kali. Satu-satunya yang dapat "
+"dilakukan pada titik ini adalah <b>menjalankan ulang Pitivi</b>.\n"
+"\n"
+"Ini bug yang jarang dan parah. Harap lihat <a href=\"http://wiki.pitivi.org/"
+"wiki/Bug_reporting\">panduan pelaporan bug</a> dan luangkan waktu untuk "
+"melaporkannya! Kami akan sangat senang memperbaiki bug ini dan memastikan "
+"bahwa ini tidak akan terjadi lagi pada versi-versi mendatang.\n"
+"\n"
+"Sebelum menutup Pitivi, Anda dapat menyimpan perubah ke berkas proyek yang "
+"ada atau sebagai suatu berkas proyek terpisah."
 
 #: ../pitivi/project.py:157
-#, fuzzy
 msgid "Close Pitivi"
-msgstr "Pitivi"
+msgstr "Tutup Pitivi"
 
 #: ../pitivi/project.py:227
 msgid ""
@@ -1271,16 +1312,17 @@ msgid ""
 "were trying to add a media file to your project, use the \"Import\" button "
 "instead."
 msgstr ""
+"Ini mungkin karena suatu bug atau format berkas proyek yang tidak didukung. "
+"Bila Anda mencoba menambahkan suatu berkas media ke proyek Anda, gunakan "
+"tombol \"Impor\" sebagai pengganti."
 
 #: ../pitivi/project.py:249
-#, fuzzy
 msgid "Ignore backup"
-msgstr "Aba_ikan"
+msgstr "Abaikan salinan cadangan"
 
 #: ../pitivi/project.py:250
-#, fuzzy
 msgid "Restore from backup"
-msgstr "_Kembalikan Cadangan"
+msgstr "Pulihkan dari cadangan"
 
 #: ../pitivi/project.py:266
 #, python-format
@@ -1290,27 +1332,28 @@ msgid ""
 "\n"
 "Would you like to load it instead?"
 msgstr ""
+"Ditemukan suatu versi tersimpan-otomatis dari berkas proyek Anda. Ini lebih "
+"baru %s daripada proyek yang disimpan.\n"
+"\n"
+"Apakah Anda hendak memuatnya sebagai pengganti?"
 
 #: ../pitivi/project.py:342
-#, fuzzy
 msgid "You do not have permissions to write to this folder."
-msgstr "Anda mungkin tidak punya hak tulis ke folder yang dipilih"
+msgstr "Anda tidak berhak untuk menulis ke folder ini."
 
 #. Save the project to a temporary file.
 #: ../pitivi/project.py:375
-#, fuzzy
 msgid "project"
-msgstr "Projek"
+msgstr "proyek"
 
 #: ../pitivi/project.py:672
-#, fuzzy
 msgid "Pitivi encoding profile"
-msgstr "Pitivi"
+msgstr "Profil pengkodean Pitivi"
 
 #: ../pitivi/render.py:331
-#, fuzzy, python-format
+#, python-format
 msgid "Rendering — %d%% complete"
-msgstr "Pemasangan komplit: %d berkas disalin"
+msgstr "Merender — %d%% selesai"
 
 #. Translators: this string indicates the estimated time
 #. remaining until an action (such as rendering) completes.
@@ -1319,33 +1362,32 @@ msgstr "Pemasangan komplit: %d berkas disalin"
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
 #: ../pitivi/render.py:340
-#, fuzzy, python-format
+#, python-format
 msgid "About %s left"
-msgstr "%s pergi"
+msgstr "Sekitar %s tersisa"
 
 #: ../pitivi/render.py:384
-#, fuzzy
 msgid "Currently rendering"
-msgstr "<b>Perenderan HTML</b>"
+msgstr "Sedang merender"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
 #: ../pitivi/render.py:621
-#, fuzzy
 msgid "Unsupported"
 msgstr "Tak didukung"
 
 #: ../pitivi/render.py:655
-#, fuzzy
 msgid "A file name is required."
-msgstr "Nama berkas"
+msgstr "Suatu nama berkas diperlukan."
 
 #: ../pitivi/render.py:657
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
 msgstr ""
+"Berkas ini sudah ada.\n"
+"Bila Anda tidak ingin menimpanya, pilihlah folder atau nama berkas lain."
 
 #: ../pitivi/render.py:687
 #, python-format
@@ -1364,19 +1406,20 @@ msgid ""
 "check our troubleshooting guide or file a bug report. The GStreamer error "
 "was:"
 msgstr ""
+"Terjadi suatu kesalahan ketika mencoba merender proyek Anda. Anda mungkin "
+"ingin memeriksa panduan penelusuran masalah kami atau mengirimkan suatu "
+"laporan bug. Kesalahan GStreamernya:"
 
 #: ../pitivi/render.py:984 ../pitivi/render.py:985 ../pitivi/render.py:991
-#, fuzzy
 msgid "Render complete"
-msgstr "_Render"
+msgstr "Render selesai"
 
 #: ../pitivi/render.py:989
-#, fuzzy, python-format
+#, python-format
 msgid "\"%s\" has finished rendering."
-msgstr "Selesai mencetak."
+msgstr "\"%s\" telah selesai merender."
 
 #: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
-#, fuzzy
 msgid "Absolute"
 msgstr "Absolut"
 
@@ -1393,9 +1436,8 @@ msgid "Bottom"
 msgstr "Dasar"
 
 #: ../pitivi/titleeditor.py:95
-#, fuzzy
 msgid "Baseline"
-msgstr "garis basis"
+msgstr "Baseline"
 
 #: ../pitivi/titleeditor.py:99
 msgid "Left"
@@ -1410,7 +1452,6 @@ msgid "Normal"
 msgstr "Normal"
 
 #: ../pitivi/transitions.py:89
-#, fuzzy
 msgid "Loop"
 msgstr "Pengulangan"
 
@@ -1423,6 +1464,9 @@ msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
 msgstr ""
+"Mebuat suatu transisi dengan menumpang tindih dua klip bersebelahan pada "
+"lapisan yang sama. Klik transisi pada alur waktu untuk mengubah tipe "
+"transisi."
 
 #: ../pitivi/transitions.py:238
 msgid "Slow"
@@ -1434,10 +1478,9 @@ msgstr "Cepat"
 
 #: ../pitivi/transitions.py:242
 msgid "Epileptic"
-msgstr ""
+msgstr "Epileptik"
 
 #: ../pitivi/transitions.py:246
-#, fuzzy
 msgid "Sharp"
 msgstr "Tajam"
 
@@ -1446,175 +1489,164 @@ msgid "Smooth"
 msgstr "Mulus"
 
 #: ../pitivi/viewer/viewer.py:76
-#, fuzzy
 msgid "Currently playing"
-msgstr "Tak ada aplikasi yang sedang memainkan atau merekam audio."
+msgstr "Sedang memutar"
 
 #: ../pitivi/viewer/viewer.py:223
-#, fuzzy
 msgid "Go to the beginning of the timeline"
-msgstr "Menuju awal dokumen"
+msgstr "Ke awal alur waktu"
 
 #: ../pitivi/viewer/viewer.py:230
-#, fuzzy
 msgid "Go back one second"
-msgstr "Mundur Selangkah"
+msgstr "Mundur satu detik"
 
 #: ../pitivi/viewer/viewer.py:242
-#, fuzzy
 msgid "Go forward one second"
-msgstr "Maju Selangkah"
+msgstr "Maju satu detik"
 
 #: ../pitivi/viewer/viewer.py:250
-#, fuzzy
 msgid "Go to the end of the timeline"
-msgstr "Menuju akhir dokumen"
+msgstr "Ke akhir alur waktu"
 
 #: ../pitivi/viewer/viewer.py:257
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
 msgstr ""
+"Masukkan suatu kode waktu atau nomor bingkai\n"
+"dan tekan \"Enter\" untuk pergi ke posisi itu"
 
 #: ../pitivi/viewer/viewer.py:265
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
 msgstr ""
+"Copot penilik\n"
+"Anda dapat merekatkannya lagi dengan menutup jendela yang baru dibuat."
 
 #: ../pitivi/viewer/viewer.py:355 ../pitivi/viewer/viewer.py:405
-#, fuzzy
 msgid "Show this window in fullscreen"
-msgstr "Apakah jendela layar penuh"
+msgstr "Tampilkan jendela ini dalam layar penuh"
 
 #: ../pitivi/viewer/viewer.py:402
-#, fuzzy
 msgid "Exit fullscreen mode"
-msgstr "Memakai mode layar penuh"
+msgstr "Keluar mode layar penuh"
 
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
 #: ../pitivi/timeline/elements.py:372
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Property: %s\n"
 "Timestamp: %s\n"
 "Value: %s"
-msgstr "Nilai properti %s dari suatu elemen %s (\"%s\") tak diketahui."
+msgstr ""
+"Properti: %s\n"
+"Stempel Waktu: %s\n"
+"Nilai: %s"
 
 #: ../pitivi/timeline/elements.py:1211
-#, fuzzy
 msgid "Audio crossfade"
-msgstr "~Audio..."
+msgstr "Crossfade audio"
 
 #: ../pitivi/timeline/layer.py:166
-#, fuzzy
 msgid "Move layer to top"
-msgstr "Pindahkan lapisan ini ke puncak tumpukan lapisan"
+msgstr "Pindahkan lapisan ke puncak"
 
 #: ../pitivi/timeline/layer.py:172
-#, fuzzy
 msgid "Move layer up"
-msgstr "Naik"
+msgstr "Pindahkan lapisan ke atas"
 
 #: ../pitivi/timeline/layer.py:178
-#, fuzzy
 msgid "Move layer down"
-msgstr "Pindahkan lapisan ini ke puncak tumpukan lapisan"
+msgstr "Pindahkan lapisan ke bawah"
 
 #: ../pitivi/timeline/layer.py:184
-#, fuzzy
 msgid "Move layer to bottom"
-msgstr "Pindahkan lapisan ini ke dasar tumpukan lapisan"
+msgstr "Pindahkan lapisan ke dasar"
 
 #: ../pitivi/timeline/layer.py:190
 msgid "Delete layer"
 msgstr "Hapus lapisan"
 
 #: ../pitivi/timeline/layer.py:274
-#, fuzzy, python-format
+#, python-format
 msgid "Layer %d"
-msgstr "D_uplikatkan Lapisan"
+msgstr "Lapisan %d"
 
 #: ../pitivi/timeline/ruler.py:224
-#, fuzzy, python-format
+#, python-format
 msgid "Frame #%d"
-msgstr "Ke ~Bingkai"
+msgstr "Bingkai #%d"
 
 #: ../pitivi/timeline/timeline.py:74
-#, fuzzy
 msgid "Snap distance"
-msgstr "_Jarak"
+msgstr "Jarak kancing"
 
 #: ../pitivi/timeline/timeline.py:75
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
 msgstr ""
+"Ambang (dalam piksel) dimana dua klip akan lengket menjadi satu ketika "
+"menyeret atau memangkas."
 
 #: ../pitivi/timeline/timeline.py:87
-#, fuzzy
 msgid "Image clip duration"
-msgstr "~Galeri Klip Seni"
+msgstr "Durasi klip gambar"
 
 #: ../pitivi/timeline/timeline.py:89
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
+"Panjang klip baku (dalam milidetik) dari citra ketika menyisipkan dalam alur "
+"waktu."
 
 #: ../pitivi/timeline/timeline.py:100
-#, fuzzy
 msgid "Left click also seeks"
-msgstr "Klik Tombol Kiri Tetikus"
+msgstr "Klik kiri juga seek"
 
 #: ../pitivi/timeline/timeline.py:102
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
-msgstr ""
+msgstr "Apakah mengklik kiri juga seek selain memilih dan menyunting klip."
 
 #: ../pitivi/timeline/timeline.py:1469 ../pitivi/dialogs/prefs.py:53
 msgid "Timeline"
-msgstr ""
+msgstr "Alur Waktu"
 
 #: ../pitivi/timeline/timeline.py:1476
-#, fuzzy
 msgid "Delete selected clips"
-msgstr "Hapus yang dipilih"
+msgstr "Hapus klip yang dipilih"
 
 #: ../pitivi/timeline/timeline.py:1482
-#, fuzzy
 msgid "Group selected clips together"
-msgstr "Kelompokkan tab yang serupa bersama-sama."
+msgstr "Kelompokkan klip yang dipilih menjadi satu"
 
 #: ../pitivi/timeline/timeline.py:1488
-#, fuzzy
 msgid "Ungroup selected clips"
-msgstr "Pisahkan Kel~ompok..."
+msgstr "Bongkar kelompok klip yang dipilih"
 
 #: ../pitivi/timeline/timeline.py:1494
-#, fuzzy
 msgid "Copy selected clips"
-msgstr "Salin yang tampak dalam wilayah yang dipilih"
+msgstr "Salin klip yang dipilih"
 
 #: ../pitivi/timeline/timeline.py:1500
-#, fuzzy
 msgid "Paste selected clips"
-msgstr "Tempelkan penyangga yang dipilih sebagai suatu gambar baru"
+msgstr "Tempelkan klip yang dipilih"
 
 #: ../pitivi/timeline/timeline.py:1512
-#, fuzzy
 msgid "Split the clip at the position"
-msgstr "~Galeri Klip Seni"
+msgstr "Belah klip pada posisi"
 
 #: ../pitivi/timeline/timeline.py:1518
 msgid "Add keyframe to the keyframe curve of selected clip"
-msgstr ""
+msgstr "Menambah bingkai kunci ke kurva bingkai kunci dari klip yang dipilih"
 
 #: ../pitivi/timeline/timeline.py:1523
-#, fuzzy
 msgid "Timeline Navigation"
-msgstr "Navigasi"
+msgstr "Navigasi Alur Waktu"
 
 #: ../pitivi/timeline/timeline.py:1530
 msgid "Zoom in"
@@ -1625,34 +1657,30 @@ msgid "Zoom out"
 msgstr "Perkecil"
 
 #: ../pitivi/timeline/timeline.py:1542
-#, fuzzy
 msgid "Adjust zoom to fit the project to the window"
-msgstr "Sesuaikan rasio zum sehingga seluruh jendela terpakai"
+msgstr "Atur zum agar seluruh proyek pas ke jendela"
 
 #: ../pitivi/timeline/timeline.py:1553
 msgid "Seek backward one frame"
-msgstr ""
+msgstr "Seek mundur satu bingkai"
 
 #: ../pitivi/timeline/timeline.py:1559
-#, fuzzy
 msgid "Seek forward one frame"
-msgstr "Maju satu direktori"
+msgstr "Maju satu bingkai"
 
 #: ../pitivi/timeline/timeline.py:1566
-#, fuzzy
 msgid "Seek backward one second"
-msgstr "kurang dari satu detik"
+msgstr "Mundur satu detik"
 
 #: ../pitivi/timeline/timeline.py:1573
-#, fuzzy
 msgid "Seek forward one second"
-msgstr "kurang dari satu detik"
+msgstr "Maju satu detik"
 
 #. Translators: a label showing an invalid framerate value
 #: ../pitivi/dialogs/clipmediaprops.py:112
-#, fuzzy, python-format
+#, python-format
 msgid "invalid (%s fps)"
-msgstr "%.3f fps"
+msgstr "tidak valid (%s fps)"
 
 #: ../pitivi/dialogs/clipmediaprops.py:135
 msgid "Image:"
@@ -1663,38 +1691,33 @@ msgid "Unknown reason"
 msgstr "Alasan tak diketahui"
 
 #: ../pitivi/dialogs/filelisterrordialog.py:86
-#, fuzzy
 msgid "Problem:"
-msgstr "Pelaporan Masalah Otom_atis"
+msgstr "Masalah:"
 
 #: ../pitivi/dialogs/filelisterrordialog.py:94
-#, fuzzy
 msgid "Extra information:"
-msgstr "Tampilkan informasi ekstra"
+msgstr "Informasi ekstra:"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
 #: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:677
-#, fuzzy, python-format
+#, python-format
 msgid "%(preference_label)s:"
-msgstr "Tidak dapat menulis label: %s"
+msgstr "%(preference_label)s:"
 
 #: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:741
-#, fuzzy
 msgid "Reset to default value"
-msgstr "Menata KUNCI ke nilai bawaannya"
+msgstr "Menata ulang ke nilai-nilai bawaan"
 
 #: ../pitivi/dialogs/prefs.py:250
 msgid "Shortcuts"
 msgstr "Pintasan"
 
 #: ../pitivi/dialogs/prefs.py:280
-#, fuzzy
 msgid "Reset the shortcut to the default accelerator"
-msgstr "Tata ulang pintasan ke nilai baku"
+msgstr "Tata ulang pintasan ke akselerator baku"
 
 #: ../pitivi/dialogs/prefs.py:436
-#, fuzzy
 msgid "Set Shortcut"
 msgstr "Atur Pintasan"
 
@@ -1704,31 +1727,33 @@ msgid "Apply"
 msgstr "Terapkan"
 
 #: ../pitivi/dialogs/prefs.py:454
-#, fuzzy
 msgid "Apply the accelerator to this shortcut."
-msgstr "Pintasan"
+msgstr "Terapkan akselerator ke pintasan ini."
 
 #: ../pitivi/dialogs/prefs.py:457
-#, fuzzy
 msgid "Replace"
-msgstr "_Gantikan"
+msgstr "Timpa"
 
 #: ../pitivi/dialogs/prefs.py:460
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
 msgstr ""
+"Hapus akselerator ini dari tempat dia sebelumnya dipakai dan atur menjadi "
+"pintasan ini."
 
 #: ../pitivi/dialogs/prefs.py:467
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr ""
+msgstr "Masukkan pintasan untuk <b>%s</b>, atau tekan Esc untuk batal."
 
 #: ../pitivi/dialogs/prefs.py:476
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
 msgstr ""
+"Akselerator yang Anda coba atur mungkin mengganggu pengetikan. Mohon coba "
+"memakai Control, Shift, atau Alt dengan kunci lain."
 
 #: ../pitivi/dialogs/prefs.py:510
 #, python-format
@@ -1736,21 +1761,25 @@ msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
 "for <b>%s</b> instead."
 msgstr ""
+"Kombinasi tombol ini sudah dipakai oleh <b>%s</b>. Tekan Gantikan untuk "
+"tetap memakainya bagi <b>%s</b>."
 
 #: ../pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
 msgstr "Proyek"
 
 #: ../pitivi/dialogs/startupwizard.py:163
-#, fuzzy, python-format
+#, python-format
 msgid "Pitivi %s is available."
-msgstr "Pitivi"
+msgstr "Pitivi %s sudah tersedia."
 
 #: ../pitivi/utils/misc.py:266
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
 msgstr ""
+"Gagal membuka manual penggunal. Pastikan telah terpasangnya penampil "
+"dokumentasi GNOME 'yelp' atau suatu peramban web"
 
 #: ../pitivi/utils/misc.py:275
 msgid ""
@@ -1759,33 +1788,38 @@ msgid ""
 "settings; if you try to use Pitivi with a broken locale, weird bugs will "
 "happen."
 msgstr ""
+"Locale sistem yang sedang Anda pakai tidak berkemampuan UTF-8. Dukungan "
+"Unicode diperlukan bagi perangkat lunak Python3 seperti Pitivi. Harap "
+"perbaiki setelan sistem Anda; bila Anda mencoba memakai Pitivi dengan locale "
+"yang rusak, bug yang aneh akan terjadi."
 
 #: ../pitivi/utils/misc.py:285
-#, fuzzy
 msgid "Error while decoding a string"
-msgstr "Kesalahan saat mendekode peta warna"
+msgstr "Kesalahan saat mendekode sebuah string"
 
 #: ../pitivi/utils/ui.py:281
 msgid ""
 "\n"
 "<b>Proxy creation progress: "
 msgstr ""
+"\n"
+"<b>Kemajuan pembuatan proksi: "
 
 #: ../pitivi/utils/ui.py:308
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] ""
+msgstr[0] "<b>Audio:</b> %d kanal pada %d <i>Hz</i> (%d <i>bit</i>)"
 
 #: ../pitivi/utils/ui.py:318
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
-msgstr ""
+msgstr "<b>Video:</b> %d×%d <i>piksel</i> pada %.3f <i>fps</i>"
 
 #: ../pitivi/utils/ui.py:326
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
-msgstr ""
+msgstr "<b>Citra:</b> %d×%d <i>piksel</i>"
 
 #: ../pitivi/utils/ui.py:381 ../pitivi/utils/ui.py:408
 #: ../pitivi/utils/ui.py:432
@@ -1863,9 +1897,8 @@ msgid "Mono"
 msgstr "Mono"
 
 #: ../pitivi/utils/ui.py:573
-#, fuzzy
 msgid "Square"
-msgstr "Bujur Sangkar"
+msgstr "Kotak"
 
 #: ../pitivi/utils/ui.py:574
 msgid "480p"
@@ -1936,30 +1969,26 @@ msgid "Anamorphic (2.4)"
 msgstr "Anamorfik (2.4)"
 
 #: ../pitivi/utils/widgets.py:76
-#, fuzzy
 msgid "Implement Me"
-msgstr "Saya:"
+msgstr "Implementasikan Saya"
 
 #: ../pitivi/utils/widgets.py:642
-#, fuzzy
 msgid "No properties."
-msgstr "_Properti…"
+msgstr "Tidak ada properti."
 
 #. Avoid the ugly selection outline
 #: ../pitivi/utils/widgets.py:726
-#, fuzzy
 msgid "Show keyframes for this value"
-msgstr "Tampilkan nilai sebagai _persentase"
+msgstr "Tampilkan bingkai kunci untuk nilai ini"
 
 #: ../pitivi/utils/widgets.py:893
-#, fuzzy, python-format
+#, python-format
 msgid "Properties for %s"
-msgstr "Gagal mendapat properti folder: %s"
+msgstr "Properti untuk %s"
 
 #: ../pitivi/utils/widgets.py:1030
-#, fuzzy
 msgid "Zoom Fit"
-msgstr "~Zum"
+msgstr "Zum Pas"
 
 #: ../pitivi/utils/widgets.py:1035
 msgid "Zoom"
@@ -1967,11 +1996,11 @@ msgstr "Zum"
 
 #. Translators: %s represents a duration, for example "10 minutes"
 #: ../pitivi/utils/widgets.py:1109
-#, fuzzy, python-format
+#, python-format
 msgid "%s displayed"
-msgstr "Bila difungsikan, panel kiri akan ditampilkan."
+msgstr "%s ditampilkan"
 
 #: ../pitivi/utils/widgets.py:1113
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
-msgstr ""
+msgstr "%d nanodetik ditampilkan, karena kami bisa"
