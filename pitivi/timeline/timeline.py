@@ -38,6 +38,7 @@ from pitivi.timeline.elements import TrimHandle
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.layer import SpacedSeparator
+from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
@@ -436,6 +437,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
+        # Avoid starting/closing preview generation like crazy while tearing down project
+        Previewer.manager.start_flushing()
         if self.ges_timeline is not None:
             self.disconnect_by_func(self._button_press_event_cb)
             self.disconnect_by_func(self._button_release_event_cb)
@@ -454,6 +457,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         if self._project:
             self._project.pipeline.disconnect_by_func(self._positionCb)
+        Previewer.manager.stop_flushing()
+
         self._project = project
         if self._project:
             self._project.pipeline.connect('position', self._positionCb)

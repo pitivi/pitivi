@@ -308,6 +308,7 @@ class PreviewGeneratorManager():
             GES.TrackType.AUDIO: [],
             GES.TrackType.VIDEO: []
         }
+        self._running = True
 
     def add_previewer(self, previewer):
         """Adds the specified previewer to the queue.
@@ -332,11 +333,29 @@ class PreviewGeneratorManager():
         previewer.connect("done", self.__previewer_done_cb)
         previewer.startGeneration()
 
+    def start_flushing(self):
+        """Flushes all previewers and start ignoring any update."""
+        if self._running:
+            self._running = False
+            for previewer in list(self._current_previewers.values()):
+                previewer.stopGeneration()
+
+            for previewers in self._previewers.values():
+                for previewer in previewers:
+                    previewer.stopGeneration()
+
+    def stop_flushing(self):
+        """Stop ignoring managed previewers updates."""
+        self._running = True
+
     def __previewer_done_cb(self, previewer):
         track_type = previewer.track_type
         next_previewer = self._current_previewers.pop(track_type, None)
         if next_previewer:
             next_previewer.disconnect_by_func(self.__previewer_done_cb)
+
+        if not self._running:
+            return
 
         if self._previewers[track_type]:
             self._start_previewer(self._previewers[track_type].pop())
@@ -350,7 +369,7 @@ class Previewer(Gtk.Layout):
     """
 
     # We only need one PreviewGeneratorManager to manage all previewers.
-    __manager = PreviewGeneratorManager()
+    manager = PreviewGeneratorManager()
 
     def __init__(self, track_type):
         Gtk.Layout.__init__(self)
@@ -367,7 +386,7 @@ class Previewer(Gtk.Layout):
 
     def becomeControlled(self):
         """Lets the PreviewGeneratorManager control our execution."""
-        Previewer.__manager.add_previewer(self)
+        Previewer.manager.add_previewer(self)
 
     def setSelected(self, selected):
         """Marks this instance as being selected."""
