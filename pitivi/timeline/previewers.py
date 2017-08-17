@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 """Previewers for the timeline."""
 import os
-import pickle
 import random
 import sqlite3
 
@@ -175,7 +174,7 @@ class TeedThumbnailBin(ThumbnailBin):
 
 # pylint: disable=too-many-instance-attributes
 class WaveformPreviewer(PreviewerBin):
-    """Bin to generate and save waveforms as a pickle file."""
+    """Bin to generate and save waveforms as a .npy file."""
 
     __gproperties__ = {
         "uri": (str,
@@ -277,7 +276,7 @@ class WaveformPreviewer(PreviewerBin):
 
             self.samples = list(samples)
             with open(self.wavefile, 'wb') as wavefile:
-                pickle.dump(list(samples), wavefile)
+                numpy.save(wavefile, samples)
 
         if proxy:
             proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
@@ -869,8 +868,8 @@ class ThumbnailCache(Loggable):
 
 
 def get_wavefile_location_for_uri(uri):
-    """Computes the URI where the pickled wave file should be stored."""
-    filename = hash_file(Gst.uri_get_location(uri)) + ".wave"
+    """Computes the URI where the wave.npy file should be stored."""
+    filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
     return os.path.join(cache_dir, filename)
@@ -931,7 +930,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
-                self.samples = pickle.load(samples)
+                self.samples = list(numpy.load(samples))
             self._startRendering()
         else:
             self.wavefile = filename
