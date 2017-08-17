@@ -42,6 +42,7 @@ from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.pipeline import MAX_BRINGING_TO_PAUSED_DURATION
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
@@ -417,6 +418,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # Guard against malformed URIs
         self.uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
+        self.__preroll_timeout_id = 0
+
         # Variables related to thumbnailing
         self.wishlist = []
         self.queue = []
@@ -469,34 +472,15 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         # get the gdkpixbufsink and the sinkpad
         self.gdkpixbufsink = self.pipeline.get_by_name("gdkpixbufsink")
-        sinkpad = self.gdkpixbufsink.get_static_pad("sink")
-
-        self.pipeline.set_state(Gst.State.PAUSED)
-
-        # Wait for the pipeline to be prerolled so we can check the width
-        # that the thumbnails will have and set the aspect ratio accordingly
-        # as well as getting the framerate of the video:
-        change_return = self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
-        if Gst.StateChangeReturn.SUCCESS == change_return[0]:
-            neg_caps = sinkpad.get_current_caps()[0]
-            self.thumb_width = neg_caps["width"]
-        else:
-            # the pipeline couldn't be prerolled so we can't determine the
-            # correct values. Set sane defaults (this should never happen)
-            self.warning("Couldn't preroll the pipeline")
-            # assume 16:9 aspect ratio
-            self.thumb_width = 16 * self.thumb_height / 9
 
         decode = self.pipeline.get_by_name("decode")
         decode.connect("autoplug-select", self._autoplug_select_cb)
 
-        # pop all messages from the bus so we won't be flooded with messages
-        # from the prerolling phase
-        while self.pipeline.get_bus().pop():
-            continue
-        # add a message handler that listens for the created pixbufs
+        self.__preroll_timeout_id = GLib.timeout_add_seconds(MAX_BRINGING_TO_PAUSED_DURATION,
+                                                             self.__preroll_timed_out_cb)
         self.pipeline.get_bus().add_signal_watch()
         self.pipeline.get_bus().connect("message", self.__bus_message_cb)
+        self.pipeline.set_state(Gst.State.PAUSED)
 
     def _checkCPU(self):
         """Adjusts when the next thumbnail is generated.
@@ -671,20 +655,33 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._update_thumbnails()
 
     # Callbacks
-
     def __bus_message_cb(self, unused_bus, message):
         if message.type == Gst.MessageType.ELEMENT and \
-                message.src == self.gdkpixbufsink:
+                message.src == self.gdkpixbufsink and \
+                self.__preroll_timeout_id == 0:
             struct = message.get_structure()
             struct_name = struct.get_name()
             if struct_name == "preroll-pixbuf":
                 stream_time = struct.get_value("stream-time")
                 pixbuf = struct.get_value("pixbuf")
                 self._set_pixbuf(stream_time, pixbuf)
+        elif message.src == self.pipeline and message.type == Gst.MessageType.STATE_CHANGED:
+            if message.parse_state_changed()[1] == Gst.State.PAUSED:
+                if self.__preroll_timeout_id:
+                    GLib.source_remove(self.__preroll_timeout_id)
+                    self.__preroll_timeout_id = 0
+                    sinkpad = self.gdkpixbufsink.get_static_pad("sink")
+                    neg_caps = sinkpad.get_current_caps()[0]
+                    self.thumb_width = neg_caps["width"]
+
+                self._update_thumbnails()
         elif message.type == Gst.MessageType.ASYNC_DONE and \
                 message.src == self.pipeline:
             self._checkCPU()
         return Gst.BusSyncReply.PASS
+
+    def __preroll_timed_out_cb(self):
+        self.stopGeneration()
 
     # pylint: disable=no-self-use
     def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
