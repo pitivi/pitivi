@@ -801,7 +801,6 @@ class AudioUriSource(TimelineElement):
     def _getPreviewer(self):
         previewer = AudioPreviewer(self._ges_elem)
         previewer.get_style_context().add_class("AudioUriSource")
-        previewer.startLevelsDiscoveryWhenIdle()
 
         return previewer
 

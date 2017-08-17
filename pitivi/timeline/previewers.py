@@ -912,18 +912,13 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
         self.connect("notify::height-request", self._height_changed_cb)
+        self.becomeControlled()
 
     def _inpoint_changed_cb(self, unused_b_element, unused_value):
         self._force_redraw = True
 
     def _height_changed_cb(self, unused_widget, unused_param_spec):
         self._force_redraw = True
-
-    def startLevelsDiscoveryWhenIdle(self):
-        """Starts processing waveform (whenever possible)."""
-        self.debug('Waiting for UI to become idle for: %s',
-                   path_from_uri(self._uri))
-        GLib.idle_add(self._startLevelsDiscovery, priority=GLib.PRIORITY_LOW)
 
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
@@ -962,7 +957,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         asset = self.ges_elem.get_parent().get_asset()
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
-        self.becomeControlled()
 
     def zoomChanged(self):
         self._force_redraw = True
@@ -1053,7 +1047,16 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         context.set_source_surface(self.surface, self._surface_x, 0)
         context.paint()
 
+    def _emit_done_on_idle(self):
+        self.emit("done")
+
     def startGeneration(self):
+        self._startLevelsDiscovery()
+        if not self.pipeline:
+            # No need to generate as we loaded pre-generated .wave file.
+            GLib.idle_add(self._emit_done_on_idle, priority=GLib.PRIORITY_LOW)
+            return
+
         self.pipeline.set_state(Gst.State.PLAYING)
         if self.adapter is not None:
             self.adapter.start()
