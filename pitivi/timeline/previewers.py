@@ -977,6 +977,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.discovered = True
         if self.adapter:
             self.adapter.stop()
+        self.queue_draw()
 
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
