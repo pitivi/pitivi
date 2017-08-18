@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-08-15 15:11+0000\n"
-"PO-Revision-Date: 2017-08-16 20:16+0700\n"
+"POT-Creation-Date: 2017-08-16 13:17+0000\n"
+"PO-Revision-Date: 2017-08-18 12:07+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: Indonesian <gnome-l10n-id@googlegroups.com>\n"
 "Language: id\n"
@@ -45,7 +45,7 @@ msgid ""
 "review your scenes. Pitivi's ripple and roll editing features allow spending "
 "more time on storytelling and less time on \"pushing clips around\"."
 msgstr ""
-"Dengan alur kerja penyuntingan non-modal, alur waktu yang bebas laju bingkau "
+"Dengan alur kerja penyuntingan non-modal, lini masa yang bebas laju bingkai "
 "dan berpusat playhead, Pitivi memungkinkan Anda dengan cepat dan akurat "
 "memangkas, memecah, dan meninjau skenario Anda. Fitur penyuntingan 'ripple "
 "and roll' Pitivi memungkinkan lebih banyak waktu untuk bercerita dan sedikit "
@@ -296,7 +296,7 @@ msgstr "Properti klip..."
 
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
-msgstr "Sisipkan klip-klip yang dipilih di akhir alur waktu"
+msgstr "Sisipkan klip-klip yang dipilih di akhir lini masa"
 
 #: ../data/ui/medialibrary.ui.h:7
 msgid "Insert at _End of Timeline"
@@ -789,7 +789,7 @@ msgstr "Nama efek"
 
 #: ../pitivi/clipproperties.py:206
 msgid "Select a clip on the timeline to configure its associated effects"
-msgstr "Pilih suatu klip pada alur waktu untuk menata efek-efek terkaitnya"
+msgstr "Pilih suatu klip pada lini masa untuk menata efek-efek terkaitnya"
 
 #: ../pitivi/clipproperties.py:225
 msgid "Clip Effects"
@@ -1173,7 +1173,7 @@ msgstr "Hapus yang aset yang dipilih"
 
 #: ../pitivi/medialibrary.py:556
 msgid "Insert selected assets at the end of the timeline"
-msgstr "Sisipkan aset yang dipilih di akhir alur waktu"
+msgstr "Sisipkan aset yang dipilih di akhir lini masa"
 
 #: ../pitivi/medialibrary.py:745
 msgid "Select One or More Files"
@@ -1426,8 +1426,8 @@ msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
 msgstr ""
-"Panjang klip baku (dalam milidetik) dari judul ketika menyisipkan dalam alur "
-"waktu."
+"Panjang klip baku (dalam milidetik) dari judul ketika menyisipkan dalam lini "
+"masa."
 
 #: ../pitivi/titleeditor.py:105 ../pitivi/titleeditor.py:112
 msgid "Absolute"
@@ -1475,8 +1475,7 @@ msgid ""
 "Click the transition on the timeline to change the transition type."
 msgstr ""
 "Mebuat suatu transisi dengan menumpang tindih dua klip bersebelahan pada "
-"lapisan yang sama. Klik transisi pada alur waktu untuk mengubah tipe "
-"transisi."
+"lapisan yang sama. Klik transisi pada lini masa untuk mengubah tipe transisi."
 
 #: ../pitivi/transitions.py:238
 msgid "Slow"
@@ -1504,7 +1503,7 @@ msgstr "Sedang memutar"
 
 #: ../pitivi/viewer/viewer.py:219
 msgid "Go to the beginning of the timeline"
-msgstr "Ke awal alur waktu"
+msgstr "Ke awal lini masa"
 
 #: ../pitivi/viewer/viewer.py:226
 msgid "Go back one second"
@@ -1516,7 +1515,7 @@ msgstr "Maju satu detik"
 
 #: ../pitivi/viewer/viewer.py:246
 msgid "Go to the end of the timeline"
-msgstr "Ke akhir alur waktu"
+msgstr "Ke akhir lini masa"
 
 #: ../pitivi/viewer/viewer.py:253
 msgid ""
@@ -1611,8 +1610,8 @@ msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
 msgstr ""
-"Panjang klip baku (dalam milidetik) dari citra ketika menyisipkan dalam alur "
-"waktu."
+"Panjang klip baku (dalam milidetik) dari citra ketika menyisipkan dalam lini "
+"masa."
 
 #: ../pitivi/timeline/timeline.py:99
 msgid "Left click also seeks"
@@ -1819,7 +1818,6 @@ msgstr "<b>Kemajuan pembuatan proksi:</b> %d%%"
 
 #: ../pitivi/utils/ui.py:300
 #, python-format
-#| msgid "<b>Duration</b>: %s"
 msgid "<b>Path</b>: %s"
 msgstr "<b>Path</b>: %s"
 
