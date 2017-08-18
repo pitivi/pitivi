@@ -452,7 +452,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         # We set up the default mixing property right here, if a binding was
         # already set (when loading a project), it will be added later
         # and override that one.
-        self.showDefaultKeyframes()
+        self.showDefaultKeyframes(lazy_render=True)
 
     def release(self):
         if self.__previewer:
@@ -477,9 +477,12 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def showKeyframes(self, ges_elem, prop):
         self.__setKeyframes(ges_elem, prop)
+        self.__create_keyframe_curve(ges_elem)
 
-    def showDefaultKeyframes(self):
+    def showDefaultKeyframes(self, lazy_render=False):
         self.__setKeyframes(self._ges_elem, self._getDefaultMixingProperty())
+        if not lazy_render:
+            self.__create_keyframe_curve()
 
     def __setKeyframes(self, ges_elem, prop):
         self.__removeKeyframes()
@@ -520,10 +523,13 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             assert source.set(inpoint, val)
             assert source.set(inpoint + self._ges_elem.props.duration, val)
 
-    def __create_keyframe_curve(self):
+    def __create_keyframe_curve(self, ges_elem=None):
         """Creates required keyframe curve."""
         self.__removeKeyframes()
-        binding = self._ges_elem.get_control_binding(self.__controlledProperty.name)
+        if not ges_elem:
+            ges_elem = self._ges_elem
+
+        binding = ges_elem.get_control_binding(self.__controlledProperty.name)
         self.keyframe_curve = KeyframeCurve(self.timeline, binding)
         self.keyframe_curve.connect("enter", self.__curveEnterCb)
         self.keyframe_curve.connect("leave", self.__curveLeaveCb)
@@ -578,7 +584,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     def __update_keyframe_curve_visibility(self):
         """Updates the keyframes widget visibility by adding or removing it."""
         if self._ges_elem.selected and len(self.timeline.selection) == 1:
-            self.add(self.keyframe_curve)
+            if not self.keyframe_curve.get_parent():
+                self.add(self.keyframe_curve)
         else:
             self.remove(self.keyframe_curve)
 
