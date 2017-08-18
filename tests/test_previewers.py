@@ -17,11 +17,11 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
-import pickle
 import tempfile
 from unittest import mock
 from unittest import TestCase
 
+import numpy
 from gi.repository import GES
 from gi.repository import Gst
 
@@ -92,7 +92,7 @@ class TestPreviewers(BaseTestMediaLibrary):
         self.assertTrue(os.path.exists(wavefile), wavefile)
 
         with open(wavefile, "rb") as fsamples:
-            samples = pickle.load(fsamples)
+            samples = list(numpy.load(fsamples))
 
         self.assertEqual(samples, SIMPSON_WAVFORM_VALUES)
 
