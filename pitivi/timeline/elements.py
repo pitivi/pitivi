@@ -779,7 +779,7 @@ class VideoUriSource(VideoSource):
         self.get_style_context().add_class("VideoUriSource")
 
     def _getPreviewer(self):
-        previewer = VideoPreviewer(self._ges_elem)
+        previewer = VideoPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         previewer.get_style_context().add_class("VideoUriSource")
 
         return previewer
@@ -806,7 +806,7 @@ class AudioUriSource(TimelineElement):
         self.get_style_context().add_class("AudioUriSource")
 
     def _getPreviewer(self):
-        previewer = AudioPreviewer(self._ges_elem)
+        previewer = AudioPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         previewer.get_style_context().add_class("AudioUriSource")
 
         return previewer

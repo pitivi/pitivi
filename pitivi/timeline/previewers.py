@@ -54,11 +54,7 @@ except ImportError:
     import renderer
 
 
-WAVEFORMS_CPU_USAGE = 30
 SAMPLE_DURATION = Gst.SECOND / 100
-
-# A little lower as it's more fluctuating
-THUMBNAILS_CPU_USAGE = 20
 
 THUMB_MARGIN_PX = 3
 # For the waveforms, ensures we always have a little extra surface when
@@ -371,10 +367,11 @@ class Previewer(Gtk.Layout):
     # We only need one PreviewGeneratorManager to manage all previewers.
     manager = PreviewGeneratorManager()
 
-    def __init__(self, track_type):
+    def __init__(self, track_type, max_cpu_usage):
         Gtk.Layout.__init__(self)
 
         self.track_type = track_type
+        self._max_cpu_usage = max_cpu_usage
 
     def startGeneration(self):
         """Starts preview generation."""
@@ -405,8 +402,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
     # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
-    def __init__(self, ges_elem):
-        Previewer.__init__(self, GES.TrackType.VIDEO)
+    def __init__(self, ges_elem, max_cpu_usage):
+        Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -489,7 +486,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         happen when the gobject loop is idle to avoid blocking the UI.
         """
         usage_percent = self.cpu_usage_tracker.usage()
-        if usage_percent < THUMBNAILS_CPU_USAGE:
+        if usage_percent < self._max_cpu_usage:
             self.interval *= 0.9
             self.log(
                 'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"',
@@ -880,8 +877,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
-    def __init__(self, ges_elem):
-        Previewer.__init__(self, GES.TrackType.AUDIO)
+    def __init__(self, ges_elem, max_cpu_usage):
+        Previewer.__init__(self, GES.TrackType.AUDIO, max_cpu_usage)
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
@@ -941,7 +938,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         # GstCpuThrottlingClock below.
         Gst.ElementFactory.make("uritranscodebin", None)
         clock = GObject.new(GObject.type_from_name("GstCpuThrottlingClock"))
-        clock.props.cpu_usage = self.app.settings.previewers_max_cpu
+        clock.props.cpu_usage = self._max_cpu_usage
         self.pipeline.use_clock(clock)
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
