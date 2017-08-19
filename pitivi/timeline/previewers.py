@@ -707,7 +707,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def _ensure_proxy_thumbnails_cache(self):
         """Ensures that both the target asset and the proxy assets have caches."""
-        uri = self.ges_elem.props.uri
+        uri = quote_uri(self.ges_elem.props.uri)
         if self.uri != uri:
             self.thumb_cache.copy(uri)
 
