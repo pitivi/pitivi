@@ -639,10 +639,15 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
             return self.cache_dict.pop(effect)
 
     def _postConfiguration(self, effect, effect_set_ui):
+        effect_name = effect.get_property("bin-description")
         if 'aspectratiocrop' in effect.get_property("bin-description"):
             for widget in effect_set_ui.get_children()[0].get_children():
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
+        else:
+            self.log('No additional set-up required for "%s"', effect_name)
+            return
+        self.debug('Additional properties successfully set for "%s"', effect_name)
 
     def _connectAllWidgetCallbacks(self, effect_settings_widget, effect):
         for prop, widget in effect_settings_widget.properties.items():

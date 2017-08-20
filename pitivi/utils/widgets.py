@@ -23,6 +23,7 @@ import re
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
@@ -1329,3 +1330,141 @@ class ZoomBox(Gtk.Grid, Zoomable):
                 "%d nanoseconds displayed, because we can") % timeline_width_ns
         tooltip.set_text(tip)
         return True
+
+
+DROPPER_BITS = (
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377\377\377\377"
+    b"\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\0\0\0\377"
+    b"\0\0\0\377\0\0\0\377\377\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377"
+    b"\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\377\377\377\377"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377"
+    b"\377\377\377\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\377\0\0"
+    b"\0\377\0\0\0\377\0\0\0\377\377\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\0\0\0\377\0\0\0\377\0"
+    b"\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\377\377\377"
+    b"\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\377\377\377\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0"
+    b"\0\0\377\377\377\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\0\0\0\377\0\0"
+    b"\0\377\0\0\0\377\377\377\377\377\377\377\377\377\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377"
+    b"\377\377\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\377\377\377"
+    b"\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377\377\377\377\377\377\377"
+    b"\0\0\0\377\377\377\377\377\0\0\0\377\377\377\377\377\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377"
+    b"\377\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0\377\377"
+    b"\377\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\377\377\377\377\377\377\377\377\377\377\377\377\377\0\0\0"
+    b"\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377\377\377\377"
+    b"\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377"
+    b"\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\377\377\377\377\377\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377\377\377\0\0"
+    b"\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\0\0\0\0\377\0\0\0"
+    b"\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    b"\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0")
+
+DROPPER_WIDTH = 17
+DROPPER_HEIGHT = 17
+DROPPER_X_HOT = 2
+DROPPER_Y_HOT = 16
+
+
+class ColorPickerButton(Gtk.Button):
+
+    # This ported ColorPickerButton borrows from deprecated GtkColorsel widget
+
+    __gsignals__ = {
+        "value-changed": (GObject.SignalFlags.RUN_LAST, None, (),),
+    }
+
+    color_r = GObject.Property(type=int, default=0)
+    color_g = GObject.Property(type=int, default=0)
+    color_b = GObject.Property(type=int, default=0)
+
+    def __init__(self, r=0, g=0, b=0):
+        Gtk.Button.__init__(self)
+        self.color_r = r
+        self.color_g = g
+        self.color_b = b
+        self.dropper_grab_widget = None
+        self.pointer_device = None
+        self.is_picking = False
+        picker_image = Gtk.Image.new_from_icon_name("gtk-color-picker", Gtk.IconSize.BUTTON)
+        self.set_image(picker_image)
+        self.connect("clicked", self.clicked_cb)
+
+    def clicked_cb(self, button):
+        device = Gtk.get_current_event_device()
+        # Allow picking color using mouse only
+        if device == Gdk.InputSource.KEYBOARD:
+            return
+        self.pointer_device = device
+        screen = self.get_screen()
+        if self.dropper_grab_widget is None:
+            grab_widget = Gtk.Window(Gtk.WindowType.POPUP)
+            grab_widget.set_screen(screen)
+            grab_widget.resize(1, 1)
+            grab_widget.move(-100, -100)
+            grab_widget.show()
+            grab_widget.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK)
+            top_level = self.get_toplevel()
+            if isinstance(top_level, Gtk.Window):
+                if top_level.has_group():
+                    top_level.get_group().add_window(grab_widget)
+            self.dropper_grab_widget = grab_widget
+
+        window = self.dropper_grab_widget.get_window()
+        picker_cursor = self.make_cursor_picker(screen)
+        # Connect to button release event else unnecessary events are triggered
+        grab_status = self.pointer_device.grab(window, Gdk.GrabOwnership.APPLICATION, False,
+                                               Gdk.EventMask.BUTTON_RELEASE_MASK,
+                                               picker_cursor, Gdk.CURRENT_TIME)
+        if grab_status != Gdk.GrabStatus.SUCCESS:
+            return
+        # Start tracking the mouse events
+        self.dropper_grab_widget.grab_add()
+        self.dropper_grab_widget.connect("button-release-event", self.button_release_event_cb)
+
+    def make_cursor_picker(self, screen):
+        # Get color-picker cursor if it exists in the current theme else fallback to generating it ourself
+        try:
+            cursor = Gdk.Cursor.new_from_name(screen.get_display(), "color-picker")
+        except:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(DROPPER_BITS, GdkPixbuf.Colorspace.RGB, True, 8, DROPPER_WIDTH,
+                                                    DROPPER_HEIGHT, DROPPER_WIDTH * 4)
+            cursor = Gdk.Cursor.new_from_pixbuf(screen.get_display(), pixbuf, DROPPER_X_HOT, DROPPER_Y_HOT)
+        return cursor
+
+    def button_release_event_cb(self, widget, event):
+        if event.button != Gdk.BUTTON_PRIMARY:
+            return False
+        self.grab_color_at_pointer(event.get_screen(), event.get_device(), event.x_root, event.y_root)
+        self.emit("value-changed")
+        self.shutdown_eyedropper()
+
+    def grab_color_at_pointer(self, screen, device, x, y, *args):
+        root_window = screen.get_root_window()
+        pixbuf = Gdk.pixbuf_get_from_window(root_window, x, y, 1, 1)
+        pixels = pixbuf.get_pixels()
+        self.color_r = pixels[0]
+        self.color_g = pixels[1]
+        self.color_b = pixels[2]
+
+    def shutdown_eyedropper(self):
+        self.is_picking = False
+        self.pointer_device.ungrab(Gdk.CURRENT_TIME)
+        self.dropper_grab_widget.grab_remove()
+        self.pointer_device = None
+        self.dropper_grab_widget = None
