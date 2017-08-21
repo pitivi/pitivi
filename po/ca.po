@@ -403,7 +403,7 @@ msgstr "Relació d'aspecte:"
 #. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
 #: ../data/ui/projectsettings.ui.h:11
 msgid "Display aspect ratio"
-msgstr "Mostra la relació d'aspecte"
+msgstr "Relació d'aspecte de pantalla"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
 #: ../data/ui/projectsettings.ui.h:13
