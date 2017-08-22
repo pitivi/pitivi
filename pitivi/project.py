@@ -23,6 +23,7 @@ import os
 import pwd
 import tarfile
 import time
+import uuid
 from gettext import gettext as _
 
 from gi.repository import GES
@@ -88,6 +89,9 @@ for i in range(2, GLib.MAXINT):
     except ValueError:
         break
 
+# Properties of encoders that should be ignored when saving/loading
+# a project.
+IGNORED_PROPS = ["name", "parent"]
 
 class ProjectManager(GObject.Object, Loggable):
     """The project manager.
@@ -727,13 +731,11 @@ class Project(Loggable, GES.Project):
         self._has_default_audio_settings = has_default_settings
         self._has_default_video_settings = has_default_settings
 
-        # FIXME That does not really belong to here and should be savable into
-        # the serialized file. For now, just let it be here.
-        # A (muxer -> containersettings) map.
+        # A ((container_profile, muxer) -> containersettings) map.
         self._containersettings_cache = {}
-        # A (vencoder -> vcodecsettings) map.
+        # A ((container_profile, vencoder) -> vcodecsettings) map.
         self._vcodecsettings_cache = {}
-        # A (aencoder -> acodecsettings) map.
+        # A ((container_profile, aencoder) -> acodecsettings) map.
         self._acodecsettings_cache = {}
         self._has_rendering_values = False
 
@@ -1246,6 +1248,7 @@ class Project(Loggable, GES.Project):
             # The project just loaded, check the new
             # encoding profile and make use of it now.
             self.set_container_profile(profiles[0], reset_all=True)
+            self._load_encoder_settings(profiles)
 
     def set_container_profile(self, container_profile, reset_all=False):
         """Sets @container_profile as new profile if usable.
@@ -1299,6 +1302,41 @@ class Project(Loggable, GES.Project):
 
         return True
 
+    def _load_encoder_settings(self, profiles):
+        for container_profile in profiles:
+            if not isinstance(container_profile, GstPbutils.EncodingContainerProfile):
+                self.warning("%s is not an EncodingContainerProfile", container_profile)
+                continue
+
+            for profile in container_profile.get_profiles():
+                preset = profile.get_preset()
+                if not preset:
+                    continue
+
+                encoder_factory_name = profile.get_preset_name()
+                encoder = Gst.ElementFactory.make(encoder_factory_name, None)
+                if not isinstance(encoder, Gst.Preset):
+                    self.warning("Element %s does not implement Gst.Preset. Cannot load"
+                                 "its rendering settings", encoder)
+                    continue
+
+                if profile.get_type_nick() == "video":
+                    cache = self._vcodecsettings_cache
+                elif profile.get_type_nick() == "audio":
+                    cache = self._acodecsettings_cache
+                else:
+                    self.warning("Unrecognized profile type for profile %s", profile)
+                    continue
+                cache_key = (container_profile, encoder_factory_name)
+
+                if not encoder.load_preset(preset):
+                    self.warning("No preset named %s for encoder %s", preset, encoder)
+                    continue
+
+                cache[cache_key] = {prop.name: encoder.get_property(prop.name)
+                                    for prop in GObject.list_properties(encoder)
+                                    if prop.name not in IGNORED_PROPS and prop.flags & GObject.ParamFlags.WRITABLE}
+
     # ------------------------------------------ #
     # Our API                                    #
     # ------------------------------------------ #
@@ -1314,6 +1352,43 @@ class Project(Loggable, GES.Project):
         self.app.proxy_manager.disconnect_by_func(self.__proxyErrorCb)
         self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingCancelledCb)
         self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
+
+    def save(self, ges_timeline, uri, formatter_asset, overwrite):
+        for container_profile in self.list_encoding_profiles():
+            if not isinstance(container_profile, GstPbutils.EncodingContainerProfile):
+                self.warning("%s is not an EncodingContainerProfile", container_profile)
+                continue
+
+            for profile in container_profile.get_profiles():
+                encoder_factory_name = profile.get_preset_name()
+                encoder = Gst.ElementFactory.make(encoder_factory_name, None)
+                if not isinstance(encoder, Gst.Preset):
+                    self.warning("Element %s does not implement Gst.Preset. Cannot save"
+                                 "its rendering settings", encoder)
+                    continue
+
+                if profile.get_type_nick() == "video":
+                    cache = self._vcodecsettings_cache
+                elif profile.get_type_nick() == "audio":
+                    cache = self._acodecsettings_cache
+                else:
+                    self.warning("Unrecognized profile type for profile %s", profile)
+                    continue
+                cache_key = (container_profile, encoder_factory_name)
+                if cache_key not in cache:
+                    continue
+
+                # Save the encoder settings in a Gst.Preset so they are
+                # available in GES.Project.save() for serialization
+                settings = cache[cache_key]
+                preset = "encoder_settings_%s" % uuid.uuid4().hex
+                profile.set_preset(preset)
+
+                for prop, value in settings.items():
+                    encoder.set_property(prop, value)
+                assert encoder.save_preset(preset)
+
+        return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
 
     def use_proxies_for_assets(self, assets):
         originals = []
@@ -1525,27 +1600,33 @@ class Project(Loggable, GES.Project):
 
     @property
     def containersettings(self):
-        return self._containersettings_cache.setdefault(self.muxer, {})
+        cache_key = (self.container_profile, self.muxer)
+        return self._containersettings_cache.setdefault(cache_key, {})
 
     @containersettings.setter
     def containersettings(self, value):
-        self._containersettings_cache[self.muxer] = value
+        cache_key = (self.container_profile, self.muxer)
+        self._containersettings_cache[cache_key] = value
 
     @property
     def vcodecsettings(self):
-        return self._vcodecsettings_cache.setdefault(self.vencoder, {})
+        cache_key = (self.container_profile, self.vencoder)
+        return self._vcodecsettings_cache.setdefault(cache_key, {})
 
     @vcodecsettings.setter
     def vcodecsettings(self, value):
-        self._vcodecsettings_cache[self.vencoder] = value
+        cache_key = (self.container_profile, self.vencoder)
+        self._vcodecsettings_cache[cache_key] = value
 
     @property
     def acodecsettings(self):
-        return self._acodecsettings_cache.setdefault(self.aencoder, {})
+        cache_key = (self.container_profile, self.aencoder)
+        return self._acodecsettings_cache.setdefault(cache_key, {})
 
     @acodecsettings.setter
     def acodecsettings(self, value):
-        self._acodecsettings_cache[self.aencoder] = value
+        cache_key = (self.container_profile, self.aencoder)
+        self._acodecsettings_cache[cache_key] = value
 
     # ------------------------------------------ #
     # Private methods                            #
