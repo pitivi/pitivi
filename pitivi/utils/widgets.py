@@ -225,6 +225,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.set_spacing(SPACING)
         self._type = None
         self.spinner = None
+        self.handler_id = None
 
         if adjustment:
             self.adjustment = adjustment
@@ -264,8 +265,14 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.spinner.show()
         disable_scroll(self.spinner)
 
+    def block_signals(self):
+        self.adjustment.handler_block(self.handler_id)
+
+    def unblock_signals(self):
+        self.adjustment.handler_unblock(self.handler_id)
+
     def connectValueChanged(self, callback, *args):
-        self.adjustment.connect("value-changed", callback, *args)
+        self.handler_id = self.adjustment.connect("value-changed", callback, *args)
 
     def getWidgetValue(self):
         if self._type:
