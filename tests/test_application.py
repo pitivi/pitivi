@@ -64,9 +64,9 @@ class TestPitivi(common.TestCase):
         self.assertTrue(app.isLatest())
         self.assertEqual("0.91", app.getLatest())
 
-        app = self.call_version_info_received("0.100000000=current")
+        app = self.call_version_info_received("9999.00000000=current")
         self.assertFalse(app.isLatest())
-        self.assertEqual("0.100000000", app.getLatest())
+        self.assertEqual("9999.00000000", app.getLatest())
 
     def test_inhibition(self):
         app = application.Pitivi()
