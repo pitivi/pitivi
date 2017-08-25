@@ -447,6 +447,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "master",
                     "url": "git://anongit.freedesktop.org/gstreamer/gstreamer-vaapi"
                 }
             ]
