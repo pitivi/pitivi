@@ -43,6 +43,7 @@ SDK_BRANCH = {"0.96": "3.20",
               "stable": "3.24",
               "master": "3.24"}
 FLATPAK_REQ = "0.6.4"
+DEFAULT_GST_BRANCH = '1.12'
 
 
 class Colors:  # pylint: disable=too-few-public-methods
@@ -103,7 +104,7 @@ def expand_json_file(json_template, outfile, basedir, gst_version, branchname):
 
         if module["name"].startswith("gst"):
             module["sources"][0]["branch"] = gst_version
-            if gst_version != "master":
+            if gst_version != DEFAULT_GST_BRANCH:
                 continue
 
         repo = os.path.join(basedir, module["name"])
@@ -643,7 +644,7 @@ if __name__ == "__main__":
                        default="master")
     devel.add_argument("--gst-version", dest="gst_version",
                        help="The GStreamer version to build.",
-                       default="master")
+                       default=DEFAULT_GST_BRANCH)
     devel.add_argument("--check", dest="check",
                        help="Run unit tests once the build is done.",
                        action="store_true")

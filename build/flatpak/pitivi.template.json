@@ -451,6 +451,7 @@
             "sources": [
                 {
                     "type": "git",
+                    "branch": "1.12",
                     "url": "git://anongit.freedesktop.org/gstreamer/gstreamer-vaapi"
                 }
             ]
