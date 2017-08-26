@@ -483,6 +483,7 @@
             "name": "pitivi",
             "buildsystem": "meson",
             "builddir": true,
+            "config-opts": ["--libdir=lib"],
             "build-options": {
               "build-args": ["--share=network"]
             },
