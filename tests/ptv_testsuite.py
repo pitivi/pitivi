@@ -31,6 +31,7 @@ sys.path.insert(0, os.path.join(CDIR, '..'))
 import tests  # noqa
 # pylint: disable=import-error
 from launcher.baseclasses import Test  # noqa
+from launcher.config import GST_VALIDATE_TESTSUITE_VERSION  # noqa
 
 
 # pylint: disable=too-few-public-methods
@@ -38,7 +39,10 @@ class PitiviTest(Test):
     """A launcher.Test subclass for our unit tests."""
     def build_arguments(self):
         """Builds subprocess arguments."""
-        self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))
+        if GST_VALIDATE_TESTSUITE_VERSION == "1.12":
+            self.add_arguments('-m', 'unittest', self.classname)
+        else:
+            self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))
 
 
 def setup_tests(test_manager, options):
