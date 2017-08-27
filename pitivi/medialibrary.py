@@ -366,7 +366,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
 
-        self.pending_rows = []
+        self._pending_assets = []
 
         self.app = app
         self._errors = []
@@ -787,23 +787,26 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         self.debug("Adding asset %s", asset.props.id)
 
-        thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-        name = info_name(asset)
-        self.pending_rows.append((thumbs_decorator.small_thumb,
-                                  thumbs_decorator.large_thumb,
-                                  beautify_asset(asset),
-                                  asset,
-                                  asset.props.id,
-                                  name,
-                                  thumbs_decorator))
-        self._flushPendingRows()
+        self._pending_assets.append(asset)
 
-    def _flushPendingRows(self):
-        self.debug("Flushing %d pending model rows", len(self.pending_rows))
-        for row in self.pending_rows:
-            self.storemodel.append(row)
+        if self._project.loaded:
+            self._flushPendingAssets()
 
-        del self.pending_rows[:]
+    def _flushPendingAssets(self):
+        self.debug("Flushing %d pending model rows", len(self._pending_assets))
+        for asset in self._pending_assets:
+            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+            name = info_name(asset)
+
+            self.storemodel.append((thumbs_decorator.small_thumb,
+                                    thumbs_decorator.large_thumb,
+                                    beautify_asset(asset),
+                                    asset,
+                                    asset.props.id,
+                                    name,
+                                    thumbs_decorator))
+
+        del self._pending_assets[:]
 
     # medialibrary callbacks
 
@@ -940,7 +943,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _doneImporting(self):
         self.debug("Importing took %.3f seconds",
                    time.time() - self.import_start_time)
-        self._flushPendingRows()
+        self._flushPendingAssets()
         self._progressbar.hide()
         if self._errors:
             errors_amount = len(self._errors)
@@ -1385,7 +1388,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _newProjectLoadedCb(self, unused_project_manager, project):
         # Make sure that the sources added to the project are added
-        self._flushPendingRows()
+        self._flushPendingAssets()
 
     def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
         self.storemodel.clear()
