@@ -559,6 +559,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                            Gst.SeekType.NONE, -1)
 
         # Remove the GSource
+        self._thumb_cb_id = None
         return False
 
     def _autosave(self):
