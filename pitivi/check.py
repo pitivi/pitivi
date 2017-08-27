@@ -348,6 +348,7 @@ def initialize_modules():
 
     require_version("Gst", GST_API_VERSION)
     require_version("GstController", GST_API_VERSION)
+    require_version("GstTranscoder", GST_API_VERSION)
     from gi.repository import Gst
     from pitivi.configure import get_audiopresets_dir, get_videopresets_dir
     Gst.init(None)
