@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://wiki.pitivi.org/wiki/Bug_reporting\n"
 "POT-Creation-Date: 2017-06-27 22:34+0000\n"
-"PO-Revision-Date: 2017-08-28 17:23+0200\n"
+"PO-Revision-Date: 2017-08-28 18:05+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -489,6 +489,11 @@ msgid ""
 "This option is a good trade-off between quality of the rendered video and "
 "stability."
 msgstr ""
+"Používat soubory z proxy, když jsou k dispozici a zdrojové multimediální "
+"soubory nejsou v oficiálně podporovaném formátu.\n"
+"\n"
+"Tato volba je zlatou střední cestou mezi kvalitou výsledného videa a "
+"stabilitou."
 
 #: ../data/ui/renderingdialog.ui.h:24
 msgid "Always render from proxy files"
@@ -499,6 +504,8 @@ msgid ""
 "Render all proxied clips from the proxy assets. There might be some quality "
 "loss during the rendering process."
 msgstr ""
+"Vykreslovat všechny multimediální soubory, které jsou v proxy, z proxy. Při "
+"vykreslování ale může dojít k jisté ztrátě kvality."
 
 #: ../data/ui/renderingdialog.ui.h:26
 msgid "Never render from proxy files"
@@ -511,6 +518,10 @@ msgid ""
 "use of not officially supported media formats.\n"
 "<i>Use at your own risk!</i>"
 msgstr ""
+"Pro vykreslování vždy používat zdrojové multimediální soubory. Jedná se "
+"nejlepší volbu ohledně kvality výsledného videa, ale můžete narazit na chyby "
+"u multimediálních formátů, které nejsou oficiálně podporované.\n"
+"<i>Používejte jen na vlastní riziko!</i>"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -1164,13 +1175,12 @@ msgstr "Informace"
 
 #: ../pitivi/medialibrary.py:550
 msgid "Remove the selected assets"
-msgstr ""
+msgstr "Odstranit vybrané multimediální soubory"
 
 #: ../pitivi/medialibrary.py:556
-#, fuzzy
 #| msgid "Insert the selected clips at the end of the timeline"
 msgid "Insert selected assets at the end of the timeline"
-msgstr "Vložit vybrané klipy na konec časové osy"
+msgstr "Vložit vybrané multimediální soubory na konec časové osy"
 
 #: ../pitivi/medialibrary.py:745
 msgid "Select One or More Files"
@@ -1194,9 +1204,11 @@ msgstr "Podporované formáty souborů"
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
-msgstr[0] ""
+msgstr[0] "Překódovává se multimediální soubor: %d %% (odhad dokončení %s)"
 msgstr[1] ""
+"Překódovávají se %d multimediální soubory: %d %% (odhad dokončení %s)"
 msgstr[2] ""
+"Překódovává se %d multimediálních souborů: %d %% (odhad dokončení %s)"
 
 #: ../pitivi/medialibrary.py:932
 msgid "View error"
@@ -1233,9 +1245,9 @@ msgstr "Otevřít rodičovskou složku"
 #: ../pitivi/medialibrary.py:1182
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Nepoužívat proxy pro vybraný multimediální soubor"
+msgstr[1] "Nepoužívat proxy pro vybrané multimediální soubory"
+msgstr[2] "Nepoužívat proxy pro vybrané multimediální soubory"
 
 #: ../pitivi/medialibrary.py:1193
 msgid "Delete corresponding proxy file"
@@ -1247,9 +1259,9 @@ msgstr[2] "Smazat související soubory proxy"
 #: ../pitivi/medialibrary.py:1204
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Používat proxy pro vybraný multimediální soubor"
+msgstr[1] "Používat proxy pro vybrané multimediální soubory"
+msgstr[2] "Používat proxy pro vybrané multimediální soubory"
 
 #: ../pitivi/preset.py:99
 msgid "Remove"
