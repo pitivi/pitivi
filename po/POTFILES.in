@@ -26,6 +26,7 @@ pitivi/effects.py
 pitivi/mainwindow.py
 pitivi/mediafilespreviewer.py
 pitivi/medialibrary.py
+pitivi/pluginmanager.py
 pitivi/preset.py
 pitivi/project.py
 pitivi/render.py
