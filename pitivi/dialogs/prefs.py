@@ -30,6 +30,7 @@ from gi.repository import Gtk
 from gi.repository import Peas
 
 from pitivi.configure import get_ui_dir
+from pitivi.pluginmanager import PluginManager
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
 from pitivi.utils.loggable import Loggable
@@ -673,7 +674,11 @@ class PluginManagerStore(Gio.ListStore):
 
     def reload(self):
         self.remove_all()
-        for plugin_info in self.app.plugin_manager.engine.get_plugin_list():
+        plugins = self.app.plugin_manager.engine.get_plugin_list()
+        # Firstly, sort the plugins according the number assigned to the
+        # pluginmanager.PluginType object. Secondly, sort alphabetically.
+        for plugin_info in sorted(plugins,
+                                  key=lambda x: (PluginManager.get_plugin_type(x), x.get_name())):
             item = PluginItem(self.app, plugin_info)
             self.append(item)
 
@@ -746,24 +751,31 @@ class PluginsBox(Gtk.ListBox):
 
     def _add_header_func(self, row, before, unused_user_data):
         """Adds a header for a new section in the model."""
-        if row.get_index() == 0:
-            header = Gtk.Label()
-            header.set_use_markup(True)
+        current_type = PluginManager.get_plugin_type(row.plugin_info)
+        if before is not None:
+            previous_type = PluginManager.get_plugin_type(before.plugin_info)
+        else:
+            previous_type = None
+        if previous_type != current_type:
+            self._set_header(row, str(current_type))
 
-            group_title = _("Plugins")
-            header.set_markup("<b>%s</b>" % group_title)
-            header.props.margin_top = PADDING * 3
-            header.props.margin_bottom = PADDING
-            header.props.margin_left = PADDING * 2
-            header.props.margin_right = PADDING * 2
-            header.props.xalign = 0
-            alter_style_class("group_title", header, "font-size: small;")
-            header.get_style_context().add_class("group_title")
-            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-            box.add(header)
-            box.get_style_context().add_class("background")
-            box.show_all()
-            row.set_header(box)
+    def _set_header(self, row, group_title):
+        header = Gtk.Label()
+        header.set_use_markup(True)
+
+        header.set_markup("<b>%s</b>" % group_title)
+        header.props.margin_top = PADDING * 3
+        header.props.margin_bottom = PADDING
+        header.props.margin_left = PADDING * 2
+        header.props.margin_right = PADDING * 2
+        header.props.xalign = 0
+        alter_style_class("group_title", header, "font-size: small;")
+        header.get_style_context().add_class("group_title")
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        box.add(header)
+        box.get_style_context().add_class("background")
+        box.show_all()
+        row.set_header(box)
 
 
 class PluginPreferencesPage(Gtk.ScrolledWindow):

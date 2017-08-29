@@ -17,6 +17,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
+from enum import IntEnum
+from gettext import gettext as _
 
 from gi.repository import GObject
 from gi.repository import Peas
@@ -39,6 +41,17 @@ class API(GObject.GObject):
     def __init__(self, app):
         GObject.GObject.__init__(self)
         self.app = app
+
+
+class PluginType(IntEnum):
+    SYSTEM = 1
+    USER = 2
+
+    def __str__(self):
+        if self.value == PluginType.USER:
+            return _("User plugins")
+        elif self.value == PluginType.SYSTEM:
+            return _("System plugins")
 
 
 class PluginManager(Loggable):
@@ -72,6 +85,13 @@ class PluginManager(Loggable):
     def plugins(self):
         """Gets the engine's plugin list."""
         return self.engine.get_plugin_list()
+
+    @classmethod
+    def get_plugin_type(cls, plugin_info):
+        paths = [plugin_info.get_data_dir(), get_plugins_dir()]
+        if os.path.commonprefix(paths) == get_plugins_dir():
+            return PluginType.SYSTEM
+        return PluginType.USER
 
     def _load_plugins(self):
         """Loads plugins from settings."""
