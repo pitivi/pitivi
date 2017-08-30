@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-08-28 22:06+0000\n"
-"PO-Revision-Date: 2017-08-29 07:29+0200\n"
+"POT-Creation-Date: 2017-08-29 16:51+0000\n"
+"PO-Revision-Date: 2017-08-30 02:17+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -1298,6 +1298,14 @@ msgstr[0] "Používat proxy pro vybraný multimediální soubor"
 msgstr[1] "Používat proxy pro vybrané multimediální soubory"
 msgstr[2] "Používat proxy pro vybrané multimediální soubory"
 
+#: ../pitivi/pluginmanager.py:52
+msgid "User plugins"
+msgstr "Uživatelské zásuvné moduly"
+
+#: ../pitivi/pluginmanager.py:54
+msgid "System plugins"
+msgstr "Systémové zásuvné moduly"
+
 #: ../pitivi/preset.py:99
 msgid "Remove"
 msgstr "Odebrat"
@@ -1684,7 +1692,7 @@ msgstr ""
 "Jestli kliknutí levým tlačítkem kromě vybírání a úprav klipů provádí i "
 "přeskakování."
 
-#: ../pitivi/timeline/timeline.py:1504 ../pitivi/dialogs/prefs.py:60
+#: ../pitivi/timeline/timeline.py:1504 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Časová osa"
 
@@ -1770,47 +1778,47 @@ msgstr "Problém:"
 msgid "Extra information:"
 msgstr "Další informace:"
 
-#: ../pitivi/dialogs/prefs.py:61 ../pitivi/dialogs/prefs.py:753
+#: ../pitivi/dialogs/prefs.py:62
 msgid "Plugins"
 msgstr "Zásuvné moduly"
 
-#: ../pitivi/dialogs/prefs.py:62
+#: ../pitivi/dialogs/prefs.py:63
 msgid "Shortcuts"
 msgstr "Klávesové zkratky"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:241 ../pitivi/utils/widgets.py:690
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:690
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:251 ../pitivi/utils/widgets.py:754
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:754
 msgid "Reset to default value"
 msgstr "Vrátit na výchozí hodnotu"
 
-#: ../pitivi/dialogs/prefs.py:346
+#: ../pitivi/dialogs/prefs.py:347
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Vrátit všechny klávesové zkratky na výchozí kombinace kláves"
 
-#: ../pitivi/dialogs/prefs.py:502
+#: ../pitivi/dialogs/prefs.py:503
 msgid "Set Shortcut"
 msgstr "Nastavení klávesové zkratky"
 
 #. Setup the widgets used in the dialog.
-#: ../pitivi/dialogs/prefs.py:517
+#: ../pitivi/dialogs/prefs.py:518
 msgid "Apply"
 msgstr "Použít"
 
-#: ../pitivi/dialogs/prefs.py:520
+#: ../pitivi/dialogs/prefs.py:521
 msgid "Apply the accelerator to this shortcut."
 msgstr "Použít kombinaci kláves pro tuto zkratku."
 
-#: ../pitivi/dialogs/prefs.py:523
+#: ../pitivi/dialogs/prefs.py:524
 msgid "Replace"
 msgstr "Nahradit"
 
-#: ../pitivi/dialogs/prefs.py:526
+#: ../pitivi/dialogs/prefs.py:527
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
@@ -1818,13 +1826,13 @@ msgstr ""
 "Odebrat tuto kombinaci kláves od tam, kde byla použita dříve, a nastavit ji "
 "pro tuto zkratku."
 
-#: ../pitivi/dialogs/prefs.py:533
+#: ../pitivi/dialogs/prefs.py:534
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr ""
 "Zadejte novou klávesovou zkratku pro <b>%s</b>, nebo zrušte zmáčknutím Esc."
 
-#: ../pitivi/dialogs/prefs.py:542
+#: ../pitivi/dialogs/prefs.py:543
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -1832,7 +1840,7 @@ msgstr ""
 "Klávesa, které jste zvolili, může kolidovat s běžným psaním. Zkuste prosím "
 "použít kombinaci s Ctrl, Shift nebo Alt nebo jinou klávesu."
 
-#: ../pitivi/dialogs/prefs.py:576
+#: ../pitivi/dialogs/prefs.py:577
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -1841,11 +1849,11 @@ msgstr ""
 "Kombinace kláves je již použita pro <b>%s</b>. Jestli ji chcete použít pro "
 "<b>%s</b>, zmáčkněte Nahradit."
 
-#: ../pitivi/dialogs/prefs.py:619
+#: ../pitivi/dialogs/prefs.py:620
 msgid "No description available."
 msgstr "Žádný popis není k dispozici."
 
-#: ../pitivi/dialogs/prefs.py:726
+#: ../pitivi/dialogs/prefs.py:731
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "Nezdařilo se načíst zásuvný modul „{module_name}“"
