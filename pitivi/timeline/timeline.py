@@ -1460,12 +1460,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
+        self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(vscrollbar, 2, 1, 1, 1)
         self.attach(hscrollbar, 1, 2, 1, 1)
-        # Make sure the timeline is attached after the scrollbars, otherwise
-        # a lot of warnings are printed because they are drawn before being
-        # allocated a size, for some reason.
-        self.attach(self.timeline, 0, 1, 2, 1)
         self.attach(self.toolbar, 3, 1, 1, 1)
 
         self.set_margin_top(SPACING)
