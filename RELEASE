@@ -1,52 +1,64 @@
-0.98 Release
-------------
+0.99 Release "Ocean Big Chair"
+------------------------------
 
-This is the eighth release for the new version of Pitivi based on GES,
-the GStreamer Editing Services library. This is mainly a bug-fix release.
+This is the ninth release for the new version of Pitivi based on GES,
+the GStreamer Editing Services library. This is a bug-fix release, and
+can be considered a release candidate for version 1.0.
 
-Users can now customize the keyboard shortcuts.
+Many performance improvements have been made, and many bugs have been fixed.
 
 
 == Requirements ==
 
-For this release, we depend on GStreamer, Gst-Python, GES 1.10.2.
+For this release, we depend on GStreamer, Gst-Python, GES 1.12.3.
 
-The gnome-desktop optional dependency is not used anymore.
+We now use Gnome GSound instead of pycanberra.
 
-We now use nose2 instead of nosetests for "make check".
+We now depend on gst-devtools for tests.
+
+We got rid of `configure` and `Makefile`, and now rely on Meson and Ninja.
+See http://mesonbuild.com/Quick-guide.html for an intro.
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
-See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
 
 
 == Contributors for this release ==
 
-   152  Alexandru Băluț
-    19  Thibault Saunier
-     2  Jakub Brindza
-     1  Piotr Drąg
-     1  Sebastian Dröge
+   104  Thibault Saunier
+    78  Alexandru Băluț
+    14  Stefan Popa
+    14  Suhas Nayak
+     4  Naman Yadav
+     3  Fabian Orccon
+     2  Shivam Tripathi
+     2  Umang Jain
+     1  Aswin Mohan
+     1  Dan Muntean
+     1  Igor Gnatenko
+     1  Michael Sheldon
+     1  Rodolfo Ribeiro Gomes
+     1  dg1727
 
 Translations:
     ca  Jordi Mas
-    cs  Marek Černocký
-    de  Mario Blättermann
+    da  Alan Mortensen
+    de  Mario Blättermann, Wolfgang Stöggl
     es  Daniel Mustieles
-    fr  Claude Paroz
-    hu  Balázs Meskó
+    hu  Gábor Kelemen
+    id  Andika Triwidada
     lt  Aurimas Černius
     pl  Piotr Drąg
- pt_BR  Rafael Fontenelle
-    pt  Tiago Santos
+ pt_BR  Rafael Fontenelle, Enrico Nicoletto
     sk  Dušan Kazik
     sr  Мирослав Николић
+    sv  Josef Andersson, Anders Jonsson
     uk  Daniel Korostil
 
 
 == Download ==
 
   Pitivi source tarballs are available on the GNOME FTP servers:
-    http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.98
+    http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.99
 
   See the website for the official build based on flatpak.
 
@@ -60,4 +72,4 @@ Translations:
 
 == Bugs Fixed ==
 
-See https://phabricator.freedesktop.org/project/board/108/query/all/
+See https://phabricator.freedesktop.org/project/board/110/query/all/

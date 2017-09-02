@@ -1,4 +1,4 @@
-project('pitivi', 'c', version : '0.98', meson_version : '>= 0.41.0')
+project('pitivi', 'c', version : '0.99', meson_version : '>= 0.41.0')
 
 python = find_program('python3')
 intltool_merge = find_program('intltool-merge')
@@ -6,7 +6,7 @@ itstool = find_program('itstool')
 msgfmt = find_program('msgfmt')
 
 python_dep = dependency('python3', version : '>= 3.3')
-gst_dep = dependency('gstreamer-1.0', version : '>= 1.12.2')
+gst_dep = dependency('gstreamer-1.0', version : '>= 1.12.3')
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
 
