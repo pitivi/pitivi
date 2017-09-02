@@ -605,7 +605,6 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.cache_dict = {}
-        self._current_element_values = {}
         self.app = app
 
     def getEffectConfigurationUI(self, effect):
@@ -627,10 +626,6 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
                 effect_widget.show_widget(widget)
             self.cache_dict[effect] = effect_widget
             self._connectAllWidgetCallbacks(effect_widget, effect)
-
-        for prop in effect.list_children_properties():
-            value = effect.get_child_property(prop.name)
-            self._current_element_values[prop.name] = value
 
         return self.cache_dict[effect]
 
@@ -663,15 +658,12 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         if isinstance(value, Gst.Fraction):
             value = Gst.Fraction(int(value.num), int(value.denom))
 
-        if value != self._current_element_values.get(prop.name):
-            from pitivi.undo.timeline import CommitTimelineFinalizingAction
-
-            pipeline = self.app.project_manager.current_project.pipeline
-            with self.app.action_log.started("Effect property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
-                                             toplevel=True):
-                effect.set_child_property(prop.name, value)
-            self._current_element_values[prop.name] = value
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = self.app.project_manager.current_project.pipeline
+        with self.app.action_log.started("Effect property change",
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
+            effect.set_child_property(prop.name, value)
 
     def create_property_widget(self, element_settings_widget, prop, prop_value):
         prop_widget = self.emit("create_property_widget", element_settings_widget, element_settings_widget.element,
