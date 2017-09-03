@@ -28,6 +28,7 @@ help_pages = [
 ]
 
 subdir('C')
+subdir('ca')
 subdir('cs')
 subdir('de')
 subdir('el')

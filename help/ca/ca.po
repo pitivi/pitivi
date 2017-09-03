@@ -1,0 +1,3985 @@
+# Catalan translation for pitivi.
+# Copyright (C) 2017 pitivi's COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.
+#
+# Carles Ferrando Garcia <carles.ferrando@gmail.com>, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi master\n"
+"POT-Creation-Date: 2017-08-27 11:22+0000\n"
+"PO-Revision-Date: 2017-08-27 20:44+0200\n"
+"Last-Translator: Carles Ferrando Garcia <carles.ferrando@gmail.com>\n"
+"Language-Team: Catalan <info@softcatala.org>\n"
+"Language: ca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 2.0.3\n"
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Carles Ferrando Garcia <carles.ferrando@gmail.com>, 2017"
+
+#. (itstool) path: credit/name
+#: C/selectiongrouping.page:7 C/layers.page:15 C/workwithprojects.page:15
+#: C/splitting.page:15 C/keyframecurves.page:17 C/presets.page:13
+#: C/transitions.page:7 C/mainwindow.page:13 C/movearoundtimeline.page:19
+#: C/sysreq.page:15 C/codecscontainers.page:11 C/gstreamer.page:15
+#: C/usingeffects.page:7 C/medialibrary.page:15 C/welcomedialog.page:11
+#: C/importing.page:15 C/effects.page:12 C/rendering.page:15 C/trimming.page:15
+#: C/usingclips.page:15
+msgid "Tomáš Karger"
+msgstr "Tomáš Karger"
+
+#. (itstool) path: credit/name
+#: C/selectiongrouping.page:11 C/layers.page:7 C/workwithprojects.page:7
+#: C/splitting.page:7 C/keyframecurves.page:9 C/presets.page:9
+#: C/transitions.page:11 C/mainwindow.page:9 C/movearoundtimeline.page:7
+#: C/about.page:7 C/index.page:8 C/sysreq.page:7 C/codecscontainers.page:7
+#: C/gstreamer.page:7 C/savescreenshot.page:7 C/importingmpegts.page:8
+#: C/usingeffects.page:11 C/medialibrary.page:7 C/welcomedialog.page:7
+#: C/importing.page:7 C/effects.page:8 C/rendering.page:7 C/trimming.page:7
+#: C/usingclips.page:7 C/cheatsheet.page:8
+msgid "Jean-François Fortin Tam"
+msgstr "Jean-François Fortin Tam"
+
+#. (itstool) path: credit/name
+#: C/selectiongrouping.page:15 C/layers.page:11 C/workwithprojects.page:11
+#: C/splitting.page:11 C/keyframecurves.page:13 C/transitions.page:15
+#: C/movearoundtimeline.page:11 C/about.page:11 C/index.page:12
+#: C/sysreq.page:11 C/gstreamer.page:11 C/importing.page:11 C/rendering.page:11
+#: C/trimming.page:11 C/usingclips.page:11
+msgid "Mario Blättermann"
+msgstr "Mario Blättermann"
+
+#. (itstool) path: info/desc
+#: C/selectiongrouping.page:18
+msgid "Making selections and grouping clips in timeline."
+msgstr "Fent seleccions i agrupant seqüencies a la línia de temps."
+
+#. (itstool) path: license/p
+#: C/selectiongrouping.page:22 C/layers.page:22 C/workwithprojects.page:22
+#: C/splitting.page:22 C/keyframecurves.page:28 C/presets.page:20
+#: C/transitions.page:22 C/mainwindow.page:20 C/movearoundtimeline.page:26
+#: C/about.page:18 C/index.page:16 C/sysreq.page:22 C/codecscontainers.page:15
+#: C/gstreamer.page:22 C/savescreenshot.page:11 C/importingmpegts.page:15
+#: C/usingeffects.page:16 C/medialibrary.page:22 C/welcomedialog.page:18
+#: C/importing.page:22 C/effects.page:17 C/rendering.page:22 C/trimming.page:22
+#: C/usingclips.page:22 C/cheatsheet.page:12
+msgid "Creative Commons Share Alike 3.0"
+msgstr "Creative Commons Compartir Igual 3.0"
+
+#. (itstool) path: page/title
+#: C/selectiongrouping.page:25
+msgid "Selection and grouping"
+msgstr "Selecció i agrupament"
+
+#. (itstool) path: section/title
+#: C/selectiongrouping.page:27
+msgid "Making selections"
+msgstr "Fent seleccions"
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:28
+msgid ""
+"By selecting a clip, you specify what item should the subsequent actions be "
+"applied to. Selecting multiple clips allows you to apply actions (dragging, "
+"deleting, grouping, etc.) to all of them at once. To select an individual "
+"clip, simply click it."
+msgstr ""
+"Quan seleccioneu una seqüencia, especifiqueu a quin element s'hauria "
+"d'aplicar les accions posteriors. Quan seleccioneu múltiples seqüencies "
+"podeu aplicar accions (arrossegar, eliminar, agrupar, etc.) a tots elles a "
+"mateix temps. Per seleccionar una seqüencia individual, premeu sobre ella."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:29
+msgid ""
+"To select multiple adjacent clips you can click the timeline anywhere in an "
+"empty region and drag. Alternatively, you can:"
+msgstr ""
+"Per seleccionar seqüencies adjacents múltiples podeu prémer en una regió "
+"buida a la línia de temps i arrossegueu-les. De forma alternativa, podeu:"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:32
+msgid "Click the first clip."
+msgstr "Premeu la primera seqüencia."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:35
+msgid "Hold the <key>Shift</key> key."
+msgstr "Mantingueu premuda la tecla <key>Majúscules</key>."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:38
+msgid "Click the last clip."
+msgstr "Premeu la darrera seqüencia."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:41
+msgid ""
+"When selecting a clip by clicking or when selecting multiple adjacent clips, "
+"the selection is reset. The rest of the clips become deselected if they were "
+"previously selected. Selecting or deselecting specific clips without "
+"resetting the selection can be done by toggling individually a clip's "
+"selection:"
+msgstr ""
+"Quan seleccioneu una seqüencia prement-la o quan seleccioneu seqüencies "
+"adjacents múltiples, la selecció es reinicialitza. La resta de seqüencies es "
+"des-seleccionen si estaven prèviament seleccionades. Seleccionar o des-"
+"seleccionar seqüencies especifiques sense reinicialitzar la selecció pot fer-"
+"se commutant la selecció individual de la seqüencia:"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:44
+msgid "Hold down the <key>Ctrl</key> key."
+msgstr "Mantingueu premuda la tecla <key>Ctrl</key>."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:47
+msgid "Click on each clip you want to toggle the selection."
+msgstr "Premeu en cada seqüencia que voleu commutar a la selecció."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:50
+msgid ""
+"To clear the selection, click anywhere on the timeline in an empty region."
+msgstr ""
+"Per netejar la selecció, premeu sobre una regió buida a la línia de temps."
+
+#. (itstool) path: note/p
+#: C/selectiongrouping.page:52
+msgid ""
+"By default, clicking in the timeline changes the selection and also moves "
+"the playhead. To have a better control of the playhead you can disable "
+"seeking when left-clicking. This way left-clicking only changes the "
+"selection and the playhead position won't be lost when you make selections. "
+"This can be specified at <guiseq><gui>Menu button</gui><gui>Preferences</"
+"gui><gui>Left click also seeks</gui></guiseq>. You can still use right-click "
+"to move the playhead, as before, see <link xref="
+"\"movearoundtimeline#movingplayhead\"/> for details."
+msgstr ""
+"Per defecte quan premeu sobre la línia de temps canvieu la selecció i moveu "
+"el punt de reproducció. Per  tindre un millor control sobre el punt de "
+"reproducció podeu deshabilitar la cerca quan premeu el botó esquerre. "
+"D'aquesta forma al prémer el botó esquerre sols canvieu la selecció i el "
+"punt de reproducció no es perdrà quan feu seleccions. Això es pot "
+"especificar al <guiseq><gui>botó Menú</gui><gui>Preferències</gui><gui>Clic "
+"esquerre també cerca</gui></guiseq>. Podeu usar clic dret per moure el punt "
+"de reproducció, com abans, mireu <link xref="
+"\"movearoundtimeline#movingplayhead\"/> per veure més detalls."
+
+#. (itstool) path: section/title
+#: C/selectiongrouping.page:56
+msgid "Grouping and ungrouping clips"
+msgstr "Agrupament i desagrupament de seqüencies"
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:57
+msgid ""
+"The grouping and ungrouping functions are useful when you want to add or "
+"separate audio tracks from video clips, or when you want to create a block "
+"of clips that you can select, edit and move all at once."
+msgstr ""
+"Les funcions d'agrupament i desagrupament són útils quan voleu afegir o "
+"extraure pistes d'àudio separades de seqüencies de vídeo, o quan voleu crear "
+"un bloc de seqüencies que heu seleccionat, o editar o moure tot a la vegada."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:58
+msgid "Grouping clips in timeline:"
+msgstr "Agrupament de seqüencies a la línia de temps:"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:61
+msgid "Select multiple clips in the timeline."
+msgstr "Seleccioneu múltiples seqüencies a la línia de temps."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:64
+msgid ""
+"Click the <gui>Group clips</gui> button on the timeline toolbar, or press "
+"<keyseq><key>Ctrl</key><key>G</key></keyseq>."
+msgstr ""
+"Premeu el botó <gui>Agrupa seqüencies</gui> a la barra d'eines de la línia "
+"de temps, o premeu <keyseq><key>Ctrl</key><key>G</key></keyseq>."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:67
+msgid "You can now select, edit and move the clips all at once."
+msgstr ""
+"Podeu ara seleccionar, editar, i moure les seqüencies totes a la vegada."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:68
+msgid "Ungrouping clips in timeline:"
+msgstr "Desagrupament de seqüencies a la línia de temps:"
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:71
+msgid "Select a group of clips in the timeline."
+msgstr "Seleccioneu un grup de seqüencies a la línia de temps."
+
+#. (itstool) path: item/p
+#: C/selectiongrouping.page:74
+msgid ""
+"Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press "
+"<keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>."
+msgstr ""
+"Premeu el botó <gui>Desagrupa seqüencies</gui> a la barra d'eines de la "
+"línia de temps, o premeu <keyseq><key>Ctrl</key><key>Maj</key><key>G</key></"
+"keyseq>."
+
+#. (itstool) path: section/p
+#: C/selectiongrouping.page:77
+msgid "You can now select, edit and move the clips independently."
+msgstr ""
+"Podeu ara seleccionar, editar, i moure les seqüencies de forma independent."
+
+#. (itstool) path: info/desc
+#: C/layers.page:18
+msgid "Explaining how layers work within the timeline."
+msgstr "Explicació de com funcionen les capes dins la línia de temps."
+
+#. (itstool) path: page/title
+#: C/layers.page:25
+msgid "Understanding layers"
+msgstr "Entendre les capes"
+
+#. (itstool) path: page/p
+#: C/layers.page:26
+msgid ""
+"<em>Layers</em> are a fundamental concept for advanced editing in the "
+"timeline: compositing, mixing multiple videos simultaneously, and adding "
+"titles depend on this feature."
+msgstr ""
+"<em>Les capes</em> són un concepte fonamental per fer edició avançada a la "
+"línia de temps: La composició, mescla simultània de múltiples vídeos, i "
+"afegit de títols depen d'aquesta característica."
+
+#. (itstool) path: page/p
+#: C/layers.page:27
+msgid ""
+"It is easier to think of layers in terms of images painted on glass. With "
+"several pieces of glass stacked on top of each other, each of these pieces "
+"of glass is a layer. If the top piece of glass is completely painted over, "
+"none of the pieces of glass underneath will be visible. If, on the other "
+"hand, you only paint over a portion of a piece of glass, you will be able to "
+"see what is underneath the non-painted parts."
+msgstr ""
+"És fàcil pensar en les capes en termes d'imatges pintades de vidre. Amb "
+"diverses peces de vidre apilades unes sobre les altres, cadascuna d'aquestes "
+"peces de vidre és una capa. Si la part superior del vidre està completament "
+"pintada, cap dels cristalls de sota serà visible. Si, d'altra banda, només "
+"es pinta sobre una porció d'una peça de vidre, podreu veure què hi ha a sota "
+"de les peces no pintades."
+
+#. (itstool) path: section/title
+#: C/layers.page:29
+msgid "Opacity (how solid “opaque” things are)"
+msgstr "Opacitat (com de «opaques» són les coses solides)"
+
+#. (itstool) path: section/p
+#: C/layers.page:30
+msgid ""
+"Each layer (and each clip) has its own transparency. To continue the paint "
+"on glass metaphor, if the paint is thin enough, it can be seen through. "
+"Visually, an opacity of 100% means you cannot see the clips below that layer "
+"or clip, and an opacity of of 50% means you can partly see them."
+msgstr ""
+"Cada capa ( i cada seqüencia) té la seva pròpia transparència. Per continuar "
+"amb la metàfora de la pintura sobre vidre, si la pintura es prou fina es pot "
+"veure a través d'ella. Visualment una opacitat del 100% significa que que no "
+"podeu veure les seqüencies sota la capa o la seqüencia, i una opacitat del "
+"50% significa que les podeu veure de forma parcial."
+
+#. (itstool) path: section/title
+#: C/layers.page:33
+msgid "How this translates in terms of user interface"
+msgstr "Com es tradueix això en termes de la interfície d'usuari"
+
+#. (itstool) path: section/p
+#: C/layers.page:34
+msgid ""
+"While, in real life, you can stack pieces of glass onto each other in three "
+"dimensions, your computer monitor only has two dimensions. Thus, the "
+"<em>layers on top</em> (the “Z” axis in the physical world) are also "
+"visually <em>on top</em>, albeit on the “Y” axis."
+msgstr ""
+"Mentre, en el mon real, podeu apilar peces de vidre una sobre altra en les "
+"tres dimensions, la vostra pantalla d'ordinador té sols dues dimensions. Per "
+"això les <em>capes de dalt</em> (l'eix «Z» al mon físic) està visualment "
+"<em>dalt</em> tot i que a l'eix «Y»."
+
+#. (itstool) path: figure/desc
+#: C/layers.page:36
+msgid ""
+"Diagram illustrating the <em>pieces of glass</em> (left) and how they are "
+"show as <em>layers</em> in <app>Pitivi</app>'s user interface (right)."
+msgstr ""
+"Diagrama il·lustrant les <em>peces de vidre</em> (esquerra) i com es mostren "
+"les <em>capes</em> en la interfície d'usuari gràfica de <app>Pitivi</app> "
+"(dreta)."
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/layers.page:37
+msgctxt "_"
+msgid ""
+"external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
+msgstr ""
+"external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
+
+#. (itstool) path: note/p
+#: C/layers.page:40
+msgid ""
+"Clips located on a layer above will block the clips below from view, unless "
+"they have an opacity value lower than 100% (as shown with the two topmost "
+"layers in the previous illustration)."
+msgstr ""
+"Les seqüencies situades sobre una capa boquejaran la visualització de les "
+"seqüencies de sota, llevat que tinguin una valor d'opacitat menor que el "
+"100% (com es mostra amb les dos capes superiors a la il·lustració prèvia)."
+
+#. (itstool) path: section/title
+#: C/layers.page:44
+msgid "Adding and removing layers"
+msgstr "Afegit i supressió de capes"
+
+#. (itstool) path: section/p
+#: C/layers.page:45
+msgid ""
+"To create a layer, drag a clip to the middle space between two existing "
+"layers or just above the top layer or just below the bottom layer. Once the "
+"thin space between the layers is highlighted, release the clip."
+msgstr ""
+"Per crear una capa, arrossegueu una seqüencia a la meitat de l'espai entre "
+"dos capes ja creades o sobre la part de dalt de la capa superior o per sota "
+"de la capa inferior. Una vegada que es ressalti l'espai fi entre les capes, "
+"deixeu anar la seqüencia."
+
+#. (itstool) path: section/p
+#: C/layers.page:46
+msgid ""
+"To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</"
+"gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the "
+"layer name field."
+msgstr ""
+"Per suprimir una capa, premeu la icona <guiseq><gui>Capa</gui><gui>Suprimeix "
+"capa</gui></guiseq>. La icona <gui>Capa</gui> es pot trobar a la dreta del "
+"camp del nom de la capa."
+
+#. (itstool) path: section/title
+#: C/layers.page:49
+msgid "What about audio layers?"
+msgstr "Què passa amb les capes d'àudio?"
+
+#. (itstool) path: section/p
+#: C/layers.page:50
+msgid ""
+"Unlike in vision, multiple sounds do not “block” each other. If you have "
+"multiple audio clips on separate layers, their sound will be mixed together. "
+"Controlling the volume of those audio clips simply changes their relative "
+"loudness."
+msgstr ""
+"Al contrari que en la visió, els sons múltiples no bloquegen cap altre só. "
+"Si teniu múltiples seqüencies d'àudio en capes separades, el seu só es "
+"mesclarà sempre. Controlar el volum d'àudio d'aquestes seqüencies canvia la "
+"seva sonoritat relativa."
+
+#. (itstool) path: info/desc
+#: C/workwithprojects.page:18
+msgid "How to load and save projects, edit their settings and metadata."
+msgstr ""
+"Com carregar i desar projectes, editar els seus paràmetres i les metadades."
+
+#. (itstool) path: page/title
+#: C/workwithprojects.page:25
+msgid "Working with projects"
+msgstr "Treball amb projectes"
+
+#. (itstool) path: section/title
+#: C/workwithprojects.page:27
+msgid "Saving a project"
+msgstr "Desat d'un projecte"
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:28
+msgid ""
+"To save your project work, use the <gui>Save</gui> button in the header bar "
+"or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a "
+"project for the first time, a dialog window appears, asking you where to "
+"save the project file and how to name it."
+msgstr ""
+"Per desar el vostre projecte, useu el botó <gui>Desa</gui> a la capçalera de "
+"la barra o premeu <keyseq><key>Ctrl</key><key>S</key></keyseq>. Quan desau "
+"un projecte per primera vegada, apareix un diàleg que us pregunta on voleu "
+"desar el projecte i el seu nom."
+
+#. (itstool) path: note/p
+#: C/workwithprojects.page:30
+msgid ""
+"If you want to save your project to a different file, use <guiseq><gui>App "
+"menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</"
+"key><key>Shift</key><key>S</key></keyseq>. This can be used to create "
+"different versions of your project."
+msgstr ""
+"Si voleu desar el vostre projecte en un fitxer diferent, useu "
+"<guiseq><gui>Menú d'aplicacions</gui><gui>Anomena i desa</gui></guiseq> o "
+"premeu <keyseq><key>Ctrl</key><key>Maj</key><key>S</key></keyseq>. Així "
+"podreu crear diferents versions del vostre projecte."
+
+#. (itstool) path: section/title
+#: C/workwithprojects.page:34
+msgid "Undoing and reverting changes"
+msgstr "Desfent i revertint canvis"
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:35
+msgid ""
+"To undo a change, simply click on the <gui>Undo</gui> button in the header "
+"bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to "
+"undoing individual changes, you can also decide to revert all the changes "
+"you have made since the last time you saved your project. To do so, use "
+"<guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>."
+msgstr ""
+"Per desfer un canvi, premeu sobre el botó <gui>Desfés</gui> a la capçalera "
+"de la barra o premeu <keyseq><key>Ctrl</key><key>Z</key></keyseq>. A més a "
+"més, per desfer canvis individuals podeu també revertir tots els canvis que "
+"heu fet des de la darrera vegada que heu desat el vostre projecte. Per fer "
+"això, useu el <guiseq><gui>Menú aplicacions </gui><gui>Reverteix a la versió "
+"desada</gui></guiseq>."
+
+#. (itstool) path: note/p
+#: C/workwithprojects.page:37
+msgid ""
+"To redo changes that were undone, click on the <gui>Redo</gui> button in the "
+"header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></"
+"keyseq>."
+msgstr ""
+"Per tornar a fer canvis que heu desfet, premeu sobre el botó <gui>Refés</"
+"gui> a la capçalera de la barra o premeu <keyseq><key>Ctrl</key><key>Maj</"
+"key><key>Z</key></keyseq>."
+
+#. (itstool) path: section/title
+#: C/workwithprojects.page:41
+msgid "Editing the project settings"
+msgstr "Editeu el paràmetres del projectes"
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:42
+msgid ""
+"The project settings define mainly how the video appears while you edit the "
+"project. The video resolution and aspect ratio affect the appearance of the "
+"previewer. If the resolution and aspect ratio do not match those of your "
+"footage, the video may look squished or letterboxed. These settings can be "
+"changed at any time by using <guiseq><gui>App menu</gui><gui>Project "
+"Settings</gui></guiseq>."
+msgstr ""
+"Els paràmetres del projectes defineixen com es mostra el vídeo quan editeu "
+"el projecte. La resolució del vídeo i la relació d'aspecte afecta l'aparença "
+"del previsualitzador. Si la resolució i la relació d'aspecte no coincideixen "
+"amb la de les imatges, el vídeo por semblar aixafat o amb vores negres. "
+"Aquests paràmetres es poden canviar en qualsevol moment usant "
+"<guiseq><gui>Menú aplicacions</gui><gui>Paràmetres del projecte</gui></"
+"guiseq>."
+
+#. (itstool) path: note/p
+#: C/workwithprojects.page:44
+msgid ""
+"When you import the first video file the project settings are automatically "
+"changed to match. See <link xref=\"importing\">Getting media</link> for "
+"details."
+msgstr ""
+"Quan importeu el primer vídeo els paràmetres del projecte canvien per "
+"coincidir. Mireu <link xref=\"importing\">Primers passos amb el multimèdia</"
+"link> per veure més detalls."
+
+#. (itstool) path: section/title
+#: C/workwithprojects.page:48
+msgid "Pixel aspect ratio vs display aspect ratio"
+msgstr "Relació d'aspecte dels píxels vs relació d'aspecte de pantalla"
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:49
+msgid ""
+"Digital images are composed of a grid of <link href=\"http://en.wikipedia."
+"org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
+"cases, you may need to set the <link href=\"http://en.wikipedia.org/wiki/"
+"Pixel_aspect_ratio\">pixel aspect ratio</link> (PAR) for the image to "
+"display correctly. On the other hand, <link href=\"http://en.wikipedia.org/"
+"wiki/Display_aspect_ratio\">display aspect ratio</link> (DAR) is the "
+"mathematical ratio of width:height for the whole image."
+msgstr ""
+"Les imatges digitals estan composades d'una graella de <link href=\"http://"
+"en.wikipedia.org/wiki/Pixel\">píxels</link>, que pot ser o no quadrada. En "
+"alguns casos podeu necessitar configurar la <link href=\"http://en.wikipedia."
+"org/wiki/Pixel_aspect_ratio\">relació d'aspecte del píxel</link> (PAR) per "
+"mostrar de forma correcta la imatge. D'altra banda, <link href=\"http://en."
+"wikipedia.org/wiki/Display_aspect_ratio\">Relació d'aspecte de pantalla</"
+"link> (DAR) és la relació matemàtica de Amplada:alçada per tota la imatge."
+
+#. (itstool) path: section/p
+#: C/workwithprojects.page:50
+msgid ""
+"In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
+"related to each other through video resolution (width and height). Once your "
+"resolution is set, setting the DAR will influence the PAR and vice versa. "
+"You can use either DAR or PAR, whichever you are most comfortable with."
+msgstr ""
+"En <app>Pitivi</app>, la relació d'aspecte del píxel i la relació d'aspecte "
+"de pantalla estan relacionades entre si a través de la resolució de vídeo "
+"(amplada i alçada). Una vegada la resolució està configurada, establir el "
+"DAR influeix el PAR i viceversa. Podeu usar el DAR o el PAR, el que trobeu "
+"més còmode."
+
+#. (itstool) path: note/p
+#: C/workwithprojects.page:52
+msgid ""
+"You can use the ratios already provided in the combo boxes, or input a "
+"custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
+"or \"1.3333\", although the decimal version is less precise)."
+msgstr ""
+"Podeu usar les relacions proporcionades pels quadres combinats, o entrar una "
+"relació d'aspecte personalitzat al text de l'entrada de sota (useu una "
+"sintaxi «4:3» or «1.3333», encara que la versió decimal és menys precisa)."
+
+#. (itstool) path: info/desc
+#: C/splitting.page:18
+msgid "Dividing clips in two parts."
+msgstr "Divideix seqüencies en dos parts."
+
+#. (itstool) path: page/title
+#: C/splitting.page:25
+msgid "Splitting"
+msgstr "Divisió"
+
+#. (itstool) path: page/p
+#: C/splitting.page:26
+msgid ""
+"As the name implies, splitting a clip divides it into two adjacent clips, "
+"with new beginning/end points being created accordingly."
+msgstr ""
+"Con el nom implica, dividir una seqüencia el parteix en dos seqüencies "
+"adjacents, amb el començament/final creat de forma concordant."
+
+#. (itstool) path: page/p
+#: C/splitting.page:27
+msgid ""
+"In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that "
+"you do not have to “activate” a particular tool before doing the split "
+"action. Splitting occurs where the playhead is currently located (see also "
+"<link xref=\"movearoundtimeline\">Moving the playhead</link>). Combined with "
+"zooming, frame-by-frame seeking with the keyboard or scrubbing, modeless "
+"splitting is not only fast and efficient, it is also very accurate."
+msgstr ""
+"En <app>Pitivi</app> dividir és una operació «no modal»; això vol dir que no "
+"heu «d'activar» una eina particular abans de fer l'acció de dividir. La "
+"divisió succeïx on el punt de reproducció està situat actualment (mireu "
+"també <link xref=\"movearoundtimeline\">Movent el punt de reproducció</"
+"link>). Combinat amb amplia, cercant fotograma-a-fotograma amb el teclat o "
+"el tractament de neteja, dividir sense models no sols és més ràpid, també és "
+"més eficient."
+
+#. (itstool) path: page/p
+#: C/splitting.page:28
+msgid "For example, to split a single clip:"
+msgstr "Per exemple, per dividir una sola seqüencia:"
+
+#. (itstool) path: item/p
+#: C/splitting.page:31
+msgid "Click on the clip to select it."
+msgstr "Premeu sobre la seqüencia per seleccionar-la."
+
+#. (itstool) path: item/p
+#: C/splitting.page:34
+msgid "Reposition the playhead where you want to split (if needed)."
+msgstr ""
+"Canvieu la posició del punt de reproducció allà on vulgueu fer la divisió "
+"(si cal)."
+
+#. (itstool) path: item/p
+#: C/splitting.page:37
+msgid ""
+"Click on the <gui>Split</gui> button on the timeline toolbar or press "
+"<key>S</key>."
+msgstr ""
+"Premeu sobre el botó  <gui>Divideix</gui> en la barra d'eines de la línia de "
+"temps o premeu <key>S</key>."
+
+#. (itstool) path: page/p
+#: C/splitting.page:40
+msgid ""
+"Only the clips under the playhead can be split, depending on the current "
+"selection:"
+msgstr ""
+"Sols es poden dividir les seqüencies sota el punt de reproducció, depenent "
+"de la selecció actual:"
+
+#. (itstool) path: item/p
+#: C/splitting.page:43
+msgid ""
+"If clips are selected, only the selected clips under the playhead are split."
+msgstr ""
+"Si s'han seleccionat varies seqüencies, sols es tallaran les seleccionades "
+"sota el punt de reproducció."
+
+#. (itstool) path: item/p
+#: C/splitting.page:46
+msgid "If the selection is empty, all the clips under the playhead are split."
+msgstr ""
+"Si la selecció és buida, es dividiran tots els clips sota el punt de "
+"reproducció."
+
+#. (itstool) path: page/p
+#: C/splitting.page:49
+msgid ""
+"See how to select clips in <link xref=\"selectiongrouping#selection"
+"\">Selection and grouping</link>."
+msgstr ""
+"Mireu com es seleccionen les seqüencies a <link xref="
+"\"selectiongrouping#selection\">Selecció i agrupament</link>."
+
+#. (itstool) path: note/title
+#: C/splitting.page:51
+msgid "Cutting out the middle"
+msgstr "Tallant en la meitat"
+
+#. (itstool) path: note/p
+#: C/splitting.page:52
+msgid ""
+"When you want to cut out a middle section of a clip, split the clip twice on "
+"the positions where the part you want to remove begins and ends. Select the "
+"middle part and hit <key>Delete</key>. Now, eliminate the empty space "
+"between the remaining two parts by moving one of them towards the other "
+"until they snap."
+msgstr ""
+"Quan voleu tallar en la secció central d'una seqüencia, dividiu la seqüencia "
+"dues vegades en les posicions on comença i acaba la part que voleu eliminar. "
+"Seleccioneu la la part central i premeu <key>Suprimeix</key>. Ara elimineu "
+"l'espai buit entre les dues parts restants movent una d'elles cap a l'altra "
+"fins que s'enganxin."
+
+#. (itstool) path: credit/name
+#: C/keyframecurves.page:21
+msgid "Alexandru Băluț"
+msgstr "Alexandru Băluț"
+
+#. (itstool) path: info/desc
+#: C/keyframecurves.page:24
+msgid "Changing properties of a clip over time."
+msgstr "Canvi de les propietats d'una seqüencia al llarg del temps."
+
+#. (itstool) path: page/title
+#. (itstool) path: figure/title
+#: C/keyframecurves.page:31 C/keyframecurves.page:34
+msgid "Keyframe curves"
+msgstr "Corbes del fotograma clau"
+
+#. (itstool) path: page/p
+#: C/keyframecurves.page:32
+msgid ""
+"By using keyframe curves, you can change the value of a property over time, "
+"instead of having a fixed value for the entire duration of a clip. This can "
+"be used to change opacity or volume just as well as effect properties at any "
+"point in the clip's duration."
+msgstr ""
+"En usar corbes de fotograma clau, podeu canviar el valor d'una propietat al "
+"llarg del temps, encara que tingui un valor fixat per la duració sencera "
+"d'una seqüencia. Això es pot gastar per canviar la opacitat o el volum igual "
+"que si es canviessin les propietats de l'efecte en qualsevol punt de la "
+"durada de la seqüencia."
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/keyframecurves.page:35
+msgctxt "_"
+msgid ""
+"external ref='figures/keyframecurves.png' "
+"md5='d91b335281ec48ab9f8fade73bf09852'"
+msgstr ""
+"external ref='figures/keyframecurves.png' "
+"md5='d91b335281ec48ab9f8fade73bf09852'"
+
+#. (itstool) path: page/p
+#: C/keyframecurves.page:37
+msgid "A terminological note:"
+msgstr "Una nota terminològica:"
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:40
+msgid ""
+"<em>Keyframes</em> are the points that are used to determine the property "
+"value at a specific point in time."
+msgstr ""
+"Els <em>fotogrames clau</em> són punts que són usats per determinar el valor "
+"d'una propietats en un punt especific del temps."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:43
+msgid ""
+"<em>Keyframe curves</em> are the lines connecting the points providing "
+"smooth transitions between them."
+msgstr ""
+"Les <em>corbes del fotogrames claus</em> són les línies que connecten els "
+"punts que proporcionen transicions suaus entre elles."
+
+#. (itstool) path: page/p
+#: C/keyframecurves.page:46
+msgid ""
+"By default, the keyframe curves on an audio clip control the volume (on a "
+"scale from 0 to 200%) and the keyframe curves on a video clip control the "
+"alpha (opacity) of the video (on a scale from 0 to 100%). See the <link xref="
+"\"layers\">Understanding layers</link> page for more details on opacity. The "
+"default alpha or volume keyframe curves are an intrinsic property of clips "
+"and cannot be removed."
+msgstr ""
+"Per defecte, les corbes de fotogrames claus en una seqüencia de d'àudio "
+"controlen el volum (en una escala des de 0 fins el 200%) i les corbes de "
+"fotogrames claus en una seqüencia de de vídeo controlen la capa alfa "
+"(opacitat) al vídeo (en una escala del 0 al 100%). Mireu la pàgina <link "
+"xref=\"layers\">Entenent les capes</link> per saber més detalls sobre la "
+"opacitat. La capa alfa per defecte o les corbes dels fotogrames claus del "
+"volum són una propietat intrínseca de les seqüencies i no es poden suprimir."
+
+#. (itstool) path: note/p
+#: C/keyframecurves.page:48
+msgid ""
+"You can create fade-in and fade-out transitions by controlling opacity and "
+"volume. See an example in the <link xref=\"transitions#fades\">Transitions</"
+"link> page."
+msgstr ""
+"Podeu crear transicions apareix i esvaeix controlant la opacitat i el volum. "
+"Mireu un exemple a la pàgina <link xref=\"transitions#fades\">Transicions</"
+"link>."
+
+#. (itstool) path: page/p
+#: C/keyframecurves.page:50
+msgid ""
+"Besides volume and alpha, you can use keyframes to control effect "
+"properties. See the <link xref=\"usingeffects#keyframes\">Using effects</"
+"link> page for details."
+msgstr ""
+"Amb els dos, volum i capa alfa podeu usar fotogrames clau per controlar les "
+"propietats dels efectes. Mireu la pàgina <link xref=\"usingeffects#keyframes"
+"\">Ús d'efectes</link> per més detalls."
+
+#. (itstool) path: section/title
+#: C/keyframecurves.page:52
+msgid "General usage"
+msgstr "Ús general"
+
+#. (itstool) path: section/p
+#: C/keyframecurves.page:53
+msgid ""
+"The start and end keyframes are fixed to the start and end points of the "
+"clip and cannot be removed. The curve between these two keyframes is "
+"initially a flat horizontal line, indicating that the value of the "
+"controlled property is the same at each point in time within the clip's "
+"duration. To change the value (and the rate of its change) at any point, you "
+"can add one or more keyframes to the clip and drag them to appropriate "
+"vertical positions representing their values."
+msgstr ""
+"El començament i el final del fotogrames clau està fixat a l'inici i al "
+"final dels punts de la seqüencia i no es pot suprimir. La corba entre "
+"aquests dos fotogrames clau és inicialment una línia horitzontal plana, que "
+"indica que el valor de la propietat controlada és el mateix en cada punt del "
+"temps durant la duració de la seqüencia. Per canviar el valor ( i la "
+"velocitat d'aquest canvi) en cada punt, podeu afegir un o més fotogrames "
+"clau a la seqüencia i arrossegar-los a les posicions verticals apropiades "
+"que representen els seus valors."
+
+#. (itstool) path: section/p
+#: C/keyframecurves.page:54
+msgid "You can:"
+msgstr "Podeu:"
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:57
+msgid "Add a new keyframe by clicking on the line."
+msgstr "Afegir un fotograma clau nou fent clic sobre la línia."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:60
+msgid "Remove a keyframe by double-clicking on it."
+msgstr "Suprimir una fotograma clau fent doble clic sobre ell."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:63
+msgid "Adjust the time and value of a keyframe by moving it with the mouse."
+msgstr ""
+"Ajustar el temps i el valor del fotograma clau movent-lo amb el ratolí."
+
+#. (itstool) path: item/p
+#: C/keyframecurves.page:66
+msgid ""
+"Click-and-drag on a segment of a curve between two keyframes to adjust the "
+"vertical position of the segment."
+msgstr ""
+"Premeu i arrossegueu en un segment de la corba entre dos fotogrames clau per "
+"ajustar la posició vertical del segment."
+
+#. (itstool) path: note/p
+#: C/keyframecurves.page:70
+msgid "Currently only linear keyframe curves are supported."
+msgstr "Normalment sols són compatibles les corbes lineals de fotogrames clau."
+
+#. (itstool) path: info/desc
+#: C/presets.page:16
+msgid "Using presets in rendering and project settings."
+msgstr ""
+"Ús de valors predefinits en la configuració del renderitzat i projectes."
+
+#. (itstool) path: page/title
+#: C/presets.page:23
+msgid "Presets"
+msgstr "Predefinits"
+
+#. (itstool) path: page/p
+#: C/presets.page:24
+msgid ""
+"Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> "
+"dialog allow you to save presets for later use. If you often deal with the "
+"same kind of project settings, with different cameras or target devices for "
+"rendering, you may want to create custom presets."
+msgstr ""
+"Ambdós el diàleg <gui>Paràmetres del projecte</gui> i el diàleg "
+"<gui>Renderització</gui> us permeten desar els predefinits per utilitzar-los "
+"més tard. Si sovint s'encarregueu del mateix tipus de configuració de "
+"projecte, amb diferents càmeres o dispositius de destinació per al "
+"renderitzat, és possible que vulgueu crear predefinits personalitzats."
+
+#. (itstool) path: note/p
+#: C/presets.page:26
+msgid ""
+"In project settings, video presets and audio presets are independent of each "
+"other."
+msgstr ""
+"Als paràmetres del projecte, els predefinits de vídeo i els predefinits "
+"d'àudio són independents un de l'altre."
+
+#. (itstool) path: section/title
+#: C/presets.page:29
+msgid "Creating and editing presets"
+msgstr "Creació i edició de predefinits"
+
+#. (itstool) path: section/p
+#: C/presets.page:30
+msgid "To create a preset:"
+msgstr "Per crear un predefinit:"
+
+#. (itstool) path: item/p
+#: C/presets.page:33 C/presets.page:48
+msgid "Change the settings to your liking."
+msgstr "Canvieu els paràmetres amb les vostres preferències."
+
+#. (itstool) path: item/p
+#: C/presets.page:36
+msgid ""
+"At the right of the presets combobox click <guiseq><gui>Menu button</"
+"gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next "
+"step."
+msgstr ""
+"Premeu a la dreta del quadre combinat dels predefinits el botó "
+"<guiseq><gui>Menú</gui><gui>Nou</gui></guiseq>. Si aquesta opció està "
+"desactivada omet i ves al següent pas."
+
+#. (itstool) path: item/p
+#: C/presets.page:39
+msgid ""
+"Give your preset a unique name: click on the combobox to edit the name. When "
+"you're done, press <key>Enter</key>."
+msgstr ""
+"Doneu al vostre predefinit un nom únic: Premeu sobre el quadre combinat per "
+"editar el nom. Quan ho hageu fet, premeu <key>Intro</key>."
+
+#. (itstool) path: section/p
+#: C/presets.page:42
+msgid "To edit a preset:"
+msgstr "Per editar un predefinit:"
+
+#. (itstool) path: item/p
+#: C/presets.page:45
+msgid "Select your preset in the presets combobox."
+msgstr "Seleccioneu els vostres predefinits al quadre combinat de predefinits."
+
+#. (itstool) path: item/p
+#: C/presets.page:51
+msgid ""
+"Click at the right of the presets combobox <guiseq><gui>Menu button</"
+"gui><gui>Save</gui></guiseq>."
+msgstr ""
+"Premeu a la dreta del quadre combinat de predefinits el botó "
+"<guiseq><gui>Menú</gui><gui>Desa</gui></guiseq>."
+
+#. (itstool) path: section/p
+#: C/presets.page:54
+msgid ""
+"To remove a preset, simply select it in the presets combobox and click "
+"<guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>."
+msgstr ""
+"Per suprimir un predefinit, seleccioneu-lo al quadre combinat de predefinits "
+"i premeu el botó <guiseq><gui>Menú</gui><gui>Suprimeix</gui></guiseq>."
+
+#. (itstool) path: section/title
+#: C/presets.page:57
+msgid "Limiting the resolution of a rendering preset"
+msgstr "Limitació de la resolució del predefinit d'un renderitzat"
+
+#. (itstool) path: section/p
+#: C/presets.page:58
+msgid ""
+"If you want to make a preset with a fixed maximum resolution, you need to "
+"edit the preset file with a text editor. Presets files are typically stored "
+"in ~/.local/share/pitivi/ ; since many devices don't have a maximum "
+"resolution, the width/height are set to 0 (unlimited) by default. You can "
+"change these values to the maximum resolution of your target device."
+msgstr ""
+"Si voleu fer un predefinit amb la resolució màxima fixada, necessiteu editar "
+"el fitxer del predefinit amb un editor de text. El predefinits estan "
+"emmagatzemats de forma típica a ~/.local/share/pitivi/ ; ja que molts "
+"dispositius no tenen una resolució màxima, l'amplada/alçada s'estableix a 0 "
+"(il·limitada) de manera predeterminada. Podeu canviar aquests valors de la "
+"resolució màxima al dispositiu destí."
+
+#. (itstool) path: info/desc
+#: C/transitions.page:18
+msgid ""
+"Applying crossfades, fade-ins, fade-outs and other types of transitions."
+msgstr ""
+"Aplicació  d'esvaïments creuats, aparicions, esvaïments i altres tipus de "
+"transicions."
+
+#. (itstool) path: page/title
+#: C/transitions.page:25
+msgid "Transitions"
+msgstr "Transicions"
+
+#. (itstool) path: section/title
+#: C/transitions.page:27
+msgid "Crossfading clips"
+msgstr "Seqüencies amb esvaïments creuats"
+
+#. (itstool) path: section/p
+#: C/transitions.page:28
+msgid ""
+"To do a crossfade between two clips on the same layer, simply drag one of "
+"the clips onto the other so that it overlaps. The overlapping region will be "
+"used as a space for transition between the two clips. You can adjust the "
+"length of the transition either by moving the clips or by trimming them. If "
+"you want to apply other types of transitions than the default (crossfade), "
+"see the <em>Other types of transitions</em> section on this page."
+msgstr ""
+"Per fer un esvaïment creuat entre dos seqüencies en la mateixa capa, "
+"arrossegueu una de les seqüencies sobre l'altra fins solapar-la parcialment. "
+"La regió de solapament s'usarà com un espai de transició entre les dos "
+"seqüencies. Podeu ajustar la longitud de les transicions movent les "
+"seqüencies o tallant-les. Si voleu aplicar altres tipus de transicions com "
+"la que hi ha per defecte (esvaïment creuat), mireu la secció <em>Altres "
+"tipus de transicions</em> en aquesta pàgina."
+
+#. (itstool) path: note/p
+#: C/transitions.page:30
+msgid ""
+"Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
+"which use keyframes to control the opacity of clips. This means that if you "
+"set opacity keyframes for a clip, they will be taken into account for the "
+"crossfade."
+msgstr ""
+"Els esvaïments creuats s'aconsegueixen amb les funcions de barreja de vídeo "
+"de <app>Pitivi</ app>, les quals utilitzen fotogrames clau per controlar "
+"l'opacitat de les seqüències. Això vol dir que si establiu fotogrames clau "
+"d'opacitat per a una seqüencies, es tindran en compte per a l'esvaïment "
+"creuat."
+
+#. (itstool) path: section/title
+#: C/transitions.page:34
+msgid "Other types of transitions"
+msgstr "Altres tipus de transicions"
+
+#. (itstool) path: section/p
+#: C/transitions.page:35
+msgid ""
+"Assuming that you have two overlapping clips in your timeline, you can "
+"achieve other types of transitions by following these steps:"
+msgstr ""
+"Si assumim que teniu dos seqüencies que es solapen en la línia de temps, "
+"podeu aconseguir altres tipus de transicions seguint els passos següents:"
+
+#. (itstool) path: item/p
+#: C/transitions.page:38
+msgid "Select the overlapping region by clicking on it."
+msgstr "Seleccioneu la regió que es solapa prement sobre ella."
+
+#. (itstool) path: item/p
+#: C/transitions.page:41
+msgid "Select the <gui>Transition</gui> tab in the middle pane."
+msgstr ""
+"Seleccioneu la pestanya <gui>Transició</gui> en la zona central del panell."
+
+#. (itstool) path: item/p
+#: C/transitions.page:44
+msgid "Select one of the offered transitions."
+msgstr "Seleccioneu una de les transicions oferides."
+
+#. (itstool) path: section/p
+#: C/transitions.page:47
+msgid ""
+"The transitions can be further adjusted with the following options from the "
+"bottom of the <gui>Transition</gui> tab:"
+msgstr ""
+"Les transicions es poden ajustar amb les següents opcions des de la part "
+"inferior de la pestanya <gui>Transició</ gui>:"
+
+#. (itstool) path: item/p
+#: C/transitions.page:50
+msgid ""
+"<em>Normal mode</em> will apply the transition in a linear fashion over the "
+"whole overlapping region. When in normal mode, you can adjust the degree of "
+"sharpness/smoothenss of the transition."
+msgstr ""
+"El <em>mode normal</em> aplicarà la transició de manera lineal al damunt de "
+"tota la regió solapada. Quan estem en mode normal, podeu ajustar el grau "
+"denitidesa/suavitzat de la transició."
+
+#. (itstool) path: item/p
+#: C/transitions.page:53
+msgid ""
+"<em>Loop</em> mode will apply the transition in a circular manner. When in "
+"loop mode, you can adjust the speed with which the transition will repeat "
+"itself."
+msgstr ""
+"El <em>mode bucle</em> aplicarà la transició d'una forma circular. Quan "
+"estem en el mode bucle, podeu ajustar la velocitat durant la qual la "
+"transició es repeteix ella mateixa."
+
+#. (itstool) path: item/p
+#: C/transitions.page:56
+msgid ""
+"In both modes, you can apply the transition in <em>reverse direction</em> by "
+"ticking the corresponding checkbox."
+msgstr ""
+"Em ambdós modes podeu aplicar la transició en <em>direcció reversa </em> "
+"activant el casella de selecció corresponent."
+
+#. (itstool) path: note/p
+#: C/transitions.page:60
+msgid ""
+"Each transition has its name and description. They are displayed when you "
+"hover the cursor over the transition icon. You can also filter the "
+"transitions by typing into the search entry at the top of the "
+"<gui>Transition</gui> tab. This will show only transitions whose name or "
+"description match your search terms."
+msgstr ""
+"Cada transició té el seu nom i la seua descripció. Aquests es mostren quan "
+"moveu el cursor sobre la icona de transició. També podeu filtrar les "
+"transicions escrivint a l'entrada de la cerca a la part superior de la "
+"pestanya <gui> Transició </ gui>. Això només mostrarà transicions en les "
+"quals el nom o la descripció coincideixi amb els termes de cerca."
+
+#. (itstool) path: section/title
+#: C/transitions.page:64
+msgid "Fade-ins and fade-outs"
+msgstr "Apareix i esvaeix"
+
+#. (itstool) path: section/p
+#: C/transitions.page:65
+msgid ""
+"You can create fade-in and fade-out transitions in single clips by using "
+"keyframes controlling the clip's opacity. For more information on keyframes, "
+"see <link xref=\"keyframecurves\">Keyframe curves</link>. To understand "
+"opacity, see <link xref=\"layers\">Understanding layers</link>. The "
+"following images illustrate how to fade a clip to black:"
+msgstr ""
+"Podeu crear transicions apareix i esvaeix en seqüencies si useu fotogrames "
+"clau que controlin la opacitat de la seqüencia. Per tindre més informació "
+"sobre fotogrames clau mireu les <link xref=\"keyframecurves\">corbes de "
+"fotogrames clau</link>. Per entendre la opacitat, mireu <link xref=\"layers"
+"\">Entenent les capes</link>. Les següents imatges il·lustren com esvair una "
+"seqüencia a negre:"
+
+#. (itstool) path: figure/title
+#: C/transitions.page:67
+msgid "Keyframe curves controlling the video opacity"
+msgstr "Les corbes de fotogrames clau controlen la opacitat del vídeo"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:68
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+msgstr ""
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:69
+msgid ""
+"The default curve is flat indicating the same opacity at any position within "
+"the clip."
+msgstr ""
+"La corba per defecte és plana indicant la mateixa opacitat en qualsevol "
+"posició de la seqüencia."
+
+#. (itstool) path: figure/title
+#: C/transitions.page:72
+msgid "Adding a new keyframe"
+msgstr "Afegit d'un fotograma clau nou"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:73
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+msgstr ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:74
+msgid ""
+"Create a new keyframe by clicking the curve in a position where you want to "
+"start the fade-out."
+msgstr ""
+"Creeu un fotograma clau nou prement la corba en la posició en la qual voleu "
+"que comenci la transició esvaeix."
+
+#. (itstool) path: figure/title
+#: C/transitions.page:77
+msgid "Moving the keyframe"
+msgstr "Movent el fotograma clau"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:78
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
+msgstr ""
+"external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:79
+msgid "Click and drag the last keyframe downwards."
+msgstr "Feu clic i arrossegueu l'últim fotograma clau cap avall."
+
+#. (itstool) path: section/p
+#: C/transitions.page:81
+msgid ""
+"To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe "
+"in a position where the fade-in should end and the first keyframe dragged "
+"down) at the beginning of the clip."
+msgstr ""
+"Per aconseguir una transició apareix, simplement creeu una corba de "
+"fotogrames clau reflex (fotograma clau nou en una posició on la transició "
+"apareix s'haurà acabat i el primer fotograma clau s'ha arrossegat cap avall) "
+"al principi de la seqüencia."
+
+#. (itstool) path: note/p
+#: C/transitions.page:83
+msgid ""
+"Fades and crossfading as described here can be applied to both audio and "
+"video clips."
+msgstr ""
+"La transicions esvaeix i esvaïment creuat  descrites aquí  poden aplicar-se "
+"ambdues a les seqüencies d'àudio i vídeo."
+
+#. (itstool) path: info/desc
+#: C/mainwindow.page:16
+msgid "Discover the components of the main window."
+msgstr "Descobreix el components de la finestra principal."
+
+#. (itstool) path: page/title
+#: C/mainwindow.page:23
+msgid "The main window"
+msgstr "La finestra principal"
+
+#. (itstool) path: page/p
+#: C/mainwindow.page:24
+msgid ""
+"The main window, as the name implies, is the window containing the main "
+"components of the <app>Pitivi</app> user interface, namely: the header bar, "
+"the toolbars, the timeline and various customizable components (media "
+"library, previewer, effects library, transitions library, etc.)."
+msgstr ""
+"La finestra principal, com el seu nom implica, és la finestra que conté els "
+"principals components de la interfície d'usuari de <app>Pitivi</app>: la "
+"barra de títol, les barres d'eines, la línia de temps i varis components "
+"personalitzables (biblioteca de multimèdia, previsualitzador, biblioteca "
+"d'efectes, biblioteca de transicions, etc...)."
+
+#. (itstool) path: page/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/mainwindow.page:25
+msgctxt "_"
+msgid ""
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
+msgstr ""
+"external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
+
+#. (itstool) path: page/p
+#: C/mainwindow.page:26
+msgid "In the figure above, the following areas can be observed:"
+msgstr "A la figura anterior, es poden observar les següents àrees:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:29
+msgid "Header bar and main toolbar buttons"
+msgstr "Botons de la barra de títol i barra d'eines principal"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:32
+msgid "Main menu button"
+msgstr "Botó del menú principal"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:35
+msgid "Primary tabs: media library and effects library"
+msgstr "Pestanyes principals: biblioteca multimèdia i biblioteca d'efectes"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:38
+msgid "Contextual tabs: clip properties, transitions, titles"
+msgstr "Pestanyes contextuals: propietats de la seqüencia, transicions, títols"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:41
+msgid "Viewer"
+msgstr "Visualitzador"
+
+#. (itstool) path: item/p
+#. (itstool) path: section/title
+#: C/mainwindow.page:44 C/mainwindow.page:66
+msgid "Ruler"
+msgstr "Regle"
+
+#. (itstool) path: item/p
+#. (itstool) path: section/title
+#: C/mainwindow.page:47 C/mainwindow.page:77 C/cheatsheet.page:61
+msgid "Timeline"
+msgstr "Línia de temps"
+
+#. (itstool) path: note/title
+#: C/mainwindow.page:51
+msgid "Resizing the components of the main window"
+msgstr "Canvia la mida dels components de la finestra principal"
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:52
+msgid ""
+"The spaces between components can be clicked and dragged to proportionally "
+"resize the respective adjacent components."
+msgstr ""
+"Els espais entre components es podem prémer i arrossegar per canviar la mida "
+"proporcionalment als seus components adjacents respectius."
+
+#. (itstool) path: note/title
+#: C/mainwindow.page:55
+msgid "Hovering for more information"
+msgstr "Passeu per sobre per obtindre més informació"
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:56
+msgid ""
+"Hovering the mouse cursor over an element in the main window usually reveals "
+"an information tooltip regarding its function."
+msgstr ""
+"Passar el cursos del ratolí per damunt d'un element de la finestra principal "
+"normalment revela informació sobre la seua funció."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:59
+msgid "Header bar"
+msgstr "Barra de títol"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:60
+msgid ""
+"The header bar is a place where basic functions such as <gui>Undo</gui>, "
+"<gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly "
+"accessed. It also contains the main <gui>menu button</gui> where you can "
+"find further functions such as <gui>New project</gui>, <gui>Open project</"
+"gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
+msgstr ""
+"La barra de títol és on col·loquen funcions bàsiques com <gui>Desfés</gui>, "
+"<gui>Refés</gui>, <gui>Desa</gui>, o <gui>Renderitza</gui> que poden "
+"utilitzar-se directament. També conté el botó <gui>menú</gui> principal on "
+"podreu trobar funcions com <gui>Projecte nou</gui>, <gui>Obre projecte</"
+"gui>, <gui>Paràmetres del projecte</gui> o <gui>Preferències</gui>."
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:62
+msgid ""
+"The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</"
+"key>."
+msgstr ""
+"Podeu accedir al contingut del botó <gui>menú</gui> en prémer la tecla "
+"<key>F10</key>."
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:67
+msgid ""
+"The ruler plays a crucial role in your interaction with the timeline. First, "
+"it represents a time scale providing time measurements (in seconds) for "
+"overall orientation. Second, it constitutes the primary surface on which you "
+"can move the playhead (and thus, change your position in time). To move your "
+"position, click anywhere on the ruler. You can also <em>scrub</em> the "
+"timeline by clicking on the ruler and holding down the mouse button while "
+"moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</"
+"link> for more details."
+msgstr ""
+"La regla juga un rol crucial en interaccionar amb la línia de temps. Primer, "
+"representa una escala de temps que proporciona mesures del temps (en segons) "
+"per orientar-se de forma general. Segon, constitueix la superfície primària "
+"en la qual podeu moure el punt de reproducció (i així, canviar la posició "
+"durant el temps). Per moure la posició, premeu en qualsevol posició sobre la "
+"regla. Podeu també <em>netejar</em> la línia de temps prement sobre la regla "
+"i mantenint premut el botó del ratolí mentre estigui en moviment. Mireu la "
+"secció <link xref=\"movearoundtimeline\">Tractament de neteja</link> per "
+"saber més detalls."
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:68
+msgid "The current playhead position is indicated by a red vertical line:"
+msgstr ""
+"La posició actual del punt de reproducció està indicat per una línia "
+"vertical vermella:"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/mainwindow.page:70
+msgctxt "_"
+msgid "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
+msgstr ""
+"external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:73
+msgid ""
+"When zoomed in, frames are visually represented as alternating light and "
+"dark areas in the bottom part of the ruler. Hovering the mouse cursor over "
+"the ruler in this state will reveal an information tooltip with frame "
+"number. The amount of time the individual frames take up is based on the "
+"project framerate settings."
+msgstr ""
+"Quan s'amplien, els fotogrames es representen visualment com una alternança "
+"d'àrees de llum i foscor en la part inferior de la regla. Passar el cursos "
+"del ratolí per damunt de la regla en aquest estat revela informació sobre "
+"l'indicador de funció amb el nom del fotograma. La quantitat de temps que "
+"els fotogrames ocupen està basat en els paràmetres d'imatges per segon del "
+"projecte."
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:78
+msgid ""
+"The timeline is the core user interface component that you will use for "
+"editing. Vertically, it is divided into layers that can be filled with audio "
+"and video clips. Horizontally, it constitutes a time-proportional "
+"representation of your project's chronology. Various levels of zoom can be "
+"applied to the timeline. However, these apply only to the horizontal "
+"(chronological) dimension of the timeline."
+msgstr ""
+"La línia de temps és el component principal de la interfície d'usuari que "
+"utilitzareu per editar. Verticalment està dividida en capes que podeu omplir "
+"amb seqüencies de vídeo i àudio. Horitzontalment, constitueix una "
+"representació proporcional al temps de la cronologia del vostre projecte. Es "
+"poden aplicar varis nivells per ampliar la línia de temps. Tot i així, això "
+"sols es pot aplicar a la dimensió horizontal (cronològica) de la línia de "
+"temps."
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:79
+msgid ""
+"See the <link xref=\"layers\">Understanding layers</link> and <link xref="
+"\"movearoundtimeline\">Moving around the timeline</link> pages for more "
+"information on how to work with the timeline."
+msgstr ""
+"Mireu <link xref=\"layers\">Entenent les capes</link> i la pàgina <link xref="
+"\"movearoundtimeline\"> Movent la línia de temps</link> per obtindre més "
+"informació sobre com funciona la línia de temps."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:82
+msgid "Timeline toolbar"
+msgstr "Barra d'eines línia de temps"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:83
+msgid ""
+"The timeline toolbar is located at the right edge of the timeline. It "
+"contains basic actions for editing in timeline:"
+msgstr ""
+"La barra d'eines de la línia de temps es troba a la vora dreta de la línia "
+"de temps. Conté accions bàsiques per editar en la línia de temps:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:86
+msgid "Split clip at playhead position"
+msgstr "Divisió de la seqüencia en la posició del punt de reproducció"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:89
+msgid "Delete selected"
+msgstr "Supressió seleccionada"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:92
+msgid "Group clips"
+msgstr "Agrupament de seqüencies"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:95
+msgid "Ungroup clips"
+msgstr "Desagrupament de seqüencies"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:98
+msgid "Copy"
+msgstr "Copiat"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:101
+msgid "Paste"
+msgstr "Enganxat"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:105
+msgid "Toggle gapless mode"
+msgstr "Commutació mode sense espais"
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:109
+msgid ""
+"Note that most of the actions become available only once a clip is selected "
+"(see <link xref=\"selectiongrouping\">Selection and grouping</link> for more "
+"details). When there is no subject for the action to be performed on, it "
+"remains shaded (indicating its unavailability)."
+msgstr ""
+"Fixeu-vos que la majoria de les accions esdevenen disponibles sols quan es "
+"selecciona una seqüencia (mireu la pàgina <link xref=\"selectiongrouping"
+"\">Selecció i agrupament</link> per obtindre més detalls). Quan no hi ha cap "
+"subjecte per rebre l'acció, permaneix oculta (indicant la no disponibilitat)."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:113
+msgid "Playback toolbar"
+msgstr "Barra d'eines de reproducció"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:114
+msgid ""
+"This toolbar, located below the previewer, contains buttons controlling the "
+"playback of the timeline. Options provided by the toolbar are the following:"
+msgstr ""
+"Aquesta barra d'eines situada sota el previsualitzador conté botons que "
+"controlen la reproducció de la línia de temps. Les opcions proporcionades "
+"per la barra d'eines són les següents:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:117
+msgid "Play/Pause"
+msgstr "Reprodueix/pausa"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:120
+msgid "Go forward one second"
+msgstr "Vés endavant un segon"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:123
+msgid "Go back one second"
+msgstr "Vés enrere un segon"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:126
+msgid "Go to the end of the timeline"
+msgstr "Vés al final de la línia de temps"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:129
+msgid "Go to the beginning of the timeline"
+msgstr "Vés al començament de la línia de temps"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:132
+msgid ""
+"For more information on how to move on the timeline, see the <em>Moving the "
+"playhead</em> and <em>Scrubbing</em> sections on the <link xref="
+"\"movearoundtimeline\">Moving around the timeline</link> page."
+msgstr ""
+"Per més informació sobre com moure's en la línia de temps, mireu <em>Movent "
+"el punt de reproducció</em> i <em>Tractament de neteja</em> seccions de la "
+"pàgina <link xref=\"movearoundtimeline\">Movent la línia de temps</link>."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:135
+msgid "Previewer"
+msgstr "Previsualitzador"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:136
+msgid "The previewer displays:"
+msgstr "El previsualitzador mostra:"
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:139
+msgid "The video frame at the current position of the playhead."
+msgstr "Els fotogrames de vídeo a la posició actual del punt de reproducció."
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:142
+msgid "Your project's video when playing back."
+msgstr "El vídeo del vostre projecte quan el torneu a reproduir."
+
+#. (itstool) path: item/p
+#: C/mainwindow.page:145
+msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
+msgstr ""
+"Una <em>vista prèvia en directe</ em> quan talleu el punt d'inici / final "
+"d'una seqüencia."
+
+#. (itstool) path: note/title
+#: C/mainwindow.page:149
+msgid "Detaching the previewer into a separate window"
+msgstr "El desacoblament del previsualitzador en una finestra separada"
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:150
+msgid ""
+"You can detach the previewer into a separate window by clicking the "
+"<gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From "
+"the separate window, you can play the preview in fullscreen. This will also "
+"allow other parts of the main window to take up the space the previewer "
+"occupied. You can attach the previewer back by closing the separate window."
+msgstr ""
+"Podeu desacoblar el previsualitzador en una finestra separada prement el "
+"botó <gui>Desacobla el visualitzador</gui> a la <gui>Barra d'eines "
+"Reproducció</gui>. Des d'una finestra separada, podeu reproduir la "
+"previsualització en pantalla completa. Això també permetrà que altres parts "
+"de la finestra principal ocupin l'espai ocupat pel previsualitzador. Podeu "
+"acoblar de nou la finestra del previsualitzador tancant la finestra "
+"independent."
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:153
+msgid ""
+"<app>Pitivi</app> inhibits the screensaver while playing the video preview."
+msgstr ""
+"<app>Pitivi</app> inhibeix el estalvi de pantalla mentre es reprodueix la "
+"previsualització del vídeo."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:157
+msgid "Left pane"
+msgstr "Subfinestra de l'esquerra"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:158
+msgid ""
+"The left pane contains media and effect libraries. You can switch between "
+"them by selecting the appropriate tab. The <gui>Media Library</gui> displays "
+"the imported media files in your project and allows you to manage them. The "
+"<gui>Effect library</gui> contains number of audio and video effects "
+"applicable to clips."
+msgstr ""
+"La subfinestra de l'esquerra conté multimèdia i biblioteques d'efectes. "
+"Podeu seleccionar entre ells usant la pestanya apropiada. La <gui>Biblioteca "
+"multimèdia</gui> mostra els fitxers multimèdia importats al vostre projecte "
+"i us permet gestionar-los. La <gui>Biblioteca d'efectes</gui> conté "
+"nombrosos efectes de vídeo i àudio aplicables a les seqüencies."
+
+#. (itstool) path: note/p
+#: C/mainwindow.page:160
+msgid ""
+"You can search the libraries by using the text box in the header of each "
+"library."
+msgstr ""
+"Podeu cercar a les biblioteques usant la caixa de text a la capçalera de "
+"cada biblioteca."
+
+#. (itstool) path: section/title
+#: C/mainwindow.page:164
+msgid "Middle pane"
+msgstr "Subfinestra central"
+
+#. (itstool) path: section/p
+#: C/mainwindow.page:165
+msgid ""
+"The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</"
+"gui> and <gui>Title editor</gui>. You can switch between them by selecting "
+"the appropriate tab. The <gui>Clip configuration</gui> allows you to "
+"activate, deactivate or configure settings of effects applied to a selected "
+"clip. <gui>Transitions</gui> let you pick and configure the transition type "
+"when two clips overlap in the timeline. With <gui>Title editor</gui> you can "
+"create new clips with titles or add titles to existing ones."
+msgstr ""
+"La subfinestra central conté <gui>Configuració de seqüencies</gui>, "
+"<gui>Transicions</gui> i <gui>Editor de títols</gui>. Podeu alternar entre "
+"elles seleccionant la pestanya apropiada. La <gui>Configuració de la "
+"seqüencia</gui> us permet activar, desactivar o configurar paràmetres dels "
+"efectes aplicats a la seqüencia seleccionada. Amb <gui>Editor de títols</"
+"gui> podeu crear seqüencies noves amb títols o afegir títols a seqüencies ja "
+"creades."
+
+#. (itstool) path: credit/name
+#: C/movearoundtimeline.page:15 C/medialibrary.page:11
+msgid "Brian Grohe"
+msgstr "Brian Grohe"
+
+#. (itstool) path: info/desc
+#: C/movearoundtimeline.page:22
+msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
+msgstr ""
+"Moviment del punt de reproducció, ús de la característica d'ampliació, "
+"desplaçat i tractament de neteja."
+
+#. (itstool) path: page/title
+#: C/movearoundtimeline.page:29
+msgid "Moving around the timeline"
+msgstr "Movent la línia de temps"
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:31
+msgid "Activating the timeline toolbar"
+msgstr "Activació de la barra d'eines de la línia de temps"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:32
+msgid ""
+"The timeline toolbar contains many tools, which become active once a clip is "
+"selected in the timeline. To select a clip, simply click on the desired clip "
+"in the timeline. When selected, the clip will become darker and the timeline "
+"toolbar items will now be clickable."
+msgstr ""
+"La barra d'eines de la línia de temps conté moltes eines que esdevenen "
+"actives quan una seqüencia ha estat seleccionada a la línia de temps. Per "
+"seleccionar una seqüencia, premeu en la seqüencia desitjada a la línia de "
+"temps. Quan es seleccioni, la seqüencia esdevindrà fosca i els elements de "
+"la barra d'eines línia de temps es podran prémer."
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:35
+msgid "Scrolling"
+msgstr "Desplaçament"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:36
+msgid "You can scroll by:"
+msgstr "Podeu desplaçar-vos quan:"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:39
+msgid ""
+"Using the mouse wheel anywhere over the timeline to scroll horizontally, or "
+"hold down the <key>Shift</key> key while using the mouse wheel to scroll the "
+"timeline layers vertically"
+msgstr ""
+"Useu qualsevol roda del ratolí en qualsevol lloc sobre la línia de temps per "
+"desplaçar-vos horitzontalment, o mantindre premuda la tecla <key>Maj</"
+"key>mentre la roda del ratolí es desplaça verticalment per les capes de la "
+"línia de temps"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:42
+msgid ""
+"Clicking anywhere over the timeline with the middle button and dragging the "
+"timeline"
+msgstr ""
+"Premeu qualsevol lloc sobre la línia de temps amb el botó del mig i "
+"arrossegueu la línia de temps"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:45
+msgid "Using the scrollbars located on the right and bottom of the timeline"
+msgstr ""
+"Useu les barres desplaçadores situades a la dreta i a la part inferior de la "
+"línia de temps"
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:50
+msgid "Zooming"
+msgstr "Ampliació"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:51
+msgid ""
+"Zooming directly affects your editing accuracy and your ability to move "
+"quickly along the timeline:"
+msgstr ""
+"L'ampliació directament afecta la precisió de l'edició i la capacitat per "
+"moure's ràpidament al llarg de la línia de temps:"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:54
+msgid ""
+"When zooming in, video clips display more thumbnails and audio clips display "
+"increasingly detailed waveforms, allowing you to do precise edits."
+msgstr ""
+"Quan s'amplien les seqüencies de vídeo es mostren més miniatures i "
+"seqüencies d'àudio mostrant formes d'ona cada vegada més detallades, que us "
+"permeten fer edicions precises."
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:57
+msgid ""
+"Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
+"used in conjunction with scrolling to move quickly between distant points of "
+"your project's chronology."
+msgstr ""
+"Quan us allunyeu us permet desplaçar-vos ràpid per la línia de temps. "
+"L'escalat pot usar-se en conjunció amb el desplaçament per moure's "
+"ràpidament entre punts distants del vostre projecte tecnològic."
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:60
+msgid "You can zoom in and out by:"
+msgstr "Podeu ampliar i reduir quan:"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:63
+msgid ""
+"Holding the <key>Ctrl</key> key while using the mousewheel over the "
+"timeline, to keep the timeline point where the mouse cursor is in place if "
+"possible"
+msgstr ""
+"Manteniu premuda la tecla <key>Ctrl</key> mentre useu la roda del ratolí "
+"sobre la línia de temps, per mantenir el punt de la línia de temps on el "
+"cursor del ratolí està situat al lloc si es possible"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:66
+msgid ""
+"Holding the <key>Alt</key> key while using the mousewheel over the timeline, "
+"to keep the playhead in view"
+msgstr ""
+"Mantenir premuda la tecla <key>Alt</key> mentre s'usa la roda del ratolí "
+"sobre la línia de temps per mantenir el punt de reproducció en la "
+"visualització"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:69
+msgid "Dragging the zoom slider on the left of the ruler"
+msgstr "Arrossegueu el control lliscant del zoom a l'esquerra de la regla"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:72
+msgid ""
+"Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></"
+"keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> "
+"(<keyseq><key>Ctrl</key><key>+</key></keyseq> on the numeric keypad) to zoom "
+"in"
+msgstr ""
+"Usant les dreceres del teclat com <keyseq><key>Ctrl</key><key>-</key></"
+"keyseq> per ampliar o <keyseq><key>Ctrl</key><key>=</key></keyseq> "
+"(<keyseq><key>Ctrl</key><key>+</key></keyseq> sobre el teclat numèric ) per "
+"ampliar"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:75
+msgid ""
+"To get a global overview of your timeline, you may click the <gui>Zoom</gui> "
+"button on the left of the zoom slider. Another way to do this is by pressing "
+"<keyseq><key>Ctrl</key><key>0</key></keyseq>."
+msgstr ""
+"Per tindre  una vista global de la línia d temps, podeu prémer el botó "
+"<gui>Zoom</gui> a l'esquerra del control lliscant del zoom. Una altra forma "
+"de fer això és pressionar <keyseq><key>Ctrl</key><key>0</key></keyseq>."
+
+#. (itstool) path: note/title
+#: C/movearoundtimeline.page:77
+msgid "<em>Warping</em> between zoom levels"
+msgstr "<em>Deformació</em> entre nivells de zoom"
+
+#. (itstool) path: note/p
+#: C/movearoundtimeline.page:78
+msgid ""
+"Using your mouse, you can also <em>warp</em> instantly from any zoom level "
+"to another in a single click. To do that, click anywhere on the zoom slider."
+msgstr ""
+"Usant el ratolí, podeu també <em>deformar</em> de forma instantània des d'un "
+"nivell de zoom fins un altre amb un clic. Per fer això, premeu a qualsevol "
+"lloc sobre el lliscador del zoom."
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:82
+msgid "Moving the playhead"
+msgstr "Movent el punt de reproducció"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:83
+msgid ""
+"You can change the position of the playhead by clicking with the right mouse "
+"button anywhere on the ruler or on the timeline."
+msgstr ""
+"Podeu canviar la posició del punt de reproducció fent clic amb el botó dret "
+"del ratolí a qualsevol lloc de la regla o a la línia de temps."
+
+#. (itstool) path: note/title
+#: C/movearoundtimeline.page:85
+msgid "Jumping to an exact position"
+msgstr "Saltant a una posició exacta"
+
+#. (itstool) path: note/p
+#: C/movearoundtimeline.page:86
+msgid ""
+"You can jump to an exact position in the timeline by editing the time value "
+"shown in the playback toolbar (see description of <link xref=\"mainwindow"
+"\">The main window</link>). To edit it, simply click on the widget, "
+"overwrite the value and hit <key>enter</key>. The value can represent either "
+"timecode or a frame number. Timecode has the following form: <em>hh:mm:ss."
+"milisec</em> where hours are optional. To insert a frame number, overwrite "
+"the timecode with a plain number of the desired frame."
+msgstr ""
+"Podeu saltar a una posició exacta en la línia de temps editant el valor del "
+"temps mostrat en la barra d'eines de reproducció ( mireu la descripció de "
+"<link xref=\"mainwindow\">La finestra principal </link>). Per editar-ho "
+"premeu sobre el giny, sobreescriviu el valor i premeu  <key>Intro</key>. El "
+"valor pot representar un codi de temps o un número de fotograma. El codi de "
+"temps té el següent formulari: <em>hh:mm:ss.milisec </ em>, on les hores són "
+"opcionals. Per inserir un número de fotograma, sobreescriu el codi de temps "
+"amb un nombre en format pla del fotograma desitjat."
+
+#. (itstool) path: section/title
+#: C/movearoundtimeline.page:90
+msgid "Scrubbing"
+msgstr "Tractament de neteja"
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:91
+msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
+msgstr ""
+"El <em>tractament de neteja</em> és una forma de moure el punt de "
+"reproducció que us permet:"
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:94
+msgid ""
+"Search for a specific position in time by approximation/trial and error."
+msgstr ""
+"Cercar una posició especifica en el temps per aproximació / assaig i error."
+
+#. (itstool) path: item/p
+#: C/movearoundtimeline.page:97
+msgid ""
+"Review repeatedly the visual motion in a scene by moving back and forth in "
+"time."
+msgstr ""
+"Revisar repetidament el moviment visual d'una escena movent-se cap a enrere "
+"i cap endavant amb el temps."
+
+#. (itstool) path: section/p
+#: C/movearoundtimeline.page:100
+msgid ""
+"To scrub, click on the ruler with the right mouse button and move the mouse "
+"with the button still held down."
+msgstr ""
+"Per depurar, premeu sobre la regla amb el botó dret del ratolí i moveu el "
+"ratolí amb el botó premut."
+
+#. (itstool) path: info/desc
+#: C/about.page:14
+msgid "Current state of this user manual and call for participation."
+msgstr "Estat actual d'aquest manual d'usuari i cridada per participar."
+
+#. (itstool) path: page/title
+#: C/about.page:21
+msgid "About this manual"
+msgstr "Quant a aquest manual"
+
+#. (itstool) path: page/p
+#: C/about.page:22
+msgid "This user manual is written and maintained by Jean-François Fortin Tam."
+msgstr ""
+"Aquest manual d'usuari està escrit i mantingut per  Jean-François Fortin Tam."
+
+#. (itstool) path: section/title
+#: C/about.page:24
+msgid "Work in progress"
+msgstr "Treballs en progrés"
+
+#. (itstool) path: section/p
+#: C/about.page:25
+msgid ""
+"You may encounter unwritten portions due to features that have not yet been "
+"implemented in Pitivi at the time of writing."
+msgstr ""
+"Podeu trobar parts no escrites a causa de funcions que encara no s'han "
+"implementat a Pitivi en aquest moment."
+
+#. (itstool) path: section/p
+#: C/about.page:26
+msgid ""
+"You may also encounter smaller areas which have been documented in this "
+"manual but have not been implemented in Pitivi – those are areas where the "
+"design and expected user interaction are quite narrow/certain."
+msgstr ""
+"També podeu trobar àrees més petites que s'han documentat en aquest manual, "
+"però que no s'han implementat a Pitivi: aquestes són àrees on el disseny i "
+"la interacció dels usuaris esperada són bastant estretes / segures."
+
+#. (itstool) path: section/title
+#: C/about.page:29
+msgid "Patches welcome"
+msgstr "Benvinguts pedaços"
+
+#. (itstool) path: section/p
+#: C/about.page:30
+msgid ""
+"If you happen to find errors, missing information or unclear passages in "
+"this manual, please feel free to submit corrections. You can find contact "
+"information on <link href=\"http://jeff.ecchi.ca/\">my personal website</"
+"link>. You can also <link href=\"https://phabricator.freedesktop.org/"
+"maniphest/task/create/?projects=pitivi,pitivi_documentation\">file bugs in "
+"our bug tracker</link>."
+msgstr ""
+"Si trobeu errors, informació perduda o passos poc clars en aquest manual, no "
+"dubteu a enviar correccions. Podeu trobar la informació de contacte a <link "
+"href=\"http://jeff.ecchi.ca/\"> la meva web personal</link>. També podeu "
+"<link href=\"https://phabricator.freedesktop.org/maniphest/task/create/?"
+"projects=pitivi,pitivi_documentation\"> enviar fitxers amb errors al nostre "
+"gestor d'errors</link>."
+
+#. (itstool) path: info/title
+#: C/index.page:4
+msgctxt "link"
+msgid "Pitivi Quick Start Manual"
+msgstr "Manual d'inici ràpid de Pitivi"
+
+#. (itstool) path: info/title
+#: C/index.page:5
+msgctxt "text"
+msgid "Pitivi Quick Start Manual"
+msgstr "Manual d'inici ràpid de Pitivi"
+
+#. (itstool) path: title/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/index.page:19
+msgctxt "_"
+msgid "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
+msgstr "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
+
+#. (itstool) path: page/title
+#: C/index.page:19
+msgid ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
+"logo</media> Pitivi Video Editor"
+msgstr ""
+"<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Logo de "
+"Pitivi</media> Video Editor de Pitivi"
+
+#. (itstool) path: page/p
+#: C/index.page:22
+msgid ""
+"Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer"
+"\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims "
+"to be an intuitive and flexible video editor that integrates well with <link "
+"href=\"http://gnome.org\"><app>GNOME</app></link> and can appeal to newbies "
+"and professionals alike."
+msgstr ""
+"Construït sobre l'entorn de treball <link href=\"http://en.wikipedia.org/"
+"wiki/GStreamer\"><app>GStreamer</app></link> , <app>Pitivi</app> vol ser un "
+"editor de vídeo intuïtiu i flexible que s'integra bé amb <link href=\"http://"
+"gnome.org\"><app>GNOME</app></link> i pot atraure professionals i novells "
+"per igual."
+
+#. (itstool) path: page/p
+#: C/index.page:23
+msgid ""
+"This guide is intended to help you grasp the concepts behind its design and "
+"get productive quickly."
+msgstr ""
+"Aquesta guia té com a finalitat ajudar-vos a comprendre els conceptes que hi "
+"ha darrere del seu disseny i ser de forma ràpida més productiu."
+
+#. (itstool) path: section/title
+#: C/index.page:25
+msgid "Introduction"
+msgstr "Introducció"
+
+#. (itstool) path: section/title
+#: C/index.page:28
+msgid "Getting Started"
+msgstr "Començant"
+
+#. (itstool) path: section/title
+#: C/index.page:31
+msgid "Basic Editing with the Timeline"
+msgstr "Edició bàsica amb la línia del temps"
+
+#. (itstool) path: section/title
+#: C/index.page:34
+msgid "Effects and Transitions"
+msgstr "Efectes i transicions"
+
+#. (itstool) path: section/title
+#: C/index.page:37
+msgid "Exporting Your Finished Movie"
+msgstr "Exportació de la vostra pel·licula acabada"
+
+#. (itstool) path: info/desc
+#: C/sysreq.page:18
+msgid "What kind of hardware is needed to do video editing?"
+msgstr "Quin tipus de maquinari es necessita per fer edició de vídeo?"
+
+#. (itstool) path: page/title
+#: C/sysreq.page:25
+msgid "System requirements"
+msgstr "Requeriments de sistema"
+
+#. (itstool) path: page/p
+#: C/sysreq.page:26
+msgid ""
+"In terms of hardware, video editing typically requires a powerful computer, "
+"depending on the type of video you are editing. While the processing power "
+"of computers has increased tremendously over the years, so has demand for "
+"higher quality video. Editing HD (High Definition) video usually requires "
+"(at the time of this writing) state of the art hardware (depending on the "
+"codec used), while SD (Standard Definition) video editing can be done on "
+"modest hardware configurations. It is up to you to make sure that your "
+"equipment is adequate. It should at least be able to playback your media in "
+"<app>Totem</app> without lagging."
+msgstr ""
+"Pel que fa al maquinari, l'edició de vídeo normalment requereix una potent "
+"computadora, depenent del tipus de vídeo que esteu editant. Tot i que la "
+"potència de processament de les computadores ha augmentat enormement al "
+"llarg dels anys, també té demanda de vídeo de major qualitat. L'edició del "
+"vídeo HD (alta definició) sol requerir (en el moment d'escriure aquest text) "
+"maquinari potents (depenent del còdec utilitzat), mentre que l'edició de "
+"vídeo SD (definició estàndard) es pot fer amb configuracions de maquinari "
+"modestes. Us correspon assegurar-vos que el vostre equip sigui adequat. Com "
+"a mínim, hauríeu de poder reproduir els vostres vídeos a <app> Totem </ app> "
+"sense retards."
+
+#. (itstool) path: page/p
+#: C/sysreq.page:27
+msgid "Here are some general hardware recommendations:"
+msgstr "Aquí teniu algunes recomanacions generals de maquinari:"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:30
+msgid "Modern quad core CPU"
+msgstr "CPU moderna quad core"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:33
+msgid "Solid state drive"
+msgstr "Disc dur d'estat sòlid"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:36
+msgid "Intel graphic cards tend to work without problems"
+msgstr "Les targetes gràfiques Intel tendeixen a treballar sense problemes"
+
+#. (itstool) path: item/p
+#: C/sysreq.page:39
+msgid ""
+"Full HD (1920x1080) capable monitor (resolutions below 1024x768 are not "
+"supported)"
+msgstr ""
+"Monitor amb capacitat Full HD (1920x1080) (les resolucions per sota de "
+"1024x768 no són compatibles)"
+
+#. (itstool) path: page/p
+#: C/sysreq.page:42
+msgid ""
+"It is possible, however, to use low-quality versions of your footage during "
+"editing and use the high-quality versions when rendering the final output, "
+"thus allowing to bypass hardware limitations to some extent. This is called "
+"<em>proxy editing</em>. This feature, however, is not yet available in "
+"<app>Pitivi</app>."
+msgstr ""
+"Tanmateix, és possible utilitzar versions de baixa qualitat del vostre "
+"material durant l'edició i utilitzar les versions d'alta qualitat quan es "
+"produeixi la sortida final, de manera que es pugui evitar les limitacions de "
+"maquinari en certa mesura. Això s'anomena <em>edició amb servidor "
+"intermediari</em>. Aquesta característica, tan mateix, no està disponible "
+"encara a <app>Pitivi</app>."
+
+#. (itstool) path: note/p
+#: C/sysreq.page:44
+msgid ""
+"You can track the state of proxy editing in <app>Pitivi</app> through <link "
+"href=\"https://phabricator.freedesktop.org/T2455\">task T2455</link>."
+msgstr ""
+"Podeu fer un seguiment de l'estat de l'edició amb servidor intermediari a "
+"<app>Pitivi</app> mitjançant <link href=\"https://phabricator.freedesktop."
+"org/T2455\">tasca T2455</link>."
+
+#. (itstool) path: page/p
+#: C/sysreq.page:46
+msgid ""
+"Software requirements are covered in <link xref=\"gstreamer\">Gstreamer and "
+"compatibility</link> and <link xref=\"effects\">Introduction to effects</"
+"link>."
+msgstr ""
+"Els requeriments de programari estan coberts a <link xref=\"gstreamer"
+"\">Gstreamer i la seva compatibilitat </link> i <link xref=\"effects"
+"\">Introducció als seus efectes</link>."
+
+#. (itstool) path: info/desc
+#: C/codecscontainers.page:17
+msgid ""
+"What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
+"Learn about codecs and container formats here."
+msgstr ""
+"Quina és la diferencia entre OGG i Vorbis ? AVI i DivX ? x264 i H.264? "
+"Apreneu sobre els còdecs i els contenidors de formats aquí."
+
+#. (itstool) path: page/title
+#: C/codecscontainers.page:19
+msgid "Understanding codecs and containers"
+msgstr "Entenent els còdecs i els contenidors"
+
+#. (itstool) path: page/p
+#: C/codecscontainers.page:20
+msgid ""
+"The distinction between codecs and container file formats is often "
+"ambiguous. This is in part due to the general lack of standardization, "
+"confusing marketing terms and filename extensions. This page attempts to "
+"clarify this distinction briefly and without going into technical details. "
+"If you want to learn more about containers and codecs, you should probably "
+"look at Wikipedia's page on <link href=\"http://en.wikipedia.org/wiki/"
+"Digital_container_format\">containers</link> and <link href=\"http://en."
+"wikipedia.org/wiki/Codec\">codecs</link>."
+msgstr ""
+"La distinció entre còdecs i formats de fitxers de contenidors sovint és "
+"ambigua. Això es deu, en part, a la general falta d'estandardització, "
+"confondre termes de màrqueting i extensions de nom de fitxer. Aquesta pàgina "
+"intenta aclarir aquesta distinció breument i sense entrar en detalls "
+"tècnics. Si voleu obtenir més informació sobre contenidors i còdecs, "
+"probablement hauríeu de mirar la pàgina de Wikipedia a <link href=\"http://"
+"en.wikipedia.org/wiki/Digital_container_format\">contenidors </link> i <link "
+"href=\"http://en.wikipedia.org/wiki/Codec\">còdecs</link>."
+
+#. (itstool) path: page/p
+#: C/codecscontainers.page:21
+msgid ""
+"<em>Container</em> is what we typically associate with the file format. "
+"Containers \"contain\" the various components of a video: the stream of "
+"images, the sound, and anything else. For example, you could have multiple "
+"soundtracks and subtitles included in a video file, if the container format "
+"allows it. Example of popular containers are OGG, Matroska, AVI, MPEG."
+msgstr ""
+"<em>Contenidor</em> és el que normalment associem amb el format del fitxer. "
+"Els contenidors «contenen» els diferents components d'un vídeo: el flux "
+"d'imatges, el so i qualsevol altra cosa. Per exemple, podeu tenir múltiples "
+"bandes sonores i subtítols inclosos en un fitxer de vídeo, si el format del "
+"contenidor ho permet. Exemple de contenidors populars són OGG, Matroska, "
+"AVI, MPEG."
+
+#. (itstool) path: page/p
+#: C/codecscontainers.page:22
+msgid ""
+"<em>Codecs</em> are ways of \"coding\" and \"decoding\" streams. Their job "
+"is typically to compress data (and decompress it when playing it back) so "
+"that you can store and transmit files with a smaller filesize. There are "
+"many codecs available out there, each with their strengths, weaknesses and "
+"peculiarities, and choosing the right codec with the right settings for the "
+"right situation is close to be a form of art in itself."
+msgstr ""
+"<em> Còdecs </em> són formes de «codificar« i «descodificar» els fluxos. "
+"Normalment, la seva tasca és comprimir dades (i descomprimir-la quan es "
+"reprodueixi) perquè pugui emmagatzemar i transmetre fitxers amb un format de "
+"fitxer més petit. Hi ha molts còdecs disponibles, cadascun amb els seus "
+"punts forts, debilitats i peculiaritats, i triar el còdec correcte amb la "
+"configuració adequada per a la situació adequada es considera una forma "
+"d'art en si mateixa."
+
+#. (itstool) path: figure/title
+#: C/codecscontainers.page:24
+msgid "The relationship between containers and codecs"
+msgstr "La relació entre contenidors i còdecs"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/codecscontainers.page:25
+msgctxt "_"
+msgid ""
+"external ref='figures/codecscontainers.jpg' "
+"md5='e43e6a92cda311d0cd8c24fb0df67a17'"
+msgstr ""
+"external ref='figures/codecscontainers.jpg' "
+"md5='e43e6a92cda311d0cd8c24fb0df67a17'"
+
+#. (itstool) path: info/desc
+#: C/license.page:6
+msgid "Legal information."
+msgstr "Informació legal."
+
+#. (itstool) path: page/title
+#: C/license.page:8
+msgid "License"
+msgstr "Llicència"
+
+#. (itstool) path: page/p
+#: C/license.page:9
+msgid ""
+"This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 "
+"Unported license."
+msgstr ""
+"Aquest treball és distribuït sota la llicència Creative Commons "
+"Reconeixement-Compartir igual 3.0 llicència no adaptada."
+
+#. (itstool) path: page/p
+#: C/license.page:16
+msgid "You are free:"
+msgstr "Sou lliures de:"
+
+#. (itstool) path: item/title
+#: C/license.page:21
+msgid "<em>To share</em>"
+msgstr "<em>Compartir</em>"
+
+#. (itstool) path: item/p
+#: C/license.page:24
+msgid "To copy, distribute and transmit the work."
+msgstr "Copiar, distribuir i transmetre el treball."
+
+#. (itstool) path: item/title
+#: C/license.page:27
+msgid "<em>To remix</em>"
+msgstr "<em>Combinar</em>"
+
+#. (itstool) path: item/p
+#: C/license.page:30
+msgid "To adapt the work."
+msgstr "Per adaptar el treball."
+
+#. (itstool) path: page/p
+#: C/license.page:33
+msgid "Under the following conditions:"
+msgstr "Sota les condicions següents:"
+
+#. (itstool) path: item/title
+#: C/license.page:36
+msgid "<em>Attribution</em>"
+msgstr "<em>Atribució</em>"
+
+#. (itstool) path: item/p
+#: C/license.page:39
+msgid ""
+"You must attribute the work in the manner specified by the author or "
+"licensor (but not in any way that suggests that they endorse you or your use "
+"of the work)."
+msgstr ""
+"Cal que reconegueu el treball de la forma especificada per l'autor o el "
+"llicenciatari (però no de forma que suggereixi que us dóna suport personal o "
+"de l'ús del treball)."
+
+#. (itstool) path: item/title
+#: C/license.page:42
+msgid "<em>Share Alike</em>"
+msgstr "<em>Compartir igual</em>"
+
+#. (itstool) path: item/p
+#: C/license.page:45
+msgid ""
+"If you alter, transform, or build upon this work, you may distribute the "
+"resulting work only under the same, similar or a compatible license."
+msgstr ""
+"Si altereu, transformeu, o construïu a partir d'aquest treball heu de "
+"distribuir el treball resultant sota la mateixa llicència o una de "
+"compatible."
+
+#. (itstool) path: page/p
+#: C/license.page:48
+msgid ""
+"For the full text of the license, see the <link href=\"http://"
+"creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</"
+"link>, or read the full <link href=\"http://creativecommons.org/licenses/by-"
+"sa/3.0/\">Commons Deed</link>."
+msgstr ""
+"Per llegir el text complet de la llicència, mireu la <link href=\"http://"
+"creativecommons.org/licenses/by-sa/3.0/legalcode\">web CreativeCommons</"
+"link> o llegiu la pàgina <link href=\"http://creativecommons.org/licenses/by-"
+"sa/3.0/\">Commons Deed</link>."
+
+#. (itstool) path: page/p
+#: C/license.page:51
+msgid ""
+"For the license of Pitivi itself, see the <link href=\"http://www.gnu.org/"
+"licenses/lgpl-2.1.html\">GNU Lesser General Public License</link>."
+msgstr ""
+"Per la llicència de Pitivi, mireu la <link href=\"http://www.gnu.org/"
+"licenses/lgpl-2.1.html\">Llicència Pública General Reduïda de GNU</link>."
+
+#. (itstool) path: info/desc
+#: C/gstreamer.page:18
+msgid ""
+"Ensuring you have the proper multimedia codecs and plugins installed for "
+"maximum compatibility."
+msgstr ""
+"Assegureu-vos que teniu els còdecs i connectors multimèdia adequats "
+"instal·lats per a la màxima compatibilitat."
+
+#. (itstool) path: page/title
+#: C/gstreamer.page:25
+msgid "Gstreamer and compatibility"
+msgstr "Gstreamer i la seva compatibilitat"
+
+#. (itstool) path: page/p
+#: C/gstreamer.page:26
+msgid ""
+"A great strength of <app>Pitivi</app> lies in the fact that it uses the "
+"<app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by "
+"dozens of multimedia applications across desktop environments, operating "
+"systems and architectures."
+msgstr ""
+"Una gran fortalesa de <app> Pitivi </ app> rau en el fet que utilitza "
+"l'espai de treball multimèdia <app> GStreamer </app>. <app> GStreamer </app> "
+"és utilitzat per dotzenes d'aplicacions multimèdia en entorns d'escriptori, "
+"sistemes operatius i arquitectures."
+
+#. (itstool) path: page/p
+#: C/gstreamer.page:27
+msgid "For <app>Pitivi</app> users, this essentially means two things:"
+msgstr ""
+"Per als usuaris de <app>Pitivi</app>, això essencialment vol dir dues coses:"
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:30
+msgid ""
+"You can, in theory, import pretty much any media file supported by "
+"<app>GStreamer</app> (see the sections below for more details)."
+msgstr ""
+"Podeu, en teoria, importar pràcticament qualsevol fitxer multimèdia suportat "
+"per <app> GStreamer </app> (consulteu les seccions següents per obtenir més "
+"detalls)."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:33
+msgid ""
+"You can render your projects using any supported container and codec "
+"combination from <app>GStreamer</app>."
+msgstr ""
+"Podeu renderitzar els vostres projectes usant qualsevol combinació de "
+"contenidors i còdecs compatibles amb <app> GStreamer </app>."
+
+#. (itstool) path: note/p
+#: C/gstreamer.page:37
+msgid ""
+"To maximize <app>Pitivi</app>'s capabilities and reduce the possibilities of "
+"bugs, a very recent version of <app>GStreamer</app> is recommended. This is "
+"because <app>Pitivi</app> developers work hard on fixing problems directly "
+"in <app>GStreamer</app> instead of putting temporary workarounds inside "
+"<app>Pitivi</app>."
+msgstr ""
+"Per maximitzar les capacitats de <app> Pitivi </app> i reduir les "
+"possibilitats d'errors, es recomana una versió molt recent de <app> "
+"GStreamer </app>. Això és degut a que els desenvolupadors <app> Pitivi </"
+"app> treballen dur per solucionar problemes directament a <app> GStreamer </"
+"app> en lloc de solucionar-los temporalment a <app> Pitivi </app>."
+
+#. (itstool) path: section/title
+#: C/gstreamer.page:40
+msgid "A word about editing-friendly codecs"
+msgstr "Unes paraules sobre còdecs d'edició-amigables"
+
+#. (itstool) path: section/p
+#: C/gstreamer.page:41
+msgid ""
+"Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
+"not compress each frame independently. While it is the goal of <app>Pitivi</"
+"app> to support working with these files, certain operations (like rapid "
+"seeking) will not perform as well as they would with frame-independent "
+"compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
+msgstr ""
+"Alguns formats, com ara <em> MPEG </em>, estan orientats a la reproducció "
+"només i no comprimeixen cada fotograma independentment. Tot i que  "
+"l'objectiu de <app> Pitivi </app> és treballar amb aquests fitxers, algunes "
+"operacions (com ara la cerca ràpida) no funcionaran tan bé com ho farien amb "
+"un vídeo comprimit independent del marc (com ara <em> MJPEG  </em> o <em> DV "
+"<em>)."
+
+#. (itstool) path: section/title
+#: C/gstreamer.page:44
+msgid "The Good, the Bad and the Ugly"
+msgstr "El «Good» (bo), el «Bad» (dolent) i el «Ugly» (lleig)"
+
+#. (itstool) path: section/p
+#: C/gstreamer.page:45
+msgid ""
+"<app>GStreamer</app> plugins come into three categories: good, bad and ugly. "
+"You may need to install plugins from any category to ensure compatibility "
+"with your media files. Whether or not you install them is up to you, and may "
+"depend on your country's jurisdiction regarding software patents. An "
+"overview of gstreamer plugins and their classification into categories can "
+"be found on the <link href=\"http://gstreamer.freedesktop.org/documentation/"
+"plugins.html\">Gstreamer website</link>."
+msgstr ""
+"Els connectors <app>GStreamer </app> es troben en tres categories: Good, Bad "
+"i Ugly. És possible que necessiteu instal·lar connectors de qualsevol "
+"categoria per garantir la compatibilitat amb els vostres fitxers multimèdia. "
+"Tant si els instal·leu o no, pot dependre de la jurisdicció del vostre país "
+"sobre les patents de programari. Podeu trobar una descripció general dels "
+"connectors gstreamer i la seva classificació en categories <link href = "
+"\"http://gstreamer.freedesktop.org/documentation/plugins.html\"> Lloc web de "
+"Gstreamer </link>."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:48
+msgid ""
+"The \"Good\" plugins are high quality plugins under the LGPL license. These "
+"plugins are considered safe and recommended at any time. To install them, "
+"search for packages containing gstreamer plugins good in your distribution's "
+"repositories."
+msgstr ""
+"Els connectors \"Good\" són connectors d'alta qualitat sota la llicència "
+"LGPL. Aquests connectors es consideren segurs i recomanats en qualsevol "
+"moment. Per instal·lar-los, cerqueu paquets que continguin connectors "
+"gstreamer «Good» als dipòsits de la vostra distribució."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:51
+msgid ""
+"The \"Bad\" plugins are plugins whose code quality is not good enough, or "
+"are not considered tested well enough. The licensing may or may not be LGPL. "
+"To install them, search for packages containing gstreamer plugins bad in "
+"your distribution's repositories."
+msgstr ""
+"Els connectors «Bad» són complements la qualitat del qual no és prou bona o "
+"no es considera suficientment provada. La llicència pot ser o no LGPL. Per "
+"instal·lar-los, cerqueu paquets que continguin connectors gstreamer «Bad» "
+"als dipòsits de la vostra distribució."
+
+#. (itstool) path: item/p
+#: C/gstreamer.page:54
+msgid ""
+"The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
+"with licensing issues. To install them, search for packages containing "
+"containing gstreamer plugins ugly in your distribution's repositories."
+msgstr ""
+"Els connectors «Ugly» són connectors de bona qualitat, la llicència dels "
+"quals no és LGPL o amb problemes de llicència. Per instal·lar-los, cerqueu "
+"paquets que continguin connectors gstreamer «Ugly» en els dipòsits de la "
+"vostra distribució."
+
+#. (itstool) path: note/p
+#: C/gstreamer.page:58
+msgid ""
+"In addition to the Good, Bad and Ugly plugins, you may want to install the "
+"<em>gstreamer-ffmpeg</em> package to have access to ffmpeg's set of codecs."
+msgstr ""
+"A més a més dels connectors Good, Bad i Ugly, podeu instal·lar el paquet "
+"<em>gstreamer-ffmpeg</em> per tindre accés al conjunt de còdecs de ffmpeg."
+
+#. (itstool) path: section/title
+#: C/gstreamer.page:62
+msgid "Image file formats"
+msgstr "Formats de fitxers d'imatge"
+
+#. (itstool) path: section/p
+#: C/gstreamer.page:63
+msgid ""
+"While it is not feasible to list every possible combination of supported "
+"video or audio formats, it is however possible to list the static image "
+"formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
+msgstr ""
+"Tot i que no és possible incloure totes les combinacions possibles de "
+"formats de vídeo o àudio compatibles, és possible que es mostrin els formats "
+"d'imatge estàtics que es poden importar: JPEG, PNG, JPEG 2000, PNM i SVG."
+
+#. (itstool) path: page/title
+#: C/savescreenshot.page:14
+msgid "Saving a snapshot of the current frame"
+msgstr "Prendre una captura de pantalla del fotograma actual"
+
+#. (itstool) path: page/p
+#: C/savescreenshot.page:15
+msgid ""
+"You can use <guiseq><gui>Menu button</gui><gui>Export current frame...</"
+"gui></guiseq> to save a copy of the current frame as an image file."
+msgstr ""
+"Podeu usar el botó <guiseq><gui>Menú</gui><gui>Exporta fotograma actual...</"
+"gui></guiseq> per desar una copia del fotograma actual com un fitxer "
+"d'imatge."
+
+#. (itstool) path: page/p
+#: C/savescreenshot.page:16
+msgid ""
+"Currently, PNG and JPEG are supported as file formats. The image resolution "
+"will match the project settings and any effect or transformation will also "
+"be applied to the resulting image."
+msgstr ""
+"Actualment, PNG i JPEG són compatibles com formats de fitxer. La resolució "
+"de la imatge coincidirà amb la configuració del projecte i qualsevol efecte "
+"o transformació també s'aplicarà a la imatge resultant."
+
+#. (itstool) path: info/desc
+#: C/importingmpegts.page:11
+msgid ""
+"How to convert .mts and .m2ts files to a format that can be parsed by "
+"GStreamer and Pitivi."
+msgstr ""
+"Com convertir fitxers .mts i .m2ts a formats que puguin ser analitzats per "
+"GStreamer i Pitivi."
+
+#. (itstool) path: page/title
+#: C/importingmpegts.page:19
+msgid "Dealing with AVCHD / MPEG-TS files"
+msgstr "Tractament de fitxers amb AVCHD / MPEG-TS"
+
+#. (itstool) path: page/p
+#: C/importingmpegts.page:20
+msgid ""
+"At the time being, MPEG Transport Stream files (usually with file extensions "
+"such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some "
+"HD camcorders, cannot be played reliably with <app>GStreamer</app>. As such, "
+"you may want to remux them in a different container format by using "
+"<app>ffmpeg</app>. To convert losslessly to an MPEG4 container, you can use "
+"the following command:"
+msgstr ""
+"En aquests moments, els fitxers transport de flux MPEG (normalment amb "
+"extensions de fitxer com .mts, .m2ts i de vegades .mpg o .mpeg), com les que "
+"utilitzen algunes càmeres de vídeo HD, no es poden reproduir de forma fiable "
+"amb <app>GStreamer</app>. Com a tal, és possible que vulgueu remesclar-los "
+"en un format de contenidor diferent mitjançant <app> ffmpeg </app>. Per "
+"convertir sense pèrdues a un contenidor MPEG4, podeu utilitzar el següent "
+"comandament:"
+
+#. (itstool) path: page/code
+#: C/importingmpegts.page:21
+#, no-wrap
+msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
+msgstr "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
+
+#. (itstool) path: info/desc
+#: C/usingeffects.page:14
+msgid "Configuring effects and using Effect Library."
+msgstr "Configuració d'efectes i ús de la biblioteca d'efectes."
+
+#. (itstool) path: page/title
+#: C/usingeffects.page:19
+msgid "Using effects"
+msgstr "Ús d'efectes"
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:21
+msgid "Effect Library"
+msgstr "Biblioteca d'efectes"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:22
+msgid ""
+"The <gui>Effect Library</gui> contains all audio and video effects available "
+"on the system. The library shows either audio or video effects depending on "
+"which button (<gui>Show video effects</gui> or <gui>Show audio effects</"
+"gui>) in its upper left corner is activated. Once you choose audio or video "
+"effects you can further sort them by choosing one of the categories from the "
+"drop down list next to the two buttons. By default, the list is set to show "
+"all effects."
+msgstr ""
+"La <gui> Biblioteca d'efectes </gui> conté tots els efectes d'àudio i vídeo "
+"disponibles al sistema. La biblioteca mostra efectes d'àudio o de vídeo "
+"segons quin botó estigui activat (<gui>Mostra efectes de vídeo</gui> o "
+"<gui>Mostra efectes d'àudio</gui>) a la cantonada superior esquerra. Un cop "
+"seleccioneu els efectes d'àudio o de vídeo, podeu ordenar-los més si "
+"seleccioneu una de les categories de la llista desplegable al costat dels "
+"dos botons. Per defecte, la llista està establerta per mostrar tots els "
+"efectes."
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:23
+msgid ""
+"Alternatively, you can use the <gui>Search Bar</gui> that is shown at the "
+"top of the <gui>Effect Library</gui>. Typing into the search entry filters "
+"the contents of the <gui>Effect Library</gui> to show only effects whose "
+"name or description match your search terms. To reset the search entry, "
+"click the <gui>Clear</gui> icon in the search entry."
+msgstr ""
+"Alternativament, podeu utilitzar la <gui>Barra de cerca</gui> que es mostra "
+"a la part superior de la <gui>Biblioteca d'efectes</gui>. En escriure a "
+"l'entrada de cerca es filtren els continguts de la <gui>Biblioteca "
+"d'efectes</gui> per mostrar només efectes el nom o la descripció dels quals "
+"coincideixen amb els vostres termes de cerca. Per restablir l'entrada de "
+"cerca, feu clic a la icona <gui> Neteja </gui> a l'entrada de cerca."
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:26
+msgid "Configuring effects"
+msgstr "Configurant efectes"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:27
+msgid ""
+"To configure an effect, simply select it in the <guiseq><gui>middle pane</"
+"gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The properties "
+"that can be adjusted will appear below in the same tab. Each variable can be "
+"put back to its original value by clicking the corresponding <gui>Reset to "
+"default value</gui> button."
+msgstr ""
+"Per configurar un efecte, simplement seleccioneu-lo al <guiseq> <gui>centre "
+"del panell </gui> <gui>Configuració de la seqüencia</gui> <gui> Efectes </"
+"gui> </guiseq>. Les propietats que es poden ajustar es mostraran a "
+"continuació a la mateixa pestanya. Cada variable es pot tornar al seu valor "
+"original fent clic al botó corresponent <gui>Restableix al valor "
+"predeterminat</gui>."
+
+#. (itstool) path: section/title
+#: C/usingeffects.page:30
+msgid "Animating effects with keyframes"
+msgstr "Efectes animats amb els fotogrames clau"
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:31
+msgid ""
+"The effect properties which can be controlled using keyframe curves have a "
+"<gui>Show keyframes for this property</gui> button. When you click it, the "
+"keyframe curves on the clip start controlling the respective property. You "
+"can now edit the keyframes to achieve the desired effect. Once you are done "
+"with editing, you can click the button again and the keyframe curve "
+"disappears from the clip. However, the effect property is still controlled "
+"by the adjusted keyframe curve (which is indicated by the filled shape on "
+"the button)."
+msgstr ""
+"Les propietats de l'efecte que es poden controlar utilitzant les corbes de "
+"fotogrames clau tenen un boto <gui> Mostra els fotogrames clau per a aquesta "
+"propietat </gui>. Quan feu clic, les corbes del fotograma clau al "
+"començament de la seqüencia controlen la propietat respectiva. Ara podeu "
+"editar els fotogrames clau per aconseguir l'efecte desitjat. Una vegada que "
+"hàgiu acabat l'edició, podeu fer clic al botó de nou i la corba del "
+"fotograma clau desapareixerà de la seqüencia. Tanmateix, la propietat de "
+"l'efecte encara està controlada per la corba de fotogrames clau ajustada "
+"(que s'indica amb la forma completada amb el botó)."
+
+#. (itstool) path: section/p
+#: C/usingeffects.page:32
+msgid ""
+"Once a property becomes controlled, the widget for editing the property "
+"value directly is disabled. To remove the keyframes and be able to set again "
+"directly a constant value using the widget, you have to click the <gui>Reset "
+"to default value</gui> button. For more information on how to use keyframes "
+"see the <link xref=\"keyframecurves\">Keyframe curves</link> page."
+msgstr ""
+"Un cop controlada una propietat, el giny està desactivat per editar el valor "
+"de la propietat directament. Per eliminar els fotogrames clau i tornar a "
+"configurar directament un valor constant mitjançant el giny, heu de fer clic "
+"al botó <gui>Restableix al valor predeterminat</gui>. Per obtenir més "
+"informació sobre com utilitzar fotogrames clau, consulteu la pàgina <link "
+"xref = \"keyframecurves\"> corbes de fotogrames clau </link>."
+
+#. (itstool) path: note/p
+#: C/usingeffects.page:34
+msgid ""
+"If there is no <gui>Show keyframes for this value</gui> button next to the "
+"effect variable, it cannot be controlled with keyframes."
+msgstr ""
+"Si no hi ha el botó  <gui>Mostra els fotogrames claus per aquest valor</gui> "
+"a la vora de l'efecte variable, no es pot controlar amb fotogrames clau."
+
+#. (itstool) path: info/desc
+#: C/medialibrary.page:18
+msgid "Managing your imported clips with the Media Library"
+msgstr "Gestió de les seqüencies importades amb la biblioteca multimèdia"
+
+#. (itstool) path: page/title
+#: C/medialibrary.page:25
+msgid "Using the Media Library"
+msgstr "Ús de la biblioteca multimèdia"
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:27
+msgid "Importing a file to the <gui>Media Library</gui>"
+msgstr "Importació d'un fitxer a la <gui>Biblioteca multimèdia</gui>"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:28
+msgid ""
+"There are two ways to import files into the <gui>Media Library</gui>. The "
+"first way is to click on the <gui>Import</gui> button in the upper left "
+"corner. This will open a file chooser in which you can preview selected "
+"files or select multiple files (by holding <key>Shift</key> or <key>Control</"
+"key> while selecting them). The second way is to drag and drop the files "
+"from a file browser to the <gui>Media Library</gui>. <em>Files</em> imported "
+"into the <gui>Media Library</gui> are called <em>clips</em>."
+msgstr ""
+"Hi ha dues maneres d'importar fitxers a la <gui>Biblioteca multimèdia</gui>. "
+"La primera manera es prémer al botó <gui> Importa </gui> a l'extrem superior "
+"esquerre. Això obrirà un selector de fitxers en el qual podreu veure els "
+"fitxers seleccionats o seleccionar diversos fitxers (mantenint premuda "
+"<tecla> Maj </key> o la tecla <tecla> Control </key>). La segona manera és "
+"arrossegar i deixar anar els fitxers des d'un navegador de fitxers a la "
+"<gui>Biblioteca multimèdia</gui>. Els <em> Fitxers </em> importats a la "
+"<gui> Biblioteca multimèdia </gui> s'anomenen  <em>seqüencies</em>."
+
+#. (itstool) path: note/p
+#: C/medialibrary.page:30
+msgid "The clips in the <gui>Media Library</gui> are sorted alphabetically."
+msgstr ""
+"Les seqüencies a la <gui>Biblioteca multimèdia</gui> estan ordenades de "
+"forma alfabètica."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:34
+msgid "Previewing a clip from the <gui>Media Library</gui>"
+msgstr ""
+"Previsualitzant una seqüencia des de la <gui>Biblioteca multimèdia</gui>"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:35
+msgid ""
+"To preview a clip before placing it on the timeline, you can double-click on "
+"it in the <gui>Media Library</gui>. This will open the clip in a window that "
+"automatically closes whenever you click outside the window."
+msgstr ""
+"Per previsualitzar una seqüencia abans de posar-la a la línia de temps, "
+"podeu fer doble clic sobre la <gui>Biblioteca multimèdia</gui>. Això obrirà "
+"la seqüencia en una finestra que de forma automàtica es tancarà sempre que "
+"feu clic fora de la finestra."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:38
+msgid "Filtering search"
+msgstr "Cerca amb filtres"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:39
+msgid ""
+"A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
+"into the search entry filters the contents of the <gui>Media Library</gui> "
+"to show only clips whose filenames match your search terms. To reset the "
+"search entry, click the \"cleanup\" icon in the search entry."
+msgstr ""
+"Es mostra una barra de cerca a la part de dalt de la <gui>Biblioteca "
+"multimèdia</gui>. Si escriviu filtres a l'entrada de cerca es mostren sols "
+"els noms dels fitxers de les seqüencies de la <gui>Biblioteca multimèdia</"
+"gui> que coincideixen amb els criteris de cerca. Per reiniciar la cerca, "
+"premeu la icona «Neteja» de l'entrada de cerca."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:42
+msgid "View modes"
+msgstr "Modes de visualització"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:43
+msgid ""
+"The <gui>Media Library</gui> can display your clips in a list or in an icon "
+"view. The default mode is icon view because it display more clips without "
+"needing to scroll down. However, the list view mode shows more details about "
+"each clip. To activate/deactivate it, click on the <gui>Show clips as a "
+"detailed list</gui> button next to the search bar."
+msgstr ""
+"La <gui>Biblioteca multimèdia</gui> pot mostrar les vostres seqüencies en "
+"una llista o en una visualització d'icones. El mode per defecte és "
+"visualització d'icones ja que us mostra moltes seqüencies sense necessitar "
+"desplaçament cap avall. Tanmateix, la visualització llista mostra més "
+"detalls sobre cada seqüencia. Per activar-la / desactivar-la premeu sobre el "
+"botó <gui>Mostra seqüencies com a llista detallada</gui> al costat de la "
+"barra de cerca."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:46
+msgid "Selecting unused clips"
+msgstr "Selecció de seqüencies no usades"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:47
+msgid ""
+"You may sometimes find that you have imported more clips that you needed in "
+"your project. <app>Pitivi</app> allows you to select clips that are present "
+"in the media library but not in the timeline. There are various reasons to "
+"do this:"
+msgstr ""
+"Podeu trobar-vos que importeu més seqüencies de les necessiteu al vostre "
+"projecte. <app>Pitivi</app> us permet seleccionar seqüencies que hi són a la "
+"biblioteca multimèdia però no hi són a la línia de temps. Hi ha varies raons "
+"per fer-ho:"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:50
+msgid "Improving performance when loading the project"
+msgstr "Millora del rendiment en carregar el projecte"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:53
+msgid "Simplifying your editing workflow"
+msgstr "Simplificació del flux de treball en l'edició"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:56
+msgid "Check which clips you may have forgot to use in your movie"
+msgstr "Comprovar quines seqüencies heu oblidar usar en la vostra pel·lícula"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:59
+msgid "Backup or share your project more easily"
+msgstr "Còpia de seguretat o compartir el projecte més fàcilment"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:62
+msgid ""
+"To identify which clips are not being used in your project, use the "
+"<gui>Select clips that have not been used in the project</gui> button at the "
+"left side of the search bar. Unused clips will then be selected in the media "
+"library."
+msgstr ""
+"Per identificar quines seqüencies no s'utilitzen en el vostre projecte, "
+"utilitzeu el botó <gui>Selecciona les seqüencies que no s'han usat al "
+"projecte</gui> al costat esquerre de la barra de cerca. Les seqüencies no "
+"utilitzades es seleccionaran a la biblioteca multimèdia."
+
+#. (itstool) path: note/p
+#: C/medialibrary.page:64
+msgid ""
+"If there are no unused clips in your project, nothing will be selected in "
+"the media library."
+msgstr ""
+"Si no hi ha seqüencies no utilitzades al vostre projecte, no se seleccionarà "
+"res a la biblioteca multimèdia."
+
+#. (itstool) path: section/title
+#: C/medialibrary.page:68
+msgid "Other actions"
+msgstr "Altres accions"
+
+#. (itstool) path: section/p
+#: C/medialibrary.page:69
+msgid ""
+"There are three further actions you can perform with clips. Each is "
+"represented by a button in the upper right part of the <gui>Media Library</"
+"gui>:"
+msgstr ""
+"Hi ha tres accions més que podeu realitzar amb seqüencies. Cada una està "
+"representada per un botó a la part superior dreta de la <gui>Biblioteca "
+"multimèdia</gui>:"
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:72
+msgid ""
+"<gui>Remove selected clips from the project</gui> (this can also be "
+"performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>)."
+msgstr ""
+"<gui>Suprimeix les seqüencies seleccionades del projecte</gui> (això és pot "
+"fer també prement <keyseq><key>Control</key><key>Suprimeix</key></keyseq>)."
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:75
+msgid ""
+"<gui>Clip properties...</gui> opens a new window with information on "
+"<em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking "
+"the <gui>Apply to project</gui> button adjusts the project settings to the "
+"clip properties. You can select which properties to apply by leaving them "
+"ticked/unticked."
+msgstr ""
+"<gui>Propietats de la seqüencia...</gui>obre una finestra nova amb "
+"informació sobre <em>mida del vídeo</em>, <em>fotogrames per segon</em> "
+"i<em>relació d'aspecte</em>. En prémer sobre el botó <gui>Aplica al "
+"projecte</gui> s'ajusten els paràmetres del projecte a les propietats de la "
+"seqüencia. Podeu seleccionar quines propietats aplicar deixant-les marcades/"
+"desmarcades."
+
+#. (itstool) path: item/p
+#: C/medialibrary.page:78
+msgid ""
+"<gui>Insert selected clips at the end of the timeline</gui> inserts the "
+"selected clips one after another into the longest layer of the timeline "
+"where the last clip on that layer ends."
+msgstr ""
+"<gui>Insereix les seqüencies seleccionades al final de la línia de temps </"
+"gui> insereix les seqüencies seleccionades una darrere l'altra a la capa més "
+"llarga de la línia de temps on l'últim seqüencia d'aquesta capa acabi."
+
+#. (itstool) path: note/p
+#: C/medialibrary.page:82
+msgid ""
+"In order for these actions to become available, one or more clips must be "
+"selected."
+msgstr ""
+"Per tal que aquestes accions estiguin disponibles, una o més seqüencies han "
+"de ser seleccionades."
+
+#. (itstool) path: info/desc
+#: C/welcomedialog.page:14
+msgid "Creating new projects and opening recent projects on startup"
+msgstr "Creació de nous projectes i obertura de projectes recents a l'inici"
+
+#. (itstool) path: page/title
+#: C/welcomedialog.page:21
+msgid "The welcome dialog"
+msgstr "El diàleg de benvinguda"
+
+#. (itstool) path: page/p
+#: C/welcomedialog.page:22
+msgid ""
+"When you launch <app>Pitivi</app>, a startup assistant appears, allowing you "
+"to create a new project or open an existing project in a few clicks. If you "
+"want to skip this dialog, press the <key>Escape</key> key on your keyboard "
+"or click the window's close button. Skipping the dialog will open a new "
+"project with default settings."
+msgstr ""
+"Quan executeu <app> Pitivi </app>, apareixerà un assistent d'inici, que us "
+"permetrà crear un projecte nou o obrir un projecte existent amb pocs clics. "
+"Si voleu ometre aquest diàleg, premeu la tecla <tecla>Escapament </key> al "
+"teclat o feu clic al botó tancament de la finestra. En ometre el diàleg "
+"s'obrirà un nou projecte amb la configuració predeterminada."
+
+#. (itstool) path: page/p
+#: C/welcomedialog.page:23
+msgid ""
+"The dialog offers you projects that are found among the recently used files. "
+"Double-click one of them to load it or use one of the following buttons:"
+msgstr ""
+"El diàleg us ofereix projectes que es troben entre els fitxers usats "
+"recentment. Feu doble clic en un d'ells per carregar-lo o utilitzar un dels "
+"següents botons:"
+
+#. (itstool) path: item/p
+#: C/welcomedialog.page:26
+msgid "<gui>New</gui> opens a new project with the default settings."
+msgstr ""
+"<gui>Nou</gui> obre un projecte nou amb la configuració predeterminada."
+
+#. (itstool) path: item/p
+#: C/welcomedialog.page:29
+msgid ""
+"<gui>Browse projects...</gui> opens file chooser in the last used directory."
+msgstr ""
+"<gui>Navega per projectes... </gui> obre el selector de fitxers a l'últim "
+"directori usat."
+
+#. (itstool) path: item/p
+#: C/welcomedialog.page:32
+msgid "<gui>Help</gui> opens the user documenation on the index page."
+msgstr "<gui>Ajuda</gui> obre la documentació de l'usuari a la pàgina d'índex."
+
+#. (itstool) path: item/p
+#: C/welcomedialog.page:35
+msgid ""
+"<gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard "
+"shortcuts and cheatsheet page."
+msgstr ""
+"<gui>Dreceres de teclat </gui> obre la documentació de l'usuari a la drecera "
+"del teclat i a la pàgina dels trucs."
+
+#. (itstool) path: note/p
+#: C/welcomedialog.page:39
+msgid ""
+"By right-clicking the individual projects offered by the <gui>Welcome "
+"dialog</gui> you can get more options: copy project's location, remove "
+"project from the list, clear the list, or show private resources."
+msgstr ""
+"Si feu clic amb el botó secundari sobre els projectes individuals que "
+"ofereix el diàleg <gui>diàleg de benvinguda</gui>, podeu obtenir més "
+"opcions: copieu la ubicació del projecte, suprimiu el projecte de la llista, "
+"netegeu la llista o mostreu recursos privats."
+
+#. (itstool) path: info/desc
+#: C/importing.page:18
+msgid "Importing files into your project as clips."
+msgstr "Importació de fitxers al vostre projecte com seqüencies."
+
+#. (itstool) path: page/title
+#: C/importing.page:25
+msgid "Getting media"
+msgstr "Obtenció de multimèdia"
+
+#. (itstool) path: page/p
+#: C/importing.page:26
+msgid "Pitivi allows importing media files from your computer's hard drive."
+msgstr ""
+"Pitivi permet importar fitxers multimèdia des del disc dur del vostre "
+"ordinador."
+
+#. (itstool) path: note/p
+#: C/importing.page:28
+msgid ""
+"When you create a new project and import the first video file, its "
+"properties are transposed to the <link xref="
+"\"workwithprojects#projectsettings\">project settings</link>, unless you "
+"changed them yourself already. An infobar appears when this happens. Click "
+"the <gui>Project Settings</gui> button in the infobar for details."
+msgstr ""
+"Quan creeu un projecte nou i importeu el primer fitxer de vídeo, les seves "
+"propietats es transposen a la <link xref=\"workwithprojects#projectsettings"
+"\">configuració del projecte </link>, tret que ja les hàgiu modificat. Una "
+"barra d'informació apareix quan això succeeix. Feu clic al botó "
+"<gui>Configuració del projecte </gui> de la barra d'informació per obtenir-"
+"ne més detalls."
+
+#. (itstool) path: note/p
+#: C/importing.page:31
+msgid ""
+"Due to our limited resources and the rapid evolution of filmmaking hardware "
+"in the past few years, and to ensure <app>Pitivi</app> remains robust and "
+"simple to use, we do not attempt to support every possible hardware device "
+"out there. As a result, you currently cannot use <app>Pitivi</app> to "
+"capture directly from a camcorder; specialized applications are better "
+"suited for this task. For example, for DV/HDV camcorders using an IEEE 1394 "
+"connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
+"footage."
+msgstr ""
+"A causa dels nostres recursos limitats i de la ràpida evolució del maquinari "
+"de filmació durant els darrers anys, i per assegurar que <app>Pitivi</app> "
+"segueix sent robust i senzill d'utilitzar, no intentem donar suport a tot "
+"dispositiu de maquinari possible. Com a resultat, actualment no podeu "
+"utilitzar <app> Pitivi </app> per capturar directament des d'una càmera de "
+"vídeo; les aplicacions especialitzades són més adequades per a aquesta "
+"tasca. Per exemple, per càmeres de vídeo DV/HDV que utilitzen una connexió "
+"IEEE 1394, podeu utilitzar <app>Kino</app> o <app>dvgrab</app> per capturar "
+"imatges."
+
+#. (itstool) path: section/title
+#: C/importing.page:34
+msgid "Importing files using the file chooser"
+msgstr "Importació de fitxers amb el selector de fitxers"
+
+#. (itstool) path: section/p
+#: C/importing.page:35
+msgid ""
+"You can import media into the <gui>Media Library</gui> by using the file "
+"chooser dialog, which has the advantage of letting you preview the files you "
+"want to import. To do so, use the <gui>Import</gui> button in the <gui>Media "
+"Library</gui> header."
+msgstr ""
+"Podeu importar fitxers multimèdia a la <gui>Biblioteca multimèdia</gui> "
+"mitjançant el diàleg del selector de fitxers, que té l'avantatge de poder "
+"visualitzar els fitxers que voleu importar. Per fer-ho, utilitzeu el botó "
+"<gui>Importa</gui> a la capçalera <gui>Biblioteca multimèdia</gui>."
+
+#. (itstool) path: section/p
+#: C/importing.page:36
+msgid ""
+"A file chooser dialog window will appear. You can press <key>Ctrl</key> or "
+"<key>Shift</key> to select multiple files at the same time."
+msgstr ""
+"Apareixerà una finestra de diàleg del selector de fitxers. Podeu prémer "
+"<key> Ctrl </key> o <key> Maj </key> per seleccionar diversos fitxers al "
+"mateix temps."
+
+#. (itstool) path: section/title
+#: C/importing.page:39
+msgid "Importing files using drag and drop"
+msgstr "Importació de fitxers amb arrossegar i deixar anar"
+
+#. (itstool) path: section/p
+#: C/importing.page:40
+msgid ""
+"The concept of drag and drop is a well-established method of bridging the "
+"gap between software applications. Simply select the files you want to "
+"import in another application (such as a file manager or a multimedia app) "
+"and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</"
+"gui>."
+msgstr ""
+"El concepte d'arrossegar i deixar anar és un mètode ben establert de reduir "
+"la distància entre les aplicacions de programari. Simplement seleccioneu els "
+"fitxers que voleu importar en una altra aplicació (com ara un gestor de "
+"fitxers o una aplicació multimèdia) i arrossegueu-les amb el ratolí a "
+"la<gui>Biblioteca multimèdia</gui> de <app> Pitivi</app>."
+
+#. (itstool) path: section/p
+#: C/importing.page:41
+msgid "This feature can be used to:"
+msgstr "Aquesta característica pots ser usada per:"
+
+#. (itstool) path: item/p
+#: C/importing.page:44
+msgid ""
+"Easily import music or video clips from a media player (such as "
+"<app>Rhythmbox</app> or <app>Totem</app>)."
+msgstr ""
+"Importar fàcilment seqüencies de música o vídeo des de reproductors "
+"multimèdia ( com <app>Rhythmbox</app> o <app>Totem</app>)."
+
+#. (itstool) path: item/p
+#: C/importing.page:47
+msgid ""
+"Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
+"<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
+"the file chooser dialog."
+msgstr ""
+"Permetre utilitzar un gestor de fitxers de tota mena (com ara <app>Nautilus "
+"</app>, <app> Thunar </app>, <app> Dolphin </app> o <app> Konqueror </app>) "
+"en comptes del diàleg del selector de fitxers."
+
+#. (itstool) path: item/p
+#: C/importing.page:50
+msgid "Import a combination of multiple files and folders at the same time."
+msgstr "Importa una combinació de diversos fitxers i carpetes alhora."
+
+#. (itstool) path: item/p
+#: C/importing.page:53
+msgid ""
+"Leverage the searching capability of another application (such as <app>GNOME "
+"Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
+"<app>GNOME Search Tool</app>, etc.)."
+msgstr ""
+"Aprofiteu la capacitat de cerca d'altres aplicació (com <app>GNOME Shell</"
+"app>, <app>Seguidor</app>, <app>Diari d'activitat de GNOME</app>, <app> Eina "
+"de cerca de GNOME </app> , etc.)."
+
+#. (itstool) path: info/desc
+#: C/effects.page:15
+msgid "Adding special effects to your video and audio clips"
+msgstr ""
+"Afegiment d'efectes especials a les vostres seqüencies de vídeo i àudio"
+
+#. (itstool) path: page/title
+#: C/effects.page:20
+msgid "Introduction to effects"
+msgstr "Introducció als efectes"
+
+#. (itstool) path: page/p
+#: C/effects.page:21
+msgid ""
+"<app>Pitivi</app> offers a wide variety of video and audio effects to spice "
+"up your movies. Available effects depend on the software installed on your "
+"computer. If you don't see anything (or only a handful of effects) in the "
+"effect library, make sure that the <app>gnome-video-effects</app> package is "
+"installed on your system. Alternatively, you can look for packages "
+"containing GStreamer or frei0r effect plugins that are available in the "
+"repositories of your distribution."
+msgstr ""
+"<app> Pitivi </app> ofereix una àmplia varietat d'efectes de vídeo i àudio "
+"per donar a conèixer les vostres pel·lícules. Els efectes disponibles "
+"depenen del programari instal·lat a l'ordinador. Si no veieu res (o només "
+"pocs efectes) a la biblioteca d'efectes, assegureu-vos que el paquet <app> "
+"gnome-video-effects </app> estigui instal·lat al vostre sistema. D'altra "
+"banda, podeu buscar paquets que continguin connectors d'efectes GStreamer o "
+"frei0r que estiguin disponibles als dipòsits de la vostra distribució."
+
+#. (itstool) path: note/p
+#: C/effects.page:23
+msgid ""
+"Effects are non-destructive: they are only applied to the resulting rendered "
+"movie and do not affect your source files."
+msgstr ""
+"Els efectes no són destructius: només s'apliquen a la pel·lícula "
+"renderitzada resultant i no afecten els vostres fitxers d'origen."
+
+#. (itstool) path: section/title
+#: C/effects.page:26
+msgid "Adding and removing effects to clips"
+msgstr "Afegit i supressió d'efectes a les seqüencies"
+
+#. (itstool) path: section/p
+#: C/effects.page:27
+msgid "To add an effect:"
+msgstr "Per afegir un efecte:"
+
+#. (itstool) path: item/p
+#: C/effects.page:30 C/effects.page:39
+msgid "Select an existing clip on the timeline"
+msgstr "Seleccioneu uns seqüencia que estigui a la línia de temps"
+
+#. (itstool) path: item/p
+#: C/effects.page:33
+msgid "Double-click an effect in the effect library"
+msgstr "Feu doble clic sobre l'efecte a la biblioteca d'efectes"
+
+#. (itstool) path: section/p
+#: C/effects.page:36
+msgid "To remove an effect:"
+msgstr "Per suprimir un efecte:"
+
+#. (itstool) path: item/p
+#: C/effects.page:42
+msgid ""
+"Select the effect you want to remove in the <guiseq><gui>middle pane</"
+"gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
+msgstr ""
+"Seleccioneu el efecte que voleu suprimir al <guiseq><gui>centre del panell</"
+"gui><gui>Configuració de la seqüencia</gui><gui>Efectes</gui></guiseq>"
+
+#. (itstool) path: item/p
+#: C/effects.page:45
+msgid "Click the <gui>Remove effect</gui> button"
+msgstr "Premeu el botó <gui>Suprimeix efecte</gui>"
+
+#. (itstool) path: section/title
+#: C/effects.page:50
+msgid "Toggling effects"
+msgstr "Commutació d'efectes"
+
+#. (itstool) path: section/p
+#: C/effects.page:51
+msgid ""
+"If you want to temporarily disable an effect (to compare with and without "
+"the effect, or for performance reasons), click the corresponding checkbox in "
+"the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</"
+"gui></guiseq>."
+msgstr ""
+"Si voleu deshabilitar un efecte temporalment ( per comparar amb l'efecte i "
+"sense ell, o per raons de rendiment), premeu la casella de selecció a "
+"<guiseq><gui> centre del panell</gui><gui>Configuració de la seqüencia</"
+"gui><gui>Efectes</gui></guiseq>."
+
+#. (itstool) path: info/desc
+#: C/rendering.page:18
+msgid ""
+"Learn the difference between saving a project and exporting a rendered movie."
+msgstr ""
+"Apreneu la diferència entre desar un projecte i exportar una pel·lícula "
+"renderitzada."
+
+#. (itstool) path: page/title
+#: C/rendering.page:25
+msgid "Understanding rendering"
+msgstr "Entenent la renderització"
+
+#. (itstool) path: page/p
+#: C/rendering.page:26
+msgid ""
+"Rendering is the process of exporting your project into a new, finalized "
+"media file. Rendering only creates a new “rendered” video file, and does not "
+"affect the project itself; you can still make edits to your project and "
+"render again as many times as needed."
+msgstr ""
+"La renderització és el procés d'exportar el vostre projecte a un fitxer "
+"multimèdia nou i finalitzat. La renderització només crea un fitxer nou de "
+"vídeo \"renderitzat\" i no afecta el projecte en si mateix; Encara podeu fer "
+"modificacions al vostre projecte i tornar-les a renderitzar tantes vegades "
+"com calgui."
+
+#. (itstool) path: item/p
+#: C/rendering.page:29
+msgid "Click <guiseq><gui>Headerbar</gui><gui>Render</gui></guiseq>."
+msgstr ""
+"Premeu <guiseq><gui>Barra de títol</gui><gui>Renderitzat</gui></guiseq>."
+
+#. (itstool) path: item/p
+#: C/rendering.page:32
+msgid "Choose the location and name of the exported file."
+msgstr "Trieu la localització i nom del fitxer exportat."
+
+#. (itstool) path: item/p
+#: C/rendering.page:35
+msgid "Optionally choose a preset."
+msgstr "De forma opcional trieu un predefinit."
+
+#. (itstool) path: item/p
+#: C/rendering.page:38
+msgid ""
+"Choose a container. See the <link xref=\"codecscontainers\">codecs and "
+"containers</link> page for details."
+msgstr ""
+"Trieu un contenidor. Mireu la pàgina <link xref=\"codecscontainers\">còdecs "
+"and contenidors</link> per trobar més detalls."
+
+#. (itstool) path: item/p
+#: C/rendering.page:41
+msgid "Adjust the various encoding settings."
+msgstr "Ajusteu paràmetres variats de codificació."
+
+#. (itstool) path: item/p
+#: C/rendering.page:44
+msgid "Click the <gui>Render</gui> button."
+msgstr "Premeu el botó <gui>Renderitzat</gui>."
+
+#. (itstool) path: page/p
+#: C/rendering.page:47
+msgid ""
+"While rendering, you can pause the process by clicking the <gui>Pause</gui> "
+"button and unpause it by clicking it again. You can also stop rendering "
+"either by clicking the <gui>Cancel</gui> button or by pressing <key>Esc</"
+"key>. If you stop the rendering process, the already rendered part of the "
+"project will be saved at the specified location. You might be able to use a "
+"partially rendered file, depending on the specified container format. A new "
+"render operation cannot resume from a partially rendered file."
+msgstr ""
+"Mentre es renderitza, podeu fer una pausa al procés fent clic al botó "
+"<gui>Pausa</gui> i fer-lo anar fent clic novament. També podeu deixar de "
+"renderitzar fent clic al botó <gui> Cancel·la</gui> o prement <key>Esc</"
+"key>. Si deteniu el procés de renderitzat, la part ja renderitzada del "
+"projecte es desarà a la ubicació especificada. És possible que pugueu "
+"utilitzar un fitxer parcialment renderitzat, depenent del format del "
+"contenidor especificat. Una nova operació de renderització no es pot "
+"reiniciar en un fitxer parcialment renderitzar."
+
+#. (itstool) path: note/p
+#: C/rendering.page:49
+msgid ""
+"If your computer is set to suspend or hibernate automatically, <app>Pitivi</"
+"app> will automatically inhibit the power saving features during the render "
+"process."
+msgstr ""
+"Si l'equip està configurat per suspendre o hibernar automàticament, <app> "
+"Pitivi </ app>inhibirà automàticament les funcions d'estalvi d'energia "
+"durant el procés de renderitzat."
+
+#. (itstool) path: section/title
+#: C/rendering.page:52
+msgid "Project settings and the rendering dialog"
+msgstr "Paràmetres del projecte i diàleg de renderitzat"
+
+#. (itstool) path: section/p
+#: C/rendering.page:53
+msgid ""
+"The <gui>Project Settings</gui> are a base on which the <gui>Rendering "
+"dialog</gui> settings are applied when performing a render. The <gui>Project "
+"Settings</gui> are kept separate because they also determine how you preview "
+"the project while editing it. The values specified in the <gui>Rendering "
+"dialog</gui> are temporary and used only at render time. Because they are so "
+"closely related, the <gui>Rendering dialog</gui> has a button which opens "
+"the <gui>Project Settings</gui>."
+msgstr ""
+"La <gui> Configuració del projecte </gui> és una base sobre la qual "
+"s'apliquen els paràmetres <gui>Diàleg de renderitzat</gui> quan es fa un "
+"renderitzat. La <gui> Configuració del projecte </gui> es manté separada "
+"perquè també determina com visualitzeu el projecte mentre l'editeu. Els "
+"valors especificats al <gui> Diàleg de renderització</gui> són temporals i "
+"s'utilitzen només en temps de renderitzat. Com que estan molt relacionats, "
+"el <gui> Diàleg de renderització</gui> té un botó que obre la "
+"<gui>Configuració del projecte</gui>."
+
+#. (itstool) path: info/desc
+#: C/trimming.page:18
+msgid ""
+"Shortening clips by changing the beginning and ending points. Also covers "
+"ripple and roll editing."
+msgstr ""
+"Ordenació de seqüencies canviant el començament i el final dels punts. També "
+"cobreix l'edició d'ondulació i l'edició de rodet."
+
+#. (itstool) path: page/title
+#: C/trimming.page:25
+msgid "Trimming"
+msgstr "Retallat"
+
+#. (itstool) path: page/p
+#: C/trimming.page:26
+msgid ""
+"<em>Trimming</em> is the act of changing the length of a clip by moving its "
+"beginning or end point in the timeline. Move the mouse cursor over the edge "
+"of a clip and a trimming handle will appear. Drag the trimming handle in an "
+"appropriate direction to either reduce or increase the length of the clip."
+msgstr ""
+"El <em> Retallat </em> és l'acte de canviar la longitud d'una seqüencia "
+"movent el punt d'inici o final a la línia de temps. Moveu el cursor del "
+"ratolí sobre la vora d'una seqüencia i apareixerà una eina de tall. "
+"Arrossegueu l'eina de retall en la direcció adequada per reduir o augmentar "
+"la longitud de la seqüencia."
+
+#. (itstool) path: figure/title
+#: C/trimming.page:28
+msgid "Trimming handle"
+msgstr "Eina de tall"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:29
+msgid ""
+"The mouse cursor transforms into trimming handle when hovering over the edge "
+"of a clip."
+msgstr ""
+"El cursor del ratolí es transforma en una eina de tall quan passa per damunt "
+"de la vora d'una seqüencia."
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:30
+msgctxt "_"
+msgid ""
+"external ref='figures/trimming-individual.png' "
+"md5='858585ad6ddc21696f7b9f0d597982b4'"
+msgstr ""
+"external ref='figures/trimming-individual.png' "
+"md5='858585ad6ddc21696f7b9f0d597982b4'"
+
+#. (itstool) path: page/p
+#: C/trimming.page:32
+msgid ""
+"Clips that are grouped together, such as corresponding audio and video "
+"clips, will trim in unison when you drag the trimming handle. To trim only "
+"the audio or only the video clip, you need to ungroup them first (see the "
+"<link xref=\"selectiongrouping\">Selection and grouping</link> page for "
+"instructions on how to do that)."
+msgstr ""
+"Els clips agrupats, com les seqüencies corresponents d'àudio i de vídeo, es "
+"retallaran al mateix temps quan arrossegueu l'eina de retall. Per retallar "
+"només la seqüencia de l'àudio o només el seqüencia de vídeo, primer heu de "
+"desagrupar-los (consulteu la pàgina <link xref=\"selectiongrouping"
+"\">Selecció i agrupament</link>  per obtenir instruccions sobre com fer-ho)."
+
+#. (itstool) path: section/title
+#: C/trimming.page:34
+msgid "Ripple editing"
+msgstr "Edició d'ondulació"
+
+#. (itstool) path: section/p
+#: C/trimming.page:35
+msgid ""
+"Ripple editing is a variant of basic trimming which, in addition to trimming "
+"a clip, also moves the following clips (the clips that start after the one "
+"you're directly editing) so that their relative position to the edited clip "
+"stays the same."
+msgstr ""
+"L'edició d'ondulació és una variant de tallat bàsica que, a més de retallar "
+"una seqüencia, també mou les següents seqüencies (les seqüencies que "
+"comencen després de la que s'està editant directament) de manera que la seva "
+"posició relativa a la seqüencia editada es mantingui igual."
+
+#. (itstool) path: figure/title
+#: C/trimming.page:37 C/trimming.page:73
+msgid "Before"
+msgstr "Abans"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:38
+msgid "Relative position of two adjacent clips before ripple editing"
+msgstr ""
+"Posició relativa de dos seqüencies adjacents abans de l'edició d'ondulació"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:39
+msgctxt "_"
+msgid ""
+"external ref='figures/ripple-before.png' "
+"md5='7052e3caadd1ccbf9a91a8c506aeca7d'"
+msgstr ""
+"external ref='figures/ripple-before.png' "
+"md5='7052e3caadd1ccbf9a91a8c506aeca7d'"
+
+#. (itstool) path: figure/title
+#: C/trimming.page:42 C/trimming.page:78
+msgid "After"
+msgstr "Després"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:43
+msgid "Relative position of two adjacent clips after ripple editing"
+msgstr ""
+"Posició relativa de dos seqüencies adjacents després de l'edició d'ondulació"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:44
+msgctxt "_"
+msgid ""
+"external ref='figures/ripple-after.png' "
+"md5='3f2fdba79d1c69c2f2022fe08a62b5a7'"
+msgstr ""
+"external ref='figures/ripple-after.png' "
+"md5='3f2fdba79d1c69c2f2022fe08a62b5a7'"
+
+#. (itstool) path: note/p
+#: C/trimming.page:47
+msgid ""
+"Note that if there is a gap between the clips, the following clip moves "
+"toward the edited so that the gap length stays the same."
+msgstr ""
+"Noteu que no hi ha cap buit entre les seqüencies, la seqüencia següent es "
+"mou cap l'editada per això la longitud del buit roman la mateixa."
+
+#. (itstool) path: note/p
+#: C/trimming.page:50
+msgid ""
+"Ripple editing affects all following clips, regardless of whether or not "
+"they are on the same layer."
+msgstr ""
+"L'edició d'ondulació afecta totes les seqüencies, independentment de si es "
+"troben o no a la mateixa capa."
+
+#. (itstool) path: section/p
+#: C/trimming.page:52
+msgid "To do a ripple edit:"
+msgstr "Per fer una edició d'ondulació:"
+
+#. (itstool) path: item/p
+#: C/trimming.page:56
+msgid "Place the mouse cursor on a trimming handle."
+msgstr "Poseu el cursor del ratolí sobre la eina de tall."
+
+#. (itstool) path: item/p
+#: C/trimming.page:59
+msgid "Press and hold <key>Shift</key>."
+msgstr "Premeu i manteniu premut <key>Maj</key>."
+
+#. (itstool) path: item/p
+#: C/trimming.page:62 C/trimming.page:94
+msgid "Drag the trimming handle."
+msgstr "Arrossegueu l'eina de tall."
+
+#. (itstool) path: note/p
+#: C/trimming.page:66
+msgid ""
+"Ripple editing can also be used when moving clips around in the timeline. "
+"For detailed explanations on how to do this, see the section <link xref="
+"\"usingclips#ripple\">Using ripple editing while moving clips</link>."
+msgstr ""
+"L'edició d'ondulació també es pot usar quan es mouen les seqüencies sobre la "
+"línia de temps. Per veure més explicacions sobre com fer això mireu la "
+"secció <link xref=\"usingclips#ripple\">Usant l'edició d'ondulació mentre es "
+"mouen les seqüencies</link>."
+
+#. (itstool) path: section/title
+#: C/trimming.page:70
+msgid "Roll editing"
+msgstr "Edició de rodet"
+
+#. (itstool) path: section/p
+#: C/trimming.page:71
+msgid ""
+"Roll editing is a variant of basic trimming which, in addition to trimming a "
+"clip, <em>trims</em> the adjacent clips in a complementary way to prevent "
+"creating gaps."
+msgstr ""
+"L'edició de rodet és una variant de tall bàsica que, a més de retallar una "
+"seqüencia, <em>talla</em>, les seqüencies adjacents de manera complementària "
+"per evitar crear espais buits."
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:74
+msgid "Relative position of two adjacent clips before roll editing"
+msgstr ""
+"Posició relativa de dos seqüencies adjacents abans de fer l'edició de rodet"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:75
+msgctxt "_"
+msgid ""
+"external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
+msgstr ""
+"external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
+
+#. (itstool) path: figure/desc
+#: C/trimming.page:79
+msgid "Relative position of two adjacent clips after roll editing"
+msgstr ""
+"Posició relativa de dos seqüencies adjacents després de fer l'edició de rodet"
+
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/trimming.page:80
+msgctxt "_"
+msgid ""
+"external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
+msgstr ""
+"external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
+
+#. (itstool) path: note/p
+#: C/trimming.page:83
+msgid ""
+"Roll editing affects all adjacent clips, regardless of whether or not they "
+"are on the same layer."
+msgstr ""
+"L'edició de rodet afecta totes les seqüencies adjacents, independentment de "
+"si es troben o no a la mateixa capa."
+
+#. (itstool) path: section/p
+#: C/trimming.page:85
+msgid "To do a roll edit:"
+msgstr "Per fer una edició de rodet:"
+
+#. (itstool) path: item/p
+#: C/trimming.page:88
+msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
+msgstr ""
+"Poseu el cursor del ratolí sobre l'eina de tall entre dos seqüencies "
+"adjacents."
+
+#. (itstool) path: item/p
+#: C/trimming.page:91
+msgid "Press and hold <key>Ctrl</key>."
+msgstr "Premeu i manteniu premut <key>Ctrl</key>."
+
+#. (itstool) path: info/desc
+#: C/usingclips.page:18
+msgid ""
+"Learn the difference between clips and files and how to do basic operations "
+"on clips in the timeline."
+msgstr ""
+"Apreneu la diferència entre entre seqüencies i fitxers i com fer operacions "
+"bàsiques en les seqüencies a la línia de temps."
+
+#. (itstool) path: page/title
+#: C/usingclips.page:25
+msgid "Using clips"
+msgstr "Usant seqüencies"
+
+#. (itstool) path: section/title
+#: C/usingclips.page:27
+msgid "Clips vs files"
+msgstr "Seqüencies vs fitxers"
+
+#. (itstool) path: section/p
+#: C/usingclips.page:28
+msgid ""
+"<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
+"that can be accessed by <app>Pitivi</app> and incorporated in your video "
+"editing project."
+msgstr ""
+"Els <em>Fitxers</em> són dades que teniu al vostre disc dur (vídeos, música, "
+"imatges, etc.) que poden obrir-se amb <app>Pitivi</app> i incorporar-se al "
+"vostre projecte d'edició de vídeo."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:29
+msgid ""
+"<em>Clips</em> are a visual representation of your files on the timeline. "
+"They represent the period of time they consume on the timeline and can be "
+"edited independently: each time you drag a file from the <gui>Media Library</"
+"gui> to the timeline, a new clip is created. As such, a file can be reused "
+"as much as you want to create any amount of different clips."
+msgstr ""
+"Les <em>Seqüencies</em> són una representació visual dels vostres fitxers en "
+"la línia de temps. Això representa el període de temps que consumeix en la "
+"línia de temps i que pot editar-se de forma independent: cada vegada que "
+"arrossegueu un fitxer des de la <gui>Biblioteca multimèdia</gui> a la línia "
+"de temps, es crea una seqüencia nova. Com a tal, un fitxer es pot "
+"reutilitzar tant com vulgueu creant una quantitat qualsevol de seqüencies "
+"diferents."
+
+#. (itstool) path: note/p
+#: C/usingclips.page:31
+msgid ""
+"Since Pitivi is a non-destructive editor, clips are edited, not files. As "
+"such, your files stay intact."
+msgstr ""
+"Atès que Pitivi és un editor no destructiu, s'editen les seqüencies, no els "
+"fitxers. Per tan, els vostres fitxers romanen intactes."
+
+#. (itstool) path: section/title
+#: C/usingclips.page:35
+msgid "Inserting clips"
+msgstr "Inserció de seqüencies"
+
+#. (itstool) path: section/p
+#: C/usingclips.page:36
+msgid ""
+"From the <gui>Media Library</gui>, you can insert one or more clips by "
+"selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select "
+"multiple clips) and doing one of the following:"
+msgstr ""
+"Des de la <gui>Biblioteca multimèdia</gui>, podeu inserir una o més "
+"seqüencies seleccionant-les (utilitzeu les tecles <key>Ctrl</key> o "
+"<key>Maj</key> per seleccionar diverses seqüencies) i fer el següent:"
+
+#. (itstool) path: item/p
+#: C/usingclips.page:39
+msgid "Dragging and dropping them onto a place in the timeline."
+msgstr "Arrossega i deixa-les anar anar en un lloc de la línia de temps."
+
+#. (itstool) path: item/p
+#: C/usingclips.page:42
+msgid ""
+"Clicking the <gui>Insert the selected clips at the end of the timeline</gui> "
+"button in the <gui>Media Library</gui> header."
+msgstr ""
+"Feu clic al botó <gui>Inseriu les seqüencies seleccionades al final de la "
+"línia de temps</gui> de la capçalera <gui>Biblioteca multimèdia</gui>."
+
+#. (itstool) path: item/p
+#: C/usingclips.page:45
+msgid "Pressing the <key>Insert</key> key."
+msgstr "Prement la tecla  <key>Insereix</key>."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:48
+msgid ""
+"When following the second and third options (clicking or pressing insert), "
+"the new clips will be inserted one after another on the longest layer of the "
+"timeline where the last clip ends."
+msgstr ""
+"Quan es segueix la segona i la tercera opció (fent clic o prement "
+"«Inserta»), les seqüencies noves s'insereixen un darrere l'altre a la capa "
+"més llarga de la línia de temps on acaba l'última seqüencia."
+
+#. (itstool) path: section/title
+#: C/usingclips.page:51
+msgid "Moving clips along the timeline"
+msgstr "Movent seqüencies a la línia de temps"
+
+#. (itstool) path: section/p
+#: C/usingclips.page:52
+msgid "You can move a clip within a layer or move it to a different layer."
+msgstr ""
+"Podeu moure una seqüencia dins d'una capa o moure-la a una capa diferent."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:53
+msgid ""
+"Click and drag a single clip to move it, and release the mouse button to "
+"place it. Dragging horizontally keeps the clip on the same layer, but "
+"dragging it vertically moves the clip to a different layer (see <link xref="
+"\"layers\">Understanding layers</link> for more information)."
+msgstr ""
+"Feu clic i arrossegueu una sola seqüencia per moure-la i deixeu anar el botó "
+"del ratolí per col·locar-la. Arrossegar horitzontalment manté la seqüencia a "
+"la mateixa capa, però arrossegant-la verticalment, moveu la seqüencia a una "
+"capa diferent (consulteu <link xref=\"layers\">Entenent les capes</link> per "
+"obtenir més informació)."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:54
+msgid ""
+"To move a clip to an existing layer, drag it on the layer at the desired "
+"position and release it. To move a clip to a new layer, drag it to the "
+"middle space between two existing layers. Once the space between the "
+"respective layers is highlighted, release it."
+msgstr ""
+"Per moure una seqüencia a una capa existent, arrossegueu-la a la capa a la "
+"posició desitjada i allibereu-la. Per moure una seqüencia a una capa nova, "
+"arrossegueu-la cap a l'espai intermedi entre dues capes existents. Deixeu-la "
+"anar una vegada que l'espai entre les capes respectives estigui ressaltat."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:55
+msgid ""
+"To move multiple clips at the same time, use the <key>Ctrl</key> or "
+"<key>Shift</key> keys to select multiple clips (see <link xref="
+"\"selectiongrouping\">Selection and grouping</link> for more details). "
+"Selected clips do not need to be on the same layer. Then, drag the clips "
+"just as you would do for a single clip; their position relative to each "
+"other will be preserved."
+msgstr ""
+"Per moure diverses seqüencies al mateix temps, utilitzeu les tecles "
+"<key>Ctrl</key> o <key>Maj</key> (seleccioneu per a més detalls<link xref="
+"\"selectiongrouping\">Selecció i agrupament</link>). Les seqüencies "
+"seleccionades no necessiten estar en la mateixa capa. A continuació, "
+"arrossegueu les seqüencies tal com faria amb un sola seqüencia; es "
+"conservarà la seva posició relativa entre si."
+
+#. (itstool) path: section/title
+#: C/usingclips.page:57
+msgid "Using ripple editing while moving clips"
+msgstr "Usant l'edició d'ondulació mentre moveu seqüencies"
+
+#. (itstool) path: section/p
+#: C/usingclips.page:58
+msgid ""
+"While dragging clips around in the timeline, you can use the <link xref="
+"\"trimming#ripple\">ripple technique</link> to move the <em>following</em> "
+"clips (the clips that start after the one you're directly editing) in sync "
+"with the moved clip."
+msgstr ""
+"Mentre arrossegueu seqüencies en la línia de temps, podeu utilitzar la "
+"tècnica <link xref=\"trimming#ripple\">edició d'ondulació</link> per moure "
+"les <em>següents</em> seqüencies  (les seqüencies que comencen després de la "
+"que esteu editant) en sincronia amb la seqüencia moguda."
+
+#. (itstool) path: item/p
+#: C/usingclips.page:61
+msgid ""
+"Click and drag the clip you want to move, with the mouse button held down"
+msgstr ""
+"Premeu i arrossegueu la seqüencia que voleu moure, mantenint premut el botó "
+"del ratolí"
+
+#. (itstool) path: item/p
+#: C/usingclips.page:64
+msgid "During the drag, hold down <key>Shift</key> on the keyboard"
+msgstr ""
+"Durant l'arrossegament, manteniu premuda la tecla <key>Maj</key> al teclat"
+
+#. (itstool) path: item/p
+#: C/usingclips.page:67
+msgid ""
+"Release the mouse button to end the drag operation, then release the "
+"<key>Shift</key> key."
+msgstr ""
+"Deixeu anar el botó del ratolí per finalitzar l'operació d'arrossegament, i "
+"allibereu la tecla <key>Maj</key>."
+
+#. (itstool) path: section/p
+#: C/usingclips.page:70
+msgid ""
+"You can release and press <key>Shift</key> at any time during the drag "
+"operation to disable or enable ripple editing."
+msgstr ""
+"Podeu alliberar i prémer <key>Shift</key> en qualsevol moment durant "
+"l'operació d'arrossegament per inhabilitar o habilitar l'edició d'ondulació."
+
+#. (itstool) path: page/title
+#: C/cheatsheet.page:15
+msgid "Keyboard shortcuts and cheatsheet"
+msgstr "Dreceres de teclat i trucs"
+
+#. (itstool) path: page/p
+#: C/cheatsheet.page:16
+msgid ""
+"This page is a list of important shortcuts to access commonly used or hidden "
+"features. Take the time to get familiar with them as they will improve your "
+"productivity tremendously."
+msgstr ""
+"Aquesta pàgina és una llista de dreceres importants per accedir a funcions "
+"d'ús comú o ocult. Preneu el temps per familiaritzar-vos amb ells, ja que "
+"milloraran tremendament la vostra productivitat."
+
+#. (itstool) path: section/title
+#: C/cheatsheet.page:18
+msgid "General"
+msgstr "General"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:21
+msgid "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project"
+msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Creeu un projecte nou"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:24
+msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>O</key></keyseq>:  Obriu un fitxer de projecte"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:27
+msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
+msgstr "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Deseu el projecte actual"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:30
+msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
+msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>:  Sortiu de l'aplicació"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:33
+msgid "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo"
+msgstr "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Desfeu"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:36
+msgid "<keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>: Redo"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>Maj</key><key>Z</key></keyseq>: Torneu a fer"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:39
+msgid "<key>F11</key>: Toggle fullscreen mode"
+msgstr "<key>F11</key>: Commuteu el mode pantalla sencera"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:42
+msgid "<key>F1</key>: Show the user manual"
+msgstr "<key>F1</key>: Mostreu el manual d'usuari"
+
+#. (itstool) path: section/title
+#: C/cheatsheet.page:47
+msgid "Media Library"
+msgstr "Biblioteca multimèdia"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:50
+msgid "<key>Enter</key>: Preview (playback) the selected clip"
+msgstr "<key>Intro</key>:  Visualitzeu (reproducció) la seqüencia seleccionada"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:53
+msgid "<key>Insert</key>: Insert the selected clips into the timeline"
+msgstr ""
+"<key>Insereix</key>: Inseriu les seqüencies seleccionades dins de la línia "
+"de temps"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:56
+msgid ""
+"<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
+"from the project"
+msgstr ""
+"<keyseq><key>Ctrl</key><key>Suprimeix</key></keyseq>: Removeu les seqüencies "
+"seleccionades des del projecte"
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:64
+msgid "<key>Spacebar</key>: Toggle playback."
+msgstr "<key>Barra espaiadora</key>: Commuta reproducció."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:67
+msgid ""
+"<key>S</key>: Split the clips at the current playhead position. If there are "
+"selected clips, only those will be split."
+msgstr ""
+"<key>S</key>: Dividiu les seqüencies a la posició actual de reproducció. Si "
+"hi ha seqüencies seleccionades, només aquelles es dividiran."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:70
+msgid "<key>Delete</key>: Remove selected clips from the timeline."
+msgstr ""
+"<key>Suprimeix</key>: Suprimeix les seqüencies seleccionades de la línia de "
+"temps."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:73
+msgid ""
+"<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
+"depends on your project framerate."
+msgstr ""
+"<key>←</key> i <key>→</key>: Aneu un fotograma cap a enrere o cap endavant. "
+"Això depèn dels fotogrames per segon del vostre projecte."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:76
+msgid ""
+"<keyseq><key>Shift</key><key>←</key></keyseq> and <keyseq><key>Shift</"
+"key><key>→</key></keyseq>: Seek one second backwards or forwards."
+msgstr ""
+"<keyseq><key>Maj</key><key>←</key></keyseq> i <keyseq><key>Maj</key><key>→</"
+"key></keyseq>: Aneu un segon endarrere o endavant."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:79
+msgid ""
+"<keyseq><key>Ctrl</key><key>+</key></keyseq> and <keyseq><key>Ctrl</"
+"key><key>-</key></keyseq>: Zoom in or zoom out. You can also use <key>Ctrl</"
+"key> with the mouse wheel to control the zoom more efficiently."
+msgstr ""
+"<keyseq><key>Ctrl</key><key>+</key></keyseq> i <keyseq><key>Ctrl</key><key>-"
+"</key></keyseq>: Amplia o redueix amb el zoom. Podeu també usar <key>Ctrl</"
+"key> amb la roda del ratolí per controlar el zoom més eficientment."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:82
+msgid ""
+"<keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the "
+"timeline."
+msgstr ""
+"<keyseq><key>Ctrl</key><key>0</key></keyseq>: Ajusteu el zoom per adaptar-"
+"vos a la línia de temps."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:85
+msgid "<key>Shift</key>+drag: Ripple edit."
+msgstr "<key>Maj</key> + arrossegar: Edició d'ondulació."
+
+#. (itstool) path: item/p
+#: C/cheatsheet.page:88
+msgid "<key>Ctrl</key>+drag: Roll edit."
+msgstr "<key>Ctrl</key>+ arrossegar: Edició de rodet."
