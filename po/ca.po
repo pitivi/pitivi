@@ -758,7 +758,7 @@ msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "No s'ha pogut crear la sortida de vídeo. Assegureu-vos que teniu una sortida "
-"de vídeo gtksink"
+"de vídeo gtksink."
 
 #: ../pitivi/check.py:322
 #, python-format
@@ -971,10 +971,10 @@ msgid ""
 "Out of respect for our contributors, we point you instead to:\n"
 msgstr ""
 "Contribuïdors:\n"
-"Una llista a ma podria...\n"
+"Una llista a mà podria...\n"
 "• ser massa llarga,\n"
 "• estar molt sovint antiquada,\n"
-"• no mostrar el seu merit relatiu.\n"
+"• no mostrar el seu mèrit relatiu.\n"
 "\n"
 "Respecte als nostres col·laboradors, us indiquem: \n"
 
@@ -1174,7 +1174,7 @@ msgstr ""
 "seran enviats a un servidor intermediari, però AAC, i H.264  continguts en "
 "MPEG-TS sí ho seran. \n"
 "\n"
-"<i>Aquesta és la única opció oficialment suportada pels desenvolupadors de "
+"<i>Aquesta és l'única opció oficialment suportada pels desenvolupadors de "
 "Pitivi i és per això la més segura.</i>"
 
 #: ../pitivi/medialibrary.py:144
@@ -1449,9 +1449,9 @@ msgid ""
 "check our troubleshooting guide or file a bug report. The GStreamer error "
 "was:"
 msgstr ""
-"Ha succeït un error mentre intentàveu renderitzar el vostre projecte.  Es "
-"possible que vulgueu consultar la nostre guia de resolució de problemes o "
-"enviar un informe d'error. El error de GStreamer ha estat:"
+"Ha succeït un error mentre intentàveu renderitzar el vostre projecte. Es "
+"possible que vulgueu consultar la nostra guia de resolució de problemes o "
+"enviar un informe d'error. L'error de GStreamer ha estat:"
 
 #: ../pitivi/render.py:1051 ../pitivi/render.py:1052 ../pitivi/render.py:1058
 msgid "Render complete"
@@ -1666,7 +1666,7 @@ msgstr "El botó esquerre també cerca"
 #: ../pitivi/timeline/timeline.py:102
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
-"Si prement el botó esquerra també feu cerques a més de seleccionar i editar "
+"Si prement el botó esquerre també feu cerques a més de seleccionar i editar "
 "seqüencies."
 
 #: ../pitivi/timeline/timeline.py:1492 ../pitivi/dialogs/prefs.py:53
