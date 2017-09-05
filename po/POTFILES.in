@@ -6,6 +6,7 @@ data/pitivi.desktop.in
 [type: gettext/glade]data/ui/alignmentprogress.ui
 [type: gettext/glade]data/ui/clipmediaprops.ui
 [type: gettext/glade]data/ui/cliptransformation.ui
+[type: gettext/glade]data/ui/customwidgets/alpha.ui
 [type: gettext/glade]data/ui/depsmanager.ui
 [type: gettext/glade]data/ui/effectslibrary.ui
 [type: gettext/glade]data/ui/elementsettingsdialog.ui
