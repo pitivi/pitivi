@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-03 16:21+0200\n"
-"PO-Revision-Date: 2017-09-03 16:22+0200\n"
+"POT-Creation-Date: 2017-09-10 20:54+0200\n"
+"PO-Revision-Date: 2017-09-10 20:55+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -189,13 +189,53 @@ msgstr "→"
 msgid "Next keyframe"
 msgstr "Następna klatka kluczowa"
 
-#: ../data/ui/cliptransformation.ui.h:9
+#: ../data/ui/cliptransformation.ui.h:9 ../data/ui/customwidgets/alpha.ui.h:5
 msgid "◇"
 msgstr "◇"
 
 #: ../data/ui/cliptransformation.ui.h:10
 msgid "Reset to default values"
 msgstr "Przywraca domyślne wartości"
+
+#: ../data/ui/customwidgets/alpha.ui.h:1
+msgid "Angle:"
+msgstr "Kąt:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:2
+msgid "Noise level:"
+msgstr "Poziom szumu:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:3
+msgid "White sensitivity:"
+msgstr "Czułość białego:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:4
+msgid "Black sensitivity:"
+msgstr "Czułość czarnego:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:6
+msgid "Alpha:"
+msgstr "Alfa:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:7
+msgid "Target chroma key:"
+msgstr "Docelowe kluczowanie kolorem:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:8
+msgid "Red"
+msgstr "Czerwony"
+
+#: ../data/ui/customwidgets/alpha.ui.h:9
+msgid "Green"
+msgstr "Zielony"
+
+#: ../data/ui/customwidgets/alpha.ui.h:10
+msgid "Select a color"
+msgstr "Wybór koloru"
+
+#: ../data/ui/customwidgets/alpha.ui.h:11
+msgid "Blue"
+msgstr "Niebieski"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -803,52 +843,52 @@ msgstr ""
 "włącza watchdoga w potoku biblioteki GStreamer. Używane do wykrywania błędów "
 "występujących w bibliotece GStreamer i naprawiania ich"
 
-#: ../pitivi/clipproperties.py:116
+#: ../pitivi/clipproperties.py:117
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:140
+#: ../pitivi/clipproperties.py:142
 msgid "Remove effect"
 msgstr "Usuń efekt"
 
-#: ../pitivi/clipproperties.py:175
+#: ../pitivi/clipproperties.py:177
 msgid "Active"
 msgstr "Aktywny"
 
-#: ../pitivi/clipproperties.py:178
+#: ../pitivi/clipproperties.py:180
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:187
+#: ../pitivi/clipproperties.py:189
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:209
+#: ../pitivi/clipproperties.py:211
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
 
-#: ../pitivi/clipproperties.py:228
+#: ../pitivi/clipproperties.py:230
 msgid "Clip Effects"
 msgstr "Efekty klipów"
 
-#: ../pitivi/clipproperties.py:234
+#: ../pitivi/clipproperties.py:236
 msgid "Remove the selected effect"
 msgstr "Usunięcie zaznaczonego efektu"
 
-#: ../pitivi/clipproperties.py:535
+#: ../pitivi/clipproperties.py:537
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: ../pitivi/clipproperties.py:640
+#: ../pitivi/clipproperties.py:642
 msgid "Show keyframes"
 msgstr "Wyświetla klatki kluczowe"
 
-#: ../pitivi/clipproperties.py:642
+#: ../pitivi/clipproperties.py:644
 msgid "Activate keyframes"
 msgstr "Aktywuje klatki kluczowe"
 
-#: ../pitivi/clipproperties.py:647
+#: ../pitivi/clipproperties.py:649
 msgid "Hide keyframes"
 msgstr "Ukrywa klatki kluczowe"
 
@@ -1808,12 +1848,12 @@ msgstr "Skróty"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:753
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:896
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:817
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:960
 msgid "Reset to default value"
 msgstr "Przywraca domyślną wartość"
 
@@ -2106,39 +2146,39 @@ msgstr "Anamorficzne (2,39)"
 msgid "Anamorphic (2.4)"
 msgstr "Anamorficzne (2,4)"
 
-#: ../pitivi/utils/widgets.py:78
+#: ../pitivi/utils/widgets.py:79
 msgid "Implement Me"
 msgstr "Niezaimplementowane"
 
-#: ../pitivi/utils/widgets.py:708
+#: ../pitivi/utils/widgets.py:851
 msgid "No properties."
 msgstr "Brak właściwości."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:802
+#: ../pitivi/utils/widgets.py:945
 msgid "Show keyframes for this value"
 msgstr "Wyświetlanie klatek kluczowych dla tej wartości"
 
-#: ../pitivi/utils/widgets.py:968
+#: ../pitivi/utils/widgets.py:1117
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla „%s”"
 
-#: ../pitivi/utils/widgets.py:1105
+#: ../pitivi/utils/widgets.py:1254
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/utils/widgets.py:1110
+#: ../pitivi/utils/widgets.py:1259
 msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1184
+#: ../pitivi/utils/widgets.py:1333
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
-#: ../pitivi/utils/widgets.py:1188
+#: ../pitivi/utils/widgets.py:1337
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone: %d ns"
