@@ -3,10 +3,11 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # Carles Ferrando Garcia <carles.ferrando@gmail.com>, 2017.
+# Jordi Serratosa <jordis@softcatala.cat>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2017-08-27 11:22+0000\n"
+"POT-Creation-Date: 2017-09-06 06:31+0000\n"
 "PO-Revision-Date: 2017-08-27 20:44+0200\n"
 "Last-Translator: Carles Ferrando Garcia <carles.ferrando@gmail.com>\n"
 "Language-Team: Catalan <info@softcatala.org>\n"
@@ -2355,9 +2356,9 @@ msgid ""
 "dozens of multimedia applications across desktop environments, operating "
 "systems and architectures."
 msgstr ""
-"Una gran fortalesa de <app>Pitivi</app> rau en el fet que utilitza "
-"l'espai de treball multimèdia <app> GStreamer </app>. <app> GStreamer </app> "
-"és utilitzat per dotzenes d'aplicacions multimèdia en entorns d'escriptori, "
+"Una gran fortalesa de <app>Pitivi</app> rau en el fet que utilitza l'espai "
+"de treball multimèdia <app> GStreamer </app>. <app> GStreamer </app> és "
+"utilitzat per dotzenes d'aplicacions multimèdia en entorns d'escriptori, "
 "sistemes operatius i arquitectures."
 
 #. (itstool) path: page/p
@@ -3323,8 +3324,8 @@ msgid ""
 "app> will automatically inhibit the power saving features during the render "
 "process."
 msgstr ""
-"Si l'equip està configurat per suspendre o hibernar automàticament, <app>"
-"Pitivi</app>inhibirà automàticament les funcions d'estalvi d'energia "
+"Si l'equip està configurat per suspendre o hibernar automàticament, "
+"<app>Pitivi</app>inhibirà automàticament les funcions d'estalvi d'energia "
 "durant el procés de renderitzat."
 
 #. (itstool) path: section/title
@@ -3718,7 +3719,7 @@ msgid ""
 "timeline where the last clip ends."
 msgstr ""
 "Quan es segueix la segona i la tercera opció (fent clic o prement "
-"«Inserta»), les seqüències noves s'insereixen un darrere l'altre a la capa "
+"«Inser»), les seqüències noves s'insereixen un darrere l'altre a la capa "
 "més llarga de la línia de temps on acaba l'última seqüència."
 
 #. (itstool) path: section/title
