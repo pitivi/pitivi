@@ -18,6 +18,8 @@
 # Boston, MA 02110-1301, USA.
 """Utility methods for custom effect UI."""
 import os
+from colorsys import rgb_to_hsv
+from types import MethodType
 
 from gi.repository import Gdk
 from gi.repository import Gtk
@@ -57,16 +59,19 @@ def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
     """Creates custom effect UI."""
     effect_name = effect.get_property("bin-description")
     path = os.path.join(CUSTOM_WIDGETS_DIR, effect_name + ".ui")
-    if not os.path.isfile(path):
-        return None
 
     # Write individual effect callbacks here
     if effect_name == "alpha":
         widget = create_alpha_widget(effect_prop_manager, effect_widget, effect)
         return widget
+    elif effect_name == "frei0r-filter-3-point-color-balance":
+        widget = create_3point_color_balance_widget(effect_prop_manager, effect_widget, effect)
+        return widget
 
     # Check if there is a UI file available as a glade file
     # Assuming a GtkGrid called base_table exists
+    if not os.path.isfile(path):
+        return None
     builder = setup_from_ui_file(effect_widget, path)
     widget = builder.get_object("base_table")
     return widget
@@ -168,3 +173,169 @@ def create_custom_alpha_prop_widget(unused_element_setting_widget, unused_elemen
     """Not implemented yet."""
     # In the auto-generated UI, replace a property widget with a custom one
     return None
+
+
+# pylint: disable=invalid-name, too-many-locals, too-many-arguments
+def create_3point_color_balance_widget(effect_prop_manager, element_setting_widget, element):
+    """Creates a widget for the `frei0r-filter-3-point-color-balance` effect."""
+    ui_path = os.path.join(CUSTOM_WIDGETS_DIR, "frei0r-filter-3-point-color-balance.ui")
+    builder = setup_from_ui_file(element_setting_widget, ui_path)
+    element_setting_widget.mapBuilder(builder)
+    color_balance_grid = builder.get_object("base_table")
+
+    shadows_wheel = Gtk.HSV()
+    midtones_wheel = Gtk.HSV()
+    highlights_wheel = Gtk.HSV()
+
+    color_balance_grid.attach(shadows_wheel, 1, 1, 1, 1)
+    color_balance_grid.attach(midtones_wheel, 2, 1, 1, 1)
+    color_balance_grid.attach(highlights_wheel, 3, 1, 1, 1)
+
+    shadows_color_picker_button = ColorPickerButton()
+    midtones_color_picker_button = ColorPickerButton()
+    highlights_color_picker_button = ColorPickerButton()
+
+    shadows_color_picker_frame = builder.get_object("shadows_color_picker_frame")
+    midtones_color_picker_frame = builder.get_object("midtones_color_picker_frame")
+    highlights_color_picker_frame = builder.get_object("highlights_color_picker_frame")
+
+    shadows_color_picker_frame.add(shadows_color_picker_button)
+    midtones_color_picker_frame.add(midtones_color_picker_button)
+    highlights_color_picker_frame.add(highlights_color_picker_button)
+
+    # Manually handle the custom part of the UI.
+    # 1) Connecting the color wheel widgets
+    # 2) Scale values between to be shown on the UI vs
+    #    the actual property values (RGB values here).
+
+    black_r = element_setting_widget.get_widget_of_prop("black-color-r")
+    black_g = element_setting_widget.get_widget_of_prop("black-color-g")
+    black_b = element_setting_widget.get_widget_of_prop("black-color-b")
+
+    gray_r = element_setting_widget.get_widget_of_prop("gray-color-r")
+    gray_g = element_setting_widget.get_widget_of_prop("gray-color-g")
+    gray_b = element_setting_widget.get_widget_of_prop("gray-color-b")
+
+    white_r = element_setting_widget.get_widget_of_prop("white-color-r")
+    white_g = element_setting_widget.get_widget_of_prop("white-color-g")
+    white_b = element_setting_widget.get_widget_of_prop("white-color-b")
+
+    # The UI widget values need to be scaled back to the property.
+    # Since for RGB values, 0-255 format is used in the UI
+    # where as the property values are actually between 0-1.
+
+    def get_widget_scaled_value(self):
+        """Gets the color value for the GES element property."""
+        return self.adjustment.get_value() / 255
+
+    black_r.getWidgetValue = MethodType(get_widget_scaled_value, black_r)
+    black_g.getWidgetValue = MethodType(get_widget_scaled_value, black_g)
+    black_b.getWidgetValue = MethodType(get_widget_scaled_value, black_b)
+
+    gray_r.getWidgetValue = MethodType(get_widget_scaled_value, gray_r)
+    gray_g.getWidgetValue = MethodType(get_widget_scaled_value, gray_g)
+    gray_b.getWidgetValue = MethodType(get_widget_scaled_value, gray_b)
+
+    white_r.getWidgetValue = MethodType(get_widget_scaled_value, white_r)
+    white_b.getWidgetValue = MethodType(get_widget_scaled_value, white_b)
+    white_g.getWidgetValue = MethodType(get_widget_scaled_value, white_g)
+
+    # Update underlying GObject color properties when the color widgets change.
+
+    def color_wheel_changed_cb(color_wheel, prop_r, prop_g, prop_b):
+        """Handles the selection of a color with a color wheel."""
+        hsv_color = color_wheel.get_color()
+        rgb_color = color_wheel.to_rgb(hsv_color.h, hsv_color.s, hsv_color.v)
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
+        action_log = effect_prop_manager.app.action_log
+        with action_log.started("Effect property change",
+                                finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                toplevel=False):
+            element.set_child_property(prop_r, rgb_color.r)
+            element.set_child_property(prop_g, rgb_color.g)
+            element.set_child_property(prop_b, rgb_color.b)
+
+    shadows_wheel.connect("changed", color_wheel_changed_cb, "black-color-r", "black-color-g", "black-color-b")
+    midtones_wheel.connect("changed", color_wheel_changed_cb, "gray-color-r", "gray-color-g", "gray-color-b")
+    highlights_wheel.connect("changed", color_wheel_changed_cb, "white-color-r", "white-color-g", "white-color-b")
+
+    def color_picker_value_changed_cb(color_picker_button, prop_r, prop_g, prop_b):
+        """Handles the selection of a color with the color picker button."""
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
+        action_log = effect_prop_manager.app.action_log
+        with action_log.started("Effect property change",
+                                finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                toplevel=True):
+            element.set_child_property(prop_r, color_picker_button.color_r / 255)
+            element.set_child_property(prop_g, color_picker_button.color_g / 255)
+            element.set_child_property(prop_b, color_picker_button.color_b / 255)
+
+    shadows_color_picker_button.connect("value-changed", color_picker_value_changed_cb,
+                                        "black-color-r", "black-color-g", "black-color-b")
+    midtones_color_picker_button.connect("value-changed", color_picker_value_changed_cb,
+                                         "gray-color-r", "gray-color-g", "gray-color-b")
+    highlights_color_picker_button.connect("value-changed", color_picker_value_changed_cb,
+                                           "white-color-r", "white-color-g", "white-color-b")
+
+    def update_wheel(prop_r, prop_g, prop_b, wheel, numeric_widget, value):
+        """Updates the widgets with the value from the Gst element."""
+        _, r = element_setting_widget.element.get_child_property(prop_r)
+        _, g = element_setting_widget.element.get_child_property(prop_g)
+        _, b = element_setting_widget.element.get_child_property(prop_b)
+        new_hsv = rgb_to_hsv(r, g, b)
+        # GtkHSV always emits `changed` signal when set_color is used.
+        # But we need to only emit it when the color has actually changed!
+        current_hsv = wheel.get_color()
+        if current_hsv != new_hsv:
+            wheel.set_color(*new_hsv)
+        numeric_widget.block_signals()
+        try:
+            numeric_widget.setWidgetValue(round(value * 255))
+        finally:
+            numeric_widget.unblock_signals()
+
+    def property_changed_cb(unused_effect, gst_element, pspec):
+        """Handles the change of a GObject property."""
+        if gst_element.get_control_binding(pspec.name):
+            Loggable().log("%s controlled, not displaying value", pspec.name)
+            return
+
+        widget = element_setting_widget.properties.get(pspec)
+        if not widget:
+            return
+
+        res, value = element_setting_widget.element.get_child_property(pspec.name)
+        assert res
+
+        if pspec.name in ("black-color-r", "black-color-g", "black-color-b"):
+            update_wheel("black-color-r", "black-color-g", "black-color-b", shadows_wheel, widget, value)
+        elif pspec.name in ("gray-color-r", "gray-color-g", "gray-color-b"):
+            update_wheel("gray-color-r", "gray-color-g", "gray-color-b", midtones_wheel, widget, value)
+        elif pspec.name in ("white-color-r", "white-color-g", "white-color-b"):
+            update_wheel("white-color-r", "white-color-g", "white-color-b", highlights_wheel, widget, value)
+        else:
+            widget.setWidgetValue(value)
+
+    element.connect("deep-notify", property_changed_cb)
+
+    shadows_reset_button = builder.get_object("shadows_reset_button")
+    midtones_reset_button = builder.get_object("midtones_reset_button")
+    highlights_reset_button = builder.get_object("highlights_reset_button")
+
+    def reset_wheel_cb(unused_arg, wheel, value):
+        """Handles the click of a reset button."""
+        wheel.set_color(0, 0, value)
+
+    shadows_reset_button.connect("clicked", reset_wheel_cb, shadows_wheel, 0)
+    midtones_reset_button.connect("clicked", reset_wheel_cb, midtones_wheel, 0.5)
+    highlights_reset_button.connect("clicked", reset_wheel_cb, highlights_wheel, 1)
+
+    # Initialize the wheels with the correct values
+
+    shadows_wheel.set_color(0, 0, 0)
+    midtones_wheel.set_color(0, 0, 0.5)
+    highlights_wheel.set_color(0, 0, 1)
+
+    return color_balance_grid
