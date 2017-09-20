@@ -45,12 +45,17 @@ def setup():
     from pitivi import configure
 
     # Let Gst overrides from our prefix take precedence over any
-    # other, making sure they are used. This allows us to ensure that
-    # Gst overrides from gst-python are used when within flatpak
+    # other, making sure they are used.
     local_overrides = os.path.join(configure.LIBDIR,
                                    "python" + sys.version[:3],
                                    "site-packages", "gi", "overrides")
     gi.overrides.__path__.insert(0, local_overrides)
+
+    # Make sure that flatpak gst-python overrides are always used first.
+    flatpak_gst_python_path = os.path.join("/app/lib/", "python" + sys.version[:3],
+                                           "site-packages", "gi", "overrides")
+    if os.path.exists(flatpak_gst_python_path):
+        gi.overrides.__path__.insert(0, flatpak_gst_python_path)
 
     # Make available the compiled C code.
     sys.path.append(configure.BUILDDIR)
