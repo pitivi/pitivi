@@ -602,14 +602,14 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         if in_devel():
             version_str = _("Development version: %s") % GITVERSION
-        elif not self.app.isLatest():
-            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
-                {"cur_ver": GITVERSION,
-                 "new_ver": self.app.getLatest()}
-        elif GITVERSION:
-            version_str = _("Version %s") % GITVERSION
         else:
-            version_str = _("Version %s") % VERSION
+            version = GITVERSION if GITVERSION.startswith(VERSION) else VERSION
+            if not self.app.isLatest():
+                version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
+                    {"cur_ver": version,
+                     "new_ver": self.app.getLatest()}
+            else:
+                version_str = _("Version %s") % version
         abt.set_version(version_str)
 
         comments = ["",
