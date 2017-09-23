@@ -65,18 +65,18 @@
     <p>You can create fade-in and fade-out transitions in single clips by using keyframes controlling the clip's opacity. For more information on keyframes, see <link xref="keyframecurves">Keyframe curves</link>. To understand opacity, see <link xref="layers">Understanding layers</link>. The following images illustrate how to fade a clip to black:</p>
     <figure>
       <title>Keyframe curves controlling the video opacity</title>
-      <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"/>
       <desc>The default curve is flat indicating the same opacity at any position within the clip.</desc>
+      <media type="image" src="figures/fadestep1.png" mime="image/png" style="right"/>
     </figure>
     <figure>
       <title>Adding a new keyframe</title>
-      <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"/>
       <desc>Create a new keyframe by clicking the curve in a position where you want to start the fade-out.</desc>
+      <media type="image" src="figures/fadestep2.png" mime="image/png" style="right"/>
     </figure>
     <figure>
       <title>Moving the keyframe</title>
-      <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"/>
       <desc>Click and drag the last keyframe downwards.</desc>
+      <media type="image" src="figures/fadestep3.png" mime="image/png" style="right"/>
     </figure>
     <p>To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe in a position where the fade-in should end and the first keyframe dragged down) at the beginning of the clip.</p>
     <note style="tip">
