@@ -266,10 +266,12 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         disable_scroll(self.spinner)
 
     def block_signals(self):
-        self.adjustment.handler_block(self.handler_id)
+        if self.handler_id:
+            self.adjustment.handler_block(self.handler_id)
 
     def unblock_signals(self):
-        self.adjustment.handler_unblock(self.handler_id)
+        if self.handler_id:
+            self.adjustment.handler_unblock(self.handler_id)
 
     def connectValueChanged(self, callback, *args):
         self.handler_id = self.adjustment.connect("value-changed", callback, *args)
