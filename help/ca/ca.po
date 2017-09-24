@@ -1560,7 +1560,7 @@ msgstr "El vídeo del vostre projecte quan el torneu a reproduir."
 #: C/mainwindow.page:145
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr ""
-"Una <em>vista prèvia en directe</ em> quan talleu el punt d'inici / final "
+"Una <em>vista prèvia en directe</em> quan talleu el punt d'inici / final "
 "d'una seqüència."
 
 #. (itstool) path: note/title
