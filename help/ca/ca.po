@@ -1860,7 +1860,7 @@ msgstr ""
 "<link xref=\"mainwindow\">La finestra principal </link>). Per editar-ho "
 "premeu sobre el giny, sobreescriviu el valor i premeu  <key>Intro</key>. El "
 "valor pot representar un codi de temps o un número de fotograma. El codi de "
-"temps té el següent formulari: <em>hh:mm:ss.milisec </ em>, on les hores són "
+"temps té el següent formulari: <em>hh:mm:ss.milisec </em>, on les hores són "
 "opcionals. Per inserir un número de fotograma, sobreescriu el codi de temps "
 "amb un nombre en format pla del fotograma desitjat."
 
