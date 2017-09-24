@@ -395,7 +395,7 @@ msgstr ""
 "přeskakování levým kliknutím zakázat. Pak levé kliknutí pouze mění výběr a "
 "pozice přehrávání není při vybírání ovlivňována. Toto nastavení můžete "
 "provést přes <guiseq><gui>tlačítko nabídky</gui><gui>Předvolby</"
-"gui><gui>Kliknutí levým tlačítkem také mění pozici přehrávání</gui></giseq>. "
+"gui><gui>Kliknutí levým tlačítkem také mění pozici přehrávání</gui></guiseq>. "
 "Pro přesun pozice přehrávání můžete nadále používat pravé kliknutí, viz "
 "<link xref=\"movearoundtimeline#movingplayhead\"/>."
 
