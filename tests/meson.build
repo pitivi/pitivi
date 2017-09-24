@@ -1,4 +1,4 @@
-runtests = find_program('gst-validate-launcher', required : true)
+runtests = find_program('gst-validate-launcher', required : false)
 
 if runtests.found()
     test('Pitivi unit tests', runtests,
