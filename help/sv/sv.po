@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2017-07-07 22:34+0000\n"
-"PO-Revision-Date: 2017-07-14 12:20+0200\n"
+"POT-Creation-Date: 2017-09-05 23:05+0000\n"
+"PO-Revision-Date: 2017-09-24 15:35+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.0.3\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -413,7 +413,7 @@ msgid ""
 "save the project file and how to name it."
 msgstr ""
 "För att spara ditt projektarbete, använd knappen <gui>Spara</gui> i "
-"huvudfältet eller tryck <keyseq><key>Ctrl</key><key>S</key></keyseq>. När du "
+"rubrikraden eller tryck <keyseq><key>Ctrl</key><key>S</key></keyseq>. När du "
 "sparar ett projekt för första gången kommer ett dialogfönster att visas som "
 "frågar var du ska spara din projektfil och hur den ska döpas."
 
@@ -444,7 +444,7 @@ msgid ""
 "you have made since the last time you saved your project. To do so, use "
 "<guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>."
 msgstr ""
-"För att ångra en ändring, klicka på <gui>Ångra</gui> i huvudfältet eller "
+"För att ångra en ändring, klicka på <gui>Ångra</gui> i rubrikraden eller "
 "tryck <keyseq><key>Ctrl</key><key>Z</key></keyseq>. Förutom att ångra "
 "individuella ändringar kan du också ångra alla ändringar du har gjort sedan "
 "senaste gången du sparade ditt projekt. För att göra så, använd "
@@ -459,7 +459,7 @@ msgid ""
 "keyseq>."
 msgstr ""
 "För att göra om ändringar som ångrades, klicka på <gui>Gör om</gui> i "
-"huvudfältet eller tryck <keyseq><key>Ctrl</key><key>Skift</key><key>Z</key></"
+"rubrikraden eller tryck <keyseq><key>Ctrl</key><key>Skift</key><key>Z</key></"
 "keyseq>."
 
 #. (itstool) path: section/title
@@ -1204,7 +1204,7 @@ msgid ""
 "library, previewer, effects library, transitions library, etc.)."
 msgstr ""
 "Huvudfönstret är, som namnet antyder, fönstret som innehåller "
-"huvudkomponenterna för <app>Pitivi</app>s användargränssnitt: huvudfältet, "
+"huvudkomponenterna för <app>Pitivi</app>s användargränssnitt: rubrikraden, "
 "verktygsfälten, tidslinjen och olika anpassningsbara komponenter "
 "(mediabibliotek, förhandsvisare, effektbibliotek, övergångsbibliotek etc.)."
 
@@ -1228,7 +1228,7 @@ msgstr "I figuren ovan kan följande områden ses:"
 #. (itstool) path: item/p
 #: C/mainwindow.page:29
 msgid "Header bar and main toolbar buttons"
-msgstr "Huvudfältet och verktygsfältets huvudknappar"
+msgstr "Rubrikradens och verktygsfältets huvudknappar"
 
 #. (itstool) path: item/p
 #: C/mainwindow.page:32
@@ -1293,7 +1293,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/mainwindow.page:59
 msgid "Header bar"
-msgstr "Huvudfält"
+msgstr "Rubrikrad"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:60
@@ -1304,7 +1304,7 @@ msgid ""
 "find further functions such as <gui>New project</gui>, <gui>Open project</"
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
-"Huvudfältet är ett ställe där grundläggande funktioner som <gui>Ångra</gui>, "
+"Rubrikraden är ett ställe där grundläggande funktioner som <gui>Ångra</gui>, "
 "<gui>Gör om</gui>, <gui>Spara</gui> eller <gui>Rendera</gui> kan kommas åt "
 "direkt. Det innehåller också huvud<gui>menyknappen</gui> där du kan hitta "
 "fler funktioner som <gui>Nytt projekt</gui>, <gui>Öppna projekt</gui>, "
@@ -3196,7 +3196,7 @@ msgstr ""
 #. (itstool) path: item/p
 #: C/rendering.page:29
 msgid "Click <guiseq><gui>Headerbar</gui><gui>Render</gui></guiseq>."
-msgstr "Klicka <guiseq><gui>Huvudfält</gui><gui>Rendera</gui></guiseq>."
+msgstr "Klicka <guiseq><gui>Rubrikrad</gui><gui>Rendera</gui></guiseq>."
 
 #. (itstool) path: item/p
 #: C/rendering.page:32
