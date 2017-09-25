@@ -1417,6 +1417,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def updateActions(self):
         selection_non_empty = bool(self.timeline.selection)
         self.delete_action.set_enabled(selection_non_empty)
+        self.delete_and_shift_action.set_enabled(selection_non_empty)
         self.group_action.set_enabled(selection_non_empty)
         self.ungroup_action.set_enabled(selection_non_empty)
         self.copy_action.set_enabled(selection_non_empty)
@@ -1506,6 +1507,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         group.add_action(self.delete_action)
         self.app.shortcuts.add("timeline.delete-selected-clips", ["Delete"],
                                _("Delete selected clips"))
+
+        self.delete_and_shift_action = Gio.SimpleAction.new("delete-selected-clips-and-shift", None)
+        self.delete_and_shift_action.connect("activate", self._delete_selected_and_shift)
+        group.add_action(self.delete_and_shift_action)
+        self.app.shortcuts.add("timeline.delete-selected-clips-and-shift", ["<Shift>Delete"],
+                               _("Delete selected clips and shift following ones"))
 
         self.group_action = Gio.SimpleAction.new("group-selected-clips", None)
         self.group_action.connect("activate", self._group_selected_cb)
@@ -1632,6 +1639,48 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     if isinstance(clip, GES.TransitionClip):
                         continue
                     layer.remove_clip(clip)
+
+            self.timeline.selection.setSelection([], SELECT)
+
+    def _delete_selected_and_shift(self, unused_action, unused_parameter):
+        if self.ges_timeline:
+            with self.app.action_log.started("delete clip and shift",
+                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                             toplevel=True):
+                start = []
+                end = []
+
+                # remove the clips and store their start/end positions
+                for clip in self.timeline.selection:
+                    if isinstance(clip, GES.TransitionClip):
+                        continue
+                    layer = clip.get_layer()
+                    start.append(clip.start)
+                    end.append(clip.start + clip.duration)
+                    layer.remove_clip(clip)
+
+                if start:
+                    start = min(start)
+                    end = max(end)
+                    found_overlapping = False
+
+                    # check if any other clips occur during that period
+                    for layer in self.ges_timeline.layers:
+                        for clip in layer.get_clips():
+                            clip_end = clip.start + clip.duration
+                            if clip_end > start and clip.start < end:
+                                found_overlapping = True
+                                break
+                        if found_overlapping:
+                            break
+
+                    if not found_overlapping:
+                        # now shift everything following cut time
+                        shift_by = end - start
+                        for layer in self.ges_timeline.layers:
+                            for clip in layer.get_clips():
+                                if clip.start >= end:
+                                    clip.set_start(clip.start - shift_by)
 
             self.timeline.selection.setSelection([], SELECT)
 
