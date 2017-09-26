@@ -7,7 +7,6 @@
                     "--socket=x11",
                     "--socket=pulseaudio",
                     "--socket=wayland",
-                    "--socket=session-bus",
                     "--talk-name=ca.desrt.dconf",
                     "--talk-name=org.freedesktop.Notifications",
                     "--filesystem=host", "--device=dri"],
