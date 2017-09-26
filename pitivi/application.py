@@ -68,7 +68,7 @@ class Pitivi(Gtk.Application, Loggable):
 
     def __init__(self):
         Gtk.Application.__init__(self,
-                                 application_id="org.pitivi",
+                                 application_id="org.pitivi.Pitivi",
                                  flags=Gio.ApplicationFlags.HANDLES_OPEN)
         Loggable.__init__(self)
 
