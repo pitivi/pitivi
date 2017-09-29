@@ -26,6 +26,7 @@ from gi.repository import Gtk
 
 from pitivi import configure
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.ui import model
 from pitivi.utils.widgets import ColorPickerButton
 
 
@@ -53,6 +54,8 @@ def create_custom_prop_widget_cb(unused_effect_prop_manager, effect_widget, effe
     effect_name = effect.get_property("bin-description")
     if effect_name == "alpha":
         return create_custom_alpha_prop_widget(effect_widget, effect, prop, prop_value)
+    elif effect_name == "frei0r-filter-alphaspot":
+        return create_custom_alphaspot_prop_widget(effect_widget, effect, prop, prop_value)
 
 
 def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
@@ -66,6 +69,9 @@ def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
         return widget
     elif effect_name == "frei0r-filter-3-point-color-balance":
         widget = create_3point_color_balance_widget(effect_prop_manager, effect_widget, effect)
+        return widget
+    elif effect_name == "frei0r-filter-alphaspot":
+        widget = create_alphaspot_widget(effect_prop_manager, effect_widget, effect)
         return widget
 
     # Check if there is a UI file available as a glade file
@@ -339,3 +345,129 @@ def create_3point_color_balance_widget(effect_prop_manager, element_setting_widg
     highlights_wheel.set_color(0, 0, 1)
 
     return color_balance_grid
+
+
+def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element):
+    """Creates the UI for the `alpha` effect."""
+    builder = setup_from_ui_file(element_setting_widget, os.path.join(CUSTOM_WIDGETS_DIR, "frei0r-filter-alphaspot.ui"))
+
+    # Shape picker
+
+    shape_picker = builder.get_object("frei0r-filter-alphaspot::shape")
+    shape_list = model((str, float), [
+        # ouch...
+        ("rectangle", 0.0),
+        ("ellipse", 0.26),
+        ("triangle", 0.51),
+        ("diamond shape", 0.76),
+    ])
+    shape_picker.set_model(shape_list)
+    shape_text_renderer = Gtk.CellRendererText()
+    shape_picker.pack_start(shape_text_renderer, 0)
+    shape_picker.add_attribute(shape_text_renderer, "text", 0)
+
+    def get_current_shape():
+        """Gets the shape index used by the effect."""
+        res, flid = element.get_child_property("shape")
+        assert res
+        for index, vals in reversed(list(enumerate(shape_list))):
+            if flid >= vals[1]:
+                return index
+        assert False
+
+    shape_picker.set_active(get_current_shape())
+
+    def shape_picker_value_changed_cb(unused):
+        """Handles the selection of shape via combobox."""
+        v = shape_list[shape_picker.get_active()][1]
+
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
+        action_log = effect_prop_manager.app.action_log
+        with action_log.started("Effect property change",
+                                finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                toplevel=True):
+            element.set_child_property("shape", v)
+
+    shape_picker.connect("changed", shape_picker_value_changed_cb)
+
+    # Operation picker
+
+    op_picker = builder.get_object("frei0r-filter-alphaspot::operation")
+    op_list = model((str, float), [
+        # ouch...
+        ("write on clear", 0.0),
+        ("max", 0.21),
+        ("min", 0.41),
+        ("add", 0.61),
+        ("subtract", 0.81),
+    ])
+    op_picker.set_model(op_list)
+    op_text_renderer = Gtk.CellRendererText()
+    op_picker.pack_start(op_text_renderer, 0)
+    op_picker.add_attribute(op_text_renderer, "text", 0)
+
+    def get_current_op():
+        """Gets the op index used by the effect."""
+        res, flid = element.get_child_property("operation")
+        assert res
+        for index, vals in reversed(list(enumerate(op_list))):
+            if flid >= vals[1]:
+                return index
+        assert False
+
+    op_picker.set_active(get_current_op())
+
+    def op_picker_value_changed_cb(unused):
+        """Handles the selection of op via combobox."""
+        v = op_list[op_picker.get_active()][1]
+
+        from pitivi.undo.timeline import CommitTimelineFinalizingAction
+        pipeline = effect_prop_manager.app.project_manager.current_project.pipeline
+        action_log = effect_prop_manager.app.action_log
+        with action_log.started("Effect property change",
+                                finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                toplevel=True):
+            element.set_child_property("operation", v)
+
+    op_picker.connect("changed", op_picker_value_changed_cb)
+
+    def property_changed_cb(unused_effect, gst_element, pspec):
+        """Handles the change of a GObject property."""
+        if gst_element.get_control_binding(pspec.name):
+            Loggable().log("%s controlled, not displaying value", pspec.name)
+            return
+
+        widget = element_setting_widget.properties.get(pspec)
+        if not widget:
+            return
+
+        res, value = element_setting_widget.element.get_child_property(pspec.name)
+        assert res
+
+        if pspec.name in ("shape",):
+            shape_picker.set_active(get_current_shape())
+            widget.block_signals()
+            try:
+                widget.setWidgetValue(value)
+            finally:
+                widget.unblock_signals()
+        elif pspec.name in ("operation",):
+            op_picker.set_active(get_current_op())
+            widget.block_signals()
+            try:
+                widget.setWidgetValue(value)
+            finally:
+                widget.unblock_signals()
+        else:
+            widget.setWidgetValue(value)
+
+    element.connect("deep-notify", property_changed_cb)
+
+    return builder.get_object("base_table")
+
+
+def create_custom_alphaspot_prop_widget(unused_element_setting_widget, unused_element, unused_prop, unused_prop_value):
+    """Not implemented yet."""
+    # In the auto-generated UI, replace a property widget with a custom one
+    return None
