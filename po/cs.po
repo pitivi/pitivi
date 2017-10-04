@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-09-05 23:08+0000\n"
-"PO-Revision-Date: 2017-09-06 08:29+0200\n"
+"POT-Creation-Date: 2017-10-04 05:35+0000\n"
+"PO-Revision-Date: 2017-10-04 08:09+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -98,7 +98,7 @@ msgstr "Editor videa"
 
 #: ../data/pitivi.desktop.in.h:4
 msgid "video;film;movie;editor;"
-msgstr "video;film;střih;editor;"
+msgstr "video;film;střih;střižna;editor;"
 
 #: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
@@ -234,6 +234,38 @@ msgstr "Vybrat barvu"
 #: ../data/ui/customwidgets/alpha.ui.h:11
 msgid "Blue"
 msgstr "Modrá"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:1
+msgid "Split preview"
+msgstr "Rozdělit náhled"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:2
+msgid "Source image on left"
+msgstr "Zdrojový obrázek vlevo"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:3
+msgid "R"
+msgstr "R"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:4
+msgid "G"
+msgstr "G"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:5
+msgid "B"
+msgstr "B"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:6
+msgid "Shadows"
+msgstr "Stíny"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:7
+msgid "Midtones"
+msgstr "Střední tóny"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
+msgid "Highlights"
+msgstr "Světla"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -1828,12 +1860,12 @@ msgstr "Klávesové zkratky"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:896
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:898
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:960
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:962
 msgid "Reset to default value"
 msgstr "Vrátit na výchozí hodnotu"
 
@@ -2130,35 +2162,35 @@ msgstr "Anamorfní (2,4)"
 msgid "Implement Me"
 msgstr "Čeká na implementaci"
 
-#: ../pitivi/utils/widgets.py:851
+#: ../pitivi/utils/widgets.py:853
 msgid "No properties."
 msgstr "Žádné vlastnosti"
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:945
+#: ../pitivi/utils/widgets.py:947
 msgid "Show keyframes for this value"
 msgstr "Zobrazit klíčové snímky pro tuto hodnotu"
 
-#: ../pitivi/utils/widgets.py:1117
+#: ../pitivi/utils/widgets.py:1119
 #, python-format
 msgid "Properties for %s"
 msgstr "Vlastnosti – %s"
 
-#: ../pitivi/utils/widgets.py:1254
+#: ../pitivi/utils/widgets.py:1256
 msgid "Zoom Fit"
 msgstr "Přizpůsobit"
 
-#: ../pitivi/utils/widgets.py:1259
+#: ../pitivi/utils/widgets.py:1261
 msgid "Zoom"
 msgstr "Přiblížit"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1333
+#: ../pitivi/utils/widgets.py:1335
 #, python-format
 msgid "%s displayed"
 msgstr "Zobrazeno %s"
 
-#: ../pitivi/utils/widgets.py:1337
+#: ../pitivi/utils/widgets.py:1339
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Zobrazeno %d nanosekund, protože je to možné"
