@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-10 20:54+0200\n"
-"PO-Revision-Date: 2017-09-10 20:55+0200\n"
+"POT-Creation-Date: 2017-10-08 19:02+0200\n"
+"PO-Revision-Date: 2017-10-08 19:03+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -236,6 +236,38 @@ msgstr "Wybór koloru"
 #: ../data/ui/customwidgets/alpha.ui.h:11
 msgid "Blue"
 msgstr "Niebieski"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:1
+msgid "Split preview"
+msgstr "Podział podglądu"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:2
+msgid "Source image on left"
+msgstr "Obraz źródłowy po lewej"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:3
+msgid "R"
+msgstr "Czer."
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:4
+msgid "G"
+msgstr "Ziel."
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:5
+msgid "B"
+msgstr "Nieb."
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:6
+msgid "Shadows"
+msgstr "Cienie"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:7
+msgid "Midtones"
+msgstr "Półtony"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
+msgid "Highlights"
+msgstr "Światła"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -1848,12 +1880,12 @@ msgstr "Skróty"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:896
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:898
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:960
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:962
 msgid "Reset to default value"
 msgstr "Przywraca domyślną wartość"
 
@@ -2150,35 +2182,35 @@ msgstr "Anamorficzne (2,4)"
 msgid "Implement Me"
 msgstr "Niezaimplementowane"
 
-#: ../pitivi/utils/widgets.py:851
+#: ../pitivi/utils/widgets.py:853
 msgid "No properties."
 msgstr "Brak właściwości."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:945
+#: ../pitivi/utils/widgets.py:947
 msgid "Show keyframes for this value"
 msgstr "Wyświetlanie klatek kluczowych dla tej wartości"
 
-#: ../pitivi/utils/widgets.py:1117
+#: ../pitivi/utils/widgets.py:1119
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla „%s”"
 
-#: ../pitivi/utils/widgets.py:1254
+#: ../pitivi/utils/widgets.py:1256
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/utils/widgets.py:1259
+#: ../pitivi/utils/widgets.py:1261
 msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1333
+#: ../pitivi/utils/widgets.py:1335
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
-#: ../pitivi/utils/widgets.py:1337
+#: ../pitivi/utils/widgets.py:1339
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone: %d ns"
