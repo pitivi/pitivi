@@ -234,7 +234,7 @@ class PreferencesDialog(Loggable):
             self.widgets[attrname] = widget
             # Add a semicolon, except for checkbuttons.
             if isinstance(widget, widgets.ToggleWidget):
-                widget.set_label(label)
+                widget.check_button.set_label(label)
                 label_widget = None
             else:
                 # Translators: This adds a semicolon to an already
