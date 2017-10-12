@@ -335,6 +335,18 @@
             ]
         },
         {
+            "name": "opencv",
+            "buildsystem": "cmake",
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "branch": "2.4.13.3",
+                    "url": "https://github.com/opencv/opencv"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
