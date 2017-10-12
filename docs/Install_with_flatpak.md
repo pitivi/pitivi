@@ -24,21 +24,27 @@ only one time.
 To install the latest stable Pitivi release, run as a normal user (no
 root nor sudo):
 
-  `$ flatpak install --user `[`https://flathub.org/repo/appstream/org.pitivi.Pitivi.flatpakref`](https://flathub.org/repo/appstream/org.pitivi.Pitivi.flatpakref)
+```
+  $ flatpak install --user https://flathub.org/repo/appstream/org.pitivi.Pitivi.flatpakref
+```
 
 We also provide latest development snapshot toward what is going to become `Pitivi 1.0`, you can install with:
 
-  `$ flatpak install --user `[`http://flatpak.pitivi.org/pitivi.flatpakref`](http://flatpak.pitivi.org/pitivi.flatpakref)`
+```
+  $ flatpak install --user http://flatpak.pitivi.org/pitivi.flatpakref
+```
 
 ### Troubleshooting
 
 If your flatpak version is less than 0.8, you need to run instead:
 
-` $ flatpak --version`\
-` $ curl `[`https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak`](https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak)` -Sso pitivi-flatpak`\
-` $ chmod +x pitivi-flatpak`\
-` $ ./pitivi-flatpak --branch=`**`stable`**` --update`
-
+ 
+```
+$ flatpak --version
+$ curl https://git.gnome.org/browse/pitivi/plain/build/flatpak/pitivi-flatpak -Sso pitivi-flatpak
+$ chmod +x pitivi-flatpak
+$ ./pitivi-flatpak --branch=stable --update
+```
 When the script finishes installing (or updating), it launches Pitivi.
 
 ## Installing Pitivi master (development version)
@@ -46,7 +52,9 @@ When the script finishes installing (or updating), it launches Pitivi.
 To install the development version as a separate application called
 “(Rolling) Pitivi”, run in a terminal:
 
-` $ flatpak install --user `[`http://flatpak.pitivi.org/pitivi-master.flatpakref`](http://flatpak.pitivi.org/pitivi-master.flatpakref)
+```
+$ flatpak install --user http://flatpak.pitivi.org/pitivi-master.flatpakref
+```
 
 You might want to use Pitivi master to contribute and help us test
 Pitivi, or if a specific bug which annoys you is fixed in master, etc.
@@ -61,11 +69,15 @@ to the latest version.
 
 To see if warning or error messages are printed in the console, run:
 
-` $ flatpak run org.pitivi.Pitivi//stable`
+```
+$ flatpak run org.pitivi.Pitivi//stable
+```
 
 If for some reason you need to use an older Pitivi version, run:
 
-` $ flatpak run org.pitivi.Pitivi//0.96`
+```
+$ flatpak run org.pitivi.Pitivi//0.96`
+```
 
 ## Updating Pitivi
 
@@ -74,7 +86,7 @@ installer the same way as before.
 
 Alternatively, update by using directly flatpak:
 
-` $ flatpak --user update org.pitivi.Pitivi`
+`$ flatpak --user update org.pitivi.Pitivi`
 
 If a new version is fetched, it will be made current.
 
@@ -82,7 +94,7 @@ If a new version is fetched, it will be made current.
 
 If your software manager doesn't allow this yet, run the command below:
 
-` $ flatpak --user uninstall org.pitivi.Pitivi stable`
+`$ flatpak --user uninstall org.pitivi.Pitivi stable`
 
 ## Install GStreamer vaapi support
 
