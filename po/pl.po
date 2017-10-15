@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-08 19:02+0200\n"
-"PO-Revision-Date: 2017-10-08 19:03+0200\n"
+"POT-Creation-Date: 2017-10-15 16:04+0200\n"
+"PO-Revision-Date: 2017-10-15 16:05+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -190,6 +190,7 @@ msgid "Next keyframe"
 msgstr "Następna klatka kluczowa"
 
 #: ../data/ui/cliptransformation.ui.h:9 ../data/ui/customwidgets/alpha.ui.h:5
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:1
 msgid "◇"
 msgstr "◇"
 
@@ -268,6 +269,46 @@ msgstr "Półtony"
 #: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
 msgid "Highlights"
 msgstr "Światła"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:2
+msgid "Shape:"
+msgstr "Kształt:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:3
+msgid "x"
+msgstr "Oś X"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:4
+msgid "y"
+msgstr "Oś Y"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:5
+msgid "width"
+msgstr "szerokość"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:6
+msgid "height"
+msgstr "wysokość"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:7
+msgid "Operation:"
+msgstr "Działanie:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:8
+msgid "tilt"
+msgstr "nachylenie"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:9
+msgid "trans. width"
+msgstr "szerokość przejściowa"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:10
+msgid "min alpha"
+msgstr "minimalna alfa"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:11
+msgid "max alpha"
+msgstr "maksymalna alfa"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -642,7 +683,7 @@ msgid "Pause"
 msgstr "Wstrzymaj"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1580
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Play"
 msgstr "Odtwórz"
 
@@ -1783,68 +1824,72 @@ msgstr ""
 "Czy kliknięcie lewym przyciskiem poza zaznaczaniem i modyfikowaniem klipów "
 "także przewija."
 
-#: ../pitivi/timeline/timeline.py:1501 ../pitivi/dialogs/prefs.py:61
+#: ../pitivi/timeline/timeline.py:1502 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Oś czasu"
 
-#: ../pitivi/timeline/timeline.py:1508
+#: ../pitivi/timeline/timeline.py:1509
 msgid "Delete selected clips"
 msgstr "Usunięcie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1514
+#: ../pitivi/timeline/timeline.py:1515
+msgid "Delete selected clips and shift following ones"
+msgstr "Usunięcie zaznaczonych klipów i przesunięcie następnych"
+
+#: ../pitivi/timeline/timeline.py:1521
 msgid "Group selected clips together"
 msgstr "Umieszczenie zaznaczonych klipów w grupie"
 
-#: ../pitivi/timeline/timeline.py:1520
+#: ../pitivi/timeline/timeline.py:1527
 msgid "Ungroup selected clips"
 msgstr "Rozgrupowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1526
+#: ../pitivi/timeline/timeline.py:1533
 msgid "Copy selected clips"
 msgstr "Skopiowanie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1532
+#: ../pitivi/timeline/timeline.py:1539
 msgid "Paste selected clips"
 msgstr "Wklejenie zaznaczonych klipów"
 
-#: ../pitivi/timeline/timeline.py:1545
+#: ../pitivi/timeline/timeline.py:1552
 msgid "Split the clip at the position"
 msgstr "Przecięcie klipu w pozycji"
 
-#: ../pitivi/timeline/timeline.py:1551
+#: ../pitivi/timeline/timeline.py:1558
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Dodanie klatki kluczowej do krzywej klatek kluczowych zaznaczonego klipu"
 
-#: ../pitivi/timeline/timeline.py:1556
+#: ../pitivi/timeline/timeline.py:1563
 msgid "Timeline Navigation"
 msgstr "Nawigacja na osi czasu"
 
-#: ../pitivi/timeline/timeline.py:1563
+#: ../pitivi/timeline/timeline.py:1570
 msgid "Zoom in"
 msgstr "Przybliżenie"
 
-#: ../pitivi/timeline/timeline.py:1569
+#: ../pitivi/timeline/timeline.py:1576
 msgid "Zoom out"
 msgstr "Oddalenie"
 
-#: ../pitivi/timeline/timeline.py:1575
+#: ../pitivi/timeline/timeline.py:1582
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Dopasowanie przybliżenia projektu do okna"
 
-#: ../pitivi/timeline/timeline.py:1586
+#: ../pitivi/timeline/timeline.py:1593
 msgid "Seek backward one frame"
 msgstr "Przejście do tyłu o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1592
+#: ../pitivi/timeline/timeline.py:1599
 msgid "Seek forward one frame"
 msgstr "Przejście naprzód o jedną klatkę"
 
-#: ../pitivi/timeline/timeline.py:1599
+#: ../pitivi/timeline/timeline.py:1606
 msgid "Seek backward one second"
 msgstr "Przejście do tyłu o jedną sekundę"
 
-#: ../pitivi/timeline/timeline.py:1606
+#: ../pitivi/timeline/timeline.py:1613
 msgid "Seek forward one second"
 msgstr "Przejście naprzód o jedną sekundę"
 
