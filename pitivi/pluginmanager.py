@@ -120,7 +120,7 @@ class PluginManager(Loggable):
         user_plugins_dir = get_user_plugins_dir()
         if os.path.exists(plugins_dir):
             self.engine.add_search_path(plugins_dir)
-        if os.path.exists(plugins_dir):
+        if os.path.exists(user_plugins_dir):
             self.engine.add_search_path(user_plugins_dir)
 
     @staticmethod
