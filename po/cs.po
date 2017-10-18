@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-10-04 05:35+0000\n"
-"PO-Revision-Date: 2017-10-04 08:09+0200\n"
+"POT-Creation-Date: 2017-10-17 10:18+0000\n"
+"PO-Revision-Date: 2017-10-18 09:07+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -188,6 +188,7 @@ msgid "Next keyframe"
 msgstr "Následující klíčový snímek"
 
 #: ../data/ui/cliptransformation.ui.h:9 ../data/ui/customwidgets/alpha.ui.h:5
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:1
 msgid "◇"
 msgstr "◇"
 
@@ -266,6 +267,46 @@ msgstr "Střední tóny"
 #: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
 msgid "Highlights"
 msgstr "Světla"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:2
+msgid "Shape:"
+msgstr "Tvar:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:3
+msgid "x"
+msgstr "x"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:4
+msgid "y"
+msgstr "y"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:5
+msgid "width"
+msgstr "šířka"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:6
+msgid "height"
+msgstr "výška"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:7
+msgid "Operation:"
+msgstr "Operace:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:8
+msgid "tilt"
+msgstr "sklon"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:9
+msgid "trans. width"
+msgstr "šířka přechodu"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:10
+msgid "min alpha"
+msgstr "min. průhlednost"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:11
+msgid "max alpha"
+msgstr "max. průhlednost"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -638,7 +679,7 @@ msgid "Pause"
 msgstr "Pozastavit"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1580
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Play"
 msgstr "Přehrát"
 
@@ -1764,67 +1805,71 @@ msgstr ""
 "Jestli kliknutí levým tlačítkem kromě vybírání a úprav klipů provádí i "
 "přeskakování."
 
-#: ../pitivi/timeline/timeline.py:1501 ../pitivi/dialogs/prefs.py:61
+#: ../pitivi/timeline/timeline.py:1502 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Časová osa"
 
-#: ../pitivi/timeline/timeline.py:1508
+#: ../pitivi/timeline/timeline.py:1509
 msgid "Delete selected clips"
 msgstr "Odstranit vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1514
+#: ../pitivi/timeline/timeline.py:1515
+msgid "Delete selected clips and shift following ones"
+msgstr "Odstranit vybrané klipy a následující posunout"
+
+#: ../pitivi/timeline/timeline.py:1521
 msgid "Group selected clips together"
 msgstr "Seskupit vybrané klipy dohromady"
 
-#: ../pitivi/timeline/timeline.py:1520
+#: ../pitivi/timeline/timeline.py:1527
 msgid "Ungroup selected clips"
 msgstr "Zrušit seskupení vybraných klipů"
 
-#: ../pitivi/timeline/timeline.py:1526
+#: ../pitivi/timeline/timeline.py:1533
 msgid "Copy selected clips"
 msgstr "Kopírovat vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1532
+#: ../pitivi/timeline/timeline.py:1539
 msgid "Paste selected clips"
 msgstr "Vložit vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1545
+#: ../pitivi/timeline/timeline.py:1552
 msgid "Split the clip at the position"
 msgstr "Rozdělit klipy na pozici přehrávání"
 
-#: ../pitivi/timeline/timeline.py:1551
+#: ../pitivi/timeline/timeline.py:1558
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Přidat klíčový snímek na křivku klíčkových snímků vybraného klipu"
 
-#: ../pitivi/timeline/timeline.py:1556
+#: ../pitivi/timeline/timeline.py:1563
 msgid "Timeline Navigation"
 msgstr "Práce s časovou osou"
 
-#: ../pitivi/timeline/timeline.py:1563
+#: ../pitivi/timeline/timeline.py:1570
 msgid "Zoom in"
 msgstr "Přiblížit"
 
-#: ../pitivi/timeline/timeline.py:1569
+#: ../pitivi/timeline/timeline.py:1576
 msgid "Zoom out"
 msgstr "Oddálit"
 
-#: ../pitivi/timeline/timeline.py:1575
+#: ../pitivi/timeline/timeline.py:1582
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Upravit přiblížení, aby se projekt vešel do okna"
 
-#: ../pitivi/timeline/timeline.py:1586
+#: ../pitivi/timeline/timeline.py:1593
 msgid "Seek backward one frame"
 msgstr "Přeskočit o snímek zpět"
 
-#: ../pitivi/timeline/timeline.py:1592
+#: ../pitivi/timeline/timeline.py:1599
 msgid "Seek forward one frame"
 msgstr "Přeskočit o snímek vpřed"
 
-#: ../pitivi/timeline/timeline.py:1599
+#: ../pitivi/timeline/timeline.py:1606
 msgid "Seek backward one second"
 msgstr "Přeskočit o sekundu zpět"
 
-#: ../pitivi/timeline/timeline.py:1606
+#: ../pitivi/timeline/timeline.py:1613
 msgid "Seek forward one second"
 msgstr "Přeskočit o sekundu vpřed"
 
