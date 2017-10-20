@@ -210,7 +210,7 @@ class EffectInfo(object):
             return False
 
 
-class EffectsManager(object):
+class EffectsManager(Loggable):
     """Keeps info about effects and their categories.
 
     Attributes:
@@ -219,16 +219,18 @@ class EffectsManager(object):
     """
 
     def __init__(self):
-        object.__init__(self)
+        Loggable.__init__(self)
         self.video_effects = []
         self.audio_effects = []
+        self.gl_effects = []
         self._effects = {}
 
         useless_words = ["Video", "Audio", "audio", "effect",
                          _("Video"), _("Audio"), _("Audio").lower(), _("effect")]
         uselessRe = re.compile(" |".join(useless_words))
 
-        factories = Gst.Registry.get().get_feature_list(Gst.ElementFactory)
+        registry = Gst.Registry.get()
+        factories = registry.get_feature_list(Gst.ElementFactory)
         longnames = set()
         duplicate_longnames = set()
         for factory in factories:
@@ -267,6 +269,36 @@ class EffectsManager(object):
                                 human_name=human_name,
                                 description=factory.get_description())
             self._effects[name] = effect
+
+        gl_element_factories = registry.get_feature_list_by_plugin("opengl")
+        self.gl_effects = [element_factory.get_name()
+                           for element_factory in gl_element_factories]
+        if self.gl_effects:
+            # Checking whether the GL effects can be used
+            # by setting a pipeline with "gleffects" to PAUSED.
+            pipeline = Gst.parse_launch("videotestsrc ! glupload ! gleffects ! fakesink")
+            bus = pipeline.get_bus()
+            bus.add_signal_watch()
+            bus.connect("message", self._gl_pipeline_message_cb, pipeline)
+            assert pipeline.set_state(Gst.State.PAUSED) == Gst.StateChangeReturn.ASYNC
+
+    def _gl_pipeline_message_cb(self, bus, message, pipeline):
+        """Handles a `message` event on the pipeline for checking gl effects."""
+        done = False
+        if message.type == Gst.MessageType.ASYNC_DONE:
+            self.debug("GL effects check pipeline successfully PAUSED")
+            done = True
+        elif message.type == Gst.MessageType.ERROR:
+            # The pipeline cannot be set to PAUSED.
+            error, detail = message.parse_error()
+            self.debug("Hiding the GL effects because: %s, %s", error, detail)
+            HIDDEN_EFFECTS.extend(self.gl_effects)
+            done = True
+
+        if done:
+            bus.remove_signal_watch()
+            bus.disconnect_by_func(self._gl_pipeline_message_cb)
+            pipeline.set_state(Gst.State.NULL)
 
     def getInfo(self, bin_description):
         """Gets the info for an effect which can be applied.
