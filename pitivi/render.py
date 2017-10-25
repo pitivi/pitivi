@@ -638,13 +638,14 @@ class RenderDialog(Loggable):
         for row in data_supported:
             model.append(None, row)
 
-        # Translators: This item appears in a combobox's popup and
-        # contains as children the unsupported (but still available)
-        # muxers and encoders.
-        unsupported_iter = model.append(None, (_("Unsupported"), None))
-        data_unsupported.sort()
-        for row in data_unsupported:
-            model.append(unsupported_iter, row)
+        if data_unsupported:
+            # Translators: This item appears in a combobox's popup and
+            # contains as children the unsupported (but still available)
+            # muxers and encoders.
+            unsupported_iter = model.append(None, (_("Unsupported"), None))
+            data_unsupported.sort()
+            for row in data_unsupported:
+                model.append(unsupported_iter, row)
 
         return model
 
