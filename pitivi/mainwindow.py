@@ -219,23 +219,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self._headerbar = Gtk.HeaderBar()
         self._create_headerbar_buttons()
-        self.builder.add_from_file(
-            os.path.join(get_ui_dir(), "mainmenubutton.ui"))
-
-        # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=729263
-        self.builder.connect_signals_full(self._builderConnectCb, self)
-
-        self._menubutton = self.builder.get_object("menubutton")
-
-        if Gtk.get_major_version() == 3 and Gtk.get_minor_version() < 13:
-            open_menu_image = self.builder.get_object("open_menu_image")
-            open_menu_image.set_property("icon_name", "emblem-system-symbolic")
-
-        self._menubutton_items = {}
-        for widget in self.builder.get_object("menu").get_children():
-            self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
-
-        self._headerbar.pack_end(self._menubutton)
         self._headerbar.set_show_close_button(True)
         self._headerbar.show_all()
         self.set_titlebar(self._headerbar)
@@ -393,32 +376,25 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             layers_representation.grab_focus()
 
     def _create_headerbar_buttons(self):
+
         undo_button = Gtk.Button.new_from_icon_name(
-            "edit-undo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
         undo_button.set_always_show_image(True)
         undo_button.set_label(_("Undo"))
         undo_button.set_action_name("app.undo")
         undo_button.set_use_underline(True)
 
         redo_button = Gtk.Button.new_from_icon_name(
-            "edit-redo-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            "edit-redo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
         redo_button.set_always_show_image(True)
-        redo_button.set_label(_("Redo"))
         redo_button.set_action_name("app.redo")
         redo_button.set_use_underline(True)
 
-        separator = Gtk.Separator()
-
-        self.save_button = Gtk.Button.new_from_icon_name(
-            "document-save", Gtk.IconSize.LARGE_TOOLBAR)
-        self.save_button.set_always_show_image(True)
-        self.save_button.set_label(_("Save"))
+        self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
-        render_icon = Gtk.Image.new_from_file(
-            os.path.join(get_pixmap_dir(), "pitivi-render-24.png"))
-        self.render_button = Gtk.Button()
-        self.render_button.set_image(render_icon)
+        self.render_button = Gtk.Button.new_from_icon_name(
+            "system-run-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
         self.render_button.set_always_show_image(True)
         self.render_button.set_label(_("Render"))
         self.render_button.set_tooltip_text(
@@ -426,11 +402,27 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.render_button.set_sensitive(False)  # The only one we have to set.
         self.render_button.connect("clicked", self._renderCb)
 
-        self._headerbar.pack_start(undo_button)
-        self._headerbar.pack_start(redo_button)
-        self._headerbar.pack_start(separator)
-        self._headerbar.pack_start(self.save_button)
-        self._headerbar.pack_start(self.render_button)
+        undo_redo_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        undo_redo_box.get_style_context().add_class("linked")
+        undo_redo_box.pack_start(undo_button, expand=False, fill=False, padding=0)
+        undo_redo_box.pack_start(redo_button, expand=False, fill=False, padding=0)
+        self._headerbar.pack_start(undo_redo_box)
+
+        self.builder.add_from_file(
+            os.path.join(get_ui_dir(), "mainmenubutton.ui"))
+
+        # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=729263
+        self.builder.connect_signals_full(self._builderConnectCb, self)
+
+        self._menubutton = self.builder.get_object("menubutton")
+
+        self._menubutton_items = {}
+        for widget in self.builder.get_object("menu").get_children():
+            self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
+
+        self._headerbar.pack_end(self._menubutton)
+        self._headerbar.pack_end(self.save_button)
+        self._headerbar.pack_end(self.render_button)
 
     def _set_keyboard_shortcuts(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)

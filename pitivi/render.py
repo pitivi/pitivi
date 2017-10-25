@@ -320,10 +320,7 @@ class RenderingProgressDialog(GObject.Object):
         # Parent the dialog with mainwindow, since renderingdialog is hidden.
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app.gui)
-
-        # UI widgets
-        self.window.set_icon_from_file(
-            configure.get_pixmap_dir() + "/pitivi-render-16.png")
+        self.window.set_icon_name("system-run-symbolic")
 
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
@@ -601,8 +598,7 @@ class RenderDialog(Loggable):
         self.render_presets.setupUi(self.presets_combo, self.preset_menubutton)
         self.render_presets.loadAll()
 
-        icon = os.path.join(configure.get_pixmap_dir(), "pitivi-render-16.png")
-        self.window.set_icon_from_file(icon)
+        self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
 
     def _settings_changed_cb(self, unused_project, key, value):
