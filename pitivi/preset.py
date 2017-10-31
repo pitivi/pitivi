@@ -67,6 +67,17 @@ class PresetManager(GObject.Object, Loggable):
         self.presets = {}
         self.widget_map = {}
         self.ordered = Gtk.ListStore(str, object)
+
+        def sortme(store, i1, i2, unused_udata):
+            name1 = store[i1][0]
+            name2 = store[i2][0]
+            if name1 > name2:
+                return 1
+
+            return -1
+
+        self.ordered.set_sort_func(0, sortme)
+        self.ordered.set_sort_column_id(0, Gtk.SortType.DESCENDING)
         self.cur_preset = None
         # Whether to ignore the updateValue calls.
         self.ignore_update_requests = False
