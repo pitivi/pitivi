@@ -358,6 +358,14 @@ def initialize_modules():
     from pitivi.configure import get_audiopresets_dir, get_videopresets_dir
     Gst.init(None)
 
+    require_version("GstPbutils", GST_API_VERSION)
+    from gi.repository import GstPbutils
+
+    # Monky patch an helper method to retrieve the size of a video
+    # when using square pixels.
+    GstPbutils.DiscovererVideoInfo.get_square_width = \
+        lambda i: i.get_width() * i.get_par_num() / i.get_par_denom()
+
     if not os.environ.get("GES_DISCOVERY_TIMEOUT"):
         os.environ["GES_DISCOVERY_TIMEOUT"] = "5"
 
