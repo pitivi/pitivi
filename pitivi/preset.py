@@ -427,15 +427,10 @@ class VideoPresetManager(PresetManager):
         framerate_denom = parser["framerate-denom"]
         framerate = Gst.Fraction(framerate_num, framerate_denom)
 
-        par_num = parser["par-num"]
-        par_denom = parser["par-denom"]
-        par = Gst.Fraction(par_num, par_denom)
-
         return {
             "width": width,
             "height": height,
             "frame-rate": framerate,
-            "par": par,
         }
 
     def _serializePreset(self, preset):
@@ -444,16 +439,13 @@ class VideoPresetManager(PresetManager):
             "height": int(preset["height"]),
             "framerate-num": preset["frame-rate"].num,
             "framerate-denom": preset["frame-rate"].denom,
-            "par-num": preset["par"].num,
-            "par-denom": preset["par"].denom,
         }
 
     def _projectToPreset(self, project):
         return {
             "width": project.videowidth,
             "height": project.videoheight,
-            "frame-rate": project.videorate,
-            "par": project.videopar}
+            "frame-rate": project.videorate}
 
 
 class AudioPresetManager(PresetManager):

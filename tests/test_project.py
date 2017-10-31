@@ -528,8 +528,6 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(1080, project.videoheight)
         project.videorate = Gst.Fraction(50, 7)
         self.assertEqual(Gst.Fraction(50, 7), project.videorate)
-        project.videopar = Gst.Fraction(2, 7)
-        self.assertEqual(Gst.Fraction(2, 7), project.videopar)
 
     def testSetAudioProp(self):
         timeline = common.create_timeline_container()
@@ -597,7 +595,6 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(960, project.videowidth)
         self.assertEqual(400, project.videoheight)
         self.assertEqual(Gst.Fraction(24, 1), project.videorate)
-        self.assertEqual(Gst.Fraction(1, 1), project.videopar)
 
     def testLoad(self):
         project = Project(uri="fake.xges", app=common.create_pitivi_mock())

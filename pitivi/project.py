@@ -885,16 +885,6 @@ class Project(Loggable, GES.Project):
             self._emitChange("rendering-settings-changed", "videorate", value)
 
     @property
-    def videopar(self):
-        return self.video_profile.get_restriction()[0]["pixel-aspect-ratio"]
-
-    @videopar.setter
-    def videopar(self, value):
-        if self.setVideoRestriction("pixel-aspect-ratio", value):
-            self._emitChange(
-                "rendering-settings-changed", "pixel-aspect-ratio", value)
-
-    @property
     def audiochannels(self):
         return self.audio_profile.get_restriction()[0]["channels"]
 
@@ -1472,10 +1462,12 @@ class Project(Loggable, GES.Project):
         videocaps.set_value("width", width)
         videocaps.set_value("height", height)
         videocaps.set_value("framerate", self.videorate)
+        videocaps.set_value("pixel-aspect-ratio", Gst.Fraction(1, 1))
 
         audiocaps = Gst.Caps.new_empty_simple("audio/x-raw")
         audiocaps.set_value("rate", self.audiorate)
         audiocaps.set_value("channels", self.audiochannels)
+
         for track in self.ges_timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
                 track.set_restriction_caps(videocaps)
@@ -1550,7 +1542,7 @@ class Project(Loggable, GES.Project):
         return self._dirty
 
     def getDAR(self):
-        return Gst.Fraction(self.videowidth, self.videoheight) * self.videopar
+        return Gst.Fraction(self.videowidth, self.videoheight)
 
     def getVideoWidthAndHeight(self, render=False):
         """Returns the video width and height as a tuple.
@@ -1579,9 +1571,8 @@ class Project(Loggable, GES.Project):
             Gst.Caps: The video settings caps.
         """
         videowidth, videoheight = self.getVideoWidthAndHeight(render=render)
-        vstr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (
+        vstr = "width=%d,height=%d,pixel-aspect-ratio=1/1,framerate=%d/%d" % (
             videowidth, videoheight,
-            self.videopar.num, self.videopar.denom,
             self.videorate.num, self.videorate.denom)
         caps_str = "video/x-raw,%s" % (vstr)
         video_caps = Gst.caps_from_string(caps_str)
@@ -1772,14 +1763,12 @@ class Project(Loggable, GES.Project):
         if video_streams and self._has_default_video_settings:
             video = video_streams[0]
             if not video.is_image():
-                self.videowidth = video.get_width()
+                self.videowidth = video.get_square_width()
                 self.videoheight = video.get_height()
                 if video.get_framerate_num() > 0:
                     # The asset has a non-variable framerate.
                     self.videorate = Gst.Fraction(video.get_framerate_num(),
                                                   video.get_framerate_denom())
-                self.videopar = Gst.Fraction(video.get_par_num(),
-                                             video.get_par_denom())
                 self._has_default_video_settings = False
                 emit = True
         audio_streams = info.get_audio_streams()
@@ -1858,8 +1847,6 @@ class ProjectSettingsDialog(object):
         getObj = self.builder.get_object
         self.window = getObj("project-settings-dialog")
         self.frame_rate_combo = getObj("frame_rate_combo")
-        self.dar_combo = getObj("dar_combo")
-        self.par_combo = getObj("par_combo")
         self.channels_combo = getObj("channels_combo")
         self.sample_rate_combo = getObj("sample_rate_combo")
         self.year_spinbutton = getObj("year_spinbutton")
@@ -1868,7 +1855,6 @@ class ProjectSettingsDialog(object):
         self.height_spinbutton = getObj("height_spinbutton")
         self.audio_presets_combo = getObj("audio_presets_combo")
         self.video_presets_combo = getObj("video_presets_combo")
-        self.select_par_radiobutton = getObj("select_par_radiobutton")
         self.constrain_sar_button = getObj("constrain_sar_button")
         self.select_dar_radiobutton = getObj("select_dar_radiobutton")
         self.title_entry = getObj("title_entry")
@@ -1885,14 +1871,6 @@ class ProjectSettingsDialog(object):
 
     def _setupUiConstraints(self):
         """Creates the dynamic widgets and connects other widgets."""
-        # Add custom fraction widgets for DAR and PAR.
-        aspect_ratio_grid = self.builder.get_object("aspect_ratio_grid")
-        self.dar_fraction_widget = FractionWidget()
-        aspect_ratio_grid.attach(self.dar_fraction_widget, 0, 2, 1, 1)
-        self.dar_fraction_widget.show()
-        self.par_fraction_widget = FractionWidget()
-        aspect_ratio_grid.attach(self.par_fraction_widget, 1, 2, 1, 1)
-        self.par_fraction_widget.show()
 
         # Add custom framerate fraction widget.
         frame_rate_box = self.builder.get_object("frame_rate_box")
@@ -1902,8 +1880,6 @@ class ProjectSettingsDialog(object):
 
         # Populate comboboxes.
         self.frame_rate_combo.set_model(frame_rates)
-        self.dar_combo.set_model(display_aspect_ratios)
-        self.par_combo.set_model(pixel_aspect_ratios)
 
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
@@ -1918,10 +1894,6 @@ class ProjectSettingsDialog(object):
                           signal="value-changed",
                           update_func=self._updateFraction,
                           update_func_args=(self.frame_rate_combo,))
-        self.wg.addVertex(self.dar_combo, signal="changed")
-        self.wg.addVertex(self.dar_fraction_widget, signal="value-changed")
-        self.wg.addVertex(self.par_combo, signal="changed")
-        self.wg.addVertex(self.par_fraction_widget, signal="value-changed")
         self.wg.addVertex(self.width_spinbutton, signal="value-changed")
         self.wg.addVertex(self.height_spinbutton, signal="value-changed")
         self.wg.addVertex(self.audio_preset_menubutton,
@@ -1945,41 +1917,6 @@ class ProjectSettingsDialog(object):
         self.wg.addBiEdge(
             self.frame_rate_combo, self.frame_rate_fraction_widget)
 
-        # Keep the DAR combo and fraction widgets in sync.
-        self.wg.addEdge(self.dar_combo, self.dar_fraction_widget,
-                        edge_func=self.updateDarFromCombo)
-        self.wg.addEdge(self.dar_fraction_widget, self.dar_combo,
-                        edge_func=self.updateDarFromFractionWidget)
-
-        # Keep the PAR combo and fraction widgets in sync.
-        self.wg.addEdge(self.par_combo, self.par_fraction_widget,
-                        edge_func=self.updateParFromCombo)
-        self.wg.addEdge(self.par_fraction_widget, self.par_combo,
-                        edge_func=self.updateParFromFractionWidget)
-
-        # Constrain the DAR and PAR by linking the fraction widgets together.
-        # The combos are already linked to their fraction widgets.
-        self.wg.addEdge(self.par_fraction_widget, self.dar_fraction_widget,
-                        edge_func=self.updateDarFromPar)
-        self.wg.addEdge(self.dar_fraction_widget, self.par_fraction_widget,
-                        edge_func=self.updateParFromDar)
-
-        # Update the PAR when the w or h change and the DAR radio is selected.
-        self.wg.addEdge(self.width_spinbutton, self.par_fraction_widget,
-                        predicate=self.darSelected,
-                        edge_func=self.updateParFromDar)
-        self.wg.addEdge(self.height_spinbutton, self.par_fraction_widget,
-                        predicate=self.darSelected,
-                        edge_func=self.updateParFromDar)
-
-        # Update the DAR when the w or h change and the PAR radio is selected.
-        self.wg.addEdge(self.width_spinbutton, self.dar_fraction_widget,
-                        predicate=self.parSelected,
-                        edge_func=self.updateDarFromPar)
-        self.wg.addEdge(self.height_spinbutton, self.dar_fraction_widget,
-                        predicate=self.parSelected,
-                        edge_func=self.updateDarFromPar)
-
         # Presets.
         self.audio_presets.loadAll()
         self.video_presets.loadAll()
@@ -1990,7 +1927,6 @@ class ProjectSettingsDialog(object):
             self.video_presets, "height", self.height_spinbutton)
         self.bindFractionWidget(
             self.video_presets, "frame-rate", self.frame_rate_fraction_widget)
-        self.bindPar(self.video_presets)
 
         # Bind the widgets in the Audio tab to the Audio Presets Manager.
         self.bindCombo(self.audio_presets, "channels", self.channels_combo)
@@ -1998,24 +1934,12 @@ class ProjectSettingsDialog(object):
             self.audio_presets, "sample-rate", self.sample_rate_combo)
 
         self.wg.addEdge(
-            self.par_fraction_widget, self.video_preset_menubutton)
-        self.wg.addEdge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
         self.wg.addEdge(self.width_spinbutton, self.video_preset_menubutton)
         self.wg.addEdge(self.height_spinbutton, self.video_preset_menubutton)
 
         self.wg.addEdge(self.channels_combo, self.audio_preset_menubutton)
         self.wg.addEdge(self.sample_rate_combo, self.audio_preset_menubutton)
-
-    def bindPar(self, mgr):
-
-        def updatePar(value):
-            # activate par so we can set the value
-            self.select_par_radiobutton.props.active = True
-            self.par_fraction_widget.setWidgetValue(value)
-
-        mgr.bindWidget(
-            "par", updatePar, self.par_fraction_widget.getWidgetValue)
 
     def bindFractionWidget(self, mgr, name, widget):
         mgr.bindWidget(name, widget.setWidgetValue, widget.getWidgetValue)
@@ -2053,24 +1977,8 @@ class ProjectSettingsDialog(object):
     def _updateSar(self):
         self.sar = self.getSAR()
 
-    def _selectDarRadiobuttonToggledCb(self, unused_button):
-        self._updateDarParSensitivity()
-
-    def _updateDarParSensitivity(self):
-        dar_is_selected = self.darSelected()
-        self.dar_fraction_widget.set_sensitive(dar_is_selected)
-        self.dar_combo.set_sensitive(dar_is_selected)
-        self.par_fraction_widget.set_sensitive(not dar_is_selected)
-        self.par_combo.set_sensitive(not dar_is_selected)
-
     def _updatePresetMenuButton(self, unused_source, unused_target, mgr):
         mgr.updateMenuActions()
-
-    def darSelected(self):
-        return self.select_dar_radiobutton.props.active
-
-    def parSelected(self):
-        return not self.darSelected()
 
     def updateWidth(self):
         height = int(self.height_spinbutton.get_value())
@@ -2084,42 +1992,11 @@ class ProjectSettingsDialog(object):
         height = int(fraction.num / fraction.denom)
         self.height_spinbutton.set_value(height)
 
-    def updateDarFromPar(self):
-        par = self.par_fraction_widget.getWidgetValue()
-        sar = self.getSAR()
-        self.dar_fraction_widget.setWidgetValue(sar * par)
-
-    def updateParFromDar(self):
-        dar = self.dar_fraction_widget.getWidgetValue()
-        sar = self.getSAR()
-        self.par_fraction_widget.setWidgetValue(dar / sar)
-
-    def updateDarFromCombo(self):
-        self.dar_fraction_widget.setWidgetValue(
-            get_combo_value(self.dar_combo))
-
-    def updateDarFromFractionWidget(self):
-        set_combo_value(
-            self.dar_combo, self.dar_fraction_widget.getWidgetValue())
-
-    def updateParFromCombo(self):
-        self.par_fraction_widget.setWidgetValue(
-            get_combo_value(self.par_combo))
-
-    def updateParFromFractionWidget(self):
-        set_combo_value(
-            self.par_combo, self.par_fraction_widget.getWidgetValue())
-
     def updateUI(self):
         # Video
         self.width_spinbutton.set_value(self.project.videowidth)
         self.height_spinbutton.set_value(self.project.videoheight)
         self.frame_rate_fraction_widget.setWidgetValue(self.project.videorate)
-        self.par_fraction_widget.setWidgetValue(self.project.videopar)
-
-        if self.project.videopar == Gst.Fraction(1, 1):
-            self.select_par_radiobutton.props.active = True
-        self._updateDarParSensitivity()
 
         matching_video_preset = self.video_presets.matchingPreset(self.project)
         if matching_video_preset:
@@ -2151,7 +2028,6 @@ class ProjectSettingsDialog(object):
 
             self.project.videowidth = int(self.width_spinbutton.get_value())
             self.project.videoheight = int(self.height_spinbutton.get_value())
-            self.project.videopar = self.par_fraction_widget.getWidgetValue()
             self.project.videorate = self.frame_rate_fraction_widget.getWidgetValue()
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
