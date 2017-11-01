@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-09-05 23:08+0000\n"
-"PO-Revision-Date: 2017-10-02 11:40+0200\n"
+"POT-Creation-Date: 2017-10-12 14:42+0000\n"
+"PO-Revision-Date: 2017-10-16 21:20+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -201,6 +201,7 @@ msgid "Next keyframe"
 msgstr "Nächstes Schlüsselbild"
 
 #: ../data/ui/cliptransformation.ui.h:9 ../data/ui/customwidgets/alpha.ui.h:5
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:1
 msgid "◇"
 msgstr "◇"
 
@@ -247,6 +248,79 @@ msgstr "Farbe wählen"
 #: ../data/ui/customwidgets/alpha.ui.h:11
 msgid "Blue"
 msgstr "Blau"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:1
+msgid "Split preview"
+msgstr "Vorschau teilen"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:2
+msgid "Source image on left"
+msgstr "Ausgangsbild links"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:3
+msgid "R"
+msgstr "R"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:4
+msgid "G"
+msgstr "G"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:5
+msgid "B"
+msgstr "B"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:6
+msgid "Shadows"
+msgstr "Schatten"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:7
+msgid "Midtones"
+msgstr "Mittentöne"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
+msgid "Highlights"
+msgstr "Glanzlichter"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:2
+msgid "Shape:"
+msgstr "Form:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:3
+msgid "x"
+msgstr "x"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:4
+msgid "y"
+msgstr "y"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:5
+msgid "width"
+msgstr "Breite"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:6
+msgid "height"
+msgstr "Höhe"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:7
+#| msgid "Aspect Ratio:"
+msgid "Operation:"
+msgstr "Operation:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:8
+msgid "tilt"
+msgstr "Neigen"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:9
+msgid "trans. width"
+msgstr "Übergangsbreite"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:10
+msgid "min alpha"
+msgstr "Alpha minimal"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:11
+msgid "max alpha"
+msgstr "Alpha maximal"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -625,7 +699,7 @@ msgid "Pause"
 msgstr "Pause"
 
 #: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1580
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Play"
 msgstr "Wiedergeben"
 
@@ -1769,68 +1843,72 @@ msgstr ""
 "Legt fest, ob Klicken mit der linken Maustaste neben der Auswahl und "
 "Bearbeitung von Clips auch suchen kann."
 
-#: ../pitivi/timeline/timeline.py:1501 ../pitivi/dialogs/prefs.py:61
+#: ../pitivi/timeline/timeline.py:1502 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Zeitleiste"
 
-#: ../pitivi/timeline/timeline.py:1508
+#: ../pitivi/timeline/timeline.py:1509
 msgid "Delete selected clips"
 msgstr "Ausgewählte Clips entfernen"
 
-#: ../pitivi/timeline/timeline.py:1514
+#: ../pitivi/timeline/timeline.py:1515
+msgid "Delete selected clips and shift following ones"
+msgstr "Ausgewählte Clips entfernen und folgende verschieben"
+
+#: ../pitivi/timeline/timeline.py:1521
 msgid "Group selected clips together"
 msgstr "Ausgewählte Clips gruppieren"
 
-#: ../pitivi/timeline/timeline.py:1520
+#: ../pitivi/timeline/timeline.py:1527
 msgid "Ungroup selected clips"
 msgstr "Gruppierung der ausgewählten Clips lösen"
 
-#: ../pitivi/timeline/timeline.py:1526
+#: ../pitivi/timeline/timeline.py:1533
 msgid "Copy selected clips"
 msgstr "Ausgewählte Clips kopieren"
 
-#: ../pitivi/timeline/timeline.py:1532
+#: ../pitivi/timeline/timeline.py:1539
 msgid "Paste selected clips"
 msgstr "Ausgewählte Clips einfügen"
 
-#: ../pitivi/timeline/timeline.py:1545
+#: ../pitivi/timeline/timeline.py:1552
 msgid "Split the clip at the position"
 msgstr "Clips an dieser Position schneiden"
 
-#: ../pitivi/timeline/timeline.py:1551
+#: ../pitivi/timeline/timeline.py:1558
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Schlüsselbild zur Schlüsselbildkurve des ausgewählte Clips hinzufügen"
 
-#: ../pitivi/timeline/timeline.py:1556
+#: ../pitivi/timeline/timeline.py:1563
 msgid "Timeline Navigation"
 msgstr "Zeitleistennavigation"
 
-#: ../pitivi/timeline/timeline.py:1563
+#: ../pitivi/timeline/timeline.py:1570
 msgid "Zoom in"
 msgstr "Vergrößern"
 
-#: ../pitivi/timeline/timeline.py:1569
+#: ../pitivi/timeline/timeline.py:1576
 msgid "Zoom out"
 msgstr "Verkleinern"
 
-#: ../pitivi/timeline/timeline.py:1575
+#: ../pitivi/timeline/timeline.py:1582
 msgid "Adjust zoom to fit the project to the window"
 msgstr ""
 "Die Vergrößerung so anpassen, dass das Fenster vollständig ausgefüllt ist"
 
-#: ../pitivi/timeline/timeline.py:1586
+#: ../pitivi/timeline/timeline.py:1593
 msgid "Seek backward one frame"
 msgstr "Ein Einzelbild zurückspulen"
 
-#: ../pitivi/timeline/timeline.py:1592
+#: ../pitivi/timeline/timeline.py:1599
 msgid "Seek forward one frame"
 msgstr "Ein Einzelbild vorspulen"
 
-#: ../pitivi/timeline/timeline.py:1599
+#: ../pitivi/timeline/timeline.py:1606
 msgid "Seek backward one second"
 msgstr "Eine Sekunde zurückspulen"
 
-#: ../pitivi/timeline/timeline.py:1606
+#: ../pitivi/timeline/timeline.py:1613
 msgid "Seek forward one second"
 msgstr "Eine Sekunde vorspulen"
 
@@ -1866,12 +1944,12 @@ msgstr "Tastenkombinationen"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:896
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:898
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:960
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:962
 msgid "Reset to default value"
 msgstr "Auf den Standardwert zurücksetzen"
 
@@ -2161,35 +2239,35 @@ msgstr "Anamorph (2.4)"
 msgid "Implement Me"
 msgstr "Noch nicht implementiert"
 
-#: ../pitivi/utils/widgets.py:851
+#: ../pitivi/utils/widgets.py:853
 msgid "No properties."
 msgstr "Keine Eigenschaften."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:945
+#: ../pitivi/utils/widgets.py:947
 msgid "Show keyframes for this value"
 msgstr "Zeige Schlüsselbilder für diesen Wert"
 
-#: ../pitivi/utils/widgets.py:1117
+#: ../pitivi/utils/widgets.py:1119
 #, python-format
 msgid "Properties for %s"
 msgstr "Eigenschaften für %s"
 
-#: ../pitivi/utils/widgets.py:1254
+#: ../pitivi/utils/widgets.py:1256
 msgid "Zoom Fit"
 msgstr "Auf Größe einpassen"
 
-#: ../pitivi/utils/widgets.py:1259
+#: ../pitivi/utils/widgets.py:1261
 msgid "Zoom"
 msgstr "Vergrößerung"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1333
+#: ../pitivi/utils/widgets.py:1335
 #, python-format
 msgid "%s displayed"
 msgstr "%s angezeigt"
 
-#: ../pitivi/utils/widgets.py:1337
+#: ../pitivi/utils/widgets.py:1339
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d Nanosekunden angezeigt, weil wir es können"
