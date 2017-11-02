@@ -24,7 +24,11 @@ only one time.
 To install the latest stable Pitivi release, run as a normal user (no
 root nor sudo):
 
-` $ flatpak install --user `[`http://flatpak.pitivi.org/pitivi.flatpakref`](http://flatpak.pitivi.org/pitivi.flatpakref)
+  `$ flatpak install --user `[`https://flathub.org/repo/appstream/org.pitivi.Pitivi.flatpakref`](https://flathub.org/repo/appstream/org.pitivi.Pitivi.flatpakref)
+
+We also provide latest development snapshot toward what is going to become `Pitivi 1.0`, you can install with:
+
+  `$ flatpak install --user `[`http://flatpak.pitivi.org/pitivi.flatpakref`](http://flatpak.pitivi.org/pitivi.flatpakref)`
 
 ### Troubleshooting
 
