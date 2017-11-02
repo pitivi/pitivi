@@ -134,12 +134,12 @@ class TestMiscUtils(TestCase):
                 " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
                 " audio/x-raw, channel-mask=(bitmask)0x000000000000003f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;")
 
-        audio_defaults = {'channels': Gst.IntRange(range(1, 2147483647)),
+        audio_defaults = {"channels": Gst.IntRange(range(1, 2147483647)),
                           "rate": Gst.IntRange(range(8000, GLib.MAXINT))}
 
         dataset = [
             (voaacenc_caps, yt_audiorest, audio_defaults, None, Gst.Caps("audio/x-raw, channels=2,rate=48000,channel-mask=(bitmask)0x03")),
-            (vorbis_caps, None, audio_defaults, None, Gst.Caps('audio/x-raw,channels=1,rate=8000')),
+            (vorbis_caps, None, audio_defaults, None, Gst.Caps("audio/x-raw,channels=1,rate=8000")),
             (avenc_ac3_caps, None, audio_defaults, Gst.Caps("audio/x-raw, channels=(int)6, rate=(int)44100"), Gst.Caps("audio/x-raw, channels=(int)6, rate=(int)44100")),
         ]
 

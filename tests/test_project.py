@@ -493,6 +493,31 @@ class TestProjectSettings(common.TestCase):
         project.videopar = Gst.Fraction(2, 7)
         self.assertEqual(Gst.Fraction(2, 7), project.videopar)
 
+    def testSetAudioProp(self):
+        timeline = common.create_timeline_container()
+        project = timeline.app.project_manager.current_project
+        project.addUris([common.get_sample_uri("mp3_sample.mp3")])
+
+        audio_track = [t for t in project.ges_timeline.tracks if isinstance(t, GES.AudioTrack)][0]
+        mainloop = common.create_main_loop()
+
+        def progress_cb(project, progress, estimated_time):
+            if progress == 100:
+                mainloop.quit()
+
+        project.connect_after("asset-loading-progress", progress_cb)
+        mainloop.run()
+
+        expected = Gst.Caps("audio/x-raw,channels=(int)2,rate=(int)44100")
+        ccaps = audio_track.props.restriction_caps
+        self.assertTrue(ccaps.is_equal_fixed(expected), "%s != %s" % (ccaps, expected))
+
+        project.audiochannels = 6
+
+        expected = Gst.Caps("audio/x-raw,channels=(int)6,rate=(int)44100")
+        ccaps = audio_track.props.restriction_caps
+        self.assertTrue(ccaps.is_equal_fixed(expected), "%s != %s" % (ccaps, expected))
+
     def testInitialization(self):
         mainloop = common.create_main_loop()
         uris = collections.deque([

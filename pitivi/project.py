@@ -93,6 +93,7 @@ for i in range(2, GLib.MAXINT):
 # a project.
 IGNORED_PROPS = ["name", "parent"]
 
+
 class ProjectManager(GObject.Object, Loggable):
     """The project manager.
 
@@ -1461,22 +1462,33 @@ class Project(Loggable, GES.Project):
     def update_restriction_caps(self):
         # Get the height/width without rendering settings applied
         width, height = self.getVideoWidthAndHeight()
-        caps = Gst.Caps.new_empty_simple("video/x-raw")
+        videocaps = Gst.Caps.new_empty_simple("video/x-raw")
 
-        caps.set_value("width", width)
-        caps.set_value("height", height)
-        caps.set_value("framerate", self.videorate)
+        videocaps.set_value("width", width)
+        videocaps.set_value("height", height)
+        videocaps.set_value("framerate", self.videorate)
+
+        audiocaps = Gst.Caps.new_empty_simple("audio/x-raw")
+        audiocaps.set_value("rate", self.audiorate)
+        audiocaps.set_value("channels", self.audiochannels)
         for track in self.ges_timeline.get_tracks():
             if isinstance(track, GES.VideoTrack):
-                track.set_restriction_caps(caps)
+                track.set_restriction_caps(videocaps)
+            elif isinstance(track, GES.AudioTrack):
+                track.set_restriction_caps(audiocaps)
 
         if self.app:
             self.app.write_action(
                 "set-track-restriction-caps",
-                caps=caps.to_string(),
+                caps=videocaps.to_string(),
                 track_type=GES.TrackType.VIDEO.value_nicks[0])
 
-        self.pipeline.flushSeek()
+            self.app.write_action(
+                "set-track-restriction-caps",
+                caps=audiocaps.to_string(),
+                track_type=GES.TrackType.AUDIO.value_nicks[0])
+
+        self.pipeline.commit_timeline()
 
     def addUris(self, uris):
         """Adds assets asynchronously.

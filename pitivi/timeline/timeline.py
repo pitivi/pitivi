@@ -1880,7 +1880,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.ruler.setProjectFrameRate(self._framerate)
 
-        if item == "width" or item == "height" or item == "videorate":
+        if item in ["width", "height", "videorate", "rate", "channels"]:
             project.update_restriction_caps()
 
     def _projectLoadedCb(self, unused_project_manager, project):
