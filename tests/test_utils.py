@@ -115,15 +115,34 @@ class TestMiscUtils(TestCase):
                                "audio/x-raw, format=(string)F32LE, layout=(string)interleaved, rate=(int)[ 1, 200000 ], channels=(int)8, channel-mask=(bitmask)0x0000000000000c3f;"
                                "audio/x-raw, format=(string)F32LE, layout=(string)interleaved, rate=(int)[ 1, 200000 ], channels=(int)[ 9, 255 ], channel-mask=(bitmask)0x0000000000000000")
 
+        avenc_ac3_caps = Gst.Caps("audio/x-raw, channel-mask=(bitmask)0x0000000000000000, channels=(int)1, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000003, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000103, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000007, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c03, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000033, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000107, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c07, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000037, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000000c, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000000b, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000010b, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000000f, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000003b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000010f, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                " audio/x-raw, channel-mask=(bitmask)0x000000000000003f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;")
+
         audio_defaults = {'channels': Gst.IntRange(range(1, 2147483647)),
                           "rate": Gst.IntRange(range(8000, GLib.MAXINT))}
 
         dataset = [
             (voaacenc_caps, yt_audiorest, audio_defaults, None, Gst.Caps("audio/x-raw, channels=2,rate=48000,channel-mask=(bitmask)0x03")),
-            (vorbis_caps, None, audio_defaults, Gst.Caps('audio/x-raw,channels=1,rate=8000'))
+            (vorbis_caps, None, audio_defaults, None, Gst.Caps('audio/x-raw,channels=1,rate=8000')),
+            (avenc_ac3_caps, None, audio_defaults, Gst.Caps("audio/x-raw, channels=(int)6, rate=(int)44100"), Gst.Caps("audio/x-raw, channels=(int)6, rate=(int)44100")),
         ]
 
-        for data in dataset:
-            res = fixate_caps_with_default_values(*data[:-1])
-            print(res)
-            self.assertTrue(res.is_equal_fixed(data[-1]), "%s != %s" % (res, data[-1]))
+        for template, restrictions, default_values, prev_vals, expected in dataset:
+            res = fixate_caps_with_default_values(template, restrictions, default_values, prev_vals)
+            self.assertTrue(res.is_equal_fixed(expected), "%s != %s" % (res, expected))

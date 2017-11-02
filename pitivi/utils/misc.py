@@ -338,6 +338,15 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
     Returns:
         Gst.Caps: The caps resulting from the previously defined operations.
     """
+    log.log("utils",
+            "\ntemplate=Gst.Caps(\"%s\"),"
+            "\nrestrictions=%s,\n"
+            "default_values=%s,\n"
+            "prev_vals=Gst.Caps(\"%s\"),\n",
+            "\"\n        \"".join(template.to_string().split(";")),
+            "Gst.Caps(\"%s\')" % restrictions if restrictions is not None else "None",
+            default_values,
+            "Gst.Caps(\"%s\')" % prev_vals if prev_vals is not None else "None")
     res = Gst.Caps.new_empty()
     fields = set(default_values.keys())
     if restrictions:
@@ -388,10 +397,21 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
             if key not in fields:
                 struct.remove_field(key)
 
+        if prev_vals and struct.is_equal(prev_vals[0]):
+            res = Gst.Caps.new_empty()
+            res.append_structure(prev_vals[0])
+            res.mini_object.refcount += 1
+            res = res.fixate()
+            log.debug("utils", "Returning previous caps as we have a corresponding"
+                      " version of them: %s", res)
+            return res
+
         log.debug("utils", "Adding %s to resulting caps", struct)
+
         res.append_structure(struct)
 
     res.mini_object.refcount += 1
+    log.debug("utils", "Fixating %s", res)
     res = res.fixate()
     log.debug("utils", "Fixated %s", res)
     return res
