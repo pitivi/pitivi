@@ -402,8 +402,8 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
             res.append_structure(prev_vals[0])
             res.mini_object.refcount += 1
             res = res.fixate()
-            log.debug("utils", "Returning previous caps as we have a corresponding"
-                      " version of them: %s", res)
+            log.debug("utils", "Returning previous caps %s as it is fully compatible"
+                      " with the template", res)
             return res
 
         log.debug("utils", "Adding %s to resulting caps", struct)
