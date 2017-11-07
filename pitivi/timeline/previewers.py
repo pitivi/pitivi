@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Previewers for the timeline."""
+import contextlib
 import os
 import random
 import sqlite3
@@ -330,10 +331,10 @@ class PreviewGeneratorManager():
         previewer.connect("done", self.__previewer_done_cb)
         previewer.startGeneration()
 
-    def start_flushing(self):
-        """Flushes all previewers and start ignoring any update."""
-        if self._running:
-            self._running = False
+    @contextlib.contextmanager
+    def paused(self, interrupt=False):
+        """Pauses (and flushes if interrupt=True) managed previewers."""
+        if interrupt:
             for previewer in list(self._current_previewers.values()):
                 previewer.stopGeneration()
 
@@ -341,12 +342,21 @@ class PreviewGeneratorManager():
                 for previewer in previewers:
                     previewer.stopGeneration()
 
-    def stop_flushing(self):
-        """Stop ignoring managed previewers updates."""
-        self._running = True
+        try:
+            self._running = False
+            yield
+        except:
+            self.warning("An exception occurred while the previewer was paused")
+            raise
+        finally:
+            self._running = True
+            for track_type in self._previewers:
+                self.__start_next_previewer(track_type)
 
     def __previewer_done_cb(self, previewer):
-        track_type = previewer.track_type
+        self.__start_next_previewer(previewer.track_type)
+
+    def __start_next_previewer(self, track_type):
         next_previewer = self._current_previewers.pop(track_type, None)
         if next_previewer:
             next_previewer.disconnect_by_func(self.__previewer_done_cb)
