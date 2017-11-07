@@ -766,7 +766,8 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     # Callbacks
     def __selectedChangedCb(self, unused_selected, selected):
-        if not self.keyframe_curve and self.__controlledProperty:
+        if not self.keyframe_curve and self.__controlledProperty and \
+                selected and len(self.timeline.selection) == 1:
             self.__create_keyframe_curve()
 
         if self.keyframe_curve:
