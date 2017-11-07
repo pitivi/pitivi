@@ -341,6 +341,11 @@ def initialize_modules():
     require_version("Gdk", GTK_API_VERSION)
     from gi.repository import Gdk
     Gdk.init([])
+    from gi.repository import Gtk
+
+    # Monkey patch deprecated methods to use the new variant by default
+    Gtk.Layout.get_vadjustment = Gtk.Scrollable.get_vadjustment
+    Gtk.Layout.get_hadjustment = Gtk.Scrollable.get_hadjustment
 
     if not gi.version_info >= (3, 11):
         from gi.repository import GObject
@@ -359,6 +364,8 @@ def initialize_modules():
     require_version("GES", GST_API_VERSION)
     from gi.repository import GES
     res, sys.argv = GES.init_check(sys.argv)
+    # Monkey patch deprecated methods to use the new variant by default
+    GES.TrackElement.list_children_properties = GES.TimelineElement.list_children_properties
 
     from pitivi.utils import validate
     if validate.init() and "--inspect-action-type" in sys.argv:

@@ -1419,7 +1419,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     # Internal API
 
     def _createUi(self):
-        left_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        left_size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
         zoom_box = ZoomBox(self)
         left_size_group.add_widget(zoom_box)
 
