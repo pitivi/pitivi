@@ -439,26 +439,25 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
         # Avoid starting/closing preview generation like crazy while tearing down project
-        Previewer.manager.start_flushing()
-        if self.ges_timeline is not None:
-            self.disconnect_by_func(self._button_press_event_cb)
-            self.disconnect_by_func(self._button_release_event_cb)
-            self.disconnect_by_func(self._motion_notify_event_cb)
+        with Previewer.manager.paused(True):
+            if self.ges_timeline is not None:
+                self.disconnect_by_func(self._button_press_event_cb)
+                self.disconnect_by_func(self._button_release_event_cb)
+                self.disconnect_by_func(self._motion_notify_event_cb)
 
-            self.ges_timeline.disconnect_by_func(self._durationChangedCb)
-            self.ges_timeline.disconnect_by_func(self._layer_added_cb)
-            self.ges_timeline.disconnect_by_func(self._layer_removed_cb)
-            self.ges_timeline.disconnect_by_func(self._snapCb)
-            self.ges_timeline.disconnect_by_func(self._snapEndedCb)
-            for ges_layer in self.ges_timeline.get_layers():
-                self._remove_layer(ges_layer)
+                self.ges_timeline.disconnect_by_func(self._durationChangedCb)
+                self.ges_timeline.disconnect_by_func(self._layer_added_cb)
+                self.ges_timeline.disconnect_by_func(self._layer_removed_cb)
+                self.ges_timeline.disconnect_by_func(self._snapCb)
+                self.ges_timeline.disconnect_by_func(self._snapEndedCb)
+                for ges_layer in self.ges_timeline.get_layers():
+                    self._remove_layer(ges_layer)
 
-            self.ges_timeline.ui = None
-            self.ges_timeline = None
+                self.ges_timeline.ui = None
+                self.ges_timeline = None
 
-        if self._project:
-            self._project.pipeline.disconnect_by_func(self._positionCb)
-        Previewer.manager.stop_flushing()
+            if self._project:
+                self._project.pipeline.disconnect_by_func(self._positionCb)
 
         self._project = project
         if self._project:
@@ -1631,14 +1630,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
-            with self.app.action_log.started("delete clip",
-                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                             toplevel=True):
-                for clip in self.timeline.selection:
-                    layer = clip.get_layer()
-                    if isinstance(clip, GES.TransitionClip):
-                        continue
-                    layer.remove_clip(clip)
+            with Previewer.manager.paused():
+                with self.app.action_log.started("delete clip",
+                                                finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                                toplevel=True):
+                    for clip in self.timeline.selection:
+                        layer = clip.get_layer()
+                        if isinstance(clip, GES.TransitionClip):
+                            continue
+                        layer.remove_clip(clip)
 
             self.timeline.selection.setSelection([], SELECT)
 
