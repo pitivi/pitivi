@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: http://wiki.pitivi.org/wiki/Bug_reporting\n"
-"POT-Creation-Date: 2017-01-07 23:35+0000\n"
-"PO-Revision-Date: 2017-01-22 09:49+0200\n"
+"Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
+"POT-Creation-Date: 2017-10-17 10:18+0000\n"
+"PO-Revision-Date: 2017-11-09 16:16+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation@linux.org.ua>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
 msgid "Pitivi"
@@ -107,7 +107,7 @@ msgstr "Розпочинаємо автовирівнювання"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Виконання автовирівнювання</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1091
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1102
 msgid "Estimating..."
 msgstr "Визначення оцінки…"
 
@@ -155,20 +155,167 @@ msgid "Audio:"
 msgstr "Звук:"
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "X:"
-msgstr "X:"
-
-#: ../data/ui/cliptransformation.ui.h:2
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/cliptransformation.ui.h:3
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "Width:"
 msgstr "Ширина:"
 
-#: ../data/ui/cliptransformation.ui.h:4
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Height:"
 msgstr "Висота:"
+
+#: ../data/ui/cliptransformation.ui.h:4
+msgid "X:"
+msgstr "X:"
+
+#: ../data/ui/cliptransformation.ui.h:5
+msgid "<"
+msgstr "<"
+
+#: ../data/ui/cliptransformation.ui.h:6
+#| msgid "_Previous Keyframe"
+msgid "Previous keyframe"
+msgstr "Попередній ключовий кадр"
+
+#: ../data/ui/cliptransformation.ui.h:7
+msgid ">"
+msgstr ">"
+
+#: ../data/ui/cliptransformation.ui.h:8
+#| msgid "_Next Keyframe"
+msgid "Next keyframe"
+msgstr "Наступний ключовий кадр"
+
+#: ../data/ui/cliptransformation.ui.h:9 ../data/ui/customwidgets/alpha.ui.h:5
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:1
+msgid "◇"
+msgstr "◇"
+
+#: ../data/ui/cliptransformation.ui.h:10
+#| msgid "Reset to default value"
+msgid "Reset to default values"
+msgstr "Скинути до типовий значень"
+
+#: ../data/ui/customwidgets/alpha.ui.h:1
+msgid "Angle:"
+msgstr "Кут:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:2
+msgid "Noise level:"
+msgstr "Рівень шуму:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:3
+msgid "White sensitivity:"
+msgstr "Чутливість білого:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:4
+msgid "Black sensitivity:"
+msgstr "Чутливість чорного:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:6
+msgid "Alpha:"
+msgstr "Прозорість:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:7
+msgid "Target chroma key:"
+msgstr "Хромакей призначення:"
+
+#: ../data/ui/customwidgets/alpha.ui.h:8
+#| msgid "Redo"
+msgid "Red"
+msgstr "Червоний"
+
+#: ../data/ui/customwidgets/alpha.ui.h:9
+msgid "Green"
+msgstr "Зелений"
+
+#: ../data/ui/customwidgets/alpha.ui.h:10
+#| msgid "Text color"
+msgid "Select a color"
+msgstr "Виберіть колір"
+
+#: ../data/ui/customwidgets/alpha.ui.h:11
+msgid "Blue"
+msgstr "Синій"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:1
+#| msgid "Preview"
+msgid "Split preview"
+msgstr "Розділити перегляд"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:2
+msgid "Source image on left"
+msgstr "Початкове зображення ліворуч"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:3
+msgid "R"
+msgstr "Ч"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:4
+msgid "G"
+msgstr "З"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:5
+msgid "B"
+msgstr "С"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:6
+msgid "Shadows"
+msgstr "Тіні"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:7
+msgid "Midtones"
+msgstr "Півтони"
+
+#: ../data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui.h:8
+#| msgid "Height"
+msgid "Highlights"
+msgstr "Підсвічування"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:2
+msgid "Shape:"
+msgstr "Форма:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:3
+msgid "x"
+msgstr "x"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:4
+msgid "y"
+msgstr "y"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:5
+#| msgid "Width:"
+msgid "width"
+msgstr "ширина"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:6
+#| msgid "Height"
+msgid "height"
+msgstr "висота"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:7
+#| msgid "Duration:"
+msgid "Operation:"
+msgstr "Операція:"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:8
+msgid "tilt"
+msgstr "ухил"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:9
+msgid "trans. width"
+msgstr "ширина переходу"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:10
+msgid "min alpha"
+msgstr "мін. прозорість"
+
+#: ../data/ui/customwidgets/frei0r-filter-alphaspot.ui.h:11
+msgid "max alpha"
+msgstr "макс. прозорість"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -223,8 +370,8 @@ msgstr "Відкрити проект…"
 msgid "Save the current project under a new name or a different location"
 msgstr "Зберегти поточний проект під новою назвою або до іншого місця"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1148
-#: ../pitivi/mainwindow.py:1202
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1146
+#: ../pitivi/mainwindow.py:1200
 msgid "Save As..."
 msgstr "Зберегти як…"
 
@@ -259,7 +406,7 @@ msgid "Edit the project settings"
 msgstr "Змінити параметри проекту"
 
 #: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:1
-#: ../pitivi/medialibrary.py:376
+#: ../pitivi/medialibrary.py:393
 msgid "Project Settings"
 msgstr "Параметри проекту"
 
@@ -279,7 +426,7 @@ msgstr "Інструкція користувача"
 msgid "About"
 msgstr "Про програму"
 
-#: ../data/ui/medialibrary.ui.h:1 ../pitivi/mainwindow.py:481
+#: ../data/ui/medialibrary.ui.h:1 ../pitivi/mainwindow.py:478
 msgid "Add media files to your project"
 msgstr "Додати файли даних до вашого проекту"
 
@@ -359,10 +506,10 @@ msgstr ""
 "Деякі з внесених вами змін набудуть чинності лише після перезапуску Pitivi"
 
 #: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:4
-#: ../pitivi/mainwindow.py:674 ../pitivi/mainwindow.py:791
-#: ../pitivi/mainwindow.py:929 ../pitivi/mainwindow.py:1099
-#: ../pitivi/mainwindow.py:1151 ../pitivi/mainwindow.py:1204
-#: ../pitivi/medialibrary.py:736
+#: ../pitivi/mainwindow.py:671 ../pitivi/mainwindow.py:788
+#: ../pitivi/mainwindow.py:926 ../pitivi/mainwindow.py:1097
+#: ../pitivi/mainwindow.py:1149 ../pitivi/mainwindow.py:1202
+#: ../pitivi/medialibrary.py:749
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -430,7 +577,7 @@ msgstr "Рік:"
 msgid "Info"
 msgstr "Інформація"
 
-#: ../data/ui/renderingdialog.ui.h:1 ../pitivi/mainwindow.py:426
+#: ../data/ui/renderingdialog.ui.h:1 ../pitivi/mainwindow.py:423
 msgid "Render"
 msgstr "Обробити"
 
@@ -447,7 +594,7 @@ msgid "Container format:"
 msgstr "Формат контейнера:"
 
 #: ../data/ui/renderingdialog.ui.h:6 ../data/ui/startupwizard.ui.h:5
-#: ../pitivi/mainwindow.py:468
+#: ../pitivi/mainwindow.py:465
 msgid "Help"
 msgstr "Довідка"
 
@@ -539,12 +686,12 @@ msgstr ""
 "вибраних кодеків, роздільності зображення, обчислювальних можливостей вашого "
 "комп’ютера, застосованих ефектів та тривалості відео.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer/viewer.py:543
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer/viewer.py:549
 msgid "Pause"
 msgstr "Пауза"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:535
-#: ../pitivi/timeline/timeline.py:1547
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:541
+#: ../pitivi/timeline/timeline.py:1587
 msgid "Play"
 msgstr "Пуск"
 
@@ -564,7 +711,7 @@ msgstr "Вітаємо"
 msgid "Double-click a project below to load it:"
 msgstr "Двічі клацніть на позначці проекту, щоб завантажити його:"
 
-#: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:92
+#: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:93
 msgid "New"
 msgstr "Новий"
 
@@ -670,34 +817,37 @@ msgid "Pick a background color"
 msgstr "Вибрати колір тла"
 
 #: ../data/ui/titleeditor.ui.h:8
-msgid "Horizontal alignment:"
-msgstr "Горизонтальне вирівнювання:"
+#| msgid "Horizontal alignment:"
+msgid "Horizontal:"
+msgstr "Горизонтально:"
 
 #: ../data/ui/titleeditor.ui.h:9
-msgid "Vertical alignment:"
-msgstr "Вертикальне вирівнювання:"
+#| msgid "Vertical alignment:"
+msgid "Vertical:"
+msgstr "Вертикально:"
 
 #: ../data/ui/titleeditor.ui.h:10
-msgid "Advanced positioning"
-msgstr "Додаткові можливості позиціювання"
+#| msgid "Align"
+msgid "Alignment"
+msgstr "Вирівнювання"
 
-#: ../pitivi/application.py:158
+#: ../pitivi/application.py:160
 msgid "General"
 msgstr "Загальне"
 
-#: ../pitivi/application.py:163
+#: ../pitivi/application.py:165
 msgid "Undo the most recent action"
 msgstr "Скасувати останню операцію"
 
-#: ../pitivi/application.py:169
+#: ../pitivi/application.py:171
 msgid "Redo the most recent action"
 msgstr "Повернути скасовану операцію"
 
-#: ../pitivi/application.py:174
+#: ../pitivi/application.py:176
 msgid "Quit"
 msgstr "Вийти"
 
-#: ../pitivi/application.py:181
+#: ../pitivi/application.py:183
 msgid "Show the Shortcuts Window"
 msgstr "Показати вікно клавіатурних скорочень"
 
@@ -715,15 +865,15 @@ msgstr ""
 "- Встановлено %s версії %s, але для роботи Pitivi потрібна принаймні версія "
 "%s"
 
-#: ../pitivi/check.py:258
+#: ../pitivi/check.py:281
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ПОМИЛКА: не знайдено таких обов’язкових залежностей:"
 
-#: ../pitivi/check.py:267
+#: ../pitivi/check.py:290
 msgid "Missing soft dependency:"
 msgstr "Не знайдено бажаної залежності:"
 
-#: ../pitivi/check.py:274
+#: ../pitivi/check.py:297
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -731,7 +881,7 @@ msgstr ""
 "ПОМИЛКА: не вдалося створити Gst.Fraction — це означає, що gst-python не "
 "встановлено належним чином."
 
-#: ../pitivi/check.py:279
+#: ../pitivi/check.py:302
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -739,39 +889,39 @@ msgstr ""
 "Не вдалося створити потік виведення звукових даних. Переконайтеся, що у "
 "програми є доступ до відповідного приймача (pulsesink, alsasink або osssink)."
 
-#: ../pitivi/check.py:284
+#: ../pitivi/check.py:307
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Не вдалося створити потік виведення відеоданих. Переконайтеся, що у програми "
 "є доступ до gtksink."
 
-#: ../pitivi/check.py:297
+#: ../pitivi/check.py:322
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr ""
 "Не вдалося імпортувати «%s». Переконайтеся, що у програми є доступ до цього "
 "компоненту."
 
-#: ../pitivi/check.py:311
+#: ../pitivi/check.py:336
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Не вдалося імпортувати «gi». Переконайтеся, що у програми є доступ до "
 "pygobject."
 
-#: ../pitivi/check.py:377
+#: ../pitivi/check.py:409
 msgid "enables sound notifications when rendering is complete"
 msgstr "вмикає звукове сповіщення щодо завершення обробки"
 
-#: ../pitivi/check.py:379
+#: ../pitivi/check.py:411
 msgid "enables visual notifications when rendering is complete"
 msgstr "вмикає візуальне сповіщення щодо завершення обробки"
 
-#: ../pitivi/check.py:381
+#: ../pitivi/check.py:413
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "додаткові мультимедійні кодеки з бібліотеки GStreamer Libav"
 
-#: ../pitivi/check.py:383
+#: ../pitivi/check.py:415
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -780,42 +930,57 @@ msgstr ""
 "скористатися для виявлення помилок, які виникають під час обробки у "
 "GStreamer, і виправлення цих помилок"
 
-#: ../pitivi/clipproperties.py:113
+#: ../pitivi/clipproperties.py:117
 msgid "Effects"
 msgstr "Ефекти"
 
-#: ../pitivi/clipproperties.py:137
+#: ../pitivi/clipproperties.py:142
 msgid "Remove effect"
 msgstr "Вилучити ефект"
 
-#: ../pitivi/clipproperties.py:172
+#: ../pitivi/clipproperties.py:177
 msgid "Active"
 msgstr "Активний"
 
-#: ../pitivi/clipproperties.py:175
+#: ../pitivi/clipproperties.py:180
 msgid "Type"
 msgstr "Тип"
 
-#: ../pitivi/clipproperties.py:184
+#: ../pitivi/clipproperties.py:189
 msgid "Effect name"
 msgstr "Назва ефекту"
 
-#: ../pitivi/clipproperties.py:206
+#: ../pitivi/clipproperties.py:211
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Позначте кліп на монтажному столі для налаштування пов’язаних з ним ефектів"
 
-#: ../pitivi/clipproperties.py:225
+#: ../pitivi/clipproperties.py:230
 msgid "Clip Effects"
 msgstr "Ефекти кліпу"
 
-#: ../pitivi/clipproperties.py:231
+#: ../pitivi/clipproperties.py:236
 msgid "Remove the selected effect"
 msgstr "Вилучити вибраний ефект"
 
-#: ../pitivi/clipproperties.py:519
+#: ../pitivi/clipproperties.py:537
 msgid "Transformation"
 msgstr "Перетворення"
+
+#: ../pitivi/clipproperties.py:642
+#| msgid "Show keyframes for this value"
+msgid "Show keyframes"
+msgstr "Показати ключові кадри"
+
+#: ../pitivi/clipproperties.py:644
+#| msgid "Add a keyframe"
+msgid "Activate keyframes"
+msgstr "Задіяти ключові кадри"
+
+#: ../pitivi/clipproperties.py:649
+#| msgid "Add a keyframe"
+msgid "Hide keyframes"
+msgstr "Приховати ключові кадри"
 
 #: ../pitivi/effects.py:60
 msgid "Colors"
@@ -858,96 +1023,96 @@ msgstr "Без категорій"
 msgid "All effects"
 msgstr "Всі ефекти"
 
-#: ../pitivi/mainwindow.py:262 ../pitivi/medialibrary.py:533
+#: ../pitivi/mainwindow.py:259 ../pitivi/medialibrary.py:545
 msgid "Media Library"
 msgstr "Бібліотека творів"
 
-#: ../pitivi/mainwindow.py:264
+#: ../pitivi/mainwindow.py:261
 msgid "Effect Library"
 msgstr "Бібліотека ефектів"
 
-#: ../pitivi/mainwindow.py:275
+#: ../pitivi/mainwindow.py:272
 msgid "Clip"
 msgstr "Кліп"
 
-#: ../pitivi/mainwindow.py:277
+#: ../pitivi/mainwindow.py:274
 msgid "Transition"
 msgstr "Перехід"
 
-#: ../pitivi/mainwindow.py:279
+#: ../pitivi/mainwindow.py:276
 msgid "Title"
 msgstr "Назва"
 
-#: ../pitivi/mainwindow.py:402
+#: ../pitivi/mainwindow.py:399
 msgid "Undo"
 msgstr "Скасувати"
 
-#: ../pitivi/mainwindow.py:409
+#: ../pitivi/mainwindow.py:406
 msgid "Redo"
 msgstr "Повернути"
 
-#: ../pitivi/mainwindow.py:418 ../pitivi/mainwindow.py:785
-#: ../pitivi/mainwindow.py:1100 ../pitivi/mainwindow.py:1152
-#: ../pitivi/mainwindow.py:1205 ../pitivi/preset.py:104
-#: ../pitivi/project.py:158
+#: ../pitivi/mainwindow.py:415 ../pitivi/mainwindow.py:782
+#: ../pitivi/mainwindow.py:1098 ../pitivi/mainwindow.py:1150
+#: ../pitivi/mainwindow.py:1203 ../pitivi/preset.py:105
+#: ../pitivi/project.py:188
 msgid "Save"
 msgstr "Зберегти"
 
-#: ../pitivi/mainwindow.py:428
+#: ../pitivi/mainwindow.py:425
 msgid "Export your project as a finished movie"
 msgstr "Експортувати ваш проект як завершене відео"
 
-#: ../pitivi/mainwindow.py:439
+#: ../pitivi/mainwindow.py:436
 msgid "Project"
 msgstr "Проект"
 
-#: ../pitivi/mainwindow.py:444
+#: ../pitivi/mainwindow.py:441
 msgid "Save the current project"
 msgstr "Зберегти поточний проект"
 
-#: ../pitivi/mainwindow.py:451
+#: ../pitivi/mainwindow.py:448
 msgid "Create a new project"
 msgstr "Створити проект"
 
-#: ../pitivi/mainwindow.py:457
+#: ../pitivi/mainwindow.py:454
 msgid "Open a project"
 msgstr "Відкрити проект"
 
-#: ../pitivi/mainwindow.py:463
+#: ../pitivi/mainwindow.py:460
 msgid "Save the current project as"
 msgstr "Зберегти поточний проект як"
 
-#: ../pitivi/mainwindow.py:474
+#: ../pitivi/mainwindow.py:471
 msgid "Show the menu button content"
 msgstr "Показувати вміст кнопки меню"
 
-#: ../pitivi/mainwindow.py:607
+#: ../pitivi/mainwindow.py:604
 #, python-format
 msgid "Development version: %s"
 msgstr "Тестова версія: %s"
 
-#: ../pitivi/mainwindow.py:609
+#: ../pitivi/mainwindow.py:606
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Версія %(cur_ver)s — доступна версія %(new_ver)s"
 
-#: ../pitivi/mainwindow.py:613 ../pitivi/mainwindow.py:615
+#: ../pitivi/mainwindow.py:610 ../pitivi/mainwindow.py:612
 #, python-format
 msgid "Version %s"
 msgstr "Версія %s"
 
-#: ../pitivi/mainwindow.py:624
+#: ../pitivi/mainwindow.py:621
 msgid "Current maintainers:"
 msgstr "Поточна команда супроводу:"
 
-#: ../pitivi/mainwindow.py:630
+#: ../pitivi/mainwindow.py:627
 msgid "Past maintainers:"
 msgstr "Колишні супровідники:"
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
 #. below it
-#: ../pitivi/mainwindow.py:638
+#: ../pitivi/mainwindow.py:635
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -967,7 +1132,7 @@ msgstr ""
 "джерел даних:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:645
+#: ../pitivi/mainwindow.py:642
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
@@ -979,104 +1144,98 @@ msgstr ""
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
 #. for details on how this is used.
-#: ../pitivi/mainwindow.py:652
+#: ../pitivi/mainwindow.py:649
 msgid "translator-credits"
 msgstr "Юрій Чорноіван <yurchor@ukr.net>"
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:671
+#: ../pitivi/mainwindow.py:668
 msgid "Open File..."
 msgstr "Відкрити файл…"
 
-#: ../pitivi/mainwindow.py:675 ../pitivi/mainwindow.py:930
+#: ../pitivi/mainwindow.py:672 ../pitivi/mainwindow.py:927
 msgid "Open"
 msgstr "Відкрити"
 
-#: ../pitivi/mainwindow.py:691
+#: ../pitivi/mainwindow.py:688
 msgid "All supported formats"
 msgstr "Усі підтримувані формати"
 
-#: ../pitivi/mainwindow.py:749
+#: ../pitivi/mainwindow.py:746
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Не вдалося зберегти проект «%s»"
 
-#: ../pitivi/mainwindow.py:787 ../pitivi/project.py:157
+#: ../pitivi/mainwindow.py:784 ../pitivi/project.py:187
 msgid "Save as..."
 msgstr "Зберегти як…"
 
-#: ../pitivi/mainwindow.py:790
+#: ../pitivi/mainwindow.py:787
 msgid "Close without saving"
 msgstr "Закрити без збереження"
 
-#: ../pitivi/mainwindow.py:805
+#: ../pitivi/mainwindow.py:802
 msgid "Save changes to the current project before closing?"
 msgstr "Зберегти зміни, внесені до поточного проекту, перед закриттям?"
 
-#: ../pitivi/mainwindow.py:818
+#: ../pitivi/mainwindow.py:815
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr ""
 "Якщо ви не збережете внесені зміни, роботу, виконану протягом останніх %s, "
 "буде втрачено."
 
-#: ../pitivi/mainwindow.py:822
+#: ../pitivi/mainwindow.py:819
 msgid "If you don't save, your changes will be lost."
 msgstr "Якщо ви не збережете внесені зміни, їх буде втрачено."
 
-#: ../pitivi/mainwindow.py:890
+#: ../pitivi/mainwindow.py:887
 msgid "Revert to saved project version?"
 msgstr "Повернутися до збереженої версії проекту?"
 
-#: ../pitivi/mainwindow.py:895
+#: ../pitivi/mainwindow.py:892
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Ця дія призведе до перезавантаження поточного проекту. Усі незбережені зміни "
 "буде втрачено."
 
-#: ../pitivi/mainwindow.py:910
+#: ../pitivi/mainwindow.py:907
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Не вдалось завантажити проект «%s»"
 
-#: ../pitivi/mainwindow.py:925
+#: ../pitivi/mainwindow.py:922
 msgid "Locate missing file..."
 msgstr "Пошук потрібного файла…"
 
-#. The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:957
-#, python-format
-msgid ""
-"The following file has moved: \"<b>%s</b>\"\n"
-"Please specify its new location:"
-msgstr ""
-"Цей файл було пересунуто: «<b>%s</b>»\n"
-"Будь ласка, вкажіть його нове розташування:"
+#: ../pitivi/mainwindow.py:938
+#| msgid "The following file can not be used with Pitivi."
+#| msgid_plural "The following files can not be used with Pitivi."
+msgid "The following file could not be found:"
+msgstr "Не вдалося знайти вказаний нижче файл:"
 
 #: ../pitivi/mainwindow.py:962
-#, python-format
-msgid ""
-"The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
-"Please specify its new location:"
-msgstr ""
-"Цей файл було пересунуто: «<b>%s</b>» (тривалість: %s)\n"
-"Будь ласка, вкажіть його нове розташування:"
+#| msgid ""
+#| "The following file has moved: \"<b>%s</b>\"\n"
+#| "Please specify its new location:"
+msgid "Please specify its new location:"
+msgstr "Будь ласка, вкажіть його нове розташування:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
-#: ../pitivi/mainwindow.py:986
+#: ../pitivi/mainwindow.py:984
 #, python-format
 msgid "%s files"
 msgstr "файли %s"
 
-#: ../pitivi/mainwindow.py:990 ../pitivi/medialibrary.py:760
+#: ../pitivi/mainwindow.py:988 ../pitivi/medialibrary.py:773
 msgid "All files"
 msgstr "усі файли"
 
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: ../pitivi/mainwindow.py:1015
+#: ../pitivi/mainwindow.py:1013
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1087,33 +1246,33 @@ msgstr ""
 "\n"
 "У поточній версії Pitivi не передбачено підтримки неповних проектів."
 
-#: ../pitivi/mainwindow.py:1096
+#: ../pitivi/mainwindow.py:1094
 msgid "Export To..."
 msgstr "Експортувати до…"
 
-#: ../pitivi/mainwindow.py:1111 ../pitivi/mainwindow.py:1161
-#: ../pitivi/mainwindow.py:1208 ../pitivi/mainwindow.py:1236
-#: ../pitivi/render.py:420
+#: ../pitivi/mainwindow.py:1109 ../pitivi/mainwindow.py:1159
+#: ../pitivi/mainwindow.py:1206 ../pitivi/mainwindow.py:1234
+#: ../pitivi/render.py:423
 msgid "Untitled"
 msgstr "Без назви"
 
-#: ../pitivi/mainwindow.py:1117
+#: ../pitivi/mainwindow.py:1115
 msgid "Tar archive"
 msgstr "архів tar"
 
-#: ../pitivi/mainwindow.py:1121 ../pitivi/mainwindow.py:1167
+#: ../pitivi/mainwindow.py:1119 ../pitivi/mainwindow.py:1165
 msgid "Detect automatically"
 msgstr "Визначити автоматично"
 
-#: ../pitivi/mainwindow.py:1210
+#: ../pitivi/mainwindow.py:1208
 msgid "PNG image"
 msgstr "зображення PNG"
 
-#: ../pitivi/mainwindow.py:1211
+#: ../pitivi/mainwindow.py:1209
 msgid "JPEG image"
 msgstr "зображення JPEG"
 
-#: ../pitivi/mainwindow.py:1302
+#: ../pitivi/mainwindow.py:1300
 msgid "Preview"
 msgstr "Перегляд"
 
@@ -1125,18 +1284,18 @@ msgstr "Перегляд цього файла у Pitivi неможливий."
 msgid "More info"
 msgstr "Додаткова інформація"
 
-#: ../pitivi/mediafilespreviewer.py:261
+#: ../pitivi/mediafilespreviewer.py:272
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Роздільність</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:263 ../pitivi/mediafilespreviewer.py:280
+#: ../pitivi/mediafilespreviewer.py:274 ../pitivi/mediafilespreviewer.py:291
+#: ../pitivi/utils/ui.py:304
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Тривалість</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:456 ../pitivi/medialibrary.py:1048
-#| msgid "Error while analyzing a file"
+#: ../pitivi/mediafilespreviewer.py:465 ../pitivi/medialibrary.py:1076
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Помилка під час спроби аналізу файлів"
@@ -1186,39 +1345,35 @@ msgstr ""
 msgid "Do not use proxy files"
 msgstr "Не використовувати проміжних файлів"
 
-#: ../pitivi/medialibrary.py:364 ../pitivi/medialibrary.py:910
+#: ../pitivi/medialibrary.py:381 ../pitivi/medialibrary.py:935
 msgid "Unknown"
 msgstr "Невідомо"
 
-#: ../pitivi/medialibrary.py:444
+#: ../pitivi/medialibrary.py:461
 msgid "Icon"
 msgstr "Піктограма"
 
-#: ../pitivi/medialibrary.py:453
+#: ../pitivi/medialibrary.py:472
 msgid "Information"
 msgstr "Інформація"
 
-#: ../pitivi/medialibrary.py:464
-msgid "Duration"
-msgstr "Тривалість"
-
-#: ../pitivi/medialibrary.py:539
+#: ../pitivi/medialibrary.py:551
 msgid "Remove the selected assets"
 msgstr "Вилучити позначені ділянки"
 
-#: ../pitivi/medialibrary.py:545
+#: ../pitivi/medialibrary.py:557
 msgid "Insert selected assets at the end of the timeline"
 msgstr "Вставити позначені ділянки наприкінці монтажного столу"
 
-#: ../pitivi/medialibrary.py:733
+#: ../pitivi/medialibrary.py:746
 msgid "Select One or More Files"
 msgstr "Виберіть один або декілька файлів"
 
-#: ../pitivi/medialibrary.py:737
+#: ../pitivi/medialibrary.py:750
 msgid "Add"
 msgstr "Додати"
 
-#: ../pitivi/medialibrary.py:752
+#: ../pitivi/medialibrary.py:765
 msgid "Supported file formats"
 msgstr "Підтримувані формати файлів"
 
@@ -1228,7 +1383,7 @@ msgstr "Підтримувані формати файлів"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: ../pitivi/medialibrary.py:823
+#: ../pitivi/medialibrary.py:841
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
@@ -1237,7 +1392,7 @@ msgstr[1] "Перекодування %d ділянок: %d%% (лишилося 
 msgstr[2] "Перекодування %d ділянок: %d%% (лишилося близько %s)"
 msgstr[3] "Перекодування %d ділянки: %d%% (лишилося близько %s)"
 
-#: ../pitivi/medialibrary.py:922
+#: ../pitivi/medialibrary.py:947
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Перегляд помилки"
@@ -1246,7 +1401,7 @@ msgstr[2] "Перегляд помилок"
 msgstr[3] "Перегляд помилки"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: ../pitivi/medialibrary.py:924
+#: ../pitivi/medialibrary.py:949
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
@@ -1255,14 +1410,13 @@ msgstr[1] "Під час імпортування сталося {0:d} поми�
 msgstr[2] "Під час імпортування сталося {0:d} помилок."
 msgstr[3] "Під час імпортування сталася {0:d} помилка."
 
-#: ../pitivi/medialibrary.py:940
+#: ../pitivi/medialibrary.py:965
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
 "Параметри проекту було встановлено у відповідності до параметрів файла «%s»"
 
-#: ../pitivi/medialibrary.py:1051
-#| msgid "The following file can not be used with Pitivi."
+#: ../pitivi/medialibrary.py:1079
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "Вказані нижче файли не можна використовувати у Pitivi."
@@ -1270,7 +1424,11 @@ msgstr[1] "Вказані нижче файли не можна використ
 msgstr[2] "Вказані нижче файли не можна використовувати у Pitivi."
 msgstr[3] "Вказаний нижче файл не можна використовувати у Pitivi."
 
-#: ../pitivi/medialibrary.py:1158
+#: ../pitivi/medialibrary.py:1188
+msgid "Open containing folder"
+msgstr "Відкрити теку з даними"
+
+#: ../pitivi/medialibrary.py:1200
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
 msgstr[0] "Не використовувати проміжні кліпи для позначних даних"
@@ -1278,7 +1436,7 @@ msgstr[1] "Не використовувати проміжні кліпи дл�
 msgstr[2] "Не використовувати проміжні кліпи для позначних даних"
 msgstr[3] "Не використовувати проміжний кліп для позначних даних"
 
-#: ../pitivi/medialibrary.py:1169
+#: ../pitivi/medialibrary.py:1211
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Вилучити відповідний проміжний файл"
@@ -1286,7 +1444,7 @@ msgstr[1] "Вилучити відповідні проміжні файли"
 msgstr[2] "Вилучити відповідні проміжні файли"
 msgstr[3] "Вилучити відповідний проміжний файл"
 
-#: ../pitivi/medialibrary.py:1180
+#: ../pitivi/medialibrary.py:1222
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
 msgstr[0] "Використовувати проміжні кліпи для позначних даних"
@@ -1294,30 +1452,51 @@ msgstr[1] "Використовувати проміжні кліпи для п�
 msgstr[2] "Використовувати проміжні кліпи для позначних даних"
 msgstr[3] "Використовувати проміжний кліп для позначних даних"
 
-#: ../pitivi/preset.py:98
+#: ../pitivi/pluginmanager.py:52
+#| msgid "Manage plugins"
+msgid "User plugins"
+msgstr "Додатки користувача"
+
+#: ../pitivi/pluginmanager.py:54
+#| msgid "Manage plugins"
+msgid "System plugins"
+msgstr "Загальносистемні додатки"
+
+#: ../pitivi/preset.py:99
 msgid "Remove"
 msgstr "Вилучити"
 
-#: ../pitivi/preset.py:213
+#: ../pitivi/preset.py:215
 msgid "New preset"
 msgstr "Новий шаблон"
 
-#: ../pitivi/preset.py:216
+#: ../pitivi/preset.py:218
 #, python-format
 msgid "New preset %d"
 msgstr "Новий шаблон %d"
 
-#: ../pitivi/project.py:63
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: ../pitivi/preset.py:539
+msgid "new-profile"
+msgstr "новий-профіль"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: ../pitivi/preset.py:543
+#, python-format
+msgid "new-profile-%d"
+msgstr "новий-профіль-%d"
+
+#: ../pitivi/project.py:65
 msgid "New Project"
 msgstr "Створити проект"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:141 ../pitivi/render.py:810
+#: ../pitivi/project.py:171 ../pitivi/render.py:837
 msgid "Sorry, something didn’t work right."
 msgstr "Вибачте, щось пішло не так."
 
-#: ../pitivi/project.py:144
+#: ../pitivi/project.py:174
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1344,11 +1523,11 @@ msgstr ""
 "Перш ніж закривати вікно Pitivi, ви можете зберегти зміни до наявного файла "
 "проекту або записати їх до нового файла проекту."
 
-#: ../pitivi/project.py:159
+#: ../pitivi/project.py:189
 msgid "Close Pitivi"
 msgstr "Закрити Pitivi"
 
-#: ../pitivi/project.py:229
+#: ../pitivi/project.py:259
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1358,15 +1537,15 @@ msgstr ""
 "Якщо ви хочете додати до вашого проекту якийсь мультимедійний файл, краще "
 "скористайтеся кнопкою «Імпортувати»."
 
-#: ../pitivi/project.py:251
+#: ../pitivi/project.py:281
 msgid "Ignore backup"
 msgstr "Ігнорувати резервну копію"
 
-#: ../pitivi/project.py:252
+#: ../pitivi/project.py:282
 msgid "Restore from backup"
 msgstr "Відновлення з резервної копії"
 
-#: ../pitivi/project.py:268
+#: ../pitivi/project.py:298
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1379,20 +1558,20 @@ msgstr ""
 "\n"
 "Хочете завантажити автоматично збережену версію?"
 
-#: ../pitivi/project.py:344
+#: ../pitivi/project.py:374
 msgid "You do not have permissions to write to this folder."
 msgstr "У вас немає прав доступу для запису до цієї теки."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:377
+#: ../pitivi/project.py:407
 msgid "project"
 msgstr "проект"
 
-#: ../pitivi/project.py:673
+#: ../pitivi/project.py:714
 msgid "Pitivi encoding profile"
 msgstr "Профіль кодування Pitivi"
 
-#: ../pitivi/render.py:331
+#: ../pitivi/render.py:335
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Обробка — виконано на %d%%"
@@ -1403,27 +1582,27 @@ msgstr "Обробка — виконано на %d%%"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: ../pitivi/render.py:340
+#: ../pitivi/render.py:344
 #, python-format
 msgid "About %s left"
 msgstr "Залишилося близько %s"
 
-#: ../pitivi/render.py:384
+#: ../pitivi/render.py:387
 msgid "Currently rendering"
 msgstr "Триває обробка"
 
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: ../pitivi/render.py:620
+#: ../pitivi/render.py:644
 msgid "Unsupported"
 msgstr "Не підтримується"
 
-#: ../pitivi/render.py:654
+#: ../pitivi/render.py:678
 msgid "A file name is required."
 msgstr "Слід вказати назву файла."
 
-#: ../pitivi/render.py:656
+#: ../pitivi/render.py:680
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1432,18 +1611,18 @@ msgstr ""
 "Якщо ви не бажаєте перезаписати цей файл, виберіть іншу назву файла або іншу "
 "теку."
 
-#: ../pitivi/render.py:686
+#: ../pitivi/render.py:710
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f ГБ"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:691
+#: ../pitivi/render.py:715
 #, python-format
 msgid "%d MB"
 msgstr "%d МБ"
 
-#: ../pitivi/render.py:811
+#: ../pitivi/render.py:838
 msgid ""
 "An error occurred while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. The GStreamer error "
@@ -1453,40 +1632,56 @@ msgstr ""
 "нашими настановами щодо усування вад або повідомити розробникам про ваду у "
 "програмі. Повідомлення про помилку GStreamer:"
 
-#: ../pitivi/render.py:1040 ../pitivi/render.py:1041 ../pitivi/render.py:1047
+#: ../pitivi/render.py:1051 ../pitivi/render.py:1052 ../pitivi/render.py:1058
 msgid "Render complete"
 msgstr "Обробку завершено"
 
-#: ../pitivi/render.py:1045
+#: ../pitivi/render.py:1056
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Обробку «%s» завершено."
 
-#: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
+#: ../pitivi/titleeditor.py:44
+#| msgid "Image clip duration"
+msgid "Title clip duration"
+msgstr "Тривалість кліпу з титрами"
+
+#: ../pitivi/titleeditor.py:46
+#| msgid ""
+#| "Default clip length (in milliseconds) of images when inserting on the "
+#| "timeline."
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr ""
+"Типова тривалість (у мілісекундах) кліпу із титрами при додаванні на "
+"монтажний стіл."
+
+#: ../pitivi/titleeditor.py:105 ../pitivi/titleeditor.py:112
 msgid "Absolute"
 msgstr "Абсолютне"
 
-#: ../pitivi/titleeditor.py:92
+#: ../pitivi/titleeditor.py:106
 msgid "Top"
 msgstr "Вгорі"
 
-#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:107 ../pitivi/titleeditor.py:114
 msgid "Center"
 msgstr "У центрі"
 
-#: ../pitivi/titleeditor.py:94
+#: ../pitivi/titleeditor.py:108
 msgid "Bottom"
 msgstr "Внизу"
 
-#: ../pitivi/titleeditor.py:95
+#: ../pitivi/titleeditor.py:109
 msgid "Baseline"
 msgstr "Базова лінія"
 
-#: ../pitivi/titleeditor.py:99
+#: ../pitivi/titleeditor.py:113
 msgid "Left"
 msgstr "Ліворуч"
 
-#: ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:115
 msgid "Right"
 msgstr "Праворуч"
 
@@ -1534,23 +1729,23 @@ msgstr "Згладити"
 msgid "Currently playing"
 msgstr "Триває відтворення"
 
-#: ../pitivi/viewer/viewer.py:222
+#: ../pitivi/viewer/viewer.py:219
 msgid "Go to the beginning of the timeline"
 msgstr "Перейти до початку запису на монтажному столі"
 
-#: ../pitivi/viewer/viewer.py:229
+#: ../pitivi/viewer/viewer.py:226
 msgid "Go back one second"
 msgstr "Повернутися на одну секунду"
 
-#: ../pitivi/viewer/viewer.py:241
+#: ../pitivi/viewer/viewer.py:238
 msgid "Go forward one second"
 msgstr "Вперед на одну секунду"
 
-#: ../pitivi/viewer/viewer.py:249
+#: ../pitivi/viewer/viewer.py:246
 msgid "Go to the end of the timeline"
 msgstr "Перейти в кінець запису на монтажному столі"
 
-#: ../pitivi/viewer/viewer.py:256
+#: ../pitivi/viewer/viewer.py:253
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1558,7 +1753,7 @@ msgstr ""
 "Введіть значення часової позначки або номер кадру\n"
 "і натисніть клавішу Enter, щоб перейти до відповідної позиції"
 
-#: ../pitivi/viewer/viewer.py:264
+#: ../pitivi/viewer/viewer.py:262
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1566,18 +1761,18 @@ msgstr ""
 "Від’єднати вікно перегляду\n"
 "Повернути його в основне вікно можна закриттям новоствореного вікна."
 
-#: ../pitivi/viewer/viewer.py:354 ../pitivi/viewer/viewer.py:404
+#: ../pitivi/viewer/viewer.py:357 ../pitivi/viewer/viewer.py:408
 msgid "Show this window in fullscreen"
 msgstr "Розтягти це вікно на весь екран"
 
-#: ../pitivi/viewer/viewer.py:401
+#: ../pitivi/viewer/viewer.py:405
 msgid "Exit fullscreen mode"
 msgstr "Вийти з повноекранного режиму"
 
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: ../pitivi/timeline/elements.py:376
+#: ../pitivi/timeline/elements.py:420
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1588,31 +1783,36 @@ msgstr ""
 "Мітка часу: %s\n"
 "Значення: %s"
 
-#: ../pitivi/timeline/elements.py:1242
+#: ../pitivi/timeline/elements.py:595
+#, python-format
+msgid "Timestamp: %s"
+msgstr "Часова позначка: %s"
+
+#: ../pitivi/timeline/elements.py:1458
 msgid "Audio crossfade"
 msgstr "Перехресний перехід звуку"
 
-#: ../pitivi/timeline/layer.py:166
+#: ../pitivi/timeline/layer.py:167
 msgid "Move layer to top"
 msgstr "Пересунути шар на початок списку"
 
-#: ../pitivi/timeline/layer.py:172
+#: ../pitivi/timeline/layer.py:173
 msgid "Move layer up"
 msgstr "Пересунути шар вище"
 
-#: ../pitivi/timeline/layer.py:178
+#: ../pitivi/timeline/layer.py:179
 msgid "Move layer down"
 msgstr "Пересунути шар нижче"
 
-#: ../pitivi/timeline/layer.py:184
+#: ../pitivi/timeline/layer.py:185
 msgid "Move layer to bottom"
 msgstr "Пересунути шар у кінець списку"
 
-#: ../pitivi/timeline/layer.py:190
+#: ../pitivi/timeline/layer.py:191
 msgid "Delete layer"
 msgstr "Вилучити шар"
 
-#: ../pitivi/timeline/layer.py:274
+#: ../pitivi/timeline/layer.py:280
 #, python-format
 msgid "Layer %d"
 msgstr "Шар %d"
@@ -1656,67 +1856,72 @@ msgstr ""
 "Визначає, чи буде клацання лівою використано для позиціювання, окрім "
 "позначення та редагування кліпів."
 
-#: ../pitivi/timeline/timeline.py:1469 ../pitivi/dialogs/prefs.py:53
+#: ../pitivi/timeline/timeline.py:1502 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Монтажний стіл"
 
-#: ../pitivi/timeline/timeline.py:1476
+#: ../pitivi/timeline/timeline.py:1509
 msgid "Delete selected clips"
 msgstr "Вилучити позначені кліпи"
 
-#: ../pitivi/timeline/timeline.py:1482
+#: ../pitivi/timeline/timeline.py:1515
+#| msgid "Delete selected clips"
+msgid "Delete selected clips and shift following ones"
+msgstr "Вилучити позначені кліпи і посунути наступні"
+
+#: ../pitivi/timeline/timeline.py:1521
 msgid "Group selected clips together"
 msgstr "Згрупувати позначені кліпи"
 
-#: ../pitivi/timeline/timeline.py:1488
+#: ../pitivi/timeline/timeline.py:1527
 msgid "Ungroup selected clips"
 msgstr "Розгрупувати позначені кліпи"
 
-#: ../pitivi/timeline/timeline.py:1494
+#: ../pitivi/timeline/timeline.py:1533
 msgid "Copy selected clips"
 msgstr "Скопіювати позначені кліпи"
 
-#: ../pitivi/timeline/timeline.py:1500
+#: ../pitivi/timeline/timeline.py:1539
 msgid "Paste selected clips"
 msgstr "Вставити позначені кліпи"
 
-#: ../pitivi/timeline/timeline.py:1512
+#: ../pitivi/timeline/timeline.py:1552
 msgid "Split the clip at the position"
 msgstr "Розділити кліп за поточною позицією"
 
-#: ../pitivi/timeline/timeline.py:1518
+#: ../pitivi/timeline/timeline.py:1558
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Додати ключовий кадр до кривої ключових кадрів позначеного кліпу"
 
-#: ../pitivi/timeline/timeline.py:1523
+#: ../pitivi/timeline/timeline.py:1563
 msgid "Timeline Navigation"
 msgstr "Навігація монтажним столом"
 
-#: ../pitivi/timeline/timeline.py:1530
+#: ../pitivi/timeline/timeline.py:1570
 msgid "Zoom in"
 msgstr "Збільшити"
 
-#: ../pitivi/timeline/timeline.py:1536
+#: ../pitivi/timeline/timeline.py:1576
 msgid "Zoom out"
 msgstr "Зменшити"
 
-#: ../pitivi/timeline/timeline.py:1542
+#: ../pitivi/timeline/timeline.py:1582
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Скоригувати масштаб так, щоб проект вміщався у вікні"
 
-#: ../pitivi/timeline/timeline.py:1553
+#: ../pitivi/timeline/timeline.py:1593
 msgid "Seek backward one frame"
 msgstr "Назад на один кадр"
 
-#: ../pitivi/timeline/timeline.py:1559
+#: ../pitivi/timeline/timeline.py:1599
 msgid "Seek forward one frame"
 msgstr "Вперед на один кадр"
 
-#: ../pitivi/timeline/timeline.py:1566
+#: ../pitivi/timeline/timeline.py:1606
 msgid "Seek backward one second"
 msgstr "Назад на одну секунду"
 
-#: ../pitivi/timeline/timeline.py:1573
+#: ../pitivi/timeline/timeline.py:1613
 msgid "Seek forward one second"
 msgstr "Вперед на одну секунду"
 
@@ -1742,43 +1947,48 @@ msgstr "Проблема:"
 msgid "Extra information:"
 msgstr "Додаткова інформація:"
 
+#: ../pitivi/dialogs/prefs.py:62
+#| msgid "Plugin"
+msgid "Plugins"
+msgstr "Додатки"
+
+#: ../pitivi/dialogs/prefs.py:63
+msgid "Shortcuts"
+msgstr "Клавіатурні скорочення"
+
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:677
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:898
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:741
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:962
 msgid "Reset to default value"
 msgstr "Відновити типове значення"
 
-#: ../pitivi/dialogs/prefs.py:250
-msgid "Shortcuts"
-msgstr "Клавіатурні скорочення"
-
-#: ../pitivi/dialogs/prefs.py:280
+#: ../pitivi/dialogs/prefs.py:347
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Скинути скорочення до типового"
 
-#: ../pitivi/dialogs/prefs.py:436
+#: ../pitivi/dialogs/prefs.py:503
 msgid "Set Shortcut"
 msgstr "Встановити клавіатурне скорочення"
 
 #. Setup the widgets used in the dialog.
-#: ../pitivi/dialogs/prefs.py:451
+#: ../pitivi/dialogs/prefs.py:518
 msgid "Apply"
 msgstr "Застосувати"
 
-#: ../pitivi/dialogs/prefs.py:454
+#: ../pitivi/dialogs/prefs.py:521
 msgid "Apply the accelerator to this shortcut."
 msgstr "Застосувати клавіші-акселератори для цього скорочення."
 
-#: ../pitivi/dialogs/prefs.py:457
+#: ../pitivi/dialogs/prefs.py:524
 msgid "Replace"
 msgstr "Замінити"
 
-#: ../pitivi/dialogs/prefs.py:460
+#: ../pitivi/dialogs/prefs.py:527
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
@@ -1786,12 +1996,12 @@ msgstr ""
 "Вилучити цей акселератор з місця, де він раніше використовувався, і "
 "встановити його для цього скорочення."
 
-#: ../pitivi/dialogs/prefs.py:467
+#: ../pitivi/dialogs/prefs.py:534
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr "Уведіть нове скорочення для <b>%s</b> або натисніть Esc."
 
-#: ../pitivi/dialogs/prefs.py:476
+#: ../pitivi/dialogs/prefs.py:543
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -1800,7 +2010,7 @@ msgstr ""
 "ласка, додайте до нього якусь клавішу-модифікатор, наприклад Ctrl, Shift або "
 "Alt."
 
-#: ../pitivi/dialogs/prefs.py:510
+#: ../pitivi/dialogs/prefs.py:577
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -1808,6 +2018,16 @@ msgid ""
 msgstr ""
 "Цю комбінацію клавіш вже використано для <b>%s</b>. Натисніть кнопку "
 "«Замінити», якщо хочете скористатися нею для <b>%s</b>."
+
+#: ../pitivi/dialogs/prefs.py:620
+#| msgid "No device available"
+msgid "No description available."
+msgstr "Опису немає."
+
+#: ../pitivi/dialogs/prefs.py:731
+#, python-brace-format
+msgid "Unable to load the plugin '{module_name}'"
+msgstr "Не вдалося завантажити додаток «{module_name}»"
 
 #: ../pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
@@ -1818,7 +2038,7 @@ msgstr "Проекти"
 msgid "Pitivi %s is available."
 msgstr "Випущено Pitivi %s."
 
-#: ../pitivi/utils/misc.py:282
+#: ../pitivi/utils/misc.py:289
 msgid ""
 "Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
 "documentation viewer or a web browser installed"
@@ -1827,7 +2047,7 @@ msgstr ""
 "належно встановлено або програму для перегляду документації GNOME yelp, або "
 "програму для перегляду сторінок інтернету."
 
-#: ../pitivi/utils/misc.py:291
+#: ../pitivi/utils/misc.py:298
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
@@ -1840,19 +2060,34 @@ msgstr ""
 "продовжувати працювати з Pitivi на такій некоректній локалі, можливі усілякі "
 "дивні помилки."
 
-#: ../pitivi/utils/misc.py:301
+#: ../pitivi/utils/misc.py:308
 msgid "Error while decoding a string"
 msgstr "Помилка під час спроби декодування рядка"
 
-#: ../pitivi/utils/ui.py:281
+#: ../pitivi/utils/ui.py:284
 #, python-format
-#| msgid ""
-#| "\n"
-#| "<b>Proxy creation progress: "
+#| msgid "<b>Duration</b>: %s"
+msgid "<b>Duration:</b> %s"
+msgstr "<b>Тривалість:</b> %s"
+
+#: ../pitivi/utils/ui.py:287
+#, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Поступ створення проміжного кліпу: %d%%"
 
-#: ../pitivi/utils/ui.py:307
+#: ../pitivi/utils/ui.py:300
+#, python-format
+#| msgid "<b>Duration</b>: %s"
+msgid "<b>Path</b>: %s"
+msgstr "<b>Шлях</b>: %s"
+
+#: ../pitivi/utils/ui.py:309
+#, python-format
+#| msgid "<b>Size</b>"
+msgid "<b>Size</b>: %s"
+msgstr "<b>Розмір</b>: %s"
+
+#: ../pitivi/utils/ui.py:335
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
@@ -1861,18 +2096,18 @@ msgstr[1] "<b>Аудіо:</b> %d канали, %d <i>Гц</i> (%d <i>біт</i>)
 msgstr[2] "<b>Аудіо:</b> %d каналів, %d <i>Гц</i> (%d <i>біт</i>)"
 msgstr[3] "<b>Аудіо:</b> %d канал, %d <i>Гц</i> (%d <i>біт</i>)"
 
-#: ../pitivi/utils/ui.py:317
+#: ../pitivi/utils/ui.py:345
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgstr "<b>Відео:</b> %d⨯%d <i>пікселів</i>, %.3f <i>кд/с</i>"
 
-#: ../pitivi/utils/ui.py:325
+#: ../pitivi/utils/ui.py:353
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Зображення:</b> %d⨯%d <i>пікселів</i>"
 
-#: ../pitivi/utils/ui.py:380 ../pitivi/utils/ui.py:407
-#: ../pitivi/utils/ui.py:431
+#: ../pitivi/utils/ui.py:408 ../pitivi/utils/ui.py:435
+#: ../pitivi/utils/ui.py:459
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -1881,8 +2116,8 @@ msgstr[1] "%d години"
 msgstr[2] "%d годин"
 msgstr[3] "%d година"
 
-#: ../pitivi/utils/ui.py:383 ../pitivi/utils/ui.py:410
-#: ../pitivi/utils/ui.py:434
+#: ../pitivi/utils/ui.py:411 ../pitivi/utils/ui.py:438
+#: ../pitivi/utils/ui.py:462
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -1891,8 +2126,8 @@ msgstr[1] "%d хвилини"
 msgstr[2] "%d хвилин"
 msgstr[3] "%d хвилина"
 
-#: ../pitivi/utils/ui.py:386 ../pitivi/utils/ui.py:413
-#: ../pitivi/utils/ui.py:437
+#: ../pitivi/utils/ui.py:414 ../pitivi/utils/ui.py:441
+#: ../pitivi/utils/ui.py:465
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -1901,7 +2136,7 @@ msgstr[1] "%d секунди"
 msgstr[2] "%d секунд"
 msgstr[3] "%d секунда"
 
-#: ../pitivi/utils/ui.py:405
+#: ../pitivi/utils/ui.py:433
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -1911,162 +2146,175 @@ msgstr[2] "%d днів"
 msgstr[3] "%d день"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:541 ../pitivi/utils/ui.py:542
-#: ../pitivi/utils/ui.py:543 ../pitivi/utils/ui.py:545
-#: ../pitivi/utils/ui.py:546 ../pitivi/utils/ui.py:548
-#: ../pitivi/utils/ui.py:549 ../pitivi/utils/ui.py:551
-#: ../pitivi/utils/ui.py:552
+#: ../pitivi/utils/ui.py:580 ../pitivi/utils/ui.py:581
+#: ../pitivi/utils/ui.py:582 ../pitivi/utils/ui.py:584
+#: ../pitivi/utils/ui.py:585 ../pitivi/utils/ui.py:587
+#: ../pitivi/utils/ui.py:588 ../pitivi/utils/ui.py:590
+#: ../pitivi/utils/ui.py:591
 #, python-format
 msgid "%d fps"
 msgstr "%d кд/с"
 
-#: ../pitivi/utils/ui.py:544
+#: ../pitivi/utils/ui.py:583
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f кд/с"
 
-#: ../pitivi/utils/ui.py:547 ../pitivi/utils/ui.py:550
+#: ../pitivi/utils/ui.py:586 ../pitivi/utils/ui.py:589
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f кд/с"
 
-#: ../pitivi/utils/ui.py:556 ../pitivi/utils/ui.py:557
-#: ../pitivi/utils/ui.py:558 ../pitivi/utils/ui.py:559
-#: ../pitivi/utils/ui.py:560 ../pitivi/utils/ui.py:561
-#: ../pitivi/utils/ui.py:563 ../pitivi/utils/ui.py:564
+#: ../pitivi/utils/ui.py:595 ../pitivi/utils/ui.py:596
+#: ../pitivi/utils/ui.py:597 ../pitivi/utils/ui.py:598
+#: ../pitivi/utils/ui.py:599 ../pitivi/utils/ui.py:600
+#: ../pitivi/utils/ui.py:602 ../pitivi/utils/ui.py:603
 #, python-format
 msgid "%d kHz"
 msgstr "%d кГц"
 
-#: ../pitivi/utils/ui.py:562
+#: ../pitivi/utils/ui.py:601
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f кГц"
 
-#: ../pitivi/utils/ui.py:567
+#: ../pitivi/utils/ui.py:606
 msgid "6 Channels (5.1)"
 msgstr "6 каналів (5.1)"
 
-#: ../pitivi/utils/ui.py:568
+#: ../pitivi/utils/ui.py:607
 msgid "4 Channels (4.0)"
 msgstr "4 канали (4.0)"
 
-#: ../pitivi/utils/ui.py:569
+#: ../pitivi/utils/ui.py:608
 msgid "Stereo"
 msgstr "Стерео"
 
-#: ../pitivi/utils/ui.py:570
+#: ../pitivi/utils/ui.py:609
 msgid "Mono"
 msgstr "Моно"
 
-#: ../pitivi/utils/ui.py:575
+#: ../pitivi/utils/ui.py:614
 msgid "Square"
 msgstr "Квадрат"
 
-#: ../pitivi/utils/ui.py:576
+#: ../pitivi/utils/ui.py:615
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:577
+#: ../pitivi/utils/ui.py:616
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:578
+#: ../pitivi/utils/ui.py:617
 msgid "480p Wide"
 msgstr "480p, широкий"
 
-#: ../pitivi/utils/ui.py:579
+#: ../pitivi/utils/ui.py:618
 msgid "480i Wide"
 msgstr "480i, широкий"
 
-#: ../pitivi/utils/ui.py:580
+#: ../pitivi/utils/ui.py:619
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:581
+#: ../pitivi/utils/ui.py:620
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:582
+#: ../pitivi/utils/ui.py:621
 msgid "576p Wide"
 msgstr "576p, широкий"
 
-#: ../pitivi/utils/ui.py:583
+#: ../pitivi/utils/ui.py:622
 msgid "576i Wide"
 msgstr "576i, широкий"
 
-#: ../pitivi/utils/ui.py:587
+#: ../pitivi/utils/ui.py:626
 msgid "Standard (4:3)"
 msgstr "Стандартне (4:3)"
 
-#: ../pitivi/utils/ui.py:588
+#: ../pitivi/utils/ui.py:627
 msgid "DV (15:11)"
 msgstr "DV (15:11)"
 
-#: ../pitivi/utils/ui.py:589
+#: ../pitivi/utils/ui.py:628
 msgid "DV Widescreen (16:9)"
 msgstr "DV, широкоекранний (16:9)"
 
-#: ../pitivi/utils/ui.py:590
+#: ../pitivi/utils/ui.py:629
 msgid "Cinema (1.37)"
 msgstr "Кіноплівка (1,37)"
 
-#: ../pitivi/utils/ui.py:591
+#: ../pitivi/utils/ui.py:630
 msgid "Cinema (1.66)"
 msgstr "Кіноплівка (1,66)"
 
-#: ../pitivi/utils/ui.py:592
+#: ../pitivi/utils/ui.py:631
 msgid "Cinema (1.85)"
 msgstr "Кіноплівка (1,85)"
 
-#: ../pitivi/utils/ui.py:593
+#: ../pitivi/utils/ui.py:632
 msgid "Anamorphic (2.35)"
 msgstr "Анаморфозне (2,35)"
 
-#: ../pitivi/utils/ui.py:594
+#: ../pitivi/utils/ui.py:633
 msgid "Anamorphic (2.39)"
 msgstr "Анаморфозне (2,39)"
 
-#: ../pitivi/utils/ui.py:595
+#: ../pitivi/utils/ui.py:634
 msgid "Anamorphic (2.4)"
 msgstr "Анаморфозне (2,4)"
 
-#: ../pitivi/utils/widgets.py:76
+#: ../pitivi/utils/widgets.py:79
 msgid "Implement Me"
 msgstr "Ще не реалізовано"
 
-#: ../pitivi/utils/widgets.py:642
+#: ../pitivi/utils/widgets.py:853
 msgid "No properties."
 msgstr "Немає властивостей."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:726
+#: ../pitivi/utils/widgets.py:947
 msgid "Show keyframes for this value"
 msgstr "Показати ключові кадри для цього значення"
 
-#: ../pitivi/utils/widgets.py:893
+#: ../pitivi/utils/widgets.py:1119
 #, python-format
 msgid "Properties for %s"
 msgstr "Властивості %s"
 
-#: ../pitivi/utils/widgets.py:1030
+#: ../pitivi/utils/widgets.py:1256
 msgid "Zoom Fit"
 msgstr "Підібрати за розмірами"
 
-#: ../pitivi/utils/widgets.py:1035
+#: ../pitivi/utils/widgets.py:1261
 msgid "Zoom"
 msgstr "Масштаб"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1109
+#: ../pitivi/utils/widgets.py:1335
 #, python-format
 msgid "%s displayed"
 msgstr "показано %s"
 
-#: ../pitivi/utils/widgets.py:1113
+#: ../pitivi/utils/widgets.py:1339
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Показано %d наносекунд, бо ми можемо"
+
+#~ msgid "Advanced positioning"
+#~ msgstr "Додаткові можливості позиціювання"
+
+#~ msgid ""
+#~ "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
+#~ "Please specify its new location:"
+#~ msgstr ""
+#~ "Цей файл було пересунуто: «<b>%s</b>» (тривалість: %s)\n"
+#~ "Будь ласка, вкажіть його нове розташування:"
+
+#~ msgid "Duration"
+#~ msgstr "Тривалість"
 
 #~ msgid "Properties for <element>"
 #~ msgstr "Властивості <element>"
@@ -2121,9 +2369,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 
 #~ msgid "Save changes to the currently selected preset"
 #~ msgstr "Зберегти зміни, внесені до поточного шаблону"
-
-#~ msgid "x"
-#~ msgstr "⨯"
 
 #~ msgid "Audio Preset"
 #~ msgstr "Аудіошаблон"
@@ -2338,9 +2583,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ msgid "Behavior"
 #~ msgstr "Поведінка"
 
-#~ msgid "Add a keyframe"
-#~ msgstr "Додати ключовий кадр"
-
 #~ msgid "Move to the previous keyframe"
 #~ msgstr "Перейти до попереднього ключового кадру"
 
@@ -2352,12 +2594,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 
 #~ msgid "Add a Keyframe"
 #~ msgstr "Додати ключовий кадр"
-
-#~ msgid "_Previous Keyframe"
-#~ msgstr "_Попередній ключовий кадр"
-
-#~ msgid "_Next Keyframe"
-#~ msgstr "_Наступний ключовий кадр"
 
 #~ msgid "%s doesn't yet handle non-local projects"
 #~ msgstr "У %s ще не передбачено обробки нелокальних проектів"
@@ -2396,9 +2632,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ "переходи між частинами відео.</li> <li>Зручність у користуванні на "
 #~ "багатомоніторних конфігураціях з можливістю розташування елементів "
 #~ "інтерфейсу на різних екранах.</li> </ul>"
-
-#~ msgid "<b>Size</b>"
-#~ msgstr "<b>Розмір</b>"
 
 #~ msgid "<b>Crop</b>"
 #~ msgstr "<b>Обрізати</b>"
@@ -2948,9 +3181,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ msgid "Audio Capture Device:"
 #~ msgstr "Пристрій захоплення звуку:"
 
-#~ msgid "No device available"
-#~ msgstr "Жоден пристрій не доступний"
-
 #~ msgid "Video Capture Device:"
 #~ msgstr "Пристрій захоплення відео:"
 
@@ -3027,9 +3257,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ msgid "_Plugins..."
 #~ msgstr "_Додатки…"
 
-#~ msgid "Manage plugins"
-#~ msgstr "Керування додатками"
-
 #~ msgid "Import from _Webcam..."
 #~ msgstr "Імпортувати з _веб-камери…"
 
@@ -3105,9 +3332,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ msgstr ""
 #~ "Щоб встановити додатки, перетягніть їх до цього списку.\n"
 #~ "Щоб знайти певний додаток, введіть ключ пошуку."
-
-#~ msgid "Plugin"
-#~ msgstr "Додаток"
 
 #~ msgid "Category"
 #~ msgstr "Категорія"
@@ -3226,9 +3450,6 @@ msgstr "Показано %d наносекунд, бо ми можемо"
 #~ msgstr ""
 #~ "Вказаний файл було пересунуто, будь ласка, повідомте Pitivi його нову "
 #~ "адресу."
-
-#~ msgid "Duration:"
-#~ msgstr "Тривалість:"
 
 #~ msgid "Importing clips..."
 #~ msgstr "Імпортування кліпів…"
