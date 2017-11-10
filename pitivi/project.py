@@ -127,6 +127,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.disable_save = False
         self._backup_lock = 0
         self.exitcode = 0
+        self.__start_loading_time = 0
 
     def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
@@ -249,6 +250,7 @@ class ProjectManager(GObject.Object, Loggable):
             uri = None
 
         # Load the project:
+        self.__start_loading_time = time.time()
         project = Project(self.app, uri=uri, scenario=scenario)
         self.emit("new-project-loading", project)
 
@@ -526,6 +528,7 @@ class ProjectManager(GObject.Object, Loggable):
                 # The user has not made a decision, don't do anything
                 return False
 
+        self.__start_loading_time = time.time()
         project = Project(self.app, name=DEFAULT_NAME)
         self.emit("new-project-loading", project)
 
@@ -623,6 +626,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.emit("new-project-loaded", project)
         project.loaded = True
         self.time_loaded = time.time()
+        self.info("Loaded in %s", self.time_loaded - self.__start_loading_time)
 
 
 class Project(Loggable, GES.Project):
