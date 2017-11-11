@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pitivi\n"
 "Report-Msgid-Bugs-To: http://developer.pitivi.org/Bug_reporting.html\n"
-"POT-Creation-Date: 2017-10-17 10:18+0000\n"
+"POT-Creation-Date: 2017-11-07 14:48+0000\n"
 "PO-Revision-Date: 2017-10-24 20:25+0200\n"
 "Last-Translator: Alan Mortensen <alanmortensen.am@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -1037,7 +1037,7 @@ msgstr "Omgør"
 #: ../pitivi/mainwindow.py:415 ../pitivi/mainwindow.py:782
 #: ../pitivi/mainwindow.py:1098 ../pitivi/mainwindow.py:1150
 #: ../pitivi/mainwindow.py:1203 ../pitivi/preset.py:105
-#: ../pitivi/project.py:188
+#: ../pitivi/project.py:189
 msgid "Save"
 msgstr "Gem"
 
@@ -1154,7 +1154,7 @@ msgstr "Alle understøttede formater"
 msgid "Unable to save project \"%s\""
 msgstr "Kunne ikke gemme projektet “%s”"
 
-#: ../pitivi/mainwindow.py:784 ../pitivi/project.py:187
+#: ../pitivi/mainwindow.py:784 ../pitivi/project.py:188
 msgid "Save as..."
 msgstr "Gem som …"
 
@@ -1451,12 +1451,12 @@ msgstr "Nyt project"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:171 ../pitivi/render.py:837
+#: ../pitivi/project.py:172 ../pitivi/render.py:837
 msgid "Sorry, something didn’t work right."
 msgstr "Beklager, noget gik galt."
 
 # Har tilladt mig at ændre linket til et, der dur.
-#: ../pitivi/project.py:174
+#: ../pitivi/project.py:175
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1483,11 +1483,11 @@ msgstr ""
 "Inden du lukker Pitivi, kan du gemme ændringer til den eksisterende "
 "projektfil eller som en separat projektfil."
 
-#: ../pitivi/project.py:189
+#: ../pitivi/project.py:190
 msgid "Close Pitivi"
 msgstr "Luk Pitivi"
 
-#: ../pitivi/project.py:259
+#: ../pitivi/project.py:260
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1497,15 +1497,15 @@ msgstr ""
 "Hvis du prøvede at tilføje en mediefil til dit projekt, så brug “Import”-"
 "knappen i stedet."
 
-#: ../pitivi/project.py:281
+#: ../pitivi/project.py:282
 msgid "Ignore backup"
 msgstr "Ignorér sikkerhedskopi"
 
-#: ../pitivi/project.py:282
+#: ../pitivi/project.py:283
 msgid "Restore from backup"
 msgstr "Gendan fra sikkerhedskopi"
 
-#: ../pitivi/project.py:298
+#: ../pitivi/project.py:299
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1518,16 +1518,16 @@ msgstr ""
 "\n"
 "Vil du indlæse denne i stedet?"
 
-#: ../pitivi/project.py:374
+#: ../pitivi/project.py:375
 msgid "You do not have permissions to write to this folder."
 msgstr "Du har ikke rettigheder til at skrive til denne mappe."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:407
+#: ../pitivi/project.py:408
 msgid "project"
 msgstr "projekt"
 
-#: ../pitivi/project.py:714
+#: ../pitivi/project.py:715
 msgid "Pitivi encoding profile"
 msgstr "Pitivi-kodningsprofil"
 
@@ -1975,7 +1975,7 @@ msgstr "Ingen beskrivelse tilgængelig."
 #: ../pitivi/dialogs/prefs.py:731
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
-msgstr "Kunne ikke indlæse udvidelsesmodulet \"{module_name}\""
+msgstr "Kunne ikke indlæse udvidelsesmodulet “{module_name}”"
 
 #: ../pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
@@ -2413,7 +2413,7 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 
 #~ msgid "You do not have a GStreamer source element to handle protocol '%s'"
 #~ msgstr ""
-#~ "Du har ikke et GStreamer kildeelement til at håndtere protokollen \"%s\""
+#~ "Du har ikke et GStreamer kildeelement til at håndtere protokollen “%s”"
 
 #~ msgid "Pipeline didn't want to go to PAUSED."
 #~ msgstr "Kanalen ville ikke skifte til PAUSED (PAUSE)."
@@ -2445,7 +2445,7 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ "\n"
 #~ "      %prog [-r UDDATAFIL] [PROJEKTFIL]\n"
 #~ "      %prog [PROJEKTFIL]\n"
-#~ "      %prog -i [-a] [MEDIEFIL]..."
+#~ "      %prog -i [-a] [MEDIEFIL] …"
 
 #, fuzzy
 #~ msgid ""
@@ -2556,7 +2556,7 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ msgstr "Tilpas"
 
 #~ msgid "Choose..."
-#~ msgstr "Vælg..."
+#~ msgstr "Vælg …"
 
 #~ msgid "<b>Author:</b>"
 #~ msgstr "<b>Forfatter:</b>"
@@ -2742,25 +2742,25 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ msgstr "Omgør den sidste fortrudte operation"
 
 #~ msgid "_Plugins..."
-#~ msgstr "_Udvidelsesmoduler..."
+#~ msgstr "_Udvidelsesmoduler …"
 
 #~ msgid "_Preferences"
 #~ msgstr "_Indstillinger"
 
 #~ msgid "Import from _Webcam..."
-#~ msgstr "Importér fra _webkamera..."
+#~ msgstr "Importér fra _webkamera …"
 
 #~ msgid "Import Camera stream"
 #~ msgstr "Importér kamerastream"
 
 #~ msgid "_Make screencast..."
-#~ msgstr "_Lav skærmoptagelse..."
+#~ msgstr "_Lav skærmoptagelse …"
 
 #~ msgid "Capture the desktop"
 #~ msgstr "Indspil skrivebordet"
 
 #~ msgid "_Capture Network Stream..."
-#~ msgstr "_Indspil netværksstream..."
+#~ msgstr "_Indspil netværksstream …"
 
 #~ msgid "Capture Network Stream"
 #~ msgstr "Indspil netværksstream"
@@ -2947,7 +2947,7 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ msgstr "Start Istanbul"
 
 #~ msgid "Import clips..."
-#~ msgstr "Importer klip..."
+#~ msgstr "Importer klip …"
 
 #~ msgid ""
 #~ "<span>Import your clips by dragging them here or by using the buttons "
@@ -2957,13 +2957,13 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ "knapperne oven for.</span>"
 
 #~ msgid "_Import clips..."
-#~ msgstr "Imp_ortér klip..."
+#~ msgstr "Imp_ortér klip …"
 
 #~ msgid "Import clips to use"
 #~ msgstr "Importér klip som skal bruges"
 
 #~ msgid "Import _folder of clips..."
-#~ msgstr "Import_mappe til klip..."
+#~ msgstr "Import_mappe til klip …"
 
 #~ msgid "Import folder of clips to use"
 #~ msgstr "Importér mappe af klip som skal bruges"
@@ -2972,7 +2972,7 @@ msgstr "%d nanosekunder vist, fordi vi kan"
 #~ msgstr "Importér en mappe"
 
 #~ msgid "Importing clips..."
-#~ msgstr "Importerer klippene..."
+#~ msgstr "Importerer klippene …"
 
 #~ msgid "Error(s) occurred while importing"
 #~ msgstr "Der opstod fejl under import"
