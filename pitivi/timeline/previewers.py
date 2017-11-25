@@ -1004,9 +1004,10 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                 self._launchPipeline()
                 self.becomeControlled()
             else:
-                Gst.debug_bin_to_dot_file_with_ts(self.pipeline,
-                                                  Gst.DebugGraphDetails.ALL,
-                                                  "error-generating-waveforms")
+                if self.pipeline:
+                    Gst.debug_bin_to_dot_file_with_ts(self.pipeline,
+                                                      Gst.DebugGraphDetails.ALL,
+                                                      "error-generating-waveforms")
                 self.error("Aborting due to waveforms generation issue: %s",
                            message.parse_error())
 
