@@ -1244,6 +1244,7 @@ class Project(Loggable, GES.Project):
                 self.debug("The following assets are still being transcoded: %s."
                            " (They must be proxied assets with missing/deleted"
                            " proxy files).", self.loading_assets)
+            self.__updateAssetLoadingProgress()
 
         if self.scenario is not None:
             return
