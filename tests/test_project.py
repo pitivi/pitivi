@@ -344,6 +344,16 @@ class TestProjectLoading(common.TestCase):
 
         self.assertEqual(len(assets), 1, assets)
 
+    def create_project_file_from_xges(self, app, xges):
+        unused, xges_path = tempfile.mkstemp(suffix=".xges")
+        proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
+        app.project_manager.saveProject(uri=proj_uri)
+
+        with open(xges_path, "w") as f:
+            f.write(xges)
+
+        return proj_uri
+
     def load_project_with_missing_proxy(self):
         """Loads a project with missing proxies."""
         uris = [common.get_sample_uri("1sec_simpsons_trailer.mp4")]
@@ -377,16 +387,11 @@ class TestProjectLoading(common.TestCase):
         app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
         proxy_manager = app.proxy_manager
         project_manager = app.project_manager
+        medialib = medialibrary.MediaLibraryWidget(app)
 
         mainloop = common.create_main_loop()
 
-        unused, xges_path = tempfile.mkstemp(suffix=".xges")
-        proj_uri = "file://" + os.path.abspath(xges_path)
-        app.project_manager.saveProject(uri=proj_uri)
-        medialib = medialibrary.MediaLibraryWidget(app)
-
-        with open(proj_uri[len("file://"):], "w") as f:
-            f.write(PROJECT_STR)
+        proj_uri = self.create_project_file_from_xges(app, PROJECT_STR)
 
         # Remove proxy
         common.clean_proxy_samples()
@@ -471,6 +476,39 @@ class TestProjectLoading(common.TestCase):
         self.assertEqual(asset.creation_progress, 100)
         self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
                          medialibrary.AssetThumbnail.PROXIED)
+
+    def test_loading_project_with_moved_asset(self):
+        """Loads a project with moved asset."""
+        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.NOTHING)
+
+        proj_uri = self.create_project_file_from_xges(app, """<ges version='0.3'>
+            <project properties='properties;' metadatas='metadatas;'>
+                <ressources>
+                    <asset id='file://this/is/a/moved/asset.mp4' extractable-type-name='GESUriClip'
+                        properties='properties, supported-formats=(int)6, duration=(guint64)1228000000;' metadatas='metadatas' />
+                </ressources>
+            </project>
+            </ges>""")
+        project_manager = app.project_manager
+        medialib = medialibrary.MediaLibraryWidget(app)
+
+        mainloop = common.create_main_loop()
+
+        # Remove proxy
+        common.clean_proxy_samples()
+
+        def new_project_loaded_cb(*args, **kwargs):
+            mainloop.quit()
+
+        def missing_uri_cb(project_manager, project, unused_error, asset):
+            return common.get_sample_uri("1sec_simpsons_trailer.mp4")
+
+        project_manager.connect("missing-uri", missing_uri_cb)
+        project_manager.connect("new-project-loaded", new_project_loaded_cb)
+
+        project_manager.loadProject(proj_uri)
+        mainloop.run()
+        self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
 
 
 class TestProjectSettings(common.TestCase):
