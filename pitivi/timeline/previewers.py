@@ -446,7 +446,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.thumbs = {}
         self.thumb_cache = ThumbnailCache.get(self.uri)
         self._ensure_proxy_thumbnails_cache()
-        self.thumb_width, unused_height = self.thumb_cache.getImagesSize()
+        self.thumb_width, unused_height = self.thumb_cache.image_size
 
         self.cpu_usage_tracker = CPUUsageTracker()
         self.interval = 500  # Every 0.5 second, reevaluate the situation
@@ -753,12 +753,12 @@ class Thumbnail(Gtk.Image):
 
 
 class ThumbnailCache(Loggable):
-    """Caches an asset's thumbnails by key, using LRU policy.
+    """Cache for the thumbnails of an asset.
 
-    Uses a two stage caching mechanism. A limited number of elements are
-    held in memory, the rest is being cached on disk in an SQLite db.
+    Uses a separate sqlite3 database for each asset.
     """
 
+    # The cache of caches.
     caches_by_uri = {}
 
     def __init__(self, uri):
@@ -767,10 +767,18 @@ class ThumbnailCache(Loggable):
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
         self._db = sqlite3.connect(self._dbfile)
-        self._cur = self._db.cursor()  # Use this for normal db operations
-        self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs\
-                          (Time INTEGER NOT NULL PRIMARY KEY,\
-                          Jpeg BLOB NOT NULL)")
+        self._cur = self._db.cursor()
+        self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs "
+                          "(Time INTEGER NOT NULL PRIMARY KEY, "
+                          " Jpeg BLOB NOT NULL)")
+        # The cached (width, height) of the images.
+        self._image_size = (None, None)
+        # The cached positions available in the database.
+        self.positions = self.__existing_positions()
+
+    def __existing_positions(self):
+        self._cur.execute("SELECT Time FROM Thumbs")
+        return set([row[0] for row in self._cur.fetchall()])
 
     @classmethod
     def get(cls, obj):
@@ -810,70 +818,69 @@ class ThumbnailCache(Loggable):
             pass
         os.symlink(self._dbfile, dbfile)
 
-    def getImagesSize(self):
+    @property
+    def image_size(self):
         """Gets the image size.
 
         Returns:
             List[int]: The width and height of the images in the cache.
         """
-        self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
-        row = self._cur.fetchone()
-        if not row:
-            return None, None
+        if self._image_size[0] is None:
+            self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
+            row = self._cur.fetchone()
+            if row:
+                pixbuf = self.__pixbuf_from_row(row)
+                self._image_size = (pixbuf.get_width(), pixbuf.get_height())
+        return self._image_size
 
-        pixbuf = self.__getPixbufFromRow(row)
-        return pixbuf.get_width(), pixbuf.get_height()
-
-    def getPreviewThumbnail(self):
+    def get_preview_thumbnail(self):
         """Gets a thumbnail contained 'at the middle' of the cache."""
-        self._cur.execute("SELECT Time FROM Thumbs")
-        timestamps = self._cur.fetchall()
-        if not timestamps:
+        if not self.positions:
             return None
 
-        return self[timestamps[int(len(timestamps) / 2)][0]]
+        middle = int(len(self.positions) / 2)
+        position = sorted(list(self.positions))[middle]
+        return self[position]
 
-    # pylint: disable=no-self-use
-    def __getPixbufFromRow(self, row):
+    @staticmethod
+    def __pixbuf_from_row(row):
+        """Returns the GdkPixbuf.Pixbuf from the specified row."""
         jpeg = row[1]
         loader = GdkPixbuf.PixbufLoader.new()
-        # TODO: what do to if any of the following calls fails?
         loader.write(jpeg)
         loader.close()
         pixbuf = loader.get_pixbuf()
         return pixbuf
 
-    def __contains__(self, key):
-        # check if item is present in on disk cache
-        self._cur.execute("SELECT Time FROM Thumbs WHERE Time = ?", (key,))
-        if self._cur.fetchone():
-            return True
-        return False
+    def __contains__(self, position):
+        """Returns whether a row for the specified position exists in the DB."""
+        return position in self.positions
 
-    def __getitem__(self, key):
-        self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (key,))
+    def __getitem__(self, position):
+        """Gets the GdkPixbuf.Pixbuf for the specified position."""
+        self._cur.execute("SELECT * FROM Thumbs WHERE Time = ?", (position,))
         row = self._cur.fetchone()
         if not row:
-            raise KeyError(key)
-        return self.__getPixbufFromRow(row)
+            raise KeyError(position)
+        return self.__pixbuf_from_row(row)
 
-    def __setitem__(self, key, value):
-        success, jpeg = value.save_to_bufferv(
+    def __setitem__(self, position, pixbuf):
+        """Sets a GdkPixbuf.Pixbuf for the specified position."""
+        success, jpeg = pixbuf.save_to_bufferv(
             "jpeg", ["quality", None], ["90"])
         if not success:
             self.warning("JPEG compression failed")
             return
         blob = sqlite3.Binary(jpeg)
         # Replace if a row with the same time already exists.
-        self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (key,))
-        self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (key, blob,))
+        self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (position,))
+        self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (position, blob,))
+        self.positions.add(position)
 
     def commit(self):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
-        self.log("Saved thumbnail cache file: %s" % self._filehash)
-
-        return False
+        self.log("Saved thumbnail cache file: %s", self._filehash)
 
 
 def get_wavefile_location_for_uri(uri):

@@ -110,14 +110,14 @@ def create_main_loop():
     mainloop = GLib.MainLoop()
     timed_out = False
 
-    def quit_cb(unused):
+    def timeout_cb(unused):
         nonlocal timed_out
         timed_out = True
         mainloop.quit()
 
     def run(timeout_seconds=5):
         source = GLib.timeout_source_new_seconds(timeout_seconds)
-        source.set_callback(quit_cb)
+        source.set_callback(timeout_cb)
         source.attach()
         GLib.MainLoop.run(mainloop)
         source.destroy()
@@ -250,6 +250,12 @@ def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
 def get_sample_uri(sample):
     tests_dir = os.path.dirname(os.path.abspath(__file__))
     return Gst.filename_to_uri(os.path.join(tests_dir, "samples", sample))
+
+
+def get_clip_children(ges_clip, *track_types, recursive=False):
+    for ges_timeline_element in ges_clip.get_children(recursive):
+        if not track_types or ges_timeline_element.get_track_type() in track_types:
+            yield ges_timeline_element
 
 
 def clean_proxy_samples():

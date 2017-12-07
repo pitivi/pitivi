@@ -16,12 +16,14 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the timeline.previewers module."""
+# pylint: disable=protected-access
 import os
 import tempfile
 from unittest import mock
-from unittest import TestCase
 
 import numpy
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gst
 
@@ -66,28 +68,23 @@ SIMPSON_WAVFORM_VALUES = [
     3.6256085412966614, 0.0]
 
 
-class TestPreviewers(BaseTestMediaLibrary):
+class TestAudioPreviewer(BaseTestMediaLibrary):
+    """Tests for the `AudioPreviewer` class."""
 
-    def testCreateThumbnailBin(self):
+    def test_create_thumbnail_bin(self):
+        """Checks our `waveformbin` element is usable."""
         pipeline = Gst.parse_launch("uridecodebin name=decode uri=file:///some/thing"
                                     " waveformbin name=wavebin ! fakesink qos=false name=faked")
         self.assertTrue(pipeline)
         wavebin = pipeline.get_by_name("wavebin")
         self.assertTrue(wavebin)
 
-    def testWaveFormAndThumbnailCreated(self):
+    def test_waveform_creation(self):
+        """Checks the waveform generation."""
         sample_name = "1sec_simpsons_trailer.mp4"
         self.runCheckImport([sample_name])
 
         sample_uri = common.get_sample_uri(sample_name)
-        asset = GES.UriClipAsset.request_sync(sample_uri)
-
-        thumb_cache = ThumbnailCache.get(asset)
-        width, height = thumb_cache.getImagesSize()
-        self.assertEqual(height, THUMB_HEIGHT)
-        self.assertTrue(thumb_cache[0] is not None)
-        self.assertTrue(thumb_cache[Gst.SECOND / 2] is not None)
-
         wavefile = get_wavefile_location_for_uri(sample_uri)
         self.assertTrue(os.path.exists(wavefile), wavefile)
 
@@ -97,9 +94,11 @@ class TestPreviewers(BaseTestMediaLibrary):
         self.assertEqual(samples, SIMPSON_WAVFORM_VALUES)
 
 
-class TestThumbnailCache(TestCase):
+class TestThumbnailCache(BaseTestMediaLibrary):
+    """Tests for the ThumbnailCache class."""
 
     def test_get(self):
+        """Checks the `get` method returns the same thing for asset and URI."""
         with self.assertRaises(ValueError):
             ThumbnailCache.get(1)
         with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_config_home,\
@@ -111,3 +110,41 @@ class TestThumbnailCache(TestCase):
 
             asset = GES.UriClipAsset.request_sync(sample_uri)
             self.assertEqual(ThumbnailCache.get(asset), cache)
+
+    def test_image_size(self):
+        """Checks the `image_size` property."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_cache_home:
+                xdg_cache_home.return_value = tmpdirname
+                sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+                thumb_cache = ThumbnailCache(sample_uri)
+                self.assertEqual(thumb_cache.image_size, (None, None))
+
+                pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                              False, 8, 20, 10)
+                thumb_cache[0] = pixbuf
+                self.assertEqual(thumb_cache.image_size, (20, 10))
+
+    def test_containment(self):
+        """Checks the __contains/getitem/setitem__ methods."""
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            with mock.patch("pitivi.timeline.previewers.xdg_cache_home") as xdg_cache_home:
+                xdg_cache_home.return_value = tmpdirname
+                sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+                thumb_cache = ThumbnailCache(sample_uri)
+                self.assertFalse(Gst.SECOND in thumb_cache)
+                with self.assertRaises(KeyError):
+                    # pylint: disable=pointless-statement
+                    thumb_cache[Gst.SECOND]
+
+                pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                              False, 8,
+                                              int(THUMB_HEIGHT * 1280 / 544), THUMB_HEIGHT)
+                thumb_cache[Gst.SECOND] = pixbuf
+                self.assertTrue(Gst.SECOND in thumb_cache)
+                self.assertIsNotNone(thumb_cache[Gst.SECOND])
+                thumb_cache.commit()
+
+                thumb_cache = ThumbnailCache(sample_uri)
+                self.assertTrue(Gst.SECOND in thumb_cache)
+                self.assertIsNotNone(thumb_cache[Gst.SECOND])

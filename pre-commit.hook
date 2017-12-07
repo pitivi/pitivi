@@ -55,7 +55,6 @@ tests/test_log.py
 tests/test_media_library.py
 tests/test_prefs.py
 tests/test_preset.py
-tests/test_previewers.py
 tests/test_project.py
 tests/test_system.py
 tests/test_timeline_layer.py

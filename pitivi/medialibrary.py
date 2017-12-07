@@ -232,7 +232,7 @@ class AssetThumbnail(Loggable):
                 else:
                     # Build or reuse a ThumbnailCache.
                     thumb_cache = ThumbnailCache.get(self.__asset)
-                    small_thumb = thumb_cache.getPreviewThumbnail()
+                    small_thumb = thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
                     else:
