@@ -21,6 +21,7 @@ A collection of objects to use for testing
 """
 import contextlib
 import gc
+import glob
 import os
 import shutil
 import tempfile
@@ -293,3 +294,12 @@ def create_test_clip(clip_type):
     clip.selected = Selected()
     clip.ui = None
     return clip
+
+
+def clean_proxy_samples(samples_dir=None):
+    if not samples_dir:
+        tests_dir = os.path.dirname(os.path.abspath(__file__))
+        samples_dir = os.path.join(tests_dir, "samples")
+
+    for f in glob.glob(os.path.join(samples_dir, "*.proxy.*")):
+        os.remove(f)
