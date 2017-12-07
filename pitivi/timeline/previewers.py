@@ -276,7 +276,7 @@ class WaveformPreviewer(PreviewerBin):
             with open(self.wavefile, 'wb') as wavefile:
                 numpy.save(wavefile, samples)
 
-        if proxy:
+        if proxy and not proxy.get_error():
             proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
             self.debug("symlinking %s and %s", self.wavefile, proxy_wavefile)
             try:

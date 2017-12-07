@@ -910,7 +910,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             # with more file-missing dialogs, as we need all of them.
             return None
 
-        uri = asset.get_id()
+        if self.app.proxy_manager.is_proxy_asset(asset):
+            uri = self.app.proxy_manager.getTargetUri(asset)
+        else:
+            uri = asset.get_id()
         dialog = Gtk.Dialog(title=_("Locate missing file..."),
                             transient_for=self,
                             modal=True)
