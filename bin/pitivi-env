@@ -15,6 +15,7 @@ SCRIPT_DIR=$(dirname $(realpath $SCRIPT))
 PITIVI_REPO_DIR=$(realpath $SCRIPT_DIR/..)
 export FLATPAK_ENVPATH=$(realpath $PITIVI_REPO_DIR/..)
 export CURRENT_GST=$FLATPAK_ENVPATH
+export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
 
 # Use ptvenv for entering or running commands in the sandbox.
 alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
@@ -55,9 +56,16 @@ then
 
     alias pitivi="ptvenv $PITIVI_REPO_DIR/bin/pitivi"
 
+    # Enter the Python virtual env to have specific dev tools,
+    # such as git-phab, pre-commit, etc.
     source $PITIVI_REPO_DIR/build/flatpak/pyvenv/bin/activate
+
+    # Install the pre-commit framework as a git hook, for doing clean commits.
+    rm -f .git/hooks/pre-commit
+    ln -s ../../pre-commit.hook .git/hooks/pre-commit
+
+    # Update the prompt to indicate this is the Pitivi dev env.
     export PS1="(ptv-flatpak) $PS1"
-    export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
 
     echo "===================================================================="
     echo "                   BATTLECRUISER OPERATIONAL                        "
