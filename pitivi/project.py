@@ -615,6 +615,8 @@ class ProjectManager(GObject.Object, Loggable):
         new_uri = self.emit("missing-uri", project, error, asset)
         if not new_uri:
             project.at_least_one_asset_missing = True
+        else:
+            project.relocated_assets[asset.props.id] = new_uri
         project.setModificationState(True)
         return new_uri
 
@@ -676,6 +678,8 @@ class Project(Loggable, GES.Project):
         self.at_least_one_asset_missing = False
         self.app = app
         self.loading_assets = set()
+
+        self.relocated_assets = {}
         self.app.proxy_manager.connect("progress", self.__assetTranscodingProgressCb)
         self.app.proxy_manager.connect("error-preparing-asset",
                                        self.__proxyErrorCb)
@@ -1153,6 +1157,9 @@ class Project(Loggable, GES.Project):
         if self.app.proxy_manager.is_proxy_asset(asset):
             self.debug("Missing proxy file: %s", asset.props.id)
             target_uri = self.app.proxy_manager.getTargetUri(asset)
+
+            # Take asset relocation into account.:
+            target_uri = self.relocated_assets.get(target_uri, target_uri)
 
             GES.Asset.needs_reload(GES.UriClip, asset.props.id)
             # Check if the target has already been loaded.

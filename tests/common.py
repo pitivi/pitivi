@@ -21,6 +21,7 @@ A collection of objects to use for testing
 """
 import contextlib
 import gc
+import glob
 import os
 import shutil
 import tempfile
