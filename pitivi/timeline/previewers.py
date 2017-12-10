@@ -561,9 +561,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         else:
             time = self.queue.pop(0)
         self.log('Creating thumb for "%s"', path_from_uri(self.uri))
-        # append the time to the end of the queue so that if this seek fails
-        # another try will be started later
-        self.queue.append(time)
         self.pipeline.seek(1.0,
                            Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
                            Gst.SeekType.SET, time,
