@@ -332,18 +332,18 @@ class PreviewGeneratorManager(Loggable):
     def _start_previewer(self, previewer):
         self._current_previewers[previewer.track_type] = previewer
         previewer.connect("done", self.__previewer_done_cb)
-        previewer.startGeneration()
+        previewer.start_generation()
 
     @contextlib.contextmanager
     def paused(self, interrupt=False):
         """Pauses (and flushes if interrupt=True) managed previewers."""
         if interrupt:
             for previewer in list(self._current_previewers.values()):
-                previewer.stopGeneration()
+                previewer.stop_generation()
 
             for previewers in self._previewers.values():
                 for previewer in previewers:
-                    previewer.stopGeneration()
+                    previewer.stop_generation()
 
         try:
             self._running = False
@@ -387,19 +387,19 @@ class Previewer(Gtk.Layout):
         self.track_type = track_type
         self._max_cpu_usage = max_cpu_usage
 
-    def startGeneration(self):
+    def start_generation(self):
         """Starts preview generation."""
         raise NotImplementedError
 
-    def stopGeneration(self):
+    def stop_generation(self):
         """Stops preview generation."""
         raise NotImplementedError
 
-    def becomeControlled(self):
+    def become_controlled(self):
         """Lets the PreviewGeneratorManager control our execution."""
         Previewer.manager.add_previewer(self)
 
-    def setSelected(self, selected):
+    def set_selected(self, selected):
         """Marks this instance as being selected."""
         pass
 
@@ -451,10 +451,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         # Connect signals and fire things up
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
+        self.ges_elem.connect("notify::duration", self._duration_changed_cb)
 
         self.pipeline = None
         self.gdkpixbufsink = None
-        self.becomeControlled()
+        self.become_controlled()
 
         self.connect("notify::height-request", self._height_changed_cb)
 
@@ -542,7 +543,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         if not self.wishlist or not self.queue:
             # nothing left to do
             self.debug("Thumbnails generation complete")
-            self.stopGeneration()
+            self.stop_generation()
             return
         else:
             self.debug("Missing %d thumbs", len(self.wishlist))
@@ -677,7 +678,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
-        self.stopGeneration()
+        self.stop_generation()
 
     # pylint: disable=no-self-use
     def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
@@ -690,9 +691,14 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._update_thumbnails()
 
     def _inpoint_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
+        """Handles the changing of the in-point of the clip."""
         self._update_thumbnails()
 
-    def setSelected(self, selected):
+    def _duration_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
+        """Handles the changing of the duration of the clip."""
+        self._update_thumbnails()
+
+    def set_selected(self, selected):
         if selected:
             opacity = 0.5
         else:
@@ -701,7 +707,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         for thumb in self.get_children():
             thumb.props.opacity = opacity
 
-    def startGeneration(self):
+    def start_generation(self):
         self.pipeline = self._setup_pipeline()
         self._startThumbnailingWhenIdle()
 
@@ -711,7 +717,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         if self.uri != uri:
             self.thumb_cache.copy(uri)
 
-    def stopGeneration(self):
+    def stop_generation(self):
         if self._thumb_cb_id:
             GLib.source_remove(self._thumb_cb_id)
             self._thumb_cb_id = None
@@ -727,7 +733,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def release(self):
         """Stops preview generation and cleans the object."""
-        self.stopGeneration()
+        self.stop_generation()
         Zoomable.__del__(self)
 
 
@@ -937,7 +943,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
         self.connect("notify::height-request", self._height_changed_cb)
-        self.becomeControlled()
+        self.become_controlled()
 
     def _inpoint_changed_cb(self, unused_b_element, unused_value):
         self._force_redraw = True
@@ -1002,14 +1008,14 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         if message.type == Gst.MessageType.EOS:
             self._prepareSamples()
             self._startRendering()
-            self.stopGeneration()
+            self.stop_generation()
 
         elif message.type == Gst.MessageType.ERROR:
             if self.adapter:
                 self.adapter.stop()
                 self.adapter = None
             # Something went wrong TODO : recover
-            self.stopGeneration()
+            self.stop_generation()
             self._num_failures += 1
             if self._num_failures < 2:
                 self.warning("Issue during waveforms generation: %s"
@@ -1018,7 +1024,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
                              self._num_failures)
                 bus.disconnect_by_func(self._busMessageCb)
                 self._launchPipeline()
-                self.becomeControlled()
+                self.become_controlled()
             else:
                 if self.pipeline:
                     Gst.debug_bin_to_dot_file_with_ts(self.pipeline,
@@ -1076,7 +1082,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
     def _emit_done_on_idle(self):
         self.emit("done")
 
-    def startGeneration(self):
+    def start_generation(self):
         self._startLevelsDiscovery()
         if not self.pipeline:
             # No need to generate as we loaded pre-generated .wave file.
@@ -1087,7 +1093,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         if self.adapter is not None:
             self.adapter.start()
 
-    def stopGeneration(self):
+    def stop_generation(self):
         if self.adapter is not None:
             self.adapter.stop()
             self.adapter = None
@@ -1101,5 +1107,5 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     def release(self):
         """Stops preview generation and cleans the object."""
-        self.stopGeneration()
+        self.stop_generation()
         Zoomable.__del__(self)
