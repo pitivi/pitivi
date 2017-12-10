@@ -774,7 +774,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.__update_keyframe_curve_visibility()
 
         if self.__previewer:
-            self.__previewer.setSelected(selected)
+            self.__previewer.set_selected(selected)
 
     def __update_keyframe_curve_visibility(self):
         """Updates the keyframes widget visibility by adding or removing it."""

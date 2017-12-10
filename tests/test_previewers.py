@@ -29,7 +29,9 @@ from gi.repository import Gst
 
 from pitivi.timeline.previewers import get_wavefile_location_for_uri
 from pitivi.timeline.previewers import THUMB_HEIGHT
+from pitivi.timeline.previewers import THUMB_PERIOD
 from pitivi.timeline.previewers import ThumbnailCache
+from pitivi.timeline.previewers import VideoPreviewer
 from tests import common
 from tests.test_media_library import BaseTestMediaLibrary
 
@@ -92,6 +94,32 @@ class TestAudioPreviewer(BaseTestMediaLibrary):
             samples = list(numpy.load(fsamples))
 
         self.assertEqual(samples, SIMPSON_WAVFORM_VALUES)
+
+
+class TestVideoPreviewer(common.TestCase):
+    """Tests for the `VideoPreviewer` class."""
+
+    def test_thumb_interval(self):
+        """Checks the `thumb_interval` property."""
+        ges_elem = mock.Mock()
+        ges_elem.props.uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        ges_elem.props.id = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        previewer = VideoPreviewer(ges_elem, 94)
+        previewer.thumb_width = 1  # Just so it's not None.
+
+        def run_thumb_interval(interval):
+            """Runs thumb_interval."""
+            with mock.patch("pitivi.utils.timeline.Zoomable.pixelToNs") as pixel_to_ns:
+                pixel_to_ns.return_value = interval
+                return previewer.thumb_interval
+
+        self.assertEqual(run_thumb_interval(1), THUMB_PERIOD)
+        self.assertEqual(run_thumb_interval(THUMB_PERIOD - 1), THUMB_PERIOD)
+        self.assertEqual(run_thumb_interval(THUMB_PERIOD), THUMB_PERIOD)
+
+        self.assertEqual(run_thumb_interval(THUMB_PERIOD + 1), 2 * THUMB_PERIOD)
+        self.assertEqual(run_thumb_interval(2 * THUMB_PERIOD - 1), 2 * THUMB_PERIOD)
+        self.assertEqual(run_thumb_interval(2 * THUMB_PERIOD), 2 * THUMB_PERIOD)
 
 
 class TestThumbnailCache(BaseTestMediaLibrary):

@@ -58,6 +58,9 @@ except ImportError:
 SAMPLE_DURATION = Gst.SECOND / 100
 
 THUMB_MARGIN_PX = 3
+THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+THUMB_PERIOD = int(Gst.SECOND / 2)
+assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
 # scrolling while playing.
 MARGIN = 500
@@ -66,8 +69,6 @@ PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SIGNAL_RUN_LAST, None, ()),
     "error": (GObject.SIGNAL_RUN_LAST, None, ()),
 }
-
-THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 
 GlobalSettings.addConfigSection("previewers")
 
@@ -433,9 +434,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.queue = []
         self._thumb_cb_id = None
 
-        # We should have one thumbnail per thumb_period.
-        # TODO: get this from the user settings
-        self.thumb_period = int(0.5 * Gst.SECOND)
         self.thumb_height = THUMB_HEIGHT
 
         self.__image_pixbuf = None
@@ -460,34 +458,36 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.connect("notify::height-request", self._height_changed_cb)
 
-    # Internal API
-    def _setupPipeline(self):
+    def _setup_pipeline(self):
         """Creates the pipeline.
 
         It has the form "playbin ! thumbnailsink" where thumbnailsink
         is a Bin made out of "videorate ! capsfilter ! gdkpixbufsink"
         """
-        # TODO: don't hardcode framerate
-        self.pipeline = Gst.parse_launch(
+        pipeline = Gst.parse_launch(
             "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
             "videorate ! "
             "videoscale method=lanczos ! "
             "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int){height},"
-            "pixel-aspect-ratio=(fraction)1/1,framerate=2/1 ! "
-            "gdkpixbufsink name=gdkpixbufsink".format(uri=self.uri, height=self.thumb_height))
+            "pixel-aspect-ratio=(fraction)1/1,framerate={thumbs_per_second}/1 ! "
+            "gdkpixbufsink name=gdkpixbufsink".format(
+                uri=self.uri,
+                height=self.thumb_height,
+                thumbs_per_second=int(Gst.SECOND / THUMB_PERIOD)))
 
-        # get the gdkpixbufsink and the sinkpad
-        self.gdkpixbufsink = self.pipeline.get_by_name("gdkpixbufsink")
+        # Get the gdkpixbufsink which contains the the sinkpad.
+        self.gdkpixbufsink = pipeline.get_by_name("gdkpixbufsink")
 
-        decode = self.pipeline.get_by_name("decode")
+        decode = pipeline.get_by_name("decode")
         decode.connect("autoplug-select", self._autoplug_select_cb)
 
         self.__preroll_timeout_id = GLib.timeout_add_seconds(MAX_BRINGING_TO_PAUSED_DURATION,
                                                              self.__preroll_timed_out_cb)
-        self.pipeline.get_bus().add_signal_watch()
-        self.pipeline.get_bus().connect("message", self.__bus_message_cb)
-        self.pipeline.set_state(Gst.State.PAUSED)
+        pipeline.get_bus().add_signal_watch()
+        pipeline.get_bus().connect("message", self.__bus_message_cb)
+        pipeline.set_state(Gst.State.PAUSED)
+        return pipeline
 
     def _checkCPU(self):
         """Adjusts when the next thumbnail is generated.
@@ -531,7 +531,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.debug("Could not determine duration of: %s", self.uri)
             duration = self.ges_elem.props.duration
 
-        self.queue = list(range(0, duration, self.thumb_period))
+        self.queue = list(range(0, duration, THUMB_PERIOD))
 
         self._checkCPU()
 
@@ -563,16 +563,22 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._thumb_cb_id = None
         return False
 
-    def _get_thumb_duration(self):
-        thumb_duration_tmp = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
-        # quantize thumb length to thumb_period
-        thumb_duration = quantize(thumb_duration_tmp, self.thumb_period)
-        # make sure that the thumb duration after the quantization isn't
-        # smaller than before
-        if thumb_duration < thumb_duration_tmp:
-            thumb_duration += self.thumb_period
-        # make sure that we don't show thumbnails more often than thumb_period
-        return max(thumb_duration, self.thumb_period)
+    @property
+    def thumb_interval(self):
+        """Gets the interval for which a thumbnail is displayed.
+
+        Returns:
+            int: a duration in nanos, multiple of THUMB_PERIOD.
+        """
+        interval = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
+        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
+        quantized = quantize(interval, THUMB_PERIOD)
+        # Make sure the quantized thumb interval fits
+        # the thumb and the margin.
+        if quantized < interval:
+            quantized += THUMB_PERIOD
+        # Make sure we don't show thumbs more often than THUMB_PERIOD.
+        return max(THUMB_PERIOD, quantized)
 
     def _update_thumbnails(self):
         """Updates the thumbnails for the currently visible clip portion."""
@@ -581,10 +587,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         thumbs = {}
         self.wishlist = []
-        thumb_duration = self._get_thumb_duration()
-        element_left = quantize(self.ges_elem.props.in_point, thumb_duration)
+        interval = self.thumb_interval
+        element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
-        for position in range(element_left, element_right, thumb_duration):
+        for position in range(element_left, element_right, interval):
             x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
             y = (self.props.height_request - self.thumb_height) / 2
             try:
@@ -696,7 +702,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             thumb.props.opacity = opacity
 
     def startGeneration(self):
-        self._setupPipeline()
+        self.pipeline = self._setup_pipeline()
         self._startThumbnailingWhenIdle()
 
     def _ensure_proxy_thumbnails_cache(self):
