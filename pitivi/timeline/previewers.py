@@ -295,10 +295,12 @@ Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
 
 
 # pylint: disable=too-few-public-methods
-class PreviewGeneratorManager():
+class PreviewGeneratorManager(Loggable):
     """Manager for running the previewers."""
 
     def __init__(self):
+        Loggable.__init__(self)
+
         # The current Previewer per GES.TrackType.
         self._current_previewers = {}
         # The queue of Previewers.
@@ -419,7 +421,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         Loggable.__init__(self)
 
         # Variables related to the timeline objects
-        self.timeline = ges_elem.get_parent().get_timeline().ui
         self.ges_elem = ges_elem
 
         # Guard against malformed URIs
@@ -431,7 +432,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.wishlist = []
         self.queue = []
         self._thumb_cb_id = None
-        self._running = False
 
         # We should have one thumbnail per thumb_period.
         # TODO: get this from the user settings
@@ -903,7 +903,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.discovered = False
         self.ges_elem = ges_elem
-        self.timeline = ges_elem.get_parent().get_timeline().ui
 
         asset = self.ges_elem.get_parent().get_asset()
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
