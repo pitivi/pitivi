@@ -535,12 +535,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self._checkCPU()
 
-        # Save periodically to avoid the common situation where the user exits
-        # the app before a long clip has been fully thumbnailed.
-        # Spread timeouts between 30-80 secs to avoid concurrent disk writes.
-        random_time = random.randrange(30, 80)
-        GLib.timeout_add_seconds(random_time, self._autosave)
-
         # Remove the GSource
         return False
 
@@ -549,7 +543,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             # nothing left to do
             self.debug("Thumbnails generation complete")
             self.stopGeneration()
-            self.thumb_cache.commit()
             return
         else:
             self.debug("Missing %d thumbs", len(self.wishlist))
@@ -568,14 +561,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         # Remove the GSource
         self._thumb_cb_id = None
-        return False
-
-    def _autosave(self):
-        if self.wishlist:
-            self.log("Periodic thumbnail autosave")
-            self.thumb_cache.commit()
-            return True
-        # Stop the timer
         return False
 
     def _get_thumb_duration(self):
@@ -772,6 +757,8 @@ class ThumbnailCache(Loggable):
         self._image_size = (None, None)
         # The cached positions available in the database.
         self.positions = self.__existing_positions()
+        # The ID of the autosave event.
+        self.__autosave_id = None
 
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
@@ -873,6 +860,26 @@ class ThumbnailCache(Loggable):
         self._cur.execute("DELETE FROM Thumbs WHERE  time=?", (position,))
         self._cur.execute("INSERT INTO Thumbs VALUES (?,?)", (position, blob,))
         self.positions.add(position)
+        self._schedule_commit()
+
+    def _schedule_commit(self):
+        """Schedules an autosave at a random later time."""
+        if self.__autosave_id is not None:
+            # A commit is already scheduled.
+            return
+        # Save after some time, to avoid saving too often.
+        # Randomize to avoid concurrent disk writes.
+        random_time = random.randrange(10, 20)
+        self.__autosave_id = GLib.timeout_add_seconds(random_time, self._autosave_cb)
+
+    def _autosave_cb(self):
+        """Handles the autosave event."""
+        try:
+            self.commit()
+        finally:
+            self.__autosave_id = None
+        # Stop calling me.
+        return False
 
     def commit(self):
         """Saves the cache on disk (in the database)."""
