@@ -421,7 +421,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         Zoomable.__init__(self)
         Loggable.__init__(self)
 
-        # Variables related to the timeline objects
         self.ges_elem = ges_elem
 
         # Guard against malformed URIs
@@ -431,8 +430,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.__preroll_timeout_id = 0
         self._thumb_cb_id = 0
 
-        # Variables related to thumbnailing
-        self.wishlist = []
+        # The thumbs to be generated.
         self.queue = []
         self._thumb_cb_id = None
 
@@ -449,7 +447,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.gdkpixbufsink = None
 
         self.cpu_usage_tracker = CPUUsageTracker()
-        self.interval = 500  # Every 0.5 second, reevaluate the situation
+        # Initial delay before generating the next thumbnail, in millis.
+        self.interval = 500
 
         # Connect signals and fire things up
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
@@ -521,50 +520,43 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.__start_id = None
 
         if isinstance(self.ges_elem, GES.ImageSource):
+            self.debug('Now generating thumbnail for: %s', path_from_uri(self.uri))
             self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
             self.thumb_width = self.__image_pixbuf.props.width
-            self._update_thumbnails()
             self.emit("done")
-            return False
+        else:
+            self.debug('Now generating thumbnails for: %s', path_from_uri(self.uri))
+            self.pipeline = self._setup_pipeline()
+            self._schedule_next_thumb_generation()
 
-        self.debug('Now generating thumbnails for: %s', path_from_uri(self.uri))
-        self.pipeline = self._setup_pipeline()
-        query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
-        if not query_success or duration == -1:
-            self.debug("Could not determine duration of: %s", self.uri)
-            duration = self.ges_elem.props.duration
-
-        self.queue = list(range(0, duration, THUMB_PERIOD))
-
-        self._schedule_next_thumb_generation()
+        # Update the thumbnails with what we already have, if anything.
+        self._update_thumbnails()
 
         # Stop calling me.
         return False
 
     def _create_next_thumb_cb(self):
-        if not self.wishlist or not self.queue:
-            # nothing left to do
+        """Creates a missing thumbnail."""
+        self._thumb_cb_id = None
+        if not self.queue:
+            # Nothing left to do.
             self.debug("Thumbnails generation complete")
             self.stop_generation()
-            return
-        else:
-            self.debug("Missing %d thumbs", len(self.wishlist))
+            # Stop calling me.
+            return False
 
-        wish = self._get_wish()
-        if wish:
-            time = wish
-            self.queue.remove(wish)
-        else:
-            time = self.queue.pop(0)
-        self.log('Creating thumb for "%s"', path_from_uri(self.uri))
+        position = self.queue.pop(0)
+        self.log("Creating thumb for `%s` at %s", path_from_uri(self.uri), position)
         self.pipeline.seek(1.0,
-                           Gst.Format.TIME, Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                           Gst.SeekType.SET, time,
+                           Gst.Format.TIME,
+                           Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
+                           Gst.SeekType.SET, position,
                            Gst.SeekType.NONE, -1)
 
-        # Remove the GSource
-        self._thumb_cb_id = None
+        # Stop calling me.
+        # The seek operation will generate an ASYNC_DONE message on the bus,
+        # and then the next thumbnail generation operation will be scheduled.
         return False
 
     @property
@@ -585,12 +577,14 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         return max(THUMB_PERIOD, quantized)
 
     def _update_thumbnails(self):
-        """Updates the thumbnails for the currently visible clip portion."""
+        """Updates the thumbnail widgets for the clip at the current zoom."""
         if self.thumb_width is None:
+            # The thumb_width will be available when pipeline has been started
+            # or the __image_pixbuf is ready.
             return
 
         thumbs = {}
-        self.wishlist = []
+        queue = []
         interval = self.thumb_interval
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
@@ -613,19 +607,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
             else:
-                self.wishlist.append(position)
+                queue.append(position)
         for thumb in self.thumbs.values():
             self.remove(thumb)
         self.thumbs = thumbs
-
-    def _get_wish(self):
-        """Returns a wish that is also in the queue, if any."""
-        while True:
-            if not self.wishlist:
-                return None
-            wish = self.wishlist.pop(0)
-            if wish in self.queue:
-                return wish
+        self.queue = queue
 
     def _set_pixbuf(self, position, pixbuf):
         """Sets the pixbuf for the thumbnail at the specified position."""
@@ -646,24 +632,14 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.thumb_cache[position] = pixbuf
         self.queue_draw()
 
-    # Interface (Zoomable)
-
     def zoomChanged(self):
         self._update_thumbnails()
 
-    # Callbacks
     def __bus_message_cb(self, unused_bus, message):
-        if message.type == Gst.MessageType.ELEMENT and \
-                message.src == self.gdkpixbufsink and \
-                self.__preroll_timeout_id == 0:
-            struct = message.get_structure()
-            struct_name = struct.get_name()
-            if struct_name == "preroll-pixbuf":
-                stream_time = struct.get_value("stream-time")
-                pixbuf = struct.get_value("pixbuf")
-                self._set_pixbuf(stream_time, pixbuf)
-        elif message.src == self.pipeline and message.type == Gst.MessageType.STATE_CHANGED:
+        if message.src == self.pipeline and \
+                message.type == Gst.MessageType.STATE_CHANGED:
             if message.parse_state_changed()[1] == Gst.State.PAUSED:
+                # The pipeline is ready to be used.
                 if self.__preroll_timeout_id:
                     GLib.source_remove(self.__preroll_timeout_id)
                     self.__preroll_timeout_id = 0
@@ -672,8 +648,19 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                     self.thumb_width = neg_caps["width"]
 
                 self._update_thumbnails()
-        elif message.type == Gst.MessageType.ASYNC_DONE and \
-                message.src == self.pipeline:
+        elif message.src == self.gdkpixbufsink and \
+                message.type == Gst.MessageType.ELEMENT and \
+                self.__preroll_timeout_id == 0:
+            # We got a thumbnail pixbuf.
+            struct = message.get_structure()
+            struct_name = struct.get_name()
+            if struct_name == "preroll-pixbuf":
+                stream_time = struct.get_value("stream-time")
+                pixbuf = struct.get_value("pixbuf")
+                self._set_pixbuf(stream_time, pixbuf)
+        elif message.src == self.pipeline and \
+                message.type == Gst.MessageType.ASYNC_DONE:
+            # The seek operation has been performed.
             self._schedule_next_thumb_generation()
         return Gst.BusSyncReply.PASS
 
