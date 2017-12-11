@@ -409,7 +409,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     Attributes:
         ges_elem (GES.TrackElement): The previewed element.
-        thumbs (dict): Maps (quantized) times to Thumbnail objects.
+        thumbs (dict): Maps (quantized) times to Thumbnail widgets.
         thumb_cache (ThumbnailCache): The pixmaps persistent cache.
     """
 
@@ -434,17 +434,20 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.queue = []
         self._thumb_cb_id = None
 
+        self.thumbs = {}
         self.thumb_height = THUMB_HEIGHT
 
-        self.__image_pixbuf = None
         if isinstance(ges_elem, GES.ImageSource):
             self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
-
-        self.thumbs = {}
-        self.thumb_cache = ThumbnailCache.get(self.uri)
-        self._ensure_proxy_thumbnails_cache()
-        self.thumb_width, unused_height = self.thumb_cache.image_size
+            self.thumb_width = self.__image_pixbuf.props.width
+        else:
+            self.__image_pixbuf = None
+            self.thumb_cache = ThumbnailCache.get(self.uri)
+            self._ensure_proxy_thumbnails_cache()
+            self.thumb_width, unused_height = self.thumb_cache.image_size
+        self.pipeline = None
+        self.gdkpixbufsink = None
 
         self.cpu_usage_tracker = CPUUsageTracker()
         self.interval = 500  # Every 0.5 second, reevaluate the situation
@@ -453,8 +456,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
         self.ges_elem.connect("notify::duration", self._duration_changed_cb)
 
-        self.pipeline = None
-        self.gdkpixbufsink = None
         self.become_controlled()
 
         self.connect("notify::height-request", self._height_changed_cb)
@@ -490,8 +491,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         pipeline.set_state(Gst.State.PAUSED)
         return pipeline
 
-    def _checkCPU(self):
-        """Adjusts when the next thumbnail is generated.
+    def _schedule_next_thumb_generation(self):
+        """Schedules the generation of the next thumbnail.
 
         Checks the CPU usage and adjusts the waiting time at which the next
         thumbnail will be generated +/- 10%. Even then, it will only
@@ -500,23 +501,16 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         usage_percent = self.cpu_usage_tracker.usage()
         if usage_percent < self._max_cpu_usage:
             self.interval *= 0.9
-            self.log(
-                'Thumbnailing sped up (+10%%) to a %.1f ms interval for "%s"',
-                self.interval, path_from_uri(self.uri))
+            self.log("Thumbnailing sped up to a %.1f ms interval for `%s`",
+                     self.interval, path_from_uri(self.uri))
         else:
             self.interval *= 1.1
-            self.log(
-                'Thumbnailing slowed down (-10%%) to a %.1f ms interval for "%s"',
-                self.interval, path_from_uri(self.uri))
+            self.log("Thumbnailing slowed down to a %.1f ms interval for `%s`",
+                     self.interval, path_from_uri(self.uri))
         self.cpu_usage_tracker.reset()
         self._thumb_cb_id = GLib.timeout_add(self.interval,
-                                             self._create_next_thumb,
+                                             self._create_next_thumb_cb,
                                              priority=GLib.PRIORITY_LOW)
-
-    def _startThumbnailingWhenIdle(self):
-        self.debug(
-            'Waiting for UI to become idle for: %s', path_from_uri(self.uri))
-        GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _startThumbnailing(self):
         if not self.pipeline:
@@ -534,12 +528,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.queue = list(range(0, duration, THUMB_PERIOD))
 
-        self._checkCPU()
+        self._schedule_next_thumb_generation()
 
         # Remove the GSource
         return False
 
-    def _create_next_thumb(self):
+    def _create_next_thumb_cb(self):
         if not self.wishlist or not self.queue:
             # nothing left to do
             self.debug("Thumbnails generation complete")
@@ -674,7 +668,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 self._update_thumbnails()
         elif message.type == Gst.MessageType.ASYNC_DONE and \
                 message.src == self.pipeline:
-            self._checkCPU()
+            self._schedule_next_thumb_generation()
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
@@ -708,8 +702,14 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             thumb.props.opacity = opacity
 
     def start_generation(self):
-        self.pipeline = self._setup_pipeline()
-        self._startThumbnailingWhenIdle()
+        if self.__image_pixbuf:
+            # Nothing else to generate.
+            pass
+        else:
+            self.pipeline = self._setup_pipeline()
+            self.debug(
+                'Waiting for UI to become idle for: %s', path_from_uri(self.uri))
+            GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
 
     def _ensure_proxy_thumbnails_cache(self):
         """Ensures that both the target asset and the proxy assets have caches."""
