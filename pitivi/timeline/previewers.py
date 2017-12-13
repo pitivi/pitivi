@@ -427,7 +427,9 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # Guard against malformed URIs
         self.uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
+        self.__start_id = 0
         self.__preroll_timeout_id = 0
+        self._thumb_cb_id = 0
 
         # Variables related to thumbnailing
         self.wishlist = []
@@ -436,13 +438,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.thumbs = {}
         self.thumb_height = THUMB_HEIGHT
+        self.thumb_width = 0
 
-        if isinstance(ges_elem, GES.ImageSource):
-            self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
-            self.thumb_width = self.__image_pixbuf.props.width
-        else:
-            self.__image_pixbuf = None
+        self.__image_pixbuf = None
+        if not isinstance(ges_elem, GES.ImageSource):
             self.thumb_cache = ThumbnailCache.get(self.uri)
             self._ensure_proxy_thumbnails_cache()
             self.thumb_width, unused_height = self.thumb_cache.image_size
@@ -512,15 +511,25 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                                              self._create_next_thumb_cb,
                                              priority=GLib.PRIORITY_LOW)
 
-    def _startThumbnailing(self):
-        if not self.pipeline:
+    def _start_thumbnailing_cb(self):
+        if not self.__start_id:
             # Can happen if stopGeneration is called because the clip has been
             # removed from the timeline after the PreviewGeneratorManager
             # started this job.
             return
 
-        self.debug(
-            'Now generating thumbnails for: %s', path_from_uri(self.uri))
+        self.__start_id = None
+
+        if isinstance(self.ges_elem, GES.ImageSource):
+            self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
+            self.thumb_width = self.__image_pixbuf.props.width
+            self._update_thumbnails()
+            self.emit("done")
+            return False
+
+        self.debug('Now generating thumbnails for: %s', path_from_uri(self.uri))
+        self.pipeline = self._setup_pipeline()
         query_success, duration = self.pipeline.query_duration(Gst.Format.TIME)
         if not query_success or duration == -1:
             self.debug("Could not determine duration of: %s", self.uri)
@@ -530,7 +539,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self._schedule_next_thumb_generation()
 
-        # Remove the GSource
+        # Stop calling me.
         return False
 
     def _create_next_thumb_cb(self):
@@ -578,16 +587,16 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
     def _update_thumbnails(self):
         """Updates the thumbnails for the currently visible clip portion."""
         if self.thumb_width is None:
-            return False
+            return
 
         thumbs = {}
         self.wishlist = []
         interval = self.thumb_interval
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
+        y = (self.props.height_request - self.thumb_height) / 2
         for position in range(element_left, element_right, interval):
             x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
-            y = (self.props.height_request - self.thumb_height) / 2
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -596,8 +605,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 self.put(thumb, x, y)
 
             thumbs[position] = thumb
-            if self.__image_pixbuf:
-                # The thumbnail is fixed, probably it's an image clip.
+            if isinstance(self.ges_elem, GES.ImageSource):
                 thumb.set_from_pixbuf(self.__image_pixbuf)
                 thumb.set_visible(True)
             elif position in self.thumb_cache:
@@ -609,8 +617,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         for thumb in self.thumbs.values():
             self.remove(thumb)
         self.thumbs = thumbs
-
-        return True
 
     def _get_wish(self):
         """Returns a wish that is also in the queue, if any."""
@@ -702,14 +708,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             thumb.props.opacity = opacity
 
     def start_generation(self):
-        if self.__image_pixbuf:
-            # Nothing else to generate.
-            pass
-        else:
-            self.pipeline = self._setup_pipeline()
-            self.debug(
-                'Waiting for UI to become idle for: %s', path_from_uri(self.uri))
-            GLib.idle_add(self._startThumbnailing, priority=GLib.PRIORITY_LOW)
+        self.debug('Waiting for UI to become idle for: %s',
+                   path_from_uri(self.uri))
+        self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
+                                        priority=GLib.PRIORITY_LOW)
 
     def _ensure_proxy_thumbnails_cache(self):
         """Ensures that both the target asset and the proxy assets have caches."""
@@ -718,7 +720,18 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.thumb_cache.copy(uri)
 
     def stop_generation(self):
+        if self.__start_id:
+            # Cancel the starting.
+            GLib.source_remove(self.__start_id)
+            self.__start_id = None
+
+        if self.__preroll_timeout_id:
+            # Stop waiting for the pipeline to be ready.
+            GLib.source_remove(self.__preroll_timeout_id)
+            self.__preroll_timeout_id = None
+
         if self._thumb_cb_id:
+            # Cancel the thumbnailing.
             GLib.source_remove(self._thumb_cb_id)
             self._thumb_cb_id = None
 
