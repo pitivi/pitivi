@@ -295,7 +295,6 @@ Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
                      TeedThumbnailBin)
 
 
-# pylint: disable=too-few-public-methods
 class PreviewGeneratorManager(Loggable):
     """Manager for running the previewers."""
 
@@ -612,6 +611,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.remove(thumb)
         self.thumbs = thumbs
         self.queue = queue
+        if queue:
+            self.become_controlled()
 
     def _set_pixbuf(self, position, pixbuf):
         """Sets the pixbuf for the thumbnail at the specified position."""
