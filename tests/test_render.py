@@ -256,7 +256,7 @@ class TestRender(common.TestCase):
         self.assertTrue(dialog.render_presets.action_save.get_enabled())
         dialog.render_presets.action_save.activate(None)
         self.assertEqual([i[0] for i in preset_combo.props.model],
-                         profile_names + ['test'])
+                         sorted(profile_names + ['test']))
         active_iter = preset_combo.get_active_iter()
         self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
 

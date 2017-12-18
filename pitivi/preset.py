@@ -77,7 +77,7 @@ class PresetManager(GObject.Object, Loggable):
             return -1
 
         self.ordered.set_sort_func(0, sortme)
-        self.ordered.set_sort_column_id(0, Gtk.SortType.DESCENDING)
+        self.ordered.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.cur_preset = None
         # Whether to ignore the updateValue calls.
         self.ignore_update_requests = False
@@ -577,7 +577,7 @@ class EncodingTargetManager(PresetManager):
         Override from PresetManager
 
         Args:
-            combo (str): The Gtk.ComboBox to retrieve selected GstEncodingProfile from.
+            combo (Gtk.ComboBox): The combo to retrieve selected GstEncodingProfile from.
         """
         active_iter = combo.get_active_iter()
         name = None
