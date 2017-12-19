@@ -147,6 +147,8 @@ class PresetManager(GObject.Object, Loggable):
         entry = self.combo.get_child()
         preset_name = entry.get_text()
         self.saveCurrentPreset(preset_name)
+        # Useful when a new preset has just been created.
+        self.combo.set_active_id(preset_name)
         self.updateMenuActions()
 
     def updateMenuActions(self):
@@ -321,9 +323,8 @@ class PresetManager(GObject.Object, Loggable):
 
     def saveCurrentPreset(self, new_name=None):
         """Updates the current preset values from the widgets and saves it."""
-
         if not self.cur_preset:
-            self.createPreset(preset_name)
+            self.createPreset(new_name)
         if new_name:
             self._renameCurrentPreset(new_name)
         values = self.presets[self.cur_preset]
@@ -569,7 +570,6 @@ class EncodingTargetManager(PresetManager):
         target.save()
 
         self._add_target(target)
-        self.combo.set_active(len(self.combo.props.model) - 1)
 
     def select_preset(self, combo):
         """Selects preset from currently active row in @combo.
