@@ -250,6 +250,7 @@ class TestRender(common.TestCase):
         profile_names = [i[0] for i in preset_combo.props.model]
         active_iter = preset_combo.get_active_iter()
         self.assertEqual(active_iter, None)
+        self.assertEqual(preset_combo.get_child().props.text, "")
 
         # Re save the current EncodingProfile calling it the same as before.
         preset_combo.get_child().set_text("test")

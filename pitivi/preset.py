@@ -141,6 +141,8 @@ class PresetManager(GObject.Object, Loggable):
 
     def _removePresetCb(self, unused_action, unused_param):
         self.removeCurrentPreset()
+        entry = self.combo.get_child()
+        entry.set_text("")
         self.updateMenuActions()
 
     def _savePresetCb(self, unused_action, unused_param):
@@ -284,10 +286,6 @@ class PresetManager(GObject.Object, Loggable):
 
     def getPresetNames(self):
         return (row[0] for row in self.ordered)
-
-    def getModel(self):
-        """Gets the GtkModel used by the UI."""
-        return self.ordered
 
     def updateValue(self, name, value):
         """Updates a value in the current preset, if any."""
@@ -596,7 +594,6 @@ class EncodingTargetManager(PresetManager):
         self._removed_profiles.append(self.cur_preset)
         self._save_removed_profiles()
         self._forgetPreset(self.cur_preset)
-        self.combo.get_parent().setWidgetValue(self.getNewPresetName())
         self.cur_preset = None
 
     def restorePreset(self, values):
