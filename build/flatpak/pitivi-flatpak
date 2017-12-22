@@ -545,7 +545,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         venv_path = os.path.join(self.scriptdir, "pyvenv")
         activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint"
+        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint hotdoc"
         if not os.path.isdir(venv_path):
             print("Setting up a Python virtual env for development: %s" % venv_path)
             venv.create(venv_path, with_pip=True)
