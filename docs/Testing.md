@@ -14,15 +14,21 @@ you want to test more thoroughly.
 
 You can run the unit tests with:
 
-`ninja -C mesonbuild/ test`
+```
+ninja -C mesonbuild/ test
+```
 
 If you want to run only one particular unit test, use:
 
-`gst-validate-launcher tests/ptv_testsuite.py -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat`
+```
+gst-validate-launcher tests/ptv_testsuite.py -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
+```
 
 Listing tests:
 
-`gst-validate-launcher tests/ptv_testsuite.py -L`
+```
+gst-validate-launcher tests/ptv_testsuite.py -L
+```
 
 ### Writing unit tests
 
@@ -59,8 +65,6 @@ each time Pitivi is used.
 
 You can run the integration tests with:
 
-`tests/validate-tests/runtests`
-
-See also:
-
--   [Test suite wishlist](Test_suite_wishlist.md)
+```
+tests/validate-tests/runtests
+```
