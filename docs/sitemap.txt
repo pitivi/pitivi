@@ -2,8 +2,9 @@ index.md
 	Install_with_flatpak.md
 	Bug_reporting.md
 	HACKING.md
+		Development_workflow.md
 		Git.md
-		Git_repositories.md
+		Coding_style_guide.md
 		Command_line_tools.md
 		Pitivi_Love.md
 	The_people.md
@@ -50,7 +51,6 @@ index.md
 		Feroze_gsoc.md
 	Testing.md
 		QA_Scenarios.md
-		Test_suite_wishlist.md
 	design.md
 		design/Why_python.md
 		design/Proxy_editing_requirements.md

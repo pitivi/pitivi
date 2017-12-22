@@ -1,3 +1,7 @@
+---
+short-description: A list of tools useful when developing Pitivi
+...
+
 # Command line tools
 
 This is a list of tools useful when developing Pitivi.
