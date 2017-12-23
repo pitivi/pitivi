@@ -742,6 +742,8 @@ class Project(Loggable, GES.Project):
         self._vcodecsettings_cache = {}
         # A ((container_profile, aencoder) -> acodecsettings) map.
         self._acodecsettings_cache = {}
+        # Whether the current settings are temporary and should be reverted,
+        # as they apply only for rendering.
         self._has_rendering_values = False
 
     def _scenarioDoneCb(self, scenario):
@@ -807,23 +809,23 @@ class Project(Loggable, GES.Project):
             return
         self.set_meta("author", author)
 
-    # Encoding related properties
     def set_rendering(self, rendering):
+        """Sets the a/v restrictions for rendering or for editing."""
         self._ensureAudioRestrictions()
         self._ensureVideoRestrictions()
 
         video_restrictions = self.video_profile.get_restriction().copy_nth(0)
-        video_restrictions_struct = video_restrictions[0]
 
-        if rendering and self._has_rendering_values != rendering:
-            width = int(video_restrictions_struct["width"] * self.render_scale / 100)
-            height = int(video_restrictions_struct["height"] * self.render_scale / 100)
-
-            video_restrictions.set_value('width', width)
-            video_restrictions.set_value('height', height)
-        elif self._has_rendering_values != rendering:
-            width = int(video_restrictions_struct["width"] / self.render_scale * 100)
-            height = int(video_restrictions_struct["height"] / self.render_scale * 100)
+        if self._has_rendering_values != rendering:
+            if rendering:
+                video_restrictions_struct = video_restrictions[0]
+                self.__width = video_restrictions_struct["width"]
+                self.__height = video_restrictions_struct["height"]
+                width = int(self.__width * self.render_scale / 100)
+                height = int(self.__height * self.render_scale / 100)
+            else:
+                width = self.__width
+                height = self.__height
 
             video_restrictions.set_value("width", width)
             video_restrictions.set_value("height", height)

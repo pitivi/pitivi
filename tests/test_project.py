@@ -606,12 +606,12 @@ class TestProjectSettings(common.TestCase):
 
 class TestExportSettings(TestCase):
 
-    def testMasterAttributes(self):
-        self._testMasterAttribute('muxer', dependant_attr='containersettings')
-        self._testMasterAttribute('vencoder', dependant_attr='vcodecsettings')
-        self._testMasterAttribute('aencoder', dependant_attr='acodecsettings')
+    def test_master_attributes(self):
+        self._check_master_attribute("muxer", dependant_attr="containersettings")
+        self._check_master_attribute("vencoder", dependant_attr="vcodecsettings")
+        self._check_master_attribute("aencoder", dependant_attr="acodecsettings")
 
-    def _testMasterAttribute(self, attr, dependant_attr):
+    def _check_master_attribute(self, attr, dependant_attr):
         """Test changing the specified attr has effect on its dependent attr."""
         project = common.create_project()
 
@@ -645,3 +645,37 @@ class TestExportSettings(TestCase):
         setattr(project, attr, attr_value2)
         self.assertFalse("key1" in getattr(project, dependant_attr))
         self.assertFalse("key2" in getattr(project, dependant_attr))
+
+    def test_set_rendering(self):
+        """Checks the set_rendering method."""
+        mainloop = common.create_main_loop()
+
+        def loaded_cb(project, timeline):
+            project.addUris([common.get_sample_uri("tears_of_steel.webm")])
+
+        def progress_cb(project, progress, estimated_time):
+            if progress == 100:
+                mainloop.quit()
+
+        # Create a blank project and add some assets.
+        project = common.create_project()
+
+        project.connect_after("loaded", loaded_cb)
+        project.connect_after("asset-loading-progress", progress_cb)
+
+        mainloop.run()
+
+        # The video settings should match tears_of_steel.webm
+        self.assertEqual(project.videowidth, 960)
+        self.assertEqual(project.videoheight, 400)
+
+        project.render_scale = 3
+        # Pretend we're rendering.
+        project.set_rendering(True)
+        self.assertEqual(project.videowidth, 28)
+        self.assertEqual(project.videoheight, 12)
+
+        # Pretend we're not rendering anymore.
+        project.set_rendering(False)
+        self.assertEqual(project.videowidth, 960)
+        self.assertEqual(project.videoheight, 400)
