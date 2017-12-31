@@ -438,8 +438,8 @@ class RenderDialog(Loggable):
         self._displayRenderSettings()
 
         self.window.connect("delete-event", self._deleteEventCb)
-        self.project.connect(
-            "rendering-settings-changed", self._settings_changed_cb)
+        self.project.connect("rendering-settings-changed",
+                             self._rendering_settings_changed_cb)
 
         # Monitor changes
 
@@ -601,7 +601,8 @@ class RenderDialog(Loggable):
         self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
 
-    def _settings_changed_cb(self, unused_project, key, value):
+    def _rendering_settings_changed_cb(self, unused_project, unused_item):
+        """Handles Project metadata changes."""
         self.updateResolution()
 
     def __initialize_muxers_model(self):
@@ -996,7 +997,7 @@ class RenderDialog(Loggable):
 
     def _closeButtonClickedCb(self, unused_button):
         self.debug("Render dialog's Close button clicked")
-        self.project.disconnect_by_func(self._settings_changed_cb)
+        self.project.disconnect_by_func(self._rendering_settings_changed_cb)
         self.destroy()
 
     def _deleteEventCb(self, unused_window, unused_event):
@@ -1126,7 +1127,7 @@ class RenderDialog(Loggable):
         self.updateResolution()
 
     def updateResolution(self):
-        width, height = self.project.getVideoWidthAndHeight(True)
+        width, height = self.project.getVideoWidthAndHeight(render=True)
         self.resolution_label.set_text("%d×%d" % (width, height))
 
     def _projectSettingsButtonClickedCb(self, unused_button):

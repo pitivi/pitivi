@@ -1406,7 +1406,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project = project
         if self._project:
             self._project.connect("rendering-settings-changed",
-                                  self._renderingSettingsChangedCb)
+                                  self._rendering_settings_changed_cb)
             self.ges_timeline = project.ges_timeline
         else:
             self.ges_timeline = None
@@ -1864,29 +1864,22 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.log("Timeline has lost focus")
         self.updateActions()
 
-    # Callbacks
-    def _renderingSettingsChangedCb(self, project, item, value):
-        """Handles Project metadata changes.
-
-        We filter out the one we are not interested in.
-
-        If `item` is None, it means we called it ourself, and want to force
-        getting the project videorate value
-        """
+    def _rendering_settings_changed_cb(self, project, item):
+        """Handles Project metadata changes."""
         if item == "videorate" or item is None:
-            if value is None:
-                value = project.videorate
-            self._framerate = value
-
-            self.ruler.setProjectFrameRate(self._framerate)
+            self._update_ruler(project.videorate)
 
         if item in ["width", "height", "videorate", "rate", "channels"]:
             project.update_restriction_caps()
 
+    def _update_ruler(self, videorate):
+        self._framerate = videorate
+        self.ruler.setProjectFrameRate(self._framerate)
+
     def _projectLoadedCb(self, unused_project_manager, project):
         """Connects to the project's timeline and pipeline."""
         if self._project:
-            self._project.disconnect_by_func(self._renderingSettingsChangedCb)
+            self._project.disconnect_by_func(self._rendering_settings_changed_cb)
             try:
                 self.timeline._pipeline.disconnect_by_func(
                     self.timeline.positionCb)
@@ -1900,11 +1893,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.setProject(project)
         if project:
             self.ruler.setPipeline(project.pipeline)
-
-            self.ruler.setProjectFrameRate(project.videorate)
             self.ruler.zoomChanged()
+            self._update_ruler(project.videorate)
 
-            self._renderingSettingsChangedCb(project, None, None)
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
 
