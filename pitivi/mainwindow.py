@@ -1014,12 +1014,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         # FIXME GES we should re-enable this when possible
         # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("project-changed", self._projectChangedCb)
-        project.connect(
-            "rendering-settings-changed", self._renderingSettingsChangedCb)
+        project.connect("rendering-settings-changed",
+                        self._rendering_settings_changed_cb)
         project.ges_timeline.connect("notify::duration",
                                      self._timelineDurationChangedCb)
-
-# Missing Plugins Support
 
     def _sourceListMissingPluginsCb(
         self, unused_project, unused_uri, unused_factory,
@@ -1036,8 +1034,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                                                missingPluginsCallback)
         return res
 
-# Pitivi current project callbacks
-
     def _setProject(self, project):
         """Disconnects and then reconnects callbacks to the specified project.
 
@@ -1049,7 +1045,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             return False
 
         self.viewer.setPipeline(project.pipeline)
-        self._renderingSettingsChangedCb(project)
+        self._reset_viewer_aspect_ratio(project)
         self.clipconfig.project = project
 
         # When creating a blank project there's no project URI yet.
@@ -1059,12 +1055,14 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _disconnectFromProject(self, project):
         project.disconnect_by_func(self._projectChangedCb)
-        project.disconnect_by_func(self._renderingSettingsChangedCb)
+        project.disconnect_by_func(self._rendering_settings_changed_cb)
         project.ges_timeline.disconnect_by_func(self._timelineDurationChangedCb)
 
-# Pitivi current project callbacks
+    def _rendering_settings_changed_cb(self, project, unused_item):
+        """Handles Project metadata changes."""
+        self._reset_viewer_aspect_ratio(project)
 
-    def _renderingSettingsChangedCb(self, project, unused_item=None, unused_value=None):
+    def _reset_viewer_aspect_ratio(self, project):
         """Resets the viewer aspect ratio."""
         self.viewer.setDisplayAspectRatio(project.getDAR())
         self.viewer.timecode_entry.setFramerate(project.videorate)
@@ -1078,8 +1076,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         duration = timeline.get_duration()
         self.debug("Timeline duration changed to %s", duration)
         self.render_button.set_sensitive(duration > 0)
-
-# other
 
     def _showExportDialog(self, project):
         self.log("Export requested")

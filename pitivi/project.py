@@ -659,8 +659,7 @@ class Project(Loggable, GES.Project):
         "start-importing": (GObject.SignalFlags.RUN_LAST, None, ()),
         "project-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
         "rendering-settings-changed": (GObject.SignalFlags.RUN_LAST, None,
-                                       (GObject.TYPE_PYOBJECT,
-                                        GObject.TYPE_PYOBJECT,)),
+                                       (GObject.TYPE_PYOBJECT,)),
         "settings-set-from-imported-asset": (GObject.SignalFlags.RUN_LAST, None,
                                              (GES.Asset,)),
         "video-size-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
@@ -866,7 +865,7 @@ class Project(Loggable, GES.Project):
     @videowidth.setter
     def videowidth(self, value):
         if self.setVideoRestriction("width", int(value)):
-            self._emitChange("rendering-settings-changed", "width", value)
+            self._emit_change("width")
 
     @property
     def videoheight(self):
@@ -875,7 +874,7 @@ class Project(Loggable, GES.Project):
     @videoheight.setter
     def videoheight(self, value):
         if self.setVideoRestriction("height", int(value)):
-            self._emitChange("rendering-settings-changed", "height", value)
+            self._emit_change("height")
 
     @property
     def videorate(self):
@@ -884,7 +883,7 @@ class Project(Loggable, GES.Project):
     @videorate.setter
     def videorate(self, value):
         if self.setVideoRestriction("framerate", value):
-            self._emitChange("rendering-settings-changed", "videorate", value)
+            self._emit_change("videorate")
 
     @property
     def audiochannels(self):
@@ -893,7 +892,7 @@ class Project(Loggable, GES.Project):
     @audiochannels.setter
     def audiochannels(self, value):
         if self.__setAudioRestriction("channels", int(value)):
-            self._emitChange("rendering-settings-changed", "channels", value)
+            self._emit_change("channels")
 
     @property
     def audiorate(self):
@@ -905,7 +904,7 @@ class Project(Loggable, GES.Project):
     @audiorate.setter
     def audiorate(self, value):
         if self.__setAudioRestriction("rate", int(value)):
-            self._emitChange("rendering-settings-changed", "rate", value)
+            self._emit_change("rate")
 
     @property
     def aencoder(self):
@@ -920,7 +919,7 @@ class Project(Loggable, GES.Project):
             self.audio_profile.set_preset_name(value)
             # Gst.Preset can be set exclusively through EncodingTagets for now.
             self.audio_profile.set_preset(None)
-            self._emitChange("rendering-settings-changed", "aencoder", value)
+            self._emit_change("aencoder")
 
     def _enforce_video_encoder_restrictions(self, encoder, profile=None):
         """Enforces @encoder specific restrictions."""
@@ -944,7 +943,7 @@ class Project(Loggable, GES.Project):
             # Gst.Preset can be set exclusively through EncodingTagets for now.
             self.video_profile.set_preset(None)
             self._enforce_video_encoder_restrictions(value)
-            self._emitChange("rendering-settings-changed", "vencoder", value)
+            self._emit_change("vencoder")
 
     @property
     def muxer(self):
@@ -957,7 +956,7 @@ class Project(Loggable, GES.Project):
             if caps:
                 self.container_profile.set_format(caps)
             self.container_profile.set_preset_name(value)
-            self._emitChange("rendering-settings-changed", "muxer", value)
+            self._emit_change("muxer")
 
     def _get_caps_from_feature(self, name):
         """Gets the caps for the source static pad template of a feature."""
@@ -1783,8 +1782,8 @@ class Project(Loggable, GES.Project):
         if emit:
             self.emit("settings-set-from-imported-asset", asset)
 
-    def _emitChange(self, signal, key, value):
-        self.emit(signal, key, value)
+    def _emit_change(self, key):
+        self.emit("rendering-settings-changed", key)
         # TODO: Remove this when it's possible to undo/redo these changes.
         self.setModificationState(True)
 
