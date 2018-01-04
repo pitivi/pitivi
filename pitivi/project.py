@@ -837,25 +837,38 @@ class Project(Loggable, GES.Project):
 
     @staticmethod
     def _set_restriction(profile, name, value):
-        if profile.get_restriction()[0][name] != value and value:
-            restriction = profile.get_restriction().copy_nth(0)
-            restriction.set_value(name, value)
-            profile.set_restriction(restriction)
-            return True
+        """Sets a restriction on the specified profile.
 
-        return False
+        Assumes the profile has a single restriction.
 
-    def setVideoRestriction(self, name, value):
+        Args:
+            profile (GstPbutils.EncodingProfile): The profile to be updated.
+
+        Returns:
+            bool: Whether the profile actually changed.
+        """
+        caps = profile.get_restriction()
+        if caps[0][name] == value or not value:
+            return False
+
+        restriction = caps.copy_nth(0)
+        restriction.set_value(name, value)
+        profile.set_restriction(restriction)
+        return True
+
+    def _set_video_restriction(self, name, value):
         res = Project._set_restriction(self.video_profile, name, value)
         if res:
             self.emit("video-size-changed")
             self._has_default_video_settings = False
+            self.update_restriction_caps()
         return res
 
-    def __setAudioRestriction(self, name, value):
+    def _set_audio_restriction(self, name, value):
         res = Project._set_restriction(self.audio_profile, name, value)
         if res:
             self._has_default_audio_settings = False
+            self.update_restriction_caps()
         return res
 
     @property
@@ -864,7 +877,7 @@ class Project(Loggable, GES.Project):
 
     @videowidth.setter
     def videowidth(self, value):
-        if self.setVideoRestriction("width", int(value)):
+        if self._set_video_restriction("width", int(value)):
             self._emit_change("width")
 
     @property
@@ -873,7 +886,7 @@ class Project(Loggable, GES.Project):
 
     @videoheight.setter
     def videoheight(self, value):
-        if self.setVideoRestriction("height", int(value)):
+        if self._set_video_restriction("height", int(value)):
             self._emit_change("height")
 
     @property
@@ -882,7 +895,7 @@ class Project(Loggable, GES.Project):
 
     @videorate.setter
     def videorate(self, value):
-        if self.setVideoRestriction("framerate", value):
+        if self._set_video_restriction("framerate", value):
             self._emit_change("videorate")
 
     @property
@@ -891,7 +904,7 @@ class Project(Loggable, GES.Project):
 
     @audiochannels.setter
     def audiochannels(self, value):
-        if self.__setAudioRestriction("channels", int(value)):
+        if self._set_audio_restriction("channels", int(value)):
             self._emit_change("channels")
 
     @property
@@ -903,7 +916,7 @@ class Project(Loggable, GES.Project):
 
     @audiorate.setter
     def audiorate(self, value):
-        if self.__setAudioRestriction("rate", int(value)):
+        if self._set_audio_restriction("rate", int(value)):
             self._emit_change("rate")
 
     @property
