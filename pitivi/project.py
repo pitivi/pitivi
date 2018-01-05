@@ -828,9 +828,6 @@ class Project(Loggable, GES.Project):
 
             video_restrictions.set_value("width", width)
             video_restrictions.set_value("height", height)
-        else:
-            restriction = self.audio_profile.get_restriction().copy_nth(0)
-            self.audio_profile.set_restriction(restriction)
 
         self._has_rendering_values = rendering
         self.video_profile.set_restriction(video_restrictions)
