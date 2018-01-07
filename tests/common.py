@@ -27,7 +27,6 @@ import tempfile
 import unittest
 from unittest import mock
 
-from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -72,6 +71,10 @@ def create_pitivi_mock(**settings):
     app.settings = __create_settings(**settings)
     app.proxy_manager = ProxyManager(app)
 
+    # TODO: Get rid of Zoomable.app.
+    from pitivi.utils.timeline import Zoomable
+    Zoomable.app = app
+
     return app
 
 
@@ -91,6 +94,12 @@ def create_pitivi(**settings):
 
 
 def create_timeline_container():
+    # TODO: Get rid of Previewer.manager.
+    from pitivi.timeline.previewers import Previewer
+    from pitivi.timeline.previewers import PreviewGeneratorManager
+    assert hasattr(Previewer, "manager")
+    Previewer.manager = PreviewGeneratorManager()
+
     app = create_pitivi_mock()
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
@@ -118,10 +127,12 @@ def create_main_loop():
         timed_out = True
         mainloop.quit()
 
-    def run(timeout_seconds=5):
+    def run(timeout_seconds=5, until_empty=False):
         source = GLib.timeout_source_new_seconds(timeout_seconds)
         source.set_callback(timeout_cb)
         source.attach()
+        if until_empty:
+            GLib.idle_add(mainloop.quit)
         GLib.MainLoop.run(mainloop)
         source.destroy()
         if timed_out:
@@ -249,29 +260,28 @@ def created_project_file(asset_uri):
     os.remove(xges_path)
 
 
-def get_sample_uri(sample, tests_dir=None):
-    if not tests_dir:
+def get_sample_uri(sample, samples_dir=None):
+    if not samples_dir:
         tests_dir = os.path.dirname(os.path.abspath(__file__))
-        tests_dir = os.path.join(tests_dir, "samples")
-    return Gst.filename_to_uri(os.path.join(tests_dir, sample))
+        samples_dir = os.path.join(tests_dir, "samples")
+    return Gst.filename_to_uri(os.path.join(samples_dir, sample))
 
 
 @contextlib.contextmanager
 def cloned_sample(*samples):
     """Gets a context manager which commits the transaction at the end."""
-    tmpdir = tempfile.mkdtemp(suffix="pitivi_cloned_samples")
-    module = globals()
-    original_get_sample_uri = module["get_sample_uri"]
-    module["get_sample_uri"] = lambda sample: original_get_sample_uri(sample, tests_dir=tmpdir)
-    for sample in samples:
-        sample_path = path_from_uri(original_get_sample_uri(sample))
-        clone_path = path_from_uri(get_sample_uri(sample))
-        shutil.copyfile(sample_path, clone_path)
-    try:
-        yield tmpdir
-    finally:
-        module["get_sample_uri"] = original_get_sample_uri
-        shutil.rmtree(tmpdir)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        module = globals()
+        original_get_sample_uri = module["get_sample_uri"]
+        module["get_sample_uri"] = lambda sample: original_get_sample_uri(sample, samples_dir=tmpdir)
+        try:
+            for sample in samples:
+                sample_path = path_from_uri(original_get_sample_uri(sample))
+                clone_path = path_from_uri(get_sample_uri(sample))
+                shutil.copyfile(sample_path, clone_path)
+            yield tmpdir
+        finally:
+            module["get_sample_uri"] = original_get_sample_uri
 
 
 def get_clip_children(ges_clip, *track_types, recursive=False):

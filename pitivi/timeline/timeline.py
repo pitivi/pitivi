@@ -439,7 +439,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
         # Avoid starting/closing preview generation like crazy while tearing down project
-        with Previewer.manager.paused(True):
+        with Previewer.manager.paused(interrupt=True):
             if self.ges_timeline is not None:
                 self.disconnect_by_func(self._button_press_event_cb)
                 self.disconnect_by_func(self._button_release_event_cb)
