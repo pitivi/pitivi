@@ -32,9 +32,11 @@ from gi.repository import Gtk
 from pitivi.preset import EncodingTargetManager
 from pitivi.render import Encoders
 from pitivi.render import extension_for_muxer
+from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from tests import common
+from tests.test_media_library import BaseTestMediaLibrary
 
 
 def factory_exists(*factories):
@@ -63,7 +65,7 @@ def find_preset_row_index(combo, name):
     return None
 
 
-class TestRender(common.TestCase):
+class TestRender(BaseTestMediaLibrary):
     """Tests for functions."""
 
     def test_extensions_supported(self):
@@ -104,8 +106,8 @@ class TestRender(common.TestCase):
         mainloop.run()
 
         layer, = project.ges_timeline.get_layers()
-        layer.add_asset(project.list_assets(GES.UriClip)[0],
-                        0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.UNKNOWN)
+        asset, = project.list_assets(GES.UriClip)
+        layer.add_asset(asset, 0, 0, Gst.CLOCK_TIME_NONE, GES.TrackType.UNKNOWN)
 
         return project
 
@@ -263,7 +265,9 @@ class TestRender(common.TestCase):
 
     def check_simple_rendering_profile(self, profile_name):
         """Checks that rendering with the specified profile works."""
-
+        # TODO: Get rid of Zoomable._instances.
+        from pitivi.utils.timeline import Zoomable
+        del Zoomable._instances[:]
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
 
@@ -290,17 +294,54 @@ class TestRender(common.TestCase):
             message = dialog._pipeline.get_bus().timed_pop_filtered(
                 10 * Gst.SECOND,
                 Gst.MessageType.EOS | Gst.MessageType.ERROR)
+            self.assertIsNotNone(message)
             Gst.debug_bin_to_dot_file_with_ts(
                 dialog._pipeline, Gst.DebugGraphDetails.ALL,
                 "test_rendering_with_profile.dot")
 
             result_file = Gst.filename_to_uri(os.path.join(temp_dir, "outfile"))
-            struct = message.get_structure() if message else None
+            struct = message.get_structure()
             self.assertEqual(message.type, Gst.MessageType.EOS,
                              struct.to_string() if struct else message)
             asset = GES.UriClipAsset.request_sync(result_file)
             # FIXME Check more things?
             self.assertIsNotNone(asset)
+
+            if message:
+                dialog._pipeline.get_bus().post(message)
+
+    def test_rendering_with_scale(self):
+        """Tests rendering with a smaller scale."""
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name])
+
+            project = self.app.project_manager.current_project
+            timeline_container = TimelineContainer(self.app)
+            timeline_container.setProject(project)
+
+            assets = project.list_assets(GES.UriClip)
+            asset, = [a for a in assets if "proxy" in a.props.id]
+            layer, = project.ges_timeline.get_layers()
+            clip = asset.extract()
+            layer.add_clip(clip)
+            video_source = clip.find_track_element(None, GES.VideoUriSource)
+            self.assertEqual(video_source.get_child_property("width")[1], 320)
+            self.assertEqual(video_source.get_child_property("height")[1], 240)
+
+            dialog = self.create_rendering_dialog(project)
+
+            # Simulate setting the scale to 10%.
+            with mock.patch.object(dialog.scale_spinbutton, "get_value",
+                                   return_value=10):
+                dialog._scaleSpinbuttonChangedCb(None)
+                self.render(dialog)
+
+            self.mainloop.run(until_empty=True)
+
+            video_source = clip.find_track_element(None, GES.VideoUriSource)
+            self.assertEqual(video_source.get_child_property("width")[1], 320)
+            self.assertEqual(video_source.get_child_property("height")[1], 240)
 
     @skipUnless(*encoding_target_exists("youtube"))
     # pylint: disable=invalid-name

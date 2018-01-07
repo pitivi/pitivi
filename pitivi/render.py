@@ -872,11 +872,11 @@ class RenderDialog(Loggable):
         self._rendering_is_paused = False
         self._time_spent_paused = 0
         self._pipeline.set_state(Gst.State.NULL)
+        self.project.set_rendering(False)
         self.__useProxyAssets()
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
-        self.project.set_rendering(False)
 
     def _pauseRender(self, unused_progress):
         self._rendering_is_paused = self.progress.play_pause_button.get_active(
@@ -926,7 +926,7 @@ class RenderDialog(Loggable):
             self.debug("Rendering from proxies, not replacing assets")
             return
 
-        for layer in self.app.gui.timeline_ui.ges_timeline.get_layers():
+        for layer in self.app.project_manager.current_project.ges_timeline.get_layers():
             for clip in layer.get_clips():
                 if not isinstance(clip, GES.UriClip):
                     continue
@@ -934,29 +934,34 @@ class RenderDialog(Loggable):
                 asset = clip.get_asset()
                 asset_target = asset.get_proxy_target()
                 if not asset_target:
+                    # The asset is not a proxy.
                     continue
 
                 if self.__automatically_use_proxies.get_active():
-                    if self.app.proxy_manager.isAssetFormatWellSupported(
+                    if not self.app.proxy_manager.isAssetFormatWellSupported(
                             asset_target):
-                        self.info("Asset %s format well supported, "
-                                  "rendering from real asset.",
-                                  asset_target.props.id)
-                    else:
-                        self.info("Asset %s format not well supported, "
+                        self.info("Original asset %s format not well supported, "
                                   "rendering from proxy.",
                                   asset_target.props.id)
                         continue
 
-                if not asset_target.get_error():
-                    clip.set_asset(asset_target)
-                    self.error("Using %s as an asset (instead of %s)",
-                               asset_target.get_id(),
-                               asset.get_id())
-                    self.__unproxiedClips[clip] = asset
+                    self.info("Original asset %s format well supported, "
+                              "rendering from real asset.",
+                              asset_target.props.id)
+
+                if asset_target.get_error():
+                    # The original asset cannot be used.
+                    continue
+
+                clip.set_asset(asset_target)
+                self.info("Using original asset %s (instead of proxy %s)",
+                          asset_target.get_id(),
+                          asset.get_id())
+                self.__unproxiedClips[clip] = asset
 
     def __useProxyAssets(self):
         for clip, asset in self.__unproxiedClips.items():
+            self.info("Reverting to using proxy asset %s", asset)
             clip.set_asset(asset)
 
         self.__unproxiedClips = {}
