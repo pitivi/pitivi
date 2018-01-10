@@ -36,7 +36,6 @@ from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import binary_search
 from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
@@ -431,6 +430,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         # The thumbs to be generated.
         self.queue = []
+        # The position for which a thumbnail is currently being generated.
+        self.position = -1
         self._thumb_cb_id = None
 
         self.thumbs = {}
@@ -550,12 +551,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Creates a missing thumbnail."""
         self._thumb_cb_id = None
 
-        position = self.queue.pop(0)
-        self.log("Creating thumb for `%s` at %s", path_from_uri(self.uri), position)
+        self.position = self.queue.pop(0)
+        self.log("Creating thumb for `%s` at %s", path_from_uri(self.uri), self.position)
         self.pipeline.seek(1.0,
                            Gst.Format.TIME,
                            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
-                           Gst.SeekType.SET, position,
+                           Gst.SeekType.SET, self.position,
                            Gst.SeekType.NONE, -1)
 
         # Stop calling me.
@@ -619,23 +620,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         if queue:
             self.become_controlled()
 
-    def _set_pixbuf(self, position, pixbuf):
-        """Sets the pixbuf for the thumbnail at the specified position."""
-        if position in self.thumbs:
-            thumb = self.thumbs[position]
-        else:
-            # The pixbufs we get from gdkpixbufsink are not always
-            # exactly the ones requested, the reported position can differ.
-            # Try to find the closest thumbnail for the specified position.
-            sorted_times = sorted(self.thumbs.keys())
-            index = binary_search(sorted_times, position)
-            position = sorted_times[index]
-            thumb = self.thumbs[position]
-
+    def _set_pixbuf(self, pixbuf):
+        """Sets the pixbuf for the thumbnail at the expected position."""
+        thumb = self.thumbs[self.position]
         thumb.set_from_pixbuf(pixbuf)
-        if position in self.queue:
-            self.queue.remove(position)
-        self.thumb_cache[position] = pixbuf
+        self.thumb_cache[self.position] = pixbuf
         self.queue_draw()
 
     def zoomChanged(self):
@@ -661,9 +650,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             struct = message.get_structure()
             struct_name = struct.get_name()
             if struct_name == "preroll-pixbuf":
-                stream_time = struct.get_value("stream-time")
                 pixbuf = struct.get_value("pixbuf")
-                self._set_pixbuf(stream_time, pixbuf)
+                self._set_pixbuf(pixbuf)
         elif message.src == self.pipeline and \
                 message.type == Gst.MessageType.ASYNC_DONE:
             # The seek operation has been performed.

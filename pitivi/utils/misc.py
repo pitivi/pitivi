@@ -229,29 +229,6 @@ def quantize(input, interval):
     return (input // interval) * interval
 
 
-def binary_search(elements, value):
-    """Returns the index of the element closest to value.
-
-    Args:
-        elements (List): A sorted list.
-    """
-    if not elements:
-        return -1
-    closest_index = bisect.bisect_left(elements, value, 0, len(elements) - 1)
-    element = elements[closest_index]
-    closest_distance = abs(element - value)
-    if closest_distance == 0:
-        return closest_index
-    for index in (closest_index - 1,):
-        if index < 0:
-            continue
-        distance = abs(elements[index] - value)
-        if closest_distance > distance:
-            closest_index = index
-            closest_distance = distance
-    return closest_index
-
-
 def show_user_manual(page=None):
     """Displays the user manual.
 
