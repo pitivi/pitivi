@@ -242,7 +242,7 @@ class WaveformPreviewer(PreviewerBin):
 
                 pos = int(stream_time / SAMPLE_DURATION)
                 if pos >= len(self.peaks[0]):
-                    return
+                    return False
 
                 for i, val in enumerate(peaks):
                     if val < 0:
@@ -489,12 +489,18 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         return pipeline
 
     def _schedule_next_thumb_generation(self):
-        """Schedules the generation of the next thumbnail.
+        """Schedules the generation of the next thumbnail, or stop.
 
         Checks the CPU usage and adjusts the waiting time at which the next
         thumbnail will be generated +/- 10%. Even then, it will only
         happen when the gobject loop is idle to avoid blocking the UI.
         """
+        if not self.queue:
+            # Nothing left to do.
+            self.debug("Thumbnails generation complete")
+            self.stop_generation()
+            return
+
         usage_percent = self.cpu_usage_tracker.usage()
         if usage_percent < self._max_cpu_usage:
             self.interval *= 0.9
@@ -523,27 +529,18 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
             self.thumb_width = self.__image_pixbuf.props.width
+            self._update_thumbnails()
             self.emit("done")
         else:
             self.debug('Now generating thumbnails for: %s', path_from_uri(self.uri))
             self.pipeline = self._setup_pipeline()
+            # Update the thumbnails with what we already have, if anything.
+            self._update_thumbnails()
             self._schedule_next_thumb_generation()
-
-        # Update the thumbnails with what we already have, if anything.
-        self._update_thumbnails()
-
-        # Stop calling me.
-        return False
 
     def _create_next_thumb_cb(self):
         """Creates a missing thumbnail."""
         self._thumb_cb_id = None
-        if not self.queue:
-            # Nothing left to do.
-            self.debug("Thumbnails generation complete")
-            self.stop_generation()
-            # Stop calling me.
-            return False
 
         position = self.queue.pop(0)
         self.log("Creating thumb for `%s` at %s", path_from_uri(self.uri), position)
