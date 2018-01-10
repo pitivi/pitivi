@@ -23,33 +23,9 @@ import unittest
 
 from gi.repository import Gst
 
-from pitivi.utils.misc import binary_search
 from pitivi.utils.misc import PathWalker
 from tests.common import create_main_loop
 from tests.common import get_sample_uri
-
-
-class BinarySearchTest(unittest.TestCase):
-    """Tests for the `binary_search` method."""
-
-    def test_empty_list(self):
-        """Checks the result when the list is empty."""
-        self.assertEqual(binary_search([], 10), -1)
-
-    def test_existing(self):
-        """Checks the result when the element is present."""
-        self.assertEqual(binary_search([10, 20, 30], 10), 0)
-        self.assertEqual(binary_search([10, 20, 30], 20), 1)
-        self.assertEqual(binary_search([10, 20, 30], 30), 2)
-
-    def test_missing(self):
-        """Checks the result when the element is missing."""
-        self.assertEqual(binary_search([10, 20, 30], 1), 0)
-        self.assertEqual(binary_search([10, 20, 30], 11), 0)
-        self.assertEqual(binary_search([10, 20, 30], 16), 1)
-        self.assertEqual(binary_search([10, 20, 30], 24), 1)
-        self.assertEqual(binary_search([10, 20, 30], 29), 2)
-        self.assertEqual(binary_search([10, 20, 30], 40), 2)
 
 
 class PathWalkerTest(unittest.TestCase):
