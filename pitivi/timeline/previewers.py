@@ -432,6 +432,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.queue = []
         # The position for which a thumbnail is currently being generated.
         self.position = -1
+        # The positions for which we failed to get a pixbuf.
+        self.failures = set()
         self._thumb_cb_id = None
 
         self.thumbs = {}
@@ -552,7 +554,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self._thumb_cb_id = None
 
         self.position = self.queue.pop(0)
-        self.log("Creating thumb for `%s` at %s", path_from_uri(self.uri), self.position)
+        self.log("Creating thumb at %s", self.position)
         self.pipeline.seek(1.0,
                            Gst.Format.TIME,
                            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
@@ -612,7 +614,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
             else:
-                queue.append(position)
+                if position not in self.failures and position != self.position:
+                    queue.append(position)
         for thumb in self.thumbs.values():
             self.remove(thumb)
         self.thumbs = thumbs
@@ -622,9 +625,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def _set_pixbuf(self, pixbuf):
         """Sets the pixbuf for the thumbnail at the expected position."""
-        thumb = self.thumbs[self.position]
+        position = self.position
+        self.position = -1
+
+        thumb = self.thumbs[position]
         thumb.set_from_pixbuf(pixbuf)
-        self.thumb_cache[self.position] = pixbuf
+        self.thumb_cache[position] = pixbuf
         self.queue_draw()
 
     def zoomChanged(self):
@@ -654,7 +660,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 self._set_pixbuf(pixbuf)
         elif message.src == self.pipeline and \
                 message.type == Gst.MessageType.ASYNC_DONE:
-            # The seek operation has been performed.
+            if self.position >= 0:
+                self.warning("Thumbnail generation failed at %s", self.position)
+                self.failures.add(self.position)
+                self.position = -1
             self._schedule_next_thumb_generation()
         return Gst.BusSyncReply.PASS
 
@@ -689,7 +698,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             thumb.props.opacity = opacity
 
     def start_generation(self):
-        self.debug('Waiting for UI to become idle for: %s',
+        self.debug("Waiting for UI to become idle for: %s",
                    path_from_uri(self.uri))
         self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
                                         priority=GLib.PRIORITY_LOW)
