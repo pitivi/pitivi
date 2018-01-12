@@ -1,5 +1,6 @@
+repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks.git
-    sha: e626cd57090d8df0be21e4df0f4e55cc3511d6ab
+    sha: v1.1.1
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -10,11 +11,10 @@
     -   id: flake8
         files: .*\.py$\|bin/pitivi.in
 -   repo: https://github.com/pre-commit/pre-commit.git
-    sha: e5669ca135901120495e4d500805537abb856a1c
+    sha: v1.4.5
     hooks:
-    -   id: validate_config
     -   id: validate_manifest
 -   repo: https://github.com/asottile/reorder_python_imports.git
-    sha: 9aa4d08f9a28d3defc5e4db3c3b77d1a9980fd1a
+    sha: v1.0.1
     hooks:
     -   id: reorder-python-imports
