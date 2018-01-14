@@ -3,6 +3,27 @@
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
 get involved.
 
+## 2017
+
+-   [Fabián Orccón](https://github.com/jakubbrindza) implemented a
+    [plugin system](http://www.jakubbrindza.com/2016/08/gsoc-with-pitivi.html)
+    which has been merged. Unfortunately we noticed too late the excellent
+    additional Developer Console plugin he developed was based on code which is
+    not compatible with our license, so until that part is rewritten we can't
+    merge it.
+-   [Suhas Nayak](https://suhas2go.github.io) implemented a [framework for
+    supporting custom UI for effects](https://suhas2go.github.io/gnome/pitivi/2017/08/28/GSoCFinalReport/),
+    instead of the UI generated automatically. Suhas used the new framework to
+    provide a polished UI for the `frei0r-filter-3-point-color-balance` and
+    `alpha` effects.
+-   [Ștefan-Adrian Popa](https://stefanpopablog.wordpress.com) implemented
+    the UI for the [Ken-Burns
+    effect](https://stefanpopablog.wordpress.com/2017/08/22/gsoc-2017-coming-to-an-end/),
+    including keyframing the placement and zoom of the clips by interacting with
+    the viewer. Additionally, Ștefan fixed a lot of bugs [most of them unrelated
+    to his main
+    task](https://gist.github.com/stefanzzz22/260fa2be10bccd7404af87152ecd5a88).
+
 ## 2016
 
 -   [Jakub Brindza](https://github.com/jakubbrindza) implemented
