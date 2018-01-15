@@ -94,22 +94,17 @@ for i in $(flatpak list | grep org.pitivi.Pitivi | awk '{ print $1 }'); do
 done
 ```
 
-2. Start a shell in the Pitivi bundle environment
-
-(If developping pitivi, make sure to be in the environment before running)
+2. Start a shell in the Pitivi bundle environment.
 
 ```
-if type ptvenv; then
-  ptvenv
-else
-  flatpak run -d --command=bash org.pitivi.Pitivi
-fi
+flatpak run -d --command=bash org.pitivi.Pitivi
 ```
+In the development environment, you do this by running `ptvenv` instead.
 
 3. Start Pitivi inside gdb
 
 ```
-gdb python3 -ex 'run /app/bin/pitivi
+gdb python3 -ex 'run /app/bin/pitivi'
 ```
 
 When Pitivi crashes, run `bt full` to get the backtrace. When Pitivi
