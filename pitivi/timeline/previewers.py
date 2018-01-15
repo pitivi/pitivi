@@ -495,6 +495,10 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         thumbnail will be generated +/- 10%. Even then, it will only
         happen when the gobject loop is idle to avoid blocking the UI.
         """
+        if self._thumb_cb_id is not None:
+            # A thumb has already been scheduled.
+            return
+
         if not self.queue:
             # Nothing left to do.
             self.debug("Thumbnails generation complete")
@@ -525,18 +529,22 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.__start_id = None
 
         if isinstance(self.ges_elem, GES.ImageSource):
-            self.debug('Now generating thumbnail for: %s', path_from_uri(self.uri))
+            self.debug("Generating thumbnail for image: %s", path_from_uri(self.uri))
             self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
             self.thumb_width = self.__image_pixbuf.props.width
             self._update_thumbnails()
             self.emit("done")
         else:
-            self.debug('Now generating thumbnails for: %s', path_from_uri(self.uri))
-            self.pipeline = self._setup_pipeline()
             # Update the thumbnails with what we already have, if anything.
             self._update_thumbnails()
-            self._schedule_next_thumb_generation()
+            if self.queue:
+                self.debug("Generating thumbnails for video: %s, %s", path_from_uri(self.uri), self.queue)
+                # When the pipeline status is set to PAUSED,
+                # the first thumbnail generation will be scheduled.
+                self.pipeline = self._setup_pipeline()
+            else:
+                self.emit("done")
 
     def _create_next_thumb_cb(self):
         """Creates a missing thumbnail."""
