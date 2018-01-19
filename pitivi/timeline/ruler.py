@@ -194,16 +194,21 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         if not self._pipeline:
             return False
 
-        self.debug("button pressed at x:%d", event.x)
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
+            self.debug("button pressed at x:%d", event.x)
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self._pipeline.simple_seek(position)
+            self.__set_tooltip_text(position, True)
         return False
 
     def do_button_release_event(self, event):
-        self.debug("button released at x:%d", event.x)
-        self.app.gui.focusTimeline()
+        button = event.button
+        if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
+            self.debug("button released at x:%d", event.x)
+            self.app.gui.focusTimeline()
+            position = self.pixelToNs(event.x + self.pixbuf_offset)
+            self.__set_tooltip_text(position)
         return False
 
     def do_motion_notify_event(self, event):
@@ -215,13 +220,13 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         seek_mask = Gdk.ModifierType.BUTTON3_MASK
         if self.app.settings.leftClickAlsoSeeks:
             seek_mask |= Gdk.ModifierType.BUTTON1_MASK
-        if event.state & seek_mask:
+
+        seeking = event.state & seek_mask
+        if seeking:
             self.debug("motion at event.x %d", event.x)
             self._pipeline.simple_seek(position)
+        self.__set_tooltip_text(position, seeking)
 
-        human_time = beautify_length(position)
-        cur_frame = int(position / self.ns_per_frame) + 1
-        self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
         return False
 
     def do_scroll_event(self, event):
@@ -232,6 +237,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.frame_rate = rate
         self.ns_per_frame = float(Gst.SECOND / self.frame_rate)
         self.scales = (2 / rate, 5 / rate, 10 / rate) + SCALES
+
+    def __set_tooltip_text(self, position, seeking=False):
+        """Updates the tooltip."""
+        if seeking:
+            timeline_duration = self.timeline.ges_timeline.props.duration
+            if position > timeline_duration:
+                position = timeline_duration
+        human_time = beautify_length(position)
+        cur_frame = int(position / self.ns_per_frame) + 1
+        self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
 
 # Drawing methods
 
