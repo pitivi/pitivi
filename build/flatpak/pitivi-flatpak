@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 # pylint: disable=missing-docstring,invalid-name
-
 import argparse
 import configparser
 import json
@@ -28,7 +27,6 @@ import subprocess
 import sys
 import tempfile
 import venv
-
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
@@ -310,7 +308,7 @@ class FlatpakPackage(FlatpakObject):
 
     def install(self):
         if not self.repo:
-            return False
+            return
 
         self.flatpak("install", self.repo.name, self.name,
                      self.branch, show_output=True,
@@ -318,7 +316,8 @@ class FlatpakPackage(FlatpakObject):
 
     def update(self):
         if not self.is_installed():
-            return self.install()
+            self.install()
+            return
 
         self.flatpak("update", self.name, self.branch, show_output=True,
                      comment="Updating %s" % self.name)
@@ -504,7 +503,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def setup_sandbox(self):
         """Creates the sandbox."""
-        if not os.path.exists(self.prefix) or self.update:
+        fresh_install = not os.path.exists(self.prefix)
+        if fresh_install or self.update:
             self.install_all()
             Console.message("Building Pitivi %s and dependencies in %s",
                             self.branch, self.prefix)
@@ -545,16 +545,18 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         venv_path = os.path.join(self.scriptdir, "pyvenv")
         activate_script = os.path.join(venv_path, "bin", "activate")
+        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook"
         if not os.path.isdir(venv_path):
-            print("Installing development tools in a virtual env.")
+            print("Setting up a Python virtual env: %s" % venv_path)
             venv.create(venv_path, with_pip=True)
+            print("Installing development tools in a Python virtual env: %s" % venv_path)
             subprocess.check_call(
-                ". %s && pip install pre-commit git-phab" % activate_script,
+                ". %s && pip install %s" % (activate_script, pip_modules),
                 shell=True)
 
         if self.update:
             subprocess.check_call(
-                ". %s && pip install -U pre-commit git-phab" % activate_script,
+                ". %s && pip install -U %s" % (activate_script, pip_modules),
                 shell=True)
 
         if not self.check and not self.update:
@@ -564,6 +566,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         flatpak_command = ["flatpak", "build", "--socket=x11",
                            "--socket=session-bus", "--socket=pulseaudio",
                            "--share=network", "--env=PITIVI_DEVELOPMENT=1",
+                           "--env=PYTHONUSERBASE=/app/",
                            "--env=CC=ccache gcc",
                            "--env=CXX=ccache g++", "--device=dri"]
 
