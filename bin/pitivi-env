@@ -12,7 +12,7 @@ SCRIPT=${BASH_SOURCE[0]:-$0}
     && exit 1
 
 SCRIPT_DIR=$(dirname $(realpath $SCRIPT))
-PITIVI_REPO_DIR=$(realpath $SCRIPT_DIR/..)
+export PITIVI_REPO_DIR=$(realpath $SCRIPT_DIR/..)
 export FLATPAK_ENVPATH=$(realpath $PITIVI_REPO_DIR/..)
 export CURRENT_GST=$FLATPAK_ENVPATH
 export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
@@ -22,11 +22,12 @@ alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
 
 echo "-> Setting up the prefix for the sandbox..."
 # This builds the local flatpak repo if it is not yet built.
-ptvenv echo Prefix ready
+ptvenv echo Setting up the sandbox prefix...
 if [ "$?" = "0" ];
 then
-    # Set up environment variables and aliases so configuring, building, etc.
-    # takes place in the sandbox.
+    echo Sandbox ready.
+
+    echo Setting up aliases etc. so configuring, building takes place in the sandbox...
 
     # Meson sets up the build directory where ninja works.
     # Consider using `setup` instead of `meson`, see below.
@@ -60,7 +61,7 @@ then
     # such as git-phab, pre-commit, etc.
     source $PITIVI_REPO_DIR/build/flatpak/pyvenv/bin/activate
 
-    # Install the pre-commit framework as a git hook, for doing clean commits.
+    # Install our pre-commit git hook, for doing clean commits.
     rm -f .git/hooks/pre-commit
     ln -s ../../pre-commit.hook .git/hooks/pre-commit
 
