@@ -1565,19 +1565,19 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.zoom_in_action.connect("activate", self._zoom_in_cb)
         navigation_group.add_action(self.zoom_in_action)
         self.app.shortcuts.add("navigation.zoom-in",
-                               ["<Primary>plus", "<Primary>equal"],
+                               ["<Primary>plus", "<Primary>KP_Add", "<Primary>equal"],
                                _("Zoom in"))
 
         self.zoom_out_action = Gio.SimpleAction.new("zoom-out", None)
         self.zoom_out_action.connect("activate", self._zoom_out_cb)
         navigation_group.add_action(self.zoom_out_action)
-        self.app.shortcuts.add("navigation.zoom-out", ["<Primary>minus"],
+        self.app.shortcuts.add("navigation.zoom-out", ["<Primary>minus", "<Primary>KP_Subtract"],
                                _("Zoom out"))
 
         self.zoom_fit_action = Gio.SimpleAction.new("zoom-fit", None)
         self.zoom_fit_action.connect("activate", self._zoom_fit_cb)
         navigation_group.add_action(self.zoom_fit_action)
-        self.app.shortcuts.add("navigation.zoom-fit", ["<Primary>0"],
+        self.app.shortcuts.add("navigation.zoom-fit", ["<Primary>0", "<Primary>KP_0"],
                                _("Adjust zoom to fit the project to the window"))
 
         self.play_action = Gio.SimpleAction.new("play", None)
