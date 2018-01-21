@@ -203,8 +203,13 @@ class ShortcutsWindow(Gtk.ShortcutsWindow):
             group = Gtk.ShortcutsGroup(title=self.app.shortcuts.group_titles[group_id])
             group.show()
             for action, title in self.app.shortcuts.group_actions[group_id]:
-                accelerators = " ".join(self.app.get_accels_for_action(action))
-                short = Gtk.ShortcutsShortcut(title=title, accelerator=accelerators)
+                # Show only the first accelerator which is the main one.
+                # Don't bother with the others, to keep the dialog pretty.
+                try:
+                    accelerator = self.app.get_accels_for_action(action)[0]
+                except IndexError:
+                    accelerator = ""
+                short = Gtk.ShortcutsShortcut(title=title, accelerator=accelerator)
                 short.show()
                 group.add(short)
             section.add(group)
