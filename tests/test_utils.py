@@ -18,6 +18,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import TestCase
+from unittest.mock import Mock
 
 from gi.repository import GLib
 from gi.repository import Gst
@@ -28,6 +29,7 @@ from pitivi.check import GstDependency
 from pitivi.check import GtkDependency
 from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.ui import beautify_length
+from pitivi.utils.ui import get_framerate
 
 second = Gst.SECOND
 minute = second * 60
@@ -58,6 +60,33 @@ class TestBeautifyLength(TestCase):
 
     def test_beautify_nothing(self):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
+
+
+class TestGetFramerate(TestCase):
+
+    def __check(self, num, denom, expected):
+        stream = Mock()
+        stream.get_framerate_num = Mock(return_value=num)
+        stream.get_framerate_denom = Mock(return_value=denom)
+        self.assertEqual(get_framerate(stream), expected)
+
+    def test_invalid_fps(self):
+        self.__check(0, 1, "0")
+        self.__check(0, 0, "0")
+        self.__check(1, 0, "0")
+
+    def test_int_fps(self):
+        self.__check(1, 1, "1")
+        self.__check(24, 1, "24")
+
+    def test_float_fps(self):
+        self.__check(24000, 1001, "23.976")
+        self.__check(30000, 1001, "29.97")
+        self.__check(60000, 1001, "59.94")
+
+    def test_high_fps(self):
+        self.__check(2500, 1, "2,500")
+        self.__check(120, 1, "120")
 
 
 class TestDependencyChecks(TestCase):
