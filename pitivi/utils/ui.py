@@ -158,6 +158,18 @@ TIMELINE_CSS = """
 
 """ % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
+
+
+def get_framerate(stream):
+    """Formats the framerate of the stream for display."""
+    num = stream.get_framerate_num()
+    denom = stream.get_framerate_denom()
+    if num == 0 or denom == 0:
+        # Gst returns 0/1 if unable to determine it or in case of an image.
+        return "0"
+    return "{0:.5n}".format(num / denom)
+
+
 # ---------------------- ARGB color helper-------------------------------------#
 
 
@@ -293,7 +305,7 @@ def beautify_missing_asset(asset):
     """Formats the specified missing asset for display.
 
     Args:
-        asset (GES.Asset): The asset to display.
+        asset (GES.UriClipAsset): The asset to display.
     """
     uri = asset.get_id()
     path = path_from_uri(uri)
@@ -335,24 +347,20 @@ def beautify_stream(stream):
             "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
             "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
             stream.get_channels())
-        templ = templ % (stream.get_channels(), stream.get_sample_rate(),
-                         stream.get_depth())
-        return templ
+        return templ % (stream.get_channels(), stream.get_sample_rate(),
+                        stream.get_depth())
 
     elif type(stream) is DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
+        width = stream.get_width()
+        height = stream.get_height()
         if not stream.is_image():
-            templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>")
-            try:
-                templ = templ % (par * stream.get_width(), stream.get_height(),
-                                 float(stream.get_framerate_num()) / stream.get_framerate_denom())
-            except ZeroDivisionError:
-                templ = templ % (
-                    par * stream.get_width(), stream.get_height(), 0)
+            fps = get_framerate(stream)
+            templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>")
+            return templ % (par * width, height, fps)
         else:
             templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
-            templ = templ % (par * stream.get_width(), stream.get_height())
-        return templ
+            return templ % (par * width, height)
 
     elif type(stream) is DiscovererSubtitleInfo:
         # Ignore subtitle streams
@@ -573,7 +581,7 @@ def fix_infobar(infobar):
     infobar.forall(make_sure_revealer_does_nothing)
 
 
-# ----------------------- encoding datas --------------------------------------- #
+# ----------------------- encoding datas --------------------------------------#
 # FIXME This should into a special file
 frame_rates = model((str, object), (
     # Translators: fps is for frames per second
