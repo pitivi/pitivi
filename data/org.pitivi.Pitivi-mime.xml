@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="text/x-xptv">
+    <comment>Pitivi video project (legacy)</comment>
+    <glob pattern="*.xptv"/>
+    <generic-icon name="text-x-xges"/>
+    <magic priority="50">
+      <match type="string" offset="0" value="&lt;pitivi"/>
+    </magic>
+  </mime-type>
+  <mime-type type="text/x-xges">
+    <comment>Pitivi/GES video project</comment>
+    <glob pattern="*.xges"/>
+    <generic-icon name="text-x-xges"/>
+    <magic priority="50">
+      <match type="string" offset="0" value="&lt;ges"/>
+    </magic>
+  </mime-type>
+</mime-info>
