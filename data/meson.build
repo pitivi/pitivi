@@ -11,11 +11,14 @@ custom_target('org.pitivi.Pitivi.desktop',
     input : 'org.pitivi.Pitivi.desktop.in',
     command : [intltool_merge, '--desktop-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
-    install_dir : get_option('datadir') + '/applications')
+    install_dir : join_paths(get_option('datadir'), 'applications'))
 
 custom_target('org.pitivi.Pitivi.appdata.xml',
     output : 'org.pitivi.Pitivi.appdata.xml',
     input : 'org.pitivi.Pitivi.appdata.xml.in',
     command : [intltool_merge, '--xml-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
-    install_dir : get_option('datadir') + '/appdata')
+    install_dir : join_paths(get_option('datadir'), 'appdata'))
+
+install_data('org.pitivi.Pitivi-mime.xml',
+    install_dir : join_paths(get_option('datadir'), 'mime/packages'))
