@@ -6,7 +6,7 @@ not a replacement for the GStreamer Plugin Tutorial.
 
 I will try to walk you through creating a new element that acts as a
 filter (has both a sink and source, this one wont actually do any
-filtering :)), which recieves a buffer and pushes it forward. As such it
+filtering :)), which receives a buffer and pushes it forward. As such it
 should help you avoid the pain.
 
 :   source
@@ -31,15 +31,15 @@ elements](Src-filter-sink.elemets-basics.png "source filter and sink elements")
 All new elements are derived from gst.Element or a class derived from
 gst.Element, gst.PushSrc is such an example. There are several basic
 steps common to all plugins which include registering the element with
-gstreamer, and initalising the plugin like you would anyother object.
+gstreamer, and initialising the plugin like you would any other object.
 When initialising a derivied gst.Element you must do several things,
 create the gst.Pads which describe media streams (buffers) the element
-can recieve and send, and make the pads by calling the
-gst.Element.add\_pad(gst.Pad) method. You must also overide the
+can receive and send, and make the pads by calling the
+gst.Element.add\_pad(gst.Pad) method. You must also override the
 functions specific to what you are trying to do, we are creating a
-filter (an element which both recieves and sends buffers) in this case
+filter (an element which both receives and sends buffers) in this case
 we must at minimum override the gst.Pad.set\_caps function which is used
-to negotiate which type of buffers can be recieved and the gst.Pad.chain
+to negotiate which type of buffers can be received and the gst.Pad.chain
 function which handles incoming buffers.
 
 NewElement is derived from gst.Element
@@ -63,7 +63,7 @@ gst.Element) must register it's self
             gst.PAD_ALWAYS,
             gst.caps_new_any())
 
-        #sink pad (template): we recieve buffers from our sink pad
+        #sink pad (template): we receive buffers from our sink pad
         _sinktemplate = gst.PadTemplate ('sink',
             gst.PAD_SINK,
             gst.PAD_ALWAYS,
@@ -101,8 +101,8 @@ with.
             #incoming data
             return True
 
-the pad chain function is called on sink caps (the ones recieving data),
-a buffer is recieved and pushed forward. Normally this is where we would
+the pad chain function is called on sink caps (the ones receiving data),
+a buffer is received and pushed forward. Normally this is where we would
 make changes to a buffer.
 
         def _sink_chain(self, pad, buf):

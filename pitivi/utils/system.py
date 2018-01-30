@@ -69,7 +69,7 @@ class System(GObject.Object, Loggable):
 
 
 class FreedesktopOrgSystem(System):
-    """Provides messaging capabilites for desktops that implement fd.o specs."""
+    """Provides messaging capabilities for desktops that implement fd.o specs."""
 
     def __init__(self):
         System.__init__(self)

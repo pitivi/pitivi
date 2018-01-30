@@ -94,7 +94,7 @@ implementing the file format (which is the hard/interesting part).
 
 I've been working on the design documents, and creating file/load save
 test cases. My goal is to have the application logic for file load/save
-comitted to the SoC branch some time next week. I've been focusing
+committed to the SoC branch some time next week. I've been focusing
 mostly on design at the moment. Today I spent some time splitting up the
 design docs page into separate elements. I also am having to compile
 GStreamer from CVS to catch up to the latest gstreamer bug fixes.

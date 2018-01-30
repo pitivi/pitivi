@@ -618,7 +618,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         if message.type == Gst.MessageType.ASYNC_DONE and\
                 self._commit_wanted:
-            self.debug("Commiting now that ASYNC is DONE")
+            self.debug("Committing now that ASYNC is DONE")
             self._addWaitingForAsyncDoneTimeout()
             self.props.timeline.commit()
             self._commit_wanted = False
@@ -638,13 +638,13 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         else:
             self._addWaitingForAsyncDoneTimeout()
             self.props.timeline.commit()
-            self.debug("Commiting right now")
+            self.debug("Committing right now")
             self._was_empty = is_empty
 
     def setState(self, state):
         SimplePipeline.setState(self, state)
         if state >= Gst.State.PAUSED and self.props.timeline.is_empty():
-            self.debug("No ASYNC_DONE will be emited on empty timelines")
+            self.debug("No ASYNC_DONE will be emitted on empty timelines")
             self._was_empty = True
             self._removeWaitingForAsyncDoneTimeout()
 

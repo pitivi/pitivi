@@ -190,7 +190,7 @@ Timeline view design document (c) 2005 Edward Hervey
 	     [ Layers of sources				]
 
     * Properties:
-      _ Global Simple Effect(s) (Optionnal)
+      _ Global Simple Effect(s) (Optional)
       _ Simple Effect(s)
       _ Complex Effect(s)
       _ Transition(s)

@@ -33,7 +33,7 @@ Let's create an automated of existing `videobalance` demo.
 
 ![](Color_balance_pipeline.png "Color_balance_pipeline.png")
 
-    Exerpt 1
+    Excerpt 1
 
 The trick now is to control one or more of the `videobalance` element's
 properties with a `gst.Controller`. First we create a controller, and

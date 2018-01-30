@@ -60,7 +60,7 @@ Frequent Tasks
 -   finding a specific time in the timeline
 -   shifting a clip's start position
 -   triming a clip's in or out position
--   spliting a clip into multiple pieces
+-   splitting a clip into multiple pieces
 -   previewing the project
 -   adjusting audio volume or video alpha
 -   moving sources between layers
@@ -577,7 +577,7 @@ properties of the currently selected timeline object(s) (for example,
 audio balance, or image color correction). The type of controls
 presented are determined by the current selection:
 
--   accessable at all times by clicking on its tab
+-   accessible at all times by clicking on its tab
 -   default interface which simply presents a control for every
     available property should work in the majority of cases
     -   time-varying properties are presented on an interpolation graph

@@ -98,7 +98,7 @@
 
             widget = gtk.HScale(); label = gtk.Label("Crossfade")
 
-            # set appropriate atributes
+            # set appropriate attributes
             widget.set_update_policy(gtk.UPDATE_CONTINUOUS)
             widget.set_draw_value(True)
             widget.set_range(lower, upper)

@@ -86,7 +86,7 @@ would be
 
 At the moment plugin.settings must be a
 pitivi.pluginsettings.SettingsStore object, this object can then create
-xml data to store and retrive the settings as needed.
+xml data to store and retrieve the settings as needed.
 
 a further example for the entire settings store is:
 
@@ -123,7 +123,7 @@ configuration dialog.
 
 The current implimentation is a mix-in object that replaces the
 configure() method with our own gui-builder code (plugin authors that
-need more flexability can create their own configure() method)
+need more flexibility can create their own configure() method)
 
 the gui-builder code simply parses the current settings object and is
 able to build a gui from the fields provided, for example it will
@@ -136,7 +136,7 @@ with a widget argument, for example:
 
 this code will provide an input widget where the characters are starred
 out which is appropriate for a password field. plugins can even provide
-their own widgets by subclassing FieldWidget but this is absolutly not
+their own widgets by subclassing FieldWidget but this is absolutely not
 nessasserry
 
 #### custom configuration widget example
@@ -248,7 +248,7 @@ The above example produces the following image
 
         # this is another floating point setting but we use a different widget
         # to draw it, the scaleField widget will allow people to configure the
-        # setting by draging a handlebar around
+        # setting by dragging a handlebar around
         arange = FloatField('push this widget around', default=10.0, priority=500,
                             max_value=100.0, min_value=0.0,
                             widget=pluginsettings.scaleField_widget)
@@ -258,7 +258,7 @@ The above example produces the following image
                                widget=pluginsettings.scaleField_widget)
 
         # this is a boolean value, it will store True/False values, we set draw_label
-        # to false because the checkbutton thats used to draw this setting already
+        # to false because the checkbutton that's used to draw this setting already
         # contains a label inside it
         truth = BooleanField('this is a truth value', default=True, draw_label=False)
 
@@ -284,7 +284,7 @@ The above example produces the following image
                                    widget=pluginsettings.scaleField_widget)
 
 
-    # this is our main plugin class thats called by pitivi, we subclass it from
+    # this is our main plugin class that's called by pitivi, we subclass it from
     # ConfigureBuilder so that we can have a settings dialog built for us
     class Configure_Test(pluginsettings.ConfigureBuilder):
 
@@ -312,7 +312,7 @@ The above example produces the following image
             # load our saved settings
             self.manager.loadSettings(self)
 
-            # connect up the 'enabled changed' signal, its a signal thats emitted
+            # connect up the 'enabled changed' signal, its a signal that's emitted
             # when the plugin.enabled state is changed somehow, obviously our
             # plugin has to take note of that and disable/enable its functionality
             # accordingly

@@ -907,7 +907,7 @@ def outputToFiles(stdout=None, stderr=None):
         info('log', "Received SIGHUP, reopening logs")
         reopenOutputFiles()
         if _old_hup_handler:
-            info('log', "Calling old SIGHUP hander")
+            info('log', "Calling old SIGHUP handler")
             _old_hup_handler(signum, frame)
 
     debug('log', 'installing SIGHUP handler')

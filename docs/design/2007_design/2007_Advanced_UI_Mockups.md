@@ -3,7 +3,7 @@
 ## Basic Design
 
 In basic design goal is to provide as much direct-manipulation as
-possible. In this case, properties interpolation graphs are overlayed
+possible. In this case, properties interpolation graphs are overlaid
 atop source widgets directly. The properties can be shown/hidden with
 the property selection popup at the bottom of the source. In addition,
 the interpolation mode can be set for the currently selected
@@ -14,7 +14,7 @@ keyframe.
 -   When a source in the timeline moves, the viewer needs to seek just
     before that source's in point in the timeline.
 -   When the user adjusts the in-point or out-point of a source, the
-    viewer nees to seek to the new in or out point in the source
+    viewer needs to seek to the new in or out point in the source
 -   When the user adjusts a keyframe, the viewer needs to seek to that
     point in the timeline and show the user a preview of the change
 
@@ -32,7 +32,7 @@ key-frame handles, which would not become visible until objects within
 the key-frame window are selected.
 
 All keyframed properties are initially flat lines. These lines can be
-moved up or down simply by clicking/draging.
+moved up or down simply by clicking/dragging.
 
 At this point it is not yet clear which variant would be preferable. It
 is also not yet clear how the user will add or remove key-frames.

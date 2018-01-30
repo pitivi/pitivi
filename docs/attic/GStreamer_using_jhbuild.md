@@ -2,7 +2,7 @@
 
 JHBuild is a build tool that automates the process of building the GNOME
 software stack. It is organized somewhat like a package manager and is
-cabable of tracking dependencies between packages. JHBuild elminates a
+cabable of tracking dependencies between packages. JHBuild eliminates a
 great deal of the work of compiling GStreamer manually.
 
 **Warning: The following instructions are not supported** by the PiTiVi
