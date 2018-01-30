@@ -5,7 +5,7 @@ If you see a problem in one of them, [Create a
 task](Bug_reporting.md) on Phabricator, indicating:
 
 -   which QA Scenario doesn't go through,
--   (optionnaly) the media files you used,
+-   (optionally) the media files you used,
 -   At which step it failed and what happened
 -   Which version of Pitivi was used
 
@@ -82,7 +82,7 @@ task](Bug_reporting.md) on Phabricator, indicating:
 
 1. Start with at least two clips in the timeline
 2. Click and drag the middle of one of the clips.
-   -   the trimming handles at the start and end of the clips should hilight as the mouse moves over them
+   -   the trimming handles at the start and end of the clips should highlight as the mouse moves over them
    -   the clip should move smoothly, even when vigorously scrubbed back and forth
    -   the viewer should not update during this operation **this will change when we support live previews**
    -   if thumbnails are enabled, they should appear properly even while the clip is being moved
@@ -110,7 +110,7 @@ task](Bug_reporting.md) on Phabricator, indicating:
 8. Position the playhead at the start of this clip and press play
     The volume of the clip should rise and fall with the keyframe curve.
 9. Double click the keyframe control point
-    The control point should disapear
+    The control point should disappear
 10. Double click both the start and end points
     These points should never disappear
 11. Trim the start of the clip

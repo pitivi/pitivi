@@ -47,20 +47,20 @@ class RippleUpdateGroup(object):
         - zero or more user-specified arguments, passed to the
           update_function.
 
-    An edge between two verticies represents a sequence of operations. If an
+    An edge between two vertices represents a sequence of operations. If an
     edge exists from object A to object B, then whenever A is perfomred, B
     should be performed too -- unless it has already been visited as part of
     this update cycle.
 
     In addition to a a pair of objects, each edge also has the following
-    assoicated with it:
+    associated with it:
 
         - a predicate function. called during an update cycle when this edge
           is reached, and before any other processing is done. If this
           function returns false, it will be as if this edge otherwise did not
           exist.
 
-        - a function to be called whenver the edge is visited during an update
+        - a function to be called whenever the edge is visited during an update
           cycle. this function will not be called if the condition function
           returns False.
 
@@ -77,7 +77,7 @@ class RippleUpdateGroup(object):
 
     def addVertex(self, widget, signal=None, update_func=None,
                   update_func_args=()):
-        """Adds a widget to the list of vertexes.
+        """Adds a widget to the list of vertices.
 
         Args:
             widget (Gtk.Widget): The vertex to be added.
@@ -106,7 +106,7 @@ class RippleUpdateGroup(object):
         self.arcs[widget_a].append((widget_b, predicate, edge_func))
 
     def addBiEdge(self, widget_a, widget_b, predicate=None, edge_func=None):
-        """Adds a bidirectional edge between the specified vertexes.
+        """Adds a bidirectional edge between the specified vertices.
 
         See `addEdge`.
         """

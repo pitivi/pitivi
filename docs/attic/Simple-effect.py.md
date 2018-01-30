@@ -67,11 +67,11 @@
             # create a place to hold our controls
             controls = gtk.VBox()
             labels = gtk.VBox()
-            # for every propety, create a control and set its attributes
+            # for every property, create a control and set its attributes
             for prop, lower, upper, default in properties:
                 widget = gtk.HScale(); label = gtk.Label(prop)
 
-                # set appropriate atributes
+                # set appropriate attributes
                 widget.set_update_policy(gtk.UPDATE_CONTINUOUS)
                 widget.set_value(default)
                 widget.set_draw_value(True)

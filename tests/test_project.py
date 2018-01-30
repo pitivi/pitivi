@@ -87,7 +87,7 @@ class TestProjectManager(TestCase):
 
     def testLoadProjectClosesCurrent(self):
         """
-        Check that new-project-failed is emited if we can't close the current
+        Check that new-project-failed is emitted if we can't close the current
         project instance.
         """
         state = {"tried-close": False}
@@ -610,7 +610,7 @@ class TestExportSettings(TestCase):
         self._testMasterAttribute('aencoder', dependant_attr='acodecsettings')
 
     def _testMasterAttribute(self, attr, dependant_attr):
-        """Test changing the specified attr has effect on its dependant attr."""
+        """Test changing the specified attr has effect on its dependent attr."""
         project = common.create_project()
 
         attr_value1 = "%s_value1" % attr

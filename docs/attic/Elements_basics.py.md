@@ -32,7 +32,7 @@
             gst.PAD_ALWAYS,
             gst.caps_new_any())
 
-        #sink pad (template): we recieve buffers from our sink pad
+        #sink pad (template): we receive buffers from our sink pad
         _sinktemplate = gst.PadTemplate ('sink',
             gst.PAD_SINK,
             gst.PAD_ALWAYS,

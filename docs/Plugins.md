@@ -107,26 +107,26 @@ the plugin when it is activated and a reference to them is usually kept
 inside the plugin though all its lifetime.
 
 API for UI integration allow to insert new menu items, leaving to the
-plugin the responsability to remove the inserted items when it is
+plugin the responsibility to remove the inserted items when it is
 unloaded. The same logic is applied when additional output formats are
 provided by the plugin, those must be removed from available output
 format by the plugin itself when it is deactivated.
 
 Strength points of the Jokosher approach are a well designed and
-lightweight plugin manager; the possiblity to store plugins in python
+lightweight plugin manager; the possibility to store plugins in python
 eggs that simplifies a lot the deployment of new plugins; a clean set of
 API the plugin can use to interact with the host application; the
 possibility to add new output formats; the possibility to save plugin's
 preferences without having the plugin care about serialization
 procedures.
 
-Weak points of this architecture are a limited UI integration beccause
-plugins wich uses only the API can insert menu items only under the
+Weak points of this architecture are a limited UI integration because
+plugins which uses only the API can insert menu items only under the
 “plugin” submenu; the creation of a preferences file for each plugin
 available could lead to a pollution of config files; leaving to plugins
 the duty of removing UI enhancements they inserted could lead to waste
 of memory if the plugin writer does not make a good job, a defaulf
-approach for cleaning would be preferrable.
+approach for cleaning would be preferable.
 
 ## The Trac way
 
@@ -234,7 +234,7 @@ to modules, objects and functions, since they follow the golden rule
 that “specification should make no assumption about implementation”;
 this approach leaves complete freedom to the plugin developer to
 organize its code in the way it prefers, as long the intefrace
-requirements are fullfilled; in this way duck typing gets formalized
+requirements are fulfilled; in this way duck typing gets formalized
 without adding a big overhead.
 
 `from zope.interface import Interface, implements,  providedBy`
@@ -255,9 +255,9 @@ without adding a big overhead.
 Interfaces fully supports inheritance from other interfaces (with the
 security check that children's methods conforms to ancestor's one if
 overridden), implementer of an interface hierarchy can limit the
-implentation only to a certain child interface in the lineage; the
+implementation only to a certain child interface in the lineage; the
 status of interface implementer can be attached at runtime to items that
-do not explicitely implemented the interface in their definition; as
+do not explicitly implemented the interface in their definition; as
 well the implementer status can be removed from an item at runtime
 (useful for example in containers that implement an interface by
 delegating implementation to contained objects).
@@ -334,7 +334,7 @@ file for each plugin. Eggs are similar to java's jar files, they make
 very simple the shipping and installation of new plugins since all you
 need is to drag the .egg file inside the ./plugins directory. Eggs also
 ships a standard method for exposing plugin's entry points and
-dependancies, making easy to allow cooperation/subordination among
+dependencies, making easy to allow cooperation/subordination among
 plugins.
 
 we can expect pitivi to be shipped with some default plugins available
@@ -457,7 +457,7 @@ The user:
 The plugin manager:
 
 1.  Check the plugin pool for duplicates of the plugin to be installed
-2.  Ensure the verion of the dropped plugin is newer than the current's,
+2.  Ensure the version of the dropped plugin is newer than the current's,
     otherwise prompt the user for confirmation
 3.  Remove the old plugin, preserving configuration items
 4.  Install the new plugin

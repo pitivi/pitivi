@@ -81,7 +81,7 @@ of three things:
 -   **Producer**(s) which are generally the contents we're using (Ex:
     Timeline, File, Network Stream, WebCam, DV VCR, ...)
 -   **Consumer**(s) which convert/process/display streams from the
-    Producers (Ex: Encoding to File, Ouputting to Screen/Speakers,
+    Producers (Ex: Encoding to File, Outputting to Screen/Speakers,
     Streaming, recording to DV VCR, ...)
 -   **Action**(s) which represent meaningful usage of the various
     producers and consumers (Ex: Record from Webcam, (Pre)View timeline,

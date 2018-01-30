@@ -401,4 +401,4 @@ February 24, 2014
     Gwibber)
 -   **herrsteiner** \#Pitivi helped me to convert a video to \#ogg
     \#theora which I strangly couldn't convert on commandline without
-    loosing the audio (7:31 PM Aug 13th, 2009 from web)
+    losing the audio (7:31 PM Aug 13th, 2009 from web)

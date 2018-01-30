@@ -143,7 +143,7 @@ It seriously needs to be rethinked.
 
 -   Actually use ObjectFactory for producing its content
 -   Remove limitation of only one brother per object
--   Allow re-using indentical source/composition many times in a
+-   Allow re-using identical source/composition many times in a
     composition
     -   Fully synchronized (modifications to one instance are spread to
         all instances)
@@ -273,7 +273,7 @@ gnome-specific things)
 
 -   Make it generic
 -   It provides ObjectFactory objects
--   Allow acces to various kinds of source provider
+-   Allow access to various kinds of source provider
     -   Local providers (filesystem, F-Spot, Gnome media (SoC project),
         ...)
     -   Network providers (Media Asset Management)
@@ -407,7 +407,7 @@ False.
 -   interlaced support
     -   caps (differentiate raw frame/fields)
     -   Buffer Flags (TFF, Repeat)
-    -   ... and obviously support in virtually all relevent plugins
+    -   ... and obviously support in virtually all relevant plugins
 -   Perfect Profesionnal Colourspace support
     -   Various Subsampling + Chroma placement (right now we don't make
         a difference between 4:2:0 jpeg/mpeg2/dv-ntsc ... whereas they

@@ -83,7 +83,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         Tests that the transformation properties spin buttons display
         the correct values of the source properties.
         """
-        # Create tranformation box
+        # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
@@ -115,7 +115,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         Tests that changes in spin buttons values are reflected in source
         properties.
         """
-        # Create tranformation box
+        # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
@@ -152,7 +152,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         Check that spin buttons update correctly when changing the selected
         clip.
         """
-        # Create tranformation box
+        # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons

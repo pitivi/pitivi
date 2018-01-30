@@ -94,7 +94,7 @@ On Fedora 12 install at least the following packages:
 </code>
 
 And to build plugins needed to use Pitivi, install these packages
-aswell:
+as well:
 
 <code>
 

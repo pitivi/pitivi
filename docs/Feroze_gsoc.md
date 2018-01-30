@@ -32,7 +32,7 @@ codecs or would have to google it up.
 
 `   1. The user should just be able to click on the output format and render. This would enable us to expand the userbase to people without much codec knowledge.`\
 `   2. User can add, remove and rename presets and edit codec settings within the render dialog menu.`\
-`   3. The presets should be stored seperately and the user should be able to import and export presets from GUI.`\
+`   3. The presets should be stored separately and the user should be able to import and export presets from GUI.`\
 `   4. Enable us to bundle a default set of rendering and project setting presets`
 
 Presets Suggested : iPod , iPad, PlayStation 3, DVD (NTSC, PAL), HTML5 (

@@ -176,7 +176,7 @@ control](Trackobject-gnonlin-relationship.png "fig:Relationship between TrackObj
 ![Unlinking two TrackObjects coming from the same
 ObjectFactory](Timeline-object-unlinking.png "Unlinking two TrackObjects coming from the same ObjectFactory")
 
-We have a TimelineObject 'X' controling two TrackObject 'A' and 'B'
+We have a TimelineObject 'X' controlling two TrackObject 'A' and 'B'
 coming from a common ObjectFactory 'O'. This is the most common case
 when adding a Audio+Video File to the Timeline.
 
@@ -238,7 +238,7 @@ example is when we recorded Audio and Video on separate devices/files.
         ObjectFactory, we could automatically create a
         LinkedObjectFactory for the LinkedTimelineObject (XY) we just
         created
-        -   This allows infinit reuse of objects created in the
+        -   This allows infinite reuse of objects created in the
             Timeline.
 
 # Remaining issues
