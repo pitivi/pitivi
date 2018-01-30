@@ -498,16 +498,16 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.set_property("ratio", float(ratio))
 
     def do_get_preferred_width(self):
-        mininum, unused_natural = Gtk.AspectFrame.do_get_preferred_width(self)
+        minimum, unused_natural = Gtk.AspectFrame.do_get_preferred_width(self)
         # Do not let a chance for Gtk to choose video natural size
         # as we want to have full control
-        return mininum, mininum + 1
+        return minimum, minimum + 1
 
     def do_get_preferred_height(self):
-        mininum, unused_natural = Gtk.AspectFrame.do_get_preferred_height(self)
+        minimum, unused_natural = Gtk.AspectFrame.do_get_preferred_height(self)
         # Do not let a chance for Gtk to choose video natural size
         # as we want to have full control
-        return mininum, mininum + 1
+        return minimum, minimum + 1
 
 
 class PlayPauseButton(Gtk.Button, Loggable):
