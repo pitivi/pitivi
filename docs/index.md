@@ -53,7 +53,7 @@ on the website (includes a “Why contribute to Pitivi?” section).
 
 -   [Goals](Goals.md) (mission statement, vision)
 -   [Project history](Project_history.md) - rumors of our death
-    have been greatly exagerated... :)
+    have been greatly exaggerated... :)
 -   [Current events](Current_events.md) - releases, meetings,
     talks ... See also the [planet](http://www.pitivi.org/planet) for
     news about the project.

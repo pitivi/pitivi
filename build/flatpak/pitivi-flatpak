@@ -380,7 +380,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         except FileNotFoundError:
             Console.message("\n%sYou need to install flatpak >= %s"
                             " to be able to use the '%s' script.\n\n"
-                            "You can find some informations about"
+                            "You can find some information about"
                             " how to install it for your distribution at:\n"
                             "    * http://flatpak.org/%s\n", Colors.FAIL,
                             FLATPAK_REQ, sys.argv[0], Colors.ENDC)

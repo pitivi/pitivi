@@ -139,7 +139,7 @@
   * Integrated offline user manual
   * Cleaner advanced codec settings dialog
   * Improved video thumbnailing performance
-  * "Soft depedencies" manager to warn the user of features requiring additional packages
+  * "Soft dependencies" manager to warn the user of features requiring additional packages
   * Port to gtkbuilder
   * Respect GNOME's button icons setting
   * Improved startup time

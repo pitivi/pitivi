@@ -30,7 +30,7 @@ Install
     -   mingw32-base
     -   mingw32-gcc-g++
     -   msys-base
--   Instalation =&gt; Apply changes
+-   Installation =&gt; Apply changes
 -   Close the dialoge when complete
 
 ## CMake

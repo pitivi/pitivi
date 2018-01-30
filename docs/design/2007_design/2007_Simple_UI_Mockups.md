@@ -148,7 +148,7 @@ in red below).
 
 ### Back to timeline view
 
-The scene has shrinked back to the normal size.
+The scene has shrunk back to the normal size.
 
 ![](Deroule-editingvideo8.png "Deroule-editingvideo8.png")
 
@@ -195,7 +195,7 @@ onto an existing transition...
 ## Remove Transition
 
 To remove an existing transition, click on the cross/delete button at
-the top-right of the transition (hightlighted in red).
+the top-right of the transition (highlighted in red).
 
 ![](Deroule-removetransition1.png "Deroule-removetransition1.png")
 

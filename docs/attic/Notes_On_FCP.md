@@ -20,7 +20,7 @@ timeline clips only have name and single thumbnail. single playback head
 decends from timeline ruler across entire timeline video and audio
 tracks are separated from each other in separate panes.
 
-each track (audio/video) conatins: enable/disable button, label, lock,
+each track (audio/video) contains: enable/disable button, label, lock,
 two other unidentified markings. tracks appear slightly translucent,
 with 3d beveled edges.
 
@@ -42,7 +42,7 @@ you can normalize audio clips to a peak decibel
 you can make realtime adjustments to filters applied to a clip, but
 there is also a keyframe editor.
 
-audio volume is adjustable by manipulating keyframes overlayed on top of
+audio volume is adjustable by manipulating keyframes overlaid on top of
 the waveform (rendered into the audio clip)
 
 portions of the timeline can be sent to other studio applications. when

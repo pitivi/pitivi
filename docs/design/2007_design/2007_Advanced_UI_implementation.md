@@ -83,7 +83,7 @@ directory in the source tree:
 -   ComplexTimelineCanvas
 -   ComplexTimelineWidget
 
-# Utilites
+# Utilities
 
 The util.py file provides a number of convenience functions for working
 with goocanvas, including an easy way of creating canvas item objects,
@@ -106,7 +106,7 @@ need to know about smart group is:
 -   The smart group keeps track of its own position: Setting the x or y
     properties on a smartgroup will cause all the group's children to
     move accordingly.
--   The smart gropu keeps track of its size: If any of the group's
+-   The smart group keeps track of its size: If any of the group's
     children change size or position, the group recomputes its width and
     height properties.
 
@@ -141,7 +141,7 @@ These functions manipulate object size and position
 -   size(item)
 -   set\_size(item, size), where size is a tuple (width, height)
 
-These functions activate draging and selection management:
+These functions activate dragging and selection management:
 
 -   manage\_selection(canvas, changed\_cb)
 -   make\_selectable(canvas, item)
@@ -155,7 +155,7 @@ support for some of the convenience functions described above:
 
 ### Methods
 
--   manage\_selection(), activates internal selection managment,
+-   manage\_selection(), activates internal selection management,
     deprecates top-level function with same name
 -   make\_selectable(), activates selection management on a given
     object, deprecates top-level function with same name.
@@ -268,7 +268,7 @@ Encapsulates the concept of an important point on the timeline to which
 timestamps should be snapped during mouse operations. The class keeps
 track of all its instances in a sorted list, and uses binary search to
 implement the class method snapTime(), and snapObj, which actually
-implement magnetic edge snaping.
+implement magnetic edge snapping.
 
 ### Properties
 

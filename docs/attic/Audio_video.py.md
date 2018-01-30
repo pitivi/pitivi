@@ -40,7 +40,7 @@ class AVDemo(Demo):
     __usage__ = "python audio_video.py <filename>"
     __def_win_size__ = (320, 240)
 
-    # this commment allows us to include only a portion of the file
+    # this comment allows us to include only a portion of the file
     # in the tutorial for this demo
 
     def magic(self, pipeline, (videosink, audiosink), args):

@@ -291,7 +291,7 @@ sub TextFile_DetermineEncoding ($)
 	}
 	elsif ($filetype =~ /^XML/)
 	{
-	    $gettext_code="UTF-8"; # We asume that .glade and other .xml files are UTF-8
+	    $gettext_code="UTF-8"; # We assume that .glade and other .xml files are UTF-8
 	}
     }
 

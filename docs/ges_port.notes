@@ -28,7 +28,7 @@ GES:
                 *Done:
 
         -> Implement groups
-                > Beteen 7 and 10 days
+                > Between 7 and 10 days
 
         -> Add the timeline_edition API:
             => 4 more days:
@@ -57,7 +57,7 @@ Pitivi:
 
     Critical
     ========
-        -> Make Seeker more powerfull, and rely only on it for all the:
+        -> Make Seeker more powerful, and rely only on it for all the:
            seeking:
             => 2 days DONE:
 
