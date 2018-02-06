@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """
-Test for pitivi/mainwindow.py
+Tests for pitivi/mainwindow.py
 """
 from unittest import mock
 
@@ -31,14 +31,10 @@ from tests import common
 
 
 class TestMainWindow(common.TestCase):
-    """
-    Test MainWindow
-    """
+    """Tests for the MainWindow class."""
 
-    def testSwitchContextTab(self):
-        """
-        Test tab switches
-        """
+    def test_switch_context_tab(self):
+        """Checks tab switches."""
         app = common.create_pitivi_mock()
         mainwindow = MainWindow(app)
         for expected_tab, b_element in [
@@ -46,13 +42,13 @@ class TestMainWindow(common.TestCase):
                 (0, GES.SourceClip()),
                 (1, GES.TransitionClip())]:
             mainwindow.switchContextTab(b_element)
-            self.assertEqual(expected_tab,
-                             mainwindow.context_tabs.get_current_page(),
+            self.assertEqual(mainwindow.context_tabs.get_current_page(),
+                             expected_tab,
                              b_element)
             # Make sure the tab does not change when using an invalid argument.
             mainwindow.switchContextTab("invalid")
-            self.assertEqual(
-                expected_tab, mainwindow.context_tabs.get_current_page())
+            self.assertEqual(mainwindow.context_tabs.get_current_page(),
+                             expected_tab)
 
         mainwindow.destroy()
 
@@ -65,8 +61,7 @@ class TestMainWindow(common.TestCase):
         mainwindow = MainWindow(app)
         mainwindow.viewer = mock.MagicMock()
 
-        def __pm_missing_uri_cb(project_manager, project,
-                                error, asset):
+        def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
             nonlocal mainwindow
             nonlocal self
@@ -109,22 +104,19 @@ class TestMainWindow(common.TestCase):
         disconnectAllByFunc(app.project_manager,
                             mainwindow._projectManagerNewProjectFailedCb)
 
-        app.project_manager.connect("missing-uri",
-                                    __pm_missing_uri_cb)
+        app.project_manager.connect("missing-uri", __pm_missing_uri_cb)
 
-        with common.created_project_file() as uri:
-            app.project_manager.loadProject(uri)
+        with common.cloned_sample():
+            asset_uri = common.get_sample_uri("missing.png")
+            with common.created_project_file(asset_uri) as uri:
+                app.project_manager.loadProject(uri)
 
         mainloop.run()
 
     def test_loading_project_no_proxy(self):
-        """
-        Test loading failure without proxies
-        """
+        """Checks loading failure without proxies."""
         self.__loading_failure(has_proxy=False)
 
     def test_loading_project_with_proxy(self):
-        """
-        Test loading failure with proxies
-        """
+        """Checks loading failure with proxies."""
         self.__loading_failure(has_proxy=True)

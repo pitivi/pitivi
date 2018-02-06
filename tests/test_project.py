@@ -126,9 +126,11 @@ class TestProjectManager(TestCase):
         result = [False]
         self.manager.connect("missing-uri", missingUriCb, result)
 
-        with common.created_project_file() as uri:
-            self.assertTrue(self.manager.loadProject(uri))
-            mainloop.run()
+        with common.cloned_sample():
+            asset_uri = common.get_sample_uri("missing.png")
+            with common.created_project_file(asset_uri) as uri:
+                self.assertTrue(self.manager.loadProject(uri))
+                mainloop.run()
         self.assertTrue(result[0], "missing-uri has not been emitted")
 
     def testLoaded(self):
@@ -139,10 +141,11 @@ class TestProjectManager(TestCase):
 
         self.manager.connect("new-project-loaded", new_project_loaded_cb)
 
-        asset_uri = common.get_sample_uri("flat_colour1_640x480.png")
-        with common.created_project_file(asset_uri=asset_uri) as uri:
-            self.assertTrue(self.manager.loadProject(uri))
-            mainloop.run()
+        with common.cloned_sample("flat_colour1_640x480.png"):
+            asset_uri = common.get_sample_uri("flat_colour1_640x480.png")
+            with common.created_project_file(asset_uri=asset_uri) as uri:
+                self.assertTrue(self.manager.loadProject(uri))
+                mainloop.run()
 
         project = self.manager.current_project
         self.assertFalse(project.at_least_one_asset_missing)
@@ -393,9 +396,6 @@ class TestProjectLoading(common.TestCase):
 
         proj_uri = self.create_project_file_from_xges(app, PROJECT_STR)
 
-        # Remove proxy
-        common.clean_proxy_samples()
-
         def closing_project_cb(*args, **kwargs):
             # Do not ask whether to save project on closing.
             return True
@@ -412,8 +412,10 @@ class TestProjectLoading(common.TestCase):
 
     def test_load_project_with_missing_proxy(self):
         """Checks loading a project with missing proxies."""
-        mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
-        mainloop.run()
+        with common.cloned_sample("1sec_simpsons_trailer.mp4"):
+            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+            mainloop.run()
+
         self.assertEqual(len(medialib.storemodel), 1)
         self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
                          proxy_uri)
@@ -424,49 +426,51 @@ class TestProjectLoading(common.TestCase):
         """Checks progress tracking of loading project with missing proxies."""
         from gi.repository import GstTranscoder
 
-        # Disable proxy generation by not making it start ever.
-        # This way we are sure it will not finish before we test
-        # the state while it is being rebuilt.
-        with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
-            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
-            uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        with common.cloned_sample("1sec_simpsons_trailer.mp4"):
+            # Disable proxy generation by not making it start ever.
+            # This way we are sure it will not finish before we test
+            # the state while it is being rebuilt.
+            with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
+                mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+                uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
 
-            app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
-            mainloop.run()
+                app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
+                mainloop.run()
 
-            self.assertEqual(len(medialib.storemodel), 1)
-            self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
-                             uri)
-            self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                             medialibrary.AssetThumbnail.IN_PROGRESS)
+        self.assertEqual(len(medialib.storemodel), 1)
+        self.assertEqual(medialib.storemodel[0][medialibrary.COL_ASSET].props.id,
+                         uri)
+        self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
+                         medialibrary.AssetThumbnail.IN_PROGRESS)
 
     def test_load_project_with_missing_proxy_stop_generating_and_proxy(self):
         """Checks cancelling creation of a missing proxies and forcing it again."""
         from gi.repository import GstTranscoder
 
-        # Disable proxy generation by not making it start ever.
-        # This way we are sure it will not finish before we test
-        # stop generating the proxy and restart it.
-        with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
-            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
-            uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        with common.cloned_sample("1sec_simpsons_trailer.mp4"):
+            # Disable proxy generation by not making it start ever.
+            # This way we are sure it will not finish before we test
+            # stop generating the proxy and restart it.
+            with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
+                mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
 
-            app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
-            mainloop.run()
-            asset = medialib.storemodel[0][medialibrary.COL_ASSET]
-            app.project_manager.current_project.disable_proxies_for_assets([asset])
+                app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
+                mainloop.run()
+                asset = medialib.storemodel[0][medialibrary.COL_ASSET]
+                app.project_manager.current_project.disable_proxies_for_assets([asset])
 
             row, = medialib.storemodel
             asset = row[medialibrary.COL_ASSET]
             self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
+            uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
             self.assertEqual(asset.props.id, uri)
             self.assertEqual(asset.ready, True)
             self.assertEqual(asset.creation_progress, 100)
             self.assertEqual(row[medialibrary.COL_THUMB_DECORATOR].state,
                              medialibrary.AssetThumbnail.NO_PROXY)
 
-        app.project_manager.current_project.use_proxies_for_assets([asset])
-        mainloop.run()
+            app.project_manager.current_project.use_proxies_for_assets([asset])
+            mainloop.run()
 
         row, = medialib.storemodel
         asset = row[medialibrary.COL_ASSET]
@@ -494,9 +498,6 @@ class TestProjectLoading(common.TestCase):
 
         mainloop = common.create_main_loop()
 
-        # Remove proxy
-        common.clean_proxy_samples()
-
         def new_project_loaded_cb(*args, **kwargs):
             mainloop.quit()
 
@@ -507,7 +508,8 @@ class TestProjectLoading(common.TestCase):
         project_manager.connect("new-project-loaded", new_project_loaded_cb)
 
         project_manager.loadProject(proj_uri)
-        mainloop.run()
+        with common.cloned_sample("1sec_simpsons_trailer.mp4"):
+            mainloop.run()
         self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
 
 

@@ -98,8 +98,8 @@ class BaseTestMediaLibrary(common.TestCase):
             self.app.project_manager.current_project.create_asset(
                 common.get_sample_uri(sample_name), GES.UriClip)
 
-    def runCheckImport(self, assets, proxying_strategy=ProxyingStrategy.ALL,
-                       check_no_transcoding=False, clean_proxies=True):
+    def check_import(self, assets, proxying_strategy=ProxyingStrategy.ALL,
+                     check_no_transcoding=False):
         self._customSetUp(proxyingStrategy=proxying_strategy,
                           numTranscodingJobs=4,
                           lastClipView=medialibrary.SHOW_TREEVIEW)
@@ -107,9 +107,6 @@ class BaseTestMediaLibrary(common.TestCase):
 
         self.medialibrary._progressbar.connect(
             "notify::fraction", self._progressBarCb)
-
-        if clean_proxies:
-            common.clean_proxy_samples()
 
         self._createAssets(assets)
         self.mainloop.run()
@@ -120,7 +117,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
     def stop_using_proxies(self, delete_proxies=False):
         sample_name = "30fps_numeroted_frames_red.mkv"
-        self.runCheckImport([sample_name])
+        self.check_import([sample_name])
 
         asset_uri = common.get_sample_uri(sample_name)
         proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
@@ -137,90 +134,102 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.assertEqual(self.medialibrary.storemodel[0][medialibrary.COL_URI],
                          asset_uri)
 
-    def testTranscoding(self):
-        self.runCheckImport(["30fps_numeroted_frames_red.mkv"])
+    def test_transcoding_and_reusing(self):
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            # Create proxies.
+            self.check_import([sample_name])
+
+            # Try to import again, checking that no transcoding is done.
+            self.check_import([sample_name],
+                              check_no_transcoding=True)
 
     def testDisableProxies(self):
-        self.runCheckImport(["30fps_numeroted_frames_red.mkv"],
-                            ProxyingStrategy.NOTHING, True)
-
-    def testReuseProxies(self):
-        # Create proxies
-        self.runCheckImport(["30fps_numeroted_frames_red.mkv"])
-        self.info("Now trying to import again, checking that no"
-                  " transcoding is done.")
-        self.runCheckImport(["30fps_numeroted_frames_red.mkv"],
-                            check_no_transcoding=True,
-                            clean_proxies=False)
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name],
+                              proxying_strategy=ProxyingStrategy.NOTHING,
+                              check_no_transcoding=True)
 
     def testSaveProjectWithRemovedProxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
-        self.runCheckImport([sample_name])
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name])
 
-        project = self.app.project_manager.current_project
-        asset = GES.UriClipAsset.request_sync(common.get_sample_uri(sample_name))
-        target = asset.get_proxy_target()
-        self.assertEqual(set(project.list_assets(GES.Extractable)), set([target, asset]))
+            project = self.app.project_manager.current_project
+            asset = GES.UriClipAsset.request_sync(common.get_sample_uri(sample_name))
+            target = asset.get_proxy_target()
+            self.assertEqual(set(project.list_assets(GES.Extractable)), set([target, asset]))
 
-        # Remove the asset
-        self.medialibrary.remove_assets_action.emit("activate", None)
+            # Remove the asset
+            self.medialibrary.remove_assets_action.emit("activate", None)
 
-        # Make sure that the project has not assets anymore
-        self.assertEqual(project.list_assets(GES.Extractable), [])
+            # Make sure that the project has not assets anymore
+            self.assertEqual(project.list_assets(GES.Extractable), [])
 
-        # Save the project and reload it, making sure there is no asset
-        # in that new project
-        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
-        project.save(project.ges_timeline, project_uri, None, True)
+            # Save the project and reload it, making sure there is no asset
+            # in that new project
+            project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+            project.save(project.ges_timeline, project_uri, None, True)
 
-        self._customSetUp(project_uri)
-        self.assertNotEqual(project, self.app.project_manager.current_project)
-        project = self.app.project_manager.current_project
-        self.assertEqual(project.list_assets(GES.Extractable), [])
+            self._customSetUp(project_uri)
+            self.assertNotEqual(project, self.app.project_manager.current_project)
+            project = self.app.project_manager.current_project
+            self.assertEqual(project.list_assets(GES.Extractable), [])
 
     def testNewlyImportedAssetSelected(self):
-        self.runCheckImport(["30fps_numeroted_frames_red.mkv",
-                            "30fps_numeroted_frames_blue.webm"])
+        samples = ["30fps_numeroted_frames_red.mkv",
+                   "30fps_numeroted_frames_blue.webm"]
+        with common.cloned_sample(*samples):
+            self.check_import(samples)
 
         self.assertEqual(len(list(self.medialibrary.getSelectedPaths())),
                          len(self.samples))
 
     def test_stop_using_proxies(self):
-        self.stop_using_proxies()
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.stop_using_proxies()
 
     def test_delete_proxy(self):
-        self.stop_using_proxies(delete_proxies=True)
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.stop_using_proxies(delete_proxies=True)
 
-        asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-        proxy_uri = self.app.proxy_manager.getProxyUri(asset)
+            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+            proxy_uri = self.app.proxy_manager.getProxyUri(asset)
 
-        # Requesting UriClip sync will return None if the asset is not in cache
-        # this way we make sure that this asset used to exist
-        proxy = GES.Asset.request(GES.UriClip, proxy_uri)
-        self.assertIsNotNone(proxy)
-        self.assertFalse(os.path.exists(Gst.uri_get_location(proxy_uri)))
+            # Requesting UriClip sync will return None if the asset is not in cache
+            # this way we make sure that this asset used to exist
+            proxy = GES.Asset.request(GES.UriClip, proxy_uri)
+            self.assertIsNotNone(proxy)
+            self.assertFalse(os.path.exists(Gst.uri_get_location(proxy_uri)))
 
-        self.assertIsNone(asset.get_proxy())
+            self.assertIsNone(asset.get_proxy())
 
-        # And let's recreate the proxy file.
-        self.app.project_manager.current_project.use_proxies_for_assets([asset])
-        self.assertEqual(asset.creation_progress, 0)
+            # And let's recreate the proxy file.
+            self.app.project_manager.current_project.use_proxies_for_assets([asset])
+            self.assertEqual(asset.creation_progress, 0)
 
-        # Check that the info column notifies the user about progress
-        self.assertTrue("Proxy creation progress:" in
-                        self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+            # Check that the info column notifies the user about progress
+            self.assertTrue("Proxy creation progress:" in
+                            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
 
-        # Run the mainloop and let _progressBarCb stop it when the proxy is
-        # ready
-        self.mainloop.run()
+            # Run the mainloop and let _progressBarCb stop it when the proxy is
+            # ready
+            self.mainloop.run()
 
-        self.assertEqual(asset.creation_progress, 100)
-        self.assertEqual(asset.get_proxy(), proxy)
+            self.assertEqual(asset.creation_progress, 100)
+            self.assertEqual(asset.get_proxy(), proxy)
 
     def test_supported_out_of_container_audio(self):
-        self.runCheckImport(["mp3_sample.mp3"], check_no_transcoding=True)
+        sample = "mp3_sample.mp3"
+        with common.cloned_sample(sample):
+            self.check_import([sample], check_no_transcoding=True)
 
-    def testMissingUriDisplayed(self):
-        with common.created_project_file() as uri:
-            self._customSetUp(project_uri=uri)
+    def test_missing_uri_displayed(self):
+        with common.cloned_sample():
+            asset_uri = common.get_sample_uri("missing.png")
+            with common.created_project_file(asset_uri) as uri:
+                self._customSetUp(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)
