@@ -22,10 +22,12 @@ A collection of objects to use for testing
 import contextlib
 import gc
 import os
+import shutil
 import tempfile
 import unittest
 from unittest import mock
 
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -36,12 +38,13 @@ from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import path_from_uri
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.timeline import Selected
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
-os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp("pitiviTestsuite")
+os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 
 
 def clean_pitivi_mock(app):
@@ -216,9 +219,8 @@ class TestCase(unittest.TestCase, Loggable):
 
 
 @contextlib.contextmanager
-def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
-    """
-    Create a project file.
+def created_project_file(asset_uri):
+    """Creates a project file.
 
     Yields:
         str: The URI of the new project
@@ -247,25 +249,35 @@ def created_project_file(asset_uri="file:///icantpossiblyexist.png"):
     os.remove(xges_path)
 
 
-def get_sample_uri(sample):
-    tests_dir = os.path.dirname(os.path.abspath(__file__))
-    return Gst.filename_to_uri(os.path.join(tests_dir, "samples", sample))
+def get_sample_uri(sample, tests_dir=None):
+    if not tests_dir:
+        tests_dir = os.path.dirname(os.path.abspath(__file__))
+        tests_dir = os.path.join(tests_dir, "samples")
+    return Gst.filename_to_uri(os.path.join(tests_dir, sample))
+
+
+@contextlib.contextmanager
+def cloned_sample(*samples):
+    """Gets a context manager which commits the transaction at the end."""
+    tmpdir = tempfile.mkdtemp(suffix="pitivi_cloned_samples")
+    module = globals()
+    original_get_sample_uri = module["get_sample_uri"]
+    module["get_sample_uri"] = lambda sample: original_get_sample_uri(sample, tests_dir=tmpdir)
+    for sample in samples:
+        sample_path = path_from_uri(original_get_sample_uri(sample))
+        clone_path = path_from_uri(get_sample_uri(sample))
+        shutil.copyfile(sample_path, clone_path)
+    try:
+        yield tmpdir
+    finally:
+        module["get_sample_uri"] = original_get_sample_uri
+        shutil.rmtree(tmpdir)
 
 
 def get_clip_children(ges_clip, *track_types, recursive=False):
     for ges_timeline_element in ges_clip.get_children(recursive):
         if not track_types or ges_timeline_element.get_track_type() in track_types:
             yield ges_timeline_element
-
-
-def clean_proxy_samples():
-    _dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples")
-    proxy_manager = ProxyManager(mock.MagicMock())
-
-    for f in os.listdir(_dir):
-        if f.endswith(proxy_manager.proxy_extension):
-            f = os.path.join(_dir, f)
-            os.remove(f)
 
 
 def create_test_clip(clip_type):

@@ -47,8 +47,6 @@ class PitiviTest(Test):
 
 def setup_tests(test_manager, options):
     """Sets up Pitivi unit testsuite."""
-    print("Forcing 1 job at a time as testsuite will fail otherwise")
-    options.num_jobs = 1
     loader = unittest.TestLoader()
     testsuites = loader.discover(CDIR)
     for testsuite in testsuites:

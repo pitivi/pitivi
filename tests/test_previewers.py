@@ -84,10 +84,12 @@ class TestAudioPreviewer(BaseTestMediaLibrary):
     def test_waveform_creation(self):
         """Checks the waveform generation."""
         sample_name = "1sec_simpsons_trailer.mp4"
-        self.runCheckImport([sample_name])
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name])
 
-        sample_uri = common.get_sample_uri(sample_name)
-        wavefile = get_wavefile_location_for_uri(sample_uri)
+            sample_uri = common.get_sample_uri(sample_name)
+            wavefile = get_wavefile_location_for_uri(sample_uri)
+
         self.assertTrue(os.path.exists(wavefile), wavefile)
 
         with open(wavefile, "rb") as fsamples:
