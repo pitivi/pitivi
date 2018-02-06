@@ -408,7 +408,7 @@ class MoveScaleOverlay(Overlay):
         self.handles[(Edge.bottom, Edge.left)].position = numpy.array([0, size[1]])
         self.handles[(Edge.bottom, Edge.right)].position = numpy.array([size[0], size[1]])
         self.handles[(Edge.top, Edge.right)].position = numpy.array([size[0], 0])
-        self.__update_egdes_from_corners()
+        self.__update_edges_from_corners()
 
     def __set_position(self, position):
         for handle in self.handles.values():
@@ -426,7 +426,7 @@ class MoveScaleOverlay(Overlay):
         for handle in self.handles.values():
             handle.restrict_radius_to_size(smaller_size)
 
-    def __update_egdes_from_corners(self):
+    def __update_edges_from_corners(self):
         half_w = numpy.array([self.__get_width() * 0.5, 0])
         half_h = numpy.array([0, self.__get_height() * 0.5])
 
@@ -494,7 +494,7 @@ class MoveScaleOverlay(Overlay):
         if self.__clicked_handle:
             # Resize Box / Use Handle
             self.__clicked_handle.on_drag(click_to_cursor)
-            self.__update_egdes_from_corners()
+            self.__update_edges_from_corners()
 
             # We only need to change translation coordinates in the source for resizing
             # when handle does not return NULL for get_source_position

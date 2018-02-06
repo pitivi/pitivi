@@ -2,7 +2,7 @@
 
 The [Google “Summer of Code” program] is available for students only. If
 we accept your project proposal, in June-July-August you work on your
-project while being payed by Google. Mid-term and end-term we evaluate
+project while being paid by Google. Mid-term and end-term we evaluate
 your work.
 
 On the technical side, it might interest you that we use GES/GStreamer

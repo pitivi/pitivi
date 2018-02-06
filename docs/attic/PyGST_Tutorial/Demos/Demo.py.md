@@ -37,7 +37,7 @@
         __usage__ = "python demo.py -- runs a simple test demo"
         __def_win_size__ = (320, 240)
 
-        # this commment allows us to include only a portion of the file
+        # this comment allows us to include only a portion of the file
         # in the tutorial for this demo
         # <excerpt 1>     ...
 

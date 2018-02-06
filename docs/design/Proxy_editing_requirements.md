@@ -27,7 +27,7 @@ As [T2455](https://phabricator.freedesktop.org/T2455) indicates, we can
 envision two types of user experience: a semi-automatic and a
 fully-automated one. Since Pitivi is not the only application (now and
 in the future) using GES, we need to design the GES API to be flexible
-enough to accomodate the design needs of both kinds of applications.
+enough to accommodate the design needs of both kinds of applications.
 
 In both cases, the experience must be:
 

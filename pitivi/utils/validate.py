@@ -133,7 +133,7 @@ def stop(scenario, action):
 
         if project:
             project.setModificationState(False)
-            GstValidate.print_action(action, "Force quiting, ignoring any"
+            GstValidate.print_action(action, "Force quitting, ignoring any"
 
                                      " changes in the project\n")
         timeline.ui.app.shutdown()
@@ -290,7 +290,7 @@ def editContainer(scenario, action):
     if container is None:
         for layer in timeline.get_layers():
             for clip in layer.get_clips():
-                Gst.info("Exisiting clip: %s" % clip.get_name())
+                Gst.info("Existing clip: %s" % clip.get_name())
 
         scenario.report_simple(GLib.quark_from_string("scenario::execution-error"),
                                "Could not find container: %s"

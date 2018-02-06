@@ -107,7 +107,7 @@ As pitivi will be used by all kinds of end users, it is nice that they
 don't have to worry about codecs or transcode it first in another codec.
 
 The algorithm knows after two seeks if the codec is accurate or not. If
-it is accurate, it will show a succes icon and the correction algorithm
+it is accurate, it will show a success icon and the correction algorithm
 disables itself. If it is incorrect, it will calculate and show a
 warning sign. By clicking on the warning icon, you can optionally show
 the incorrectness. The incorrectness is the average difference between
@@ -153,7 +153,7 @@ The view supports many features, which might be interesting for pitivi:
 ### Base
 
 The view code which is independent of the toolkit is in pystreamer/view.
-It uses some ui\_\* methods which are overriden by specific toolkit
+It uses some ui\_\* methods which are overridden by specific toolkit
 methods. The events are buffered with timer threads so that the UI stays
 as responsive as possible. The timer thread will not send seek events
 for every user event, but rather keep track and only request a next seek

@@ -47,7 +47,7 @@ chain demuxers and decoders. It creates one source pad for each
 individual stream in the file. Therefore if a file contains one video
 stream and one audio stream, decodebin creates two pads: one for video,
 and one for audio. GStreamer refers to this type of behavior as
-*autoplugging* and elments which do this type of thing as
+*autoplugging* and elements which do this type of thing as
 “autopluggers”. Because decodebin can't know what's in a stream until it
 reads it, the pads are not created until the pipeline transitions into
 the ready or paused states. This is why we must link decodebin to other
