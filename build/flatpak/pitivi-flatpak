@@ -545,11 +545,11 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         venv_path = os.path.join(self.scriptdir, "pyvenv")
         activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook"
+        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint"
         if not os.path.isdir(venv_path):
-            print("Setting up a Python virtual env: %s" % venv_path)
+            print("Setting up a Python virtual env for development: %s" % venv_path)
             venv.create(venv_path, with_pip=True)
-            print("Installing development tools in a Python virtual env: %s" % venv_path)
+            print("Installing development tools in the Python virtual env: %s" % pip_modules)
             subprocess.check_call(
                 ". %s && pip install %s" % (activate_script, pip_modules),
                 shell=True)
@@ -558,6 +558,15 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             subprocess.check_call(
                 ". %s && pip install -U %s" % (activate_script, pip_modules),
                 shell=True)
+
+        # git-pylint-commit-hook must run pylint in the sandbox so it uses
+        # the gi Python modules in there. At the same time it also has to be
+        # installed in the development pyvenv which is outside the sandbox
+        # because git-pylint-commit-hook needs to import pylint.config.
+        if fresh_install or self.update:
+            pip_modules = "pylint"
+            print("Installing development tools in the sandbox: %s" % pip_modules)
+            self.run_in_sandbox("pip3 install -U --user %s" % pip_modules, exit_on_failure=True)
 
         if not self.check and not self.update:
             self.run_in_sandbox(*self.args, exit_on_failure=True)
