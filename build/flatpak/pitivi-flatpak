@@ -564,9 +564,10 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         # installed in the development pyvenv which is outside the sandbox
         # because git-pylint-commit-hook needs to import pylint.config.
         if fresh_install or self.update:
-            pip_modules = "pylint"
+            pip_modules = ["pylint"]
             print("Installing development tools in the sandbox: %s" % pip_modules)
-            self.run_in_sandbox("pip3 install -U --user %s" % pip_modules, exit_on_failure=True)
+            self.run_in_sandbox("pip3", "install", "-U", "--user", *pip_modules,
+                                exit_on_failure=True)
 
         if not self.check and not self.update:
             self.run_in_sandbox(*self.args, exit_on_failure=True)
