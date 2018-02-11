@@ -55,7 +55,6 @@ pitivi/viewer/title_overlay.py
 pitivi/viewer/viewer.py
 tests/common.py
 tests/test_check.py
-tests/test_clipproperties.py
 tests/test_common.py
 tests/test_log.py
 tests/test_media_library.py

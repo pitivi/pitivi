@@ -92,7 +92,7 @@ def create_pitivi(**settings):
 
 
 def create_timeline_container():
-    app = create_pitivi_mock()
+    app = create_pitivi_mock(leftClickAlsoSeeks=False)
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
     project = project_manager.current_project
@@ -105,7 +105,6 @@ def create_timeline_container():
     timeline.get_parent = mock.MagicMock(return_value=timeline_container)
 
     app.gui.timeline_ui = timeline_container
-    timeline.app.settings.leftClickAlsoSeeks = False
 
     return timeline_container
 

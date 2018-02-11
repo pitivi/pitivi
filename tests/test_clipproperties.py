@@ -16,6 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.clipproperties module."""
+# pylint: disable=protected-access,no-self-use,too-many-locals
 import unittest
 from unittest import mock
 
@@ -28,8 +30,10 @@ from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class EffectPropertiesTest(unittest.TestCase):
+    """Tests for the EffectProperties class."""
 
-    def testCalculateEffectPriority(self):
+    def test_calculate_effect_priority(self):
+        """Checks the effect priority calculation."""
         # Dragging 1 onto itself and nearby.
         self.assertEqual(1, EffectProperties.calculateEffectPriority(
             1, 0, Gtk.TreeViewDropPosition.AFTER))
@@ -79,10 +83,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         return transformation_box
 
     def test_spin_buttons_read(self):
-        """
-        Tests that the transformation properties spin buttons display
-        the correct values of the source properties.
-        """
+        """Checks the spin buttons update when the source properties change."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -111,10 +112,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(new_val, spin_btn_value)
 
     def test_spin_buttons_write(self):
-        """
-        Tests that changes in spin buttons values are reflected in source
-        properties.
-        """
+        """Checks the spin buttons changing updates the source properties."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -148,10 +146,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 self.assertEqual(current_spin_values[source_prop], source_value)
 
     def test_spin_buttons_source_change(self):
-        """
-        Check that spin buttons update correctly when changing the selected
-        clip.
-        """
+        """Checks the spin buttons update when the selected clip changes."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -184,7 +179,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
             self.assertEqual(spin_buttons[prop].get_value_as_int(), new_values[prop])
 
     def test_keyframes_activate(self):
-        """Tests transformation properties keyframes activation."""
+        """Checks transformation properties keyframes activation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -219,7 +214,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
                                          (inpoint + duration, initial_values[prop])])
 
     def test_keyframes_add(self):
-        """Tests keyframe creation."""
+        """Checks keyframe creation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -252,7 +247,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 self.assertEqual((timestamp, value), keyframes[index + 1])
 
     def test_keyframes_navigation(self):
-        """Tests keyframe navigation."""
+        """Checks keyframe navigation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
@@ -301,7 +296,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
                 prev_index += 1
 
     def test_reset_to_default(self):
-        """Tests "reset to default" button."""
+        """Checks "reset to default" button."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
         timeline = transformation_box.app.gui.timeline_ui.timeline
