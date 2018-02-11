@@ -118,6 +118,7 @@ class TestKeyframeCurve(BaseTestTimeline):
             values = [item.timestamp for item in control_source.get_all()]
             self.assertEqual(values, [inpoint, inpoint + duration])
 
+    # pylint: disable=too-many-statements
     def check_keyframe_ui_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling by click events."""
         timeline = timeline_container.timeline
@@ -141,11 +142,11 @@ class TestKeyframeCurve(BaseTestTimeline):
             x, y = keyframe_curve._ax.transData.transform((xdata, ydata))
 
             event = MouseEvent(
-                name = "button_press_event",
-                canvas = keyframe_curve,
-                x = x,
-                y = y,
-                button = 1
+                name="button_press_event",
+                canvas=keyframe_curve,
+                x=x,
+                y=y,
+                button=1
             )
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
             keyframe_curve._mpl_button_press_event_cb(event)

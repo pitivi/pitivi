@@ -41,6 +41,7 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.timeline import Selected
+from pitivi.utils.timeline import Zoomable
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
@@ -194,6 +195,8 @@ class TestCase(unittest.TestCase, Loggable):
         if detect_leaks:
             self.gctrack()
 
+        self.__zoom_level = Zoomable.getCurrentZoomLevel()
+
     def tearDown(self):
         # don't barf gc info all over the console if we have already failed a
         # test case
@@ -203,6 +206,7 @@ class TestCase(unittest.TestCase, Loggable):
         if detect_leaks:
             self.gccollect()
             self.gcverify()
+        Zoomable.setZoomLevel(self.__zoom_level)
 
     # override run() to save a reference to the test result object
     def run(self, result=None):
