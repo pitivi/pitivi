@@ -16,8 +16,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-from unittest import TestCase
-
 from gi.repository import Gst
 
 from pitivi.utils.widgets import ChoiceWidget
@@ -28,9 +26,10 @@ from pitivi.utils.widgets import NumericWidget
 from pitivi.utils.widgets import PathWidget
 from pitivi.utils.widgets import TextWidget
 from pitivi.utils.widgets import ToggleWidget
+from tests import common
 
 
-class TestWidgets(TestCase):
+class TestWidgets(common.TestCase):
 
     def testConstruction(self):
         widgets = (
@@ -63,7 +62,7 @@ class TestWidgets(TestCase):
         self.assertNotEqual(bad_value, widget.getWidgetValue())
 
 
-class TestFractionWidget(TestCase):
+class TestFractionWidget(common.TestCase):
 
     def test_widget_text(self):
         widget = FractionWidget()

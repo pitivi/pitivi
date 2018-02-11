@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import mock
-from unittest import TestCase
 
 from gi.repository import GES
 
@@ -29,7 +28,7 @@ from pitivi.utils.timeline import UNSELECT
 from tests import common
 
 
-class TestSelected(TestCase):
+class TestSelected(common.TestCase):
 
     def testBoolEvaluation(self):
         selected = Selected()
@@ -42,7 +41,7 @@ class TestSelected(TestCase):
         self.assertFalse(selected)
 
 
-class TestSelection(TestCase):
+class TestSelection(common.TestCase):
 
     def testBoolEvaluation(self):
         clip1 = mock.MagicMock()

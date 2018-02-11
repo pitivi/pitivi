@@ -22,7 +22,6 @@ import os
 import tempfile
 import time
 from unittest import mock
-from unittest import TestCase
 
 from gi.repository import GES
 from gi.repository import Gst
@@ -59,9 +58,10 @@ class ProjectManagerListener(object):
         return True
 
 
-class TestProjectManager(TestCase):
+class TestProjectManager(common.TestCase):
 
     def setUp(self):
+        super(TestProjectManager, self).setUp()
         app = mock.MagicMock()
         self.manager = ProjectManager(app)
         self.listener = ProjectManagerListener(self.manager)
@@ -604,7 +604,7 @@ class TestProjectSettings(common.TestCase):
         self.assertFalse(project._has_default_audio_settings)
 
 
-class TestExportSettings(TestCase):
+class TestExportSettings(common.TestCase):
 
     def test_master_attributes(self):
         self._check_master_attribute("muxer", dependant_attr="containersettings")

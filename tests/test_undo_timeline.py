@@ -18,8 +18,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import mock
-from unittest import skip
-from unittest import TestCase
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -40,9 +38,10 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
 
 
-class BaseTestUndoTimeline(TestCase):
+class BaseTestUndoTimeline(common.TestCase):
 
     def setUp(self):
+        super(BaseTestUndoTimeline, self).setUp()
         self.app = common.create_pitivi()
         self.app.project_manager.newBlankProject()
 

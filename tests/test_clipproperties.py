@@ -18,14 +18,13 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.clipproperties module."""
 # pylint: disable=protected-access,no-self-use,too-many-locals
-import unittest
-
 from gi.repository import Gtk
 
 from pitivi.clipproperties import EffectProperties
+from tests import common
 
 
-class EffectPropertiesTest(unittest.TestCase):
+class EffectPropertiesTest(common.TestCase):
     """Tests for the EffectProperties class."""
 
     def test_calculate_effect_priority(self):

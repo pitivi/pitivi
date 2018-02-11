@@ -17,22 +17,19 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the effects module."""
-import unittest
-
 from gi.repository import GES
 
 from pitivi.effects import AUDIO_EFFECT
 from pitivi.effects import EffectInfo
 from pitivi.effects import VIDEO_EFFECT
-from tests.common import create_timeline_container
-from tests.common import get_sample_uri
+from tests import common
 
 
-class EffectInfoTest(unittest.TestCase):
+class EffectInfoTest(common.TestCase):
     """Tests for the EffectInfo class."""
 
     def test_bin_description(self):
-        """Tests the bin_description property."""
+        """Checks the bin_description property."""
         effect_info = EffectInfo("name", None, None, None, None)
         self.assertEqual(effect_info.bin_description, "name")
 
@@ -40,18 +37,18 @@ class EffectInfoTest(unittest.TestCase):
         self.assertEqual(effect_info.bin_description, "glupload ! glname ! gldownload")
 
     def test_name_from_bin_description(self):
-        """Tests the name_from_bin_description method."""
+        """Checks the name_from_bin_description method."""
         self.assertEqual(EffectInfo.name_from_bin_description("name"), "name")
         self.assertEqual(EffectInfo.name_from_bin_description("glupload ! glname ! gldownload"), "glname")
 
     def test_good_for_track_element(self):
-        """Tests the good_for_track_element method."""
-        uri = get_sample_uri("tears_of_steel.webm")
+        """Checks the good_for_track_element method."""
+        uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         ges_clip = asset.extract()
 
         # Add the clip to a timeline so it gets tracks.
-        ges_timeline = create_timeline_container().timeline.ges_timeline
+        ges_timeline = common.create_timeline_container().timeline.ges_timeline
         ges_timeline.append_layer()
         ges_layer, = ges_timeline.get_layers()
         ges_layer.add_clip(ges_clip)

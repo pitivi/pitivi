@@ -20,14 +20,14 @@
 # pylint: disable=missing-docstring
 import os
 import tempfile
-import unittest
 from unittest import mock
 
 from pitivi.settings import ConfigError
 from pitivi.settings import GlobalSettings
+from tests import common
 
 
-class TestGlobalSettings(unittest.TestCase):
+class TestGlobalSettings(common.TestCase):
     """Tests the GlobalSettings class."""
 
     def setUp(self):

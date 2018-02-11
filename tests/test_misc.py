@@ -19,21 +19,19 @@
 """Tests for the utils.misc module."""
 # pylint: disable=protected-access,no-self-use
 import os
-import unittest
 
 from gi.repository import Gst
 
 from pitivi.utils.misc import PathWalker
-from tests.common import create_main_loop
-from tests.common import get_sample_uri
+from tests import common
 
 
-class PathWalkerTest(unittest.TestCase):
+class PathWalkerTest(common.TestCase):
     """Tests for the `PathWalker` class."""
 
     def _scan(self, uris):
         """Uses the PathWalker to scan URIs."""
-        mainloop = create_main_loop()
+        mainloop = common.create_main_loop()
         received_uris = []
 
         def done_cb(uris):  # pylint: disable=missing-docstring
@@ -46,9 +44,9 @@ class PathWalkerTest(unittest.TestCase):
 
     def test_scanning(self):
         """Checks the scanning of the URIs."""
-        valid_uri = get_sample_uri("tears_of_steel.webm")
+        valid_uri = common.get_sample_uri("tears_of_steel.webm")
         uris = self._scan([valid_uri,
-                           get_sample_uri("missing.webm"),
+                           common.get_sample_uri("missing.webm"),
                            "http://pitivi.org/very_real.webm"])
         self.assertEqual(len(uris), 1, uris)
         self.assertIn(valid_uri, uris)
@@ -60,5 +58,5 @@ class PathWalkerTest(unittest.TestCase):
         uris = [valid_dir_uri]
         received_uris = self._scan(uris)
         self.assertGreater(len(received_uris), 1, received_uris)
-        valid_uri = get_sample_uri("tears_of_steel.webm")
+        valid_uri = common.get_sample_uri("tears_of_steel.webm")
         self.assertIn(valid_uri, received_uris)

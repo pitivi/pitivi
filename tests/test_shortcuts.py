@@ -20,12 +20,12 @@
 import os
 import tempfile
 from unittest import mock
-from unittest import TestCase
 
 from pitivi.shortcuts import ShortcutsManager
+from tests import common
 
 
-class TestShortcutsManager(TestCase):
+class TestShortcutsManager(common.TestCase):
     """Tests for the ShortcutsManager."""
 
     def test_groups(self):

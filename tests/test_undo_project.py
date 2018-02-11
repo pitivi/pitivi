@@ -16,8 +16,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-from unittest import TestCase
-
 from gi.repository import GES
 from gi.repository import Gtk
 
@@ -25,9 +23,10 @@ from pitivi.project import ProjectSettingsDialog
 from tests import common
 
 
-class TestProjectUndo(TestCase):
+class TestProjectUndo(common.TestCase):
 
     def setUp(self):
+        super(TestProjectUndo, self).setUp()
         self.app = common.create_pitivi()
         self.assertTrue(self.app.project_manager.newBlankProject())
 

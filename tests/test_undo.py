@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from unittest import mock
-from unittest import TestCase
 
 from gi.repository import GES
 
@@ -28,9 +27,10 @@ from pitivi.undo.undo import UndoableActionLog
 from pitivi.undo.undo import UndoableActionStack
 from pitivi.undo.undo import UndoError
 from pitivi.undo.undo import UndoWrongStateError
+from tests import common
 
 
-class TestUndoableActionStack(TestCase):
+class TestUndoableActionStack(common.TestCase):
 
     def testUndoDo(self):
         """
@@ -79,7 +79,7 @@ class TestUndoableActionStack(TestCase):
         self.assertEqual(action3.undo.call_count, 1)
 
 
-class TestUndoableActionLog(TestCase):
+class TestUndoableActionLog(common.TestCase):
 
     def setUp(self):
         self.log = UndoableActionLog()
@@ -407,7 +407,8 @@ class TestUndoableActionLog(TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
-class TestGObjectObserver(TestCase):
+
+class TestGObjectObserver(common.TestCase):
 
     def test_property_change(self):
         action_log = UndoableActionLog()
@@ -432,7 +433,7 @@ class TestGObjectObserver(TestCase):
         self.assertEqual(action.new_value, 4)
 
 
-class TestPropertyChangedAction(TestCase):
+class TestPropertyChangedAction(common.TestCase):
 
     def test_expand(self):
         stack = UndoableActionStack("good one!")
