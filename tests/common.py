@@ -47,11 +47,6 @@ detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 
 
-def clean_pitivi_mock(app):
-    app.settings = None
-    app.proxy_manager = None
-
-
 def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
                       numTranscodingJobs=4,
                       **additional_settings):
