@@ -51,7 +51,6 @@ index.md
 	Testing.md
 		QA_Scenarios.md
 		Test_suite_wishlist.md
-	Troubleshooting.md
 	design.md
 		design/Why_python.md
 		design/Proxy_editing_requirements.md
@@ -86,4 +85,3 @@ index.md
 	attic.md
 		attic/GNonLin.md
 		attic/Building_with_Windows.md
-		attic/Dependencies.md
