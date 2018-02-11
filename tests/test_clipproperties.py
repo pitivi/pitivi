@@ -16,6 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.clipproperties module."""
+# pylint: disable=protected-access,no-self-use,too-many-locals
 import unittest
 
 from gi.repository import Gtk
@@ -24,8 +26,10 @@ from pitivi.clipproperties import EffectProperties
 
 
 class EffectPropertiesTest(unittest.TestCase):
+    """Tests for the EffectProperties class."""
 
-    def testCalculateEffectPriority(self):
+    def test_calculate_effect_priority(self):
+        """Checks the effect priority calculation."""
         # Dragging 1 onto itself and nearby.
         self.assertEqual(1, EffectProperties.calculateEffectPriority(
             1, 0, Gtk.TreeViewDropPosition.AFTER))
