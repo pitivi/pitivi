@@ -31,10 +31,6 @@ from pitivi.utils.proxy import ProxyingStrategy
 from tests import common
 
 
-def fakeSwitchProxies(asset):
-    timeline.TimelineContainer.switchProxies(mock.MagicMock(), asset)
-
-
 class BaseTestMediaLibrary(common.TestCase):
 
     def __init__(self, *args):
@@ -49,9 +45,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def clean(self):
         self.mainloop = None
-
-        if self.app:
-            self.app = common.clean_pitivi_mock(self.app)
+        self.app = None
 
         if self.medialibrary:
             self.medialibrary.finalize()
