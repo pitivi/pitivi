@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.clipproperties module."""
 # pylint: disable=protected-access,no-self-use,too-many-locals
-import unittest
 from unittest import mock
 
 from gi.repository import Gtk
@@ -29,7 +28,7 @@ from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
 
 
-class EffectPropertiesTest(unittest.TestCase):
+class EffectPropertiesTest(common.TestCase):
     """Tests for the EffectProperties class."""
 
     def test_calculate_effect_priority(self):

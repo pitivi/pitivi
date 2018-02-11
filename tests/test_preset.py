@@ -21,11 +21,11 @@
 import os.path
 import shutil
 import tempfile
-from unittest import TestCase
 
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import PresetManager
 from pitivi.utils.system import System
+from tests import common
 
 
 def clearPresetManagerPaths(preset_manager):
@@ -49,7 +49,7 @@ def countUserPresets(preset_manager):
     return countJsonFilesIn(preset_manager.user_path)
 
 
-class TestPresetBasics(TestCase):
+class TestPresetBasics(common.TestCase):
 
     def setUp(self):
         self.manager = PresetManager(None, tempfile.mkdtemp(), System())
@@ -108,7 +108,7 @@ class TestPresetBasics(TestCase):
         self.assertEqual('New preset 3', new_preset3)
 
 
-class TestAudioPresetsIO(TestCase):
+class TestAudioPresetsIO(common.TestCase):
 
     def setUp(self):
         self.manager = AudioPresetManager(System())

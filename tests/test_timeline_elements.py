@@ -19,7 +19,6 @@
 """Tests for the timeline.elements module."""
 # pylint: disable=protected-access,no-self-use,too-many-locals
 from unittest import mock
-from unittest import TestCase
 
 from gi.overrides import GObject
 from gi.repository import Gdk
@@ -31,9 +30,8 @@ from matplotlib.backend_bases import MouseEvent
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import Zoomable
-from tests.common import create_test_clip
-from tests.common import create_timeline_container
 from tests.test_timeline_timeline import BaseTestTimeline
+from tests import common
 
 
 class TestKeyframeCurve(BaseTestTimeline):
@@ -41,7 +39,7 @@ class TestKeyframeCurve(BaseTestTimeline):
 
     def test_keyframe_toggle(self):
         """Checks keyframes toggling at the playhead position."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline_container.app.action_log = UndoableActionLog()
         timeline = timeline_container.timeline
         ges_layer = timeline.ges_timeline.append_layer()
@@ -49,7 +47,7 @@ class TestKeyframeCurve(BaseTestTimeline):
         ges_clip2 = self.add_clip(ges_layer, 10, duration=2 * Gst.SECOND)
         ges_clip3 = self.add_clip(ges_layer, 20, inpoint=100, duration=2 * Gst.SECOND)
         # For variety, add TitleClip to the list of clips.
-        ges_clip4 = create_test_clip(GES.TitleClip)
+        ges_clip4 = common.create_test_clip(GES.TitleClip)
         ges_clip4.props.start = 30
         ges_clip4.props.duration = int(0.9 * Gst.SECOND)
         ges_layer.add_clip(ges_clip4)
@@ -205,7 +203,7 @@ class TestKeyframeCurve(BaseTestTimeline):
 
     def test_no_clip_selected(self):
         """Checks nothing happens when no clip is selected."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         # Make sure this does not raise any exception
         timeline_container._keyframe_cb(None, None)
 
@@ -215,7 +213,7 @@ class TestVideoSource(BaseTestTimeline):
 
     def test_video_source_scaling(self):
         """Checks the size of the scaled clips."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         project = timeline.app.project_manager.current_project
 
@@ -271,7 +269,7 @@ class TestVideoSource(BaseTestTimeline):
 
     def test_rotation(self):
         """Checks the size of the clips flipped 90 degrees."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
         clip = self.addClipsSimple(timeline, 1)[0]
@@ -315,7 +313,7 @@ class TestVideoSource(BaseTestTimeline):
         self.assertEqual(height, 400)
 
 
-class TestClip(TestCase):
+class TestClip(common.TestCase):
     """Tests for the Clip class."""
 
     def test_clip_subclasses(self):

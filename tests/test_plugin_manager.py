@@ -16,26 +16,26 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""Test the Plugin Manager"""
+"""Tests for the pluginmanager module."""
 import os
 import tempfile
-import unittest
 from unittest import mock
 
 from gi.repository import GObject
 
 from pitivi.pluginmanager import PluginManager
 from pitivi.settings import GlobalSettings
+from tests import common
 
 
-class TestPluginManager(unittest.TestCase):
-    """Test the behavior of the Plugin Manager"""
+class TestPluginManager(common.TestCase):
+    """Tests for the Plugin Manager."""
 
     def test_load_plugins_from_settings(self):
         """Checks if the plugin manager loads plugins from GlobalSettings."""
 
         class App(GObject.Object):
-            """A representation of the Pitivi Application for test purposes"""
+            """A representation of the Pitivi Application for test purposes."""
             __gsignals__ = {
                 "window-added": (GObject.SIGNAL_RUN_LAST, None, (object, ))
             }
