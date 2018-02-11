@@ -35,6 +35,8 @@ from pitivi import check
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.previewers import Previewer
+from pitivi.timeline.previewers import PreviewGeneratorManager
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
@@ -90,12 +92,6 @@ def create_pitivi(**settings):
 
 
 def create_timeline_container():
-    # TODO: Get rid of Previewer.manager.
-    from pitivi.timeline.previewers import Previewer
-    from pitivi.timeline.previewers import PreviewGeneratorManager
-    assert hasattr(Previewer, "manager")
-    Previewer.manager = PreviewGeneratorManager()
-
     app = create_pitivi_mock()
     project_manager = ProjectManager(app)
     project_manager.newBlankProject()
@@ -191,6 +187,10 @@ class TestCase(unittest.TestCase, Loggable):
             self.gctrack()
 
         self.__zoom_level = Zoomable.getCurrentZoomLevel()
+
+        # TODO: Get rid of Previewer.manager.
+        assert hasattr(Previewer, "manager")
+        Previewer.manager = PreviewGeneratorManager()
 
     def tearDown(self):
         # don't barf gc info all over the console if we have already failed a
