@@ -17,14 +17,12 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-
 import cProfile
-import os
-import sys
-import signal
-import locale
 import gettext
-
+import locale
+import os
+import signal
+import sys
 from ctypes import cdll
 try:
     x11 = cdll.LoadLibrary('libX11.so')
@@ -62,8 +60,7 @@ def _add_pitivi_path():
     try:
         import gi.overrides
     except ImportError:
-        print(_("Could not import 'gi'. "
-                "Make sure you have pygobject available."))
+        print("Could not import 'gi'. Make sure you have pygobject.")
         exit(1)
 
     # Let Gst overrides from our prefix take precedence over any
