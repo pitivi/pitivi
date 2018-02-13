@@ -19,7 +19,6 @@
 # Boston, MA 02110-1301, USA.
 import cProfile
 import gettext
-import locale
 import os
 import signal
 import sys
@@ -94,17 +93,11 @@ def _add_pitivi_path():
         if path not in sys.path:
             sys.path.append(path)
 
-    # Added for i18n
+    # i18n
     localedir = os.path.join(DATADIR, "locale")
     try:
-        locale.setlocale(locale.LC_ALL, '')
-        locale.bindtextdomain('pitivi', localedir)
-        locale.textdomain('pitivi')
-    except Exception as e:
-        print("Couldn't set locale.", localedir, e)
-    try:
-        gettext.bindtextdomain('pitivi', localedir)
-        gettext.textdomain('pitivi')
+        gettext.bindtextdomain("pitivi", localedir)
+        gettext.textdomain("pitivi")
     except Exception as e:
         print("Couldn't set the gettext domain. Translations will not work.", localedir, e)
 
