@@ -78,10 +78,8 @@ def _add_pitivi_path():
     if _in_devel():
         root = os.path.split(dir)[0]
         sys.path.append(BUILDDIR)
-        localedir = os.path.join(BUILDDIR, 'po')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
-        localedir = os.path.join(DATADIR, "locale")
 
     if root not in sys.path:
         sys.path.append(root)
@@ -97,6 +95,7 @@ def _add_pitivi_path():
             sys.path.append(path)
 
     # Added for i18n
+    localedir = os.path.join(DATADIR, "locale")
     try:
         locale.setlocale(locale.LC_ALL, '')
         locale.bindtextdomain('pitivi', localedir)
