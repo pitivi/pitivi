@@ -94,6 +94,15 @@ def _add_pitivi_path():
             sys.path.append(path)
 
     # i18n
+    if _in_devel():
+        # LC_ALL is set to en_US.UTF-8 by flatpak builder which is used
+        # when developers run Pitivi in the development sandbox.
+        # We don't need to use LC_ALL when developing, so unset it
+        # to avoid being surprised that setting LANG does not work.
+        try:
+            del os.environ["LC_ALL"]
+        except KeyError:
+            pass
     localedir = os.path.join(DATADIR, "locale")
     try:
         gettext.bindtextdomain("pitivi", localedir)
