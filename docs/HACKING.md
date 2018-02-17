@@ -162,3 +162,23 @@ You can then inspect the call tree profile with your preferred image viewer:
 ```
 $ xdg-open profile.svg
 ```
+
+
+## Switching locales
+
+To see how Pitivi looks in a different locale, use:
+
+```
+(ptv-flatpak) $ LANG=fr_FR.UTF-8 pitivi
+```
+
+Pay attention the translations in the sandbox are not automatically
+updated when you `git pull`. You can update them by updating your
+sandbox (`ptvenv --update`) or by reinstalling Pitivi in the sandbox:
+
+```
+(ptv-flatpak) $ binstall
+[...]
+Installing /.../pitivi-dev/pitivi/mesonbuild/po/de.gmo to /app/share/locale/de/LC_MESSAGES/pitivi.mo
+[...]
+```
