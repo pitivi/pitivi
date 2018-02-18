@@ -239,7 +239,7 @@ class FlatpakRepos(FlatpakObject):
             same_name.url = repo.url
             return same_name
 
-        self.flatpak("remote-add", repo.name, "--from",
+        self.flatpak("remote-add", "--if-not-exists", repo.name, "--from",
                      repo.repo_file.name,
                      comment="Adding repo %s" % repo.name)
         repo.repos = self
