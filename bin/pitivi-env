@@ -18,7 +18,7 @@ export CURRENT_GST=$FLATPAK_ENVPATH
 export PATH="$FLATPAK_ENVPATH/bin/:$PATH"
 
 # Use ptvenv for entering or running commands in the sandbox.
-alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -d"
+alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak"
 
 echo "-> Setting up the prefix for the sandbox..."
 # This builds the local flatpak repo if it is not yet built.
@@ -50,7 +50,7 @@ then
     alias binstall="ptvenv ninja -C mesonbuild/ install"
 
     # Prefer to run some binaries in the sandbox. For example "python3".
-    for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q -d ls /app/bin/`;
+    for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q ls /app/bin/`;
     do
         alias $i="ptvenv $i"
     done

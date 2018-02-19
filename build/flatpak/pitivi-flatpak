@@ -334,15 +334,12 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
     def __init__(self):
         self.name = "Pitivi"
         self.sdk_repo = None
-        self.app_repo = None
         self.runtime = None
         self.locale = None
         self.sdk = None
-        self.app = None
 
         self.packs = []
         self.update = False
-        self.devel = False
         self.json = None
         self.args = []
         self.build = False
@@ -412,10 +409,6 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                         url="http://sdk.gnome.org/repo/",
                         repo_file="https://sdk.gnome.org/gnome.flatpakrepo"))
 
-        self.app_repo = repos.add(
-            FlatpakRepo("pitivi",
-                        url="http://flatpak.pitivi.org/",
-                        repo_file="http://flatpak.pitivi.org/pitivi.flatpakrepo"))
         sdk_branch = SDK_BRANCH[self.branch]
         self.runtime = FlatpakPackage(
             "org.gnome.Platform", sdk_branch, self.sdk_repo, "x86_64")
@@ -423,30 +416,28 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             "org.gnome.Platform.Locale", sdk_branch, self.sdk_repo, "x86_64")
         self.sdk = FlatpakPackage(
             "org.gnome.Sdk", sdk_branch, self.sdk_repo, "x86_64")
-        self.app = FlatpakPackage(
-            "org.pitivi.Pitivi", self.branch, self.app_repo, "x86_64")
-        self.packs = [self.runtime, self.locale]
+        self.packs = [self.runtime, self.locale, self.sdk]
 
         if self.bundle:
             self.build = True
 
-        if self.devel:
-            self.packs.append(self.sdk)
-        else:
-            self.packs.append(self.app)
-            self.local_repos_path = "/nowhere/really/"
-
         self.json = os.path.join(self.scriptdir, self.build_name + ".json")
 
+        if not self.args:
+            self.args.append(os.path.join(self.scriptdir, "enter-env"))
+
     def run(self):
-        if self.clean and os.path.exists(self.prefix):
-            shutil.rmtree(self.prefix)
+        if self.clean:
+            try:
+                shutil.rmtree(self.prefix)
+            except FileNotFoundError:
+                pass
 
-        if self.update:
-            self.update_all()
-
-        if self.devel:
+        fresh_install = not os.path.exists(self.prefix)
+        if fresh_install or self.update:
+            self.install_flatpak_runtimes()
             self.setup_sandbox()
+            self.install_development_tools()
 
         if self.check:
             self.run_in_sandbox("gst-validate-launcher",
@@ -456,16 +447,12 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         if self.bundle:
             self.update_bundle()
-            return
 
-        if not self.devel:
-            self.install_all()
-            self.app.run_app(*self.args)
+        if not self.check and not self.update and not self.bundle:
+            assert self.args
+            self.run_in_sandbox(*self.args, exit_on_failure=True)
 
     def update_bundle(self):
-        if not os.path.exists(self.prefix):
-            self.setup_sandbox()
-
         if not os.path.exists(self.repodir):
             os.mkdir(self.repodir)
 
@@ -495,84 +482,75 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         update_repo_args.append(self.repodir)
 
-        Console.message("Updating repo '%s'", "'".join(update_repo_args))
+        Console.message("Updating repo: '%s'", "' '".join(update_repo_args))
         try:
             subprocess.check_call(update_repo_args)
         except subprocess.CalledProcessError:
             self.exit(1)
 
     def setup_sandbox(self):
-        """Creates the sandbox."""
-        fresh_install = not os.path.exists(self.prefix)
-        if fresh_install or self.update:
-            self.install_all()
-            Console.message("Building Pitivi %s and dependencies in %s",
-                            self.branch, self.prefix)
+        """Creates and updates the sandbox."""
+        Console.message("Building Pitivi %s and dependencies in %s",
+                        self.branch, self.prefix)
 
-            json_template = os.path.join(
-                self.scriptdir, "%s.template.json" % self.name.lower())
-            expand_json_file(json_template, self.json,
-                             self.local_repos_path, self.gst_version,
-                             self.branch)
+        json_template = os.path.join(
+            self.scriptdir, "%s.template.json" % self.name.lower())
+        expand_json_file(json_template, self.json,
+                         self.local_repos_path, self.gst_version,
+                         self.branch)
 
-            builder_args = ["flatpak-builder", "--force-clean",
-                            "--ccache", self.prefix, self.json]
-            if not self.bundle:
-                builder_args.append("--build-only")
+        builder_args = ["flatpak-builder", "--force-clean",
+                        "--ccache", self.prefix, self.json]
+        if not self.bundle:
+            builder_args.append("--build-only")
 
-            try:
-                subprocess.check_call(["flatpak-builder", "--version"])
-            except FileNotFoundError:
-                Console.message("\n%sYou need to install flatpak-builder%s\n",
-                                Colors.FAIL, Colors.ENDC)
-                self.exit(1)
-            subprocess.check_call(builder_args, cwd=self.scriptdir)
+        try:
+            subprocess.check_call(["flatpak-builder", "--version"])
+        except FileNotFoundError:
+            Console.message("\n%sYou need to install flatpak-builder%s\n",
+                            Colors.FAIL, Colors.ENDC)
+            self.exit(1)
+        subprocess.check_call(builder_args, cwd=self.scriptdir)
 
-            if not os.path.isdir("mesonbuild/"):
-                # Create the build directory.
-                meson_args = ["meson", "mesonbuild/", "--prefix=/app",
-                              "--libdir=lib", "-Ddisable_gtkdoc=true",
-                              "-Ddisable_doc=true"]
-                self.run_in_sandbox(*meson_args, exit_on_failure=True,
-                                    cwd=self.topdir)
-
-            # Build the buildable parts of Pitivi.
-            ninja_args = ["ninja", "-C", "mesonbuild/"]
-            self.run_in_sandbox(*ninja_args, exit_on_failure=True,
+        if not os.path.isdir("mesonbuild/"):
+            # Create the build directory.
+            meson_args = ["meson", "mesonbuild/", "--prefix=/app",
+                          "--libdir=lib", "-Ddisable_gtkdoc=true",
+                          "-Ddisable_doc=true"]
+            self.run_in_sandbox(*meson_args, exit_on_failure=True,
                                 cwd=self.topdir)
-        else:
-            Console.message("Using Pitivi prefix in %s", self.prefix)
 
+        # Build the buildable parts of Pitivi.
+        ninja_args = ["ninja", "-C", "mesonbuild/"]
+        self.run_in_sandbox(*ninja_args, exit_on_failure=True,
+                            cwd=self.topdir)
+
+    def install_development_tools(self):
         venv_path = os.path.join(self.scriptdir, "pyvenv")
-        activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint hotdoc"
+        Console.message("Setting up a Python virtual env for development: %s", venv_path)
         if not os.path.isdir(venv_path):
-            print("Setting up a Python virtual env for development: %s" % venv_path)
             venv.create(venv_path, with_pip=True)
-            print("Installing development tools in the Python virtual env: %s" % pip_modules)
-            subprocess.check_call(
-                ". %s && pip install %s" % (activate_script, pip_modules),
-                shell=True)
 
-        if self.update:
-            subprocess.check_call(
-                ". %s && pip install -U %s" % (activate_script, pip_modules),
-                shell=True)
+        activate_script = os.path.join(venv_path, "bin", "activate")
+        pip_modules = "git-phab pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint"
+        Console.message("Installing development tools in the Python virtual env: %s", pip_modules)
+        subprocess.check_call(
+            ". %s && pip install -U %s" % (activate_script, pip_modules),
+            shell=True)
 
         # git-pylint-commit-hook must run pylint in the sandbox so it uses
         # the gi Python modules in there. At the same time it also has to be
         # installed in the development pyvenv which is outside the sandbox
         # because git-pylint-commit-hook needs to import pylint.config.
-        if fresh_install or self.update:
-            pip_modules = ["pylint"]
-            print("Installing development tools in the sandbox: %s" % pip_modules)
-            self.run_in_sandbox("pip3", "install", "-U", "--user", *pip_modules,
-                                exit_on_failure=True)
-
-        if not self.check and not self.update:
-            self.run_in_sandbox(*self.args, exit_on_failure=True)
+        pip_modules = ["pylint"]
+        Console.message("Installing development tools in the sandbox: %s", pip_modules)
+        self.run_in_sandbox("pip3", "install", "-U", "--user", *pip_modules,
+                            exit_on_failure=True)
 
     def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None):
+        if not args:
+            return
+
         flatpak_command = ["flatpak", "build", "--socket=x11",
                            "--socket=session-bus", "--socket=pulseaudio",
                            "--share=network", "--env=PITIVI_DEVELOPMENT=1",
@@ -604,10 +582,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         flatpak_command.append(self.prefix)
 
-        if args:
-            flatpak_command.extend(args)
-        else:
-            flatpak_command.append(os.path.join(self.scriptdir, "enter-env"))
+        flatpak_command.extend(args)
 
         Console.message("Running in sandbox: %s", ' '.join(args))
         try:
@@ -616,21 +591,18 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             if exit_on_failure:
                 self.exit(e.returncode)
 
-    def install_all(self):
-        for m in self.packs:
-            if not m.is_installed():
-                m.install()
-
-    def update_all(self):
-        for m in self.packs:
-            m.update()
+    def install_flatpak_runtimes(self):
+        for runtime in self.packs:
+            if not runtime.is_installed():
+                runtime.install()
+            else:
+                runtime.update()
 
 
 if __name__ == "__main__":
     app_flatpak = PitiviFlatpak()
 
-    parser = argparse.ArgumentParser(
-        prog="pitivi-flatpak")
+    parser = argparse.ArgumentParser(prog="pitivi-flatpak")
 
     general = parser.add_argument_group("General")
     general.add_argument("--update", dest="update",
@@ -644,14 +616,9 @@ if __name__ == "__main__":
                          help="Do not print anything")
     general.add_argument("args",
                          nargs=argparse.REMAINDER,
-                         help="Arguments passed when starting %s or, if -d is "
-                              "passed, the command to run" % app_flatpak.name)
+                         help="The command to run in the sandbox")
 
     devel = parser.add_argument_group("Development")
-    devel.add_argument("-d", "--devel", dest="devel",
-                       action="store_true",
-                       help="Setup a devel environment")
-
     devel.add_argument("--branch", dest="branch",
                        help="The flatpak branch to use (stable, master...)",
                        default="master")
@@ -669,7 +636,6 @@ if __name__ == "__main__":
     bundling.add_argument("--bundle", dest="bundle",
                           action="store_true",
                           help="Create bundle repository, implies --build")
-
     bundling.add_argument(
         "--repo-commit-subject", dest="commit_subject", default=None,
         help="The commit subject to be used when updating the ostree repository")
