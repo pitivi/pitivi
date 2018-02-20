@@ -47,6 +47,7 @@ from pitivi.utils.timeline import Zoomable
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
+os.environ["DISPLAY"] = "99.0"
 
 
 def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
