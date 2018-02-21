@@ -271,7 +271,7 @@
         },
         {
             "name": "ffmpeg",
-            "config-opts": [ /* From https://phabricator.freedesktop.org/diffusion/GSTLIBAV/browse/master/configure.ac;6d7192bcb7bbab17dc194e8dbb56c208bced0a92*/
+            "config-opts": [
                 "--disable-static",
                 "--disable-avdevice",
                 "--disable-postproc",
@@ -314,8 +314,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://git.ffmpeg.org/ffmpeg.git",
-                    "branch": "6d7192bcb7bbab17dc194e8dbb56c208bced0a92" /* From submodule https://github.com/GStreamer/gst-libav/tree/master/gst-libs/ext */
+                    "url": "https://github.com/FFmpeg/FFmpeg.git",
+                    "branch": "6d7192bcb7bbab17dc194e8dbb56c208bced0a92"
                 }
             ]
         },

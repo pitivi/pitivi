@@ -33,6 +33,7 @@ from urllib.request import urlretrieve
 # The default branch is master because the script is used most often
 # for development.
 PITIVI_BRANCH = "master"
+MANIFEST_NAME = "org.pitivi.Pitivi.json"
 # To see the existing branches, run:
 # flatpak remote-ls pitivi --user -d
 SDK_BRANCH = {"0.96": "3.20",
@@ -493,8 +494,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         Console.message("Building Pitivi %s and dependencies in %s",
                         self.branch, self.prefix)
 
-        json_template = os.path.join(
-            self.scriptdir, "%s.template.json" % self.name.lower())
+        json_template = os.path.join(self.scriptdir, MANIFEST_NAME)
         expand_json_file(json_template, self.json,
                          self.local_repos_path, self.gst_version,
                          self.branch)
