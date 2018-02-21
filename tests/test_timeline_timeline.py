@@ -462,19 +462,17 @@ class TestCopyPaste(BaseTestTimeline):
         return timeline_container
 
     def testCopyPaste(self):
-        position = 20
-
         timeline_container = self.copyClips(2)
         timeline = timeline_container.timeline
-
         layer = timeline.ges_timeline.get_layers()[0]
-        # Monkey patching the pipeline.getPosition method
         project = timeline.ges_timeline.get_asset()
-        project.pipeline.getPosition = mock.Mock(return_value=position)
 
         clips = layer.get_clips()
         self.assertEqual(len(clips), 2)
 
+        # Pasting clips for the first time.
+        position = 20
+        project.pipeline.getPosition = mock.Mock(return_value=position)
         timeline_container.paste_action.emit("activate", None)
 
         n_clips = layer.get_clips()
@@ -484,6 +482,19 @@ class TestCopyPaste(BaseTestTimeline):
         self.assertEqual(len(copied_clips), 2)
         self.assertEqual(copied_clips[0].props.start, position)
         self.assertEqual(copied_clips[1].props.start, position + 10)
+
+        # Pasting same clips second time.
+        position = 40
+        project.pipeline.getPosition = mock.Mock(return_value=position)
+        timeline_container.paste_action.emit("activate", None)
+
+        n_clips = layer.get_clips()
+        self.assertEqual(len(n_clips), 6)
+
+        copied_clips = [clip for clip in n_clips if clip not in clips]
+        self.assertEqual(len(copied_clips), 4)
+        self.assertEqual(copied_clips[2].props.start, position)
+        self.assertEqual(copied_clips[3].props.start, position + 10)
 
 
 class TestEditing(BaseTestTimeline):
