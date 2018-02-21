@@ -1739,12 +1739,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             return
 
         with self.app.action_log.started("paste",
-                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                         toplevel=True):
-            save = self.__copiedGroup.copy(True)
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
             position = self._project.pipeline.getPosition()
-            self.__copiedGroup.paste(position)
-            self.__copiedGroup = save
+            copiedGroupShallowCopy = self.__copiedGroup.paste(position)
+            self.__copiedGroup = copiedGroupShallowCopy.copy(True)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
