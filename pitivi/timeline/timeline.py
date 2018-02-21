@@ -1288,7 +1288,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._project = None
         self.ges_timeline = None
-        self.__copiedGroup = None
+        self.__copied_group = None
 
         self._createUi()
         self._createActions()
@@ -1422,7 +1422,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.group_action.set_enabled(selection_non_empty)
         self.ungroup_action.set_enabled(selection_non_empty)
         self.copy_action.set_enabled(selection_non_empty)
-        can_paste = bool(self.__copiedGroup)
+        can_paste = bool(self.__copied_group)
         self.paste_action.set_enabled(can_paste)
         self.keyframe_action.set_enabled(selection_non_empty)
         project_loaded = bool(self._project)
@@ -1732,21 +1732,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def __copyClipsCb(self, unused_action, unused_parameter):
         if self.timeline.current_group:
-            self.__copiedGroup = self.timeline.current_group.copy(True)
+            self.__copied_group = self.timeline.current_group.copy(True)
             self.updateActions()
 
     def __pasteClipsCb(self, unused_action, unused_parameter):
-        if not self.__copiedGroup:
+        if not self.__copied_group:
             self.info("Nothing to paste.")
             return
 
         with self.app.action_log.started("paste",
-                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                         toplevel=True):
-            save = self.__copiedGroup.copy(True)
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
             position = self._project.pipeline.getPosition()
-            self.__copiedGroup.paste(position)
-            self.__copiedGroup = save
+            copied_group_shallow_copy = self.__copied_group.paste(position)
+            self.__copied_group = copied_group_shallow_copy.copy(True)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
