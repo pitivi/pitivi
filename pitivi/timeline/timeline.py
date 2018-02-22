@@ -1744,6 +1744,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             position = self._project.pipeline.getPosition()
             copied_group_shallow_copy = self.__copied_group.paste(position)
             self.__copied_group = copied_group_shallow_copy.copy(True)
+            copied_group_shallow_copy.ungroup(recursive=False)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
