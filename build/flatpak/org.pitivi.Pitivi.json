@@ -430,11 +430,23 @@
             "builddir": true,
             "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
             "sources": [
+		{
+                    "type" : "git",
+                    "branch" : "master",
+                    "disable-shallow-clone": true,
+                    "url" : "git://anongit.freedesktop.org/gstreamer/gst-libav"
+                },
                 {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-libav",
-                    "disable-shallow-clone": true
+                    "type" : "git",
+                    "url" : "https://git.ffmpeg.org/ffmpeg.git",
+                    "disable-shallow-clone": true,
+                    "branch" : "master"
+                },
+                {
+                    "type" : "git",
+                    "url" : "git://git.libav.org/gas-preprocessor.git",
+                    "disable-shallow-clone": true,
+                    "branch" : "master"
                 }
             ]
         },
