@@ -20,8 +20,10 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 from tests import common
@@ -530,3 +532,126 @@ class TestEditing(BaseTestTimeline):
         timeline._button_release_event_cb(None, event)
         self.assertEqual(len(timeline.ges_timeline.get_layers()), 1,
                          "No new layer should have been created")
+
+
+class TestShiftSelection(BaseTestTimeline):
+
+    def __reset_clips_selection(self, timeline):
+        """Unselect all clips in the timeline."""
+        layers = timeline.ges_timeline.get_layers()
+        for layer in layers:
+            clips = layer.get_clips()
+            timeline.selection.setSelection(clips, UNSELECT)
+
+    def __check_selected(self, selected_clips, not_selected_clips):
+        for selected_clip in selected_clips:
+            self.assertEqual(selected_clip.selected._selected, True)
+        for not_selected_clip in not_selected_clips:
+            self.assertEqual(not_selected_clip.selected._selected, False)
+
+    def test_shift_selection_single_layer(self):
+        """Checks group clips selection using shift key across a single layer."""
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
+        timeline.app.settings.leftClickAlsoSeeks = True
+        ges_layer = timeline.ges_timeline.append_layer()
+        ges_clip1 = self.add_clip(ges_layer, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip2 = self.add_clip(ges_layer, 15 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip3 = self.add_clip(ges_layer, 25 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip4 = self.add_clip(ges_layer, 35 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        event = mock.Mock()
+        event.get_button.return_value = (True, 1)
+        timeline.get_parent()._shiftMask = True
+        timeline._seek = mock.Mock()
+        timeline._seek.return_value = True
+        timeline.get_clicked_layer_and_pos = mock.Mock()
+
+        # Simulate shift+click before first and on second clip.
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 1 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 17 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
+        self.__reset_clips_selection(timeline)
+        timeline.resetSelectionGroup()
+
+        # Simiulate shift+click before first and after fourth clip.
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 1 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 39 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip1, ges_clip2, ges_clip3, ges_clip4], [])
+        self.__reset_clips_selection(timeline)
+        timeline.resetSelectionGroup()
+
+        # Simiulate shift+click on first, after fourth and before third clip.
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 40 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 23 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
+        self.__reset_clips_selection(timeline)
+        timeline.resetSelectionGroup()
+
+        # Simulate shift+click twice on the same clip.
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6.5 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip1], [ges_clip2, ges_clip3, ges_clip4])
+
+    def test_shift_selection_multiple_layers(self):
+        """Checks group clips selection using shift key across multiple layers."""
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
+        timeline.app.settings.leftClickAlsoSeeks = True
+        ges_layer1 = timeline.ges_timeline.append_layer()
+        ges_clip11 = self.add_clip(ges_layer1, 5 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip12 = self.add_clip(ges_layer1, 15 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip13 = self.add_clip(ges_layer1, 25 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_layer2 = timeline.ges_timeline.append_layer()
+        ges_clip21 = self.add_clip(ges_layer2, 0 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip22 = self.add_clip(ges_layer2, 6 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip23 = self.add_clip(ges_layer2, 21 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_layer3 = timeline.ges_timeline.append_layer()
+        ges_clip31 = self.add_clip(ges_layer3, 3 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip32 = self.add_clip(ges_layer3, 10 * Gst.SECOND, duration=2 * Gst.SECOND)
+        ges_clip33 = self.add_clip(ges_layer3, 18 * Gst.SECOND, duration=2 * Gst.SECOND)
+
+        event = mock.Mock()
+        event.get_button.return_value = (True, 1)
+        timeline.get_parent()._shiftMask = True
+        timeline._seek = mock.Mock()
+        timeline._seek.return_value = True
+        timeline.get_clicked_layer_and_pos = mock.Mock()
+
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer2, 3 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 9 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip11, ges_clip22], [ges_clip12, ges_clip13,
+            ges_clip21, ges_clip23, ges_clip31, ges_clip32, ges_clip33])
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer3, 12 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip22, ges_clip31, ges_clip32], [ges_clip11,
+            ges_clip12, ges_clip13, ges_clip21, ges_clip23, ges_clip33])
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 22 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip11, ges_clip12, ges_clip22, ges_clip23],
+            [ges_clip13, ges_clip21, ges_clip31, ges_clip32, ges_clip33])
+        self.__reset_clips_selection(timeline)
+        timeline.resetSelectionGroup()
+
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 3 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer2, 26 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip11, ges_clip12, ges_clip13, ges_clip22, ges_clip23],
+            [ges_clip21, ges_clip31, ges_clip32, ges_clip33])
+        timeline.get_clicked_layer_and_pos.return_value = (ges_layer3, 30 * Gst.SECOND)
+        timeline._button_release_event_cb(None, event)
+        self.__check_selected([ges_clip11, ges_clip12, ges_clip13, ges_clip22, ges_clip23,
+            ges_clip31, ges_clip32, ges_clip33], [ges_clip21])

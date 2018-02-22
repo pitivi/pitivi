@@ -27,8 +27,8 @@ from matplotlib.backend_bases import MouseEvent
 
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
-from tests.test_timeline_timeline import BaseTestTimeline
 from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
