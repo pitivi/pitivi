@@ -27,6 +27,6 @@
   </section>
   <section id="patches">
     <title>Patches welcome</title>
-    <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://phabricator.freedesktop.org/maniphest/task/create/?projects=pitivi,pitivi_documentation">file bugs in our bug tracker</link>.</p>
+    <p>If you happen to find errors, missing information or unclear passages in this manual, please feel free to submit corrections. You can find contact information on <link href="http://jeff.ecchi.ca/">my personal website</link>. You can also <link href="https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=8.+User+Docs">file bugs in our bug tracker</link>.</p>
   </section>
 </page>
