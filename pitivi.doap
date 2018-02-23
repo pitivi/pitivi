@@ -20,7 +20,7 @@ we would recommend building from version control.
   <homepage rdf:resource="http://www.pitivi.org/" />
   <mailing-list rdf:resource="https://lists.sourceforge.net/lists/listinfo/pitivi-pitivi" />
   <download-page rdf:resource="http://ftp.gnome.org/pub/GNOME/sources/pitivi/" />
-  <bug-database rdf:resource="https://phabricator.freedesktop.org/tag/pitivi/" />
+  <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/pitivi" />
 
   <category rdf:resource="http://api.gnome.org/doap-extensions#apps" />
   <programming-language>Python</programming-language>
