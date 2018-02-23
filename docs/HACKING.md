@@ -4,9 +4,9 @@ short-description: Using the Pitivi development environment
 
 # Hacking on Pitivi
 
-*Pitivi being a GNOME project, we advice newcomer to follow the*
-*[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/) to setup*
-*the Pitivi development environment. Make sure to use the right git repository:*
+*The simplest way to get starting on hacking on Pitivi is following the*
+*[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/)*
+*Make sure to use the right git repository:*
 
 >   **https://gitlab.gnome.org/GNOME/pitivi.git**
 
