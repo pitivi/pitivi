@@ -739,7 +739,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self._project.pipeline.simple_seek(self.__next_seek_position)
                 self.__next_seek_position = None
             else:
-                self._seek(event)
+                event_widget = Gtk.get_event_widget(event)
+                if self._getParentOfType(event_widget, LayerControls) is None:
+                    self._seek(event)
 
         self._snapEndedCb()
         self.update_visible_overlays()
