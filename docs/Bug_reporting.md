@@ -4,28 +4,15 @@ Welcome, testers!
 
 To report a bug/problem in the software, or request a new
 feature/enhancement, [create a
-task](https://phabricator.freedesktop.org/maniphest/task/edit/form/1/?projects=pitivi)
+task](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=)
 and set Projects: Pitivi.
 
-Bug reporting and feature requests are managed with Freedesktop's
-[Phabricator](https://phabricator.freedesktop.org). You need to create
+Bug reporting and feature requests are managed with GNOME's
+[GitLab](https://gitlab.gnome.org/). You need to create
 an account to file tasks and comment on them. Take a look at the
 [existing list of bugs/feature
-requests](https://phabricator.freedesktop.org/tag/pitivi/) to see if
-your problem has already been reported *(hint: use control+F in your
-browser to search!)*.
-
-Example queries:
-
--   [Everything](https://phabricator.freedesktop.org/tag/pitivi/) - All
-    the tasks (bug reports and feature requests).
--   [Patches](https://phabricator.freedesktop.org/differential/query/8RA8XgY0ogT3/)
-    — All the patches (diffs) attached to tasks that have not yet been
-    merged.
--   [Pitivi tasks for
-    newcomers](https://phabricator.freedesktop.org/project/view/111/) —
-    feature requests and some small bugs that are considered easier for
-    new contributors to tackle.
+requests](https://gitlab.gnome.org/GNOME/pitivi/issues) to see if
+your problem has already been reported.
 
 # Providing debugging information
 
