@@ -25,7 +25,7 @@
     </screenshot>
   </screenshots>
   <url type="homepage">http://www.pitivi.org</url>
-  <url type="bugtracker">https://phabricator.freedesktop.org/tag/pitivi/</url>
+  <url type="bugtracker">https://gitlab.gnome.org/GNOME/pitivi/</url>
   <url type="donation">http://www.pitivi.org/?go=donators</url>
   <url type="help">http://www.pitivi.org/manual/</url>
   <url type="translate">https://wiki.gnome.org/TranslationProject#How_can_I_help.3F</url>
