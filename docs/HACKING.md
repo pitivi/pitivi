@@ -4,21 +4,32 @@ short-description: Using the Pitivi development environment
 
 # Hacking on Pitivi
 
+*The easy way to setup the development environment is to follow the*
+*[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/).*
+*Make sure to use the right git repository:*
+
+>   **https://gitlab.gnome.org/GNOME/pitivi.git**
+
+## Setting up advanced development environment
+
+> NOTE: This way of setting the development environment is sensibly more complex
+> but also more flexible than the one for newcomers. If you are a  beginner
+> or if you usually use [gnome-builder](https://wiki.gnome.org/Apps/Builder)
+> as your main IDE, follow, as previously adviced, the
+> [GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/)
+
 The official way of getting your environment up and running is by using
 [flatpak](http://flatpak.org/). For this you need to
 [install flatpak](http://flatpak.org/getting.html) on your system,
 along with flatpak-builder. Note flatpak-builder might be provided by an
 additional package on some distributions (such as Archlinux).
 
-
-## Setting up the development environment
-
-Create a development environment folder and get the [Pitivi source code](https://git.gnome.org/browse/pitivi/tree/) into it:
+Create a development environment folder and get the [Pitivi source code](http://gitlab.gnome.org/GNOME/pitivi) into it:
 
 ```
 $ mkdir pitivi-dev
 $ cd pitivi-dev
-$ git clone https://git.gnome.org/browse/pitivi
+$ git clone https://gitlab.gnome.org/GNOME/pitivi.git
 ```
 
 Whenever you want to hack on Pitivi, enter the development environment:
@@ -42,7 +53,6 @@ By entering the development environment, you get:
 for the dependencies, in `pitivi-dev/pitivi-prefix`
 - a [Python virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 with development tools, such as
-[git-phab](https://phabricator.freedesktop.org/diffusion/GITPHAB/#description) and
 [pre-commit](http://pre-commit.com),
 in `pitivi-dev/pitivi/build/flatpak/pyvenv`
 - the [Meson build directory](http://mesonbuild.com/Quick-guide.html),
