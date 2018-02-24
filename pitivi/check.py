@@ -417,6 +417,7 @@ HARD_DEPENDENCIES = [GICheck("3.20.0"),
                      GstPluginDependency("gtk"),
                      GstPluginDependency("gdkpixbuf"),
                      ClassicDependency("matplotlib"),
+                     GIDependency("Peas", "1.0"),
                      ]
 
 SOFT_DEPENDENCIES = (
