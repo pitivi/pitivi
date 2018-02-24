@@ -1,0 +1,15 @@
+image: thiblahute/pitivi-ci
+
+build:
+  stage: build
+  cache:
+    paths:
+      - .flatpak-builder/
+  script:
+    - pwd
+    - ls -a
+    - ls -a /
+    - export
+    - mkdir -p ~/.ccache/ && touch ~/.ccache/ccache.conf
+    - mv /.flatpak-builder .
+    - flatpak-builder --force-clean --repo=repo app build/flatpak/org.pitivi.Pitivi.json --ccache
