@@ -1,1 +1,2 @@
 option('disable-help', type : 'boolean', value : false)
+option('build-gst', type : 'boolean', value : false)
