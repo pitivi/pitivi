@@ -6,7 +6,19 @@ itstool = find_program('itstool')
 msgfmt = find_program('msgfmt')
 
 python_dep = dependency('python3', version : '>= 3.3')
-gst_dep = dependency('gstreamer-1.0', version : '>= 1.13.0.1')
+if get_option('build-gst')
+    subproject('gst-build', default_options: ['enable_python=true',
+        'disable_gstreamer_sharp=true', 'disable_rtsp_server=true',
+        'gst-devtools:disable_gtkdoc=true',
+        'gst-editing-services:disable_gtkdoc=true',
+        'gst-plugins-base:disable_gtkdoc=true',
+        'gstreamer:disable_gtkdoc=true',
+        ])
+    subproject('gst-transcoder')
+endif
+
+gst_dep = dependency('gstreamer-1.0', version : '>= 1.14.1',
+    fallback : ['gstreamer', 'gst_dep'])
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
 
