@@ -128,6 +128,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         setup_custom_effect_widgets(self.effects_properties_manager)
         self.clip_properties = clip_properties
 
+        self.no_effects_label = Gtk.Label(_("No Effects"))
+        self._no_effects_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=SPACING)
+        self._no_effects_box.pack_start(self.no_effects_label, False, False, 0)
+
         # The toolbar that will go between the list of effects and properties
         buttons_box = Gtk.ButtonBox()
         buttons_box.set_halign(Gtk.Align.END)
@@ -160,6 +164,8 @@ class EffectProperties(Gtk.Expander, Loggable):
                 self.source_index = path.get_indices()[0]
 
         self.storemodel = EffectsListStore(bool, str, str, str, str, object)
+        if len(self.storemodel) > 0:
+            self._no_effects_box.set_visible(False)
         self.treeview = Gtk.TreeView(model=self.storemodel)
         self.treeview.set_property("has_tooltip", True)
         self.treeview.set_headers_visible(False)
@@ -213,6 +219,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Prepare the main container widgets and lay out everything
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._vbox.pack_start(self._no_effects_box, False, False, 0)
         self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
         self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
         separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
@@ -482,7 +489,8 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
-        self._vbox.set_visible(len(self.storemodel) > 0)
+        self._no_effects_box.set_visible(len(self.storemodel) == 0)
+        self._vbox.set_visible(True)
 
     def _treeviewSelectionChangedCb(self, unused_treeview):
         selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
