@@ -534,6 +534,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": ["--libdir=lib"],
+            "run-tests": true,
             "build-options": {
               "build-args": ["--share=network"]
             },
