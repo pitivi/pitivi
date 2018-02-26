@@ -9,7 +9,7 @@
     "syntax_highlighting_activate": true,
     "html_extra_theme": "extra",
     "git_upload_repository": "git@github.com:pitivi/pitivi.github.io.git",
-    "html_theme": "https://github.com/thiblahute/hotdoc-gnome-theme/releases/download/0.3/hotdoc-gnome-theme-0.3.tar.xz?sha256=84675ba05a11a3807a388ead1bda695c87a5eb2d858770562e9d3a1cce02f35e",
-    "edit_on_github_repository": "https://github.com/pitivi/pitivi",
+    "html_theme": "https://github.com/hotdoc/hotdoc_lumen_theme/releases/download/0.3/hotdoc_lumen_theme-0.3.tar.xz?sha256=c5ff56817dfaf19f8e32078da12edf6f0cc04b9369fb049f19365bc108cf5229",
+    "edit_on_github_repository": "https://gitlab.gnome.org/GNOME/pitivi",
     "edit_on_github_branch": "master"
 }
