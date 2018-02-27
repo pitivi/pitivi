@@ -4,13 +4,17 @@ short-description: Using the Pitivi development environment
 
 # Hacking on Pitivi
 
-*The easy way to setup the development environment is to follow the*
-*[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/).*
-*Make sure to use the right git repository:*
+## The easy way
+
+The easy way to setup the development environment is to follow the
+[GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/).
+
+Make sure to use the right git repository:
 
 >   **https://gitlab.gnome.org/GNOME/pitivi.git**
 
-## Setting up advanced development environment
+
+## Setting up the advanced development environment
 
 > NOTE: This way of setting the development environment is sensibly more complex
 > but also more flexible than the one for newcomers. If you are a  beginner
@@ -66,7 +70,7 @@ Now that you are in the development environment, try running the
 Running in sandbox: ninja -C mesonbuild/ test
 ```
 
-Hack away, and check the effect of you changes by simply running:
+Hack away, and check the effect of your changes by simply running:
 ```
 (ptv-flatpak) $ pitivi
 ```
@@ -85,14 +89,29 @@ dependencies from their git repos and tarballs as defined in the
 manifest](https://git.gnome.org/browse/pitivi/tree/build/flatpak/pitivi.template.json) (located at `build/flatpak/pitivi.template.json`).
 
 
-### Building the Pitivi C parts
+### How we use the sandbox
 
-Select parts of Pitivi are written in C and need to be built when changed,
-such as the audio envelope renderer for the audio clips. Build them with:
-```
-(ptv-flatpak) $ ninja -C mesonbuild/
-Running in sandbox: ninja -C mesonbuild/
-```
+The sandbox we set up has access to the host file system. This allows
+running the Python modules in `pitivi-dev/pitivi/pitivi/...` on top of
+the GNOME + Pitivi dependencies system installed in the sandbox.
+Without this trick, you'd have to build and install every time when you
+change a `.py` file, to be able to test how it works, which would be
+annoying because it takes a non-negligible amount of time.
+
+We don't actually run Pitivi 100% uninstalled. Besides the `.py` files
+there are other parts which need to be built when changed or even
+installed before using them:
+
+- Select parts of Pitivi are written in C, such as the audio envelope
+renderer for the audio clips. Build them with `ninja -C mesonbuild/` or
+with our very own alias `build`, which is the same thing. No need to
+install them.
+
+- Similarly, `bin/pitivi.py.in` and `pitivi/configure.py.in` also need
+to be built with `build`, to regenerate the corresponding `.py` files.
+
+- The translations need to be built and installed, which can be done
+with `binstall`. See "Switching locales" below.
 
 
 ### Hacking on Pitivi dependencies (Meson)

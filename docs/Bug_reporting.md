@@ -62,10 +62,38 @@ process:**
     integrate it into our test suite so that it does not happen again in
     the future!
 
-## Stack traces for crashes
 
-When reporting a **crash** or when the application freezed **deadlock**,
-it would be good to provide a **stack trace**.
+## Stack traces for crashes and deadlocks
+
+When reporting a **crash** or a **deadlock** (application is frozen),
+we can't do much without a **stack trace** (also known as back trace).
+
+The back trace can be obtained with `gdb`. Below are instructions on
+how to properly start Pitivi in gdb.
+
+Once Pitivi is started in gdb and you reproduce the crash or deadlock:
+- When Pitivi crashes, run `bt full` to get the backtrace.
+- When Pitivi freezes, press Ctrl+Z and run `thread apply all bt` to
+get the backtraces for all the threads.
+
+> To avoid the need to press Enter to “scroll” in gdb, run `set pagination 0`.
+
+### When running in the development environment
+
+1. Make sure you have the GNOME Sdk and Debug symbols installed,
+see below.
+
+2. Enter the sandbox:
+
+```
+ptvenv
+```
+
+3. Start Pitivi inside gdb:
+
+```
+gdb python3 -ex "run $PITIVI_REPO_DIR/bin/pitivi"
+```
 
 ### When running with Flatpak
 
@@ -81,33 +109,24 @@ for i in $(flatpak list | grep org.pitivi.Pitivi | awk '{ print $1 }'); do
 done
 ```
 
-2. Start a shell in the Pitivi bundle environment.
+2. Start a shell in the Pitivi flatpak sandbox:
 
 ```
 flatpak run -d --command=bash org.pitivi.Pitivi
 ```
-In the development environment, you do this by running `ptvenv` instead.
 
-3. Start Pitivi inside gdb
+3. Start Pitivi inside gdb:
 
 ```
 gdb python3 -ex 'run /app/bin/pitivi'
 ```
 
-When Pitivi crashes, run `bt full` to get the backtrace. When Pitivi
-freezes, press Ctrl+Z and run `thread apply all bt` to get the
-backtraces for all the threads.
-
 ### When running from the packages of your Linux distro
 
-See GNOME's [Getting
-Traces](https://wiki.gnome.org/Community/GettingInTouch/Bugzilla/GettingTraces)
-instructions for some comprehensive documentation and tips on the
-subject.
-
-For those of you who already know how to install the relevant debug
-packages etc, we provide you with some simple reminders below of
-commands that can be particularly useful in Pitivi's context.
+GNOME's [Getting Stack Traces] has excellent documentation and tips
+on the subject, including how to install the relevant debug
+packages. Below is a quick reminder for those already familiar with
+the process.
 
 When you want to “attach” to an existing Python process (useful for
 deadlocks, where the application will be hung instead of crashed):
@@ -119,14 +138,9 @@ gdb python3 THE_PITIVI_PROCESS_NUMBER
 When you want to run Pitivi entirely in gdb from the start:
 
 ```
-gdb python3 $(which pitivi)
-set pagination 0  # avoids the need to press Enter to “scroll”
-run
+gdb python3 -ex "run $(which pitivi)"
 ```
 
-When Pitivi crashes, run `bt full` to get the backtrace. When Pitivi
-freezes, press Ctrl+Z and run `thread apply all bt` to get the
-backtraces for all the threads.
 
 ## Debug logs
 
@@ -182,12 +196,11 @@ info from [GES](GES.md) in addition to Pitivi's:
 PITIVI_DEBUG=5 GST_DEBUG=ges:5 bin/pitivi > debug.log 2>&1;
 ```
 
-Some additional tips:
 
--   When using GST\_DEBUG, the resulting logs will most likely be too
-    big to be attached to a bug report directly. Instead, compress them
-    (in gzip, bzip2 or lzma format) before attaching them to a bug
-    report.
+> When using GST\_DEBUG, the resulting logs will most likely be too
+> big to be attached to a bug report directly. Instead, compress them
+> (in gzip, bzip2 or lzma format) before attaching them to a bug report.
+
 
 # Python performance profiling
 
@@ -205,3 +218,5 @@ The resulting `pitivi_performance.profile` file can then be processed
 to create a visual representation of where the most time was spent and
 which functions were called the most often in the code. See also [Jeff's
 blog posts on profiling](http://jeff.ecchi.ca/blog/tag/profiling/).
+
+[Getting Stack Traces]: https://wiki.gnome.org/Community/GettingInTouch/Bugzilla/GettingTraces
