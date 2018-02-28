@@ -437,6 +437,7 @@
                 {
                     "type": "git",
                     "branch": "1.12",
+                    "disable-shallow-clone" : true,
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
                 }
             ]
