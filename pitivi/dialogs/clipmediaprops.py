@@ -22,11 +22,9 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
-from pitivi.utils.ui import audio_channels
-from pitivi.utils.ui import audio_rates
-from pitivi.utils.ui import frame_rates
-from pitivi.utils.ui import get_value_from_model
-from pitivi.utils.ui import pixel_aspect_ratios
+from pitivi.utils.ui import format_audiochannels
+from pitivi.utils.ui import format_audiorate
+from pitivi.utils.ui import format_framerate
 
 
 class ClipMediaPropsDialog(object):
@@ -80,10 +78,8 @@ class ClipMediaPropsDialog(object):
         # in the UI, instead of acting as if there was only one. But that means
         # dynamically creating checkboxes and labels in a table and such.
         for stream in self.audio_streams:
-            self.channels.set_text(
-                get_value_from_model(audio_channels, stream.get_channels()))
-            self.sample_rate.set_text(
-                get_value_from_model(audio_rates, stream.get_sample_rate()))
+            self.channels.set_text(format_audiochannels(stream))
+            self.sample_rate.set_text(format_audiorate(stream))
             self.has_audio = True
             break
 
@@ -92,35 +88,32 @@ class ClipMediaPropsDialog(object):
             self.size_height.set_text(str(stream.get_height()))
             self.is_image = stream.is_image()
             if not self.is_image:
-                # When gst returns a crazy framerate such as 0/1, that either
-                # means it couldn't determine it, or it is a variable framerate
-                framerate_num = stream.get_framerate_num()
-                framerate_denom = stream.get_framerate_denom()
-                if framerate_num != 0 and framerate_denom != 0:
-                    self.frame_rate.set_text(
-                        get_value_from_model(frame_rates,
-                            Gst.Fraction(framerate_num, framerate_denom)
-                        ))
-                    if (framerate_num / framerate_denom) > 500:
-                        # Sometimes you have "broken" 1000fps clips (WebM files
-                        # from YouTube, for example), but it could also be a
-                        # real framerate, so just uncheck instead of disabling:
-                        self.framerate_checkbutton.set_active(False)
+                num = stream.get_framerate_num()
+                denom = stream.get_framerate_denom()
+                if denom != 0:
+                    fps = num / denom
                 else:
-                    foo = str(framerate_num) + "/" + str(framerate_denom)
-                    # Translators: a label showing an invalid framerate value
-                    self.frame_rate.set_text(_("invalid (%s fps)") % foo)
+                    fps = 0
+
+                if fps > 500:
+                    # Sometimes you have "broken" 1000fps clips (WebM files
+                    # from YouTube, for example), but it could also be a
+                    # real framerate, so just uncheck instead of disabling:
+                    self.framerate_checkbutton.set_active(False)
+                elif fps == 0:
+                    self.frame_rate.set_text(_("Variable"))
                     self.framerate_checkbutton.set_active(False)
                     # For consistency, insensitize the checkbox AND value
                     # labels
                     self.framerate_checkbutton.set_sensitive(False)
                     self.frame_rate.set_sensitive(False)
+                else:
+                    self.frame_rate.set_text(format_framerate(stream))
 
-                # Aspect ratio (probably?) doesn't need such a check:
-                self.aspect_ratio.set_text(
-                    get_value_from_model(pixel_aspect_ratios, Gst.Fraction(
-                        stream.get_par_num(),
-                        stream.get_par_denom())))
+                par_num = stream.get_par_num()
+                par_denom = stream.get_par_denom()
+                aspect_ratio = "{0:n}:{1:n}".format(par_num, par_denom)
+                self.aspect_ratio.set_text(aspect_ratio)
 
             self.has_video = True
             break
