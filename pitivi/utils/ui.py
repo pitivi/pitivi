@@ -160,14 +160,53 @@ TIMELINE_CSS = """
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
 
 
-def get_framerate(stream):
-    """Formats the framerate of the stream for display."""
-    num = stream.get_framerate_num()
-    denom = stream.get_framerate_denom()
-    if num == 0 or denom == 0:
+def format_framerate_value(framerate):
+    """Formats the framerate value."""
+    if isinstance(framerate, DiscovererVideoInfo):
+        num = framerate.get_framerate_num()
+        denom = framerate.get_framerate_denom()
+        framerate = Gst.Fraction(num, denom)
+
+    if framerate.num == 0 or framerate.denom == 0:
         # Gst returns 0/1 if unable to determine it or in case of an image.
         return "0"
-    return "{0:.5n}".format(num / denom)
+    return "{0:.5n}".format(framerate.num / framerate.denom)
+
+
+def format_framerate(framerate):
+    """Formats the framerate for display."""
+    # Translators: 'fps' is for 'frames per second'
+    return format_framerate_value(framerate) + _(" fps")
+
+
+def format_audiorate(rate):
+    """Formats the audiorate (in kHz) for display."""
+    if isinstance(rate, DiscovererAudioInfo):
+        rate = rate.get_sample_rate()
+
+    rate = rate // 100
+    return _("{0:.5n} kHz").format(rate / 10)
+
+
+def format_audiochannels(channels):
+    """Formats the audio channels for display."""
+    if isinstance(channels, DiscovererAudioInfo):
+        channels = channels.get_channels()
+
+    unique_vals = {"1": _("Mono"), "2": _("Stereo"), "6": _("6 (5.1)")}
+
+    try:
+        return unique_vals[str(channels)]
+    except KeyError:
+        return str(channels)
+
+
+def format_pixel_aspect_ratio(ratio):
+    """Formats the pixel aspect ratio for display."""
+    if isinstance(ratio, DiscovererVideoInfo):
+        ratio = Gst.Fraction(ratio.get_par_num(), ratio.get_par_denom())
+
+    return "{0:n}:{1:n}".format(ratio.num, ratio.denom)
 
 
 # ---------------------- ARGB color helper-------------------------------------#
@@ -355,7 +394,7 @@ def beautify_stream(stream):
         width = stream.get_width()
         height = stream.get_height()
         if not stream.is_image():
-            fps = get_framerate(stream)
+            fps = format_framerate_value(stream)
             templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>")
             return templ % (par * width, height, fps)
         else:
@@ -522,22 +561,6 @@ def get_combo_value(combo):
     return combo.props.model.get_value(active_iter, 1)
 
 
-def get_value_from_model(model, key):
-    """Searches a key in a model's second column.
-
-    Returns:
-        str: The first column element on the matching row. If no row matches,
-            and the key is a `Gst.Fraction`, returns a beautified form.
-            Otherwise returns the key.
-    """
-    for row in model:
-        if row[1] == key:
-            return str(row[0])
-    if isinstance(key, Gst.Fraction):
-        return "%.3f" % decimal.Decimal(float(key.num) / key.denom)
-    return str(key)
-
-
 def alter_style_class(style_class, target_widget, css_style):
     css_provider = Gtk.CssProvider()
     css = "%s { %s }" % (style_class, css_style)
@@ -583,61 +606,47 @@ def fix_infobar(infobar):
 
 # ----------------------- encoding datas --------------------------------------#
 # FIXME This should into a special file
-frame_rates = model((str, object), (
-    # Translators: fps is for frames per second
-    (_("%d fps") % 12, Gst.Fraction(12, 1)),
-    (_("%d fps") % 15, Gst.Fraction(15, 1)),
-    (_("%d fps") % 20, Gst.Fraction(20, 1)),
-    (_("%.3f fps") % 23.976, Gst.Fraction(24000, 1001)),
-    (_("%d fps") % 24, Gst.Fraction(24, 1)),
-    (_("%d fps") % 25, Gst.Fraction(25, 1)),
-    (_("%.2f fps") % 29.97, Gst.Fraction(30000, 1001)),
-    (_("%d fps") % 30, Gst.Fraction(30, 1)),
-    (_("%d fps") % 50, Gst.Fraction(50, 1)),
-    (_("%.2f fps") % 59.94, Gst.Fraction(60000, 1001)),
-    (_("%d fps") % 60, Gst.Fraction(60, 1)),
-    (_("%d fps") % 120, Gst.Fraction(120, 1)),
-))
+audio_channels = model((str, int),
+    [(format_audiochannels(ch), ch) for ch in (6, 4, 2, 1)])
 
-audio_rates = model((str, int), (
-    (_("%d kHz") % 8, 8000),
-    (_("%d kHz") % 11, 11025),
-    (_("%d kHz") % 12, 12000),
-    (_("%d kHz") % 16, 16000),
-    (_("%d kHz") % 22, 22050),
-    (_("%d kHz") % 24, 24000),
-    (_("%.1f kHz") % 44.1, 44100),
-    (_("%d kHz") % 48, 48000),
-    (_("%d kHz") % 96, 96000)))
+frame_rates = model((str, object),
+    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
+        (12, 1),
+        (15, 1),
+        (20, 1),
+        (24000, 1001),
+        (24, 1),
+        (25, 1),
+        (30000, 1001),
+        (30, 1),
+        (50, 1),
+        (60000, 1001),
+        (60, 1),
+        (120, 1)
+    )])
 
-audio_channels = model((str, int), (
-    (_("6 Channels (5.1)"), 6),
-    (_("4 Channels (4.0)"), 4),
-    (_("Stereo"), 2),
-    (_("Mono"), 1)))
+audio_rates = model((str, int),
+    [(format_audiorate(rate), rate) for rate in (
+        8000,
+        11025,
+        12000,
+        16000,
+        22050,
+        24000,
+        44100,
+        48000,
+        96000
+    )])
 
-# FIXME: are we sure the following tables correct?
-
-pixel_aspect_ratios = model((str, object), (
-    (_("Square"), Gst.Fraction(1, 1)),
-    (_("480p"), Gst.Fraction(10, 11)),
-    (_("480i"), Gst.Fraction(8, 9)),
-    (_("480p Wide"), Gst.Fraction(40, 33)),
-    (_("480i Wide"), Gst.Fraction(32, 27)),
-    (_("576p"), Gst.Fraction(12, 11)),
-    (_("576i"), Gst.Fraction(16, 15)),
-    (_("576p Wide"), Gst.Fraction(16, 11)),
-    (_("576i Wide"), Gst.Fraction(64, 45)),
-))
-
-display_aspect_ratios = model((str, object), (
-    (_("Standard (4:3)"), Gst.Fraction(4, 3)),
-    (_("DV (15:11)"), Gst.Fraction(15, 11)),
-    (_("DV Widescreen (16:9)"), Gst.Fraction(16, 9)),
-    (_("Cinema (1.37)"), Gst.Fraction(11, 8)),
-    (_("Cinema (1.66)"), Gst.Fraction(166, 100)),
-    (_("Cinema (1.85)"), Gst.Fraction(185, 100)),
-    (_("Anamorphic (2.35)"), Gst.Fraction(235, 100)),
-    (_("Anamorphic (2.39)"), Gst.Fraction(239, 100)),
-    (_("Anamorphic (2.4)"), Gst.Fraction(24, 10)),
-))
+pixel_aspect_ratios = model((str, object),
+    [(format_pixel_aspect_ratio(Gst.Fraction(*ratio)), Gst.Fraction(*ratio))
+        for ratio in ((1, 1),
+        (10, 11),
+        (8, 9),
+        (40, 33),
+        (32, 27),
+        (12, 11),
+        (16, 15),
+        (16, 11),
+        (64, 45)
+    )])

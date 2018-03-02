@@ -51,10 +51,8 @@ from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import audio_channels
 from pitivi.utils.ui import audio_rates
 from pitivi.utils.ui import beautify_time_delta
-from pitivi.utils.ui import display_aspect_ratios
 from pitivi.utils.ui import frame_rates
 from pitivi.utils.ui import get_combo_value
-from pitivi.utils.ui import pixel_aspect_ratios
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.ui import SPACING
 from pitivi.utils.validate import create_monitor

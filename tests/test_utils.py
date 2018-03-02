@@ -22,6 +22,8 @@ from unittest.mock import Mock
 
 from gi.repository import GLib
 from gi.repository import Gst
+from gi.repository.GstPbutils import DiscovererAudioInfo
+from gi.repository.GstPbutils import DiscovererVideoInfo
 
 from pitivi.check import CairoDependency
 from pitivi.check import ClassicDependency
@@ -29,7 +31,10 @@ from pitivi.check import GstDependency
 from pitivi.check import GtkDependency
 from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.ui import beautify_length
-from pitivi.utils.ui import get_framerate
+from pitivi.utils.ui import format_audiochannels
+from pitivi.utils.ui import format_audiorate
+from pitivi.utils.ui import format_framerate_value
+from pitivi.utils.ui import format_pixel_aspect_ratio
 
 second = Gst.SECOND
 minute = second * 60
@@ -62,13 +67,17 @@ class TestBeautifyLength(TestCase):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
 
 
-class TestGetFramerate(TestCase):
+class TestFormatFramerateValue(TestCase):
 
     def __check(self, num, denom, expected):
-        stream = Mock()
+        stream = Mock(spec=DiscovererVideoInfo)
+        fraction = Mock(num=num, denom=denom)
+
         stream.get_framerate_num = Mock(return_value=num)
         stream.get_framerate_denom = Mock(return_value=denom)
-        self.assertEqual(get_framerate(stream), expected)
+
+        self.assertEqual(format_framerate_value(stream), expected)
+        self.assertEqual(format_framerate_value(fraction), expected)
 
     def test_invalid_fps(self):
         self.__check(0, 1, "0")
@@ -87,6 +96,57 @@ class TestGetFramerate(TestCase):
     def test_high_fps(self):
         self.__check(2500, 1, "2,500")
         self.__check(120, 1, "120")
+
+
+class TestFormatAudiorate(TestCase):
+
+    def __check(self, rate, expected):
+        stream = Mock(spec=DiscovererAudioInfo)
+        stream.get_sample_rate = Mock(return_value=rate)
+
+        self.assertEqual(format_audiorate(stream), expected)
+        self.assertEqual(format_audiorate(rate), expected)
+
+    def test_audiorates(self):
+        self.__check(8000, "8 kHz")
+        self.__check(11025, "11 kHz")
+        self.__check(22050, "22 kHz")
+        self.__check(44100, "44.1 kHz")
+        self.__check(96000, "96 kHz")
+        self.__check(960000, "960 kHz")
+
+
+class TestFormatAudiochannels(TestCase):
+
+    def __check(self, channels, expected):
+        stream = Mock(spec=DiscovererAudioInfo)
+        stream.get_channels = Mock(return_value=channels)
+
+        self.assertEqual(format_audiochannels(stream), expected)
+        self.assertEqual(format_audiochannels(channels), expected)
+
+    def test_audiochannels(self):
+        self.__check(1, "Mono")
+        self.__check(2, "Stereo")
+        self.__check(6, "6 (5.1)")
+
+
+class TestFormatPixelAspectRatio(TestCase):
+
+    def __check(self, num, denom, expected):
+        stream = Mock(spec=DiscovererVideoInfo)
+        fraction = Mock(num=num, denom=denom)
+
+        stream.get_par_num = Mock(return_value=num)
+        stream.get_par_denom = Mock(return_value=denom)
+
+        self.assertEqual(format_pixel_aspect_ratio(stream), expected)
+        self.assertEqual(format_pixel_aspect_ratio(fraction), expected)
+
+    def test_ratios(self):
+        self.__check(1, 1, "1:1")
+        self.__check(40, 33, "40:33")
+        self.__check(5, 12, "5:12")
 
 
 class TestDependencyChecks(TestCase):
