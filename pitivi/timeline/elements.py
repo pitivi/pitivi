@@ -55,8 +55,8 @@ KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
 KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
 KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
-SELECTED_KEYFRAME_NODE_COLOR = "#204A87" # "Tango" dark sky blue
-HOVERED_KEYFRAME_NODE_COLOR = "#3465A4" # "Tango" medium sky blue
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
+HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -460,9 +460,9 @@ class MultipleKeyframeCurve(KeyframeCurve):
 
         sizes = [80]
         self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
-                                                    c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
+                                                c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
         self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
-                                                    c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
+                                                c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
         self.__update_selected_keyframe()
         self.__hovered_keyframe.set_visible(False)
 
@@ -594,6 +594,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
                 return
             markup = _("Timestamp: %s") % Gst.TIME_ARGS(event.xdata)
         self.set_tooltip_markup(markup)
+
 
 class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
@@ -1264,13 +1265,12 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 self.timeline.current_group.remove(
                     self.ges_clip.get_toplevel_parent())
                 mode = UNSELECT
-        elif not self.get_state_flags() & Gtk.StateFlags.SELECTED:
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(
-                self.ges_clip.get_toplevel_parent())
-            self.app.gui.switchContextTab(self.ges_clip)
+            clicked_layer, click_pos = self.timeline.get_clicked_layer_and_pos(event)
+            self.timeline.selection.set_selection_meta_info(clicked_layer, click_pos, mode)
         else:
             self.timeline.resetSelectionGroup()
+            self.timeline.current_group.add(self.ges_clip.get_toplevel_parent())
+            self.app.gui.switchContextTab(self.ges_clip)
 
         parent = self.ges_clip.get_parent()
         if parent == self.timeline.current_group or parent is None:
