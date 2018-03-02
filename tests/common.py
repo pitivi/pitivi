@@ -21,13 +21,13 @@ A collection of objects to use for testing
 """
 import contextlib
 import gc
-import glob
 import os
 import shutil
 import tempfile
 import unittest
 from unittest import mock
 
+from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -220,12 +220,18 @@ class TestCase(unittest.TestCase, Loggable):
         self.assertEqual(ges_clip.selected.selected, selected)
 
         # Simulate a click on the clip.
-        event = mock.Mock()
+        event = mock.Mock(spec=Gdk.EventButton)
+        event.x = 0
+        event.y = 0
         event.get_button.return_value = (True, 1)
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = ges_clip.ui
             ges_clip.ui.timeline._button_press_event_cb(None, event)
-        ges_clip.ui._button_release_event_cb(None, event)
+            with mock.patch.object(ges_clip.ui, "translate_coordinates") as translate_coordinates:
+                translate_coordinates.return_value = (0, 0)
+                with mock.patch.object(ges_clip.ui.timeline, "_get_layer_at") as _get_layer_at:
+                    _get_layer_at.return_value = ges_clip.props.layer, None
+                    ges_clip.ui._button_release_event_cb(None, event)
 
         self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)

@@ -595,6 +595,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
             markup = _("Timestamp: %s") % Gst.TIME_ARGS(event.xdata)
         self.set_tooltip_markup(markup)
 
+
 class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
         # Signal the keyframes curve are being hovered
@@ -1264,13 +1265,12 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 self.timeline.current_group.remove(
                     self.ges_clip.get_toplevel_parent())
                 mode = UNSELECT
-        elif not self.get_state_flags() & Gtk.StateFlags.SELECTED:
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(
-                self.ges_clip.get_toplevel_parent())
-            self.app.gui.switchContextTab(self.ges_clip)
+            clicked_layer, click_pos = self.timeline.get_clicked_layer_and_pos(event)
+            self.timeline.set_selection_meta_info(clicked_layer, click_pos, mode)
         else:
             self.timeline.resetSelectionGroup()
+            self.timeline.current_group.add(self.ges_clip.get_toplevel_parent())
+            self.app.gui.switchContextTab(self.ges_clip)
 
         parent = self.ges_clip.get_parent()
         if parent == self.timeline.current_group or parent is None:

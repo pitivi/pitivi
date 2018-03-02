@@ -47,6 +47,7 @@ from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import TimelineError
+from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import LAYER_HEIGHT
@@ -129,6 +130,8 @@ class Marquee(Gtk.Box, Loggable):
         """Hides and resets the widget."""
         self.start_x = None
         self.start_y = None
+        self.end_x = None
+        self.end_y = None
         self.props.height_request = -1
         self.props.width_request = -1
         self.set_visible(False)
@@ -154,15 +157,15 @@ class Marquee(Gtk.Box, Loggable):
                 the coordinates of the second corner.
         """
         event_widget = Gtk.get_event_widget(event)
-        x, y = event_widget.translate_coordinates(
+        self.end_x, self.end_y = event_widget.translate_coordinates(
             self._timeline.layout.layers_vbox, event.x, event.y)
 
-        start_x = min(x, self.start_x)
-        start_y = min(y, self.start_y)
+        x = min(self.start_x, self.end_x)
+        y = min(self.start_y, self.end_y)
 
-        self.get_parent().move(self, start_x, start_y)
-        self.props.width_request = abs(self.start_x - x)
-        self.props.height_request = abs(self.start_y - y)
+        self.get_parent().move(self, x, y)
+        self.props.width_request = abs(self.start_x - self.end_x)
+        self.props.height_request = abs(self.start_y - self.end_y)
         self.set_visible(True)
 
     def find_clips(self):
@@ -171,49 +174,13 @@ class Marquee(Gtk.Box, Loggable):
         Returns:
             List[GES.Clip]: The clips under the marquee.
         """
-        x = self._timeline.layout.child_get_property(self, "x")
-        res = set()
+        start_layer = self._timeline._get_layer_at(self.start_y)[0]
+        end_layer = self._timeline._get_layer_at(self.end_y)[0]
+        start_pos = max(0, self._timeline.pixelToNs(self.start_x))
+        end_pos = max(0, self._timeline.pixelToNs(self.end_x))
 
-        w = self.props.width_request
-        for layer in self._timeline.ges_timeline.get_layers():
-            intersects, unused_rect = layer.ui.get_allocation().intersect(self.get_allocation())
-            if not intersects:
-                continue
-
-            for clip in layer.get_clips():
-                if not self.contains(clip, x, w):
-                    continue
-
-                toplevel = clip.get_toplevel_parent()
-                if isinstance(toplevel, GES.Group) and toplevel != self._timeline.current_group:
-                    res.update([c for c in toplevel.get_children(True)
-                                if isinstance(c, GES.Clip)])
-                else:
-                    res.add(clip)
-
-        self.debug("Result is %s", res)
-
-        return tuple(res)
-
-    def contains(self, clip, marquee_start, marquee_width):
-        if clip.ui is None:
-            return False
-
-        child_start = clip.ui.get_parent().child_get_property(clip.ui, "x")
-        child_end = child_start + clip.ui.get_allocation().width
-
-        marquee_end = marquee_start + marquee_width
-
-        if child_start <= marquee_start <= child_end:
-            return True
-
-        if child_start <= marquee_end <= child_end:
-            return True
-
-        if marquee_start <= child_start and marquee_end >= child_end:
-            return True
-
-        return False
+        return self._timeline.get_clips_in_between(start_layer,
+            end_layer, start_pos, end_pos)
 
 
 class LayersLayout(Gtk.Layout, Zoomable, Loggable):
@@ -380,6 +347,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Clip selection.
         self.selection = Selection()
         self.current_group = None
+        # The last layer where the user clicked.
+        self.last_clicked_layer = None
+        # Position where the user last clicked.
+        self.last_click_pos = 0
         self.resetSelectionGroup()
 
         # Clip editing.
@@ -734,19 +705,85 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._scrolling = False
 
-        if allow_seek and res and (button == 1 and self.app.settings.leftClickAlsoSeeks):
-            if self.__next_seek_position is not None:
-                self._project.pipeline.simple_seek(self.__next_seek_position)
-                self.__next_seek_position = None
-            else:
-                event_widget = Gtk.get_event_widget(event)
-                if self._getParentOfType(event_widget, LayerControls) is None:
-                    self._seek(event)
+        if allow_seek and res and button == 1:
+            if self.app.settings.leftClickAlsoSeeks:
+                if self.__next_seek_position is not None:
+                    self._project.pipeline.simple_seek(self.__next_seek_position)
+                    self.__next_seek_position = None
+                else:
+                    event_widget = Gtk.get_event_widget(event)
+                    if self._getParentOfType(event_widget, LayerControls) is None:
+                        self._seek(event)
+
+            # Allowing group clips selection by shift+clicking anywhere on the timeline.
+            if self.get_parent()._shiftMask:
+                last_clicked_layer = self.last_clicked_layer
+                if not last_clicked_layer:
+                    clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
+                    self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
+                else:
+                    self.resetSelectionGroup()
+                    last_click_pos = self.last_click_pos
+                    cur_clicked_layer, cur_click_pos = self.get_clicked_layer_and_pos(event)
+                    clips = self.get_clips_in_between(
+                        last_clicked_layer, cur_clicked_layer, last_click_pos, cur_click_pos)
+                    for clip in clips:
+                        self.current_group.add(clip.get_toplevel_parent())
+                    self.selection.setSelection(clips, SELECT)
+            elif not self.get_parent()._controlMask:
+                clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
+                self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
 
         self._snapEndedCb()
         self.update_visible_overlays()
 
         return False
+
+    def set_selection_meta_info(self, clicked_layer, click_pos, mode):
+        if mode == UNSELECT:
+            self.last_clicked_layer = None
+            self.last_click_pos = 0
+        else:
+            self.last_clicked_layer = clicked_layer
+            self.last_click_pos = click_pos
+
+    def get_clicked_layer_and_pos(self, event):
+        """Gets layer and position in the timeline where user clicked."""
+        event_widget = Gtk.get_event_widget(event)
+        x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
+        clicked_layer = self._get_layer_at(y)[0]
+        click_pos = max(0, self.pixelToNs(x))
+        return clicked_layer, click_pos
+
+    def get_clips_in_between(self, layer1, layer2, pos1, pos2):
+        """Gets all clips between pos1 and pos2 within layer1 and layer2."""
+        layers = self.ges_timeline.get_layers()
+        layer1_pos = layer1.props.priority
+        layer2_pos = layer2.props.priority
+
+        if layer2_pos >= layer1_pos:
+            layers_pos = range(layer1_pos, layer2_pos + 1)
+        else:
+            layers_pos = range(layer2_pos, layer1_pos + 1)
+
+        # The interval in which the clips will be selected.
+        start = min(pos1, pos2)
+        end = max(pos1, pos2)
+
+        clips = set()
+        for layer_pos in layers_pos:
+            layer = layers[layer_pos]
+            clips.update(layer.get_clips_in_interval(start, end))
+
+        grouped_clips = set()
+        # Also include those clips which are grouped with currently selected clips.
+        for clip in clips:
+            toplevel = clip.get_toplevel_parent()
+            if isinstance(toplevel, GES.Group) and toplevel != self.current_group:
+                grouped_clips.update([c for c in toplevel.get_children(True)
+                                if isinstance(c, GES.Clip)])
+
+        return clips.union(grouped_clips)
 
     def _motion_notify_event_cb(self, unused_widget, event):
         if self.draggingElement:
