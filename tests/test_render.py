@@ -266,9 +266,6 @@ class TestRender(BaseTestMediaLibrary):
 
     def check_simple_rendering_profile(self, profile_name):
         """Checks that rendering with the specified profile works."""
-        # TODO: Get rid of Zoomable._instances.
-        from pitivi.utils.timeline import Zoomable
-        del Zoomable._instances[:]
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
 
