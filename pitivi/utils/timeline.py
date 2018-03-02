@@ -75,6 +75,8 @@ class Selection(GObject.Object, Loggable):
 
     Attributes:
         selected (List[GES.TrackElement]): Set of selected elements.
+        last_clicked_layer (GES.Layer): The last layer on which the user clicked.
+        last_click_pos: Position at which the user clicked within last clicked layer.
 
     Signals:
         selection-changed: The contents of the selection changed.
@@ -88,6 +90,8 @@ class Selection(GObject.Object, Loggable):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.selected = set()
+        self.last_clicked_layer = None
+        self.last_click_pos = 0
 
     def setSelection(self, objs, mode):
         """Updates the current selection.
@@ -135,6 +139,14 @@ class Selection(GObject.Object, Loggable):
                 element.selected.selected = selected
 
         self.emit("selection-changed")
+
+    def set_selection_meta_info(self, clicked_layer, click_pos, mode):
+        if mode == UNSELECT:
+            self.last_clicked_layer = None
+            self.last_click_pos = 0
+        else:
+            self.last_clicked_layer = clicked_layer
+            self.last_click_pos = click_pos
 
     def __get_selection_changes(self, old_selection):
         for obj in old_selection - self.selected:
