@@ -735,6 +735,23 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._scrolling = False
 
         if allow_seek and res and (button == 1 and self.app.settings.leftClickAlsoSeeks):
+            # Allowing group clips selection by shift+clicking anywhere on the timeline.
+            if self.get_parent()._shiftMask:
+                last_clicked_layer = self.selection.last_clicked_layer
+                if not last_clicked_layer:
+                    self.__set_selection_meta_info(event)
+                else:
+                    self.resetSelectionGroup()
+                    last_click_pos = self.selection.last_click_pos
+                    cur_clicked_layer, cur_click_pos = self.get_clicked_layer_and_pos(event)
+                    clips = self.__get_clips_in_between(
+                        last_clicked_layer, cur_clicked_layer, last_click_pos, cur_click_pos)
+                    for clip in clips:
+                        self.current_group.add(clip.get_toplevel_parent())
+                    self.selection.setSelection(clips, SELECT)
+            elif not self.get_parent()._controlMask:
+                self.__set_selection_meta_info(event)
+
             if self.__next_seek_position is not None:
                 self._project.pipeline.simple_seek(self.__next_seek_position)
                 self.__next_seek_position = None
@@ -747,6 +764,41 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.update_visible_overlays()
 
         return False
+
+    def __set_selection_meta_info(self, event):
+        clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
+        self.selection.set_selection_meta_info(clicked_layer, click_pos, SELECT)
+
+    def __get_clips_in_between(self, last_clicked_layer,
+                        cur_clicked_layer, last_click_pos, cur_click_pos):
+        """Get all clips between last click pos and current click pos."""
+        layers = self.ges_timeline.get_layers()
+        cur_clicked_layer_pos = layers.index(cur_clicked_layer)
+        last_clicked_layer_pos = layers.index(last_clicked_layer)
+
+        if cur_clicked_layer_pos >= last_clicked_layer_pos:
+            selected_layers_pos = range(last_clicked_layer_pos, cur_clicked_layer_pos + 1)
+        else:
+            selected_layers_pos = range(cur_clicked_layer_pos, last_clicked_layer_pos + 1)
+
+        # The interval in which the clips will be selected.
+        start = min(cur_click_pos, last_click_pos)
+        end = max(cur_click_pos, last_click_pos)
+
+        clips = []
+        for layer_pos in selected_layers_pos:
+            cur_layer = layers[layer_pos]
+            clips.extend(cur_layer.get_clips_in_interval(start, end))
+
+        return clips
+
+    def get_clicked_layer_and_pos(self, event):
+        """Get the layer and the position within the layer at which the user clicked."""
+        event_widget = Gtk.get_event_widget(event)
+        x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
+        clicked_layer = self._get_layer_at(y)[0]
+        click_pos = max(0, self.pixelToNs(x))
+        return clicked_layer, click_pos
 
     def _motion_notify_event_cb(self, unused_widget, event):
         if self.draggingElement:
