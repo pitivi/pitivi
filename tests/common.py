@@ -181,6 +181,10 @@ class TestCase(unittest.TestCase, Loggable):
         del self._tracked
 
     def setUp(self):
+        # TODO: Get rid of Zoomable._instances.
+        from pitivi.utils.timeline import Zoomable
+        del Zoomable._instances[:]
+
         self._num_failures = len(getattr(self._result, 'failures', []))
         self._num_errors = len(getattr(self._result, 'errors', []))
         if detect_leaks:
