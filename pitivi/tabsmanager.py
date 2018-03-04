@@ -45,8 +45,7 @@ class BaseTabs(Gtk.Notebook, Loggable):
         notebook_widget_settings.props.gtk_dnd_drag_threshold = 1
 
     # pylint: disable=arguments-differ
-    def append_page(self, child, label):
-        child_name = label.get_text()
+    def append_page(self, child_name, child, label):
         Gtk.Notebook.append_page(self, child, label)
         self._set_child_properties(child, label)
         label.show()
