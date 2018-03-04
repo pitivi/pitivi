@@ -225,16 +225,12 @@ class NumericWidget(Gtk.Box, DynamicWidget):
             upper is not None and upper < reasonable_limit)
 
         self.adjustment = Gtk.Adjustment()
-        # Limit the limits, otherwise the widget appears huge.
-        # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=727294
-        # If these hardcoded limits are a problem, the fix should be passing
-        # the proper limits using the upper and lower parameters.
         if upper is None:
-            upper = GLib.MAXINT16
+            upper = GLib.MAXINT32
         if lower is None:
-            lower = GLib.MININT16
-        self.adjustment.props.lower = max(GLib.MININT16, lower)
-        self.adjustment.props.upper = min(upper, GLib.MAXINT16)
+            lower = GLib.MININT32
+        self.adjustment.props.lower = lower
+        self.adjustment.props.upper = upper
 
         if with_slider:
             self.slider = Gtk.Scale.new(
