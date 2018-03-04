@@ -88,7 +88,7 @@ class ClipMediaPropsDialog(object):
             break
 
         for stream in self.video_streams:
-            self.size_width.set_text(str(stream.get_square_width()))
+            self.size_width.set_text(str(int(stream.get_square_width())))
             self.size_height.set_text(str(stream.get_height()))
             self.is_image = stream.is_image()
             if not self.is_image:
