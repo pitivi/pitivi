@@ -1114,6 +1114,8 @@ class GstElementSettingsDialog(Loggable):
         self.window.set_title(
             _("Properties for %s") % self.factory.get_longname())
         self.elementsettings.setElement(self.element, self.properties)
+        self.elementsettings.add_widgets(
+            GstElementSettingsWidget.make_property_widget, with_reset_button=True)
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()
