@@ -238,9 +238,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.main_tabs = BaseTabs(self.app)
         self.medialibrary = MediaLibraryWidget(self.app)
         self.effectlist = EffectListWidget(self.app)
-        self.main_tabs.append_page(
+        self.main_tabs.append_page("Media Library",
             self.medialibrary, Gtk.Label(label=_("Media Library")))
-        self.main_tabs.append_page(
+        self.main_tabs.append_page("Effect Library",
             self.effectlist, Gtk.Label(label=_("Effect Library")))
         self.medialibrary.connect('play', self._mediaLibraryPlayCb)
         self.medialibrary.show()
@@ -251,11 +251,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.clipconfig = ClipProperties(self.app)
         self.trans_list = TransitionsListWidget(self.app)
         self.title_editor = TitleEditor(self.app)
-        self.context_tabs.append_page(
+        self.context_tabs.append_page("Clip",
             self.clipconfig, Gtk.Label(label=_("Clip")))
-        self.context_tabs.append_page(
+        self.context_tabs.append_page("Transition",
             self.trans_list, Gtk.Label(label=_("Transition")))
-        self.context_tabs.append_page(
+        self.context_tabs.append_page("Title",
             self.title_editor.widget, Gtk.Label(label=_("Title")))
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
