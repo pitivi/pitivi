@@ -293,7 +293,7 @@ msgid ""
 msgstr ""
 "Cada capa ( i cada seqüència) té la seva pròpia transparència. Per continuar "
 "amb la metàfora de la pintura sobre vidre, si la pintura es prou fina es pot "
-"veure a través d'ella. Visualment una opacitat del 100% significa que que no "
+"veure a través d'ella. Visualment una opacitat del 100% significa que no "
 "podeu veure les seqüències sota la capa o la seqüència, i una opacitat del "
 "50% significa que les podeu veure de forma parcial."
 
@@ -345,7 +345,7 @@ msgid ""
 "layers in the previous illustration)."
 msgstr ""
 "Les seqüències situades sobre una capa boquejaran la visualització de les "
-"seqüències de sota, llevat que tinguin una valor d'opacitat menor que el "
+"seqüències de sota, llevat que tinguin un valor d'opacitat menor que el "
 "100% (com es mostra amb les dos capes superiors a la il·lustració prèvia)."
 
 #. (itstool) path: section/title
@@ -390,7 +390,7 @@ msgid ""
 "loudness."
 msgstr ""
 "Al contrari que en la visió, els sons múltiples no bloquegen cap altre só. "
-"Si teniu múltiples seqüències d'àudio en capes separades, el seu só es "
+"Si teniu múltiples seqüències d'àudio en capes separades, el seu so es "
 "mesclarà sempre. Controlar el volum d'àudio d'aquestes seqüències canvia la "
 "seva sonoritat relativa."
 
@@ -554,7 +554,7 @@ msgstr ""
 #. (itstool) path: info/desc
 #: C/splitting.page:18
 msgid "Dividing clips in two parts."
-msgstr "Divideix seqüències en dos parts."
+msgstr "Divideix seqüències en dues parts."
 
 #. (itstool) path: page/title
 #: C/splitting.page:25
@@ -567,7 +567,7 @@ msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
 msgstr ""
-"Con el nom implica, dividir una seqüència el parteix en dos seqüències "
+"Com el nom implica, dividir una seqüència el parteix en dos seqüències "
 "adjacents, amb el començament/final creat de forma concordant."
 
 #. (itstool) path: page/p
@@ -663,7 +663,7 @@ msgid ""
 msgstr ""
 "Quan voleu tallar en la secció central d'una seqüència, dividiu la seqüència "
 "dues vegades en les posicions on comença i acaba la part que voleu eliminar. "
-"Seleccioneu la la part central i premeu <key>Suprimeix</key>. Ara elimineu "
+"Seleccioneu la part central i premeu <key>Suprimeix</key>. Ara elimineu "
 "l'espai buit entre les dues parts restants movent una d'elles cap a l'altra "
 "fins que s'enganxin."
 
@@ -744,12 +744,12 @@ msgid ""
 "default alpha or volume keyframe curves are an intrinsic property of clips "
 "and cannot be removed."
 msgstr ""
-"Per defecte, les corbes de fotogrames claus en una seqüència de d'àudio "
+"Per defecte, les corbes de fotogrames claus en una seqüència d'àudio "
 "controlen el volum (en una escala des de 0 fins el 200%) i les corbes de "
-"fotogrames claus en una seqüència de de vídeo controlen la capa alfa "
+"fotogrames claus en una seqüència de vídeo controlen la capa alfa "
 "(opacitat) al vídeo (en una escala del 0 al 100%). Mireu la pàgina <link "
-"xref=\"layers\">Entenent les capes</link> per saber més detalls sobre la "
-"opacitat. La capa alfa per defecte o les corbes dels fotogrames claus del "
+"xref=\"layers\">Entenent les capes</link> per saber més detalls sobre "
+"l'opacitat. La capa alfa per defecte o les corbes dels fotogrames claus del "
 "volum són una propietat intrínseca de les seqüències i no es poden suprimir."
 
 #. (itstool) path: note/p
@@ -812,7 +812,7 @@ msgstr "Afegir un fotograma clau nou fent clic sobre la línia."
 #. (itstool) path: item/p
 #: C/keyframecurves.page:60
 msgid "Remove a keyframe by double-clicking on it."
-msgstr "Suprimir una fotograma clau fent doble clic sobre ell."
+msgstr "Suprimir un fotograma clau fent doble clic sobre ell."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
@@ -946,7 +946,7 @@ msgid ""
 "change these values to the maximum resolution of your target device."
 msgstr ""
 "Si voleu fer un predefinit amb la resolució màxima fixada, necessiteu editar "
-"el fitxer del predefinit amb un editor de text. El predefinits estan "
+"el fitxer del predefinit amb un editor de text. Els predefinits estan "
 "emmagatzemats de forma típica a ~/.local/share/pitivi/ ; ja que molts "
 "dispositius no tenen una resolució màxima, l'amplada/alçada s'estableix a 0 "
 "(il·limitada) de manera predeterminada. Podeu canviar aquests valors de la "
@@ -1050,7 +1050,7 @@ msgid ""
 msgstr ""
 "El <em>mode normal</em> aplicarà la transició de manera lineal al damunt de "
 "tota la regió solapada. Quan estem en mode normal, podeu ajustar el grau "
-"denitidesa/suavitzat de la transició."
+"de nitidesa/suavitzat de la transició."
 
 #. (itstool) path: item/p
 #: C/transitions.page:53
@@ -1069,7 +1069,7 @@ msgid ""
 "In both modes, you can apply the transition in <em>reverse direction</em> by "
 "ticking the corresponding checkbox."
 msgstr ""
-"Em ambdós modes podeu aplicar la transició en <em>direcció inversa</em> "
+"En ambdós modes podeu aplicar la transició en <em>direcció inversa</em> "
 "activant el casella de selecció corresponent."
 
 #. (itstool) path: note/p
@@ -1081,7 +1081,7 @@ msgid ""
 "<gui>Transition</gui> tab. This will show only transitions whose name or "
 "description match your search terms."
 msgstr ""
-"Cada transició té el seu nom i la seua descripció. Aquests es mostren quan "
+"Cada transició té el seu nom i la seva descripció. Aquests es mostren quan "
 "moveu el cursor sobre la icona de transició. També podeu filtrar les "
 "transicions escrivint a l'entrada de la cerca a la part superior de la "
 "pestanya <gui> Transició </gui>. Això només mostrarà transicions en les "
@@ -1307,7 +1307,7 @@ msgid ""
 "an information tooltip regarding its function."
 msgstr ""
 "Passar el cursos del ratolí per damunt d'un element de la finestra principal "
-"normalment revela informació sobre la seua funció."
+"normalment revela informació sobre la seva funció."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:59
@@ -1483,7 +1483,7 @@ msgstr ""
 "Fixeu-vos que la majoria de les accions esdevenen disponibles sols quan es "
 "selecciona una seqüència (mireu la pàgina <link xref=\"selectiongrouping"
 "\">Selecció i agrupament</link> per obtindre més detalls). Quan no hi ha cap "
-"subjecte per rebre l'acció, permaneix oculta (indicant la no disponibilitat)."
+"subjecte per rebre l'acció, continua oculta (indicant la no disponibilitat)."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:113
@@ -1590,7 +1590,7 @@ msgstr ""
 msgid ""
 "<app>Pitivi</app> inhibits the screensaver while playing the video preview."
 msgstr ""
-"<app>Pitivi</app> inhibeix el estalvi de pantalla mentre es reprodueix la "
+"<app>Pitivi</app> inhibeix l'estalvi de pantalla mentre es reprodueix la "
 "previsualització del vídeo."
 
 #. (itstool) path: section/title
@@ -1806,7 +1806,7 @@ msgid ""
 "button on the left of the zoom slider. Another way to do this is by pressing "
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>."
 msgstr ""
-"Per tindre  una vista global de la línia d temps, podeu prémer el botó "
+"Per tindre  una vista global de la línia de temps, podeu prémer el botó "
 "<gui>Zoom</gui> a l'esquerra del control lliscant del zoom. Una altra forma "
 "de fer això és pressionar <keyseq><key>Ctrl</key><key>0</key></keyseq>."
 
@@ -1889,7 +1889,7 @@ msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
-"Revisar repetidament el moviment visual d'una escena movent-se cap a enrere "
+"Revisar repetidament el moviment visual d'una escena movent-se cap enrere "
 "i cap endavant amb el temps."
 
 #. (itstool) path: section/p
@@ -2042,7 +2042,7 @@ msgstr "Efectes i transicions"
 #. (itstool) path: section/title
 #: C/index.page:37
 msgid "Exporting Your Finished Movie"
-msgstr "Exportació de la vostra pel·licula acabada"
+msgstr "Exportació de la vostra pel·lícula acabada"
 
 #. (itstool) path: info/desc
 #: C/sysreq.page:18
@@ -2150,7 +2150,7 @@ msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
 msgstr ""
-"Quina és la diferencia entre OGG i Vorbis ? AVI i DivX ? x264 i H.264? "
+"Quina és la diferència entre OGG i Vorbis ? AVI i DivX ? x264 i H.264? "
 "Apreneu sobre els còdecs i els contenidors de formats aquí."
 
 #. (itstool) path: page/title
@@ -2664,7 +2664,7 @@ msgid ""
 "the button)."
 msgstr ""
 "Les propietats de l'efecte que es poden controlar utilitzant les corbes de "
-"fotogrames clau tenen un boto <gui> Mostra els fotogrames clau per a aquesta "
+"fotogrames clau tenen un botó <gui> Mostra els fotogrames clau per a aquesta "
 "propietat </gui>. Quan feu clic, les corbes del fotograma clau al "
 "començament de la seqüència controlen la propietat respectiva. Ara podeu "
 "editar els fotogrames clau per aconseguir l'efecte desitjat. Una vegada que "
@@ -2830,7 +2830,7 @@ msgstr "Simplificació del flux de treball en l'edició"
 #. (itstool) path: item/p
 #: C/medialibrary.page:56
 msgid "Check which clips you may have forgot to use in your movie"
-msgstr "Comprovar quines seqüències heu oblidar usar en la vostra pel·lícula"
+msgstr "Comprovar quines seqüències heu d'oblidar usar en la vostra pel·lícula"
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:59
@@ -2881,7 +2881,7 @@ msgid ""
 "<gui>Remove selected clips from the project</gui> (this can also be "
 "performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>)."
 msgstr ""
-"<gui>Suprimeix les seqüències seleccionades del projecte</gui> (això és pot "
+"<gui>Suprimeix les seqüències seleccionades del projecte</gui> (això es pot "
 "fer també prement <keyseq><key>Control</key><key>Suprimeix</key></keyseq>)."
 
 #. (itstool) path: item/p
@@ -2895,7 +2895,7 @@ msgid ""
 msgstr ""
 "<gui>Propietats de la seqüència...</gui>obre una finestra nova amb "
 "informació sobre <em>mida del vídeo</em>, <em>fotogrames per segon</em> "
-"i<em>relació d'aspecte</em>. En prémer sobre el botó <gui>Aplica al "
+"i <em>relació d'aspecte</em>. En prémer sobre el botó <gui>Aplica al "
 "projecte</gui> s'ajusten els paràmetres del projecte a les propietats de la "
 "seqüència. Podeu seleccionar quines propietats aplicar deixant-les marcades/"
 "desmarcades."
@@ -3209,7 +3209,7 @@ msgid ""
 "Select the effect you want to remove in the <guiseq><gui>middle pane</"
 "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
 msgstr ""
-"Seleccioneu el efecte que voleu suprimir al <guiseq><gui>centre del panell</"
+"Seleccioneu l'efecte que voleu suprimir al <guiseq><gui>centre del panell</"
 "gui><gui>Configuració de la seqüència</gui><gui>Efectes</gui></guiseq>"
 
 #. (itstool) path: item/p
@@ -3626,7 +3626,7 @@ msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
 msgstr ""
-"Apreneu la diferència entre entre seqüències i fitxers i com fer operacions "
+"Apreneu la diferència entre seqüències i fitxers i com fer operacions "
 "bàsiques en les seqüències a la línia de temps."
 
 #. (itstool) path: page/title
@@ -3674,7 +3674,7 @@ msgid ""
 "such, your files stay intact."
 msgstr ""
 "Atès que Pitivi és un editor no destructiu, s'editen les seqüències, no els "
-"fitxers. Per tan, els vostres fitxers romanen intactes."
+"fitxers. Per tant, els vostres fitxers romanen intactes."
 
 #. (itstool) path: section/title
 #: C/usingclips.page:35
@@ -3695,7 +3695,7 @@ msgstr ""
 #. (itstool) path: item/p
 #: C/usingclips.page:39
 msgid "Dragging and dropping them onto a place in the timeline."
-msgstr "Arrossega i deixa-les anar anar en un lloc de la línia de temps."
+msgstr "Arrossega i deixa-les anar en un lloc de la línia de temps."
 
 #. (itstool) path: item/p
 #: C/usingclips.page:42
@@ -3774,7 +3774,7 @@ msgstr ""
 "<key>Ctrl</key> o <key>Maj</key> (seleccioneu per a més detalls<link xref="
 "\"selectiongrouping\">Selecció i agrupament</link>). Les seqüències "
 "seleccionades no necessiten estar en la mateixa capa. A continuació, "
-"arrossegueu les seqüències tal com faria amb un sola seqüència; es "
+"arrossegueu les seqüències tal com faria amb una sola seqüència; es "
 "conservarà la seva posició relativa entre si."
 
 #. (itstool) path: section/title
@@ -3883,7 +3883,7 @@ msgstr ""
 #. (itstool) path: item/p
 #: C/cheatsheet.page:39
 msgid "<key>F11</key>: Toggle fullscreen mode"
-msgstr "<key>F11</key>: Commuteu el mode pantalla sencera"
+msgstr "<key>F11</key>: Commuteu el mode pantalla completa"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:42
@@ -3943,7 +3943,7 @@ msgid ""
 "<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
 "depends on your project framerate."
 msgstr ""
-"<key>←</key> i <key>→</key>: Aneu un fotograma cap a enrere o cap endavant. "
+"<key>←</key> i <key>→</key>: Aneu un fotograma cap enrere o cap endavant. "
 "Això depèn dels fotogrames per segon del vostre projecte."
 
 #. (itstool) path: item/p
