@@ -128,11 +128,20 @@ class EffectProperties(Gtk.Expander, Loggable):
         setup_custom_effect_widgets(self.effects_properties_manager)
         self.clip_properties = clip_properties
 
+        no_effects_label = Gtk.Label(
+            _("To apply an effect to the clip, drag it from the Effect Library."))
+        no_effects_label.set_line_wrap(True)
+        no_effects_infobar = Gtk.InfoBar()
+        no_effects_infobar.props.message_type = Gtk.MessageType.OTHER
+        no_effects_infobar.get_content_area().add(no_effects_label)
+        self.no_effects_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.no_effects_box.pack_start(no_effects_infobar, False, False, 0)
+
         # The toolbar that will go between the list of effects and properties
-        buttons_box = Gtk.ButtonBox()
-        buttons_box.set_halign(Gtk.Align.END)
-        buttons_box.set_margin_end(SPACING)
-        buttons_box.props.margin_top = SPACING / 2
+        self.buttons_box = Gtk.ButtonBox()
+        self.buttons_box.set_halign(Gtk.Align.END)
+        self.buttons_box.set_margin_end(SPACING)
+        self.buttons_box.props.margin_top = SPACING / 2
 
         remove_effect_button = Gtk.Button()
         remove_icon = Gtk.Image.new_from_icon_name("list-remove-symbolic",
@@ -140,7 +149,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         remove_effect_button.set_image(remove_icon)
         remove_effect_button.set_always_show_image(True)
         remove_effect_button.set_label(_("Remove effect"))
-        buttons_box.pack_start(remove_effect_button,
+        self.buttons_box.pack_start(remove_effect_button,
                                expand=False, fill=False, padding=0)
 
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
@@ -213,20 +222,21 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Prepare the main container widgets and lay out everything
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._vbox.pack_start(self.no_effects_box, expand=False, fill=False, padding=0)
         self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
-        self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
-        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        separator.set_margin_top(SPACING)
-        separator.set_margin_left(SPACING)
-        separator.set_margin_right(SPACING)
-        self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
+        self._vbox.pack_start(self.buttons_box, expand=False, fill=False, padding=0)
+        self.separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self.separator.set_margin_top(SPACING)
+        self.separator.set_margin_left(SPACING)
+        self.separator.set_margin_right(SPACING)
+        self._vbox.pack_start(self.separator, expand=False, fill=False, padding=0)
         self._vbox.show_all()
         self.add(self._vbox)
         self.hide()
 
         effects_actions_group = Gio.SimpleActionGroup()
         self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
-        buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
+        self.buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
         self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"), position=60)
 
         self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
@@ -482,7 +492,10 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
-        self._vbox.set_visible(len(self.storemodel) > 0)
+        self.no_effects_box.set_visible(len(self.storemodel) == 0)
+        self.buttons_box.set_visible(len(self.storemodel) > 0)
+        self.separator.set_visible(len(self.storemodel) > 0)
+        self._vbox.set_visible(True)
 
     def _treeviewSelectionChangedCb(self, unused_treeview):
         selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
