@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 """Rendering-related classes and utilities."""
 import os
+import posixpath
 import time
 from gettext import gettext as _
 
@@ -373,7 +374,7 @@ class RenderingProgressDialog(GObject.Object):
         Gio.AppInfo.launch_default_for_uri(self.main_render_dialog.outfile, None)
 
     def _showInFileManagerButtonClickedCb(self, unused_button):
-        directory_uri = os.path.dirname(self.main_render_dialog.outfile)
+        directory_uri = posixpath.dirname(self.main_render_dialog.outfile)
         Gio.AppInfo.launch_default_for_uri(directory_uri, None)
 
 
