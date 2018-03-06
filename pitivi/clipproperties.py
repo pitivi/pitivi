@@ -128,6 +128,15 @@ class EffectProperties(Gtk.Expander, Loggable):
         setup_custom_effect_widgets(self.effects_properties_manager)
         self.clip_properties = clip_properties
 
+        no_effect_label = Gtk.Label(
+            _("To apply an effect to the clip, drag it from the Effect Library."))
+        no_effect_label.set_line_wrap(True)
+        no_effect_infobar = Gtk.InfoBar()
+        no_effect_infobar.props.message_type = Gtk.MessageType.OTHER
+        no_effect_infobar.get_content_area().add(no_effect_label)
+        self.no_effect_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.no_effect_box.pack_start(no_effect_infobar, expand=False, fill=False, padding=0)
+
         # The toolbar that will go between the list of effects and properties
         buttons_box = Gtk.ButtonBox()
         buttons_box.set_halign(Gtk.Align.END)
@@ -212,6 +221,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._infobar.show_all()
 
         # Prepare the main container widgets and lay out everything
+        self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
         self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
@@ -221,7 +231,10 @@ class EffectProperties(Gtk.Expander, Loggable):
         separator.set_margin_right(SPACING)
         self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
         self._vbox.show_all()
-        self.add(self._vbox)
+        self._expander_box.pack_start(self.no_effect_box, expand=False, fill=False, padding=0)
+        self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
+        self._expander_box.show_all()
+        self.add(self._expander_box)
         self.hide()
 
         effects_actions_group = Gio.SimpleActionGroup()
@@ -482,6 +495,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
+        self.no_effect_box.set_visible(len(self.storemodel) == 0)
         self._vbox.set_visible(len(self.storemodel) > 0)
 
     def _treeviewSelectionChangedCb(self, unused_treeview):
