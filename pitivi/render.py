@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 """Rendering-related classes and utilities."""
 import os
+import posixpath
 import time
 from gettext import gettext as _
 
@@ -312,6 +313,8 @@ class RenderingProgressDialog(GObject.Object):
         self.play_rendered_file_button = self.builder.get_object(
             "play_rendered_file_button")
         self.close_button = self.builder.get_object("close_button")
+        self.show_in_file_manager_button = self.builder.get_object(
+            "show_in_file_manager_button")
         self.cancel_button = self.builder.get_object("cancel_button")
         self._filesize_est_label = self.builder.get_object(
             "estimated_filesize_label")
@@ -325,6 +328,7 @@ class RenderingProgressDialog(GObject.Object):
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
         self.close_button.hide()
+        self.show_in_file_manager_button.hide()
 
     def updatePosition(self, fraction):
         self.progressbar.set_fraction(fraction)
@@ -368,6 +372,10 @@ class RenderingProgressDialog(GObject.Object):
 
     def _playRenderedFileButtonClickedCb(self, unused_button):
         Gio.AppInfo.launch_default_for_uri(self.main_render_dialog.outfile, None)
+
+    def _show_in_file_manager_button_clicked_cb(self, unused_button):
+        directory_uri = posixpath.dirname(self.main_render_dialog.outfile)
+        Gio.AppInfo.launch_default_for_uri(directory_uri, None)
 
 
 class RenderDialog(Loggable):
@@ -1062,6 +1070,7 @@ class RenderDialog(Loggable):
             self._maybe_play_finished_sound()
             self.progress.play_rendered_file_button.show()
             self.progress.close_button.show()
+            self.progress.show_in_file_manager_button.show()
             self.progress.cancel_button.hide()
             self.progress.play_pause_button.hide()
 
