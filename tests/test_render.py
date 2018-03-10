@@ -185,7 +185,7 @@ class TestRender(BaseTestMediaLibrary):
                       'muxer': "oggmux"}),
             ("test_ogg-vp8-opus", {
                 "aencoder": "opusenc",
-                "vencoder": "vp8enc",
+                "vencoder": ["vp8enc", "vaapivp8enc"],
                 "muxer": "oggmux"}),
             ("test_fullhd", {
                 "aencoder": "vorbisenc",
@@ -196,7 +196,7 @@ class TestRender(BaseTestMediaLibrary):
                 "videorate": Gst.Fraction(120, 1)}),
             ("test_ogg-vp8-opus", {
                 "aencoder": "opusenc",
-                "vencoder": "vp8enc",
+                "vencoder": ["vp8enc", "vaapivp8enc"],
                 "muxer": "oggmux"}),
             ("test_fullhd", {
                 "aencoder": "vorbisenc",
@@ -223,14 +223,15 @@ class TestRender(BaseTestMediaLibrary):
             self.assertEqual(changed, [1], "Preset %s" % preset_name)
 
             for attr, val in values.items():
+                val = val if isinstance(val, list) else [val]
                 combo = attr_dialog_widget_map.get(attr)
                 if combo:
                     combo_value = get_combo_value(combo)
                     if isinstance(combo_value, Gst.ElementFactory):
                         combo_value = combo_value.get_name()
-                    self.assertEqual(combo_value, val, preset_name)
+                    self.assertIn(combo_value, val, preset_name)
 
-                self.assertEqual(getattr(project, attr), val)
+                self.assertIn(getattr(project, attr), val)
 
     @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
                                 "opusenc", "vp8enc"))
