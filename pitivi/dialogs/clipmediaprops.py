@@ -67,8 +67,6 @@ class ClipMediaPropsDialog(object):
         # Various other layout widgets
         self.frame1 = builder.get_object("frame1")
         self.frame2 = builder.get_object("frame2")
-        self.hbox2 = builder.get_object("hbox2")
-        self.hbox3 = builder.get_object("hbox3")
         self.video_header_label = builder.get_object("label2")
 
     def run(self):
@@ -123,8 +121,10 @@ class ClipMediaPropsDialog(object):
         if not self.has_audio:
             self.frame2.hide()
         if self.is_image:
-            self.hbox2.hide()
-            self.hbox3.hide()
+            self.frame_rate.hide()
+            self.aspect_ratio.hide()
+            self.PAR_checkbutton.hide()
+            self.framerate_checkbutton.hide()
             self.video_header_label.set_markup("<b>" + _("Image:") + "</b>")
 
         self.dialog.connect("key-press-event", self._keyPressCb)
