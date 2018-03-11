@@ -550,6 +550,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
 
     def _newProjectLoadedCb(self, unused_app, project):
         if self._selection is not None:
@@ -563,6 +565,9 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self._selection = project.ges_timeline.ui.selection
             self._selection.connect('selection-changed', self._selectionChangedCb)
             self._project.pipeline.connect("position", self._position_cb)
+
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        self._project = None
 
     def _initButtons(self):
         clear_button = self.builder.get_object("clear_button")
