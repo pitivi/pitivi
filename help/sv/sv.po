@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2017-09-05 23:05+0000\n"
-"PO-Revision-Date: 2017-09-24 15:35+0200\n"
+"POT-Creation-Date: 2018-03-10 16:08+0000\n"
+"PO-Revision-Date: 2018-03-12 12:40+0100\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -22,66 +22,123 @@ msgid "translator-credits"
 msgstr "Josef Andersson <josef.andersson@fripost.org>, 2015, 2016"
 
 #. (itstool) path: credit/name
-#: C/selectiongrouping.page:7 C/layers.page:15 C/workwithprojects.page:15
-#: C/splitting.page:15 C/keyframecurves.page:17 C/presets.page:13
-#: C/transitions.page:7 C/mainwindow.page:13 C/movearoundtimeline.page:19
-#: C/sysreq.page:15 C/codecscontainers.page:11 C/gstreamer.page:15
-#: C/usingeffects.page:7 C/medialibrary.page:15 C/welcomedialog.page:11
-#: C/importing.page:15 C/effects.page:12 C/rendering.page:15 C/trimming.page:15
-#: C/usingclips.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:17
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:13
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:13
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:12
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:15
 msgid "Tomáš Karger"
 msgstr "Tomáš Karger"
 
 #. (itstool) path: credit/name
-#: C/selectiongrouping.page:11 C/layers.page:7 C/workwithprojects.page:7
-#: C/splitting.page:7 C/keyframecurves.page:9 C/presets.page:9
-#: C/transitions.page:11 C/mainwindow.page:9 C/movearoundtimeline.page:7
-#: C/about.page:7 C/index.page:8 C/sysreq.page:7 C/codecscontainers.page:7
-#: C/gstreamer.page:7 C/savescreenshot.page:7 C/importingmpegts.page:8
-#: C/usingeffects.page:11 C/medialibrary.page:7 C/welcomedialog.page:7
-#: C/importing.page:7 C/effects.page:8 C/rendering.page:7 C/trimming.page:7
-#: C/usingclips.page:7 C/cheatsheet.page:8
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:9
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:9
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:9
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:8
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/savescreenshot.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:8
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:8
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:7
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:8
 msgid "Jean-François Fortin Tam"
 msgstr "Jean-François Fortin Tam"
 
 #. (itstool) path: credit/name
-#: C/selectiongrouping.page:15 C/layers.page:11 C/workwithprojects.page:11
-#: C/splitting.page:11 C/keyframecurves.page:13 C/transitions.page:15
-#: C/movearoundtimeline.page:11 C/about.page:11 C/index.page:12
-#: C/sysreq.page:11 C/gstreamer.page:11 C/importing.page:11 C/rendering.page:11
-#: C/trimming.page:11 C/usingclips.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:13
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:12
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:11
 msgid "Mario Blättermann"
 msgstr "Mario Blättermann"
 
 #. (itstool) path: info/desc
-#: C/selectiongrouping.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:18
 msgid "Making selections and grouping clips in timeline."
 msgstr "Att göra markering och gruppera klipp i tidslinjen."
 
 #. (itstool) path: license/p
-#: C/selectiongrouping.page:22 C/layers.page:22 C/workwithprojects.page:22
-#: C/splitting.page:22 C/keyframecurves.page:28 C/presets.page:20
-#: C/transitions.page:22 C/mainwindow.page:20 C/movearoundtimeline.page:26
-#: C/about.page:18 C/index.page:16 C/sysreq.page:22 C/codecscontainers.page:15
-#: C/gstreamer.page:22 C/savescreenshot.page:11 C/importingmpegts.page:15
-#: C/usingeffects.page:16 C/medialibrary.page:22 C/welcomedialog.page:18
-#: C/importing.page:22 C/effects.page:17 C/rendering.page:22 C/trimming.page:22
-#: C/usingclips.page:22 C/cheatsheet.page:12
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:20
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:20
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/savescreenshot.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:17
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:12
 msgid "Creative Commons Share Alike 3.0"
 msgstr "Creative Commons Share Alike 3.0"
 
 #. (itstool) path: page/title
-#: C/selectiongrouping.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:25
 msgid "Selection and grouping"
 msgstr "Markering och gruppering"
 
 #. (itstool) path: section/title
-#: C/selectiongrouping.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:27
 msgid "Making selections"
 msgstr "Göra markeringar"
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:28
 msgid ""
 "By selecting a clip, you specify what item should the subsequent actions be "
 "applied to. Selecting multiple clips allows you to apply actions (dragging, "
@@ -94,7 +151,7 @@ msgstr ""
 "välja ett individuellt klipp, klicka på det."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:29
 msgid ""
 "To select multiple adjacent clips you can click the timeline anywhere in an "
 "empty region and drag. Alternatively, you can:"
@@ -103,22 +160,22 @@ msgstr ""
 "helst i ett tomt område och dra. Alternativt kan du:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:32
 msgid "Click the first clip."
 msgstr "Klicka på det första klippet."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:35
 msgid "Hold the <key>Shift</key> key."
 msgstr "Håll inne <key>Skift</key>."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:38
 msgid "Click the last clip."
 msgstr "Klicka på det sista klippet."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:41
 msgid ""
 "When selecting a clip by clicking or when selecting multiple adjacent clips, "
 "the selection is reset. The rest of the clips become deselected if they were "
@@ -132,17 +189,17 @@ msgstr ""
 "urvalet kan ske genom att ändra ett klipps markering individuellt:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:44
 msgid "Hold down the <key>Ctrl</key> key."
 msgstr "Håll inne tangenten <key>Ctrl</key>."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:47
 msgid "Click on each clip you want to toggle the selection."
 msgstr "Klicka på alla klipp du vill ändra på markeringen för."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:50
 msgid ""
 "To clear the selection, click anywhere on the timeline in an empty region."
 msgstr ""
@@ -150,7 +207,7 @@ msgstr ""
 "område."
 
 #. (itstool) path: note/p
-#: C/selectiongrouping.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:52
 msgid ""
 "By default, clicking in the timeline changes the selection and also moves "
 "the playhead. To have a better control of the playhead you can disable "
@@ -172,12 +229,12 @@ msgstr ""
 "\"movearoundtimeline#movingplayhead\"/> för detaljer."
 
 #. (itstool) path: section/title
-#: C/selectiongrouping.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:56
 msgid "Grouping and ungrouping clips"
 msgstr "Gruppera och avgruppera klipp"
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:57
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:57
 msgid ""
 "The grouping and ungrouping functions are useful when you want to add or "
 "separate audio tracks from video clips, or when you want to create a block "
@@ -188,17 +245,17 @@ msgstr ""
 "klippblock som du kan markera, redigera och flytta samtidigt."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:58
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:58
 msgid "Grouping clips in timeline:"
 msgstr "Gruppera klipp i tidslinjen:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:61
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:61
 msgid "Select multiple clips in the timeline."
 msgstr "Markera flera klipp i tidslinjen."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:64
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:64
 msgid ""
 "Click the <gui>Group clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>G</key></keyseq>."
@@ -207,22 +264,22 @@ msgstr ""
 "eller tryck ned <keyseq><key>Ctrl</key><key>G</key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:67
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:67
 msgid "You can now select, edit and move the clips all at once."
 msgstr "Du kan nu markera, redigera och flytta klippen allihop samtidigt."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:68
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:68
 msgid "Ungrouping clips in timeline:"
 msgstr "Avgruppera klippen i tidslinjen:"
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:71
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:71
 msgid "Select a group of clips in the timeline."
 msgstr "Markera en grupp av klipp i tidslinjen."
 
 #. (itstool) path: item/p
-#: C/selectiongrouping.page:74
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:74
 msgid ""
 "Click the <gui>Ungroup clips</gui> button on the timeline toolbar, or press "
 "<keyseq><key>Ctrl</key><key>Shift</key><key>G</key></keyseq>."
@@ -232,22 +289,22 @@ msgstr ""
 "key></keyseq>."
 
 #. (itstool) path: section/p
-#: C/selectiongrouping.page:77
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/selectiongrouping.page:77
 msgid "You can now select, edit and move the clips independently."
 msgstr "Du kan nu markera, redigera och flytta klippen oberoende."
 
 #. (itstool) path: info/desc
-#: C/layers.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:18
 msgid "Explaining how layers work within the timeline."
 msgstr "Förklarar hur lager fungerar inuti tidslinjen."
 
 #. (itstool) path: page/title
-#: C/layers.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:25
 msgid "Understanding layers"
 msgstr "Förstå lager"
 
 #. (itstool) path: page/p
-#: C/layers.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:26
 msgid ""
 "<em>Layers</em> are a fundamental concept for advanced editing in the "
 "timeline: compositing, mixing multiple videos simultaneously, and adding "
@@ -258,7 +315,7 @@ msgstr ""
 "lägga till rubriker beror på dessa egenskaper."
 
 #. (itstool) path: page/p
-#: C/layers.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:27
 msgid ""
 "It is easier to think of layers in terms of images painted on glass. With "
 "several pieces of glass stacked on top of each other, each of these pieces "
@@ -274,12 +331,12 @@ msgstr ""
 "att kunna se vad som finns under de omålade delarna."
 
 #. (itstool) path: section/title
-#: C/layers.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:29
 msgid "Opacity (how solid “opaque” things are)"
 msgstr "Ogenomskinlighet (hur solida ”opaka” saker är)"
 
 #. (itstool) path: section/p
-#: C/layers.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:30
 msgid ""
 "Each layer (and each clip) has its own transparency. To continue the paint "
 "on glass metaphor, if the paint is thin enough, it can be seen through. "
@@ -293,12 +350,12 @@ msgstr ""
 "se dem delvis."
 
 #. (itstool) path: section/title
-#: C/layers.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:33
 msgid "How this translates in terms of user interface"
 msgstr "Vad detta betyder i användargränssnittet"
 
 #. (itstool) path: section/p
-#: C/layers.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:34
 msgid ""
 "While, in real life, you can stack pieces of glass onto each other in three "
 "dimensions, your computer monitor only has two dimensions. Thus, the "
@@ -311,7 +368,7 @@ msgstr ""
 "axeln."
 
 #. (itstool) path: figure/desc
-#: C/layers.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:36
 msgid ""
 "Diagram illustrating the <em>pieces of glass</em> (left) and how they are "
 "show as <em>layers</em> in <app>Pitivi</app>'s user interface (right)."
@@ -324,7 +381,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/layers.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:37
 msgctxt "_"
 msgid ""
 "external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
@@ -332,7 +389,7 @@ msgstr ""
 "external ref='figures/layers.png' md5='27c5f543944b381bc7147ff90b3deaee'"
 
 #. (itstool) path: note/p
-#: C/layers.page:40
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:40
 msgid ""
 "Clips located on a layer above will block the clips below from view, unless "
 "they have an opacity value lower than 100% (as shown with the two topmost "
@@ -343,12 +400,12 @@ msgstr ""
 "två översta lagren i föregående illustration)."
 
 #. (itstool) path: section/title
-#: C/layers.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:44
 msgid "Adding and removing layers"
 msgstr "Lägg till och ta bort lager"
 
 #. (itstool) path: section/p
-#: C/layers.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:45
 msgid ""
 "To create a layer, drag a clip to the middle space between two existing "
 "layers or just above the top layer or just below the bottom layer. Once the "
@@ -360,7 +417,7 @@ msgstr ""
 "klippet."
 
 #. (itstool) path: section/p
-#: C/layers.page:46
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:46
 msgid ""
 "To remove a layer, click <guiseq><gui>Layer icon</gui><gui>Delete layer</"
 "gui></guiseq>. The <gui>Layer icon</gui> can be found at the right of the "
@@ -371,12 +428,12 @@ msgstr ""
 "lagernamnsfältet."
 
 #. (itstool) path: section/title
-#: C/layers.page:49
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:49
 msgid "What about audio layers?"
 msgstr "Ljudlager då?"
 
 #. (itstool) path: section/p
-#: C/layers.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/layers.page:50
 msgid ""
 "Unlike in vision, multiple sounds do not “block” each other. If you have "
 "multiple audio clips on separate layers, their sound will be mixed together. "
@@ -388,24 +445,24 @@ msgstr ""
 "kontrollera volymen på dessa ljudklipp ändrar deras relativa ljudstyrka."
 
 #. (itstool) path: info/desc
-#: C/workwithprojects.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:18
 msgid "How to load and save projects, edit their settings and metadata."
 msgstr ""
 "Hur man läser in och sparar projekt, redigerar deras inställningar och "
 "metadata."
 
 #. (itstool) path: page/title
-#: C/workwithprojects.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:25
 msgid "Working with projects"
 msgstr "Arbeta med projekt"
 
 #. (itstool) path: section/title
-#: C/workwithprojects.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:27
 msgid "Saving a project"
 msgstr "Spara ett projekt"
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:28
 msgid ""
 "To save your project work, use the <gui>Save</gui> button in the header bar "
 "or press <keyseq><key>Ctrl</key><key>S</key></keyseq>. When you save a "
@@ -418,7 +475,7 @@ msgstr ""
 "frågar var du ska spara din projektfil och hur den ska döpas."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:30
 msgid ""
 "If you want to save your project to a different file, use <guiseq><gui>App "
 "menu</gui><gui>Save as</gui></guiseq> or press <keyseq><key>Ctrl</"
@@ -431,12 +488,12 @@ msgstr ""
 "användas för att skapa olika versioner av ditt projekt."
 
 #. (itstool) path: section/title
-#: C/workwithprojects.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:34
 msgid "Undoing and reverting changes"
 msgstr "Ångra och dra tillbaka ändringar"
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:35
 msgid ""
 "To undo a change, simply click on the <gui>Undo</gui> button in the header "
 "bar or press <keyseq><key>Ctrl</key><key>Z</key></keyseq>. In addition to "
@@ -452,7 +509,7 @@ msgstr ""
 "guiseq>."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:37
 msgid ""
 "To redo changes that were undone, click on the <gui>Redo</gui> button in the "
 "header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></"
@@ -463,12 +520,12 @@ msgstr ""
 "keyseq>."
 
 #. (itstool) path: section/title
-#: C/workwithprojects.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:41
 msgid "Editing the project settings"
 msgstr "Redigera projektinställningarna"
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:42
 msgid ""
 "The project settings define mainly how the video appears while you edit the "
 "project. The video resolution and aspect ratio affect the appearance of the "
@@ -486,7 +543,7 @@ msgstr ""
 "gui><gui>Projektinställningar</gui></guiseq>."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:44
 msgid ""
 "When you import the first video file the project settings are automatically "
 "changed to match. See <link xref=\"importing\">Getting media</link> for "
@@ -497,12 +554,12 @@ msgstr ""
 "link> för detaljer."
 
 #. (itstool) path: section/title
-#: C/workwithprojects.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:48
 msgid "Pixel aspect ratio vs display aspect ratio"
 msgstr "Bildförhållande för bildpunkt (pixel) vs bildförhållande för display"
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:49
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:49
 msgid ""
 "Digital images are composed of a grid of <link href=\"http://en.wikipedia."
 "org/wiki/Pixel\">pixels</link>, which may or may not be square. In some "
@@ -521,7 +578,7 @@ msgstr ""
 "matematiska förhållandet för bredd:höjd för hela bilden."
 
 #. (itstool) path: section/p
-#: C/workwithprojects.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:50
 msgid ""
 "In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are "
 "related to each other through video resolution (width and height). Once your "
@@ -535,7 +592,7 @@ msgstr ""
 "eller PAR beroende på vad är mest komfortabel med."
 
 #. (itstool) path: note/p
-#: C/workwithprojects.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/workwithprojects.page:52
 msgid ""
 "You can use the ratios already provided in the combo boxes, or input a "
 "custom aspect ratio in the text entry below (using a syntax such as \"4:3\" "
@@ -546,17 +603,17 @@ msgstr ""
 "\"4:3\" eller \"1.3333\", fastän decimalversionen är mindre precis)."
 
 #. (itstool) path: info/desc
-#: C/splitting.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:18
 msgid "Dividing clips in two parts."
 msgstr "Dela upp klipp i två delar."
 
 #. (itstool) path: page/title
-#: C/splitting.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:25
 msgid "Splitting"
 msgstr "Dela"
 
 #. (itstool) path: page/p
-#: C/splitting.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:26
 msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
@@ -565,7 +622,7 @@ msgstr ""
 "start/slutpunkter."
 
 #. (itstool) path: page/p
-#: C/splitting.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:27
 msgid ""
 "In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that "
 "you do not have to “activate” a particular tool before doing the split "
@@ -582,22 +639,22 @@ msgstr ""
 "(scrub), är delning inte bara snabbt och effektivt utan också väldigt precis."
 
 #. (itstool) path: page/p
-#: C/splitting.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:28
 msgid "For example, to split a single clip:"
 msgstr "Exempelvis, för att dela ett klipp:"
 
 #. (itstool) path: item/p
-#: C/splitting.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:31
 msgid "Click on the clip to select it."
 msgstr "Klicka på klippet för att markera det."
 
 #. (itstool) path: item/p
-#: C/splitting.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:34
 msgid "Reposition the playhead where you want to split (if needed)."
 msgstr "Positionera om uppspelningshuvudet där du vill dela (om det behövs)."
 
 #. (itstool) path: item/p
-#: C/splitting.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:37
 msgid ""
 "Click on the <gui>Split</gui> button on the timeline toolbar or press "
 "<key>S</key>."
@@ -606,7 +663,7 @@ msgstr ""
 "key>."
 
 #. (itstool) path: page/p
-#: C/splitting.page:40
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:40
 msgid ""
 "Only the clips under the playhead can be split, depending on the current "
 "selection:"
@@ -615,7 +672,7 @@ msgstr ""
 "urvalet:"
 
 #. (itstool) path: item/p
-#: C/splitting.page:43
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:43
 msgid ""
 "If clips are selected, only the selected clips under the playhead are split."
 msgstr ""
@@ -623,13 +680,13 @@ msgstr ""
 "uppspelningshuvudet att delas."
 
 #. (itstool) path: item/p
-#: C/splitting.page:46
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:46
 msgid "If the selection is empty, all the clips under the playhead are split."
 msgstr ""
 "Om urvalet är tomt kommer alla klipp under uppspelningshuvudet att delas."
 
 #. (itstool) path: page/p
-#: C/splitting.page:49
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:49
 msgid ""
 "See how to select clips in <link xref=\"selectiongrouping#selection"
 "\">Selection and grouping</link>."
@@ -638,12 +695,12 @@ msgstr ""
 "\">Markering och gruppering</link>."
 
 #. (itstool) path: note/title
-#: C/splitting.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:51
 msgid "Cutting out the middle"
 msgstr "Klippa ut mitten"
 
 #. (itstool) path: note/p
-#: C/splitting.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/splitting.page:52
 msgid ""
 "When you want to cut out a middle section of a clip, split the clip twice on "
 "the positions where the part you want to remove begins and ends. Select the "
@@ -658,23 +715,24 @@ msgstr ""
 "till de fäster samman."
 
 #. (itstool) path: credit/name
-#: C/keyframecurves.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:21
 msgid "Alexandru Băluț"
 msgstr "Alexandru Băluț"
 
 #. (itstool) path: info/desc
-#: C/keyframecurves.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:24
 msgid "Changing properties of a clip over time."
 msgstr "Ändra egenskaper för ett klipp över tid."
 
 #. (itstool) path: page/title
 #. (itstool) path: figure/title
-#: C/keyframecurves.page:31 C/keyframecurves.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:34
 msgid "Keyframe curves"
 msgstr "Nyckelbildskurvor"
 
 #. (itstool) path: page/p
-#: C/keyframecurves.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:32
 msgid ""
 "By using keyframe curves, you can change the value of a property over time, "
 "instead of having a fixed value for the entire duration of a clip. This can "
@@ -691,7 +749,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/keyframecurves.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:35
 msgctxt "_"
 msgid ""
 "external ref='figures/keyframecurves.png' "
@@ -701,12 +759,12 @@ msgstr ""
 "md5='d91b335281ec48ab9f8fade73bf09852'"
 
 #. (itstool) path: page/p
-#: C/keyframecurves.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:37
 msgid "A terminological note:"
 msgstr "Kort angående termer:"
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:40
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:40
 msgid ""
 "<em>Keyframes</em> are the points that are used to determine the property "
 "value at a specific point in time."
@@ -715,7 +773,7 @@ msgstr ""
 "egenskapsvärden vid en specifik tidpunkt."
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:43
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:43
 msgid ""
 "<em>Keyframe curves</em> are the lines connecting the points providing "
 "smooth transitions between them."
@@ -724,7 +782,7 @@ msgstr ""
 "mjuk övergång mellan dem."
 
 #. (itstool) path: page/p
-#: C/keyframecurves.page:46
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:46
 msgid ""
 "By default, the keyframe curves on an audio clip control the volume (on a "
 "scale from 0 to 200%) and the keyframe curves on a video clip control the "
@@ -741,7 +799,7 @@ msgstr ""
 "egenskap för klippen och kan inte tas bort."
 
 #. (itstool) path: note/p
-#: C/keyframecurves.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:48
 msgid ""
 "You can create fade-in and fade-out transitions by controlling opacity and "
 "volume. See an example in the <link xref=\"transitions#fades\">Transitions</"
@@ -752,7 +810,7 @@ msgstr ""
 "\">Övergångar</link>."
 
 #. (itstool) path: page/p
-#: C/keyframecurves.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:50
 msgid ""
 "Besides volume and alpha, you can use keyframes to control effect "
 "properties. See the <link xref=\"usingeffects#keyframes\">Using effects</"
@@ -763,12 +821,12 @@ msgstr ""
 "effekter</link> för detaljer."
 
 #. (itstool) path: section/title
-#: C/keyframecurves.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:52
 msgid "General usage"
 msgstr "Allmän användning"
 
 #. (itstool) path: section/p
-#: C/keyframecurves.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:53
 msgid ""
 "The start and end keyframes are fixed to the start and end points of the "
 "clip and cannot be removed. The curve between these two keyframes is "
@@ -787,28 +845,28 @@ msgstr ""
 "till passande vertikala positioner som representerar deras värden."
 
 #. (itstool) path: section/p
-#: C/keyframecurves.page:54
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:54
 msgid "You can:"
 msgstr "Du kan:"
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:57
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:57
 msgid "Add a new keyframe by clicking on the line."
 msgstr "lägga till en ny nyckelbild genom att klicka på raden."
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:60
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:60
 msgid "Remove a keyframe by double-clicking on it."
 msgstr "Ta bort en nyckelbildruta genom att dubbelklicka på den."
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:63
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:63
 msgid "Adjust the time and value of a keyframe by moving it with the mouse."
 msgstr ""
 "Justera tiden och värdet av en nyckelbild genom att flytta den med musen."
 
 #. (itstool) path: item/p
-#: C/keyframecurves.page:66
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:66
 msgid ""
 "Click-and-drag on a segment of a curve between two keyframes to adjust the "
 "vertical position of the segment."
@@ -817,22 +875,22 @@ msgstr ""
 "justera den vertikala positionen av segmentet."
 
 #. (itstool) path: note/p
-#: C/keyframecurves.page:70
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/keyframecurves.page:70
 msgid "Currently only linear keyframe curves are supported."
 msgstr "För närvarande stöds endast linjära nyckelbilder."
 
 #. (itstool) path: info/desc
-#: C/presets.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:16
 msgid "Using presets in rendering and project settings."
 msgstr "Använda förinställningar vid rendering och projektinställningar."
 
 #. (itstool) path: page/title
-#: C/presets.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:23
 msgid "Presets"
 msgstr "Förinställningar"
 
 #. (itstool) path: page/p
-#: C/presets.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:24
 msgid ""
 "Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> "
 "dialog allow you to save presets for later use. If you often deal with the "
@@ -845,7 +903,7 @@ msgstr ""
 "du vilja skapa anpassade förinställningar."
 
 #. (itstool) path: note/p
-#: C/presets.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:26
 msgid ""
 "In project settings, video presets and audio presets are independent of each "
 "other."
@@ -854,22 +912,23 @@ msgstr ""
 "varandra."
 
 #. (itstool) path: section/title
-#: C/presets.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:29
 msgid "Creating and editing presets"
 msgstr "Skapa och redigera förinställningar"
 
 #. (itstool) path: section/p
-#: C/presets.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:30
 msgid "To create a preset:"
 msgstr "Att skapa en förinställning:"
 
 #. (itstool) path: item/p
-#: C/presets.page:33 C/presets.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:48
 msgid "Change the settings to your liking."
 msgstr "Ändra inställningarna efter ditt tycke."
 
 #. (itstool) path: item/p
-#: C/presets.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:36
 msgid ""
 "At the right of the presets combobox click <guiseq><gui>Menu button</"
 "gui><gui>New</gui></guiseq>. If this option is deactivated, skip to the next "
@@ -880,7 +939,7 @@ msgstr ""
 "inaktiverat, hoppa till nästa steg."
 
 #. (itstool) path: item/p
-#: C/presets.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:39
 msgid ""
 "Give your preset a unique name: click on the combobox to edit the name. When "
 "you're done, press <key>Enter</key>."
@@ -889,18 +948,18 @@ msgstr ""
 "redigera namnet. När du är klar, tryck ned <key>Retur</key>."
 
 #. (itstool) path: section/p
-#: C/presets.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:42
 msgid "To edit a preset:"
 msgstr "Att redigera en förinställning:"
 
 #. (itstool) path: item/p
-#: C/presets.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:45
 msgid "Select your preset in the presets combobox."
 msgstr ""
 "Markera din förinställning i listan kombinationsrutan för förinställningar."
 
 #. (itstool) path: item/p
-#: C/presets.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:51
 msgid ""
 "Click at the right of the presets combobox <guiseq><gui>Menu button</"
 "gui><gui>Save</gui></guiseq>."
@@ -909,7 +968,7 @@ msgstr ""
 "<guiseq><gui>Menyknapp</gui><gui>Spara</gui></guiseq>."
 
 #. (itstool) path: section/p
-#: C/presets.page:54
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:54
 msgid ""
 "To remove a preset, simply select it in the presets combobox and click "
 "<guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>."
@@ -919,12 +978,12 @@ msgstr ""
 "guiseq>."
 
 #. (itstool) path: section/title
-#: C/presets.page:57
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:57
 msgid "Limiting the resolution of a rendering preset"
 msgstr "Begränsa upplösningen för en renderingsförinställning"
 
 #. (itstool) path: section/p
-#: C/presets.page:58
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/presets.page:58
 msgid ""
 "If you want to make a preset with a fixed maximum resolution, you need to "
 "edit the preset file with a text editor. Presets files are typically stored "
@@ -939,7 +998,7 @@ msgstr ""
 "Du kan ändra dessa värden till maximal upplösning för din målenhet."
 
 #. (itstool) path: info/desc
-#: C/transitions.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:18
 msgid ""
 "Applying crossfades, fade-ins, fade-outs and other types of transitions."
 msgstr ""
@@ -947,17 +1006,17 @@ msgstr ""
 "övergångar."
 
 #. (itstool) path: page/title
-#: C/transitions.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:25
 msgid "Transitions"
 msgstr "Övergångar"
 
 #. (itstool) path: section/title
-#: C/transitions.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:27
 msgid "Crossfading clips"
 msgstr "Övertona klipp"
 
 #. (itstool) path: section/p
-#: C/transitions.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:28
 msgid ""
 "To do a crossfade between two clips on the same layer, simply drag one of "
 "the clips onto the other so that it overlaps. The overlapping region will be "
@@ -974,7 +1033,7 @@ msgstr ""
 "se avsnittet <em>Andra typer av övergångar</em> på den här sidan."
 
 #. (itstool) path: note/p
-#: C/transitions.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:30
 msgid ""
 "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
 "which use keyframes to control the opacity of clips. This means that if you "
@@ -988,12 +1047,12 @@ msgstr ""
 "övertoning."
 
 #. (itstool) path: section/title
-#: C/transitions.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:34
 msgid "Other types of transitions"
 msgstr "Andra typer av övergångar"
 
 #. (itstool) path: section/p
-#: C/transitions.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:35
 msgid ""
 "Assuming that you have two overlapping clips in your timeline, you can "
 "achieve other types of transitions by following these steps:"
@@ -1002,22 +1061,22 @@ msgstr ""
 "andra typer av övergångar genom att följa dessa steg:"
 
 #. (itstool) path: item/p
-#: C/transitions.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:38
 msgid "Select the overlapping region by clicking on it."
 msgstr "Markera det överlappade området genom att klicka på det."
 
 #. (itstool) path: item/p
-#: C/transitions.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:41
 msgid "Select the <gui>Transition</gui> tab in the middle pane."
 msgstr "Markera fliken <gui>Övergång</gui> i mittenpanelen."
 
 #. (itstool) path: item/p
-#: C/transitions.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:44
 msgid "Select one of the offered transitions."
 msgstr "Markera en av de erbjudna övergångarna."
 
 #. (itstool) path: section/p
-#: C/transitions.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:47
 msgid ""
 "The transitions can be further adjusted with the following options from the "
 "bottom of the <gui>Transition</gui> tab:"
@@ -1026,7 +1085,7 @@ msgstr ""
 "av fliken <gui>Övergång</gui>:"
 
 #. (itstool) path: item/p
-#: C/transitions.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:50
 msgid ""
 "<em>Normal mode</em> will apply the transition in a linear fashion over the "
 "whole overlapping region. When in normal mode, you can adjust the degree of "
@@ -1037,7 +1096,7 @@ msgstr ""
 "av skärpa/mjukhet av övergången."
 
 #. (itstool) path: item/p
-#: C/transitions.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:53
 msgid ""
 "<em>Loop</em> mode will apply the transition in a circular manner. When in "
 "loop mode, you can adjust the speed with which the transition will repeat "
@@ -1048,7 +1107,7 @@ msgstr ""
 "att repetera sig."
 
 #. (itstool) path: item/p
-#: C/transitions.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:56
 msgid ""
 "In both modes, you can apply the transition in <em>reverse direction</em> by "
 "ticking the corresponding checkbox."
@@ -1057,7 +1116,7 @@ msgstr ""
 "kryssa i motsvarande kryssruta."
 
 #. (itstool) path: note/p
-#: C/transitions.page:60
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:60
 msgid ""
 "Each transition has its name and description. They are displayed when you "
 "hover the cursor over the transition icon. You can also filter the "
@@ -1072,12 +1131,12 @@ msgstr ""
 "söktermer."
 
 #. (itstool) path: section/title
-#: C/transitions.page:64
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:64
 msgid "Fade-ins and fade-outs"
 msgstr "In- och uttoningar"
 
 #. (itstool) path: section/p
-#: C/transitions.page:65
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:65
 msgid ""
 "You can create fade-in and fade-out transitions in single clips by using "
 "keyframes controlling the clip's opacity. For more information on keyframes, "
@@ -1092,24 +1151,12 @@ msgstr ""
 "link>. Följande bilder visar hur man tonar ut ett klipp till svart:"
 
 #. (itstool) path: figure/title
-#: C/transitions.page:67
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:67
 msgid "Keyframe curves controlling the video opacity"
 msgstr "Nyckelbildskurvor kontrollerar videoopaciteten"
 
-#. (itstool) path: figure/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:68
-msgctxt "_"
-msgid ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-msgstr ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-
 #. (itstool) path: figure/desc
-#: C/transitions.page:69
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:68
 msgid ""
 "The default curve is flat indicating the same opacity at any position within "
 "the clip."
@@ -1117,25 +1164,25 @@ msgstr ""
 "Standardkurvan är platt vilket indikerar samma ogenomskinlighet vilken "
 "position som helst i klippet."
 
-#. (itstool) path: figure/title
-#: C/transitions.page:72
-msgid "Adding a new keyframe"
-msgstr "Lägga till en ny nyckelbild"
-
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:73
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:69
 msgctxt "_"
 msgid ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
 msgstr ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+
+#. (itstool) path: figure/title
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:72
+msgid "Adding a new keyframe"
+msgstr "Lägga till en ny nyckelbild"
 
 #. (itstool) path: figure/desc
-#: C/transitions.page:74
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:73
 msgid ""
 "Create a new keyframe by clicking the curve in a position where you want to "
 "start the fade-out."
@@ -1143,30 +1190,42 @@ msgstr ""
 "Skapa en ny nyckelbild genom att klicka på kurvan i en position där du vill "
 "starta uttoningen."
 
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:74
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+msgstr ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+
 #. (itstool) path: figure/title
-#: C/transitions.page:77
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:77
 msgid "Moving the keyframe"
 msgstr "Flytta nyckelbilden"
+
+#. (itstool) path: figure/desc
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:78
+msgid "Click and drag the last keyframe downwards."
+msgstr "Klicka och dra senaste nyckelbilden nedåt."
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:78
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:79
 msgctxt "_"
 msgid ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
 msgstr ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
 
-#. (itstool) path: figure/desc
-#: C/transitions.page:79
-msgid "Click and drag the last keyframe downwards."
-msgstr "Klicka och dra senaste nyckelbilden nedåt."
-
 #. (itstool) path: section/p
-#: C/transitions.page:81
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:81
 msgid ""
 "To achieve a fade-in, simply create a mirroring keyframe curve (new keyframe "
 "in a position where the fade-in should end and the first keyframe dragged "
@@ -1177,7 +1236,7 @@ msgstr ""
 "nyckelbilden dras ner) vid början av klippet."
 
 #. (itstool) path: note/p
-#: C/transitions.page:83
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/transitions.page:83
 msgid ""
 "Fades and crossfading as described here can be applied to both audio and "
 "video clips."
@@ -1186,17 +1245,17 @@ msgstr ""
 "och videoklipp."
 
 #. (itstool) path: info/desc
-#: C/mainwindow.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:16
 msgid "Discover the components of the main window."
 msgstr "Upptäck huvudfönstrets komponenter."
 
 #. (itstool) path: page/title
-#: C/mainwindow.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:23
 msgid "The main window"
 msgstr "Huvudfönstret"
 
 #. (itstool) path: page/p
-#: C/mainwindow.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:24
 msgid ""
 "The main window, as the name implies, is the window containing the main "
 "components of the <app>Pitivi</app> user interface, namely: the header bar, "
@@ -1213,7 +1272,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:25
 msgctxt "_"
 msgid ""
 "external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
@@ -1221,54 +1280,57 @@ msgstr ""
 "external ref='figures/mainwindow.jpg' md5='741256057cc4a37550ce853bb07f2b9d'"
 
 #. (itstool) path: page/p
-#: C/mainwindow.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:26
 msgid "In the figure above, the following areas can be observed:"
 msgstr "I figuren ovan kan följande områden ses:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:29
 msgid "Header bar and main toolbar buttons"
 msgstr "Rubrikradens och verktygsfältets huvudknappar"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:32
 msgid "Main menu button"
 msgstr "Huvudmenyknappen"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:35
 msgid "Primary tabs: media library and effects library"
 msgstr "Primära flikar: mediabibliotek och effektbibliotek"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:38
 msgid "Contextual tabs: clip properties, transitions, titles"
 msgstr "Kontextflikar: klippegenskaper, övergångar, titlar"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:41
 msgid "Viewer"
 msgstr "Visare"
 
 #. (itstool) path: item/p
 #. (itstool) path: section/title
-#: C/mainwindow.page:44 C/mainwindow.page:66
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:66
 msgid "Ruler"
 msgstr "Linjal"
 
 #. (itstool) path: item/p
 #. (itstool) path: section/title
-#: C/mainwindow.page:47 C/mainwindow.page:77 C/cheatsheet.page:61
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:77
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:61
 msgid "Timeline"
 msgstr "Tidslinje"
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:51
 msgid "Resizing the components of the main window"
 msgstr "Ändra storlek på huvudfönstrets komponenter"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:52
 msgid ""
 "The spaces between components can be clicked and dragged to proportionally "
 "resize the respective adjacent components."
@@ -1277,12 +1339,12 @@ msgstr ""
 "ändra storlek på respektive närliggande komponenter."
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:55
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:55
 msgid "Hovering for more information"
 msgstr "Hovra för mer information"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:56
 msgid ""
 "Hovering the mouse cursor over an element in the main window usually reveals "
 "an information tooltip regarding its function."
@@ -1291,12 +1353,12 @@ msgstr ""
 "inforuta om dess funktion."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:59
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:59
 msgid "Header bar"
 msgstr "Rubrikrad"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:60
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:60
 msgid ""
 "The header bar is a place where basic functions such as <gui>Undo</gui>, "
 "<gui>Redo</gui>, <gui>Save</gui>, or <gui>Render</gui> can be directly "
@@ -1311,7 +1373,7 @@ msgstr ""
 "<gui>Projektinställningar</gui> eller <gui>Inställningar</gui>."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:62
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:62
 msgid ""
 "The <gui>menu button</gui>'s contents can be accessed by pressing <key>F10</"
 "key>."
@@ -1320,7 +1382,7 @@ msgstr ""
 "key>."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:67
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:67
 msgid ""
 "The ruler plays a crucial role in your interaction with the timeline. First, "
 "it represents a time scale providing time measurements (in seconds) for "
@@ -1341,7 +1403,7 @@ msgstr ""
 "\"movearoundtimeline\">scrubbing</link> för fler detaljer."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:68
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:68
 msgid "The current playhead position is indicated by a red vertical line:"
 msgstr ""
 "Uppspelningshuvudets nuvarande position indikeras med en röd vertikal linje:"
@@ -1351,14 +1413,14 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/mainwindow.page:70
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:70
 msgctxt "_"
 msgid "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 msgstr ""
 "external ref='figures/ruler.png' md5='2d2f2261c4bdb034be332fbcea37f273'"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:73
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:73
 msgid ""
 "When zoomed in, frames are visually represented as alternating light and "
 "dark areas in the bottom part of the ruler. Hovering the mouse cursor over "
@@ -1373,7 +1435,7 @@ msgstr ""
 "inställningar."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:78
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:78
 msgid ""
 "The timeline is the core user interface component that you will use for "
 "editing. Vertically, it is divided into layers that can be filled with audio "
@@ -1390,7 +1452,7 @@ msgstr ""
 "dimensionen av tidslinjen."
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:79
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:79
 msgid ""
 "See the <link xref=\"layers\">Understanding layers</link> and <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
@@ -1401,12 +1463,12 @@ msgstr ""
 "hur man arbetar med tidslinjen."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:82
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:82
 msgid "Timeline toolbar"
 msgstr "Tidslinjeverktygsfält"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:83
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:83
 msgid ""
 "The timeline toolbar is located at the right edge of the timeline. It "
 "contains basic actions for editing in timeline:"
@@ -1415,42 +1477,42 @@ msgstr ""
 "innehåller grundläggande åtgärder för att redigera i tidslinjen:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:86
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:86
 msgid "Split clip at playhead position"
 msgstr "Dela klipp vid uppspelningshuvudpositionen"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:89
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:89
 msgid "Delete selected"
 msgstr "Ta bort markerade"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:92
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:92
 msgid "Group clips"
 msgstr "Gruppera klipp"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:95
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:95
 msgid "Ungroup clips"
 msgstr "Avgruppera klipp"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:98
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:98
 msgid "Copy"
 msgstr "Kopiera"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:101
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:101
 msgid "Paste"
 msgstr "Klistra in"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:105
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:105
 msgid "Toggle gapless mode"
 msgstr "Växla mellanrumslöst läge"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:109
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:109
 msgid ""
 "Note that most of the actions become available only once a clip is selected "
 "(see <link xref=\"selectiongrouping\">Selection and grouping</link> for more "
@@ -1463,12 +1525,12 @@ msgstr ""
 "visas den skuggad (vilket indikerar dess otillgänglighet)."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:113
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:113
 msgid "Playback toolbar"
 msgstr "Verktygsfält för uppspelning"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:114
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:114
 msgid ""
 "This toolbar, located below the previewer, contains buttons controlling the "
 "playback of the timeline. Options provided by the toolbar are the following:"
@@ -1477,32 +1539,32 @@ msgstr ""
 "som kontrollerar tidslinjens uppspelning. Alternativ i verktygsfältet är:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:117
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:117
 msgid "Play/Pause"
 msgstr "Spela/Pausa"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:120
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:120
 msgid "Go forward one second"
 msgstr "Gå framåt en sekund"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:123
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:123
 msgid "Go back one second"
 msgstr "Gå bakåt en sekund"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:126
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:126
 msgid "Go to the end of the timeline"
 msgstr "Gå till slutet på tidslinjen"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:129
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:129
 msgid "Go to the beginning of the timeline"
 msgstr "Gå till början av tidslinjen"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:132
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:132
 msgid ""
 "For more information on how to move on the timeline, see the <em>Moving the "
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
@@ -1513,39 +1575,39 @@ msgstr ""
 "\"movearoundtimeline\">Flytta runt tidslinjen</link>."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:135
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:135
 msgid "Previewer"
 msgstr "Förhandsvisa"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:136
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:136
 msgid "The previewer displays:"
 msgstr "Förhandsvisningen visar:"
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:139
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:139
 msgid "The video frame at the current position of the playhead."
 msgstr "Videobildrutan vid uppspelningshuvudets aktuella närvarande position."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:142
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:142
 msgid "Your project's video when playing back."
 msgstr "Ditt projekts video vid uppspelning."
 
 #. (itstool) path: item/p
-#: C/mainwindow.page:145
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:145
 msgid "A <em>live preview</em> when trimming a clip's beginning/end point."
 msgstr ""
 "<em>live-förhandsgranskning</em> vid trimning av ett klipps start/"
 "slutpunkter."
 
 #. (itstool) path: note/title
-#: C/mainwindow.page:149
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:149
 msgid "Detaching the previewer into a separate window"
 msgstr "Koppla från förhandsvisaren till ett separat fönster"
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:150
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:150
 msgid ""
 "You can detach the previewer into a separate window by clicking the "
 "<gui>Detach the viewer</gui> button in the <gui>Playback toolbar</gui>. From "
@@ -1561,19 +1623,19 @@ msgstr ""
 "förhandsvisaren igen genom att stänga det separata fönstret."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:153
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:153
 msgid ""
 "<app>Pitivi</app> inhibits the screensaver while playing the video preview."
 msgstr ""
 "<app>Pitivi</app> förhindrar skärmsläckaren vid förhandsvisning av video."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:157
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:157
 msgid "Left pane"
 msgstr "Vänster panel"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:158
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:158
 msgid ""
 "The left pane contains media and effect libraries. You can switch between "
 "them by selecting the appropriate tab. The <gui>Media Library</gui> displays "
@@ -1588,7 +1650,7 @@ msgstr ""
 "tillgängliga för klippen."
 
 #. (itstool) path: note/p
-#: C/mainwindow.page:160
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:160
 msgid ""
 "You can search the libraries by using the text box in the header of each "
 "library."
@@ -1597,12 +1659,12 @@ msgstr ""
 "bibliotek."
 
 #. (itstool) path: section/title
-#: C/mainwindow.page:164
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:164
 msgid "Middle pane"
 msgstr "Mittenpanel"
 
 #. (itstool) path: section/p
-#: C/mainwindow.page:165
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/mainwindow.page:165
 msgid ""
 "The middle pane contains <gui>Clip configuration</gui>, <gui>Transitions</"
 "gui> and <gui>Title editor</gui>. You can switch between them by selecting "
@@ -1622,29 +1684,30 @@ msgstr ""
 "till titlar till befintliga."
 
 #. (itstool) path: credit/name
-#: C/movearoundtimeline.page:15 C/medialibrary.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:11
 msgid "Brian Grohe"
 msgstr "Brian Grohe"
 
 #. (itstool) path: info/desc
-#: C/movearoundtimeline.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:22
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
 msgstr ""
 "Flytta runt uppspelningshuvudet, använd zoomfunktionen, rulla och "
 "snabbgranska (scrub)."
 
 #. (itstool) path: page/title
-#: C/movearoundtimeline.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:29
 msgid "Moving around the timeline"
 msgstr "Flytta runt tidslinjen"
 
 #. (itstool) path: section/title
-#: C/movearoundtimeline.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:31
 msgid "Activating the timeline toolbar"
 msgstr "Aktivera tidslinjens verktygsfält"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:32
 msgid ""
 "The timeline toolbar contains many tools, which become active once a clip is "
 "selected in the timeline. To select a clip, simply click on the desired clip "
@@ -1657,17 +1720,17 @@ msgstr ""
 "objekten i tidslinjens verktygsfält blir klickbara."
 
 #. (itstool) path: section/title
-#: C/movearoundtimeline.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:35
 msgid "Scrolling"
 msgstr "Rulla"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:36
 msgid "You can scroll by:"
 msgstr "Du kan rulla genom att:"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:39
 msgid ""
 "Using the mouse wheel anywhere over the timeline to scroll horizontally, or "
 "hold down the <key>Shift</key> key while using the mouse wheel to scroll the "
@@ -1678,7 +1741,7 @@ msgstr ""
 "rulla tidslinjens lager vertikalt"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:42
 msgid ""
 "Clicking anywhere over the timeline with the middle button and dragging the "
 "timeline"
@@ -1686,18 +1749,18 @@ msgstr ""
 "Klicka var som helst över tidslinjen med mittenknappen och dra i tidslinjen"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:45
 msgid "Using the scrollbars located on the right and bottom of the timeline"
 msgstr ""
 "Använd rullningslisterna placerade till höger och längst ned i tidslinjen"
 
 #. (itstool) path: section/title
-#: C/movearoundtimeline.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:50
 msgid "Zooming"
 msgstr "Zooma"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:51
 msgid ""
 "Zooming directly affects your editing accuracy and your ability to move "
 "quickly along the timeline:"
@@ -1706,7 +1769,7 @@ msgstr ""
 "flytta runt tidslinjen:"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:54
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:54
 msgid ""
 "When zooming in, video clips display more thumbnails and audio clips display "
 "increasingly detailed waveforms, allowing you to do precise edits."
@@ -1716,7 +1779,7 @@ msgstr ""
 "redigeringar."
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:57
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:57
 msgid ""
 "Zooming out allows you to scroll faster along the timeline. Zoom can thus be "
 "used in conjunction with scrolling to move quickly between distant points of "
@@ -1727,12 +1790,12 @@ msgstr ""
 "avlägsna punkter i ditt projekts kronologi."
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:60
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:60
 msgid "You can zoom in and out by:"
 msgstr "Du kan zooma in och ut genom att:"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:63
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:63
 msgid ""
 "Holding the <key>Ctrl</key> key while using the mousewheel over the "
 "timeline, to keep the timeline point where the mouse cursor is in place if "
@@ -1742,7 +1805,7 @@ msgstr ""
 "behålla tidslinjepunkten där musmarkören är om möjligt"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:66
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:66
 msgid ""
 "Holding the <key>Alt</key> key while using the mousewheel over the timeline, "
 "to keep the playhead in view"
@@ -1751,12 +1814,12 @@ msgstr ""
 "behålla uppspelningshuvudet i vyn"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:69
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:69
 msgid "Dragging the zoom slider on the left of the ruler"
 msgstr "Att dra skjutreglaget för zoom till vänster om linjalen"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:72
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:72
 msgid ""
 "Using keyboard shortcuts such as <keyseq><key>Ctrl</key><key>-</key></"
 "keyseq> to zoom out or <keyseq><key>Ctrl</key><key>=</key></keyseq> "
@@ -1769,7 +1832,7 @@ msgstr ""
 "för att zooma in"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:75
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:75
 msgid ""
 "To get a global overview of your timeline, you may click the <gui>Zoom</gui> "
 "button on the left of the zoom slider. Another way to do this is by pressing "
@@ -1781,12 +1844,12 @@ msgstr ""
 "keyseq>."
 
 #. (itstool) path: note/title
-#: C/movearoundtimeline.page:77
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:77
 msgid "<em>Warping</em> between zoom levels"
 msgstr "<em>Flytta</em> mellan zoomnivåer"
 
 #. (itstool) path: note/p
-#: C/movearoundtimeline.page:78
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:78
 msgid ""
 "Using your mouse, you can also <em>warp</em> instantly from any zoom level "
 "to another in a single click. To do that, click anywhere on the zoom slider."
@@ -1796,12 +1859,12 @@ msgstr ""
 "klicka vara som helst på zoomskjutreglaget."
 
 #. (itstool) path: section/title
-#: C/movearoundtimeline.page:82
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:82
 msgid "Moving the playhead"
 msgstr "Att flytta uppspelningshuvudet"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:83
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:83
 msgid ""
 "You can change the position of the playhead by clicking with the right mouse "
 "button anywhere on the ruler or on the timeline."
@@ -1810,12 +1873,12 @@ msgstr ""
 "linjalen eller tidslinjen med höger musknapp."
 
 #. (itstool) path: note/title
-#: C/movearoundtimeline.page:85
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:85
 msgid "Jumping to an exact position"
 msgstr "Hoppa till en exakt position"
 
 #. (itstool) path: note/p
-#: C/movearoundtimeline.page:86
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:86
 msgid ""
 "You can jump to an exact position in the timeline by editing the time value "
 "shown in the playback toolbar (see description of <link xref=\"mainwindow"
@@ -1835,24 +1898,24 @@ msgstr ""
 "önskad bildruta."
 
 #. (itstool) path: section/title
-#: C/movearoundtimeline.page:90
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:90
 msgid "Scrubbing"
 msgstr "Scrubbing"
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:91
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:91
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
 "<em>Scrubbing</em> är ett sätt att flytta uppspelningshuvudet som låter dig:"
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:94
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:94
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
 msgstr "Söka efter en specifik position i tiden genom ungefärlighet/testa."
 
 #. (itstool) path: item/p
-#: C/movearoundtimeline.page:97
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:97
 msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
@@ -1861,7 +1924,7 @@ msgstr ""
 "framåt och bakåt i tiden."
 
 #. (itstool) path: section/p
-#: C/movearoundtimeline.page:100
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/movearoundtimeline.page:100
 msgid ""
 "To scrub, click on the ruler with the right mouse button and move the mouse "
 "with the button still held down."
@@ -1870,28 +1933,28 @@ msgstr ""
 "flytta musen med knappen fortfarande nedtryckt."
 
 #. (itstool) path: info/desc
-#: C/about.page:14
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:14
 msgid "Current state of this user manual and call for participation."
 msgstr "Aktuellt tillstånd för användarguiden och upprop för medverkan."
 
 #. (itstool) path: page/title
-#: C/about.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:21
 msgid "About this manual"
 msgstr "Om denna handbok"
 
 #. (itstool) path: page/p
-#: C/about.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:22
 msgid "This user manual is written and maintained by Jean-François Fortin Tam."
 msgstr ""
 "Denna användarhandbok är skriven och underhållen av Jean-François Fortin Tam."
 
 #. (itstool) path: section/title
-#: C/about.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:24
 msgid "Work in progress"
 msgstr "Pågående arbete"
 
 #. (itstool) path: section/p
-#: C/about.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:25
 msgid ""
 "You may encounter unwritten portions due to features that have not yet been "
 "implemented in Pitivi at the time of writing."
@@ -1900,7 +1963,7 @@ msgstr ""
 "implementerats i Pitivi."
 
 #. (itstool) path: section/p
-#: C/about.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:26
 msgid ""
 "You may also encounter smaller areas which have been documented in this "
 "manual but have not been implemented in Pitivi – those are areas where the "
@@ -1911,35 +1974,33 @@ msgstr ""
 "användarinteraktion är ganska liten."
 
 #. (itstool) path: section/title
-#: C/about.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:29
 msgid "Patches welcome"
 msgstr "Programfixar välkomnas"
 
 #. (itstool) path: section/p
-#: C/about.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/about.page:30
 msgid ""
 "If you happen to find errors, missing information or unclear passages in "
 "this manual, please feel free to submit corrections. You can find contact "
 "information on <link href=\"http://jeff.ecchi.ca/\">my personal website</"
-"link>. You can also <link href=\"https://phabricator.freedesktop.org/"
-"maniphest/task/create/?projects=pitivi,pitivi_documentation\">file bugs in "
-"our bug tracker</link>."
+"link>. You can also <link href=\"https://gitlab.gnome.org/GNOME/pitivi/"
+"issues?label_name%5B%5D=8.+User+Docs\">file bugs in our bug tracker</link>."
 msgstr ""
 "Om du råkar hitta fel, saknad information eller oklara stycken i denna "
 "handbok, skicka gärna in rättningar. Du hittar kontaktinformationen på <link "
 "href=\"http://jeff.ecchi.ca/\">min personliga webbplats</link>. Du kan också "
-"<link href=\"https://phabricator.freedesktop.org/maniphest/task/create/?"
-"projects=pitivi,pitivi_documentation\">skicka in felrapporter till vårt "
-"felrapporteringssystem</link>."
+"<link href=\"https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=8."
+"+User+Docs\">skicka in felrapporter till vårt felrapporteringssystem</link>."
 
 #. (itstool) path: info/title
-#: C/index.page:4
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:4
 msgctxt "link"
 msgid "Pitivi Quick Start Manual"
 msgstr "Pitivi snabbstartshandbok"
 
 #. (itstool) path: info/title
-#: C/index.page:5
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:5
 msgctxt "text"
 msgid "Pitivi Quick Start Manual"
 msgstr "Pitivi snabbstartshandbok"
@@ -1949,13 +2010,13 @@ msgstr "Pitivi snabbstartshandbok"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/index.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:19
 msgctxt "_"
 msgid "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 msgstr "external ref='figures/logo.png' md5='fe64746d2b62fdda1bf1be2c930d3796'"
 
 #. (itstool) path: page/title
-#: C/index.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:19
 msgid ""
 "<media type=\"image\" mime=\"image/png\" src=\"figures/logo.png\">Pitivi "
 "logo</media> Pitivi Video Editor"
@@ -1964,7 +2025,7 @@ msgstr ""
 "logo</media> Pitivi videoredigerare"
 
 #. (itstool) path: page/p
-#: C/index.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:22
 msgid ""
 "Built upon the <link href=\"http://en.wikipedia.org/wiki/GStreamer"
 "\"><app>GStreamer</app></link> multimedia framework, <app>Pitivi</app> aims "
@@ -1979,7 +2040,7 @@ msgstr ""
 "amatörer och professionella."
 
 #. (itstool) path: page/p
-#: C/index.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:23
 msgid ""
 "This guide is intended to help you grasp the concepts behind its design and "
 "get productive quickly."
@@ -1988,42 +2049,42 @@ msgstr ""
 "design samt att få dig produktiv snabbt."
 
 #. (itstool) path: section/title
-#: C/index.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:25
 msgid "Introduction"
 msgstr "Introduktion"
 
 #. (itstool) path: section/title
-#: C/index.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:28
 msgid "Getting Started"
 msgstr "Komma igång"
 
 #. (itstool) path: section/title
-#: C/index.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:31
 msgid "Basic Editing with the Timeline"
 msgstr "Grundläggande redigering med tidslinjen"
 
 #. (itstool) path: section/title
-#: C/index.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:34
 msgid "Effects and Transitions"
 msgstr "Effekter och övergångar"
 
 #. (itstool) path: section/title
-#: C/index.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/index.page:37
 msgid "Exporting Your Finished Movie"
 msgstr "Export av din färdiga film"
 
 #. (itstool) path: info/desc
-#: C/sysreq.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:18
 msgid "What kind of hardware is needed to do video editing?"
 msgstr "Vilken typ av maskinvara behövs för att redigera video?"
 
 #. (itstool) path: page/title
-#: C/sysreq.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:25
 msgid "System requirements"
 msgstr "Systemkrav"
 
 #. (itstool) path: page/p
-#: C/sysreq.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:26
 msgid ""
 "In terms of hardware, video editing typically requires a powerful computer, "
 "depending on the type of video you are editing. While the processing power "
@@ -2046,27 +2107,27 @@ msgstr ""
 "fördröjningar."
 
 #. (itstool) path: page/p
-#: C/sysreq.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:27
 msgid "Here are some general hardware recommendations:"
 msgstr "Här är några allmänna maskinvarurekommendationer:"
 
 #. (itstool) path: item/p
-#: C/sysreq.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:30
 msgid "Modern quad core CPU"
 msgstr "Modern quad core-processor"
 
 #. (itstool) path: item/p
-#: C/sysreq.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:33
 msgid "Solid state drive"
 msgstr "Solid state drive"
 
 #. (itstool) path: item/p
-#: C/sysreq.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:36
 msgid "Intel graphic cards tend to work without problems"
 msgstr "Intel-grafikkort tenderar att fungera utan problem"
 
 #. (itstool) path: item/p
-#: C/sysreq.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:39
 msgid ""
 "Full HD (1920x1080) capable monitor (resolutions below 1024x768 are not "
 "supported)"
@@ -2074,7 +2135,7 @@ msgstr ""
 "Full HD (1920x1080)-kapabel skärm (upplösningar under 1024x768 stöds inte)"
 
 #. (itstool) path: page/p
-#: C/sysreq.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:42
 msgid ""
 "It is possible, however, to use low-quality versions of your footage during "
 "editing and use the high-quality versions when rendering the final output, "
@@ -2089,7 +2150,7 @@ msgstr ""
 "tillgänglig i <app>Pitivi</app>."
 
 #. (itstool) path: note/p
-#: C/sysreq.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:44
 msgid ""
 "You can track the state of proxy editing in <app>Pitivi</app> through <link "
 "href=\"https://phabricator.freedesktop.org/T2455\">task T2455</link>."
@@ -2098,7 +2159,7 @@ msgstr ""
 "\"https://phabricator.freedesktop.org/T2455\">ärende T2455</link>."
 
 #. (itstool) path: page/p
-#: C/sysreq.page:46
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/sysreq.page:46
 msgid ""
 "Software requirements are covered in <link xref=\"gstreamer\">Gstreamer and "
 "compatibility</link> and <link xref=\"effects\">Introduction to effects</"
@@ -2109,7 +2170,7 @@ msgstr ""
 "effekter</link>."
 
 #. (itstool) path: info/desc
-#: C/codecscontainers.page:17
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:17
 msgid ""
 "What is the difference between OGG and Vorbis? AVI and DivX? x264 and H.264? "
 "Learn about codecs and container formats here."
@@ -2118,12 +2179,12 @@ msgstr ""
 "dig mer om kodekar och behållarformat här."
 
 #. (itstool) path: page/title
-#: C/codecscontainers.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:19
 msgid "Understanding codecs and containers"
 msgstr "Förstå kodekar och behållare"
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:20
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:20
 msgid ""
 "The distinction between codecs and container file formats is often "
 "ambiguous. This is in part due to the general lack of standardization, "
@@ -2143,7 +2204,7 @@ msgstr ""
 "link> och <link href=\"http://en.wikipedia.org/wiki/Codec\">kodekar</link>."
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:21
 msgid ""
 "<em>Container</em> is what we typically associate with the file format. "
 "Containers \"contain\" the various components of a video: the stream of "
@@ -2158,7 +2219,7 @@ msgstr ""
 "är OGG, Matroska, AVI, MPEG."
 
 #. (itstool) path: page/p
-#: C/codecscontainers.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:22
 msgid ""
 "<em>Codecs</em> are ways of \"coding\" and \"decoding\" streams. Their job "
 "is typically to compress data (and decompress it when playing it back) so "
@@ -2175,7 +2236,7 @@ msgstr ""
 "rätt situation är nästan en konstform i sig."
 
 #. (itstool) path: figure/title
-#: C/codecscontainers.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:24
 msgid "The relationship between containers and codecs"
 msgstr "Relationen mellan behållare och kodekar"
 
@@ -2184,7 +2245,7 @@ msgstr "Relationen mellan behållare och kodekar"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/codecscontainers.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/codecscontainers.page:25
 msgctxt "_"
 msgid ""
 "external ref='figures/codecscontainers.jpg' "
@@ -2194,17 +2255,17 @@ msgstr ""
 "md5='e43e6a92cda311d0cd8c24fb0df67a17'"
 
 #. (itstool) path: info/desc
-#: C/license.page:6
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:6
 msgid "Legal information."
 msgstr "Juridisk information."
 
 #. (itstool) path: page/title
-#: C/license.page:8
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:8
 msgid "License"
 msgstr "Licens"
 
 #. (itstool) path: page/p
-#: C/license.page:9
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:9
 msgid ""
 "This work is distributed under a CreativeCommons Attribution-Share Alike 3.0 "
 "Unported license."
@@ -2213,42 +2274,42 @@ msgstr ""
 "Alike 3.0 Unported license."
 
 #. (itstool) path: page/p
-#: C/license.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:16
 msgid "You are free:"
 msgstr "Du har rätt:"
 
 #. (itstool) path: item/title
-#: C/license.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:21
 msgid "<em>To share</em>"
 msgstr "<em>Att dela</em>"
 
 #. (itstool) path: item/p
-#: C/license.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:24
 msgid "To copy, distribute and transmit the work."
 msgstr "Att kopiera, distribuera och vidarebefordra."
 
 #. (itstool) path: item/title
-#: C/license.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:27
 msgid "<em>To remix</em>"
 msgstr "<em>Att remixa</em>"
 
 #. (itstool) path: item/p
-#: C/license.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:30
 msgid "To adapt the work."
 msgstr "Att anpassa programmet."
 
 #. (itstool) path: page/p
-#: C/license.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:33
 msgid "Under the following conditions:"
 msgstr "Under följande förhållanden:"
 
 #. (itstool) path: item/title
-#: C/license.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:36
 msgid "<em>Attribution</em>"
 msgstr "<em>Erkännande</em>"
 
 #. (itstool) path: item/p
-#: C/license.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:39
 msgid ""
 "You must attribute the work in the manner specified by the author or "
 "licensor (but not in any way that suggests that they endorse you or your use "
@@ -2259,12 +2320,12 @@ msgstr ""
 "rekommenderar din användning av verket)."
 
 #. (itstool) path: item/title
-#: C/license.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:42
 msgid "<em>Share Alike</em>"
 msgstr "<em>Dela vidare</em>"
 
 #. (itstool) path: item/p
-#: C/license.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:45
 msgid ""
 "If you alter, transform, or build upon this work, you may distribute the "
 "resulting work only under the same, similar or a compatible license."
@@ -2273,7 +2334,7 @@ msgstr ""
 "resultatet endast under samma, eller liknande eller en kompatibel licens."
 
 #. (itstool) path: page/p
-#: C/license.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:48
 msgid ""
 "For the full text of the license, see the <link href=\"http://"
 "creativecommons.org/licenses/by-sa/3.0/legalcode\">CreativeCommons website</"
@@ -2286,7 +2347,7 @@ msgstr ""
 "sa/3.0/\">Commons Deed</link>."
 
 #. (itstool) path: page/p
-#: C/license.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/license.page:51
 msgid ""
 "For the license of Pitivi itself, see the <link href=\"http://www.gnu.org/"
 "licenses/lgpl-2.1.html\">GNU Lesser General Public License</link>."
@@ -2295,7 +2356,7 @@ msgstr ""
 "lgpl-2.1.html\">GNU Lesser General Public License</link>."
 
 #. (itstool) path: info/desc
-#: C/gstreamer.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:18
 msgid ""
 "Ensuring you have the proper multimedia codecs and plugins installed for "
 "maximum compatibility."
@@ -2304,12 +2365,12 @@ msgstr ""
 "installerade för högsta kompatibilitet."
 
 #. (itstool) path: page/title
-#: C/gstreamer.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:25
 msgid "Gstreamer and compatibility"
 msgstr "GStreamer och kompatibilitet"
 
 #. (itstool) path: page/p
-#: C/gstreamer.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:26
 msgid ""
 "A great strength of <app>Pitivi</app> lies in the fact that it uses the "
 "<app>GStreamer</app> multimedia framework. <app>GStreamer</app> is used by "
@@ -2322,12 +2383,12 @@ msgstr ""
 "arkitekturer."
 
 #. (itstool) path: page/p
-#: C/gstreamer.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:27
 msgid "For <app>Pitivi</app> users, this essentially means two things:"
 msgstr "För <app>Pitivi</app>-användare betyder detta egentligen två saker:"
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:30
 msgid ""
 "You can, in theory, import pretty much any media file supported by "
 "<app>GStreamer</app> (see the sections below for more details)."
@@ -2336,7 +2397,7 @@ msgstr ""
 "app> (se avsnittet nedan för fler detaljer)."
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:33
 msgid ""
 "You can render your projects using any supported container and codec "
 "combination from <app>GStreamer</app>."
@@ -2345,7 +2406,7 @@ msgstr ""
 "som stöds av <app>GStreamer</app>."
 
 #. (itstool) path: note/p
-#: C/gstreamer.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:37
 msgid ""
 "To maximize <app>Pitivi</app>'s capabilities and reduce the possibilities of "
 "bugs, a very recent version of <app>GStreamer</app> is recommended. This is "
@@ -2360,12 +2421,12 @@ msgstr ""
 "app>."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:40
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:40
 msgid "A word about editing-friendly codecs"
 msgstr "Kort om redigeringsvänliga kodekar"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:41
 msgid ""
 "Some formats, like <em>MPEG</em>, are oriented towards playback only, and do "
 "not compress each frame independently. While it is the goal of <app>Pitivi</"
@@ -2380,12 +2441,12 @@ msgstr ""
 "video (som <em>MJPG</em> eller <em>DV</em>)."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:44
 msgid "The Good, the Bad and the Ugly"
 msgstr "Det goda, det onda och det fula"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:45
 msgid ""
 "<app>GStreamer</app> plugins come into three categories: good, bad and ugly. "
 "You may need to install plugins from any category to ensure compatibility "
@@ -2404,7 +2465,7 @@ msgstr ""
 "freedesktop.org/documentation/plugins.html\">Gstreamers webbplats</link>."
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:48
 msgid ""
 "The \"Good\" plugins are high quality plugins under the LGPL license. These "
 "plugins are considered safe and recommended at any time. To install them, "
@@ -2417,7 +2478,7 @@ msgstr ""
 "distributions förråd."
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:51
 msgid ""
 "The \"Bad\" plugins are plugins whose code quality is not good enough, or "
 "are not considered tested well enough. The licensing may or may not be LGPL. "
@@ -2429,7 +2490,7 @@ msgstr ""
 "innehållandes gstreamer plugins bad i din distributions förråd."
 
 #. (itstool) path: item/p
-#: C/gstreamer.page:54
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:54
 msgid ""
 "The \"Ugly\" plugins are good quality plugins whose license is not LGPL or "
 "with licensing issues. To install them, search for packages containing "
@@ -2440,7 +2501,7 @@ msgstr ""
 "gstreamer plugins ugly i din distributions förråd."
 
 #. (itstool) path: note/p
-#: C/gstreamer.page:58
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:58
 msgid ""
 "In addition to the Good, Bad and Ugly plugins, you may want to install the "
 "<em>gstreamer-ffmpeg</em> package to have access to ffmpeg's set of codecs."
@@ -2449,12 +2510,12 @@ msgstr ""
 "<em>gstreamer-ffmpeg</em>-paketet för att få åtkomst till ffmpegs kodekar."
 
 #. (itstool) path: section/title
-#: C/gstreamer.page:62
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:62
 msgid "Image file formats"
 msgstr "Bildfilformat"
 
 #. (itstool) path: section/p
-#: C/gstreamer.page:63
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/gstreamer.page:63
 msgid ""
 "While it is not feasible to list every possible combination of supported "
 "video or audio formats, it is however possible to list the static image "
@@ -2465,12 +2526,12 @@ msgstr ""
 "bildformat som kan importeras: JPEG, PNG, JPEG 2000, PNM och SVG."
 
 #. (itstool) path: page/title
-#: C/savescreenshot.page:14
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/savescreenshot.page:14
 msgid "Saving a snapshot of the current frame"
 msgstr "Spara en ögonblicksbild av aktuell bildruta"
 
 #. (itstool) path: page/p
-#: C/savescreenshot.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/savescreenshot.page:15
 msgid ""
 "You can use <guiseq><gui>Menu button</gui><gui>Export current frame...</"
 "gui></guiseq> to save a copy of the current frame as an image file."
@@ -2479,7 +2540,7 @@ msgstr ""
 "</gui></guiseq> för att spara en kopia av aktuell bildruta som en bildfil."
 
 #. (itstool) path: page/p
-#: C/savescreenshot.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/savescreenshot.page:16
 msgid ""
 "Currently, PNG and JPEG are supported as file formats. The image resolution "
 "will match the project settings and any effect or transformation will also "
@@ -2490,7 +2551,7 @@ msgstr ""
 "också att tillämpas på slutbilden."
 
 #. (itstool) path: info/desc
-#: C/importingmpegts.page:11
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:11
 msgid ""
 "How to convert .mts and .m2ts files to a format that can be parsed by "
 "GStreamer and Pitivi."
@@ -2499,12 +2560,12 @@ msgstr ""
 "GStreamer och Pitivi."
 
 #. (itstool) path: page/title
-#: C/importingmpegts.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:19
 msgid "Dealing with AVCHD / MPEG-TS files"
 msgstr "Att hantera AVCHD / MPEG-TS-filer"
 
 #. (itstool) path: page/p
-#: C/importingmpegts.page:20
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:20
 msgid ""
 "At the time being, MPEG Transport Stream files (usually with file extensions "
 "such as .mts, .m2ts and sometimes .mpg or .mpeg), such as those used by some "
@@ -2521,28 +2582,28 @@ msgstr ""
 "behållare kan du använda följande kommando:"
 
 #. (itstool) path: page/code
-#: C/importingmpegts.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importingmpegts.page:21
 #, no-wrap
 msgid "ffmpeg -i your_clip.MTS -vcodec copy -acodec copy -sn test.mp4"
 msgstr "ffmpeg -i ditt_klipp.MTS -vcodec copy -acodec copy -sn test.mp4"
 
 #. (itstool) path: info/desc
-#: C/usingeffects.page:14
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:14
 msgid "Configuring effects and using Effect Library."
 msgstr "Konfigurera effekter och att använda effektbiblioteket."
 
 #. (itstool) path: page/title
-#: C/usingeffects.page:19
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:19
 msgid "Using effects"
 msgstr "Använda effekter"
 
 #. (itstool) path: section/title
-#: C/usingeffects.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:21
 msgid "Effect Library"
 msgstr "Effektbibliotek"
 
 #. (itstool) path: section/p
-#: C/usingeffects.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:22
 msgid ""
 "The <gui>Effect Library</gui> contains all audio and video effects available "
 "on the system. The library shows either audio or video effects depending on "
@@ -2561,7 +2622,7 @@ msgstr ""
 "att visa alla effekter."
 
 #. (itstool) path: section/p
-#: C/usingeffects.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:23
 msgid ""
 "Alternatively, you can use the <gui>Search Bar</gui> that is shown at the "
 "top of the <gui>Effect Library</gui>. Typing into the search entry filters "
@@ -2576,12 +2637,12 @@ msgstr ""
 "på ikonen <gui>Rensa</gui> i sökfältet."
 
 #. (itstool) path: section/title
-#: C/usingeffects.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:26
 msgid "Configuring effects"
 msgstr "Konfigurera effekter"
 
 #. (itstool) path: section/p
-#: C/usingeffects.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:27
 msgid ""
 "To configure an effect, simply select it in the <guiseq><gui>middle pane</"
 "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The properties "
@@ -2596,13 +2657,13 @@ msgstr ""
 "<gui>Återställ till standardvärde</gui>."
 
 #. (itstool) path: section/title
-#: C/usingeffects.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:30
 msgid "Animating effects with keyframes"
 msgstr "Animera effekter med nyckelbilder"
 
 # TODO: Is there really a "Show keyframes for this property"?
 #. (itstool) path: section/p
-#: C/usingeffects.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:31
 msgid ""
 "The effect properties which can be controlled using keyframe curves have a "
 "<gui>Show keyframes for this property</gui> button. When you click it, the "
@@ -2623,7 +2684,7 @@ msgstr ""
 "ifyllda figuren längst ned)."
 
 #. (itstool) path: section/p
-#: C/usingeffects.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:32
 msgid ""
 "Once a property becomes controlled, the widget for editing the property "
 "value directly is disabled. To remove the keyframes and be able to set again "
@@ -2639,7 +2700,7 @@ msgstr ""
 "\">Nyckelbildskurvor</link>."
 
 #. (itstool) path: note/p
-#: C/usingeffects.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingeffects.page:34
 msgid ""
 "If there is no <gui>Show keyframes for this value</gui> button next to the "
 "effect variable, it cannot be controlled with keyframes."
@@ -2648,22 +2709,22 @@ msgstr ""
 "effektvariabeln kan den inte kontrolleras genom nyckelbilder."
 
 #. (itstool) path: info/desc
-#: C/medialibrary.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:18
 msgid "Managing your imported clips with the Media Library"
 msgstr "Hantera dina importerade klipp med mediabiblioteket"
 
 #. (itstool) path: page/title
-#: C/medialibrary.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:25
 msgid "Using the Media Library"
 msgstr "Att använda mediabiblioteket"
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:27
 msgid "Importing a file to the <gui>Media Library</gui>"
 msgstr "Importera en fil till <gui>Mediabiblioteket</gui>"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:28
 msgid ""
 "There are two ways to import files into the <gui>Media Library</gui>. The "
 "first way is to click on the <gui>Import</gui> button in the upper left "
@@ -2683,18 +2744,18 @@ msgstr ""
 "<em>klipp</em>."
 
 #. (itstool) path: note/p
-#: C/medialibrary.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:30
 msgid "The clips in the <gui>Media Library</gui> are sorted alphabetically."
 msgstr ""
 "Klippen i <gui>Mediabiblioteket</gui> är sorterade i alfabetisk ordning."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:34
 msgid "Previewing a clip from the <gui>Media Library</gui>"
 msgstr "Förhandsgranska ett klipp från <gui>Mediabiblioteket</gui>"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:35
 msgid ""
 "To preview a clip before placing it on the timeline, you can double-click on "
 "it in the <gui>Media Library</gui>. This will open the clip in a window that "
@@ -2705,12 +2766,12 @@ msgstr ""
 "klippet i ett fönster som automatiskt stängs när du klickar utanför fönstret."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:38
 msgid "Filtering search"
 msgstr "Filtrera sök"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:39
 msgid ""
 "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
 "into the search entry filters the contents of the <gui>Media Library</gui> "
@@ -2723,12 +2784,12 @@ msgstr ""
 "sökinmatningen klickar på ikonen ”Städa upp” i sökfältet."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:42
 msgid "View modes"
 msgstr "Visningslägen"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:43
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:43
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list or in an icon "
 "view. The default mode is icon view because it display more clips without "
@@ -2743,12 +2804,12 @@ msgstr ""
 "detaljerad lista</gui> bredvid sökraden."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:46
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:46
 msgid "Selecting unused clips"
 msgstr "Välja oanvända klipp"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:47
 msgid ""
 "You may sometimes find that you have imported more clips that you needed in "
 "your project. <app>Pitivi</app> allows you to select clips that are present "
@@ -2761,27 +2822,27 @@ msgstr ""
 "detta:"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:50
 msgid "Improving performance when loading the project"
 msgstr "Förbättra prestanda vid inläsning av projekt"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:53
 msgid "Simplifying your editing workflow"
 msgstr "Förenkla ditt arbetsflöde för redigering"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:56
 msgid "Check which clips you may have forgot to use in your movie"
 msgstr "Kontrollera vilka klipp du kan ha glömt att använda i din film"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:59
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:59
 msgid "Backup or share your project more easily"
 msgstr "Dela, eller ta en säkerhetskopia av ditt projekt enkelt"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:62
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:62
 msgid ""
 "To identify which clips are not being used in your project, use the "
 "<gui>Select clips that have not been used in the project</gui> button at the "
@@ -2793,7 +2854,7 @@ msgstr ""
 "sökraden. Oanvända klipp kommer sedan att markeras i mediabiblioteket."
 
 #. (itstool) path: note/p
-#: C/medialibrary.page:64
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:64
 msgid ""
 "If there are no unused clips in your project, nothing will be selected in "
 "the media library."
@@ -2802,12 +2863,12 @@ msgstr ""
 "mediabiblioteket."
 
 #. (itstool) path: section/title
-#: C/medialibrary.page:68
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:68
 msgid "Other actions"
 msgstr "Andra åtgärder"
 
 #. (itstool) path: section/p
-#: C/medialibrary.page:69
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:69
 msgid ""
 "There are three further actions you can perform with clips. Each is "
 "represented by a button in the upper right part of the <gui>Media Library</"
@@ -2818,7 +2879,7 @@ msgstr ""
 "gui>:"
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:72
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:72
 msgid ""
 "<gui>Remove selected clips from the project</gui> (this can also be "
 "performed by pressing <keyseq><key>Control</key><key>Delete</key></keyseq>)."
@@ -2827,7 +2888,7 @@ msgstr ""
 "genom att trycka <keyseq><key>Control</key><key>Ta bort</key></keyseq>)."
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:75
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:75
 msgid ""
 "<gui>Clip properties...</gui> opens a new window with information on "
 "<em>video size</em>, <em>frame rate</em> and <em>aspect ratio</em>. Clicking "
@@ -2842,7 +2903,7 @@ msgstr ""
 "att tillämpa genom att lämna dem ikryssade/urkryssade."
 
 #. (itstool) path: item/p
-#: C/medialibrary.page:78
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:78
 msgid ""
 "<gui>Insert selected clips at the end of the timeline</gui> inserts the "
 "selected clips one after another into the longest layer of the timeline "
@@ -2853,7 +2914,7 @@ msgstr ""
 "sista klippet i det lagret slutar."
 
 #. (itstool) path: note/p
-#: C/medialibrary.page:82
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/medialibrary.page:82
 msgid ""
 "In order for these actions to become available, one or more clips must be "
 "selected."
@@ -2862,17 +2923,17 @@ msgstr ""
 "markeras."
 
 #. (itstool) path: info/desc
-#: C/welcomedialog.page:14
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:14
 msgid "Creating new projects and opening recent projects on startup"
 msgstr "Skapa nya projekt och öppna senaste projekt vid uppstart"
 
 #. (itstool) path: page/title
-#: C/welcomedialog.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:21
 msgid "The welcome dialog"
 msgstr "Välkomstdialogen"
 
 #. (itstool) path: page/p
-#: C/welcomedialog.page:22
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:22
 msgid ""
 "When you launch <app>Pitivi</app>, a startup assistant appears, allowing you "
 "to create a new project or open an existing project in a few clicks. If you "
@@ -2887,7 +2948,7 @@ msgstr ""
 "kommer att öppna ett nytt projekt med standardinställningarna."
 
 #. (itstool) path: page/p
-#: C/welcomedialog.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:23
 msgid ""
 "The dialog offers you projects that are found among the recently used files. "
 "Double-click one of them to load it or use one of the following buttons:"
@@ -2897,12 +2958,12 @@ msgstr ""
 "knappar:"
 
 #. (itstool) path: item/p
-#: C/welcomedialog.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:26
 msgid "<gui>New</gui> opens a new project with the default settings."
 msgstr "<gui>Nytt</gui> öppnar ett nytt projekt med standardinställningarna."
 
 #. (itstool) path: item/p
-#: C/welcomedialog.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:29
 msgid ""
 "<gui>Browse projects...</gui> opens file chooser in the last used directory."
 msgstr ""
@@ -2910,12 +2971,12 @@ msgstr ""
 "öppnade katalogen."
 
 #. (itstool) path: item/p
-#: C/welcomedialog.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:32
 msgid "<gui>Help</gui> opens the user documenation on the index page."
 msgstr "<gui>Hjälp</gui> öppnar användardokumentationen på indexsidan."
 
 #. (itstool) path: item/p
-#: C/welcomedialog.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:35
 msgid ""
 "<gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard "
 "shortcuts and cheatsheet page."
@@ -2924,7 +2985,7 @@ msgstr ""
 "tangentbordsgenvägar och dess fusksida."
 
 #. (itstool) path: note/p
-#: C/welcomedialog.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/welcomedialog.page:39
 msgid ""
 "By right-clicking the individual projects offered by the <gui>Welcome "
 "dialog</gui> you can get more options: copy project's location, remove "
@@ -2935,22 +2996,22 @@ msgstr ""
 "projektet från listan, tömma listan eller visa privata resurser."
 
 #. (itstool) path: info/desc
-#: C/importing.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:18
 msgid "Importing files into your project as clips."
 msgstr "Importera filer till ditt projekt som klipp."
 
 #. (itstool) path: page/title
-#: C/importing.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:25
 msgid "Getting media"
 msgstr "Hämta media"
 
 #. (itstool) path: page/p
-#: C/importing.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:26
 msgid "Pitivi allows importing media files from your computer's hard drive."
 msgstr "Pitivi kan importera mediafiler från din dators hårddisk."
 
 #. (itstool) path: note/p
-#: C/importing.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:28
 msgid ""
 "When you create a new project and import the first video file, its "
 "properties are transposed to the <link xref="
@@ -2965,7 +3026,7 @@ msgstr ""
 "knappen <gui>Projektinställninar</gui> i inforaden för detaljer."
 
 #. (itstool) path: note/p
-#: C/importing.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:31
 msgid ""
 "Due to our limited resources and the rapid evolution of filmmaking hardware "
 "in the past few years, and to ensure <app>Pitivi</app> remains robust and "
@@ -2986,12 +3047,12 @@ msgstr ""
 "<app>Kino</app> eller <app>dvgrab</app> för att fånga bilder."
 
 #. (itstool) path: section/title
-#: C/importing.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:34
 msgid "Importing files using the file chooser"
 msgstr "Importera filer med filväljaren"
 
 #. (itstool) path: section/p
-#: C/importing.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:35
 msgid ""
 "You can import media into the <gui>Media Library</gui> by using the file "
 "chooser dialog, which has the advantage of letting you preview the files you "
@@ -3004,7 +3065,7 @@ msgstr ""
 "gui> i rubriken <gui>Mediabibliotek</gui>."
 
 #. (itstool) path: section/p
-#: C/importing.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:36
 msgid ""
 "A file chooser dialog window will appear. You can press <key>Ctrl</key> or "
 "<key>Shift</key> to select multiple files at the same time."
@@ -3013,12 +3074,12 @@ msgstr ""
 "<key>Skift</key> för att välja flera filer samtidigt."
 
 #. (itstool) path: section/title
-#: C/importing.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:39
 msgid "Importing files using drag and drop"
 msgstr "Importera filer med dra-och-släpp"
 
 #. (itstool) path: section/p
-#: C/importing.page:40
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:40
 msgid ""
 "The concept of drag and drop is a well-established method of bridging the "
 "gap between software applications. Simply select the files you want to "
@@ -3032,12 +3093,12 @@ msgstr ""
 "till <app>Pitivi</app>s <gui>mediabibliotek</gui>."
 
 #. (itstool) path: section/p
-#: C/importing.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:41
 msgid "This feature can be used to:"
 msgstr "Denna egenskap kan användas för att:"
 
 #. (itstool) path: item/p
-#: C/importing.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:44
 msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
@@ -3046,7 +3107,7 @@ msgstr ""
 "<app>Rhythmbox</app> eller <app>Totem</app>)."
 
 #. (itstool) path: item/p
-#: C/importing.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:47
 msgid ""
 "Allow using a full-fledged file manager (such as <app>Nautilus</app>, "
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
@@ -3057,12 +3118,12 @@ msgstr ""
 "för filväljardialogen."
 
 #. (itstool) path: item/p
-#: C/importing.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:50
 msgid "Import a combination of multiple files and folders at the same time."
 msgstr "Importera en kombination av flera filer och mappar samtidigt."
 
 #. (itstool) path: item/p
-#: C/importing.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/importing.page:53
 msgid ""
 "Leverage the searching capability of another application (such as <app>GNOME "
 "Shell</app>, <app>Tracker</app>, <app>GNOME Activity Journal</app>, "
@@ -3073,17 +3134,17 @@ msgstr ""
 "Tool</app>, etc.)."
 
 #. (itstool) path: info/desc
-#: C/effects.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:15
 msgid "Adding special effects to your video and audio clips"
 msgstr "Lägga till specialeffekter till video- och ljudklipp"
 
 #. (itstool) path: page/title
-#: C/effects.page:20
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:20
 msgid "Introduction to effects"
 msgstr "Introduktion till effekter"
 
 #. (itstool) path: page/p
-#: C/effects.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:21
 msgid ""
 "<app>Pitivi</app> offers a wide variety of video and audio effects to spice "
 "up your movies. Available effects depend on the software installed on your "
@@ -3102,7 +3163,7 @@ msgstr ""
 "som finns tillgängliga i din distributions förråd."
 
 #. (itstool) path: note/p
-#: C/effects.page:23
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:23
 msgid ""
 "Effects are non-destructive: they are only applied to the resulting rendered "
 "movie and do not affect your source files."
@@ -3111,32 +3172,33 @@ msgstr ""
 "och påverkar inte dina källfiler."
 
 #. (itstool) path: section/title
-#: C/effects.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:26
 msgid "Adding and removing effects to clips"
 msgstr "Lägg till och ta bort effekter på klipp"
 
 #. (itstool) path: section/p
-#: C/effects.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:27
 msgid "To add an effect:"
 msgstr "Att lägga till en effekt:"
 
 #. (itstool) path: item/p
-#: C/effects.page:30 C/effects.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:39
 msgid "Select an existing clip on the timeline"
 msgstr "Välj ett existerande klipp på tidslinjen"
 
 #. (itstool) path: item/p
-#: C/effects.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:33
 msgid "Double-click an effect in the effect library"
 msgstr "Dubbelklicka på en effekt i effektbiblioteket"
 
 #. (itstool) path: section/p
-#: C/effects.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:36
 msgid "To remove an effect:"
 msgstr "Att ta bort en effekt:"
 
 #. (itstool) path: item/p
-#: C/effects.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:42
 msgid ""
 "Select the effect you want to remove in the <guiseq><gui>middle pane</"
 "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
@@ -3145,17 +3207,17 @@ msgstr ""
 "<gui>Klippkonfiguration</gui> <gui>Effekter</gui></guiseq>"
 
 #. (itstool) path: item/p
-#: C/effects.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:45
 msgid "Click the <gui>Remove effect</gui> button"
 msgstr "Klicka på knappen <gui>Ta bort effekter</gui>"
 
 #. (itstool) path: section/title
-#: C/effects.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:50
 msgid "Toggling effects"
 msgstr "Växla effekter"
 
 #. (itstool) path: section/p
-#: C/effects.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/effects.page:51
 msgid ""
 "If you want to temporarily disable an effect (to compare with and without "
 "the effect, or for performance reasons), click the corresponding checkbox in "
@@ -3168,7 +3230,7 @@ msgstr ""
 "<gui>Effekter</gui></guiseq>."
 
 #. (itstool) path: info/desc
-#: C/rendering.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:18
 msgid ""
 "Learn the difference between saving a project and exporting a rendered movie."
 msgstr ""
@@ -3176,12 +3238,12 @@ msgstr ""
 "film."
 
 #. (itstool) path: page/title
-#: C/rendering.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:25
 msgid "Understanding rendering"
 msgstr "Förstå rendering"
 
 #. (itstool) path: page/p
-#: C/rendering.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:26
 msgid ""
 "Rendering is the process of exporting your project into a new, finalized "
 "media file. Rendering only creates a new “rendered” video file, and does not "
@@ -3194,22 +3256,22 @@ msgstr ""
 "igen så mycket som önskas."
 
 #. (itstool) path: item/p
-#: C/rendering.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:29
 msgid "Click <guiseq><gui>Headerbar</gui><gui>Render</gui></guiseq>."
 msgstr "Klicka <guiseq><gui>Rubrikrad</gui><gui>Rendera</gui></guiseq>."
 
 #. (itstool) path: item/p
-#: C/rendering.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:32
 msgid "Choose the location and name of the exported file."
 msgstr "Välj platsen och namnet för den exporterade filen."
 
 #. (itstool) path: item/p
-#: C/rendering.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:35
 msgid "Optionally choose a preset."
 msgstr "Välj eventuellt en förinställning."
 
 #. (itstool) path: item/p
-#: C/rendering.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:38
 msgid ""
 "Choose a container. See the <link xref=\"codecscontainers\">codecs and "
 "containers</link> page for details."
@@ -3218,17 +3280,17 @@ msgstr ""
 "behållare</link> för detaljer."
 
 #. (itstool) path: item/p
-#: C/rendering.page:41
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:41
 msgid "Adjust the various encoding settings."
 msgstr "Justera de olika kodningsinställningarna."
 
 #. (itstool) path: item/p
-#: C/rendering.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:44
 msgid "Click the <gui>Render</gui> button."
 msgstr "Klicka på knappen <gui>Rendera</gui>."
 
 #. (itstool) path: page/p
-#: C/rendering.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:47
 msgid ""
 "While rendering, you can pause the process by clicking the <gui>Pause</gui> "
 "button and unpause it by clicking it again. You can also stop rendering "
@@ -3248,7 +3310,7 @@ msgstr ""
 "renderad fil."
 
 #. (itstool) path: note/p
-#: C/rendering.page:49
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:49
 msgid ""
 "If your computer is set to suspend or hibernate automatically, <app>Pitivi</"
 "app> will automatically inhibit the power saving features during the render "
@@ -3259,12 +3321,12 @@ msgstr ""
 "renderingsprocessen."
 
 #. (itstool) path: section/title
-#: C/rendering.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:52
 msgid "Project settings and the rendering dialog"
 msgstr "Projektinställningar och renderingsdialogen"
 
 #. (itstool) path: section/p
-#: C/rendering.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/rendering.page:53
 msgid ""
 "The <gui>Project Settings</gui> are a base on which the <gui>Rendering "
 "dialog</gui> settings are applied when performing a render. The <gui>Project "
@@ -3283,7 +3345,7 @@ msgstr ""
 "gui>en en knapp som öppnar <gui>Projektinställningarna</gui>."
 
 #. (itstool) path: info/desc
-#: C/trimming.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:18
 msgid ""
 "Shortening clips by changing the beginning and ending points. Also covers "
 "ripple and roll editing."
@@ -3292,12 +3354,12 @@ msgstr ""
 "krusning- och rullredigering."
 
 #. (itstool) path: page/title
-#: C/trimming.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:25
 msgid "Trimming"
 msgstr "Trimma"
 
 #. (itstool) path: page/p
-#: C/trimming.page:26
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:26
 msgid ""
 "<em>Trimming</em> is the act of changing the length of a clip by moving its "
 "beginning or end point in the timeline. Move the mouse cursor over the edge "
@@ -3310,12 +3372,12 @@ msgstr ""
 "riktning för att antingen minska eller öka klippets längd."
 
 #. (itstool) path: figure/title
-#: C/trimming.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:28
 msgid "Trimming handle"
 msgstr "Trimhandtag"
 
 #. (itstool) path: figure/desc
-#: C/trimming.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:29
 msgid ""
 "The mouse cursor transforms into trimming handle when hovering over the edge "
 "of a clip."
@@ -3328,7 +3390,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:30
 msgctxt "_"
 msgid ""
 "external ref='figures/trimming-individual.png' "
@@ -3338,7 +3400,7 @@ msgstr ""
 "md5='858585ad6ddc21696f7b9f0d597982b4'"
 
 #. (itstool) path: page/p
-#: C/trimming.page:32
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:32
 msgid ""
 "Clips that are grouped together, such as corresponding audio and video "
 "clips, will trim in unison when you drag the trimming handle. To trim only "
@@ -3353,12 +3415,12 @@ msgstr ""
 "hur man gör det)."
 
 #. (itstool) path: section/title
-#: C/trimming.page:34
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:34
 msgid "Ripple editing"
 msgstr "Krusningsredigering"
 
 #. (itstool) path: section/p
-#: C/trimming.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:35
 msgid ""
 "Ripple editing is a variant of basic trimming which, in addition to trimming "
 "a clip, also moves the following clips (the clips that start after the one "
@@ -3371,12 +3433,13 @@ msgstr ""
 "redigerade klippet behålls."
 
 #. (itstool) path: figure/title
-#: C/trimming.page:37 C/trimming.page:73
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:37
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:73
 msgid "Before"
 msgstr "Före"
 
 #. (itstool) path: figure/desc
-#: C/trimming.page:38
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:38
 msgid "Relative position of two adjacent clips before ripple editing"
 msgstr ""
 "Relativ position för två närliggande klipp före och efter krusningsredigering"
@@ -3386,7 +3449,7 @@ msgstr ""
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:39
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-before.png' "
@@ -3396,12 +3459,13 @@ msgstr ""
 "md5='7052e3caadd1ccbf9a91a8c506aeca7d'"
 
 #. (itstool) path: figure/title
-#: C/trimming.page:42 C/trimming.page:78
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:78
 msgid "After"
 msgstr "Efter"
 
 #. (itstool) path: figure/desc
-#: C/trimming.page:43
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:43
 msgid "Relative position of two adjacent clips after ripple editing"
 msgstr "Relativ position för två närliggande klipp efter krusningsredigering"
 
@@ -3410,7 +3474,7 @@ msgstr "Relativ position för två närliggande klipp efter krusningsredigering"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:44
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:44
 msgctxt "_"
 msgid ""
 "external ref='figures/ripple-after.png' "
@@ -3420,7 +3484,7 @@ msgstr ""
 "md5='3f2fdba79d1c69c2f2022fe08a62b5a7'"
 
 #. (itstool) path: note/p
-#: C/trimming.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:47
 msgid ""
 "Note that if there is a gap between the clips, the following clip moves "
 "toward the edited so that the gap length stays the same."
@@ -3430,7 +3494,7 @@ msgstr ""
 "densamma."
 
 #. (itstool) path: note/p
-#: C/trimming.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:50
 msgid ""
 "Ripple editing affects all following clips, regardless of whether or not "
 "they are on the same layer."
@@ -3439,27 +3503,28 @@ msgstr ""
 "lager eller ej."
 
 #. (itstool) path: section/p
-#: C/trimming.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:52
 msgid "To do a ripple edit:"
 msgstr "För att göra en krusningsredigering:"
 
 #. (itstool) path: item/p
-#: C/trimming.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:56
 msgid "Place the mouse cursor on a trimming handle."
 msgstr "Placera musmarkören på ett trimhandtag."
 
 #. (itstool) path: item/p
-#: C/trimming.page:59
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:59
 msgid "Press and hold <key>Shift</key>."
 msgstr "Tryck och håll ner <key>Skift</key>."
 
 #. (itstool) path: item/p
-#: C/trimming.page:62 C/trimming.page:94
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:62
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:94
 msgid "Drag the trimming handle."
 msgstr "Dra i trimhandtaget."
 
 #. (itstool) path: note/p
-#: C/trimming.page:66
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:66
 msgid ""
 "Ripple editing can also be used when moving clips around in the timeline. "
 "For detailed explanations on how to do this, see the section <link xref="
@@ -3470,12 +3535,12 @@ msgstr ""
 "\"usingclips#ripple\">Använda krusningsredigering vid flytt av klipp</link>."
 
 #. (itstool) path: section/title
-#: C/trimming.page:70
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:70
 msgid "Roll editing"
 msgstr "Rullredigering"
 
 #. (itstool) path: section/p
-#: C/trimming.page:71
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:71
 msgid ""
 "Roll editing is a variant of basic trimming which, in addition to trimming a "
 "clip, <em>trims</em> the adjacent clips in a complementary way to prevent "
@@ -3486,7 +3551,7 @@ msgstr ""
 "kompletterande sätt för att förhindra att mellanrum skapas."
 
 #. (itstool) path: figure/desc
-#: C/trimming.page:74
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:74
 msgid "Relative position of two adjacent clips before roll editing"
 msgstr "Relativ position för två närliggande klipp före rullredigering"
 
@@ -3495,7 +3560,7 @@ msgstr "Relativ position för två närliggande klipp före rullredigering"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:75
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:75
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
@@ -3503,7 +3568,7 @@ msgstr ""
 "external ref='figures/roll-before.png' md5='a6c8ea270c5aa9953c07b493409637a2'"
 
 #. (itstool) path: figure/desc
-#: C/trimming.page:79
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:79
 msgid "Relative position of two adjacent clips after roll editing"
 msgstr "Relativ position för två närliggande klipp efter rullredigering"
 
@@ -3512,7 +3577,7 @@ msgstr "Relativ position för två närliggande klipp efter rullredigering"
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/trimming.page:80
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:80
 msgctxt "_"
 msgid ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
@@ -3520,7 +3585,7 @@ msgstr ""
 "external ref='figures/roll-after.png' md5='83653c2c984da5d10a0bea16dcee84e4'"
 
 #. (itstool) path: note/p
-#: C/trimming.page:83
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:83
 msgid ""
 "Roll editing affects all adjacent clips, regardless of whether or not they "
 "are on the same layer."
@@ -3529,22 +3594,22 @@ msgstr ""
 "lager eller ej."
 
 #. (itstool) path: section/p
-#: C/trimming.page:85
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:85
 msgid "To do a roll edit:"
 msgstr "För att göra en rullredigering:"
 
 #. (itstool) path: item/p
-#: C/trimming.page:88
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:88
 msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr "Placera musmarkören på ett trimhandtag mellan två närliggande klipp."
 
 #. (itstool) path: item/p
-#: C/trimming.page:91
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/trimming.page:91
 msgid "Press and hold <key>Ctrl</key>."
 msgstr "Tryck och håll ner <key>Ctrl</key>."
 
 #. (itstool) path: info/desc
-#: C/usingclips.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:18
 msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
@@ -3553,17 +3618,17 @@ msgstr ""
 "åtgärder på klipp i tidslinjen."
 
 #. (itstool) path: page/title
-#: C/usingclips.page:25
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:25
 msgid "Using clips"
 msgstr "Använda klipp"
 
 #. (itstool) path: section/title
-#: C/usingclips.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:27
 msgid "Clips vs files"
 msgstr "Klipp vs filer"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:28
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:28
 msgid ""
 "<em>Files</em> are data on your hard disk (videos, music, pictures, etc.) "
 "that can be accessed by <app>Pitivi</app> and incorporated in your video "
@@ -3573,7 +3638,7 @@ msgstr ""
 "<app>Pitivi</app> kan komma åt och lägga till i ditt videoredigeringsprojekt."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:29
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:29
 msgid ""
 "<em>Clips</em> are a visual representation of your files on the timeline. "
 "They represent the period of time they consume on the timeline and can be "
@@ -3588,7 +3653,7 @@ msgstr ""
 "så mycket som du vill för att skapa olika klipp."
 
 #. (itstool) path: note/p
-#: C/usingclips.page:31
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:31
 msgid ""
 "Since Pitivi is a non-destructive editor, clips are edited, not files. As "
 "such, your files stay intact."
@@ -3597,12 +3662,12 @@ msgstr ""
 "utan klipp. Dina filer förblir orörda."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:35
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:35
 msgid "Inserting clips"
 msgstr "Infoga klipp"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:36
 msgid ""
 "From the <gui>Media Library</gui>, you can insert one or more clips by "
 "selecting them (use the <key>Ctrl</key> or <key>Shift</key> keys to select "
@@ -3613,12 +3678,12 @@ msgstr ""
 "markera flera klipp) och göra ett av följande:"
 
 #. (itstool) path: item/p
-#: C/usingclips.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:39
 msgid "Dragging and dropping them onto a place in the timeline."
 msgstr "Dra och släpp dem på en plats i tidslinjen."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:42
 msgid ""
 "Clicking the <gui>Insert the selected clips at the end of the timeline</gui> "
 "button in the <gui>Media Library</gui> header."
@@ -3627,12 +3692,12 @@ msgstr ""
 "i <gui>Mediabiblioteket</gui>."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:45
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:45
 msgid "Pressing the <key>Insert</key> key."
 msgstr "Tryck tangenten <key>Insert</key>."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:48
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:48
 msgid ""
 "When following the second and third options (clicking or pressing insert), "
 "the new clips will be inserted one after another on the longest layer of the "
@@ -3643,18 +3708,18 @@ msgstr ""
 "tidslinjen där det sista klippet slutar."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:51
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:51
 msgid "Moving clips along the timeline"
 msgstr "Flytta klipp efter tidslinjen"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:52
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:52
 msgid "You can move a clip within a layer or move it to a different layer."
 msgstr ""
 "Du kan flytta ett klipp inom ett lager eller flytta det till ett annat lager."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:53
 msgid ""
 "Click and drag a single clip to move it, and release the mouse button to "
 "place it. Dragging horizontally keeps the clip on the same layer, but "
@@ -3667,7 +3732,7 @@ msgstr ""
 "\">Förstå lager</link> för mer information)."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:54
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:54
 msgid ""
 "To move a clip to an existing layer, drag it on the layer at the desired "
 "position and release it. To move a clip to a new layer, drag it to the "
@@ -3680,7 +3745,7 @@ msgstr ""
 "lager är markerat, släpp det."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:55
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:55
 msgid ""
 "To move multiple clips at the same time, use the <key>Ctrl</key> or "
 "<key>Shift</key> keys to select multiple clips (see <link xref="
@@ -3696,12 +3761,12 @@ msgstr ""
 "ett enkelt klipp; deras position relativt till varandra kommer att bevaras."
 
 #. (itstool) path: section/title
-#: C/usingclips.page:57
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:57
 msgid "Using ripple editing while moving clips"
 msgstr "Använd krusningsredigering under flytt av klipp"
 
 #. (itstool) path: section/p
-#: C/usingclips.page:58
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:58
 msgid ""
 "While dragging clips around in the timeline, you can use the <link xref="
 "\"trimming#ripple\">ripple technique</link> to move the <em>following</em> "
@@ -3713,18 +3778,18 @@ msgstr ""
 "(klippen som börjar efter det du redigerar) i synk med det flyttade klippet."
 
 #. (itstool) path: item/p
-#: C/usingclips.page:61
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:61
 msgid ""
 "Click and drag the clip you want to move, with the mouse button held down"
 msgstr "Klicka och dra klippet du vill flytta med musknappen nedtryckt"
 
 #. (itstool) path: item/p
-#: C/usingclips.page:64
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:64
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
 msgstr "Under dragningen, håll ner <key>Skift</key> på tangentbordet"
 
 #. (itstool) path: item/p
-#: C/usingclips.page:67
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:67
 msgid ""
 "Release the mouse button to end the drag operation, then release the "
 "<key>Shift</key> key."
@@ -3733,7 +3798,7 @@ msgstr ""
 "key>tangenten."
 
 #. (itstool) path: section/p
-#: C/usingclips.page:70
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/usingclips.page:70
 msgid ""
 "You can release and press <key>Shift</key> at any time during the drag "
 "operation to disable or enable ripple editing."
@@ -3742,12 +3807,12 @@ msgstr ""
 "åtgärder för att aktivera eller inaktivera krusningsredigering."
 
 #. (itstool) path: page/title
-#: C/cheatsheet.page:15
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:15
 msgid "Keyboard shortcuts and cheatsheet"
 msgstr "Tangentbordsgenvägar och fusklapp"
 
 #. (itstool) path: page/p
-#: C/cheatsheet.page:16
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:16
 msgid ""
 "This page is a list of important shortcuts to access commonly used or hidden "
 "features. Take the time to get familiar with them as they will improve your "
@@ -3758,67 +3823,67 @@ msgstr ""
 "eftersom de kommer att öka din produktivitet enormt."
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:18
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:18
 msgid "General"
 msgstr "Allmänt"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:21
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:21
 msgid "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Create a new project"
 msgstr "<keyseq><key>Ctrl</key><key>N</key></keyseq>: Skapa ett nytt projekt"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:24
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:24
 msgid "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Open a project file"
 msgstr "<keyseq><key>Ctrl</key><key>O</key></keyseq>: Öppna en projektfil"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:27
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:27
 msgid "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Save the current project"
 msgstr "<keyseq><key>Ctrl</key><key>S</key></keyseq>: Spara aktuellt projekt"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:30
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:30
 msgid "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Quit the application"
 msgstr "<keyseq><key>Ctrl</key><key>Q</key></keyseq>: Avsluta programmet"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:33
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:33
 msgid "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Undo"
 msgstr "<keyseq><key>Ctrl</key><key>Z</key></keyseq>: Ångra"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:36
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:36
 msgid "<keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>: Redo"
 msgstr "<keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></keyseq>: Gör om"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:39
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:39
 msgid "<key>F11</key>: Toggle fullscreen mode"
 msgstr "<key>F11</key>: Växla helskärmsläge"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:42
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:42
 msgid "<key>F1</key>: Show the user manual"
 msgstr "<key>F1</key>: Visa användarhandboken"
 
 #. (itstool) path: section/title
-#: C/cheatsheet.page:47
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:47
 msgid "Media Library"
 msgstr "Mediabibliotek"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:50
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:50
 msgid "<key>Enter</key>: Preview (playback) the selected clip"
 msgstr "<key>Retur</key>: Förhandsvisa (spela upp) markerat klipp"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:53
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:53
 msgid "<key>Insert</key>: Insert the selected clips into the timeline"
 msgstr "<key>Insert</key>: Infoga de markerade klippen i tidslinjen"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:56
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:56
 msgid ""
 "<keyseq><key>Ctrl</key><key>Delete</key></keyseq>: Remove the selected clips "
 "from the project"
@@ -3827,12 +3892,12 @@ msgstr ""
 "klippen från projektet"
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:64
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:64
 msgid "<key>Spacebar</key>: Toggle playback."
 msgstr "<key>Mellanslag</key>: Växla uppspelning."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:67
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:67
 msgid ""
 "<key>S</key>: Split the clips at the current playhead position. If there are "
 "selected clips, only those will be split."
@@ -3841,12 +3906,12 @@ msgstr ""
 "finns markerade klipp kommer endast dessa att delas."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:70
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:70
 msgid "<key>Delete</key>: Remove selected clips from the timeline."
 msgstr "<key>Delete</key>: Ta bort markerade klipp från tidslinjen."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:73
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:73
 msgid ""
 "<key>←</key> and <key>→</key>: Seek one frame backwards or forwards. This "
 "depends on your project framerate."
@@ -3855,7 +3920,7 @@ msgstr ""
 "beror på bildfrekvensen för ditt projekt."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:76
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:76
 msgid ""
 "<keyseq><key>Shift</key><key>←</key></keyseq> and <keyseq><key>Shift</"
 "key><key>→</key></keyseq>: Seek one second backwards or forwards."
@@ -3864,7 +3929,7 @@ msgstr ""
 "key><key>→</key></keyseq>: Sök en sekund framåt eller bakåt."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:79
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:79
 msgid ""
 "<keyseq><key>Ctrl</key><key>+</key></keyseq> and <keyseq><key>Ctrl</"
 "key><key>-</key></keyseq>: Zoom in or zoom out. You can also use <key>Ctrl</"
@@ -3875,7 +3940,7 @@ msgstr ""
 "<key>Ctrl</key> med mushjulet för att kontrollera zoomen effektivare."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:82
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:82
 msgid ""
 "<keyseq><key>Ctrl</key><key>0</key></keyseq>: Adjust the zoom to fit the "
 "timeline."
@@ -3884,12 +3949,12 @@ msgstr ""
 "tidslinjen."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:85
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:85
 msgid "<key>Shift</key>+drag: Ripple edit."
 msgstr "<key>Skift</key>+drag: Krusningsredigering."
 
 #. (itstool) path: item/p
-#: C/cheatsheet.page:88
+#: /var/www/gnomeweb/scratchdir/git/pitivi/help/C/cheatsheet.page:88
 msgid "<key>Ctrl</key>+drag: Roll edit."
 msgstr "<key>Ctrl</key>+dra: Rullredigering."
 
