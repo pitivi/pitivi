@@ -1589,7 +1589,7 @@ msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
 msgstr ""
-"Détacher le lecteur\n"
+"Détacher le moniteur\n"
 "Vous pouvez le rattacher en fermant la fenêtre nouvellement créée."
 
 #: ../pitivi/viewer/viewer.py:357 ../pitivi/viewer/viewer.py:408
