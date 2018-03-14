@@ -606,7 +606,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         comments = ["",
                     "GES %s" % ".".join(map(str, GES.version())),
-                    "Gtk %s" % ".".join(map(str, (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION))),
+                    "GTK+ %s" % ".".join(map(str, (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION))),
                     "GStreamer %s" % ".".join(map(str, Gst.version()))]
         abt.set_comments("\n".join(comments))
 
