@@ -1632,6 +1632,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
+            self.timeline.resetSelectionGroup()
             with Previewer.manager.paused():
                 with self.app.action_log.started("delete clip",
                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
