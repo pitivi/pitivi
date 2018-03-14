@@ -198,7 +198,13 @@ class EffectProperties(Gtk.Expander, Loggable):
         name_col.add_attribute(name_cell, "text", COL_NAME_TEXT)
         self.treeview.append_column(name_col)
 
-        # Allow the treeview to accept EFFECT_TARGET_ENTRY when drag&dropping.
+        # Allow the entire expander to accept EFFECT_TARGET_ENTRY when
+        # drag&dropping.
+        self.drag_dest_set(Gtk.DestDefaults.DROP, [EFFECT_TARGET_ENTRY],
+                           Gdk.DragAction.COPY)
+
+        # Allow also the treeview to accept EFFECT_TARGET_ENTRY when
+        # drag&dropping so the effect can be dragged at a specific position.
         self.treeview.enable_model_drag_dest([EFFECT_TARGET_ENTRY],
                                              Gdk.DragAction.COPY)
 
@@ -246,9 +252,12 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Connect all the widget signals
         self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)
-        self.treeview.connect("drag-motion", self._dragMotionCb)
-        self.treeview.connect("drag-leave", self._dragLeaveCb)
-        self.treeview.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-motion", self._drag_motion_cb)
+        self.connect("drag-leave", self._drag_leave_cb)
+        self.connect("drag-data-received", self._drag_data_received_cb)
+        self.treeview.connect("drag-motion", self._drag_motion_cb)
+        self.treeview.connect("drag-leave", self._drag_leave_cb)
+        self.treeview.connect("drag-data-received", self._drag_data_received_cb)
         self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
         self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
@@ -331,28 +340,38 @@ class EffectProperties(Gtk.Expander, Loggable):
             effect.get_parent().remove(effect)
         self._updateTreeview()
 
-    # pylint: disable=too-many-arguments
-    def _dragMotionCb(self, unused_tree_view, unused_drag_context, unused_x, unused_y, unused_timestamp):
+    def _drag_motion_cb(self, unused_widget, unused_drag_context, unused_x, unused_y, unused_timestamp):
+        """Highlights some widgets to indicate it can receive drag&drop."""
         self.debug(
             "Something is being dragged in the clip properties' effects list")
-        self.drag_highlight()
+        self.no_effect_infobar.drag_highlight()
+        # It would be nicer to highlight only the treeview, but
+        # it does not seem to have a visible effect.
+        self._vbox.drag_highlight()
 
-    def _dragLeaveCb(self, unused_tree_view, unused_drag_context, unused_timestamp):
-        self.info(
+    def _drag_leave_cb(self, unused_widget, unused_drag_context, unused_timestamp):
+        """Unhighlights the widgets which can receive drag&drop."""
+        self.debug(
             "The item being dragged has left the clip properties' effects list")
-        self.drag_unhighlight()
+        self.no_effect_infobar.drag_unhighlight()
+        self._vbox.drag_unhighlight()
 
     # pylint: disable=too-many-arguments
-    def _dragDataReceivedCb(self, treeview, drag_context, x, y, selection_data, unused_info, timestamp):
+    def _drag_data_received_cb(self, widget, drag_context, x, y, selection_data, unused_info, timestamp):
         if not self.clip:
             # Indicate that a drop will not be accepted.
             Gdk.drag_status(drag_context, 0, timestamp)
             return
-        dest_row = treeview.get_dest_row_at_pos(x, y)
+
+        dest_row = self.treeview.get_dest_row_at_pos(x, y)
         if drag_context.get_suggested_action() == Gdk.DragAction.COPY:
             # An effect dragged probably from the effects list.
             factory_name = str(selection_data.get_data(), "UTF-8")
-            drop_index = self.__get_new_effect_index(dest_row)
+            if widget is self.treeview:
+                drop_index = self.__get_new_effect_index(dest_row)
+            else:
+                drop_index = len(self.storemodel)
+            self.debug("Effect dragged at position %s", drop_index)
             effect_info = self.app.effects.getInfo(factory_name)
             pipeline = self._project.pipeline
             with self.app.action_log.started("add effect",
@@ -365,7 +384,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             # An effect dragged from the same treeview to change its position.
             # Source
             source_index, drop_index = self.__get_move_indexes(
-                dest_row, treeview.get_model())
+                dest_row, self.treeview.get_model())
             self.__move_effect(self.clip, source_index, drop_index)
 
         drag_context.finish(True, False, timestamp)
@@ -489,8 +508,9 @@ class EffectProperties(Gtk.Expander, Loggable):
             to_append.append(effect_info.description)
             to_append.append(effect)
             self.storemodel.append(to_append)
-        self.no_effect_infobar.set_visible(len(self.storemodel) == 0)
-        self._vbox.set_visible(len(self.storemodel) > 0)
+        has_effects = len(self.storemodel) > 0
+        self.no_effect_infobar.set_visible(not has_effects)
+        self._vbox.set_visible(has_effects)
 
     def _treeviewSelectionChangedCb(self, unused_treeview):
         selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
