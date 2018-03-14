@@ -311,6 +311,7 @@ class RenderingProgressDialog(GObject.Object):
         self.play_pause_button = self.builder.get_object("play_pause_button")
         self.play_rendered_file_button = self.builder.get_object(
             "play_rendered_file_button")
+        self.show_in_folder_button = self.builder.get_object("show_in_folder_button")
         self.close_button = self.builder.get_object("close_button")
         self.cancel_button = self.builder.get_object("cancel_button")
         self._filesize_est_label = self.builder.get_object(
@@ -324,6 +325,7 @@ class RenderingProgressDialog(GObject.Object):
 
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
+        self.show_in_folder_button.hide()
         self.close_button.hide()
 
     def updatePosition(self, fraction):
@@ -368,6 +370,24 @@ class RenderingProgressDialog(GObject.Object):
 
     def _playRenderedFileButtonClickedCb(self, unused_button):
         Gio.AppInfo.launch_default_for_uri(self.main_render_dialog.outfile, None)
+
+    def _ShowInFolderButtonClickedCb(self, unused_button):
+        """Pops up the "Show in Folder" dialog box."""
+        dialog = Gtk.FileChooserDialog()
+        dialog.set_title(_("Folder"))
+        dialog.set_action(Gtk.FileChooserAction.OPEN)
+        dialog.set_icon_name("pitivi")
+        dialog.add_buttons(_("Close"), Gtk.ResponseType.CANCEL)
+        dialog.set_default_response(Gtk.ResponseType.OK)
+        dialog.set_modal(True)
+        dialog.set_transient_for(self.app.gui)
+        dialog.set_current_folder(self.app.settings.lastExportFolder)
+        dialog.connect('response', self._showInFolderDialogBoxResponseCb)
+        dialog.show()
+
+    def _showInFolderDialogBoxResponseCb(self, dialog, response):
+        if response == Gtk.ResponseType.CANCEL:
+            dialog.destroy()
 
 
 class RenderDialog(Loggable):
@@ -1060,6 +1080,7 @@ class RenderDialog(Loggable):
                 self.notification = self.app.system.desktopMessage(
                     _("Render complete"), notification, "pitivi")
             self._maybe_play_finished_sound()
+            self.progress.show_in_folder_button.show()
             self.progress.play_rendered_file_button.show()
             self.progress.close_button.show()
             self.progress.cancel_button.hide()
