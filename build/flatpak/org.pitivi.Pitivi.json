@@ -332,22 +332,6 @@
             ]
         },
         {
-            "name": "meson",
-            "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
-            "build-commands": [
-               "mkdir -p /app/lib/python3.5/site-packages",
-               "PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pypi.python.org/packages/6d/32/a474702fcba1144aef89e7ec5d8a33d49be8389a0f983d11aab486c8392b/meson-0.41.2.tar.gz#md5=3b4a99beb09a0286ca1307449570c689",
-                    "sha256": "ad1707717987fe8b7b65392b8327580105fcbdd5f2032bf3b7232b647284c95c"
-                }
-            ]
-        },
-        {
             "name": "opencv",
             "buildsystem": "cmake",
             "builddir": true,
