@@ -193,20 +193,13 @@ def format_audiochannels(channels):
     if isinstance(channels, DiscovererAudioInfo):
         channels = channels.get_channels()
 
-    unique_vals = {"1": _("Mono"), "2": _("Stereo"), "6": _("6 (5.1)")}
+    unique_vals = {"1": _("Mono"), "2": _("Stereo"), "6": _("6 (5.1)"),
+        "8": ("8 (7.1)")}
 
     try:
         return unique_vals[str(channels)]
     except KeyError:
         return str(channels)
-
-
-def format_pixel_aspect_ratio(ratio):
-    """Formats the pixel aspect ratio for display."""
-    if isinstance(ratio, DiscovererVideoInfo):
-        ratio = Gst.Fraction(ratio.get_par_num(), ratio.get_par_denom())
-
-    return "{0:n}:{1:n}".format(ratio.num, ratio.denom)
 
 
 # ---------------------- ARGB color helper-------------------------------------#
@@ -636,17 +629,4 @@ audio_rates = model((str, int),
         44100,
         48000,
         96000
-    )])
-
-pixel_aspect_ratios = model((str, object),
-    [(format_pixel_aspect_ratio(Gst.Fraction(*ratio)), Gst.Fraction(*ratio))
-        for ratio in ((1, 1),
-        (10, 11),
-        (8, 9),
-        (40, 33),
-        (32, 27),
-        (12, 11),
-        (16, 15),
-        (16, 11),
-        (64, 45)
     )])

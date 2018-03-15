@@ -25,7 +25,6 @@ from pitivi.configure import get_ui_dir
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate
-from pitivi.utils.ui import format_pixel_aspect_ratio
 
 
 class ClipMediaPropsDialog(object):
@@ -102,9 +101,7 @@ class ClipMediaPropsDialog(object):
                     # real framerate, so just uncheck instead of disabling:
                     self.framerate_checkbutton.set_active(False)
                 elif fps == 0:
-                    # Translators: a label showing an invalid framerate value
-                    fps = format_framerate(stream)
-                    self.frame_rate.set_text(_("Invalid (%s)") % fps)
+                    self.frame_rate.set_text(_("Variable"))
                     self.framerate_checkbutton.set_active(False)
                     # For consistency, insensitize the checkbox AND value
                     # labels
@@ -114,7 +111,10 @@ class ClipMediaPropsDialog(object):
                     self.frame_rate.set_text(format_framerate(stream))
 
                 # Aspect ratio (probably?) doesn't need such a check:
-                self.aspect_ratio.set_text(format_pixel_aspect_ratio(stream))
+                par_num = stream.get_par_num()
+                par_denom = stream.get_par_denom()
+                self.aspect_ratio.set_text("{0:n}:{1:n}".format(par_num,
+                    par_denom))
 
             self.has_video = True
             break

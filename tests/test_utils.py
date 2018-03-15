@@ -34,7 +34,6 @@ from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
-from pitivi.utils.ui import format_pixel_aspect_ratio
 
 second = Gst.SECOND
 minute = second * 60
@@ -129,24 +128,6 @@ class TestFormatAudiochannels(TestCase):
         self.__check(1, "Mono")
         self.__check(2, "Stereo")
         self.__check(6, "6 (5.1)")
-
-
-class TestFormatPixelAspectRatio(TestCase):
-
-    def __check(self, num, denom, expected):
-        stream = Mock(spec=DiscovererVideoInfo)
-        fraction = Mock(num=num, denom=denom)
-
-        stream.get_par_num = Mock(return_value=num)
-        stream.get_par_denom = Mock(return_value=denom)
-
-        self.assertEqual(format_pixel_aspect_ratio(stream), expected)
-        self.assertEqual(format_pixel_aspect_ratio(fraction), expected)
-
-    def test_ratios(self):
-        self.__check(1, 1, "1:1")
-        self.__check(40, 33, "40:33")
-        self.__check(5, 12, "5:12")
 
 
 class TestDependencyChecks(TestCase):
