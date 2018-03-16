@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-14 17:42+0100\n"
-"PO-Revision-Date: 2018-03-14 17:44+0100\n"
+"POT-Creation-Date: 2018-03-16 22:32+0100\n"
+"PO-Revision-Date: 2018-03-16 22:33+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -910,48 +910,53 @@ msgstr ""
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:142
+#: ../pitivi/clipproperties.py:132
+msgid "To apply an effect to the clip, drag it from the Effect Library."
+msgstr ""
+"Aby zastosować efekt na klipie, należy przeciągnąć go z kolekcji efektów."
+
+#: ../pitivi/clipproperties.py:150
 msgid "Remove effect"
 msgstr "Usuń efekt"
 
-#: ../pitivi/clipproperties.py:177
+#: ../pitivi/clipproperties.py:185
 msgid "Active"
 msgstr "Aktywny"
 
-#: ../pitivi/clipproperties.py:180
+#: ../pitivi/clipproperties.py:188
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:189
+#: ../pitivi/clipproperties.py:197
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:211
+#: ../pitivi/clipproperties.py:225
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
 
-#: ../pitivi/clipproperties.py:230
+#: ../pitivi/clipproperties.py:248
 msgid "Clip Effects"
 msgstr "Efekty klipów"
 
-#: ../pitivi/clipproperties.py:236
+#: ../pitivi/clipproperties.py:254
 msgid "Remove the selected effect"
 msgstr "Usunięcie zaznaczonego efektu"
 
-#: ../pitivi/clipproperties.py:537
+#: ../pitivi/clipproperties.py:570
 msgid "Transformation"
 msgstr "Przekształcenie"
 
-#: ../pitivi/clipproperties.py:647
+#: ../pitivi/clipproperties.py:680
 msgid "Show keyframes"
 msgstr "Wyświetla klatki kluczowe"
 
-#: ../pitivi/clipproperties.py:649
+#: ../pitivi/clipproperties.py:682
 msgid "Activate keyframes"
 msgstr "Aktywuje klatki kluczowe"
 
-#: ../pitivi/clipproperties.py:654
+#: ../pitivi/clipproperties.py:687
 msgid "Hide keyframes"
 msgstr "Ukrywa klatki kluczowe"
 
