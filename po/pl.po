@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-14 17:40+0100\n"
-"PO-Revision-Date: 2018-03-14 17:42+0100\n"
+"POT-Creation-Date: 2018-03-16 22:30+0100\n"
+"PO-Revision-Date: 2018-03-16 22:32+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -773,36 +773,41 @@ msgstr ""
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:137
+#: ../pitivi/clipproperties.py:127
+msgid "To apply an effect to the clip, drag it from the Effect Library."
+msgstr ""
+"Aby zastosować efekt na klipie, należy przeciągnąć go z kolekcji efektów."
+
+#: ../pitivi/clipproperties.py:145
 msgid "Remove effect"
 msgstr "Usuń efekt"
 
-#: ../pitivi/clipproperties.py:172
+#: ../pitivi/clipproperties.py:180
 msgid "Active"
 msgstr "Aktywny"
 
-#: ../pitivi/clipproperties.py:175
+#: ../pitivi/clipproperties.py:183
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:184
+#: ../pitivi/clipproperties.py:192
 msgid "Effect name"
 msgstr "Nazwa efektu"
 
-#: ../pitivi/clipproperties.py:206
+#: ../pitivi/clipproperties.py:214
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Proszę wybrać klip na osi czasu, aby skonfigurować jego powiązane efekty"
 
-#: ../pitivi/clipproperties.py:225
+#: ../pitivi/clipproperties.py:237
 msgid "Clip Effects"
 msgstr "Efekty klipów"
 
-#: ../pitivi/clipproperties.py:231
+#: ../pitivi/clipproperties.py:243
 msgid "Remove the selected effect"
 msgstr "Usunięcie zaznaczonego efektu"
 
-#: ../pitivi/clipproperties.py:531
+#: ../pitivi/clipproperties.py:544
 msgid "Transformation"
 msgstr "Przekształcenie"
 
