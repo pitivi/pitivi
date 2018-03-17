@@ -424,6 +424,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-drop", self._drag_drop_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
+        self.connect("size-allocate", self.__size_allocate_cb)
 
         self.app.settings.connect("edgeSnapDeadbandChanged",
                                   self.__snap_distance_changed_cb)
@@ -959,6 +960,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dropData = factory_name
                 self.dropDataReady = True
 
+    def __size_allocate_cb(self, unused_widget, allocation):
+        if self.layout.props.height > allocation.height:
+            self.get_parent().vscrollbar.show()
+        else:
+            self.get_parent().vscrollbar.hide()
+
     # Handle layers
     def _layer_added_cb(self, unused_ges_timeline, ges_layer):
         self._add_layer(ges_layer)
@@ -1290,6 +1297,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ges_timeline = None
         self.__copied_group = None
 
+        # Vertical Scrollbar. It will be displayed only when needed.
+        self.vscrollbar = None
+
         self._createUi()
         self._createActions()
 
@@ -1441,9 +1451,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline = Timeline(self.app, left_size_group)
 
-        vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
+        self.vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
                                    adjustment=self.timeline.vadj)
-        vscrollbar.get_style_context().add_class("background")
+        self.vscrollbar.get_style_context().add_class("background")
+
         hscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.HORIZONTAL,
                                    adjustment=self.timeline.hadj)
         hscrollbar.get_style_context().add_class("background")
@@ -1464,7 +1475,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.timeline, 0, 1, 2, 1)
-        self.attach(vscrollbar, 2, 1, 1, 1)
+        self.attach(self.vscrollbar, 2, 1, 1, 1)
         self.attach(hscrollbar, 1, 2, 1, 1)
         self.attach(self.toolbar, 3, 1, 1, 1)
 
