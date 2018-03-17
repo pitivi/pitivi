@@ -1290,11 +1290,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ges_timeline = None
         self.__copied_group = None
 
+        # Vertical Scrollbar. It will be displayed only when needed.
+        self.vscrollbar = None
+
         self._createUi()
         self._createActions()
 
         self.app.project_manager.connect("new-project-loaded",
                                          self._projectLoadedCb)
+        self.timeline.connect("size-allocate", self.__size_allocate_cb)
 
     # Public API
 
@@ -1441,9 +1445,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.timeline = Timeline(self.app, left_size_group)
 
-        vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
+        self.vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
                                    adjustment=self.timeline.vadj)
-        vscrollbar.get_style_context().add_class("background")
+        self.vscrollbar.get_style_context().add_class("background")
+
         hscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.HORIZONTAL,
                                    adjustment=self.timeline.hadj)
         hscrollbar.get_style_context().add_class("background")
@@ -1464,7 +1469,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.attach(zoom_box, 0, 0, 1, 1)
         self.attach(self.ruler, 1, 0, 1, 1)
         self.attach(self.timeline, 0, 1, 2, 1)
-        self.attach(vscrollbar, 2, 1, 1, 1)
+        self.attach(self.vscrollbar, 2, 1, 1, 1)
         self.attach(hscrollbar, 1, 2, 1, 1)
         self.attach(self.toolbar, 3, 1, 1, 1)
 
@@ -1883,6 +1888,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _update_ruler(self, videorate):
         self._framerate = videorate
         self.ruler.setProjectFrameRate(self._framerate)
+
+    def __size_allocate_cb(self, unused_widget, allocation):
+        if self.timeline.layout.props.height > allocation.height:
+            self.vscrollbar.show()
+        else:
+            self.vscrollbar.hide()
 
     def _projectLoadedCb(self, unused_project_manager, project):
         """Connects to the project's timeline and pipeline."""
