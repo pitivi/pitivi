@@ -198,21 +198,26 @@ class FlatpakRepos(FlatpakObject):
         repo_defs = [rd for rd in
                      self.flatpak("remote-list", "-d").split("\n") if rd]
         for repo in repo_defs:
-            components = repo.split(" ")
-            name = components[0]
-            desc = ""
-            url = None
-            for elem in components[1:]:
-                if not elem:
-                    continue
-                parsed_url = urlparse(elem)
-                if parsed_url.scheme:
-                    url = elem
-                    break
+            for components in [repo.split(" "), repo.split("\t")]:
+                if len(components) == 1:
+                    components = repo.split("\t")
+                name = components[0]
+                desc = ""
+                url = None
+                for elem in components[1:]:
+                    if not elem:
+                        continue
+                    parsed_url = urlparse(elem)
+                    if parsed_url.scheme:
+                        url = elem
+                        break
 
-                if desc:
-                    desc += " "
-                desc += elem
+                    if desc:
+                        desc += " "
+                    desc += elem
+
+                if url:
+                    break
 
             if not url:
                 Console.message("No valid URI found for: %s", repo)
@@ -442,8 +447,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         if self.check:
             self.run_in_sandbox("gst-validate-launcher",
-                                os.path.join(self.topdir, "tests/ptv_testsuite.py"),
-                                "--xunit-file", "xunit.xml", exit_on_failure=False,
+                                os.path.join(
+                                    self.topdir, "tests/ptv_testsuite.py"),
+                                "--xunit-file", "xunit.xml", exit_on_failure=True,
                                 cwd=self.topdir)
 
         if self.bundle:
@@ -527,13 +533,15 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def install_development_tools(self):
         venv_path = os.path.join(self.scriptdir, "pyvenv")
-        Console.message("Setting up a Python virtual env for development: %s", venv_path)
+        Console.message(
+            "Setting up a Python virtual env for development: %s", venv_path)
         if not os.path.isdir(venv_path):
             venv.create(venv_path, with_pip=True)
 
         activate_script = os.path.join(venv_path, "bin", "activate")
         pip_modules = "pre-commit git-pylint-commit-hook git_pep8_commit_hook pylint"
-        Console.message("Installing development tools in the Python virtual env: %s", pip_modules)
+        Console.message(
+            "Installing development tools in the Python virtual env: %s", pip_modules)
         subprocess.check_call(
             ". %s && pip install -U %s" % (activate_script, pip_modules),
             shell=True)
@@ -543,7 +551,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         # installed in the development pyvenv which is outside the sandbox
         # because git-pylint-commit-hook needs to import pylint.config.
         pip_modules = ["pylint"]
-        Console.message("Installing development tools in the sandbox: %s", pip_modules)
+        Console.message(
+            "Installing development tools in the sandbox: %s", pip_modules)
         self.run_in_sandbox("pip3", "install", "-U", "--user", *pip_modules,
                             exit_on_failure=True)
 
