@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-03-14 05:56+0000\n"
-"PO-Revision-Date: 2018-03-14 07:36+0100\n"
+"POT-Creation-Date: 2018-03-18 23:11+0000\n"
+"PO-Revision-Date: 2018-03-19 18:32+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -655,7 +655,7 @@ msgid "Pause"
 msgstr "Pozastavit"
 
 #: ../data/ui/renderingprogress.ui.h:4 ../pitivi/viewer/viewer.py:541
-#: ../pitivi/timeline/timeline.py:1588
+#: ../pitivi/timeline/timeline.py:1589
 msgid "Play"
 msgstr "Přehrát"
 
@@ -902,48 +902,53 @@ msgstr ""
 msgid "Effects"
 msgstr "Efekty"
 
-#: ../pitivi/clipproperties.py:142
+#: ../pitivi/clipproperties.py:132
+msgid "To apply an effect to the clip, drag it from the Effect Library."
+msgstr ""
+"Když chcete na klip použít nějaký efekt, přetáhněte jej z knihovny efektů."
+
+#: ../pitivi/clipproperties.py:150
 msgid "Remove effect"
 msgstr "Odebrat efekt"
 
-#: ../pitivi/clipproperties.py:177
+#: ../pitivi/clipproperties.py:185
 msgid "Active"
 msgstr "Aktivní"
 
-#: ../pitivi/clipproperties.py:180
+#: ../pitivi/clipproperties.py:188
 msgid "Type"
 msgstr "Typ"
 
-#: ../pitivi/clipproperties.py:189
+#: ../pitivi/clipproperties.py:197
 msgid "Effect name"
 msgstr "Název efektu"
 
-#: ../pitivi/clipproperties.py:211
+#: ../pitivi/clipproperties.py:225
 msgid "Select a clip on the timeline to configure its associated effects"
 msgstr ""
 "Abyste mohli nastavit přidružené efekty, musíte na časové ose vybrat klip"
 
-#: ../pitivi/clipproperties.py:230
+#: ../pitivi/clipproperties.py:248
 msgid "Clip Effects"
 msgstr "Efekty klipů"
 
-#: ../pitivi/clipproperties.py:236
+#: ../pitivi/clipproperties.py:254
 msgid "Remove the selected effect"
 msgstr "Odebrat vybraný efekt"
 
-#: ../pitivi/clipproperties.py:537
+#: ../pitivi/clipproperties.py:570
 msgid "Transformation"
 msgstr "Transformace"
 
-#: ../pitivi/clipproperties.py:647
+#: ../pitivi/clipproperties.py:680
 msgid "Show keyframes"
 msgstr "Zobrazit klíčové snímky"
 
-#: ../pitivi/clipproperties.py:649
+#: ../pitivi/clipproperties.py:682
 msgid "Activate keyframes"
 msgstr "Aktivovat klíčové snímky"
 
-#: ../pitivi/clipproperties.py:654
+#: ../pitivi/clipproperties.py:687
 msgid "Hide keyframes"
 msgstr "Skrýt klíčové snímky"
 
@@ -1791,71 +1796,71 @@ msgstr ""
 "Jestli kliknutí levým tlačítkem kromě vybírání a úprav klipů provádí i "
 "přeskakování."
 
-#: ../pitivi/timeline/timeline.py:1503 ../pitivi/dialogs/prefs.py:61
+#: ../pitivi/timeline/timeline.py:1504 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Časová osa"
 
-#: ../pitivi/timeline/timeline.py:1510
+#: ../pitivi/timeline/timeline.py:1511
 msgid "Delete selected clips"
 msgstr "Odstranit vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1516
+#: ../pitivi/timeline/timeline.py:1517
 msgid "Delete selected clips and shift following ones"
 msgstr "Odstranit vybrané klipy a následující posunout"
 
-#: ../pitivi/timeline/timeline.py:1522
+#: ../pitivi/timeline/timeline.py:1523
 msgid "Group selected clips together"
 msgstr "Seskupit vybrané klipy dohromady"
 
-#: ../pitivi/timeline/timeline.py:1528
+#: ../pitivi/timeline/timeline.py:1529
 msgid "Ungroup selected clips"
 msgstr "Zrušit seskupení vybraných klipů"
 
-#: ../pitivi/timeline/timeline.py:1534
+#: ../pitivi/timeline/timeline.py:1535
 msgid "Copy selected clips"
 msgstr "Kopírovat vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1540
+#: ../pitivi/timeline/timeline.py:1541
 msgid "Paste selected clips"
 msgstr "Vložit vybrané klipy"
 
-#: ../pitivi/timeline/timeline.py:1553
+#: ../pitivi/timeline/timeline.py:1554
 msgid "Split the clip at the position"
 msgstr "Rozdělit klipy na pozici přehrávání"
 
-#: ../pitivi/timeline/timeline.py:1559
+#: ../pitivi/timeline/timeline.py:1560
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr "Přidat klíčový snímek na křivku klíčkových snímků vybraného klipu"
 
-#: ../pitivi/timeline/timeline.py:1564
+#: ../pitivi/timeline/timeline.py:1565
 msgid "Timeline Navigation"
 msgstr "Práce s časovou osou"
 
-#: ../pitivi/timeline/timeline.py:1571
+#: ../pitivi/timeline/timeline.py:1572
 msgid "Zoom in"
 msgstr "Přiblížit"
 
-#: ../pitivi/timeline/timeline.py:1577
+#: ../pitivi/timeline/timeline.py:1578
 msgid "Zoom out"
 msgstr "Oddálit"
 
-#: ../pitivi/timeline/timeline.py:1583
+#: ../pitivi/timeline/timeline.py:1584
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Upravit přiblížení, aby se projekt vešel do okna"
 
-#: ../pitivi/timeline/timeline.py:1594
+#: ../pitivi/timeline/timeline.py:1595
 msgid "Seek backward one frame"
 msgstr "Přeskočit o snímek zpět"
 
-#: ../pitivi/timeline/timeline.py:1600
+#: ../pitivi/timeline/timeline.py:1601
 msgid "Seek forward one frame"
 msgstr "Přeskočit o snímek vpřed"
 
-#: ../pitivi/timeline/timeline.py:1607
+#: ../pitivi/timeline/timeline.py:1608
 msgid "Seek backward one second"
 msgstr "Přeskočit o sekundu zpět"
 
-#: ../pitivi/timeline/timeline.py:1614
+#: ../pitivi/timeline/timeline.py:1615
 msgid "Seek forward one second"
 msgstr "Přeskočit o sekundu vpřed"
 
