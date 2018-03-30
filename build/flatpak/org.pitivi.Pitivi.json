@@ -351,7 +351,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gstreamer"
                 }
             ]
@@ -364,7 +364,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-base"
                 }
             ]
@@ -377,7 +377,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-good"
                 }
             ]
@@ -390,7 +390,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly"
                 }
             ]
@@ -403,12 +403,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-bad"
-                },
-                {
-                    "type": "patch",
-                    "path": "bad/0001-compositor-Add-support-for-crossfade-blending.patch"
                 }
             ]
         },
@@ -420,8 +416,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
-                    "disable-shallow-clone" : true,
+                    "branch": "1.14",
+                    "disable-shallow-clone": true,
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
                 }
             ]
@@ -434,7 +430,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-python"
                 }
             ]
@@ -448,7 +444,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-devtools"
                 }
             ]
@@ -457,11 +453,14 @@
             "name": "gstreamer-vaapi",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gstreamer-vaapi"
                 }
             ]
@@ -474,16 +473,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
-                },
-                {
-                    "type": "patch",
-                    "path": "ges/0001-video-transition-Make-use-of-the-new-compositor-cros.patch"
-                },
-                {
-                    "type": "patch",
-                    "path": "ges/0002-transition-Fix-usage-of-transition-types-crossfade.patch"
                 }
             ]
         },
@@ -491,11 +482,14 @@
             "name": "gst-transcoder",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_doc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_doc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.12",
+                    "branch": "1.14",
                     "url": "https://github.com/pitivi/gst-transcoder"
                 }
             ]
