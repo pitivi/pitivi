@@ -42,7 +42,7 @@ SDK_BRANCH = {"0.96": "3.20",
               "stable": "3.24",
               "master": "3.24"}
 FLATPAK_REQ = "0.6.4"
-DEFAULT_GST_BRANCH = '1.12'
+DEFAULT_GST_BRANCH = '1.14'
 
 
 class Colors:  # pylint: disable=too-few-public-methods
