@@ -839,12 +839,20 @@ class RenderDialog(Loggable):
         self.dialog.ok_btn.connect(
             "clicked", self._okButtonClickedCb, settings_attr)
 
+    def __additional_debug_info(self, error):
+        if self.project.vencoder == 'x264enc':
+            if self.project.videowidth % 2 or self.project.videoheight % 2:
+                return "\n\n%s\n\n" % _("\n\n<b>Make sure your rendering size is even, "
+                         "x264enc might not be able to render otherwise.</b>\n\n")
+
+        return ""
+
     def _showRenderErrorDialog(self, error, unused_details):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = _("An error occurred while trying to render your "
-                              "project. You might want to check our "
-                              "troubleshooting guide or file a bug report. "
-                              "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
+                              "project.") + self.__additional_debug_info(str(error)) + (
+            "You might want to check our troubleshooting guide or file a bug report. "
+            "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
                                    message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
