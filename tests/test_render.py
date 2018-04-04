@@ -151,8 +151,6 @@ class TestRender(BaseTestMediaLibrary):
                                         Gst.ElementFactory.find("matroskamux")))
         self.assertTrue(set_combo_value(dialog.video_encoder_combo,
                                         Gst.ElementFactory.find("x264enc")))
-        self.assertEqual(project.video_profile.get_restriction()[0]["format"],
-                         "Y444")
 
         # Set encoding profile
         if getattr(GstPbutils.EncodingProfile, "copy"):  # Available only in > 1.11
@@ -161,8 +159,6 @@ class TestRender(BaseTestMediaLibrary):
                          if isinstance(p, GstPbutils.EncodingVideoProfile)]
             vprofile.set_restriction(Gst.Caps("video/x-raw"))
             project.set_container_profile(profile)
-            self.assertEqual(project.video_profile.get_restriction()[0]["format"],
-                             "Y444")
 
     @skipUnless(*factory_exists("vorbisenc", "theoraenc", "oggmux",
                                 "opusenc", "vp8enc"))
