@@ -317,7 +317,7 @@ class FlatpakPackage(FlatpakObject):
             return
 
         self.flatpak("install", self.repo.name, self.name,
-                     self.branch, show_output=True,
+                     self.branch, "--reinstall", show_output=True,
                      comment="Installing %s" % self.name)
 
     def update(self):
@@ -412,8 +412,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         repos = FlatpakRepos()
         self.sdk_repo = repos.add(
             FlatpakRepo("gnome",
-                        url="http://sdk.gnome.org/repo/",
-                        repo_file="https://sdk.gnome.org/gnome.flatpakrepo"))
+                        url="https://dl.flathub.org/repo/",
+                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
 
         sdk_branch = SDK_BRANCH[self.branch]
         self.runtime = FlatpakPackage(
