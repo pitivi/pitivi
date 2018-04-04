@@ -176,9 +176,9 @@ class TestRender(BaseTestMediaLibrary):
         preset_combo.connect("changed", preset_changed_cb, changed)
 
         test_data = [
-            ("test", {'aencoder': "vorbisenc",
-                      'vencoder': "theoraenc",
-                      'muxer': "oggmux"}),
+            ("test", {"aencoder": "vorbisenc",
+                      "vencoder": "theoraenc",
+                      "muxer": "oggmux"}),
             ("test_ogg-vp8-opus", {
                 "aencoder": "opusenc",
                 "vencoder": ["vp8enc", "vaapivp8enc"],
@@ -236,13 +236,13 @@ class TestRender(BaseTestMediaLibrary):
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
         preset_combo = dialog.render_presets.combo
-        i = find_preset_row_index(preset_combo, 'test')
+        i = find_preset_row_index(preset_combo, "test")
         self.assertIsNotNone(i)
         preset_combo.set_active(i)
 
         # Check the 'test' profile is selected
         active_iter = preset_combo.get_active_iter()
-        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
+        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), "test")
 
         # Remove current profile and verify it has been removed
         dialog.render_presets.action_remove.activate()
@@ -256,12 +256,12 @@ class TestRender(BaseTestMediaLibrary):
         self.assertTrue(dialog.render_presets.action_save.get_enabled())
         dialog.render_presets.action_save.activate(None)
         self.assertEqual([i[0] for i in preset_combo.props.model],
-                         sorted(profile_names + ['test']))
+                         sorted(profile_names + ["test"]))
         active_iter = preset_combo.get_active_iter()
-        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), 'test')
+        self.assertEqual(preset_combo.props.model.get_value(active_iter, 0), "test")
 
-    def check_simple_rendering_profile(self, profile_name):
-        """Checks that rendering with the specified profile works."""
+    def setup_project_with_profile(self, profile_name):
+        """Creates a simple project, open the render dialog and select @profile_name."""
         project = self.create_simple_project()
         dialog = self.create_rendering_dialog(project)
 
@@ -272,7 +272,11 @@ class TestRender(BaseTestMediaLibrary):
             self.assertIsNotNone(i)
             preset_combo.set_active(i)
 
-        self.render(dialog)
+        return project, dialog
+
+    def check_simple_rendering_profile(self, profile_name):
+        """Checks that rendering with the specified profile works."""
+        self.render(self.setup_project_with_profile(profile_name)[1])
 
     def render(self, dialog):
         """Renders pipeline from @dialog."""
@@ -352,3 +356,26 @@ class TestRender(BaseTestMediaLibrary):
     def test_rendering_with_default_profile(self):
         """Tests rendering a simple timeline with the default profile."""
         self.check_simple_rendering_profile(None)
+
+    @skipUnless(*encoding_target_exists("youtube"))
+    def test_setting_caps_fields_in_advanced_dialog(self):
+        """Tests setting special advanced setting (which are actually set on caps)."""
+        project, dialog = self.setup_project_with_profile("youtube")
+
+        dialog.window = None  # Make sure the dialog window is never set to Mock.
+        dialog._videoSettingsButtonClickedCb(None)
+        self.assertEqual(dialog.dialog.elementsettings.getCapsValues(), {"profile": "high"})
+
+        dialog.dialog.elementsettings.caps_values["profile"].setWidgetValue("baseline")
+        self.assertEqual(dialog.dialog.elementsettings.getCapsValues(), {"profile": "baseline"})
+
+        caps = dialog.dialog.getCaps()
+        self.assert_caps_equal(caps, "video/x-h264,profile=baseline")
+
+        dialog.dialog.ok_btn.emit("clicked")
+        self.assert_caps_equal(project.video_profile.get_format(), "video/x-h264,profile=baseline")
+
+        dialog._videoSettingsButtonClickedCb(None)
+
+        caps = dialog.dialog.getCaps()
+        self.assert_caps_equal(caps, "video/x-h264,profile=baseline")
