@@ -831,13 +831,14 @@ class RenderDialog(Loggable):
 
         Args:
             factory (Gst.ElementFactory): The factory for editing.
-            settings_attr (str): The Project attribute holding the properties.
+            media_type (str): String describing the media type ('audio' or 'video')
         """
         # Reconsitute de property name from the media type (vcodecsettings or acodecsettings)
         properties = getattr(self.project, media_type[0] + 'codecsettings')
 
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
                                                caps=getattr(self.project, media_type + '_profile').get_format(),
+                                               # In unit tests self.window is a MagicMock.
                                                parent_window=self.window if isinstance(self.window, Gtk.Window) else None)
         self.dialog.ok_btn.connect(
             "clicked", self._okButtonClickedCb, media_type)
@@ -988,8 +989,12 @@ class RenderDialog(Loggable):
     # ------------------- Callbacks ------------------------------------------ #
 
     # -- UI callbacks
-    def _okButtonClickedCb(self, unused_button, settings_attr):
-        setattr(self.project, settings_attr, self.dialog.getSettings())
+    def _okButtonClickedCb(self, unused_button, media_type):
+        setattr(self.project, media_type[0] + 'codecsettings', self.dialog.getSettings())
+
+        caps = self.dialog.getCaps()
+        if caps:
+            getattr(self.project, media_type + '_profile').set_format(caps)
         self.dialog.window.destroy()
 
     def _renderButtonClickedCb(self, unused_button):
@@ -1205,7 +1210,7 @@ class RenderDialog(Loggable):
         if self._setting_encoding_profile:
             return
         factory = get_combo_value(self.video_encoder_combo)
-        self._elementSettingsDialog(factory, 'vcodecsettings')
+        self._elementSettingsDialog(factory, 'video')
 
     def _channelsComboChangedCb(self, combo):
         if self._setting_encoding_profile:
@@ -1231,7 +1236,7 @@ class RenderDialog(Loggable):
 
     def _audioSettingsButtonClickedCb(self, unused_button):
         factory = get_combo_value(self.audio_encoder_combo)
-        self._elementSettingsDialog(factory, 'acodecsettings')
+        self._elementSettingsDialog(factory, 'audio')
 
     def _muxerComboChangedCb(self, combo):
         """Handles the changing of the container format combobox."""
