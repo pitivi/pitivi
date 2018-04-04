@@ -237,6 +237,15 @@ class TestCase(unittest.TestCase, Loggable):
                          expect_selected)
         self.assertEqual(ges_clip.selected.selected, expect_selected)
 
+    def assertCapsEqual(self, caps1, caps2):
+        if isinstance(caps1, str):
+            caps1 = Gst.Caps(caps1)
+        if isinstance(caps2, str):
+            caps2 = Gst.Caps(caps2)
+
+        self.assertTrue(caps1.is_equal(caps2),
+                        "%s != %s" % (caps1.to_string(), caps2.to_string()))
+
 
 @contextlib.contextmanager
 def created_project_file(asset_uri):
