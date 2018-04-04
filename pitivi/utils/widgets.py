@@ -693,12 +693,20 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         ("x264enc", "multipass-cache-file"): is_valid_file
     }
 
+    # Dictionary that references the GstCaps field to expose in the UI
+    # for a well known set of elements.
+    CAP_FIELDS_TO_EXPOSE = {
+        "x264enc": {"profile": Gst.ValueList(["high", "main", "baseline"])}
+    }
+
     def __init__(self, controllable=True):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = None
         self.ignore = []
         self.properties = {}
+        # Maps caps fields to the corresponding widgets.
+        self.caps_widgets = {}
         self.__controllable = controllable
         self.set_orientation(Gtk.Orientation.VERTICAL)
         self.__bindings_by_keyframe_button = {}
@@ -819,7 +827,18 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             props = GObject.list_properties(self.element)
         return [prop for prop in props if prop.name not in self.ignore]
 
-    def add_widgets(self, create_property_widget, values={}, with_reset_button=False):
+    def __add_widget_to_grid(self, grid, nick, widget, y):
+        if isinstance(widget, ToggleWidget):
+            widget.set_label(nick)
+            grid.attach(widget, 0, y, 2, 1)
+        else:
+            text = _("%(preference_label)s:") % {"preference_label": nick}
+            label = Gtk.Label(label=text)
+            label.props.yalign = 0.5
+            grid.attach(label, 0, y, 1, 1)
+            grid.attach(widget, 1, y, 1, 1)
+
+    def add_widgets(self, create_property_widget, values={}, with_reset_button=False, caps_values=None):
         """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
@@ -856,11 +875,35 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         grid.props.column_spacing = SPACING
         grid.props.border_width = SPACING
 
-        for y, prop in enumerate(props):
+        element_name = None
+        if isinstance(self.element, Gst.Element):
+            element_name = self.element.get_factory().get_name()
+
+        src_caps_fields = self.CAP_FIELDS_TO_EXPOSE.get(element_name)
+        y = 0
+        if src_caps_fields:
+            srccaps = self.element.get_static_pad('src').get_pad_template().caps
+
+            vals = {}
+            for field, prefered_value in src_caps_fields.items():
+                gvalue = srccaps[0][field]
+                if isinstance(gvalue, Gst.ValueList) and isinstance(prefered_value, Gst.ValueList):
+                    prefered_value = Gst.ValueList([v for v in prefered_value if v in gvalue])
+                    gvalue = Gst.ValueList.merge(prefered_value, gvalue)
+
+                widget = self._make_widget_from_gvalue(gvalue, prefered_value)
+                if caps_values.get(field):
+                    widget.setWidgetValue(caps_values[field])
+                self.__add_widget_to_grid(grid, field.capitalize(), widget, y)
+                y += 1
+
+                self.caps_widgets[field] = widget
+
+        for y, prop in enumerate(props, start=y):
             # We do not know how to work with GObjects, so blacklist
             # them to avoid noise in the UI
-            if (not prop.flags & GObject.PARAM_WRITABLE or
-                    not prop.flags & GObject.PARAM_READABLE or
+            if (not prop.flags & GObject.ParamFlags.WRITABLE or
+                    not prop.flags & GObject.ParamFlags.READABLE or
                     GObject.type_is_a(prop.value_type, GObject.Object)):
                 continue
 
@@ -896,7 +939,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 label.set_alignment(0.0, 0.5)
                 grid.attach(label, 0, y, 1, 1)
                 grid.attach(widget, 1, y, 1, 1)
-
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
@@ -926,6 +968,20 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.element.connect('deep-notify', self._propertyChangedCb)
         self.pack_start(grid, expand=False, fill=False, padding=0)
         self.show_all()
+
+    def _make_widget_from_gvalue(self, gvalue, default):
+        if type(gvalue) == Gst.ValueList:
+            choices = []
+            for val in gvalue:
+                choices.append([val, val])
+            widget = ChoiceWidget(choices, default=default[0])
+            widget.setWidgetValue(default[0])
+        else:
+            # TODO: implement widgets for other types.
+            self.fixme("Unsupported value type: %s", type(gvalue))
+            widget = DefaultWidget()
+
+        return widget
 
     def _propertyChangedCb(self, effect, gst_element, pspec):
         if gst_element.get_control_binding(pspec.name):
@@ -1045,6 +1101,15 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 values[prop.name] = value
         return values
 
+    def get_caps_values(self):
+        values = {}
+        for field, widget in self.caps_widgets.items():
+            value = widget.getWidgetValue()
+            if value is not None:
+                values[field] = value
+
+        return values
+
     def make_property_widget(self, prop, value=None):
         """Creates a widget for the specified element property."""
         type_name = GObject.type_name(prop.value_type.fundamental)
@@ -1089,7 +1154,8 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 class GstElementSettingsDialog(Loggable):
     """Dialog window for viewing/modifying properties of a Gst.Element."""
 
-    def __init__(self, elementfactory, properties, parent_window=None):
+    def __init__(self, elementfactory, properties, parent_window=None,
+                 caps=None):
         Loggable.__init__(self)
         self.debug("factory: %s, properties: %s", elementfactory, properties)
 
@@ -1099,6 +1165,7 @@ class GstElementSettingsDialog(Loggable):
             self.warning(
                 "Couldn't create element from factory %s", self.factory)
         self.properties = properties
+        self.__caps = caps
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(
@@ -1113,9 +1180,22 @@ class GstElementSettingsDialog(Loggable):
         # set title and frame label
         self.window.set_title(
             _("Properties for %s") % self.factory.get_longname())
+
+        caps_values = {}
+        if self.__caps:
+            element_name = None
+            if isinstance(self.element, Gst.Element):
+                element_name = self.element.get_factory().get_name()
+            src_caps_fields = GstElementSettingsWidget.CAP_FIELDS_TO_EXPOSE.get(element_name)
+            if src_caps_fields:
+                for field in src_caps_fields.keys():
+                    val = caps[0][field]
+                    if val is not None and Gst.value_is_fixed(val):
+                        caps_values[field] = val
         self.elementsettings.setElement(self.element, self.properties)
-        self.elementsettings.add_widgets(
-            GstElementSettingsWidget.make_property_widget, with_reset_button=True)
+        self.elementsettings.add_widgets(GstElementSettingsWidget.make_property_widget,
+                                         with_reset_button=True,
+                                         caps_values=caps_values)
 
         # Try to avoid scrolling, whenever possible.
         screen_height = self.window.get_screen().get_height()
@@ -1144,6 +1224,17 @@ class GstElementSettingsDialog(Loggable):
         Returns:
             dict: A property name to value map."""
         return self.elementsettings.getSettings()
+
+    def get_caps(self):
+        values = self.elementsettings.get_caps_values()
+        if self.__caps and values:
+            caps = Gst.Caps(self.__caps.to_string())
+
+            for field, value in values.items():
+                caps.set_value(field, value)
+
+            return caps
+        return None
 
     def _resetValuesClickedCb(self, unused_button):
         self.resetAll()
