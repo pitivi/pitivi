@@ -826,25 +826,36 @@ class RenderDialog(Loggable):
                 second = encoder_combo.props.model.iter_nth_child(first, 0)
                 encoder_combo.set_active_iter(second)
 
-    def _elementSettingsDialog(self, factory, settings_attr):
+    def _elementSettingsDialog(self, factory, media_type):
         """Opens a dialog to edit the properties for the specified factory.
 
         Args:
             factory (Gst.ElementFactory): The factory for editing.
             settings_attr (str): The Project attribute holding the properties.
         """
-        properties = getattr(self.project, settings_attr)
+        # Reconsitute de property name from the media type (vcodecsettings or acodecsettings)
+        properties = getattr(self.project, media_type[0] + 'codecsettings')
+
         self.dialog = GstElementSettingsDialog(factory, properties=properties,
-                                               parent_window=self.window)
+                                               caps=getattr(self.project, media_type + '_profile').get_format(),
+                                               parent_window=self.window if isinstance(self.window, Gtk.Window) else None)
         self.dialog.ok_btn.connect(
-            "clicked", self._okButtonClickedCb, settings_attr)
+            "clicked", self._okButtonClickedCb, media_type)
+
+    def __additional_debug_info(self, error):
+        if self.project.vencoder == 'x264enc':
+            if self.project.videowidth % 2 or self.project.videoheight % 2:
+                return _("\n\n<b>Make sure your rendering size is even, "
+                         "x264enc might not be able to render otherwise.</b>\n\n")
+
+        return ""
 
     def _showRenderErrorDialog(self, error, unused_details):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = _("An error occurred while trying to render your "
-                              "project. You might want to check our "
-                              "troubleshooting guide or file a bug report. "
-                              "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
+                              "project.") + self.__additional_debug_info(str(error)) + (
+            "You might want to check our troubleshooting guide or file a bug report. "
+            "The GStreamer error was:") + "\n\n<i>" + str(error) + "</i>"
 
         dialog = Gtk.MessageDialog(transient_for=self.window, modal=True,
                                    message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK,
