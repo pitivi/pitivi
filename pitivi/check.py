@@ -324,6 +324,22 @@ def require_version(modulename, version):
         exit(1)
 
 
+def get_square_width(video_info):
+    """Applies the pixel aspect ratio to the width of the video info.
+
+    Args:
+        video_info (GstPbutils.DiscovererVideoInfo): The video info.
+
+    Returns:
+        int: The width calculated exactly as GStreamer does.
+    """
+    width = video_info.get_width()
+    par_num = video_info.get_par_num()
+    par_denom = video_info.get_par_denom()
+    # We observed GStreamer does a simple int(), so we leave it like this.
+    return int(width * par_num / par_denom)
+
+
 def initialize_modules():
     """Initializes the modules.
 
@@ -361,10 +377,9 @@ def initialize_modules():
     require_version("GstPbutils", GST_API_VERSION)
     from gi.repository import GstPbutils
 
-    # Monky patch an helper method to retrieve the size of a video
+    # Monky patch a helper method for retrieving the size of a video
     # when using square pixels.
-    GstPbutils.DiscovererVideoInfo.get_square_width = \
-        lambda i: i.get_width() * i.get_par_num() / i.get_par_denom()
+    GstPbutils.DiscovererVideoInfo.get_square_width = get_square_width
 
     if not os.environ.get("GES_DISCOVERY_TIMEOUT"):
         os.environ["GES_DISCOVERY_TIMEOUT"] = "5"
