@@ -18,12 +18,11 @@ To edit the website edit the markdown files in our git repo in the
 
 # Contributors' documentation
 
-See the [Developer documentation](HACKING.md) section
+See the [Developer documentation](HACKING.md)
 page for a complete listing of documentation aimed at contributing to
 Pitivi. Here is a small overview/some starting points taken from that
 category:
 
--   [Easy and fun projects](Pitivi_Love.md) for new contributors
 -   [Roadmap](Roadmap.md) (long-term plans)
 -   [Architecture](Architecture.md): where does Pitivi fit? What
     are all those components?

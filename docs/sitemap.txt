@@ -6,7 +6,6 @@ index.md
 		Git.md
 		Coding_style_guide.md
 		Command_line_tools.md
-		Pitivi_Love.md
 	The_people.md
 	Roadmap.md
 	Goals.md
