@@ -1,8 +1,8 @@
 These QA Scenarios are here to check the expected behaviours of Pitivi
 under many situations.
 
-If you see a problem in one of them, [Create a
-task](Bug_reporting.md) on Phabricator, indicating:
+If you see a problem in one of them, [create an issue](Bug_reporting.md)
+on GitLab, indicating:
 
 -   which QA Scenario doesn't go through,
 -   (optionally) the media files you used,

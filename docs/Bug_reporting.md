@@ -3,14 +3,13 @@
 Welcome, testers!
 
 To report a bug/problem in the software, or request a new
-feature/enhancement, [create a
-task](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=)
-and set Projects: Pitivi.
+feature/enhancement, [create an
+issue](https://gitlab.gnome.org/GNOME/pitivi/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=).
 
 Bug reporting and feature requests are managed with GNOME's
 [GitLab](https://gitlab.gnome.org/). You need to create
-an account to file tasks and comment on them. Take a look at the
-[existing list of bugs/feature
+an account to file issues and comment on them. Take a look at the
+[existing list of bugs and feature
 requests](https://gitlab.gnome.org/GNOME/pitivi/issues) to see if
 your problem has already been reported.
 

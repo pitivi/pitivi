@@ -20,30 +20,27 @@ ready](http://gitready.com).
 ## Sending changes around
 
 As can be seen in the [development workflow](Development_workflow.md),
-we normally don't take care of pushing branches around, as this is done
-automatically by git-phab. Once somebody attaches a branch to a task
-with git-phab, all of us can try it with:
-
-```
-git-phab fetch T1234 -c
-```
+best is to create an account on the GNOME GitLab instance and fork
+[Pitivi](https://gitlab.gnome.org/GNOME/pitivi) there to create
+your own remote `pitivi` repository. When you push branches to this
+remote repository, you have the option to create a merge request.
+A GitLab merge request is the same things as a GitHub pull request.
+This way, the maintainers and other interested parties are notified
+and can review the changes.
 
 
 ## When to use git pull
 
 With rare exceptions, in Pitivi we rebase contributed commits before
 pushing them to origin/master, to avoid merge commits. This worked fine
-and it enforces some discipline, so there is no plan to change it. It's
-similar with Phabricator's philosophy (`arc land` squashes all the
-commits in the current branch into a single one before pushing to
-origin/master) — just that we like to keep control.
+and it enforces some discipline, so there is no plan to change it.
 
-When working on a task, assuming you're following the [development
+When working on a issue, assuming you're following the [development
 workflow](Development_workflow.md), you should have a specific branch.
 To get the latest changes in your branch, normally in Pitivi you should
 do something like `git fetch` and `git rebase origin/master`.
 
-It should be safe to use `git pull` on the master branch if you don't
+It should be safe to use `git pull` on the master branch, if you don't
 work on it. Just make sure it's exactly what origin/master is and no
 merge commit is created.
 
@@ -56,7 +53,7 @@ using a graphical tool such as `gitk` or
 really nice interface).
 
 [Meld](http://meldmerge.org) can be very useful for reviewing a large
-change to be committed.
+change to be committed. Simply run `meld .` in your local repository.
 
 Set up your prompt to show the current branch info, and make sure
 tab-completion works.

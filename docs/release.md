@@ -12,10 +12,10 @@ number (1, 2, 3...).
 
 Most of the steps below should be done in the [development environment](HACKING.md): `$ source bin/pitivi-env` -> `(ptv-flatpak) $`
 
-1. Check [Phabricator](https://phabricator.freedesktop.org/tag/pitivi/)
-    * Make sure there is no open 'blocker' task against the current milestone.
-    * Move the other open tasks somewhere else, for example to the next milestone.
-    * Archive the current milestone. Open the milestone's workboard, click Manage, then Archive Project.
+1. Check [GitLab](https://gitlab.gnome.org/GNOME/pitivi/milestones)
+    * Make sure there are no significant issues open against the current milestone.
+    * Move the remaining open issues somewhere else, for example to the next milestone.
+    * Close the current milestone.
 
 2. Make sure we depend on the latest GStreamer. This should be done as soon as GStreamer makes a release.
     * Find the latest tag in https://cgit.freedesktop.org/gstreamer/gstreamer/
