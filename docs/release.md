@@ -33,18 +33,18 @@ Most of the steps below should be done in the [development environment](HACKING.
  <!-- * `$ make validate` FIXME! -->
 
 5. Update the following files:
-    * [meson.build](../meson.build):
+    * [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build):
 If doing a bugfix release, add or increase the micro.
 If doing a regular release, bump YY up and remove the micro from
 the version number, for example: 0.97.1 -> 0.98. Normally this is the
 same as the name of the Phabricator milestone you just archived.
-     * [RELEASE](../RELEASE):
+     * [RELEASE](https://gitlab.gnome.org/GNOME/pitivi/blob/master/RELEASE):
 Update the short version of the release notes.
 To get the list of contributors: `$ git shortlog -s -n <previous-tag>..`
 To get the list of translators: `$ for i in po/*.po help/*; do echo $i; git shortlog -s <previous-tag>.. $i; done`
-     * [NEWS](../NEWS):
+     * [NEWS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/NEWS):
 A shorter version of RELEASE, with the exec summary of changes.
-     * [AUTHORS](../AUTHORS):
+     * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
 If there are new maintainers.
 
 6. Commit the changes: `$ git commit -a -m "Release <version-number>"`
@@ -89,4 +89,4 @@ If there are new maintainers.
 
 11. On pitivi.org, update "releases.txt" for the app's update notification feature
 
-12. Bump the Z in the version number in [meson.build](../meson.build), for example if it was a regular release: 0.98 -> 0.98.1 or if it was a bug-fix release: 0.97.1 -> 0.97.2, and `$ commit -a -m "Back to development"`
+12. Bump the Z in the version number in [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build), for example if it was a regular release: 0.98 -> 0.98.1 or if it was a bug-fix release: 0.97.1 -> 0.97.2, and `$ commit -a -m "Back to development"`
