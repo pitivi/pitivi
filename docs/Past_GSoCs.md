@@ -42,7 +42,7 @@ get involved.
 
 -   Anton Belka worked on the initial
     implementation of proxies in [GES](GES.md) (see [proxy
-    editing requirements](proxy_editing_requirements.md)).
+    editing requirements](design/proxy_editing_requirements.md)).
 -   Mathieu Duponchelle worked on heavy
     bugfixing all across the Pitivi, [GES](GES.md) and GStreamer
     stack, allowing us to release [0.91](releases/0.91.md) at the end of
