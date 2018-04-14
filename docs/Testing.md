@@ -39,8 +39,7 @@ as of [0.94](releases/0.94.md).
 
 If you're curious about our unit tests, the best way to get to know them
 is to write a few Pitivi unit tests and have us review them. Check out
-[how to set up your dev
-env](https://github.com/pitivi/pitivi/blob/master/docs/HACKING.md) and
+[how to set up your dev env](HACKING.md) and
 come in our [IRC channel](http://www.pitivi.org/?go=contact)!
 
 ## Integration tests

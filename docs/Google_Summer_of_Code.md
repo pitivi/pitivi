@@ -123,7 +123,7 @@ Therefore, you should proceed like this:
   [our official stance]: http://jeff.ecchi.ca/blog/2014/02/15/applying-for-a-gsoc-project-is-all-about-early-involvement-and-commitment/
   [Being selected as a Summer of Code student]: http://ploum.net/be-selected-student-for-soc/
   [IRC channel]: http://www.pitivi.org/?go=contact
-  [development environment]: https://github.com/pitivi/pitivi/blob/master/docs/HACKING.md
+  [development environment]: HACKING.md
   [Test suite]: Testing.md
   [issue]: https://gitlab.gnome.org/GNOME/pitivi/issues
   [fun tasks for newcomers]: https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers
