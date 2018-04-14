@@ -66,6 +66,3 @@ want to create.
 
 4. Create merge request either by the link that shows in the command line after
    pushing or in the GitLab UI clicking "Create merge request" in your branch.
-
-[Gitlab workflow for contribution]: https://gitlab.gnome.org/GNOME/pitivi/
-[gitlab]: https://gitlab.gnome.org/GNOME/pitivi/
