@@ -4,22 +4,27 @@ short-description: How we do it
 
 # Development Workflow
 
-We use [Gitlab](https://gitlab.gnome.org/GNOME/pitivi/issues) to track all
-bugs and feature requests. Feel free to open a task if you have found a
-bug or wish to see a feature implemented. If it already exists,
-subscribe to it to keep yourself updated with its progress. You can also
-subscribe to the entire project.
+We use [GitLab](https://gitlab.gnome.org/GNOME/pitivi/issues) to track
+all bugs and feature requests. Most of the time, you assign an issue
+to yourself, work on it until it's fixed, and then you close it.
 
-## Picking a task to work on
+Interested users can enable notifications for an existing issue to
+get an email when it's updated. It's also possible to change your
+"Notification settings" for
+[pitivi](https://gitlab.gnome.org/GNOME/pitivi) from the default
+"Global" to "Watch", to receive notifications for any activity in the
+entire project.
 
-To get involved, you can start with tasks tagged [Pitivi tasks for
-newcomers](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers).
+## Picking an issue to work on
+
+To get involved, start with issues tagged
+[4. Newcomers](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers).
 It's best to get in touch with us on our IRC channel `#pitivi` on
 Freenode, to see if it's still meaningful.
 
-Once you decide, assign the task to yourself in GitLab.
+Once you decide, assign the issue to yourself in GitLab.
 
-## Fixing the task
+## Fixing the issue
 
 Next is the fun part where you implement your cool feature, or fix an
 annoying bug:

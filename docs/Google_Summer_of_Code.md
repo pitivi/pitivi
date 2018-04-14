@@ -107,7 +107,7 @@ Therefore, you should proceed like this:
     doesn't, etc. See how you like it.
 3.  To get a better idea of how comfortable you are with the code and
     community, make some small contributions to the code. Pick some
-    small [bugs] to fix or pick a “small” task in the [Pitivi tasks for
+    small [bugs] to fix or pick a “small” task in the [fun tasks for
     newcomers] list and have a go at it. Keep us in the loop. The
     earlier you start contributing, the more likely you know what you're
     getting into. Don't start contributing in March/April: we highly
@@ -125,8 +125,8 @@ Therefore, you should proceed like this:
   [IRC channel]: http://www.pitivi.org/?go=contact
   [development environment]: https://github.com/pitivi/pitivi/blob/master/docs/HACKING.md
   [Test suite]: Testing.md
-  [bugs]: https://phabricator.freedesktop.org/project/view/15/
-  [Pitivi tasks for newcomers]: https://phabricator.freedesktop.org/tag/pitivi_tasks_for_newcomers/
+  [issue]: https://gitlab.gnome.org/GNOME/pitivi/issues
+  [fun tasks for newcomers]: https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers
   [application]: https://wiki.gnome.org/Outreach/SummerOfCode/Students#Fill_out_the_Application
   [website]: https://developers.google.com/open-source/gsoc/
 
@@ -150,7 +150,7 @@ multiple codebases:
 We'd love to see GSoC proposals originating from an itch you need to
 scratch. You are welcome to ask around and **bring your own ideas**. If
 you're not sure where you can be most useful, have a look at the “large”
-tasks in the [Pitivi tasks for newcomers] list. They are fun cool
+tasks in the [fun tasks for newcomers] list. They are fun cool
 features very suitable for a GSoC project. See the [roadmap] for our
 overall vision for the project. Deadlines for applying are approaching
 fast, hurry up!
@@ -160,6 +160,6 @@ See [Past GSoCs] for details on what the previous GSoC students did.
   [architecture]: Architecture.md
   [GES]: GES.md
   [Pitivi]: http://www.pitivi.org/manual/mainwindow.html
-  [Pitivi tasks for newcomers]: https://phabricator.freedesktop.org/tag/pitivi_tasks_for_newcomers/
+  [fun tasks for newcomers]: https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers
   [roadmap]: Roadmap.md
   [Past GSoCs]: Past_GSoCs.md
