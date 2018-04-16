@@ -164,14 +164,16 @@ class FlatpakPackages(FlatpakObject):  # pylint: disable=too-few-public-methods
 
     def __detect_packages(self, *args):
         packs = []
-        package_defs = [rd for rd in
-                        self.flatpak("list", "-d", *args).split("\n") if rd]
+        package_defs = [rd
+                        for rd in self.flatpak("list", "-d", *args).split("\n")
+                        if rd]
         for package_def in package_defs:
-            splited_packaged_def = [p for p in package_def.split(" ") if p]
+            splited_packaged_def = package_def.split()
             name, arch, branch = splited_packaged_def[0].split("/")
 
             # If installed from a file, the package is in no repo
-            repo = self.repos.repos.get(splited_packaged_def[1])
+            repo_name = splited_packaged_def[1]
+            repo = self.repos.repos.get(repo_name)
 
             packs.append(FlatpakPackage(name, branch, repo, arch))
 
@@ -300,8 +302,8 @@ class FlatpakPackage(FlatpakObject):
         self.repo.repos.update()
         for package in self.repo.repos.packages:
             if package.name == self.name and \
-                    package.branch == self.branch and \
-                    package.arch == self.arch:
+                    package.arch == self.arch and \
+                    package.branch == self.branch:
                 return True
 
         return False
