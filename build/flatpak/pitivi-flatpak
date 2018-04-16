@@ -143,6 +143,8 @@ class FlatpakObject:  # pylint: disable=too-few-public-methods
                 command.append("--user")
         command.extend(args)
 
+        if comment:
+            Console.message(" ".join(command))
         if not show_output:
             return subprocess.check_output(command).decode("utf-8")
 
@@ -190,14 +192,16 @@ class FlatpakRepos(FlatpakObject):
 
     def __init__(self, user=True):
         FlatpakObject.__init__(self, user=user)
+        # The remote repositories, name -> FlatpakRepo
         self.repos = {}
         self.update()
 
     def update(self):
         self.repos = {}
-        repo_defs = [rd for rd in
-                     self.flatpak("remote-list", "-d").split("\n") if rd]
-        for repo in repo_defs:
+        remotes = [row
+                   for row in self.flatpak("remote-list", "-d").split("\n")
+                   if row]
+        for repo in remotes:
             for components in [repo.split(" "), repo.split("\t")]:
                 if len(components) == 1:
                     components = repo.split("\t")
@@ -223,65 +227,55 @@ class FlatpakRepos(FlatpakObject):
                 Console.message("No valid URI found for: %s", repo)
                 continue
 
-            self.repos[name] = FlatpakRepo(name, desc, url, repos=self)
+            self.repos[name] = FlatpakRepo(name, url, desc, repos=self)
 
         self.packages = FlatpakPackages(self)
 
-    def add(self, repo, override=True):
+    def add(self, name, flatpakrepo_url, override=True):
+        flatpakrepo = tempfile.NamedTemporaryFile(mode="w")
+        urlretrieve(flatpakrepo_url, flatpakrepo.name)
+        repo = configparser.ConfigParser()
+        repo.read(flatpakrepo.name)
+        url = repo["Flatpak Repo"]["Url"]
+
         same_name = None
-        for name, tmprepo in self.repos.items():
-            if repo.url == tmprepo.url:
+        for tmpname, tmprepo in self.repos.items():
+            if url == tmprepo.url:
                 return tmprepo
-            if repo.name == name:
+            if name == tmpname:
                 same_name = tmprepo
 
         if same_name:
+            Console.message("Flatpak remote with the same name already exists: %s", same_name)
             if not override:
+                Console.message("%sNote the URL is %s, not %s%s",
+                                Colors.WARNING, same_name.url, url, Colors.ENDC)
                 return None
 
-            self.flatpak("remote-modify", repo.name, "--url=" + repo.url,
+            Console.message("The URL is different. Overriding.")
+            self.flatpak("remote-modify", name, "--url=" + url,
                          comment="Setting repo %s URL from %s to %s"
-                         % (repo.name, same_name.url, repo.url))
-            same_name.url = repo.url
+                         % (name, same_name.url, url))
+            same_name.url = url
             return same_name
 
-        self.flatpak("remote-add", "--if-not-exists", repo.name, "--from",
-                     repo.repo_file.name,
-                     comment="Adding repo %s" % repo.name)
-        repo.repos = self
-        return repo
+        self.flatpak("remote-add", "--if-not-exists", name,
+                     "--from", flatpakrepo_url,
+                     comment="Adding repo %s" % name)
+        self.update()
+        return self.repos[name]
 
 
 class FlatpakRepo(FlatpakObject):  # pylint: disable=too-few-public-methods
 
-    def __init__(self, name, desc=None, url=None,  # pylint: disable=too-many-arguments
-                 repo_file=None, user=True, repos=None):
+    def __init__(self, name, url, desc=None, user=True, repos=None):
         FlatpakObject.__init__(self, user=user)
 
         self.name = name
-        self.url = url
-        self.desc = desc
-        self.repo_file_name = repo_file
-        self._repo_file = None
-        self.repos = repos
         assert name
-        if repo_file and not url:
-            repo = configparser.ConfigParser()
-            repo.read(self.repo_file.name)
-            self.url = repo["Flatpak Repo"]["Url"]
-        else:
-            assert url
-
-    @property
-    def repo_file(self):
-        if self._repo_file:
-            return self._repo_file
-
-        assert self.repo_file_name
-        self._repo_file = tempfile.NamedTemporaryFile(mode="w")
-        urlretrieve(self.repo_file_name, self._repo_file.name)
-
-        return self._repo_file
+        self.desc = desc
+        self.repos = repos
+        self.url = url
 
 
 class FlatpakPackage(FlatpakObject):
@@ -410,10 +404,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.check_flatpak()
 
         repos = FlatpakRepos()
-        self.sdk_repo = repos.add(
-            FlatpakRepo("gnome",
-                        url="https://dl.flathub.org/repo/",
-                        repo_file="https://dl.flathub.org/repo/flathub.flatpakrepo"))
+        self.sdk_repo = repos.add("gnome",
+            "https://dl.flathub.org/repo/flathub.flatpakrepo")
 
         sdk_branch = SDK_BRANCH[self.branch]
         self.runtime = FlatpakPackage(
@@ -594,6 +586,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         flatpak_command.extend(args)
 
         Console.message("Running in sandbox: %s", ' '.join(args))
+        Console.message(" ".join(flatpak_command))
         try:
             subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
