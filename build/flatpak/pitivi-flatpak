@@ -268,7 +268,7 @@ class FlatpakRepos(FlatpakObject):
 
 class FlatpakRepo(FlatpakObject):  # pylint: disable=too-few-public-methods
 
-    def __init__(self, name, url, desc=None, user=True, repos=None):
+    def __init__(self, name, url, desc=None, user=True, repos=None):  # pylint: disable=too-many-arguments
         FlatpakObject.__init__(self, user=user)
 
         self.name = name
@@ -339,6 +339,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.sdk = None
 
         self.packs = []
+        self.init = False
         self.update = False
         self.json = None
         self.args = []
@@ -405,7 +406,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
         repos = FlatpakRepos()
         self.sdk_repo = repos.add("gnome",
-            "https://dl.flathub.org/repo/flathub.flatpakrepo")
+                                  "https://dl.flathub.org/repo/flathub.flatpakrepo")
 
         sdk_branch = SDK_BRANCH[self.branch]
         self.runtime = FlatpakPackage(
@@ -426,16 +427,23 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
 
     def run(self):
         if self.clean:
+            Console.message("Removing prefix")
             try:
                 shutil.rmtree(self.prefix)
             except FileNotFoundError:
                 pass
 
-        fresh_install = not os.path.exists(self.prefix)
-        if fresh_install or self.update:
+        missing_prefix = not os.path.exists(self.prefix)
+        if self.init or self.update:
             self.install_flatpak_runtimes()
-            self.setup_sandbox()
+            if missing_prefix or self.update:
+                self.setup_sandbox()
             self.install_development_tools()
+        else:
+            if missing_prefix:
+                Console.message("%sPrefix missing, create it with: %s --init%s",
+                                Colors.FAIL, __file__, Colors.ENDC)
+                exit(1)
 
         if self.check:
             self.run_in_sandbox("gst-validate-launcher",
@@ -447,7 +455,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         if self.bundle:
             self.update_bundle()
 
-        if not self.check and not self.update and not self.bundle:
+        if not self.check and not self.init and not self.update and not self.bundle:
             assert self.args
             self.run_in_sandbox(*self.args, exit_on_failure=True)
 
@@ -598,7 +606,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             if not runtime.is_installed():
                 runtime.install()
             else:
-                runtime.update()
+                # Update only if requested.
+                if self.update:
+                    runtime.update()
 
 
 if __name__ == "__main__":
@@ -607,9 +617,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="pitivi-flatpak")
 
     general = parser.add_argument_group("General")
+    general.add_argument("--init", dest="init",
+                         action="store_true",
+                         help="Initialize the runtime/sdk/app and build the development environment if needed")
     general.add_argument("--update", dest="update",
                          action="store_true",
-                         help="Update the runtime/sdk/app and rebuild the development environment if needed")
+                         help="Update the runtime/sdk/app and rebuild the development environment")
     general.add_argument("--installer", dest="installer",
                          action="store_true",
                          help="Wait for Enter to be pressed when the script exits because something failed")
