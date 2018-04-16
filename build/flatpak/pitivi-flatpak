@@ -299,12 +299,19 @@ class FlatpakPackage(FlatpakObject):
             # Bundle installed from file
             return True
 
-        self.repo.repos.update()
-        for package in self.repo.repos.packages:
-            if package.name == self.name and \
-                    package.arch == self.arch and \
-                    package.branch == self.branch:
+        if len(self.name.split(".")) <= 3:
+            self.repo.repos.update()
+            for package in self.repo.repos.packages:
+                if package.name == self.name and \
+                        package.arch == self.arch and \
+                        package.branch == self.branch:
+                    return True
+        else:
+            try:
+                self.flatpak("info", self.name)
                 return True
+            except subprocess.CalledProcessError:
+                return False
 
         return False
 
