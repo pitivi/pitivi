@@ -22,7 +22,7 @@ alias ptvenv="$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak"
 
 echo "-> Setting up the prefix for the sandbox..."
 # This builds the local flatpak repo if it is not yet built.
-ptvenv echo Setting up the sandbox prefix...
+ptvenv --init
 if [ "$?" = "0" ];
 then
     echo Sandbox ready.
