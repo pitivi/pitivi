@@ -388,7 +388,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             finally:
                 devnull.close()
 
-    def check_flatpak(self):
+    @staticmethod
+    def check_flatpak():
         try:
             output = subprocess.check_output(["flatpak", "--version"])
         except FileNotFoundError:
@@ -398,7 +399,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                             " how to install it for your distribution at:\n"
                             "    * http://flatpak.org/%s\n", Colors.FAIL,
                             FLATPAK_REQ, sys.argv[0], Colors.ENDC)
-            self.exit(1)
+            exit(1)
 
         def comparable_version(version):
             return [int(number) for number in version.split(".")]
@@ -408,13 +409,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             Console.message("\n%sFlatpak %s required but %s found."
                             " Please update and try again%s\n", Colors.FAIL,
                             FLATPAK_REQ, version, Colors.ENDC)
-            self.exit(1)
-
-    def exit(self, exitcode):
-        if self.installer:
-            input("Failure installing %s press <enter> to continue" % self.name)
-
-        exit(exitcode)
+            exit(1)
 
     def clean_args(self):
         Console.quiet = self.quiet
@@ -499,7 +494,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         try:
             subprocess.check_call(build_export_args)
         except subprocess.CalledProcessError:
-            self.exit(1)
+            exit(1)
 
         update_repo_args = ["flatpak", "build-update-repo"]
 
@@ -512,7 +507,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         try:
             subprocess.check_call(update_repo_args)
         except subprocess.CalledProcessError:
-            self.exit(1)
+            exit(1)
 
     def setup_sandbox(self):
         """Creates and updates the sandbox."""
@@ -534,7 +529,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         except FileNotFoundError:
             Console.message("\n%sYou need to install flatpak-builder%s\n",
                             Colors.FAIL, Colors.ENDC)
-            self.exit(1)
+            exit(1)
         subprocess.check_call(builder_args, cwd=self.scriptdir)
 
         if not os.path.isdir("mesonbuild/"):
@@ -618,7 +613,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
             if exit_on_failure:
-                self.exit(e.returncode)
+                exit(e.returncode)
 
     def install_flatpak_runtimes(self):
         for runtime in self.packs:
@@ -642,9 +637,6 @@ if __name__ == "__main__":
     general.add_argument("--update", dest="update",
                          action="store_true",
                          help="Update the runtime/sdk/app and rebuild the development environment")
-    general.add_argument("--installer", dest="installer",
-                         action="store_true",
-                         help="Wait for Enter to be pressed when the script exits because something failed")
     general.add_argument("-q", "--quiet", dest="quiet",
                          action="store_true",
                          help="Do not print anything")
