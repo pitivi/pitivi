@@ -1701,8 +1701,6 @@ class Project(Loggable, GES.Project):
             "height": 576,
             "framerate": Gst.Fraction(25, 1),
             "pixel-aspect-ratio": Gst.Fraction(1, 1),
-            "format": Gst.ValueArray(ALL_RAW_VIDEO_FORMATS),
-
         }
 
         prev_vals = None
@@ -1714,10 +1712,6 @@ class Project(Loggable, GES.Project):
             ref_restrictions = Gst.Caps("video/x-raw")
         else:
             ref_restrictions = profile.get_restriction()
-
-        for struct in ref_restrictions:
-            if not struct["format"]:
-                struct["format"] = Gst.ValueArray(ALL_RAW_VIDEO_FORMATS)
 
         self._ensureRestrictions(profile, defaults, ref_restrictions,
                                  prev_vals)
