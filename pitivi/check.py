@@ -417,7 +417,7 @@ def initialize_modules():
 # a specific version requirement, they have the "None" value.
 
 GST_API_VERSION = "1.0"
-GST_VERSION = "1.12.3"
+GST_VERSION = "1.14.1"
 GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
 HARD_DEPENDENCIES = [GICheck("3.20.0"),
