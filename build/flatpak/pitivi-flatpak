@@ -143,6 +143,8 @@ class FlatpakObject:  # pylint: disable=too-few-public-methods
                 command.append("--user")
         command.extend(args)
 
+        if comment:
+            Console.message(" ".join(command))
         if not show_output:
             return subprocess.check_output(command).decode("utf-8")
 
@@ -584,6 +586,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         flatpak_command.extend(args)
 
         Console.message("Running in sandbox: %s", ' '.join(args))
+        Console.message(" ".join(flatpak_command))
         try:
             subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
