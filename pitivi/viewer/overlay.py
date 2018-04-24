@@ -40,6 +40,8 @@ class Overlay(Gtk.DrawingArea, Loggable):
         self.project_size = numpy.array([project.videowidth,
                                          project.videoheight])
 
+        self._source.selected.connect("selected-changed", self.__source_selected_changed_cb)
+
     def _canvas_size_changed_cb(self, project):
         project = self.stack.app.project_manager.current_project
         self.project_size = numpy.array([project.videowidth,
@@ -62,6 +64,10 @@ class Overlay(Gtk.DrawingArea, Loggable):
             self.warning("Unknown clip type: %s", self._source)
             return
         self.stack.app.gui.context_tabs.set_current_page(page)
+
+    def __source_selected_changed_cb(self, unused_source, selected):
+        if not selected and self._is_selected():
+            self._deselect()
 
     def _deselect(self):
         self.stack.selected_overlay = None
