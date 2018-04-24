@@ -65,6 +65,7 @@ class Overlay(Gtk.DrawingArea, Loggable):
 
     def _deselect(self):
         self.stack.selected_overlay = None
+        self.queue_draw()
 
     def _hover(self):
         self.stack.hovered_overlay = self
