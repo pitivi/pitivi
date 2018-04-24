@@ -361,12 +361,15 @@ class MoveScaleOverlay(Overlay):
         return binding is not None
 
     def __get_pipeline_position(self):
-        pipeline = self.stack.app.project_manager.current_project.pipeline
-        try:
-            position = pipeline.getPosition()
-            return True, position
-        except PipelineError:
-            return False, None
+        project = self.stack.app.project_manager.current_project
+        if project:
+            pipeline = project.pipeline
+            try:
+                position = pipeline.getPosition()
+                return True, position
+            except PipelineError:
+                pass
+        return False, None
 
     def __get_source_position(self):
         res_x, x = self.__get_source_property("posx")
