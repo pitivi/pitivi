@@ -4,14 +4,19 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.24",
     "command": "pitivi",
-    "finish-args": ["--socket=x11", "--share=ipc",
-                    "--socket=pulseaudio",
-                    "--socket=wayland",
-                    "--filesystem=xdg-run/dconf", "--filesystem=~/.config/dconf:ro",
-                    "--talk-name=ca.desrt.dconf", "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
-                    "--talk-name=org.freedesktop.Notifications",
-                    "--filesystem=host",
-                    "--device=dri"],
+    "finish-args": [
+        "--socket=x11",
+        "--share=ipc",
+        "--socket=pulseaudio",
+        "--socket=wayland",
+        "--filesystem=xdg-run/dconf",
+        "--filesystem=~/.config/dconf:ro",
+        "--talk-name=ca.desrt.dconf",
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+        "--talk-name=org.freedesktop.Notifications",
+        "--filesystem=host",
+        "--device=dri"
+    ],
     "sdk": "org.gnome.Sdk",
     "rename-appdata-file": "pitivi.appdata.xml",
     "rename-desktop-file": "pitivi.desktop",
@@ -21,9 +26,9 @@
         "cflags": "-O0 -g",
         "cxxflags": "-O0 -g",
         "env": {
-          "PYTHON": "python3",
-          "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
-          "FREI0R_PATH": "/app/lib/frei0r-1/"
+            "PYTHON": "python3",
+            "GST_PLUGIN_SYSTEM_PATH": "/app/lib/gstreamer-1.0/",
+            "FREI0R_PATH": "/app/lib/frei0r-1/"
         },
         "strip": false,
         "no-debuginfo": true
@@ -32,10 +37,12 @@
         {
             "name": "numpy",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "mkdir -p /app/lib/python3.5/site-packages",
-               "CFLAGS='-L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.5m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
+                "mkdir -p /app/lib/python3.5/site-packages",
+                "CFLAGS='-L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.5m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
             ],
             "sources": [
                 {
@@ -48,9 +55,11 @@
         {
             "name": "pyparsing",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "python3 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -63,9 +72,11 @@
         {
             "name": "pytz",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "python3 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -78,9 +89,11 @@
         {
             "name": "six",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "python3 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -93,9 +106,11 @@
         {
             "name": "Cycler",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "python3 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -108,9 +123,11 @@
         {
             "name": "python-dateutil",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "python3 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -123,9 +140,11 @@
         {
             "name": "matplotlib",
             "buildsystem": "simple",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "build-commands": [
-               "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
+                "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
             ],
             "sources": [
                 {
@@ -137,10 +156,14 @@
         },
         {
             "name": "ipdb",
-            "build-options" : {
-              "build-args": ["--share=network"]
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ]
             },
-            "config-opts": ["--module=ipdb==0.8.1"],
+            "config-opts": [
+                "--module=ipdb==0.8.1"
+            ],
             "sources": [
                 {
                     "type": "file",
@@ -151,10 +174,14 @@
         },
         {
             "name": "nose2",
-            "build-options" : {
-              "build-args": ["--share=network"]
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ]
             },
-            "config-opts": ["--module=nose2==0.6.5"],
+            "config-opts": [
+                "--module=nose2==0.6.5"
+            ],
             "sources": [
                 {
                     "type": "file",
@@ -165,7 +192,9 @@
         },
         {
             "name": "sound-theme-freedesktop",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -176,7 +205,9 @@
         },
         {
             "name": "gsound",
-            "ensure-writable": ["easy-install.pth"],
+            "ensure-writable": [
+                "easy-install.pth"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -187,7 +218,12 @@
         },
         {
             "name": "x264",
-            "config-opts": ["--enable-shared", "--enable-static", "--enable-pic", "--disable-lavf"],
+            "config-opts": [
+                "--enable-shared",
+                "--enable-static",
+                "--enable-pic",
+                "--disable-lavf"
+            ],
             "sources": [
                 {
                     "type": "archive",
@@ -208,7 +244,9 @@
         },
         {
             "name": "gavl",
-            "config-opts": ["--without-doxygen"],
+            "config-opts": [
+                "--without-doxygen"
+            ],
             "sources": [
                 {
                     "type": "archive",
@@ -260,7 +298,7 @@
         {
             "name": "x265",
             "cmake": true,
-            "subdir":"source",
+            "subdir": "source",
             "sources": [
                 {
                     "type": "archive",
@@ -321,7 +359,9 @@
         },
         {
             "name": "fdkaac",
-            "config-opts": ["--disable-static"],
+            "config-opts": [
+                "--disable-static"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -347,7 +387,10 @@
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -359,7 +402,10 @@
         {
             "name": "gst-plugins-base",
             "buildsystem": "meson",
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "builddir": true,
             "sources": [
                 {
@@ -373,7 +419,10 @@
             "name": "gst-plugins-good",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -386,7 +435,10 @@
             "name": "gst-plugins-ugly",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -399,7 +451,10 @@
             "name": "gst-plugins-bad",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -412,25 +467,28 @@
             "name": "gst-libav",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
-		{
-                    "type" : "git",
-                    "branch" : "master",
+                {
+                    "type": "git",
+                    "branch": "master",
                     "disable-shallow-clone": true,
-                    "url" : "git://anongit.freedesktop.org/gstreamer/gst-libav"
+                    "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
                 },
                 {
-                    "type" : "git",
-                    "url" : "https://git.ffmpeg.org/ffmpeg.git",
+                    "type": "git",
+                    "url": "https://git.ffmpeg.org/ffmpeg.git",
                     "disable-shallow-clone": true,
-                    "branch" : "master"
+                    "branch": "master"
                 },
                 {
-                    "type" : "git",
-                    "url" : "git://git.libav.org/gas-preprocessor.git",
+                    "type": "git",
+                    "url": "git://git.libav.org/gas-preprocessor.git",
                     "disable-shallow-clone": true,
-                    "branch" : "master"
+                    "branch": "master"
                 }
             ]
         },
@@ -438,7 +496,10 @@
             "name": "gst-python",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Dpygi-overrides-dir=/app/lib/python3.5/site-packages/gi/overrides/", "--libdir=lib"],
+            "config-opts": [
+                "-Dpygi-overrides-dir=/app/lib/python3.5/site-packages/gi/overrides/",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -452,7 +513,10 @@
             "config-opts": [],
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -465,7 +529,10 @@
             "name": "gstreamer-vaapi",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -478,7 +545,10 @@
             "name": "gst-editing-services",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_gtkdoc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_gtkdoc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -491,7 +561,10 @@
             "name": "gst-transcoder",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["-Ddisable_doc=true", "--libdir=lib"],
+            "config-opts": [
+                "-Ddisable_doc=true",
+                "--libdir=lib"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -517,9 +590,13 @@
             "name": "pitivi",
             "buildsystem": "meson",
             "builddir": true,
-            "config-opts": ["--libdir=lib"],
+            "config-opts": [
+                "--libdir=lib"
+            ],
             "build-options": {
-              "build-args": ["--share=network"]
+                "build-args": [
+                    "--share=network"
+                ]
             },
             "sources": [
                 {
