@@ -66,8 +66,10 @@ class Selected(GObject.Object):
 
     @selected.setter
     def selected(self, selected):
+        differs = self._selected != selected
         self._selected = selected
-        self.emit("selected-changed", selected)
+        if differs:
+            self.emit("selected-changed", selected)
 
 
 class Selection(GObject.Object, Loggable):
