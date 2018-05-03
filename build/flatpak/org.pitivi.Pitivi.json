@@ -191,6 +191,24 @@
             ]
         },
         {
+            "name": "meson",
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ]
+            },
+            "config-opts": [
+                "--module=meson==0.46.0"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "py-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
             "name": "sound-theme-freedesktop",
             "ensure-writable": [
                 "easy-install.pth"
