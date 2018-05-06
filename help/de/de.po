@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi help master\n"
 "POT-Creation-Date: 2017-12-18 12:16+0000\n"
-"PO-Revision-Date: 2018-03-24 12:08+0100\n"
+"PO-Revision-Date: 2018-05-06 12:23+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -396,10 +396,8 @@ msgstr ""
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:34
-#, fuzzy
-#| msgid "Reverting changes"
 msgid "Undoing and reverting changes"
-msgstr "Änderungen zurücknehmen"
+msgstr "Änderungen zurücknehmen und wiederherstellen"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:35
@@ -410,6 +408,13 @@ msgid ""
 "you have made since the last time you saved your project. To do so, use "
 "<guiseq><gui>App menu</gui><gui>Revert to saved version</gui></guiseq>."
 msgstr ""
+"Um eine Änderung zurückzunehmen, klicken Sie einfach auf den "
+"<gui>Rückgängig</gui>-Knopf in der Kopfleiste oder drücken Sie "
+"<keyseq><key>Strg</key><key>Z</key></keyseq>. Neben dem Zurücknehmen "
+"einzelner Änderungen können Sie auch sämtliche Änderungen seit dem letzten "
+"Speichern Ihres Projekts zurücknehmen. Dies erreichen Sie über "
+"<guiseq><gui>Anwendungsmenü</gui><gui>Zurücksetzen auf das gespeicherte "
+"Projekt</gui></guiseq>."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:37
@@ -418,6 +423,9 @@ msgid ""
 "header bar or press <keyseq><key>Ctrl</key><key>Shift</key><key>Z</key></"
 "keyseq>."
 msgstr ""
+"Um zurückgenommene Änderungen wieder anzuwenden, klicken Sie auf den "
+"<gui>Wiederholen</gui>-Knopf in der Kopfleiste oder drücken Sie "
+"<keyseq><key>Strg</key<key>Umschalt</key>><key>Z</key></keyseq>."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:41
@@ -434,6 +442,13 @@ msgid ""
 "changed at any time by using <guiseq><gui>App menu</gui><gui>Project "
 "Settings</gui></guiseq>."
 msgstr ""
+"Die Projekteinstellungen legen vor allem fest, wie das Video während der "
+"Bearbeitung des Projekts dargestellt wird. Die Bildauflösung und das "
+"Seitenverhältnis beeinflussen das Erscheinungsbild der Vorschau. Falls "
+"Auflösung und Seitenverhältnis nicht denen der Aufnahme entsprechen, kann "
+"das Bild verzerrt sein oder mit schwarzen Randstreifen angezeigt werden. "
+"Diese Einstellungen können Sie in <guiseq><gui>Anwendungsmenü</"
+"gui><gui>Projekteinstellungen</gui></guiseq> ändern."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:44
@@ -442,6 +457,10 @@ msgid ""
 "changed to match. See <link xref=\"importing\">Getting media</link> for "
 "details."
 msgstr ""
+"Beim Import der ersten Videodatei werden die Projekteinstellungen "
+"automatisch gewählt, so dass Sie den Eigenschaften des Videos entsprechen. "
+"In <link xref=\"importing\">Medien importieren</link> finden Sie weitere "
+"Details."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:48
@@ -777,17 +796,13 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/presets.page:54
-#, fuzzy
-#| msgid ""
-#| "To remove an effect on a selected clip, select it in the clip's effect "
-#| "list and click the <gui>Remove</gui> button."
 msgid ""
 "To remove a preset, simply select it in the presets combobox and click "
 "<guiseq><gui>Menu button</gui><gui>Remove</gui></guiseq>."
 msgstr ""
 "Um einen Effekt von einem vorhandenen Clip zu entfernen, wählen Sie ihn in "
-"der Effektliste des Clips aus und klicken Sie auf den Knopf <gui>Entfernen</"
-"gui>."
+"der Effektliste des Clips aus und klicken Sie auf <guiseq><gui>Menüknopf</"
+"gui><gui>Entfernen</gui></guiseq>."
 
 #. (itstool) path: section/title
 #: C/presets.page:57
@@ -989,11 +1004,8 @@ msgstr ""
 
 #. (itstool) path: figure/desc
 #: C/transitions.page:79
-#, fuzzy
-#| msgid "Click and drag the last (or first) keyframe of the clip downwards."
 msgid "Click and drag the last keyframe downwards."
-msgstr ""
-"Klicken und Ziehen Sie das letzte (oder erste) Schlüsselbild nach unten."
+msgstr "Klicken und ziehen Sie das letzte Schlüsselbild nach unten."
 
 #. (itstool) path: section/p
 #: C/transitions.page:81
@@ -1073,7 +1085,6 @@ msgstr "Vorschaubereich"
 #. (itstool) path: item/p
 #. (itstool) path: section/title
 #: C/mainwindow.page:44 C/mainwindow.page:66
-#, fuzzy
 msgid "Ruler"
 msgstr "Lineal"
 
@@ -2236,12 +2247,12 @@ msgstr ""
 #. (itstool) path: page/title
 #: C/medialibrary.page:25
 msgid "Using the Media Library"
-msgstr ""
+msgstr "Verwendung der Medienbibliothek"
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:27
 msgid "Importing a file to the <gui>Media Library</gui>"
-msgstr ""
+msgstr "Eine Datei in die <gui>Medienbibliothek</gui> importieren"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:28
@@ -2259,11 +2270,12 @@ msgstr ""
 #: C/medialibrary.page:30
 msgid "The clips in the <gui>Media Library</gui> are sorted alphabetically."
 msgstr ""
+"Die Clips in der <gui>Medienbibliothek</gui> sind alphabetisch sortiert."
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:34
 msgid "Previewing a clip from the <gui>Media Library</gui>"
-msgstr ""
+msgstr "Vorschau auf einen Clip aus der Medienbibliothek"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:35
@@ -2272,6 +2284,11 @@ msgid ""
 "it in the <gui>Media Library</gui>. This will open the clip in a window that "
 "automatically closes whenever you click outside the window."
 msgstr ""
+"Um vor der Platzierung in der Zeitleiste eine Vorschau auf einen Clip zu "
+"erhalten, klicken Sie in der <gui>Medienbibliothek</gui> einfach doppelt "
+"darauf. Dadurch wird der Clip in einem Fenster geöffnet, das sich "
+"automatisch schließt, so bald Sie auf eine Stelle außerhalb dieses Fensters "
+"klicken."
 
 #. (itstool) path: section/title
 #: C/medialibrary.page:38
@@ -2324,7 +2341,7 @@ msgstr "Verbesserung der Performance beim Laden des Projekts"
 #. (itstool) path: item/p
 #: C/medialibrary.page:53
 msgid "Simplifying your editing workflow"
-msgstr ""
+msgstr "Vereinfachung der Arbeitsabläufe beim Bearbeiten"
 
 #. (itstool) path: item/p
 #: C/medialibrary.page:56
@@ -2396,6 +2413,8 @@ msgid ""
 "In order for these actions to become available, one or more clips must be "
 "selected."
 msgstr ""
+"Damit diese Aktionen auswählbar werden, müssen einer oder mehrere Clips "
+"ausgewählt sein."
 
 #. (itstool) path: info/desc
 #: C/welcomedialog.page:14
@@ -2424,22 +2443,28 @@ msgid ""
 "The dialog offers you projects that are found among the recently used files. "
 "Double-click one of them to load it or use one of the following buttons:"
 msgstr ""
+"Der Dialog bietet Ihnen Projekte an, die unter den zuletzt genutzten Dateien "
+"gefunden wurden. Klicken Sie doppelt auf eines davon, um es zu laden oder "
+"verwenden Sie einen der folgenden Knöpfe:"
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:26
 msgid "<gui>New</gui> opens a new project with the default settings."
-msgstr ""
+msgstr "<gui>Neu</gui> öffnet ein Projekt mit den Standardeinstellungen."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:29
 msgid ""
 "<gui>Browse projects...</gui> opens file chooser in the last used directory."
 msgstr ""
+"<gui>Projekte durchsuchen …</gui> öffnet einen Dateiauswahldialog im zuletzt "
+"verwendeten Ordner."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:32
 msgid "<gui>Help</gui> opens the user documenation on the index page."
 msgstr ""
+"<gui>Hilfe</gui> öffnet die Benutzerdokumentation auf deren Übersichtsseite."
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:35
@@ -2447,6 +2472,8 @@ msgid ""
 "<gui>Keyboard shortcuts</gui> opens the user documentation on the Keyboard "
 "shortcuts and cheatsheet page."
 msgstr ""
+"<gui>Tastenkürzel</gui> öffnet die Benutzerdokumentation auf der Seite der "
+"Tastenkürzel und Schnellzugriffe."
 
 #. (itstool) path: note/p
 #: C/welcomedialog.page:39
@@ -2455,16 +2482,19 @@ msgid ""
 "dialog</gui> you can get more options: copy project's location, remove "
 "project from the list, clear the list, or show private resources."
 msgstr ""
+"Durch Klicken mit der rechten Maustaste auf die im <gui>Willkommensdialog</"
+"gui> haben Sie mehrere Optionen: den Ort des Projekts kopieren, das Projekt "
+"aus der liste entfernen, die Liste leeren oder private Ressourcen anzeigen."
 
 #. (itstool) path: info/desc
 #: C/importing.page:18
 msgid "Importing files into your project as clips."
-msgstr ""
+msgstr "Dateien in Ihr Projekt als Clips importieren."
 
 #. (itstool) path: page/title
 #: C/importing.page:25
 msgid "Getting media"
-msgstr ""
+msgstr "Medien importieren"
 
 #. (itstool) path: page/p
 #: C/importing.page:26
@@ -2509,6 +2539,10 @@ msgid ""
 "want to import. To do so, use the <gui>Import</gui> button in the <gui>Media "
 "Library</gui> header."
 msgstr ""
+"Sie können Medien mit dem Dateiauswahldialog in die <gui>Medienbibliothek</"
+"gui> importieren, was den Vorteil hat, dass eine Vorschau der zu "
+"importierenden Dateien angezeigt wird. Dazu klicken Sie auf den <gui>Import</"
+"gui>-Knopf unter <gui>Medienbibliothek</gui>."
 
 #. (itstool) path: section/p
 #: C/importing.page:36
@@ -2533,11 +2567,17 @@ msgid ""
 "and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</"
 "gui>."
 msgstr ""
+"Das Konzept des Ziehen und Ablegens ist eine etablierte Methode, um eine "
+"Brücke zwischen Software-Anwendungen zu schlagen. Wählen Sie dazu einfach "
+"die zu importierenden Dateien in einer anderen Anwendung aus (zum Beispiel "
+"einer Dateiverwaltung oder einer Anwendung zur Multimedia-Wiedergabe) und "
+"ziehen Sie sie mit der Maus in die <app>Medienbibliothek</app> von "
+"<gui>Pitivi</gui>."
 
 #. (itstool) path: section/p
 #: C/importing.page:41
 msgid "This feature can be used to:"
-msgstr ""
+msgstr "Dieses Funktionsmerkmal kann für folgende Zwecke verwendet werden:"
 
 #. (itstool) path: item/p
 #: C/importing.page:44
@@ -2545,6 +2585,8 @@ msgid ""
 "Easily import music or video clips from a media player (such as "
 "<app>Rhythmbox</app> or <app>Totem</app>)."
 msgstr ""
+"Einfaches Importieren von Musik oder Videoclips aus einer Multimedia-"
+"Wiedergabe, wie <app>Rhythmbox</app> oder <app>Totem</app>."
 
 #. (itstool) path: item/p
 #: C/importing.page:47
@@ -2553,11 +2595,14 @@ msgid ""
 "<app>Thunar</app>, <app>Dolphin</app> or <app>Konqueror</app>) instead of "
 "the file chooser dialog."
 msgstr ""
+"Import aus einer vollwertigen Dateiverwaltung, wie <app>Nautilus</app>, "
+"<app>Thunar</app>, <app>Dolphin</app> oder <app>Konqueror</app> anstatt aus "
+"einem Dateiauswahldialog."
 
 #. (itstool) path: item/p
 #: C/importing.page:50
 msgid "Import a combination of multiple files and folders at the same time."
-msgstr ""
+msgstr "Gleichzeitiger Import mehrerer Dateien und Ordner."
 
 #. (itstool) path: item/p
 #: C/importing.page:53
@@ -2664,11 +2709,13 @@ msgstr ""
 msgid ""
 "Learn the difference between saving a project and exporting a rendered movie."
 msgstr ""
+"Erfahren Sie mehr über den Unterschied zwischen dem Speichern eines Projekts "
+"und dem Export eines gerenderten Films."
 
 #. (itstool) path: page/title
 #: C/rendering.page:25
 msgid "Understanding rendering"
-msgstr ""
+msgstr "Rendering verstehen"
 
 #. (itstool) path: page/p
 #: C/rendering.page:26
@@ -2678,11 +2725,17 @@ msgid ""
 "affect the project itself; you can still make edits to your project and "
 "render again as many times as needed."
 msgstr ""
+"Die Erstellung (das »Rendering«) ist der Prozess des Exportierens in eine "
+"neue, finalisierte Mediendatei. Dadurch wird lediglich ein neues, "
+"»gerendertes« Video erstellt, aber das eigentliche Projekt nicht "
+"beeinflusst. Sie können weiterhin Änderungen vornehmen und Ihr Projekt immer "
+"wieder neu rendern, so oft Sie wollen."
 
 #. (itstool) path: item/p
 #: C/rendering.page:29
 msgid "Click <guiseq><gui>Headerbar</gui><gui>Render</gui></guiseq>."
 msgstr ""
+"Klicken Sie auf <guiseq><gui>Kopfleiste</gui><gui>Erstellen</gui></guiseq>."
 
 #. (itstool) path: item/p
 #: C/rendering.page:32
@@ -2700,16 +2753,18 @@ msgid ""
 "Choose a container. See the <link xref=\"codecscontainers\">codecs and "
 "containers</link> page for details."
 msgstr ""
+"Wählen Sie einen Container. Im Abschnitt <link xref=\"codecscontainers"
+"\">Codecs und Container verstehen</link> finden Sie weitere Details."
 
 #. (itstool) path: item/p
 #: C/rendering.page:41
 msgid "Adjust the various encoding settings."
-msgstr ""
+msgstr "Passen Sie die verschiedenen Kodierungseinstellungen an."
 
 #. (itstool) path: item/p
 #: C/rendering.page:44
 msgid "Click the <gui>Render</gui> button."
-msgstr ""
+msgstr "Klicken Sie auf den Knopf <gui>Erstellen</gui>."
 
 #. (itstool) path: page/p
 #: C/rendering.page:47
@@ -2734,7 +2789,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/rendering.page:52
 msgid "Project settings and the rendering dialog"
-msgstr ""
+msgstr "Projekteinstellungen und Rendering-Dialog"
 
 #. (itstool) path: section/p
 #: C/rendering.page:53
@@ -2758,7 +2813,7 @@ msgstr ""
 #. (itstool) path: page/title
 #: C/trimming.page:25
 msgid "Trimming"
-msgstr ""
+msgstr "Trimmen"
 
 #. (itstool) path: page/p
 #: C/trimming.page:26
@@ -2768,11 +2823,16 @@ msgid ""
 "of a clip and a trimming handle will appear. Drag the trimming handle in an "
 "appropriate direction to either reduce or increase the length of the clip."
 msgstr ""
+"Beim <em>Trimmen</em> passen Sie die Länge eines Clips an, indem Sie den "
+"Start- oder Endpunkt in der Zeitleiste verschieben. Bewegen Sie dazu den "
+"Mauszeiger über den Rand eines Clips, woraufhin der Mauszeiger zu einem "
+"Anfasser wird. Ziehen Sie diesen in die gewünschte Richtung, um die Länge "
+"des Clips zu verkleinern oder zu vergrößern."
 
 #. (itstool) path: figure/title
 #: C/trimming.page:28
 msgid "Trimming handle"
-msgstr ""
+msgstr "Trimm-Anfasser"
 
 #. (itstool) path: figure/desc
 #: C/trimming.page:29
@@ -2780,6 +2840,8 @@ msgid ""
 "The mouse cursor transforms into trimming handle when hovering over the edge "
 "of a clip."
 msgstr ""
+"Der Mauszeiger verwandelt sich in einen Trimm-Anfasser, wenn er sich über "
+"dem Rand eines Clips befindet."
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -2912,7 +2974,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/trimming.page:70
 msgid "Roll editing"
-msgstr ""
+msgstr "Rollende Bearbeitung"
 
 #. (itstool) path: section/p
 #: C/trimming.page:71
@@ -2921,11 +2983,15 @@ msgid ""
 "clip, <em>trims</em> the adjacent clips in a complementary way to prevent "
 "creating gaps."
 msgstr ""
+"Die rollende Bearbeitung ist eine Abwandlung des Trimmens, wobei zusätzlich "
+"zum gewöhnlichen Trimmen eines Clips die angrenzenden Clips so angepasst "
+"werden, dass keine Lücken entstehen."
 
 #. (itstool) path: figure/desc
 #: C/trimming.page:74
 msgid "Relative position of two adjacent clips before roll editing"
 msgstr ""
+"Relative Position zweier angrenzender Clips vor der rollenden Bearbeitung"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -2943,6 +3009,7 @@ msgstr ""
 #: C/trimming.page:79
 msgid "Relative position of two adjacent clips after roll editing"
 msgstr ""
+"Relative Position zweier angrenzender Clips nach der rollenden Bearbeitung"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -2962,16 +3029,20 @@ msgid ""
 "Roll editing affects all adjacent clips, regardless of whether or not they "
 "are on the same layer."
 msgstr ""
+"Die rollende Bearbeitung erfasst alle angrenzenden Clips, unabhängig davon, "
+"ob sie sich in der gleichen Ebene befinden oder nicht."
 
 #. (itstool) path: section/p
 #: C/trimming.page:85
 msgid "To do a roll edit:"
-msgstr ""
+msgstr "So führen Sie eine rollende Bearbeitung aus:"
 
 #. (itstool) path: item/p
 #: C/trimming.page:88
 msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr ""
+"Bewegen Sie den Mauszeiger über den Trimm-Anfasser zwischen zwei aneinander "
+"grenzenden Clips."
 
 #. (itstool) path: item/p
 #: C/trimming.page:91
@@ -2984,6 +3055,8 @@ msgid ""
 "Learn the difference between clips and files and how to do basic operations "
 "on clips in the timeline."
 msgstr ""
+"Erfahren Sie mehr über den Unterschied zwischen Clips und Dateien und die "
+"Ausführung grundlegender Operationen mit Clips in der Zeitleiste."
 
 #. (itstool) path: page/title
 #: C/usingclips.page:25
@@ -2993,7 +3066,7 @@ msgstr "Verwendung von Clips"
 #. (itstool) path: section/title
 #: C/usingclips.page:27
 msgid "Clips vs files"
-msgstr ""
+msgstr "Clips und Dateien"
 
 #. (itstool) path: section/p
 #: C/usingclips.page:28
@@ -3002,6 +3075,9 @@ msgid ""
 "that can be accessed by <app>Pitivi</app> and incorporated in your video "
 "editing project."
 msgstr ""
+"<em>Dateien</em> sind Daten auf Ihren Speichergeräten (Videos, Musik, Bilder "
+"usw.), auf die Sie mit <app>Pitivi</app> zugreifen und in Ihr Projekt "
+"einbauen können."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:29
@@ -3012,6 +3088,12 @@ msgid ""
 "gui> to the timeline, a new clip is created. As such, a file can be reused "
 "as much as you want to create any amount of different clips."
 msgstr ""
+"<em>Clips</em> sind eine Visualisierung Ihrer Dateien in der Zeitleiste. Sie "
+"stellen die Zeitperiode dar, die sie belegen, und sie können individuell "
+"bearbeitet werden: Jedes Mal, wenn Sie eine Datei aus der "
+"<gui>Medienbibliothek</gui> in die Zeitleiste ziehen, wird ein neuer Clip "
+"erstellt. Daher kann eine Datei wiederverwendet werden, sooft Sie wollen, um "
+"eine beliebige Anzahl verschiedener Clips zu erzielen."
 
 #. (itstool) path: note/p
 #: C/usingclips.page:31
@@ -3019,6 +3101,8 @@ msgid ""
 "Since Pitivi is a non-destructive editor, clips are edited, not files. As "
 "such, your files stay intact."
 msgstr ""
+"Da Pitivi ein zerstörungsfreier Editor ist, werden nur Clips bearbeitet, "
+"keine Dateien. Daher bleiben Ihre Dateien intakt."
 
 #. (itstool) path: section/title
 #: C/usingclips.page:35
@@ -3069,6 +3153,8 @@ msgstr "Verschieben von Clips entlang der Zeitleiste"
 #: C/usingclips.page:52
 msgid "You can move a clip within a layer or move it to a different layer."
 msgstr ""
+"Sie können einen Clip innerhalb einer Ebene oder in eine andere Ebene "
+"verschieben."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:53
@@ -3118,11 +3204,15 @@ msgstr ""
 msgid ""
 "Click and drag the clip you want to move, with the mouse button held down"
 msgstr ""
+"Klicken und ziehen Sie den zu verschiebenden Clip und halten dabei die "
+"Maustaste gedrückt"
 
 #. (itstool) path: item/p
 #: C/usingclips.page:64
 msgid "During the drag, hold down <key>Shift</key> on the keyboard"
 msgstr ""
+"Halten Sie während des Ziehens die <key>Umschalttaste</key> auf der Tastatur "
+"gedrückt"
 
 #. (itstool) path: item/p
 #: C/usingclips.page:67
@@ -3130,6 +3220,8 @@ msgid ""
 "Release the mouse button to end the drag operation, then release the "
 "<key>Shift</key> key."
 msgstr ""
+"Lassen Sie die Maustaste los, um den Ziehvorgang abzuschließen, und lassen "
+"anschließend die <key>Umschalttaste</key> los."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:70
