@@ -238,6 +238,8 @@ class EditingContext(GObject.Object, Loggable):
         else:
             self.focus = focus
 
+        self.with_video = GES.TrackType.VIDEO & self.focus.get_track_types()
+
         self.old_position = self.focus.get_start()
         if edge == GES.Edge.EDGE_END and mode == GES.EditMode.EDIT_TRIM:
             self.old_position += self.focus.get_duration()
@@ -298,7 +300,7 @@ class EditingContext(GObject.Object, Loggable):
             edge=self.edge.value_nick,
             new_layer_priority=int(priority))
 
-        if res and self.mode == GES.EditMode.EDIT_TRIM:
+        if res and self.mode == GES.EditMode.EDIT_TRIM and self.with_video:
             if self.edge == GES.Edge.EDGE_START:
                 self.timeline.ui.app.gui.viewer.clipTrimPreview(self.focus, self.focus.props.in_point)
             elif self.edge == GES.Edge.EDGE_END:
