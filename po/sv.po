@@ -15,16 +15,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-04-03 16:09+0000\n"
-"PO-Revision-Date: 2018-04-04 23:40+0200\n"
-"Last-Translator: Josef Andersson <josef.andersson@fripost.org>\n"
+"POT-Creation-Date: 2018-05-18 20:17+0000\n"
+"PO-Revision-Date: 2018-05-18 22:46+0200\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.7\n"
 "X-Project-Style: gnome\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
@@ -110,7 +110,7 @@ msgstr "Startar automatisk justering"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Genomför automatisk justering</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1114
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1130
 msgid "Estimating..."
 msgstr "Uppskattar…"
 
@@ -877,24 +877,24 @@ msgstr ""
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Kunde inte importera ”%s”. Försäkra dig om att du har den tillgänglig."
 
-#: ../pitivi/check.py:336
+#: ../pitivi/check.py:352
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Kunde inte importera ”gi”. Försäkra dig om att du har pygobject tillgängligt."
 
-#: ../pitivi/check.py:425
+#: ../pitivi/check.py:440
 msgid "enables sound notifications when rendering is complete"
 msgstr "aktiverar ljudaviseringar när renderingen är avslutad"
 
-#: ../pitivi/check.py:427
+#: ../pitivi/check.py:442
 msgid "enables visual notifications when rendering is complete"
 msgstr "aktiverar visuella aviseringar när renderingen är färdig"
 
-#: ../pitivi/check.py:429
+#: ../pitivi/check.py:444
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "ytterligare kodekar för multimedia via GStreamer Libav-biblioteket"
 
-#: ../pitivi/check.py:431
+#: ../pitivi/check.py:446
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1023,7 +1023,7 @@ msgstr "Ångra"
 #: ../pitivi/mainwindow.py:393 ../pitivi/mainwindow.py:774
 #: ../pitivi/mainwindow.py:1089 ../pitivi/mainwindow.py:1141
 #: ../pitivi/mainwindow.py:1194 ../pitivi/preset.py:116
-#: ../pitivi/project.py:188
+#: ../pitivi/project.py:177
 msgid "Save"
 msgstr "Spara"
 
@@ -1136,7 +1136,7 @@ msgstr "Alla format som stöds"
 msgid "Unable to save project \"%s\""
 msgstr "Kunde inte spara projektet ”%s”"
 
-#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:187
+#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:176
 msgid "Save as..."
 msgstr "Spara som…"
 
@@ -1436,11 +1436,11 @@ msgstr "Nytt projekt"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:171 ../pitivi/render.py:843
+#: ../pitivi/project.py:160 ../pitivi/render.py:854
 msgid "Sorry, something didn’t work right."
 msgstr "Tyvärr, någonting fungerade inte riktigt rätt."
 
-#: ../pitivi/project.py:174
+#: ../pitivi/project.py:163
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1466,11 +1466,11 @@ msgstr ""
 "Innan du stänger Pitivi kan du spara ändringar till den befintliga "
 "projektfilen, eller som en separat projektfil."
 
-#: ../pitivi/project.py:189
+#: ../pitivi/project.py:178
 msgid "Close Pitivi"
 msgstr "Stäng Pitivi"
 
-#: ../pitivi/project.py:260
+#: ../pitivi/project.py:249
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1480,15 +1480,15 @@ msgstr ""
 "försökte lägga till en mediafil till ditt projekt, använd knappen "
 "”Importera” istället."
 
-#: ../pitivi/project.py:282
+#: ../pitivi/project.py:271
 msgid "Ignore backup"
 msgstr "Ignorera säkerhetskopia"
 
-#: ../pitivi/project.py:283
+#: ../pitivi/project.py:272
 msgid "Restore from backup"
 msgstr "Återställ från säkerhetskopia"
 
-#: ../pitivi/project.py:299
+#: ../pitivi/project.py:288
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1501,16 +1501,16 @@ msgstr ""
 "\n"
 "Vill du läsa in den istället?"
 
-#: ../pitivi/project.py:375
+#: ../pitivi/project.py:364
 msgid "You do not have permissions to write to this folder."
 msgstr "Du har inte rättigheter att skriva till denna mapp."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:408
+#: ../pitivi/project.py:397
 msgid "project"
 msgstr "projekt"
 
-#: ../pitivi/project.py:720
+#: ../pitivi/project.py:709
 msgid "Pitivi encoding profile"
 msgstr "Pitivis kodningsprofil"
 
@@ -1564,21 +1564,25 @@ msgstr "%.2f GB"
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:844
+#: ../pitivi/render.py:848
 msgid ""
-"An error occurred while trying to render your project. You might want to "
-"check our troubleshooting guide or file a bug report. The GStreamer error "
-"was:"
+"<b>Make sure your rendering size is even, x264enc might not be able to "
+"render otherwise.</b>\n"
+"\n"
 msgstr ""
-"Ett fel uppstod under försök att rendera ditt projekt. Du kanske vill "
-"undersöka problemsökningshandboken eller skicka en felrapport. GStreamer-"
-"felet var:"
+"<b>Säkerställ att din renderingsstorlek är jämn, i annat fall kan x264enc "
+"kanske inte rendera.</b>\n"
+"\n"
 
-#: ../pitivi/render.py:1062 ../pitivi/render.py:1063 ../pitivi/render.py:1069
+#: ../pitivi/render.py:855
+msgid "An error occurred while trying to render your project."
+msgstr "Ett fel inträffade vid försök att rendera ditt projekt."
+
+#: ../pitivi/render.py:1078 ../pitivi/render.py:1079 ../pitivi/render.py:1085
 msgid "Render complete"
 msgstr "Rendering färdig"
 
-#: ../pitivi/render.py:1067
+#: ../pitivi/render.py:1083
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "”%s” är klar med rendering."
@@ -1894,12 +1898,13 @@ msgstr "Genvägar"
 # See https://phabricator.freedesktop.org/T7349
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:894
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:835
+#: ../pitivi/utils/widgets.py:937
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:958
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:1014
 msgid "Reset to default value"
 msgstr "Återställ till standardvärde"
 
@@ -2016,7 +2021,6 @@ msgid "Stereo"
 msgstr "Stereo"
 
 #: ../pitivi/utils/ui.py:213
-#| msgid "6 Channels (5.1)"
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
@@ -2096,38 +2100,47 @@ msgstr[1] "%d dagar"
 msgid "Implement Me"
 msgstr "Implementera mig"
 
-#: ../pitivi/utils/widgets.py:849
+#: ../pitivi/utils/widgets.py:868
 msgid "No properties."
 msgstr "Inga egenskaper."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:943
+#: ../pitivi/utils/widgets.py:999
 msgid "Show keyframes for this value"
 msgstr "Visa nyckelbild för detta värde"
 
-#: ../pitivi/utils/widgets.py:1115
+#: ../pitivi/utils/widgets.py:1182
 #, python-format
 msgid "Properties for %s"
 msgstr "Egenskaper för %s"
 
-#: ../pitivi/utils/widgets.py:1254
+#: ../pitivi/utils/widgets.py:1345
 msgid "Zoom Fit"
 msgstr "Anpassad zoom"
 
-#: ../pitivi/utils/widgets.py:1259
+#: ../pitivi/utils/widgets.py:1350
 msgid "Zoom"
 msgstr "Zooma"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1333
+#: ../pitivi/utils/widgets.py:1424
 #, python-format
 msgid "%s displayed"
 msgstr "%s visat"
 
-#: ../pitivi/utils/widgets.py:1337
+#: ../pitivi/utils/widgets.py:1428
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanosekunder visat, eftersom vi kan"
+
+#~ msgid ""
+#~ "An error occurred while trying to render your project. You might want to "
+#~ "check our troubleshooting guide or file a bug report. The GStreamer error "
+#~ "was:"
+#~ msgstr ""
+#~ "Ett fel uppstod under försök att rendera ditt projekt. Du kanske vill "
+#~ "undersöka problemsökningshandboken eller skicka en felrapport. GStreamer-"
+#~ "felet var:"
 
 #~ msgid "invalid (%s fps)"
 #~ msgstr "ogiltig (%s fps)"
