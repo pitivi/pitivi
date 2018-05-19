@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi pitivi-1.0\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-04-04 21:30+0000\n"
-"PO-Revision-Date: 2018-04-05 23:57+0200\n"
+"POT-Creation-Date: 2018-05-18 21:36+0000\n"
+"PO-Revision-Date: 2018-05-19 10:39+0200\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -108,7 +108,7 @@ msgstr "Začíná automatického zarovnání"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Provádění automatického zarovnání</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1114
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1130
 msgid "Estimating..."
 msgstr "Odhaduje se…"
 
@@ -737,23 +737,23 @@ msgstr ""
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Nelze naimportovat „%s“. Ujistěte se, že je k dispozici."
 
-#: ../pitivi/check.py:336
+#: ../pitivi/check.py:352
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr "Nelze naimportovat „gi“. Ujistěte se, že je k dispozici pygobject."
 
-#: ../pitivi/check.py:424
+#: ../pitivi/check.py:439
 msgid "enables sound notifications when rendering is complete"
 msgstr "zapne zvukové upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:426
+#: ../pitivi/check.py:441
 msgid "enables visual notifications when rendering is complete"
 msgstr "zapne vizuální upozorňování na dokončené vykreslování"
 
-#: ../pitivi/check.py:428
+#: ../pitivi/check.py:443
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatečné multimediální kodeky z knihovny GStreamer Libav"
 
-#: ../pitivi/check.py:430
+#: ../pitivi/check.py:445
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -871,7 +871,7 @@ msgstr "Zpět"
 #: ../pitivi/mainwindow.py:393 ../pitivi/mainwindow.py:774
 #: ../pitivi/mainwindow.py:1089 ../pitivi/mainwindow.py:1141
 #: ../pitivi/mainwindow.py:1194 ../pitivi/preset.py:116
-#: ../pitivi/project.py:188
+#: ../pitivi/project.py:177
 msgid "Save"
 msgstr "Uložit"
 
@@ -982,7 +982,7 @@ msgstr "Všechny podporované formáty"
 msgid "Unable to save project \"%s\""
 msgstr "Nelze uložit projekt „%s“"
 
-#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:187
+#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:176
 msgid "Save as..."
 msgstr "Uložit jako…"
 
@@ -1283,11 +1283,11 @@ msgstr "Nový projekt"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:171 ../pitivi/render.py:843
+#: ../pitivi/project.py:160 ../pitivi/render.py:854
 msgid "Sorry, something didn’t work right."
 msgstr "Bohužel, ale něco nefunguje správně."
 
-#: ../pitivi/project.py:174
+#: ../pitivi/project.py:163
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1313,11 +1313,11 @@ msgstr ""
 "Než Pitivi zavřete, můžete uložit změny do stávajícího projektového souboru "
 "nebo do odděleného projektového souboru."
 
-#: ../pitivi/project.py:189
+#: ../pitivi/project.py:178
 msgid "Close Pitivi"
 msgstr "Zavřít Pitivi"
 
-#: ../pitivi/project.py:260
+#: ../pitivi/project.py:249
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1327,15 +1327,15 @@ msgstr ""
 "souboru. Jestli zkoušíte přidat do svého projektu multimediální soubor, "
 "použijte raději tlačítko „Importovat“."
 
-#: ../pitivi/project.py:282
+#: ../pitivi/project.py:271
 msgid "Ignore backup"
 msgstr "Ignorovat zálohu"
 
-#: ../pitivi/project.py:283
+#: ../pitivi/project.py:272
 msgid "Restore from backup"
 msgstr "Obnovit ze zálohy"
 
-#: ../pitivi/project.py:299
+#: ../pitivi/project.py:288
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1348,16 +1348,16 @@ msgstr ""
 "\n"
 "Přejete si načíst tuto?"
 
-#: ../pitivi/project.py:375
+#: ../pitivi/project.py:364
 msgid "You do not have permissions to write to this folder."
 msgstr "Nemáte oprávnění zapisovat do této složky."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:408
+#: ../pitivi/project.py:397
 msgid "project"
 msgstr "projekt"
 
-#: ../pitivi/project.py:720
+#: ../pitivi/project.py:709
 msgid "Pitivi encoding profile"
 msgstr "Profil kódování Pitivi"
 
@@ -1411,21 +1411,32 @@ msgstr "%.2f GB"
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:844
+#: ../pitivi/render.py:848
 msgid ""
-"An error occurred while trying to render your project. You might want to "
-"check our troubleshooting guide or file a bug report. The GStreamer error "
-"was:"
+"<b>Make sure your rendering size is even, x264enc might not be able to "
+"render otherwise.</b>\n"
+"\n"
 msgstr ""
-"Při pokusu o vykreslení vašeho projektu se vyskytla chyba. Možná byste se "
-"měli podívat do naší příručky s popsanými řešeními problémů nebo vyplnit "
-"chybové hlášení. Chyba v systému GStreamer byla:"
+"<b>Zkontrolujte, že velikost pro vykreslení je sudá, jinak kodek x264enc není "
+"schopen vykreslení provést.</b>\n"
 
-#: ../pitivi/render.py:1062 ../pitivi/render.py:1063 ../pitivi/render.py:1069
+#: ../pitivi/render.py:855
+msgid "An error occurred while trying to render your project."
+msgstr "Při pokusu o vykreslení vašeho projektu se vyskytla chyba."
+
+#: ../pitivi/render.py:857
+msgid ""
+"You might want to check our troubleshooting guide or file a bug report. The "
+"GStreamer error was:"
+msgstr ""
+"Zkuste se podívat do naší příručky s popsanými řešeními problémů, nebo "
+"případně chybu nahlaste. Chyba v systému GStreamer byla:"
+
+#: ../pitivi/render.py:1078 ../pitivi/render.py:1079 ../pitivi/render.py:1085
 msgid "Render complete"
 msgstr "Vykreslování dokončeno"
 
-#: ../pitivi/render.py:1067
+#: ../pitivi/render.py:1083
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ má dokončeno vykreslování."
@@ -1720,12 +1731,12 @@ msgstr "Další informace:"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:749
+#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:714
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:813
+#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:874
 msgid "Reset to default value"
 msgstr "Vrátit na výchozí hodnotu"
 
@@ -1922,35 +1933,35 @@ msgstr[2] "%d dní"
 msgid "Implement Me"
 msgstr "Čeká na implementaci"
 
-#: ../pitivi/utils/widgets.py:704
+#: ../pitivi/utils/widgets.py:739
 msgid "No properties."
 msgstr "Žádné vlastnosti"
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:798
+#: ../pitivi/utils/widgets.py:859
 msgid "Show keyframes for this value"
 msgstr "Zobrazit klíčové snímky pro tuto hodnotu"
 
-#: ../pitivi/utils/widgets.py:964
+#: ../pitivi/utils/widgets.py:1036
 #, python-format
 msgid "Properties for %s"
 msgstr "Vlastnosti – %s"
 
-#: ../pitivi/utils/widgets.py:1101
+#: ../pitivi/utils/widgets.py:1184
 msgid "Zoom Fit"
 msgstr "Přizpůsobit"
 
-#: ../pitivi/utils/widgets.py:1106
+#: ../pitivi/utils/widgets.py:1189
 msgid "Zoom"
 msgstr "Přiblížit"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1180
+#: ../pitivi/utils/widgets.py:1263
 #, python-format
 msgid "%s displayed"
 msgstr "Zobrazeno %s"
 
-#: ../pitivi/utils/widgets.py:1184
+#: ../pitivi/utils/widgets.py:1267
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Zobrazeno %d nanosekund, protože je to možné"
