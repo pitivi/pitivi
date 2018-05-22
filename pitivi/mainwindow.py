@@ -30,12 +30,9 @@ from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
-from pitivi.configure import APPURL
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
-from pitivi.configure import GITVERSION
-from pitivi.configure import in_devel
-from pitivi.configure import VERSION
+from pitivi.dialogs.about import AboutDialog
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
@@ -107,7 +104,7 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                default='')
 
 
-class MainWindow(Gtk.ApplicationWindow, Loggable):
+class MainWindow(Gtk.Widget, Loggable):
     """Pitivi's main window.
 
     Attributes:
@@ -115,32 +112,22 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     """
 
     def __init__(self, app):
-        gtksettings = Gtk.Settings.get_default()
-        gtksettings.set_property("gtk-application-prefer-dark-theme", True)
-        theme = gtksettings.get_property("gtk-theme-name")
-        os.environ["GTK_THEME"] = theme + ":dark"
-
         # Pulseaudio "role"
         # (http://0pointer.de/blog/projects/tagging-audio.htm)
         os.environ["PULSE_PROP_media.role"] = "production"
         os.environ["PULSE_PROP_application.icon_name"] = "pitivi"
 
-        Gtk.ApplicationWindow.__init__(self)
+        Gtk.Widget.__init__(self)
         Loggable.__init__(self)
+
         self.app = app
         self.log("Creating MainWindow")
         self.settings = app.settings
 
         Gtk.IconTheme.get_default().append_search_path(get_pixmap_dir())
 
-        self.connect("destroy", self._destroyedCb)
-
-        self.setupCss()
         self.builder_handler_ids = []
         self.builder = Gtk.Builder()
-
-        self._createUi()
-        self.recent_manager = Gtk.RecentManager()
 
         pm = self.app.project_manager
         pm.connect("new-project-loading",
@@ -158,11 +145,17 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
+    def setup_main_window_ui(self):
+        self.setupCss()
+        self._createUi()
+        self.checkScreenConstraints()
+        self.app.gui.connect("destroy", self._destroyedCb)
+
     def setupCss(self):
         css_provider = Gtk.CssProvider()
         css_provider.load_from_data(TIMELINE_CSS.encode('UTF-8'))
         screen = Gdk.Screen.get_default()
-        style_context = self.get_style_context()
+        style_context = self.app.gui.get_style_context()
         style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
@@ -175,6 +168,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.window.show()
 
     def _destroyedCb(self, unused_self):
+        """Cleanup before destroying this window or switching to Welcome window tab."""
         self.render_button.disconnect_by_func(self._renderCb)
         pm = self.app.project_manager
         pm.disconnect_by_func(self._projectManagerNewProjectLoadingCb)
@@ -192,8 +186,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.save_as_action.disconnect_by_func(self._saveProjectAsCb)
         self.help_action.disconnect_by_func(self._userManualCb)
         self.menu_button_action.disconnect_by_func(self._menuCb)
-        self.disconnect_by_func(self._destroyedCb)
-        self.disconnect_by_func(self._configureCb)
+        self.app.gui.disconnect_by_func(self._destroyedCb)
+        self.app.gui.disconnect_by_func(self._configureCb)
         for gobject, id_ in self.builder_handler_ids:
             gobject.disconnect(id_)
         self.builder_handler_ids = None
@@ -214,14 +208,13 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         The full hierarchy can be admired by starting the GTK+ Inspector
         with Ctrl+Shift+I.
         """
-        self.set_icon_name("pitivi")
+        self.app.gui.set_icon_name("pitivi")
 
         # Main "toolbar" (using client-side window decorations with HeaderBar)
-        self._headerbar = Gtk.HeaderBar()
+        self.headerbar = Gtk.HeaderBar()
         self._create_headerbar_buttons()
-        self._headerbar.set_show_close_button(True)
-        self._headerbar.show_all()
-        self.set_titlebar(self._headerbar)
+        self.headerbar.set_show_close_button(True)
+        self.headerbar.show_all()
 
         # Set up our main containers, in the order documented above
         self.vpaned = Gtk.Paned(orientation=Gtk.Orientation.VERTICAL)  # Separates the tabs+viewer from the timeline
@@ -229,7 +222,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.secondhpaned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)  # Separates the two sets of tabs
         self.vpaned.pack1(self.mainhpaned, resize=False, shrink=False)
         self.mainhpaned.pack1(self.secondhpaned, resize=True, shrink=False)
-        self.add(self.vpaned)
         self.vpaned.show()
         self.secondhpaned.show()
         self.mainhpaned.show()
@@ -281,7 +273,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
         self.get_accessible().set_name("main window")
-        self._headerbar.get_accessible().set_name("headerbar")
+        self.headerbar.get_accessible().set_name("headerbar")
         self._menubutton.get_accessible().set_name("main menu button")
         self.vpaned.get_accessible().set_name("contents")
         self.mainhpaned.get_accessible().set_name("upper half")
@@ -297,32 +289,32 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         width = self.settings.mainWindowWidth
         height = self.settings.mainWindowHeight
         if height == -1 and width == -1:
-            self.maximize()
+            self.app.gui.maximize()
         else:
-            self.set_default_size(width, height)
-            self.move(self.settings.mainWindowX, self.settings.mainWindowY)
+            self.app.gui.set_default_size(width, height)
+            self.app.gui.move(self.settings.mainWindowX, self.settings.mainWindowY)
         self.secondhpaned.set_position(self.settings.mainWindowHPanePosition)
         self.mainhpaned.set_position(self.settings.mainWindowMainHPanePosition)
         self.vpaned.set_position(self.settings.mainWindowVPanePosition)
 
         # Connect the main window's signals at the end, to avoid messing around
         # with the restoration of settings above.
-        self.connect("delete-event", self._deleteCb)
-        self.connect("configure-event", self._configureCb)
+        self.app.gui.connect("delete-event", self._deleteCb)
+        self.app.gui.connect("configure-event", self._configureCb)
 
         # Focus the timeline by default!
         self.focusTimeline()
         self.updateTitle()
 
     def _setDefaultPositions(self):
-        window_width = self.get_size()[0]
+        window_width = self.app.gui.get_size()[0]
         if self.settings.mainWindowHPanePosition is None:
             self.settings.mainWindowHPanePosition = window_width / 3
         if self.settings.mainWindowMainHPanePosition is None:
             self.settings.mainWindowMainHPanePosition = 2 * window_width / 3
         if self.settings.mainWindowVPanePosition is None:
-            screen_width = float(self.get_screen().get_width())
-            screen_height = float(self.get_screen().get_height())
+            screen_width = float(self.app.gui.get_screen().get_width())
+            screen_height = float(self.app.gui.get_screen().get_height())
             req = self.vpaned.get_preferred_size()[0]
             if screen_width / screen_height < 0.75:
                 # Tall screen, give some more vertical space the the tabs.
@@ -406,7 +398,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         undo_redo_box.get_style_context().add_class("linked")
         undo_redo_box.pack_start(undo_button, expand=False, fill=False, padding=0)
         undo_redo_box.pack_start(redo_button, expand=False, fill=False, padding=0)
-        self._headerbar.pack_start(undo_redo_box)
+        self.headerbar.pack_start(undo_redo_box)
 
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
@@ -420,52 +412,52 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         for widget in self.builder.get_object("menu").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
 
-        self._headerbar.pack_end(self._menubutton)
-        self._headerbar.pack_end(self.save_button)
-        self._headerbar.pack_end(self.render_button)
+        self.headerbar.pack_end(self._menubutton)
+        self.headerbar.pack_end(self.save_button)
+        self.headerbar.pack_end(self.render_button)
 
     def _set_keyboard_shortcuts(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self._saveProjectCb)
-        self.add_action(self.save_action)
+        self.app.gui.add_action(self.save_action)
         self.app.shortcuts.add("win.save", ["<Primary>s"],
                                _("Save the current project"))
         self.save_button.set_action_name("win.save")
 
         self.new_project_action = Gio.SimpleAction.new("new-project", None)
         self.new_project_action.connect("activate", self._newProjectMenuCb)
-        self.add_action(self.new_project_action)
+        self.app.gui.add_action(self.new_project_action)
         self.app.shortcuts.add("win.new-project", ["<Primary>n"],
                                _("Create a new project"))
 
         self.open_project_action = Gio.SimpleAction.new("open-project", None)
         self.open_project_action.connect("activate", self._openProjectCb)
-        self.add_action(self.open_project_action)
+        self.app.gui.add_action(self.open_project_action)
         self.app.shortcuts.add("win.open-project", ["<Primary>o"],
                                _("Open a project"))
 
         self.save_as_action = Gio.SimpleAction.new("save-as", None)
         self.save_as_action.connect("activate", self._saveProjectAsCb)
-        self.add_action(self.save_as_action)
+        self.app.gui.add_action(self.save_as_action)
         self.app.shortcuts.add("win.save-as", ["<Primary><Shift>s"],
                                _("Save the current project as"))
 
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self._userManualCb)
-        self.add_action(self.help_action)
+        self.app.gui.add_action(self.help_action)
         self.app.shortcuts.add("win.help", ["F1"], _("Help"), group="app")
 
         self.menu_button_action = Gio.SimpleAction.new("menu-button", None)
         self.menu_button_action.connect("activate", self._menuCb)
-        self.add_action(self.menu_button_action)
+        self.app.gui.add_action(self.menu_button_action)
         self.app.shortcuts.add("win.menu-button", ["F10"],
                                _("Show the menu button content"),
                                group="app")
 
         import_asset_action = Gio.SimpleAction.new("import-asset", None)
         import_asset_action.connect("activate", self.__import_asset_cb)
-        self.add_action(import_asset_action)
+        self.app.gui.add_action(import_asset_action)
         self.app.shortcuts.add("win.import-asset", ["<Primary>i"],
                                _("Add media files to your project"))
 
@@ -485,12 +477,12 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _configureCb(self, unused_widget, unused_event):
         """Saves the main window position and size."""
         # Takes window manager decorations into account.
-        position = self.get_position()
+        position = self.app.gui.get_position()
         self.settings.mainWindowX = position.root_x
         self.settings.mainWindowY = position.root_y
 
         # Does not include the size of the window manager decorations.
-        size = self.get_size()
+        size = self.app.gui.get_size()
         self.settings.mainWindowWidth = size.width
         self.settings.mainWindowHeight = size.height
 
@@ -538,7 +530,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.project_manager.newBlankProject()
 
     def _openProjectCb(self, unused_action, unused_param):
-        self.openProject()
+        if not self.app.project_manager.closeRunningProject():
+            return  # The user has not made a decision, don't do anything.
+        self.app.gui.show_welcome_window()
 
     def _saveProjectCb(self, action, unused_param):
         if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
@@ -574,7 +568,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def showProjectSettingsDialog(self):
         project = self.app.project_manager.current_project
-        dialog = ProjectSettingsDialog(self, project, self.app)
+        dialog = ProjectSettingsDialog(self.app.gui, project, self.app)
         dialog.window.run()
         self.updateTitle()
 
@@ -584,117 +578,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _userManualCb(self, unused_action, unused_param):
         show_user_manual()
 
-    def _aboutResponseCb(self, dialog, unused_response):
-        dialog.destroy()
-
     def _aboutCb(self, unused_action):
-        abt = Gtk.AboutDialog()
-        abt.set_program_name(APPNAME)
-        abt.set_website(APPURL)
-
-        if in_devel():
-            version_str = _("Development version: %s") % GITVERSION
-        elif not self.app.isLatest():
-            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
-                {"cur_ver": GITVERSION,
-                 "new_ver": self.app.getLatest()}
-        elif GITVERSION:
-            version_str = _("Version %s") % GITVERSION
-        else:
-            version_str = _("Version %s") % VERSION
-        abt.set_version(version_str)
-
-        comments = ["",
-                    "GES %s" % ".".join(map(str, GES.version())),
-                    "GTK+ %s" % ".".join(map(str, (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION))),
-                    "GStreamer %s" % ".".join(map(str, Gst.version()))]
-        abt.set_comments("\n".join(comments))
-
-        authors = [_("Current maintainers:"),
-                   "Jean-François Fortin Tam <nekohayo@gmail.com>",
-                   "Thibault Saunier <tsaunier@gnome.org>",
-                   "Mathieu Duponchelle <mduponchelle1@gmail.com>",
-                   "Alexandru Băluț <alexandru.balut@gmail.com>",
-                   "",
-                   _("Past maintainers:"),
-                   "Edward Hervey <bilboed@bilboed.com>",
-                   "Alessandro Decina <alessandro.decina@collabora.co.uk>",
-                   "Brandon Lewis <brandon_lewis@berkeley.edu>",
-                   "",
-                   # Translators: this paragraph is to be translated, the list
-                   # of contributors is shown dynamically as a clickable link
-                   # below it
-                   _("Contributors:\n" +
-                     "A handwritten list here would...\n" +
-                     "• be too long,\n" +
-                     "• be frequently outdated,\n" +
-                     "• not show their relative merit.\n\n" +
-                     "Out of respect for our contributors, we point you instead to:\n"),
-                   # Translators: keep the %s at the end of the 1st line
-                   _("The list of contributors on Ohloh %s\n" +
-                     "Or you can run: git shortlog -s -n")
-                   % "http://ohloh.net/p/pitivi/contributors", ]
-        abt.set_authors(authors)
-        # Translators: See
-        # https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
-        # for details on how this is used.
-        translators = _("translator-credits")
-        if translators != "translator-credits":
-            abt.set_translator_credits(translators)
-        documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
-        abt.set_documenters(documenters)
-        abt.set_license_type(Gtk.License.LGPL_2_1)
-        abt.set_icon_name("pitivi")
-        abt.set_logo_icon_name("pitivi")
-        abt.connect("response", self._aboutResponseCb)
-        abt.set_transient_for(self)
-        abt.show()
-
-    def openProject(self):
-        # Requesting project closure at this point in time prompts users about
-        # unsaved changes (if any); much better than having ProjectManager
-        # trigger this *after* the user already chose a new project to load...
-        if not self.app.project_manager.closeRunningProject():
-            return  # The user has not made a decision, don't do anything
-
-        chooser = Gtk.FileChooserDialog(title=_("Open File..."),
-                                        transient_for=self,
-                                        action=Gtk.FileChooserAction.OPEN)
-        chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
-                            _("Open"), Gtk.ResponseType.OK)
-        chooser.set_default_response(Gtk.ResponseType.OK)
-        chooser.set_select_multiple(False)
-        # TODO: Remove this set_current_folder call when GTK bug 683999 is
-        # fixed
-        chooser.set_current_folder(self.settings.lastProjectFolder)
-        formatter_assets = GES.list_assets(GES.Formatter)
-        formatter_assets.sort(
-            key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
-        for format_ in formatter_assets:
-            filt = Gtk.FileFilter()
-            filt.set_name(format_.get_meta(GES.META_DESCRIPTION))
-            filt.add_pattern("*%s" %
-                             format_.get_meta(GES.META_FORMATTER_EXTENSION))
-            chooser.add_filter(filt)
-        default = Gtk.FileFilter()
-        default.set_name(_("All supported formats"))
-        default.add_custom(Gtk.FileFilterFlags.URI, self._canLoadUri, None)
-        chooser.add_filter(default)
-
-        response = chooser.run()
-        uri = chooser.get_uri()
-        chooser.destroy()
-        if response == Gtk.ResponseType.OK:
-            self.app.project_manager.loadProject(uri)
-        else:
-            self.info("User cancelled loading a new project")
-            self.app.welcome_wizard.show()
-
-    def _canLoadUri(self, filterinfo, unused_uri):
-        try:
-            return GES.Formatter.can_load_uri(filterinfo.uri)
-        except:
-            return False
+        AboutDialog(self.app)
 
     def _prefsCb(self, unused_action):
         PreferencesDialog(self.app).run()
@@ -709,6 +594,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             project (Project): The project which has been loaded.
         """
         self.log("A new project has been loaded")
+
+        uri = project.get_uri()
+        if uri:
+            self.app.recent_manager.add_item(uri)
+
         self._connectToProject(project)
         project.pipeline.activatePositionListener()
         self._setProject(project)
@@ -726,12 +616,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _projectManagerNewProjectLoadingCb(self, unused_project_manager, project):
         uri = project.get_uri()
         if uri:
-            self.recent_manager.add_item(uri)
+            # Remove the selected project from recent projects list.
+            # When the project is loaded successfully, it will get added
+            # back to the recent projects list with updated info.
+            self.app.recent_manager.remove_item(uri)
         self.log("A NEW project is loading, deactivate UI")
 
     def _projectManagerSaveProjectFailedCb(self, unused_project_manager, uri, exception=None):
         project_filename = unquote(uri.split("/")[-1])
-        dialog = Gtk.MessageDialog(transient_for=self,
+        dialog = Gtk.MessageDialog(transient_for=self.app.gui,
                                    modal=True,
                                    message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK,
@@ -739,7 +632,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         if exception:
             dialog.set_property("secondary-use-markup", True)
             dialog.set_property("secondary-text", unquote(str(exception)))
-        dialog.set_transient_for(self)
+        dialog.set_transient_for(self.app.gui)
         dialog.run()
         dialog.destroy()
         self.error("failed to save project")
@@ -751,7 +644,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         self.save_action.set_enabled(False)
         if uri:
-            self.recent_manager.add_item(uri)
+            self.app.recent_manager.add_item(uri)
 
         if project.uri is None:
             project.uri = uri
@@ -775,7 +668,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         else:
             save = _("Save as...")
 
-        dialog = Gtk.Dialog(title="", transient_for=self, modal=True)
+        dialog = Gtk.Dialog(title="", transient_for=self.app.gui, modal=True)
         dialog.add_buttons(_("Close without saving"), Gtk.ResponseType.REJECT,
                            _("Cancel"), Gtk.ResponseType.CANCEL,
                            save, Gtk.ResponseType.YES)
@@ -872,7 +765,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _projectManagerRevertingToSavedCb(self, unused_project_manager, unused_project):
         if self.app.project_manager.current_project.hasUnsavedModifications():
-            dialog = Gtk.MessageDialog(transient_for=self,
+            dialog = Gtk.MessageDialog(transient_for=self.app.gui,
                                        modal=True,
                                        message_type=Gtk.MessageType.WARNING,
                                        buttons=Gtk.ButtonsType.NONE,
@@ -883,7 +776,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             dialog.set_property("secondary-text",
                                 _("This will reload the current project. All unsaved changes will be lost."))
             dialog.set_default_response(Gtk.ResponseType.NO)
-            dialog.set_transient_for(self)
+            dialog.set_transient_for(self.app.gui)
             response = dialog.run()
             dialog.destroy()
             if response != Gtk.ResponseType.YES:
@@ -892,17 +785,17 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def _projectManagerNewProjectFailedCb(self, unused_project_manager, uri, reason):
         project_filename = unquote(uri.split("/")[-1])
-        dialog = Gtk.MessageDialog(transient_for=self,
+        dialog = Gtk.MessageDialog(transient_for=self.app.gui,
                                    modal=True,
                                    message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK,
                                    text=_('Unable to load project "%s"') % project_filename)
         dialog.set_property("secondary-use-markup", True)
         dialog.set_property("secondary-text", unquote(str(reason)))
-        dialog.set_transient_for(self)
+        dialog.set_transient_for(self.app.gui)
         dialog.run()
         dialog.destroy()
-        self.app.welcome_wizard.show()
+        self.app.gui.show_welcome_window()
 
     def _projectManagerMissingUriCb(self, project_manager, project, unused_error, asset):
         if project.at_least_one_asset_missing:
@@ -915,14 +808,14 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         else:
             uri = asset.get_id()
         dialog = Gtk.Dialog(title=_("Locate missing file..."),
-                            transient_for=self,
+                            transient_for=self.app.gui,
                             modal=True)
 
         dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                            _("Open"), Gtk.ResponseType.OK)
         dialog.set_border_width(SPACING * 2)
         dialog.get_content_area().set_spacing(SPACING)
-        dialog.set_transient_for(self)
+        dialog.set_transient_for(self.app.gui)
         dialog.set_default_response(Gtk.ResponseType.OK)
 
         # This box will contain widgets with details about the missing file.
@@ -1083,7 +976,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _showExportDialog(self, project):
         self.log("Export requested")
         chooser = Gtk.FileChooserDialog(title=_("Export To..."),
-                                        transient_for=self,
+                                        transient_for=self.app.gui,
                                         action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
@@ -1135,7 +1028,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _showSaveAsDialog(self):
         self.log("Save URI requested")
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-                                        transient_for=self,
+                                        transient_for=self.app.gui,
                                         action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
@@ -1189,7 +1082,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             List[str]: The full path and the mimetype if successful, None otherwise.
         """
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-                                        transient_for=self, action=Gtk.FileChooserAction.SAVE)
+            transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)
@@ -1236,8 +1129,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         event_box.add(label)
         event_box.show_all()
         event_box.connect("button-press-event", self.__titleClickCb, project)
-        self._headerbar.set_custom_title(event_box)
-        self.set_title(title)
+        self.headerbar.set_custom_title(event_box)
+        self.app.gui.set_title(title)
 
     def __titleClickCb(self, unused_widget, unused_event, project):
         entry = Gtk.Entry()
@@ -1246,7 +1139,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         entry.set_margin_right(SPACING)
         entry.show()
         entry.set_text(project.name)
-        self._headerbar.set_custom_title(entry)
+        self.headerbar.set_custom_title(entry)
         if project.hasDefaultName():
             entry.grab_focus()
         else:
@@ -1290,7 +1183,7 @@ class PreviewAssetWindow(Gtk.Window):
 
         self.set_title(_("Preview"))
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-        self.set_transient_for(main_window)
+        self.set_transient_for(main_window.app.gui)
 
         self._previewer = PreviewWidget(main_window.settings, minimal=True)
         self.add(self._previewer)
@@ -1326,7 +1219,7 @@ class PreviewAssetWindow(Gtk.Window):
         video = video_streams[0]
         img_width = video.get_square_width()
         img_height = video.get_height()
-        mainwindow_width, mainwindow_height = self._main_window.get_size()
+        mainwindow_width, mainwindow_height = self._main_window.app.gui.get_size()
         max_width = 0.85 * mainwindow_width
         max_height = 0.85 * mainwindow_height
 

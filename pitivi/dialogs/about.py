@@ -1,0 +1,103 @@
+# -*- coding: utf-8 -*-
+# Pitivi video editor
+# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+from gettext import gettext as _
+
+from gi.repository import GES
+from gi.repository import Gst
+from gi.repository import Gtk
+
+from pitivi.configure import APPNAME
+from pitivi.configure import APPURL
+from pitivi.configure import GITVERSION
+from pitivi.configure import in_devel
+from pitivi.configure import VERSION
+
+
+class AboutDialog(object):
+    """Displays Gtk.AboutDialog showing Pitivi's version and maintainers info."""
+
+    def __init__(self, app):
+        self.app = app
+        self.__create_and_show_dialog()
+
+    def __create_and_show_dialog(self):
+        abt = Gtk.AboutDialog()
+        abt.set_program_name(APPNAME)
+        abt.set_website(APPURL)
+
+        if in_devel():
+            version_str = _("Development version: %s") % GITVERSION
+        elif not self.app.isLatest():
+            version_str = _("Version %(cur_ver)s — %(new_ver)s is available") % \
+                {"cur_ver": GITVERSION,
+                 "new_ver": self.app.getLatest()}
+        elif GITVERSION:
+            version_str = _("Version %s") % GITVERSION
+        else:
+            version_str = _("Version %s") % VERSION
+        abt.set_version(version_str)
+
+        comments = ["",
+                    "GES %s" % ".".join(map(str, GES.version())),
+                    "GTK+ %s" % ".".join(map(str, (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION))),
+                    "GStreamer %s" % ".".join(map(str, Gst.version()))]
+        abt.set_comments("\n".join(comments))
+
+        authors = [_("Current maintainers:"),
+                   "Jean-François Fortin Tam <nekohayo@gmail.com>",
+                   "Thibault Saunier <tsaunier@gnome.org>",
+                   "Mathieu Duponchelle <mduponchelle1@gmail.com>",
+                   "Alexandru Băluț <alexandru.balut@gmail.com>",
+                   "",
+                   _("Past maintainers:"),
+                   "Edward Hervey <bilboed@bilboed.com>",
+                   "Alessandro Decina <alessandro.decina@collabora.co.uk>",
+                   "Brandon Lewis <brandon_lewis@berkeley.edu>",
+                   "",
+                   # Translators: this paragraph is to be translated, the list
+                   # of contributors is shown dynamically as a clickable link
+                   # below it
+                   _("Contributors:\n" +
+                     "A handwritten list here would...\n" +
+                     "• be too long,\n" +
+                     "• be frequently outdated,\n" +
+                     "• not show their relative merit.\n\n" +
+                     "Out of respect for our contributors, we point you instead to:\n"),
+                   # Translators: keep the %s at the end of the 1st line
+                   _("The list of contributors on Ohloh %s\n" +
+                     "Or you can run: git shortlog -s -n")
+                   % "http://ohloh.net/p/pitivi/contributors", ]
+        abt.set_authors(authors)
+        # Translators: See
+        # https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+        # for details on how this is used.
+        translators = _("translator-credits")
+        if translators != "translator-credits":
+            abt.set_translator_credits(translators)
+        documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
+        abt.set_documenters(documenters)
+        abt.set_license_type(Gtk.License.LGPL_2_1)
+        abt.set_icon_name("pitivi")
+        abt.set_logo_icon_name("pitivi")
+        abt.connect("response", self.__about_response_cb)
+        abt.set_transient_for(self.app.gui)
+        abt.show()
+
+    def __about_response_cb(self, dialog, unused_response):
+        dialog.destroy()
