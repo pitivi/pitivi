@@ -37,6 +37,7 @@ class TestMainWindow(common.TestCase):
         """Checks tab switches."""
         app = common.create_pitivi_mock()
         mainwindow = MainWindow(app)
+        mainwindow.setup_main_window_ui()
         for expected_tab, b_element in [
                 (2, GES.TitleClip()),
                 (0, GES.SourceClip()),
