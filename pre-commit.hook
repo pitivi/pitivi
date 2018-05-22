@@ -15,6 +15,8 @@ pitivi/autoaligner.py
 pitivi/check.py
 pitivi/clipproperties.py
 pitivi/configure.py
+pitivi/dialogs/about.py
+pitivi/dialogs/browseprojects.py
 pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/depsmanager.py
 pitivi/dialogs/filelisterrordialog.py
@@ -28,6 +30,8 @@ pitivi/preset.py
 pitivi/project.py
 pitivi/render.py
 pitivi/settings.py
+pitivi/welcomewindow.py
+pitivi/windowsmanager.py
 pitivi/timeline/elements.py
 pitivi/timeline/layer.py
 pitivi/timeline/ruler.py

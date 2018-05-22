@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="app-menu">
+    <section>
+      <item>
+        <attribute name="action">app.new</attribute>
+        <attribute name="label" translatable="yes">New Project</attribute>
+        <attribute name="accel">&lt;Primary&gt;n</attribute>
+      </item>
+      <item>
+        <attribute name="action">app.open</attribute>
+        <attribute name="label" translatable="yes">Open Project</attribute>
+        <attribute name="accel">&lt;Primary&gt;o</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="action">app.shortcuts</attribute>
+        <attribute name="label" translatable="yes">Keyboard Shortcuts</attribute>
+        <attribute name="accel">&lt;Primary&gt;F1</attribute>
+      </item>
+      <item>
+        <attribute name="action">app.help</attribute>
+        <attribute name="label" translatable="yes">Help</attribute>
+        <attribute name="accel">F1</attribute>
+      </item>
+      <item>
+        <attribute name="action">app.about</attribute>
+        <attribute name="label" translatable="yes">About</attribute>
+        <attribute name="accel">&lt;Primary&gt;a</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="action">app.quit</attribute>
+        <attribute name="label" translatable="yes">Quit</attribute>
+        <attribute name="accel">&lt;Primary&gt;q</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>
