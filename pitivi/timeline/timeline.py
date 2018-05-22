@@ -639,7 +639,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def update_visible_overlays(self):
         sources = self.get_sources_at_position(self.__last_position)
-        self.app.gui.viewer.overlay_stack.set_current_sources(sources)
+        self.app.gui.main_window.viewer.overlay_stack.set_current_sources(sources)
 
     def set_next_seek_position(self, next_seek_position):
         """Sets the position the playhead seeks to on the next button-release.
@@ -651,7 +651,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _button_press_event_cb(self, unused_widget, event):
         self.debug("PRESSED %s", event)
-        self.app.gui.focusTimeline()
+        self.app.gui.main_window.focusTimeline()
 
         event_widget = Gtk.get_event_widget(event)
 
@@ -1411,7 +1411,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 else:
                     raise TimelineError("Cannot insert: %s" % type(obj))
                 clip_position += duration
-        self.app.gui.focusTimeline()
+        self.app.gui.main_window.focusTimeline()
 
         if zoom_was_fitted:
             self.timeline.set_best_zoom_ratio()

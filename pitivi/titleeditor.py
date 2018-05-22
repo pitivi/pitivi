@@ -225,7 +225,7 @@ class TitleEditor(Loggable):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
-        self.app.gui.timeline_ui.insert_clips_on_first_layer([title_clip])
+        self.app.gui.main_window.timeline_ui.insert_clips_on_first_layer([title_clip])
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
         source = title_clip.get_children(False)[0]
@@ -237,8 +237,8 @@ class TitleEditor(Loggable):
         assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
         # Select it so the Title editor becomes active.
         self._selection.setSelection([title_clip], SELECT)
-        self.app.gui.timeline_ui.timeline.resetSelectionGroup()
-        self.app.gui.timeline_ui.timeline.current_group.add(title_clip)
+        self.app.gui.main_window.timeline_ui.timeline.resetSelectionGroup()
+        self.app.gui.main_window.timeline_ui.timeline.current_group.add(title_clip)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:

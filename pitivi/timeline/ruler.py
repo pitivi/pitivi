@@ -206,7 +206,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         button = event.button
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button released at x:%d", event.x)
-            self.app.gui.focusTimeline()
+            self.app.gui.main_window.focusTimeline()
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
         return False

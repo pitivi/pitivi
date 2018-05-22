@@ -213,9 +213,9 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.destroy()
 
         if response == 1:
-            self.app.gui.saveProjectAsDialog()
+            self.app.gui.main_window.saveProjectAsDialog()
         elif response == 2:
-            self.app.gui.saveProject()
+            self.app.gui.main_window.saveProject()
 
         self.app.shutdown()
 
