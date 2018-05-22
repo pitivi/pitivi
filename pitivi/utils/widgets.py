@@ -1310,20 +1310,24 @@ class BaseTabs(Gtk.Notebook):
         return notebook
 
     def _hideSecondHpanedInMainWindow(self):
-        self.app.gui.mainhpaned.remove(self.app.gui.secondhpaned)
-        self.app.gui.secondhpaned.remove(self.app.gui.projecttabs)
-        self.app.gui.secondhpaned.remove(self.app.gui.propertiestabs)
-        self.app.gui.mainhpaned.pack1(self.app.gui.projecttabs, resize=True,
-                                      shrink=False)
+        self.app.gui.main_window.mainhpaned.remove(
+            self.app.gui.main_window.secondhpaned)
+        self.app.gui.main_window.secondhpaned.remove(
+            self.app.gui.main_window.projecttabs)
+        self.app.gui.main_window.secondhpaned.remove(
+            self.app.gui.main_window.propertiestabs)
+        self.app.gui.main_window.mainhpaned.pack1(
+            self.app.gui.main_window.projecttabs, resize=True, shrink=False)
 
     def _showSecondHpanedInMainWindow(self):
-        self.app.gui.mainhpaned.remove(self.app.gui.projecttabs)
-        self.app.gui.secondhpaned.pack1(self.app.gui.projecttabs,
-                                        resize=True, shrink=False)
-        self.app.gui.secondhpaned.pack2(self.app.gui.propertiestabs,
-                                        resize=True, shrink=False)
-        self.app.gui.mainhpaned.pack1(self.app.gui.secondhpaned,
-                                      resize=True, shrink=False)
+        self.app.gui.main_window.mainhpaned.remove(
+            self.app.gui.main_window.projecttabs)
+        self.app.gui.main_window.secondhpaned.pack1(
+            self.app.gui.main_window.projecttabs, resize=True, shrink=False)
+        self.app.gui.main_window.secondhpaned.pack2(
+            self.app.gui.main_window.propertiestabs, resize=True, shrink=False)
+        self.app.gui.main_window.mainhpaned.pack1(
+            self.app.gui.main_window.secondhpaned, resize=True, shrink=False)
 
 
 class ZoomBox(Gtk.Grid, Zoomable):

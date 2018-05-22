@@ -785,7 +785,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         for prop in ["posx", "posy", "width", "height"]:
             self.__update_spin_btn(prop)
         # Keep the overlay stack in sync with the spin buttons values
-        self.app.gui.viewer.overlay_stack.update(self.source)
+        self.app.gui.main_window.viewer.overlay_stack.update(self.source)
 
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         self.__update_spin_btn(param.name)
@@ -862,7 +862,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         if value != cvalue:
             self.__set_prop(prop, value)
-            self.app.gui.viewer.overlay_stack.update(self.source)
+            self.app.gui.main_window.viewer.overlay_stack.update(self.source)
 
     def __set_source(self, source):
         if self.source:
@@ -888,7 +888,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             if source:
                 self._selected_clip = clip
                 self.__set_source(source)
-                self.app.gui.viewer.overlay_stack.select(source)
+                self.app.gui.main_window.viewer.overlay_stack.select(source)
                 self.show()
                 return
 
