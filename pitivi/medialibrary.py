@@ -50,6 +50,7 @@ from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import show_user_manual
 from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
@@ -115,59 +116,121 @@ for category, mime_types in SUPPORTED_FILE_FORMATS.items():
         SUPPORTED_MIMETYPES.append(category + "/" + mime)
 
 
-class FileChooserExtraWidget(Gtk.Grid, Loggable):
+class FileChooserExtraWidget(Gtk.Box, Loggable):
+
     def __init__(self, app):
         Loggable.__init__(self)
-        Gtk.Grid.__init__(self)
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.HORIZONTAL)
         self.app = app
 
-        self.set_row_spacing(SPACING)
-        self.set_column_spacing(SPACING)
+        self.__keep_open_check = Gtk.CheckButton(label=_("Keep dialog open"))
+        self.__keep_open_check.props.valign = Gtk.Align.START
+        self.__keep_open_check.set_tooltip_text(_("When importing files keep the dialog open"))
+        self.__keep_open_check.set_active(not self.app.settings.closeImportDialog)
+        self.pack_start(self.__keep_open_check, expand=False, fill=False, padding=0)
 
-        self.__close_after = Gtk.CheckButton(label=_("Close after importing files"))
-        self.__close_after.set_active(self.app.settings.closeImportDialog)
-        self.attach(self.__close_after, 0, 0, 1, 2)
+        self.hq_proxy_check = Gtk.CheckButton.new()
+        # Translators: Create optimized media for unsupported files.
+        self.hq_proxy_check.set_label(_("Optimize:"))
+        self.hq_proxy_check.connect("toggled", self._hq_proxy_check_cb)
 
-        self.__automatic_proxies = Gtk.RadioButton.new_with_label(
-            None, _("Create proxies when the media format is not supported officially"))
-        self.__automatic_proxies.set_tooltip_markup(
-            _("Let Pitivi decide when to"
-              " create proxy files and when not. The decision will be made"
-              " depending on the file format, and how well it is supported."
-              " For example H.264, FLAC files contained in QuickTime will"
-              " not be proxied, but AAC, H.264 contained in MPEG-TS will.\n\n"
-              "<i>This is the only option officially supported by the"
-              " Pitivi developers and thus is the safest."
-              "</i>"))
+        self.hq_combo = Gtk.ComboBoxText.new()
+        self.hq_combo.insert_text(0, _("Unsupported assets"))
+        self.hq_combo.insert_text(1, _("All"))
+        self.hq_combo.props.active = 0
+        self.hq_combo.set_sensitive(False)
 
-        self.__force_proxies = Gtk.RadioButton.new_with_label_from_widget(
-            self.__automatic_proxies, _("Create proxies for all files"))
-        self.__force_proxies.set_tooltip_markup(
-            _("Use proxies for every imported file"
-              " whatever its current media format is."))
-        self.__no_proxies = Gtk.RadioButton.new_with_label_from_widget(
-            self.__automatic_proxies, _("Do not use proxy files"))
+        self.help_button = Gtk.Button()
+        self.__update_help_button()
+        self.help_button.props.relief = Gtk.ReliefStyle.NONE
+        self.help_button.connect("clicked", self._help_button_clicked_cb)
 
-        if self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
-            self.__force_proxies.set_active(True)
-        elif self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
-            self.__no_proxies.set_active(True)
-        else:
-            self.__automatic_proxies.set_active(True)
+        self.scaled_proxy_check = Gtk.CheckButton.new()
+        self.__update_scaled_proxy_check()
+        self.scaled_proxy_check.connect("toggled", self._scaled_proxy_check_cb)
 
-        self.attach(self.__automatic_proxies, 1, 0, 1, 1)
-        self.attach(self.__force_proxies, 1, 1, 1, 1)
-        self.attach(self.__no_proxies, 1, 2, 1, 1)
+        self.project_settings_label = Gtk.Label()
+        self.project_settings_label.set_markup("<a href='#'>%s</a>" % _("Project Settings"))
+        self.project_settings_label.connect("activate-link", self._target_res_cb)
+
+        proxy_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        hq_proxy_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        hq_proxy_row.pack_start(self.hq_proxy_check, expand=False, fill=False, padding=0)
+        hq_proxy_row.pack_start(self.hq_combo, expand=False, fill=False, padding=PADDING)
+        hq_proxy_row.pack_start(self.help_button, expand=False, fill=False, padding=SPACING)
+        proxy_box.pack_start(hq_proxy_row, expand=False, fill=False, padding=0)
+
+        row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        row.pack_start(self.scaled_proxy_check, expand=False, fill=False, padding=0)
+        row.pack_start(self.project_settings_label, expand=False, fill=False, padding=SPACING)
+        proxy_box.pack_start(row, expand=False, fill=False, padding=0)
+
+        self.pack_start(proxy_box, expand=False, fill=False, padding=SPACING * 2)
+
         self.show_all()
 
-    def saveValues(self):
-        self.app.settings.closeImportDialog = self.__close_after.get_active()
-        if self.__force_proxies.get_active():
-            self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
-        elif self.__no_proxies.get_active():
-            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
+        size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.VERTICAL)
+        size_group.add_widget(self.__keep_open_check)
+        size_group.add_widget(hq_proxy_row)
+
+        if self.app.settings.proxyingStrategy == ProxyingStrategy.AUTOMATIC:
+            self.hq_proxy_check.set_active(True)
+            self.hq_combo.set_sensitive(True)
+            self.hq_combo.props.active = 0
+        elif self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
+            self.hq_proxy_check.set_active(True)
+            self.hq_combo.set_sensitive(True)
+            self.hq_combo.props.active = 1
+
+        if self.app.settings.auto_scaling_enabled:
+            self.scaled_proxy_check.set_active(True)
+
+    def _hq_proxy_check_cb(self, check_button):
+        active = check_button.get_active()
+        self.hq_combo.set_sensitive(active)
+        self.__update_help_button()
+
+        if not active:
+            self.scaled_proxy_check.set_active(False)
+
+    def __update_help_button(self):
+        if self.hq_proxy_check.get_active():
+            icon = "question-round-symbolic"
         else:
-            self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+            icon = "warning-symbolic"
+        image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+        self.help_button.set_image(image)
+
+    def _help_button_clicked_cb(self, unused_button):
+        show_user_manual("importing")
+
+    def _scaled_proxy_check_cb(self, unused_button):
+        if self.scaled_proxy_check.get_active():
+            self.hq_proxy_check.set_active(True)
+
+    def _target_res_cb(self, label_widget, unused_uri):
+        self.app.gui.editor.showProjectSettingsDialog()
+        self.__update_scaled_proxy_check()
+
+    def __update_scaled_proxy_check(self):
+        target_width = self.app.project_manager.current_project.scaled_proxy_width
+        target_height = self.app.project_manager.current_project.scaled_proxy_height
+        self.scaled_proxy_check.set_label(_("Scale assets larger than %s×%s px.") % (target_width, target_height))
+
+    def saveValues(self):
+        self.app.settings.closeImportDialog = not self.__keep_open_check.get_active()
+
+        if self.hq_proxy_check.get_active():
+            if self.hq_combo.props.active == 0:
+                self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+            else:
+                self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
+        else:
+            assert not self.scaled_proxy_check.get_active()
+            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
+
+        self.app.settings.auto_scaling_enabled = self.scaled_proxy_check.get_active()
 
 
 class AssetThumbnail(GObject.Object, Loggable):
@@ -184,6 +247,7 @@ class AssetThumbnail(GObject.Object, Loggable):
 
     EMBLEMS = {}
     PROXIED = "asset-proxied"
+    SCALED = "asset-scaled"
     NO_PROXY = "no-proxy"
     IN_PROGRESS = "asset-proxy-in-progress"
     ASSET_PROXYING_ERROR = "asset-proxying-error"
@@ -193,7 +257,7 @@ class AssetThumbnail(GObject.Object, Loggable):
 
     icons_by_name = {}
 
-    for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED]:
+    for status in [PROXIED, SCALED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED]:
         EMBLEMS[status] = GdkPixbuf.Pixbuf.new_from_file_at_size(
             os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64)
 
@@ -347,14 +411,17 @@ class AssetThumbnail(GObject.Object, Loggable):
             icon = icon_theme.load_icon("dialog-question", size, 0)
         return icon
 
-    def __setState(self):
+    def _set_state(self):
         asset = self.__asset
         target = asset.get_proxy_target()
-        asset_is_proxy = self.proxy_manager.is_proxy_asset(asset)
-        if asset_is_proxy and target and not target.get_error():
-            # The asset is a proxy.
+        target_is_valid = target and not target.get_error()
+        if self.proxy_manager.is_scaled_proxy(asset) and target_is_valid:
+            # The asset is a scaled proxy.
+            self.state = self.SCALED
+        elif self.proxy_manager.is_hq_proxy(asset) and target_is_valid:
+            # The asset is a HQ proxy.
             self.state = self.PROXIED
-        elif not asset_is_proxy and asset.proxying_error:
+        elif not self.proxy_manager.is_proxy_asset(asset) and asset.proxying_error:
             self.state = self.ASSET_PROXYING_ERROR
         elif self.proxy_manager.is_asset_queued(asset):
             self.state = self.IN_PROGRESS
@@ -364,7 +431,7 @@ class AssetThumbnail(GObject.Object, Loggable):
             self.state = self.NO_PROXY
 
     def decorate(self):
-        self.__setState()
+        self._set_state()
         if self.state == self.NO_PROXY:
             self.small_thumb = self.src_small
             self.large_thumb = self.src_large
@@ -776,7 +843,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.treeview_scrollwin.hide()
             self.iconview_scrollwin.show_all()
 
-    def __filter_unsupported(self, filter_info):
+    def _filter_unsupported(self, filter_info):
         """Returns whether the specified item should be displayed."""
         if filter_info.mime_type not in SUPPORTED_MIMETYPES:
             return False
@@ -811,7 +878,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filter.set_name(_("Supported file formats"))
         filter.add_custom(Gtk.FileFilterFlags.URI |
                           Gtk.FileFilterFlags.MIME_TYPE,
-                          self.__filter_unsupported)
+                          self._filter_unsupported)
         for formatter in GES.list_assets(GES.Formatter):
             for extension in formatter.get_meta("extension").split(","):
                 if not extension:
@@ -956,7 +1023,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._addAsset(asset)
 
         if self._project.loaded:
-            self.app.gui.editor.timeline_ui.switchProxies(asset)
+            self.app.gui.editor.timeline_ui.update_clips_asset(asset, proxy)
 
     def _assetAddedCb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""
@@ -1236,14 +1303,22 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.iconview.unselect_all()
 
     def __stopUsingProxyCb(self, unused_action, unused_parameter):
-        self._project.disable_proxies_for_assets(self.getSelectedAssets())
+        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
+        self._project.disable_proxies_for_assets(self.getSelectedAssets(),
+                                                 hq_proxy=not prefer_original)
 
     def __useProxiesCb(self, unused_action, unused_parameter):
         self._project.use_proxies_for_assets(self.getSelectedAssets())
 
+    def __use_scaled_proxies_cb(self, unused_action, unused_parameter):
+        self._project.use_proxies_for_assets(self.getSelectedAssets(),
+            scaled=True)
+
     def __deleteProxiesCb(self, unused_action, unused_parameter):
+        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
         self._project.disable_proxies_for_assets(self.getSelectedAssets(),
-                                                 delete_proxy_file=True)
+                                                 delete_proxy_file=True,
+                                                 hq_proxy=not prefer_original)
 
     def __open_containing_folder_cb(self, unused_action, unused_parameter):
         assets = self.getSelectedAssets()
@@ -1293,15 +1368,63 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         proxies = [asset.get_proxy_target() for asset in assets
                    if self.app.proxy_manager.is_proxy_asset(asset)]
+        hq_proxies = [asset.get_proxy_target() for asset in assets
+                   if self.app.proxy_manager.is_hq_proxy(asset)]
+        scaled_proxies = [asset.get_proxy_target() for asset in assets
+                   if self.app.proxy_manager.is_scaled_proxy(asset)]
         in_progress = [asset.creation_progress for asset in assets
                        if asset.creation_progress < 100]
 
-        if proxies or in_progress:
+        if hq_proxies:
             action = Gio.SimpleAction.new("unproxy-asset", None)
             action.connect("activate", self.__stopUsingProxyCb)
             action_group.insert(action)
-            text = ngettext("Do not use proxy for selected asset",
-                            "Do not use proxies for selected assets",
+            text = ngettext("Do not use Optimised Proxy for selected asset",
+                            "Do not use Optimised Proxies for selected assets",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+            action = Gio.SimpleAction.new("delete-proxies", None)
+            action.connect("activate", self.__deleteProxiesCb)
+            action_group.insert(action)
+
+            text = ngettext("Delete corresponding proxy file",
+                            "Delete corresponding proxy files",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+        if in_progress:
+            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action.connect("activate", self.__stopUsingProxyCb)
+            action_group.insert(action)
+            text = ngettext("Do not use Proxy for selected asset",
+                            "Do not use Proxies for selected assets",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+            action = Gio.SimpleAction.new("delete-proxies", None)
+            action.connect("activate", self.__deleteProxiesCb)
+            action_group.insert(action)
+
+            text = ngettext("Delete corresponding proxy file",
+                            "Delete corresponding proxy files",
+                            len(proxies) + len(in_progress))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+        if scaled_proxies:
+            action = Gio.SimpleAction.new("unproxy-asset", None)
+            action.connect("activate", self.__stopUsingProxyCb)
+            action_group.insert(action)
+            text = ngettext("Do not use Scaled Proxy for selected asset",
+                            "Do not use Scaled Proxies for selected assets",
                             len(proxies) + len(in_progress))
 
             menu_model.append(text, "assets.%s" %
@@ -1322,8 +1445,17 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             action = Gio.SimpleAction.new("use-proxies", None)
             action.connect("activate", self.__useProxiesCb)
             action_group.insert(action)
-            text = ngettext("Use proxy for selected asset",
-                            "Use proxies for selected assets", len(assets))
+            text = ngettext("Use Optimised Proxy for selected asset",
+                            "Use Optimised Proxies for selected assets", len(assets))
+
+            menu_model.append(text, "assets.%s" %
+                              action.get_name().replace(" ", "."))
+
+            action = Gio.SimpleAction.new("use-scaled-proxies", None)
+            action.connect("activate", self.__use_scaled_proxies_cb)
+            action_group.insert(action)
+            text = ngettext("Use Scaled Proxy for selected asset",
+                            "Use Scaled Proxies for selected assets", len(assets))
 
             menu_model.append(text, "assets.%s" %
                               action.get_name().replace(" ", "."))

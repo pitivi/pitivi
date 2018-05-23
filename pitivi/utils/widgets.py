@@ -214,7 +214,7 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         lower (Optional[int]): The lower limit for this widget.
     """
 
-    def __init__(self, upper=None, lower=None, default=None, adjustment=None):
+    def __init__(self, upper=None, lower=None, default=None, adjustment=None, width_chars=None):
         Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
 
@@ -239,6 +239,8 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.adjustment.props.upper = upper
 
         self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
+        if width_chars:
+            self.spinner.props.width_chars = width_chars
         self.pack_start(self.spinner, expand=False, fill=False, padding=0)
         self.spinner.show()
 

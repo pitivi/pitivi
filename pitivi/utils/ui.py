@@ -46,7 +46,6 @@ from pitivi.utils.loggable import doLog
 from pitivi.utils.loggable import ERROR
 from pitivi.utils.loggable import INFO
 from pitivi.utils.misc import path_from_uri
-from pitivi.utils.proxy import get_proxy_target
 
 # Dimensions in pixels
 EXPANDED_SIZE = 65
@@ -427,6 +426,7 @@ def beautify_asset(asset):
     Args:
         asset (GES.Asset): The asset to display.
     """
+    from pitivi.utils.proxy import get_proxy_target
     uri = get_proxy_target(asset).props.id
     path = path_from_uri(uri)
     res = ["<b>" + GLib.markup_escape_text(path) + "</b>"]
@@ -494,6 +494,7 @@ def info_name(info):
         info (GES.Asset or DiscovererInfo): The info to display.
     """
     if isinstance(info, GES.Asset):
+        from pitivi.utils.proxy import get_proxy_target
         filename = urllib.parse.unquote(os.path.basename(get_proxy_target(info).get_id()))
     elif isinstance(info, DiscovererInfo):
         filename = urllib.parse.unquote(os.path.basename(info.get_uri()))

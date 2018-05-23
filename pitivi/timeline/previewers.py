@@ -554,7 +554,7 @@ class AssetPreviewer(Previewer, Loggable):
         self.thumb_height = THUMB_HEIGHT
         self.thumb_width = 0
 
-        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self.thumb_cache = ThumbnailCache.get(self.asset)
 
         self.thumb_width, unused_height = self.thumb_cache.image_size
         self.pipeline = None

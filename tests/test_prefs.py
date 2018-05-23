@@ -16,11 +16,25 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+from unittest import mock
+
+from gi.repository import Gtk
+
 from pitivi.dialogs.prefs import PreferencesDialog
 from tests import common
 
 
 class PreferencesDialogTest(common.TestCase):
+
+    def test_dialog_creation(self):
+        """Exercises the dialog creation."""
+        app = common.create_pitivi()
+        with mock.patch.object(Gtk.Dialog, "set_transient_for"):
+            PreferencesDialog(app)
+
+        app.project_manager.new_blank_project()
+        with mock.patch.object(Gtk.Dialog, "set_transient_for"):
+            PreferencesDialog(app)
 
     def testNumeric(self):
         PreferencesDialog.addNumericPreference('numericPreference1',

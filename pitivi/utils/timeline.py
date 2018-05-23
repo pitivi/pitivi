@@ -23,8 +23,6 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import set_children_state_recurse
-from pitivi.utils.ui import unset_children_state_recurse
 
 
 # Selection modes
@@ -129,8 +127,10 @@ class Selection(GObject.Object, Loggable):
             obj.selected.selected = selected
             if obj.ui:
                 if selected:
+                    from pitivi.utils.ui import set_children_state_recurse
                     set_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
                 else:
+                    from pitivi.utils.ui import unset_children_state_recurse
                     unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
             for element in obj.get_children(False):
                 if isinstance(obj, GES.BaseEffect) or\

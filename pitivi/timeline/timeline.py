@@ -43,6 +43,7 @@ from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import Selection
@@ -831,6 +832,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         return clips.union(grouped_clips)
 
+    def clips(self):
+        for layer in self.ges_timeline.get_layers():
+            for clip in layer.get_clips():
+                yield clip
+
     def _motion_notify_event_cb(self, unused_widget, event):
         if self.draggingElement:
             if type(self.draggingElement) == TransitionClip and \
@@ -1421,28 +1427,19 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def switchProxies(self, asset):
-        proxy = asset.props.proxy
-        unproxy = False
+    def update_clips_asset(self, asset, proxy):
+        """Updates the relevant clips to use the asset or the proxy.
 
-        if not proxy:
-            unproxy = True
-            proxy_uri = self.app.proxy_manager.getProxyUri(asset)
-            proxy = GES.Asset.request(GES.UriClip,
-                                      proxy_uri)
-            if not proxy:
-                self.debug("proxy_uri: %s does not have an asset associated",
-                           proxy_uri)
-                return
-
-        layers = self.ges_timeline.get_layers()
-        for layer in layers:
-            for clip in layer.get_clips():
-                if unproxy:
-                    if clip.get_asset() == proxy:
-                        clip.set_asset(asset)
-                elif clip.get_asset() == proxy.get_proxy_target():
-                    clip.set_asset(proxy)
+        Args:
+            asset (GES.Asset): Only the clips who's current asset's target is
+                is this will be updated.
+            proxy (Ges.Asset): The proxy to use, or None to use the asset itself.
+        """
+        original_asset = get_proxy_target(asset)
+        replacement_asset = proxy or asset
+        for clip in self.timeline.clips():
+            if get_proxy_target(clip) == original_asset:
+                clip.set_asset(replacement_asset)
         self._project.pipeline.commit_timeline()
 
     def insertAssets(self, assets, position=None):

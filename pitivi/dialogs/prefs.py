@@ -59,8 +59,9 @@ class PreferencesDialog(Loggable):
     prefs = {}
     section_names = {
         "timeline": _("Timeline"),
-        "_plugins": _("Plugins"),
-        "_shortcuts": _("Shortcuts")
+        "__plugins": _("Plugins"),
+        "__shortcuts": _("Shortcuts"),
+        "_proxies": _("Proxies"),
     }
 
     def __init__(self, app):
@@ -91,6 +92,7 @@ class PreferencesDialog(Loggable):
             self.add_settings_page(section_id)
         self.factory_settings.set_sensitive(self._canReset())
 
+        self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
         self.__setup_css()
@@ -152,7 +154,7 @@ class PreferencesDialog(Loggable):
         """
         if section not in cls.section_names:
             raise Exception("%s is not a valid section id" % section)
-        if section.startswith("_"):
+        if section.startswith("__"):
             raise Exception("Cannot add preferences to reserved sections")
         if section not in cls.prefs:
             cls.prefs[section] = {}
@@ -225,8 +227,11 @@ class PreferencesDialog(Loggable):
 
     def add_settings_page(self, section_id):
         """Adds a page for the preferences in the specified section."""
-        options = self.prefs[section_id]
+        prefs = self._prepare_prefs_widgets(self.prefs[section_id])
+        container = self._create_props_container(prefs)
+        self._add_page(section_id, container)
 
+    def _create_props_container(self, prefs):
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         container.set_border_width(SPACING)
 
@@ -235,11 +240,57 @@ class PreferencesDialog(Loggable):
         listbox.props.margin = PADDING * 2
         listbox.get_style_context().add_class('prefs_list')
 
-        container.add(listbox)
+        container.pack_start(listbox, False, False, 0)
 
         label_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
         prop_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
 
+        for y, (label, widget, revert_widget, extra_widget) in enumerate(prefs):
+            box = Gtk.Box()
+
+            label_widget = Gtk.Label(label=label)
+            label_widget.set_alignment(0.0, 0.5)
+            label_widget.props.margin_right = PADDING * 3
+            label_widget.props.margin_top = PADDING * 2
+            label_widget.props.margin_bottom = PADDING * 2
+            label_size_group.add_widget(label_widget)
+
+            widget.props.margin_right = PADDING * 3
+            widget.props.margin_top = PADDING * 2
+            widget.props.margin_bottom = PADDING * 2
+            prop_size_group.add_widget(widget)
+
+            box.pack_start(label_widget, True, True, 0)
+            box.pack_start(widget, False, False, 0)
+            if revert_widget:
+                box.pack_start(revert_widget, False, False, 0)
+
+            if extra_widget:
+                box1 = box
+                box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                box.pack_start(box1, False, False, 0)
+                box.pack_start(extra_widget, False, False, SPACING)
+
+            box.props.margin_left = PADDING * 3
+
+            row = Gtk.ListBoxRow()
+            row.set_activatable(False)
+            row.add(box)
+            if y == 0:
+                row.get_style_context().add_class('first')
+            listbox.add(row)
+
+        container.show_all()
+        return container
+
+    def _create_revert_button(self):
+        revert = Gtk.Button.new_from_icon_name("edit-clear-all-symbolic", Gtk.IconSize.MENU)
+        revert.set_tooltip_text(_("Reset to default value"))
+        revert.set_relief(Gtk.ReliefStyle.NONE)
+        revert.props.valign = Gtk.Align.CENTER
+        return revert
+
+    def _prepare_prefs_widgets(self, options):
         prefs = []
         for attrname in options:
             label, description, widget_class, args = options[attrname]
@@ -249,70 +300,91 @@ class PreferencesDialog(Loggable):
             widget.set_tooltip_text(description)
             self.widgets[attrname] = widget
 
-            widget.props.margin_left = PADDING * 3
-            widget.props.margin_right = PADDING * 3
-            widget.props.margin_top = PADDING * 2
-            widget.props.margin_bottom = PADDING * 2
-
-            prop_size_group.add_widget(widget)
-
-            label_widget = Gtk.Label(label=label)
-            label_widget.set_tooltip_text(description)
-            label_widget.set_alignment(0.0, 0.5)
-
-            label_widget.props.margin_left = PADDING * 3
-            label_widget.props.margin_right = PADDING * 3
-            label_widget.props.margin_top = PADDING * 2
-            label_widget.props.margin_bottom = PADDING * 2
-
-            label_widget.show()
-            label_size_group.add_widget(label_widget)
-
-            icon = Gtk.Image()
-            icon.set_from_icon_name(
-                "edit-clear-all-symbolic", Gtk.IconSize.MENU)
-            revert = Gtk.Button()
-            revert.add(icon)
-            revert.set_tooltip_text(_("Reset to default value"))
-            revert.set_relief(Gtk.ReliefStyle.NONE)
+            revert = self._create_revert_button()
             revert.set_sensitive(not self.settings.isDefault(attrname))
             revert.connect("clicked", self.__reset_option_cb, attrname)
-            revert.show_all()
-
             self.resets[attrname] = revert
-            row_widgets = (label_widget, widget, revert)
+
             # Construct the prefs list so that it can be sorted.
-            # Make sure the L{ToggleWidget}s appear at the end.
-            prefs.append((label_widget is None, label, row_widgets))
+            prefs.append((label, widget, revert, None))
 
-        # Sort widgets: I think we only want to sort by the non-localized
-        # names, so options appear in the same place across locales ...
-        # but then I may be wrong
-        for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
-            label, widget, revert = row_widgets
-            box = Gtk.Box()
-
-            if label:
-                box.pack_start(label, True, True, 0)
-
-            box.pack_start(widget, False, False, 0)
-            box.pack_start(revert, False, False, 0)
-
-            row = Gtk.ListBoxRow()
-            row.set_activatable(False)
-            row.add(box)
-            listbox.add(row)
-
-            if y == 0:
-                row.get_style_context().add_class('first')
-
-        container.show_all()
-        self._add_page(section_id, container)
+        # TODO: We need to know exactly where each preference appears,
+        #   currently they are sorted by the translated label.
+        return sorted(prefs)
 
     def __add_plugin_manager_section(self):
         page = PluginPreferencesPage(self.app, self)
         page.show_all()
-        self._add_page("_plugins", page)
+        self._add_page("__plugins", page)
+
+    def __add_proxies_section(self):
+        """Adds a section for proxy settings."""
+        prefs = self._prepare_prefs_widgets(self.prefs["_proxies"])
+
+        self.proxy_width_widget = widgets.NumericWidget(lower=1, width_chars=4)
+        self.proxy_width_widget.setWidgetValue(self.app.settings.default_scaled_proxy_width)
+        self.widgets["default_scaled_proxy_width"] = self.proxy_width_widget
+        self.proxy_height_widget = widgets.NumericWidget(lower=1, width_chars=4)
+        self.proxy_height_widget.setWidgetValue(self.app.settings.default_scaled_proxy_height)
+        self.widgets["default_scaled_proxy_height"] = self.proxy_height_widget
+        size_box = Gtk.Box(spacing=SPACING)
+        size_box.pack_start(self.proxy_width_widget, False, False, 0)
+        size_box.pack_start(Gtk.Label("×"), False, False, 0)
+        size_box.pack_start(self.proxy_height_widget, False, False, 0)
+        size_box.set_tooltip_text(_("This resolution will be used as the"
+            " default target resolution for new projects and projects missing"
+            " scaled proxy meta-data."))
+        self.scaled_proxy_size_revert_button = self._create_revert_button()
+
+        self.proxy_infobar = Gtk.InfoBar.new()
+        fix_infobar(self.proxy_infobar)
+        self.proxy_infobar.set_message_type(Gtk.MessageType.WARNING)
+        self.proxy_infobar.add_button(_("Project Settings"), Gtk.ResponseType.OK)
+        self.scaled_proxies_infobar_label = Gtk.Label.new()
+        self.proxy_infobar.get_content_area().add(self.scaled_proxies_infobar_label)
+        self.proxy_infobar.show_all()
+
+        prefs.append((_("Initial proxy size for new projects"), size_box, self.scaled_proxy_size_revert_button, None))
+
+        container = self._create_props_container(prefs)
+
+        container.pack_start(self.proxy_infobar, False, False, 0)
+
+        self._add_page("_proxies", container)
+
+        self.__update_scaled_proxies_infobar()
+        self.__update_proxy_size_revert_button()
+
+        self.proxy_width_widget.connectValueChanged(self.__scaled_proxy_size_change_cb)
+        self.proxy_height_widget.connectValueChanged(self.__scaled_proxy_size_change_cb)
+        self.scaled_proxy_size_revert_button.connect("clicked", self.__reset_option_cb, "default_scaled_proxy_width", "default_scaled_proxy_height")
+        self.proxy_infobar.connect("response", self.__proxy_infobar_cb)
+
+    def __scaled_proxy_size_change_cb(self, unused_widget):
+        self.app.settings.default_scaled_proxy_width = self.proxy_width_widget.getWidgetValue()
+        self.app.settings.default_scaled_proxy_height = self.proxy_height_widget.getWidgetValue()
+        self.__update_scaled_proxies_infobar()
+        self.__update_proxy_size_revert_button()
+
+    def __update_proxy_size_revert_button(self):
+        default = all([self.settings.isDefault(setting)
+                       for setting in ("default_scaled_proxy_width", "default_scaled_proxy_height")])
+        self.scaled_proxy_size_revert_button.set_sensitive(not default)
+
+    def __update_scaled_proxies_infobar(self):
+        project = self.app.project_manager.current_project
+        different = project and \
+            (project.scaled_proxy_width != self.app.settings.default_scaled_proxy_width or
+                project.scaled_proxy_height != self.app.settings.default_scaled_proxy_height)
+        self.proxy_infobar.set_visible(different)
+        if different:
+            self.scaled_proxies_infobar_label.set_text(
+                _("Proxy resolution for the current project is %d×%d px") %
+                (project.scaled_proxy_width, project.scaled_proxy_height))
+
+    def __proxy_infobar_cb(self, unused_infobar, unused_response_id):
+        self.app.gui.editor.showProjectSettingsDialog()
+        self.__update_scaled_proxies_infobar()
 
     def __add_shortcuts_section(self):
         """Adds a section with keyboard shortcuts."""
@@ -349,7 +421,7 @@ class PreferencesDialog(Loggable):
         outside_box.add(scrolled_window)
         outside_box.show_all()
 
-        self._add_page("_shortcuts", outside_box)
+        self._add_page("__shortcuts", outside_box)
 
     def __row_activated_cb(self, list_box, row):
         index = row.get_index()
@@ -463,8 +535,9 @@ class PreferencesDialog(Loggable):
         self.revert_button.set_sensitive(False)
         self.factory_settings.set_sensitive(self._canReset())
 
-    def __reset_option_cb(self, button, attrname):
-        self.__reset_option(button, attrname)
+    def __reset_option_cb(self, button, *attrnames):
+        for attrname in attrnames:
+            self.__reset_option(button, attrname)
 
     def __reset_option(self, button, attrname):
         """Resets a particular setting to the factory default."""

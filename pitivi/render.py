@@ -444,7 +444,7 @@ class RenderDialog(Loggable):
         # the current container format.
         self.preferred_vencoder = self.project.vencoder
         self.preferred_aencoder = self.project.aencoder
-        self.__unproxiedClips = {}
+        self.__replaced_assets = {}
 
         self.frame_rate_combo.set_model(frame_rates)
         self.channels_combo.set_model(audio_channels)
@@ -935,7 +935,7 @@ class RenderDialog(Loggable):
         self._time_spent_paused = 0
         self._pipeline.set_state(Gst.State.NULL)
         self.project.set_rendering(False)
-        self.__useProxyAssets()
+        self._use_proxy_assets()
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
@@ -983,50 +983,61 @@ class RenderDialog(Loggable):
         except GLib.Error as e:
             self.warning("GSound failed to play: %s", e)
 
-    def __maybeUseSourceAsset(self):
-        if self.__always_use_proxies.get_active():
-            self.debug("Rendering from proxies, not replacing assets")
-            return
+    def _asset_replacement(self, clip):
+        if not isinstance(clip, GES.UriClip):
+            return None
 
-        for layer in self.app.project_manager.current_project.ges_timeline.get_layers():
-            for clip in layer.get_clips():
-                if not isinstance(clip, GES.UriClip):
-                    continue
+        asset = clip.get_asset()
+        asset_target = asset.get_proxy_target()
+        if not asset_target:
+            # The asset is not a proxy.
+            return None
 
-                asset = clip.get_asset()
-                asset_target = asset.get_proxy_target()
-                if not asset_target:
-                    # The asset is not a proxy.
-                    continue
+        # Replace all proxies
+        if self.__never_use_proxies.get_active():
+            return asset_target
 
-                if self.__automatically_use_proxies.get_active():
-                    if not self.app.proxy_manager.isAssetFormatWellSupported(
-                            asset_target):
-                        self.info("Original asset %s format not well supported, "
-                                  "rendering from proxy.",
-                                  asset_target.props.id)
-                        continue
+        # Use HQ Proxy (or equivalent) only for unsupported assets
+        if self.__automatically_use_proxies.get_active():
+            if self.app.proxy_manager.isAssetFormatWellSupported(
+                    asset_target):
+                return asset_target
+            else:
+                proxy_unsupported = True
 
-                    self.info("Original asset %s format well supported, "
-                              "rendering from real asset.",
-                              asset_target.props.id)
+        # Use HQ Proxy (or equivalent) whenever available
+        if self.__always_use_proxies.get_active() or proxy_unsupported:
+            if self.app.proxy_manager.is_hq_proxy(asset):
+                return None
 
-                if asset_target.get_error():
-                    # The original asset cannot be used.
-                    continue
+            if self.app.proxy_manager.is_scaled_proxy(asset):
+                width, height = self.project.getVideoWidthAndHeight(render=True)
+                stream = asset.get_info().get_video_streams()[0]
+                asset_res = [stream.get_width(), stream.get_height()]
 
-                clip.set_asset(asset_target)
-                self.info("Using original asset %s (instead of proxy %s)",
-                          asset_target.get_id(),
-                          asset.get_id())
-                self.__unproxiedClips[clip] = asset
+                if asset_res[0] == width and asset_res[1] == height:
+                    # Check whether the scaled proxy size matches the render size
+                    # exactly. If the size is same, render from the scaled proxy
+                    # to avoid double scaling.
+                    return None
 
-    def __useProxyAssets(self):
-        for clip, asset in self.__unproxiedClips.items():
+                hq_proxy = GES.Asset.request(GES.UriClip,
+                    self.app.proxy_manager.getProxyUri(asset_target))
+                return hq_proxy or None
+
+    def __replace_proxies(self):
+        for clip in self.project.ges_timeline.ui.clips():
+            asset = self._asset_replacement(clip)
+            if asset:
+                self.__replaced_assets[clip] = clip.get_asset()
+                clip.set_asset(asset)
+
+    def _use_proxy_assets(self):
+        for clip, asset in self.__replaced_assets.items():
             self.info("Reverting to using proxy asset %s", asset)
             clip.set_asset(asset)
 
-        self.__unproxiedClips = {}
+        self.__replaced_assets = {}
 
     # ------------------- Callbacks ------------------------------------------ #
 
@@ -1042,7 +1053,7 @@ class RenderDialog(Loggable):
 
     def _renderButtonClickedCb(self, unused_button):
         """Starts the rendering process."""
-        self.__maybeUseSourceAsset()
+        self.__replace_proxies()
         self.outfile = os.path.join(self.filebutton.get_uri(),
                                     self.fileentry.get_text())
         self.progress = RenderingProgressDialog(self.app, self)

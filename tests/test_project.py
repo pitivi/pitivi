@@ -633,6 +633,40 @@ class TestProjectSettings(common.TestCase):
         project.uri = "file:///tmp/%40%23%24%5E%26%60.xges"
         self.assertEqual(project.name, "@#$^&`")
 
+    def test_scaled_proxy_size(self):
+        app = common.create_pitivi_mock(default_scaled_proxy_width=123,
+                                        default_scaled_proxy_height=456)
+        manager = ProjectManager(app)
+        project = manager.new_blank_project()
+        self.assertFalse(project.has_scaled_proxy_size())
+        self.assertEqual(project.scaled_proxy_width, 123)
+        self.assertEqual(project.scaled_proxy_height, 456)
+
+        with tempfile.NamedTemporaryFile() as f:
+            uri = Gst.filename_to_uri(f.name)
+            manager.saveProject(uri=uri, backup=False)
+            app2 = common.create_pitivi_mock(default_scaled_proxy_width=12,
+                                             default_scaled_proxy_height=45)
+            project2 = ProjectManager(app2).load_project(uri)
+            self.assertFalse(project2.has_scaled_proxy_size())
+            self.assertEqual(project2.scaled_proxy_width, 12)
+            self.assertEqual(project2.scaled_proxy_height, 45)
+
+        project.scaled_proxy_width = 123
+        project.scaled_proxy_height = 456
+        self.assertTrue(project.has_scaled_proxy_size())
+        self.assertEqual(project.scaled_proxy_width, 123)
+        self.assertEqual(project.scaled_proxy_height, 456)
+
+        with tempfile.NamedTemporaryFile() as f:
+            manager.saveProject(uri=uri, backup=False)
+            app2 = common.create_pitivi_mock(default_scaled_proxy_width=1,
+                                             default_scaled_proxy_height=4)
+            project2 = ProjectManager(app2).load_project(uri)
+            self.assertTrue(project2.has_scaled_proxy_size())
+            self.assertEqual(project2.scaled_proxy_width, 123)
+            self.assertEqual(project2.scaled_proxy_height, 456)
+
 
 class TestExportSettings(common.TestCase):
 
