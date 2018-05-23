@@ -60,7 +60,8 @@ class PreferencesDialog(Loggable):
     section_names = {
         "timeline": _("Timeline"),
         "_plugins": _("Plugins"),
-        "_shortcuts": _("Shortcuts")
+        "_shortcuts": _("Shortcuts"),
+        "_proxies": _("Proxies"),
     }
 
     def __init__(self, app):
@@ -91,6 +92,7 @@ class PreferencesDialog(Loggable):
             self.add_settings_page(section_id)
         self.factory_settings.set_sensitive(self._canReset())
 
+        self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
         self.dialog.set_transient_for(app.gui)
@@ -281,6 +283,122 @@ class PreferencesDialog(Loggable):
         page = PluginPreferencesPage(self.app, self)
         page.show_all()
         self._add_page("_plugins", page)
+
+    def __add_proxies_section(self):
+        """Adds a section for proxy settings"""
+
+        grid = Gtk.Grid()
+        grid.set_border_width(SPACING)
+        grid.props.column_spacing = SPACING
+        grid.props.row_spacing = SPACING
+
+        scaled_res_label = Gtk.Label(label=_("Default Scaled Proxy Resolution"))
+        scaled_res_label.set_tooltip_text(_("This resolution will be used as the"
+            " default target resolution for new projects and projects missing"
+            " scaled proxy meta-data."))
+
+        res_width_input = widgets.NumericWidget(lower=1)
+        res_width_input.setWidgetValue(self.app.settings.default_scaled_proxy_width)
+        res_height_input = widgets.NumericWidget(lower=1)
+        res_height_input.setWidgetValue(self.app.settings.default_scaled_proxy_height)
+        scaled_res_box = Gtk.Box(spacing=SPACING)
+        scaled_res_box.pack_start(scaled_res_label, False, False, PADDING)
+        scaled_res_box.pack_start(res_width_input, False, False, PADDING)
+        scaled_res_box.pack_start(res_height_input, False, False, PADDING)
+
+        scaled_res_infobar = Gtk.InfoBar.new()
+        scaled_res_infobar.set_message_type(Gtk.MessageType.INFO)
+
+        scaled_res_infobar.add_button(_("Apply to current project"),
+            Gtk.ResponseType.OK)
+
+        info_content_area = scaled_res_infobar.get_content_area()
+        info_help_text = Gtk.Label.new()
+        info_content_area.add(info_help_text)
+
+        self.__update_infobar_content(info_content_area)
+
+        trans_jobs_label = Gtk.Label(label=_("Max number of parallel transcoding jobs"))
+        trans_jobs_input = widgets.NumericWidget(lower=1)
+        trans_jobs_input.setWidgetValue(self.app.settings.numTranscodingJobs)
+        trans_jobs_box = Gtk.Box(spacing=SPACING)
+        trans_jobs_box.pack_start(trans_jobs_label, False, False, PADDING)
+        trans_jobs_box.pack_start(trans_jobs_input, False, False, PADDING)
+
+        max_cpu_label = Gtk.Label(label=_("Max percentage of CPU usage dedicated"
+            " to transcoding"))
+        max_cpu_input = widgets.NumericWidget(lower=1)
+        max_cpu_input.setWidgetValue(self.app.settings.max_cpu_usage)
+        max_cpu_box = Gtk.Box(spacing=SPACING)
+        max_cpu_box.pack_start(max_cpu_label, False, False, PADDING)
+        max_cpu_box.pack_start(max_cpu_input, False, False, PADDING)
+
+        grid.attach(scaled_res_box, 0, 1, 3, 1)
+        grid.attach(scaled_res_infobar, 0, 0, 2, 1)
+        grid.attach(trans_jobs_box, 0, 3, 2, 1)
+        grid.attach(max_cpu_box, 0, 4, 2, 1)
+
+        res_width_input.connectValueChanged(self.__scaled_proxy_cb,
+            res_width_input, res_height_input, scaled_res_infobar)
+        res_height_input.connectValueChanged(self.__scaled_proxy_cb,
+            res_width_input, res_height_input, scaled_res_infobar)
+
+        scaled_res_infobar.connect("response", self.__set_project_proxy_resolution_cb,
+            res_width_input, res_height_input)
+
+        trans_jobs_input.connectValueChanged(self.__set_transcoding_jobs_cb,
+            trans_jobs_input)
+
+        max_cpu_input.connectValueChanged(self.__set_max_cpu_cb, max_cpu_input)
+
+        grid.show_all()
+        Gtk.Widget.do_hide(scaled_res_infobar)
+        self._add_page("_proxies", grid)
+
+    def __scaled_proxy_cb(self, _unused, width_input, height_input, infobar):
+        project = self.app.project_manager.current_project
+
+        current_width = self.app.settings.default_scaled_proxy_width
+        current_height = self.app.settings.default_scaled_proxy_height
+
+        width = width_input.getWidgetValue()
+        height = height_input.getWidgetValue()
+
+        if height != current_height or width != current_width:
+            self.app.settings.default_scaled_proxy_width = width
+            self.app.settings.default_scaled_proxy_height = height
+
+        infobar.show()
+
+    def __update_infobar_content(self, content):
+        project = self.app.project_manager.current_project
+
+        label = content.get_children()[0]
+        label.set_text(_("The setting below only affects new projects by"
+            " default.\nScaled Proxy resolution for the current project is "
+            "%dx%d px" % (project.scaled_proxy_width,
+            project.scaled_proxy_height)))
+
+    def __set_project_proxy_resolution_cb(self, infobar, _unused2, width_input,
+            height_input):
+        project = self.app.project_manager.current_project
+
+        width = width_input.getWidgetValue()
+        height = height_input.getWidgetValue()
+
+        project.scaled_proxy_width = width
+        project.scaled_proxy_height = height
+
+        self.__update_infobar_content(infobar.get_content_area())
+        Gtk.Widget.do_hide(infobar)
+
+    def __set_transcoding_jobs_cb(self, _unused, num_input):
+        num = num_input.getWidgetValue()
+        self.app.settings.numTranscodingJobs = num
+
+    def __set_max_cpu_cb(self, _unused, num_input):
+        num = num_input.getWidgetValue()
+        self.app.settings.max_cpu_usage = num
 
     def __add_shortcuts_section(self):
         """Adds a section with keyboard shortcuts."""
