@@ -178,12 +178,13 @@ class AssetThumbnail(Loggable):
     NO_PROXY = "no-proxy"
     IN_PROGRESS = "asset-proxy-in-progress"
     ASSET_PROXYING_ERROR = "asset-proxying-error"
+    UNSUPPORTED = "asset-unsupported"
 
     DEFAULT_ALPHA = 255
 
     icons_by_name = {}
 
-    for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR]:
+    for status in [PROXIED, IN_PROGRESS, UNSUPPORTED]:
         EMBLEMS[status] = []
         for size in [32, 64]:
             EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
@@ -327,6 +328,8 @@ class AssetThumbnail(Loggable):
             self.state = self.ASSET_PROXYING_ERROR
         elif self.proxy_manager.is_asset_queued(asset):
             self.state = self.IN_PROGRESS
+        elif not asset.is_image() and not self.proxy_manager.isAssetFormatWellSupported(asset):
+            self.state = self.UNSUPPORTED
         else:
             self.state = self.NO_PROXY
 
