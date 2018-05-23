@@ -1338,18 +1338,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def switchProxies(self, asset):
-        proxy = asset.props.proxy
+    def switchProxies(self, asset, proxy):
+        proxied = asset.props.proxy
         unproxy = False
 
-        if not proxy:
+        if not proxied:
             unproxy = True
-            proxy_uri = self.app.proxy_manager.getProxyUri(asset)
-            proxy = GES.Asset.request(GES.UriClip,
-                                      proxy_uri)
             if not proxy:
-                self.debug("proxy_uri: %s does not have an asset associated",
-                           proxy_uri)
+                self.debug("Proxy does not have an asset associated")
                 return
 
         layers = self.ges_timeline.get_layers()

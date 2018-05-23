@@ -410,6 +410,7 @@ class RenderDialog(Loggable):
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
+        self._hq_requests_pending = 0
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -940,7 +941,57 @@ class RenderDialog(Loggable):
         except GLib.Error as e:
             self.warning("GSound failed to play: %s", e)
 
+    def __replace_scaled_proxies(self):
+        replace_all = self.__never_use_proxies.get_active()
+
+        for layer in self.app.project_manager.current_project.ges_timeline.get_layers():
+            for clip in layer.get_clips():
+                if not isinstance(clip, GES.UriClip):
+                    continue
+
+                asset = clip.get_asset()
+                asset_target = asset.get_proxy_target()
+                if not asset_target:
+                    # The asset is not a proxy.
+                    continue
+
+                if self.app.proxy_manager.is_hq_proxy(asset):
+                    # The asset is not a scaled proxy.
+                    continue
+
+                if not replace_all:
+                    # Don't replace scaled proxy if it matches the scale percent
+                    width, height = self.project.getVideoWidthAndHeight(render=True)
+                    stream = asset.get_info().get_video_streams()[0]
+                    asset_res = [stream.get_width(), stream.get_height()]
+                    if asset_res[0] == width and asset_res[1] == height:
+                        continue
+
+                # Replace with HQ Proxy if available
+                hq_proxy_uri = self.app.proxy_manager.getProxyUri(asset_target)
+                if Gio.File.new_for_uri(hq_proxy_uri).query_exists(None):
+                    print("HQ")
+                    GES.Asset.request_async(GES.UriClip, hq_proxy_uri, None,
+                    self.__set_hq_asset_cb, clip)
+                    self._hq_requests_pending += 1
+                    continue
+
+                # Replace with original asset
+                clip.set_asset(asset_target)
+
+    def __set_hq_asset_cb(self, hq_asset, res, clip):
+        self._hq_requests_pending -= 1
+        try:
+            GES.Asset.request_finish(res)
+        except GLib.Error as e:
+            return
+        clip.set_asset(hq_asset)
+
     def __maybeUseSourceAsset(self):
+        self.__replace_scaled_proxies()
+        while self._hq_requests_pending != 0:
+            time.sleep(1)
+
         if self.__always_use_proxies.get_active():
             self.debug("Rendering from proxies, not replacing assets")
             return

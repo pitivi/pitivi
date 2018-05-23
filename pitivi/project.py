@@ -30,6 +30,7 @@ from hashlib import md5
 
 from gi.repository import GdkPixbuf
 from gi.repository import GES
+from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
@@ -55,6 +56,7 @@ from pitivi.utils.misc import quote_uri
 from pitivi.utils.misc import scale_pixbuf
 from pitivi.utils.misc import unicode_error_dialog
 from pitivi.utils.pipeline import Pipeline
+from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
 from pitivi.utils.ui import audio_channels
 from pitivi.utils.ui import audio_rates
@@ -702,6 +704,15 @@ class Project(Loggable, GES.Project):
 
         # Project property default values
         self.register_meta(GES.MetaFlag.READWRITE, "author", "")
+        # Get & Set default scaled proxy target resolution from settings
+
+        if self.scaled_proxy_height is None or self.scaled_proxy_width is None:
+            self.setModificationState(True)
+
+        width = self.app.settings.default_scaled_proxy_width
+        height = self.app.settings.default_scaled_proxy_height
+        self.register_meta(GES.MetaFlag.READWRITE, "scaled_proxy_width", width)
+        self.register_meta(GES.MetaFlag.READWRITE, "scaled_proxy_height", height)
 
         # The rendering settings.
         self.set_meta("render-scale", 100.0)
@@ -796,6 +807,26 @@ class Project(Loggable, GES.Project):
         if author == self.author:
             return
         self.set_meta("author", author)
+
+    @property
+    def scaled_proxy_height(self):
+        return self.get_meta("scaled_proxy_height")
+
+    @scaled_proxy_height.setter
+    def scaled_proxy_height(self, scaled_proxy_height):
+        if scaled_proxy_height == self.scaled_proxy_height:
+            return
+        self.set_meta("scaled_proxy_height", scaled_proxy_height)
+
+    @property
+    def scaled_proxy_width(self):
+        return self.get_meta("scaled_proxy_width")
+
+    @scaled_proxy_width.setter
+    def scaled_proxy_width(self, scaled_proxy_width):
+        if scaled_proxy_width == self.scaled_proxy_width:
+            return
+        self.set_meta("scaled_proxy_width", scaled_proxy_width)
 
     @staticmethod
     def get_thumb_path(uri, resolution):
@@ -1115,9 +1146,22 @@ class Project(Loggable, GES.Project):
             else:
                 # Check that we are not recreating deleted proxy
                 proxy_uri = self.app.proxy_manager.getProxyUri(asset)
+                scaled_proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
+
+                no_hq_proxy = False
+                no_scaled_proxy = False
+
                 if proxy_uri and proxy_uri not in self.__deleted_proxy_files and \
                         asset.props.id not in self.__awaited_deleted_proxy_targets:
+                    no_hq_proxy = True
+
+                if scaled_proxy_uri and scaled_proxy_uri not in self.__deleted_proxy_files and \
+                        asset.props.id not in self.__awaited_deleted_proxy_targets:
+                    no_scaled_proxy = True
+
+                if no_hq_proxy and no_scaled_proxy:
                     asset.ready = True
+
                 num_loaded += 1
 
         if all_ready:
@@ -1242,18 +1286,21 @@ class Project(Loggable, GES.Project):
 
         self._prepare_asset_processing(asset)
 
-    def __regenerate_missing_proxy(self, asset):
+    def __regenerate_missing_proxy(self, asset, scaled=False):
         self.info("Re generating deleted proxy file %s.", asset.props.id)
         GES.Asset.needs_reload(GES.UriClip, asset.props.id)
         self._prepare_asset_processing(asset)
         asset.force_proxying = True
-        self.app.proxy_manager.add_job(asset)
+        self.app.proxy_manager.add_job(asset, scaled=scaled)
         self.__updateAssetLoadingProgress()
 
     def do_missing_uri(self, error, asset):
         if self.app.proxy_manager.is_proxy_asset(asset):
+            scaled = False
+            if self.app.proxy_manager.is_scaled_proxy(asset):
+                scaled = True
             self.debug("Missing proxy file: %s", asset.props.id)
-            target_uri = self.app.proxy_manager.getTargetUri(asset)
+            target_uri = self.app.proxy_manager.getTargetUri(asset, scaled=scaled)
 
             # Take asset relocation into account.:
             target_uri = self.relocated_assets.get(target_uri, target_uri)
@@ -1263,7 +1310,7 @@ class Project(Loggable, GES.Project):
             target = [asset for asset in self.list_assets(GES.UriClip) if
                       asset.props.id == target_uri]
             if target:
-                self.__regenerate_missing_proxy(target[0])
+                self.__regenerate_missing_proxy(target[0], scaled=scaled)
             else:
                 self.__awaited_deleted_proxy_targets.add(target_uri)
 
@@ -1506,12 +1553,19 @@ class Project(Loggable, GES.Project):
 
         return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
 
-    def use_proxies_for_assets(self, assets):
+    def use_proxies_for_assets(self, assets, scaled=False):
+        proxy_manager = self.app.proxy_manager
         originals = []
         for asset in assets:
-            if not self.app.proxy_manager.is_proxy_asset(asset):
+            if scaled:
+                is_proxied = proxy_manager.is_scaled_proxy(asset) and \
+                    not proxy_manager.asset_matches_target_res(asset)
+            else:
+                is_proxied = proxy_manager.is_hq_proxy(asset)
+            if not is_proxied:
                 target = asset.get_proxy_target()
-                if target and target.props.id == self.app.proxy_manager.getProxyUri(asset):
+                uri = proxy_manager.getProxyUri(asset, scaled=scaled)
+                if target and target.props.id == uri:
                     self.info("Missing proxy needs to be recreated after cancelling"
                               " its recreation")
                     target.unproxy(asset)
@@ -1525,22 +1579,50 @@ class Project(Loggable, GES.Project):
                     self.app.action_log.push(action)
                     self._prepare_asset_processing(asset)
                     asset.force_proxying = True
-                    self.app.proxy_manager.add_job(asset)
+                    if scaled and not proxy_manager.isAssetFormatWellSupported(asset) and not \
+                            self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
+                        # Queue a shadow HQ proxy
+                        hq_uri = self.app.proxy_manager.getProxyUri(asset)
+                        if not Gio.File.new_for_uri(hq_uri).query_exists(None):
+                            proxy_manager.add_job(asset, shadow=True)
+                    proxy_manager.add_job(asset, scaled)
 
-    def disable_proxies_for_assets(self, assets, delete_proxy_file=False):
+    def disable_proxies_for_assets(self, assets, delete_proxy_file=False, ignore_unsupported=False):
+        proxy_manager = self.app.proxy_manager
         for asset in assets:
-            if self.app.proxy_manager.is_proxy_asset(asset):
+            if proxy_manager.is_proxy_asset(asset):
                 proxy_target = asset.get_proxy_target()
                 # The asset is a proxy for the proxy_target original asset.
                 self.debug("Stop proxying %s", proxy_target.props.id)
                 proxy_target.set_proxy(None)
+                if not ignore_unsupported and proxy_manager.is_scaled_proxy(asset) \
+                        and not proxy_manager.isAssetFormatWellSupported(proxy_target):
+                    # Revert to using HQ proxies for blacklisted formats
+                    self.use_proxies_for_assets([proxy_target])
                 self.remove_asset(asset)
                 proxy_target.force_proxying = False
                 if delete_proxy_file:
                     os.remove(Gst.uri_get_location(asset.props.id))
             else:
                 # The asset is an original which is not being proxied.
-                self.app.proxy_manager.cancel_job(asset)
+                proxy_manager.cancel_job(asset)
+
+    def regenerate_scaled_proxies(self):
+        assets = self.list_assets(GES.Extractable)
+        scaled_proxies = []
+        scaled_proxy_targets = []
+
+        for asset in assets:
+            if self.app.proxy_manager.is_scaled_proxy(asset):
+                scaled_proxies.append(asset)
+                scaled_proxy_targets.append(asset.get_proxy_target())
+
+        self.disable_proxies_for_assets(scaled_proxies, delete_proxy_file=True,
+            ignore_unsupported=True)
+        self.use_proxies_for_assets(scaled_proxy_targets, scaled=True)
+
+    def hasDefaultName(self):
+        return DEFAULT_NAME == self.name
 
     def _commit(self):
         """Logs the operation and commits.
@@ -1967,7 +2049,6 @@ class ProjectSettingsDialog(object):
         self.video_presets_combo = getObj("video_presets_combo")
         self.constrain_sar_button = getObj("constrain_sar_button")
         self.select_dar_radiobutton = getObj("select_dar_radiobutton")
-        self.author_entry = getObj("author_entry")
         self.year_spinbutton = getObj("year_spinbutton")
 
         self.video_preset_menubutton = getObj("video_preset_menubutton")
@@ -1977,6 +2058,12 @@ class ProjectSettingsDialog(object):
         self.audio_preset_menubutton = getObj("audio_preset_menubutton")
         self.audio_presets.setupUi(self.audio_presets_combo,
                                    self.audio_preset_menubutton)
+
+        self.scaled_proxy_width_spin = getObj("scaled_proxy_width")
+        self.scaled_proxy_height_spin = getObj("scaled_proxy_height")
+        self.revert_to_default = getObj("default-resolution-button")
+        self.revert_to_default.connect("clicked", self.set_default_proxy_res)
+        self.proxy_res_linked_check = getObj("proxy_res_linked")
 
     def _setupUiConstraints(self):
         """Creates the dynamic widgets and connects other widgets."""
@@ -1989,7 +2076,6 @@ class ProjectSettingsDialog(object):
 
         # Populate comboboxes.
         self.frame_rate_combo.set_model(frame_rates)
-
         self.channels_combo.set_model(audio_channels)
         self.sample_rate_combo.set_model(audio_rates)
 
@@ -2013,14 +2099,26 @@ class ProjectSettingsDialog(object):
                           update_func_args=(self.video_presets,))
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
+        self.wg.addVertex(self.scaled_proxy_width_spin, signal="value-changed")
+        self.wg.addVertex(self.scaled_proxy_height_spin, signal="value-changed")
 
-        # Constrain width and height IFF the Link checkbox is checked.
+        # Constrain width and height IF the Link checkbox is checked.
+        # Video
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
                         predicate=self.widthHeightLinked,
                         edge_func=self.updateHeight)
         self.wg.addEdge(self.height_spinbutton, self.width_spinbutton,
                         predicate=self.widthHeightLinked,
                         edge_func=self.updateWidth)
+        # Proxy
+        self.wg.addEdge(self.scaled_proxy_width_spin,
+                        self.scaled_proxy_height_spin,
+                        predicate=self.proxy_res_linked,
+                        edge_func=self.update_scaled_proxy_height)
+        self.wg.addEdge(self.scaled_proxy_height_spin,
+                        self.scaled_proxy_width_spin,
+                        predicate=self.proxy_res_linked,
+                        edge_func=self.update_scaled_proxy_width)
 
         # Keep the framerate combo and fraction widgets in sync.
         self.wg.addBiEdge(
@@ -2066,6 +2164,9 @@ class ProjectSettingsDialog(object):
     def widthHeightLinked(self):
         return self.constrain_sar_button.props.active and not self.video_presets.ignore_update_requests
 
+    def proxy_res_linked(self):
+        return self.proxy_res_linked_check.props.active
+
     def _updateFraction(self, unused, fraction, combo):
         fraction.setWidgetValue(get_combo_value(combo))
 
@@ -2101,6 +2202,32 @@ class ProjectSettingsDialog(object):
         height = int(fraction.num / fraction.denom)
         self.height_spinbutton.set_value(height)
 
+    def _proxy_res_linked_toggle_Cb(self, unused_button):
+        width = int(self.scaled_proxy_width_spin.get_value())
+        height = int(self.scaled_proxy_height_spin.get_value())
+        self.proxy_aspect_ratio = Gst.Fraction(width, height)
+
+    def update_scaled_proxy_width(self):
+        height = int(self.scaled_proxy_height_spin.get_value())
+        fraction = height * self.proxy_aspect_ratio
+        width = int(fraction.num / fraction.denom)
+        self.scaled_proxy_width_spin.set_value(width)
+
+    def update_scaled_proxy_height(self):
+        width = int(self.scaled_proxy_width_spin.get_value())
+        fraction = width / self.proxy_aspect_ratio
+        height = int(fraction.num / fraction.denom)
+        self.scaled_proxy_height_spin.set_value(height)
+
+    def set_default_proxy_res(self, _unused):
+        width = self.app.settings.default_scaled_proxy_width
+        height = self.app.settings.default_scaled_proxy_height
+
+        self.proxy_res_linked_check.set_active(False)
+
+        self.scaled_proxy_width_spin.set_value(width)
+        self.scaled_proxy_height_spin.set_value(height)
+
     def updateUI(self):
         # Video
         self.width_spinbutton.set_value(self.project.videowidth)
@@ -2127,6 +2254,9 @@ class ProjectSettingsDialog(object):
             year = datetime.datetime.now().year
         self.year_spinbutton.get_adjustment().set_value(year)
 
+        self.scaled_proxy_width_spin.set_value(self.project.scaled_proxy_width)
+        self.scaled_proxy_height_spin.set_value(self.project.scaled_proxy_height)
+
     def updateProject(self):
         with self.app.action_log.started("change project settings",
                                          toplevel=True):
@@ -2139,6 +2269,16 @@ class ProjectSettingsDialog(object):
 
             self.project.audiochannels = get_combo_value(self.channels_combo)
             self.project.audiorate = get_combo_value(self.sample_rate_combo)
+
+            proxy_width = int(self.scaled_proxy_width_spin.get_value())
+            proxy_height = int(self.scaled_proxy_height_spin.get_value())
+            # Update scaled proxy meta-data and trigger proxy regen
+            if self.project.scaled_proxy_width != proxy_width or \
+                    self.project.scaled_proxy_height != proxy_height:
+                self.project.scaled_proxy_width = proxy_width
+                self.project.scaled_proxy_height = proxy_height
+
+                self.project.regenerate_scaled_proxies()
 
     def _responseCb(self, unused_widget, response):
         """Handles the dialog being closed."""
