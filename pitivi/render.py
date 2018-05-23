@@ -437,6 +437,7 @@ class RenderDialog(Loggable):
         self.preferred_vencoder = self.project.vencoder
         self.preferred_aencoder = self.project.aencoder
         self.__unproxiedClips = {}
+        self.__unscaled_clips = {}
 
         self.frame_rate_combo.set_model(frame_rates)
         self.channels_combo.set_model(audio_channels)
@@ -892,7 +893,7 @@ class RenderDialog(Loggable):
         self._time_spent_paused = 0
         self._pipeline.set_state(Gst.State.NULL)
         self.project.set_rendering(False)
-        self.__useProxyAssets()
+        self._useProxyAssets()
         self._disconnectFromGst()
         self._pipeline.set_mode(GES.PipelineFlags.FULL_PREVIEW)
         self._pipeline.set_state(Gst.State.PAUSED)
@@ -940,7 +941,47 @@ class RenderDialog(Loggable):
         except GLib.Error as e:
             self.warning("GSound failed to play: %s", e)
 
+    def __replace_scaled_proxies(self):
+        replace_all = self.__never_use_proxies.get_active()
+
+        for layer in self.app.project_manager.current_project.ges_timeline.get_layers():
+            for clip in layer.get_clips():
+                if not isinstance(clip, GES.UriClip):
+                    continue
+
+                asset = clip.get_asset()
+                asset_target = asset.get_proxy_target()
+                if not asset_target:
+                    # The asset is not a proxy.
+                    continue
+
+                if self.app.proxy_manager.is_hq_proxy(asset):
+                    # The asset is not a scaled proxy.
+                    continue
+
+                if not replace_all:
+                    # Don't replace scaled proxy if it matches the scale percent
+                    width, height = self.project.getVideoWidthAndHeight(render=True)
+                    stream = asset.get_info().get_video_streams()[0]
+                    asset_res = [stream.get_width(), stream.get_height()]
+                    if asset_res[0] == width and asset_res[1] == height:
+                        continue
+                # Replace with HQ Proxy if available
+                hq_proxy = GES.Asset.request(GES.UriClip,
+                    self.app.proxy_manager.getProxyUri(asset_target))
+                if hq_proxy is not None:
+                    clip.set_asset(hq_proxy)
+                    self.__unscaled_clips[clip] = asset
+                    continue
+
+                # Replace with original asset
+                clip.set_asset(asset_target)
+
+                self.__unscaled_clips[clip] = asset
+
     def __maybeUseSourceAsset(self):
+        self.__replace_scaled_proxies()
+
         if self.__always_use_proxies.get_active():
             self.debug("Rendering from proxies, not replacing assets")
             return
@@ -978,12 +1019,15 @@ class RenderDialog(Loggable):
                           asset.get_id())
                 self.__unproxiedClips[clip] = asset
 
-    def __useProxyAssets(self):
+    def _useProxyAssets(self):
         for clip, asset in self.__unproxiedClips.items():
-            self.info("Reverting to using proxy asset %s", asset)
+            self.info("Reverting to using HQ proxy asset %s", asset)
             clip.set_asset(asset)
-
+        for clip, asset in self.__unscaled_clips.items():
+            self.info("Reverting to using scaled proxy asset %s", asset)
+            clip.set_asset(asset)
         self.__unproxiedClips = {}
+        self.__unscaled_clips = {}
 
     # ------------------- Callbacks ------------------------------------------ #
 
