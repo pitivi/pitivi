@@ -7,30 +7,6 @@
     <property name="can_focus">False</property>
     <property name="halign">end</property>
     <child>
-      <object class="GtkMenuItem" id="menu_new">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">win.new-project</property>
-        <property name="label" translatable="yes">New project</property>
-        <property name="use_underline">True</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_open">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">win.open-project</property>
-        <property name="label" translatable="yes">Open project...</property>
-        <property name="use_underline">True</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_sep1">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
       <object class="GtkMenuItem" id="menu_save_as">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
