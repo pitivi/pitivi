@@ -633,7 +633,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         position = self.position
         self.position = -1
 
-        thumb = self.thumbs[position]
+        try:
+            thumb = self.thumbs[position]
+        except KeyError:
+            # Can happen because we don't stop the pipeline before
+            # updating the thumbnails in _update_thumbnails.
+            return
         thumb.set_from_pixbuf(pixbuf)
         self.thumb_cache[position] = pixbuf
         self.queue_draw()
@@ -829,7 +834,7 @@ class ThumbnailCache(Loggable):
         Returns:
             List[int]: The width and height of the images in the cache.
         """
-        if self._image_size[0] is None:
+        if self._image_size[0] is 0:
             self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
             row = self._cur.fetchone()
             if row:

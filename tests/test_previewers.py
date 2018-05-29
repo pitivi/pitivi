@@ -148,7 +148,7 @@ class TestThumbnailCache(BaseTestMediaLibrary):
                 xdg_cache_home.return_value = tmpdirname
                 sample_uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
                 thumb_cache = ThumbnailCache(sample_uri)
-                self.assertEqual(thumb_cache.image_size, (None, None))
+                self.assertEqual(thumb_cache.image_size, (0, 0))
 
                 pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
                                               False, 8, 20, 10)
