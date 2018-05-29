@@ -27,9 +27,11 @@ from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.configure import get_ui_dir
 from pitivi.configure import RELEASES_URL
 from pitivi.configure import VERSION
-from pitivi.dialogs.startupwizard import StartUpWizard
+from pitivi.dialogs.about import AboutDialog
+from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import MainWindow
 from pitivi.pluginmanager import PluginManager
@@ -45,6 +47,7 @@ from pitivi.utils import loggable
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import show_user_manual
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import get_system
 from pitivi.utils.threads import ThreadMaster
@@ -58,6 +61,7 @@ class Pitivi(Gtk.Application, Loggable):
         action_log (UndoableActionLog): The undo/redo log for the current project.
         effects (EffectsManager): The effects which can be applied to a clip.
         gui (MainWindow): The main window of the app.
+        recent_manager (Gtk.RecentManager): Manages recently used projects.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
         system (pitivi.utils.system.System): The system running the app.
@@ -84,7 +88,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
-        self.__welcome_wizard = None
+        self.recent_manager = Gtk.RecentManager.get_default()
         self.__inhibit_cookies = {}
 
         self._version_information = {}
@@ -198,27 +202,21 @@ class Pitivi(Gtk.Application, Loggable):
                 self.gui.present()
             # No need to show the welcome wizard.
             return
-        self.createMainWindow()
-        self.welcome_wizard.show()
+        self.create_welcome_window()
 
-    @property
-    def welcome_wizard(self):
-        if not self.__welcome_wizard:
-            self.__welcome_wizard = StartUpWizard(self)
-        return self.__welcome_wizard
-
-    def createMainWindow(self):
+    def create_welcome_window(self):
         if self.gui:
             return
+
         self.gui = MainWindow(self)
+        self.gui.setup_ui()
+        self.gui.perspective_manager.show_greeter_window()
         self.add_window(self.gui)
-        self.gui.checkScreenConstraints()
-        # We might as well show it.
         self.gui.show()
 
     def do_open(self, giofiles, unused_count, unused_hint):
         assert giofiles
-        self.createMainWindow()
+        self.create_welcome_window()
         if len(giofiles) > 1:
             self.warning(
                 "Can open only one project file at a time. Ignoring the rest!")
@@ -234,12 +232,11 @@ class Pitivi(Gtk.Application, Loggable):
         """
         self.debug("shutting down")
         # Refuse to close if we are not done with the current project.
-        if not self.project_manager.closeRunningProject():
+        if self.gui.perspective_manager.current_active_child == "editor_window" and\
+                not self.project_manager.closeRunningProject():
             self.warning(
                 "Not closing since running project doesn't want to close")
             return False
-        if self.welcome_wizard:
-            self.welcome_wizard.hide()
         if self.gui:
             self.gui.destroy()
         self.threads.stopAllThreads()
@@ -271,6 +268,22 @@ class Pitivi(Gtk.Application, Loggable):
                 content = project.read().replace("\n", "")
                 self.write_action("load-project",
                                   serialized_content=content)
+
+    def __new_project_menu_item_cb(self, unused_action, unused_param):
+        self.gui.show_main_window()
+        self.project_manager.newBlankProject()
+
+    def __open_project_menu_item_cb(self, unused_action, unused_param):
+        BrowseProjectsDialog(self)
+
+    def __shortcuts_menu_item_cb(self, unused_action, unused_param):
+        show_shortcuts(self)
+
+    def __help_menu_item_cb(self, unused_action, unused_param):
+        show_user_manual()
+
+    def __about_menu_item_cb(self, unused_action, unused_param):
+        AboutDialog(self)
 
     def _newProjectLoadingCb(self, unused_project_manager, project):
         self._setScenarioFile(project.get_uri())
