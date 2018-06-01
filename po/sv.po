@@ -1,9 +1,9 @@
 # Swedish messages for pitivi.
-# Copyright © 2006-2017 Free Software Foundation, Inc.
+# Copyright © 2006-2018 Free Software Foundation, Inc.
 # Christian Rose <menthos@menthos.com>, 2006.
 # Daniel Nylander <po@danielnylander.se>, 2006-2012.
 # Josef Andersson <josef.andersson@fripost.org>, 2015, 2016.
-# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2017.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2017, 2018.
 # Sebastian Rasmussen <sebras@gmail.com>, 2017.
 # Termer:
 # playhead:uppspelningshuvud
@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-05-18 18:00+0000\n"
-"PO-Revision-Date: 2018-05-18 22:38+0200\n"
+"POT-Creation-Date: 2018-05-28 16:35+0000\n"
+"PO-Revision-Date: 2018-06-01 23:41+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -1421,6 +1421,14 @@ msgstr ""
 msgid "An error occurred while trying to render your project."
 msgstr "Ett fel inträffade vid försök att rendera ditt projekt."
 
+#: ../pitivi/render.py:857
+msgid ""
+"You might want to check our troubleshooting guide or file a bug report. The "
+"GStreamer error was:"
+msgstr ""
+"Du kanske vill undersöka problemsökningshandboken eller skicka en "
+"felrapport. GStreamer-felet var:"
+
 #: ../pitivi/render.py:1078 ../pitivi/render.py:1079 ../pitivi/render.py:1085
 msgid "Render complete"
 msgstr "Rendering färdig"
@@ -1952,15 +1960,6 @@ msgstr "%s visat"
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanosekunder visat, eftersom vi kan"
-
-#~ msgid ""
-#~ "An error occurred while trying to render your project. You might want to "
-#~ "check our troubleshooting guide or file a bug report. The GStreamer error "
-#~ "was:"
-#~ msgstr ""
-#~ "Ett fel uppstod under försök att rendera ditt projekt. Du kanske vill "
-#~ "undersöka problemsökningshandboken eller skicka en felrapport. GStreamer-"
-#~ "felet var:"
 
 #~ msgid "<"
 #~ msgstr "<"
