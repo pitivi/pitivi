@@ -594,7 +594,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "git://git.gnome.org/libpeas"
+                    "url": "https://git.gnome.org/browse/libpeas"
                 },
                 {
                     "type": "patch",
