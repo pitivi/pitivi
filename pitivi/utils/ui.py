@@ -95,6 +95,32 @@ NORMAL_FONT = _get_font("font-name", "Cantarell")
 DOCUMENT_FONT = _get_font("document-font-name", "Sans")
 MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
+GREETER_PERSPECTIVE_CSS = """
+    #recent_projects_listbox {
+        font-weight: bold;
+        border: 1px solid alpha(@borders, 0.6);
+    }
+
+    #recent_projects_listbox row {
+        padding: 10px 200px 10px 10px;
+        border-bottom: 1px solid alpha(@borders, 0.2);
+    }
+
+    #recent_projects_listbox row:last-child {
+        border-bottom-width: 0px;
+    }
+
+    #recent_projects_labelbox {
+        color: @insensitive_fg_color;
+        font-weight: bold;
+        padding-bottom: 6px;
+    }
+
+    #recent_projects_labelbox > label:backdrop {
+        color: @unfocused_insensitive_color;
+    }
+"""
+
 TIMELINE_CSS = """
     .AudioBackground {
         background-color: #496c21;

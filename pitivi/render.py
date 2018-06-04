@@ -1006,7 +1006,7 @@ class RenderDialog(Loggable):
         # Hide the rendering settings dialog while rendering
         self.window.hide()
 
-        self.app.gui.timeline_ui.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+        self.app.gui.editor.timeline_ui.timeline.set_best_zoom_ratio(allow_zoom_in=True)
         self.project.set_rendering(True)
         self._pipeline.set_render_settings(
             self.outfile, self.project.container_profile)

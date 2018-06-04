@@ -85,25 +85,6 @@ class TestProjectManager(common.TestCase):
         signalUri, unused_message = args
         self.assertEqual(uri, signalUri, self.signals)
 
-    def testLoadProjectClosesCurrent(self):
-        """
-        Check that new-project-failed is emitted if we can't close the current
-        project instance.
-        """
-        state = {"tried-close": False}
-
-        def close():
-            state["tried-close"] = True
-            return False
-        self.manager.closeRunningProject = close
-
-        uri = "file:///Untitled.xptv"
-        self.manager.current_project = mock.Mock()
-        self.manager.loadProject(uri)
-
-        self.assertEqual(0, len(self.signals))
-        self.assertTrue(state["tried-close"], self.signals)
-
     def testLoadProject(self):
         self.manager.newBlankProject()
 
@@ -189,18 +170,6 @@ class TestProjectManager(common.TestCase):
         self.assertTrue(project is current)
 
         self.assertTrue(self.manager.current_project is None)
-
-    def testNewBlankProjectCantCloseCurrent(self):
-        def closing(manager, project):
-            return False
-
-        self.manager.current_project = mock.Mock()
-        self.manager.current_project.uri = "file:///ciao"
-        self.manager.connect("closing-project", closing)
-        self.assertFalse(self.manager.newBlankProject())
-        self.assertEqual(1, len(self.signals))
-        signal, args = self.signals[0]
-        self.assertEqual("closing-project", signal)
 
     def testNewBlankProject(self):
         self.assertTrue(self.manager.newBlankProject())
@@ -388,6 +357,7 @@ class TestProjectLoading(common.TestCase):
 </project>
 </ges>""" % {"uri": uris[0], "proxy_uri": proxy_uri}
         app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
+        app.recent_manager.remove_item = mock.Mock(return_value=True)
         proxy_manager = app.proxy_manager
         project_manager = app.project_manager
         medialib = medialibrary.MediaLibraryWidget(app)

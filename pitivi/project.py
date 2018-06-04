@@ -213,9 +213,9 @@ class ProjectManager(GObject.Object, Loggable):
         dialog.destroy()
 
         if response == 1:
-            self.app.gui.saveProjectAsDialog()
+            self.app.gui.editor.saveProjectAsDialog()
         elif response == 2:
-            self.app.gui.saveProject()
+            self.app.gui.editor.saveProject()
 
         self.app.shutdown()
 
@@ -225,8 +225,7 @@ class ProjectManager(GObject.Object, Loggable):
         If a backup file exists, asks if it should be loaded instead, and if so,
         forces the user to use "Save as" afterwards.
         """
-        if self.current_project is not None and not self.closeRunningProject():
-            return False
+        assert self.current_project is None
 
         is_validate_scenario = self._isValidateScenario(uri)
         if not is_validate_scenario:
@@ -509,11 +508,8 @@ class ProjectManager(GObject.Object, Loggable):
             bool: Whether the project has been created successfully.
         """
         self.debug("New blank project")
-        if self.current_project is not None:
-            # This will prompt users about unsaved changes (if any):
-            if not ignore_unsaved_changes and not self.closeRunningProject():
-                # The user has not made a decision, don't do anything
-                return False
+
+        assert self.current_project is None
 
         self.__start_loading_time = time.time()
         project = Project(self.app, name=DEFAULT_NAME)
