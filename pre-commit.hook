@@ -20,8 +20,8 @@ pitivi/dialogs/depsmanager.py
 pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
 pitivi/dialogs/startupwizard.py
+pitivi/editorperspective.py
 pitivi/effects.py
-pitivi/mainwindow.py
 pitivi/mediafilespreviewer.py
 pitivi/medialibrary.py
 pitivi/preset.py

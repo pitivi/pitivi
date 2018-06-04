@@ -29,7 +29,6 @@ from gi.repository import Gtk
 
 from pitivi.configure import RELEASES_URL
 from pitivi.configure import VERSION
-from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import MainWindow
 from pitivi.pluginmanager import PluginManager
@@ -58,6 +57,7 @@ class Pitivi(Gtk.Application, Loggable):
         action_log (UndoableActionLog): The undo/redo log for the current project.
         effects (EffectsManager): The effects which can be applied to a clip.
         gui (MainWindow): The main window of the app.
+        recent_manager (Gtk.RecentManager): Manages recently used projects.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
         system (pitivi.utils.system.System): The system running the app.
@@ -84,7 +84,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
-        self.__welcome_wizard = None
+        self.recent_manager = Gtk.RecentManager.get_default()
         self.__inhibit_cookies = {}
 
         self._version_information = {}
@@ -198,27 +198,21 @@ class Pitivi(Gtk.Application, Loggable):
                 self.gui.present()
             # No need to show the welcome wizard.
             return
-        self.createMainWindow()
-        self.welcome_wizard.show()
+        self.create_main_window()
+        self.gui.show_greeter_perspective()
+        self.gui.show()
 
-    @property
-    def welcome_wizard(self):
-        if not self.__welcome_wizard:
-            self.__welcome_wizard = StartUpWizard(self)
-        return self.__welcome_wizard
-
-    def createMainWindow(self):
+    def create_main_window(self):
         if self.gui:
             return
         self.gui = MainWindow(self)
+        self.gui.setup_ui()
         self.add_window(self.gui)
-        self.gui.checkScreenConstraints()
-        # We might as well show it.
-        self.gui.show()
 
     def do_open(self, giofiles, unused_count, unused_hint):
         assert giofiles
-        self.createMainWindow()
+        self.create_main_window()
+        self.gui.show()
         if len(giofiles) > 1:
             self.warning(
                 "Can open only one project file at a time. Ignoring the rest!")
@@ -238,8 +232,6 @@ class Pitivi(Gtk.Application, Loggable):
             self.warning(
                 "Not closing since running project doesn't want to close")
             return False
-        if self.welcome_wizard:
-            self.welcome_wizard.hide()
         if self.gui:
             self.gui.destroy()
         self.threads.stopAllThreads()
