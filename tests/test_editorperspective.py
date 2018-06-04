@@ -16,41 +16,41 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Tests for pitivi/mainwindow.py
-"""
+"""Tests for pitivi/editorperspective.py"""
 from unittest import mock
 
 from gi.repository import GES
 from gi.repository import Gtk
 
-from pitivi.mainwindow import MainWindow
+from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnectAllByFunc
 from tests import common
 
 
-class TestMainWindow(common.TestCase):
-    """Tests for the MainWindow class."""
+class TestEditorPerspective(common.TestCase):
+    """Tests for the EditorPerspective class."""
 
+    # pylint: disable=protected-access
     def test_switch_context_tab(self):
         """Checks tab switches."""
         app = common.create_pitivi_mock()
-        mainwindow = MainWindow(app)
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
         for expected_tab, b_element in [
                 (2, GES.TitleClip()),
                 (0, GES.SourceClip()),
                 (1, GES.TransitionClip())]:
-            mainwindow.switchContextTab(b_element)
-            self.assertEqual(mainwindow.context_tabs.get_current_page(),
+            editorperspective.switchContextTab(b_element)
+            self.assertEqual(editorperspective.context_tabs.get_current_page(),
                              expected_tab,
                              b_element)
             # Make sure the tab does not change when using an invalid argument.
-            mainwindow.switchContextTab("invalid")
-            self.assertEqual(mainwindow.context_tabs.get_current_page(),
+            editorperspective.switchContextTab("invalid")
+            self.assertEqual(editorperspective.context_tabs.get_current_page(),
                              expected_tab)
 
-        mainwindow.destroy()
+        editorperspective.destroy()
 
     def __loading_failure(self, has_proxy):
         mainloop = common.create_main_loop()
@@ -58,12 +58,13 @@ class TestMainWindow(common.TestCase):
         app = common.create_pitivi_mock(lastProjectFolder="/tmp",
                                         edgeSnapDeadband=32)
         app.project_manager = ProjectManager(app)
-        mainwindow = MainWindow(app)
-        mainwindow.viewer = mock.MagicMock()
+        editorperspective = EditorPerspective(app)
+        editorperspective.setup_ui()
+        editorperspective.viewer = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
-            nonlocal mainwindow
+            nonlocal editorperspective
             nonlocal self
             nonlocal app
             nonlocal has_proxy
@@ -81,7 +82,7 @@ class TestMainWindow(common.TestCase):
                 app.proxy_manager.checkProxyLoadingSucceeded =  \
                     mock.MagicMock(return_value=has_proxy)
 
-                mainwindow._projectManagerMissingUriCb(
+                editorperspective._projectManagerMissingUriCb(
                     project_manager, project, error, asset)
 
                 self.assertTrue(dialog.called)
@@ -90,19 +91,19 @@ class TestMainWindow(common.TestCase):
 
             # pylint: disable=protected-access
             app.project_manager.connect("missing-uri",
-                                        mainwindow._projectManagerMissingUriCb)
+                                        editorperspective._projectManagerMissingUriCb)
             # pylint: disable=protected-access
             app.project_manager.connect("new-project-failed",
-                                        mainwindow._projectManagerNewProjectFailedCb)
+                                        editorperspective._projectManagerNewProjectFailedCb)
 
-            mainwindow.destroy()
+            editorperspective.destroy()
             mainloop.quit()
 
         # pylint: disable=protected-access
         disconnectAllByFunc(app.project_manager,
-                            mainwindow._projectManagerMissingUriCb)
+                            editorperspective._projectManagerMissingUriCb)
         disconnectAllByFunc(app.project_manager,
-                            mainwindow._projectManagerNewProjectFailedCb)
+                            editorperspective._projectManagerNewProjectFailedCb)
 
         app.project_manager.connect("missing-uri", __pm_missing_uri_cb)
 
