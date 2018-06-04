@@ -29,7 +29,6 @@ from gi.repository import Gtk
 
 from pitivi.configure import RELEASES_URL
 from pitivi.configure import VERSION
-from pitivi.dialogs.startupwizard import StartUpWizard
 from pitivi.effects import EffectsManager
 from pitivi.mainwindow import MainWindow
 from pitivi.pluginmanager import PluginManager
@@ -58,13 +57,15 @@ class Pitivi(Gtk.Application, Loggable):
         action_log (UndoableActionLog): The undo/redo log for the current project.
         effects (EffectsManager): The effects which can be applied to a clip.
         gui (MainWindow): The main window of the app.
+        recent_manager (Gtk.RecentManager): Manages recently used projects.
         project_manager (ProjectManager): The holder of the current project.
         settings (GlobalSettings): The application-wide settings.
         system (pitivi.utils.system.System): The system running the app.
     """
 
     __gsignals__ = {
-        "version-info-received": (GObject.SIGNAL_RUN_LAST, None, (object,))
+        "version-info-received": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "main-window-created": (GObject.SIGNAL_RUN_LAST, None, ())
     }
 
     def __init__(self):
@@ -84,7 +85,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._last_action_time = Gst.util_get_timestamp()
 
         self.gui = None
-        self.__welcome_wizard = None
+        self.recent_manager = Gtk.RecentManager.get_default()
         self.__inhibit_cookies = {}
 
         self._version_information = {}
@@ -152,6 +153,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.connect(
             "new-project-loaded", self._newProjectLoaded)
         self.project_manager.connect("project-closed", self._projectClosed)
+        self.project_manager.connect("project-saved", self.__project_saved_cb)
 
         self._createActions()
         self._syncDoUndo()
@@ -198,27 +200,21 @@ class Pitivi(Gtk.Application, Loggable):
                 self.gui.present()
             # No need to show the welcome wizard.
             return
-        self.createMainWindow()
-        self.welcome_wizard.show()
+        self.create_main_window()
+        self.emit("main-window-created")
+        self.gui.show()
 
-    @property
-    def welcome_wizard(self):
-        if not self.__welcome_wizard:
-            self.__welcome_wizard = StartUpWizard(self)
-        return self.__welcome_wizard
-
-    def createMainWindow(self):
+    def create_main_window(self):
         if self.gui:
             return
         self.gui = MainWindow(self)
+        self.gui.setup_ui()
         self.add_window(self.gui)
-        self.gui.checkScreenConstraints()
-        # We might as well show it.
-        self.gui.show()
 
     def do_open(self, giofiles, unused_count, unused_hint):
         assert giofiles
-        self.createMainWindow()
+        self.create_main_window()
+        self.gui.show()
         if len(giofiles) > 1:
             self.warning(
                 "Can open only one project file at a time. Ignoring the rest!")
@@ -238,8 +234,6 @@ class Pitivi(Gtk.Application, Loggable):
             self.warning(
                 "Not closing since running project doesn't want to close")
             return False
-        if self.welcome_wizard:
-            self.welcome_wizard.hide()
         if self.gui:
             self.gui.destroy()
         self.threads.stopAllThreads()
@@ -276,12 +270,22 @@ class Pitivi(Gtk.Application, Loggable):
         self._setScenarioFile(project.get_uri())
 
     def _newProjectLoaded(self, unused_project_manager, project):
+        uri = project.get_uri()
+        if uri:
+            # We remove the project from recent projects list
+            # and then re-add it to this list to make sure it
+            # gets positioned at the top of the recent projects list.
+            self.recent_manager.remove_item(uri)
+            self.recent_manager.add_item(uri)
         self.action_log = UndoableActionLog()
         self.action_log.connect("pre-push", self._action_log_pre_push_cb)
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("move", self._action_log_move_cb)
-
         self.project_observer = ProjectObserver(project, self.action_log)
+
+    def __project_saved_cb(self, unused_project_manager, unused_project, uri):
+        if uri:
+            self.recent_manager.add_item(uri)
 
     def _projectClosed(self, unused_project_manager, project):
         if project.loaded:
@@ -389,7 +393,7 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.current_project.setModificationState(dirty)
         # In the tests we do not want to create any gui
         if self.gui is not None:
-            self.gui.showProjectStatus()
+            self.gui.editor.showProjectStatus()
 
     def simple_inhibit(self, reason, flags):
         """Informs the session manager about actions to be inhibited.
