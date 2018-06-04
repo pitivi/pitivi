@@ -655,18 +655,18 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 asset = model[row.get_path()][COL_ASSET]
                 target = asset.get_proxy_target()
                 self._project.remove_asset(asset)
-                self.app.gui.timeline_ui.purgeAsset(asset.props.id)
+                self.app.gui.editor.timeline_ui.purgeAsset(asset.props.id)
 
                 if target:
                     self._project.remove_asset(target)
-                    self.app.gui.timeline_ui.purgeAsset(target.props.id)
+                    self.app.gui.editor.timeline_ui.purgeAsset(target.props.id)
 
         # The treeview can make some of the remaining items selected, so
         # make sure none are selected.
         self._unselectAll()
 
     def _insertEndCb(self, unused_action, unused_parameter):
-        self.app.gui.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
+        self.app.gui.editor.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
 
     def _searchEntryChangedCb(self, entry):
         # With many hundred clips in an iconview with dynamic columns and
@@ -877,7 +877,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._addAsset(asset)
 
         if self._project.loaded:
-            self.app.gui.timeline_ui.switchProxies(asset)
+            self.app.gui.editor.timeline_ui.switchProxies(asset)
 
     def _assetAddedCb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""
@@ -1045,7 +1045,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def __projectSettingsSetInfobarCb(self, infobar, response_id):
         if response_id == Gtk.ResponseType.OK:
-            self.app.gui.showProjectSettingsDialog()
+            self.app.gui.editor.showProjectSettingsDialog()
         infobar.hide()
 
     def _clipPropertiesCb(self, unused_widget):

@@ -263,7 +263,7 @@ class EditingContext(GObject.Object, Loggable):
         if self.__log_actions:
             self.app.action_log.commit("move-clip")
         self.timeline.get_asset().pipeline.commit_timeline()
-        self.timeline.ui.app.gui.viewer.clipTrimPreviewFinished()
+        self.timeline.ui.app.gui.editor.viewer.clipTrimPreviewFinished()
 
     def setMode(self, mode):
         """Sets the current editing mode.
@@ -300,10 +300,11 @@ class EditingContext(GObject.Object, Loggable):
 
         if res and self.mode == GES.EditMode.EDIT_TRIM:
             if self.edge == GES.Edge.EDGE_START:
-                self.timeline.ui.app.gui.viewer.clipTrimPreview(self.focus, self.focus.props.in_point)
+                self.timeline.ui.app.gui.editor.viewer.clipTrimPreview(
+                    self.focus, self.focus.props.in_point)
             elif self.edge == GES.Edge.EDGE_END:
-                self.timeline.ui.app.gui.viewer.clipTrimPreview(self.focus,
-                                                                self.focus.props.duration + self.focus.props.in_point)
+                self.timeline.ui.app.gui.editor.viewer.clipTrimPreview(
+                    self.focus, self.focus.props.duration + self.focus.props.in_point)
 
 
 # -------------------------- Interfaces ----------------------------------------#
