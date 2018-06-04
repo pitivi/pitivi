@@ -291,12 +291,13 @@ class ViewerContainer(Gtk.Box, Loggable):
     def _entryActivateCb(self, unused_entry):
         nanoseconds = self.timecode_entry.getWidgetValue()
         self.app.project_manager.current_project.pipeline.simple_seek(nanoseconds)
-        self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+        self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
+            align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _entry_key_press_event_cb(self, widget, event):
         """Handles the key press events in the timecode_entry widget."""
         if event.keyval == Gdk.KEY_Escape:
-            self.app.gui.focusTimeline()
+            self.app.gui.editor.focusTimeline()
 
     # Active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
@@ -307,30 +308,34 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _playButtonCb(self, unused_button, unused_playing):
         self.app.project_manager.current_project.pipeline.togglePlayback()
-        self.app.gui.focusTimeline()
+        self.app.gui.editor.focusTimeline()
 
     def _goToStartCb(self, unused_button):
         self.app.project_manager.current_project.pipeline.simple_seek(0)
-        self.app.gui.focusTimeline()
-        self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.START, when_not_in_view=True)
+        self.app.gui.editor.focusTimeline()
+        self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
+            align=Gtk.Align.START, when_not_in_view=True)
 
     def _backCb(self, unused_button):
         # Seek backwards one second
         self.app.project_manager.current_project.pipeline.seekRelative(0 - Gst.SECOND)
-        self.app.gui.focusTimeline()
-        self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.END, when_not_in_view=True)
+        self.app.gui.editor.focusTimeline()
+        self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
+            align=Gtk.Align.END, when_not_in_view=True)
 
     def _forwardCb(self, unused_button):
         # Seek forward one second
         self.app.project_manager.current_project.pipeline.seekRelative(Gst.SECOND)
-        self.app.gui.focusTimeline()
-        self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.START, when_not_in_view=True)
+        self.app.gui.editor.focusTimeline()
+        self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
+            align=Gtk.Align.START, when_not_in_view=True)
 
     def _goToEndCb(self, unused_button):
         end = self.app.project_manager.current_project.pipeline.getDuration()
         self.app.project_manager.current_project.pipeline.simple_seek(end)
-        self.app.gui.focusTimeline()
-        self.app.gui.timeline_ui.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+        self.app.gui.editor.focusTimeline()
+        self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
+            align=Gtk.Align.CENTER, when_not_in_view=True)
 
     # Public methods for controlling playback
 
