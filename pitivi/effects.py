@@ -538,7 +538,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         effect_info = self.app.effects.getInfo(effect)
         if not effect_info:
             return
-        timeline = self.app.gui.timeline_ui.timeline
+        timeline = self.app.gui.editor.timeline_ui.timeline
         clip = timeline.selection.getSingleClip()
         if not clip:
             return
