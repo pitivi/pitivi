@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-05-19 17:09+0000\n"
-"PO-Revision-Date: 2018-05-28 18:04+0200\n"
+"POT-Creation-Date: 2018-06-02 12:38+0000\n"
+"PO-Revision-Date: 2018-06-12 16:00+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -526,7 +526,6 @@ msgid "Play"
 msgstr "Reproducir"
 
 #: ../data/ui/renderingprogress.ui.h:5
-#| msgid "Folder"
 msgid "Open Folder"
 msgstr "Abrir carpeta"
 
@@ -774,6 +773,7 @@ msgstr "Efectos"
 #: ../pitivi/clipproperties.py:127
 msgid "To apply an effect to the clip, drag it from the Effect Library."
 msgstr ""
+"Para aplicar el efecto al clip arrástrelo desde la Biblioteca de efectos."
 
 #: ../pitivi/clipproperties.py:145
 msgid "Remove effect"
@@ -1416,18 +1416,15 @@ msgid ""
 "render otherwise.</b>\n"
 "\n"
 msgstr ""
+"<b>Asegúrese de que su tamaño de renderizado es par, ya que x264enc puede no "
+"ser capaz de hacerlo si no es así.</b>\n"
+"\n"
 
 #: ../pitivi/render.py:855
-#| msgid "An error occurred while importing."
-#| msgid_plural "{0:d} errors occurred while importing."
 msgid "An error occurred while trying to render your project."
 msgstr "Ha habido un error al renderizar el proyecto."
 
 #: ../pitivi/render.py:857
-#| msgid ""
-#| "An error occurred while trying to render your project. You might want to "
-#| "check our troubleshooting guide or file a bug report. The GStreamer error "
-#| "was:"
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1837,7 +1834,6 @@ msgstr "Error al decodificar una cadena"
 
 #. Translators: 'fps' is for 'frames per second'
 #: ../pitivi/utils/ui.py:182
-#| msgid "20 fps"
 msgid "{0:s} fps"
 msgstr "{0:s} fps"
 
@@ -1855,7 +1851,6 @@ msgid "Stereo"
 msgstr "Estéreo"
 
 #: ../pitivi/utils/ui.py:213
-#| msgid "6 Channels (5.1)"
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
