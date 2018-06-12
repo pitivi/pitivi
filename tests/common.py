@@ -28,6 +28,7 @@ import unittest
 from unittest import mock
 
 from gi.repository import Gdk
+from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -283,6 +284,13 @@ def get_sample_uri(sample, samples_dir=None):
         tests_dir = os.path.dirname(os.path.abspath(__file__))
         samples_dir = os.path.join(tests_dir, "samples")
     return Gst.filename_to_uri(os.path.join(samples_dir, sample))
+
+
+def get_sample_clip(sample):
+    uri = get_sample_uri(sample)
+    asset = GES.UriClipAsset.request_sync(uri)
+    clip = asset.extract()
+    return clip
 
 
 @contextlib.contextmanager
