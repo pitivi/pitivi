@@ -219,7 +219,8 @@ class TestMediaLibrary(BaseTestMediaLibrary):
     def test_supported_out_of_container_audio(self):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
-            self.check_import([sample], check_no_transcoding=True)
+            self.check_import([sample], check_no_transcoding=True,
+                proxying_strategy=ProxyingStrategy.AUTOMATIC)
 
     def test_missing_uri_displayed(self):
         with common.cloned_sample():
