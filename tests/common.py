@@ -23,7 +23,9 @@ import contextlib
 import gc
 import os
 import shutil
+import sys
 import tempfile
+import traceback
 import unittest
 from unittest import mock
 
@@ -46,6 +48,15 @@ from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import Zoomable
+
+
+def handle_uncaught_exception(exctype, value, trace):
+    traceback.print_tb(trace)
+    print(value, file=sys.stderr)
+    sys.exit(1)
+
+
+sys.excepthook = handle_uncaught_exception
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
