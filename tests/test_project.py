@@ -62,7 +62,11 @@ class TestProjectManager(common.TestCase):
 
     def setUp(self):
         super(TestProjectManager, self).setUp()
-        app = mock.MagicMock()
+        self.setupApp()
+
+    def setupApp(self, app=None):
+        if not app:
+            app = mock.MagicMock()
         self.manager = ProjectManager(app)
         self.listener = ProjectManagerListener(self.manager)
         self.signals = self.listener.signals
@@ -117,6 +121,7 @@ class TestProjectManager(common.TestCase):
         self.assertEqual("new-project-loaded", name, self.signals)
 
     def testMissingUriForwarded(self):
+        self.setupApp(app=common.create_pitivi_mock())
         mainloop = common.create_main_loop()
 
         def missingUriCb(self, project, error, clip_asset, result):
