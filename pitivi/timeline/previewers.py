@@ -997,7 +997,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         faked = self.pipeline.get_by_name("faked")
         faked.props.sync = True
         self._wavebin = self.pipeline.get_by_name("wave")
-        asset = self.ges_elem.get_parent().get_asset()
+        asset = self.ges_elem.get_asset().get_filesource_asset()
         self._wavebin.props.uri = asset.get_id()
         self._wavebin.props.duration = asset.get_duration()
         decode = self.pipeline.get_by_name("decode")
@@ -1005,7 +1005,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
 
-        asset = self.ges_elem.get_parent().get_asset()
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
 
