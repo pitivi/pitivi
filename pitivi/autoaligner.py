@@ -683,9 +683,9 @@ if __name__ == '__main__':
     reference = envelopes[-1]
     offsets, drifts = affinealign(reference, envelopes, 0.02)
     print(offsets, drifts)
-    from matplotlib.pyplot import *
-    clf()
-    for i in range(len(envelopes)):
-        t = offsets[i] + (1 + drifts[i]) * numpy.arange(len(envelopes[i]))
-        plot(t, envelopes[i] / numpy.sqrt(numpy.sum(envelopes[i] ** 2)))
-    show()
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    for o, d, e in zip(offsets, drifts, envelopes):
+        t = o + (1 + d) * numpy.arange(len(e))
+        ax.plot(t, e / numpy.sqrt(numpy.sum(e ** 2)))
+    plt.show()
