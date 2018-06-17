@@ -123,10 +123,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self._ax.tick_params(axis='both',
                              which='both',
-                             bottom='off',
-                             top='off',
-                             right='off',
-                             left='off')
+                             bottom=False,
+                             top=False,
+                             right=False,
+                             left=False)
 
         # This seems to also be necessary for transparency ..
         figure.patch.set_visible(False)
