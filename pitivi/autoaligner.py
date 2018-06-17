@@ -250,8 +250,6 @@ def affinealign(reference, targets, max_drift=0.02):
         for i in range(2 * num_blocks):
             halfautocorr[:, i] /= numpy.sqrt(
                 numpy.sum(halfautocorr[:, i] ** 2))
-        # from matplotlib.pyplot import imshow,show
-        # imshow(halfautocorr,interpolation='nearest',aspect='auto');show()
         drift = _findslope(halfautocorr) / bspace
         del halfautocorr
 
@@ -271,16 +269,11 @@ def affinealign(reference, targets, max_drift=0.02):
                 xcorr_blocks[-shift:, i] = xcorr_blocks[:shift, i].copy()
                 xcorr_blocks[:-shift, i] = temp
 
-        # from matplotlib.pyplot import imshow,show
-        # imshow(xcorr_blocks,interpolation='nearest',aspect='auto');show()
-
         # xcorr is the drift-compensated cross-correlation
         xcorr = numpy.sum(xcorr_blocks, axis=1)
         del xcorr_blocks
 
         offset = numpy.argmax(xcorr)
-        # from matplotlib.pyplot import plot,show
-        # plot(xcorr);show()
         del xcorr
         if offset >= len(t):
             offset -= L2
