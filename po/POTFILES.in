@@ -13,6 +13,7 @@ data/pitivi.desktop.in
 [type: gettext/glade]data/ui/effectslibrary.ui
 [type: gettext/glade]data/ui/elementsettingsdialog.ui
 [type: gettext/glade]data/ui/filelisterrordialog.ui
+[type: gettext/glade]data/ui/greeter.ui
 [type: gettext/glade]data/ui/mainmenubutton.ui
 [type: gettext/glade]data/ui/medialibrary.ui
 [type: gettext/glade]data/ui/preferences.ui
@@ -25,7 +26,9 @@ data/pitivi.desktop.in
 pitivi/application.py
 pitivi/check.py
 pitivi/clipproperties.py
+pitivi/editorperspective.py
 pitivi/effects.py
+pitivi/greeterperspective.py
 pitivi/mainwindow.py
 pitivi/mediafilespreviewer.py
 pitivi/medialibrary.py
@@ -44,10 +47,11 @@ pitivi/timeline/layer.py
 pitivi/timeline/ruler.py
 pitivi/timeline/timeline.py
 
+pitivi/dialogs/about.py
+pitivi/dialogs/browseprojects.py
 pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
-pitivi/dialogs/startupwizard.py
 
 pitivi/utils/misc.py
 pitivi/utils/ui.py
