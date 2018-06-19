@@ -16,7 +16,6 @@ pitivi/check.py
 pitivi/clipproperties.py
 pitivi/configure.py
 pitivi/dialogs/clipmediaprops.py
-pitivi/dialogs/depsmanager.py
 pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
 pitivi/dialogs/startupwizard.py
