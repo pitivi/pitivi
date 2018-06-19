@@ -43,7 +43,7 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         self.titles = {}
         self.config_path = os.path.sep.join([xdg_config_home(),
                                              "shortcuts.conf"])
-        self.__loaded = self.__load()
+        self.__loaded_actions = self.__load()
 
     @property
     def groups(self):
@@ -53,17 +53,16 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
     def __load(self):
         """Loads the shortcuts from the config file and sets them.
 
-        Returns:
-            bool: Whether the config file exists.
+        Returns: A list of loaded actions.
         """
-        if not os.path.isfile(self.config_path):
-            return False
-
-        for line in open(self.config_path, "r"):
-            action_name, accelerators = line.split(":", 1)
-            accelerators = accelerators.strip("\n").split(",")
-            self.app.set_accels_for_action(action_name, accelerators)
-        return True
+        loaded_actions = []
+        if os.path.isfile(self.config_path):
+            for line in open(self.config_path, "r"):
+                action_name, accelerators = line.split(":", 1)
+                accelerators = accelerators.strip("\n").split(",")
+                self.app.set_accels_for_action(action_name, accelerators)
+                loaded_actions.append(action_name)
+        return loaded_actions
 
     def save(self):
         """Saves the accelerators for each action to the config file.
@@ -75,6 +74,12 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
                 for action, unused_title in actions:
                     accels = ",".join(self.app.get_accels_for_action(action))
                     conf_file.write(action + ":" + accels + "\n")
+
+    def __save_new_shortcut(self, action, accelerators):
+        """Saves the newly added keyboard shortcut."""
+        with open(self.config_path, "a") as conf_file:
+            accels = ",".join(accelerators)
+            conf_file.write(action + ":" + accels + "\n")
 
     def add(self, action, accelerators, title=None, group=None):
         """Adds an action to be displayed.
@@ -92,8 +97,9 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         """
         self.default_accelerators[action] = accelerators
         self.titles[action] = title
-        if not self.__loaded:
+        if action not in self.__loaded_actions:
             self.app.set_accels_for_action(action, accelerators)
+            self.__save_new_shortcut(action, accelerators)
 
         if title:
             action_prefix = group or action.split(".")[0]
@@ -163,6 +169,7 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         self.__groups.append((position, action_prefix))
         self.__groups.sort()
 
+    # pylint: disable=redefined-argument-from-local
     def reset_accels(self, action=None):
         """Resets accelerators to their default values.
 
