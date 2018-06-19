@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Test the keyboard shortcuts."""
-import os
 import tempfile
 from unittest import mock
 
@@ -71,18 +70,20 @@ class TestShortcutsManager(common.TestCase):
             manager.register_group("general", "General group", position=0)
             manager.add("prefix.action1", ["<Primary>P"], "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
+            manager.save()
 
-            # Create the temporary shortcuts.conf file
-            # and test that add is not calling set_accels_for_action()
-            open(os.path.sep.join([temp_dir, "shortcuts.conf"]), "w").close()
             manager2 = ShortcutsManager(app)
+            # The accelerators for 'prefix.action1' will be loaded from the
+            # config file and 'set_accels_for_action' will be called.
+            self.assertEqual(app.set_accels_for_action.call_count, 2)
             manager2.register_group("other", "Other group", position=0)
-
+            manager2.add("prefix.action1", ["<Primary>P"], "Action one")
+            # Accelerators for 'prefix.action1' are already loaded from the
+            # config file and hence 'set_accels_for_action' will not be called.
+            self.assertEqual(app.set_accels_for_action.call_count, 2)
             manager2.add("prefix.action4", ["<Primary>W"],
                          "Action addition not invoking set_accels_for_action")
-            # No. of calls to set_accels_for_action should be unchanged now
-            # because calling set_accels_for_action isn't allowed with .conf existing
-            self.assertEqual(app.set_accels_for_action.call_count, 1)
+            self.assertEqual(app.set_accels_for_action.call_count, 3)
 
     def test_load_save(self):
         """Checks saved shortcuts are loaded by a new instance."""

@@ -43,27 +43,28 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         self.titles = {}
         self.config_path = os.path.sep.join([xdg_config_home(),
                                              "shortcuts.conf"])
-        self.__loaded = self.__load()
+        self.__loaded_actions = list(self.__load())
 
     @property
     def groups(self):
         """The group ids ordered as they should be displayed."""
         return [item[1] for item in self.__groups]
 
+    # pylint: disable=inconsistent-return-statements
     def __load(self):
         """Loads the shortcuts from the config file and sets them.
 
-        Returns:
-            bool: Whether the config file exists.
+        Yields:
+            string: The shortcuts loaded from the config file.
         """
         if not os.path.isfile(self.config_path):
-            return False
+            return None
 
         for line in open(self.config_path, "r"):
             action_name, accelerators = line.split(":", 1)
             accelerators = accelerators.strip("\n").split(",")
             self.app.set_accels_for_action(action_name, accelerators)
-        return True
+            yield action_name
 
     def save(self):
         """Saves the accelerators for each action to the config file.
@@ -92,7 +93,7 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         """
         self.default_accelerators[action] = accelerators
         self.titles[action] = title
-        if not self.__loaded:
+        if action not in self.__loaded_actions:
             self.app.set_accels_for_action(action, accelerators)
 
         if title:
@@ -163,6 +164,7 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
         self.__groups.append((position, action_prefix))
         self.__groups.sort()
 
+    # pylint: disable=redefined-argument-from-local
     def reset_accels(self, action=None):
         """Resets accelerators to their default values.
 
