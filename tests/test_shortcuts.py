@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Test the keyboard shortcuts."""
-import os
 import tempfile
 from unittest import mock
 
@@ -71,17 +70,21 @@ class TestShortcutsManager(common.TestCase):
             manager.register_group("general", "General group", position=0)
             manager.add("prefix.action1", ["<Primary>P"], "Action one")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
+            # Save the shortcut to the config file.
+            manager.save()
+            app.set_accels_for_action.reset_mock()
 
-            # Create the temporary shortcuts.conf file
-            # and test that add is not calling set_accels_for_action()
-            open(os.path.sep.join([temp_dir, "shortcuts.conf"]), "w").close()
             manager2 = ShortcutsManager(app)
+            # Previously saved shortcut is read from the config file
+            # and 'set_accels_for_action' is called.
+            self.assertEqual(app.set_accels_for_action.call_count, 1)
             manager2.register_group("other", "Other group", position=0)
-
-            manager2.add("prefix.action4", ["<Primary>W"],
-                         "Action addition not invoking set_accels_for_action")
-            # No. of calls to set_accels_for_action should be unchanged now
-            # because calling set_accels_for_action isn't allowed with .conf existing
+            app.set_accels_for_action.reset_mock()
+            manager2.add("prefix.action1", ["<Primary>P"], "Action one")
+            # Above shortcut has been already loaded from the config file
+            # and hence 'set_accels_for_action' is not called.
+            self.assertEqual(app.set_accels_for_action.call_count, 0)
+            manager2.add("prefix.action2", ["<Primary>W"], "Action two")
             self.assertEqual(app.set_accels_for_action.call_count, 1)
 
     def test_load_save(self):
