@@ -495,14 +495,8 @@ class ProjectManager(GObject.Object, Loggable):
 
         return True
 
-    def newBlankProject(self, ignore_unsaved_changes=False):
+    def newBlankProject(self):
         """Creates a new blank project and sets it as the current project.
-
-        Args:
-            ignore_unsaved_changes (Optional[bool]): If True, forces
-                the creation of a new project without prompting the user about
-                unsaved changes. This is an "extreme" way to reset Pitivi's
-                state.
 
         Returns:
             bool: Whether the project has been created successfully.

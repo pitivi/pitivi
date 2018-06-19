@@ -65,7 +65,7 @@ class BaseTestMediaLibrary(common.TestCase):
         if project_uri:
             self.app.project_manager.loadProject(project_uri)
         else:
-            self.app.project_manager.newBlankProject(ignore_unsaved_changes=True)
+            self.app.project_manager.newBlankProject()
 
         self.app.project_manager.current_project.connect(
             "loaded", self.projectLoadedCb)
