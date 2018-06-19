@@ -80,9 +80,7 @@ class TestShortcutsManager(common.TestCase):
 
             manager2.add("prefix.action4", ["<Primary>W"],
                          "Action addition not invoking set_accels_for_action")
-            # No. of calls to set_accels_for_action should be unchanged now
-            # because calling set_accels_for_action isn't allowed with .conf existing
-            self.assertEqual(app.set_accels_for_action.call_count, 1)
+            self.assertEqual(app.set_accels_for_action.call_count, 2)
 
     def test_load_save(self):
         """Checks saved shortcuts are loaded by a new instance."""
