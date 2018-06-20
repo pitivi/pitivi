@@ -20,8 +20,8 @@
 from unittest import mock
 
 from gi.repository import GES
-from gi.repository import Gtk
 
+from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnectAllByFunc
@@ -67,13 +67,12 @@ class TestEditorPerspective(common.TestCase):
             nonlocal app
             nonlocal has_proxy
 
-            with mock.patch('gi.repository.Gtk.Dialog') as dialog:
+            with mock.patch.object(MissingAssetDialog, '__new__') as constructor:
                 failed_cb = mock.MagicMock()
                 app.project_manager.connect("new-project-failed", failed_cb)
 
-                dialog.return_value = mock.MagicMock()
-                dialog.return_value.run = mock.MagicMock(
-                    return_value=Gtk.ResponseType.CLOSE)
+                dialog = constructor.return_value
+                dialog.get_new_uri.return_value = None
 
                 # Call the actual callback
                 # pylint: disable=protected-access
@@ -83,8 +82,8 @@ class TestEditorPerspective(common.TestCase):
                 editorperspective._projectManagerMissingUriCb(
                     project_manager, project, error, asset)
 
-                self.assertTrue(dialog.called)
-                self.assertTrue(dialog.return_value.run.called)
+                self.assertTrue(constructor.called)
+                self.assertTrue(dialog.get_new_uri.called)
                 self.assertEqual(failed_cb.called, not has_proxy)
 
             # pylint: disable=protected-access

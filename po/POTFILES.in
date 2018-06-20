@@ -50,6 +50,7 @@ pitivi/dialogs/about.py
 pitivi/dialogs/browseprojects.py
 pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/filelisterrordialog.py
+pitivi/dialogs/missingasset.py
 pitivi/dialogs/prefs.py
 
 pitivi/utils/misc.py
