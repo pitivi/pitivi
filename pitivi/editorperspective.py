@@ -30,10 +30,10 @@ from gi.repository import Gtk
 from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
+from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
-from pitivi.medialibrary import AssetThumbnail
 from pitivi.medialibrary import MediaLibraryWidget
 from pitivi.perspective import Perspective
 from pitivi.project import ProjectSettingsDialog
@@ -44,7 +44,6 @@ from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
-from pitivi.utils.ui import beautify_missing_asset
 from pitivi.utils.ui import beautify_time_delta
 from pitivi.utils.ui import clear_styles
 from pitivi.utils.ui import info_name
@@ -638,99 +637,20 @@ class EditorPerspective(Perspective, Loggable):
             uri = self.app.proxy_manager.getTargetUri(asset)
         else:
             uri = asset.get_id()
-        dialog = Gtk.Dialog(title=_("Locate missing file..."),
-                            transient_for=self.app.gui,
-                            modal=True)
 
-        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
-                           _("Open"), Gtk.ResponseType.OK)
-        dialog.set_border_width(SPACING * 2)
-        dialog.get_content_area().set_spacing(SPACING)
-        dialog.set_transient_for(self.app.gui)
-        dialog.set_default_response(Gtk.ResponseType.OK)
+        dialog = MissingAssetDialog(self.app, asset, uri)
+        new_uri = dialog.get_new_uri()
 
-        # This box will contain widgets with details about the missing file.
-        vbox = Gtk.Box()
-        vbox.set_orientation(Gtk.Orientation.VERTICAL)
-
-        label_start = Gtk.Label()
-        label_start.set_markup(_("The following file could not be found:"))
-        label_start.set_xalign(0)
-        vbox.pack_start(label_start, False, False, 0)
-
-        hbox = Gtk.Box()
-        hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        hbox.set_margin_top(PADDING)
-        hbox.set_spacing(PADDING * 2)
-
-        label_asset_info = Gtk.Label()
-        label_asset_info.set_markup(beautify_missing_asset(asset))
-        label_asset_info.set_xalign(0)
-        label_asset_info.set_yalign(0)
-        hbox.pack_start(label_asset_info, False, False, 0)
-
-        small_thumb, large_thumb = AssetThumbnail.get_thumbnails_from_xdg_cache(uri)
-        if large_thumb:
-            self.debug("A thumbnail file was found for %s", uri)
-            thumbnail = Gtk.Image.new_from_pixbuf(large_thumb)
-            hbox.pack_end(thumbnail, False, False, 0)
-
-        vbox.pack_start(hbox, False, False, 0)
-
-        label_end = Gtk.Label()
-        label_end.set_markup(_("Please specify its new location:"))
-        label_end.set_xalign(0)
-        label_end.set_margin_top(PADDING)
-        vbox.pack_start(label_end, False, False, 0)
-
-        dialog.get_content_area().pack_start(vbox, False, False, 0)
-        vbox.show_all()
-
-        chooser = Gtk.FileChooserWidget(action=Gtk.FileChooserAction.OPEN)
-        chooser.set_select_multiple(False)
-        previewer = PreviewWidget(self.settings, discover_sync=True)
-        chooser.set_preview_widget(previewer)
-        chooser.set_use_preview_label(False)
-        chooser.connect('update-preview', previewer.update_preview_cb)
-        chooser.set_current_folder(self.settings.lastProjectFolder)
-        # Use a Gtk FileFilter to only show files with the same extension
-        # Note that splitext gives us the extension with the ".", no need to
-        # add it inside the filter string.
-        unused_filename, extension = os.path.splitext(uri)
-        filter_ = Gtk.FileFilter()
-        # Translators: this is a format filter in a filechooser. Ex: "AVI
-        # files"
-        filter_.set_name(_("%s files") % extension)
-        filter_.add_pattern("*%s" % extension.lower())
-        filter_.add_pattern("*%s" % extension.upper())
-        default = Gtk.FileFilter()
-        default.set_name(_("All files"))
-        default.add_pattern("*")
-        chooser.add_filter(filter_)
-        chooser.add_filter(default)
-        dialog.get_content_area().pack_start(chooser, True, True, 0)
-        chooser.show()
-
-        # If the window is too big, the window manager will resize it so that
-        # it fits on the screen.
-        dialog.set_default_size(1024, 1000)
-        response = dialog.run()
-
-        new_uri = None
-        if response == Gtk.ResponseType.OK:
-            self.log("User chose a new URI for the missing file")
-            new_uri = chooser.get_uri()
-        else:
+        if not new_uri:
             dialog.hide()
-
             if not self.app.proxy_manager.checkProxyLoadingSucceeded(asset):
                 # Reset the project manager and disconnect all the signals.
                 project_manager.closeRunningProject()
                 # Signal the project loading failure.
                 # You have to do this *after* successfully creating a blank project,
                 # or the startupwizard will still be connected to that signal too.
-                reason = _('No replacement file was provided for "<i>%s</i>".\n\n'
-                           'Pitivi does not currently support partial projects.') % \
+                reason = _("No replacement file was provided for \"<i>%s</i>\".\n\n"
+                           "Pitivi does not currently support partial projects.") % \
                     info_name(asset)
                 project_manager.emit("new-project-failed", project.uri, reason)
 
