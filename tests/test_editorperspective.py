@@ -22,6 +22,7 @@ from unittest import mock
 from gi.repository import GES
 from gi.repository import Gtk
 
+from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
 from pitivi.utils.misc import disconnectAllByFunc
@@ -67,7 +68,7 @@ class TestEditorPerspective(common.TestCase):
             nonlocal app
             nonlocal has_proxy
 
-            with mock.patch('gi.repository.Gtk.Dialog') as dialog:
+            with mock.patch.object(MissingAssetDialog, '__new__') as dialog:
                 failed_cb = mock.MagicMock()
                 app.project_manager.connect("new-project-failed", failed_cb)
 
