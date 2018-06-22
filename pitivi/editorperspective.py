@@ -342,14 +342,14 @@ class EditorPerspective(Perspective, Loggable):
         self.headerbar.insert_action_group("editor", group)
 
         self.save_action = Gio.SimpleAction.new("save", None)
-        self.save_action.connect("activate", self._saveProjectCb)
+        self.save_action.connect("activate", self.__save_project_cb)
         group.add_action(self.save_action)
         self.app.shortcuts.add("editor.save", ["<Primary>s"],
                                _("Save the current project"), group="win")
         self.save_button.set_action_name("editor.save")
 
         self.save_as_action = Gio.SimpleAction.new("save-as", None)
-        self.save_as_action.connect("activate", self._saveProjectAsCb)
+        self.save_as_action.connect("activate", self.__save_project_as_cb)
         group.add_action(self.save_as_action)
         self.app.shortcuts.add("editor.save-as", ["<Primary><Shift>s"],
                                _("Save the current project as"), group="win")
@@ -403,20 +403,20 @@ class EditorPerspective(Perspective, Loggable):
         """Closes the current project."""
         self.app.project_manager.closeRunningProject()
 
-    def _saveProjectCb(self, action, unused_param):
+    def __save_project_cb(self, unused_action, unused_param):
+        self.saveProject()
+
+    def __save_project_as_cb(self, unused_action, unused_param):
+        self.saveProjectAs()
+
+    def saveProject(self):
         if not self.app.project_manager.current_project.uri or self.app.project_manager.disable_save:
             self.saveProjectAs()
         else:
             self.app.project_manager.saveProject()
 
-    def _saveProjectAsCb(self, unused_action, unused_param):
-        self.saveProjectAs()
-
-    def saveProject(self):
-        self._saveProjectCb(None, None)
-
     def saveProjectAsDialog(self):
-        self._saveProjectAsCb(None, None)
+        self.saveProjectAs()
 
     def _revertToSavedProjectCb(self, unused_action):
         return self.app.project_manager.revertToSavedProject()

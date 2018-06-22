@@ -873,9 +873,9 @@ class RenderDialog(Loggable):
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect(
-            "element-added", self._elementAddedCb)
+            "element-added", self.__element_added_cb)
         for element in encodebin.iterate_recurse():
-            self._elementAddedCb(encodebin, element)
+            self.__set_properties(element)
         self._pipeline.set_state(Gst.State.PLAYING)
         self._is_rendering = True
         self._time_started = time.time()
@@ -1137,7 +1137,10 @@ class RenderDialog(Loggable):
             self._filesizeEstimateTimer = GLib.timeout_add_seconds(
                 5, self._updateFilesizeEstimateCb)
 
-    def _elementAddedCb(self, unused_bin, gst_element):
+    def __element_added_cb(self, unused_bin, gst_element):
+        self.__set_properties(gst_element)
+
+    def __set_properties(self, gst_element):
         """Sets properties on the specified Gst.Element."""
         factory = gst_element.get_factory()
         settings = {}

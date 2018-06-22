@@ -252,7 +252,7 @@ class PreferencesDialog(Loggable):
             revert.set_tooltip_text(_("Reset to default value"))
             revert.set_relief(Gtk.ReliefStyle.NONE)
             revert.set_sensitive(not self.settings.isDefault(attrname))
-            revert.connect("clicked", self._resetOptionCb, attrname)
+            revert.connect("clicked", self.__reset_option_cb, attrname)
             revert.show_all()
             self.resets[attrname] = revert
             row_widgets = (label_widget, widget, revert)
@@ -408,7 +408,7 @@ class PreferencesDialog(Loggable):
         """Resets all settings to the defaults."""
         for section in self.prefs.values():
             for attrname in section:
-                self._resetOptionCb(self.resets[attrname], attrname)
+                self.__reset_option(self.resets[attrname], attrname)
         self.app.shortcuts.reset_accels()
 
     def _revertButtonCb(self, unused_button):
@@ -420,7 +420,10 @@ class PreferencesDialog(Loggable):
         self.revert_button.set_sensitive(False)
         self.factory_settings.set_sensitive(self._canReset())
 
-    def _resetOptionCb(self, button, attrname):
+    def __reset_option_cb(self, button, attrname):
+        self.__reset_option(button, attrname)
+
+    def __reset_option(self, button, attrname):
         """Resets a particular setting to the factory default."""
         if not self.settings.isDefault(attrname):
             self.settings.setDefault(attrname)

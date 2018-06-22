@@ -420,7 +420,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.ges_timeline.disconnect_by_func(self._layer_added_cb)
                 self.ges_timeline.disconnect_by_func(self._layer_removed_cb)
                 self.ges_timeline.disconnect_by_func(self._snapCb)
-                self.ges_timeline.disconnect_by_func(self._snapEndedCb)
+                self.ges_timeline.disconnect_by_func(self.__snap_ended_cb)
                 for ges_layer in self.ges_timeline.get_layers():
                     self._remove_layer(ges_layer)
 
@@ -447,7 +447,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.ges_timeline.connect("layer-added", self._layer_added_cb)
         self.ges_timeline.connect("layer-removed", self._layer_removed_cb)
         self.ges_timeline.connect("snapping-started", self._snapCb)
-        self.ges_timeline.connect("snapping-ended", self._snapEndedCb)
+        self.ges_timeline.connect("snapping-ended", self.__snap_ended_cb)
 
         self.connect("button-press-event", self._button_press_event_cb)
         self.connect("button-release-event", self._button_release_event_cb)
@@ -503,7 +503,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.layout.snap_position = position
         self.layout.queue_draw()
 
-    def _snapEndedCb(self, *unused_args):
+    def __snap_ended_cb(self, *unused_args):
+        self.__handle_snap_end()
+
+    def __handle_snap_end(self):
         """Handles a clip snap end."""
         self.layout.snap_position = 0
         self.layout.queue_draw()
@@ -734,7 +737,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
                 self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
 
-        self._snapEndedCb()
+        self.__handle_snap_end()
         self.update_visible_overlays()
 
         return False
@@ -1284,7 +1287,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def dragEnd(self):
         if self.editing_context:
-            self._snapEndedCb()
+            self.__handle_snap_end()
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
