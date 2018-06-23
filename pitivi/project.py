@@ -60,8 +60,6 @@ from pitivi.utils.validate import has_validate
 from pitivi.utils.widgets import FractionWidget
 
 
-DEFAULT_NAME = _("New Project")
-
 ALL_RAW_VIDEO_FORMATS = []
 # Starting at 2 as 0 is UNKNOWN and 1 is ENCODED.
 # We want to make sure we do not try to force ENCODED
@@ -378,13 +376,13 @@ class ProjectManager(GObject.Object, Loggable):
             if not backup:
                 # Do not emit the signal when autosaving a backup file
                 self.current_project.setModificationState(False)
-                self.emit("project-saved", self.current_project, uri)
                 self.debug('Saved project: %s', uri)
                 # Update the project instance's uri,
                 # otherwise, subsequent saves will be to the old uri.
                 self.info("Setting the project instance's URI to: %s", uri)
                 self.current_project.uri = uri
                 self.disable_save = False
+                self.emit("project-saved", self.current_project, uri)
             else:
                 self.debug('Saved backup: %s', uri)
 
@@ -506,7 +504,7 @@ class ProjectManager(GObject.Object, Loggable):
         assert self.current_project is None
 
         self.__start_loading_time = time.time()
-        project = Project(self.app, name=DEFAULT_NAME)
+        project = Project(self.app)
         self.emit("new-project-loading", project)
 
         # setting default values for project metadata
@@ -620,7 +618,6 @@ class Project(Loggable, GES.Project):
         loaded (bool): Whether the project is fully loaded.
 
     Args:
-        name (Optional[str]): The name of the new empty project.
         uri (Optional[str]): The URI of the file where the project should
             be loaded from.
 
@@ -644,10 +641,10 @@ class Project(Loggable, GES.Project):
         "video-size-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
-    def __init__(self, app, name="", uri=None, scenario=None, **unused_kwargs):
+    def __init__(self, app, uri=None, scenario=None, **unused_kwargs):
         Loggable.__init__(self)
         GES.Project.__init__(self, uri=uri, extractable_type=GES.Timeline)
-        self.log("name:%s, uri:%s", name, uri)
+        self.log("uri:%s", uri)
         self.pipeline = None
         self.ges_timeline = None
         self.uri = uri
@@ -688,7 +685,6 @@ class Project(Loggable, GES.Project):
         self.__awaited_deleted_proxy_targets = set()
 
         # Project property default values
-        self.register_meta(GES.MetaFlag.READWRITE, "name", name)
         self.register_meta(GES.MetaFlag.READWRITE, "author", "")
 
         # The rendering settings.
@@ -751,13 +747,9 @@ class Project(Loggable, GES.Project):
     # Project specific properties
     @property
     def name(self):
-        return self.get_meta("name")
-
-    @name.setter
-    def name(self, name):
-        if name == self.name:
-            return
-        self.set_meta("name", name)
+        if not self.uri:
+            return None
+        return os.path.splitext(os.path.basename(self.uri))[0]
 
     @property
     def year(self):
@@ -1408,9 +1400,6 @@ class Project(Loggable, GES.Project):
                 # The asset is an original which is not being proxied.
                 self.app.proxy_manager.cancel_job(asset)
 
-    def hasDefaultName(self):
-        return DEFAULT_NAME == self.name
-
     def _commit(self):
         """Logs the operation and commits.
 
@@ -1836,7 +1825,6 @@ class ProjectSettingsDialog(object):
         self.video_presets_combo = getObj("video_presets_combo")
         self.constrain_sar_button = getObj("constrain_sar_button")
         self.select_dar_radiobutton = getObj("select_dar_radiobutton")
-        self.title_entry = getObj("title_entry")
         self.author_entry = getObj("author_entry")
         self.year_spinbutton = getObj("year_spinbutton")
 
@@ -1990,7 +1978,6 @@ class ProjectSettingsDialog(object):
             self.audio_presets_combo.set_active_id(matching_audio_preset)
 
         # Metadata
-        self.title_entry.set_text(self.project.name)
         self.author_entry.set_text(self.project.author)
         if self.project.year:
             year = int(self.project.year)
@@ -2001,7 +1988,6 @@ class ProjectSettingsDialog(object):
     def updateProject(self):
         with self.app.action_log.started("change project settings",
                                          toplevel=True):
-            self.project.name = self.title_entry.get_text()
             self.project.author = self.author_entry.get_text()
             self.project.year = str(self.year_spinbutton.get_value_as_int())
 
