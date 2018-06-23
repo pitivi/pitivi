@@ -656,6 +656,7 @@ class TestProjectSettings(common.TestCase):
 
     def testLoad(self):
         project = Project(uri="fake.xges", app=common.create_pitivi_mock())
+        self.assertEqual(project.name, "fake")
         self.assertFalse(project._has_default_video_settings)
         self.assertFalse(project._has_default_audio_settings)
 
