@@ -126,25 +126,22 @@ class TestProjectUndo(common.TestCase):
                                        project=self.project,
                                        app=self.app)
 
-        def assert_meta(title, author, year):
-            self.assertEqual(self.project.name, title)
+        def assert_meta(author, year):
             self.assertEqual(self.project.author, author)
             self.assertEqual(self.project.year, year)
 
-        dialog.title_entry.set_text("t1")
         dialog.author_entry.set_text("a1")
         dialog.year_spinbutton.set_value(2001)
         dialog.updateProject()
-        assert_meta("t1", "a1", "2001")
+        assert_meta("a1", "2001")
 
-        dialog.title_entry.set_text("t2")
         dialog.author_entry.set_text("a2")
         dialog.year_spinbutton.set_value(2002)
         dialog.updateProject()
-        assert_meta("t2", "a2", "2002")
+        assert_meta("a2", "2002")
 
         self.action_log.undo()
-        assert_meta("t1", "a1", "2001")
+        assert_meta("a1", "2001")
 
         self.action_log.redo()
-        assert_meta("t2", "a2", "2002")
+        assert_meta("a2", "2002")
