@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.1 -->
+<!-- Generated with glade 3.22.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="adjustment1">
@@ -215,7 +215,7 @@
                                       <object class="GtkLabel" id="label9">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="label" translatable="no">x</property>
+                                        <property name="label">x</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -557,25 +557,13 @@
                           <object class="GtkEntry" id="author_entry">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="hexpand">True</property>
-                            <property name="invisible_char">●</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="title_entry">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="margin_right">10</property>
                             <property name="hexpand">True</property>
                             <property name="invisible_char">●</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">0</property>
-                            <property name="width">3</property>
                           </packing>
                         </child>
                         <child>
@@ -584,18 +572,6 @@
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">Author:</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">0</property>
-                            <property name="top_attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label24">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">Project title:</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
@@ -611,7 +587,7 @@
                           </object>
                           <packing>
                             <property name="left_attach">2</property>
-                            <property name="top_attach">1</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
@@ -621,14 +597,14 @@
                             <property name="halign">start</property>
                             <property name="max_length">4</property>
                             <property name="invisible_char">●</property>
-                            <property name="text" translatable="no">1900</property>
+                            <property name="text">1900</property>
                             <property name="adjustment">adjustment3</property>
                             <property name="numeric">True</property>
                             <property name="value">1900</property>
                           </object>
                           <packing>
                             <property name="left_attach">3</property>
-                            <property name="top_attach">1</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                       </object>
