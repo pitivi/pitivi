@@ -20,6 +20,7 @@
 """UI constants and various functions and classes that help with UI drawing."""
 import decimal
 import os
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -97,12 +98,11 @@ MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 GREETER_PERSPECTIVE_CSS = """
     #recent_projects_listbox {
-        font-weight: bold;
         border: 1px solid alpha(@borders, 0.6);
     }
 
     #recent_projects_listbox row {
-        padding: 10px 200px 10px 10px;
+        padding: 12px 12px 12px 12px;
         border-bottom: 1px solid alpha(@borders, 0.2);
     }
 
@@ -110,14 +110,25 @@ GREETER_PERSPECTIVE_CSS = """
         border-bottom-width: 0px;
     }
 
+    #project_name_label {
+        font-weight: bold;
+    }
+
+    #project_uri_label, #project_last_updated_label {
+        opacity: 0.55;
+    }
+
     #recent_projects_labelbox {
         color: @insensitive_fg_color;
-        font-weight: bold;
         padding-bottom: 6px;
     }
 
     #recent_projects_labelbox > label:backdrop {
         color: @unfocused_insensitive_color;
+    }
+
+    #recent_projects_label {
+        font-weight: bold;
     }
 """
 
@@ -412,6 +423,14 @@ def info_name(info):
     return GLib.markup_escape_text(filename)
 
 
+def beautify_project_path(path):
+    """Beautifies project path by shortening the home directory path (if present)."""
+    home_dir = os.path.expanduser("~")
+    if path.startswith(home_dir):
+        return path.replace(home_dir, "~")
+    return path
+
+
 def beautify_stream(stream):
     if type(stream) is DiscovererAudioInfo:
         if stream.get_depth() == 0:
@@ -546,6 +565,32 @@ def beautify_ETA(length_nanos):
     if hours == 0 and mins < 2 and sec:
         parts.append(ngettext("%d second", "%d seconds", sec) % sec)
     return ", ".join(parts)
+
+
+def beautify_last_updated_timestamp(last_updated_timestamp):
+    """Returns project last updated timestamp in a human-readable format."""
+
+    # Seconds elapsed since we last updated this project.
+    diff = int(time.time()) - last_updated_timestamp
+
+    if diff < 60 * 45:
+        return _("Just now")
+    elif diff < 60 * 90:
+        return _("An hour ago")
+    elif diff < 60 * 60 * 24:
+        return _("Today")
+    elif diff < 60 * 60 * 24 * 2:
+        return _("Yesterday")
+    elif diff < 60 * 60 * 24 * 7:
+        return time.strftime("%A", time.localtime(last_updated_timestamp))
+    elif diff < 60 * 60 * 24 * 365:
+        return time.strftime("%0B", time.localtime(last_updated_timestamp))
+    elif diff < 60 * 60 * 24 * 365 * 1.5:
+        return _("About a year ago")
+
+    years = max(2, diff / (60 * 60 * 24 * 365))
+    return ngettext("About %d year ago",
+                    "About %d years ago", years) % years
 
 
 # -------------------- Gtk widget helpers ----------------------------------- #
