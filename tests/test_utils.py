@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import time
+from gettext import gettext as _
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -29,6 +31,7 @@ from pitivi.check import ClassicDependency
 from pitivi.check import GstDependency
 from pitivi.check import GtkDependency
 from pitivi.utils.misc import fixate_caps_with_default_values
+from pitivi.utils.ui import beautify_last_accessed_timestamp
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
@@ -63,6 +66,21 @@ class TestBeautifyLength(TestCase):
 
     def test_beautify_nothing(self):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
+
+    def test_beautify_last_accessed_timestamp(self):
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 10),
+                         _("Last accessed few seconds ago"))
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 200),
+                         _("Last accessed 3 minutes ago"))
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 10000),
+                         _("Last accessed 2 hours ago"))
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 90000),
+                         _("Last accessed 1 day ago"))
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 1814420),
+                         _("Last accessed 3 weeks ago"))
+        self.assertEqual(beautify_last_accessed_timestamp(time.time() - 3024000),
+                         _("Last accessed on %s") %
+                         (time.strftime("%x", time.localtime(time.time() - 3024000))))
 
 
 class TestFormatFramerateValue(TestCase):

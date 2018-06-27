@@ -20,6 +20,7 @@
 """UI constants and various functions and classes that help with UI drawing."""
 import decimal
 import os
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -97,7 +98,6 @@ MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 GREETER_PERSPECTIVE_CSS = """
     #recent_projects_listbox {
-        font-weight: bold;
         border: 1px solid alpha(@borders, 0.6);
     }
 
@@ -108,6 +108,14 @@ GREETER_PERSPECTIVE_CSS = """
 
     #recent_projects_listbox row:last-child {
         border-bottom-width: 0px;
+    }
+
+    #project_name_label {
+        font-weight: bold;
+    }
+
+    #project_uri_label, #project_last_accessed_label {
+        opacity: 0.55;
     }
 
     #recent_projects_labelbox {
@@ -546,6 +554,38 @@ def beautify_ETA(length_nanos):
     if hours == 0 and mins < 2 and sec:
         parts.append(ngettext("%d second", "%d seconds", sec) % sec)
     return ", ".join(parts)
+
+
+def beautify_last_accessed_timestamp(last_accessed_timestamp):
+    """Returns project last accessed timestamp in a human-readable format."""
+    # Seconds elapsed since we last accessed this project.
+    sec = int(time.time()) - last_accessed_timestamp
+    if sec < 120:
+        return _("Last accessed few seconds ago")
+
+    mins = sec // 60
+    if mins < 60:
+        return ngettext("Last accessed %d minute ago",
+                        "Last accessed %d minutes ago", mins) % mins
+
+    hours = mins // 60
+    if hours < 24:
+        return ngettext("Last accessed %d hour ago",
+                        "Last accessed %d hours ago", hours) % hours
+
+    days = hours // 24
+    if days < 7:
+        return ngettext("Last accessed %d day ago",
+                        "Last accessed %d days ago", days) % days
+
+    weeks = days // 7
+    if weeks < 4:
+        return ngettext("Last accessed %d week ago",
+                        "Last accessed %d weeks ago", weeks) % weeks
+
+    # Translators: %s formats locale appropriate date representation.
+    return _("Last accessed on %s") %\
+        (time.strftime("%x", time.localtime(last_accessed_timestamp)))
 
 
 # -------------------- Gtk widget helpers ----------------------------------- #

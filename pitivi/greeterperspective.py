@@ -29,6 +29,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
+from pitivi.utils.ui import beautify_last_accessed_timestamp
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import GREETER_PERSPECTIVE_CSS
 
@@ -39,12 +40,22 @@ class ProjectInfoRow(Gtk.ListBoxRow):
     """Displays a project's info.
 
     Attributes:
-        project: Project's meta-data.
+        recent_project_item (Gtk.RecentInfo): Recent project's meta-data.
     """
-    def __init__(self, project):
+    def __init__(self, recent_project_item):
         Gtk.ListBoxRow.__init__(self)
-        self.uri = project.get_uri()
-        self.add(Gtk.Label(project.get_display_name(), xalign=0))
+        self.uri = recent_project_item.get_uri()
+
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "project_info.ui"))
+        self.add(builder.get_object("project_info_vbox"))
+
+        builder.get_object("project_name_label").set_text(
+            os.path.splitext(recent_project_item.get_display_name())[0])
+        builder.get_object("project_uri_label").set_text(
+            recent_project_item.get_uri_display().replace(os.path.expanduser("~"), "~"))
+        builder.get_object("project_last_accessed_label").set_text(
+            beautify_last_accessed_timestamp(recent_project_item.get_visited()))
 
 
 # pylint: disable=too-many-instance-attributes
