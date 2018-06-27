@@ -19,7 +19,9 @@
 # Boston, MA 02110-1301, USA.
 """Pitivi's Welcome/Greeter perspective."""
 import os
+import time
 from gettext import gettext as _
+from gettext import ngettext
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -44,7 +46,56 @@ class ProjectInfoRow(Gtk.ListBoxRow):
     def __init__(self, project):
         Gtk.ListBoxRow.__init__(self)
         self.uri = project.get_uri()
-        self.add(Gtk.Label(project.get_display_name(), xalign=0))
+
+        builder = Gtk.Builder()
+        builder.add_from_file(os.path.join(get_ui_dir(), "project_info.ui"))
+        self.add(builder.get_object("project_info_vbox"))
+
+        builder.get_object("project_name_label").set_text(self.__get_name(project))
+        builder.get_object("project_uri_label").set_text(self.__get_uri(project))
+        builder.get_object("project_last_accessed_label").set_text(
+            self.__get_last_accessed(project))
+
+    @staticmethod
+    def __get_name(project):
+        """Returns project name with extension stripped off."""
+        return os.path.splitext(project.get_display_name())[0]
+
+    @staticmethod
+    def __get_uri(project):
+        """Returns project uri with home directory path stripped off."""
+        return project.get_uri_display().replace(os.path.expanduser("~"), "")[1:]
+
+    @staticmethod
+    def __get_last_accessed(project):
+        """Returns project last accessed timestamp in a human-readable format."""
+        # Seconds elapsed since we last accessed this project.
+        sec = int(time.time()) - project.get_visited()
+        if sec < 120:
+            return _("Last accessed few seconds ago")
+
+        mins = sec // 60
+        if mins < 60:
+            return ngettext("Last accessed %d minute ago",
+                            "Last accessed %d minutes ago", mins) % mins
+
+        hours = mins // 60
+        if hours < 24:
+            return ngettext("Last accessed %d hour ago",
+                            "Last accessed %d hours ago", hours) % hours
+
+        days = hours // 24
+        if days < 7:
+            return ngettext("Last accessed %d day ago",
+                            "Last accessed %d days ago", days) % days
+
+        weeks = days // 7
+        if weeks < 4:
+            return ngettext("Last accessed %d week ago",
+                            "Last accessed %d weeks ago", weeks) % weeks
+
+        return _("Last accessed on %s") %\
+            (time.strftime("%x", time.localtime(project.get_visited())))
 
 
 # pylint: disable=too-many-instance-attributes
