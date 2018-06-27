@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import time
+from gettext import gettext as _
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -29,6 +31,7 @@ from pitivi.check import ClassicDependency
 from pitivi.check import GstDependency
 from pitivi.check import GtkDependency
 from pitivi.utils.misc import fixate_caps_with_default_values
+from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
@@ -39,30 +42,37 @@ minute = second * 60
 hour = minute * 60
 
 
-class TestBeautifyLength(TestCase):
+class TestBeautifyTime(TestCase):
+    """Tests time beautifying utility methods."""
 
-    def test_beautify_seconds(self):
+    def test_beautify_length(self):
+        """Tests beautification of time duration."""
         self.assertEqual(beautify_length(second), "1 second")
         self.assertEqual(beautify_length(second * 2), "2 seconds")
 
-    def test_beautify_minutes(self):
         self.assertEqual(beautify_length(minute), "1 minute")
         self.assertEqual(beautify_length(minute * 2), "2 minutes")
 
-    def test_beautify_hours(self):
         self.assertEqual(beautify_length(hour), "1 hour")
         self.assertEqual(beautify_length(hour * 2), "2 hours")
 
-    def test_beautify_minutes_and_seconds(self):
-        self.assertEqual(beautify_length(minute + second),
-                         "1 minute, 1 second")
-
-    def test_beautify_hours_and_minutes(self):
-        self.assertEqual(beautify_length(hour + minute + second),
-                         "1 hour, 1 minute")
-
-    def test_beautify_nothing(self):
+        self.assertEqual(beautify_length(minute + second), "1 minute, 1 second")
+        self.assertEqual(beautify_length(hour + minute + second), "1 hour, 1 minute")
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
+
+    def test_beautify_last_updated_timestamp(self):
+        """Tests beautification of project's updation timestamp."""
+        now = time.time()
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 10), "Just now")
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60), "An hour ago")
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 10), "Today")
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 36), "Yesterday")
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 24 * 3),
+                         "%s" % ((time.strftime("%A", time.localtime(now - 60 * 60 * 24 * 3)))))
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 24 * 10),
+                         "%s" % ((time.strftime("%B", time.localtime(now - 60 * 60 * 24 * 10)))))
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 24 * 365 * 1.2), "About a year ago")
+        self.assertEqual(beautify_last_updated_timestamp(now - 60 * 60 * 24 * 365 * 2), "About 2 years ago")
 
 
 class TestFormatFramerateValue(TestCase):
