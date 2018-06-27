@@ -97,7 +97,6 @@ MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 GREETER_PERSPECTIVE_CSS = """
     #recent_projects_listbox {
-        font-weight: bold;
         border: 1px solid alpha(@borders, 0.6);
     }
 
@@ -108,6 +107,14 @@ GREETER_PERSPECTIVE_CSS = """
 
     #recent_projects_listbox row:last-child {
         border-bottom-width: 0px;
+    }
+
+    #project_name_label {
+        font-weight: bold;
+    }
+
+    #project_uri_label, #project_last_accessed_label {
+        opacity: 0.55;
     }
 
     #recent_projects_labelbox {
