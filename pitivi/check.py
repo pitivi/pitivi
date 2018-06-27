@@ -25,6 +25,7 @@ Package maintainers should look at the bottom section of this file.
 """
 import os
 import sys
+import time
 from gettext import gettext as _
 
 missing_soft_deps = {}
@@ -400,6 +401,16 @@ def initialize_modules():
             exit(0)
         else:
             exit(1)
+
+
+def get_month_format_string():
+    """Returns the appropriate format string for month name in time.strftime() function."""
+    # %OB produces the month name in nominative case.
+    month_format_string = "%OB"
+    if time.strftime(month_format_string) == "%OB":
+        # %B produces the month name in genitive case.
+        month_format_string = "%B"
+    return month_format_string
 
 
 # Package maintainers, this is where you can see the list of requirements.
