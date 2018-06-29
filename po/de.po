@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-04-11 16:21+0000\n"
-"PO-Revision-Date: 2018-04-14 12:59+0200\n"
+"POT-Creation-Date: 2018-06-25 16:43+0000\n"
+"PO-Revision-Date: 2018-06-29 22:04+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.7\n"
 "X-Project-Style: gnome\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
@@ -122,7 +122,7 @@ msgstr "Automatisches Ausrichten beginnt"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Automatische Ausrichtung wird ausgeführt</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1114
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1130
 msgid "Estimating..."
 msgstr "Schätzung …"
 
@@ -899,7 +899,7 @@ msgstr "_Rückgängig"
 #: ../pitivi/mainwindow.py:393 ../pitivi/mainwindow.py:774
 #: ../pitivi/mainwindow.py:1089 ../pitivi/mainwindow.py:1141
 #: ../pitivi/mainwindow.py:1194 ../pitivi/preset.py:116
-#: ../pitivi/project.py:188
+#: ../pitivi/project.py:177
 msgid "Save"
 msgstr "Speichern"
 
@@ -1019,7 +1019,7 @@ msgstr "Alle unterstützten Formate"
 msgid "Unable to save project \"%s\""
 msgstr "Projekt »%s« konnte nicht gespeichert werden"
 
-#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:187
+#: ../pitivi/mainwindow.py:776 ../pitivi/project.py:176
 msgid "Save as..."
 msgstr "Speichern unter …"
 
@@ -1315,11 +1315,11 @@ msgstr "Neues Projekt"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: ../pitivi/project.py:171 ../pitivi/render.py:843
+#: ../pitivi/project.py:160 ../pitivi/render.py:854
 msgid "Sorry, something didn’t work right."
 msgstr "Entschuldigung, es ist ein Fehler aufgetreten."
 
-#: ../pitivi/project.py:174
+#: ../pitivi/project.py:163
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1346,11 +1346,11 @@ msgstr ""
 "Bevor Sie Pitivi schließen, können Sie die Änderungen an Ihrer vorhandenen "
 "Projektdatei speichern oder eine separate Projektdatei anlegen."
 
-#: ../pitivi/project.py:189
+#: ../pitivi/project.py:178
 msgid "Close Pitivi"
 msgstr "Pitivi schließen"
 
-#: ../pitivi/project.py:260
+#: ../pitivi/project.py:249
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1361,15 +1361,15 @@ msgstr ""
 "Projekt hinzuzufügen, nutzen Sie stattdessen den »Dateien Importieren …«-"
 "Knopf."
 
-#: ../pitivi/project.py:282
+#: ../pitivi/project.py:271
 msgid "Ignore backup"
 msgstr "Sicherung ignorieren"
 
-#: ../pitivi/project.py:283
+#: ../pitivi/project.py:272
 msgid "Restore from backup"
 msgstr "Von Sicherung wiederherstellen"
 
-#: ../pitivi/project.py:299
+#: ../pitivi/project.py:288
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1382,16 +1382,16 @@ msgstr ""
 "\n"
 "Möchten Sie stattdessen diese Datei laden?"
 
-#: ../pitivi/project.py:375
+#: ../pitivi/project.py:364
 msgid "You do not have permissions to write to this folder."
 msgstr "Sie haben keine Berechtigung, um in diesem Ordner zu schreiben."
 
 #. Save the project to a temporary file.
-#: ../pitivi/project.py:408
+#: ../pitivi/project.py:397
 msgid "project"
 msgstr "Projekt"
 
-#: ../pitivi/project.py:720
+#: ../pitivi/project.py:709
 msgid "Pitivi encoding profile"
 msgstr "Pitivi-Enkodierungsprofil"
 
@@ -1446,21 +1446,33 @@ msgstr "%.2f GB"
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:844
+#: ../pitivi/render.py:848
 msgid ""
-"An error occurred while trying to render your project. You might want to "
-"check our troubleshooting guide or file a bug report. The GStreamer error "
-"was:"
+"<b>Make sure your rendering size is even, x264enc might not be able to "
+"render otherwise.</b>\n"
+"\n"
 msgstr ""
-"Beim Versuch, Ihr Projekt zu erstellen trat ein Fehler auf. Möglicherweise "
-"wäre es hilfreich, unseren Problemlösungsleitfaden zu lesen oder einen "
-"Fehler zu melden. Der GStreamer-Fehler war:"
+"<b>Stellen Sie sicher, dass die zu erstellende Größe geradzahlig ist, "
+"x264enc könnte sonst scheitern.</b>\n"
+"\n"
 
-#: ../pitivi/render.py:1062 ../pitivi/render.py:1063 ../pitivi/render.py:1069
+#: ../pitivi/render.py:855
+msgid "An error occurred while trying to render your project."
+msgstr "Beim Versuch, Ihr Projekt zu erstellen trat ein Fehler auf."
+
+#: ../pitivi/render.py:857
+msgid ""
+"You might want to check our troubleshooting guide or file a bug report. The "
+"GStreamer error was:"
+msgstr ""
+"Möglicherweise wäre es hilfreich, unseren Problemlösungsleitfaden zu lesen "
+"oder einen Fehler zu melden. Der GStreamer-Fehler war:"
+
+#: ../pitivi/render.py:1078 ../pitivi/render.py:1079 ../pitivi/render.py:1085
 msgid "Render complete"
 msgstr "Erstellung fertig"
 
-#: ../pitivi/render.py:1067
+#: ../pitivi/render.py:1083
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "»%s« hat die Erstellung beendet."
@@ -1760,12 +1772,12 @@ msgstr "Zusätzliche Information:"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:749
+#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:714
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:813
+#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:874
 msgid "Reset to default value"
 msgstr "Auf den Standardwert zurücksetzen"
 
@@ -1876,7 +1888,6 @@ msgid "Stereo"
 msgstr "Stereo"
 
 #: ../pitivi/utils/ui.py:213
-#| msgid "6 Channels (5.1)"
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
@@ -1956,35 +1967,35 @@ msgstr[1] "%d Tage"
 msgid "Implement Me"
 msgstr "Noch nicht implementiert"
 
-#: ../pitivi/utils/widgets.py:704
+#: ../pitivi/utils/widgets.py:739
 msgid "No properties."
 msgstr "Keine Eigenschaften."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:798
+#: ../pitivi/utils/widgets.py:859
 msgid "Show keyframes for this value"
 msgstr "Zeige Schlüsselbilder für diesen Wert"
 
-#: ../pitivi/utils/widgets.py:964
+#: ../pitivi/utils/widgets.py:1036
 #, python-format
 msgid "Properties for %s"
 msgstr "Eigenschaften für %s"
 
-#: ../pitivi/utils/widgets.py:1101
+#: ../pitivi/utils/widgets.py:1184
 msgid "Zoom Fit"
 msgstr "Auf Größe einpassen"
 
-#: ../pitivi/utils/widgets.py:1106
+#: ../pitivi/utils/widgets.py:1189
 msgid "Zoom"
 msgstr "Vergrößerung"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1180
+#: ../pitivi/utils/widgets.py:1263
 #, python-format
 msgid "%s displayed"
 msgstr "%s angezeigt"
 
-#: ../pitivi/utils/widgets.py:1184
+#: ../pitivi/utils/widgets.py:1267
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d Nanosekunden angezeigt, weil wir es können"
