@@ -22,6 +22,7 @@ import configparser
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -380,6 +381,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             finally:
                 devnull.close()
 
+        self.coredumpgdb = None
+        self.coredumpctl_matches = ""
+
     @staticmethod
     def check_flatpak():
         try:
@@ -409,7 +413,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.check_flatpak()
 
         repos = FlatpakRepos()
-        self.sdk_repo = repos.add("gnome",
+        self.sdk_repo = repos.add("flathub",
                                   "https://dl.flathub.org/repo/flathub.flatpakrepo")
 
         sdk_branch = SDK_BRANCH[self.branch]
@@ -420,6 +424,9 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.sdk = FlatpakPackage(
             "org.gnome.Sdk", sdk_branch, self.sdk_repo, "x86_64")
         self.packs = [self.runtime, self.locale, self.sdk]
+
+        if self.coredumpgdb is None and '--coredumpgdb' in sys.argv or "-gdb" in sys.argv:
+            self.coredumpgdb = ""
 
         if self.bundle:
             self.build = True
@@ -448,6 +455,10 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                 Console.message("%sPrefix missing, create it with: %s --init%s",
                                 Colors.FAIL, __file__, Colors.ENDC)
                 exit(1)
+
+        if self.coredumpgdb is not None:
+            self.run_gdb()
+            return
 
         if self.check:
             self.run_in_sandbox("gst-validate-launcher",
@@ -535,6 +546,29 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.run_in_sandbox(*ninja_args, exit_on_failure=True,
                             cwd=self.topdir)
 
+    def run_gdb(self):
+        if not shutil.which('coredumpctl'):
+            Console.message("%s'coredumpctl' not present on the system, can't run.%s"
+                            % (Colors.WARNING, Colors.ENDC))
+            sys.exit(1)
+
+        # We need access to the host from the sandbox to run.
+        with tempfile.NamedTemporaryFile() as coredump:
+            with tempfile.NamedTemporaryFile() as stderr:
+                subprocess.check_call(["coredumpctl", "dump"] + shlex.split(self.coredumpctl_matches),
+                                      stdout=coredump, stderr=stderr)
+
+                with open(stderr.name, 'r') as stderrf:
+                    stderr = stderrf.read()
+                executable, = re.findall(".*Executable: (.*)", stderr)
+                if not executable.startswith("/newroot"):
+                    print("Executable %s doesn't seem to be a flatpaked application." % executable,
+                          file=sys.stderr)
+                executable = executable.replace("/newroot", "")
+                args = ["gdb", executable, coredump.name] + shlex.split(self.coredumpgdb)
+
+                self.run_in_sandbox(*args, mount_tmp=True)
+
     def install_development_tools(self):
         venv_path = os.path.join(self.scriptdir, "pyvenv")
         Console.message(
@@ -560,7 +594,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.run_in_sandbox("pip3", "install", "-q", "-U", "--user", *pip_modules,
                             exit_on_failure=True)
 
-    def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None):
+    def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None, mount_tmp=False):
         if not args:
             return
 
@@ -570,11 +604,13 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                            "--env=PYTHONUSERBASE=/app/",
                            "--env=CC=ccache gcc",
                            "--env=CXX=ccache g++", "--device=dri"]
+        if mount_tmp:
+            flatpak_command.append("--filesystem=/tmp/")
 
         # The forwarded environment variables.
         forwarded = {}
         for envvar, value in os.environ.items():
-            if envvar.split("_")[0] in ("GST", "GTK", "PITIVI", "LC") or \
+            if envvar.split("_")[0] in ("GST", "GTK", "PITIVI", "LC", "G") or \
                     envvar in ["DISPLAY", "LANG"]:
                 forwarded[envvar] = value
 
@@ -647,6 +683,12 @@ if __name__ == "__main__":
     devel.add_argument("-c", "--clean", dest="clean",
                        action="store_true",
                        help="Clean previous builds and restart from scratch")
+
+    debug_options = parser.add_argument_group("Debugging")
+    debug_options.add_argument("-gdb", "--coredumpgdb", nargs="?",
+                               help="Activate gdb, passing extra args to it if wanted.")
+    debug_options.add_argument("-m", "--coredumpctl-matches", default="",
+                               help='Arguments to pass to gdb.')
 
     bundling = parser.add_argument_group("Building bundle for distribution")
     bundling.add_argument("--bundle", dest="bundle",
