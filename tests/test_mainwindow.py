@@ -60,6 +60,7 @@ class TestMainWindow(common.TestCase):
         app.project_manager = ProjectManager(app)
         mainwindow = MainWindow(app)
         mainwindow.viewer = mock.MagicMock()
+        mainwindow.medialibrary = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
