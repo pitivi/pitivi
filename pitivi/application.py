@@ -23,6 +23,7 @@ import time
 from gettext import gettext as _
 
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -274,7 +275,12 @@ class Pitivi(Gtk.Application, Loggable):
             # We remove the project from recent projects list
             # and then re-add it to this list to make sure it
             # gets positioned at the top of the recent projects list.
-            self.recent_manager.remove_item(uri)
+            try:
+                self.recent_manager.remove_item(uri)
+            except GLib.Error as e:
+                if e.domain != "gtk-recent-manager-error-quark":
+                    raise e
+                pass
             self.recent_manager.add_item(uri)
         self.action_log = UndoableActionLog()
         self.action_log.connect("pre-push", self._action_log_pre_push_cb)

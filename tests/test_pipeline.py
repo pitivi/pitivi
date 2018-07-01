@@ -75,7 +75,7 @@ class TestPipeline(common.TestCase):
 
     def test_async_done_not_received(self):
         """Checks the recovery when the ASYNC_DONE message timed out."""
-        ges_timeline = GES.Timeline()
+        ges_timeline = GES.Timeline.new()
         self.assertTrue(ges_timeline.add_track(GES.VideoTrack.new()))
         ges_layer = ges_timeline.append_layer()
         uri = common.get_sample_uri("tears_of_steel.webm")

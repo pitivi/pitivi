@@ -47,8 +47,9 @@ def setup_tests(test_manager, options):
     testsuites = loader.discover(CDIR)
     for testsuite in testsuites:
         for _tests in testsuite:
-            if isinstance(_tests, unittest.loader._FailedTest):
-                print(_tests._exception)
+
+            if isinstance(_tests, unittest.loader._FailedTest):  # pylint: disable=protected-access
+                print(_tests._exception)  # pylint: disable=protected-access
                 continue
             for test in _tests:
                 test_manager.add_test(PitiviTest(
