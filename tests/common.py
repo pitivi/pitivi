@@ -58,6 +58,16 @@ def handle_uncaught_exception(exctype, value, trace):
 
 sys.excepthook = handle_uncaught_exception
 
+
+def handle_glog(domain, level, message, udata):
+    traceback.print_stack()
+    print("%s - %s" % (domain, message), file=sys.stderr)
+    sys.exit(1)
+
+
+for category in ["GStreamer", "Gtk", "Gdk", "GLib-GObject", "GES"]:
+    GLib.log_set_handler(category, GLib.LogLevelFlags.LEVEL_CRITICAL, handle_glog, None)
+
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 
