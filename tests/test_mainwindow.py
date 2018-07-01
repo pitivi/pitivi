@@ -30,6 +30,7 @@ from pitivi.utils.misc import disconnectAllByFunc
 from tests import common
 
 
+# pylint: disable=protected-access
 class TestMainWindow(common.TestCase):
     """Tests for the MainWindow class."""
 
@@ -60,6 +61,8 @@ class TestMainWindow(common.TestCase):
         app.project_manager = ProjectManager(app)
         mainwindow = MainWindow(app)
         mainwindow.viewer = mock.MagicMock()
+        mainwindow.medialibrary._import_warning_infobar = mock.MagicMock()
+        mainwindow.clipconfig.effect_expander._infobar = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
@@ -77,7 +80,6 @@ class TestMainWindow(common.TestCase):
                     return_value=Gtk.ResponseType.CLOSE)
 
                 # Call the actual callback
-                # pylint: disable=protected-access
                 app.proxy_manager.checkProxyLoadingSucceeded =  \
                     mock.MagicMock(return_value=has_proxy)
 
@@ -88,17 +90,14 @@ class TestMainWindow(common.TestCase):
                 self.assertTrue(dialog.return_value.run.called)
                 self.assertEqual(failed_cb.called, not has_proxy)
 
-            # pylint: disable=protected-access
             app.project_manager.connect("missing-uri",
                                         mainwindow._projectManagerMissingUriCb)
-            # pylint: disable=protected-access
             app.project_manager.connect("new-project-failed",
                                         mainwindow._projectManagerNewProjectFailedCb)
 
             mainwindow.destroy()
             mainloop.quit()
 
-        # pylint: disable=protected-access
         disconnectAllByFunc(app.project_manager,
                             mainwindow._projectManagerMissingUriCb)
         disconnectAllByFunc(app.project_manager,
