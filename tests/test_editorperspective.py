@@ -59,6 +59,8 @@ class TestEditorPerspective(common.TestCase):
         editorperspective = EditorPerspective(app)
         editorperspective.setup_ui()
         editorperspective.viewer = mock.MagicMock()
+        editorperspective.medialibrary._import_warning_infobar = mock.MagicMock()
+        editorperspective.clipconfig.effect_expander._infobar = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
@@ -75,7 +77,6 @@ class TestEditorPerspective(common.TestCase):
                 dialog.get_new_uri.return_value = None
 
                 # Call the actual callback
-                # pylint: disable=protected-access
                 app.proxy_manager.checkProxyLoadingSucceeded =  \
                     mock.MagicMock(return_value=has_proxy)
 
@@ -86,13 +87,10 @@ class TestEditorPerspective(common.TestCase):
                 self.assertTrue(dialog.get_new_uri.called)
                 self.assertEqual(failed_cb.called, not has_proxy)
 
-            # pylint: disable=protected-access
             app.project_manager.connect("missing-uri",
                                         editorperspective._projectManagerMissingUriCb)
-
             mainloop.quit()
 
-        # pylint: disable=protected-access
         disconnectAllByFunc(app.project_manager,
                             editorperspective._projectManagerMissingUriCb)
 
