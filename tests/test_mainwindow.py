@@ -60,6 +60,8 @@ class TestMainWindow(common.TestCase):
         app.project_manager = ProjectManager(app)
         mainwindow = MainWindow(app)
         mainwindow.viewer = mock.MagicMock()
+        # pylint: disable=protected-access
+        mainwindow.medialibrary._import_warning_infobar = mock.MagicMock()
 
         def __pm_missing_uri_cb(project_manager, project, error, asset):
             nonlocal mainloop
