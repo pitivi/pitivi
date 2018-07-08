@@ -558,7 +558,14 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Creates a missing thumbnail."""
         self._thumb_cb_id = None
 
-        self.position = self.queue.pop(0)
+        try:
+            self.position = self.queue.pop(0)
+        except IndexError:
+            # The queue is empty. Can happen if _update_thumbnails
+            # has been called in the meanwhile.
+            self.stop_generation()
+            return False
+
         self.log("Creating thumb at %s", self.position)
         self.pipeline.seek(1.0,
                            Gst.Format.TIME,
