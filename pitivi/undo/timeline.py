@@ -77,7 +77,9 @@ class TrackElementPropertyChanged(UndoableAction):
         if isinstance(self.new_value, GObject.GFlags) or\
                 isinstance(self.new_value, GObject.GEnum):
             value = int(self.new_value)
-        st['value'] = value
+
+        _, _, pspec = self.track_element.lookup_child(self.property_name)
+        st['value'] = GObject.Value(pspec.value_type, value)
         return st
 
 
@@ -632,6 +634,7 @@ class ControlSourceRemoveAction(UndoableAction):
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
         return st
+
 
 class LayerObserver(MetaContainerObserver, Loggable):
     """Monitors a Layer and reports UndoableActions.

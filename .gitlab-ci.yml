@@ -1,4 +1,4 @@
-image: thiblahute/pitivi-ci
+image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.28
 
 
 stages:
@@ -9,7 +9,7 @@ build:
   stage: build
   cache:
     paths:
-      - .flatpak-builder/
+      - .flatpak-builder
   script:
     - ls -a
     - export
