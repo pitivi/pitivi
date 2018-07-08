@@ -76,6 +76,9 @@ class GreeterPerspective(Perspective):
         self.new_project_action = None
         self.open_project_action = None
 
+        self.__topvbox = None
+        self.__welcome_vbox = None
+        self.__recent_projects_vbox = None
         self.__recent_projects_listbox = None
         self.__project_filter = self.__create_project_filter()
         self.__infobar = None
@@ -91,6 +94,9 @@ class GreeterPerspective(Perspective):
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
         self.toplevel_widget = builder.get_object("scrolled_window")
+        self.__topvbox = builder.get_object("topvbox")
+        self.__welcome_vbox = builder.get_object("welcome_vbox")
+        self.__recent_projects_vbox = builder.get_object("recent_projects_vbox")
 
         self.__recent_projects_listbox = builder.get_object("recent_projects_listbox")
         self.__recent_projects_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
@@ -109,7 +115,32 @@ class GreeterPerspective(Perspective):
     def refresh(self):
         """Refreshes the perspective."""
         self.toplevel_widget.grab_focus()
-        self.__show_recent_projects()
+
+        # Clear the currently displayed list of recent projects.
+        for child in self.__recent_projects_listbox.get_children():
+            self.__recent_projects_listbox.remove(child)
+
+        recent_items = [item for item in self.app.recent_manager.get_items()
+                        if item.get_display_name().endswith(self.__project_filter)]
+
+        # If there are recent projects, display them, else display welcome screen.
+        if recent_items:
+            for item in recent_items[:MAX_RECENT_PROJECTS]:
+                self.__recent_projects_listbox.add(ProjectInfoRow(item))
+            self.headerbar.set_title(_("Select a Project"))
+            child = self.__recent_projects_vbox
+            self.__recent_projects_listbox.show_all()
+        else:
+            self.headerbar.set_title("Pitivi")
+            child = self.__welcome_vbox
+
+        children = self.__topvbox.get_children()
+        if children:
+            current_child = children[0]
+            if current_child == child:
+                return
+            self.__topvbox.remove(current_child)
+        self.__topvbox.pack_start(child, False, False, 0)
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()
@@ -122,7 +153,6 @@ class GreeterPerspective(Perspective):
     def __create_headerbar(self):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
-        headerbar.set_title(_("Select a Project"))
 
         new_project_button = Gtk.Button.new_with_label(_("New"))
         new_project_button.set_tooltip_text(_("Create a new project"))
@@ -157,20 +187,6 @@ class GreeterPerspective(Perspective):
         group.add_action(self.open_project_action)
         self.app.shortcuts.add("greeter.open-project", ["<Primary>o"],
                                _("Open a project"), group="win")
-
-    def __show_recent_projects(self):
-        """Displays recent projects."""
-        # Clear the currently displayed list.
-        for child in self.__recent_projects_listbox.get_children():
-            self.__recent_projects_listbox.remove(child)
-
-        recent_items = [item for item in self.app.recent_manager.get_items()
-                        if item.get_display_name().endswith(self.__project_filter)]
-
-        for item in recent_items[:MAX_RECENT_PROJECTS]:
-            self.__recent_projects_listbox.add(ProjectInfoRow(item))
-
-        self.__recent_projects_listbox.show_all()
 
     @staticmethod
     def __create_project_filter():
