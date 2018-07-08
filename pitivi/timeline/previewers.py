@@ -539,6 +539,11 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self._update_thumbnails()
             self.emit("done")
         else:
+            if not self.thumb_width:
+                self.debug("Finding thumb width")
+                self.pipeline = self._setup_pipeline()
+                return
+
             # Update the thumbnails with what we already have, if anything.
             self._update_thumbnails()
             if self.queue:
@@ -585,7 +590,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
-        if self.thumb_width is None:
+        if not self.thumb_width:
             # The thumb_width will be available when pipeline has been started
             # or the __image_pixbuf is ready.
             return
@@ -769,7 +774,7 @@ class ThumbnailCache(Loggable):
                           "(Time INTEGER NOT NULL PRIMARY KEY, "
                           " Jpeg BLOB NOT NULL)")
         # The cached (width, height) of the images.
-        self._image_size = (None, None)
+        self._image_size = (0, 0)
         # The cached positions available in the database.
         self.positions = self.__existing_positions()
         # The ID of the autosave event.
