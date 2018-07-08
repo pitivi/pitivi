@@ -633,6 +633,7 @@ class ControlSourceRemoveAction(UndoableAction):
         st.set_value("property-name", self.property_name)
         return st
 
+
 class LayerObserver(MetaContainerObserver, Loggable):
     """Monitors a Layer and reports UndoableActions.
 
