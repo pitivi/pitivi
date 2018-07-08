@@ -76,6 +76,9 @@ class GreeterPerspective(Perspective):
         self.new_project_action = None
         self.open_project_action = None
 
+        self.__topvbox = None
+        self.__empty_greeter_msg_vbox = None
+        self.__recent_projects_vbox = None
         self.__recent_projects_listbox = None
         self.__project_filter = self.__create_project_filter()
         self.__infobar = None
@@ -91,6 +94,9 @@ class GreeterPerspective(Perspective):
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
         self.toplevel_widget = builder.get_object("scrolled_window")
+        self.__topvbox = builder.get_object("topvbox")
+        self.__empty_greeter_msg_vbox = builder.get_object("empty_greeter_msg_vbox")
+        self.__recent_projects_vbox = builder.get_object("recent_projects_vbox")
 
         self.__recent_projects_listbox = builder.get_object("recent_projects_listbox")
         self.__recent_projects_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
@@ -122,7 +128,6 @@ class GreeterPerspective(Perspective):
     def __create_headerbar(self):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
-        headerbar.set_title(_("Select a Project"))
 
         new_project_button = Gtk.Button.new_with_label(_("New"))
         new_project_button.set_tooltip_text(_("Create a new project"))
@@ -167,10 +172,25 @@ class GreeterPerspective(Perspective):
         recent_items = [item for item in self.app.recent_manager.get_items()
                         if item.get_display_name().endswith(self.__project_filter)]
 
-        for item in recent_items[:MAX_RECENT_PROJECTS]:
-            self.__recent_projects_listbox.add(ProjectInfoRow(item))
+        if recent_items:
+            for item in recent_items[:MAX_RECENT_PROJECTS]:
+                self.__recent_projects_listbox.add(ProjectInfoRow(item))
+            self.headerbar.set_title(_("Select a Project"))
+            self.__topvbox_add_child(self.__recent_projects_vbox)
+            self.__recent_projects_listbox.show_all()
+        else:
+            self.headerbar.set_title("Pitivi")
+            self.__topvbox_add_child(self.__empty_greeter_msg_vbox)
 
-        self.__recent_projects_listbox.show_all()
+    def __topvbox_add_child(self, child):
+        """Adds child (either 'recent projects vbox' or 'empty greeter vbox') to topvbox.
+
+        It also makes sure that topvbox contains only one child at a time.
+        """
+        if self.__topvbox.get_children() and self.__topvbox.get_children()[0] is not child:
+            self.__topvbox.remove(self.__topvbox.get_children()[0])
+        if not self.__topvbox.get_children():
+            self.__topvbox.pack_start(child, False, False, 0)
 
     @staticmethod
     def __create_project_filter():

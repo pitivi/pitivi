@@ -109,6 +109,11 @@ DOCUMENT_FONT = _get_font("document-font-name", "Sans")
 MONOSPACE_FONT = _get_font("monospace-font-name", "Monospace")
 
 GREETER_PERSPECTIVE_CSS = """
+    #empty_greeter_msg_title {
+        font-size: 125%;
+        font-weight: bold;
+    }
+
     #recent_projects_listbox {
         border: 1px solid alpha(@borders, 0.6);
     }
@@ -126,7 +131,9 @@ GREETER_PERSPECTIVE_CSS = """
         font-weight: bold;
     }
 
-    #project_uri_label, #project_last_updated_label {
+    #project_uri_label,
+    #project_last_updated_label,
+    #empty_greeter_msg_subtitle {
         opacity: 0.55;
     }
 
