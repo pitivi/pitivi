@@ -159,7 +159,7 @@ class TrackElementAction(UndoableAction):
         self.track_element = track_element
         self.track_element_props = []
         for prop in self.track_element.list_children_properties():
-            if not prop.flags & GObject.PARAM_WRITABLE or \
+            if not prop.flags & GObject.ParamFlags.WRITABLE or \
                     prop.name in PROPS_TO_IGNORE:
                 continue
             prop_name = child_property_name(prop)
@@ -170,7 +170,9 @@ class TrackElementAction(UndoableAction):
     def add(self):
         assert self.clip.add(self.track_element)
         for prop_name, prop_value in self.track_element_props:
-            self.track_element.set_child_property(prop_name, prop_value)
+            res, child, unused_pspec = self.track_element.lookup_child(prop_name)
+            assert res
+            child.set_property(prop_name, prop_value)
 
     def remove(self):
         self.clip.remove(self.track_element)
@@ -632,6 +634,7 @@ class ControlSourceRemoveAction(UndoableAction):
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
         return st
+
 
 class LayerObserver(MetaContainerObserver, Loggable):
     """Monitors a Layer and reports UndoableActions.
