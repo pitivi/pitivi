@@ -46,13 +46,13 @@ class ProjectInfoRow(Gtk.ListBoxRow):
     def __init__(self, recent_project_item):
         Gtk.ListBoxRow.__init__(self)
         self.uri = recent_project_item.get_uri()
+        self.name = os.path.splitext(recent_project_item.get_display_name())[0]
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "project_info.ui"))
         self.add(builder.get_object("project_info_vbox"))
 
-        builder.get_object("project_name_label").set_text(
-            os.path.splitext(recent_project_item.get_display_name())[0])
+        builder.get_object("project_name_label").set_text(self.name)
         builder.get_object("project_uri_label").set_text(
             beautify_project_path(recent_project_item.get_uri_display()))
         builder.get_object("project_last_updated_label").set_text(
@@ -79,6 +79,8 @@ class GreeterPerspective(Perspective):
         self.__topvbox = None
         self.__welcome_vbox = None
         self.__recent_projects_vbox = None
+        self.__search_entry = None
+        self.__recent_projects_labelbox = None
         self.__recent_projects_listbox = None
         self.__project_filter = self.__create_project_filter()
         self.__infobar = None
@@ -94,9 +96,15 @@ class GreeterPerspective(Perspective):
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
         self.toplevel_widget = builder.get_object("scrolled_window")
+
         self.__topvbox = builder.get_object("topvbox")
         self.__welcome_vbox = builder.get_object("welcome_vbox")
         self.__recent_projects_vbox = builder.get_object("recent_projects_vbox")
+
+        self.__recent_projects_labelbox = builder.get_object("recent_projects_labelbox")
+
+        self.__search_entry = builder.get_object("search_entry")
+        self.__search_entry.connect("search-changed", self.__search_changed_cb)
 
         self.__recent_projects_listbox = builder.get_object("recent_projects_listbox")
         self.__recent_projects_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
@@ -114,7 +122,13 @@ class GreeterPerspective(Perspective):
 
     def refresh(self):
         """Refreshes the perspective."""
-        self.toplevel_widget.grab_focus()
+        # We are assuming that the users name their projects meaningfully
+        # and are sure of what project they want to search for. Once they
+        # find the project and open it they don't want to come back to the
+        # previous search results. So, we clear out the search entry before
+        # the greeter is shown again.
+        self.__search_entry.set_text("")
+        self.__search_entry.grab_focus()
 
         # Clear the currently displayed list of recent projects.
         for child in self.__recent_projects_listbox.get_children():
@@ -254,3 +268,18 @@ class GreeterPerspective(Perspective):
 
     def __projects_row_activated_cb(self, unused_listbox, row):
         self.app.project_manager.loadProject(row.uri)
+
+    def __search_changed_cb(self, search_entry):
+        search_hit = False
+        search_text = search_entry.get_text().lower()
+        for recent_project_item in self.__recent_projects_listbox.get_children():
+            if search_text in recent_project_item.name.lower():
+                recent_project_item.show()
+                search_hit = True
+            else:
+                recent_project_item.hide()
+
+        if search_hit:
+            self.__recent_projects_labelbox.show()
+        else:
+            self.__recent_projects_labelbox.hide()
