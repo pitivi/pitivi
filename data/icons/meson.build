@@ -1,6 +1,6 @@
-sizes = ['16x16', '24x24', '32x32', '512x512', '22x22', '256x256', '48x48']
-themedir = get_option('datadir') + '/icons/hicolor/'
+themedir = join_paths(get_option('datadir'), 'icons/hicolor')
 
+sizes = ['16x16', '22x22', '24x24', '32x32', '48x48', '256x256', '512x512']
 foreach size: sizes
-    install_data(size + '/pitivi.png', install_dir: themedir + size + '/apps/')
+    install_data(join_paths('hicolor', size, 'apps/org.pitivi.Pitivi.png'), install_dir: join_paths(themedir, size, 'apps'))
 endforeach

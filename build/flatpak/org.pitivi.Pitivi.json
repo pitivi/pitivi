@@ -18,7 +18,6 @@
         "--device=dri"
     ],
     "sdk": "org.gnome.Sdk",
-    "rename-icon": "pitivi",
     "copy-icon": true,
     "build-options": {
         "cflags": "-O0 -g",
