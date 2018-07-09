@@ -10,6 +10,23 @@
     <property name="margin_bottom">10</property>
     <property name="orientation">vertical</property>
     <child>
+      <object class="GtkSearchEntry" id="search_entry">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="halign">center</property>
+        <property name="margin_bottom">32</property>
+        <property name="width_chars">35</property>
+        <property name="primary_icon_name">edit-find-symbolic</property>
+        <property name="primary_icon_activatable">False</property>
+        <property name="primary_icon_sensitive">False</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
       <object class="GtkBox" id="recent_projects_labelbox">
         <property name="name">recent_projects_labelbox</property>
         <property name="visible">True</property>
@@ -47,7 +64,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">0</property>
+        <property name="position">1</property>
       </packing>
     </child>
     <child>
@@ -59,7 +76,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">1</property>
+        <property name="position">2</property>
       </packing>
     </child>
   </object>
