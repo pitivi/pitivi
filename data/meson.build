@@ -8,14 +8,14 @@ install_subdir('gstpresets', install_dir: pkgdatadir)
 
 custom_target('pitivi.desktop',
     output : 'pitivi.desktop',
-    input : 'pitivi.desktop.in',
+    input : 'org.pitivi.Pitivi.desktop.in',
     command : [intltool_merge, '--desktop-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
     install_dir : join_paths(get_option('datadir'), 'applications'))
 
 custom_target('pitivi.appdata.xml',
     output : 'pitivi.appdata.xml',
-    input : 'pitivi.appdata.xml.in',
+    input : 'org.pitivi.Pitivi.appdata.xml.in',
     command : [intltool_merge, '--xml-style', podir, '@INPUT@', '@OUTPUT@'],
     install : true,
     install_dir : join_paths(get_option('datadir'), 'appdata'))
