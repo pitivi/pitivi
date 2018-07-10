@@ -2,42 +2,17 @@
 <!-- Generated with glade 3.22.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkBox" id="project_info_vbox">
+  <object class="GtkBox" id="project_info_tophbox">
     <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <property name="orientation">vertical</property>
+    <property name="can_focus">False</property>
     <child>
-      <object class="GtkBox">
+      <object class="GtkCheckButton" id="project_select_button">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkLabel" id="project_name_label">
-            <property name="name">project_name_label</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">start</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="project_last_updated_label">
-            <property name="name">project_last_updated_label</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">end</property>
-            <property name="margin_left">200</property>
-            <property name="hexpand">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="margin_right">12</property>
+        <property name="use_stock">True</property>
+        <property name="draw_indicator">True</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -46,12 +21,63 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="project_uri_label">
-        <property name="name">project_uri_label</property>
+      <object class="GtkBox" id="project_info_vbox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="halign">start</property>
-        <property name="margin_right">200</property>
+        <property name="can_focus">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel" id="project_name_label">
+                <property name="name">project_name_label</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="project_last_updated_label">
+                <property name="name">project_last_updated_label</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="margin_left">200</property>
+                <property name="hexpand">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="project_uri_label">
+            <property name="name">project_uri_label</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="margin_right">200</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
       </object>
       <packing>
         <property name="expand">False</property>
