@@ -50,7 +50,12 @@ class ProjectInfoRow(Gtk.ListBoxRow):
 
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "project_info.ui"))
-        self.add(builder.get_object("project_info_vbox"))
+        self.add(builder.get_object("project_info_tophbox"))
+
+        self.select_button = builder.get_object("project_select_button")
+        # Hide the select button as we only want to
+        # show it during projects removal screen.
+        self.select_button.hide()
 
         builder.get_object("project_name_label").set_text(self.name)
         builder.get_object("project_uri_label").set_text(
@@ -84,6 +89,15 @@ class GreeterPerspective(Perspective):
         self.__recent_projects_listbox = None
         self.__project_filter = self.__create_project_filter()
         self.__infobar = None
+        self.__selection_button = None
+        self.__actionbar = None
+        self.__remove_projects_button = None
+        self.__cancel_button = None
+        self.__new_project_button = None
+        self.__open_project_button = None
+
+        # Projects selected for removal.
+        self.__selected_projects = []
 
         if app.getLatest():
             self.__show_newer_available_version()
@@ -95,7 +109,7 @@ class GreeterPerspective(Perspective):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
-        self.toplevel_widget = builder.get_object("scrolled_window")
+        self.toplevel_widget = builder.get_object("toplevel_vbox")
 
         self.__topvbox = builder.get_object("topvbox")
         self.__welcome_vbox = builder.get_object("welcome_vbox")
@@ -116,19 +130,21 @@ class GreeterPerspective(Perspective):
         self.__infobar.hide()
         self.__infobar.connect("response", self.__infobar_response_cb)
 
+        self.__actionbar = builder.get_object("actionbar")
+        self.__remove_projects_button = builder.get_object("remove_projects_button")
+        self.__remove_projects_button.get_style_context().add_class("destructive-action")
+        self.__remove_projects_button.connect("clicked", self.__remove_projects_clicked_cb)
+
         self.__setup_css()
         self.headerbar = self.__create_headerbar()
         self.__set_keyboard_shortcuts()
 
     def refresh(self):
         """Refreshes the perspective."""
-        # We are assuming that the users name their projects meaningfully
-        # and are sure of what project they want to search for. Once they
-        # find the project and open it they don't want to come back to the
-        # previous search results. So, we clear out the search entry before
-        # the greeter is shown again.
-        self.__search_entry.set_text("")
-        self.__search_entry.grab_focus()
+        # Hide actionbar because we only want to show it during projects removal screen.
+        self.__actionbar.hide()
+        self.__remove_projects_button.set_sensitive(False)
+        self.__selected_projects = []
 
         # Clear the currently displayed list of recent projects.
         for child in self.__recent_projects_listbox.get_children():
@@ -140,21 +156,39 @@ class GreeterPerspective(Perspective):
         # If there are recent projects, display them, else display welcome screen.
         if recent_items:
             for item in recent_items[:MAX_RECENT_PROJECTS]:
-                self.__recent_projects_listbox.add(ProjectInfoRow(item))
-            self.headerbar.set_title(_("Select a Project"))
+                recent_project_info = ProjectInfoRow(item)
+                recent_project_info.select_button.connect(
+                    "toggled", self.__project_selected_cb, recent_project_info)
+                self.__recent_projects_listbox.add(recent_project_info)
+                recent_project_info.show()
+
             child = self.__recent_projects_vbox
-            self.__recent_projects_listbox.show_all()
+            self.__update_headerbar(projects=True)
+            self.__recent_projects_listbox.show()
         else:
-            self.headerbar.set_title("Pitivi")
             child = self.__welcome_vbox
+            self.__update_headerbar(welcome=True)
 
         children = self.__topvbox.get_children()
         if children:
             current_child = children[0]
             if current_child == child:
-                return
-            self.__topvbox.remove(current_child)
-        self.__topvbox.pack_start(child, False, False, 0)
+                child = None
+            else:
+                self.__topvbox.remove(current_child)
+
+        if child:
+            self.__topvbox.pack_start(child, False, False, 0)
+
+        if recent_items:
+            self.__search_entry.show()
+            # We are assuming that the users name their projects meaningfully
+            # and are sure of what project they want to search for. Once they
+            # find the project and open it they don't want to come back to the
+            # previous search results. So, we clear out the search entry before
+            # the greeter is shown again.
+            self.__search_entry.set_text("")
+            self.__search_entry.grab_focus()
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()
@@ -166,24 +200,53 @@ class GreeterPerspective(Perspective):
 
     def __create_headerbar(self):
         headerbar = Gtk.HeaderBar()
-        headerbar.set_show_close_button(True)
 
-        new_project_button = Gtk.Button.new_with_label(_("New"))
-        new_project_button.set_tooltip_text(_("Create a new project"))
-        new_project_button.set_action_name("greeter.new-project")
+        self.__new_project_button = Gtk.Button.new_with_label(_("New"))
+        self.__new_project_button.set_tooltip_text(_("Create a new project"))
+        self.__new_project_button.set_action_name("greeter.new-project")
 
-        open_project_button = Gtk.Button.new_with_label(_("Open…"))
-        open_project_button.set_tooltip_text(_("Open an existing project"))
-        open_project_button.set_action_name("greeter.open-project")
+        self.__open_project_button = Gtk.Button.new_with_label(_("Open…"))
+        self.__open_project_button.set_tooltip_text(_("Open an existing project"))
+        self.__open_project_button.set_action_name("greeter.open-project")
+
+        self.__selection_button = Gtk.Button.new_from_icon_name("object-select-symbolic",
+                                                                Gtk.IconSize.BUTTON)
+        self.__selection_button.set_tooltip_text(_("Select projects for removal"))
+        self.__selection_button.connect("clicked", self.__selection_clicked_cb)
+
+        self.__cancel_button = Gtk.Button.new_with_label(_("Cancel"))
+        self.__cancel_button.set_tooltip_text(_("Return to project selection"))
+        self.__cancel_button.connect("clicked", self.__cancel_clicked_cb)
 
         self.menu_button = self.__create_menu()
 
-        headerbar.pack_start(new_project_button)
-        headerbar.pack_start(open_project_button)
+        headerbar.pack_start(self.__new_project_button)
+        headerbar.pack_start(self.__open_project_button)
         headerbar.pack_end(self.menu_button)
-        headerbar.show_all()
+        headerbar.pack_end(self.__selection_button)
+        headerbar.pack_end(self.__cancel_button)
+        headerbar.show()
 
         return headerbar
+
+    def __update_headerbar(self, welcome=False, projects=False, selection=False):
+        """Updates the headerbar depending on the greeter state."""
+        self.__new_project_button.set_visible(welcome or projects)
+        self.__open_project_button.set_visible(welcome or projects)
+        self.__cancel_button.set_visible(selection)
+        self.__selection_button.set_visible(projects)
+        self.menu_button.set_visible(welcome or projects)
+        self.headerbar.set_show_close_button(welcome or projects)
+
+        if selection:
+            self.headerbar.get_style_context().add_class("selection-mode")
+            self.headerbar.set_title(_("Click an item to select"))
+        else:
+            self.headerbar.get_style_context().remove_class("selection-mode")
+            if projects:
+                self.headerbar.set_title(_("Select a Project"))
+            else:
+                self.headerbar.set_title(_("Pitivi"))
 
     def __set_keyboard_shortcuts(self):
         group = Gio.SimpleActionGroup()
@@ -267,7 +330,10 @@ class GreeterPerspective(Perspective):
             self.__infobar.hide()
 
     def __projects_row_activated_cb(self, unused_listbox, row):
-        self.app.project_manager.loadProject(row.uri)
+        if row.select_button.get_visible():
+            row.select_button.set_active(not row.select_button.get_active())
+        else:
+            self.app.project_manager.loadProject(row.uri)
 
     def __search_changed_cb(self, search_entry):
         search_hit = False
@@ -279,7 +345,28 @@ class GreeterPerspective(Perspective):
             else:
                 recent_project_item.hide()
 
-        if search_hit:
-            self.__recent_projects_labelbox.show()
+        self.__recent_projects_labelbox.set_visible(search_hit)
+        self.__recent_projects_listbox.set_visible(search_hit)
+
+    def __selection_clicked_cb(self, unused_button):
+        self.__update_headerbar(selection=True)
+        self.__search_entry.hide()
+        self.__actionbar.show()
+        for child in self.__recent_projects_listbox.get_children():
+            child.select_button.show()
+
+    def __cancel_clicked_cb(self, unused_button):
+        self.refresh()
+
+    def __project_selected_cb(self, check_button, project):
+        if check_button.get_active():
+            self.__selected_projects.append(project)
         else:
-            self.__recent_projects_labelbox.hide()
+            self.__selected_projects.remove(project)
+
+        self.__remove_projects_button.set_sensitive(bool(self.__selected_projects))
+
+    def __remove_projects_clicked_cb(self, unused_button):
+        for project in self.__selected_projects:
+            self.app.recent_manager.remove_item(project.uri)
+        self.refresh()
