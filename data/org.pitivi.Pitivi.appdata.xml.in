@@ -39,6 +39,55 @@
   <project_group>GNOME</project_group>
   <translation type="gettext">pitivi</translation>
   <_developer_name>The Pitivi Team</_developer_name>
+
+  <releases>
+    <release version="0.99" date="2017-09-21">
+      <description>
+        <p>
+          This release includes bug fixes and performance improvements.
+        </p>
+      </description>
+    </release>
+
+    <release version="0.98" date="2016-12-06">
+      <description>
+        <p>
+          This release includes bug fixes, and allows customizing the
+          keyboard shortcuts.
+        </p>
+      </description>
+    </release>
+
+    <release version="0.97" date="2016-08-08">
+      <description>
+        <p>
+          This release includes bug fixes and shows in the rendering dialog
+          what encoders and muxers are officially supported.
+        </p>
+      </description>
+    </release>
+
+    <release version="0.96" date="2016-06-30">
+      <description>
+        <p>
+          This release includes bug fixes, usability improvements, and
+          one important accuracy improvement.
+        </p>
+        <ul>
+          <li>Media files using an unsupported format can be transcoded
+              automatically into high-quality proxy files for reliable
+              processing.</li>
+          <li>Initial project settings are computed automatically when
+              the first media files are imported.</li>
+          <li>The project settings and rendering dialogs have been redesigned
+              for fast access.</li>
+          <li>The undo/redo system has been refactored and re-enabled.</li>
+          <li>The keyboard shortcuts can be revealed with Ctrl+F1.</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+
   <content_rating type="oars-1.1">
     <content_attribute id="violence-cartoon">none</content_attribute>
     <content_attribute id="violence-fantasy">none</content_attribute>
