@@ -39,6 +39,26 @@
   <project_group>GNOME</project_group>
   <translation type="gettext">pitivi</translation>
   <_developer_name>The Pitivi Team</_developer_name>
+
+  <releases>
+    <release version="0.99" date="2017-09-21">
+      <description>
+        <p>
+          This release 0.99 includes bug fixes and performance improvements.
+        </p>
+      </description>
+    </release>
+
+    <release version="0.98" date="2016-12-06">
+      <description>
+        <p>
+          This release 0.98 allows customizing the keyboard shortcuts.
+          Includes bug fixes, mostly on the timeline.
+        </p>
+      </description>
+    </release>
+  </releases>
+
   <content_rating type="oars-1.1">
     <content_attribute id="violence-cartoon">none</content_attribute>
     <content_attribute id="violence-fantasy">none</content_attribute>
