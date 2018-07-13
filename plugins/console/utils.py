@@ -43,6 +43,23 @@ def swap_std(stdout=None, stderr=None):
             sys.stderr = stderr
 
 
+def display_autocompletion(last_obj, matches, text_buffer,
+                           old_command, new_command):
+    """Print possible matches (to FakeOut)."""
+    if len(matches) == 1:
+        tokens = matches[0].split(last_obj)
+        if len(tokens) >= 1:
+            print(tokens[1], end="")
+    elif len(matches) > 1:
+        if new_command.startswith(old_command):
+            # Complete the rest of the command if they have a common prefix.
+            rest = new_command.replace(old_command, "")
+            text_buffer.insert(text_buffer.get_end_iter(), rest)
+        print()
+        for match in matches:
+            print(match)
+
+
 class FakeOut(TextIOBase):
     """Replacement for sys.stdout/err which redirects writes."""
 
