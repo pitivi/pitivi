@@ -17,11 +17,16 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import builtins
 import code
+import keyword
+import os
+import re
 import sys
 
 from gi.repository import GObject
 from gi.repository import Gtk
+from utils import display_autocompletion
 from utils import FakeOut
 from utils import swap_std
 
@@ -87,6 +92,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
         self.insert_at_cursor(sys.ps1)
         self.create_mark(self.AFTER_PROMPT_MARK, self.get_end_iter(), True)
 
+        self.prompt = sys.ps1
         self._stdout = FakeOut(self)
         self._stderr = FakeOut(self)
         self._console = code.InteractiveConsole(namespace)
@@ -94,6 +100,8 @@ class ConsoleBuffer(Gtk.TextBuffer):
         self.history = ConsoleHistory()
         namespace["__history__"] = self.history
         self.history.connect("pos-changed", self.__history_pos_changed_cb)
+
+        self.connect("insert-text", self.__insert_text_cb)
 
     def process_command_line(self):
         """Process the current input command line executing it if complete."""
@@ -106,10 +114,10 @@ class ConsoleBuffer(Gtk.TextBuffer):
             is_command_incomplete = self._console.push(cmd)
 
         if is_command_incomplete:
-            prompt = sys.ps2
+            self.prompt = sys.ps2
         else:
-            prompt = sys.ps1
-        self.write(prompt)
+            self.prompt = sys.ps1
+        self.write(self.prompt)
 
         self.move_mark(after_prompt_mark, self.get_end_iter())
         self.place_cursor(self.get_end_iter())
@@ -150,6 +158,98 @@ class ConsoleBuffer(Gtk.TextBuffer):
         end_iter = self.get_end_iter()
         self.delete(after_prompt_iter, end_iter)
         self.insert(self.get_end_iter(), cmd)
+
+    def show_autocompletion(self, command):
+        """Prints the autocompletion to the view."""
+        matches, last, new_command = self.get_autocompletion_matches(command)
+        namespace = {
+            "last": last,
+            "matches": matches,
+            "buf": self,
+            "command": command,
+            "new_command": new_command,
+            "display_autocompletion": display_autocompletion
+        }
+        with swap_std(self._stdout, self._stderr):
+            # pylint: disable=eval-used
+            eval("display_autocompletion(last, matches, buf, command, new_command)",
+                 namespace, self._console.locals)
+        if len(matches) > 1:
+            self.__refresh_prompt(new_command)
+
+    def get_autocompletion_matches(self, input_text):
+        """
+        Given an input text, return possible matches for autocompletion.
+        """
+        # pylint: disable=bare-except, eval-used, too-many-branches, too-many-locals
+        # Try to get the possible full object to scan.
+        # For example, if input_text is "func(circle.ra", we obtain "circle.ra".
+        identifiers = re.findall(r"[_A-Za-z][\w\.]*\w$", input_text)
+        if identifiers:
+            maybe_scannable_object = identifiers[0]
+        else:
+            maybe_scannable_object = input_text
+
+        pos = maybe_scannable_object.rfind(".")
+        if pos != -1:
+            # In this case, we cannot scan "circle.ra", so we scan "circle".
+            scannable_object = maybe_scannable_object[:pos]
+        else:
+            # This is the case when input was more simple, like "circ".
+            scannable_object = maybe_scannable_object
+        namespace = {"scannable_object": scannable_object}
+        try:
+            if pos != -1:
+                str_eval = "dir(eval(scannable_object))"
+            else:
+                str_eval = "dir()"
+            maybe_matches = eval(str_eval, namespace, self._console.locals)
+        except:
+            return [], maybe_scannable_object, input_text
+        if pos != -1:
+            # Get substring after last dot (.)
+            rest = maybe_scannable_object[(pos + 1):]
+        else:
+            rest = scannable_object
+        # First, assume we are parsing an object.
+        matches = [match for match in maybe_matches if match.startswith(rest)]
+
+        # If not matches, maybe it is a keyword or builtin function.
+        if not matches:
+            tmp_matches = keyword.kwlist + dir(builtins)
+            matches = [
+                match for match in tmp_matches if match.startswith(rest)]
+
+        if not matches:
+            new_input_text = input_text
+        else:
+            maybe_scannable_pos = input_text.find(maybe_scannable_object)
+            common = os.path.commonprefix(matches)
+            if pos == -1:
+                new_input_text = input_text[:maybe_scannable_pos] + common
+            else:
+                new_input_text = input_text[:maybe_scannable_pos] + maybe_scannable_object[:pos] + "." + common
+
+        return matches, rest, new_input_text
+
+    def __refresh_prompt(self, text=""):
+        after_prompt_mark = self.get_mark(self.AFTER_PROMPT_MARK)
+
+        # Prepare the new line
+        end_iter = self.get_end_iter()
+        self.insert(end_iter, self.prompt)
+        end_iter = self.get_end_iter()
+        self.move_mark(after_prompt_mark, end_iter)
+        self.place_cursor(end_iter)
+        self.write(text)
+
+    def __insert_text_cb(self, buf, it, text, user_data):
+        command = self.get_command_line()
+        if text == "\t" and command.strip() != "":
+            # If input text is '\t' and command doesn't start with spaces or tab
+            # prevent GtkTextView to insert the text "\t" for autocompletion.
+            GObject.signal_stop_emission_by_name(buf, "insert-text")
+            self.show_autocompletion(command)
 
     def __history_pos_changed_cb(self, history):
         cmd = history.get()
