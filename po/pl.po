@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-08 16:29+0200\n"
-"PO-Revision-Date: 2018-07-08 16:30+0200\n"
+"POT-Creation-Date: 2018-07-15 19:30+0200\n"
+"PO-Revision-Date: 2018-07-15 19:32+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -22,6 +22,7 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
+#: ../pitivi/greeterperspective.py:248
 msgid "Pitivi"
 msgstr "Pitivi"
 
@@ -359,6 +360,18 @@ msgstr "Ostatnio używane projekty"
 msgid "Updated"
 msgstr "Zaktualizowano"
 
+#: ../data/ui/greeter.ui.h:3 ../pitivi/preset.py:110
+msgid "Remove"
+msgstr "Usuń"
+
+#: ../data/ui/greeter.ui.h:4
+msgid "Welcome to Pitivi"
+msgstr "Witamy w programie Pitivi"
+
+#: ../data/ui/greeter.ui.h:5
+msgid "Beautiful, powerful and intuitive movie editor"
+msgstr "Elegancki, funkcjonalny i intuicyjny edytor filmów"
+
 #: ../data/ui/mainmenubutton.ui.h:1
 msgid "Save the current project under a new name or a different location"
 msgstr "Zapisuje bieżący projekt pod nową nazwą lub w innym położeniu"
@@ -500,8 +513,8 @@ msgstr ""
 #: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:3
 #: ../pitivi/editorperspective.py:509 ../pitivi/editorperspective.py:723
 #: ../pitivi/editorperspective.py:771 ../pitivi/editorperspective.py:824
-#: ../pitivi/medialibrary.py:749 ../pitivi/dialogs/browseprojects.py:41
-#: ../pitivi/dialogs/missingasset.py:49
+#: ../pitivi/greeterperspective.py:217 ../pitivi/medialibrary.py:749
+#: ../pitivi/dialogs/browseprojects.py:41 ../pitivi/dialogs/missingasset.py:49
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -1101,31 +1114,39 @@ msgstr "Bez kategorii"
 msgid "All effects"
 msgstr "Wszystkie efekty"
 
-#: ../pitivi/greeterperspective.py:125
-msgid "Select a Project"
-msgstr "Wybór projektu"
-
-#: ../pitivi/greeterperspective.py:127 ../pitivi/preset.py:104
+#: ../pitivi/greeterperspective.py:204 ../pitivi/preset.py:104
 msgid "New"
 msgstr "Nowy"
 
-#: ../pitivi/greeterperspective.py:128 ../pitivi/greeterperspective.py:153
+#: ../pitivi/greeterperspective.py:205 ../pitivi/greeterperspective.py:259
 msgid "Create a new project"
 msgstr "Utworzenie nowego projektu"
 
-#: ../pitivi/greeterperspective.py:131
+#: ../pitivi/greeterperspective.py:208
 msgid "Open…"
 msgstr "Otwórz…"
 
-#: ../pitivi/greeterperspective.py:132
+#: ../pitivi/greeterperspective.py:209
 msgid "Open an existing project"
 msgstr "Otwarcie istniejącego projektu"
 
-#: ../pitivi/greeterperspective.py:159
+#: ../pitivi/greeterperspective.py:214
+msgid "Select projects for removal"
+msgstr "Wybór projektów do usunięcia"
+
+#: ../pitivi/greeterperspective.py:242
+msgid "Click an item to select"
+msgstr "Kliknięcie elementu zaznacza go"
+
+#: ../pitivi/greeterperspective.py:246
+msgid "Select a Project"
+msgstr "Wybór projektu"
+
+#: ../pitivi/greeterperspective.py:265
 msgid "Open a project"
 msgstr "Otwarcie projektu"
 
-#: ../pitivi/greeterperspective.py:229
+#: ../pitivi/greeterperspective.py:321
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s jest dostępny."
@@ -1157,7 +1178,7 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Rozdzielczość</b>: %d×%d"
 
 #: ../pitivi/mediafilespreviewer.py:273 ../pitivi/mediafilespreviewer.py:290
-#: ../pitivi/utils/ui.py:413
+#: ../pitivi/utils/ui.py:420
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Czas trwania</b>: %s"
@@ -1323,10 +1344,6 @@ msgstr "Wtyczki użytkownika"
 #: ../pitivi/pluginmanager.py:54
 msgid "System plugins"
 msgstr "Wtyczki systemowe"
-
-#: ../pitivi/preset.py:110
-msgid "Remove"
-msgstr "Usuń"
 
 #: ../pitivi/preset.py:230
 msgid "New preset"
@@ -2010,52 +2027,52 @@ msgid "Error while decoding a string"
 msgstr "Błąd podczas dekodowania ciągu"
 
 #. Translators: 'fps' is for 'frames per second'
-#: ../pitivi/utils/ui.py:231
+#: ../pitivi/utils/ui.py:238
 msgid "{0:s} fps"
 msgstr "{0:s} FPS"
 
-#: ../pitivi/utils/ui.py:251
+#: ../pitivi/utils/ui.py:258
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: ../pitivi/utils/ui.py:260
+#: ../pitivi/utils/ui.py:267
 msgid "Mono"
 msgstr "Mono"
 
-#: ../pitivi/utils/ui.py:261
+#: ../pitivi/utils/ui.py:268
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../pitivi/utils/ui.py:262
+#: ../pitivi/utils/ui.py:269
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: ../pitivi/utils/ui.py:263
+#: ../pitivi/utils/ui.py:270
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: ../pitivi/utils/ui.py:393
+#: ../pitivi/utils/ui.py:400
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Czas trwania:</b> %s"
 
-#: ../pitivi/utils/ui.py:396
+#: ../pitivi/utils/ui.py:403
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Postęp tworzenia plików pośrednich:</b> %d%%"
 
-#: ../pitivi/utils/ui.py:409
+#: ../pitivi/utils/ui.py:416
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Ścieżka</b>: %s"
 
-#: ../pitivi/utils/ui.py:418
+#: ../pitivi/utils/ui.py:425
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Rozmiar</b>: %s"
 
-#: ../pitivi/utils/ui.py:452
+#: ../pitivi/utils/ui.py:459
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
@@ -2065,18 +2082,18 @@ msgstr[1] ""
 msgstr[2] ""
 "<b>Dźwięk:</b> %d kanałów o częstotliwości %d <i>Hz</i> (%d <i>b</i>)"
 
-#: ../pitivi/utils/ui.py:464
+#: ../pitivi/utils/ui.py:471
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Wideo:</b> %d×%d <i>px</i> o %s <i>FPS</i>"
 
-#: ../pitivi/utils/ui.py:467
+#: ../pitivi/utils/ui.py:474
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Obraz:</b> %d×%d <i>px</i>"
 
-#: ../pitivi/utils/ui.py:521 ../pitivi/utils/ui.py:548
-#: ../pitivi/utils/ui.py:572
+#: ../pitivi/utils/ui.py:528 ../pitivi/utils/ui.py:555
+#: ../pitivi/utils/ui.py:579
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
@@ -2084,8 +2101,8 @@ msgstr[0] "%d godzina"
 msgstr[1] "%d godziny"
 msgstr[2] "%d godzin"
 
-#: ../pitivi/utils/ui.py:524 ../pitivi/utils/ui.py:551
-#: ../pitivi/utils/ui.py:575
+#: ../pitivi/utils/ui.py:531 ../pitivi/utils/ui.py:558
+#: ../pitivi/utils/ui.py:582
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
@@ -2093,8 +2110,8 @@ msgstr[0] "%d minuta"
 msgstr[1] "%d minuty"
 msgstr[2] "%d minut"
 
-#: ../pitivi/utils/ui.py:527 ../pitivi/utils/ui.py:554
-#: ../pitivi/utils/ui.py:578
+#: ../pitivi/utils/ui.py:534 ../pitivi/utils/ui.py:561
+#: ../pitivi/utils/ui.py:585
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -2102,7 +2119,7 @@ msgstr[0] "%d sekunda"
 msgstr[1] "%d sekundy"
 msgstr[2] "%d sekund"
 
-#: ../pitivi/utils/ui.py:546
+#: ../pitivi/utils/ui.py:553
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
@@ -2110,27 +2127,27 @@ msgstr[0] "%d dzień"
 msgstr[1] "%d dni"
 msgstr[2] "%d dni"
 
-#: ../pitivi/utils/ui.py:587
+#: ../pitivi/utils/ui.py:594
 msgid "Just now"
 msgstr "Przed chwilą"
 
-#: ../pitivi/utils/ui.py:590
+#: ../pitivi/utils/ui.py:597
 msgid "An hour ago"
 msgstr "Godzina temu"
 
-#: ../pitivi/utils/ui.py:593
+#: ../pitivi/utils/ui.py:600
 msgid "Today"
 msgstr "Dzisiaj"
 
-#: ../pitivi/utils/ui.py:596
+#: ../pitivi/utils/ui.py:603
 msgid "Yesterday"
 msgstr "Wczoraj"
 
-#: ../pitivi/utils/ui.py:605
+#: ../pitivi/utils/ui.py:612
 msgid "About a year ago"
 msgstr "Około rok temu"
 
-#: ../pitivi/utils/ui.py:608
+#: ../pitivi/utils/ui.py:615
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
