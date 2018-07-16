@@ -358,6 +358,13 @@ class UndoableActionLog(GObject.Object, Loggable):
         """Gets whether currently recording an operation."""
         return bool(self.stacks)
 
+    def has_assets_operations(self):
+        """Checks whether user added/removed assets while working on the project."""
+        for stack in self.undo_stacks:
+            if stack.action_group_name in ["assets-addition", "assets-removal"]:
+                return True
+        return False
+
 
 class MetaChangedAction(UndoableAction):
 

@@ -19,11 +19,43 @@
 """Tests for the utils.misc module."""
 # pylint: disable=protected-access,no-self-use
 import os
+from unittest import mock
 
+from gi.repository import GdkPixbuf
 from gi.repository import Gst
 
 from pitivi.utils.misc import PathWalker
+from pitivi.utils.misc import scale_pixbuf
 from tests import common
+
+
+class MiscMethodsTest(common.TestCase):
+    """Tests methods in utils.misc module."""
+
+    # pylint: disable=too-many-arguments
+    def check_pixbuf_scaling(self, pixbuf_width, pixbuf_height,
+                             width, height,
+                             expected_width, expected_height):
+        """Checks pixbuf scaling."""
+        pixbuf = mock.Mock()
+        pixbuf.props.width = pixbuf_width
+        pixbuf.props.height = pixbuf_height
+        _ = scale_pixbuf(pixbuf, width, height)
+        pixbuf.scale_simple.assert_called_once_with(expected_width, expected_height, GdkPixbuf.InterpType.BILINEAR)
+
+    def test_scale_pixbuf(self):
+        """Tests pixbuf scaling."""
+        # Larger, same aspect ratio.
+        self.check_pixbuf_scaling(200, 100, 20, 10, 20, 10)
+        # Larger, wider aspect ratio.
+        self.check_pixbuf_scaling(200, 50, 20, 10, 20, 5)
+        # Larger, taller aspect ratio.
+        self.check_pixbuf_scaling(100, 200, 20, 10, 5, 10)
+
+        # Smaller.
+        self.check_pixbuf_scaling(1, 1, 20, 10, 1, 1)
+        self.check_pixbuf_scaling(20, 1, 20, 10, 20, 1)
+        self.check_pixbuf_scaling(1, 10, 20, 10, 1, 10)
 
 
 class PathWalkerTest(common.TestCase):

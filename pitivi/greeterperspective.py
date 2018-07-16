@@ -29,6 +29,7 @@ from gi.repository import Gtk
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
+from pitivi.project import Project
 from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_project_path
 from pitivi.utils.ui import fix_infobar
@@ -57,6 +58,7 @@ class ProjectInfoRow(Gtk.ListBoxRow):
         # show it during projects removal screen.
         self.select_button.hide()
 
+        builder.get_object("project_thumbnail").set_from_pixbuf(Project.get_thumb(self.uri))
         builder.get_object("project_name_label").set_text(self.name)
         builder.get_object("project_uri_label").set_text(
             beautify_project_path(recent_project_item.get_uri_display()))

@@ -151,7 +151,7 @@ class Pitivi(Gtk.Application, Loggable):
             "new-project-loading", self._newProjectLoadingCb)
         self.project_manager.connect(
             "new-project-loaded", self._newProjectLoaded)
-        self.project_manager.connect("project-closed", self._projectClosed)
+        self.project_manager.connect_after("project-closed", self._projectClosed)
         self.project_manager.connect("project-saved", self.__project_saved_cb)
 
         self._createActions()

@@ -28,6 +28,7 @@ from urllib.parse import unquote
 from urllib.parse import urlparse
 from urllib.parse import urlsplit
 
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
@@ -38,6 +39,22 @@ from pitivi.configure import APPMANUALURL_OFFLINE
 from pitivi.configure import APPMANUALURL_ONLINE
 from pitivi.configure import APPNAME
 from pitivi.utils.threads import Thread
+
+
+def scale_pixbuf(pixbuf, width, height):
+    """Scales the given pixbuf preserving the original aspect ratio."""
+    pixbuf_width = pixbuf.props.width
+    pixbuf_height = pixbuf.props.height
+
+    if pixbuf_width > width:
+        pixbuf_height = width * pixbuf_height / pixbuf_width
+        pixbuf_width = width
+
+    if pixbuf_height > height:
+        pixbuf_width = height * pixbuf_width / pixbuf_height
+        pixbuf_height = height
+
+    return pixbuf.scale_simple(pixbuf_width, pixbuf_height, GdkPixbuf.InterpType.BILINEAR)
 
 
 # Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249
