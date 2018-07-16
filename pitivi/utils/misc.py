@@ -40,6 +40,14 @@ from pitivi.configure import APPNAME
 from pitivi.utils.threads import Thread
 
 
+def get_project_thumb_path(uri):
+    from pitivi.settings import get_dir
+    from pitivi.settings import xdg_cache_home
+    thumb_hash = hashlib.md5(quote_uri(uri).encode()).hexdigest()
+    thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "project_thumbs"))
+    return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
+
+
 # Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249
 def disconnectAllByFunc(obj, func):
     i = 0

@@ -21,6 +21,7 @@ import os
 from gettext import gettext as _
 from urllib.parse import unquote
 
+from gi.repository import GdkPixbuf
 from gi.repository import Gio
 from gi.repository import Gtk
 
@@ -28,8 +29,12 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.dialogs.about import AboutDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.greeterperspective import GreeterPerspective
+from pitivi.medialibrary import AssetThumbnail
+from pitivi.medialibrary import COL_ICON_128
+from pitivi.medialibrary import COL_URI
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import get_project_thumb_path
 from pitivi.utils.misc import show_user_manual
 
 
@@ -220,7 +225,86 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.destroy()
         self.show_perspective(self.greeter)
 
-    def __project_closed_cb(self, unused_project_manager, unused_project):
+    # pylint: disable=too-many-locals
+    def __project_closed_cb(self, unused_project_manager, project):
+        """Generates thumbnail for the project and switches to greeter perspective."""
+
+        thumb_path = get_project_thumb_path(project.uri)
+
+        # Create project thumbnail only if it doesn't already exist or
+        # user imported/deleted asset(s) while working on the project.
+        if not os.path.exists(thumb_path) or project.assets_changed:
+            # Project Thumbnail Generation Approach: Out of thumbnails of all
+            # the assets in the current project, the one with maximum file size
+            # will be our project thumbnail - http://bit.ly/thumbnail-generation
+
+            # pylint: disable=unsubscriptable-object
+            storemodel = self.editor.medialibrary.storemodel
+            normal_thumb_sizes = []
+            large_thumb_sizes = []
+            n_normal_thumbs = 0
+            n_large_thumbs = 0
+
+            # pylint: disable=not-an-iterable
+            for row in storemodel:
+                path_128, path_256 = AssetThumbnail.get_asset_thumbnails_path(row[COL_URI])
+
+                # An asset can have either normal (128x128) or large (256x256)
+                # thumbnail, or both, or none in the XDG cache. So, we will try
+                # to get both normal and large thumbnails and store their sizes
+                # in respective lists and then use the list that has max number
+                # of thumbnails to get the project thumbnail.
+
+                try:
+                    normal_thumb_size = os.stat(path_128).st_size
+                    normal_thumb_sizes.append(normal_thumb_size)
+                    n_normal_thumbs += 1
+                except FileNotFoundError:
+                    normal_thumb_sizes.append(0)
+
+                try:
+                    large_thumb_size = os.stat(path_256).st_size
+                    large_thumb_sizes.append(large_thumb_size)
+                    n_large_thumbs += 1
+                except FileNotFoundError:
+                    large_thumb_sizes.append(0)
+
+            if n_normal_thumbs or n_large_thumbs:
+                if n_normal_thumbs >= n_large_thumbs:
+                    idx = normal_thumb_sizes.index(max(normal_thumb_sizes))
+                else:
+                    idx = large_thumb_sizes.index(max(large_thumb_sizes))
+
+                thumb = storemodel[idx][COL_ICON_128]
+                width = thumb.props.width
+                height = thumb.props.height
+
+                if width > 96:
+                    height = 96 * height / width
+                    width = 96
+
+                if height > 54:
+                    width = 54 * width / height
+                    height = 54
+
+                thumb = thumb.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+
+                width_diff = 96 - width
+                height_diff = 54 - height
+
+                # The thumb isn't exactly 96x54 resolution. So, we will embed
+                # it inside a dark grayish thumbnail of 96x54 resolution.
+                if width_diff or height_diff:
+                    grayish_thumb = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB,
+                                                         True, 8, 96, 54)
+                    # Fill the pixbuf with dark gray color with 100% opacity.
+                    grayish_thumb.fill(0x181818ff)
+                    thumb.copy_area(0, 0, width, height, grayish_thumb,
+                                    width_diff / 2, height_diff / 2)
+                    grayish_thumb.savev(thumb_path, "png", [], [])
+                else:
+                    thumb.savev(thumb_path, "png", [], [])
+
         self.show_perspective(self.greeter)
 
     def show_perspective(self, perspective):

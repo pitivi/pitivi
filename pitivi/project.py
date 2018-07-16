@@ -723,6 +723,8 @@ class Project(Loggable, GES.Project):
         # Whether the current settings are temporary and should be reverted,
         # as they apply only for rendering.
         self._has_rendering_values = False
+        # Whether user imported/deleted assets while working on the project.
+        self.assets_changed = False
 
     def _scenarioDoneCb(self, scenario):
         if self.pipeline is not None:
@@ -1151,10 +1153,12 @@ class Project(Loggable, GES.Project):
         self.loading_assets.add(asset)
 
     def do_asset_removed(self, asset):
+        self.assets_changed = True
         self.app.proxy_manager.cancel_job(asset)
 
     def do_asset_added(self, asset):
         """Handles `GES.Project::asset-added` emitted by self."""
+        self.assets_changed = True
         self._maybeInitSettingsFromAsset(asset)
         if asset and not GObject.type_is_a(asset.get_extractable_type(),
                                            GES.UriClip):
