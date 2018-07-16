@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 """Pitivi's main window."""
 import os
+import shutil
 from gettext import gettext as _
 from urllib.parse import unquote
 
@@ -28,6 +29,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.dialogs.about import AboutDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.greeterperspective import GreeterPerspective
+from pitivi.medialibrary import AssetThumbnail
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual
@@ -220,8 +222,68 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.destroy()
         self.show_perspective(self.greeter)
 
-    def __project_closed_cb(self, unused_project_manager, unused_project):
+    def __project_closed_cb(self, unused_project_manager, project):
+        self.__create_project_thumb(project)
         self.show_perspective(self.greeter)
+
+    def __create_project_thumb(self, project):
+        """Creates original resolution project thumbnail."""
+        thumb_path = project.original_thumb_path
+
+        # Create project thumbnail only if it doesn't already exist or
+        # user imported/deleted asset(s) while working on the project.
+        if not os.path.exists(thumb_path) or self.app.action_log.has_assets_operations():
+
+            # Project Thumbnail Generation Approach: Out of thumbnails of all
+            # the assets in the current project, the one with maximum file size
+            # will be our project thumbnail - http://bit.ly/thumbnail-generation
+
+            # Before generating new project thumbnails, remove the existing ones.
+            try:
+                os.remove(thumb_path)
+                project.update_thumb()
+            except FileNotFoundError:
+                pass
+
+            normal_thumb_path = None
+            large_thumb_path = None
+            normal_thumb_size = 0
+            large_thumb_size = 0
+            n_normal_thumbs = 0
+            n_large_thumbs = 0
+
+            for uri in project.get_assets_uri():
+                path_128, path_256 = AssetThumbnail.get_asset_thumbnails_path(uri)
+
+                try:
+                    thumb_size = os.stat(path_128).st_size
+                    if thumb_size > normal_thumb_size:
+                        normal_thumb_path = path_128
+                        normal_thumb_size = thumb_size
+                    n_normal_thumbs += 1
+                except FileNotFoundError:
+                    # The asset is missing the normal thumbnail.
+                    pass
+
+                try:
+                    thumb_size = os.stat(path_256).st_size
+                    if thumb_size > large_thumb_size:
+                        large_thumb_path = path_256
+                        large_thumb_size = thumb_size
+                    n_large_thumbs += 1
+                except FileNotFoundError:
+                    # The asset is missing the large thumbnail.
+                    pass
+
+            if normal_thumb_path or large_thumb_path:
+                # Use the category for which we found the max number of
+                # thumbnails to find the most complex thumbnail, because
+                # we can't compare the small with the large.
+                if n_normal_thumbs > n_large_thumbs:
+                    shutil.copyfile(normal_thumb_path, thumb_path)
+                else:
+                    shutil.copyfile(large_thumb_path, thumb_path)
+                project.update_thumb()
 
     def show_perspective(self, perspective):
         """Displays the specified perspective."""

@@ -63,6 +63,7 @@ class TestProjectUndo(common.TestCase):
 
         mainloop.run()
 
+        self.assertTrue(self.action_log.has_assets_operations())
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
         self.action_log.undo()
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 0)
