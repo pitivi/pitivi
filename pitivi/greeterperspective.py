@@ -22,13 +22,16 @@ import os
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.browseprojects import BrowseProjectsDialog
 from pitivi.perspective import Perspective
+from pitivi.project import Project
 from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_project_path
 from pitivi.utils.ui import fix_infobar
@@ -56,6 +59,17 @@ class ProjectInfoRow(Gtk.ListBoxRow):
         # Hide the select button as we only want to
         # show it during projects removal screen.
         self.select_button.hide()
+
+        thumb_path = Project.get_thumb_path(self.uri, "96x54")
+
+        # pylint: disable=catching-non-exception
+        try:
+            thumb = GdkPixbuf.Pixbuf.new_from_file(thumb_path)
+        except GLib.Error:
+            thumb = Project.get_default_thumb()
+
+        if thumb:
+            builder.get_object("project_thumbnail").set_from_pixbuf(thumb)
 
         builder.get_object("project_name_label").set_text(self.name)
         builder.get_object("project_uri_label").set_text(
