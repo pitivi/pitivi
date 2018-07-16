@@ -28,6 +28,9 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.dialogs.about import AboutDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.greeterperspective import GreeterPerspective
+from pitivi.medialibrary import AssetThumbnail
+from pitivi.medialibrary import COL_ICON_128
+from pitivi.medialibrary import COL_URI
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import show_user_manual
@@ -220,7 +223,71 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.destroy()
         self.show_perspective(self.greeter)
 
-    def __project_closed_cb(self, unused_project_manager, unused_project):
+    def __project_closed_cb(self, unused_project_manager, project):
+        """Generates thumbnail for the project and switches to greeter perspective."""
+
+        thumb_path = project.original_thumb_path
+
+        # Create project thumbnail only if it doesn't already exist or
+        # user imported/deleted asset(s) while working on the project.
+        if not os.path.exists(thumb_path) or self.app.action_log.has_assets_operations():
+
+            # Project Thumbnail Generation Approach: Out of thumbnails of all
+            # the assets in the current project, the one with maximum file size
+            # will be our project thumbnail - http://bit.ly/thumbnail-generation
+
+            # pylint: disable=unsubscriptable-object
+            storemodel = self.editor.medialibrary.storemodel
+            normal_thumb = None
+            large_thumb = None
+            normal_thumb_size = 0
+            large_thumb_size = 0
+            n_normal_thumbs = 0
+            n_large_thumbs = 0
+
+            # pylint: disable=not-an-iterable
+            for row in storemodel:
+                path_128, path_256 = AssetThumbnail.get_asset_thumbnails_path(row[COL_URI])
+
+                # An asset can have either normal (128x128) or large (256x256)
+                # thumbnail, or both, or none in the XDG cache. So, we will try
+                # to get max file size thumbnail from both of these categories.
+
+                try:
+                    curr_thumb_size = os.stat(path_128).st_size
+                    if curr_thumb_size > normal_thumb_size:
+                        normal_thumb = row[COL_ICON_128]
+                        normal_thumb_size = curr_thumb_size
+                    n_normal_thumbs += 1
+                except FileNotFoundError:
+                    pass
+
+                try:
+                    curr_thumb_size = os.stat(path_256).st_size
+                    if curr_thumb_size > large_thumb_size:
+                        large_thumb = row[COL_ICON_128]
+                        large_thumb_size = curr_thumb_size
+                    n_large_thumbs += 1
+                except FileNotFoundError:
+                    pass
+
+            if normal_thumb or large_thumb:
+                # Use the category for which we found the max number of
+                # thumbnails to find the most complex thumbnail, because
+                # we can't compare the small with the large.
+                if n_normal_thumbs >= n_large_thumbs:
+                    normal_thumb.savev(thumb_path, "png", [], [])
+                else:
+                    large_thumb.savev(thumb_path, "png", [], [])
+            else:
+                # Maybe user deleted all the assets in the project.
+                # So, we need to remove the existing thumbnail.
+                try:
+                    os.remove(thumb_path)
+                except FileNotFoundError:
+                    pass
+            project.update_thumb()
+
         self.show_perspective(self.greeter)
 
     def show_perspective(self, perspective):

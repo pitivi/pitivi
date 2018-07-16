@@ -149,6 +149,10 @@ GREETER_PERSPECTIVE_CSS = """
     #recent_projects_label {
         font-weight: bold;
     }
+
+    #project_thumbnail_box {
+        background-color: #181818;
+    }
 """
 
 TIMELINE_CSS = """
