@@ -220,7 +220,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         dialog.destroy()
         self.show_perspective(self.greeter)
 
-    def __project_closed_cb(self, unused_project_manager, unused_project):
+    def __project_closed_cb(self, unused_project_manager, project):
+        project.create_thumb()
         self.show_perspective(self.greeter)
 
     def show_perspective(self, perspective):

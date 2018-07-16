@@ -20,10 +20,43 @@
 # pylint: disable=protected-access,no-self-use
 import os
 
+from gi.repository import GdkPixbuf
 from gi.repository import Gst
 
 from pitivi.utils.misc import PathWalker
+from pitivi.utils.misc import scale_pixbuf
 from tests import common
+
+
+class MiscMethodsTest(common.TestCase):
+    """Tests methods in utils.misc module."""
+
+    # pylint: disable=too-many-arguments
+    def check_pixbuf_scaling(self, pixbuf, expected_width, expected_height,
+                             actual_width, actual_height):
+        """Checks pixbuf scaling."""
+        scaled_pixbuf = scale_pixbuf(pixbuf, expected_width, expected_height)
+        self.assertEqual(scaled_pixbuf.props.width, actual_width)
+        self.assertEqual(scaled_pixbuf.props.height, actual_height)
+
+    def test_scale_pixbuf(self):
+        """Tests pixbuf scaling."""
+        # Original pixbuf in 16:9.
+        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 128, 72)
+
+        # Scale to 16:9.
+        self.check_pixbuf_scaling(pixbuf, 96, 54, 96, 54)
+        # Scale to 16:10.
+        self.check_pixbuf_scaling(pixbuf, 96, 60, 96, 54)
+        # Scale to 4:3.
+        self.check_pixbuf_scaling(pixbuf, 96, 72, 96, 54)
+
+        # Original pixbuf in 1:1.
+        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 128, 128)
+
+        self.check_pixbuf_scaling(pixbuf, 96, 54, 54, 54)
+        self.check_pixbuf_scaling(pixbuf, 96, 60, 60, 60)
+        self.check_pixbuf_scaling(pixbuf, 96, 72, 72, 72)
 
 
 class PathWalkerTest(common.TestCase):

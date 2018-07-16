@@ -63,10 +63,13 @@ class TestProjectUndo(common.TestCase):
 
         mainloop.run()
 
+        self.assertTrue(self.action_log.has_assets_operations())
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
         self.action_log.undo()
+        self.assertFalse(self.action_log.has_assets_operations())
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 0)
         self.action_log.redo()
+        self.assertTrue(self.action_log.has_assets_operations())
         self.assertEqual(len(self.project.list_assets(GES.Extractable)), 1)
 
     def test_use_proxy(self):
