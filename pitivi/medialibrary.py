@@ -252,7 +252,20 @@ class AssetThumbnail(Loggable):
         return small_thumb, large_thumb
 
     @staticmethod
-    def get_thumbnails_from_xdg_cache(real_uri):
+    def get_asset_thumbnails_path(real_uri):
+        """Gets normal & large thumbnail path for the asset in the XDG cache.
+
+        Returns:
+            List[str]: The path of normal thumbnail and large thumbnail.
+        """
+        quoted_uri = quote_uri(real_uri)
+        thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
+        thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnails")
+        return os.path.join(thumb_dir, "normal", thumbnail_hash + ".png"),\
+            os.path.join(thumb_dir, "large", thumbnail_hash + ".png")
+
+    @classmethod
+    def get_thumbnails_from_xdg_cache(cls, real_uri):
         """Gets pixbufs for the specified thumbnail from the user's cache dir.
 
         Looks for thumbnails according to the [Thumbnail Managing Standard](https://specifications.freedesktop.org/thumbnail-spec/thumbnail-spec-latest.html#DIRECTORY).
@@ -264,10 +277,7 @@ class AssetThumbnail(Loggable):
             List[GdkPixbuf.Pixbuf]: The small thumbnail and the large thumbnail,
             if available in the user's cache directory, otherwise (None, None).
         """
-        quoted_uri = quote_uri(real_uri)
-        thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
-        thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnails")
-        path_128 = os.path.join(thumb_dir, "normal", thumbnail_hash + ".png")
+        path_128, path_256 = cls.get_asset_thumbnails_path(real_uri)
         interpolation = GdkPixbuf.InterpType.BILINEAR
 
         # The cache dirs might have resolutions of 256 and/or 128,
@@ -280,7 +290,6 @@ class AssetThumbnail(Loggable):
             return small_thumb, large_thumb
         except GLib.GError:
             # path_128 doesn't exist, try the 256 version.
-            path_256 = os.path.join(thumb_dir, "large", thumbnail_hash + ".png")
             try:
                 thumb_256 = GdkPixbuf.Pixbuf.new_from_file(path_256)
                 w, h = thumb_256.get_width(), thumb_256.get_height()
@@ -649,8 +658,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         rows = [Gtk.TreeRowReference.new(model, path)
                 for path in paths]
 
-        with self.app.action_log.started("remove asset from media library",
-                                         toplevel=True):
+        with self.app.action_log.started("assets-removal", toplevel=True):
             for row in rows:
                 asset = model[row.get_path()][COL_ASSET]
                 target = asset.get_proxy_target()

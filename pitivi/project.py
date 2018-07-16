@@ -25,7 +25,9 @@ import tarfile
 import time
 import uuid
 from gettext import gettext as _
+from hashlib import md5
 
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import GObject
@@ -38,6 +40,8 @@ from pitivi.configure import get_ui_dir
 from pitivi.preset import AudioPresetManager
 from pitivi.preset import VideoPresetManager
 from pitivi.render import Encoders
+from pitivi.settings import get_dir
+from pitivi.settings import xdg_cache_home
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
@@ -45,6 +49,7 @@ from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
+from pitivi.utils.misc import scale_pixbuf
 from pitivi.utils.misc import unicode_error_dialog
 from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
@@ -79,6 +84,10 @@ for i in range(2, GLib.MAXINT):
 # Properties of encoders that should be ignored when saving/loading
 # a project.
 IGNORED_PROPS = ["name", "parent"]
+
+SCALED_THUMB_WIDTH = 96
+SCALED_THUMB_HEIGHT = 54
+SCALED_THUMB_DIR = "96x54"
 
 
 class ProjectManager(GObject.Object, Loggable):
@@ -783,6 +792,43 @@ class Project(Loggable, GES.Project):
             return
         self.set_meta("author", author)
 
+    @property
+    def original_thumb_path(self):
+        """Returns path of original resolution thumbnail in the cache."""
+        return Project.get_thumb_path(self.uri, "original")
+
+    @staticmethod
+    def get_thumb_path(uri, resolution):
+        """Returns path of thumbnail of specified resolution in the cache."""
+        thumb_hash = md5(quote_uri(uri).encode()).hexdigest()
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(),
+                                   "project_thumbs", resolution))
+        return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
+
+    @classmethod
+    def get_thumb(cls, uri):
+        """Gets the project thumb, if exists, else the default thumb or None."""
+        try:
+            thumb = GdkPixbuf.Pixbuf.new_from_file(cls.get_thumb_path(uri, SCALED_THUMB_DIR))
+        except GLib.Error:
+            # Try to get the default thumb.
+            try:
+                thumb = Gtk.IconTheme.get_default().load_icon("video-x-generic", 128, 0)
+            except GLib.Error:
+                return None
+            thumb = scale_pixbuf(thumb, SCALED_THUMB_WIDTH, SCALED_THUMB_HEIGHT)
+
+        return thumb
+
+    def create_scaled_thumb(self):
+        """Creates scaled (96x54) thumbnail from the original thumbnail."""
+        try:
+            thumb = GdkPixbuf.Pixbuf.new_from_file(self.original_thumb_path)
+            thumb = scale_pixbuf(thumb, SCALED_THUMB_WIDTH, SCALED_THUMB_HEIGHT)
+            thumb.savev(self.get_thumb_path(self.uri, SCALED_THUMB_DIR), "png", [], [])
+        except GLib.Error:
+            pass
+
     def set_rendering(self, rendering):
         """Sets the a/v restrictions for rendering or for editing."""
         self._ensureAudioRestrictions()
@@ -1470,7 +1516,7 @@ class Project(Loggable, GES.Project):
         Args:
             uris (List[str]): The URIs of the assets.
         """
-        with self.app.action_log.started("Adding assets"):
+        with self.app.action_log.started("assets-addition"):
             for uri in uris:
                 if self.create_asset(quote_uri(uri), GES.UriClip):
                     # The asset was not already part of the project.
