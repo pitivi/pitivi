@@ -324,13 +324,27 @@
             ]
         },
         {
+            "name": "opencv",
+            "buildsystem": "cmake",
+            "builddir": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "branch": "2.4.13.3",
+                    "url": "https://github.com/opencv/opencv"
+                }
+            ]
+        },
+        {
             "name": "ffmpeg",
             "config-opts": [
                 "--disable-static",
+                "--enable-shared",
+                "--enable-pic",
                 "--disable-avdevice",
                 "--disable-postproc",
+                "--disable-swscale",
                 "--disable-programs",
-                "--disable-ffserver",
                 "--disable-ffplay",
                 "--disable-ffprobe",
                 "--disable-ffmpeg",
@@ -342,8 +356,8 @@
                 "--disable-dxva2",
                 "--disable-vdpau",
                 "--disable-filters",
+                "--enable-filter=yadif",
                 "--disable-doc",
-                "--disable-vda",
                 "--disable-d3d11va",
                 "--disable-dxva2",
                 "--disable-audiotoolbox",
@@ -361,15 +375,15 @@
                 "--disable-libnpp",
                 "--disable-iconv",
                 "--disable-jni",
-                "--enable-optimizations",
+                "--disable-v4l2_m2m",
                 "--enable-gpl",
-                "--enable-shared"
+                "--enable-optimizations"
             ],
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "branch": "6d7192bcb7bbab17dc194e8dbb56c208bced0a92"
+                    "branch": "3ef38c414e7908b2f66552081efe485bce52037c"
                 }
             ]
         },
@@ -384,18 +398,6 @@
                     "url": "https://github.com/mstorsjo/fdk-aac.git",
                     "branch": "v0.1.5",
                     "commit": "74c1a2a4f831285cbd93ec1427f1670d3c5c5e52"
-                }
-            ]
-        },
-        {
-            "name": "opencv",
-            "buildsystem": "cmake",
-            "builddir": true,
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "2.4.13.3",
-                    "url": "https://github.com/opencv/opencv"
                 }
             ]
         },
