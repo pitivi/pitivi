@@ -498,7 +498,7 @@
                     "type": "git",
                     "url": "https://git.ffmpeg.org/ffmpeg.git",
                     "disable-shallow-clone": true,
-                    "branch": "master"
+                    "branch": "4.0"
                 },
                 {
                     "type": "git",
