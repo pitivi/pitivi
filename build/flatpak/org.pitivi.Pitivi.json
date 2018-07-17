@@ -47,8 +47,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pypi.python.org/packages/05/84/0feb999c05f252af50a5fbc463268044feda92cdaad8cb0d0a6073d76057/numpy-1.13.0.zip#md5=fd044f0b8079abeaf5e6d2e93b2c1d03",
-                    "sha256": "dcff367b725586830ff0e20b805c7654c876c2d4585c0834a6049502b9d6cf7e"
+                    "url": "https://files.pythonhosted.org/packages/d5/6e/f00492653d0fdf6497a181a1c1d46bbea5a2383e7faf4c8ca6d6f3d2581d/numpy-1.14.5.zip",
+                    "sha256": "a4a433b3a264dbc9aa9c7c241e87c0358a503ea6394f8737df1683c7c9a102ac"
                 }
             ]
         },
@@ -330,7 +330,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "2.4.13.3",
+                    "branch": "2.4.13.6",
                     "url": "https://github.com/opencv/opencv"
                 }
             ]
