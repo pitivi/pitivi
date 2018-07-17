@@ -341,7 +341,7 @@ class FlatpakPackage(FlatpakObject):
             return
 
         self.flatpak("install", self.repo.name, self.name,
-                     self.branch, "--reinstall", show_output=True,
+                     self.branch, "--reinstall", "-y", show_output=True,
                      comment="Installing %s" % self.name)
 
     def update(self):
