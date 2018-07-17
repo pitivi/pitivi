@@ -330,7 +330,6 @@
                 "--disable-avdevice",
                 "--disable-postproc",
                 "--disable-programs",
-                "--disable-ffserver",
                 "--disable-ffplay",
                 "--disable-ffprobe",
                 "--disable-ffmpeg",
@@ -343,7 +342,6 @@
                 "--disable-vdpau",
                 "--disable-filters",
                 "--disable-doc",
-                "--disable-vda",
                 "--disable-d3d11va",
                 "--disable-dxva2",
                 "--disable-audiotoolbox",
@@ -368,8 +366,9 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "branch": "6d7192bcb7bbab17dc194e8dbb56c208bced0a92"
+                    "url": "https://git.ffmpeg.org/ffmpeg.git",
+                    "disable-shallow-clone": true,
+                    "branch": "release/4.0"
                 }
             ]
         },
@@ -394,7 +393,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "2.4.13.3",
+                    "branch": "2.4.13.7",
                     "url": "https://github.com/opencv/opencv"
                 }
             ]
@@ -493,12 +492,6 @@
                     "branch": "master",
                     "disable-shallow-clone": true,
                     "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
-                },
-                {
-                    "type": "git",
-                    "url": "https://git.ffmpeg.org/ffmpeg.git",
-                    "disable-shallow-clone": true,
-                    "branch": "master"
                 },
                 {
                     "type": "git",
