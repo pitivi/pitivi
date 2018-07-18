@@ -402,6 +402,16 @@
             ]
         },
         {
+            "name": "libunwind",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/libunwind/libunwind.git",
+                    "commit": "v1.2.1"
+                }
+            ]
+        },
+        {
             "name": "gstreamer",
             "buildsystem": "meson",
             "builddir": true,
