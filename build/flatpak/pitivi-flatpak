@@ -328,10 +328,10 @@ class FlatpakPackage(FlatpakObject):
                     return True
         else:
             try:
-                self.flatpak("info", self.name)
+                self.flatpak("info", self.name, self.branch)
                 return True
             except subprocess.CalledProcessError:
-                return False
+                pass
 
         return False
 
