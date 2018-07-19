@@ -20,9 +20,61 @@
 import code
 import sys
 
+from gi.repository import GObject
 from gi.repository import Gtk
 from utils import FakeOut
 from utils import swap_std
+
+
+class ConsoleHistory(GObject.Object):
+    """Represents a console commands history."""
+
+    __gsignals__ = {
+        "pos-changed": (GObject.SIGNAL_RUN_FIRST, None, ()),
+    }
+
+    def __init__(self):
+        GObject.Object.__init__(self)
+        self._pos = 0
+        self._history = []
+
+    def add(self, command):
+        """Adds a command line to the history."""
+        if command.strip():
+            if self._history and command == self._history[-1]:
+                return
+            if self._history and not self._history[-1].strip():
+                self._history.pop()
+            self._history.append(command)
+            self._pos = len(self._history) - 1
+
+    def get(self):
+        """Gets the command line at the current position."""
+        return self._history[self._pos]
+
+    # pylint: disable=invalid-name
+    def up(self, current_command):
+        """Sets the current command line with the previous used command line."""
+        if self._pos > 0:
+            if self._pos < len(self._history) - 1:
+                self._history[self._pos] = current_command
+                self._pos -= 1
+            elif self._pos == len(self._history) - 1:
+                if self._history[-1] != current_command:
+                    self._history.append(current_command)
+                else:
+                    self._pos -= 1
+            else:
+                return
+        if self._history:
+            self.emit("pos-changed")
+
+    def down(self, current_command):
+        """Sets the current command line with the next available used command line."""
+        if self._pos < len(self._history) - 1:
+            self._history[self._pos] = current_command
+            self._pos += 1
+            self.emit("pos-changed")
 
 
 class ConsoleBuffer(Gtk.TextBuffer):
@@ -39,9 +91,14 @@ class ConsoleBuffer(Gtk.TextBuffer):
         self._stderr = FakeOut(self)
         self._console = code.InteractiveConsole(namespace)
 
+        self.history = ConsoleHistory()
+        namespace["__history__"] = self.history
+        self.history.connect("pos-changed", self.__history_pos_changed_cb)
+
     def process_command_line(self):
         """Process the current input command line executing it if complete."""
         cmd = self.get_command_line()
+        self.history.add(cmd)
         after_prompt_mark = self.get_mark(self.AFTER_PROMPT_MARK)
 
         with swap_std(self._stdout, self._stderr):
@@ -93,3 +150,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
         end_iter = self.get_end_iter()
         self.delete(after_prompt_iter, end_iter)
         self.insert(self.get_end_iter(), cmd)
+
+    def __history_pos_changed_cb(self, history):
+        cmd = history.get()
+        self.set_command_line(cmd)
