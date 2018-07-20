@@ -24,6 +24,7 @@ from gettext import gettext as _
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
@@ -58,12 +59,19 @@ class ProjectInfoRow(Gtk.ListBoxRow):
         # show it during projects removal screen.
         self.select_button.hide()
 
-        builder.get_object("project_thumbnail").set_from_pixbuf(Project.get_thumb(self.uri))
+        self.__thumb = builder.get_object("project_thumbnail")
+        # Defer loading of thumbnail.
+        GLib.idle_add(self.__load_thumb)
+
         builder.get_object("project_name_label").set_text(self.name)
         builder.get_object("project_uri_label").set_text(
             beautify_project_path(recent_project_item.get_uri_display()))
         builder.get_object("project_last_updated_label").set_text(
             beautify_last_updated_timestamp(recent_project_item.get_modified()))
+
+    def __load_thumb(self):
+        self.__thumb.set_from_pixbuf(Project.get_thumb(self.uri))
+        return False
 
 
 # pylint: disable=too-many-instance-attributes
