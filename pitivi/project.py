@@ -44,6 +44,7 @@ from pitivi.preset import VideoPresetManager
 from pitivi.render import Encoders
 from pitivi.settings import get_dir
 from pitivi.settings import xdg_cache_home
+from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
@@ -836,6 +837,16 @@ class Project(Loggable, GES.Project):
             except FileNotFoundError:
                 pass
 
+    @staticmethod
+    def __pick_thumb_from_assets_thumbs(assets):
+        """Picks project thumbnail from assets thumbnails."""
+        for asset in assets:
+            thumb_cache = ThumbnailCache.get(asset)
+            thumb = thumb_cache.get_preview_thumbnail()
+            if thumb:
+                # First asset that has a preview thumbnail.
+                return thumb
+
     def create_thumb(self):
         """Creates project thumbnails."""
         thumb_path = self.get_thumb_path(self.uri, ORIGINAL_THUMB_DIR)
@@ -848,7 +859,15 @@ class Project(Loggable, GES.Project):
         # the assets in the current project, the one with maximum file size
         # will be our project thumbnail - http://bit.ly/thumbnail-generation
 
-        assets_uri = [asset.props.id for asset in self.listSources()]
+        assets = self.listSources()
+        assets_uri = [asset.props.id for asset in assets]
+
+        if not assets_uri:
+            # There are no assets in the project,
+            # so make sure there are no project thumbs.
+            self.__remove_thumbs()
+            return
+
         normal_thumb_path = None
         large_thumb_path = None
         normal_thumb_size = 0
@@ -887,11 +906,14 @@ class Project(Loggable, GES.Project):
                 shutil.copyfile(normal_thumb_path, thumb_path)
             else:
                 shutil.copyfile(large_thumb_path, thumb_path)
-            self.__create_scaled_thumb()
         else:
-            # No asset thumbs available, so remove the existing
-            # project thumbnails, if any.
-            self.__remove_thumbs()
+            # No thumbnails available in the XDG cache.
+            thumb = self.__pick_thumb_from_assets_thumbs(assets)
+            if not thumb:
+                return
+            thumb.savev(thumb_path, "png", [], [])
+
+        self.__create_scaled_thumb()
 
     def set_rendering(self, rendering):
         """Sets the a/v restrictions for rendering or for editing."""
