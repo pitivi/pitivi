@@ -348,7 +348,7 @@ class FlatpakPackage(FlatpakObject):
             self.install()
             return
 
-        self.flatpak("update", self.name, self.branch, show_output=True,
+        self.flatpak("update", self.name, self.branch, "-y", show_output=True,
                      comment="Updating %s" % self.name)
 
     def run_app(self, *args):
