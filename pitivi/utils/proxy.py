@@ -321,7 +321,7 @@ class ProxyManager(GObject.Object, Loggable):
         self.emit("proxy-ready", asset, proxy)
         self.__emitProgress(proxy, 100)
 
-    def __transcoderErrorCb(self, transcoder, error, asset):
+    def __transcoderErrorCb(self, transcoder, error, unused_details, asset):
         self.emit("error-preparing-asset", asset, None, error)
 
     def __transcoderDoneCb(self, transcoder, asset):
