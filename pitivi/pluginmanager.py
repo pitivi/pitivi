@@ -93,6 +93,35 @@ class PluginManager(Loggable):
             return PluginType.SYSTEM
         return PluginType.USER
 
+    def get_extension(self, module_name):
+        """Gets the extension identified by the specified name.
+
+        Args:
+            module_name (str): The name of the extension.
+
+        Returns:
+            The extension if exists. Otherwise, `None`.
+        """
+        plugin = self.get_plugin_info(module_name)
+        if not plugin:
+            return None
+
+        return self.extension_set.get_extension(plugin)
+
+    def get_plugin_info(self, module_name):
+        """Gets the plugin info for the specified plugin name.
+
+        Args:
+            module_name (str): The name from the .plugin file of the module.
+
+        Returns:
+            Peas.PluginInfo: The plugin info if it exists. Otherwise, `None`.
+        """
+        for plugin in self.plugins:
+            if plugin.get_module_name() == module_name:
+                return plugin
+        return None
+
     def _load_plugins(self):
         """Loads plugins from settings."""
         plugin_names = self.app.settings.ActivePlugins

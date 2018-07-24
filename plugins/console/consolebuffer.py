@@ -77,16 +77,18 @@ class ConsoleHistory(GObject.Object):
 
 class ConsoleBuffer(Gtk.TextBuffer):
 
-    def __init__(self, namespace):
+    def __init__(self, namespace, welcome_message=""):
         Gtk.TextBuffer.__init__(self)
-
-        self.insert_at_cursor(sys.ps1)
-        self.prompt_mark = self.create_mark("after-prompt", self.get_end_iter(), left_gravity=True)
 
         self.prompt = sys.ps1
         self._stdout = FakeOut(self)
         self._stderr = FakeOut(self)
         self._console = code.InteractiveConsole(namespace)
+
+        self.insert(self.get_end_iter(), welcome_message)
+        self.before_prompt_mark = self.create_mark("before-prompt", self.get_end_iter(), left_gravity=True)
+        self.insert_at_cursor(sys.ps1)
+        self.prompt_mark = self.create_mark("after-prompt", self.get_end_iter(), left_gravity=True)
 
         self.history = ConsoleHistory()
         namespace["__history__"] = self.history
