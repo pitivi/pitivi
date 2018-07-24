@@ -67,8 +67,10 @@ class ConsoleWidget(Gtk.ScrolledWindow):
             return True
 
         if event.keyval in (Gdk.KEY_KP_Down, Gdk.KEY_Down):
+            buf.history.down(buf.get_command_line())
             return True
         if event.keyval in (Gdk.KEY_KP_Up, Gdk.KEY_Up):
+            buf.history.up(buf.get_command_line())
             return True
 
         if event.keyval in (Gdk.KEY_KP_Left, Gdk.KEY_Left, Gdk.KEY_BackSpace):
