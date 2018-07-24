@@ -18,7 +18,7 @@ if get_option('build-gst')
     subproject('gst-transcoder')
 endif
 
-gst_dep = dependency('gstreamer-1.0', version : '>= 1.14.0',
+gst_dep = dependency('gstreamer-1.0', version : '>= 1.14.2',
     fallback : ['gstreamer', 'gst_dep'])
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
