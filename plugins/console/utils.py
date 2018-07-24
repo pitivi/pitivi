@@ -46,7 +46,7 @@ def display_autocompletion(last_obj, matches, text_buffer,
     if len(matches) == 1:
         tokens = matches[0].split(last_obj)
         if len(tokens) >= 1:
-            print(tokens[1], end="")
+            text_buffer.insert(text_buffer.get_end_iter(), tokens[1])
     elif len(matches) > 1:
         if new_command.startswith(old_command):
             # Complete the rest of the command if they have a common prefix.
@@ -106,12 +106,13 @@ class Namespace(dict):
 class FakeOut(TextIOBase):
     """Replacement for sys.stdout/err which redirects writes."""
 
-    def __init__(self, buf):
+    def __init__(self, buf, tag):
         TextIOBase.__init__(self)
         self.buf = buf
+        self.tag = tag
 
     def write(self, string):
-        self.buf.write(string)
+        self.buf.write(string, self.tag)
 
     def writelines(self, lines):
-        self.buf.write(lines)
+        self.buf.write(lines, self.tag)

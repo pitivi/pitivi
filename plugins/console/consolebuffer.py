@@ -76,13 +76,16 @@ class ConsoleHistory(GObject.Object):
 
 
 class ConsoleBuffer(Gtk.TextBuffer):
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, namespace, welcome_message=""):
         Gtk.TextBuffer.__init__(self)
 
         self.prompt = sys.ps1
-        self._stdout = FakeOut(self)
-        self._stderr = FakeOut(self)
+        self.output = self.create_tag("output")
+        self.error = self.create_tag("error")
+        self._stdout = FakeOut(self, self.output)
+        self._stderr = FakeOut(self, self.error)
         self._console = code.InteractiveConsole(namespace)
 
         self.insert(self.get_end_iter(), welcome_message)
@@ -101,6 +104,9 @@ class ConsoleBuffer(Gtk.TextBuffer):
         cmd = self.get_command_line()
         self.history.add(cmd)
 
+        before_prompt_iter = self.get_iter_at_mark(self.before_prompt_mark)
+        self.remove_all_tags(before_prompt_iter, self.get_end_iter())
+
         with swap_std(self._stdout, self._stderr):
             self.write("\n")
             is_command_incomplete = self._console.push(cmd)
@@ -109,6 +115,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
             self.prompt = sys.ps2
         else:
             self.prompt = sys.ps1
+        self.move_mark(self.before_prompt_mark, self.get_end_iter())
         self.write(self.prompt)
 
         self.move_mark(self.prompt_mark, self.get_end_iter())
@@ -121,9 +128,12 @@ class ConsoleBuffer(Gtk.TextBuffer):
         res = cursor_iter.compare(prompt_iter)
         return (before and res == -1) or (at and res == 0) or (after and res == 1)
 
-    def write(self, text):
+    def write(self, text, tag=None):
         """Writes a text to the buffer."""
-        self.insert(self.get_end_iter(), text)
+        if tag is None:
+            self.insert(self.get_end_iter(), text)
+        else:
+            self.insert_with_tags(self.get_end_iter(), text, tag)
 
     def get_command_line(self):
         """Gets the last command line after the prompt.
@@ -224,7 +234,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
         self.place_cursor(end_iter)
         self.write(text)
 
-    def __insert_text_cb(self, buf, it, text, user_data):
+    def __insert_text_cb(self, buf, unused_location, text, unused_len):
         command = self.get_command_line()
         if text == "\t" and command.strip() != "":
             # If input text is '\t' and command doesn't start with spaces or tab

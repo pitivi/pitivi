@@ -20,11 +20,16 @@
 import sys
 from gettext import gettext as _
 
+from gi.repository import Gdk
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Pango
 from gi.repository import Peas
 from utils import Namespace
 from widgets import ConsoleWidget
+
+from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.settings import ConfigError
 
 
 class PitiviNamespace(Namespace):
@@ -65,6 +70,11 @@ class Console(GObject.GObject, Peas.Activatable):
     __gtype_name__ = "ConsolePlugin"
     object = GObject.Property(type=GObject.Object)
 
+    DEFAULT_COLOR = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)
+    DEFAULT_STDERR_COLOR = Gdk.RGBA(0.96, 0.47, 0.0, 1.0)
+    DEFAULT_STDOUT_COLOR = Gdk.RGBA(1.0, 1.0, 1.0, 1.0)
+    DEFAULT_FONT = Pango.FontDescription.from_string("Monospace Regular 12")
+
     def __init__(self):
         GObject.GObject.__init__(self)
         self.window = None
@@ -79,11 +89,80 @@ class Console(GObject.GObject, Peas.Activatable):
     def do_activate(self):
         api = self.object
         self.app = api.app
+        try:
+            self.app.settings.addConfigSection("console")
+        except ConfigError:
+            pass
+
+        try:
+            self.app.settings.addConfigOption(attrname="consoleColor",
+                                              section="console",
+                                              key="console-color",
+                                              notify=True,
+                                              default=Console.DEFAULT_COLOR)
+        except ConfigError:
+            pass
+
+        try:
+            self.app.settings.addConfigOption(attrname="consoleErrorColor",
+                                              section="console",
+                                              key="console-error-color",
+                                              notify=True,
+                                              default=Console.DEFAULT_STDERR_COLOR)
+        except ConfigError:
+            pass
+
+        try:
+            self.app.settings.addConfigOption(attrname="consoleOutputColor",
+                                              section="console",
+                                              key="console-output-color",
+                                              notify=True,
+                                              default=Console.DEFAULT_STDOUT_COLOR)
+        except ConfigError:
+            pass
+
+        try:
+            self.app.settings.addConfigOption(attrname="consoleFont",
+                                              section="console",
+                                              key="console-font",
+                                              notify=True,
+                                              default=Console.DEFAULT_FONT.to_string())
+        except ConfigError:
+            pass
+
+        self.app.settings.reload_attribute_from_file("console", "consoleColor")
+        self.app.settings.reload_attribute_from_file("console",
+                                                     "consoleErrorColor")
+        self.app.settings.reload_attribute_from_file("console",
+                                                     "consoleOutputColor")
+        self.app.settings.reload_attribute_from_file("console", "consoleFont")
+
+        PreferencesDialog.add_section("console", _("Console"))
+        PreferencesDialog.addColorPreference(attrname="consoleColor",
+                                             label=_("Color"),
+                                             description=None,
+                                             section="console")
+        PreferencesDialog.addColorPreference(attrname="consoleErrorColor",
+                                             # Translators: The color of the content from stderr.
+                                             label=_("Standard error color"),
+                                             description=None,
+                                             section="console")
+        PreferencesDialog.addColorPreference(attrname="consoleOutputColor",
+                                             # Translators: The color of the content from stdout.
+                                             label=_("Standard output color"),
+                                             description=None,
+                                             section="console")
+        PreferencesDialog.addFontPreference(attrname="consoleFont",
+                                            label=_("Font"),
+                                            description=None,
+                                            section="console")
+
         self._setup_dialog()
         self.add_menu_item()
         self.menu_item.show()
 
     def do_deactivate(self):
+        PreferencesDialog.remove_section("console")
         self.window.destroy()
         self.remove_menu_item()
         self.window = None
@@ -107,16 +186,20 @@ class Console(GObject.GObject, Peas.Activatable):
     def _setup_dialog(self):
         namespace = PitiviNamespace(self.app)
         self.window = Gtk.Window()
-        welcome_message = "".join(self.create_welcome_message(namespace))
+        welcome_message = "".join(self._create_welcome_message(namespace))
         self.terminal = ConsoleWidget(namespace, welcome_message)
         self.terminal.connect("eof", self.__eof_cb)
+
+        self._init_colors()
+        self.terminal.set_font(self.app.settings.consoleFont)
+        self._connect_settings_signals()
 
         self.window.set_default_size(600, 400)
         self.window.set_title(_("Pitivi Console"))
         self.window.connect("delete-event", self.__delete_event_cb)
         self.window.add(self.terminal)
 
-    def create_welcome_message(self, namespace):
+    def _create_welcome_message(self, namespace):
         console_plugin_info = self.app.plugin_manager.get_plugin_info("console")
         name = console_plugin_info.get_name()
         version = console_plugin_info.get_version() or ""
@@ -130,6 +213,37 @@ class Console(GObject.GObject, Peas.Activatable):
         yield "\n"
         yield _("Type \"{help}(<command>)\" for more information.").format(help="help")
         yield "\n\n"
+
+    def _init_colors(self):
+        """Sets the colors from Pitivi settings."""
+        self.terminal.set_stderr_color(self.app.settings.consoleErrorColor)
+        self.terminal.set_stdout_color(self.app.settings.consoleOutputColor)
+        self.terminal.set_color(self.app.settings.consoleColor)
+
+    def _connect_settings_signals(self):
+        """Connects the settings' signals."""
+        self.app.settings.connect("consoleColorChanged", self.__color_changed_cb)
+        self.app.settings.connect("consoleErrorColorChanged",
+                                  self.__error_color_changed_cb)
+        self.app.settings.connect("consoleOutputColorChanged",
+                                  self.__output_color_changed_cb)
+        self.app.settings.connect("consoleFontChanged", self.__font_changed_cb)
+
+    def __color_changed_cb(self, settings):
+        if self.terminal:
+            self.terminal.set_color(settings.consoleColor)
+
+    def __error_color_changed_cb(self, settings):
+        if self.terminal:
+            self.terminal.set_stderr_color(settings.consoleErrorColor)
+
+    def __output_color_changed_cb(self, settings):
+        if self.terminal:
+            self.terminal.set_stdout_color(settings.consoleOutputColor)
+
+    def __font_changed_cb(self, settings):
+        if self.terminal:
+            self.terminal.set_font(settings.consoleFont)
 
     def __menu_item_activate_cb(self, unused_data):
         self.window.show_all()

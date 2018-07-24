@@ -16,13 +16,33 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""The developer console widget:"""
+"""The developer console widget."""
 from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Pango
 
 from consolebuffer import ConsoleBuffer
+
+
+class ConsoleView(Gtk.TextView):
+    """A TextView which removes tags from pasted text."""
+
+    def do_paste_clipboard(self):
+        # pylint: disable=arguments-differ
+        buf = self.get_buffer()
+        insert = buf.get_insert()
+        paste_mark = buf.create_mark("paste-mark", buf.get_iter_at_mark(insert),
+                                     left_gravity=True)
+
+        Gtk.TextView.do_paste_clipboard(self)
+
+        start = buf.get_iter_at_mark(paste_mark)
+        end = buf.get_iter_at_mark(insert)
+
+        buf.remove_all_tags(start, end)
+        buf.delete_mark(paste_mark)
 
 
 class ConsoleWidget(Gtk.ScrolledWindow):
@@ -40,7 +60,7 @@ class ConsoleWidget(Gtk.ScrolledWindow):
 
     def __init__(self, namespace, welcome_message=""):
         Gtk.ScrolledWindow.__init__(self)
-        self._view = Gtk.TextView()
+        self._view = ConsoleView()
         buf = ConsoleBuffer(namespace, welcome_message)
         self._view.set_buffer(buf)
         self._view.set_editable(True)
@@ -50,6 +70,21 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         buf.connect("mark-set", self.__mark_set_cb)
         buf.connect("insert-text", self.__insert_text_cb)
 
+        # Font color and style.
+        self._provider = Gtk.CssProvider()
+        self._css_values = {
+            "textview": {
+                "font-family": None,
+                "font-size": None,
+                "font-style": None,
+                "font-variant": None,
+                "font-weight": None
+            },
+            "textview > *": {
+                "color": None
+            }
+        }
+
     def scroll_to_end(self):
         """Scrolls the view to the end."""
         end_iter = self._view.get_buffer().get_end_iter()
@@ -57,6 +92,52 @@ class ConsoleWidget(Gtk.ScrolledWindow):
                                   xalign=0, yalign=0)
         return False
 
+    def set_font(self, font_desc):
+        """Sets the font.
+
+        Args:
+            font (str): a PangoFontDescription as a string.
+        """
+        pango_font_desc = Pango.FontDescription.from_string(font_desc)
+        self._css_values["textview"]["font-family"] = pango_font_desc.get_family()
+        self._css_values["textview"]["font-size"] = "%dpt" % int(pango_font_desc.get_size() / Pango.SCALE)
+        self._css_values["textview"]["font-style"] = pango_font_desc.get_style().value_nick
+        self._css_values["textview"]["font-variant"] = pango_font_desc.get_variant().value_nick
+        self._css_values["textview"]["font-weight"] = int(pango_font_desc.get_weight())
+        self._apply_css()
+
+    def set_color(self, color):
+        """Sets the color.
+
+        Args:
+            color (Gdk.RGBA): a color.
+        """
+        self._css_values["textview > *"]["color"] = color.to_string()
+        self._apply_css()
+
+    def _apply_css(self):
+        css = ""
+        for css_klass, props in self._css_values.items():
+            css += "%s {" % css_klass
+            for prop, value in props.items():
+                if value is not None:
+                    css += "%s: %s;" % (prop, value)
+            css += "} "
+        css = css.encode("UTF-8")
+        self._provider.load_from_data(css)
+        Gtk.StyleContext.add_provider(self._view.get_style_context(),
+                                      self._provider,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def set_stdout_color(self, color):
+        """Sets the color of the stdout text."""
+        self._view.get_buffer().output.set_property("foreground-rgba", color)
+
+    def set_stderr_color(self, color):
+        """Sets the color of the stderr text."""
+        self._view.get_buffer().error.set_property("foreground-rgba", color)
+
+    # pylint: disable=too-many-return-statements
     def __key_press_event_cb(self, view, event):
         buf = view.get_buffer()
         state = event.state & Gtk.accelerator_get_default_mod_mask()
