@@ -75,6 +75,7 @@ class Console(GObject.GObject, Peas.Activatable):
         namespace = {"app": self.app}
         self.window = Gtk.Window()
         self.terminal = ConsoleWidget(namespace)
+        self.terminal.connect("eof", self.__eof_cb)
 
         self.window.set_default_size(600, 400)
         self.window.set_title(_("Pitivi Console"))
@@ -84,6 +85,10 @@ class Console(GObject.GObject, Peas.Activatable):
     def __menu_item_activate_cb(self, unused_data):
         self.window.show_all()
         self.window.set_keep_above(True)
+
+    def __eof_cb(self, unused_widget):
+        self.window.hide()
+        return True
 
     def __delete_event_cb(self, unused_widget, unused_data):
         return self.window.hide_on_delete()

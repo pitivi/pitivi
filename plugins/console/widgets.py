@@ -19,6 +19,7 @@
 """The developer console widget:"""
 from gi.repository import Gdk
 from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gtk
 
 from consolebuffer import ConsoleBuffer
@@ -32,6 +33,10 @@ class ConsoleWidget(Gtk.ScrolledWindow):
     GtkTextBuffer. This class is (and should be) independent of the application
     it is integrated with.
     """
+
+    __gsignals__ = {
+        "eof": (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
 
     def __init__(self, namespace):
         Gtk.ScrolledWindow.__init__(self)
@@ -52,21 +57,30 @@ class ConsoleWidget(Gtk.ScrolledWindow):
                                   xalign=0, yalign=0)
         return False
 
-    @classmethod
-    def __key_press_event_cb(cls, view, event):
+    def __key_press_event_cb(self, view, event):
         buf = view.get_buffer()
+        state = event.state & Gtk.accelerator_get_default_mod_mask()
+        ctrl = state & Gdk.ModifierType.CONTROL_MASK
+
         if event.keyval == Gdk.KEY_Return:
             buf.process_command_line()
             return True
+
         if event.keyval in (Gdk.KEY_KP_Down, Gdk.KEY_Down):
             return True
         if event.keyval in (Gdk.KEY_KP_Up, Gdk.KEY_Up):
             return True
+
         if event.keyval in (Gdk.KEY_KP_Left, Gdk.KEY_Left, Gdk.KEY_BackSpace):
             return buf.is_cursor(at=True)
+
         if event.keyval in (Gdk.KEY_KP_Home, Gdk.KEY_Home):
             buf.place_cursor(buf.get_iter_at_mark(buf.prompt_mark))
             return True
+
+        if (ctrl and event.keyval == Gdk.KEY_d) or event.keyval == Gdk.KEY_Escape:
+            return self.emit("eof")
+
         return False
 
     def __mark_set_cb(self, buf, unused_iter, mark):
