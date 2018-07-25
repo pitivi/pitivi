@@ -4,7 +4,6 @@
 #include <py3cairo.h>
 #include <gst/gst.h>
 
-static Pycairo_CAPI_t *Pycairo_CAPI;
 static GObjectClass * gobject_class;
 
 /*
