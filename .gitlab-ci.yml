@@ -5,6 +5,9 @@ build:
   cache:
     paths:
       - .flatpak-builder
+  artifacts:
+    paths:
+      - xunit.xml
   script:
     - ls -a
     - export
@@ -12,4 +15,13 @@ build:
     - flatpak-builder --force-clean app build/flatpak/org.pitivi.Pitivi.json --ccache
     - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json meson mesonbuild/
     - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json ninja -C mesonbuild/
-    - xvfb-run  -n 32 -s "-screen 0 640x480x24" flatpak-builder --env=PITIVI_DEVELOPMENT=1 --run app build/flatpak/org.pitivi.Pitivi.json gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" flatpak-builder --env=PITIVI_DEVELOPMENT=1 --run app build/flatpak/org.pitivi.Pitivi.json gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file xunit.xml
+
+test-results:
+  artifacts:
+    paths:
+      - test-results
+  dependencies:
+    - build
+  stage: deploy-test-results
+    - scripts/update_test_results
