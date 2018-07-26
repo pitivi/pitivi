@@ -19,6 +19,7 @@
 from gettext import gettext as _
 from time import time
 
+import numpy
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import GObject
@@ -77,7 +78,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __init__(self, app):
         Gtk.Box.__init__(self)
-        self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
 
@@ -100,6 +100,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
+
+        self.__cursor = None
+        self.__last_click_pos = numpy.array([])
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -139,14 +142,12 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         if self.docked:
             self.pack_start(self.target, True, True, 0)
-            # Force the AspectFrame to be tall (and wide) enough to look good.
-            # TODO: review this code to create a smarter algorithm.
-            if not self._compactMode:
-                req = self.buttons.get_preferred_size()[0]
-                width = req.width
-                height = int(width / self.target.props.ratio)
-                width += 110  # Magic number to minimize dead padding
-                self.target.set_size_request(width, height)
+            # Make sure that the viewer is atleast as wide as the
+            # controller buttons so that we don't get empty left
+            # and right margins while downsizing the viewer.
+            # width = self.buttons.get_preferred_size()[0].width
+            # height = int(width / self.target.props.ratio)
+            # self.target.set_size_request(width, height)
         else:
             self.external_vbox.pack_start(self.target, False, False, 0)
             self.target.props.expand = True
@@ -205,12 +206,35 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
 
+        # Corner marker.
+        marker = Gtk.DrawingArea()
+        # Number of lines to draw in the corner marker.
+        lines = 3
+        # Space between each line.
+        space = 5
+        marker_length = space * (lines + 1)
+        marker.set_size_request(marker_length, marker_length)
+        marker.set_halign(Gtk.Align.START)
+        marker.set_tooltip_text(_("Drag to resize the viewer"))
+        marker.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+                          Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                          Gdk.EventMask.BUTTON_PRESS_MASK |
+                          Gdk.EventMask.BUTTON_RELEASE_MASK |
+                          Gdk.EventMask.POINTER_MOTION_MASK)
+        marker.connect("draw", self.__draw_corner_marker_cb, lines, space, marker_length)
+        marker.connect("enter-notify-event", self.__marker_enter_cb)
+        marker.connect("leave-notify-event", self.__marker_leave_cb)
+        marker.connect("button-press-event", self.__marker_button_press_cb)
+        marker.connect("button-release-event", self.__marker_button_release_cb)
+        marker.connect("motion-notify-event", self.__marker_drag_cb)
+        self.pack_end(marker, False, False, 0)
+
         # Buttons/Controls
         bbox = Gtk.Box()
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        self.pack_end(bbox, False, False, SPACING)
+        self.pack_end(bbox, False, False, 0)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -278,6 +302,109 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.buttons_container = bbox
         self.show_all()
         self.external_vbox.show_all()
+
+    def __draw_corner_marker_cb(self, unused_widget, cr, lines, space, marker_length):
+        cr.set_line_width(1)
+
+        marker_color = self.app.gui.get_style_context().lookup_color("borders")
+        cr.set_source_rgb(marker_color.color.red,
+                          marker_color.color.green,
+                          marker_color.color.blue)
+
+        for i in range(lines):
+            cr.move_to(space, space * i)
+            cr.line_to(marker_length - space * i, space * lines)
+            cr.stroke()
+
+    def __marker_enter_cb(self, widget, unused_event):
+        if not self.__cursor:
+            self.__cursor = Gdk.Cursor.new(Gdk.CursorType.BOTTOM_LEFT_CORNER)
+        widget.get_window().set_cursor(self.__cursor)
+        widget.set_has_tooltip(True)
+
+    def __marker_leave_cb(self, widget, unused_event):
+        # When the mouse cursor is just about to leave the corner marker,
+        # the cursor changes from drag to normal but the tooltip remains
+        # visible. We need to hide the tooltip because viewer resizing
+        # won't happen if the user clicks at this position and drags.
+        widget.set_has_tooltip(False)
+
+    def __marker_button_press_cb(self, widget, event):
+        if event.button == 1:
+            click_pos = numpy.array([event.x, event.y])
+            click_pos_root = numpy.array([event.x_root, event.y_root])
+            diff = numpy.array([event.x_root - event.x, event.y_root + 20 - event.y])
+            # print(click_pos, click_pos_root, diff)
+            hpaned = self.app.gui.editor.mainhpaned
+            vpaned = self.app.gui.editor.toplevel_widget
+            # print(hpaned.get_position(), vpaned.get_position())
+
+            self.__shift_left = diff[0] - hpaned.get_position()
+            self.__shift_down = diff[1] - vpaned.get_position()
+
+            self.__last_click_pos = numpy.array([event.x_root, event.y_root])
+
+            # Avoid tooltip from appearing while dragging the corner marker.
+            widget.set_has_tooltip(False)
+
+    def __marker_button_release_cb(self, widget, unused_event):
+        self.__last_click_pos = numpy.array([])
+        widget.set_has_tooltip(True)
+
+    def __marker_drag_cb(self, unused_widget, event):
+        if self.__last_click_pos.size:
+            curr_position = numpy.array([event.x_root, event.y_root])
+            translation = self.__last_click_pos - curr_position
+            self.__last_click_pos = curr_position
+
+            hpaned = self.app.gui.editor.mainhpaned
+            vpaned = self.app.gui.editor.toplevel_widget
+            aspect_frame_size = self.target.get_allocation()
+            viewer_height = int(aspect_frame_size.width / self.target.props.ratio)
+            viewer_width = int(viewer_height * self.target.props.ratio)
+
+            x_pointer_pos = event.x_root - self.__shift_left
+            y_pointer_pos = event.y_root - self.__shift_down
+            hpaned_pos = hpaned.get_position()
+            vpaned_pos = vpaned.get_position()
+
+            vpaned.set_position(y_pointer_pos)
+            width = int(aspect_frame_size.height * self.target.props.ratio) + 2 * SPACING
+            window_width = self.app.gui.get_size()[0]
+            hpaned.set_position(window_width - width)
+
+            # hpaned.set_position(x_pointer_pos)
+            # vpaned.set_position(y_pointer_pos)
+
+            # Considering the bottom left corner of the viewer container as origin.
+
+            # if x_pointer_pos > hpaned_pos and y_pointer_pos < vpaned_pos:
+            #     pass
+            # elif x_pointer_pos < hpaned_pos and y_pointer_pos < vpaned_pos:
+            #     # Mouse pointer is in 2nd quadrant.
+            #     vpaned.set_position(y_pointer_pos)
+            #     # Mouse pointer is in 1st quadrant.
+            #     if aspect_frame_size.height > viewer_height:
+            #         hpaned.set_position(x_pointer_pos)
+            # elif x_pointer_pos < hpaned_pos and y_pointer_pos > vpaned_pos:
+            #     # Mouse pointer is in 3rd quadrant.
+            #     pass
+            # else:
+            #     # Mouse pointer is in 4th quadrant.
+            #     pass
+            # if translation[1] <= 0:
+            #     vpaned.set_position(event.y_root - self.__shift_down)
+            #     if aspect_frame_size.height > viewer_height:
+            #         # hpaned.set_position(hpaned.get_position() - translation[0])
+            #         hpaned.set_position(event.x_root - self.__shift_left)
+            # elif translation[1] > 0:
+            #     hpaned.set_position(event.x_root - self.__shift_left)
+            #     if aspect_frame_size.width <= viewer_width:
+            #         vpaned.set_position(event.y_root - self.__shift_down)
+            # User is downsizing vertically.
+            # width = int(aspect_frame_size.height * self.target.props.ratio) + 2 * SPACING
+            # window_width = self.app.gui.get_size()[0]
+            # hpaned.set_position(window_width - width)
 
     def activateCompactMode(self):
         self.back_button.hide()
@@ -353,6 +480,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
             self.__createNewViewer()
+        self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
@@ -392,6 +520,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.show()
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
+        self.buttons_container.set_margin_bottom(0)
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
 
@@ -490,8 +619,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     def __init__(self, widget):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
-        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
-                                 ratio=4.0 / 3.0, obey_child=False)
+        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
+                                 border_width=SPACING, obey_child=False)
         Loggable.__init__(self)
 
         self.add(widget)
