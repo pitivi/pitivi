@@ -1,15 +1,26 @@
-image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.28
+stages:
+  - build
 
 build:
+  image: registry.gitlab.gnome.org/gnome/pitivi:master
   stage: build
-  cache:
+  artifacts:
     paths:
-      - .flatpak-builder
+      - xunit.xml
   script:
-    - ls -a
-    - export
-    - mkdir -p ~/.ccache/ && touch ~/.ccache/ccache.conf
-    - flatpak-builder --force-clean app build/flatpak/org.pitivi.Pitivi.json --ccache
-    - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json meson mesonbuild/
-    - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json ninja -C mesonbuild/
-    - xvfb-run  -n 32 -s "-screen 0 640x480x24" flatpak-builder --env=PITIVI_DEVELOPMENT=1 --run app build/flatpak/org.pitivi.Pitivi.json gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4
+    - export BUILDDIR=${HOME}/pitivi
+    - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
+    - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
+    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+
+    # Working around the fact that flatpak-builder *requires* the cache dir
+    # to be on the same filesystem as the build dir
+    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
+    - mv ${CI_PROJECT_DIR} ${BUILDDIR}
+    - mkdir -p ${CI_PROJECT_DIR}
+
+    - cd ${BUILDDIR}
+    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --force-clean app build/flatpak/org.pitivi.Pitivi.json
+    - ${RUN_IN_SANDBOX} meson mesonbuild/
+    - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
