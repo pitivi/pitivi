@@ -1,20 +1,81 @@
-image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.28
-
-
 stages:
+  - docker_image
   - build
   - test
 
+
 build:
+  image: registry.gitlab.gnome.org/pitivi/pitivi-ci-images/pitivi:master
   stage: build
-  cache:
+  artifacts:
     paths:
-      - .flatpak-builder
+      - xunit.xml
   script:
-    - ls -a
-    - export
-    - mkdir -p ~/.ccache/ && touch ~/.ccache/ccache.conf
-    - flatpak-builder --force-clean app build/flatpak/org.pitivi.Pitivi.json --ccache
-    - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json meson mesonbuild/
-    - flatpak-builder --run app build/flatpak/org.pitivi.Pitivi.json ninja -C mesonbuild/
-    - xvfb-run  -n 32 -s "-screen 0 640x480x24" flatpak-builder --env=PITIVI_DEVELOPMENT=1 --run app build/flatpak/org.pitivi.Pitivi.json gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4
+    - export BUILDDIR=${HOME}/pitivi
+    - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
+    - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
+    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+
+    # Working around the fact that flatpak-builder *requires* the cache dir
+    # to be on the same filesystem as the build dir
+    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
+    - mv ${CI_PROJECT_DIR} ${BUILDDIR}
+    - mkdir -p ${CI_PROJECT_DIR}
+
+    - cd ${BUILDDIR}
+    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --force-clean app build/flatpak/org.pitivi.Pitivi.json
+    - ${RUN_IN_SANDBOX} meson mesonbuild/
+    - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
+
+.build_emplate: &build_docker_image
+    image: docker:latest
+    services:
+        - docker:dind
+    script:
+        # For debugging
+        - echo ${BRANCH}
+        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}/pitivi:${BRANCH}"
+        - echo ${IMAGE}
+        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}"
+        - echo ${TMPIMAGENAME}
+        - export IMAGE_REGISTRY_URL=registry.gitlab.gnome.org/pitivi/pitivi-ci-images/pitivi:${BRANCH}
+
+        # Not using a Dockerfile because we need the container to be priviledged to run flatpak inside of it
+        # and it is not possible to use a priviledged `docker build`.
+        - export ALLURE_VERSION=2.7.0
+        - export ALLURE_DL_URL="https://bintray.com/qameta/generic/download_file?file_path=io%2Fqameta%2Fallure%2Fallure%2F2.7.0%2Fallure-${ALLURE_VERSION}.zip"
+        - export INSTALL_ALLURE="yum install java wget -y && wget ${ALLURE_DL_URL} -O allure.zip && unzip allure.zip && rm -Rf allure/ && mv allure-${ALLURE_VERSION} allure && chmod +x allure/bin/allure && rm allure.zip"
+        - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+
+        - export BUILDDIR="\${HOME}/pitivi"
+        - export CLONE_PITIVI="git clone https://gitlab.gnome.org/GNOME/pitivi.git --single-branch \${HOME}/pitivi -b ${BRANCH}"
+
+        - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --ccache --state-dir=\${HOME}/flatpak-cache"
+
+        - echo "docker run --privileged --name ${TMPIMAGENAME} ${IMAGE_REGISTRY_URL} bash -c \"${INSTALL_ALLURE} && ${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
+        - docker run --privileged --name ${TMPIMAGENAME} ${IMAGE_REGISTRY_URL} bash -c "${INSTALL_ALLURE} && ${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
+        - docker commit ${TMPIMAGENAME} ${IMAGE}
+        - docker rm ${TMPIMAGENAME}
+        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+        - docker push ${IMAGE}
+    only:
+        - triggers
+        - schedules
+    retry: 1
+
+pitivi:master:
+    stage: docker_image
+    before_script:
+        # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+        - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+        - export BRANCH=master
+    <<: *build_docker_image
+
+pitivi:1.0:
+    stage: docker_image
+    before_script:
+        # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
+        - export BRANCH=1.0
+        - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
+    <<: *build_docker_image
