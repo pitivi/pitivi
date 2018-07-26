@@ -19,6 +19,7 @@
 from gettext import gettext as _
 from time import time
 
+import numpy
 from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import GObject
@@ -77,7 +78,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __init__(self, app):
         Gtk.Box.__init__(self)
-        self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
 
@@ -100,6 +100,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
+
+        self.__marker_click_pos = numpy.array([])
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -205,12 +207,35 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
 
+        # Corner marker.
+        marker = Gtk.DrawingArea()
+        # Number of lines to draw in the corner marker.
+        lines = 3
+        # Space between each line.
+        space = 5
+        marker_length = space * (lines + 1)
+        marker.set_size_request(marker_length, marker_length)
+        marker.set_halign(Gtk.Align.START)
+        marker.set_tooltip_text(_("Drag to resize the viewer"))
+        marker.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+                          Gdk.EventMask.LEAVE_NOTIFY_MASK |
+                          Gdk.EventMask.BUTTON_PRESS_MASK |
+                          Gdk.EventMask.BUTTON_RELEASE_MASK |
+                          Gdk.EventMask.POINTER_MOTION_MASK)
+        marker.connect("draw", self.__draw_corner_marker_cb, lines, space, marker_length)
+        marker.connect("enter-notify-event", self.__marker_enter_cb)
+        marker.connect("leave-notify-event", self.__marker_leave_cb)
+        marker.connect("button-press-event", self.__marker_button_press_cb)
+        marker.connect("button-release-event", self.__marker_button_release_cb)
+        marker.connect("motion-notify-event", self.__marker_drag_cb)
+        self.pack_end(marker, False, False, 0)
+
         # Buttons/Controls
         bbox = Gtk.Box()
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        self.pack_end(bbox, False, False, SPACING)
+        self.pack_end(bbox, False, False, 0)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -260,7 +285,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.connect("clicked", self.undock)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
-        bbox.pack_start(self.undock_button, False, False, 0)
+        bbox.pack_start(self.undock_button, False, False, 6)
 
         self._haveUI = True
 
@@ -278,6 +303,42 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.buttons_container = bbox
         self.show_all()
         self.external_vbox.show_all()
+
+    def __draw_corner_marker_cb(self, unused_widget, cr, lines, space, marker_length):
+        cr.set_line_width(1)
+
+        marker_color = self.app.gui.get_style_context().lookup_color("borders")
+        cr.set_source_rgb(marker_color.color.red,
+                          marker_color.color.green,
+                          marker_color.color.blue)
+
+        for i in range(lines):
+            cr.move_to(space, space * i)
+            cr.line_to(marker_length - space * i, space * lines)
+            cr.stroke()
+
+    def __marker_enter_cb(self, widget, unused_event):
+        widget.set_has_tooltip(True)
+        widget.get_window().set_cursor(Gdk.Cursor.new(Gdk.CursorType.BOTTOM_LEFT_CORNER))
+
+    def __marker_leave_cb(self, widget, unused_event):
+        widget.set_has_tooltip(False)
+
+    def __marker_button_press_cb(self, unused_widget, event):
+        if event.type == Gdk.EventType._2BUTTON_PRESS or event.button == 1:
+            self.__marker_click_pos = numpy.array([event.x, event.y])
+
+    def __marker_button_release_cb(self, unused_widget, unused_event):
+        self.__marker_click_pos = numpy.array([])
+
+    def __marker_drag_cb(self, unused_widget, event):
+        if self.__marker_click_pos.size:
+            curr_position = numpy.array([event.x, event.y])
+            translation = self.__marker_click_pos - curr_position
+            separator_vpos = self.app.gui.editor.mainhpaned.get_position()
+            separator_hpos = self.app.gui.editor.toplevel_widget.get_position()
+            self.app.gui.editor.mainhpaned.set_position(separator_vpos - translation[0])
+            self.app.gui.editor.toplevel_widget.set_position(separator_hpos - translation[1])
 
     def activateCompactMode(self):
         self.back_button.hide()
@@ -353,6 +414,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
             self.__createNewViewer()
+        self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
@@ -392,6 +454,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.show()
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
+        self.buttons_container.set_margin_bottom(0)
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
 
@@ -494,6 +557,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
                                  ratio=4.0 / 3.0, obey_child=False)
         Loggable.__init__(self)
 
+        self.set_border_width(SPACING)
         self.add(widget)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
