@@ -77,7 +77,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __init__(self, app):
         Gtk.Box.__init__(self)
-        self.set_border_width(SPACING)
         self.app = app
         self.settings = app.settings
 
@@ -100,6 +99,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
+
+        self.__cursor = None
+        self.__translation = None
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -138,18 +140,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.target = ViewerWidget(self.overlay_stack)
 
         if self.docked:
-            self.pack_start(self.target, True, True, 0)
-            # Force the AspectFrame to be tall (and wide) enough to look good.
-            # TODO: review this code to create a smarter algorithm.
-            if not self._compactMode:
-                req = self.buttons.get_preferred_size()[0]
-                width = req.width
-                height = int(width / self.target.props.ratio)
-                width += 110  # Magic number to minimize dead padding
-                self.target.set_size_request(width, height)
+            self.pack_start(self.target, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, False, False, 0)
-            self.target.props.expand = True
+            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
             self.external_vbox.child_set(self.target, fill=True)
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
@@ -205,12 +198,38 @@ class ViewerContainer(Gtk.Box, Loggable):
             "configure-event", self._externalWindowConfigureCb)
         self.external_vbox = vbox
 
+        # Corner marker.
+        corner = Gtk.DrawingArea()
+        # Number of lines to draw in the corner marker.
+        lines = 3
+        # Space between each line.
+        space = 5
+        # Margin from left and bottom of viewer container.
+        margin = 2
+        corner_size = space * lines + margin
+        corner.set_size_request(corner_size, corner_size)
+        corner.set_halign(Gtk.Align.START)
+        corner.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK |
+                          Gdk.EventMask.BUTTON_PRESS_MASK |
+                          Gdk.EventMask.BUTTON_RELEASE_MASK |
+                          Gdk.EventMask.POINTER_MOTION_MASK)
+        hpane = self.app.gui.editor.mainhpaned
+        vpane = self.app.gui.editor.toplevel_widget
+        corner.connect("draw", self.__corner_draw_cb, lines, space, margin)
+        corner.connect("enter-notify-event", self.__corner_enter_notify_cb)
+        corner.connect("button-press-event", self.__corner_button_press_cb, hpane, vpane)
+        corner.connect("button-release-event", self.__corner_button_release_cb)
+        corner.connect("motion-notify-event", self.__corner_motion_notify_cb, hpane, vpane)
+        self.pack_end(corner, False, False, 0)
+
         # Buttons/Controls
         bbox = Gtk.Box()
         bbox.set_orientation(Gtk.Orientation.HORIZONTAL)
         bbox.set_property("valign", Gtk.Align.CENTER)
         bbox.set_property("halign", Gtk.Align.CENTER)
-        self.pack_end(bbox, False, False, SPACING)
+        bbox.set_margin_left(SPACING)
+        bbox.set_margin_right(SPACING)
+        self.pack_end(bbox, False, False, 0)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -274,10 +293,47 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
 
-        self.buttons = bbox
         self.buttons_container = bbox
         self.show_all()
         self.external_vbox.show_all()
+
+    def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
+        cr.set_line_width(1)
+
+        marker_color = self.app.gui.get_style_context().lookup_color("borders")
+        cr.set_source_rgb(marker_color.color.red,
+                          marker_color.color.green,
+                          marker_color.color.blue)
+
+        cr.translate(margin, 0)
+        for i in range(lines):
+            cr.move_to(0, space * i)
+            cr.line_to(space * (lines - i), space * lines)
+            cr.stroke()
+
+    def __corner_enter_notify_cb(self, widget, unused_event):
+        if not self.__cursor:
+            self.__cursor = Gdk.Cursor.new(Gdk.CursorType.BOTTOM_LEFT_CORNER)
+        widget.get_window().set_cursor(self.__cursor)
+
+    def __corner_button_press_cb(self, unused_widget, event, hpane, vpane):
+        if event.button == 1:
+            # The mouse pointer position is w.r.t the root of the screen
+            # whereas the positions of panes is w.r.t the root of the
+            # mainwindow. We need to find the translation that takes us
+            # from screen coordinate system to mainwindow coordinate system.
+            self.__translation = (event.x_root - hpane.get_position(),
+                                  event.y_root - vpane.get_position())
+
+    def __corner_button_release_cb(self, unused_widget, unused_event):
+        self.__translation = None
+
+    def __corner_motion_notify_cb(self, unused_widget, event, hpane, vpane):
+        if self.__translation is None:
+            return
+
+        hpane.set_position(event.x_root - self.__translation[0])
+        vpane.set_position(event.y_root - self.__translation[1])
 
     def activateCompactMode(self):
         self.back_button.hide()
@@ -353,6 +409,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
             self.__createNewViewer()
+        self.buttons_container.set_margin_bottom(SPACING)
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
@@ -360,7 +417,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.fullscreen_button.set_icon_name("view-fullscreen")
         self.fullscreen_button.set_tooltip_text(
             _("Show this window in fullscreen"))
-        self.buttons.pack_end(
+        self.buttons_container.pack_end(
             self.fullscreen_button, expand=False, fill=False, padding=6)
         self.fullscreen_button.show()
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
@@ -392,6 +449,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.show()
         self.fullscreen_button.destroy()
         self.external_vbox.remove(self.buttons_container)
+        self.buttons_container.set_margin_bottom(0)
         self.pack_end(self.buttons_container, False, False, 0)
         self.show()
 
@@ -490,8 +548,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     def __init__(self, widget):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
-        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5,
-                                 ratio=4.0 / 3.0, obey_child=False)
+        Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
+                                 border_width=SPACING, obey_child=False)
         Loggable.__init__(self)
 
         self.add(widget)
