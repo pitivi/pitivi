@@ -39,7 +39,7 @@ Presets Suggested : iPod , iPad, PlayStation 3, DVD (NTSC, PAL), HTML5 (
 Theora + Vorbis ), Flash video (for embedding), HD (using mkv -&gt; good
 compression)
 
-Reference : <http://wiki.pitivi.org/wiki/Rendering_Profiles>
+Reference : http://developer.pitivi.org/design/Rendering_Profiles.html
 
 ### 2. Upload to video services
 

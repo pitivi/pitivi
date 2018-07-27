@@ -124,7 +124,7 @@
   * Implementing many new features
   * UI polish all over the place
   * Refactoring pretty much the entire codebase
-  * See http://wiki.pitivi.org/wiki/0.91 for details
+  * See http://developer.pitivi.org/releases/0-91.html for details
 
 2012 May 3 - PiTiVi 0.15.2
   * Bug fix release for a regression introduced by 0.15.1
@@ -221,7 +221,7 @@
 2008 Dec 11 - PiTiVi 0.11.3
 
  * Remove usage of gobject as much as possible from non-ui components
- * Make smarter choices about audio/video sinks 
+ * Make smarter choices about audio/video sinks
  * Fix issues with seeking in ruler/viewer
  * general pylint cleanup
  * Picture support in the timeline
