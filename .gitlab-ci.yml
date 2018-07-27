@@ -38,7 +38,7 @@ test-results:
     - build
   script:
     - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history) || echo "No history"
-    - ${HOME}/allure/bin/allure --clean --output=test-results/ history/ .
+    - /opt/allure/bin/allure generate --clean --output=test-results/ history/ .
 
 
 .build_emplate: &build_docker_image
@@ -59,14 +59,13 @@ test-results:
         # and it is not possible to use a priviledged `docker build`.
         - export ALLURE_VERSION=2.7.0
         - export ALLURE_DL_URL="https://bintray.com/qameta/generic/download_file?file_path=io%2Fqameta%2Fallure%2Fallure%2F2.7.0%2Fallure-${ALLURE_VERSION}.zip"
-        - export INSTALL_ALLURE="yum install java wget -y && wget ${ALLURE_DL_URL} -O allure.zip && unzip allure.zip && rm -Rf allure/ && mv allure-${ALLURE_VERSION} allure && chmod +x allure/bin/allure && rm allure.zip"
+        - export INSTALL_ALLURE="yum install java wget -y && wget ${ALLURE_DL_URL} -O allure.zip && unzip allure.zip && mv allure-${ALLURE_VERSION} /opt/allure && chmod +x /opt/allure/bin/allure && rm allure.zip"
         - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
         - export BUILDDIR="\${HOME}/pitivi"
         - export CLONE_PITIVI="git clone https://gitlab.gnome.org/GNOME/pitivi.git --single-branch \${HOME}/pitivi -b ${BRANCH}"
 
         - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache"
-        - rm -Rf ${HOME}/flatpak-cache/ccache/
 
         - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${INSTALL_ALLURE} && ${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
         - docker commit ${TMPIMAGENAME} ${IMAGE}
