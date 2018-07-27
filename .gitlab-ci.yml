@@ -4,29 +4,29 @@ stages:
   - test-results
 
 
-build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
-  stage: build
-  artifacts:
-    paths:
-      - xunit.xml
-  script:
-    - export BUILDDIR=${HOME}/pitivi
-    - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
-    - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+# build:
+#   image: registry.gitlab.gnome.org/gnome/pitivi:master
+#   stage: build
+#   artifacts:
+#     paths:
+#       - xunit.xml
+#   script:
+#     - export BUILDDIR=${HOME}/pitivi
+#     - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
+#     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
+#     - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
-    # Working around the fact that flatpak-builder *requires* the cache dir
-    # to be on the same filesystem as the build dir
-    - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
-    - mv ${CI_PROJECT_DIR} ${BUILDDIR}
-    - mkdir -p ${CI_PROJECT_DIR}
+#     # Working around the fact that flatpak-builder *requires* the cache dir
+#     # to be on the same filesystem as the build dir
+#     - export FLATPAK_BUILDER_CACHE="--state-dir=${HOME}/flatpak-cache"
+#     - mv ${CI_PROJECT_DIR} ${BUILDDIR}
+#     - mkdir -p ${CI_PROJECT_DIR}
 
-    - cd ${BUILDDIR}
-    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --force-clean app build/flatpak/org.pitivi.Pitivi.json
-    - ${RUN_IN_SANDBOX} meson mesonbuild/
-    - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
+#     - cd ${BUILDDIR}
+#     - flatpak-builder ${FLATPAK_BUILDER_CACHE} --force-clean app build/flatpak/org.pitivi.Pitivi.json
+#     - ${RUN_IN_SANDBOX} meson mesonbuild/
+#     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
+#     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
 
 test-results:
   image: registry.gitlab.gnome.org/gnome/pitivi:master
@@ -34,10 +34,12 @@ test-results:
   artifacts:
     paths:
       - test-results
-  dependencies:
-    - build
+  # dependencies:
+  #   - build
   script:
     - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history) || echo "No history"
+    - ls ${HOME}
+    - find /
     - ${HOME}/allure/bin/allure --clean --output=test-results/ history/ .
 
 
