@@ -59,7 +59,7 @@ the checks integrated in the handlers, for now it is not possible to
 have additional checks.
 
 A scenario file is [created
-automatically](http://wiki.pitivi.org/wiki/Bug_reporting#Sharing_sample_files.2C_projects.2C_and_.22scenarios.22)
+automatically](http://developer.pitivi.org/Bug_reporting.html#sharing-sample-files-projects-and-scenarios)
 each time Pitivi is used.
 
 You can run the integration tests with:

@@ -16,8 +16,6 @@ The gnome-desktop optional dependency is not used anymore.
 We now use nose2 instead of nosetests for "make check".
 
 Refer to Pitivi's check.py for the dependencies' versions for this release.
-See also http://wiki.pitivi.org/wiki/Dependencies for additional tips.
-
 
 == Contributors for this release ==
 

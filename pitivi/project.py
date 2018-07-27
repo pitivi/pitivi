@@ -178,7 +178,7 @@ class ProjectManager(GObject.Object, Loggable):
                     "that can be done at this point is to <b>restart Pitivi</b>."
                     "\n\n"
                     "This is a rare and severe kind of bug. Please see our "
-                    "<a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">"
+                    "<a href=\"http://developer.pitivi.org/Bug_reporting.html\">"
                     "bug reporting guide</a> and take the time to report it! "
                     "We will be very happy to fix this bug and make sure it "
                     "does not occur again in future versions."
