@@ -1,7 +1,7 @@
 stages:
   - docker_image
   - build
-  - test
+  - test-results
 
 
 build:
@@ -27,6 +27,20 @@ build:
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
+
+test-results:
+  image: registry.gitlab.gnome.org/gnome/pitivi:master
+  stage: test-results
+  artifacts:
+    paths:
+      - test-results
+  dependencies:
+    - build
+  script:
+    - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history && ls history/) || echo "No history"
+    - /opt/allure/bin/allure generate --clean --output test-results/ history/ .
+    - echo "Test results will be available at - https://gnome.pages.gitlab.gnome.org/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/test-results/index.html"
+
 
 .build_emplate: &build_docker_image
     image: docker:latest
