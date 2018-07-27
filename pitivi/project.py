@@ -849,6 +849,9 @@ class Project(Loggable, GES.Project):
 
     def create_thumb(self):
         """Creates project thumbnails."""
+        if not self.uri:
+            return
+
         thumb_path = self.get_thumb_path(self.uri, ORIGINAL_THUMB_DIR)
 
         if os.path.exists(thumb_path) and not self.app.action_log.has_assets_operations():
