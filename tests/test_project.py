@@ -517,7 +517,7 @@ class TestProjectLoading(common.TestCase):
             mainloop.run()
         self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
 
-    def test_loading_project_with_moved_asset_and_deleted_proxy(self):
+    def test_loading_project_with_moved_assets_and_deleted_proxy(self):
         """Loads a project with moved asset as deleted proxy file."""
 
         mainloop = common.create_main_loop()
@@ -525,14 +525,16 @@ class TestProjectLoading(common.TestCase):
         def proxy_ready_cb(unused_proxy_manager, asset, proxy):
             mainloop.quit()
 
-        app = common.create_pitivi()
+        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
         app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
         proj_uri = self.create_project_file_from_xges(app, """<ges version='0.3'>
   <project properties='properties;' metadatas='metadatas, name=(string)&quot;New\ Project&quot;, author=(string)Unknown, render-scale=(double)100, format-version=(string)0.3;'>
     <ressources>
       <asset id='file:///nop/1sec_simpsons_trailer.mp4' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)1228000000;' metadatas='metadatas, audio-codec=(string)&quot;MPEG-4\ AAC\ audio&quot;, maximum-bitrate=(uint)130625, bitrate=(uint)130625, datetime=(datetime)2007-02-19T05:03:04Z, encoder=(string)Lavf54.6.100, container-format=(string)&quot;ISO\ MP4/M4A&quot;, video-codec=(string)&quot;H.264\ /\ AVC&quot;, file-size=(guint64)232417;'  proxy-id='file:///nop/1sec_simpsons_trailer.mp4.232417.proxy.mkv' />
+      <asset id='file:///nop/tears_of_steel.webm' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)2003000000;' metadatas='metadatas, container-format=(string)Matroska, language-code=(string)und, application-name=(string)Lavc56.60.100, encoder=(string)&quot;Xiph.Org\ libVorbis\ I\ 20150105\ \(\342\233\204\342\233\204\342\233\204\342\233\204\)&quot;, encoder-version=(uint)0, audio-codec=(string)Vorbis, nominal-bitrate=(uint)80000, bitrate=(uint)80000, video-codec=(string)&quot;VP8\ video&quot;, file-size=(guint64)223340;' />
       <asset id='file:///nop/1sec_simpsons_trailer.mp4.232417.proxy.mkv' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)1228020833;' metadatas='metadatas, container-format=(string)Matroska, audio-codec=(string)Opus, language-code=(string)en, encoder=(string)Lavf54.6.100, bitrate=(uint)64000, video-codec=(string)&quot;Motion\ JPEG&quot;, file-size=(guint64)4694708;' />
+      <asset id='file:///nop/tears_of_steel.webm.223340.proxy.mkv' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)2003000000;' metadatas='metadatas, container-format=(string)Matroska, language-code=(string)und, application-name=(string)Lavc56.60.100, encoder=(string)&quot;Xiph.Org\ libVorbis\ I\ 20150105\ \(\342\233\204\342\233\204\342\233\204\342\233\204\)&quot;, encoder-version=(uint)0, audio-codec=(string)Vorbis, nominal-bitrate=(uint)80000, bitrate=(uint)80000, video-codec=(string)&quot;VP8\ video&quot;, file-size=(guint64)223340;' />
     </ressources>
 </project>
 </ges>""")
@@ -540,7 +542,7 @@ class TestProjectLoading(common.TestCase):
         medialib = medialibrary.MediaLibraryWidget(app)
 
         # Remove proxy
-        with common.cloned_sample("1sec_simpsons_trailer.mp4"):
+        with common.cloned_sample("1sec_simpsons_trailer.mp4", "tears_of_steel.webm"):
             def new_project_loaded_cb(*args, **kwargs):
                 mainloop.quit()
 
@@ -548,7 +550,7 @@ class TestProjectLoading(common.TestCase):
 
             def missing_uri_cb(project_manager, project, unused_error, asset):
                 missing_uris.append(asset.props.id)
-                return common.get_sample_uri("1sec_simpsons_trailer.mp4")
+                return common.get_sample_uri(os.path.basename(asset.props.id))
 
             project_manager.connect("missing-uri", missing_uri_cb)
             project_manager.connect("new-project-loaded", new_project_loaded_cb)
@@ -559,10 +561,12 @@ class TestProjectLoading(common.TestCase):
                 "missing_uri_cb should be called only once, got %s." % missing_uris)
             self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
             mainloop.run()
-            self.assertEqual(len(medialib.storemodel), 1,
+            self.assertEqual(len(medialib.storemodel), 2,
                 "We should have one asset displayed in the MediaLibrary.")
             self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
                              medialibrary.AssetThumbnail.PROXIED)
+            self.assertEqual(medialib.storemodel[1][medialibrary.COL_THUMB_DECORATOR].state,
+                             medialibrary.AssetThumbnail.IN_PROGRESS)
 
 
 class TestProjectSettings(common.TestCase):
