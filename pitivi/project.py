@@ -1270,7 +1270,12 @@ class Project(Loggable, GES.Project):
             self.__deleted_proxy_files.add(asset.props.id)
             return target_uri
 
-        return GES.Project.do_missing_uri(self, error, asset)
+        new_uri = GES.Project.do_missing_uri(self, error, asset)
+
+        if new_uri:
+            self.relocated_assets[asset.props.id] = new_uri
+
+        return new_uri
 
     def _prepare_asset_processing(self, asset):
         asset.creation_progress = 0
