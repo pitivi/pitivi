@@ -343,6 +343,13 @@ class PreviewGeneratorManager(Loggable):
             for previewers in self._previewers.values():
                 for previewer in previewers:
                     previewer.stop_generation()
+        else:
+            for previewer in list(self._current_previewers.values()):
+                previewer.pause_generation()
+
+            for previewers in self._previewers.values():
+                for previewer in previewers:
+                    previewer.pause_generation()
 
         try:
             self._running = False
@@ -400,6 +407,10 @@ class Previewer(Gtk.Layout):
 
     def set_selected(self, selected):
         """Marks this instance as being selected."""
+        pass
+
+    def pause_generation(self):
+        """Pause preview generation"""
         pass
 
 
@@ -461,12 +472,22 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.connect("notify::height-request", self._height_changed_cb)
 
+    def pause_generation(self):
+        if self.pipeline:
+            self.pipeline.set_state(Gst.State.READY)
+
     def _setup_pipeline(self):
         """Creates the pipeline.
 
         It has the form "playbin ! thumbnailsink" where thumbnailsink
         is a Bin made out of "videorate ! capsfilter ! gdkpixbufsink"
         """
+        if self.pipeline:
+            # Generation was just PAUSED... keep going
+            # bringing the pipeline back to PAUSED.
+            self.pipeline.set_state(Gst.State.PAUSED)
+            return
+
         pipeline = Gst.parse_launch(
             "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
@@ -490,7 +511,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         pipeline.get_bus().add_signal_watch()
         pipeline.get_bus().connect("message", self.__bus_message_cb)
         pipeline.set_state(Gst.State.PAUSED)
-        return pipeline
+        self.pipeline = pipeline
 
     def _schedule_next_thumb_generation(self):
         """Schedules the generation of the next thumbnail, or stop.
@@ -528,7 +549,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             # Can happen if stopGeneration is called because the clip has been
             # removed from the timeline after the PreviewGeneratorManager
             # started this job.
-            return
+            return False
 
         self.__start_id = None
 
@@ -542,8 +563,8 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         else:
             if not self.thumb_width:
                 self.debug("Finding thumb width")
-                self.pipeline = self._setup_pipeline()
-                return
+                self._setup_pipeline()
+                return False
 
             # Update the thumbnails with what we already have, if anything.
             self._update_thumbnails()
@@ -551,9 +572,12 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 self.debug("Generating thumbnails for video: %s, %s", path_from_uri(self.uri), self.queue)
                 # When the pipeline status is set to PAUSED,
                 # the first thumbnail generation will be scheduled.
-                self.pipeline = self._setup_pipeline()
+                self._setup_pipeline()
             else:
                 self.emit("done")
+
+        # Stop calling me, I started already.
+        return False
 
     def _create_next_thumb_cb(self):
         """Creates a missing thumbnail."""
@@ -567,7 +591,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             self.stop_generation()
             return False
 
-        self.log("Creating thumb at %s", self.position)
         self.pipeline.seek(1.0,
                            Gst.Format.TIME,
                            Gst.SeekFlags.FLUSH | Gst.SeekFlags.ACCURATE,
@@ -1102,8 +1125,16 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
     def _emit_done_on_idle(self):
         self.emit("done")
 
+    def pause_generation(self):
+        if self.pipeline:
+            self.pipeline.set_state(Gst.State.PAUSED)
+
     def start_generation(self):
-        self._startLevelsDiscovery()
+        if not self.pipeline:
+            self._startLevelsDiscovery()
+        else:
+            self.pipeline.set_state(Gst.State.PLAYING)
+
         if not self.pipeline:
             # No need to generate as we loaded pre-generated .wave file.
             GLib.idle_add(self._emit_done_on_idle, priority=GLib.PRIORITY_LOW)
