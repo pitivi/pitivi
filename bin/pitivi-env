@@ -48,6 +48,7 @@ then
     # We could get rid of these, but some devs like them.
     alias build="ptvenv ninja -C mesonbuild/"
     alias binstall="ptvenv ninja -C mesonbuild/ install"
+    alias ptvtests="ptvenv gst-validate-launcher $PITIVI_REPO_DIR/tests/ptv_testsuite.py"
 
     # Prefer to run some binaries in the sandbox. For example "python3".
     for i in `$PITIVI_REPO_DIR/build/flatpak/pitivi-flatpak -q ls /app/bin/`;
