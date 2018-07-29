@@ -18,17 +18,21 @@ You can run the unit tests with:
 ninja -C mesonbuild/ test
 ```
 
-If you want to run only one particular unit test, use:
+If you want to run only one particular unit test, use (assuming you are in
+our flatpak based environment):
 
 ```
-gst-validate-launcher tests/ptv_testsuite.py -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
+ptvtests tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
 ```
 
 Listing tests:
 
 ```
-gst-validate-launcher tests/ptv_testsuite.py -L
+ptvtests -L
 ```
+
+NOTE: If you are not in our environment, replace `ptvtests` with
+`gst-validate-launcher tests/ptv_testsuite.py`.)
 
 ### Writing unit tests
 
