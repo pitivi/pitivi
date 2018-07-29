@@ -144,8 +144,8 @@ class ThumbnailBin(PreviewerBin):
     def do_get_property(self, prop):
         if prop.name == 'uri':
             return self.uri
-        else:
-            raise AttributeError('unknown property %s' % prop.name)
+
+        raise AttributeError('unknown property %s' % prop.name)
 
     def do_set_property(self, prop, value):
         if prop.name == 'uri':
@@ -205,10 +205,11 @@ class WaveformPreviewer(PreviewerBin):
     def do_get_property(self, prop):
         if prop.name == 'uri':
             return self.uri
-        elif prop.name == 'duration':
+
+        if prop.name == 'duration':
             return self.duration
-        else:
-            raise AttributeError('unknown property %s' % prop.name)
+
+        raise AttributeError('unknown property %s' % prop.name)
 
     def do_set_property(self, prop, value):
         if prop.name == 'uri':
@@ -794,7 +795,7 @@ class ThumbnailCache(Loggable):
 
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
-        return set([row[0] for row in self._cur.fetchall()])
+        return {row[0] for row in self._cur.fetchall()}
 
     @classmethod
     def get(cls, obj):
