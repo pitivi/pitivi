@@ -40,6 +40,7 @@ test-results:
     - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history && ls history/) || echo "No history"
     - /opt/allure/bin/allure generate --clean --output test-results/ history/ .
     - printf "=========================\n\n TEST RESULTS WILL BE AVAILABLE AT https://gnome.pages.gitlab.gnome.org/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/test-results/index.html\n\n==================="
+  when: always
 
 .build_emplate: &build_docker_image
     image: docker:latest
