@@ -2,7 +2,7 @@
 <!-- Copyright 2013 Jean-François Fortin Tam <nekohayo@gmail.com> -->
 <component type="desktop">
   <id>org.pitivi.Pitivi</id>
-  <launchable type="desktop">pitivi.desktop</launchable>
+  <launchable type="desktop">org.pitivi.Pitivi.desktop</launchable>
   <metadata_license>CC-BY-3.0</metadata_license>
   <project_license>LGPL-2.0+</project_license>
   <_name>Pitivi</_name>

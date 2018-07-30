@@ -18,8 +18,6 @@
         "--device=dri"
     ],
     "sdk": "org.gnome.Sdk",
-    "rename-appdata-file": "pitivi.appdata.xml",
-    "rename-desktop-file": "pitivi.desktop",
     "rename-icon": "pitivi",
     "copy-icon": true,
     "build-options": {
