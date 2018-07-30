@@ -28,6 +28,7 @@ import subprocess
 import sys
 import tempfile
 import venv
+from urllib.error import URLError
 from urllib.parse import urlparse
 from urllib.request import urlretrieve
 
@@ -256,14 +257,19 @@ class FlatpakRepos(FlatpakObject):
 
     def add(self, name, flatpakrepo_url, override=True):
         flatpakrepo = tempfile.NamedTemporaryFile(mode="w")
-        urlretrieve(flatpakrepo_url, flatpakrepo.name)
-        repo = configparser.ConfigParser()
-        repo.read(flatpakrepo.name)
-        url = repo["Flatpak Repo"]["Url"]
+        try:
+            urlretrieve(flatpakrepo_url, flatpakrepo.name)
+            repo = configparser.ConfigParser()
+            repo.read(flatpakrepo.name)
+            url = repo["Flatpak Repo"]["Url"]
+        except URLError:
+            url = None
 
         same_name = None
         for tmpname, tmprepo in self.repos.items():
-            if url == tmprepo.url:
+            # If the URL is None (meaning we couldn't retrieve Repo infos)
+            # just check if the repo names match.
+            if url == tmprepo.url or url is None and name == tmpname:
                 return tmprepo
             if name == tmpname:
                 same_name = tmprepo
