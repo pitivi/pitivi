@@ -641,7 +641,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         # The forwarded environment variables.
         forwarded = {}
         for envvar, value in os.environ.items():
-            if envvar.split("_")[0] in ("GST", "GTK", "PITIVI", "LC", "G") or \
+            if envvar.split("_")[0] in ("GDK", "GST", "GTK", "PITIVI", "LC", "G") or \
                     envvar in ["DISPLAY", "LANG"]:
                 forwarded[envvar] = value
 
