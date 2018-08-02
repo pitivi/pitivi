@@ -782,7 +782,7 @@
                                     <property name="receives_default">False</property>
                                     <property name="halign">start</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="toggled" handler="_proxy_res_linked_toggle_Cb" swapped="no"/>
+                                    <signal name="toggled" handler="_proxy_res_linked_toggle_cb" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

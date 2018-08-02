@@ -1579,12 +1579,6 @@ class Project(Loggable, GES.Project):
                     self.app.action_log.push(action)
                     self._prepare_asset_processing(asset)
                     asset.force_proxying = True
-                    if scaled and not proxy_manager.isAssetFormatWellSupported(asset) and not \
-                            self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
-                        # Queue a shadow HQ proxy
-                        hq_uri = self.app.proxy_manager.getProxyUri(asset)
-                        if not Gio.File.new_for_uri(hq_uri).query_exists(None):
-                            proxy_manager.add_job(asset, shadow=True)
                     proxy_manager.add_job(asset, scaled)
 
     def disable_proxies_for_assets(self, assets, delete_proxy_file=False, ignore_unsupported=False):
@@ -2202,7 +2196,7 @@ class ProjectSettingsDialog(object):
         height = int(fraction.num / fraction.denom)
         self.height_spinbutton.set_value(height)
 
-    def _proxy_res_linked_toggle_Cb(self, unused_button):
+    def _proxy_res_linked_toggle_cb(self, unused_button):
         width = int(self.scaled_proxy_width_spin.get_value())
         height = int(self.scaled_proxy_height_spin.get_value())
         self.proxy_aspect_ratio = Gst.Fraction(width, height)

@@ -103,7 +103,7 @@ class ProxyManager(GObject.Object, Loggable):
     }
 
     WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg",
-                                "video/x-matroska", "video/webm"]
+                                "video/x-matroska", "video/webm", "image/jpeg"]
     WHITELIST_AUDIO_CAPS = ["audio/mpeg", "audio/x-vorbis",
                             "audio/x-raw", "audio/x-flac",
                             "audio/x-wav"]
@@ -137,6 +137,7 @@ class ProxyManager(GObject.Object, Loggable):
         self._start_proxying_time = 0
         self.__running_transcoders = []
         self.__pending_transcoders = []
+        self.__waiting_transcoders = []
 
         self.__encoding_target_file = None
         self.proxyingUnsupported = False
@@ -333,12 +334,12 @@ class ProxyManager(GObject.Object, Loggable):
     def asset_matches_target_res(self, asset):
         stream = asset.get_info().get_video_streams()[0]
 
-        asset_res = [stream.get_width(), stream.get_height()]
+        asset_res = (stream.get_width(), stream.get_height())
         target_res = self._get_scaled_res(asset,
             self.app.project_manager.current_project.scaled_proxy_width,
             self.app.project_manager.current_project.scaled_proxy_height)
 
-        if asset_res != target_res:
+        if asset_res == target_res:
             return True
 
         return False
@@ -400,8 +401,8 @@ class ProxyManager(GObject.Object, Loggable):
 
             return
 
-        transcoder_uri = ""
-        second_proxy_in_progress = False
+        second_transcoder = None
+        shadow_transcoder = False
 
         if not transcoder:
             if not self.__assetsMatch(asset, proxy):
@@ -409,16 +410,13 @@ class ProxyManager(GObject.Object, Loggable):
         else:
             transcoder.props.pipeline.props.video_filter.finalize(proxy)
             transcoder.props.pipeline.props.audio_filter.finalize(proxy)
-            transcoder_uri = transcoder.props.src_uri
+
+            second_transcoder = self._get_second_transcoder(transcoder)
+            shadow_transcoder = self._is_shadow_transcoder(transcoder)
 
             del transcoder
 
-        all_transcoders = self.__running_transcoders + self.__pending_transcoders
-        for t in all_transcoders:
-            if t.props.src_uri == transcoder_uri:
-                second_proxy_in_progress = True
-
-        if not second_proxy_in_progress:
+        if not shadow_transcoder:
             self.emit("proxy-ready", asset, proxy)
             self.__emitProgress(proxy, 100)
 
@@ -426,29 +424,45 @@ class ProxyManager(GObject.Object, Loggable):
         self.emit("error-preparing-asset", asset, None, error)
 
     def __transcoderDoneCb(self, transcoder, asset):
-        shadow = False
-        if transcoder.props.position_update_interval == 1001:
-            shadow = True
-
         transcoder.disconnect_by_func(self.__proxyingPositionChangedCb)
         transcoder.disconnect_by_func(self.__transcoderDoneCb)
         transcoder.disconnect_by_func(self.__transcoderErrorCb)
 
         self.debug("Transcoder done with %s", asset.get_id())
 
-        self.__running_transcoders.remove(transcoder)
-
         # Removes '.part' at the end of dest uri to get proxy uri
         proxy_uri = transcoder.props.dest_uri[:-5]
         os.rename(Gst.uri_get_location(transcoder.props.dest_uri),
                   Gst.uri_get_location(proxy_uri))
 
-        # Make sure that if it first failed loading, the proxy is forced to be
-        # reloaded in the GES cache.
-        if not shadow:
+        second_transcoder = self._get_second_transcoder(transcoder)
+        self.__running_transcoders.remove(transcoder)
+
+        # Defer loading when waiting for shadow transcoder to finish
+        if second_transcoder is not None and not \
+                self._is_shadow_transcoder(transcoder):
+            self.__waiting_transcoders.append([transcoder, asset])
+        else:
+            # Make sure that if it first failed loading, the proxy is forced to
+            # be reloaded in the GES cache.
             GES.Asset.needs_reload(GES.UriClip, proxy_uri)
             GES.Asset.request_async(GES.UriClip, proxy_uri, None,
                                     self.__assetLoadedCb, asset, transcoder)
+
+        # Finish defered loading for waiting transcoder
+        if self._is_shadow_transcoder(transcoder):
+            for pair in self.__waiting_transcoders:
+                if pair[0].props.src_uri == transcoder.props.src_uri:
+                    waiting_transcoder = pair[0]
+                    waiting_asset = pair[1]
+                    proxy_uri = waiting_transcoder.props.dest_uri[:-5]
+
+                    GES.Asset.needs_reload(GES.UriClip, proxy_uri)
+                    GES.Asset.request_async(GES.UriClip, proxy_uri, None,
+                        self.__assetLoadedCb, waiting_asset, waiting_transcoder)
+
+                    self.__waiting_transcoders.remove(pair)
+                    break
 
         try:
             self.__startTranscoder(self.__pending_transcoders.pop())
@@ -476,11 +490,9 @@ class ProxyManager(GObject.Object, Loggable):
             self.info("Position changed after job cancelled!")
             return
 
-        all_transcoders = self.__running_transcoders + self.__pending_transcoders
-        for t in all_transcoders:
-            if t.props.position_update_interval != transcoder.props.position_update_interval \
-                    and t.props.src_uri == transcoder.props.src_uri:
-                position = (position + t.props.position) // 2
+        second_transcoder = self._get_second_transcoder(transcoder)
+        if second_transcoder is not None:
+            position = (position + second_transcoder.props.position) // 2
 
         self._transcoded_durations[asset] = position / Gst.SECOND
 
@@ -494,6 +506,19 @@ class ProxyManager(GObject.Object, Loggable):
             asset.creation_progress = max(0, min(creation_progress, 99))
 
         self.__emitProgress(asset, asset.creation_progress)
+
+    def _get_second_transcoder(self, transcoder):
+        all_transcoders = self.__running_transcoders + self.__pending_transcoders
+        for t in all_transcoders:
+            if t.props.position_update_interval != transcoder.props.position_update_interval \
+                    and t.props.src_uri == transcoder.props.src_uri:
+                return t
+        return None
+
+    def _is_shadow_transcoder(self, transcoder):
+        if transcoder.props.position_update_interval == 1001:
+            return True
+        return False
 
     def is_asset_queued_for_scaling(self, asset):
         all_transcoders = self.__running_transcoders + self.__pending_transcoders
@@ -613,8 +638,19 @@ class ProxyManager(GObject.Object, Loggable):
             asset (GES.Asset): The asset to be transcoded.
         """
         force_proxying = asset.force_proxying
-        if self.app.settings.auto_scaling_enabled and not force_proxying:
+
+        # Handle Automatic scaling
+        if self.app.settings.auto_scaling_enabled and not force_proxying \
+                and not shadow and not self.asset_matches_target_res(asset):
             scaled = True
+
+        # Create shadow proxies for unsupported assets
+        if not self.isAssetFormatWellSupported(asset) and not \
+                self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING \
+                and not shadow:
+            hq_uri = self.app.proxy_manager.getProxyUri(asset)
+            if not Gio.File.new_for_uri(hq_uri).query_exists(None):
+                self.add_job(asset, shadow=True)
 
         if scaled:
             if self.is_asset_queued_for_scaling(asset):

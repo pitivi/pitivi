@@ -106,9 +106,72 @@ class BaseTestMediaLibrary(common.TestCase):
         self.mainloop.run()
         self.assertFalse(self.medialibrary._progressbar.props.visible)
 
+    def check_add_proxy(self, asset, asset_uri, scaled=False, w=160, h=120,
+            check_progress=True):
+        proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=scaled)
+        was_in_progress = False
+
+        self.app.project_manager.current_project.scaled_proxy_width = w
+        self.app.project_manager.current_project.scaled_proxy_height = h
+
+        project = self.app.project_manager.current_project
+        old_set_state = medialibrary.AssetThumbnail._AssetThumbnail__setState
+
+        def check_set_state(self):
+            old_set_state(self)
+            if self.state == self.IN_PROGRESS:
+                nonlocal was_in_progress
+                was_in_progress = True
+
+        # Check proxy creation progress and thumbnail icon
+        self.assertFalse("Proxy creation progress:" in
+            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+        self.assertEqual(medialibrary.AssetThumbnail.NO_PROXY,
+            self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
+
+        medialibrary.AssetThumbnail._AssetThumbnail__setState = check_set_state
+        project.use_proxies_for_assets([asset], scaled)
+
+        self.assertTrue("Proxy creation progress:" in
+            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+
+        self.mainloop.run(timeout_seconds=10)
+        medialibrary.AssetThumbnail._AssetThumbnail__setState = old_set_state
+
+        if check_progress:
+            self.assertTrue(was_in_progress)
+
+        self.assertFalse("Proxy creation progress:" in
+            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+        if scaled:
+            self.assertEqual(medialibrary.AssetThumbnail.SCALED,
+                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
+        else:
+            self.assertEqual(medialibrary.AssetThumbnail.PROXIED,
+                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
+
+        proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+        stream = proxy.get_info().get_video_streams()[0]
+        resolution = [stream.get_width(), stream.get_height()]
+        self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
+        if scaled:
+            self.assertEqual(resolution, [w, h])
+
+        return proxy
+
+    def check_remove_proxy(self, asset, asset_uri, proxy, proxy_uri, delete=False):
+        self.app.project_manager.current_project.disable_proxies_for_assets([proxy],
+            delete_proxy_file=delete)
+
+        self.assertIsNone(asset.get_proxy())
+        self.assertEqual(self.medialibrary.storemodel[0][medialibrary.COL_URI],
+                         asset_uri)
+
+        if delete:
+            self.assertFalse(os.path.exists(Gst.uri_get_location(proxy_uri)))
+
 
 class TestMediaLibrary(BaseTestMediaLibrary):
-
     def test_import_dialog_proxy_filter(self):
         mock_filter = mock.Mock()
         mock_filter.mime_type = "video/mp4"
@@ -118,11 +181,11 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
         # Test HQ Proxies are filtered
         mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.proxy.mkv"
-        self.assertFalse(mlib._MediaLibraryWidget__filter_unsupported(mock_filter))
+        self.assertFalse(mlib._filter_unsupported(mock_filter))
 
         # Test Scaled Proxies are filtered
         mock_filter.uri = "file:///home/user/Videos/video.mp4.2360382.300x300.scaledproxy.mkv"
-        self.assertFalse(mlib._MediaLibraryWidget__filter_unsupported(mock_filter))
+        self.assertFalse(mlib._filter_unsupported(mock_filter))
 
     def stop_using_proxies(self, delete_proxies=False):
         sample_name = "30fps_numeroted_frames_red.mkv"
@@ -231,55 +294,6 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertEqual(asset.creation_progress, 100)
             self.assertEqual(asset.get_proxy(), proxy)
 
-    def check_add_proxy(self, asset, asset_uri, scaled=False, w=160, h=120):
-        proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=scaled)
-
-        self.app.project_manager.current_project.scaled_proxy_width = w
-        self.app.project_manager.current_project.scaled_proxy_height = h
-
-        project = self.app.project_manager.current_project
-        # Check proxy creation progress and thumbnail icon
-        self.assertFalse("Proxy creation progress:" in
-            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
-        self.assertEqual(medialibrary.AssetThumbnail.NO_PROXY,
-            self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
-
-        project.use_proxies_for_assets([asset], scaled)
-
-        self.assertTrue("Proxy creation progress:" in
-            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
-
-        self.mainloop.run(timeout_seconds=10)
-
-        self.assertFalse("Proxy creation progress:" in
-            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
-        if scaled:
-            self.assertEqual(medialibrary.AssetThumbnail.SCALED,
-                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
-        else:
-            self.assertEqual(medialibrary.AssetThumbnail.PROXIED,
-                self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state)
-
-        proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
-        stream = proxy.get_info().get_video_streams()[0]
-        resolution = [stream.get_width(), stream.get_height()]
-        self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
-        if scaled:
-            self.assertEqual(resolution, [w, h])
-
-        return proxy
-
-    def check_remove_proxy(self, asset, asset_uri, proxy, proxy_uri, delete=False):
-        self.app.project_manager.current_project.disable_proxies_for_assets([proxy],
-            delete_proxy_file=delete)
-
-        self.assertIsNone(asset.get_proxy())
-        self.assertEqual(self.medialibrary.storemodel[0][medialibrary.COL_URI],
-                         asset_uri)
-
-        if delete:
-            self.assertFalse(os.path.exists(Gst.uri_get_location(proxy_uri)))
-
     def test_create_and_delete_scaled_proxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
         with common.cloned_sample(sample_name):
@@ -316,7 +330,8 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertTrue(os.path.exists(Gst.uri_get_location(scaled_uri)))
 
             # Enable and delete scaled proxy
-            proxy = self.check_add_proxy(asset, asset_uri, scaled=True)
+            proxy = self.check_add_proxy(asset, asset_uri, scaled=True,
+                check_progress=False)
             self.check_remove_proxy(asset, asset_uri, proxy, scaled_uri, delete=True)
 
             # Check that only HQ Proxy exists
@@ -324,7 +339,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)))
 
             # Enable and delete HQ proxy
-            proxy = self.check_add_proxy(asset, asset_uri)
+            proxy = self.check_add_proxy(asset, asset_uri, check_progress=False)
             self.check_remove_proxy(asset, asset_uri, proxy, hq_uri, delete=True)
 
     def test_regenerate_scaled_proxy(self):
@@ -341,8 +356,6 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             # Change target resolution and trigger regeneration (1/4 Asset width)
             self.app.project_manager.current_project.scaled_proxy_width = 80
             self.app.project_manager.current_project.scaled_proxy_height = 60
-
-            print(self.app.project_manager.current_project.scaled_proxy_width)
 
             self.app.project_manager.current_project.regenerate_scaled_proxies()
             self.assertTrue("Proxy creation progress:" in

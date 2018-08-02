@@ -410,7 +410,6 @@ class RenderDialog(Loggable):
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
-        self._hq_requests_pending = 0
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -438,6 +437,7 @@ class RenderDialog(Loggable):
         self.preferred_vencoder = self.project.vencoder
         self.preferred_aencoder = self.project.aencoder
         self.__unproxiedClips = {}
+        self.__unscaled_clips = {}
 
         self.frame_rate_combo.set_model(frame_rates)
         self.channels_combo.set_model(audio_channels)
@@ -968,29 +968,19 @@ class RenderDialog(Loggable):
                         continue
 
                 # Replace with HQ Proxy if available
-                hq_proxy_uri = self.app.proxy_manager.getProxyUri(asset_target)
-                if Gio.File.new_for_uri(hq_proxy_uri).query_exists(None):
-                    print("HQ")
-                    GES.Asset.request_async(GES.UriClip, hq_proxy_uri, None,
-                    self.__set_hq_asset_cb, clip)
-                    self._hq_requests_pending += 1
+                hq_proxy = GES.Asset.request(GES.UriClip,
+                    self.app.proxy_manager.getProxyUri(asset_target))
+                if hq_proxy is not None:
+                    clip.set_asset(hq_proxy)
                     continue
 
                 # Replace with original asset
                 clip.set_asset(asset_target)
 
-    def __set_hq_asset_cb(self, hq_asset, res, clip):
-        self._hq_requests_pending -= 1
-        try:
-            GES.Asset.request_finish(res)
-        except GLib.Error as e:
-            return
-        clip.set_asset(hq_asset)
+                self.__unscaled_clips[clip] = asset
 
     def __maybeUseSourceAsset(self):
         self.__replace_scaled_proxies()
-        while self._hq_requests_pending != 0:
-            time.sleep(1)
 
         if self.__always_use_proxies.get_active():
             self.debug("Rendering from proxies, not replacing assets")
@@ -1031,10 +1021,13 @@ class RenderDialog(Loggable):
 
     def __useProxyAssets(self):
         for clip, asset in self.__unproxiedClips.items():
-            self.info("Reverting to using proxy asset %s", asset)
+            self.info("Reverting to using HQ proxy asset %s", asset)
             clip.set_asset(asset)
-
+        for clip, asset in self.__unscaled_clips.items():
+            self.info("Reverting to using scaled proxy asset %s", asset)
+            clip.set_asset(asset)
         self.__unproxiedClips = {}
+        self.__unscaled_clips = {}
 
     # ------------------- Callbacks ------------------------------------------ #
 
