@@ -238,6 +238,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         self.app.project_manager.current_project.scaled_proxy_height = h
 
         project = self.app.project_manager.current_project
+
         # Check proxy creation progress and thumbnail icon
         self.assertFalse("Proxy creation progress:" in
             self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
@@ -341,8 +342,6 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             # Change target resolution and trigger regeneration (1/4 Asset width)
             self.app.project_manager.current_project.scaled_proxy_width = 80
             self.app.project_manager.current_project.scaled_proxy_height = 60
-
-            print(self.app.project_manager.current_project.scaled_proxy_width)
 
             self.app.project_manager.current_project.regenerate_scaled_proxies()
             self.assertTrue("Proxy creation progress:" in

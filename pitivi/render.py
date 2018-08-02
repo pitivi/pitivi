@@ -968,13 +968,13 @@ class RenderDialog(Loggable):
                         continue
 
                 # Replace with HQ Proxy if available
-                hq_proxy_uri = self.app.proxy_manager.getProxyUri(asset_target)
+                '''hq_proxy_uri = self.app.proxy_manager.getProxyUri(asset_target)
                 if Gio.File.new_for_uri(hq_proxy_uri).query_exists(None):
                     print("HQ")
                     GES.Asset.request_async(GES.UriClip, hq_proxy_uri, None,
                     self.__set_hq_asset_cb, clip)
                     self._hq_requests_pending += 1
-                    continue
+                    continue'''
 
                 # Replace with original asset
                 clip.set_asset(asset_target)

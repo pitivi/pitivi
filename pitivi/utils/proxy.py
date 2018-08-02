@@ -103,7 +103,7 @@ class ProxyManager(GObject.Object, Loggable):
     }
 
     WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg",
-                                "video/x-matroska", "video/webm"]
+                                "video/x-matroska", "video/webm", "image/jpeg"]
     WHITELIST_AUDIO_CAPS = ["audio/mpeg", "audio/x-vorbis",
                             "audio/x-raw", "audio/x-flac",
                             "audio/x-wav"]

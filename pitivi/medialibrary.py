@@ -126,11 +126,21 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
 
         self.__close_after = Gtk.CheckButton(label=_("Close after importing files"))
         self.__close_after.set_active(self.app.settings.closeImportDialog)
-        self.attach(self.__close_after, 0, 0, 1, 4)
+        self.attach(self.__close_after, 0, 0, 1, 1)
 
-        self.__automatic_proxies = Gtk.RadioButton.new_with_label(
-            None, _("Create proxies when the media format is not supported officially"))
-        self.__automatic_proxies.set_tooltip_markup(
+        self.proxy_expander = self.proxy_settings_expander()
+        self.attach(self.proxy_expander, 1, 0, 3, 3)
+
+        self.show_all()
+
+    def proxy_settings_expander(self):
+        expander = Gtk.Expander.new(label="Proxy Settings")
+        expander.set_resize_toplevel(True)
+
+        self.hq_proxy_check = Gtk.CheckButton.new()
+        self.hq_proxy_check.set_label(_("Use optimised media for "))
+        self.hq_proxy_check.connect("toggled", self.hq_proxy_check_cb)
+        self.hq_proxy_check.set_tooltip_markup(
             _("Let Pitivi decide when to"
               " create proxy files and when not. The decision will be made"
               " depending on the file format, and how well it is supported."
@@ -140,37 +150,48 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
               " Pitivi developers and thus is the safest."
               "</i>"))
 
-        self.__auto_scale = Gtk.CheckButton.new()
-        self.__auto_scale_label = Gtk.Label.new()
-        self.__auto_scale_label.props.track_visited_links = False
+        self.hq_combo = Gtk.ComboBoxText.new()
+        self.hq_combo.insert_text(0, _("Unsupported Assets"))
+        self.hq_combo.insert_text(1, _("All"))
+        self.hq_combo.props.active = 0
+        self.hq_combo.set_sensitive(False)
 
-        self._set_target_res_label(self.__auto_scale_label)
-        self.__auto_scale_label.connect("activate-link", self._target_res_cb)
+        self.scaled_proxy_check = Gtk.CheckButton.new()
+        self.scaled_check_label = Gtk.Label.new()
 
-        self.__force_proxies = Gtk.RadioButton.new_with_label_from_widget(
-            self.__automatic_proxies, _("Create proxies for all files"))
-        self.__force_proxies.set_tooltip_markup(
-            _("Use proxies for every imported file"
-              " whatever its current media format is."))
-        self.__no_proxies = Gtk.RadioButton.new_with_label_from_widget(
-            self.__automatic_proxies, _("Do not use proxy files"))
+        self._set_target_res_label(self.scaled_check_label)
+        self.scaled_check_label.connect("activate-link", self._target_res_cb)
 
-        if self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
-            self.__force_proxies.set_active(True)
-        elif self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING:
-            self.__no_proxies.set_active(True)
+        if self.app.settings.proxyingStrategy == ProxyingStrategy.AUTOMATIC:
+            self.hq_proxy_check.set_active(True)
+            self.hq_combo.set_sensitive(True)
+            self.hq_combo.props.active = 0
+        elif self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
+            self.hq_proxy_check.set_active(True)
+            self.hq_combo.set_sensitive(True)
+            self.hq_combo.props.active = 1
+
+        if self.app.settings.auto_scaling_enabled:
+            self.scaled_proxy_check.set_active(True)
+
+        grid = Gtk.Grid.new()
+
+        grid.attach(self.hq_proxy_check, 0, 0, 2, 1)
+        grid.attach(self.hq_combo, 2, 0, 2, 1)
+        grid.attach(self.scaled_proxy_check, 0, 1, 1, 1)
+        grid.attach(self.scaled_check_label, 1, 1, 2, 1)
+        expander.add(grid)
+
+        return expander
+
+    def hq_proxy_check_cb(self, checkbutton):
+        if checkbutton.get_active():
+            self.hq_combo.set_sensitive(True)
         else:
-            self.__automatic_proxies.set_active(True)
-
-        self.attach(self.__automatic_proxies, 1, 0, 5, 1)
-        self.attach(self.__auto_scale, 2, 1, 1, 1)
-        self.attach(self.__auto_scale_label, 3, 1, 2, 1)
-        self.attach(self.__force_proxies, 1, 2, 1, 1)
-        self.attach(self.__no_proxies, 1, 3, 1, 1)
-        self.show_all()
+            self.hq_combo.set_sensitive(False)
 
     def _target_res_cb(self, label, _unused2):
-        self.app.gui.showProjectSettingsDialog()
+        self.app.gui.editor.showProjectSettingsDialog()
         self._set_target_res_label(label)
 
     def _set_target_res_label(self, label):
@@ -183,16 +204,17 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
 
     def saveValues(self):
         self.app.settings.closeImportDialog = self.__close_after.get_active()
-        if self.__force_proxies.get_active():
-            self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
-        elif self.__no_proxies.get_active():
-            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
-        else:
-            if self.__auto_scale.get_active():
-                self.app.settings.auto_scaling_enabled = True
+        if self.hq_proxy_check.get_active():
+            if self.hq_combo.props.active == 0:
+                self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
             else:
-                self.app.settings.auto_scaling_enabled = False
-            self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+                self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
+
+        self.app.settings.auto_scaling_enabled = self.scaled_proxy_check.get_active()
+
+        if not self.hq_proxy_check.get_active() and \
+                not self.scaled_proxy_check.get_active():
+            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
 
 
 class AssetThumbnail(Loggable):

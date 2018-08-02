@@ -294,7 +294,7 @@ class PreferencesDialog(Loggable):
 
         scaled_res_label = Gtk.Label(label=_("Default Scaled Proxy Resolution"))
         scaled_res_label.set_tooltip_text(_("This resolution will be used as the"
-            "default target resolution for new projects and projects missing"
+            " default target resolution for new projects and projects missing"
             " scaled proxy meta-data."))
 
         res_width_input = widgets.NumericWidget(lower=1)
@@ -337,8 +337,8 @@ class PreferencesDialog(Loggable):
         max_cpu_box.pack_start(max_cpu_label, False, False, PADDING)
         max_cpu_box.pack_start(max_cpu_input, False, False, PADDING)
 
-        grid.attach(scaled_res_box, 0, 0, 3, 1)
-        grid.attach(scaled_res_infobar, 0, 1, 2, 1)
+        grid.attach(scaled_res_box, 0, 1, 3, 1)
+        grid.attach(scaled_res_infobar, 0, 0, 2, 1)
         grid.attach(trans_jobs_box, 0, 3, 2, 1)
         grid.attach(max_cpu_box, 0, 4, 2, 1)
 
