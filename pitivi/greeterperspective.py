@@ -134,6 +134,8 @@ class GreeterPerspective(Perspective):
         self.__recent_projects_listbox.set_selection_mode(Gtk.SelectionMode.NONE)
         self.__recent_projects_listbox.connect(
             "row_activated", self.__projects_row_activated_cb)
+        self.__recent_projects_listbox.connect(
+            "button-press-event", self.__projects_button_press_cb)
 
         self.__infobar = builder.get_object("infobar")
         fix_infobar(self.__infobar)
@@ -344,6 +346,11 @@ class GreeterPerspective(Perspective):
         else:
             self.app.project_manager.loadProject(row.uri)
 
+    def __projects_button_press_cb(self, listbox, event):
+        if event.button == 3:
+            self.__start_selection_mode()
+            listbox.get_row_at_y(event.y).select_button.set_active(True)
+
     def __search_changed_cb(self, search_entry):
         search_hit = False
         search_text = search_entry.get_text().lower()
@@ -358,6 +365,11 @@ class GreeterPerspective(Perspective):
         self.__recent_projects_listbox.set_visible(search_hit)
 
     def __selection_clicked_cb(self, unused_button):
+        self.__start_selection_mode()
+
+    def __start_selection_mode(self):
+        if self.__actionbar.get_visible():
+            return
         self.__update_headerbar(selection=True)
         self.__search_entry.hide()
         self.__actionbar.show()
