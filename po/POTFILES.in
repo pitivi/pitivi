@@ -56,3 +56,6 @@ pitivi/dialogs/prefs.py
 pitivi/utils/misc.py
 pitivi/utils/ui.py
 pitivi/utils/widgets.py
+
+plugins/console/console.py
+plugins/console/utils.py
