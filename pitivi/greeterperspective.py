@@ -35,6 +35,7 @@ from pitivi.utils.ui import beautify_last_updated_timestamp
 from pitivi.utils.ui import beautify_project_path
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import GREETER_PERSPECTIVE_CSS
+from pitivi.utils.ui import URI_TARGET_ENTRY
 
 MAX_RECENT_PROJECTS = 10
 
@@ -120,6 +121,9 @@ class GreeterPerspective(Perspective):
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
         self.toplevel_widget = builder.get_object("toplevel_vbox")
+        self.toplevel_widget.drag_dest_set(
+            Gtk.DestDefaults.ALL, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
+        self.toplevel_widget.connect("drag-data-received", self.__drag_data_received_cb)
 
         self.__topvbox = builder.get_object("topvbox")
         self.__welcome_vbox = builder.get_object("welcome_vbox")
@@ -297,6 +301,18 @@ class GreeterPerspective(Perspective):
                 visible_options.remove(Gtk.Buildable.get_name(widget))
         assert not visible_options
         return menu_button
+
+    def __drag_data_received_cb(self, unused_widget, unused_context, unused_x,
+                                unused_y, data, unused_info, unused_time):
+        """Opens the project file dragged from Nautilus."""
+        uris = data.get_uris()
+        if not uris:
+            return
+
+        uri = uris[0]
+        extension = os.path.splitext(uri)[1][1:]
+        if extension in self.__project_filter:
+            self.app.project_manager.loadProject(uri)
 
     def __new_project_cb(self, unused_action, unused_param):
         self.app.project_manager.newBlankProject()
