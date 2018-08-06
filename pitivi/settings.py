@@ -137,6 +137,20 @@ class GlobalSettings(GObject.Object, Loggable):
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
 
+    def reload_attribute_from_file(self, section, attrname):
+        """Reads and sets an attribute from the configuration file.
+
+        Pitivi's default behavior is to set attributes from the configuration
+        file when starting and to save those attributes back to the file when
+        exiting the application. You can use this method when you need to
+        read an attribute during runtime (in the middle of the process).
+        """
+        if section in self.options:
+            if attrname in self.options[section]:
+                type_, key, _ = self.options[section][attrname]
+                value = self._read_value(section, key, type_)
+                setattr(self, attrname, value)
+
     def _read_value(self, section, key, type_):
         if type_ == int:
             try:
