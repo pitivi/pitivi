@@ -155,7 +155,13 @@ GREETER_PERSPECTIVE_CSS = """
     }
 """
 
-TIMELINE_CSS = """
+EDITOR_PERSPECTIVE_CSS = """
+    #resize_status {
+        font-size: 200%%;
+        background-color: black;
+        opacity: 0.8;
+    }
+
     .AudioBackground {
         background-color: #496c21;
     }
