@@ -50,6 +50,11 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.add(sink_widget)
         self.connect("size-allocate", self.__on_size_allocate)
 
+        self.revealer = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.CROSSFADE)
+        self.resize_status = Gtk.Label(name="resize_status")
+        self.revealer.add(self.resize_status)
+        self.add_overlay(self.revealer)
+
     def __on_size_allocate(self, widget, rectangle):
         self.window_size = numpy.array([rectangle.width,
                                         rectangle.height])
