@@ -21,6 +21,7 @@ from time import time
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -147,6 +148,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
+
+        # Wait for 1s to make sure that the viewer has completely realized
+        # and then we can mark the resize status as showable.
+        GLib.timeout_add(1000, self.__viewer_realization_done_cb, None)
 
     def _disconnectFromPipeline(self):
         if self.pipeline is None:
@@ -402,6 +407,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = False
         self.settings.viewerDocked = False
+        self.overlay_stack.enable_resize_status(False)
         self.remove(self.buttons_container)
         position = None
         if self.pipeline:
@@ -431,6 +437,10 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
 
+    def __viewer_realization_done_cb(self, unused_data):
+        self.overlay_stack.enable_resize_status(True)
+        return False
+
     def dock(self):
         if self.docked:
             self.warning("The viewer is already docked")
@@ -438,6 +448,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = True
         self.settings.viewerDocked = True
+        self.overlay_stack.enable_resize_status(False)
 
         position = None
         if self.pipeline:
