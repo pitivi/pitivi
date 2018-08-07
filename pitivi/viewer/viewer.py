@@ -21,6 +21,7 @@ from time import time
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -102,6 +103,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.__cursor = None
         self.__translation = None
+        # Whether to show viewer's resize status or not.
+        self.__show_resize_status = None
+        # ID of event source of the timeout function.
+        self.__id = 0
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -135,6 +140,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __createNewViewer(self):
         self.pipeline.create_sink()
+        self.pipeline.sink_widget.connect("size-allocate", self.__viewer_size_allocate_cb)
 
         self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
@@ -147,6 +153,8 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
+        # Hide resize status overlay for now. We only need it during viewer resizing.
+        self.overlay_stack.resize_status_overlay.hide()
 
     def _disconnectFromPipeline(self):
         if self.pipeline is None:
@@ -182,6 +190,33 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerHeight = event.height
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
+
+    def __viewer_size_allocate_cb(self, widget, allocation):
+        if not self.__show_resize_status:
+            return
+
+        # Viewer resizing has just started.
+        if widget.get_opacity() == 1.0:
+            # Dim the viewer.
+            widget.set_opacity(0.25)
+            self.overlay_stack.resize_status_overlay.show()
+
+        if self.__id > 0:
+            GLib.source_remove(self.__id)
+
+        video_width = self.app.project_manager.current_project.videowidth
+        resize_status = str(int(allocation.width / video_width * 100)) + "%"
+        self.overlay_stack.set_resize_status(resize_status)
+
+        # Add timeout function that gets called once the resizing is done.
+        self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done, None)
+
+    def __viewer_resizing_done(self, unused_data):
+        self.__id = 0
+        # Undim the viewer.
+        self.pipeline.sink_widget.set_opacity(1.0)
+        self.overlay_stack.resize_status_overlay.hide()
+        return False
 
     def _createUi(self):
         """Creates the Viewer GUI."""
@@ -324,9 +359,11 @@ class ViewerContainer(Gtk.Box, Loggable):
             # from screen coordinate system to mainwindow coordinate system.
             self.__translation = (event.x_root - hpane.get_position(),
                                   event.y_root - vpane.get_position())
+            self.__show_resize_status = True
 
     def __corner_button_release_cb(self, unused_widget, unused_event):
         self.__translation = None
+        self.__show_resize_status = False
 
     def __corner_motion_notify_cb(self, unused_widget, event, hpane, vpane):
         if self.__translation is None:
@@ -431,6 +468,16 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
 
+        # The viewer will be resized while undocking but we don't
+        # want to show the resize status in this case. So, we wait
+        # for 1s to make sure that undocking has finished and any
+        # future viewer resizing is done by the user.
+        GLib.timeout_add(1000, self.__undocking_done, None)
+
+    def __undocking_done(self, unused_data):
+        self.__show_resize_status = True
+        return False
+
     def dock(self):
         if self.docked:
             self.warning("The viewer is already docked")
@@ -438,6 +485,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = True
         self.settings.viewerDocked = True
+        self.__show_resize_status = False
 
         position = None
         if self.pipeline:
@@ -552,7 +600,9 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
                                  border_width=SPACING, obey_child=False)
         Loggable.__init__(self)
 
-        self.add(widget)
+        box = Gtk.Box(name="viewer")
+        box.pack_start(widget, True, True, 0)
+        self.add(box)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!

@@ -155,7 +155,21 @@ GREETER_PERSPECTIVE_CSS = """
     }
 """
 
-TIMELINE_CSS = """
+EDITOR_PERSPECTIVE_CSS = """
+    #viewer {
+        background-color: black;
+    }
+
+    #resize_status_overlay {
+        background-color: #606060;
+        border-radius: 10px;
+    }
+
+    #resize_status_overlay label {
+        margin: 12px;
+        color: white;
+    }
+
     .AudioBackground {
         background-color: #496c21;
     }

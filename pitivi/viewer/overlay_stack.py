@@ -50,6 +50,17 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.add(sink_widget)
         self.connect("size-allocate", self.__on_size_allocate)
 
+        self.resize_status_overlay = Gtk.Box(name="resize_status_overlay",
+                                             halign=Gtk.Align.CENTER,
+                                             valign=Gtk.Align.CENTER)
+        self.resize_status_overlay.pack_start(Gtk.Label(), False, False, 0)
+        self.add_overlay(self.resize_status_overlay)
+
+    def set_resize_status(self, resize_status):
+        """Sets resize status."""
+        resize_status_label = self.resize_status_overlay.get_children()[0]
+        resize_status_label.set_text(resize_status)
+
     def __on_size_allocate(self, widget, rectangle):
         self.window_size = numpy.array([rectangle.width,
                                         rectangle.height])
