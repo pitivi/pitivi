@@ -43,10 +43,10 @@ from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.ui import beautify_time_delta
+from pitivi.utils.ui import EDITOR_PERSPECTIVE_CSS
 from pitivi.utils.ui import info_name
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
-from pitivi.utils.ui import TIMELINE_CSS
 from pitivi.viewer.viewer import ViewerContainer
 
 
@@ -110,7 +110,7 @@ class EditorPerspective(Perspective, Loggable):
 
     def __setup_css(self):
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(TIMELINE_CSS.encode('UTF-8'))
+        css_provider.load_from_data(EDITOR_PERSPECTIVE_CSS.encode("UTF-8"))
         screen = Gdk.Screen.get_default()
         style_context = self.app.gui.get_style_context()
         style_context.add_provider_for_screen(screen, css_provider,

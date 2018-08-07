@@ -19,6 +19,7 @@
 import numpy
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.utils.loggable import Loggable
@@ -49,6 +50,19 @@ class OverlayStack(Gtk.Overlay, Loggable):
                         Gdk.EventMask.ALL_EVENTS_MASK)
         self.add(sink_widget)
         self.connect("size-allocate", self.__on_size_allocate)
+
+        # Whether to show the percent of the size relative to the project size.
+        # It is set to false initially because the viewer gets resized
+        # while the project is loading and we don't want to show the percent
+        # in this case.
+        self.__show_resize_status = False
+        # ID of resizing timeout callback, so it can be delayed.
+        self.__resizing_id = 0
+        self.revealer = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.CROSSFADE)
+        self.resize_status = Gtk.Label(name="resize_status")
+        self.revealer.add(self.resize_status)
+        self.add_overlay(self.revealer)
+        sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 
     def __on_size_allocate(self, widget, rectangle):
         self.window_size = numpy.array([rectangle.width,
@@ -169,3 +183,29 @@ class OverlayStack(Gtk.Overlay, Loggable):
 
     def get_normalized_cursor_position(self, cursor_position):
         return cursor_position / self.window_size
+
+    def enable_resize_status(self, enabled):
+        self.__show_resize_status = enabled
+
+    def __sink_widget_size_allocate_cb(self, unused_widget, allocation):
+        if not self.__show_resize_status:
+            return
+
+        if not self.revealer.get_reveal_child():
+            self.revealer.set_transition_duration(10)
+            self.revealer.set_reveal_child(True)
+
+        video_width = self.app.project_manager.current_project.videowidth
+        percent = int(allocation.width / video_width * 100)
+        self.resize_status.set_text("{}%".format(percent))
+
+        # Add timeout function to hide the resize percent.
+        if self.__resizing_id:
+            GLib.source_remove(self.__resizing_id)
+        self.__resizing_id = GLib.timeout_add(1000, self.__resizing_timeout_cb, None)
+
+    def __resizing_timeout_cb(self, unused_data):
+        self.__resizing_id = 0
+        self.revealer.set_transition_duration(500)
+        self.revealer.set_reveal_child(False)
+        return False
