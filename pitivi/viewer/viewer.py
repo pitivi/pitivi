@@ -21,6 +21,7 @@ from time import time
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -102,6 +103,14 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.__cursor = None
         self.__translation = None
+        # Whether to show viewer's resize status or not.
+        #
+        # It is set to false initially because the viewer gets
+        # resized while the project is loading and we don't
+        # want to show the resize status in this case.
+        self.__show_resize_status = False
+        # ID of event source of the timeout function.
+        self.__id = 0
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -135,6 +144,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __createNewViewer(self):
         self.pipeline.create_sink()
+        self.pipeline.sink_widget.connect("size-allocate", self.__viewer_size_allocate_cb)
 
         self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
@@ -147,6 +157,12 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
+        # Hide resize status for now. We only need it during viewer resizing.
+        self.overlay_stack.resize_status.hide()
+
+        # Wait for 1s to make sure that the viewer has completely realized
+        # and then we can mark the resize status as showable.
+        GLib.timeout_add(1000, self.__viewer_realization_done_cb, None)
 
     def _disconnectFromPipeline(self):
         if self.pipeline is None:
@@ -182,6 +198,27 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerHeight = event.height
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
+
+    def __viewer_size_allocate_cb(self, unused_widget, allocation):
+        if not self.__show_resize_status:
+            return
+
+        self.overlay_stack.resize_status.show()
+
+        if self.__id > 0:
+            GLib.source_remove(self.__id)
+
+        video_width = self.app.project_manager.current_project.videowidth
+        resize_status = int(allocation.width / video_width * 100)
+        self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
+
+        # Add timeout function that gets called once the resizing is done.
+        self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done_cb, None)
+
+    def __viewer_resizing_done_cb(self, unused_data):
+        self.__id = 0
+        self.overlay_stack.resize_status.hide()
+        return False
 
     def _createUi(self):
         """Creates the Viewer GUI."""
@@ -402,6 +439,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = False
         self.settings.viewerDocked = False
+        self.__show_resize_status = False
         self.remove(self.buttons_container)
         position = None
         if self.pipeline:
@@ -431,6 +469,12 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
 
+        GLib.timeout_add(1000, self.__viewer_realization_done_cb, None)
+
+    def __viewer_realization_done_cb(self, unused_data):
+        self.__show_resize_status = True
+        return False
+
     def dock(self):
         if self.docked:
             self.warning("The viewer is already docked")
@@ -438,6 +482,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = True
         self.settings.viewerDocked = True
+        self.__show_resize_status = False
 
         position = None
         if self.pipeline:
