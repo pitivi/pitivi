@@ -23,8 +23,6 @@ import time
 from gettext import gettext as _
 from gettext import ngettext
 from hashlib import md5
-from urllib.parse import unquote
-from urllib.parse import urlparse
 
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
@@ -54,7 +52,6 @@ from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
 from pitivi.utils.ui import beautify_ETA
-from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import FILE_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
@@ -184,11 +181,9 @@ class AssetThumbnail(Loggable):
 
     icons_by_name = {}
 
-    for status in [PROXIED, IN_PROGRESS, UNSUPPORTED]:
-        EMBLEMS[status] = []
-        for size in [32, 64]:
-            EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
-                os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
+    for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR, UNSUPPORTED]:
+        EMBLEMS[status] = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64)
 
     def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
@@ -342,25 +337,30 @@ class AssetThumbnail(Loggable):
 
         self.small_thumb = self.src_small.copy()
         self.large_thumb = self.src_large.copy()
-        for thumb, src in zip([self.small_thumb, self.large_thumb],
-                              self.EMBLEMS[self.state]):
-            # We need to set dest_y == offset_y for the source image
-            # not to be cropped, that API is weird.
-            if thumb.get_height() < src.get_height():
-                src = src.copy()
-                src = src.scale_simple(src.get_width(),
-                                       thumb.get_height(),
-                                       GdkPixbuf.InterpType.BILINEAR)
 
-            src.composite(thumb, dest_x=0,
-                          dest_y=thumb.get_height() - src.get_height(),
-                          dest_width=src.get_width(),
-                          dest_height=src.get_height(),
-                          offset_x=0,
-                          offset_y=thumb.get_height() - src.get_height(),
-                          scale_x=1.0, scale_y=1.0,
-                          interp_type=GdkPixbuf.InterpType.BILINEAR,
-                          overall_alpha=self.DEFAULT_ALPHA)
+        for thumb in [self.small_thumb, self.large_thumb]:
+            emblem = self.EMBLEMS[self.state]
+            if thumb.get_height() < emblem.get_height() or \
+                    thumb.get_width() < emblem.get_width():
+                width = min(emblem.get_width(), thumb.get_width())
+                height = min(emblem.get_height(), thumb.get_height())
+                # Crop the emblem to fit the thumbnail.
+                emblem = emblem.new_subpixbuf(0, emblem.get_height() - height,
+                        width, height)
+
+            # The dest_* arguments define the area of thumb to change.
+            # The offset_* arguments define the emblem offset so its
+            # bottom-left corner matches the thumb's bottom-left corner.
+            emblem.composite(thumb,
+                             dest_x=0,
+                             dest_y=thumb.get_height() - emblem.get_height(),
+                             dest_width=emblem.get_width(),
+                             dest_height=emblem.get_height(),
+                             offset_x=0,
+                             offset_y=thumb.get_height() - emblem.get_height(),
+                             scale_x=1.0, scale_y=1.0,
+                             interp_type=GdkPixbuf.InterpType.BILINEAR,
+                             overall_alpha=self.DEFAULT_ALPHA)
 
 
 class MediaLibraryWidget(Gtk.Box, Loggable):
