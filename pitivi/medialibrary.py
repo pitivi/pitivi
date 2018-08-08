@@ -184,10 +184,8 @@ class AssetThumbnail(Loggable):
     icons_by_name = {}
 
     for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR]:
-        EMBLEMS[status] = []
-        for size in [32, 64]:
-            EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
-                os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
+        EMBLEMS[status] = (GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64))
 
     def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
@@ -339,22 +337,25 @@ class AssetThumbnail(Loggable):
 
         self.small_thumb = self.src_small.copy()
         self.large_thumb = self.src_large.copy()
-        for thumb, src in zip([self.small_thumb, self.large_thumb],
-                              self.EMBLEMS[self.state]):
-            # We need to set dest_y == offset_y for the source image
-            # not to be cropped, that API is weird.
-            if thumb.get_height() < src.get_height():
-                src = src.copy()
-                src = src.scale_simple(src.get_width(),
-                                       thumb.get_height(),
-                                       GdkPixbuf.InterpType.BILINEAR)
+        emblem = self.EMBLEMS[self.state]
 
-            src.composite(thumb, dest_x=0,
-                          dest_y=thumb.get_height() - src.get_height(),
-                          dest_width=src.get_width(),
-                          dest_height=src.get_height(),
+        for thumb in [self.small_thumb, self.large_thumb]:
+            if thumb.get_height() < emblem.get_height() or \
+                    thumb.get_width() < emblem.get_width():
+
+                width = min(emblem.get_width(), thumb.get_width())
+                height = min(emblem.get_height(), thumb.get_height())
+
+                # Crop the emblem to fit thumbnail
+                emblem = emblem.new_subpixbuf(0, emblem.get_height() - height,
+                        width, height)
+
+            emblem.composite(thumb, dest_x=0,
+                          dest_y=thumb.get_height() - emblem.get_height(),
+                          dest_width=emblem.get_width(),
+                          dest_height=emblem.get_height(),
                           offset_x=0,
-                          offset_y=thumb.get_height() - src.get_height(),
+                          offset_y=thumb.get_height() - emblem.get_height(),
                           scale_x=1.0, scale_y=1.0,
                           interp_type=GdkPixbuf.InterpType.BILINEAR,
                           overall_alpha=self.DEFAULT_ALPHA)
