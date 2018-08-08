@@ -185,7 +185,7 @@ class AssetThumbnail(Loggable):
 
     for status in [PROXIED, IN_PROGRESS, ASSET_PROXYING_ERROR]:
         EMBLEMS[status] = []
-        for size in [32, 64]:
+        for size in [64, 64]:
             EMBLEMS[status].append(GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(get_pixmap_dir(), "%s.svg" % status), size, size))
 
@@ -343,11 +343,18 @@ class AssetThumbnail(Loggable):
                               self.EMBLEMS[self.state]):
             # We need to set dest_y == offset_y for the source image
             # not to be cropped, that API is weird.
-            if thumb.get_height() < src.get_height():
+            if thumb.get_height() < src.get_height() or \
+                    thumb.get_width() < src.get_width():
+
                 src = src.copy()
-                src = src.scale_simple(src.get_width(),
-                                       thumb.get_height(),
-                                       GdkPixbuf.InterpType.BILINEAR)
+                # Crop icon to fit thumbnail
+                if src.get_width() > thumb.get_width():
+                    src = src.new_subpixbuf(0, src.get_height() / 2,
+                        thumb.get_width(), src.get_height() / 2)
+
+                if src.get_height() > thumb.get_height():
+                    src = src.new_subpixbuf(0, src.get_height() - thumb.get_height(),
+                        src.get_width(), thumb.get_height())
 
             src.composite(thumb, dest_x=0,
                           dest_y=thumb.get_height() - src.get_height(),
