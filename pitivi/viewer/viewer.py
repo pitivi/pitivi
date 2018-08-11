@@ -152,8 +152,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.target, expand=True, fill=True, padding=0)
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
@@ -208,12 +207,41 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.__id > 0:
             GLib.source_remove(self.__id)
 
-        video_width = self.app.project_manager.current_project.videowidth
-        resize_status = int(allocation.width / video_width * 100)
+        project = self.app.project_manager.current_project
+        margin = self.target.get_margin_start() + self.target.get_margin_end()
+        resize_status = int((allocation.width + margin) / project.videowidth * 100)
+
+        # If the viewer size is in range [50%, 50% + delta] or
+        # [100%, 100% + delta], snap to 50% or 100% respectively.
+        delta = 5
+        marks = [50, 100]
+        snapped = False
+
+        for mark in marks:
+            if mark < resize_status <= mark + delta:
+                self.__snap_viewer(mark, resize_status, project)
+                resize_status = mark
+                snapped = True
+                break
+
+        if not snapped:
+            self.target.props.margin = 0
+
         self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
 
         # Add timeout function that gets called once the resizing is done.
         self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done_cb, None)
+
+    def __snap_viewer(self, snap_mark, resize_status, project):
+        snapping_per_percent = (resize_status - snap_mark) / 100
+        # Margins we need to set along width and height of the viewer.
+        width_margin = snapping_per_percent * project.videowidth
+        height_margin = snapping_per_percent * project.videoheight
+
+        self.target.set_margin_start(width_margin // 2)
+        self.target.set_margin_end(width_margin - width_margin // 2)
+        self.target.set_margin_top(height_margin // 2)
+        self.target.set_margin_bottom(height_margin - height_margin // 2)
 
     def __viewer_resizing_done_cb(self, unused_data):
         self.__id = 0
