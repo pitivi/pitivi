@@ -87,6 +87,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline = None
         self.docked = True
         self.target = None
+        self.__viewer_vbox = None
+        self.__viewer_vbox_size = None
         self._compactMode = False
 
         # Only used for restoring the pipeline position after a live clip trim
@@ -135,25 +137,20 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
         self.__owning_pipeline = False
-        self.__createNewViewer()
+        self.__create_viewer()
         self._setUiActive()
 
         if position:
             self.pipeline.simple_seek(position)
         self.pipeline.pause()
 
-    def __createNewViewer(self):
+    def __create_viewer(self):
         self.pipeline.create_sink()
-        self.pipeline.sink_widget.connect("size-allocate", self.__viewer_size_allocate_cb)
 
         self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
 
-        if self.docked:
-            self.pack_start(self.target, expand=True, fill=True, padding=0)
-        else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+        self.__viewer_vbox.pack_start(self.target, expand=True, fill=True, padding=0)
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
@@ -197,9 +194,17 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
 
-    def __viewer_size_allocate_cb(self, unused_widget, allocation):
+    def __viewer_vbox_size_allocate_cb(self, vbox, allocation):
         if not self.__show_resize_status:
             return
+
+        if self.__viewer_vbox_size.width == allocation.width and \
+                self.__viewer_vbox_size.height == allocation.height:
+            # No change in size allocation.
+            return
+
+        self.__viewer_vbox_size.width = allocation.width
+        self.__viewer_vbox_size.height = allocation.height
 
         if not self.overlay_stack.revealer.get_reveal_child():
             self.overlay_stack.revealer.set_transition_duration(0)
@@ -208,10 +213,48 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.__id > 0:
             GLib.source_remove(self.__id)
 
-        video_width = self.app.project_manager.current_project.videowidth
-        resize_status = int(allocation.width / video_width * 100)
-        self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
+        project = self.app.project_manager.current_project
+        vbox_width_margin = vbox.get_margin_start() + vbox.get_margin_end()
+        viewer_size = self.pipeline.sink_widget.get_allocation()
+        resize_status = int((viewer_size.width + vbox_width_margin) / project.videowidth * 100)
 
+        # If the viewer size is in range [50%, 50% + delta] or
+        # [100%, 100% + delta], snap to 50% or 100% respectively.
+        delta = 5
+        marks = [50, 100]
+        snapped = False
+
+        for mark in marks:
+            if mark <= resize_status <= mark + delta:
+                # Snap the viewer.
+                snap_status = mark / 100
+                snap_width = project.videowidth * snap_status
+                snap_height = project.videoheight * snap_status
+
+                vbox_height_margin = vbox.get_margin_top() + vbox.get_margin_bottom()
+                viewer_width = viewer_size.width + vbox_width_margin
+                viewer_height = viewer_size.height + vbox_height_margin
+
+                # Margins we need to set along width and height of the viewer.
+                width_margin = viewer_width - snap_width
+                height_margin = viewer_height - snap_height
+
+                if width_margin > 0:
+                    vbox.set_margin_start(width_margin // 2)
+                    vbox.set_margin_end(width_margin - width_margin // 2)
+
+                if height_margin > 0:
+                    vbox.set_margin_top(height_margin // 2)
+                    vbox.set_margin_bottom(height_margin - height_margin // 2)
+
+                resize_status = mark
+                snapped = True
+                break
+
+        if not snapped:
+            vbox.props.margin = 0
+
+        self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
         # Add timeout function that gets called once the resizing is done.
         self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done_cb, None)
 
@@ -225,16 +268,14 @@ class ViewerContainer(Gtk.Box, Loggable):
         """Creates the Viewer GUI."""
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
+        self.__viewer_vbox = Gtk.Box()
+        self.__viewer_vbox.set_orientation(Gtk.Orientation.VERTICAL)
+        self.__viewer_vbox.connect("size-allocate", self.__viewer_vbox_size_allocate_cb)
+        self.pack_start(self.__viewer_vbox, True, True, 0)
+
         self.external_window = Gtk.Window()
-        vbox = Gtk.Box()
-        vbox.set_orientation(Gtk.Orientation.VERTICAL)
-        vbox.set_spacing(SPACING)
-        self.external_window.add(vbox)
-        self.external_window.connect(
-            "delete-event", self._externalWindowDeleteCb)
-        self.external_window.connect(
-            "configure-event", self._externalWindowConfigureCb)
-        self.external_vbox = vbox
+        self.external_window.connect("delete-event", self._externalWindowDeleteCb)
+        self.external_window.connect("configure-event", self._externalWindowConfigureCb)
 
         # Corner marker.
         corner = Gtk.DrawingArea()
@@ -267,7 +308,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_property("halign", Gtk.Align.CENTER)
         bbox.set_margin_left(SPACING)
         bbox.set_margin_right(SPACING)
-        self.pack_end(bbox, False, False, 0)
+        self.__viewer_vbox.pack_end(bbox, False, False, 0)
 
         self.goToStart_button = Gtk.ToolButton()
         self.goToStart_button.set_icon_name("media-skip-backward")
@@ -333,7 +374,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.buttons_container = bbox
         self.show_all()
-        self.external_vbox.show_all()
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
         cr.set_line_width(1)
@@ -441,31 +481,31 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.docked = False
         self.settings.viewerDocked = False
         self.__show_resize_status = False
-        self.remove(self.buttons_container)
+
         position = None
         if self.pipeline:
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
-            self.remove(self.target)
-            self.__createNewViewer()
-        self.buttons_container.set_margin_bottom(SPACING)
-        self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
         self.fullscreen_button = Gtk.ToggleToolButton()
         self.fullscreen_button.set_icon_name("view-fullscreen")
-        self.fullscreen_button.set_tooltip_text(
-            _("Show this window in fullscreen"))
-        self.buttons_container.pack_end(
-            self.fullscreen_button, expand=False, fill=False, padding=6)
+        self.fullscreen_button.set_tooltip_text(_("Show this window in fullscreen"))
         self.fullscreen_button.show()
         self.fullscreen_button.connect("toggled", self._toggleFullscreen)
 
-        self.external_window.show()
+        self.buttons_container.pack_end(
+            self.fullscreen_button, expand=False, fill=False, padding=6)
+        self.buttons_container.set_margin_bottom(SPACING)
+
+        self.remove(self.__viewer_vbox)
         self.hide()
+
+        self.external_window.add(self.__viewer_vbox)
+        self.external_window.show()
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
-        self.external_window.resize(
-            self.settings.viewerWidth, self.settings.viewerHeight)
+        self.external_window.resize(self.settings.viewerWidth, self.settings.viewerHeight)
+
         if self.pipeline:
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
@@ -474,6 +514,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __viewer_realization_done_cb(self, unused_data):
         self.__show_resize_status = True
+        self.__viewer_vbox_size = self.__viewer_vbox.get_allocation()
         return False
 
     def dock(self):
@@ -489,17 +530,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.pipeline:
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
-            self.external_vbox.remove(self.target)
-            self.__createNewViewer()
 
         self.undock_button.show()
         self.fullscreen_button.destroy()
-        self.external_vbox.remove(self.buttons_container)
         self.buttons_container.set_margin_bottom(0)
-        self.pack_end(self.buttons_container, False, False, 0)
+        self.external_window.remove(self.__viewer_vbox)
+        self.external_window.hide()
+        self.pack_start(self.__viewer_vbox, True, True, 0)
         self.show()
 
-        self.external_window.hide()
         if self.pipeline:
             self.pipeline.pause()
             self.pipeline.simple_seek(position)
@@ -595,7 +634,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
-                                 border_width=SPACING, obey_child=False)
+                                 border_width=SPACING, obey_child=False,
+                                 shadow_type=Gtk.ShadowType.NONE)
         Loggable.__init__(self)
 
         self.add(widget)
