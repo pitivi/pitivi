@@ -16,6 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import math
 from gettext import gettext as _
 from time import time
 
@@ -111,6 +112,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__show_resize_status = False
         # ID of event source of the timeout function.
         self.__id = 0
+        self.__curr_resize_status = 0
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -208,12 +210,43 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.__id > 0:
             GLib.source_remove(self.__id)
 
-        video_width = self.app.project_manager.current_project.videowidth
-        resize_status = int(allocation.width / video_width * 100)
+        project = self.app.project_manager.current_project
+        resize_status = int(allocation.width / project.videowidth * 100)
+
+        # If the resize status is in range [50%, 50% + delta] or
+        # [100%, 100% + delta], snap to 50% or 100% respectively.
+        delta = 5
+        snap_status = [50, 100]
+
+        for status in snap_status:
+            if self.__curr_resize_status > status + delta and \
+                    status < resize_status <= status + delta:
+                self.__snap_viewer(delta, project.videowidth, project.videoheight)
+                # Round down to multiple of 10.
+                resize_status = int(math.floor(resize_status / 10)) * 10
+
+        self.__curr_resize_status = resize_status
         self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
 
         # Add timeout function that gets called once the resizing is done.
         self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done_cb, None)
+
+    def __snap_viewer(self, delta, video_width, video_height):
+        delta_per_percent = delta / 100
+        # The amount of pixels by which viewer width and height needs to be reduced.
+        width_reduction = delta_per_percent * video_width
+        height_reduction = delta_per_percent * video_height
+
+        if self.docked:
+            self.__translation[0] -= width_reduction
+            self.__translation[1] += height_reduction
+        else:
+            window_size = self.external_window.get_allocation()
+            window_width = window_size.width - width_reduction
+            window_height = window_size.height - height_reduction
+            self.external_window.hide()
+            self.external_window.resize(window_width, window_height)
+            self.external_window.show()
 
     def __viewer_resizing_done_cb(self, unused_data):
         self.__id = 0
@@ -359,8 +392,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             # whereas the positions of panes is w.r.t the root of the
             # mainwindow. We need to find the translation that takes us
             # from screen coordinate system to mainwindow coordinate system.
-            self.__translation = (event.x_root - hpane.get_position(),
-                                  event.y_root - vpane.get_position())
+            self.__translation = [event.x_root - hpane.get_position(),
+                                  event.y_root - vpane.get_position()]
 
     def __corner_button_release_cb(self, unused_widget, unused_event):
         self.__translation = None
@@ -473,6 +506,9 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def __viewer_realization_done_cb(self, unused_data):
         self.__show_resize_status = True
+        video_width = self.app.project_manager.current_project.videowidth
+        viewer_width = self.pipeline.sink_widget.get_allocated_width()
+        self.__curr_resize_status = int(viewer_width / video_width * 100)
         return False
 
     def dock(self):
