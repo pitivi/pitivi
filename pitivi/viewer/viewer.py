@@ -16,6 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import math
 from gettext import gettext as _
 from time import time
 
@@ -111,6 +112,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.__show_resize_status = False
         # ID of event source of the timeout function.
         self.__id = 0
+        self.__snap_margin = 0
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -152,8 +154,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.target, expand=True, fill=True, padding=0)
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
@@ -208,12 +209,40 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.__id > 0:
             GLib.source_remove(self.__id)
 
-        video_width = self.app.project_manager.current_project.videowidth
-        resize_status = int(allocation.width / video_width * 100)
+        project = self.app.project_manager.current_project
+        resize_status = int((allocation.width + self.__snap_margin) / project.videowidth * 100)
+
+        # If the resize status is in range [50%, 50% + delta] or
+        # [100%, 100% + delta], snap to 50% or 100% respectively.
+        delta = 5
+        snap_status = [50, 100]
+
+        for status in snap_status:
+            if status < resize_status <= status + delta:
+                self.__snap_viewer(status, resize_status,
+                                   project.videowidth, project.videoheight)
+                resize_status = status
+                break
+            if resize_status in [status, status + delta + 1]:
+                self.__snap_margin = 0
+                self.target.props.margin = 0
+                break
+
         self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
 
         # Add timeout function that gets called once the resizing is done.
         self.__id = GLib.timeout_add(1000, self.__viewer_resizing_done_cb, None)
+
+    def __snap_viewer(self, snap_status, resize_status, video_width, video_height):
+        snapping_per_percent = (resize_status - snap_status) / 100
+        # Margins we need to set along width and height of the viewer.
+        self.__snap_margin = snapping_per_percent * video_width
+        height_margin = snapping_per_percent * video_height
+
+        self.target.set_margin_start(self.__snap_margin // 2)
+        self.target.set_margin_end(self.__snap_margin - self.__snap_margin // 2)
+        self.target.set_margin_top(height_margin // 2)
+        self.target.set_margin_bottom(height_margin - height_margin // 2)
 
     def __viewer_resizing_done_cb(self, unused_data):
         self.__id = 0
