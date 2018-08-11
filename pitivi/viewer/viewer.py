@@ -152,8 +152,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
         else:
-            self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
-            self.external_vbox.child_set(self.target, fill=True)
+            self.external_vbox.pack_start(self.target, expand=True, fill=True, padding=0)
 
         self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
@@ -208,8 +207,43 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.__id > 0:
             GLib.source_remove(self.__id)
 
-        video_width = self.app.project_manager.current_project.videowidth
-        resize_status = int(allocation.width / video_width * 100)
+        project = self.app.project_manager.current_project
+        curr_width_margin = self.target.get_margin_start() + self.target.get_margin_end()
+        resize_status = int((allocation.width + curr_width_margin) / project.videowidth * 100)
+
+        # If the viewer size is in range [50%, 50% + delta] or
+        # [100%, 100% + delta], snap to 50% or 100% respectively.
+        delta = 5
+        marks = [50, 100]
+        snapped = False
+
+        for mark in marks:
+            if mark < resize_status <= mark + delta:
+                # Snap the viewer.
+                snap_status = mark / 100
+                snap_width = project.videowidth * snap_status
+                snap_height = project.videoheight * snap_status
+
+                curr_height_margin = self.target.get_margin_top() + self.target.get_margin_bottom()
+                viewer_width = allocation.width + curr_width_margin
+                viewer_height = allocation.height + curr_height_margin
+
+                # Margins we need to set along width and height of the viewer.
+                width_margin = viewer_width - snap_width
+                height_margin = viewer_height - snap_height
+
+                self.target.set_margin_start(width_margin // 2)
+                self.target.set_margin_end(width_margin - width_margin // 2)
+                self.target.set_margin_top(height_margin // 2)
+                self.target.set_margin_bottom(height_margin - height_margin // 2)
+
+                resize_status = mark
+                snapped = True
+                break
+
+        if not snapped:
+            self.target.props.margin = 0
+
         self.overlay_stack.resize_status.set_text("{}%".format(resize_status))
 
         # Add timeout function that gets called once the resizing is done.
@@ -595,7 +629,8 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # Prevent black frames and flickering while resizing or changing focus:
         # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
-                                 border_width=SPACING, obey_child=False)
+                                 border_width=SPACING, obey_child=False,
+                                 shadow_type=Gtk.ShadowType.NONE)
         Loggable.__init__(self)
 
         self.add(widget)
