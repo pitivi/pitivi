@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-05 18:44+0200\n"
-"PO-Revision-Date: 2018-08-05 18:45+0200\n"
+"POT-Creation-Date: 2018-08-12 19:54+0200\n"
+"PO-Revision-Date: 2018-08-12 19:55+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 
 #: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
-#: ../pitivi/greeterperspective.py:258
+#: ../pitivi/greeterperspective.py:264
 msgid "Pitivi"
 msgstr "Pitivi"
 
@@ -513,7 +513,7 @@ msgstr ""
 #: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:3
 #: ../pitivi/editorperspective.py:509 ../pitivi/editorperspective.py:723
 #: ../pitivi/editorperspective.py:771 ../pitivi/editorperspective.py:824
-#: ../pitivi/greeterperspective.py:227 ../pitivi/medialibrary.py:757
+#: ../pitivi/greeterperspective.py:233 ../pitivi/medialibrary.py:757
 #: ../pitivi/dialogs/browseprojects.py:41 ../pitivi/dialogs/missingasset.py:49
 msgid "Cancel"
 msgstr "Anuluj"
@@ -662,11 +662,11 @@ msgstr ""
 msgid "Rendering"
 msgstr "Renderowanie"
 
-#: ../data/ui/renderingprogress.ui.h:2 ../pitivi/viewer/viewer.py:554
+#: ../data/ui/renderingprogress.ui.h:2 ../pitivi/viewer/viewer.py:612
 msgid "Pause"
 msgstr "Wstrzymaj"
 
-#: ../data/ui/renderingprogress.ui.h:4 ../pitivi/viewer/viewer.py:546
+#: ../data/ui/renderingprogress.ui.h:4 ../pitivi/viewer/viewer.py:604
 #: ../pitivi/timeline/timeline.py:1629
 msgid "Play"
 msgstr "Odtwórz"
@@ -1114,39 +1114,39 @@ msgstr "Bez kategorii"
 msgid "All effects"
 msgstr "Wszystkie efekty"
 
-#: ../pitivi/greeterperspective.py:214 ../pitivi/preset.py:104
+#: ../pitivi/greeterperspective.py:220 ../pitivi/preset.py:104
 msgid "New"
 msgstr "Nowy"
 
-#: ../pitivi/greeterperspective.py:215 ../pitivi/greeterperspective.py:269
+#: ../pitivi/greeterperspective.py:221 ../pitivi/greeterperspective.py:275
 msgid "Create a new project"
 msgstr "Utworzenie nowego projektu"
 
-#: ../pitivi/greeterperspective.py:218
+#: ../pitivi/greeterperspective.py:224
 msgid "Open…"
 msgstr "Otwórz…"
 
-#: ../pitivi/greeterperspective.py:219
+#: ../pitivi/greeterperspective.py:225
 msgid "Open an existing project"
 msgstr "Otwarcie istniejącego projektu"
 
-#: ../pitivi/greeterperspective.py:224
+#: ../pitivi/greeterperspective.py:230
 msgid "Select projects for removal"
 msgstr "Wybór projektów do usunięcia"
 
-#: ../pitivi/greeterperspective.py:252
+#: ../pitivi/greeterperspective.py:258
 msgid "Click an item to select"
 msgstr "Kliknięcie elementu zaznacza go"
 
-#: ../pitivi/greeterperspective.py:256
+#: ../pitivi/greeterperspective.py:262
 msgid "Select a Project"
 msgstr "Wybór projektu"
 
-#: ../pitivi/greeterperspective.py:275
+#: ../pitivi/greeterperspective.py:281
 msgid "Open a project"
 msgstr "Otwarcie projektu"
 
-#: ../pitivi/greeterperspective.py:331
+#: ../pitivi/greeterperspective.py:349
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s jest dostępny."
@@ -1611,23 +1611,23 @@ msgstr "Gładkie"
 msgid "Currently playing"
 msgstr "Obecnie odtwarzane"
 
-#: ../pitivi/viewer/viewer.py:219
+#: ../pitivi/viewer/viewer.py:238
 msgid "Go to the beginning of the timeline"
 msgstr "Przechodzi na początek osi czasu"
 
-#: ../pitivi/viewer/viewer.py:226
+#: ../pitivi/viewer/viewer.py:245
 msgid "Go back one second"
 msgstr "Przechodzi do tyłu o jedną sekundę"
 
-#: ../pitivi/viewer/viewer.py:238
+#: ../pitivi/viewer/viewer.py:257
 msgid "Go forward one second"
 msgstr "Przechodzi naprzód o jedną sekundę"
 
-#: ../pitivi/viewer/viewer.py:246
+#: ../pitivi/viewer/viewer.py:265
 msgid "Go to the end of the timeline"
 msgstr "Przechodzi na koniec osi czasu"
 
-#: ../pitivi/viewer/viewer.py:253
+#: ../pitivi/viewer/viewer.py:272
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
@@ -1635,7 +1635,7 @@ msgstr ""
 "Proszę wprowadzić kod czasowy lub numer klatki\n"
 "i nacisnąć klawisz „Enter”, aby przejść do tego położenia"
 
-#: ../pitivi/viewer/viewer.py:262
+#: ../pitivi/viewer/viewer.py:281
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
@@ -1643,11 +1643,11 @@ msgstr ""
 "Odłącza przeglądarkę\n"
 "Można ją ponownie podłączyć zamykając nowo utworzone okno."
 
-#: ../pitivi/viewer/viewer.py:362 ../pitivi/viewer/viewer.py:413
+#: ../pitivi/viewer/viewer.py:419 ../pitivi/viewer/viewer.py:471
 msgid "Show this window in fullscreen"
 msgstr "Wyświetlanie tego okno na pełnym ekranie"
 
-#: ../pitivi/viewer/viewer.py:410
+#: ../pitivi/viewer/viewer.py:468
 msgid "Exit fullscreen mode"
 msgstr "Zakończ tryb pełnoekranowy"
 
@@ -1932,13 +1932,13 @@ msgstr "Skróty"
 
 #. Translators: This adds a semicolon to an already
 #. translated name of a preference.
-#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:835
-#: ../pitivi/utils/widgets.py:937
+#: ../pitivi/dialogs/prefs.py:242 ../pitivi/utils/widgets.py:811
+#: ../pitivi/utils/widgets.py:913
 #, python-format
 msgid "%(preference_label)s:"
 msgstr "%(preference_label)s:"
 
-#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:1014
+#: ../pitivi/dialogs/prefs.py:252 ../pitivi/utils/widgets.py:990
 msgid "Reset to default value"
 msgstr "Przywraca domyślną wartość"
 
@@ -1946,37 +1946,37 @@ msgstr "Przywraca domyślną wartość"
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Przywraca skrót do domyślnej wartości"
 
-#: ../pitivi/dialogs/prefs.py:506
+#: ../pitivi/dialogs/prefs.py:504
 msgid "Set Shortcut"
 msgstr "Ustawienie skrótu"
 
 #. Setup the widgets used in the dialog.
-#: ../pitivi/dialogs/prefs.py:521
+#: ../pitivi/dialogs/prefs.py:519
 msgid "Apply"
 msgstr "Zastosuj"
 
-#: ../pitivi/dialogs/prefs.py:524
+#: ../pitivi/dialogs/prefs.py:522
 msgid "Apply the accelerator to this shortcut."
 msgstr "Zastosowuje wartość dla tego skrótu."
 
-#: ../pitivi/dialogs/prefs.py:527
+#: ../pitivi/dialogs/prefs.py:525
 msgid "Replace"
 msgstr "Zastąp"
 
-#: ../pitivi/dialogs/prefs.py:530
+#: ../pitivi/dialogs/prefs.py:528
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
 msgstr "Usuwa tę wartość z poprzedniego miejsca i ustawia ją dla tego skrótu."
 
-#: ../pitivi/dialogs/prefs.py:537
+#: ../pitivi/dialogs/prefs.py:535
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr ""
 "Proszę podać nowy skrót dla „<b>%s</b>” lub nacisnąć klawisz Esc, aby "
 "anulować."
 
-#: ../pitivi/dialogs/prefs.py:546
+#: ../pitivi/dialogs/prefs.py:544
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -1984,7 +1984,7 @@ msgstr ""
 "Ustawiana wartość może przeszkadzać w pisaniu. Proszę spróbować użyć "
 "klawisza Ctrl, Shift lub Alt w połączeniu z innym klawiszem."
 
-#: ../pitivi/dialogs/prefs.py:580
+#: ../pitivi/dialogs/prefs.py:578
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -1993,11 +1993,11 @@ msgstr ""
 "Ta kombinacja klawiszy jest już używana dla „<b>%s</b>”. Naciśnięcie "
 "przycisku Zastąp użyje jej dla „<b>%s</b>”."
 
-#: ../pitivi/dialogs/prefs.py:623
+#: ../pitivi/dialogs/prefs.py:621
 msgid "No description available."
 msgstr "Brak opisu."
 
-#: ../pitivi/dialogs/prefs.py:734
+#: ../pitivi/dialogs/prefs.py:732
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "Nie można wczytać wtyczki „{module_name}”"
@@ -2159,52 +2159,74 @@ msgstr[2] "Około %d lat temu"
 msgid "Implement Me"
 msgstr "Niezaimplementowane"
 
-#: ../pitivi/utils/widgets.py:868
+#: ../pitivi/utils/widgets.py:844
 msgid "No properties."
 msgstr "Brak właściwości."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:999
+#: ../pitivi/utils/widgets.py:975
 msgid "Show keyframes for this value"
 msgstr "Wyświetlanie klatek kluczowych dla tej wartości"
 
-#: ../pitivi/utils/widgets.py:1182
+#: ../pitivi/utils/widgets.py:1158
 #, python-format
 msgid "Properties for %s"
 msgstr "Właściwości dla „%s”"
 
-#: ../pitivi/utils/widgets.py:1345
+#: ../pitivi/utils/widgets.py:1321
 msgid "Zoom Fit"
 msgstr "Dopasowanie"
 
-#: ../pitivi/utils/widgets.py:1350
+#: ../pitivi/utils/widgets.py:1326
 msgid "Zoom"
 msgstr "Powiększenie"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1424
+#: ../pitivi/utils/widgets.py:1400
 #, python-format
 msgid "%s displayed"
 msgstr "Wyświetlone: %s"
 
-#: ../pitivi/utils/widgets.py:1428
+#: ../pitivi/utils/widgets.py:1404
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Wyświetlone: %d ns"
 
-#: ../plugins/console/console.py:97
+#: ../plugins/console/console.py:140
+msgid "Console"
+msgstr "Konsola"
+
+#: ../plugins/console/console.py:142
+msgid "Color"
+msgstr "Kolor"
+
+#. Translators: The color of the content from stderr.
+#: ../plugins/console/console.py:147
+msgid "Standard error color"
+msgstr "Kolor standardowego błędu"
+
+#. Translators: The color of the content from stdout.
+#: ../plugins/console/console.py:152
+msgid "Standard output color"
+msgstr "Kolor standardowego wyjścia"
+
+#: ../plugins/console/console.py:156
+msgid "Font"
+msgstr "Czcionka"
+
+#: ../plugins/console/console.py:176
 msgid "Developer Console"
 msgstr "Konsola programistyczna"
 
-#: ../plugins/console/console.py:115
+#: ../plugins/console/console.py:198
 msgid "Pitivi Console"
 msgstr "Konsola programu Pitivi"
 
-#: ../plugins/console/console.py:126
+#: ../plugins/console/console.py:209
 msgid "You can use the following shortcuts:"
 msgstr "Można używać tych skrótów:"
 
-#: ../plugins/console/console.py:131
+#: ../plugins/console/console.py:214
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Wpisanie „{help}(<polecenie>)” wyświetli więcej informacji."
