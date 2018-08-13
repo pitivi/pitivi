@@ -374,7 +374,7 @@ class PreferencesDialog(Loggable):
         project = self.app.project_manager.current_project
 
         label = content.get_children()[0]
-        label.set_text(_("The above setting only affects new projects by"
+        label.set_text(_("The setting below only affects new projects by"
             " default.\nScaled Proxy resolution for the current project is "
             "%dx%d px" % (project.scaled_proxy_width,
             project.scaled_proxy_height)))

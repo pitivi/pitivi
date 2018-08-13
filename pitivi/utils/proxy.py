@@ -414,6 +414,9 @@ class ProxyManager(GObject.Object, Loggable):
 
             del transcoder
 
+        if shadow_transcoder:
+            self.app.project_manager.current_project.finalize_proxy(proxy)
+
         if not shadow_transcoder:
             self.emit("proxy-ready", asset, proxy)
             self.__emitProgress(proxy, 100)

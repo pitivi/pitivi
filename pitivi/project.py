@@ -1260,9 +1260,7 @@ class Project(Loggable, GES.Project):
         asset.creation_progress = 100
         asset.ready = True
         if proxy:
-            proxy.ready = False
-            proxy.error = None
-            proxy.creation_progress = 100
+            self.finalize_proxy(proxy)
 
         asset.set_proxy(proxy)
         try:
@@ -1275,6 +1273,11 @@ class Project(Loggable, GES.Project):
             self.loading_assets.add(proxy)
 
         self.__updateAssetLoadingProgress()
+
+    def finalize_proxy(self, proxy):
+        proxy.ready = False
+        proxy.error = None
+        proxy.creation_progress = 100
 
     # ------------------------------------------ #
     # GES.Project virtual methods implementation #
