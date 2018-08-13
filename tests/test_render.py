@@ -384,6 +384,60 @@ class TestRender(BaseTestMediaLibrary):
             # Check asset was replaced with scaled proxy after rendering
             self.assertTrue(proxy_manager.is_scaled_proxy(clip.get_asset()))
 
+    # pylint: disable=invalid-name
+    def test_rendering_with_unsupported_asset_scaled_proxies(self):
+        """Tests rendering with scaled proxies."""
+        sample_name = "30fps_numeroted_frames_red.mkv"
+        with common.cloned_sample(sample_name):
+            self.check_import([sample_name], proxying_strategy=ProxyingStrategy.AUTOMATIC)
+
+            project = self.app.project_manager.current_project
+            proxy_manager = self.app.proxy_manager
+            timeline_container = TimelineContainer(self.app)
+            timeline_container.setProject(project)
+            rendering_asset = None
+
+            # Mark all formats as unsupported
+            SUPPORTED_FORMATS = proxy_manager.WHITELIST_FORMATS
+            proxy_manager.WHITELIST_FORMATS = []
+
+            asset, = project.list_assets(GES.UriClip)
+            asset_uri = common.get_sample_uri(sample_name)
+
+            proxy = self.check_add_proxy(asset, asset_uri, scaled=True)
+
+            # Check that HQ proxy was created
+            hq_uri = self.app.proxy_manager.getProxyUri(asset)
+            self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)))
+
+            layer, = project.ges_timeline.get_layers()
+            clip = proxy.extract()
+            layer.add_clip(clip)
+
+            # Patch the function that reverts assets to proxies after rendering.
+            from pitivi.render import RenderDialog
+            old_use_proxy_assets = RenderDialog._useProxyAssets
+
+            def check_use_proxy_assets(self):
+                nonlocal layer, asset, rendering_asset
+                clip, = layer.get_clips()
+                rendering_asset = clip.get_asset()
+                old_use_proxy_assets(self)
+
+            RenderDialog._useProxyAssets = check_use_proxy_assets
+            dialog = self.create_rendering_dialog(project)
+            self.render(dialog)
+            # ERROR
+            self.mainloop.run(until_empty=True)
+            RenderDialog._useProxyAssets = old_use_proxy_assets
+
+            # Check rendering used HQ proxy
+            self.assertTrue(proxy_manager.is_hq_proxy(rendering_asset))
+            # Check asset was replaced with scaled proxy after rendering
+            self.assertTrue(proxy_manager.is_scaled_proxy(clip.get_asset()))
+
+            proxy_manager.WHITELIST_FORMATS = SUPPORTED_FORMATS
+
     @skipUnless(*encoding_target_exists("youtube"))
     # pylint: disable=invalid-name
     def test_rendering_with_youtube_profile(self):

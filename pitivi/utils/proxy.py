@@ -387,6 +387,11 @@ class ProxyManager(GObject.Object, Loggable):
 
         return True
 
+    def _finalize_shadow_proxies(self, proxy):
+        proxy.ready = False
+        proxy.error = None
+        proxy.creation_progress = 100
+
     def __assetLoadedCb(self, proxy, res, asset, transcoder):
         try:
             GES.Asset.request_finish(res)
@@ -413,6 +418,9 @@ class ProxyManager(GObject.Object, Loggable):
             shadow_transcoder = self._is_shadow_transcoder(transcoder)
 
             del transcoder
+
+        if shadow_transcoder:
+            self._finalize_shadow_proxies(proxy)
 
         if not shadow_transcoder:
             self.emit("proxy-ready", asset, proxy)
