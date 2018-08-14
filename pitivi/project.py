@@ -428,10 +428,7 @@ class ProjectManager(GObject.Object, Loggable):
 
                 # get common path
                 sources = project.listSources()
-                if self._allSourcesInHomedir(sources):
-                    common = os.path.expanduser("~")
-                else:
-                    common = "/"
+                common = os.path.expanduser("~") if self._allSourcesInHomedir(sources) else "/"
 
                 # add all sources
                 for source in sources:
@@ -1161,10 +1158,7 @@ class Project(Loggable, GES.Project):
             self.emit("asset-loading-progress", 100, estimated_time)
             return
 
-        if not self.loaded:
-            progress = self.__get_loading_project_progress()
-        else:
-            progress = self.__get_loading_assets_progress()
+        progress = self.__get_loading_assets_progress() if self.loaded else self.__get_loading_project_progress()
 
         self.emit("asset-loading-progress", progress, estimated_time)
 
