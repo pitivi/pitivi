@@ -35,7 +35,7 @@
     <kudo>ModernToolkit</kudo>
     <kudo>Notifications</kudo>
   </kudos>
-  <update_contact>nekohayo@gmail.com</update_contact>
+  <update_contact>pitivi@pitivi.org</update_contact>
   <project_group>GNOME</project_group>
   <translation type="gettext">pitivi</translation>
   <_developer_name>The Pitivi Team</_developer_name>
