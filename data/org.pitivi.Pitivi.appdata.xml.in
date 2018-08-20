@@ -41,6 +41,21 @@
   <_developer_name>The Pitivi Team</_developer_name>
 
   <releases>
+    <release version="0.999" date="2018-08-20">
+      <description>
+        <p>
+          This release includes bug fixes, small important features, and a feature removal.
+        </p>
+        <ul>
+          <li>Rendering non-square pixels was broken and has been disabled.</li>
+          <li>Selecting a range of clips can be done by clicking followed by Shift+click.</li>
+          <li>The advanced settings of the h264 encoder allow specifying a Profile.</li>
+          <li>The xges files have an icon associated.</li>
+          <li>The Save and Render buttons in the headerbar have been moved on the right side.</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="0.99" date="2017-09-21">
       <description>
         <p>
