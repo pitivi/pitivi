@@ -1,4 +1,4 @@
-project('pitivi', 'c', version : '0.99', meson_version : '>= 0.41.0')
+project('pitivi', 'c', version : '0.999', meson_version : '>= 0.41.0')
 
 python = find_program('python3')
 intltool_merge = find_program('intltool-merge')

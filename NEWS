@@ -1,3 +1,12 @@
+2018 August 29th - Pitivi 0.999
+
+  * Selecting a range of clips can be done by clicking followed by Shift+click
+  * The advanced settings of the h264 encoder allow specifying a Profile
+  * Rendering non-square pixels was broken and has been disabled
+  * The xges files have an icon associated
+  * The Save and Render buttons in the headerbar have been moved on the right side
+  * Lots of bug fixing
+
 2017 September 2nd - Pitivi 0.99
 
   * Many performance improvements
