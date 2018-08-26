@@ -379,7 +379,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                                              toplevel=True):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
-                    self.clip.set_top_effect_priority(effect, drop_index)
+                    self.clip.set_top_effect_index(effect, drop_index)
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
             # An effect dragged from the same treeview to change its position.
             # Source
@@ -431,7 +431,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         with self.app.action_log.started("move effect",
                                          finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                          toplevel=True):
-            clip.set_top_effect_priority(effect, drop_index)
+            clip.set_top_effect_index(effect, drop_index)
 
         new_path = Gtk.TreePath.new()
         new_path.append_index(drop_index)
