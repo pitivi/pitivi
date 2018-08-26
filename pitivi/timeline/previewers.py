@@ -101,7 +101,7 @@ class ThumbnailBin(PreviewerBin):
                 "uri of the media file",
                 "A URI",
                 "",
-                GObject.PARAM_READWRITE),
+                GObject.ParamFlags.READWRITE),
     }
 
     def __init__(self, bin_desc="videoconvert ! videorate ! "
@@ -178,11 +178,11 @@ class WaveformPreviewer(PreviewerBin):
                 "uri of the media file",
                 "A URI",
                 "",
-                GObject.PARAM_READWRITE),
+                GObject.ParamFlags.READWRITE),
         "duration": (GObject.TYPE_UINT64,
                      "Duration",
                      "Duration",
-                     0, GLib.MAXUINT64 - 1, 0, GObject.PARAM_READWRITE)
+                     0, GLib.MAXUINT64 - 1, 0, GObject.ParamFlags.READWRITE)
     }
 
     def __init__(self):
