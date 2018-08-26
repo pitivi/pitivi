@@ -307,11 +307,16 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _connect_to_track_element(self, track_element):
         track_element.connect("notify::active", self._notify_active_cb)
+        track_element.connect("notify::priority", self._notify_priority_cb)
 
     def _disconnect_from_track_element(self, track_element):
         track_element.disconnect_by_func(self._notify_active_cb)
+        track_element.disconnect_by_func(self._notify_priority_cb)
 
     def _notify_active_cb(self, unused_track_element, unused_param_spec):
+        self._updateTreeview()
+
+    def _notify_priority_cb(self, unused_track_element, unused_param_spec):
         self._updateTreeview()
 
     def _trackElementRemovedCb(self, unused_clip, track_element):
@@ -343,7 +348,6 @@ class EffectProperties(Gtk.Expander, Loggable):
             self.__remove_configuration_widget()
             self.effects_properties_manager.cleanCache(effect)
             effect.get_parent().remove(effect)
-        self._updateTreeview()
 
     def _drag_motion_cb(self, unused_widget, unused_drag_context, unused_x, unused_y, unused_timestamp):
         """Highlights some widgets to indicate it can receive drag&drop."""
@@ -421,7 +425,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         else:
             # This should happen when dragging after the last row.
             drop_index = len(model) - 1
-            drop_pos = Gtk.TreeViewDropPosition.INTO_OR_BEFORE
 
         return source_index, drop_index
 
