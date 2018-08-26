@@ -860,7 +860,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if src_caps_fields:
             srccaps = self.element.get_static_pad('src').get_pad_template().caps
 
-            vals = {}
             for field, prefered_value in src_caps_fields.items():
                 gvalue = srccaps[0][field]
                 if isinstance(gvalue, Gst.ValueList) and isinstance(prefered_value, Gst.ValueList):
@@ -1070,7 +1069,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         """Gets a name/value dict with the properties."""
         values = {}
         for prop, widget in self.properties.items():
-            if not prop.flags & GObject.PARAM_WRITABLE:
+            if not prop.flags & GObject.ParamFlags.WRITABLE:
                 continue
             value = widget.getWidgetValue()
             if value is not None and (value != prop.default_value or with_default):
