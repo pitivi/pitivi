@@ -422,9 +422,10 @@ class SimplePipeline(GObject.Object, Loggable):
                                               Gst.DebugGraphDetails.ALL,
                                               "pitivi.error")
             if not self._rendering():
+                self._removeWaitingForAsyncDoneTimeout()
                 self._recover()
         elif message.type == Gst.MessageType.DURATION_CHANGED:
-            self.debug("Duration might have changed, querying it")
+            self.debug("Querying duration async, because it changed")
             GLib.idle_add(self._queryDurationAsync)
         elif message.type == Gst.MessageType.ASYNC_DONE:
             self.debug("Async done, ready for action")
@@ -459,20 +460,18 @@ class SimplePipeline(GObject.Object, Loggable):
     def _recover(self):
         if not self._bus:
             raise PipelineError("Should not try to recover after destroy")
+
         if self._attempted_recoveries == MAX_RECOVERIES:
             self.emit("died")
-            self.error(
-                "Pipeline error detected multiple times in a row, not resetting anymore")
+            self.error("Declaring pipeline dead, because %d successive reset attempts failed", MAX_RECOVERIES)
             return
 
-        self.error("Pipeline error detected during playback, resetting"
-                   " -- num tries: %d", self._attempted_recoveries)
-
+        self._attempted_recoveries += 1
+        self.error("Resetting pipeline because error detected during playback. "
+                   "Try %d", self._attempted_recoveries)
         self.setState(Gst.State.NULL)
         self._recovery_state = self.RecoveryState.STARTED_RECOVERING
         self.pause()
-
-        self._attempted_recoveries += 1
 
     def _queryDurationAsync(self, *unused_args, **unused_kwargs):
         try:
