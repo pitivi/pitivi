@@ -165,7 +165,7 @@ class TrackElementAction(UndoableAction):
         self.track_element = track_element
         self.track_element_props = []
         for prop in self.track_element.list_children_properties():
-            if not prop.flags & GObject.PARAM_WRITABLE or \
+            if not prop.flags & GObject.ParamFlags.WRITABLE or \
                     prop.name in PROPS_TO_IGNORE:
                 continue
             prop_name = child_property_name(prop)
