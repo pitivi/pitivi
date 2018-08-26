@@ -733,6 +733,39 @@ class TestControlSourceObserver(BaseTestUndoTimeline):
         self.assertEqual(0.9, control_source.get_all()[0].value)
 
 
+class TestTrackElementObserver(BaseTestUndoTimeline):
+
+    def test_effects_index(self):
+        stacks = []
+        self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
+
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        effect1 = GES.Effect.new("agingtv")
+        effect2 = GES.Effect.new("edgetv")
+        clip1.add(effect1)
+        clip1.add(effect2)
+        self.assertEqual(clip1.get_top_effect_index(effect1), 0)
+        self.assertEqual(clip1.get_top_effect_index(effect2), 1)
+
+        with self.action_log.started("move effect"):
+            assert clip1.set_top_effect_index(effect2, 0)
+
+        self.assertEqual(len(stacks), 1)
+
+        self.assertEqual(clip1.get_top_effect_index(effect1), 1)
+        self.assertEqual(clip1.get_top_effect_index(effect2), 0)
+
+        self.action_log.undo()
+        self.assertEqual(clip1.get_top_effect_index(effect1), 0)
+        self.assertEqual(clip1.get_top_effect_index(effect2), 1)
+
+        self.action_log.redo()
+        self.assertEqual(clip1.get_top_effect_index(effect1), 1)
+        self.assertEqual(clip1.get_top_effect_index(effect2), 0)
+
+
 class TestTimelineElementObserver(BaseTestUndoTimeline):
 
     def testTrackElementPropertyChanged(self):

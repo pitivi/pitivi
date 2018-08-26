@@ -146,7 +146,11 @@ class TrackElementObserver(TimelineElementObserver):
 
     def __init__(self, ges_track_element, action_log):
         TimelineElementObserver.__init__(self, ges_track_element, action_log)
-        self.gobject_observer = GObjectObserver(ges_track_element, ("active",), action_log)
+        if isinstance(ges_track_element, GES.BaseEffect):
+            property_names = ("active", "priority",)
+        else:
+            property_names = ("active",)
+        self.gobject_observer = GObjectObserver(ges_track_element, property_names, action_log)
 
     def release(self):
         TimelineElementObserver.release(self)
