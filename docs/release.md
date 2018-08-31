@@ -17,43 +17,32 @@ Most of the steps below should be done in the [development environment](HACKING.
     * Move the remaining open issues somewhere else, for example to the next milestone.
     * Close the current milestone.
 
-2. Make sure we depend on the latest GStreamer. This should be done as soon as GStreamer makes a release.
-    * Find the latest tag in https://cgit.freedesktop.org/gstreamer/gstreamer/
-    * See our current requirement for Gst at the bottom in [check.py](../pitivi/check.py)
-    * If they are different, update the files which contain the old version, for example: `$ git grep "1\.8\.2"` and `$ git commit -a -m "Use GStreamer <gstreamer-version>"`
-
-3. Check your local repository:
-    * Make sure your sandbox is using the latest GStreamer release: `$ ptvenv --update --gst-version=<gst-version>`
+2. Check your local dev env:
+    * Make sure your sandbox is using the latest GStreamer release: `$ ptvenv --update`
     * Check `$ git status` does not show any change
 
-4. Make sure the tests pass:
-   ```
-   $ ninja -C mesonbuild/ test
-   ```
- <!-- * `$ make validate` FIXME! -->
-
-5. Update the following files:
+3. Update the following files:
     * [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build):
 If doing a bugfix release, add or increase the micro.
 If doing a regular release, bump YY up and remove the micro from
 the version number, for example: 0.97.1 -> 0.98. Normally this is the
 same as the name of the Phabricator milestone you just archived.
-     * [RELEASE](https://gitlab.gnome.org/GNOME/pitivi/blob/master/RELEASE):
-Update the short version of the release notes.
-To get the list of contributors: `$ git shortlog -s -n <previous-tag>..`
-To get the list of translators: `$ for i in po/*.po help/*; do echo $i; git shortlog -s <previous-tag>.. $i; done`
+     * [data/org.pitivi.Pitivi.appdata.xml.in](https://gitlab.gnome.org/GNOME/pitivi/blob/master/data/org.pitivi.Pitivi.appdata.xml.in):
+Add a new release tag with the exec summary of changes.
      * [NEWS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/NEWS):
-A shorter version of RELEASE, with the exec summary of changes.
+Copy the exec summary of changes also here. This ends up in the `.news` file at [download.gnome.org/sources/pitivi](https://download.gnome.org/sources/pitivi/).
      * [AUTHORS](https://gitlab.gnome.org/GNOME/pitivi/blob/master/AUTHORS):
 If there are new maintainers.
 
-6. Commit the changes: `$ git commit -a -m "Release <version-number>"`
+4. Commit the changes: `$ git commit -a -m "Release <version-number>"`
 
-7. Create the distribution archive:
+5. Create the distribution archive:
    ```
    $ ninja -C mesonbuild/ dist
    $ ls -l mesonbuild/meson-dist/*.tar.*
    ```
+   On an X system, `ninja dist` might not work because the unit tests fail because of X. In this case, stop X and use a fake X server: `xvfb-run ninja -C mesonbuild/ dist`.
+
    Install it on a real system and give it a spin. For example on Archlinux:
    ```
    $ cd /tmp
@@ -69,24 +58,27 @@ If there are new maintainers.
    $ pitivi
    ```
 
-8. Create a tag and push it to the official repository. The TAG must always include the micro. This means when doing a regular release with version number X.YY, the TAG is X.YY.0. When doing a bug-fix release, the version number already includes a micro, so it's all fine.
+6. Create a tag and push it to the official repository. The TAG must always include the micro. This means when doing a regular release with version number X.YY, the TAG is X.YY.0. When doing a bug-fix release, the version number already includes a micro, so it's all fine.
    ```
    $ git tag -a <TAG> -m "Release <version-number>"
    $ git push origin <TAG>
    ```
    We use tag X.YY.0 instead of X.YY because we want to have the option of later creating the X.YY branch to the official repository, since it's not possible to have both a tag and a branch with the same name. This branch would gather backported fixes and be used for doing future X.YY.Z bug-fix releases.
 
-9. Publish the archive on Gnome:
+7. Publish the archive on Gnome:
    ```
    $ scp mesonbuild/meson-dist/pitivi-X.YY.Z.tar.xz GNOME-USER@master.gnome.org:
    $ ssh GNOME-USER@master.gnome.org -t ftpadmin install pitivi-X.YY.Z.tar.xz
    ```
    The tarball will appear on https://download.gnome.org/sources/pitivi/X.YY/pitivi-X.YY.Z.tar.xz
 
-10. Send out an announcement mail to:
-    * gstreamer-devel@lists.freedesktop.org
-    * gnome-i18n@gnome.org (thanking translators)
+8. Spread the word about the release
+    * Send an [email](https://lists.freedesktop.org/archives/gstreamer-devel/2017-September/065566.html) to gstreamer-devel@lists.freedesktop.org
+    * Send an [email](https://mail.gnome.org/archives/gnome-i18n/2017-September/msg00136.html) to gnome-i18n@gnome.org thanking translators.
+    * [Archlinux](https://www.archlinux.org/packages/community/x86_64/pitivi/), click "Flag Package Out-of-Date".
+    * [Debian](https://packages.debian.org/pitivi), click the "unstable" Debian version and look for "maintainer".
+    * [Fedora](https://apps.fedoraproject.org/packages/pitivi), look for Point of Contact.
 
-11. On pitivi.org, update "releases.txt" for the app's update notification feature
+9. Update http://www.pitivi.org/releases.txt for the app's update notification feature
 
-12. Bump the Z in the version number in [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build), for example if it was a regular release: 0.98 -> 0.98.1 or if it was a bug-fix release: 0.97.1 -> 0.97.2, and `$ commit -a -m "Back to development"`
+10. Bump the Z in the version number in [meson.build](https://gitlab.gnome.org/GNOME/pitivi/blob/master/meson.build), for example if it was a regular release: 0.98 -> 0.98.1 or if it was a bug-fix release: 0.97.1 -> 0.97.2, and `$ commit -a -m "Back to development"`
