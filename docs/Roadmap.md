@@ -28,23 +28,6 @@ See [Current events](Current_events.md) for past items.
 
 # Major features
 
-## Plugin system
-
--   Status: [done](https://gitlab.gnome.org/GNOME/pitivi/issues/1480),
-    but we still need a [developer
-    console](https://gitlab.gnome.org/GNOME/pitivi/issues/2055), and
-    [documentation with
-    examples](https://gitlab.gnome.org/GNOME/pitivi/issues/2089).
--   **This is very important**. A plugin would have access to the entire
-    app. Being in Python, it will be extremely easy to quickly write
-    useful plugins without having to compile anything. Pitivi plugins
-    will allow manipulating the timeline clips and clip effects
-    automatically, thus allowing great flexibility for custom solutions.
-    See for example [audio
-    normalization](https://gitlab.gnome.org/GNOME/pitivi/issues/638)
-    or the [autoaligner
-    ressurection](https://gitlab.gnome.org/GNOME/pitivi/issues/1345).
-
 ## Motion ramping, time stretching
 
 -   Status: started
