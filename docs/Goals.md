@@ -10,8 +10,8 @@ cool features.*
 GStreamer developer community for many years and make sure any issues
 are solved as quickly as possible in the lower levels in order to avoid
 any bloated feature at the application level. This is what we call an
-“upstream first” approach: we fix things everywhere in the software
-stack (see: [Architecture](Architecture.md)) that we depend on,
+“upstream first” approach: we fix things everywhere in the [software
+stack](Architecture.md) that we depend on,
 instead of accumulating hacks “downstream” (in our app).
 
 Pitivi's [Architecture](Architecture.md) is meant to be
