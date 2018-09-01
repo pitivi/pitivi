@@ -3,14 +3,25 @@
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
 get involved.
 
+## 2018
+
+-   [Harish Fulara](https://harishfulara07.wordpress.com/) implemented
+    a framework for showing different UI perspectives. The existing
+    main UI has been refactored into the EditorPerspective, and
+    the welcome dialog has been replaced by a new gorgeous and modern
+    [GreeterPerspective](https://harishfulara07.wordpress.com/2018/08/13/gsoc-2018-final-report-pitivi-ui-polishing/).
+-   [Suhas Nayak](https://suhas2go.github.io) finished the slow motion
+    support in [GES][GES.md].
+-   [Yatin Maan](https://yatinmaan.github.io/) implemented support
+    for [Scaled Proxies](https://yatinmaan.github.io/2018/08/14/GSoC-18-Final-Report/).
+
 ## 2017
 
--   [Fabián Orccón](https://github.com/jakubbrindza) implemented a
-    [plugin system](http://www.jakubbrindza.com/2016/08/gsoc-with-pitivi.html)
-    which has been merged. Unfortunately we noticed too late the excellent
-    additional Developer Console plugin he developed was based on code which is
-    not compatible with our license, so until that part is rewritten we can't
-    merge it.
+-   [Fabián Orccón](https://cfoch.github.io/) implemented a
+    [plugin system](https://cfoch.github.io/tech/2017/08/28/wrap-up-and-code-submission.html)
+    which has been merged. We noticed too late the excellent additional
+    Developer Console plugin had licensing issues, and it has been
+    merged one year later after Fabian graciously made time to rewrite it.
 -   [Suhas Nayak](https://suhas2go.github.io) implemented a [framework for
     supporting custom UI for effects](https://suhas2go.github.io/gnome/pitivi/2017/08/28/GSoCFinalReport/),
     instead of the UI generated automatically. Suhas used the new framework to
@@ -32,7 +43,7 @@ get involved.
 
 ## 2014
 
--   [Fabián Orccón](http://cfoch-dev.tumblr.com/) worked on the Pitivi,
+-   [Fabián Orccón](https://cfoch.github.io/) worked on the Pitivi,
     GES, GStreamer stack to allow using image sequences.
 -   [Lubosz Sarnecki](https://lubosz.wordpress.com/) worked on
     implementing a new OpenGL based transformation effect to be used for
@@ -43,12 +54,11 @@ get involved.
 -   Anton Belka worked on the initial
     implementation of proxies in [GES](GES.md) (see [proxy
     editing requirements](design/proxy_editing_requirements.md)).
+-   Joris Valette started work on slow/fast-motion in GStreamer.
 -   Mathieu Duponchelle worked on heavy
     bugfixing all across the Pitivi, [GES](GES.md) and GStreamer
     stack, allowing us to release [0.91](releases/0.91.md) at the end of
     the summer.
--   Joris Valette started work on
-    slow/fast-motion in GStreamer.
 -   [Simon Corsin](https://github.com/rFlex) worked on various pieces
     alongside Mathieu, such as the new waveforms renderer.
 
@@ -65,21 +75,20 @@ get involved.
 All the work above has been merged and is expected to be available in
 the [0.91](releases/0.91.md) release.
 
-In addition, we also co-mentored Peteris Krisjanis who worked on an
+In addition, we also co-mentored Pēteris Krišjānis who worked on an
 audio waveform generation and display library for GStreamer (see his
 [post-summer
 report](http://pecisk.blogspot.ca/2012/11/state-of-libwaveform-after-gsoc.html)).
 
 ## 2011
 
--   Feroze Naina worked on adding profiles for
-    rendering.
--   Mathieu Duponchelle started to port
-    PiTiVi to GES after having worked on the GES Python bindings and the
-    GES Pitivi formatter.
+-   Feroze Naina worked on adding profiles for rendering.
 -   [Lubosz Sarnecki](https://lubosz.wordpress.com/) implemented a nifty
     user interface for [resizing/cropping clips directly in the
     viewer](https://lubosz.wordpress.com/2016/09/26/making-viewer-uis-for-pitivi/).
+-   Mathieu Duponchelle started to port
+    PiTiVi to GES after having worked on the GES Python bindings and the
+    GES Pitivi formatter.
 
 Feroze and Lubosz's work has been merged and made available in the
 [0.15](releases/0.15.md) release. Mathieu's work has also been merged, to
