@@ -53,7 +53,7 @@ get involved.
 
 -   Anton Belka worked on the initial
     implementation of proxies in [GES](GES.md) (see [proxy
-    editing requirements](design/proxy_editing_requirements.md)).
+    editing requirements](design/Proxy_editing_requirements.md)).
 -   Joris Valette started work on slow/fast-motion in GStreamer.
 -   Mathieu Duponchelle worked on heavy
     bugfixing all across the Pitivi, [GES](GES.md) and GStreamer
