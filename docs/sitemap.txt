@@ -18,6 +18,7 @@ index.md
 	Project_history.md
 	Current_events.md
 		releases/1.0.md
+		releases/0.999.md
 		releases/0.99.md
 		releases/0.98.md
 		releases/0.97.md
