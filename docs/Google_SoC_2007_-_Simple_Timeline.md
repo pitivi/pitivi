@@ -8,7 +8,7 @@ my participation in Summer of Code.
 
 Our goal for this summer is to finish the Simple Timeline. I started by
 adding some of the features presented in the [Simple UI
-Mockups](Simple_UI_Mockups.md) illustrations. I am now turning
+Mockups](design/2007_design/2007_Simple_UI_Mockups.md) illustrations. I am now turning
 my attention to file load and save support, even though not all of the
 simple UI has been implemented. File Load/Save is now high priority. In
 addition, I have been creating [Design Docs](design.md) for
