@@ -123,7 +123,7 @@ Reddit](https://www.reddit.com/r/linux/comments/4v0swv/pitivi_096_a_great_releas
 > became software programmer), and used Final Cut Pro. I have always
 > been a Linux user though, and have meddled with everything that exist
 > every single year. Cinelerra was always the fall-back that would never
-> really let me down because it was frank about its crashers and they
+> really let me down because it was frank about its crashes and they
 > were possible to navigate around.
 >
 > In later years, I did find Pitivi to be a possible replacement for
@@ -400,5 +400,5 @@ February 24, 2014
     \#Pitivi was perfect for the job. (9:44 AM Aug 14th, 2009 from
     Gwibber)
 -   **herrsteiner** \#Pitivi helped me to convert a video to \#ogg
-    \#theora which I strangly couldn't convert on commandline without
+    \#theora which I strangely couldn't convert on commandline without
     losing the audio (7:31 PM Aug 13th, 2009 from web)

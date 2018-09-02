@@ -59,7 +59,7 @@ Frequent Tasks
 
 -   finding a specific time in the timeline
 -   shifting a clip's start position
--   triming a clip's in or out position
+-   trimming a clip's in or out position
 -   splitting a clip into multiple pieces
 -   previewing the project
 -   adjusting audio volume or video alpha
@@ -110,7 +110,7 @@ Timeline, Clip Library, and Clip Editor, and Effect Library can be
 detached from the main window by clicking a special “detach” button.
 These windows appear as normal top-level windows. When the user closes
 one of these windows, the component returns to its default location. In
-addition, the clip editor and viwer can be “expanded” so that they
+addition, the clip editor and viewer can be “expanded” so that they
 completely fill their parent windows.
 
 ## Keyboard
@@ -403,7 +403,7 @@ is initially collapsed.
 Trimming a clip is always possible by clicking/dragging on source
 trimming handles. By default, the in or out point of a clip should be
 edge-snapped (so that it is easy to put the clip back the way it was).
-The UI should constrain the the settingof in/out point so that sources
+The UI should constrain the setting of in/out point so that sources
 can't be stretched beyond maximum native duration. **clicking and
 dragging a trimming handle should not change the current selection**
 
@@ -693,7 +693,7 @@ Specify sets of pictures which will be displayed in sequence:
 
 Other Ideas:
 
--   backround / cell paradigm -- user chooses a back drop, and can
+-   background / cell paradigm -- user chooses a back drop, and can
     composite multiple layers of translucent/transparent cells
 
 ## Motion Transform Editor
@@ -718,11 +718,11 @@ NEEDS WORK
 
 Chroma key
 
--   set thresholds, choos key color (eye-dropper?)
+-   set thresholds, choose key color (eye-dropper?)
 
 Blue/Green/Red screen
 
--   set thesholds
+-   set thresholds
 
 Should thresholds and key-color be time varying? Definitely need at
 least a local preview. Using the viewer would be better.
@@ -810,8 +810,8 @@ accept/deny their inclusion.
 -   hotkey configuration
 -   direct manipulation
 -   autosave
--   default location to use when optening a file or importing clips
-    (last forlder, arbitrary location)
--   color values for the timeline ruler and the backround of clips
+-   default location to use when opening a file or importing clips
+    (last folder, arbitrary location)
+-   color values for the timeline ruler and the background of clips
 -   whether edge snapping is enabled by default
 -   the size of deadband to use for edge snapping

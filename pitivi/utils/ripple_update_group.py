@@ -48,7 +48,7 @@ class RippleUpdateGroup(object):
           update_function.
 
     An edge between two vertices represents a sequence of operations. If an
-    edge exists from object A to object B, then whenever A is perfomred, B
+    edge exists from object A to object B, then whenever A is performed, B
     should be performed too -- unless it has already been visited as part of
     this update cycle.
 

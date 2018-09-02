@@ -46,4 +46,4 @@ inconvenience.
 ## A Word of Caution
 
 This information is for educational purposes only. It is provided free
-of chage, use at your own risk.
+of charge, use at your own risk.
