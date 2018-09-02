@@ -19,7 +19,7 @@ Make sure to use the right git repository:
 > NOTE: This way of setting the development environment is sensibly more complex
 > but also more flexible than the one for newcomers. If you are a  beginner
 > or if you usually use [gnome-builder](https://wiki.gnome.org/Apps/Builder)
-> as your main IDE, follow, as previously adviced, the
+> as your main IDE, follow, as previously advised, the
 > [GNOME Newcomers guide](https://wiki.gnome.org/Newcomers/)
 
 The official way of getting your environment up and running is by using

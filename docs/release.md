@@ -4,7 +4,7 @@ Ideally these instructions are in line with the [GNOME releasing process](https:
 
 We make two types of releases:
 - regular releases, when we have new features or improvements, and
-- "smaller" bug-fix releases, when a regular relese needs patching.
+- "smaller" bug-fix releases, when a regular release needs patching.
 
 The regular releases have the version number X.YY, and the bug-fix
 releases have the version number X.YY.Z, where Z is hopefully a relatively small

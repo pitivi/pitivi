@@ -151,7 +151,7 @@ manually.
 
 ### Adding GStreamer tools to the PATH
 
-You propably want to use ges-launch-1.0.exe and friends in the shell. To
+You probably want to use ges-launch-1.0.exe and friends in the shell. To
 do this, add the dist folder to the PATH.
 
 In your bash profle:

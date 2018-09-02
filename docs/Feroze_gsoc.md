@@ -26,7 +26,7 @@ following areas:
 
 Most users want the output formatted for a specific device or service –
 YouTube, iPod, iPhone, DVD, mobile, etc. Presently, the user would have
-to manually specify the codecs, containter and codec settings like
+to manually specify the codecs, container and codec settings like
 resolution, frame rate,etc. He would have to either be familiar with the
 codecs or would have to google it up.
 

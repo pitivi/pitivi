@@ -1197,7 +1197,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if self.__force_position_update or \
                 x != self._current_x or \
                 y != self._current_y or \
-                width != self._curent_width or \
+                width != self._current_width or \
                 parent_height != self._current_parent_height or \
                 layer != self._current_parent:
 
@@ -1211,7 +1211,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.__force_position_update = False
             self._current_x = x
             self._current_y = y
-            self._curent_width = width
+            self._current_width = width
             self._current_parent_height = parent_height
             self._current_parent = layer
 

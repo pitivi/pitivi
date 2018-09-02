@@ -110,7 +110,7 @@ first.
         unchanged
 10. Modified Project State, New Project Command
     1.  Close Project confirmation dialog displayed, presenting choices
-        of “Save”, “Dont' Save”, and “Cancel”
+        of “Save”, “Don't Save”, and “Cancel”
         1.  Cancel: a new project is not created, and the old project is
             not saved
         2.  Don't Save: the new project will replace the current, and it

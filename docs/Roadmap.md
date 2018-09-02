@@ -43,7 +43,7 @@ See [Current events](Current_events.md) for past items.
     See for example [audio
     normalization](https://gitlab.gnome.org/GNOME/pitivi/issues/638)
     or the [autoaligner
-    ressurection](https://gitlab.gnome.org/GNOME/pitivi/issues/1345).
+    resurrection](https://gitlab.gnome.org/GNOME/pitivi/issues/1345).
 
 ## Motion ramping, time stretching
 

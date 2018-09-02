@@ -205,7 +205,7 @@ current UI selection. This is kept strictly separate from Dragable, as
 there is a use case for selectable objects which cannot be moved by the
 user, as well as a use case for dragable objects which should never
 become part of the current selection. Objects are selected with
-Select(), and deslected with Deselect(). Objects are notified of their
+Select(), and deselected with Deselect(). Objects are notified of their
 selection status through the selected() and deselected() method calls.
 
 Being part of the selection implies that the object represents data that

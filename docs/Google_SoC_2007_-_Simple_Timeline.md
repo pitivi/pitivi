@@ -136,7 +136,7 @@ advanced timeline, but has run afoul of some gstreamer bugs.
 
 I'm considering replacing the slider with a gtk.ScaleButton, since that
 would allow the source widget to shrink down even more while allowing
-the slider to grow to a more managable size. I'm also thinking about a
+the slider to grow to a more manageable size. I'm also thinking about a
 custom widget for seeking that would eventually replace the simple
 gtk.HScales we've been using. It feature a much slimmer cursor, would
 support zooming, display a timescale, provide fancy navigation input
