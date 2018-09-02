@@ -245,7 +245,7 @@ class ProgressBar:
         self.term = term
         if not (self.term.CLEAR_EOL and self.term.UP and self.term.BOL):
             raise ValueError("Terminal isn't capable enough -- you "
-                             "should use a simpler progress dispaly.")
+                             "should use a simpler progress display.")
         self.width = self.term.COLS or 75
         self.bar = term.render(self.BAR)
         self.header = self.term.render(self.HEADER % header.center(self.width))

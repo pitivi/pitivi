@@ -584,7 +584,7 @@ Class IRecordingDevice(Interface):
 `   def stop():`\
 `   `“`"`”` Stop recording `“`"`”\
 `   def isRecording():`\
-`   `“`"`”` Returns true if the defice is currently recording `“`"`”
+`   `“`"`”` Returns true if the device is currently recording `“`"`”
 
 ## Effects/Transitions
 
