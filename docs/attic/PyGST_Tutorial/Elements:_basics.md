@@ -5,7 +5,7 @@ plugin, and explain what each part does succinctly. This is a jumpstart,
 not a replacement for the GStreamer Plugin Tutorial.
 
 I will try to walk you through creating a new element that acts as a
-filter (has both a sink and source, this one wont actually do any
+filter (has both a sink and source, this one won't actually do any
 filtering :)), which receives a buffer and pushes it forward. As such it
 should help you avoid the pain.
 
