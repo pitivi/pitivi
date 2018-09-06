@@ -214,7 +214,6 @@ class TitleEditor(Loggable):
             self.source = source
             self.infobar.hide()
             self.editing_box.show()
-            self.textarea.grab_focus()
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._propertyChangedCb)
         else:
