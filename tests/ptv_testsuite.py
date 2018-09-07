@@ -21,7 +21,7 @@ import os
 import sys
 import unittest
 
-TEST_MANAGER = "base"
+TEST_MANAGER = ["base", "pitivi"]
 CDIR = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(CDIR, '..'))
 
@@ -45,8 +45,17 @@ class PitiviTest(Test):
             self.add_arguments('-m', 'unittest', '.'.join(self.classname.split('.')[1:]))
 
 
-def setup_tests(test_manager, options):
-    """Sets up Pitivi unit testsuite."""
+def setup_validate_tests(test_manager, options):
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'validate-tests')
+    print("Setting up Pitivi integration tests in %s" % path)
+    options.pitivi_scenario_paths = [os.path.join(path, "scenarios")]
+    options.add_paths(os.path.join(path, os.path.pardir, "samples"))
+    options.pitivi_executable = os.path.join(path, "../", "..", "bin", "pitivi")
+    test_manager.register_defaults()
+    return True
+
+
+def setup_unit_tests(test_manager, options):
     loader = unittest.TestLoader()
     testsuites = loader.discover(CDIR)
     for testsuite in testsuites:
@@ -63,3 +72,11 @@ def setup_tests(test_manager, options):
                     extra_env_variables={'PYTHONPATH': os.path.join(CDIR, '..')}))
 
     return True
+
+
+def setup_tests(test_manager, options):
+    """Sets up Pitivi unit testsuite."""
+    if test_manager.name == "pitivi":
+        return setup_validate_tests(test_manager, options)
+
+    return setup_unit_tests(test_manager, options)

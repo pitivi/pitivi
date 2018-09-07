@@ -682,6 +682,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             "FREI0R_PATH": "/app/lib/frei0r-1/",
             "GST_PRESET_PATH":
                 "/app/share/gstreamer-1.0/presets/:/app/share/pitivi/gstpresets/",
+            "GST_VALIDATE_APPS_DIR": os.path.join(self.scriptdir, '../../tests/validate-tests'),
         }
         for envvar, path in prefixes.items():
             value = forwarded.get(envvar, "")
