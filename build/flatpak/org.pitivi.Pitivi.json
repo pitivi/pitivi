@@ -234,6 +234,7 @@
                 }
             ]
         },
+        "xvfb/xvfb.json",
         {
             "name": "x264",
             "config-opts": [
@@ -335,7 +336,7 @@
         },
         {
             "name": "x265",
-            "buildsystem": "cmake",
+            "buildsystem": "cmake-ninja",
             "subdir": "source",
             "sources": [
                 {

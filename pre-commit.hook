@@ -74,6 +74,7 @@ tests/validate-tests/manager.py
 tests/validate-tests/suite.py
 win32/configure.py
 win32/pitivi
+build/flatpak/xvfb/default.xkm
 "
 
 IGNORE_ARGS=""

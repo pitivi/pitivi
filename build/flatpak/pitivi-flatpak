@@ -97,6 +97,7 @@ def load_manifest(manifest_path):
     return manifest
 
 
+# pylint: disable=too-many-branches
 def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
     """Creates the manifest file."""
     try:
@@ -118,32 +119,43 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
     Console.message("-> Generating %s against GStreamer %s",
                     outfile, gst_version)
 
-    for module in template["modules"]:
-        if module["sources"][0]["type"] != "git":
-            continue
+    all_modules = []
+    for modules in template["modules"]:
+        if isinstance(modules, str):
+            submanifest_path = os.path.join(os.path.dirname(manifest_path), modules)
+            modules = load_manifest(submanifest_path)
 
-        if module["name"].startswith("gst"):
-            module["sources"][0]["branch"] = gst_version
-            if gst_version != DEFAULT_GST_BRANCH:
+        if not isinstance(modules, list):
+            modules = [modules]
+
+        for module in modules:
+            all_modules.append(module)
+            if module["sources"][0]["type"] != "git":
                 continue
 
-        repo = os.path.join(basedir, module["name"])
-        if not os.path.exists(os.path.join(repo, ".git")):
-            Console.message("-> Module: %s using online repo: %s",
-                            module["name"], module["sources"][0]["url"])
-            continue
+            if module["name"].startswith("gst"):
+                module["sources"][0]["branch"] = gst_version
+                if gst_version != DEFAULT_GST_BRANCH:
+                    continue
 
-        branch = subprocess.check_output(
-            r"git branch 2>&1 | grep \*", shell=True,
-            cwd=repo).decode(
-                "utf-8").split(" ")[1].strip("\n")
+            repo = os.path.join(basedir, module["name"])
+            if not os.path.exists(os.path.join(repo, ".git")):
+                Console.message("-> Module: %s using online repo: %s",
+                                module["name"], module["sources"][0]["url"])
+                continue
 
-        repo = "file://" + repo
-        Console.message("-> Module: %s repo: %s branch: %s",
-                        module["name"], repo, branch)
-        module["sources"][0]["url"] = repo
-        module["sources"][0]["branch"] = branch
+            branch = subprocess.check_output(
+                r"git branch 2>&1 | grep \*", shell=True,
+                cwd=repo).decode(
+                    "utf-8").split(" ")[1].strip("\n")
 
+            repo = "file://" + repo
+            Console.message("-> Module: %s repo: %s branch: %s",
+                            module["name"], repo, branch)
+            module["sources"][0]["url"] = repo
+            module["sources"][0]["branch"] = branch
+
+    template["modules"] = all_modules
     with open(outfile, "w") as of:
         print(json.dumps(template, indent=4), file=of)
 
