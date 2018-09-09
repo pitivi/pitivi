@@ -163,7 +163,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
         return proxy
 
-    def check_remove_proxy(self, asset, asset_uri, proxy, proxy_uri, delete=False):
+    def check_disable_proxy(self, asset, asset_uri, proxy, proxy_uri, delete=False):
         self.app.project_manager.current_project.disable_proxies_for_assets([proxy],
             delete_proxy_file=delete)
 
@@ -310,7 +310,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             proxy_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
 
             # Delete scaled proxy
-            self.check_remove_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
 
     def test_mixed_proxies(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
@@ -322,12 +322,12 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             # Create and disable scaled proxy
             proxy = self.check_add_proxy(asset, asset_uri, scaled=True)
             scaled_uri = self.app.proxy_manager.getProxyUri(asset, scaled=True)
-            self.check_remove_proxy(asset, asset_uri, proxy, scaled_uri)
+            self.check_disable_proxy(asset, asset_uri, proxy, scaled_uri)
 
             # Create and disable HQ proxy
             proxy = self.check_add_proxy(asset, asset_uri)
             hq_uri = self.app.proxy_manager.getProxyUri(asset)
-            self.check_remove_proxy(asset, asset_uri, proxy, hq_uri)
+            self.check_disable_proxy(asset, asset_uri, proxy, hq_uri)
 
             # Check both files exist
             self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)))
@@ -336,7 +336,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             # Enable and delete scaled proxy
             proxy = self.check_add_proxy(asset, asset_uri, scaled=True,
                 check_progress=False)
-            self.check_remove_proxy(asset, asset_uri, proxy, scaled_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, scaled_uri, delete=True)
 
             # Check that only HQ Proxy exists
             self.assertFalse(os.path.exists(Gst.uri_get_location(scaled_uri)))
@@ -344,7 +344,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Enable and delete HQ proxy
             proxy = self.check_add_proxy(asset, asset_uri, check_progress=False)
-            self.check_remove_proxy(asset, asset_uri, proxy, hq_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, hq_uri, delete=True)
 
     def test_regenerate_scaled_proxy(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
@@ -374,7 +374,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertEqual(proxy.props.proxy_target.props.id, asset_uri)
 
             # Delete proxy
-            self.check_remove_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
 
     def test_scaled_proxy_for_unsupported_asset(self):
         sample_name = "1sec_simpsons_trailer.mp4"
@@ -397,7 +397,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)))
 
             # Delete scaled proxy
-            self.check_remove_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
             self.mainloop.run()
 
             # Check that we revert to HQ proxy
@@ -406,7 +406,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             self.assertEqual(proxy.props.id, proxy_uri)
 
             # Delete HQ Proxy
-            self.check_remove_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
+            self.check_disable_proxy(asset, asset_uri, proxy, proxy_uri, delete=True)
 
             self.app.proxy_manager.WHITELIST_FORMATS = SUPPORTED_FORMATS
 
