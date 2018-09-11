@@ -148,4 +148,4 @@ of these use-case:
     a local, editable, copy.
 
 ![ObjectFactory
-hierarchy](Objectfactory-hierarchy.png "ObjectFactory hierarchy"){width="600"}
+hierarchy](Objectfactory-hierarchy.png "ObjectFactory hierarchy")

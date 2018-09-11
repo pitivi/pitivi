@@ -88,7 +88,7 @@ only have to work with 3 concepts:
 ## Viewing a File
 
 ![Example: Viewing a
-File](Pipeline-viewing-file.png "Example: Viewing a File"){width="200"}
+File](Pipeline-viewing-file.png "Example: Viewing a File")
 
 This is the simplest use-case for a Pipeline, which is viewing a File.
 
@@ -98,7 +98,7 @@ which connects a SourceProducer to a LocalSinksConsumer.
 ## Rendering a Timeline
 
 ![Example: Rendering a
-Timeline](Pipeline-rendering-timeline.png "Example: Rendering a Timeline"){width="200"}
+Timeline](Pipeline-rendering-timeline.png "Example: Rendering a Timeline")
 
 In this example, we are doing 2 actions at the same time:
 
@@ -139,4 +139,4 @@ When we are done rendering (because we got an EOS or such), we can then:
 # Relationship with GStreamer
 
 ![Relationship with
-GStreamer](Pipeline-gstreamer-relationship.png "Relationship with GStreamer"){width="200"}
+GStreamer](Pipeline-gstreamer-relationship.png "Relationship with GStreamer")

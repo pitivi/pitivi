@@ -15,8 +15,7 @@ PiTiVi is comprised of two main parts:
 
 # Core
 
-![Contents of
-Core](Top-level-core-only.png "Contents of Core"){width="300"}
+![Contents of Core](Top-level-core-only.png "Contents of Core")
 
 Core contains several essential components, of which the most important
 are:
@@ -54,7 +53,7 @@ If a User Interface is used, the Application object is its core
 counterpart.
 
 ![Project/Pipeline relationship and
-contents](Top-level-project-pipeline.png "Project/Pipeline relationship and contents"){width="300"}
+contents](Top-level-project-pipeline.png "Project/Pipeline relationship and contents")
 
 ### Project
 
