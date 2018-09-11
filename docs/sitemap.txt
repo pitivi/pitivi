@@ -54,7 +54,6 @@ index.md
 		design/Why_python.md
 		design/Proxy_editing_requirements.md
 		design/Rendering_Profiles.md
-		design/The_XGES_File_Format.md
 		design/XGES_Examples.md
 		design/Rendering_Profiles_Implementation.md
 		design/Plugins.md

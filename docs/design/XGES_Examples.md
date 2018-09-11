@@ -1,7 +1,6 @@
 # XGES Examples
 
-This is a list of XGES Examples. For a description of the file format
-see [The XGES File Format](The_XGES_File_Format.md).
+This is a list of XGES Examples.
 
 ### Effect
 
