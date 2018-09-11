@@ -31,47 +31,36 @@ categories:
 **This page was a draft from 2007**. It badly needs to be updated. Help
 welcome!
 
+``` xml
 <?xml version="1.0"?>
-<project xmlns='http://www.pitivi.org/projectxml'>\
-`  `<formatversion>`1`</formatversion>\
-`  `
-
-<title>
-Insane video
-
-</title>
-`  `<comment>\
-`    This is my very first video done with PiTiVi.`\
-`  `</comment>\
-`  `<authors>\
-`    `<author id="0" name="Edward Hervey" />\
-`    `<author id="1" name="George Lucas" />\
-`  `</authors>\
-`  `<history>\
-`    `<revision id="0" date="Mon 25 Sep 2006 12:00" who="0" >`Initial version`</revision>\
-`    `<revision id="1" date="Mon 25 Sep 2006 12:25" who="1" />\
-`  `</history>\
-`  `<sources>\
-`    `
-
-`  `</sources>\
-`  `<timeline>\
-`    `<composition type="video">\
-`      `<transitions>\
-`        `<transition type="fade" start="2000000000" duration="2000000000" />\
-`      `</transitions>\
-`      `<sources>\
-`        `
-
-``` {startFrom="0"}
-```
-
-`      `</sources>\
-`    `</composition>\
-`    `<composition type="audio">\
-`      `<transitions>\
-`        `<transition start="2000000000" duration="200000000" />\
-`      `</transitions>\
-`    `</composition>\
-`  `</timeline>\
+<project xmlns='http://www.pitivi.org/projectxml'>
+    <formatversion>1</formatversion>
+    <title>Insane video</title>
+    <comment>
+        This is my very first video done with PiTiVi.
+    </comment>
+    <authors>
+        <author id="0" name="Edward Hervey" />
+        <author id="1" name="George Lucas" />
+    </authors>
+    <history>
+        <revision id="0" date="Mon 25 Sep 2006 12:00" who="0" >Initial version</revision>
+        <revision id="1" date="Mon 25 Sep 2006 12:25" who="1" />
+    </history>
+    <sources>
+    </sources>
+    <timeline>
+        <composition type="video">
+            <transitions>
+                <transition type="fade" start="2000000000" duration="2000000000" />
+            </transitions>
+            <sources>{startFrom="0"}</sources>
+        </composition>
+        <composition type="audio">
+            <transitions>
+                <transition start="2000000000" duration="200000000" />
+            </transitions>
+        </composition>
+    </timeline>
 </project>
+```

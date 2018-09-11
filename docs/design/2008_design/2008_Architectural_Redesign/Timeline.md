@@ -48,14 +48,14 @@ or `TrackObject(s)`:
 
 ## Timeline properties
 
-`tracks` : Ordered list of `Tracks` controlled by the `Timeline`\
-`selections` : List of `TimelineSelection` in use.\
-`objects` : Ordered list of `TimelineObject` controlled by the `Timeline`. First ordered by `start` property, and then by `priority`.\
+`tracks` : Ordered list of `Tracks` controlled by the `Timeline`
+`selections` : List of `TimelineSelection` in use.
+`objects` : Ordered list of `TimelineObject` controlled by the `Timeline`. First ordered by `start` property, and then by `priority`.
 `factory` : The `TimelineFactory` to use in `Pipeline`s.
 
 ## Track properties
 
-`objects` : Ordered list of `TrackObject`s controlled by the Track.\
+`objects` : Ordered list of `TrackObject`s controlled by the Track.
 `stream` : The `Stream` of the Track.
 
 ## TimelineObject properties
@@ -65,20 +65,20 @@ or `TrackObject(s)`:
 `factory` : The ObjectFactory this TimelineObject corresponds to.
 :   None is an accepted value
 
-`start` : The position of the TimelineObject.\
-`duration` : The duration of the TimelineObject.\
-`in-point` : The in-point of the contents of the TimelineObject.\
-`out-point` : The out-point of the contents of the TimelineObject.\
-`priority` : The priority of the TimelineObject.\
-`min-start` : The earliest time to which we can set the start property of the TimelineObject with the trimStart method\
+`start` : The position of the TimelineObject.
+`duration` : The duration of the TimelineObject.
+`in-point` : The in-point of the contents of the TimelineObject.
+`out-point` : The out-point of the contents of the TimelineObject.
+`priority` : The priority of the TimelineObject.
+`min-start` : The earliest time to which we can set the start property of the TimelineObject with the trimStart method
 `max-duration` : The maximum value we can set the duration property of the TimelienObject to
 
 <!-- -->
 
-; `track-objects` :: The TrackObject(s) it the TimelineObject controls.\
-; `track` : the track to which the object belongs\
-; `object` : The actual TrackObject\
-; `time-offset` : The offset between the TimelineObject `start` position and the TrackObject `start` position. ALWAYS POSITIVE.\
+; `track-objects` :: The TrackObject(s) it the TimelineObject controls.
+; `track` : the track to which the object belongs
+; `object` : The actual TrackObject
+; `time-offset` : The offset between the TimelineObject `start` position and the TrackObject `start` position. ALWAYS POSITIVE.
 ; `priority-offset` : The offset between the TimelineObject `priority` and the TrackObject `priority`. ALWAYS POSITIVE.
 
 ## TimelineSelection properties
@@ -89,11 +89,11 @@ or `TrackObject(s)`:
 
 ![](images/Anatomy_of_trackobject.png)
 
-`parent` : The `TimelineObject` controlling this `TrackObject`. All the properties below **MUST NOT BE MODIFIED DIRECTLY** but through the `parent` TimelineObject.\
-`start` : The position of the TrackObject.\
-`duration` : The duration of the TrackObject.\
-`in-point` : The in-point of the contents of the TrackObject.\
-`out-point` : The out-point of the contents of the TrackObject.\
+`parent` : The `TimelineObject` controlling this `TrackObject`. All the properties below **MUST NOT BE MODIFIED DIRECTLY** but through the `parent` TimelineObject.
+`start` : The position of the TrackObject.
+`duration` : The duration of the TrackObject.
+`in-point` : The in-point of the contents of the TrackObject.
+`out-point` : The out-point of the contents of the TrackObject.
 `priority` : The priority of the TrackObject.
 
 # Relationships

@@ -77,9 +77,11 @@ contain a GESTimeline. Then the TrackObject of this TimelineObject
 contain GESTrack themselves. We should have 3 ways of creating a
 GESTimelineTimelineObject:
 
-`   ges_timeline_timeline_object_new()`\
-`   ges_timeline_timeline_object_new_from_objects (GList *timeline_object) /*So we can group them easyly */`\
-`   ges_timeline_timeline_object_new_from_project (const gchar *project_file_uri)`
+```
+   ges_timeline_timeline_object_new()
+   ges_timeline_timeline_object_new_from_objects (GList *timeline_object) /*So we can group them easyly */
+   ges_timeline_timeline_object_new_from_project (const gchar *project_file_uri)
+```
 
 The timeline contained in a GESTimelineTimelineObject can obviously also
 contain themselves a GESTimelineTimelineObject so we can infinitely
@@ -87,11 +89,13 @@ recurse.
 
 #### New Classes
 
-`   GESTimelineSource`\
-`       +---- GESTimelineTimelineObject`
+```
+   GESTimelineSource
+       +---- GESTimelineTimelineObject
 
-`   GESTrackSource`\
-`       +---- GESTrackTrackObject`
+   GESTrackSource
+       +---- GESTrackTrackObject
+```
 
 ### UI Niceties
 
