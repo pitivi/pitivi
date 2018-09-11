@@ -186,7 +186,7 @@ warning
 
 The above example produces the following image
 
-![](Config-custom-widget.png "Config-custom-widget.png")
+![](images/Config-custom-widget.png "Config-custom-widget.png")
 
 ## Plugin Examples
 
@@ -340,4 +340,4 @@ The above example produces the following image
 
 #### Preview of the previous example
 
-![](Config-example.png "Config-example.png")
+![](images/Config-example.png "Config-example.png")

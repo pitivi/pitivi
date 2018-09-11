@@ -18,7 +18,7 @@ keyframe.
 -   When the user adjusts a keyframe, the viewer needs to seek to that
     point in the timeline and show the user a preview of the change
 
-<image:advanced_ui_direct_keyframes.png>
+![](images/Advaced_ui_separated_keyframes.png)
 
 ## Separated-keyframes variant
 
@@ -44,7 +44,7 @@ Possibilities are:
 -   select a keyfame then click “add” (user can't control where new
     frame is added, so a second adjustment step is required)
 
-<image:advaced_ui_separated_keyframes.png>
+![](images/Advaced_ui_separated_keyframes.png)
 
 ## Expanded/Contracted Variant
 
@@ -52,7 +52,7 @@ The similar to the basic design, but objects can be expanded to take up
 a maximal amount of screen space. This extra space is used to display
 the interpolation graphs.
 
-<image:advanced_ui_expanded_contracted.png>
+![](images/Advanced_ui_expanded_contracted.png)
 
 # Kiddo's Design
 

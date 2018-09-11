@@ -1,6 +1,6 @@
 # Design Overview
 
-[Inheritance Diagram](image:advanced_inheritance.png.md)
+![Inheritance Diagram](images/Advanced_inheritance.png)
 
 This document **does not reflect the existing codebase**, but rather a
 road map for future development. Some of this design has been

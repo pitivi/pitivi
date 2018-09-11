@@ -60,7 +60,7 @@ or `TrackObject(s)`:
 
 ## TimelineObject properties
 
-[thumb](image:anatomy_of_timeline_object.png.md)
+![](images/Anatomy_of_timeline_object.png)
 
 `factory` : The ObjectFactory this TimelineObject corresponds to.
 :   None is an accepted value
@@ -87,7 +87,7 @@ or `TrackObject(s)`:
 
 ## TrackObject properties
 
-[thumb](image:Anatomy_of_trackobject.png.md)
+![](images/Anatomy_of_trackobject.png)
 
 `parent` : The `TimelineObject` controlling this `TrackObject`. All the properties below **MUST NOT BE MODIFIED DIRECTLY** but through the `parent` TimelineObject.\
 `start` : The position of the TrackObject.\

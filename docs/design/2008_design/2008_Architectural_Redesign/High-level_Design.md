@@ -94,7 +94,7 @@ of three things:
 
 ### Browser
 
-![Browser](Browser-functional.png "Browser")
+![Browser](images/Browser-functional.png "Browser")
 
 Browser are a unified way of searching/browsing for contents and
 devices, or more generally speaking *Media Assets*.
