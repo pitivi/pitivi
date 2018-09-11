@@ -1,8 +1,8 @@
 # 2007 Simple UI Mockups
 
 Here are a collection of UI Mockups for various actions possible with
-the Simple UI. Also, you might be interested to see
-[Advanced\_UI\_Mockups](Advanced_UI_Mockups.md).
+the Simple UI. Also, you might be interested to see the
+[Advanced UI Mockups](design/2007_design/2007_Advanced_UI_Mockups.md).
 
 ## Add Media
 

@@ -3,7 +3,7 @@
 This is just a proposal for bringing frame seeking to the user interface
 in advanced mode. If you want to follow the development progress read
 [2008 Jog and Shuttle controls code
-experiment](2008_Jog_and_Shuttle_controls_code_experiment.md)
+experiment](design/2008_design/2008_Jog_and_Shuttle_controls_code_experiment.md)
 
 ## Screen Mockups
 

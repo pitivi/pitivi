@@ -12,7 +12,7 @@ A **Project** is the object containing everything specific to an
     of the Project.
 -   The **Content Bin**, containing all the `SourceFactory` used in the
     `Timeline`.
--   The [**Timeline**](design/2008_design/2008_Architectural_Redesig/Timeline.md), describing
+-   The [**Timeline**](design/2008_design/2008_Architectural_Redesign/Timeline.md), describing
     how the various objects (sources, operations) are laid out (through
     time and priority).
 

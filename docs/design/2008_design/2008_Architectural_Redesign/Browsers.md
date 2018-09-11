@@ -8,7 +8,8 @@
 
 All `Browser`s produce/consume ObjectFactory in output/input . They are
 the main providers/consumers (along with
-[Formatter](New_Design_2008/Formatter.md)) for ObjectFactory
+[Formatter](design/2008_design/2008_Architectural_Redesign/Formatter.md
+)) for ObjectFactory
 anywhere else in the Application.
 
 New types of `Browsers` can be created through the plugin interface to:
@@ -29,7 +30,7 @@ services.
 They only return content of type `SourceFactory`
 
 -   Local content
-    -   <file://> (standard system)
+    -   `file://` (standard system)
     -   F-Spot catalog browsing
     -   Tracker
     -   ...

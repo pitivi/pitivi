@@ -44,7 +44,7 @@ explore the demos at the full potential. You can start the demos by:
     ./gst-seeker-wx uri
     ./gst-seeker-gtk uri
 
-uri is for example '<file:///home/user/some> movie.ogg'
+uri is for example `file:///home/user/some movie.ogg`
 
 == Model = Player (gstreamer) ==
 

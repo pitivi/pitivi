@@ -8,7 +8,7 @@ probably knows what he is doing/what he wants and will use the
 “Custom...” approach, or perhaps make his own preset for later reuse.
 
 See also: [Rendering Profiles
-Implementation](Rendering_Profiles_Implementation.md)
+Implementation](design/Rendering_Profiles_Implementation.md)
 
 -   Tapes and disks / (“publishing”?)
     -   DVD

@@ -82,6 +82,10 @@ index.md
 		design/UI_Design_Variants.md
 		design/UI_Implementation.md
 		design/UI_components.md
+		design/Multi-Layer_Editing.md
 	attic.md
 		attic/GNonLin.md
 		attic/Building_with_Windows.md
+		attic/Project_loading_and_saving.md
+		attic/Project_file_format.md
+		attic/building_with_ges.md

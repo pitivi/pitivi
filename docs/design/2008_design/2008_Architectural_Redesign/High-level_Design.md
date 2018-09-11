@@ -24,7 +24,7 @@ are:
     well as general application settings.
 -   The **Projects**, centralizing information on editing projects,
     including timeline, sources used, settings, ...
--   The [**Pipelines**](New_Design_2008/Pipeline.md), allowing
+-   The [**Pipelines**](design/2008_design/2008_Architectural_Redesign/Pipeline.md), allowing
     combining some Actions (View, Record, Stream,...) with Producers
     (Timeline, File, Camera, VCR, ...) and Consumers (Loudspeakers,
     Screen, File, Network stream,...)
@@ -45,8 +45,8 @@ It contains:
 
 -   The **Settings** of the application, user-interface and plugins
 -   One or more **Project**(s), corresponding to the various
-    [Timelines](New_Design_2008/Timeline.md) currently opened.
--   One or more [**Pipeline**(s)](New_Design_2008/Pipeline.md),
+    [Timelines](design/2008_design/2008_Architectural_Redesign/Timeline.md) currently opened.
+-   One or more [**Pipeline**(s)](design/2008_design/2008_Architectural_Redesign/Pipeline.md),
     corresponding to the various processing pipelines currently used.
 
 If a User Interface is used, the Application object is its core
@@ -58,7 +58,7 @@ contents](Top-level-project-pipeline.png "Project/Pipeline relationship and cont
 ### Project
 
 Represents an editing project, corresponding to ONE
-[Timeline](New_Design_2008/Timeline.md).
+[Timeline](design/2008_design/2008_Architectural_Redesign/Timeline.md).
 
 It contains:
 
@@ -69,7 +69,7 @@ It contains:
     in this project. All sources used in the Timeline are present in
     that list, but it can also contains sources not (yet) used in the
     Timeline.
--   The [**Timeline**](New_Design_2008/Timeline.md). All the
+-   The [**Timeline**](design/2008_design/2008_Architectural_Redesign/Timeline.md). All the
     timeline editing is done through this object.
 
 ### Pipeline
@@ -107,7 +107,7 @@ This includes, but is not limited to:
 -   Media Asset Management Browser
 -   Online Service Browser (ex: youtube, flickr, archive.org, ...)
 
-See [New\_Design\_2008/Browser](New_Design_2008/Browser.md) for
+See [Browsers](design/2008_design/2008_Architectural_Redesign/Browsers.md) for
 more details.
 
 ### Formatter
@@ -120,7 +120,7 @@ file formats.
 Formatters can also provide subclasses of existing core objects in order
 to store/provide format-specific information.
 
-See [New\_Design\_2008/Formatter](New_Design_2008/Formatter.md)
+See [Formatter](design/2008_design/2008_Architectural_Redesign/Formatter.md)
 for more details.
 
 ## Utilities

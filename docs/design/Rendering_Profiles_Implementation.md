@@ -26,7 +26,7 @@ As such, this page is mostly obsolete.
 # Project profiles (emdash's branch)
 
 The goal is to allow [Rendering
-Profiles](Rendering_Profiles.md), and allow the user to save
+Profiles](design/Rendering_Profiles.md), and allow the user to save
 custom profiles.
 
 Waiting for emdash to finish the job :)
