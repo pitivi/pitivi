@@ -1,4 +1,6 @@
-# Design Overview
+# Implementation
+
+## Design Overview
 
 ![Inheritance Diagram](images/Advanced_inheritance.png)
 

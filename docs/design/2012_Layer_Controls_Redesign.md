@@ -1,3 +1,12 @@
+# 2012 Layer Controls Redesign
+
+## Key ideas
+
+-   don't eat to much horizontal space
+-   show type of layer
+-   show/edit layer name
+-   provide fold action
+
 ## Solutions from other software
 
 Sony Vegas Pro 11
@@ -25,10 +34,3 @@ Avid DS
 ![](images/Glade-1.png "Glade-1.png")
 
 ![](images/Layers.png "Layers.png")
-
-## Key ideas
-
--   don't eat to much horizontal space
--   show type of layer
--   show/edit layer name
--   provide fold action

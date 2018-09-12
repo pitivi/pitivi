@@ -1,4 +1,4 @@
-# 2008 Architectural Redesign/High-level Design
+# High-level Design
 
 **High Level overview**
 

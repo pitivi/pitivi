@@ -1,4 +1,4 @@
-## Introduction
+## 2008 Plugin Interface
 
 ### About
 
@@ -50,20 +50,20 @@ exception if its called before then
 The current API uses epydoc for its documentation and is structured as
 follows:
 
--   pitivi
-    -   PluginInterface
-        -   gui
-            -   show\_gui(self, \*args, \*\*kwargs) shows or hides the
+-   `pitivi`
+    -   `PluginInterface`
+        -   `gui`
+            -   `show_gui(self, *args, **kwargs)` shows or hides the
                 main application window depending on the value of
                 'visible'
-            -   add\_menu\_item(self, \*args, \*\*kwargs) Adds a menu
+            -   `add_menu_item(self, *args, **kwargs)` Adds a menu
                 item to the appropriate main window menu
-            -   remove\_menu\_item(self, name) removes the given menu
+            -   `remove_menu_item(self, name)` removes the given menu
                 item from the user interface
-            -   remove\_ui(self) removes all changes this instance of
+            -   `remove_ui(self)` removes all changes this instance of
                 the plugininterface has made to the user interface
-        -   Project
-            -   add\_source
+        -   `Project`
+            -   `add_source`
 
 ## Settings
 

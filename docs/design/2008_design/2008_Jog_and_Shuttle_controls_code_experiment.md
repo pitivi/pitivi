@@ -1,4 +1,4 @@
-## Introduction
+## Code Experiment
 
 ![wxPython prototype seeker with warning about inaccurate codec and some
 (green)

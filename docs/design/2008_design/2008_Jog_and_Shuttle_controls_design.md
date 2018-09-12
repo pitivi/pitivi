@@ -1,4 +1,4 @@
-## Introduction
+## 2008 Jog and Shuttle controls
 
 This is just a proposal for bringing frame seeking to the user interface
 in advanced mode. If you want to follow the development progress read

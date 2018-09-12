@@ -1,4 +1,4 @@
-# Overall
+# Timeline
 
 The **Timeline** object:
 
@@ -11,8 +11,6 @@ taking place on the overall Timeline, or on the individual Tracks.
 
 > This allows both creating simple and complex UI while offering the
 > same interfaces
-
-.
 
 **All of the following editing actions must be done on the `Timeline`,
 `TimelineObject`(s) or `TimelineSelection`s** and not on the `Track`(s)

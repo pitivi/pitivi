@@ -1,4 +1,6 @@
-# Multi-Layer is not Multi-Track
+# Multi-Layer Editing
+
+## Multi-Layer is not Multi-Track
 
 PiTiVi distinguishes between multi-layer and multi-track editing. In
 PiTiVi at 'track' is a separate channel of output. A layer is a separate
@@ -19,7 +21,7 @@ other media types. Subtitle information could be kept on a subtitle
 track, or midi data used to control synthesizers and/or lighting systems
 could be kept on a score track and edited alongside the video.
 
-# Multi-Layer Editing
+## Multi-Layer Editing
 
 Multi-layer editing is how the notion of priority is handled in the UI.
 Numeric priority is mapped to the vertical position of an object in the
@@ -32,7 +34,7 @@ together with a superimpose effect.
 The user can change the priority of an object by moving it up or down. A
 new visual layer will be created if necessary.
 
-# Multi-Track Editing
+## Multi-Track Editing
 
 The current implementation supports a limited form of multi-track
 editing: there is one audio and one video track per project. Future
@@ -43,7 +45,7 @@ Individual tracks can also be enabled or disabled for preview and
 project rendering. Also, Moving sources between tracks is not ordinarily
 possible.
 
-## Linking and Brothers Objects
+### Linking and Brothers Objects
 
 Linking means that two sources are associated so that whatever is done
 to one source is also done to the other. A source can have one linked

@@ -1,6 +1,6 @@
-# Goal
+# Formatter
 
-A **Formatter** is responsible for :
+A **Formatter** is responsible for:
 
 -   Storing a [Project](design/2008_design/2008_Architectural_Redesign/Project.md) and all of
     its contents for later usage, **and/or**

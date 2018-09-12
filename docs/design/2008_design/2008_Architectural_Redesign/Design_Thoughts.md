@@ -1,4 +1,4 @@
-# 2008 Architectural Redesign/Design Thoughts
+# Design Thoughts
 
 This is a listing, not entirely sorted, of thoughts, remarks, things to
 do, regarding PiTiVi's design, uses, etc...

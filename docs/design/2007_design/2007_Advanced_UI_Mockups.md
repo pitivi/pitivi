@@ -1,4 +1,6 @@
-# Brandon's Design
+# 2007 Advanced UI
+
+Also known as Brandon's Design.
 
 ## Basic Design
 

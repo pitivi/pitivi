@@ -1,9 +1,7 @@
-# 2008 Architectural Redesign/Pipeline
+# Pipeline
 
 ![Pipeline functional
 view](Pipeline-functional.png "Pipeline functional view")
-
-# Functional Description
 
 A **Pipeline** is where all the media processing takes place in PiTiVi.
 

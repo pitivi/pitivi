@@ -1,29 +1,29 @@
-# Overall
+# ObjectFactory
 
-> **ObjectFactory are the descriptions of objects producing and/or
-> consuming data streams.**
+**ObjectFactory are the descriptions of objects producing and/or
+consuming data streams.**
 
 -   They contain a list of the Stream(s) they can produce and/or
     consume.
 
-> This implies **ALL** The potential streams the factory can
-> provide/consume.
+This implies **ALL** The potential streams the factory can
+provide/consume.
 
-> Ex: A **FileSourceFactory** of a raw DV File will list the following
-> streams:
->
-> -   `video/x-dv,systemstream=True`, The container stream,
-> -   `video/x-dv,systemstream=False`, The I-Frame only DV video stream,
-> -   `video/x-raw-yuv`, The decoded raw video stream
-> -   `audio/x-raw-int`, The audio stream
+Ex: A **FileSourceFactory** of a raw DV File will list the following
+streams:
+
+-   `video/x-dv,systemstream=True`, The container stream,
+-   `video/x-dv,systemstream=False`, The I-Frame only DV video stream,
+-   `video/x-raw-yuv`, The decoded raw video stream
+-   `audio/x-raw-int`, The audio stream
 
 -   They produce GStreamer elements for all, or a selected number of,
     streams.
 
-> Some factories will be able to produce a different GStreamer element
-> every time, some will only be able to produce one at a time (Ex:
-> Video4Linux source, or audio sink with retarded backend that can have
-> multiple sockets opened).
+Some factories will be able to produce a different GStreamer element
+every time, some will only be able to produce one at a time (Ex:
+Video4Linux source, or audio sink with retarded backend that can have
+multiple sockets opened).
 
 ## Properties
 

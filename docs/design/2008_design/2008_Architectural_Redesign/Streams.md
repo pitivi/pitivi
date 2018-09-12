@@ -1,4 +1,4 @@
-# Description
+# Streams
 
 **Stream** objects help to solve two problems:
 

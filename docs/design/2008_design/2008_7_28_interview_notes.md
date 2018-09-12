@@ -1,4 +1,4 @@
-# 2008 7 28 interview notes
+# 2008.7.28 interview notes
 
 I'll call my friend M. M. Is a 3D animator working for a gaming company,
 so his editing needs are somewhat different than the average

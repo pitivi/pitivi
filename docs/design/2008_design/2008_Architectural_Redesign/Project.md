@@ -1,4 +1,4 @@
-# Description
+# Project
 
 A **Project** is the object containing everything specific to an
 *editing project*.

@@ -1,4 +1,4 @@
-# Goal
+# Browsers
 
 `Browser`s are meant to assist in three things:
 

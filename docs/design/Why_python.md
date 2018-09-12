@@ -1,4 +1,4 @@
-# Why python ?
+# Why Python?
 
 We like Python. It is a simple, fast and elegant programming language.
 It allows **faster**, **agile** and **robust** software development.
