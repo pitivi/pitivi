@@ -62,15 +62,15 @@ index.md
 		design/2007_design/2007_Simple_UI_Mockups.md
 		design/2008_design/2008_7_28_interview_notes.md
 		design/2008_design/2008_Architectural_Redesign.md
-		design/2008_design/2008_Architectural_Redesign/Browsers.md
-		design/2008_design/2008_Architectural_Redesign/Design_Thoughts.md
-		design/2008_design/2008_Architectural_Redesign/Formatter.md
-		design/2008_design/2008_Architectural_Redesign/High-level_Design.md
-		design/2008_design/2008_Architectural_Redesign/ObjectFactory.md
-		design/2008_design/2008_Architectural_Redesign/Pipeline.md
-		design/2008_design/2008_Architectural_Redesign/Project.md
-		design/2008_design/2008_Architectural_Redesign/Streams.md
-		design/2008_design/2008_Architectural_Redesign/Timeline.md
+			design/2008_design/2008_Architectural_Redesign/Browsers.md
+			design/2008_design/2008_Architectural_Redesign/Design_Thoughts.md
+			design/2008_design/2008_Architectural_Redesign/Formatter.md
+			design/2008_design/2008_Architectural_Redesign/High-level_Design.md
+			design/2008_design/2008_Architectural_Redesign/ObjectFactory.md
+			design/2008_design/2008_Architectural_Redesign/Pipeline.md
+			design/2008_design/2008_Architectural_Redesign/Project.md
+			design/2008_design/2008_Architectural_Redesign/Streams.md
+			design/2008_design/2008_Architectural_Redesign/Timeline.md
 		design/2008_design/2008_Jog_and_Shuttle_controls_code_experiment.md
 		design/2008_design/2008_Jog_and_Shuttle_controls_design.md
 		design/2008_design/2008_Plugin_Interface_development.md
