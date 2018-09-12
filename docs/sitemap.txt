@@ -79,7 +79,6 @@ index.md
 		design/Title_editor_design.md
 		design/UI_Design_Variants.md
 		design/UI_Implementation.md
-		design/UI_components.md
 		design/Multi-Layer_Editing.md
 	attic.md
 		attic/GNonLin.md
