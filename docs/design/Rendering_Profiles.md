@@ -7,9 +7,6 @@ intended publishing medium. If the user doesn't fit in those presets, he
 probably knows what he is doing/what he wants and will use the
 “Custom...” approach, or perhaps make his own preset for later reuse.
 
-See also: [Rendering Profiles
-Implementation](design/Rendering_Profiles_Implementation.md)
-
 -   Tapes and disks / (“publishing”?)
     -   DVD
         -   NTSC, PAL, etc.

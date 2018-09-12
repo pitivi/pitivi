@@ -55,7 +55,6 @@ index.md
 		design/Proxy_editing_requirements.md
 		design/Rendering_Profiles.md
 		design/XGES_Examples.md
-		design/Rendering_Profiles_Implementation.md
 		design/Plugins.md
 		design/2007_design/2007_Advanced_UI_Mockups.md
 		design/2007_design/2007_Advanced_UI_implementation.md
