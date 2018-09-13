@@ -1249,7 +1249,7 @@ msgstr ""
 "quan no. La decisió serà pressa depenent del format del fitxer, i si està "
 "ben suportat. Per exemple H.264, i fitxers FLAC continguts en QuickTime no "
 "seran enviats a un servidor intermediari, però AAC, i H.264  continguts en "
-"MPEG-TS sí ho seran. \n"
+"MPEG-TS sí que ho seran.\n"
 "\n"
 "<i>Aquesta és l'única opció oficialment suportada pels desenvolupadors de "
 "Pitivi i és per això la més segura.</i>"
@@ -1653,7 +1653,7 @@ msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
 msgstr ""
-"Entreu el codi de temps o el nombre de fotograma\n"
+"Introduïu el codi de temps o el nombre de fotograma\n"
 "i premeu «Retorn» per anar a aquesta posició"
 
 #: ../pitivi/viewer/viewer.py:262
@@ -1898,7 +1898,7 @@ msgstr ""
 #: ../pitivi/dialogs/prefs.py:534
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
-msgstr "Entreu la drecera nova per <b>%s</b>, o premeu ESC per cancel·lar."
+msgstr "Introduïu la drecera nova per <b>%s</b>, o premeu ESC per cancel·lar."
 
 #: ../pitivi/dialogs/prefs.py:543
 msgid ""
@@ -1906,7 +1906,7 @@ msgid ""
 "Control, Shift or Alt with some other key, please."
 msgstr ""
 "L'accelerador que esteu intentant  configurar pot interferir quan s'escriu. "
-"Proveu a usar Control, Maj o Alt amb alguna altra tecla."
+"Proveu d'usar Control, Maj o Alt amb alguna altra tecla."
 
 #: ../pitivi/dialogs/prefs.py:577
 #, python-format
