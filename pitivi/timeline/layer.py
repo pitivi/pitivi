@@ -58,6 +58,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.ges_layer = ges_layer
         self.ges_timeline = self.ges_layer.get_timeline()
         self.app = app
+        self.__icon = None
 
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(hbox)
@@ -221,8 +222,11 @@ class LayerControls(Gtk.EventBox, Loggable):
             icon = "video-x-generic"
         else:
             icon = "audio-x-generic"
-        image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
-        self.menubutton.props.image = image
+
+        if icon != self.__icon:
+            image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
+            self.menubutton.props.image = image
+            self.__icon = icon
 
         # TODO: Use media_types to determine which controls to show.
 
