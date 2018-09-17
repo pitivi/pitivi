@@ -972,7 +972,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.n_samples = asset.get_duration() / SAMPLE_DURATION
         self.samples = None
         self.peaks = None
-        self._start = 0
         self._end = 0
         self._surface_x = 0
 
@@ -1105,7 +1104,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         end = int((drawn_start + drawn_duration) / SAMPLE_DURATION) + num_inpoint_samples
 
         if self._force_redraw or self._surface_x > clipped_rect.x or self._end < end:
-            self._start = start
             end = int(min(self.n_samples, end + (self.pixelToNs(MARGIN) /
                                                  SAMPLE_DURATION)))
             self._end = end
