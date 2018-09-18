@@ -978,7 +978,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         self._num_failures = 0
-        self.adapter = None
         self.surface = None
 
         self._force_redraw = True
@@ -1038,8 +1037,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     def _startRendering(self):
         self.discovered = True
-        if self.adapter:
-            self.adapter.stop()
         self.queue_draw()
 
     def _busMessageCb(self, bus, message):
@@ -1049,9 +1046,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
             self.stop_generation()
 
         elif message.type == Gst.MessageType.ERROR:
-            if self.adapter:
-                self.adapter.stop()
-                self.adapter = None
             # Something went wrong TODO : recover
             self.stop_generation()
             self._num_failures += 1
@@ -1135,14 +1129,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
             return
 
         self.pipeline.set_state(Gst.State.PLAYING)
-        if self.adapter is not None:
-            self.adapter.start()
 
     def stop_generation(self):
-        if self.adapter is not None:
-            self.adapter.stop()
-            self.adapter = None
-
         if self.pipeline:
             self.pipeline.set_state(Gst.State.NULL)
             self.pipeline.get_bus().disconnect_by_func(self._busMessageCb)
