@@ -968,8 +968,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.discovered = False
         self.ges_elem = ges_elem
 
-        asset = self.ges_elem.get_parent().get_asset()
-        self.n_samples = asset.get_duration() / SAMPLE_DURATION
         self.samples = None
         self.peaks = None
         self._end = 0
@@ -1028,8 +1026,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         decode.connect("autoplug-select", self._autoplug_select_cb)
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
-
-        self.n_samples = asset.get_duration() / SAMPLE_DURATION
         bus.connect("message", self._busMessageCb)
 
     def zoomChanged(self):
@@ -1041,7 +1037,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.samples = self._wavebin.samples
 
     def _startRendering(self):
-        self.n_samples = len(self.samples)
         self.discovered = True
         if self.adapter:
             self.adapter.stop()
@@ -1086,7 +1081,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
     def _get_num_inpoint_samples(self):
         if self.ges_elem.props.in_point:
             asset_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
-            return int(self.n_samples / (float(asset_duration) / float(self.ges_elem.props.in_point)))
+            return int(len(self.samples) / (float(asset_duration) / float(self.ges_elem.props.in_point)))
 
         return 0
 
@@ -1104,8 +1099,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         end = int((drawn_start + drawn_duration) / SAMPLE_DURATION) + num_inpoint_samples
 
         if self._force_redraw or self._surface_x > clipped_rect.x or self._end < end:
-            end = int(min(self.n_samples, end + (self.pixelToNs(MARGIN) /
-                                                 SAMPLE_DURATION)))
+            end = int(min(len(self.samples), end + (self.pixelToNs(MARGIN) /
+                                                    SAMPLE_DURATION)))
             self._end = end
             self._surface_x = clipped_rect.x
             surface_width = min(self.props.width_request - clipped_rect.x,
