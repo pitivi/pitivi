@@ -965,7 +965,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self.pipeline = None
         self._wavebin = None
 
-        self.discovered = False
         self.ges_elem = ges_elem
 
         self.samples = None
@@ -998,7 +997,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
                 self.samples = list(numpy.load(samples))
-            self._startRendering()
+            self.queue_draw()
         else:
             self.wavefile = filename
             self._launchPipeline()
@@ -1035,14 +1034,10 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         self._wavebin.finalize(proxy=proxy)
         self.samples = self._wavebin.samples
 
-    def _startRendering(self):
-        self.discovered = True
-        self.queue_draw()
-
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
             self._prepareSamples()
-            self._startRendering()
+            self.queue_draw()
             self.stop_generation()
 
         elif message.type == Gst.MessageType.ERROR:
@@ -1081,7 +1076,8 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
     # pylint: disable=arguments-differ
     def do_draw(self, context):
-        if not self.discovered:
+        if not self.samples:
+            # Nothing to draw.
             return
 
         clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
