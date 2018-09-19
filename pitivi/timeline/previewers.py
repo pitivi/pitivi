@@ -61,8 +61,8 @@ THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
-# scrolling while playing.
-MARGIN = 500
+# scrolling while playing, in pixels.
+WAVEFORM_EXTRA = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -969,27 +969,19 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.samples = None
         self.peaks = None
-        self._end = 0
-        self._surface_x = 0
+        self.surface = None
+        # The samples range used when self.surface has been created.
+        self._start_surface_ns = 0
+        self._end_surface_ns = 0
+        # The zoom level when self.surface has been created.
+        self._zoom_surface = 0
 
         # Guard against malformed URIs
         self.wavefile = None
         self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         self._num_failures = 0
-        self.surface = None
-
-        self._force_redraw = True
-
-        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
-        self.connect("notify::height-request", self._height_changed_cb)
         self.become_controlled()
-
-    def _inpoint_changed_cb(self, unused_b_element, unused_value):
-        self._force_redraw = True
-
-    def _height_changed_cb(self, unused_widget, unused_param_spec):
-        self._force_redraw = True
 
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
@@ -1025,9 +1017,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self._busMessageCb)
-
-    def zoomChanged(self):
-        self._force_redraw = True
 
     def _prepareSamples(self):
         proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
@@ -1067,43 +1056,44 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
             return True
         return False
 
-    def _get_num_inpoint_samples(self):
-        if self.ges_elem.props.in_point:
-            asset_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
-            return int(len(self.samples) / (float(asset_duration) / float(self.ges_elem.props.in_point)))
-
-        return 0
-
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ,too-many-locals
     def do_draw(self, context):
         if not self.samples:
             # Nothing to draw.
             return
 
-        clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        # The area we have to refresh.
+        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        start_px = rect.x
+        end_px = start_px + rect.width
 
-        num_inpoint_samples = self._get_num_inpoint_samples()
-        drawn_start = self.pixelToNs(clipped_rect.x)
-        drawn_duration = self.pixelToNs(clipped_rect.width)
-        start = int(drawn_start / SAMPLE_DURATION) + num_inpoint_samples
-        end = int((drawn_start + drawn_duration) / SAMPLE_DURATION) + num_inpoint_samples
+        inpoint = self.ges_elem.props.in_point
+        max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
+        start_ns = min(max(0, self.pixelToNs(start_px) + inpoint), max_duration)
+        end_ns = min(max(0, self.pixelToNs(end_px) + inpoint), max_duration)
 
-        if self._force_redraw or self._surface_x > clipped_rect.x or self._end < end:
-            end = int(min(len(self.samples), end + (self.pixelToNs(MARGIN) /
-                                                    SAMPLE_DURATION)))
-            self._end = end
-            self._surface_x = clipped_rect.x
-            surface_width = min(self.props.width_request - clipped_rect.x,
-                                clipped_rect.width + MARGIN)
-            surface_height = int(self.get_parent().get_allocation().height)
-            self.surface = renderer.fill_surface(self.samples[start:end],
-                                                 surface_width,
-                                                 surface_height)
+        zoom = self.getCurrentZoomLevel()
+        if not self.surface or zoom != self._zoom_surface or \
+                start_ns < self._start_surface_ns or \
+                end_ns > self._end_surface_ns:
+            if self.surface:
+                self.surface.finish()
+                self.surface = None
+            self._zoom_surface = zoom
+            extra = self.pixelToNs(WAVEFORM_EXTRA)
+            self._start_surface_ns = max(0, start_ns - extra)
+            self._end_surface_ns = min(end_ns + extra, max_duration)
 
-            self._force_redraw = False
+            range_start = min(max(0, int(self._start_surface_ns / SAMPLE_DURATION)), len(self.samples))
+            range_end = min(max(0, int(self._end_surface_ns / SAMPLE_DURATION)), len(self.samples))
+            samples = self.samples[range_start:range_end]
+            surface_width = self.nsToPixel(self._end_surface_ns - self._start_surface_ns)
+            surface_height = self.get_parent().get_allocation().height
+            self.surface = renderer.fill_surface(samples, surface_width, surface_height)
 
         context.set_operator(cairo.OPERATOR_OVER)
-        context.set_source_surface(self.surface, self._surface_x, 0)
+        offset = self.nsToPixel(self._start_surface_ns - start_ns)
+        context.set_source_surface(self.surface, offset, 0)
         context.paint()
 
     def _emit_done_on_idle(self):
