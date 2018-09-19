@@ -61,8 +61,8 @@ THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
-# scrolling while playing.
-MARGIN = 500
+# scrolling while playing, in pixels.
+WAVEFORM_SURFACE_EXTRA_PX = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SIGNAL_RUN_LAST, None, ()),
@@ -969,27 +969,19 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         self.samples = None
         self.peaks = None
-        self._end = 0
-        self._surface_x = 0
+        self.surface = None
+        # The zoom level when self.surface has been created.
+        self._surface_zoom_level = 0
+        # The samples range used when self.surface has been created.
+        self._surface_start_ns = 0
+        self._surface_end_ns = 0
 
         # Guard against malformed URIs
         self.wavefile = None
         self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         self._num_failures = 0
-        self.surface = None
-
-        self._force_redraw = True
-
-        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
-        self.connect("notify::height-request", self._height_changed_cb)
         self.become_controlled()
-
-    def _inpoint_changed_cb(self, unused_b_element, unused_value):
-        self._force_redraw = True
-
-    def _height_changed_cb(self, unused_widget, unused_param_spec):
-        self._force_redraw = True
 
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
@@ -1025,9 +1017,6 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self._busMessageCb)
-
-    def zoomChanged(self):
-        self._force_redraw = True
 
     def _prepareSamples(self):
         proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
@@ -1067,43 +1056,51 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
             return True
         return False
 
-    def _get_num_inpoint_samples(self):
-        if self.ges_elem.props.in_point:
-            asset_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
-            return int(len(self.samples) / (float(asset_duration) / float(self.ges_elem.props.in_point)))
-
-        return 0
-
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ,too-many-locals
     def do_draw(self, context):
         if not self.samples:
             # Nothing to draw.
             return
 
-        clipped_rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        # The area we have to refresh is determined by the start and end
+        # calculated in the context of the asset duration.
+        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        inpoint = self.ges_elem.props.in_point
+        max_duration = self.ges_elem.get_asset().get_filesource_asset().get_duration()
+        start_ns = min(max(0, self.pixelToNs(rect.x) + inpoint), max_duration)
+        end_ns = min(max(0, self.pixelToNs(rect.x + rect.width) + inpoint), max_duration)
 
-        num_inpoint_samples = self._get_num_inpoint_samples()
-        drawn_start = self.pixelToNs(clipped_rect.x)
-        drawn_duration = self.pixelToNs(clipped_rect.width)
-        start = int(drawn_start / SAMPLE_DURATION) + num_inpoint_samples
-        end = int((drawn_start + drawn_duration) / SAMPLE_DURATION) + num_inpoint_samples
+        zoom = self.getCurrentZoomLevel()
+        height = self.get_allocation().height
+        if not self.surface or \
+                height != self.surface.get_height() or \
+                zoom != self._surface_zoom_level or \
+                start_ns < self._surface_start_ns or \
+                end_ns > self._surface_end_ns:
+            if self.surface:
+                self.surface.finish()
+                self.surface = None
+            self._surface_zoom_level = zoom
+            # The generated waveform is for an extended range if possible,
+            # so if the user scrolls we don't rebuild the waveform every time.
+            extra = self.pixelToNs(WAVEFORM_SURFACE_EXTRA_PX)
+            self._surface_start_ns = max(0, start_ns - extra)
+            self._surface_end_ns = min(end_ns + extra, max_duration)
 
-        if self._force_redraw or self._surface_x > clipped_rect.x or self._end < end:
-            end = int(min(len(self.samples), end + (self.pixelToNs(MARGIN) /
-                                                    SAMPLE_DURATION)))
-            self._end = end
-            self._surface_x = clipped_rect.x
-            surface_width = min(self.props.width_request - clipped_rect.x,
-                                clipped_rect.width + MARGIN)
-            surface_height = int(self.get_parent().get_allocation().height)
-            self.surface = renderer.fill_surface(self.samples[start:end],
-                                                 surface_width,
-                                                 surface_height)
+            range_start = min(max(0, int(self._surface_start_ns / SAMPLE_DURATION)), len(self.samples))
+            range_end = min(max(0, int(self._surface_end_ns / SAMPLE_DURATION)), len(self.samples))
+            samples = self.samples[range_start:range_end]
+            surface_width = self.nsToPixel(self._surface_end_ns - self._surface_start_ns)
+            self.surface = renderer.fill_surface(samples, surface_width, height)
 
-            self._force_redraw = False
-
+        # Paint the surface, ignoring the clipped rect.
+        # We only have to make sure the offset is correct:
+        # 1. + self._start_surface_ns, because that's the position of
+        # the surface in context, if the entire asset would be drawn.
+        # 2. - inpoint, because we're drawing a clip, not the entire asset.
         context.set_operator(cairo.OPERATOR_OVER)
-        context.set_source_surface(self.surface, self._surface_x, 0)
+        offset = self.nsToPixel(self._surface_start_ns - inpoint)
+        context.set_source_surface(self.surface, offset, 0)
         context.paint()
 
     def _emit_done_on_idle(self):
