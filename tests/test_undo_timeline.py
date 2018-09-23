@@ -735,6 +735,19 @@ class TestControlSourceObserver(BaseTestUndoTimeline):
 
 class TestTrackElementObserver(BaseTestUndoTimeline):
 
+    def assert_effects(self, clip, *effects):
+        # Make sure there are no other effects.
+        actual_effects = set()
+        for track_element in clip.get_children(recursive=True):
+            if isinstance(track_element, GES.BaseEffect):
+                actual_effects.add(track_element)
+        self.assertEqual(actual_effects, set(effects))
+
+        # Make sure their order is correct.
+        indexes = [clip.get_top_effect_index(effect)
+                   for effect in effects]
+        self.assertEqual(indexes, list(range(len(effects))))
+
     def test_effects_index(self):
         stacks = []
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
@@ -746,24 +759,75 @@ class TestTrackElementObserver(BaseTestUndoTimeline):
         effect2 = GES.Effect.new("edgetv")
         clip1.add(effect1)
         clip1.add(effect2)
-        self.assertEqual(clip1.get_top_effect_index(effect1), 0)
-        self.assertEqual(clip1.get_top_effect_index(effect2), 1)
+        self.assert_effects(clip1, effect1, effect2)
 
         with self.action_log.started("move effect"):
             assert clip1.set_top_effect_index(effect2, 0)
 
         self.assertEqual(len(stacks), 1)
-
-        self.assertEqual(clip1.get_top_effect_index(effect1), 1)
-        self.assertEqual(clip1.get_top_effect_index(effect2), 0)
+        self.assert_effects(clip1, effect2, effect1)
 
         self.action_log.undo()
-        self.assertEqual(clip1.get_top_effect_index(effect1), 0)
-        self.assertEqual(clip1.get_top_effect_index(effect2), 1)
+        self.assert_effects(clip1, effect1, effect2)
 
         self.action_log.redo()
-        self.assertEqual(clip1.get_top_effect_index(effect1), 1)
-        self.assertEqual(clip1.get_top_effect_index(effect2), 0)
+        self.assert_effects(clip1, effect2, effect1)
+
+    def test_effects_index_with_removal(self):
+        stacks = []
+        self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
+
+        clip1 = GES.TitleClip()
+        self.layer.add_clip(clip1)
+
+        effect1 = GES.Effect.new("agingtv")
+        effect2 = GES.Effect.new("dicetv")
+        effect3 = GES.Effect.new("edgetv")
+        with self.action_log.started("Add effect1"):
+            clip1.add(effect1)
+        with self.action_log.started("Add effect2"):
+            clip1.add(effect2)
+        with self.action_log.started("Add effect3"):
+            clip1.add(effect3)
+        self.assert_effects(clip1, effect1, effect2, effect3)
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1, effect2)
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect2, effect3)
+
+        with self.action_log.started("Remove effect"):
+            assert clip1.remove(effect2)
+        self.assertEqual(len(stacks), 4)
+        self.assert_effects(clip1, effect1, effect3)
+
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1, effect2, effect3)
+
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect3)
+
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1, effect2, effect3)
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1, effect2)
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1)
+        self.action_log.undo()
+        self.assert_effects(clip1)
+
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1)
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect2)
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect2, effect3)
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect3)
+
+        self.action_log.undo()
+        self.assert_effects(clip1, effect1, effect2, effect3)
+        self.action_log.redo()
+        self.assert_effects(clip1, effect1, effect3)
 
 
 class TestTimelineElementObserver(BaseTestUndoTimeline):
