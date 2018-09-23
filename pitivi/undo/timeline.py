@@ -212,7 +212,11 @@ class TrackElementRemoved(TrackElementAction):
         self.remove()
 
     def undo(self):
+        # Set the priority it had when it was last removed from self.clip,
+        # because re-adding it can change it, for example if it's an effect.
+        priority = self.track_element.props.priority
         self.add()
+        self.track_element.props.priority = priority
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("container-remove-child")
