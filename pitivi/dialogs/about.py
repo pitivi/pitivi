@@ -98,8 +98,7 @@ class AboutDialog(Gtk.AboutDialog):
         documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
         self.set_documenters(documenters)
         self.set_license_type(Gtk.License.LGPL_2_1)
-        self.set_icon_name("pitivi")
-        self.set_logo_icon_name("pitivi")
+        self.set_logo_icon_name("org.pitivi.Pitivi")
         self.connect("response", self.__about_response_cb)
         self.set_transient_for(app.gui)
 
