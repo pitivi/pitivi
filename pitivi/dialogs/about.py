@@ -65,7 +65,6 @@ class AboutDialog(Gtk.AboutDialog):
         self.set_comments("\n".join(comments))
 
         authors = [_("Current maintainers:"),
-                   "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "Thibault Saunier <tsaunier@gnome.org>",
                    "Mathieu Duponchelle <mduponchelle1@gmail.com>",
                    "Alexandru Băluț <alexandru.balut@gmail.com>",
@@ -74,6 +73,7 @@ class AboutDialog(Gtk.AboutDialog):
                    "Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
                    "Brandon Lewis <brandon_lewis@berkeley.edu>",
+                   "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "",
                    # Translators: this paragraph is to be translated, the list
                    # of contributors is shown dynamically as a clickable link
