@@ -644,8 +644,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         documenters = ["Jean-François Fortin Tam <nekohayo@gmail.com>", ]
         abt.set_documenters(documenters)
         abt.set_license_type(Gtk.License.LGPL_2_1)
-        abt.set_icon_name("pitivi")
-        abt.set_logo_icon_name("pitivi")
+        abt.set_logo_icon_name("org.pitivi.Pitivi")
         abt.connect("response", self._aboutResponseCb)
         abt.set_transient_for(self)
         abt.show()
