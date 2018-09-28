@@ -1,5 +1,3 @@
-gnome = import('gnome')
-
 sources = [
     'about.page',
     'cheatsheet.page',

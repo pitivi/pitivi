@@ -1,13 +1,15 @@
 [Desktop Entry]
 Encoding=UTF-8
-_Name=Pitivi
-_GenericName=Video Editor
-_Comment=Create and edit your own movies
+Name=Pitivi
+GenericName=Video Editor
+Comment=Create and edit your own movies
 Exec=pitivi %f
 Terminal=false
 Type=Application
+# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
 Icon=org.pitivi.Pitivi
 Categories=GNOME;GTK;AudioVideo;Video;AudioVideoEditing;
 MimeType=text/x-xges;text/x-xptv;
 StartupNotify=true
-_Keywords=video;film;movie;editor;
+# Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+Keywords=video;film;movie;editor;
