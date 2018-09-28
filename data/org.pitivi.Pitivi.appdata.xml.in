@@ -5,18 +5,18 @@
   <launchable type="desktop-id">org.pitivi.Pitivi.desktop</launchable>
   <metadata_license>CC-BY-3.0</metadata_license>
   <project_license>LGPL-2.0+</project_license>
-  <_name>Pitivi</_name>
-  <_summary>Create and edit your own movies</_summary>
+  <name>Pitivi</name>
+  <summary>Create and edit your own movies</summary>
   <description>
-    <_p>Pitivi is a video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on efficiency, quality and usability. It integrates well with other applications and sports a beautiful user interface designed to be powerful yet easy to learn.</_p>
-    <_p>With a non-modal editing workflow, a framerate-independent and playhead-centric timeline, Pitivi allows you quickly and accurately trim, split and review your scenes. Pitivi's ripple and roll editing features allow spending more time on storytelling and less time on "pushing clips around".</_p>
-    <_p>Some other features include:</_p>
+    <p>Pitivi is a video editor that aims to appeal to hobbyists and professionals alike, with a strong focus on efficiency, quality and usability. It integrates well with other applications and sports a beautiful user interface designed to be powerful yet easy to learn.</p>
+    <p>With a non-modal editing workflow, a framerate-independent and playhead-centric timeline, Pitivi allows you quickly and accurately trim, split and review your scenes. Pitivi's ripple and roll editing features allow spending more time on storytelling and less time on "pushing clips around".</p>
+    <p>Some other features include:</p>
     <ul>
-      <_li>Accepts any file formats supported by the GStreamer multimedia framework</_li>
-      <_li>Can animate hundreds of special effects and filters with keyframable properties</_li>
-      <_li>Ability to set custom aspect ratios, framerates and rendering presets</_li>
-      <_li>Easy to use crossfades and SMPTE transitions</_li>
-      <_li>Multihead-friendly with detachable user interface components</_li>
+      <li>Accepts any file formats supported by the GStreamer multimedia framework</li>
+      <li>Can animate hundreds of special effects and filters with keyframable properties</li>
+      <li>Ability to set custom aspect ratios, framerates and rendering presets</li>
+      <li>Easy to use crossfades and SMPTE transitions</li>
+      <li>Multihead-friendly with detachable user interface components</li>
     </ul>
   </description>
   <screenshots>
@@ -38,7 +38,7 @@
   <update_contact>pitivi@pitivi.org</update_contact>
   <project_group>GNOME</project_group>
   <translation type="gettext">pitivi</translation>
-  <_developer_name>The Pitivi Team</_developer_name>
+  <developer_name>The Pitivi Team</developer_name>
 
   <releases>
     <release version="0.999" date="2018-08-20">
