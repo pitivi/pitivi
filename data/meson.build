@@ -6,19 +6,26 @@ install_subdir('audiopresets', install_dir: pkgdatadir)
 install_subdir('videopresets', install_dir: pkgdatadir)
 install_subdir('gstpresets', install_dir: pkgdatadir)
 
-custom_target('org.pitivi.Pitivi.desktop',
+i18n.merge_file('org.pitivi.Pitivi.desktop',
+    type: 'desktop',
     output : 'org.pitivi.Pitivi.desktop',
     input : 'org.pitivi.Pitivi.desktop.in',
-    command : [intltool_merge, '--desktop-style', podir, '@INPUT@', '@OUTPUT@'],
+    po_dir: podir,
     install : true,
     install_dir : join_paths(get_option('datadir'), 'applications'))
 
-custom_target('org.pitivi.Pitivi.appdata.xml',
+i18n.merge_file('org.pitivi.Pitivi.appdata.xml',
+    type: 'xml',
     output : 'org.pitivi.Pitivi.appdata.xml',
     input : 'org.pitivi.Pitivi.appdata.xml.in',
-    command : [intltool_merge, '--xml-style', podir, '@INPUT@', '@OUTPUT@'],
+    po_dir: podir,
     install : true,
-    install_dir : join_paths(get_option('datadir'), 'appdata'))
+    install_dir : join_paths(get_option('datadir'), 'metainfo'))
 
-install_data('org.pitivi.Pitivi-mime.xml',
+i18n.merge_file('org.pitivi.Pitivi-mime.xml',
+    output : 'org.pitivi.Pitivi-mime.xml',
+    input : 'org.pitivi.Pitivi-mime.xml.in',
+    po_dir: podir,
+    data_dirs: itsdir,
+    install: true,
     install_dir : join_paths(get_option('datadir'), 'mime/packages'))

@@ -1,9 +1,6 @@
 project('pitivi', 'c', version : '1.90.0.1', meson_version : '>= 0.41.0')
 
 python = find_program('python3')
-intltool_merge = find_program('intltool-merge')
-itstool = find_program('itstool')
-msgfmt = find_program('msgfmt')
 
 python_dep = dependency('python3', version : '>= 3.3')
 if get_option('build-gst')
@@ -25,6 +22,11 @@ pycairo_dep = dependency('py3cairo')
 gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1',
     fallback : ['gst-transcoder', 'gst_transcoder_dep'])
 
+gnome = import('gnome')
+i18n = import('i18n')
+
+podir = join_paths(meson.current_source_dir(), 'po')
+itsdir = join_paths(meson.current_source_dir(), 'gettext')
 pkgdatadir = join_paths(get_option('datadir'), meson.project_name())
 
 git = find_program('git', required : false)
