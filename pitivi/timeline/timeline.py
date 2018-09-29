@@ -1775,19 +1775,21 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         position = self._project.pipeline.getPosition()
         splitted = False
-        for clip in clips:
-            start = clip.get_start()
-            end = start + clip.get_duration()
-            if start < position and end > position:
-                clip.get_layer().splitting_object = True
 
-                self.app.write_action("split-clip",
-                    clip_name=clip.get_name(),
-                    position=float(position / Gst.SECOND))
+        with self._project.pipeline.commit_timeline_after():
+            for clip in clips:
+                start = clip.get_start()
+                end = start + clip.get_duration()
+                if start < position and end > position:
+                    clip.get_layer().splitting_object = True
 
-                clip.split(position)
-                clip.get_layer().splitting_object = False
-                splitted = True
+                    self.app.write_action("split-clip",
+                        clip_name=clip.get_name(),
+                        position=float(position / Gst.SECOND))
+
+                    clip.split(position)
+                    clip.get_layer().splitting_object = False
+                    splitted = True
 
         if not splitted and splitting_selection:
             self._splitElements()
