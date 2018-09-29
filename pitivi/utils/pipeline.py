@@ -19,6 +19,7 @@
 # the Free Software Foundation; either version 3, or (at your option)
 # any later version.
 """High-level pipelines."""
+import contextlib
 import os
 
 from gi.repository import GES
@@ -533,6 +534,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
 
         self._was_empty = False
         self._commit_wanted = False
+        self._prevent_commits = False
 
         if "watchdog" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ''):
             watchdog = Gst.ElementFactory.make("watchdog", None)
@@ -623,8 +625,18 @@ class Pipeline(GES.Pipeline, SimplePipeline):
         else:
             SimplePipeline._busMessageCb(self, bus, message)
 
+    @contextlib.contextmanager
+    def commit_timeline_after(self):
+        self._prevent_commits = True
+        self.info("Disabling commits during action execution")
+        try:
+            yield
+        finally:
+            self._prevent_commits = False
+            self.commit_timeline()
+
     def commit_timeline(self):
-        if self.getState() == Gst.State.NULL:
+        if self._prevent_commits or self.getState() == Gst.State.NULL:
             # No need to commit. NLE will do it automatically when
             # changing state from READY to PAUSED.
             return
