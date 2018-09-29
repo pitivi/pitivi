@@ -908,7 +908,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 self.__set_keyframe_active(toggle_keyframe_button, False)
         # The only way to *deactivate* keyframes (not just hide them) is to use
         # the separate reset button.
-        self.__display_controlled(keyframe_button, True)
+        self.__display_controlled(keyframe_button, active)
 
         track_element = self.__get_track_element_of_same_type(self.element)
         if not track_element:
