@@ -133,3 +133,16 @@ class TestPipeline(common.TestCase):
         self.assertEqual(pipe._recovery_state, SimplePipeline.RecoveryState.NOT_RECOVERING)
         self.assertFalse(pipe._busy_async)
         self.assertIsNone(pipe._next_seek)
+
+    def test_commit_timeline_after(self):
+        """Checks the recovery mechanism."""
+        pipe = Pipeline(common.create_pitivi_mock())
+        timeline = GES.Timeline()
+        pipe.set_timeline(timeline)
+
+        with mock.patch.object(pipe, "getState") as get_state:
+            get_state.return_value = (0, Gst.State.PAUSED, 0)
+            with mock.patch.object(timeline, "commit") as commit:
+                with pipe.commit_timeline_after():
+                    self.assertEqual(pipe._prevent_commits, 1)
+                self.assertEqual(commit.call_count, 1)
