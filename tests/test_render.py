@@ -416,7 +416,6 @@ class TestRender(BaseTestMediaLibrary):
 
             # Patch the function that reverts assets to proxies after rendering.
             from pitivi.render import RenderDialog
-            old_use_proxy_assets = RenderDialog._useProxyAssets
 
             def check_use_proxy_assets(self):
                 nonlocal layer, asset, rendering_asset
@@ -424,11 +423,15 @@ class TestRender(BaseTestMediaLibrary):
                 rendering_asset = clip.get_asset()
                 old_use_proxy_assets(self)
 
-            RenderDialog._useProxyAssets = check_use_proxy_assets
-            dialog = self.create_rendering_dialog(project)
-            self.render(dialog)
-            self.mainloop.run(until_empty=True)
-            RenderDialog._useProxyAssets = old_use_proxy_assets
+            try:
+                old_use_proxy_assets = RenderDialog._useProxyAssets
+
+                RenderDialog._useProxyAssets = check_use_proxy_assets
+                dialog = self.create_rendering_dialog(project)
+                self.render(dialog)
+                self.mainloop.run(until_empty=True)
+            finally:
+                RenderDialog._useProxyAssets = old_use_proxy_assets
 
             # Check rendering used HQ proxy
             self.assertTrue(proxy_manager.is_hq_proxy(rendering_asset))
