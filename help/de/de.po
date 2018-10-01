@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi help master\n"
-"POT-Creation-Date: 2018-08-29 22:16+0000\n"
-"PO-Revision-Date: 2018-08-26 16:03+0200\n"
+"POT-Creation-Date: 2018-09-09 15:48+0000\n"
+"PO-Revision-Date: 2018-09-17 19:05+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "Language: de\n"
@@ -158,7 +158,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/selectiongrouping.page:52
-#, fuzzy
 msgid ""
 "By default, clicking in the timeline changes the selection and also moves "
 "the playhead. To have a better control of the playhead you can disable "
@@ -171,7 +170,14 @@ msgid ""
 msgstr ""
 "In der Voreinstellung wird durch Klicken in die Zeitleiste die Auswahl "
 "geändert und auch die Zeitleistenposition verschoben. Um eine bessere "
-"Kontrolle über die Zeitleistenposition zu haben, können Sie ."
+"Kontrolle über die Zeitleistenposition zu haben, können Sie den Suchlauf "
+"beim Klicken mit der linken Maustaste deaktivieren. Auf diese Weise wird nur "
+"die Auswahl verändert und die Zeitleistenposition geht nicht verloren, wenn "
+"Sie etwas auswählen. Dieses Verhalten können Sie mit <guiseq><gui>Menüknopf</"
+"gui><gui>Einstellungen</gui><gui>Linksklick sucht auch</gui></guiseq> "
+"einrichten. Sie können immer noch die rechte Maustaste zum Verschieben der "
+"Zeitleistenposition verwenden, wie zuvor. Details hierzu finden Sie in <link "
+"xref=\"movearoundtimeline#movingplayhead\"/>."
 
 #. (itstool) path: section/title
 #: C/selectiongrouping.page:56
@@ -473,7 +479,7 @@ msgid ""
 msgstr ""
 "Um zurückgenommene Änderungen wieder anzuwenden, klicken Sie auf den "
 "<gui>Wiederholen</gui>-Knopf in der Kopfleiste oder drücken Sie "
-"<keyseq><key>Strg</key><key>Umschalt</key><key>Z</key></keyseq>."
+"<keyseq><key>Strg</key<key>Umschalt</key>><key>Z</key></keyseq>."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:41
@@ -583,7 +589,6 @@ msgstr ""
 
 #. (itstool) path: page/p
 #: C/splitting.page:27
-#, fuzzy
 msgid ""
 "In <app>Pitivi</app>, splitting is a “non-modal” operation; this means that "
 "you do not have to “activate” a particular tool before doing the split "
@@ -597,7 +602,8 @@ msgstr ""
 "vornehmen können. Die Teilung wird an der Zeitleistenposition ausgeführt "
 "(siehe auch <link xref=\"movearoundtimeline\">Die Zeitleistenposition "
 "ändern</link>). In Kombination mit Zoomen, Einzelbildsuche mit der Tastatur "
-"oder ? ist das "
+"oder Scrubbing ist das nicht-modale Teilen nicht nur schnell und effizient, "
+"sondern auch sehr präzise."
 
 #. (itstool) path: page/p
 #: C/splitting.page:28
@@ -686,7 +692,7 @@ msgstr "Alexandru Băluț"
 #. (itstool) path: info/desc
 #: C/keyframecurves.page:24
 msgid "Changing properties of a clip over time."
-msgstr ""
+msgstr "Die Eigenschaften eines Clips verändern."
 
 #. (itstool) path: page/title
 #. (itstool) path: figure/title
@@ -862,6 +868,11 @@ msgid ""
 "same kind of project settings, with different cameras or target devices for "
 "rendering, you may want to create custom presets."
 msgstr ""
+"In den <gui>Projekteinstellungen</gui> und auch im <gui>Rendern</gui>-Dialog "
+"können Sie Voreinstellungen speichern, um sie später wiederverwenden zu "
+"können. Wenn Sie oft gleichartige Projekteinstellungen verwenden, die "
+"verschiedene Kameras oder Zielgeräte verwenden, können Sie solche "
+"benutzerdefinierten Voreinstellungen anlegen."
 
 #. (itstool) path: note/p
 #: C/presets.page:26
@@ -953,12 +964,19 @@ msgid ""
 "resolution, the width/height are set to 0 (unlimited) by default. You can "
 "change these values to the maximum resolution of your target device."
 msgstr ""
+"Wenn Sie eine Voreinstellung mit einer festen maximalen Auflösung anlegen "
+"wollen, müssen Sie die Voreinstellungsdatei mit einem Texteditor bearbeiten. "
+"Solche Voreinstellungsdateien werden üblicherweise in ~/.local/share/pitivi/ "
+"gespeichert. Da viele Geräte keine maximale Auflösung haben, werden Höhe und "
+"Breite standardmäßig auf 0 gesetzt. Sie können dann diese Werte auf die "
+"maximale Auflösung Ihres Zielgeräts setzen."
 
 #. (itstool) path: info/desc
 #: C/transitions.page:18
 msgid ""
 "Applying crossfades, fade-ins, fade-outs and other types of transitions."
 msgstr ""
+"Überblendungen, Ein- und Ausblendungen und andere Übergangstypen anwenden."
 
 #. (itstool) path: page/title
 #: C/transitions.page:25
@@ -968,7 +986,7 @@ msgstr "Übergänge"
 #. (itstool) path: section/title
 #: C/transitions.page:27
 msgid "Crossfading clips"
-msgstr ""
+msgstr "Überblenden von Clips"
 
 #. (itstool) path: section/p
 #: C/transitions.page:28
@@ -980,6 +998,14 @@ msgid ""
 "you want to apply other types of transitions than the default (crossfade), "
 "see the <em>Other types of transitions</em> section on this page."
 msgstr ""
+"Um eine Überblendung zwischen zwei Clips der gleichen Ebene zu erzielen, "
+"ziehen Sie einfach einen der Clips auf den anderen, so dass sie überlappen. "
+"Der überlappende Bereich wird als Übergangsbereich für die zwei Clips "
+"verwendet. Sie können die Dauer des Übergangs entweder durch Veschieben oder "
+"Trimmen der Clips anpassen. Wenn Sie andere Übergangsarten als die "
+"voreingestellte Überblendung einsetzen wollen, finden Sie weitere "
+"Informationen dazu im Abschnitt <em>Weitere Übergangstypen</em> auf dieser "
+"Seite."
 
 #. (itstool) path: note/p
 #: C/transitions.page:30
@@ -989,6 +1015,11 @@ msgid ""
 "set opacity keyframes for a clip, they will be taken into account for the "
 "crossfade."
 msgstr ""
+"Überblendungen werden mit den Videomixer-Funktionsmerkmalen von <app>Pitivi</"
+"app> umgesetzt, wobei Schlüsselbilder zum Steuern der Deckkraft der Clips "
+"verwendet werden. Das bedeutet, dass Sie beim Festlegen der Deckkraft der "
+"Schlüsselbilder eines Clips damit zugleich die Deckkraft für die "
+"Überblendung beeinflussen."
 
 #. (itstool) path: section/title
 #: C/transitions.page:34
@@ -1283,7 +1314,7 @@ msgstr ""
 #. (itstool) path: note/title
 #: C/mainwindow.page:55
 msgid "Hovering for more information"
-msgstr ""
+msgstr "Überfahren mit dem Mauszeiger für weitere Informationen"
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:56
@@ -1291,6 +1322,8 @@ msgid ""
 "Hovering the mouse cursor over an element in the main window usually reveals "
 "an information tooltip regarding its function."
 msgstr ""
+"Das Überfahren eines Elements im Hauptfenster mit dem Mauszeiger lässt "
+"üblicherweise eine Minihilfe erscheinen, die dessen Funktion bezeichnet."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:59
@@ -1306,6 +1339,12 @@ msgid ""
 "find further functions such as <gui>New project</gui>, <gui>Open project</"
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
+"In der Kopfleiste finden Sie grundlegende Funktionen wie <gui>Rückgängig</"
+"gui>, <gui>Wiederholen</gui> und <gui>Speichern</gui>, auch auf "
+"<gui>Rendern</gui> können Sie direkt zugreifen. Dort wird auch der Haupt-"
+"<gui>Menüknopf</gui> angezeigt, wo Sie weitere Funktionen wie <gui>Neues "
+"Projekt</gui>, <gui>Projekt öffnen</gui>, <gui>Projekteinstellungen</gui> "
+"oder <gui>Einstellungen</gui> finden."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:62
@@ -1326,6 +1365,14 @@ msgid ""
 "moving. See the section on <link xref=\"movearoundtimeline\">scrubbing</"
 "link> for more details."
 msgstr ""
+"Das Lineal spielt eine zentrale Rolle in der Interaktion mit der Zeitleiste. "
+"Zunächst repräsentiert es eine Zeitskala in Sekunden für die allgemeine "
+"Orientierung. Außerdem ist es die primäre Oberfläche, auf der Sie die "
+"Wiedergabeposition verschieben können, und damit die Zeitposition ändern. "
+"Klicken Sie dazu auf eine beliebige Stelle auf dem Lineal. Sie können auch "
+"über die Zeitleiste <em>scrubben</em>, indem Sie auf das Lineal klicken und "
+"beim Verschieben die Maustaste gedrückt halten. Im Abschnitt zum <link xref="
+"\"movearoundtimeline\">Scrubbing</link> finden Sie weitere Details."
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:68
@@ -1353,6 +1400,10 @@ msgid ""
 "number. The amount of time the individual frames take up is based on the "
 "project framerate settings."
 msgstr ""
+"Im vergrößerten Zustand werden die Einzelbilder als abwechselnde helle und "
+"dunkle Bereiche im unteren Teil des Lineals dargestellt. Durch Überfahren "
+"des Lineals mit dem Mauszeiger werden Minihilfen mit Informationen und "
+"Einzelbildnummer angezeigt"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:78
@@ -1372,6 +1423,9 @@ msgid ""
 "\"movearoundtimeline\">Moving around the timeline</link> pages for more "
 "information on how to work with the timeline."
 msgstr ""
+"In den Abschnitten <link xref=\"layers\">Erläuterungen zu Ebenen</link> und "
+"<link xref=\"movearoundtimeline\">Erläuterungen zu Ebenen</link> finden Sie "
+"weitere Informationen darüber, wie Sie mit der Zeitleiste arbeiten können."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:82
@@ -1478,15 +1532,14 @@ msgstr "An den Anfang der Zeitleiste gehen"
 
 #. (itstool) path: section/p
 #: C/mainwindow.page:132
-#, fuzzy
 msgid ""
 "For more information on how to move on the timeline, see the <em>Moving the "
 "playhead</em> and <em>Scrubbing</em> sections on the <link xref="
 "\"movearoundtimeline\">Moving around the timeline</link> page."
 msgstr ""
 "Weitere Informationen über das Bewegen in der Zeitleiste finden Sie in den "
-"Abschnitten <em>Moving the playhead</em> und <em>Scrubbing</em> in <link "
-"xref=\"movearoundtimeline\"></link>."
+"Abschnitten <em>Die Zeitleistenposition ändern</em> und <em>Scrubbing</em> "
+"in <link xref=\"movearoundtimeline\"></link>."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:135
@@ -1535,6 +1588,8 @@ msgstr ""
 msgid ""
 "<app>Pitivi</app> inhibits the screensaver while playing the video preview."
 msgstr ""
+"<app>Pitivi</app> unterdrückt den Bildschirmschoner während der "
+"Videovorschau."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:157
@@ -1550,6 +1605,12 @@ msgid ""
 "<gui>Effect library</gui> contains number of audio and video effects "
 "applicable to clips."
 msgstr ""
+"In der linken Seitenleiste finden Sie die Medien- und die Effektbibliothek. "
+"Sie können zwischen diesen wechseln, indem Sie auf den entsprechenden Reiter "
+"klicken. Die <gui>Medienbibliothek</gui> zeigt die in Ihr Projekt "
+"importierten Mediendateien an und ermöglicht deren Verwaltung. Die "
+"<gui>Effektbibliothek</gui> enthält die Audio- und Videoeffekte, die Sie auf "
+"Ihre Clips anwenden können."
 
 #. (itstool) path: note/p
 #: C/mainwindow.page:160
@@ -1557,6 +1618,8 @@ msgid ""
 "You can search the libraries by using the text box in the header of each "
 "library."
 msgstr ""
+"Sie können die Bibliotheken mit Hilfe des Textfeldes im Kopfbereich jeder "
+"der Bibliotheken durchsuchen."
 
 #. (itstool) path: section/title
 #: C/mainwindow.page:164
@@ -1583,17 +1646,17 @@ msgstr "Brian Grohe"
 #. (itstool) path: info/desc
 #: C/movearoundtimeline.page:22
 msgid "Moving the playhead, using the zoom feature, scrolling and scrubbing."
-msgstr ""
+msgstr "Bewegen in der Zeitleiste, Vergrößerung, Bildlauf und Scrubbing."
 
 #. (itstool) path: page/title
 #: C/movearoundtimeline.page:29
 msgid "Moving around the timeline"
-msgstr ""
+msgstr "Bewegen in der Zeitleiste"
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:31
 msgid "Activating the timeline toolbar"
-msgstr ""
+msgstr "Aktivieren der Zeitleisten-Werkzeugleiste"
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:32
@@ -1603,6 +1666,11 @@ msgid ""
 "in the timeline. When selected, the clip will become darker and the timeline "
 "toolbar items will now be clickable."
 msgstr ""
+"Die Zeitleisten-Werkzeugleiste enthält viele Werkzeuge, die aktiv werden, "
+"sobald ein Clip in der Zeitleiste ausgewählt ist. Um einen Clip auszuwählen, "
+"klicken Sie in der Zeitleiste einfach darauf. Wenn er ausgewählt ist, wird "
+"der Clip dunkler dargestellt und die Objekte in der Werkzeugleiste werden "
+"anklickbar."
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:35
@@ -1612,7 +1680,7 @@ msgstr "Bildlauf"
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:36
 msgid "You can scroll by:"
-msgstr ""
+msgstr "Sie können einen Bildlauf folgendermaßen auslösen:"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:39
@@ -1621,6 +1689,9 @@ msgid ""
 "hold down the <key>Shift</key> key while using the mouse wheel to scroll the "
 "timeline layers vertically"
 msgstr ""
+"Mit dem Mausrad können Sie sich horizontal über die Zeitleiste bewegen. "
+"Halten Sie dabei die <key>Umschalttaste</key> gedrückt, um mit dem Mausrad "
+"sich vertikal in den Ebenen der Zeitleiste zu bewegen."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:42
@@ -1628,16 +1699,20 @@ msgid ""
 "Clicking anywhere over the timeline with the middle button and dragging the "
 "timeline"
 msgstr ""
+"Klicken Sie mit der mittleren Maustaste auf eine beliebige Stelle in der "
+"Zeitleiste und ziehen Sie sie bei gedrückt gehaltener Maustaste."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:45
 msgid "Using the scrollbars located on the right and bottom of the timeline"
 msgstr ""
+"Außerdem können Sie die Bildlaufleisten rechts und unterhalb der Zeitleiste "
+"verwenden."
 
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:50
 msgid "Zooming"
-msgstr "Vergrößern"
+msgstr "Vergrößern und Verkleinern"
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:51
@@ -1645,6 +1720,8 @@ msgid ""
 "Zooming directly affects your editing accuracy and your ability to move "
 "quickly along the timeline:"
 msgstr ""
+"Eine Vergrößerung oder Verkleinerung beeinflusst direkt die Genauigkeit beim "
+"Bearbeiten und Bewegen entlang der Zeitleiste."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:54
@@ -1652,6 +1729,9 @@ msgid ""
 "When zooming in, video clips display more thumbnails and audio clips display "
 "increasingly detailed waveforms, allowing you to do precise edits."
 msgstr ""
+"Beim Vergrößern (Hineinzoomen) zeigen die Videoclips mehr Vorschaubilder an "
+"und die Audioclips werden als detailliertere Wellenformen angezeigt. Dadurch "
+"ist eine präzisere Bearbeitung möglich."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:57
@@ -1660,11 +1740,15 @@ msgid ""
 "used in conjunction with scrolling to move quickly between distant points of "
 "your project's chronology."
 msgstr ""
+"Durch Verkleinern (Herauszoomen) können Sie sich schneller innerhalb der "
+"Zeitleiste bewegen. Das Zoomen kann deshalb in Verbindung mit dem Bildlauf "
+"zum schnellen Bewegen zwischen entfernten Punkten in der Chronologie Ihres "
+"Projekts dienen."
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:60
 msgid "You can zoom in and out by:"
-msgstr ""
+msgstr "Sie können folgendermaßen hinein- oder herauszoomen:"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:63
@@ -1749,11 +1833,10 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/movearoundtimeline.page:90
 msgid "Scrubbing"
-msgstr ""
+msgstr "Scrubbing"
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:91
-#, fuzzy
 msgid "<em>Scrubbing</em> is a way of moving the playhead that allows you to:"
 msgstr ""
 "<em>Scrubbing</em> ist eine Weise, die Zeitleistenposition zu verschieben, "
@@ -1763,7 +1846,7 @@ msgstr ""
 #: C/movearoundtimeline.page:94
 msgid ""
 "Search for a specific position in time by approximation/trial and error."
-msgstr ""
+msgstr "Suche nach einer bestimmten Position durch Schätzung und Probieren."
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:97
@@ -1771,6 +1854,8 @@ msgid ""
 "Review repeatedly the visual motion in a scene by moving back and forth in "
 "time."
 msgstr ""
+"Die visuelle Bewegung in einer Szene durch wiederholtes Vor- und "
+"Zurückbewegen in der Zeitleiste kontrollieren."
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:100
@@ -1778,6 +1863,8 @@ msgid ""
 "To scrub, click on the ruler with the right mouse button and move the mouse "
 "with the button still held down."
 msgstr ""
+"Zum Scrubben klicken Sie mit der rechten Maustaste auf das Lineal und halten "
+"die Maustaste gedrückt, während Sie sie bewegen."
 
 #. (itstool) path: info/desc
 #: C/about.page:14
@@ -1949,6 +2036,17 @@ msgid ""
 "equipment is adequate. It should at least be able to playback your media in "
 "<app>Totem</app> without lagging."
 msgstr ""
+"Bezogen auf die Hardware ist für die Videobearbeitung typischerweise ein "
+"leistungsfähiger Rechner erforderlich, abhängig vom Typ des zu bearbeitenden "
+"Videos. So wie die sich die Leistungsfähigkeit der Prozessoren über die "
+"Jahre signifikant verbessert hat, so ist andererseits auch der Bedarf an "
+"qualitativ hochwertigen Videos gestiegen. Die Bearbeitung von "
+"hochauflösenden Videos (HD) erfordert üblicherweise aktuelle Hardware, "
+"abhängig vom verwendeten Codec, während SD-Videos auch auf Hardware "
+"moderater Leistung noch bearbeitet werden können. Sie müssen selbst dafür "
+"sorgen, dass Sie über die entsprechende Ausstattung verfügen. Ihr Rechner "
+"sollte zumindest in der Lage sein, Ihre Medien in <app>Totem</app> ohne "
+"Aussetzer wiederzugeben."
 
 #. (itstool) path: page/p
 #: C/sysreq.page:27
@@ -2226,6 +2324,8 @@ msgid ""
 "You can render your projects using any supported container and codec "
 "combination from <app>GStreamer</app>."
 msgstr ""
+"Sie können Ihre Projekte mit jeder von <app>GStreamer</app> unterstützten "
+"Container- und Codec-Kombination rendern."
 
 #. (itstool) path: note/p
 #: C/gstreamer.page:37
@@ -2251,6 +2351,13 @@ msgid ""
 "seeking) will not perform as well as they would with frame-independent "
 "compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
 msgstr ""
+"Einige Formate, zum Beispiel <em>MPEG</em>, sind vor allem "
+"wiedergabeorientiert. Dabei wird nicht jedes Einzelbild unabhängig "
+"komprimiert. Es ist das erklärte Ziel von <app>Pitivi</app>, den Umgang mit "
+"solchen Dateien zu unterstützen, doch bestimmte Operationen (wie schnelles "
+"Spulen) werden nicht so ausgeführt, wie es mit komprimierten Videos möglich "
+"ist, die diese unabhängigen Einzelbilder verwenden (zum Beispiel <em>MJPEG</"
+"em> oder <em>DV</em>)."
 
 #. (itstool) path: section/title
 #: C/gstreamer.page:44
@@ -2314,6 +2421,9 @@ msgid ""
 "video or audio formats, it is however possible to list the static image "
 "formats that can be imported: JPEG, PNG, JPEG 2000, PNM and SVG."
 msgstr ""
+"Zwar ist es unmöglich, jede mögliche Kombination der unterstützten Video- "
+"und Audioformate hier aufzulisten, aber zumindest können wir hier die "
+"importierbaren Bildformate nennen: JPEG, PNG, JPEG 2000, PNM und SVG."
 
 #. (itstool) path: page/title
 #: C/savescreenshot.page:14
@@ -2341,6 +2451,8 @@ msgid ""
 "How to convert .mts and .m2ts files to a format that can be parsed by "
 "GStreamer and Pitivi."
 msgstr ""
+"Umwandlung von .mts- und .m2ts-Dateien in ein Format, das von GStreamer und "
+"Pitivi verarbeitet werden kann."
 
 #. (itstool) path: page/title
 #: C/importingmpegts.page:19
@@ -2505,7 +2617,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/medialibrary.page:38
 msgid "Filtering search"
-msgstr ""
+msgstr "Die Suche filtern"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:39
