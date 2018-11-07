@@ -568,6 +568,79 @@ class TestProjectLoading(common.TestCase):
             self.assertEqual(medialib.storemodel[1][medialibrary.COL_THUMB_DECORATOR].state,
                              medialibrary.AssetThumbnail.IN_PROGRESS)
 
+    def test_transition_type(self):
+        uri = common.get_sample_uri("png.png")
+        PROJECT_STR = """<ges version='0.4'>
+  <project properties='properties;' metadatas='metadatas, author=(string)&quot;&quot;, render-scale=(double)100, format-version=(string)0.4;'>
+    <encoding-profiles>
+      <encoding-profile name='pitivi-profile' description='Pitivi encoding profile' type='container' preset-name='oggmux' format='application/ogg' >
+        <stream-profile parent='pitivi-profile' id='0' type='video' presence='0' format='video/x-theora, framerate=(fraction)[ 1/2147483647, 2147483647/1 ], width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ]' preset-name='theoraenc' restriction='video/x-raw, framerate=(fraction)25/1, width=(int)720, height=(int)576, pixel-aspect-ratio=(fraction)1/1' pass='0' variableframerate='0' />
+        <stream-profile parent='pitivi-profile' id='1' type='audio' presence='0' format='audio/x-vorbis, rate=(int)[ 1, 200000 ], channels=(int)[ 1, 255 ]' preset-name='vorbisenc' restriction='audio/x-raw, rate=(int)8000, channels=(int)1' />
+      </encoding-profile>
+    </encoding-profiles>
+    <ressources>
+      <asset id='GESTitleClip' extractable-type-name='GESTitleClip' properties='properties;' metadatas='metadatas;' />
+      <asset id='bar-wipe-lr' extractable-type-name='GESTransitionClip' properties='properties;' metadatas='metadatas, description=(string)GES_VIDEO_STANDARD_TRANSITION_TYPE_BAR_WIPE_LR;' />
+      <asset id='%(uri)s' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)4, duration=(guint64)18446744073709551615;' metadatas='metadatas, video-codec=(string)PNG, file-size=(guint64)73294;' />
+      <asset id='crossfade' extractable-type-name='GESTransitionClip' properties='properties;' metadatas='metadatas, description=(string)GES_VIDEO_STANDARD_TRANSITION_TYPE_CROSSFADE;' />
+    </ressources>
+    <timeline properties='properties, auto-transition=(boolean)true, snapping-distance=(guint64)31710871;' metadatas='metadatas, duration=(guint64)13929667032;'>
+      <track caps='video/x-raw(ANY)' track-type='4' track-id='0' properties='properties, async-handling=(boolean)false, message-forward=(boolean)true, caps=(string)&quot;video/x-raw\(ANY\)&quot;, restriction-caps=(string)&quot;video/x-raw\,\ width\=\(int\)1920\,\ height\=\(int\)1080\,\ framerate\=\(fraction\)30/1&quot;, mixing=(boolean)true;' metadatas='metadatas;'/>
+      <track caps='audio/x-raw(ANY)' track-type='2' track-id='1' properties='properties, async-handling=(boolean)false, message-forward=(boolean)true, caps=(string)&quot;audio/x-raw\(ANY\)&quot;, restriction-caps=(string)&quot;audio/x-raw\,\ format\=\(string\)S32LE\,\ channels\=\(int\)2\,\ rate\=\(int\)44100\,\ layout\=\(string\)interleaved&quot;, mixing=(boolean)true;' metadatas='metadatas;'/>
+      <layer priority='0' properties='properties, auto-transition=(boolean)true;' metadatas='metadatas, volume=(float)1;'>
+        <clip id='0' asset-id='%(uri)s' type-name='GESUriClip' layer-priority='0' track-types='6' start='0' duration='4558919302' inpoint='0' rate='0' properties='properties, name=(string)uriclip25263, mute=(boolean)false, is-image=(boolean)false;' >
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)1, GstDeinterlace::fields=(int)0, GstFramePositioner::height=(int)1080, GstDeinterlace::mode=(int)0, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstDeinterlace::tff=(int)0, GstFramePositioner::width=(int)1920;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  4558919302:1 '/>
+          </source>
+        </clip>
+        <clip id='1' asset-id='bar-wipe-lr' type-name='GESTransitionClip' layer-priority='0' track-types='4' start='3225722559' duration='1333196743' inpoint='0' rate='0' properties='properties, name=(string)transitionclip84;'  children-properties='properties, GESVideoTransition::border=(uint)0, GESVideoTransition::invert=(boolean)false;'>
+        </clip>
+        <clip id='2' asset-id='%(uri)s' type-name='GESUriClip' layer-priority='0' track-types='6' start='3225722559' duration='3479110239' inpoint='4558919302' rate='0' properties='properties, name=(string)uriclip25265, mute=(boolean)false, is-image=(boolean)false;' >
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)1, GstDeinterlace::fields=(int)0, GstFramePositioner::height=(int)1080, GstDeinterlace::mode=(int)0, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstDeinterlace::tff=(int)0, GstFramePositioner::width=(int)1920;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  3479110239:1 '/>
+          </source>
+        </clip>
+      </layer>
+      <layer priority='1' properties='properties, auto-transition=(boolean)false;' metadatas='metadatas, volume=(float)1;'>
+        <clip id='3' asset-id='%(uri)s' type-name='GESUriClip' layer-priority='1' track-types='4' start='8566459322' duration='1684610449' inpoint='0' rate='0' properties='properties, name=(string)uriclip25266, mute=(boolean)false, is-image=(boolean)true;' >
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)1, GstDeinterlace::fields=(int)0, GstFramePositioner::height=(int)1080, GstDeinterlace::mode=(int)0, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstDeinterlace::tff=(int)0, GstFramePositioner::width=(int)1920;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  1684610449:1 '/>
+          </source>
+        </clip>
+        <clip id='4' asset-id='GESTitleClip' type-name='GESTitleClip' layer-priority='1' track-types='6' start='8566459322' duration='4500940746' inpoint='0' rate='0' properties='properties, name=(string)titleclip69;' >
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)0.99906496446087445, GstBaseTextOverlay::color=(uint)4294967295, GstDeinterlace::fields=(int)0, GstBaseTextOverlay::font-desc=(string)&quot;Nimbus\ Sans\ L\ Bold\ 16&quot;, GstVideoTestSrc::foreground-color=(uint)0, GstBaseTextOverlay::halignment=(int)5, GstFramePositioner::height=(int)1080, GstDeinterlace::mode=(int)0, GstBaseTextOverlay::outline-color=(uint)4278190080, GstVideoTestSrc::pattern=(int)17, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstBaseTextOverlay::shaded-background=(boolean)false, GstBaseTextOverlay::text=(string)2008, GstDeinterlace::tff=(int)0, GstBaseTextOverlay::valignment=(int)5, GstFramePositioner::width=(int)1920, GstBaseTextOverlay::x-absolute=(double)0.23999999999999999, GstBaseTextOverlay::xpos=(double)0.23999999999999999, GstBaseTextOverlay::y-absolute=(double)0.44494674351060864, GstBaseTextOverlay::ypos=(double)0.44494674351060864;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  4500940746:1 '/>
+          </source>
+        </clip>
+        <clip id='5' asset-id='%(uri)s' type-name='GESUriClip' layer-priority='1' track-types='4' start='9566459322' duration='4363207710' inpoint='0' rate='0' properties='properties, name=(string)uriclip25275, mute=(boolean)false, is-image=(boolean)true;' >
+          <source track-id='0' children-properties='properties, GstFramePositioner::alpha=(double)1, GstDeinterlace::fields=(int)0, GstFramePositioner::height=(int)1080, GstDeinterlace::mode=(int)0, GstFramePositioner::posx=(int)0, GstFramePositioner::posy=(int)0, GstDeinterlace::tff=(int)0, GstFramePositioner::width=(int)1920;'>
+            <binding type='direct' source_type='interpolation' property='alpha' mode='1' track_id='0' values =' 0:1  4363207710:1 '/>
+          </source>
+        </clip>
+      </layer>
+      <groups>
+      </groups>
+    </timeline>
+</project>
+</ges>""" % {"uri": uri}
+        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
+        proj_uri = self.create_project_file_from_xges(app, PROJECT_STR)
+        app.project_manager.loadProject(proj_uri)
+        mainloop = common.create_main_loop()
+        mainloop.run(until_empty=True)
+        t = app.project_manager.current_project.ges_timeline
+        layers = t.get_layers()
+        self.assertEqual(len(layers), 2)
+        print(layers[0].get_clips())
+        print(layers[1].get_clips())
+        clips = layers[0].get_clips()
+        clip1 = clips[0]
+        clip2 = clips[-1]
+        self.assertLess(clip1.props.start, clip2.props.start)
+        self.assertLess(clip2.props.start, clip1.props.start + clip1.props.duration)
+        self.assertLess(clip1.props.start + clip1.props.duration, clip2.props.start + clip2.props.duration)
+        self.assertEqual(len(clips), 3)
+
 
 class TestProjectSettings(common.TestCase):
 
