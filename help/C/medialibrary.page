@@ -32,7 +32,7 @@
   </section>
   <section id="previewing">
     <title>Previewing a clip from the <gui>Media Library</gui></title>
-    <p>To preview a clip before placing it on the timeline, you can double-click on it in the <gui>Media Library</gui>. This will open the clip in a window that automatically closes whenever you click outside the window.</p>
+    <p>To preview a clip before placing it on the timeline, you can click on it in the <gui>Media Library</gui>. This will open the clip to the right side, which you can play by clicking on "play" icon. You can also increase and decrease the dimension of the preview clip by clicking on the "plus" and "negative" icon respectively.</p>
   </section>
   <section id="searching">
     <title>Filtering search</title>
@@ -40,7 +40,7 @@
   </section>
   <section id="modes">
     <title>View modes</title>
-    <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
+    <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button to the left of search bar.</p>
   </section>
   <section id="selectingunused">
     <title>Selecting unused clips</title>

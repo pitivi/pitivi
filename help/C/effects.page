@@ -39,7 +39,7 @@
         <p>Select an existing clip on the timeline</p>
       </item>
       <item>
-        <p>Select the effect you want to remove in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq></p>
+        <p>Select the effect you want to remove in the <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Effects</gui></guiseq></p>
       </item>
       <item>
         <p>Click the <gui>Remove effect</gui> button</p>
@@ -48,6 +48,6 @@
   </section>
   <section id="toggling">
     <title>Toggling effects</title>
-    <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>.</p>
+    <p>If you want to temporarily disable an effect (to compare with and without the effect, or for performance reasons), click the corresponding checkbox in the <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Effects</gui></guiseq>.</p>
   </section>
 </page>
