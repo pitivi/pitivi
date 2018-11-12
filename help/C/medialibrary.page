@@ -40,7 +40,7 @@
   </section>
   <section id="modes">
     <title>View modes</title>
-    <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button next to the search bar.</p>
+    <p>The <gui>Media Library</gui> can display your clips in a list or in an icon view. The default mode is icon view because it display more clips without needing to scroll down. However, the list view mode shows more details about each clip. To activate/deactivate it, click on the <gui>Show clips as a detailed list</gui> button to the left of search bar.</p>
   </section>
   <section id="selectingunused">
     <title>Selecting unused clips</title>
