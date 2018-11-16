@@ -421,6 +421,7 @@ class RenderDialog(Loggable):
         # Whether encoders changing are a result of changing the muxer.
         self.muxer_combo_changing = False
         self._createUi()
+        self._setCheckButtons()
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
@@ -661,6 +662,26 @@ class RenderDialog(Loggable):
         # Audio settings
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
+
+    def _setCheckButtons(self):
+        nb_audio_clips = 0
+        nb_video_clips = 0
+
+        for layer in self.app.project_manager.current_project.ges_timeline.get_layers():
+            for clip in layer.get_clips():
+                asset = clip.get_asset()
+                info = asset.get_info()
+                nb_audio_clips += len(info.get_audio_streams())
+                nb_video_clips += len(info.get_video_streams())
+
+        if nb_audio_clips > 0:
+            self.audio_output_checkbutton.props.active = True
+        else:
+            self.audio_output_checkbutton.props.active = False
+        if nb_video_clips > 0:
+            self.video_output_checkbutton.props.active = True
+        else:
+            self.video_output_checkbutton.props.active = False
 
     def _displayRenderSettings(self):
         """Displays the settings available only in the RenderDialog."""
