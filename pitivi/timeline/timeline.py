@@ -399,6 +399,24 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app.settings.connect("edgeSnapDeadbandChanged",
                                   self.__snap_distance_changed_cb)
 
+    @property
+    def media_types(self):
+        """Gets the media types present in the layers.
+
+        Returns:
+            GES.TrackType: The type of media available in the timeline.
+        """
+        media_types = GES.TrackType(0)
+
+        for ges_layer in self.ges_timeline.get_layers():
+            media_types |= ges_layer.ui.media_types
+
+            if ((media_types & GES.TrackType.AUDIO) and
+                    (media_types & GES.TrackType.VIDEO)):
+                break
+
+        return media_types
+
     def resetSelectionGroup(self):
         self.debug("Reset selection group")
         if self.current_group:

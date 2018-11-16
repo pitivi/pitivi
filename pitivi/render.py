@@ -591,9 +591,6 @@ class RenderDialog(Loggable):
         preset_table.attach(text_widget, 1, 0, 1, 1)
         text_widget.show()
 
-        self.video_output_checkbutton.props.active = self.project.video_profile.is_enabled()
-        self.audio_output_checkbutton.props.active = self.project.audio_profile.is_enabled()
-
         self.__automatically_use_proxies = builder.get_object(
             "automatically_use_proxies")
 
@@ -608,6 +605,14 @@ class RenderDialog(Loggable):
 
         self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
+
+        media_types = self.project.ges_timeline.ui.media_types
+
+        self.audio_output_checkbutton.props.active = media_types & GES.TrackType.AUDIO
+        self._update_audio_widgets_sensitivity()
+
+        self.video_output_checkbutton.props.active = media_types & GES.TrackType.VIDEO
+        self._update_video_widgets_sensitivity()
 
     def _rendering_settings_changed_cb(self, unused_project, unused_item):
         """Handles Project metadata changes."""
@@ -661,6 +666,24 @@ class RenderDialog(Loggable):
         # Audio settings
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
+
+    def _update_audio_widgets_sensitivity(self):
+        active = self.audio_output_checkbutton.get_active()
+        self.channels_combo.set_sensitive(active)
+        self.sample_rate_combo.set_sensitive(active)
+        self.audio_encoder_combo.set_sensitive(active)
+        self.audio_settings_button.set_sensitive(active)
+        self.project.audio_profile.set_enabled(active)
+        self.__updateRenderButtonSensitivity()
+
+    def _update_video_widgets_sensitivity(self):
+        active = self.video_output_checkbutton.get_active()
+        self.scale_spinbutton.set_sensitive(active)
+        self.frame_rate_combo.set_sensitive(active)
+        self.video_encoder_combo.set_sensitive(active)
+        self.video_settings_button.set_sensitive(active)
+        self.project.video_profile.set_enabled(active)
+        self.__updateRenderButtonSensitivity()
 
     def _displayRenderSettings(self):
         """Displays the settings available only in the RenderDialog."""
@@ -1168,22 +1191,10 @@ class RenderDialog(Loggable):
         dialog.window.run()
 
     def _audioOutputCheckbuttonToggledCb(self, unused_audio):
-        active = self.audio_output_checkbutton.get_active()
-        self.channels_combo.set_sensitive(active)
-        self.sample_rate_combo.set_sensitive(active)
-        self.audio_encoder_combo.set_sensitive(active)
-        self.audio_settings_button.set_sensitive(active)
-        self.project.audio_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self._update_audio_widgets_sensitivity()
 
     def _videoOutputCheckbuttonToggledCb(self, unused_video):
-        active = self.video_output_checkbutton.get_active()
-        self.scale_spinbutton.set_sensitive(active)
-        self.frame_rate_combo.set_sensitive(active)
-        self.video_encoder_combo.set_sensitive(active)
-        self.video_settings_button.set_sensitive(active)
-        self.project.video_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self._update_video_widgets_sensitivity()
 
     def __updateRenderButtonSensitivity(self):
         video_enabled = self.video_output_checkbutton.get_active()
