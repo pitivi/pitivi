@@ -591,9 +591,6 @@ class RenderDialog(Loggable):
         preset_table.attach(text_widget, 1, 0, 1, 1)
         text_widget.show()
 
-        self.video_output_checkbutton.props.active = self.project.video_profile.is_enabled()
-        self.audio_output_checkbutton.props.active = self.project.audio_profile.is_enabled()
-
         self.__automatically_use_proxies = builder.get_object(
             "automatically_use_proxies")
 
@@ -608,6 +605,8 @@ class RenderDialog(Loggable):
 
         self.window.set_icon_name("system-run-symbolic")
         self.window.set_transient_for(self.app.gui)
+
+        self._set_check_buttons()
 
     def _rendering_settings_changed_cb(self, unused_project, unused_item):
         """Handles Project metadata changes."""
@@ -661,6 +660,12 @@ class RenderDialog(Loggable):
         # Audio settings
         set_combo_value(self.channels_combo, self.project.audiochannels)
         set_combo_value(self.sample_rate_combo, self.project.audiorate)
+
+    def _set_check_buttons(self):
+        media_types = self.project.ges_timeline.ui.media_types
+
+        self.audio_output_checkbutton.props.active = media_types & GES.TrackType.AUDIO
+        self.video_output_checkbutton.props.active = media_types & GES.TrackType.VIDEO
 
     def _displayRenderSettings(self):
         """Displays the settings available only in the RenderDialog."""
