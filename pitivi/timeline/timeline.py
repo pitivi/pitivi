@@ -334,6 +334,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # it should be kept that way if it makes sense.
         self.zoomed_fitted = True
 
+        self._media_types = GES.TrackType(0)
+
         # A list of (controls separator, layers separator) tuples.
         self._separators = []
         # Whether the user is dragging a layer.
@@ -398,6 +400,31 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.app.settings.connect("edgeSnapDeadbandChanged",
                                   self.__snap_distance_changed_cb)
+
+    @property
+    def media_types(self):
+        """Gets the media types present in the timeline.
+
+        Returns:
+            all media types present in timeline.
+        """
+        self._media_types = GES.TrackType(0)
+        ges_layers = self.ges_timeline.get_layers()
+
+        for ges_layer in ges_layers:
+            if ges_layer.ui.media_types & GES.TrackType.AUDIO:
+                self._media_types |= GES.TrackType.AUDIO
+            if ges_layer.ui.media_types & GES.TrackType.VIDEO:
+                self._media_types |= GES.TrackType.VIDEO
+
+            if ((self._media_types & GES.TrackType.AUDIO) and
+                    (self._media_types & GES.TrackType.VIDEO)):
+                break
+        return self._media_types
+
+    @media_types.setter
+    def media_types(self, value):
+        self._media_types = value
 
     def resetSelectionGroup(self):
         self.debug("Reset selection group")

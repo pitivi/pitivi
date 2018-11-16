@@ -308,17 +308,17 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
                     # Cannot find more types than these.
                     break
 
-        if not (self.media_types & GES.TrackType.AUDIO) and not (self.media_types & GES.TrackType.VIDEO):
-            # An empty layer only shows the video strip.
-            self.media_types = GES.TrackType.VIDEO
-
         height = 0
-        if self.media_types & GES.TrackType.AUDIO:
-            height += LAYER_HEIGHT / 2
-        if self.media_types & GES.TrackType.VIDEO:
-            height += LAYER_HEIGHT / 2
-
+        if (self.media_types & GES.TrackType.AUDIO) | (self.media_types & GES.TrackType.VIDEO):
+            if self.media_types & GES.TrackType.AUDIO:
+                height += LAYER_HEIGHT / 2
+            if self.media_types & GES.TrackType.VIDEO:
+                height += LAYER_HEIGHT / 2
+        else:
+            # If the layer is empty, set layer's height to default height.
+            height = LAYER_HEIGHT / 2
         self.props.height_request = height
+
         if hasattr(self.ges_layer, "control_ui") and self.ges_layer.control_ui:
             self.ges_layer.control_ui.update(self.media_types)
 
