@@ -1030,7 +1030,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
             self.stop_generation()
 
         elif message.type == Gst.MessageType.ERROR:
-            # Something went wrong TODO : recover
+            # Something went wrong.
             self.stop_generation()
             self._num_failures += 1
             if self._num_failures < 2:

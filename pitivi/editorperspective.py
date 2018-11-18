@@ -479,9 +479,7 @@ class EditorPerspective(Perspective, Loggable):
         dialog.destroy()
         self.error("failed to save project")
 
-    def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
-        # FIXME GES: Reimplement Undo/Redo
-        # self.app.action_log.checkpoint()
+    def _projectManagerProjectSavedCb(self, unused_project_manager, unused_project, unused_uri):
         self.updateTitle()
         self.save_action.set_enabled(False)
 

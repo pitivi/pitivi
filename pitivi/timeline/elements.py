@@ -55,8 +55,8 @@ KEYFRAME_LINE_HEIGHT = 2
 KEYFRAME_LINE_ALPHA = 0.5
 KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
 KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
-SELECTED_KEYFRAME_NODE_COLOR = "#204A87" # "Tango" dark sky blue
-HOVERED_KEYFRAME_NODE_COLOR = "#3465A4" # "Tango" medium sky blue
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
+HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -116,11 +116,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self._ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
         # Clear the Axes object.
         self._ax.cla()
-
-        # FIXME: drawing a grid and ticks would be nice, but
-        # matplotlib is too slow for now.
         self._ax.grid(False)
-
         self._ax.tick_params(axis='both',
                              which='both',
                              bottom=False,
@@ -462,7 +458,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
         self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
                                                     c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
         self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
-                                                    c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
+                                                   c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
         self.__update_selected_keyframe()
         self.__hovered_keyframe.set_visible(False)
 
