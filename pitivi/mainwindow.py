@@ -743,8 +743,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.error("failed to save project")
 
     def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
-        # FIXME GES: Reimplement Undo/Redo
-        # self.app.action_log.checkpoint()
         self.updateTitle()
 
         self.save_action.set_enabled(False)
@@ -1008,8 +1006,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         return new_uri
 
     def _connectToProject(self, project):
-        # FIXME GES we should re-enable this when possible
-        # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("project-changed", self._projectChangedCb)
         project.connect("rendering-settings-changed",
                         self._rendering_settings_changed_cb)

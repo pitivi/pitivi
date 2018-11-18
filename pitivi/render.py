@@ -869,7 +869,6 @@ class RenderDialog(Loggable):
     def startAction(self):
         """Starts the render process."""
         self._pipeline.set_state(Gst.State.NULL)
-        # FIXME: https://github.com/pitivi/gst-editing-services/issues/23
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
         self._gstSigId[encodebin] = encodebin.connect(
