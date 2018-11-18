@@ -302,7 +302,6 @@ class TestRender(BaseTestMediaLibrary):
             self.assertEqual(message.type, Gst.MessageType.EOS,
                              struct.to_string() if struct else message)
             asset = GES.UriClipAsset.request_sync(result_file)
-            # FIXME Check more things?
             self.assertIsNotNone(asset)
 
             if message:

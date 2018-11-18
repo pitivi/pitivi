@@ -1768,7 +1768,6 @@ class Project(Loggable, GES.Project):
 
     def _emit_change(self, key):
         self.emit("rendering-settings-changed", key)
-        # TODO: Remove this when it's possible to undo/redo these changes.
         self.setModificationState(True)
 
     def _getElementFactoryName(self, elements, profile):
