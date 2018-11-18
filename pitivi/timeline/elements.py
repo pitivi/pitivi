@@ -115,11 +115,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self._ax = figure.add_axes([0, 0, 1, 1], facecolor='None')
         # Clear the Axes object.
         self._ax.cla()
-
-        # FIXME: drawing a grid and ticks would be nice, but
-        # matplotlib is too slow for now.
         self._ax.grid(False)
-
         self._ax.tick_params(axis='both',
                              which='both',
                              bottom=False,

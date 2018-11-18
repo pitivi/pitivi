@@ -743,8 +743,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.error("failed to save project")
 
     def _projectManagerProjectSavedCb(self, unused_project_manager, project, uri):
-        # FIXME GES: Reimplement Undo/Redo
-        # self.app.action_log.checkpoint()
         self.updateTitle()
 
         self.save_action.set_enabled(False)
