@@ -420,7 +420,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gstreamer"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer.git"
                 }
             ]
         },
@@ -436,7 +436,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-base"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git"
                 }
             ]
         },
@@ -452,7 +452,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-good"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git"
                 }
             ]
         },
@@ -468,7 +468,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-ugly"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git"
                 }
             ]
         },
@@ -484,7 +484,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-plugins-bad"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git"
                 }
             ]
         },
@@ -501,7 +501,7 @@
                     "type": "git",
                     "branch": "master",
                     "disable-shallow-clone": true,
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-libav"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-libav.git"
                 },
                 {
                     "type": "git",
@@ -529,7 +529,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-python"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-python.git"
                 }
             ]
         },
@@ -546,7 +546,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-devtools"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-devtools.git"
                 }
             ]
         },
@@ -562,7 +562,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gstreamer-vaapi"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git"
                 }
             ]
         },
@@ -578,7 +578,7 @@
                 {
                     "type": "git",
                     "branch": "master",
-                    "url": "git://anongit.freedesktop.org/gstreamer/gst-editing-services"
+                    "url": "https://gitlab.freedesktop.org/gstreamer/gst-editing-services.git"
                 }
             ]
         },
