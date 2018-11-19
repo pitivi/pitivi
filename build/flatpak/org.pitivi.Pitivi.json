@@ -411,6 +411,7 @@
             "buildsystem": "meson",
             "config-opts": [
                 "-Ddisable_gtkdoc=true",
+                "-Duse_orc=yes",
                 "--libdir=lib"
             ],
             "builddir": true,
