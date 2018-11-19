@@ -429,6 +429,7 @@
             "buildsystem": "meson",
             "config-opts": [
                 "-Dgtkdoc=false",
+                "-Dorc=enabled",
                 "--libdir=lib"
             ],
             "builddir": true,
