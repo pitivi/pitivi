@@ -87,7 +87,6 @@ class EditorPerspective(Perspective, Loggable):
         self.app = app
         self.settings = app.settings
 
-        self.builder_handler_ids = []
         self.builder = Gtk.Builder()
 
         pm = self.app.project_manager
@@ -318,9 +317,6 @@ class EditorPerspective(Perspective, Loggable):
         self.builder.add_from_file(
             os.path.join(get_ui_dir(), "mainmenubutton.ui"))
 
-        # FIXME : see https://bugzilla.gnome.org/show_bug.cgi?id=729263
-        self.builder.connect_signals_full(self._builderConnectCb, self)
-
         self.menu_button = self.builder.get_object("menubutton")
 
         self._menubutton_items = {}
@@ -389,11 +385,6 @@ class EditorPerspective(Perspective, Loggable):
     def _projectChangedCb(self, unused_project):
         self.save_action.set_enabled(True)
         self.updateTitle()
-
-    def _builderConnectCb(self, builder, gobject, signal_name, handler_name,
-                          connect_object, flags, user_data):
-        id_ = gobject.connect(signal_name, getattr(self, handler_name))
-        self.builder_handler_ids.append((gobject, id_))
 
 # Toolbar/Menu actions callback
 
