@@ -25,7 +25,6 @@ from gi.repository import Gdk
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import Gst
-from gi.repository import GstPbutils
 from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
@@ -994,28 +993,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         return new_uri
 
     def _connectToProject(self, project):
-        # FIXME GES we should re-enable this when possible
-        # medialibrary.connect("missing-plugins", self._sourceListMissingPluginsCb)
         project.connect("project-changed", self._projectChangedCb)
         project.connect("rendering-settings-changed",
                         self._rendering_settings_changed_cb)
         project.ges_timeline.connect("notify::duration",
                                      self._timelineDurationChangedCb)
-
-    def _sourceListMissingPluginsCb(
-        self, unused_project, unused_uri, unused_factory,
-            details, unused_descriptions, missingPluginsCallback):
-        res = self._installPlugins(details, missingPluginsCallback)
-        return res
-
-    def _installPlugins(self, details, missingPluginsCallback):
-        context = GstPbutils.InstallPluginsContext()
-        if self.app.system.has_x11():
-            context.set_xid(self.window.xid)
-
-        res = GstPbutils.install_plugins_async(details, context,
-                                               missingPluginsCallback)
-        return res
 
     def _setProject(self, project):
         """Disconnects and then reconnects callbacks to the specified project.
