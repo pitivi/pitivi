@@ -607,7 +607,6 @@ class EffectsPropertiesManager:
 
     def __init__(self, app):
         self.cache_dict = {}
-        self._current_element_values = {}
         self.app = app
 
     def getEffectConfigurationUI(self, effect):
@@ -627,10 +626,6 @@ class EffectsPropertiesManager:
             self.cache_dict[effect] = effect_widget
             self._connectAllWidgetCallbacks(effect_widget, effect)
             self._postConfiguration(effect, effect_widget)
-
-        for prop in effect.list_children_properties():
-            value = effect.get_child_property(prop.name)
-            self._current_element_values[prop.name] = value
 
         return self.cache_dict[effect]
 
@@ -658,7 +653,9 @@ class EffectsPropertiesManager:
         if isinstance(value, Gst.Fraction):
             value = Gst.Fraction(int(value.num), int(value.denom))
 
-        if value != self._current_element_values.get(prop.name):
+        res, current_value = effect.get_child_property(prop.name)
+        assert res
+        if value != current_value:
             from pitivi.undo.timeline import CommitTimelineFinalizingAction
 
             pipeline = self.app.project_manager.current_project.pipeline
@@ -666,4 +663,3 @@ class EffectsPropertiesManager:
                                              finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                              toplevel=True):
                 effect.set_child_property(prop.name, value)
-            self._current_element_values[prop.name] = value
