@@ -665,10 +665,28 @@ class RenderDialog(Loggable):
         media_types = self.project.ges_timeline.ui.media_types
 
         self.audio_output_checkbutton.props.active = media_types & GES.TrackType.AUDIO
-        self._audioOutputCheckbuttonToggledCb(unused_audio=None)
+        self._set_audio_checkbutton_settings()
 
         self.video_output_checkbutton.props.active = media_types & GES.TrackType.VIDEO
-        self._videoOutputCheckbuttonToggledCb(unused_video=None)
+        self._set_video_checkbutton_settings()
+
+    def _set_audio_checkbutton_settings(self):
+        active = self.audio_output_checkbutton.get_active()
+        self.channels_combo.set_sensitive(active)
+        self.sample_rate_combo.set_sensitive(active)
+        self.audio_encoder_combo.set_sensitive(active)
+        self.audio_settings_button.set_sensitive(active)
+        self.project.audio_profile.set_enabled(active)
+        self.__updateRenderButtonSensitivity()
+
+    def _set_video_checkbutton_settings(self):
+        active = self.video_output_checkbutton.get_active()
+        self.scale_spinbutton.set_sensitive(active)
+        self.frame_rate_combo.set_sensitive(active)
+        self.video_encoder_combo.set_sensitive(active)
+        self.video_settings_button.set_sensitive(active)
+        self.project.video_profile.set_enabled(active)
+        self.__updateRenderButtonSensitivity()
 
     def _displayRenderSettings(self):
         """Displays the settings available only in the RenderDialog."""
@@ -1177,22 +1195,10 @@ class RenderDialog(Loggable):
         dialog.window.run()
 
     def _audioOutputCheckbuttonToggledCb(self, unused_audio):
-        active = self.audio_output_checkbutton.get_active()
-        self.channels_combo.set_sensitive(active)
-        self.sample_rate_combo.set_sensitive(active)
-        self.audio_encoder_combo.set_sensitive(active)
-        self.audio_settings_button.set_sensitive(active)
-        self.project.audio_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self._set_audio_checkbutton_settings()
 
     def _videoOutputCheckbuttonToggledCb(self, unused_video):
-        active = self.video_output_checkbutton.get_active()
-        self.scale_spinbutton.set_sensitive(active)
-        self.frame_rate_combo.set_sensitive(active)
-        self.video_encoder_combo.set_sensitive(active)
-        self.video_settings_button.set_sensitive(active)
-        self.project.video_profile.set_enabled(active)
-        self.__updateRenderButtonSensitivity()
+        self._set_video_checkbutton_settings()
 
     def __updateRenderButtonSensitivity(self):
         video_enabled = self.video_output_checkbutton.get_active()

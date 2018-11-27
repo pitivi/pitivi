@@ -409,10 +409,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         media_types = GES.TrackType(0)
 
         for ges_layer in self.ges_timeline.get_layers():
-            if ges_layer.ui.media_types & GES.TrackType.VIDEO:
-                media_types |= GES.TrackType.VIDEO
-            if ges_layer.ui.media_types & GES.TrackType.AUDIO:
-                media_types |= GES.TrackType.AUDIO
+            media_types |= ges_layer.ui.media_types
 
             if ((media_types & GES.TrackType.AUDIO) and
                     (media_types & GES.TrackType.VIDEO)):

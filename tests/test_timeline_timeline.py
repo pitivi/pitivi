@@ -36,11 +36,11 @@ THICK = LAYER_HEIGHT
 class BaseTestTimeline(common.TestCase):
     """Test case with tools for setting up a timeline."""
 
-    def add_clip(self, layer, start, inpoint=0, duration=10):
+    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
         """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
-        return layer.add_asset(asset, start, inpoint, duration, GES.TrackType.UNKNOWN)
+        return layer.add_asset(asset, start, inpoint, duration, clip_type)
 
     def addClipsSimple(self, timeline, num_clips):
         """Creates a number of clips on a new layer."""
@@ -149,6 +149,56 @@ class TestLayers(BaseTestTimeline):
         timeline._setSeparatorsPrelight(False)
         self.assertEqual(len(timeline.__on_separators), 1,
                          "The separators must be forgotten only in dragEnd()")
+
+    def test_media_types(self):
+        timeline_container = create_timeline_container()
+        timeline = timeline_container.timeline
+
+        ges_layer_1 = timeline.ges_timeline.append_layer()
+        ges_layer_2 = timeline.ges_timeline.append_layer()
+
+        # Initially timeline has no media types.
+        # Timeline should contain no media_types.
+        media_types = timeline.ges_timeline.ui.media_types
+        self.assertEqual(media_types & GES.TrackType.AUDIO, timeline.media_types)
+        self.assertEqual(media_types & GES.TrackType.VIDEO, timeline.media_types)
+
+        # Add an audio clip to layer_1 of timeline.
+        # Timeline should now contain only audio media type.
+        ges_clip_audio = self.add_clip(ges_layer_1, 10, clip_type=GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
+                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+
+        # Remove audio clip from layer_1 and add video clip to layer_2.
+        ges_layer_1.remove_clip(ges_clip_audio)
+        ges_clip_video = self.add_clip(ges_layer_2, 20, clip_type=GES.TrackType.VIDEO)
+        self.assertEqual(timeline.media_types, GES.TrackType.VIDEO)
+        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO, False)
+
+        # Remove video clip from layer_2.
+        # Timeline should contain no media_types.
+        ges_layer_2.remove_clip(ges_clip_video)
+        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO,
+                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
+                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+
+        # Add audio clip to layer_1 and video clip to layer_2.
+        # Timeline should contain both clips.
+        ges_clip_audio = self.add_clip(ges_layer_1, 10, clip_type=GES.TrackType.AUDIO)
+        ges_clip_video = self.add_clip(ges_layer_2, 20, clip_type=GES.TrackType.VIDEO)
+        self.assertEqual(timeline.media_types,
+                         GES.TrackType.VIDEO | GES.TrackType.AUDIO)
+
+        # Remove audio clip from layer_1 and video clips from layer_2.
+        # Timeline should contain no clips.
+        ges_layer_1.remove_clip(ges_clip_audio)
+        ges_layer_2.remove_clip(ges_clip_video)
+        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO,
+                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
+                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
 
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
