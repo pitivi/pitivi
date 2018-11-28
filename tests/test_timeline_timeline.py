@@ -159,30 +159,22 @@ class TestLayers(BaseTestTimeline):
 
         # Initially timeline has no media types.
         # Timeline should contain no media_types.
-        media_types = timeline.ges_timeline.ui.media_types
-        self.assertEqual(media_types & GES.TrackType.AUDIO, timeline.media_types)
-        self.assertEqual(media_types & GES.TrackType.VIDEO, timeline.media_types)
+        self.assertEqual(timeline.media_types, GES.TrackType(0))
 
         # Add an audio clip to layer_1 of timeline.
         # Timeline should now contain only audio media type.
         ges_clip_audio = self.add_clip(ges_layer_1, 10, clip_type=GES.TrackType.AUDIO)
         self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
-        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
-                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
 
         # Remove audio clip from layer_1 and add video clip to layer_2.
         ges_layer_1.remove_clip(ges_clip_audio)
         ges_clip_video = self.add_clip(ges_layer_2, 20, clip_type=GES.TrackType.VIDEO)
         self.assertEqual(timeline.media_types, GES.TrackType.VIDEO)
-        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO, False)
 
         # Remove video clip from layer_2.
         # Timeline should contain no media_types.
         ges_layer_2.remove_clip(ges_clip_video)
-        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO,
-                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
-        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
-                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types, GES.TrackType(0))
 
         # Add audio clip to layer_1 and video clip to layer_2.
         # Timeline should contain both clips.
@@ -195,10 +187,7 @@ class TestLayers(BaseTestTimeline):
         # Timeline should contain no clips.
         ges_layer_1.remove_clip(ges_clip_audio)
         ges_layer_2.remove_clip(ges_clip_video)
-        self.assertEqual(timeline.media_types & GES.TrackType.AUDIO,
-                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
-        self.assertEqual(timeline.media_types & GES.TrackType.VIDEO,
-                         GES.TrackType.AUDIO ^ GES.TrackType.AUDIO)
+        self.assertEqual(timeline.media_types, GES.TrackType(0))
 
     def test_create_layer(self):
         self.check_create_layer([0, 0, 0, 0], [3, 2, 1, 0])
