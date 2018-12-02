@@ -51,7 +51,7 @@ test-results:
         - echo ${BRANCH}
         - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}"
         - echo ${IMAGE}
-        - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.28"
+        - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30"
         - echo ${BASE_IMAGE}
         - export TMPIMAGENAME="tmp-pitivi-${BRANCH}"
         - echo ${TMPIMAGENAME}
