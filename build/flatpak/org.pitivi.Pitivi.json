@@ -220,6 +220,7 @@
         },
         {
             "name": "gsound",
+            "build-options" : { "cflags": "-O2" },
             "ensure-writable": [
                 "easy-install.pth"
             ],
