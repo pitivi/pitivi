@@ -363,7 +363,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/mstorsjo/fdk-aac.git",
-                    "branch": "v0.1.6",
+                    "branch": "v0.1.6"
                 }
             ]
         },
