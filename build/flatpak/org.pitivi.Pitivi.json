@@ -155,7 +155,8 @@
             "name": "matplotlib",
             "buildsystem": "simple",
             "ensure-writable": [
-                "easy-install.pth"
+                "easy-install.pth",
+                "setuptools.pth"
             ],
             "build-commands": [
                 "CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app"
