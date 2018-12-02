@@ -277,7 +277,7 @@
         },
         {
             "name": "x265",
-            "cmake": true,
+            "buildsystem": "cmake",
             "subdir": "source",
             "sources": [
                 {
