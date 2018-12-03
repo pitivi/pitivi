@@ -39,7 +39,7 @@
             ],
             "build-commands": [
                 "mkdir -p /app/lib/python3.7/site-packages",
-                "CFLAGS='-L/usr/lib -Lbuild/temp.linux-x86_64-3.4 -I/usr/include -I/usr/include/python3.7m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
+                "CFLAGS='-L/usr/lib -I/usr/include -I/usr/include/python3.7m/' CXX=/usr/bin/g++ CC=/usr/bin/gcc PYTHONUSERBASE=/app/ python3 setup.py install --prefix=/app # Working around linking issues"
             ],
             "sources": [
                 {
