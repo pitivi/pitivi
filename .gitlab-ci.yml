@@ -3,7 +3,6 @@ stages:
   - test-results
 
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
   stage: build
   artifacts:
     paths:
