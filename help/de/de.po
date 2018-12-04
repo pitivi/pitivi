@@ -479,7 +479,7 @@ msgid ""
 msgstr ""
 "Um zurückgenommene Änderungen wieder anzuwenden, klicken Sie auf den "
 "<gui>Wiederholen</gui>-Knopf in der Kopfleiste oder drücken Sie "
-"<keyseq><key>Strg</key<key>Umschalt</key>><key>Z</key></keyseq>."
+"<keyseq><key>Strg</key><key>Umschalt</key>><key>Z</key></keyseq>."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:41
