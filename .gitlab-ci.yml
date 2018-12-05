@@ -64,7 +64,7 @@ test-results:
         - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
         - export BUILDDIR="\${HOME}/pitivi"
-        - export CLONE_PITIVI="git clone https://gitlab.gnome.org/GNOME/pitivi.git --single-branch \${HOME}/pitivi -b ${BRANCH}"
+        - export CLONE_PITIVI="git clone https://gitlab.gnome.org/aleb/pitivi.git --single-branch \${HOME}/pitivi -b ${BRANCH}"
 
         - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
 
@@ -91,5 +91,6 @@ pitivi:1.0:
     before_script:
         # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
         - export BRANCH=1.0
+        - export BRANCH=deps
         - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
     <<: *build_docker_image
