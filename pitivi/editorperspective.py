@@ -319,7 +319,7 @@ class EditorPerspective(Perspective, Loggable):
         self.menu_button = self.builder.get_object("menubutton")
 
         self._menubutton_items = {}
-        for widget in self.builder.get_object("menu").get_children():
+        for widget in self.builder.get_object("menu_box").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
 
         headerbar.pack_end(self.menu_button)

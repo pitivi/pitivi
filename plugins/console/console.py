@@ -172,14 +172,15 @@ class Console(GObject.GObject, Peas.Activatable):
 
     def add_menu_item(self):
         """Inserts a menu item into the Pitivi menu."""
-        menu = self.app.gui.editor.builder.get_object("menu")
-        self.menu_item = Gtk.MenuItem.new_with_label(_("Developer Console"))
+        menu = self.app.gui.editor.builder.get_object("menu_box")
+        self.menu_item = Gtk.ModelButton.new()
+        self.menu_item.props.text = _("Developer Console")
         self.menu_item.connect("activate", self.__menu_item_activate_cb)
         menu.add(self.menu_item)
 
     def remove_menu_item(self):
         """Removes a menu item from the Pitivi menu."""
-        menu = self.app.gui.editor.builder.get_object("menu")
+        menu = self.app.gui.editor.builder.get_object("menu_box")
         menu.remove(self.menu_item)
         self.menu_item = None
 

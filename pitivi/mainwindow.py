@@ -179,8 +179,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         about_dialog.show()
 
     def __menu_cb(self, unused_action, unused_param):
-        self.__perspective.menu_button.set_active(
-            not self.__perspective.menu_button.get_active())
+        active = not self.__perspective.menu_button.get_active()
+        self.__perspective.menu_button.set_active(active)
 
     def __configure_cb(self, unused_widget, unused_event):
         """Saves the main window position and size."""

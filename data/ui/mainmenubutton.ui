@@ -1,121 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.22.0 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
-  <object class="GtkMenu" id="menu">
-    <property name="visible">True</property>
+  <requires lib="gtk+" version="3.18"/>
+  <object class="GtkPopoverMenu" id="menu">
     <property name="can_focus">False</property>
-    <property name="halign">end</property>
     <child>
-      <object class="GtkMenuItem" id="menu_save_as">
+      <object class="GtkBox" id="menu_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Save the current project under a new name or a different location</property>
-        <property name="action_name">editor.save-as</property>
-        <property name="label" translatable="yes">Save As...</property>
-        <property name="use_underline">True</property>
+        <property name="margin">6</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="menu_save_as">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Save the current project under a new name or a different location</property>
+            <property name="action_name">editor.save-as</property>
+            <property name="text" translatable="yes">Save As...</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_revert_to_saved">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Reload the current project</property>
+            <property name="text" translatable="yes">Revert to saved version</property>
+            <signal name="activate" handler="_revertToSavedProjectCb" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_export_tarball">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Export the current project and all its media in a .tar archive</property>
+            <property name="text" translatable="yes">Export as Archive...</property>
+            <signal name="activate" handler="_exportProjectAsTarCb" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="menu_sep2">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_save_frame">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Export the frame at the current playhead position as an image file.</property>
+            <property name="text" translatable="yes">Export current frame...</property>
+            <property name="use_underline">True</property>
+            <signal name="activate" handler="_screenshotCb" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="menu_sep3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_project_settings">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Edit the project settings</property>
+            <property name="text" translatable="yes">Project Settings</property>
+            <property name="use_underline">True</property>
+            <signal name="activate" handler="_projectSettingsCb" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="menu_sep4">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_preferences">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="text" translatable="yes">Preferences</property>
+            <signal name="activate" handler="_prefsCb" swapped="no"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_shortcuts">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action_name">app.shortcuts_window</property>
+            <property name="text" translatable="yes">Keyboard Shortcuts</property>
+            <property name="use_underline">True</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_help">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action_name">win.help</property>
+            <property name="text" translatable="yes">User Manual</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_about">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="action_name">win.about</property>
+            <property name="text" translatable="yes">About Pitivi</property>
+          </object>
+        </child>
       </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_revert_to_saved">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Reload the current project</property>
-        <property name="label" translatable="yes">Revert to saved version</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="_revertToSavedProjectCb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_export_tarball">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Export the current project and all its media in a .tar archive</property>
-        <property name="label" translatable="yes">Export as Archive...</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="_exportProjectAsTarCb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_sep2">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_save_frame">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Export the frame at the current playhead position as an image file.</property>
-        <property name="label" translatable="yes">Export current frame...</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="_screenshotCb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_sep3">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_project_settings">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Edit the project settings</property>
-        <property name="label" translatable="yes">Project Settings</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="_projectSettingsCb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_preferences">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Preferences</property>
-        <property name="use_underline">True</property>
-        <signal name="activate" handler="_prefsCb" swapped="no"/>
-      </object>
-    </child>
-    <child>
-      <object class="GtkSeparatorMenuItem" id="menu_sep4">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_shortcuts">
-	<property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">app.shortcuts_window</property>
-        <property name="label" translatable="yes">Keyboard Shortcuts</property>
-        <property name="use_underline">True</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_help">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">win.help</property>
-        <property name="label" translatable="yes">User Manual</property>
-        <property name="use_underline">True</property>
-      </object>
-    </child>
-    <child>
-      <object class="GtkMenuItem" id="menu_about">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">win.about</property>
-        <property name="label" translatable="yes">About</property>
-        <property name="use_underline">True</property>
-      </object>
+      <packing>
+        <property name="submenu">main</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
   <object class="GtkMenuButton" id="menubutton">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <property name="receives_default">True</property>
-    <property name="popup">menu</property>
+    <property name="popover">menu</property>
     <child>
       <object class="GtkImage" id="open_menu_image">
         <property name="visible">True</property>

@@ -294,7 +294,7 @@ class GreeterPerspective(Perspective):
         menu_button = builder.get_object("menubutton")
         # Menu options we want to display.
         visible_options = ["menu_shortcuts", "menu_help", "menu_about"]
-        for widget in builder.get_object("menu").get_children():
+        for widget in builder.get_object("menu_box").get_children():
             if Gtk.Buildable.get_name(widget) not in visible_options:
                 widget.hide()
             else:
