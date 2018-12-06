@@ -1,11 +1,15 @@
 stages:
   - docker_image
   - build
-  - test-results
+  - deploy
 
+variables:
+    BUNDLE: "pitivi.flatpak"
+    MANIFEST: build/flatpak/org.pitivi.Pitivi.json
+    DBUS_ID: org.pitivi.Pitivi
 
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.30
   stage: build
   artifacts:
     paths:
@@ -23,24 +27,26 @@ build:
     - mkdir -p ${CI_PROJECT_DIR}
 
     - cd ${BUILDDIR}
-    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --force-clean app build/flatpak/org.pitivi.Pitivi.json
+    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=repo --force-clean app build/flatpak/org.pitivi.Pitivi.json
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
 
-test-results:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
-  stage: test-results
+    - flatpak build-bundle --disable-rofiles-fuse repo ${BUNDLE} --runtime-repo=${RUNTIME} ${DBUS_ID} ${BRANCH}
+  cache:
+    paths:
+    - flatpak-cache
   artifacts:
     paths:
-      - test-results
-  dependencies:
-    - build
+    - ${BUNDLE}
+    expire_in: 30 days
+
+deploy:
+  tags:
+    - PitiviBuildMachine
+  stage: deploy
   script:
-    - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history && ls history/) || echo "No history"
-    - /opt/allure/bin/allure generate --clean --output test-results/ history/ .
-    - printf "=========================\n\n TEST RESULTS WILL BE AVAILABLE AT https://gnome.pages.gitlab.gnome.org/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/test-results/index.html\n\n==================="
-  when: always
+    - flatpak build-import-bundle repo ${BUNDLE}
 
 .build_emplate: &build_docker_image
     image: docker:latest
@@ -49,26 +55,23 @@ test-results:
     script:
         # For debugging
         - echo ${BRANCH}
-        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}"
+        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.30"
         - echo ${IMAGE}
         - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30"
         - echo ${BASE_IMAGE}
-        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}"
+        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.30"
         - echo ${TMPIMAGENAME}
 
         # Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
         # and it is not possible to use a privileged `docker build`.
-        - export ALLURE_VERSION=2.7.0
-        - export ALLURE_DL_URL="https://bintray.com/qameta/generic/download_file?file_path=io%2Fqameta%2Fallure%2Fallure%2F2.7.0%2Fallure-${ALLURE_VERSION}.zip"
-        - export INSTALL_ALLURE="yum install java wget -y && wget ${ALLURE_DL_URL} -O allure.zip && unzip allure.zip && mv allure-${ALLURE_VERSION} /opt/allure && chmod +x /opt/allure/bin/allure && rm allure.zip"
         - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
         - export BUILDDIR="\${HOME}/pitivi"
-        - export CLONE_PITIVI="git clone https://gitlab.gnome.org/aleb/pitivi.git --single-branch \${HOME}/pitivi -b ${BRANCH}"
+        - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
 
         - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
 
-        - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${INSTALL_ALLURE} && ${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
+        - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
         - docker commit ${TMPIMAGENAME} ${IMAGE}
         - docker rm ${TMPIMAGENAME}
         - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
@@ -91,6 +94,5 @@ pitivi:1.0:
     before_script:
         # https://stackoverflow.com/questions/2264428/converting-string-to-lower-case-in-bash#2264537
         - export BRANCH=1.0
-        - export BRANCH=deps
         - export NAMESPACE="$(echo "${CI_PROJECT_NAMESPACE}" | tr A-Z a-z)"
     <<: *build_docker_image
