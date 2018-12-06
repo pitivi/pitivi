@@ -408,7 +408,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self._menubutton = self.builder.get_object("menubutton")
 
         self._menubutton_items = {}
-        for widget in self.builder.get_object("menu").get_children():
+        for widget in self.builder.get_object("menu_box").get_children():
             self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
 
         self._headerbar.pack_end(self._menubutton)
