@@ -2,23 +2,40 @@ stages:
   - build
   - deploy
 
+variables:
+    BUNDLE: "pitivi.flatpak"
+    MANIFEST: build/flatpak/org.pitivi.Pitivi.json
+    DBUS_ID: org.pitivi.Pitivi
+    BRANCH: master
+
 build:
   image: registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30
   stage: build
   script:
     - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
-    - export MANIFEST=${CI_PROJECT_DIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+    - export RUN_IN_SANDBOX="flatpak-builder --disable-rofiles-fuse --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
     # Working around the fact that flatpak-builder *requires* the cache dir
     # to be on the same filesystem as the build dir
     - export FLATPAK_BUILDER_CACHE="--state-dir=${CI_PROJECT_DIR}/flatpak-cache"
-    - mkdir -p ${CI_PROJECT_DIR}
 
     - flatpak-builder ${FLATPAK_BUILDER_CACHE} --disable-rofiles-fuse --ccache --force-clean app build/flatpak/org.pitivi.Pitivi.json
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
+    - flatpak-builder --disable-rofiles-fuse --finish-only --repo=repo app ${MANIFEST}
+    - flatpak build-bundle --disable-rofiles-fuse repo ${BUNDLE} --runtime-repo=${RUNTIME} ${DBUS_ID} ${BRANCH}
   cache:
     paths:
     - flatpak-cache
+  artifacts:
+    paths:
+    - ${BUNDLE}
+    expire_in: 30 days
+
+deploy:
+  tags:
+    - PitiviBuildMachine
+  stage: deploy
+  script:
+    - flatpak build-import-bundle repo ${BUNDLE}
