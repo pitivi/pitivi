@@ -4,8 +4,14 @@ stages:
   - test-results
 
 
+variables:
+    BUNDLE: "pitivi.flatpak"
+    MANIFEST: build/flatpak/org.pitivi.Pitivi.json
+    DBUS_ID: org.pitivi.Pitivi
+    BRANCH: master
+
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.30
   stage: build
   artifacts:
     paths:
@@ -28,6 +34,23 @@ build:
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
 
+    - flatpak-builder --disable-rofiles-fuse --finish-only --repo=repo app ${MANIFEST}
+    - flatpak build-bundle --disable-rofiles-fuse repo ${BUNDLE} --runtime-repo=${RUNTIME} ${DBUS_ID} ${BRANCH}
+  cache:
+    paths:
+    - flatpak-cache
+  artifacts:
+    paths:
+    - ${BUNDLE}
+    expire_in: 30 days
+
+deploy:
+  tags:
+    - PitiviBuildMachine
+  stage: deploy
+  script:
+    - flatpak build-import-bundle repo ${BUNDLE}
+
 test-results:
   image: registry.gitlab.gnome.org/gnome/pitivi:master
   stage: test-results
@@ -49,11 +72,11 @@ test-results:
     script:
         # For debugging
         - echo ${BRANCH}
-        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}"
+        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.30"
         - echo ${IMAGE}
         - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30"
         - echo ${BASE_IMAGE}
-        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}"
+        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.30"
         - echo ${TMPIMAGENAME}
 
         # Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
