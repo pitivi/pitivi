@@ -823,7 +823,7 @@ class EditorPerspective(Perspective, Loggable):
         unsaved_mark = ""
         if project.hasUnsavedModifications():
             unsaved_mark = "*"
-        title = "%s%s — %s" % (unsaved_mark, project.name, APPNAME)
+        title = "%s%s — %s" % (unsaved_mark, unquote(project.name), APPNAME)
         self.headerbar.set_title(title)
 
 
