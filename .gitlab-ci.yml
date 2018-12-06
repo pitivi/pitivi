@@ -1,16 +1,19 @@
 stages:
   - build
-  - test-results
+  - deploy
+
+variables:
+  DBUS_ID: org.pitivi.Pitivi
+  XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
+  image: registry.gitlab.gnome.org/gnome/pitivi:1.0-sdk_3.30
   stage: build
   artifacts:
     paths:
       - xunit.xml
   script:
     - export BUILDDIR=${HOME}/pitivi
-    - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
     - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
@@ -21,21 +24,29 @@ build:
     - mkdir -p ${CI_PROJECT_DIR}
 
     - cd ${BUILDDIR}
-    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --force-clean app build/flatpak/org.pitivi.Pitivi.json
+    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi 1.0" --body="See ${CI_JOB_URL}" --default-branch=stable
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
-    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
-
-test-results:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master
-  stage: test-results
-  artifacts:
+    - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs
+  cache:
     paths:
-      - test-results
-  dependencies:
-    - build
+    - flatpak-cache
+  artifacts:
+    expire_in: 30 days
+    paths:
+    - repo/
+    - tests-logs/
+    reports:
+      junit:
+        - ${XUNIT_PATH}
+
+deploy:
+  tags:
+    - PitiviBuildMachine
+  stage: deploy
   script:
-    - (wget https://gitlab.gnome.org/GNOME/${CI_PROJECT_NAME}/-/jobs/artifacts/${CI_COMMIT_REF_NAME}/download?job=test-results -O history.zip && unzip history.zip && mv test-results history && ls history/) || echo "No history"
-    - /opt/allure/bin/allure generate --clean --output test-results/ history/ .
-    - printf "=========================\n\n TEST RESULTS WILL BE AVAILABLE AT https://gnome.pages.gitlab.gnome.org/-/${CI_PROJECT_NAME}/-/jobs/${CI_JOB_ID}/artifacts/test-results/index.html\n\n==================="
-  when: always
+    - flatpak build-commit-from --src-repo=repo /srv/http --timestamp=NOW --gpg-sign=739E841A org.pitivi.Pitivi/X86_64/stable
+  only:
+    - master@GNOME/pitivi
+    - 1.0@GNOME/pitivi
+    - thiblahute/sdk3.30_1.0@GNOME/pitivi
