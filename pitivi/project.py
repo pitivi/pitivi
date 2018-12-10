@@ -1516,8 +1516,10 @@ class Project(Loggable, GES.Project):
                               " its recreation")
                     target.unproxy(asset)
 
-                # The asset is not a proxy.
-                originals.append(asset)
+                if not asset.is_image():
+                    # The asset is not a proxy and not an image.
+                    originals.append(asset)
+
         if originals:
             with self.app.action_log.started("Proxying assets"):
                 for asset in originals:
