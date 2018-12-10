@@ -1199,6 +1199,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             text = _("Open containing folder")
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
+            if assets[0].is_image():
+                return menu_model, action_group
+
         proxies = [asset.get_proxy_target() for asset in assets
                    if self.app.proxy_manager.is_proxy_asset(asset)]
         in_progress = [asset.creation_progress for asset in assets
