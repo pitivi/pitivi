@@ -1199,10 +1199,18 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             text = _("Open containing folder")
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
+            if assets[0].is_image():
+                return menu_model, action_group
+
         proxies = [asset.get_proxy_target() for asset in assets
                    if self.app.proxy_manager.is_proxy_asset(asset)]
         in_progress = [asset.creation_progress for asset in assets
                        if asset.creation_progress < 100]
+        image_assets = [asset for asset in assets
+                        if asset.is_image()]
+
+        if len(assets) == len(image_assets):
+                return None, None
 
         if proxies or in_progress:
             action = Gio.SimpleAction.new("unproxy-asset", None)
