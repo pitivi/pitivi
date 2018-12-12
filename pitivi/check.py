@@ -176,6 +176,23 @@ class GstPluginDependency(Dependency):
     def _format_version(self, plugin):
         return _string_to_list(plugin.get_version())
 
+    def __repr__(self):
+        if self.satisfied:
+            return ""
+
+        if not self.component:
+            # Translators: %s is a Python module name or another os component
+            message = _("- %s GStreamer plug-in not found on the system") % self.modulename
+        else:
+            # Translators: %s is a Python module name or another os component
+            message = _("- %s Gstreamer plug-in version %s is installed but Pitivi requires at least version %s") % (
+                self.modulename, self.version_installed, self.version_required_string)
+
+        if self.additional_message is not None:
+            message += "\n    -> " + self.additional_message
+
+        return message
+
 
 class GstDependency(GIDependency):
 
