@@ -10,8 +10,8 @@ get involved.
     main UI has been refactored into the EditorPerspective, and
     the welcome dialog has been replaced by a new gorgeous and modern
     [GreeterPerspective](https://harishfulara07.wordpress.com/2018/08/13/gsoc-2018-final-report-pitivi-ui-polishing/).
--   [Suhas Nayak](https://suhas2go.github.io) finished the slow motion
-    support in [GES][GES.md].
+-   [Suhas Nayak](https://suhas2go.github.io) worked on the slow motion
+    support in [GES](GES.md), but had to interrupt.
 -   [Yatin Maan](https://yatinmaan.github.io/) implemented support
     for [Scaled Proxies](https://yatinmaan.github.io/2018/08/14/GSoC-18-Final-Report/).
 
