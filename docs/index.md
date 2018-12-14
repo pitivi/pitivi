@@ -37,7 +37,7 @@ on the website (includes a “Why contribute to Pitivi?” section).
 -   [Setup development environment](HACKING.md) (official and
     easiest way to get your testing/development environment running,
     with pre-built dependencies)
--   The [test suite](Testing.md) (outdated)
+-   The [test suite](Testing.md)
 
 ## Ways to communicate
 

@@ -12,27 +12,27 @@ you want to test more thoroughly.
 
 ## Unit tests
 
-You can run the unit tests with:
+You can run the unit tests with one of:
 
 ```
-ninja -C mesonbuild/ test
+$ ptvtests
 ```
 
 If you want to run only one particular unit test, use (assuming you are in
-our flatpak based environment):
+our flatpak based development environment):
 
 ```
-ptvtests tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
+$ ptvtests -t tests.test_project.TestProjectManager.testLoadProjectFailedUnknownFormat
 ```
 
 Listing tests:
 
 ```
-ptvtests -L
+$ ptvtests -L
 ```
 
-NOTE: If you are not in our environment, replace `ptvtests` with
-`gst-validate-launcher tests/ptv_testsuite.py`.)
+NOTE: If you are not in our dev env, replace `ptvtests` with
+`gst-validate-launcher tests/ptv_testsuite.py`.
 
 ### Writing unit tests
 
@@ -69,5 +69,5 @@ each time Pitivi is used.
 You can run the integration tests with:
 
 ```
-tests/validate-tests/runtests
+$ tests/validate-tests/runtests
 ```
