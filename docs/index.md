@@ -16,55 +16,39 @@ To edit the website edit the markdown files in our git repo in the
   [User's Manual]: http://pitivi.org/manual/
   [developer instructions]: HACKING.md
 
-# Contributors' documentation
+# We need your help
 
-See the [Developer documentation](HACKING.md)
-page for a complete listing of documentation aimed at contributing to
-Pitivi. Here is a small overview/some starting points taken from that
-category:
+See the [Contributing](http://www.pitivi.org/?go=contributing) page
+on the website for what you can contribute, and “Why contribute to
+Pitivi?”.
 
--   [Roadmap](Roadmap.md) (long-term plans)
--   [Architecture](Architecture.md): where does Pitivi fit? What
+-   [Goals](Goals.md) ― mission statement, vision
+-   [Roadmap](Roadmap.md) ― long-term plans
+-   [Architecture](Architecture.md) ― Where does Pitivi fit? What
     are all those components?
--   [Brainstorming](design.md) (UI mockups and “future” features only!)
 
-See also the [Contributing](http://www.pitivi.org/?go=contributing) page
-on the website (includes a “Why contribute to Pitivi?” section).
 
-## Tools to help you get started
+## Getting started
 
--   [Git](Git.md)
--   [Setup development environment](HACKING.md) (official and
-    easiest way to get your testing/development environment running,
-    with pre-built dependencies)
+-   [Tasks for newcomers](https://gitlab.gnome.org/GNOME/pitivi/issues?label_name%5B%5D=4.+Newcomers)
+-   Setting up the [development environment](HACKING.md)
 -   The [test suite](Testing.md)
+-   [Git](Git.md)
 
 ## Ways to communicate
 
 -   [Reporting bugs](Bug_reporting.md)
 -   IRC: [\#pitivi](irc://irc.freenode.net/pitivi) on irc.freenode.net
--   Our [Google+ page](https://plus.google.com/+pitivi) or
-    [Twitter](https://twitter.com/pitivi) account. Do *not* report bugs
+-   Our [Twitter](https://twitter.com/pitivi) account. Do *not* report bugs
     there, use our bug tracker instead!
 -   [The people](The_people.md) (who does what)
 
 # Random stuff
 
--   [Goals](Goals.md) (mission statement, vision)
--   [Project history](Project_history.md) - rumors of our death
-    have been greatly exaggerated... :)
--   [Current events](Current_events.md) - releases, meetings,
+-   [Project history](Project_history.md) ― how did we get here
+-   [Current events](Current_events.md) ― releases, meetings,
     talks ... See also the [planet](http://www.pitivi.org/planet) for
     news about the project.
 -   [Why Python?](design/Why_python.md)
--   [Praise](Praise.md) - a page to list some of the praises and
-    positive comments we received
+-   [Praise](Praise.md) ― Some of the praises and positive feedback
 -   [Google Summer of Code](Google_Summer_of_Code.md)
-
-# Pages that need to be reworked/deleted
-
-The pages in these categories need to be reworked. Help is welcome!
-Also, feel free to tag pages with these categories should you find that
-a page is woefully incomplete or outdated:
-
--   [Probably obsolete](attic.md)
