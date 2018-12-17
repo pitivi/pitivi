@@ -46,8 +46,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Reload the current project</property>
+            <property name="action_name">editor.revert-to-saved</property>
             <property name="text" translatable="yes">Revert to saved version</property>
-            <signal name="activate" handler="_revertToSavedProjectCb" swapped="no"/>
           </object>
         </child>
         <child>
@@ -55,8 +55,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Export the current project and all its media in a .tar archive</property>
+            <property name="action_name">editor.export-project</property>
             <property name="text" translatable="yes">Export as Archive...</property>
-            <signal name="activate" handler="_exportProjectAsTarCb" swapped="no"/>
           </object>
         </child>
         <child>
@@ -70,9 +70,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Export the frame at the current playhead position as an image file.</property>
+            <property name="action_name">editor.save-frame</property>
             <property name="text" translatable="yes">Export current frame...</property>
-            <property name="use_underline">True</property>
-            <signal name="activate" handler="_screenshotCb" swapped="no"/>
           </object>
         </child>
         <child>
@@ -86,9 +85,8 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Edit the project settings</property>
+            <property name="action_name">editor.project-settings</property>
             <property name="text" translatable="yes">Project Settings</property>
-            <property name="use_underline">True</property>
-            <signal name="activate" handler="_projectSettingsCb" swapped="no"/>
           </object>
         </child>
         <child>
@@ -101,8 +99,8 @@
           <object class="GtkModelButton" id="menu_preferences">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="action_name">win.preferences</property>
             <property name="text" translatable="yes">Preferences</property>
-            <signal name="activate" handler="_prefsCb" swapped="no"/>
           </object>
         </child>
         <child>
@@ -111,7 +109,6 @@
             <property name="can_focus">True</property>
             <property name="action_name">app.shortcuts_window</property>
             <property name="text" translatable="yes">Keyboard Shortcuts</property>
-            <property name="use_underline">True</property>
           </object>
         </child>
         <child>
@@ -126,8 +123,8 @@
           <object class="GtkModelButton" id="menu_about">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="action_name">win.about</property>
             <property name="text" translatable="yes">About Pitivi</property>
-            <signal name="activate" handler="_aboutCb" swapped="no"/>
           </object>
         </child>
       </object>
