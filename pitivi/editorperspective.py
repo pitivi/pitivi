@@ -30,7 +30,6 @@ from pitivi.clipproperties import ClipProperties
 from pitivi.configure import APPNAME
 from pitivi.configure import get_ui_dir
 from pitivi.dialogs.missingasset import MissingAssetDialog
-from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.effects import EffectListWidget
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.medialibrary import MediaLibraryWidget
@@ -44,7 +43,6 @@ from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.ui import beautify_time_delta
-from pitivi.utils.ui import clear_styles
 from pitivi.utils.ui import info_name
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
@@ -318,10 +316,6 @@ class EditorPerspective(Perspective, Loggable):
 
         self.menu_button = self.builder.get_object("menubutton")
 
-        self._menubutton_items = {}
-        for widget in self.builder.get_object("menu_box").get_children():
-            self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
-
         headerbar.pack_end(self.menu_button)
         headerbar.pack_end(self.save_button)
         headerbar.pack_end(self.render_button)
@@ -347,21 +341,36 @@ class EditorPerspective(Perspective, Loggable):
         self.app.shortcuts.add("editor.save-as", ["<Primary><Shift>s"],
                                _("Save the current project as"), group="win")
 
+        self.revert_to_saved_action = Gio.SimpleAction.new("revert-to-saved", None)
+        self.revert_to_saved_action.connect("activate", self.__revert_to_saved_cb)
+        group.add_action(self.revert_to_saved_action)
+
+        self.export_project_action = Gio.SimpleAction.new("export-project", None)
+        self.export_project_action.connect("activate", self.__export_project_cb)
+        group.add_action(self.export_project_action)
+
+        self.save_frame_action = Gio.SimpleAction.new("save-frame", None)
+        self.save_frame_action.connect("activate", self.__save_frame_cb)
+        group.add_action(self.save_frame_action)
+
+        self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
+        self.project_settings_action.connect("activate", self.__project_settings_cb)
+        group.add_action(self.project_settings_action)
+
         self.import_asset_action = Gio.SimpleAction.new("import-asset", None)
         self.import_asset_action.connect("activate", self.__import_asset_cb)
         group.add_action(self.import_asset_action)
         self.app.shortcuts.add("editor.import-asset", ["<Primary>i"],
                                _("Add media files to your project"), group="win")
 
-    def __import_asset_cb(self, unusdaction, unusedparam):
+    def __import_asset_cb(self, unused_action, unused_param):
         self.medialibrary.show_import_assets_dialog()
 
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
         dirty = project.hasUnsavedModifications()
         self.save_action.set_enabled(dirty)
-        if project.uri:
-            self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
+        self.revert_to_saved_action.set_enabled(bool(project.uri) and dirty)
         self.updateTitle()
 
 # UI Callbacks
@@ -403,10 +412,10 @@ class EditorPerspective(Perspective, Loggable):
         else:
             self.app.project_manager.saveProject()
 
-    def _revertToSavedProjectCb(self, unused_action):
+    def __revert_to_saved_cb(self, unused_action, unused_param):
         return self.app.project_manager.revertToSavedProject()
 
-    def _exportProjectAsTarCb(self, unused_action):
+    def __export_project_cb(self, unused_action, unused_param):
         uri = self._showExportDialog(self.app.project_manager.current_project)
         result = None
         if uri:
@@ -417,7 +426,7 @@ class EditorPerspective(Perspective, Loggable):
             self.log("Project couldn't be exported")
         return result
 
-    def _projectSettingsCb(self, unused_action):
+    def __project_settings_cb(self, unused_action, unused_param):
         self.showProjectSettingsDialog()
 
     def showProjectSettingsDialog(self):
@@ -425,9 +434,6 @@ class EditorPerspective(Perspective, Loggable):
         dialog = ProjectSettingsDialog(self.app.gui, project, self.app)
         dialog.window.run()
         self.updateTitle()
-
-    def _prefsCb(self, unused_action):
-        PreferencesDialog(self.app).run()
 
 # Project management callbacks
 
@@ -776,7 +782,7 @@ class EditorPerspective(Perspective, Loggable):
         chooser.destroy()
         return ret
 
-    def _screenshotCb(self, unused_action):
+    def __save_frame_cb(self, unused_action, unused_param):
         """Exports a snapshot of the current frame as an image file."""
         foo = self._showSaveScreenshotDialog()
         if foo:
