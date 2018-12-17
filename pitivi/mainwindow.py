@@ -407,10 +407,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         self._menubutton = self.builder.get_object("menubutton")
 
-        self._menubutton_items = {}
-        for widget in self.builder.get_object("menu_box").get_children():
-            self._menubutton_items[Gtk.Buildable.get_name(widget)] = widget
-
         self._headerbar.pack_end(self._menubutton)
         self._headerbar.pack_end(self.save_button)
         self._headerbar.pack_end(self.render_button)
@@ -454,24 +450,56 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                                _("Show the menu button content"),
                                group="app")
 
+        self.revert_to_saved_action = Gio.SimpleAction.new("revert-to-saved", None)
+        self.revert_to_saved_action.connect("activate", self.__revert_to_saved_cb)
+        self.add_action(self.revert_to_saved_action)
+
+        self.export_project_action = Gio.SimpleAction.new("export-project", None)
+        self.export_project_action.connect("activate", self.__export_project_cb)
+        self.add_action(self.export_project_action)
+
+        self.save_frame_action = Gio.SimpleAction.new("save-frame", None)
+        self.save_frame_action.connect("activate", self.__save_frame_cb)
+        self.add_action(self.save_frame_action)
+
+        self.project_settings_action = Gio.SimpleAction.new("project-settings", None)
+        self.project_settings_action.connect("activate", self.__project_settings_cb)
+        self.add_action(self.project_settings_action)
+
         import_asset_action = Gio.SimpleAction.new("import-asset", None)
         import_asset_action.connect("activate", self.__import_asset_cb)
         self.add_action(import_asset_action)
         self.app.shortcuts.add("win.import-asset", ["<Primary>i"],
                                _("Add media files to your project"))
 
-    def __import_asset_cb(self, unusdaction, unusedparam):
+        self.preferences_action = Gio.SimpleAction.new("preferences", None)
+        self.preferences_action.connect("activate", self.__preferences_cb)
+        self.add_action(self.preferences_action)
+
+        self.about_action = Gio.SimpleAction.new("about", None)
+        self.about_action.connect("activate", self.__about_cb)
+        self.add_action(self.about_action)
+        self.app.shortcuts.add("win.about", ["<Primary><Shift>a"],
+                               _("About"), group="app")
+
+    @staticmethod
+    def __user_manual_cb(unused_action, unused_param):
+        show_user_manual()
+
+    def __import_asset_cb(self, unused_action, unused_param):
         self.medialibrary.show_import_assets_dialog()
 
     def showProjectStatus(self):
         project = self.app.project_manager.current_project
         dirty = project.hasUnsavedModifications()
         self.save_action.set_enabled(dirty)
-        if project.uri:
-            self._menubutton_items["menu_revert_to_saved"].set_sensitive(dirty)
+        self.revert_to_saved_action.set_enabled(bool(project.uri) and dirty)
         self.updateTitle()
 
 # UI Callbacks
+
+    def __preferences_cb(self, unused_action, unused_param):
+        PreferencesDialog(self.app).run()
 
     def _configureCb(self, unused_widget, unused_event):
         """Saves the main window position and size."""
@@ -541,10 +569,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def saveProjectAsDialog(self):
         self._saveProjectAsCb(None, None)
 
-    def _revertToSavedProjectCb(self, unused_action):
+    def __revert_to_saved_cb(self, unused_action, unused_param):
         return self.app.project_manager.revertToSavedProject()
 
-    def _exportProjectAsTarCb(self, unused_action):
+    def __export_project_cb(self, unused_action, unused_param):
         uri = self._showExportDialog(self.app.project_manager.current_project)
         result = None
         if uri:
@@ -555,7 +583,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             self.log("Project couldn't be exported")
         return result
 
-    def _projectSettingsCb(self, unused_action):
+    def __project_settings_cb(self, unused_action, unused_param):
         self.showProjectSettingsDialog()
 
     def showProjectSettingsDialog(self):
@@ -573,7 +601,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
-    def _aboutCb(self, unused_action):
+    def __about_cb(self, unused_action, unused_param):
         abt = Gtk.AboutDialog()
         abt.set_program_name(APPNAME)
         abt.set_website(APPURL)
@@ -680,9 +708,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
             return GES.Formatter.can_load_uri(filterinfo.uri)
         except:
             return False
-
-    def _prefsCb(self, unused_action):
-        PreferencesDialog(self.app).run()
 
 # Project management callbacks
 
@@ -1132,7 +1157,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         chooser.destroy()
         return ret
 
-    def _screenshotCb(self, unused_action):
+    def __save_frame_cb(self, unused_action, unused_param):
         """Exports a snapshot of the current frame as an image file."""
         foo = self._showSaveScreenshotDialog()
         if foo:
