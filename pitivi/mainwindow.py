@@ -26,6 +26,7 @@ from gi.repository import Gtk
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.dialogs.about import AboutDialog
+from pitivi.dialogs.prefs import PreferencesDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.greeterperspective import GreeterPerspective
 from pitivi.settings import GlobalSettings
@@ -170,6 +171,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.app.shortcuts.add("win.menu-button", ["F10"],
                                _("Show the menu button content"), group="app")
 
+        self.preferences_action = Gio.SimpleAction.new("preferences", None)
+        self.preferences_action.connect("activate", self.__preferences_cb)
+        self.add_action(self.preferences_action)
+
     @staticmethod
     def __user_manual_cb(unused_action, unused_param):
         show_user_manual()
@@ -181,6 +186,9 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
     def __menu_cb(self, unused_action, unused_param):
         active = not self.__perspective.menu_button.get_active()
         self.__perspective.menu_button.set_active(active)
+
+    def __preferences_cb(self, unused_action, unused_param):
+        PreferencesDialog(self.app).run()
 
     def __configure_cb(self, unused_widget, unused_event):
         """Saves the main window position and size."""
