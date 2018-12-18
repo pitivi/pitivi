@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-12-13 07:54+0000\n"
-"PO-Revision-Date: 2018-12-13 18:39+0100\n"
+"POT-Creation-Date: 2018-12-17 21:09+0000\n"
+"PO-Revision-Date: 2018-12-18 18:23+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -393,50 +393,50 @@ msgstr "Witamy w programie Pitivi"
 msgid "Beautiful, powerful and intuitive movie editor"
 msgstr "Elegancki, funkcjonalny i intuicyjny edytor filmów"
 
-#: data/ui/mainmenubutton.ui:13
+#: data/ui/mainmenubutton.ui:17
 msgid "Save the current project under a new name or a different location"
 msgstr "Zapisuje bieżący projekt pod nową nazwą lub w innym położeniu"
 
-#: data/ui/mainmenubutton.ui:15 pitivi/editorperspective.py:739
+#: data/ui/mainmenubutton.ui:19 pitivi/editorperspective.py:739
 #: pitivi/editorperspective.py:793
 msgid "Save As..."
 msgstr "Zapisz jako…"
 
-#: data/ui/mainmenubutton.ui:23
+#: data/ui/mainmenubutton.ui:26
 msgid "Reload the current project"
 msgstr "Ponownie wczytuje bieżący projekt"
 
-#: data/ui/mainmenubutton.ui:24
+#: data/ui/mainmenubutton.ui:27
 msgid "Revert to saved version"
 msgstr "Przywraca do zapisanej wersji"
 
-#: data/ui/mainmenubutton.ui:33
+#: data/ui/mainmenubutton.ui:35
 msgid "Export the current project and all its media in a .tar archive"
 msgstr ""
 "Eksportuje bieżący projekt i wszystkie jego multimedia jako archiwum .tar"
 
-#: data/ui/mainmenubutton.ui:34
+#: data/ui/mainmenubutton.ui:36
 msgid "Export as Archive..."
 msgstr "Wyeksportuj jako archiwum…"
 
-#: data/ui/mainmenubutton.ui:49
+#: data/ui/mainmenubutton.ui:50
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "Eksportuje klatkę na bieżącym pozycji głowicy jako plik obrazu."
 
-#: data/ui/mainmenubutton.ui:50
+#: data/ui/mainmenubutton.ui:51
 msgid "Export current frame..."
 msgstr "Wyeksportuj bieżącą klatkę…"
 
-#: data/ui/mainmenubutton.ui:65
+#: data/ui/mainmenubutton.ui:66
 msgid "Edit the project settings"
 msgstr "Modyfikuje ustawienia projektu"
 
-#: data/ui/mainmenubutton.ui:66 data/ui/projectsettings.ui:29
+#: data/ui/mainmenubutton.ui:67 data/ui/projectsettings.ui:29
 #: pitivi/medialibrary.py:402
 msgid "Project Settings"
 msgstr "Ustawienia projektu"
 
-#: data/ui/mainmenubutton.ui:75 data/ui/preferences.ui:7
+#: data/ui/mainmenubutton.ui:82 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "Preferencje"
 
@@ -448,8 +448,8 @@ msgstr "Skróty klawiszowe"
 msgid "User Manual"
 msgstr "Podręcznik użytkownika"
 
-#: data/ui/mainmenubutton.ui:109 pitivi/mainwindow.py:165
-msgid "About"
+#: data/ui/mainmenubutton.ui:108
+msgid "About Pitivi"
 msgstr "O programie"
 
 #: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:354
@@ -1204,6 +1204,10 @@ msgstr "Pitivi %s jest dostępny."
 #: pitivi/mainwindow.py:154
 msgid "Project"
 msgstr "Projekt"
+
+#: pitivi/mainwindow.py:165
+msgid "About"
+msgstr "O programie"
 
 #: pitivi/mainwindow.py:171
 msgid "Show the menu button content"
@@ -2261,19 +2265,19 @@ msgstr "Kolor standardowego wyjścia"
 msgid "Font"
 msgstr "Czcionka"
 
-#: plugins/console/console.py:176
+#: plugins/console/console.py:177
 msgid "Developer Console"
 msgstr "Konsola programistyczna"
 
-#: plugins/console/console.py:198
+#: plugins/console/console.py:199
 msgid "Pitivi Console"
 msgstr "Konsola programu Pitivi"
 
-#: plugins/console/console.py:209
+#: plugins/console/console.py:210
 msgid "You can use the following shortcuts:"
 msgstr "Można używać tych skrótów:"
 
-#: plugins/console/console.py:214
+#: plugins/console/console.py:215
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Wpisanie „{help}(<polecenie>)” wyświetli więcej informacji."
