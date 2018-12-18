@@ -218,17 +218,17 @@ class LayerControls(Gtk.EventBox, Loggable):
     def update(self, media_types):
         self.props.height_request = self.ges_layer.ui.props.height_request
 
-        if media_types & GES.TrackType.VIDEO:
+        if media_types & GES.TrackType.VIDEO or not media_types:
+            # The layer has video or is empty.
             icon = "video-x-generic"
         else:
+            # The layer has audio and nothing else.
             icon = "audio-x-generic"
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
             self.menubutton.props.image = image
             self.__icon = icon
-
-        # TODO: Use media_types to determine which controls to show.
 
 
 class Layer(Gtk.Layout, Zoomable, Loggable):
