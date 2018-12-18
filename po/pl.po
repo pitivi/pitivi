@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-12-13 07:55+0000\n"
-"PO-Revision-Date: 2018-12-13 18:35+0100\n"
+"POT-Creation-Date: 2018-12-17 21:48+0000\n"
+"PO-Revision-Date: 2018-12-18 18:22+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -226,28 +226,28 @@ msgstr "Przywróć wszystko"
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/mainmenubutton.ui:14
+#: data/ui/mainmenubutton.ui:18
 msgid "New project"
 msgstr "Nowy projekt"
 
-#: data/ui/mainmenubutton.ui:23
+#: data/ui/mainmenubutton.ui:26
 msgid "Open project..."
 msgstr "Otwórz projekt…"
 
-#: data/ui/mainmenubutton.ui:37
+#: data/ui/mainmenubutton.ui:39
 msgid "Save the current project under a new name or a different location"
 msgstr "Zapisuje bieżący projekt pod nową nazwą lub w innym położeniu"
 
-#: data/ui/mainmenubutton.ui:39 pitivi/mainwindow.py:1095
+#: data/ui/mainmenubutton.ui:41 pitivi/mainwindow.py:1095
 #: pitivi/mainwindow.py:1149
 msgid "Save As..."
 msgstr "Zapisz jako…"
 
-#: data/ui/mainmenubutton.ui:47
+#: data/ui/mainmenubutton.ui:48
 msgid "Reload the current project"
 msgstr "Ponownie wczytuje bieżący projekt"
 
-#: data/ui/mainmenubutton.ui:48
+#: data/ui/mainmenubutton.ui:49
 msgid "Revert to saved version"
 msgstr "Przywraca do zapisanej wersji"
 
@@ -260,37 +260,37 @@ msgstr ""
 msgid "Export as Archive..."
 msgstr "Wyeksportuj jako archiwum…"
 
-#: data/ui/mainmenubutton.ui:73
+#: data/ui/mainmenubutton.ui:72
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "Eksportuje klatkę na bieżącym pozycji głowicy jako plik obrazu."
 
-#: data/ui/mainmenubutton.ui:74
+#: data/ui/mainmenubutton.ui:73
 msgid "Export current frame..."
 msgstr "Wyeksportuj bieżącą klatkę…"
 
-#: data/ui/mainmenubutton.ui:89
+#: data/ui/mainmenubutton.ui:88
 msgid "Edit the project settings"
 msgstr "Modyfikuje ustawienia projektu"
 
-#: data/ui/mainmenubutton.ui:90 data/ui/projectsettings.ui:29
+#: data/ui/mainmenubutton.ui:89 data/ui/projectsettings.ui:29
 #: pitivi/medialibrary.py:393
 msgid "Project Settings"
 msgstr "Ustawienia projektu"
 
-#: data/ui/mainmenubutton.ui:99 data/ui/preferences.ui:7
+#: data/ui/mainmenubutton.ui:104 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "Preferencje"
 
-#: data/ui/mainmenubutton.ui:115
+#: data/ui/mainmenubutton.ui:113
 msgid "Keyboard Shortcuts"
 msgstr "Skróty klawiszowe"
 
-#: data/ui/mainmenubutton.ui:124
+#: data/ui/mainmenubutton.ui:122
 msgid "User Manual"
 msgstr "Podręcznik użytkownika"
 
-#: data/ui/mainmenubutton.ui:132
-msgid "About"
+#: data/ui/mainmenubutton.ui:129
+msgid "About Pitivi"
 msgstr "O programie"
 
 #: data/ui/medialibrary.ui:14 pitivi/mainwindow.py:461
