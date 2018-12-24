@@ -36,12 +36,11 @@ from urllib.request import urlretrieve
 # for development.
 PITIVI_BRANCH = "master"
 MANIFEST_NAME = "org.pitivi.Pitivi.json"
-# To see the existing branches, run:
-# flatpak remote-ls pitivi --user -d
 FLATPAK_REQ = [
     ("flatpak", "0.10.0"),
     ("flatpak-builder", "0.10.0"),
 ]
+FLATPAK_VERSION = {}
 DEFAULT_GST_BRANCH = 'master'
 
 
@@ -149,6 +148,35 @@ def expand_manifest(manifest_path, outfile, basedir, gst_version, branchname):
         print(json.dumps(template, indent=4), file=of)
 
 
+def check_flatpak(verbose=True):
+    for app, required_version in FLATPAK_REQ:
+        try:
+            output = subprocess.check_output([app, "--version"])
+        except (subprocess.CalledProcessError, OSError):
+            if verbose:
+                Console.message("\n%sYou need to install %s >= %s"
+                                " to be able to use the '%s' script.\n\n"
+                                "You can find some informations about"
+                                " how to install it for your distribution at:\n"
+                                "    * http://flatpak.org/%s\n", Colors.FAIL,
+                                app, required_version, sys.argv[0], Colors.ENDC)
+            return False
+
+        def comparable_version(version):
+            return tuple(map(int, (version.split("."))))
+
+        version = output.decode("utf-8").split(" ")[1].strip("\n")
+        current = comparable_version(version)
+        FLATPAK_VERSION[app] = current
+        if current < comparable_version(required_version):
+            Console.message("\n%s%s %s required but %s found."
+                            " Please update and try again%s\n", Colors.FAIL,
+                            app, required_version, version, Colors.ENDC)
+            return False
+
+    return True
+
+
 class FlatpakObject:  # pylint: disable=too-few-public-methods
 
     def __init__(self, user):
@@ -186,18 +214,28 @@ class FlatpakPackages(FlatpakObject):  # pylint: disable=too-few-public-methods
 
     def __detect_packages(self, *args):
         packs = []
-        package_defs = [rd
-                        for rd in self.flatpak("list", "-d", *args).split("\n")
-                        if rd]
-        for package_def in package_defs:
-            splited_packaged_def = package_def.split()
-            name, arch, branch = splited_packaged_def[0].split("/")
+        if FLATPAK_VERSION["flatpak"] < (1, 1, 2):
+            out = self.flatpak("list", "-d", *args)
+            package_defs = [line for line in out.split("\n") if line]
+            for package_def in package_defs:
+                splited_packaged_def = package_def.split()
+                name, arch, branch = splited_packaged_def[0].split("/")
 
-            # If installed from a file, the package is in no repo
-            repo_name = splited_packaged_def[1]
-            repo = self.repos.repos.get(repo_name)
+                # If installed from a file, the package is in no repo
+                repo_name = splited_packaged_def[1]
+                repo = self.repos.repos.get(repo_name)
 
-            packs.append(FlatpakPackage(name, branch, repo, arch))
+                packs.append(FlatpakPackage(name, branch, repo, arch))
+        else:
+            out = self.flatpak("list", "--columns=application,arch,branch,origin", *args)
+            package_defs = [line for line in out.split("\n") if line]
+            for package_def in package_defs:
+                name, arch, branch, origin = package_def.split("\t")
+
+                # If installed from a file, the package is in no repo
+                repo = self.repos.repos.get(origin)
+
+                packs.append(FlatpakPackage(name, branch, repo, arch))
 
         return packs
 
@@ -220,38 +258,50 @@ class FlatpakRepos(FlatpakObject):
         self.repos = {}
         self.update()
 
+    # pylint: disable=too-many-branches
     def update(self):
         self.repos = {}
-        remotes = [row
-                   for row in self.flatpak("remote-list", "-d").split("\n")
-                   if row]
-        for repo in remotes:
-            for components in [repo.split(" "), repo.split("\t")]:
-                if len(components) == 1:
-                    components = repo.split("\t")
-                name = components[0]
-                desc = ""
-                url = None
-                for elem in components[1:]:
-                    if not elem:
-                        continue
-                    parsed_url = urlparse(elem)
-                    if parsed_url.scheme:
-                        url = elem
+        if FLATPAK_VERSION["flatpak"] < (1, 1, 2):
+            out = self.flatpak("remote-list", "-d")
+            remotes = [line for line in out.split("\n") if line]
+            for repo in remotes:
+                for components in [repo.split(" "), repo.split("\t")]:
+                    if len(components) == 1:
+                        components = repo.split("\t")
+                    name = components[0]
+                    desc = ""
+                    url = None
+                    for elem in components[1:]:
+                        if not elem:
+                            continue
+                        parsed_url = urlparse(elem)
+                        if parsed_url.scheme:
+                            url = elem
+                            break
+
+                        if desc:
+                            desc += " "
+                        desc += elem
+
+                    if url:
                         break
 
-                    if desc:
-                        desc += " "
-                    desc += elem
+                if not url:
+                    Console.message("No valid URI found for: %s", repo)
+                    continue
 
-                if url:
-                    break
+                self.repos[name] = FlatpakRepo(name, url, desc, repos=self)
+        else:
+            out = self.flatpak("remote-list", "--columns=name,title,url")
+            remotes = [line for line in out.split("\n") if line]
+            for remote in remotes:
+                name, title, url = remote.split("\t")
+                parsed_url = urlparse(url)
+                if not parsed_url.scheme:
+                    Console.message("No valid URI found for: %s", remote)
+                    continue
 
-            if not url:
-                Console.message("No valid URI found for: %s", repo)
-                continue
-
-            self.repos[name] = FlatpakRepo(name, url, desc, repos=self)
+                self.repos[name] = FlatpakRepo(name, url, title, repos=self)
 
         self.packages = FlatpakPackages(self)
 
@@ -411,37 +461,10 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         self.coredumpgdb = None
         self.coredumpctl_matches = ""
 
-    @staticmethod
-    def check_flatpak(verbose=True):
-        for app, required_version in FLATPAK_REQ:
-            try:
-                output = subprocess.check_output([app, "--version"])
-            except (subprocess.CalledProcessError, OSError):
-                if verbose:
-                    Console.message("\n%sYou need to install %s >= %s"
-                                    " to be able to use the '%s' script.\n\n"
-                                    "You can find some information about"
-                                    " how to install it for your distribution at:\n"
-                                    "    * http://flatpak.org/%s\n", Colors.FAIL,
-                                    app, required_version, sys.argv[0], Colors.ENDC)
-                return False
-
-            def comparable_version(version):
-                return tuple(map(int, (version.split("."))))
-
-            version = output.decode("utf-8").split(" ")[1].strip("\n")
-            if comparable_version(version) < comparable_version(required_version):
-                Console.message("\n%s%s %s required but %s found."
-                                " Please update and try again%s\n", Colors.FAIL,
-                                app, required_version, version, Colors.ENDC)
-                return False
-
-        return True
-
     def clean_args(self):
         Console.quiet = self.quiet
 
-        if not self.check_flatpak():
+        if not check_flatpak():
             exit(1)
 
         repos = FlatpakRepos()
