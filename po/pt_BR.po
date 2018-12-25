@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-12-13 07:55+0000\n"
-"PO-Revision-Date: 2018-12-17 00:59-0200\n"
+"POT-Creation-Date: 2018-12-19 06:06+0000\n"
+"PO-Revision-Date: 2018-12-25 14:23-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -236,28 +236,28 @@ msgstr "Redefinir tudo"
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/mainmenubutton.ui:14
+#: data/ui/mainmenubutton.ui:18
 msgid "New project"
 msgstr "Novo projeto"
 
-#: data/ui/mainmenubutton.ui:23
+#: data/ui/mainmenubutton.ui:26
 msgid "Open project..."
 msgstr "Abrir projeto…"
 
-#: data/ui/mainmenubutton.ui:37
+#: data/ui/mainmenubutton.ui:39
 msgid "Save the current project under a new name or a different location"
 msgstr "Salve o projeto atual sob um novo nome ou uma localização diferente"
 
-#: data/ui/mainmenubutton.ui:39 pitivi/mainwindow.py:1095
+#: data/ui/mainmenubutton.ui:41 pitivi/mainwindow.py:1095
 #: pitivi/mainwindow.py:1149
 msgid "Save As..."
 msgstr "Salvar como…"
 
-#: data/ui/mainmenubutton.ui:47
+#: data/ui/mainmenubutton.ui:48
 msgid "Reload the current project"
 msgstr "Recarregar o projeto atual"
 
-#: data/ui/mainmenubutton.ui:48
+#: data/ui/mainmenubutton.ui:49
 msgid "Revert to saved version"
 msgstr "Reverter para versão salva"
 
@@ -269,39 +269,40 @@ msgstr "Exporte o projeto atual e todas suas mídias em um pacote .tar"
 msgid "Export as Archive..."
 msgstr "Exportar como pacote…"
 
-#: data/ui/mainmenubutton.ui:73
+#: data/ui/mainmenubutton.ui:72
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
 "Exporta o quadro na posição atual de reprodução como um arquivo de imagem."
 
-#: data/ui/mainmenubutton.ui:74
+#: data/ui/mainmenubutton.ui:73
 msgid "Export current frame..."
 msgstr "Exportar o quadro atual…"
 
-#: data/ui/mainmenubutton.ui:89
+#: data/ui/mainmenubutton.ui:88
 msgid "Edit the project settings"
 msgstr "Edita as configurações do projeto"
 
-#: data/ui/mainmenubutton.ui:90 data/ui/projectsettings.ui:29
+#: data/ui/mainmenubutton.ui:89 data/ui/projectsettings.ui:29
 #: pitivi/medialibrary.py:393
 msgid "Project Settings"
 msgstr "Configurações do projeto"
 
-#: data/ui/mainmenubutton.ui:99 data/ui/preferences.ui:7
+#: data/ui/mainmenubutton.ui:104 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "Preferências"
 
-#: data/ui/mainmenubutton.ui:115
+#: data/ui/mainmenubutton.ui:113
 msgid "Keyboard Shortcuts"
 msgstr "Atalhos de teclado"
 
-#: data/ui/mainmenubutton.ui:124
+#: data/ui/mainmenubutton.ui:122
 msgid "User Manual"
 msgstr "Manual do usuário"
 
-#: data/ui/mainmenubutton.ui:132
-msgid "About"
-msgstr "Sobre"
+#: data/ui/mainmenubutton.ui:129
+#| msgid "Close Pitivi"
+msgid "About Pitivi"
+msgstr "Sobre o Pitivi"
 
 #: data/ui/medialibrary.ui:14 pitivi/mainwindow.py:461
 msgid "Add media files to your project"
@@ -738,14 +739,12 @@ msgstr "- %s versão %s está instalada, mas Pitivi requer pelo menos %s"
 #. Translators: %s is a Python module name or another os component
 #: pitivi/check.py:185
 #, python-format
-#| msgid "- %s not found on the system"
 msgid "- %s GStreamer plug-in not found on the system"
 msgstr "- plug-in de GStreamer %s não encontrado no sistema"
 
 #. Translators: %s is a Python module name or another os component
 #: pitivi/check.py:188
 #, python-format
-#| msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgid ""
 "- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
 "version %s"
@@ -2015,6 +2014,9 @@ msgstr "%s exibidos"
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanossegundos exibidos porque nós podemos"
+
+#~ msgid "About"
+#~ msgstr "Sobre"
 
 #~ msgid "Pixel aspect ratio:"
 #~ msgstr "Proporção de aspecto de pixel:"
