@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-12-06 12:31+0000\n"
-"PO-Revision-Date: 2018-12-10 22:35-0200\n"
+"POT-Creation-Date: 2018-12-18 17:23+0000\n"
+"PO-Revision-Date: 2018-12-25 14:54-0200\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
@@ -153,12 +153,10 @@ msgid "_Apply to project"
 msgstr "_Aplicar ao projeto"
 
 #: data/ui/clipmediaprops.ui:124
-#| msgid "Size (pixels):"
 msgid "Size (pixels)"
 msgstr "Tamanho (pixels)"
 
 #: data/ui/clipmediaprops.ui:139
-#| msgid "Frame rate:"
 msgid "Frame rate"
 msgstr "Taxa de quadros"
 
@@ -172,12 +170,10 @@ msgid "Video:"
 msgstr "Vídeo:"
 
 #: data/ui/clipmediaprops.ui:249
-#| msgid "Sample rate:"
 msgid "Sample rate"
 msgstr "Taxa da amostra"
 
 #: data/ui/clipmediaprops.ui:264
-#| msgid "Channels:"
 msgid "Channels"
 msgstr "Canais"
 
@@ -408,50 +404,50 @@ msgstr "Bem-vindo ao Pitivi"
 msgid "Beautiful, powerful and intuitive movie editor"
 msgstr "Um editor de vídeo bonito, potente e intuitivo"
 
-#: data/ui/mainmenubutton.ui:13
+#: data/ui/mainmenubutton.ui:17
 msgid "Save the current project under a new name or a different location"
 msgstr "Salve o projeto atual sob um novo nome ou uma localização diferente"
 
-#: data/ui/mainmenubutton.ui:15 pitivi/editorperspective.py:739
+#: data/ui/mainmenubutton.ui:19 pitivi/editorperspective.py:739
 #: pitivi/editorperspective.py:793
 msgid "Save As..."
 msgstr "Salvar como…"
 
-#: data/ui/mainmenubutton.ui:23
+#: data/ui/mainmenubutton.ui:26
 msgid "Reload the current project"
 msgstr "Recarregar o projeto atual"
 
-#: data/ui/mainmenubutton.ui:24
+#: data/ui/mainmenubutton.ui:27
 msgid "Revert to saved version"
 msgstr "Reverter para versão salva"
 
-#: data/ui/mainmenubutton.ui:33
+#: data/ui/mainmenubutton.ui:35
 msgid "Export the current project and all its media in a .tar archive"
 msgstr "Exporte o projeto atual e todas suas mídias em um pacote .tar"
 
-#: data/ui/mainmenubutton.ui:34
+#: data/ui/mainmenubutton.ui:36
 msgid "Export as Archive..."
 msgstr "Exportar como pacote…"
 
-#: data/ui/mainmenubutton.ui:49
+#: data/ui/mainmenubutton.ui:50
 msgid "Export the frame at the current playhead position as an image file."
 msgstr ""
 "Exporta o quadro na posição atual de reprodução como um arquivo de imagem."
 
-#: data/ui/mainmenubutton.ui:50
+#: data/ui/mainmenubutton.ui:51
 msgid "Export current frame..."
 msgstr "Exportar o quadro atual…"
 
-#: data/ui/mainmenubutton.ui:65
+#: data/ui/mainmenubutton.ui:66
 msgid "Edit the project settings"
 msgstr "Edita as configurações do projeto"
 
-#: data/ui/mainmenubutton.ui:66 data/ui/projectsettings.ui:29
+#: data/ui/mainmenubutton.ui:67 data/ui/projectsettings.ui:29
 #: pitivi/medialibrary.py:402
 msgid "Project Settings"
 msgstr "Configurações do projeto"
 
-#: data/ui/mainmenubutton.ui:75 data/ui/preferences.ui:7
+#: data/ui/mainmenubutton.ui:82 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -463,9 +459,10 @@ msgstr "Atalhos de teclado"
 msgid "User Manual"
 msgstr "Manual do usuário"
 
-#: data/ui/mainmenubutton.ui:109 pitivi/mainwindow.py:165
-msgid "About"
-msgstr "Sobre"
+#: data/ui/mainmenubutton.ui:108
+#| msgid "Close Pitivi"
+msgid "About Pitivi"
+msgstr "Sobre o Pitivi"
 
 #: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:354
 msgid "Add media files to your project"
@@ -875,16 +872,34 @@ msgstr "- %s não encontrado no sistema"
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr "- %s versão %s está instalada, mas Pitivi requer pelo menos %s"
 
-#: pitivi/check.py:281
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:185
+#, python-format
+#| msgid "- %s not found on the system"
+msgid "- %s GStreamer plug-in not found on the system"
+msgstr "- plug-in de GStreamer %s não encontrado no sistema"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:188
+#, python-format
+#| msgid "- %s version %s is installed but Pitivi requires at least version %s"
+msgid ""
+"- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
+"version %s"
+msgstr ""
+"- plug-in de GStreamer %s versão %s está instalada, mas Pitivi requer pelo "
+"menos a versão %s"
+
+#: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ERRO — As seguintes dependências rígidas não foram correspondidas:"
 
 # Confirmar tradução para soft
-#: pitivi/check.py:290
+#: pitivi/check.py:307
 msgid "Missing soft dependency:"
 msgstr "Dependências leves faltantes:"
 
-#: pitivi/check.py:297
+#: pitivi/check.py:314
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -892,7 +907,7 @@ msgstr ""
 "ERRO — Não foi possível criar um Gst.Fraction — isso significa que gst-"
 "python não está instalado corretamente."
 
-#: pitivi/check.py:302
+#: pitivi/check.py:319
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -900,38 +915,38 @@ msgstr ""
 "Não foi possível criar um assento de saída de áudio. Certifique-se de que "
 "você tem uma válida (pulsesink, alsasink ou osssink)."
 
-#: pitivi/check.py:307
+#: pitivi/check.py:324
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Não foi possível criar uma assento de saída de áudio. Certifique-se de que "
 "um gtksink está disponível."
 
-#: pitivi/check.py:322
+#: pitivi/check.py:339
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr ""
 "Não foi possível importar “%s”. Certifique-se de que ele está disponível."
 
-#: pitivi/check.py:352
+#: pitivi/check.py:369
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr ""
 "Não foi possível importar “gi”. Certifique-se de que pyobject está "
 "disponível."
 
-#: pitivi/check.py:440
+#: pitivi/check.py:457
 msgid "enables sound notifications when rendering is complete"
 msgstr "habilita notificações de som quando a renderização é finalizada"
 
-#: pitivi/check.py:442
+#: pitivi/check.py:459
 msgid "enables visual notifications when rendering is complete"
 msgstr "habilita notificações visuais quando a renderização é finalizada"
 
-#: pitivi/check.py:444
+#: pitivi/check.py:461
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "codecs multimídia adicionais através da biblioteca GStreamer Libav"
 
-#: pitivi/check.py:446
+#: pitivi/check.py:463
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -1198,6 +1213,10 @@ msgstr "Pitivi %s está disponível."
 msgid "Project"
 msgstr "Projeto"
 
+#: pitivi/mainwindow.py:165
+msgid "About"
+msgstr "Sobre"
+
 #: pitivi/mainwindow.py:171
 msgid "Show the menu button content"
 msgstr "Mostrar o botão do menu de conteúdo"
@@ -1354,19 +1373,19 @@ msgstr[1] "Os seguintes arquivos não podem ser usados com o Pitivi."
 msgid "Open containing folder"
 msgstr "Abrir pasta contendo"
 
-#: pitivi/medialibrary.py:1211
+#: pitivi/medialibrary.py:1217
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
 msgstr[0] "Não usar intermediário para o ativo selecionado"
 msgstr[1] "Não usar intermediários para os ativos selecionados"
 
-#: pitivi/medialibrary.py:1222
+#: pitivi/medialibrary.py:1228
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Excluir o arquivo intermediário correspondente"
 msgstr[1] "Excluir os arquivos intermediários correspondentes"
 
-#: pitivi/medialibrary.py:1233
+#: pitivi/medialibrary.py:1239
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
 msgstr[0] "Usar intermediário para o ativo selecionado"
@@ -2248,19 +2267,19 @@ msgstr "Cor de saída padrão"
 msgid "Font"
 msgstr "Fonte"
 
-#: plugins/console/console.py:176
+#: plugins/console/console.py:177
 msgid "Developer Console"
 msgstr "Console de desenvolvimento"
 
-#: plugins/console/console.py:198
+#: plugins/console/console.py:199
 msgid "Pitivi Console"
 msgstr "Console do Pitivi"
 
-#: plugins/console/console.py:209
+#: plugins/console/console.py:210
 msgid "You can use the following shortcuts:"
 msgstr "Você pode usar os seguintes atalhos:"
 
-#: plugins/console/console.py:214
+#: plugins/console/console.py:215
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Digite \"{help}(<comando>)\" para mais informações."
