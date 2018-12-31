@@ -138,7 +138,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.create_sink()
 
         self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
-        self.target = ViewerWidget(self.overlay_stack)
+        self.target = ViewerWidget(self.overlay_stack, project=self.app.project_manager.current_project)
 
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
@@ -146,7 +146,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.external_vbox.pack_start(self.target, expand=True, fill=False, padding=0)
             self.external_vbox.child_set(self.target, fill=True)
 
-        self.setDisplayAspectRatio(self.app.project_manager.current_project.getDAR())
         self.target.show_all()
 
         # Wait for 1s to make sure that the viewer has completely realized
@@ -345,9 +344,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.forward_button.hide()
         self._compactMode = True  # Prevent set_size_request later
 
-    def setDisplayAspectRatio(self, ratio):
-        self.debug("Setting aspect ratio to %f [%r]", float(ratio), ratio)
-        self.target.setDisplayAspectRatio(ratio)
+    def update_aspect_ratio(self, project):
+        ratio = project.getDAR()
+        self.debug("Updating aspect ratio to %f [%r]", float(ratio), ratio)
+        self.target.ratio = ratio
+        self.target.project = project
 
     def _entryActivateCb(self, unused_entry):
         nanoseconds = self.timecode_entry.getWidgetValue()
@@ -553,23 +554,30 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
     """Widget for displaying a video sink.
 
     Args:
-        sink_widget (Gtk.Widget): The widget doing the real work.
+        widget (Gtk.Widget): The child widget doing the real work.
+        project (Optional[pitivi.project.Project]): The project providing
+            a video width and height used for snapping the viewer size.
     """
 
-    def __init__(self, widget):
+    def __init__(self, widget, project=None):
         # Prevent black frames and flickering while resizing or changing focus:
-        # The aspect ratio gets overridden by setDisplayAspectRatio.
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
                                  border_width=SPACING, obey_child=False)
         Loggable.__init__(self)
+
+        # Set the shadow to None, otherwise it will take space and the
+        # child widget size snapping will be a bit off.
+        self.set_shadow_type(Gtk.ShadowType.NONE)
+
+        # The width and height used when snapping the child widget size.
+        self.videowidth = project.videowidth if project else 0
+        self.videoheight = project.videoheight if project else 0
 
         self.add(widget)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
-
-    def setDisplayAspectRatio(self, ratio):
-        self.set_property("ratio", float(ratio))
+        self.hide()
 
     def do_get_preferred_width(self):
         minimum, unused_natural = Gtk.AspectFrame.do_get_preferred_width(self)
@@ -582,6 +590,36 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # Do not let a chance for Gtk to choose video natural size
         # as we want to have full control
         return minimum, minimum + 1
+
+    def do_compute_child_allocation(self, allocation):
+        """Snaps the size of the child depending on the project size."""
+        # Start with the max possible allocation.
+        Gtk.AspectFrame.do_compute_child_allocation(self, allocation)
+
+        if not self.videowidth:
+            return
+
+        # Calculate the percent of the project size using w/h,
+        # whichever gives a higher precision.
+        if self.props.ratio > 1:
+            percent = allocation.width / self.project.videowidth
+        else:
+            percent = allocation.height / self.height
+
+        # See if we want to snap the size of the child widget.
+        snap = 0
+        for mark in (0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+            if mark < percent < mark + 0.05:
+                snap = mark
+                break
+            if percent < mark:
+                break
+        if snap:
+            allocation.width = self.videowidth * snap
+            allocation.height = self.videoheight * snap
+            full = self.get_allocation()
+            allocation.x = full.x + self.props.xalign * (full.width - allocation.width)
+            allocation.y = full.y + self.props.yalign * (full.height - allocation.height)
 
 
 class PlayPauseButton(Gtk.Button, Loggable):
