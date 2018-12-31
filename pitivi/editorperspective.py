@@ -673,7 +673,7 @@ class EditorPerspective(Perspective, Loggable):
 
     def _reset_viewer_aspect_ratio(self, project):
         """Resets the viewer aspect ratio."""
-        self.viewer.setDisplayAspectRatio(project.getDAR())
+        self.viewer.updateDisplayAspectRatio(project)
         self.viewer.timecode_entry.setFramerate(project.videorate)
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):

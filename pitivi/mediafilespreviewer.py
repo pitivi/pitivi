@@ -259,8 +259,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 video_height = video.get_height()
                 w, h = self.__get_best_size(video_width, video_height)
                 self.preview_video.set_size_request(w, h)
-                aspect_ratio = video_width / video_height
-                self.preview_video.setDisplayAspectRatio(aspect_ratio)
+                self.preview_video.props.ratio = video_width / video_height
                 self.preview_video.show()
                 self.bbox.show()
                 self.play_button.show()
