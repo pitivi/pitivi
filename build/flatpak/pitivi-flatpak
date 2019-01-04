@@ -402,6 +402,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
                     stderr=devnull,
                     cwd=self.topdir).decode("utf-8").strip("\n")
                 self.build_name = self.name + "." + branch
+                self.build_name = self.build_name.replace(os.path.sep, "_")
             except subprocess.CalledProcessError:
                 pass
             finally:
