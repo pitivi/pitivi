@@ -4,9 +4,10 @@ stages:
   - deploy
 
 variables:
-    BUNDLE: "pitivi.flatpak"
-    MANIFEST: build/flatpak/org.pitivi.Pitivi.json
-    DBUS_ID: org.pitivi.Pitivi
+  BUNDLE: "pitivi.flatpak"
+  MANIFEST: build/flatpak/org.pitivi.Pitivi.json
+  DBUS_ID: org.pitivi.Pitivi
+  XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
 build:
   image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.30
@@ -16,7 +17,6 @@ build:
       - xunit.xml
   script:
     - export BUILDDIR=${HOME}/pitivi
-    - export XUNIT_PATH=${CI_PROJECT_DIR}/xunit.xml
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
     - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
 
@@ -33,43 +33,41 @@ build:
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH}
 
     - flatpak build-bundle repo ${BUNDLE} --runtime-repo=${RUNTIME} ${DBUS_ID} ${BRANCH}
+    - ls -hls
   cache:
     paths:
     - flatpak-cache
   artifacts:
+    expire_in: 30 days
     paths:
     - ${BUNDLE}
-    expire_in: 30 days
+    reports:
+      junit:
+        - ${XUNIT_PATH}
 
 deploy:
   tags:
     - PitiviBuildMachine
   stage: deploy
   script:
-    - flatpak build-import-bundle repo ${BUNDLE}
+    - flatpak build-import-bundle /srv/testrepo ${BUNDLE}
 
+# Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
+# and it is not possible to use a privileged `docker build`.
 .build_emplate: &build_docker_image
     image: docker:latest
     services:
         - docker:dind
     script:
-        # For debugging
-        - echo ${BRANCH}
         - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.30"
-        - echo ${IMAGE}
         - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30"
-        - echo ${BASE_IMAGE}
         - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.30"
-        - echo ${TMPIMAGENAME}
-
-        # Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
-        # and it is not possible to use a privileged `docker build`.
         - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
-
         - export BUILDDIR="\${HOME}/pitivi"
         - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"
-
         - export BUILD_PITIVI="flatpak-builder ${BUILDDIR}/app ${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json --state-dir=\${HOME}/flatpak-cache --ccache"
+
+        - env
 
         - docker run --privileged --name ${TMPIMAGENAME} ${BASE_IMAGE} bash -c "${CLONE_PITIVI} && ${BUILD_PITIVI} && rm -Rf ${BUILDDIR}"
         - docker commit ${TMPIMAGENAME} ${IMAGE}
