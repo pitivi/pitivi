@@ -657,21 +657,17 @@ class PluginManagerStore(Gio.ListStore):
     """Stores the models for available plugins."""
 
     def __init__(self):
-        Gio.ListStore.__init__(self)
+        Gio.ListStore.__init__(self, item_type=PluginItem)
         self.app = None
         self.preferences_dialog = None
 
     @classmethod
     def new(cls, app, preferences_dialog):
-        obj = PluginManagerStore()
-        obj.app = app
-        obj.preferences_dialog = preferences_dialog
-        # FIXME
-        # For some reason this property cannot be set at construct time
-        # with GObject.Object.new.
-        obj.set_property("item-type", PluginItem)
-        obj.reload()
-        return obj
+        store = PluginManagerStore()
+        store.app = app
+        store.preferences_dialog = preferences_dialog
+        store.reload()
+        return store
 
     def reload(self):
         self.remove_all()
