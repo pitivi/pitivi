@@ -4,14 +4,14 @@
 #
 # Jan Drábek <repli2dev@gmail.com>, 2009.
 # Petr Kovar <pknbe@volny.cz>, 2009.
-# Marek Černocký <marek@manet.cz>, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018.
+# Marek Černocký <marek@manet.cz>, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi pitivi-1.0\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2018-09-29 16:51+0000\n"
-"PO-Revision-Date: 2018-09-29 21:23+0200\n"
+"POT-Creation-Date: 2019-01-02 16:27+0000\n"
+"PO-Revision-Date: 2019-01-07 11:00+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: čeština <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -122,7 +122,7 @@ msgstr "Začíná automatického zarovnání"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Provádění automatického zarovnání</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1130
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1129
 msgid "Estimating..."
 msgstr "Odhaduje se…"
 
@@ -138,34 +138,32 @@ msgstr "_Zrušit"
 msgid "_Apply to project"
 msgstr "Použít n_a projekt"
 
-#: data/ui/clipmediaprops.ui:85
-msgid "Size (pixels):"
-msgstr "Velikost (v pixelech):"
+#: data/ui/clipmediaprops.ui:124
+msgid "Size (pixels)"
+msgstr "Velikost (v pixelech)"
 
-#: data/ui/clipmediaprops.ui:158 data/ui/renderingdialog.ui:448
-msgid "Frame rate:"
-msgstr "Snímková rychlost:"
+#: data/ui/clipmediaprops.ui:139
+msgid "Frame rate"
+msgstr "Snímková rychlost"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: data/ui/clipmediaprops.ui:197
-msgid "Pixel aspect ratio:"
-msgstr "Poměr stran pixelů:"
+#: data/ui/clipmediaprops.ui:154
+msgid "Pixel aspect ratio"
+msgstr "Poměr stran pixelů"
 
-#: data/ui/clipmediaprops.ui:237
+#: data/ui/clipmediaprops.ui:197
 msgid "Video:"
 msgstr "Video:"
 
-#: data/ui/clipmediaprops.ui:273 data/ui/projectsettings.ui:451
-#: data/ui/renderingdialog.ui:505
-msgid "Channels:"
-msgstr "Kanály:"
+#: data/ui/clipmediaprops.ui:249
+msgid "Sample rate"
+msgstr "Vzorkovací frekvence"
 
-#: data/ui/clipmediaprops.ui:312 data/ui/projectsettings.ui:485
-#: data/ui/renderingdialog.ui:614
-msgid "Sample rate:"
-msgstr "Vzorkovací frekvence:"
+#: data/ui/clipmediaprops.ui:264
+msgid "Channels"
+msgstr "Kanály"
 
-#: data/ui/clipmediaprops.ui:352
+#: data/ui/clipmediaprops.ui:285
 msgid "Audio:"
 msgstr "Zvuk:"
 
@@ -226,28 +224,28 @@ msgstr "Vše na původní"
 msgid "OK"
 msgstr "Budiž"
 
-#: data/ui/mainmenubutton.ui:14
+#: data/ui/mainmenubutton.ui:18
 msgid "New project"
 msgstr "Nový projekt"
 
-#: data/ui/mainmenubutton.ui:23
+#: data/ui/mainmenubutton.ui:26
 msgid "Open project..."
 msgstr "Otevřít projekt…"
 
-#: data/ui/mainmenubutton.ui:37
+#: data/ui/mainmenubutton.ui:39
 msgid "Save the current project under a new name or a different location"
 msgstr "Uložit aktuální projekt pod novým názvem nebo na jiné místo"
 
-#: data/ui/mainmenubutton.ui:39 pitivi/mainwindow.py:1127
-#: pitivi/mainwindow.py:1181
+#: data/ui/mainmenubutton.ui:41 pitivi/mainwindow.py:1095
+#: pitivi/mainwindow.py:1149
 msgid "Save As..."
 msgstr "Uložit jako…"
 
-#: data/ui/mainmenubutton.ui:47
+#: data/ui/mainmenubutton.ui:48
 msgid "Reload the current project"
 msgstr "Znovu načíst současný projekt"
 
-#: data/ui/mainmenubutton.ui:48
+#: data/ui/mainmenubutton.ui:49
 msgid "Revert to saved version"
 msgstr "Vrátit se k uložené verzi"
 
@@ -259,40 +257,40 @@ msgstr "Exportovat aktuální projekt a všechna jeho multimédia v archivu .tar
 msgid "Export as Archive..."
 msgstr "Exportovat jako archiv…"
 
-#: data/ui/mainmenubutton.ui:73
+#: data/ui/mainmenubutton.ui:72
 msgid "Export the frame at the current playhead position as an image file."
 msgstr "Exportovat snímek na aktuální pozici jako soubor s obrázkem."
 
-#: data/ui/mainmenubutton.ui:74
+#: data/ui/mainmenubutton.ui:73
 msgid "Export current frame..."
 msgstr "Exportovat aktuální snímek…"
 
-#: data/ui/mainmenubutton.ui:89
+#: data/ui/mainmenubutton.ui:88
 msgid "Edit the project settings"
 msgstr "Upravit nastavení projektu"
 
-#: data/ui/mainmenubutton.ui:90 data/ui/projectsettings.ui:29
+#: data/ui/mainmenubutton.ui:89 data/ui/projectsettings.ui:29
 #: pitivi/medialibrary.py:393
 msgid "Project Settings"
 msgstr "Nastavení projektu"
 
-#: data/ui/mainmenubutton.ui:99 data/ui/preferences.ui:7
+#: data/ui/mainmenubutton.ui:104 data/ui/preferences.ui:7
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: data/ui/mainmenubutton.ui:115
+#: data/ui/mainmenubutton.ui:113
 msgid "Keyboard Shortcuts"
 msgstr "Klávesové zkratky"
 
-#: data/ui/mainmenubutton.ui:124
+#: data/ui/mainmenubutton.ui:122
 msgid "User Manual"
 msgstr "Uživatelská příručka"
 
-#: data/ui/mainmenubutton.ui:132
-msgid "About"
-msgstr "O aplikaci"
+#: data/ui/mainmenubutton.ui:129
+msgid "About Pitivi"
+msgstr "O aplikaci Pitivi"
 
-#: data/ui/medialibrary.ui:14 pitivi/mainwindow.py:469
+#: data/ui/medialibrary.ui:14 pitivi/mainwindow.py:461
 msgid "Add media files to your project"
 msgstr "Přidat mediální soubory do vašeho projektu"
 
@@ -371,9 +369,9 @@ msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Některé změny se neprojeví, dokud Pitivi znovu nespustíte"
 
 #: data/ui/projectsettings.ui:46 data/ui/renderingprogress.ui:41
-#: pitivi/mainwindow.py:661 pitivi/mainwindow.py:775 pitivi/mainwindow.py:915
-#: pitivi/mainwindow.py:1082 pitivi/mainwindow.py:1130
-#: pitivi/mainwindow.py:1183 pitivi/medialibrary.py:749
+#: pitivi/mainwindow.py:648 pitivi/mainwindow.py:760 pitivi/mainwindow.py:900
+#: pitivi/mainwindow.py:1050 pitivi/mainwindow.py:1098
+#: pitivi/mainwindow.py:1151 pitivi/medialibrary.py:749
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -405,6 +403,14 @@ msgstr "Snímková rychlost:"
 msgid "Video"
 msgstr "Video"
 
+#: data/ui/projectsettings.ui:451 data/ui/renderingdialog.ui:505
+msgid "Channels:"
+msgstr "Kanály:"
+
+#: data/ui/projectsettings.ui:485 data/ui/renderingdialog.ui:614
+msgid "Sample rate:"
+msgstr "Vzorkovací frekvence:"
+
 #. The title of the section with the audio settings
 #: data/ui/projectsettings.ui:529 data/ui/renderingdialog.ui:632
 #: pitivi/effects.py:229
@@ -425,7 +431,7 @@ msgid "Info"
 msgstr "Informace"
 
 #: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:52
-#: pitivi/mainwindow.py:398
+#: pitivi/mainwindow.py:393
 msgid "Render"
 msgstr "Vykreslit"
 
@@ -442,7 +448,7 @@ msgid "Container format:"
 msgstr "Formát kontejneru:"
 
 #: data/ui/renderingdialog.ui:181 data/ui/startupwizard.ui:109
-#: pitivi/mainwindow.py:456
+#: pitivi/mainwindow.py:448
 msgid "Help"
 msgstr "Napověda"
 
@@ -473,6 +479,10 @@ msgstr "Kodek:"
 #: data/ui/renderingdialog.ui:432
 msgid "Framerate"
 msgstr "Snímková rychlost"
+
+#: data/ui/renderingdialog.ui:448
+msgid "Frame rate:"
+msgstr "Snímková rychlost:"
 
 #: data/ui/renderingdialog.ui:656
 msgid "Automatically render from proxy files"
@@ -712,15 +722,31 @@ msgid "- %s version %s is installed but Pitivi requires at least version %s"
 msgstr ""
 "– je nainstalován modul %s verze %s, ale PiTiVi vyžaduje minimálně verzi %s"
 
-#: pitivi/check.py:281
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:185
+#, python-format
+msgid "- %s GStreamer plug-in not found on the system"
+msgstr "– zásuvný modul GStreamer %s nebyl nalezen v systému"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:188
+#, python-format
+msgid ""
+"- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
+"version %s"
+msgstr ""
+"– je nainstalován zásuvný modul Gstreamer %s verze %s, ale Pitivi vyžaduje "
+"minimálně verzi %s"
+
+#: pitivi/check.py:298
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "CHYBA – Následující tvrdé závislosti nejsou splněny:"
 
-#: pitivi/check.py:290
+#: pitivi/check.py:307
 msgid "Missing soft dependency:"
 msgstr "Chybějící měkká závislost:"
 
-#: pitivi/check.py:297
+#: pitivi/check.py:314
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
@@ -728,7 +754,7 @@ msgstr ""
 "CHYBA — Nelze vytvořit Gst.Fraction — to znamená, že není správně "
 "nainstalován gst-python."
 
-#: pitivi/check.py:302
+#: pitivi/check.py:319
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
@@ -736,35 +762,35 @@ msgstr ""
 "Nelze vytvořit cíl zvukového výstupu. Ujistěte se, že máte platný některý z "
 "následujících modulů: pulsesink, alsasink nebo osssink."
 
-#: pitivi/check.py:307
+#: pitivi/check.py:324
 msgid ""
 "Could not create video output sink. Make sure you have a gtksink available."
 msgstr ""
 "Nelze vytvořit cíl obrazového výstupu. Ujistěte se, že je dostupný modul "
 "gtksink."
 
-#: pitivi/check.py:322
+#: pitivi/check.py:339
 #, python-format
 msgid "Could not import '%s'. Make sure you have it available."
 msgstr "Nelze naimportovat „%s“. Ujistěte se, že je k dispozici."
 
-#: pitivi/check.py:352
+#: pitivi/check.py:369
 msgid "Could not import 'gi'. Make sure you have pygobject available."
 msgstr "Nelze naimportovat „gi“. Ujistěte se, že je k dispozici pygobject."
 
-#: pitivi/check.py:439
+#: pitivi/check.py:456
 msgid "enables sound notifications when rendering is complete"
 msgstr "zapne zvukové upozorňování na dokončené vykreslování"
 
-#: pitivi/check.py:441
+#: pitivi/check.py:458
 msgid "enables visual notifications when rendering is complete"
 msgstr "zapne vizuální upozorňování na dokončené vykreslování"
 
-#: pitivi/check.py:443
+#: pitivi/check.py:460
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "dodatečné multimediální kodeky z knihovny GStreamer Libav"
 
-#: pitivi/check.py:445
+#: pitivi/check.py:462
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
@@ -855,91 +881,91 @@ msgstr "Nezařazené"
 msgid "All effects"
 msgstr "Všechny efekty"
 
-#: pitivi/mainwindow.py:242 pitivi/medialibrary.py:545
+#: pitivi/mainwindow.py:237 pitivi/medialibrary.py:545
 msgid "Media Library"
 msgstr "Knihovna multimédií"
 
-#: pitivi/mainwindow.py:244
+#: pitivi/mainwindow.py:239
 msgid "Effect Library"
 msgstr "Knihovna efektů"
 
-#: pitivi/mainwindow.py:255
+#: pitivi/mainwindow.py:250
 msgid "Clip"
 msgstr "Klip"
 
-#: pitivi/mainwindow.py:257
+#: pitivi/mainwindow.py:252
 msgid "Transition"
 msgstr "Přechod"
 
-#: pitivi/mainwindow.py:259
+#: pitivi/mainwindow.py:254
 msgid "Title"
 msgstr "Název"
 
-#: pitivi/mainwindow.py:382
+#: pitivi/mainwindow.py:377
 msgid "Undo"
 msgstr "Zpět"
 
-#: pitivi/mainwindow.py:392 pitivi/mainwindow.py:769 pitivi/mainwindow.py:1083
-#: pitivi/mainwindow.py:1131 pitivi/mainwindow.py:1184 pitivi/preset.py:116
+#: pitivi/mainwindow.py:387 pitivi/mainwindow.py:754 pitivi/mainwindow.py:1051
+#: pitivi/mainwindow.py:1099 pitivi/mainwindow.py:1152 pitivi/preset.py:116
 #: pitivi/project.py:177
 msgid "Save"
 msgstr "Uložit"
 
-#: pitivi/mainwindow.py:400
+#: pitivi/mainwindow.py:395
 msgid "Export your project as a finished movie"
 msgstr "Exportovat váš projekt jako výsledný film"
 
-#: pitivi/mainwindow.py:427
+#: pitivi/mainwindow.py:419
 msgid "Project"
 msgstr "Projekt"
 
-#: pitivi/mainwindow.py:432
+#: pitivi/mainwindow.py:424
 msgid "Save the current project"
 msgstr "Uložit současný projekt"
 
-#: pitivi/mainwindow.py:439
+#: pitivi/mainwindow.py:431
 msgid "Create a new project"
 msgstr "Vytvořit nový projekt"
 
-#: pitivi/mainwindow.py:445
+#: pitivi/mainwindow.py:437
 msgid "Open a project"
 msgstr "Otevřít projekt…"
 
-#: pitivi/mainwindow.py:451
+#: pitivi/mainwindow.py:443
 msgid "Save the current project as"
 msgstr "Uložit současný projekt jako"
 
-#: pitivi/mainwindow.py:462
+#: pitivi/mainwindow.py:454
 msgid "Show the menu button content"
 msgstr "Zobrazit obsah nabídkového tlačítka"
 
-#: pitivi/mainwindow.py:595
+#: pitivi/mainwindow.py:582
 #, python-format
 msgid "Development version: %s"
 msgstr "Vývojová verze: %s"
 
-#: pitivi/mainwindow.py:599
+#: pitivi/mainwindow.py:586
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "Verze %(cur_ver)s — %(new_ver)s je k dispozici"
 
-#: pitivi/mainwindow.py:603
+#: pitivi/mainwindow.py:590
 #, python-format
 msgid "Version %s"
 msgstr "Verze %s"
 
-#: pitivi/mainwindow.py:612
+#: pitivi/mainwindow.py:599
 msgid "Current maintainers:"
 msgstr "Současní správci:"
 
-#: pitivi/mainwindow.py:617
+#: pitivi/mainwindow.py:604
 msgid "Past maintainers:"
 msgstr "Bývalí správci:"
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
 #. below it
-#: pitivi/mainwindow.py:626
+#: pitivi/mainwindow.py:613
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -958,7 +984,7 @@ msgstr ""
 "Proto z respektu vůči přispěvatelům místo toho doporučujeme:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: pitivi/mainwindow.py:633
+#: pitivi/mainwindow.py:620
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
@@ -970,91 +996,91 @@ msgstr ""
 #. Translators: See
 #. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
 #. for details on how this is used.
-#: pitivi/mainwindow.py:640
+#: pitivi/mainwindow.py:627
 msgid "translator-credits"
 msgstr "Marek Černocký <marek@manet.cz>"
 
 #. The user has not made a decision, don't do anything
-#: pitivi/mainwindow.py:658
+#: pitivi/mainwindow.py:645
 msgid "Open File..."
 msgstr "Otevřít soubor…"
 
-#: pitivi/mainwindow.py:662 pitivi/mainwindow.py:916
+#: pitivi/mainwindow.py:649 pitivi/mainwindow.py:901
 msgid "Open"
 msgstr "Otevřít"
 
-#: pitivi/mainwindow.py:678
+#: pitivi/mainwindow.py:665
 msgid "All supported formats"
 msgstr "Všechny podporované formáty"
 
-#: pitivi/mainwindow.py:736
+#: pitivi/mainwindow.py:723
 #, python-format
 msgid "Unable to save project \"%s\""
 msgstr "Nelze uložit projekt „%s“"
 
-#: pitivi/mainwindow.py:771 pitivi/project.py:176
+#: pitivi/mainwindow.py:756 pitivi/project.py:176
 msgid "Save as..."
 msgstr "Uložit jako…"
 
-#: pitivi/mainwindow.py:774
+#: pitivi/mainwindow.py:759
 msgid "Close without saving"
 msgstr "Zavřít bez uložení"
 
-#: pitivi/mainwindow.py:789
+#: pitivi/mainwindow.py:774
 msgid "Save changes to the current project before closing?"
 msgstr "Chcete před zavřením uložit změny v současném projektu?"
 
-#: pitivi/mainwindow.py:802
+#: pitivi/mainwindow.py:787
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "V případě neuložení budou veškeré změny za poslední %s ztraceny"
 
-#: pitivi/mainwindow.py:806
+#: pitivi/mainwindow.py:791
 msgid "If you don't save, your changes will be lost."
 msgstr "V případě neuložení budou veškeré změny ztraceny."
 
-#: pitivi/mainwindow.py:873
+#: pitivi/mainwindow.py:858
 msgid "Revert to saved project version?"
 msgstr "Vrátit se k uložené verzi projektu?"
 
-#: pitivi/mainwindow.py:878
+#: pitivi/mainwindow.py:863
 msgid "This will reload the current project. All unsaved changes will be lost."
 msgstr ""
 "Tímto se znovu načte aktuální projekt. Veškeré neuložené změny budou "
 "ztraceny."
 
-#: pitivi/mainwindow.py:893
+#: pitivi/mainwindow.py:878
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Nelze načíst projekt „%s“"
 
-#: pitivi/mainwindow.py:911
+#: pitivi/mainwindow.py:896
 msgid "Locate missing file..."
 msgstr "Hledat chybějící soubor…"
 
-#: pitivi/mainwindow.py:927
+#: pitivi/mainwindow.py:912
 msgid "The following file could not be found:"
 msgstr "Následující soubor se nezdařilo najít:"
 
-#: pitivi/mainwindow.py:951
+#: pitivi/mainwindow.py:936
 msgid "Please specify its new location:"
 msgstr "Zadejte prosím jeho nové umístění:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
-#: pitivi/mainwindow.py:973
+#: pitivi/mainwindow.py:958
 #, python-format
 msgid "%s files"
 msgstr "Soubory %s"
 
-#: pitivi/mainwindow.py:977 pitivi/medialibrary.py:773
+#: pitivi/mainwindow.py:962 pitivi/medialibrary.py:773
 msgid "All files"
 msgstr "Všechny soubory"
 
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: pitivi/mainwindow.py:1002
+#: pitivi/mainwindow.py:987
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
@@ -1065,32 +1091,32 @@ msgstr ""
 "\n"
 "Pitivi v současnosti nepodporuje neúplné projekty."
 
-#: pitivi/mainwindow.py:1079
+#: pitivi/mainwindow.py:1047
 msgid "Export To..."
 msgstr "Export do…"
 
-#: pitivi/mainwindow.py:1096
+#: pitivi/mainwindow.py:1064
 msgid "Tar archive"
 msgstr "Archiv TAR"
 
-#: pitivi/mainwindow.py:1100 pitivi/mainwindow.py:1146
+#: pitivi/mainwindow.py:1068 pitivi/mainwindow.py:1114
 msgid "Detect automatically"
 msgstr "Rozpoznat automaticky"
 
-#: pitivi/mainwindow.py:1140 pitivi/mainwindow.py:1187 pitivi/project.py:63
+#: pitivi/mainwindow.py:1108 pitivi/mainwindow.py:1155 pitivi/project.py:63
 #: pitivi/render.py:428
 msgid "Untitled"
 msgstr "Nepojmenovaný"
 
-#: pitivi/mainwindow.py:1189
+#: pitivi/mainwindow.py:1157
 msgid "PNG image"
 msgstr "Obrázek PNG"
 
-#: pitivi/mainwindow.py:1190
+#: pitivi/mainwindow.py:1158
 msgid "JPEG image"
 msgstr "Obrázek JPEG"
 
-#: pitivi/mainwindow.py:1231
+#: pitivi/mainwindow.py:1199
 msgid "Preview"
 msgstr "Náhled"
 
@@ -1241,21 +1267,21 @@ msgstr[2] "Následující soubory nemohou být použity v Pitivi."
 msgid "Open containing folder"
 msgstr "Otevřít rodičovskou složku"
 
-#: pitivi/medialibrary.py:1203
+#: pitivi/medialibrary.py:1209
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
 msgstr[0] "Nepoužívat proxy pro vybraný multimediální soubor"
 msgstr[1] "Nepoužívat proxy pro vybrané multimediální soubory"
 msgstr[2] "Nepoužívat proxy pro vybrané multimediální soubory"
 
-#: pitivi/medialibrary.py:1214
+#: pitivi/medialibrary.py:1220
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Smazat související soubor proxy"
 msgstr[1] "Smazat související soubory proxy"
 msgstr[2] "Smazat související soubory proxy"
 
-#: pitivi/medialibrary.py:1225
+#: pitivi/medialibrary.py:1231
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
 msgstr[0] "Používat proxy pro vybraný multimediální soubor"
@@ -1437,11 +1463,11 @@ msgstr ""
 "Zkuste se podívat do naší příručky s popsanými řešeními problémů, nebo "
 "případně chybu nahlaste. Chyba v systému GStreamer byla:"
 
-#: pitivi/render.py:1078 pitivi/render.py:1079 pitivi/render.py:1085
+#: pitivi/render.py:1077 pitivi/render.py:1078 pitivi/render.py:1084
 msgid "Render complete"
 msgstr "Vykreslování dokončeno"
 
-#: pitivi/render.py:1083
+#: pitivi/render.py:1082
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "„%s“ má dokončeno vykreslování."
@@ -1505,23 +1531,23 @@ msgstr ""
 "Vytvořit přechod překrytím dvou sousedních klipů ve stejné vrstvě. Kliknutím "
 "na přechod na časové ose můžete změnit jeho typ."
 
-#: pitivi/transitions.py:238
+#: pitivi/transitions.py:234
 msgid "Slow"
 msgstr "Pomalý"
 
-#: pitivi/transitions.py:240
+#: pitivi/transitions.py:236
 msgid "Fast"
 msgstr "Rychlý"
 
-#: pitivi/transitions.py:242
+#: pitivi/transitions.py:238
 msgid "Epileptic"
 msgstr "Epileptický"
 
-#: pitivi/transitions.py:246
+#: pitivi/transitions.py:242
 msgid "Sharp"
 msgstr "Ostrý"
 
-#: pitivi/transitions.py:248
+#: pitivi/transitions.py:244
 msgid "Smooth"
 msgstr "Plynulý"
 
@@ -1572,7 +1598,7 @@ msgstr "Ukončit režim celé obrazovky"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:382
+#: pitivi/timeline/elements.py:378
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1583,7 +1609,7 @@ msgstr ""
 "Časové razítko: %s\n"
 "Hodnota: %s"
 
-#: pitivi/timeline/elements.py:1264
+#: pitivi/timeline/elements.py:1260
 msgid "Audio crossfade"
 msgstr "Prolnutí zvuku"
 
@@ -1714,7 +1740,7 @@ msgstr "Přeskočit o sekundu zpět"
 msgid "Seek forward one second"
 msgstr "Přeskočit o sekundu vpřed"
 
-#: pitivi/dialogs/clipmediaprops.py:104
+#: pitivi/dialogs/clipmediaprops.py:102
 msgid "Variable"
 msgstr "proměnlivá"
 
@@ -1967,6 +1993,9 @@ msgstr "Zobrazeno %s"
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Zobrazeno %d nanosekund, protože je to možné"
+
+#~ msgid "About"
+#~ msgstr "O aplikaci"
 
 #~ msgid "Project title:"
 #~ msgstr "Název projektu:"
