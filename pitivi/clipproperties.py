@@ -574,7 +574,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._selected_clip = None
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
-        self.set_label(_("Transformation"))
+        self.set_label(_("Video Transformation"))
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -906,6 +906,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.__set_source(None)
         self.hide()
 
+
 class AudioTransformationProperties(Gtk.Expander, Loggable):
     """Widget for configuring the placement and size of the clip."""
 
@@ -917,6 +918,7 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         Loggable.__init__(self)
         self.app = app
         self._project = None
+        self._test_flag = False
         self._selection = None
         self.source = None
         self._selected_clip = None
@@ -964,6 +966,8 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
 
+#        print(self._activate_keyframes_btn.get_active())
+
         self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
         self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
         self._next_keyframe_btn.set_sensitive(False)
@@ -972,12 +976,6 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
-        # self.__setup_spin_button("xpos_spinbtn", "posx")
-        # self.__setup_spin_button("ypos_spinbtn", "posy")
-
-        # self.__setup_spin_button("width_spinbtn", "width")
-        # self.__setup_spin_button("height_spinbtn", "height")
-
         self._mute_button = self.builder.get_object("mute_button")
         self._mute_button.connect("toggled", self._muteVolumeCb)
 
@@ -985,62 +983,60 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
-        # for prop in ["volume"]:
-        #     prop_keyframes = self.__control_bindings[prop].props.control_source.get_all()
-        #     keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
+
+        prop_keyframes = self.__control_bindings["volume"].props.control_source.get_all()
+        keyframes_ts.extend([keyframe.timestamp for keyframe in prop_keyframes])
 
         return sorted(set(keyframes_ts))
 
     def __go_to_keyframe(self, unused_button, next_keyframe):
-        pass
-        # assert self.__control_bindings
-        # start = self.source.props.start
-        # duration = self.source.props.duration
-        # in_point = self.source.props.in_point
-        # pipeline = self._project.pipeline
-        # position = pipeline.getPosition() - start + in_point
-        # seekval = start
+        assert self.__control_bindings
+        start = self.source.props.start
+        duration = self.source.props.duration
+        in_point = self.source.props.in_point
+        pipeline = self._project.pipeline
+        position = pipeline.getPosition() - start + in_point
+        seekval = start
 
-        # if in_point <= position <= in_point + duration:
-        #     keyframes_ts = self.__get_keyframes_timestamps()
+        if in_point <= position <= in_point + duration:
+            keyframes_ts = self.__get_keyframes_timestamps()
 
-        #     for i in range(1, len(keyframes_ts)):
-        #         if keyframes_ts[i - 1] <= position <= keyframes_ts[i]:
-        #             prev_kf_ts = keyframes_ts[i - 1]
-        #             kf_ts = keyframes_ts[i]
-        #             if next_keyframe:
-        #                 if kf_ts == position:
-        #                     try:
-        #                         kf_ts = keyframes_ts[i + 1]
-        #                     except IndexError:
-        #                         pass
-        #                 seekval = kf_ts + start - in_point
-        #             else:
-        #                 seekval = prev_kf_ts + start - in_point
-        #             break
-        # if position > in_point + duration:
-        #     seekval = start + duration
-        # pipeline.simple_seek(seekval)
+            for i in range(1, len(keyframes_ts)):
+                if keyframes_ts[i - 1] <= position <= keyframes_ts[i]:
+                    prev_kf_ts = keyframes_ts[i - 1]
+                    kf_ts = keyframes_ts[i]
+                    if next_keyframe:
+                        if kf_ts == position:
+                            try:
+                                kf_ts = keyframes_ts[i + 1]
+                            except IndexError:
+                                pass
+                        seekval = kf_ts + start - in_point
+                    else:
+                        seekval = prev_kf_ts + start - in_point
+                    break
+        if position > in_point + duration:
+            seekval = start + duration
+        pipeline.simple_seek(seekval)
 
     def __show_keyframes_toggled_cb(self, unused_button):
-        pass
-        # if self._activate_keyframes_btn.props.active:
-        #     self.__set_control_bindings()
-        # self.__update_keyframes_ui()
+        if self._activate_keyframes_btn.props.active:
+            self.__set_control_bindings()
+        # if self._test_flag:
+        #     self._activate_keyframe_btn.props.active = True
+        self.__update_keyframes_ui()
 
     def __update_keyframes_ui(self):
-        if self.__source_uses_keyframes():
+        if self._activate_keyframes_btn.get_active() or self._test_flag:
             self._activate_keyframes_btn.props.label = "◆"
+            self._test_flag = True
         else:
             self._activate_keyframes_btn.props.label = "◇"
-            self._activate_keyframes_btn.props.active = False
-
-        print("Inside keyfames ui..")
 
         if not self._activate_keyframes_btn.props.active:
             self._prev_keyframe_btn.set_sensitive(False)
             self._next_keyframe_btn.set_sensitive(False)
-            if self.__source_uses_keyframes():
+            if self._test_flag:
                 self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
             else:
                 self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
@@ -1053,24 +1049,12 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
                 list(self.__control_bindings.values()))
 
     def __update_control_bindings(self):
-        pass
         self.__control_bindings = {}
-        if self.__source_uses_keyframes():
+        if self._activate_keyframes_btn.get_active():
             self.__set_control_bindings()
 
-    def __source_uses_keyframes(self):
-        return False
-        if self.source is None:
-            return False
-
-        #Since, volume already has its lines shown, no need to check
-        #Its always gonna return True.
-        for prop in ["volume"]:
-            binding = self.source.get_control_binding(prop)
-            if binding is None:
-                return False
-
-        return True
+    # def __source_uses_keyframes(self):
+    #     return True
 
     def __remove_control_bindings(self):
         for propname, binding in self.__control_bindings.items():
@@ -1087,25 +1071,24 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         self.__control_bindings = {}
 
     def __set_control_bindings(self):
-        adding_kfs = not self.__source_uses_keyframes()
+        adding_kfs = not self._activate_keyframes_btn.get_active()
 
         if adding_kfs:
             self.app.action_log.begin("Transformation properties keyframes activate",
                                       toplevel=True)
 
-        for prop in ["volume"]:
-            binding = self.source.get_control_binding(prop)
+        binding = self.source.get_control_binding("volume")
 
-            if not binding:
-                control_source = GstController.InterpolationControlSource()
-                control_source.props.mode = GstController.InterpolationMode.LINEAR
-                self.__own_bindings_change = True
-                self.source.set_control_source(control_source, prop, "direct-absolute")
-                self.__own_bindings_change = False
-                self.__set_default_keyframes_values(control_source, prop)
+        if not binding:
+            control_source = GstController.InterpolationControlSource()
+            control_source.props.mode = GstController.InterpolationMode.LINEAR
+            self.__own_bindings_change = True
+            self.source.set_control_source(control_source, "volume", "direct-absolute")
+            self.__own_bindings_change = False
+            self.__set_default_keyframes_values(control_source, "volume")
 
-                binding = self.source.get_control_binding(prop)
-            self.__control_bindings[prop] = binding
+            binding = self.source.get_control_binding("volume")
+        self.__control_bindings["volume"] = binding
 
         if adding_kfs:
             self.app.action_log.commit("Transformation properties keyframes activate")
@@ -1120,22 +1103,21 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         with self.app.action_log.started("Transformation properties reset default",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            if self.__source_uses_keyframes():
-                print("Yes..it uses keyframes..")
+            # if self._activate_keyframes_btn.get_active():
+            if self._test_flag:
                 self.__remove_control_bindings()
-
-            # for prop in ["volume", "mute"]:
-            #     self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
             self.source.set_child_property("volume", float(1.00))
             self.source.set_child_property("mute", False)
             self._mute_button.set_active(False)
+            self._activate_keyframes_btn.props.active = False
+            self._test_flag = False
 
         self.__update_keyframes_ui()
 
     def __get_source_property(self, prop):
         # except mute, all others need keyframes.
-        if self.__source_uses_keyframes() and prop != "mute":
+        if self._activate_keyframes_btn.get_active() and prop != "mute":
             try:
                 position = self._project.pipeline.getPosition()
                 start = self.source.props.start
@@ -1154,10 +1136,9 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         return self.source.get_child_property(prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
-        if not self.__source_uses_keyframes():
+        if not self._activate_keyframes_btn.get_active():
             return
-#        for prop in ["posx", "posy", "width", "height"]:
-#            self.__update_spin_btn(prop)
+
         self.__update_spin_btn("volume")
         # Keep the overlay stack in sync with the spin buttons values
 #        self.app.gui.editor.viewer.overlay_stack.update(self.source)
@@ -1170,20 +1151,16 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
             return
         assert self.source
 
-        print("I am called :( ")
-
         try:
             spin = self.spin_buttons[prop]
             spin_handler_id = self.spin_buttons_handler_ids[prop]
         except KeyError:
-            print("I am returning this: ")
             return
 
         res, value = self.__get_source_property(prop)
 
         assert res
         if spin.get_value() != value:
-            print("spin value: " + str(spin.get_value()) + " Actual: " + str(value))            
             # Make sure self._onValueChangedCb doesn't get called here. If that
             # happens, we might have unintended keyframes added.
             with spin.handler_block(spin_handler_id):
@@ -1199,13 +1176,8 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
 
     def __set_prop(self, prop, value):
         assert self.source
-        # print("Property is " + str(prop) + " and value is: " + str(value))
-        # with self.app.action_log.started("Transformation property change",
-        #                                  finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-        #                                  toplevel=True):
-        #     assert self.source.set_child_property(prop, value)
-#        TODO: check what happens if we remove prop!=mute
-        if self.__source_uses_keyframes():
+        # TODO: Check for mute case.
+        if self._activate_keyframes_btn.get_active() and prop != "mute":
             try:
                 position = self._project.pipeline.getPosition()
                 start = self.source.props.start
@@ -1228,8 +1200,6 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
                 self.source.set_child_property(prop, value)
-                #self._project.pipeline.commit_timeline()                
-        
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -1251,7 +1221,8 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
 
         if value != cvalue:
             self.__set_prop(prop, value)
-#            self.app.gui.editor.viewer.overlay_stack.update(self.source)
+
+        # print(type(value), value, type(cvalue), cvalue, self.__get_source_property(prop))
 
     def _muteVolumeCb(self, unused_widget):
         if not self.source:
@@ -1267,6 +1238,7 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
             self.__set_prop("mute", value)
 
     def __set_source(self, source):
+        self._test_flag = False
         if self.source:
             try:
                 self.source.disconnect_by_func(self.__source_property_changed_cb)
@@ -1276,9 +1248,9 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
         self.source = source
         if self.source:
             self.__update_control_bindings()
-            for prop in ["volume"]:
-                self.__update_spin_btn(prop)
-            #self.__update_keyframes_ui()
+            self.__update_spin_btn("volume")
+            # TODO: check what happens if below line is uncommented.
+            self.__update_keyframes_ui()
             self.source.connect("deep-notify", self.__source_property_changed_cb)
 
     def _selectionChangedCb(self, unused_timeline):
@@ -1289,9 +1261,8 @@ class AudioTransformationProperties(Gtk.Expander, Loggable):
                 self._selected_clip = clip
                 self.__set_source(source)
                 # If it had been video, changing x and y should also change
-                #the appearance thing on the right. But for volume no need.
-                #Thats the reasoning for commenting this out.
-                #self.app.gui.editor.viewer.overlay_stack.select(source)
+                # the appearance thing on the right. But for volume no need.
+                # Thats the reasoning for commenting this out.
                 self.show()
                 return
 
