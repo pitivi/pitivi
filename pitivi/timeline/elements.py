@@ -78,7 +78,7 @@ def get_pspec(element_factory_name, propname):
 class KeyframeCurve(FigureCanvas, Loggable):
     YLIM_OVERRIDES = {}
 
-    __YLIM_OVERRIDES_VALUES = [("volume", "volume", (0.0, 0.2))]
+    __YLIM_OVERRIDES_VALUES = [("volume", "volume", (0.0, 1.0))]
 
     for factory_name, propname, values in __YLIM_OVERRIDES_VALUES:
         pspec = get_pspec(factory_name, propname)
