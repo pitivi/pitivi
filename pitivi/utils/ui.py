@@ -71,6 +71,8 @@ FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)
 EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, 0)
 
+TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD, Gdk.InputSource.TRACKPOINT, Gdk.InputSource.TABLET_PAD)
+
 
 def get_month_format_string():
     """Returns the appropriate format string for month name in time.strftime() function."""

@@ -59,6 +59,7 @@ from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import SNAPBAR_COLOR
 from pitivi.utils.ui import SNAPBAR_WIDTH
 from pitivi.utils.ui import SPACING
+from pitivi.utils.ui import TOUCH_INPUT_SOURCES
 from pitivi.utils.ui import unset_children_state_recurse
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
@@ -591,14 +592,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 return False
 
         event_widget = Gtk.get_event_widget(event)
-        if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
-            if delta_y > 0:
-                # Scroll down.
-                self.__scroll_adjustment(self.vadj, 1)
-            elif delta_y < 0:
-                # Scroll up.
-                self.__scroll_adjustment(self.vadj, -1)
-        elif event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
+        if event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
                                   Gdk.ModifierType.MOD1_MASK):
             # Zoom.
             x, unused_y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
@@ -616,13 +610,20 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # Scroll so position remains in place.
             x, unused_y = event_widget.translate_coordinates(self.layout, event.x, event.y)
             self.hadj.set_value(self.nsToPixel(position) - x)
+            return False
+
+        device = event.get_source_device() or event.device
+        if device and device.get_source() in TOUCH_INPUT_SOURCES:
+            scroll_x = delta_x
+            scroll_y = delta_y
         else:
-            if delta_y > 0:
-                # Scroll right.
-                self.__scroll_adjustment(self.hadj, 1)
-            else:
-                # Scroll left.
-                self.__scroll_adjustment(self.hadj, -1)
+            scroll_x = delta_y
+            scroll_y = 0
+            if event.get_state() & Gdk.ModifierType.SHIFT_MASK:
+                scroll_x, scroll_y = scroll_y, scroll_x
+
+        self.__scroll_adjustment(self.hadj, scroll_x)
+        self.__scroll_adjustment(self.vadj, scroll_y)
 
         return False
 
