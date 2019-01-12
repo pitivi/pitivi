@@ -4,7 +4,6 @@ stages:
   - deploy
 
 variables:
-  BUNDLE: "pitivi.flatpak"
   MANIFEST: build/flatpak/org.pitivi.Pitivi.json
   DBUS_ID: org.pitivi.Pitivi
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
@@ -27,20 +26,18 @@ build:
     - mkdir -p ${CI_PROJECT_DIR}
 
     - cd ${BUILDDIR}
-    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=repo --force-clean app build/flatpak/org.pitivi.Pitivi.json
+    - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi master" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs
-
-    - flatpak build-bundle repo ${CI_PROJECT_DIR}/${BUNDLE} --runtime-repo=${RUNTIME} ${DBUS_ID} ${BRANCH}
-    - ls -hls
+    - du -h --max-depth=1 ${CI_PROJECT_DIR}/repo
   cache:
     paths:
     - flatpak-cache
   artifacts:
     expire_in: 30 days
     paths:
-    - ${BUNDLE}
+    - repo/
     - tests-logs/
     reports:
       junit:
@@ -51,7 +48,10 @@ deploy:
     - PitiviBuildMachine
   stage: deploy
   script:
-    - flatpak build-import-bundle /srv/http/ ${BUNDLE}
+    - ostree gpg-sign app/org.pitivi.Pitivi/x86_64/master 739E841A
+    - export BUILT_REPO=$PWD/repo/
+    - cd /srv/http/
+    - ostree pull-local $BUILT_REPO app/org.pitivi.Pitivi/x86_64/master
   only:
     - master@GNOME/pitivi
     - 1.0@GNOME/pitivi
