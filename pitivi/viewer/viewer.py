@@ -580,6 +580,12 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         self.videowidth = project.videowidth
         self.videoheight = project.videoheight
 
+        self.snaps = []
+        for divisor in (16, 8, 4, 2):
+            if self.videowidth % divisor == 0 and self.videoheight % divisor == 0:
+                self.snaps.append(1 / divisor)
+        self.snaps += list(range(1, 10))
+
     def do_get_preferred_width(self):
         minimum, unused_natural = Gtk.AspectFrame.do_get_preferred_width(self)
         # Do not let a chance for Gtk to choose video natural size
@@ -609,7 +615,7 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
 
         # See if we want to snap the size of the child widget.
         snap = 0
-        for scale in (0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+        for scale in self.snaps:
             if scale < current_scale < scale + 0.05:
                 snap = scale
                 break
