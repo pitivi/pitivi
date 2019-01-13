@@ -138,7 +138,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.create_sink()
 
         self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
-        self.target = ViewerWidget(self.overlay_stack, project=self.app.project_manager.current_project)
+        self.target = ViewerWidget(self.overlay_stack)
 
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
@@ -344,12 +344,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.forward_button.hide()
         self._compactMode = True  # Prevent set_size_request later
 
-    def update_aspect_ratio(self, project):
-        ratio = project.getDAR()
-        self.debug("Updating aspect ratio to %f [%r]", float(ratio), ratio)
-        self.target.ratio = ratio
-        self.target.project = project
-
     def _entryActivateCb(self, unused_entry):
         nanoseconds = self.timecode_entry.getWidgetValue()
         self.app.project_manager.current_project.pipeline.simple_seek(nanoseconds)
@@ -551,33 +545,40 @@ class ViewerContainer(Gtk.Box, Loggable):
 
 
 class ViewerWidget(Gtk.AspectFrame, Loggable):
-    """Widget for displaying a video sink.
+    """Container responsible with enforcing the aspect ratio.
 
     Args:
-        widget (Gtk.Widget): The child widget doing the real work.
-        project (Optional[pitivi.project.Project]): The project providing
-            a video width and height used for snapping the viewer size.
+        video_widget (Gtk.Widget): The child widget doing the real work.
+            Can be an OverlayStack or a sink widget.
     """
 
-    def __init__(self, widget, project=None):
-        # Prevent black frames and flickering while resizing or changing focus:
+    def __init__(self, video_widget):
         Gtk.AspectFrame.__init__(self, xalign=0.5, yalign=0.5, ratio=4 / 3,
                                  border_width=SPACING, obey_child=False)
         Loggable.__init__(self)
+
+        # The width and height used when snapping the child widget size.
+        self.videowidth = 0
+        self.videoheight = 0
 
         # Set the shadow to None, otherwise it will take space and the
         # child widget size snapping will be a bit off.
         self.set_shadow_type(Gtk.ShadowType.NONE)
 
-        # The width and height used when snapping the child widget size.
-        self.videowidth = project.videowidth if project else 0
-        self.videoheight = project.videoheight if project else 0
-
-        self.add(widget)
+        self.add(video_widget)
 
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
         self.hide()
+
+    def update_aspect_ratio(self, project):
+        """Forces the DAR of the project on the child widget."""
+        ratio_fraction = project.getDAR()
+        self.debug("Updating aspect ratio to %r", ratio_fraction)
+        self.props.ratio = float(ratio_fraction)
+
+        self.videowidth = project.videowidth
+        self.videoheight = project.videoheight
 
     def do_get_preferred_width(self):
         minimum, unused_natural = Gtk.AspectFrame.do_get_preferred_width(self)
@@ -599,20 +600,20 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         if not self.videowidth:
             return
 
-        # Calculate the percent of the project size using w/h,
-        # whichever gives a higher precision.
-        if self.props.ratio > 1:
-            percent = allocation.width / self.project.videowidth
+        # Calculate the current scale of the displayed video
+        # using width or height, whichever gives a higher precision.
+        if self.videowidth > self.videoheight:
+            current_scale = allocation.width / self.videowidth
         else:
-            percent = allocation.height / self.height
+            current_scale = allocation.height / self.videoheight
 
         # See if we want to snap the size of the child widget.
         snap = 0
-        for mark in (0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
-            if mark < percent < mark + 0.05:
-                snap = mark
+        for scale in (0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+            if scale < current_scale < scale + 0.05:
+                snap = scale
                 break
-            if percent < mark:
+            if current_scale < scale:
                 break
         if snap:
             allocation.width = self.videowidth * snap
