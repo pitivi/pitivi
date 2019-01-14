@@ -280,7 +280,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.undock_button = Gtk.ToolButton()
         self.undock_button.set_icon_name("view-restore")
-        self.undock_button.connect("clicked", self.undock)
+        self.undock_button.connect("clicked", self.undock_cb)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
         bbox.pack_start(self.undock_button, False, False, 0)
@@ -393,9 +393,12 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
             align=Gtk.Align.CENTER, when_not_in_view=True)
 
+    def undock_cb(self, unused_widget):
+        self.undock()
+
     # Public methods for controlling playback
 
-    def undock(self, *unused_widget):
+    def undock(self):
         if not self.docked:
             self.warning("The viewer is already undocked")
             return
