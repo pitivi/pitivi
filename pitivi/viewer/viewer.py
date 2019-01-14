@@ -405,10 +405,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = False
         self.settings.viewerDocked = False
-        self.overlay_stack.enable_resize_status(False)
         self.remove(self.buttons_container)
         position = None
         if self.pipeline:
+            self.overlay_stack.enable_resize_status(False)
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
@@ -446,10 +446,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.docked = True
         self.settings.viewerDocked = True
-        self.overlay_stack.enable_resize_status(False)
 
         position = None
         if self.pipeline:
+            self.overlay_stack.enable_resize_status(False)
             position = self.pipeline.getPosition()
             self.pipeline.setState(Gst.State.NULL)
             self.external_vbox.remove(self.target)
