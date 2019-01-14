@@ -135,9 +135,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.pause()
 
     def __createNewViewer(self):
-        self.pipeline.create_sink()
+        _, sink_widget = self.pipeline.create_sink()
 
-        self.overlay_stack = OverlayStack(self.app, self.pipeline.sink_widget)
+        self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
 
         if self.docked:
