@@ -101,21 +101,26 @@ class SimplePipeline(GObject.Object, Loggable):
         self._timeout_async_id = 0
         self._force_position_listener = False
 
-        self.video_sink = None
-        self.sink_widget = None
-
     def create_sink(self):
-        sink = Gst.ElementFactory.make(videosink_factory.get_name(), None)
-        self.sink_widget = sink.props.widget
+        """Creates a video sink and a widget for displaying it.
 
-        if videosink_factory.get_name() == "gtksink":
+        Returns:
+            (Gst.Element, Gtk.Widget): An element of type Gst.ElementFlags.SINK
+            and a widget connected to it.
+        """
+        factory_name = videosink_factory.get_name()
+        sink = Gst.ElementFactory.make(factory_name, None)
+        widget = sink.props.widget
+
+        if factory_name == "gtksink":
             self.info("Using gtksink")
-            self.video_sink = sink
+            video_sink = sink
         else:
             self.info("Using glsinkbin around %s", videosink_factory.get_name())
-            sinkbin = Gst.ElementFactory.make("glsinkbin", None)
-            sinkbin.props.sink = sink
-            self.video_sink = sinkbin
+            video_sink = Gst.ElementFactory.make("glsinkbin", None)
+            video_sink.props.sink = sink
+
+        return video_sink, widget
 
     def setForcePositionListener(self, force):
         self._force_position_listener = force
@@ -507,15 +512,15 @@ class AssetPipeline(SimplePipeline):
         ges_pipeline = Gst.ElementFactory.make("playbin", name)
         SimplePipeline.__init__(self, ges_pipeline)
 
-        self.create_sink()
-
         self.clip = clip
         if self.clip:
             self.setClipUri(self.clip.props.uri)
 
     def create_sink(self):
-        SimplePipeline.create_sink(self)
-        self._pipeline.set_property("video_sink", self.video_sink)
+        video_sink, sink_widget = SimplePipeline.create_sink(self)
+        self._pipeline.set_property("video_sink", video_sink)
+
+        return video_sink, sink_widget
 
     def setClipUri(self, uri):
         self._pipeline.set_property("uri", uri)
@@ -546,8 +551,9 @@ class Pipeline(GES.Pipeline, SimplePipeline):
                 self.props.audio_filter = watchdog
 
     def create_sink(self):
-        SimplePipeline.create_sink(self)
-        self._pipeline.preview_set_video_sink(self.video_sink)
+        video_sink, sink_widget = SimplePipeline.create_sink(self)
+        self._pipeline.preview_set_video_sink(video_sink)
+        return video_sink, sink_widget
 
     def set_mode(self, mode):
         self._next_seek = None
