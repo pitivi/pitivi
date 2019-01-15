@@ -702,6 +702,7 @@ class RenderDialog(Loggable):
             # This happens when the window is initialized.
             return
         warning_icon = "dialog-warning"
+        blacklist = ["%", "/"]
         filename = self.fileentry.get_text()
         if not filename:
             tooltip_text = _("A file name is required.")
@@ -709,6 +710,8 @@ class RenderDialog(Loggable):
             tooltip_text = _("This file already exists.\n"
                              "If you don't want to overwrite it, choose a "
                              "different file name or folder.")
+        elif any(ch in blacklist for ch in filename):
+            tooltip_text = _("Invalid")
         else:
             warning_icon = None
             tooltip_text = None
