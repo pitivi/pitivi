@@ -84,6 +84,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         Loggable.__init__(self)
         self.log("New ViewerContainer")
 
+        self.project = None
         self.pipeline = None
         self.docked = True
         self.target = None
@@ -103,6 +104,30 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.__cursor = None
         self.__translation = None
+
+        pm = self.app.project_manager
+        pm.connect("new-project-loaded", self._project_manager_new_project_loaded_cb)
+        pm.connect("project-closed", self._projectManagerProjectClosedCb)
+
+    def _project_manager_new_project_loaded_cb(self, unused_project_manager, project):
+        project.connect("rendering-settings-changed",
+                        self._project_rendering_settings_changed_cb)
+        self.project = project
+        self.setPipeline(project.pipeline)
+
+    def _projectManagerProjectClosedCb(self, unused_project_manager, project):
+        if self.project == project:
+            project.disconnect_by_func(self._project_rendering_settings_changed_cb)
+        self.project = None
+
+    def _project_rendering_settings_changed_cb(self, project, unused_item):
+        """Handles Project metadata changes."""
+        self._reset_viewer_aspect_ratio(project)
+
+    def _reset_viewer_aspect_ratio(self, project):
+        """Resets the viewer aspect ratio."""
+        self.target.update_aspect_ratio(project)
+        self.timecode_entry.setFramerate(project.videorate)
 
     def setPipeline(self, pipeline, position=None):
         """Sets the displayed pipeline.
@@ -139,6 +164,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
+        self._reset_viewer_aspect_ratio(self.project)
 
         if self.docked:
             self.pack_start(self.target, expand=True, fill=True, padding=0)
