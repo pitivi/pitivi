@@ -703,12 +703,18 @@ class RenderDialog(Loggable):
             return
         warning_icon = "dialog-warning"
         filename = self.fileentry.get_text()
+        # Characters that cause pipeline failure.
+        blacklist = ["/"]
+        invalid_chars = "".join([ch for ch in blacklist
+                         if ch in filename])
         if not filename:
             tooltip_text = _("A file name is required.")
         elif filename and os.path.exists(os.path.join(path, filename)):
             tooltip_text = _("This file already exists.\n"
                              "If you don't want to overwrite it, choose a "
                              "different file name or folder.")
+        elif invalid_chars:
+            tooltip_text = _("Remove invalid characters from the filename:%s" % invalid_chars)
         else:
             warning_icon = None
             tooltip_text = None
