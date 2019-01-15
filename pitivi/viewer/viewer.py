@@ -86,19 +86,15 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.project = None
         self.pipeline = None
+        self.trim_pipeline = None
         self.docked = True
         self.target = None
         self._compactMode = False
-
-        # Only used for restoring the pipeline position after a live clip trim
-        # preview:
-        self._oldTimelinePos = None
 
         self._haveUI = False
 
         self._createUi()
 
-        self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
 
@@ -150,7 +146,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.connect("position", self._positionCb)
         self.pipeline.connect("duration-changed", self._durationChangedCb)
 
-        self.__owning_pipeline = False
         self.__createNewViewer()
         self._setUiActive()
 
@@ -159,7 +154,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pipeline.pause()
 
     def __createNewViewer(self):
-        _, sink_widget = self.pipeline.create_sink()
+        _, sink_widget = self.project.pipeline.create_sink()
 
         self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
@@ -178,17 +173,13 @@ class ViewerContainer(Gtk.Box, Loggable):
         GLib.timeout_add(1000, self.__viewer_realization_done_cb, None)
 
     def _disconnectFromPipeline(self):
-        if self.pipeline is None:
-            # silently return, there's nothing to disconnect from
+        if not self.pipeline:
             return
 
         self.debug("Disconnecting from: %r", self.pipeline)
         self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
         self.pipeline.disconnect_by_func(self._positionCb)
         self.pipeline.disconnect_by_func(self._durationChangedCb)
-
-        if self.__owning_pipeline:
-            self.pipeline.release()
         self.pipeline = None
 
     def _setUiActive(self, active=True):
@@ -517,34 +508,34 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.log("Not previewing trim for image or title clip: %s", clip)
             return False
 
-        clip_uri = clip.props.uri
-        cur_time = time()
-        if self.pipeline == self.app.project_manager.current_project.pipeline:
-            self.debug("Creating temporary pipeline for clip %s, position %s",
-                       clip_uri, format_ns(position))
-            self._oldTimelinePos = self.pipeline.getPosition(False)
-            self.pipeline.set_state(Gst.State.NULL)
-            self.setPipeline(AssetPipeline(clip))
-            self.__owning_pipeline = True
-            self._lastClipTrimTime = cur_time
+        if self.pipeline.getState == Gst.State.PLAYING:
+            self.pipeline.setState(Gst.State.NULL)
 
-        if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:
-            # Do not seek more than once every 200 ms (for performance)
-            self.pipeline.simple_seek(position)
-            self._lastClipTrimTime = cur_time
+        if self.trim_pipeline and clip is not self.trim_pipeline.clip:
+            self.trim_pipeline.setState(Gst.State.NULL)
+            self.trim_pipeline = None
+
+        if not self.trim_pipeline:
+            self.debug("Creating temporary pipeline for clip %s, position %s",
+                       clip.props.uri, format_ns(position))
+            self.trim_pipeline = AssetPipeline(clip)
+            video_sink, sink_widget = self.trim_pipeline.create_sink()
+            self.trim_pipeline.setState(Gst.State.PAUSED)
+            self.target.switch_widget(sink_widget)
+
+        print (1111, position)
+        self.trim_pipeline.simple_seek(position)
 
     def clipTrimPreviewFinished(self):
-        """Switches back to the project pipeline following a clip trimming."""
-        if self.pipeline is not self.app.project_manager.current_project.pipeline:
-            self.debug("Going back to the project's pipeline")
-            self.pipeline.setState(Gst.State.NULL)
-            # Using pipeline.getPosition() here does not work because for some
-            # reason it's a bit off, that's why we need self._oldTimelinePos.
-            self.setPipeline(
-                self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
-            self._oldTimelinePos = None
+        """Brings back the main viewer, following a clip trimming."""
+        if not self.trim_pipeline:
+            return
 
-    def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
+        self.target.switch_widget(self.overlay_stack)
+        self.trim_pipeline.setState(Gst.State.NULL)
+        self.trim_pipeline = None
+
+    def _pipelineStateChangedCb(self, pipeline, state, old_state):
         """Updates the widgets when the playback starts or stops."""
         if state == Gst.State.PLAYING:
             st = Gst.Structure.new_empty("play")
@@ -558,8 +549,8 @@ class ViewerContainer(Gtk.Box, Loggable):
                 if old_state != Gst.State.PAUSED:
                     st = Gst.Structure.new_empty("pause")
                     if old_state == Gst.State.PLAYING:
-                        st.set_value("playback_time",
-                                     self.pipeline.getPosition() / Gst.SECOND)
+                        position_seconds = pipeline.getPosition() / Gst.SECOND
+                        st.set_value("playback_time", position_seconds)
                     self.app.write_action(st)
 
                 self.playpause_button.setPlay()
@@ -593,6 +584,14 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
         self.hide()
+
+    def switch_widget(self, widget):
+        child = self.get_child()
+        if child:
+            self.remove(child)
+        print ("switch", child, "with", widget)
+        widget.show_all()
+        self.add(widget)
 
     def update_aspect_ratio(self, project):
         """Forces the DAR of the project on the child widget."""
