@@ -644,8 +644,6 @@ class EditorPerspective(Perspective, Loggable):
 
     def _connectToProject(self, project):
         project.connect("project-changed", self._projectChangedCb)
-        project.connect("rendering-settings-changed",
-                        self._rendering_settings_changed_cb)
         project.ges_timeline.connect("notify::duration",
                                      self._timelineDurationChangedCb)
 
@@ -659,8 +657,6 @@ class EditorPerspective(Perspective, Loggable):
             self.warning("Current project instance does not exist")
             return False
 
-        self.viewer.setPipeline(project.pipeline)
-        self._reset_viewer_aspect_ratio(project)
         self.clipconfig.project = project
 
         # When creating a blank project there's no project URI yet.
@@ -670,17 +666,7 @@ class EditorPerspective(Perspective, Loggable):
 
     def _disconnectFromProject(self, project):
         project.disconnect_by_func(self._projectChangedCb)
-        project.disconnect_by_func(self._rendering_settings_changed_cb)
         project.ges_timeline.disconnect_by_func(self._timelineDurationChangedCb)
-
-    def _rendering_settings_changed_cb(self, project, unused_item):
-        """Handles Project metadata changes."""
-        self._reset_viewer_aspect_ratio(project)
-
-    def _reset_viewer_aspect_ratio(self, project):
-        """Resets the viewer aspect ratio."""
-        self.viewer.target.update_aspect_ratio(project)
-        self.viewer.timecode_entry.setFramerate(project.videorate)
 
     def _timelineDurationChangedCb(self, timeline, unused_duration):
         """Updates the render button.
