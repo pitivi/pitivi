@@ -168,7 +168,6 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _setUiActive(self, active=True):
         self.debug("active %r", active)
-        self.set_sensitive(active)
         if self._haveUI:
             for item in [self.goToStart_button, self.back_button,
                          self.playpause_button, self.forward_button,
@@ -357,10 +356,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     # Active Timeline calllbacks
     def _durationChangedCb(self, unused_pipeline, duration):
-        if duration == 0:
-            self._setUiActive(False)
-        else:
-            self._setUiActive(True)
+        self._setUiActive(duration > 0)
 
     def _playButtonCb(self, unused_button, unused_playing):
         self.app.project_manager.current_project.pipeline.togglePlayback()
@@ -493,8 +489,7 @@ class ViewerContainer(Gtk.Box, Loggable):
     def clipTrimPreview(self, clip, position):
         """Shows a live preview of a clip being trimmed."""
         if not hasattr(clip, "get_uri") or isinstance(clip, GES.TitleClip) or clip.props.is_image:
-            self.log(
-                "%s is an image or has no URI, so not previewing trim" % clip)
+            self.log("Not previewing trim for image or title clip: %s", clip)
             return False
 
         clip_uri = clip.props.uri
