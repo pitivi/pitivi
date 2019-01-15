@@ -27,7 +27,6 @@ from gi.repository import Gtk
 
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import format_ns
 from pitivi.utils.pipeline import AssetPipeline
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import TimeWidget
@@ -84,20 +83,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.log("New ViewerContainer")
 
         self.project = None
-        self.pipeline = None
+        self.trim_pipeline = None
         self.docked = True
         self.target = None
         self._compactMode = False
-
-        # Only used for restoring the pipeline position after a live clip trim
-        # preview:
-        self._oldTimelinePos = None
 
         self._haveUI = False
 
         self._createUi()
 
-        self.__owning_pipeline = False
         if not self.settings.viewerDocked:
             self.undock()
 
@@ -111,8 +105,7 @@ class ViewerContainer(Gtk.Box, Loggable):
     def _project_manager_new_project_loaded_cb(self, unused_project_manager, project):
         project.connect("rendering-settings-changed",
                         self._project_rendering_settings_changed_cb)
-        self.project = project
-        self.setPipeline(project.pipeline)
+        self.set_project(project)
 
     def _projectManagerProjectClosedCb(self, unused_project_manager, project):
         if self.project == project:
@@ -128,16 +121,13 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.target.update_aspect_ratio(project)
         self.timecode_entry.setFramerate(project.videorate)
 
-    def setPipeline(self, pipeline, position=None):
-        """Sets the displayed pipeline.
-
-        Properly switches the currently set action to that new Pipeline.
+    def set_project(self, project):
+        """Sets the displayed project.
 
         Args:
-            pipeline (Pipeline): The Pipeline to switch to.
-            position (Optional[int]): The position to seek to initially.
+            project (Project): The Project to switch to.
         """
-        self.debug("Setting pipeline: %r", pipeline)
+        self.debug("Setting project: %r", project)
         self._disconnectFromPipeline()
 
         if self.target:
@@ -145,21 +135,20 @@ class ViewerContainer(Gtk.Box, Loggable):
             if parent:
                 parent.remove(self.target)
 
-        self.pipeline = pipeline
-        self.pipeline.connect("state-change", self._pipelineStateChangedCb)
-        self.pipeline.connect("position", self._positionCb)
-        self.pipeline.connect("duration-changed", self._durationChangedCb)
+        project.pipeline.connect("state-change", self._pipelineStateChangedCb)
+        project.pipeline.connect("position", self._positionCb)
+        project.pipeline.connect("duration-changed", self._durationChangedCb)
+        self.project = project
 
-        self.__owning_pipeline = False
         self.__createNewViewer()
         self._setUiActive()
 
-        if position:
-            self.pipeline.simple_seek(position)
-        self.pipeline.pause()
+        # This must be done at the end, otherwise the created sink widget
+        # appears in a separate window.
+        project.pipeline.pause()
 
     def __createNewViewer(self):
-        _, sink_widget = self.pipeline.create_sink()
+        _, sink_widget = self.project.pipeline.create_sink()
 
         self.overlay_stack = OverlayStack(self.app, sink_widget)
         self.target = ViewerWidget(self.overlay_stack)
@@ -178,18 +167,14 @@ class ViewerContainer(Gtk.Box, Loggable):
         GLib.timeout_add(1000, self.__viewer_realization_done_cb, None)
 
     def _disconnectFromPipeline(self):
-        if self.pipeline is None:
-            # silently return, there's nothing to disconnect from
+        if self.project is None:
             return
 
-        self.debug("Disconnecting from: %r", self.pipeline)
-        self.pipeline.disconnect_by_func(self._pipelineStateChangedCb)
-        self.pipeline.disconnect_by_func(self._positionCb)
-        self.pipeline.disconnect_by_func(self._durationChangedCb)
-
-        if self.__owning_pipeline:
-            self.pipeline.release()
-        self.pipeline = None
+        pipeline = self.project.pipeline
+        self.debug("Disconnecting from: %r", pipeline)
+        pipeline.disconnect_by_func(self._pipelineStateChangedCb)
+        pipeline.disconnect_by_func(self._positionCb)
+        pipeline.disconnect_by_func(self._durationChangedCb)
 
     def _setUiActive(self, active=True):
         self.debug("active %r", active)
@@ -428,10 +413,10 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerDocked = False
         self.remove(self.buttons_container)
         position = None
-        if self.pipeline:
+        if self.project:
             self.overlay_stack.enable_resize_status(False)
-            position = self.pipeline.getPosition()
-            self.pipeline.setState(Gst.State.NULL)
+            position = self.project.pipeline.getPosition()
+            self.project.pipeline.setState(Gst.State.NULL)
             self.remove(self.target)
             self.__createNewViewer()
         self.buttons_container.set_margin_bottom(SPACING)
@@ -452,9 +437,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.external_window.move(self.settings.viewerX, self.settings.viewerY)
         self.external_window.resize(
             self.settings.viewerWidth, self.settings.viewerHeight)
-        if self.pipeline:
-            self.pipeline.pause()
-            self.pipeline.simple_seek(position)
+        if self.project:
+            self.project.pipeline.pause()
+            self.project.pipeline.simple_seek(position)
 
     def __viewer_realization_done_cb(self, unused_data):
         self.overlay_stack.enable_resize_status(True)
@@ -469,10 +454,10 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerDocked = True
 
         position = None
-        if self.pipeline:
+        if self.project:
             self.overlay_stack.enable_resize_status(False)
-            position = self.pipeline.getPosition()
-            self.pipeline.setState(Gst.State.NULL)
+            position = self.project.pipeline.getPosition()
+            self.project.pipeline.setState(Gst.State.NULL)
             self.external_vbox.remove(self.target)
             self.__createNewViewer()
 
@@ -484,9 +469,9 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.show()
 
         self.external_window.hide()
-        if self.pipeline:
-            self.pipeline.pause()
-            self.pipeline.simple_seek(position)
+        if self.project.pipeline:
+            self.project.pipeline.pause()
+            self.project.pipeline.simple_seek(position)
 
     def _toggleFullscreen(self, widget):
         if widget.get_active():
@@ -517,29 +502,32 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.log("Not previewing trim for image or title clip: %s", clip)
             return False
 
-        if self.pipeline == self.app.project_manager.current_project.pipeline:
-            self.debug("Creating temporary pipeline for clip %s, position %s",
-                       clip.props.uri, format_ns(position))
-            self._oldTimelinePos = self.pipeline.getPosition(False)
-            self.pipeline.set_state(Gst.State.NULL)
-            self.setPipeline(AssetPipeline(clip))
-            self.__owning_pipeline = True
+        if self.project.pipeline.getState() == Gst.State.PLAYING:
+            self.project.pipeline.setState(Gst.State.PAUSED)
 
-        self.pipeline.simple_seek(position)
-        return False
+        if self.trim_pipeline and clip is not self.trim_pipeline.clip:
+            # Seems to be the trim preview pipeline for a different clip.
+            self.trim_pipeline.release()
+            self.trim_pipeline = None
+
+        if not self.trim_pipeline:
+            self.debug("Creating temporary pipeline for clip %s", clip.props.uri)
+            self.trim_pipeline = AssetPipeline(clip)
+            video_sink, sink_widget = self.trim_pipeline.create_sink()
+            self.target.switch_widget(sink_widget)
+            self.trim_pipeline.setState(Gst.State.PAUSED)
+
+        self.trim_pipeline.simple_seek(position)
 
     def clipTrimPreviewFinished(self):
         """Switches back to the project pipeline following a clip trimming."""
-        if self.pipeline is not self.app.project_manager.current_project.pipeline:
-            self.debug("Going back to the project's pipeline")
-            self.pipeline.setState(Gst.State.NULL)
-            # Using pipeline.getPosition() here does not work because for some
-            # reason it's a bit off, that's why we need self._oldTimelinePos.
-            self.setPipeline(
-                self.app.project_manager.current_project.pipeline, self._oldTimelinePos)
-            self._oldTimelinePos = None
+        if not self.trim_pipeline:
+            return
+        self.target.switch_widget(self.overlay_stack)
+        self.trim_pipeline.release()
+        self.trim_pipeline = None
 
-    def _pipelineStateChangedCb(self, unused_pipeline, state, old_state):
+    def _pipelineStateChangedCb(self, pipeline, state, old_state):
         """Updates the widgets when the playback starts or stops."""
         if state == Gst.State.PLAYING:
             st = Gst.Structure.new_empty("play")
@@ -553,8 +541,8 @@ class ViewerContainer(Gtk.Box, Loggable):
                 if old_state != Gst.State.PAUSED:
                     st = Gst.Structure.new_empty("pause")
                     if old_state == Gst.State.PLAYING:
-                        st.set_value("playback_time",
-                                     self.pipeline.getPosition() / Gst.SECOND)
+                        position_seconds = pipeline.getPosition() / Gst.SECOND
+                        st.set_value("playback_time", position_seconds)
                     self.app.write_action(st)
 
                 self.playpause_button.setPlay()
@@ -588,6 +576,13 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # We keep the ViewerWidget hidden initially, or the desktop wallpaper
         # would show through the non-double-buffered widget!
         self.hide()
+
+    def switch_widget(self, widget):
+        child = self.get_child()
+        if child:
+            self.remove(child)
+        widget.show_all()
+        self.add(widget)
 
     def update_aspect_ratio(self, project):
         """Forces the DAR of the project on the child widget."""
