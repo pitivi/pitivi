@@ -16,8 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import time
 from gettext import gettext as _
-from time import time
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -61,6 +61,10 @@ GlobalSettings.addConfigOption("pointColor", section="viewer",
                                default='49a0e0')
 
 
+# The trim preview is updated at most once per this interval.
+TRIM_PREVIEW_UPDATE_INTERVAL_MS = 200
+
+
 class ViewerContainer(Gtk.Box, Loggable):
     """Wiget holding a viewer and the controls.
 
@@ -89,6 +93,11 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.docked = True
         self.target = None
         self._compactMode = False
+
+        # When was the last seek performed while previewing a clip trim.
+        self._last_trim_ns = 0
+        # The delayed seek timeout ID, in case the last seek is too recent.
+        self.__trim_seek_id = 0
 
         # Only used for restoring the pipeline position after a live clip trim
         # preview:
@@ -519,7 +528,8 @@ class ViewerContainer(Gtk.Box, Loggable):
             return False
 
         clip_uri = clip.props.uri
-        cur_time = time()
+        time_ns = time.monotonic_ns()
+
         if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
                        clip_uri, format_ns(position))
@@ -527,15 +537,34 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.pipeline.set_state(Gst.State.NULL)
             self.setPipeline(AssetPipeline(clip))
             self.__owning_pipeline = True
-            self._lastClipTrimTime = cur_time
 
-        if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:
-            # Do not seek more than once every 200 ms (for performance)
-            self.pipeline.simple_seek(position)
-            self._lastClipTrimTime = cur_time
+        if self.__trim_seek_id:
+            # A seek is scheduled. Update the position where it will be done.
+            self.__trim_seek_position = position
+        else:
+            # Avoid seeking too often, for performance.
+            delta_ns = time_ns - self._last_trim_ns
+            if delta_ns > TRIM_PREVIEW_UPDATE_INTERVAL_MS * 1000 * 1000:
+                # The last seek is not recent, we can seek right away.
+                self.pipeline.simple_seek(position)
+                self._last_trim_ns = time_ns
+            else:
+                # The previous seek was too recent. Schedule a seek at this position.
+                self.__trim_seek_position = position
+                self.__trim_seek_id = GLib.timeout_add(delta_ns / 1000 / 1000,
+                                                       self.__trim_seek_timeout_cb, None)
+
+    def __trim_seek_timeout_cb(self, unused_data):
+        self.__trim_seek_id = 0
+        self.pipeline.simple_seek(self.__trim_seek_position)
+        self._last_trim_ns = time.monotonic_ns()
+        return False
 
     def clipTrimPreviewFinished(self):
         """Switches back to the project pipeline following a clip trimming."""
+        if self.__trim_seek_id:
+            GLib.source_remove(self.__trim_seek_id)
+            self.__trim_seek_id = 0
         if self.pipeline is not self.app.project_manager.current_project.pipeline:
             self.debug("Going back to the project's pipeline")
             self.pipeline.setState(Gst.State.NULL)
