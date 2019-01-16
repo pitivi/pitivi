@@ -303,6 +303,14 @@ class ViewerContainer(Gtk.Box, Loggable):
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
         bbox.pack_start(self.undock_button, False, False, 0)
 
+        self.show_all()
+
+        # Create a hidden container for the clip trim preview video widget.
+        self.hidden_chest = Gtk.Frame()
+        # It has to be added to the window, otherwise when we add
+        # a video widget to it, it will create a new window!
+        self.pack_end(self.hidden_chest, False, False, 0)
+
         self._haveUI = True
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
@@ -316,7 +324,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.undock_button.get_accessible().set_name("undock_button")
 
         self.buttons_container = bbox
-        self.show_all()
         self.external_vbox.show_all()
 
     def __corner_draw_cb(self, unused_widget, cr, lines, space, margin):
@@ -522,9 +529,22 @@ class ViewerContainer(Gtk.Box, Loggable):
         if not self.trim_pipeline:
             self.debug("Creating temporary pipeline for clip %s", clip.props.uri)
             self.trim_pipeline = AssetPipeline(clip)
-            video_sink, sink_widget = self.trim_pipeline.create_sink()
-            self.target.switch_widget(sink_widget)
+            unused_video_sink, sink_widget = self.trim_pipeline.create_sink()
+            # Add the widget to a hidden container and make it appear later
+            # when it's ready. If we show it before the initial seek completion,
+            # there is a flicker when the first frame of the asset is shown for
+            # a brief moment until the initial seek to the frame we actually
+            # want to show is performed.
+            # First make sure the container itself is ready.
+            widget = self.hidden_chest.get_child()
+            if widget:
+                self.warning("The previous trim preview video widget should have been removed already")
+                self.hidden_chest.remove(widget)
+            self.hidden_chest.add(sink_widget)
+            sink_widget.show()
+            self.trim_pipeline.connect("state-change", self._state_change_cb)
             self.trim_pipeline.setState(Gst.State.PAUSED)
+            self._last_trim_ns = 0
 
         if self.__trim_seek_id:
             # A seek is scheduled. Update the position where it will be done.
@@ -542,6 +562,20 @@ class ViewerContainer(Gtk.Box, Loggable):
                 self.__trim_seek_position = position
                 self.__trim_seek_id = GLib.timeout_add(delta_ns / 1000 / 1000,
                                                        self.__trim_seek_timeout_cb, None)
+
+    def _state_change_cb(self, trim_pipeline, state, prev_state):
+        if self.trim_pipeline is not trim_pipeline:
+            self.warning("State change reported for previous trim preview pipeline")
+            trim_pipeline.disconnect_by_func(self._state_change_cb)
+            return
+        # First the pipeline goes from READY to PAUSED, and then it goes
+        # from PAUSED to PAUSED, and this is a good moment.
+        if prev_state == Gst.State.PAUSED and state == Gst.State.PAUSED:
+            sink_widget = self.hidden_chest.get_child()
+            if sink_widget:
+                self.hidden_chest.remove(sink_widget)
+                self.target.switch_widget(sink_widget)
+            trim_pipeline.disconnect_by_func(self._state_change_cb)
 
     def __trim_seek_timeout_cb(self, unused_data):
         self.__trim_seek_id = 0
@@ -614,7 +648,6 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         child = self.get_child()
         if child:
             self.remove(child)
-        widget.show_all()
         self.add(widget)
 
     def update_aspect_ratio(self, project):
