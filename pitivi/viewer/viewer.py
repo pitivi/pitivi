@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from gettext import gettext as _
-from time import time
 
 from gi.repository import Gdk
 from gi.repository import GES
@@ -518,21 +517,16 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.log("Not previewing trim for image or title clip: %s", clip)
             return False
 
-        clip_uri = clip.props.uri
-        cur_time = time()
         if self.pipeline == self.app.project_manager.current_project.pipeline:
             self.debug("Creating temporary pipeline for clip %s, position %s",
-                       clip_uri, format_ns(position))
+                       clip.props.uri, format_ns(position))
             self._oldTimelinePos = self.pipeline.getPosition(False)
             self.pipeline.set_state(Gst.State.NULL)
             self.setPipeline(AssetPipeline(clip))
             self.__owning_pipeline = True
-            self._lastClipTrimTime = cur_time
 
-        if (cur_time - self._lastClipTrimTime) > 0.2 and self.pipeline.getState() == Gst.State.PAUSED:
-            # Do not seek more than once every 200 ms (for performance)
-            self.pipeline.simple_seek(position)
-            self._lastClipTrimTime = cur_time
+        self.pipeline.simple_seek(position)
+        return False
 
     def clipTrimPreviewFinished(self):
         """Switches back to the project pipeline following a clip trimming."""
