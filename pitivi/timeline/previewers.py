@@ -988,7 +988,11 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
 
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
-                self.samples = list(numpy.load(samples))
+                samples_array = numpy.load(samples)
+                max_value = samples_array.max()
+                if max_value > 0.0001:
+                    samples_array *= 100.0 / max_value
+                self.samples = list(samples_array)
             self.queue_draw()
         else:
             self.wavefile = filename
