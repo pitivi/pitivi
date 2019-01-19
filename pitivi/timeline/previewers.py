@@ -185,7 +185,7 @@ class WaveformPreviewer(PreviewerBin):
         self.uri = None
         self.wavefile = None
         self.passthrough = False
-        self.samples = []
+        self.samples = None
         self.n_samples = 0
         self.duration = 0
         self.prev_pos = 0
@@ -261,9 +261,10 @@ class WaveformPreviewer(PreviewerBin):
             else:
                 samples = numpy.array(self.peaks[0])
 
-            self.samples = list(samples)
             with open(self.wavefile, 'wb') as wavefile:
                 numpy.save(wavefile, samples)
+
+            self.samples = samples
 
         if proxy and not proxy.get_error():
             proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
@@ -1112,11 +1113,26 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
-                self.samples = list(numpy.load(samples))
+                self.samples = self._scale_samples(numpy.load(samples))
             self.queue_draw()
         else:
             self.wavefile = filename
             self._launchPipeline()
+
+    @staticmethod
+    def _scale_samples(samples):
+        max_value = max(samples)
+        has_sound = max_value > 0.0001
+        if has_sound:
+            # TODO: The 65 value comes from the height of the widget.
+            #   It should not be hardcoded though. We can fix this
+            #   when we implement a waveform samples cache, because it's
+            #   wasteful if multiple clips backed by the same asset
+            #   keep their own samples copy.
+            factor = 65 / max_value
+            samples = samples * factor
+
+        return list(samples)
 
     def _launchPipeline(self):
         self.debug(
@@ -1145,7 +1161,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
     def _prepareSamples(self):
         proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
         self._wavebin.finalize(proxy=proxy)
-        self.samples = self._wavebin.samples
+        self.samples = self._scale_samples(self._wavebin.samples)
 
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
