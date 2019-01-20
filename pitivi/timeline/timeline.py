@@ -1310,12 +1310,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__end_snap()
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
+                priority = self.separator_priority(self.__on_separators[1])
                 time_difference = GLib.get_monotonic_time() - self.__hover_start_time
-                if(time_difference>1000000):
-                    priority = self.separator_priority(self.__on_separators[1])
+                if(time_difference>1000000 or priority==0 or priority==len(self.ges_timeline.get_layers())):
                     ges_layer = self.create_layer(priority)
                     position = self.editing_context.new_position
                     self.editing_context.edit_to(position, ges_layer)
+
 
             self.editing_context.finish()
 
