@@ -84,7 +84,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.error_message = None
 
         # playbin for play pics
-        self.player = AssetPipeline(clip=None, name="preview-player")
+        self.player = AssetPipeline(name="preview-player")
         self.player.connect('eos', self._pipelineEosCb)
         self.player.connect('error', self._pipelineErrorCb)
         self.player._bus.connect('message::tag', self._tag_found_cb)
@@ -253,7 +253,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             else:
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
-                self.player.setClipUri(self.current_selected_uri)
+                self.player.set_clip_uri(self.current_selected_uri)
                 self.player.setState(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
                 video_width = video.get_square_width()
@@ -289,7 +289,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 beautify_stream(audio),
                 _("<b>Duration</b>: %s") % pretty_duration])
             self.player.setState(Gst.State.NULL)
-            self.player.setClipUri(self.current_selected_uri)
+            self.player.set_clip_uri(self.current_selected_uri)
             self.player.setState(Gst.State.PAUSED)
             self.play_button.show()
             self.seeker.show()
