@@ -16,6 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import collections
 from gettext import gettext as _
 
 from gi.repository import Gdk
@@ -84,6 +85,7 @@ class ViewerContainer(Gtk.Box, Loggable):
 
         self.project = None
         self.trim_pipeline = None
+        self.trim_pipelines_cache = collections.OrderedDict()
         self.docked = True
         self.target = None
         self._compactMode = False
@@ -519,9 +521,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.trim_pipeline = None
 
         if not self.trim_pipeline:
-            self.debug("Creating temporary pipeline for clip %s", uri)
-            self.trim_pipeline = AssetPipeline(uri)
-            unused_video_sink, sink_widget = self.trim_pipeline.create_sink()
+            self.trim_pipeline, sink_widget = self.get_trim_preview_pipeline(uri)
             # Add the widget to a hidden container and make it appear later
             # when it's ready. If we show it before the initial seek completion,
             # there is a flicker when the first frame of the asset is shown for
@@ -539,6 +539,22 @@ class ViewerContainer(Gtk.Box, Loggable):
             self._last_trim_ns = 0
 
         self.trim_pipeline.simple_seek(position)
+
+    def get_trim_preview_pipeline(self, uri):
+        try:
+            trim_pipeline, sink_widget = self.trim_pipelines_cache[uri]
+            self.debug("Reusing temporary pipeline for clip %s", uri)
+        except KeyError:
+            self.debug("Creating temporary pipeline for clip %s", uri)
+            trim_pipeline = AssetPipeline(uri)
+            unused_video_sink, sink_widget = trim_pipeline.create_sink()
+        self.trim_pipelines_cache[uri] = trim_pipeline, sink_widget
+        if len(self.trim_pipelines_cache) > 4:
+            # Pop the first inserted item.
+            expired_uri, (expired_pipeline, unused_expired_widget) = self.trim_pipelines_cache.popitem(last=False)
+            self.debug("Releasing temporary pipeline for clip %s", expired_uri)
+            expired_pipeline.release()
+        return trim_pipeline, sink_widget
 
     def _state_change_cb(self, trim_pipeline, state, prev_state):
         if self.trim_pipeline is not trim_pipeline:
@@ -559,7 +575,6 @@ class ViewerContainer(Gtk.Box, Loggable):
         if not self.trim_pipeline:
             return
         self.target.switch_widget(self.overlay_stack)
-        self.trim_pipeline.release()
         self.trim_pipeline = None
 
     def _pipelineStateChangedCb(self, pipeline, state, old_state):
