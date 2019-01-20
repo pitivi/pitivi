@@ -340,6 +340,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Whether the user is dragging a layer.
         self.__moving_layer = None
 
+        self.__hover_start_time = 0
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
@@ -1285,7 +1286,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
         self._setSeparatorsPrelight(True)
-
+        self.__hover_start_time = GLib.get_monotonic_time()
         self.editing_context.edit_to(position, self._on_layer)
 
     def create_layer(self, priority):
@@ -1309,10 +1310,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__end_snap()
 
             if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
-                priority = self.separator_priority(self.__on_separators[1])
-                ges_layer = self.create_layer(priority)
-                position = self.editing_context.new_position
-                self.editing_context.edit_to(position, ges_layer)
+                time_difference = GLib.get_monotonic_time() - self.__hover_start_time
+                if(time_difference>1000000):
+                    priority = self.separator_priority(self.__on_separators[1])
+                    ges_layer = self.create_layer(priority)
+                    position = self.editing_context.new_position
+                    self.editing_context.edit_to(position, ges_layer)
 
             self.editing_context.finish()
 
