@@ -340,7 +340,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Whether the user is dragging a layer.
         self.__moving_layer = None
 
-        self.__hover_start_time = 0
+        self.__add_new_layer = False
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
@@ -1285,9 +1285,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # When dragging clips from more than one layer, do not allow
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
-        self._setSeparatorsPrelight(True)
-        self.__hover_start_time = GLib.get_monotonic_time()
+
+        self.__add_new_layer = False
+        if(self.__on_separators):
+            GLib.timeout_add(1000, self.after_timeout)
+
         self.editing_context.edit_to(position, self._on_layer)
+
+    def after_timeout(self):
+        self._setSeparatorsPrelight(True)
+        self.__add_new_layer = True
 
     def create_layer(self, priority):
         """Adds a new layer to the GES timeline."""
@@ -1309,14 +1316,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.editing_context:
             self.__end_snap()
 
-            if self.__on_separators and self.__got_dragged and not self.__clickedHandle:
+            if self.__add_new_layer and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
-                time_difference = GLib.get_monotonic_time() - self.__hover_start_time
-                if(time_difference>1000000 or priority==0 or priority==len(self.ges_timeline.get_layers())):
-                    ges_layer = self.create_layer(priority)
-                    position = self.editing_context.new_position
-                    self.editing_context.edit_to(position, ges_layer)
-
+                ges_layer = self.create_layer(priority)
+                position = self.editing_context.new_position
+                self.editing_context.edit_to(position, ges_layer)
 
             self.editing_context.finish()
 
