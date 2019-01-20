@@ -522,14 +522,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         if self.project.pipeline.getState() == Gst.State.PLAYING:
             self.project.pipeline.setState(Gst.State.PAUSED)
 
-        if self.trim_pipeline and clip is not self.trim_pipeline.clip:
+        uri = clip.props.uri
+        if self.trim_pipeline and uri != self.trim_pipeline.uri:
             # Seems to be the trim preview pipeline for a different clip.
             self.trim_pipeline.release()
             self.trim_pipeline = None
 
         if not self.trim_pipeline:
-            self.debug("Creating temporary pipeline for clip %s", clip.props.uri)
-            self.trim_pipeline = AssetPipeline(clip)
+            self.debug("Creating temporary pipeline for clip %s", uri)
+            self.trim_pipeline = AssetPipeline(uri)
             unused_video_sink, sink_widget = self.trim_pipeline.create_sink()
             # Add the widget to a hidden container and make it appear later
             # when it's ready. If we show it before the initial seek completion,

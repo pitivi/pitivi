@@ -506,24 +506,35 @@ class SimplePipeline(GObject.Object, Loggable):
 
 
 class AssetPipeline(SimplePipeline):
-    """Pipeline for playing a single clip."""
+    """Pipeline for playing a single asset.
 
-    def __init__(self, clip=None, name=None):
+    Attributes:
+        uri (str): The low-level pipeline.
+    """
+
+    def __init__(self, uri=None, name=None):
         ges_pipeline = Gst.ElementFactory.make("playbin", name)
         SimplePipeline.__init__(self, ges_pipeline)
 
-        self.clip = clip
-        if self.clip:
-            self.setClipUri(self.clip.props.uri)
+        self.__uri = None
+        if uri:
+            self.uri = uri
 
     def create_sink(self):
         video_sink, sink_widget = SimplePipeline.create_sink(self)
         self._pipeline.set_property("video_sink", video_sink)
-
         return video_sink, sink_widget
 
-    def setClipUri(self, uri):
+    @property
+    def uri(self):
+        # We could maybe get it using `self._pipeline.get_property`, but
+        # after setting the state to Gst.State.PAUSED, it becomes None.
+        return self.__uri
+
+    @uri.setter
+    def uri(self, uri):
         self._pipeline.set_property("uri", uri)
+        self.__uri = uri
 
 
 class Pipeline(GES.Pipeline, SimplePipeline):
