@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-01-10 12:57+0000\n"
-"PO-Revision-Date: 2019-01-12 12:33+0100\n"
+"POT-Creation-Date: 2019-01-20 00:11+0000\n"
+"PO-Revision-Date: 2019-01-20 12:18+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -124,7 +124,7 @@ msgstr "Uruchamianie automatycznego wyrównania"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Wykonywanie automatycznego wyrównania</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1129
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1138
 msgid "Estimating..."
 msgstr "Obliczanie…"
 
@@ -1334,7 +1334,7 @@ msgstr "nowy-profil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:160 pitivi/render.py:854
+#: pitivi/project.py:160 pitivi/render.py:863
 msgid "Sorry, something didn’t work right."
 msgstr "Coś nie zadziałało poprawnie."
 
@@ -1439,11 +1439,11 @@ msgstr "Obecnie renderowane"
 msgid "Unsupported"
 msgstr "Nieobsługiwane"
 
-#: pitivi/render.py:684
+#: pitivi/render.py:690
 msgid "A file name is required."
 msgstr "Wymagana jest nazwa pliku."
 
-#: pitivi/render.py:686
+#: pitivi/render.py:692
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1452,18 +1452,23 @@ msgstr ""
 "Jeśli nie ma zostać zastąpiony, to proszę wybrać inną nazwę pliku lub inny "
 "katalog."
 
-#: pitivi/render.py:716
+#: pitivi/render.py:696
+#, python-format
+msgid "Remove invalid characters from the filename: %s"
+msgstr "Proszę usunąć nieprawidłowe znaki z nazwy pliku: %s"
+
+#: pitivi/render.py:725
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:721
+#: pitivi/render.py:730
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:848
+#: pitivi/render.py:857
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1473,11 +1478,11 @@ msgstr ""
 "wypadku x264enc może nie być w stanie renderować.</b>\n"
 "\n"
 
-#: pitivi/render.py:855
+#: pitivi/render.py:864
 msgid "An error occurred while trying to render your project."
 msgstr "Wystąpił błąd podczas renderowania projektu."
 
-#: pitivi/render.py:857
+#: pitivi/render.py:866
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1485,11 +1490,11 @@ msgstr ""
 "Można sprawdzić podręcznik rozwiązywania błędów lub wysłać zgłoszenie błędu. "
 "Błąd biblioteki GStreamer:"
 
-#: pitivi/render.py:1077 pitivi/render.py:1078 pitivi/render.py:1084
+#: pitivi/render.py:1086 pitivi/render.py:1087 pitivi/render.py:1093
 msgid "Render complete"
 msgstr "Ukończono renderowanie"
 
-#: pitivi/render.py:1082
+#: pitivi/render.py:1091
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "Ukończono renderowanie „%s”."
