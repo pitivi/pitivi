@@ -341,6 +341,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__moving_layer = None
 
         self.__add_new_layer = False
+        self.__timeout_id = 0
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
@@ -1287,8 +1288,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__on_separators = []
 
         self.__add_new_layer = False
+        if(self.__timeout_id>0):
+            GLib.source_remove(self.__timeout_id)
+            self.__timeout_id=0
         if(self.__on_separators):
-            GLib.timeout_add(1000, self.after_timeout)
+            self.__timeout_id = GLib.timeout_add(1000, self.after_timeout)
 
         self.editing_context.edit_to(position, self._on_layer)
 
