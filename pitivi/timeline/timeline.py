@@ -1288,10 +1288,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__on_separators = []
 
         self.__add_new_layer = False
-        if(self.__timeout_id>0):
+        if self.__timeout_id:
             GLib.source_remove(self.__timeout_id)
             self.__timeout_id=0
-        if(self.__on_separators):
+        if self.__on_separators:
             self.__timeout_id = GLib.timeout_add(1000, self.after_timeout)
 
         self.editing_context.edit_to(position, self._on_layer)
