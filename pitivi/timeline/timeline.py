@@ -65,6 +65,10 @@ from pitivi.utils.ui import URI_TARGET_ENTRY
 from pitivi.utils.widgets import ZoomBox
 
 
+# Creates new layer if a clip is held at layers separator after this time interval
+SEPARATOR_ACCEPTING_DROP_INTERVAL_MS = 1000
+
+
 GlobalSettings.addConfigOption('edgeSnapDeadband',
                                section="user-interface",
                                key="edge-snap-deadband",
@@ -340,8 +344,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Whether the user is dragging a layer.
         self.__moving_layer = None
 
-        self.__add_new_layer = False
-        self.__timeout_id = 0
+        self.__separator_accepting_drop = False
+        self.__separator_accepting_drop_id = 0
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
@@ -1287,18 +1291,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
 
-        self.__add_new_layer = False
-        if self.__timeout_id:
-            GLib.source_remove(self.__timeout_id)
-            self.__timeout_id=0
+        self.__separator_accepting_drop = False
+        if self.__separator_accepting_drop_id:
+            GLib.source_remove(self.__separator_accepting_drop_id)
+            self.__separator_accepting_drop_id=0
         if self.__on_separators:
-            self.__timeout_id = GLib.timeout_add(1000, self.after_timeout)
+            self.__separator_accepting_drop_id = GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS
+                                                 , self.__separator_accepting_drop_timeout_cb)
 
         self.editing_context.edit_to(position, self._on_layer)
 
-    def after_timeout(self):
+    def __separator_accepting_drop_timeout_cb(self):
         self._setSeparatorsPrelight(True)
-        self.__add_new_layer = True
+        self.__separator_accepting_drop = True
 
     def create_layer(self, priority):
         """Adds a new layer to the GES timeline."""
@@ -1320,7 +1325,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.editing_context:
             self.__end_snap()
 
-            if self.__add_new_layer and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
+            if self.__separator_accepting_drop and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
                 ges_layer = self.create_layer(priority)
                 position = self.editing_context.new_position
