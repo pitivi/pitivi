@@ -711,15 +711,18 @@ class RenderDialog(Loggable):
         warning_icon = "dialog-warning"
         if not filename:
             tooltip_text = _("A file name is required.")
+            self.render_button.set_sensitive(False)
         elif os.path.exists(os.path.join(path, filename)):
             tooltip_text = _("This file already exists.\n"
                              "If you don't want to overwrite it, choose a "
                              "different file name or folder.")
         elif invalid_chars:
             tooltip_text = _("Remove invalid characters from the filename: %s") % invalid_chars
+            self.render_button.set_sensitive(False)
         else:
             warning_icon = None
             tooltip_text = None
+            self.render_button.set_sensitive(True)
 
         self.fileentry.set_icon_from_icon_name(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
