@@ -410,6 +410,7 @@ class RenderDialog(Loggable):
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
+        self._is_filename_valid = True
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -709,20 +710,24 @@ class RenderDialog(Loggable):
         invalid_chars = "".join([ch for ch in blacklist if ch in filename])
 
         warning_icon = "dialog-warning"
+        self._is_filename_valid = True
         if not filename:
             tooltip_text = _("A file name is required.")
+            self._is_filename_valid = False
         elif os.path.exists(os.path.join(path, filename)):
             tooltip_text = _("This file already exists.\n"
                              "If you don't want to overwrite it, choose a "
                              "different file name or folder.")
         elif invalid_chars:
             tooltip_text = _("Remove invalid characters from the filename: %s") % invalid_chars
+            self._is_filename_valid = False
         else:
             warning_icon = None
             tooltip_text = None
 
         self.fileentry.set_icon_from_icon_name(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
+        self.__updateRenderButtonSensitivity()
 
     def _getFilesizeEstimate(self):
         """Estimates the final file size.
@@ -1208,7 +1213,8 @@ class RenderDialog(Loggable):
     def __updateRenderButtonSensitivity(self):
         video_enabled = self.video_output_checkbutton.get_active()
         audio_enabled = self.audio_output_checkbutton.get_active()
-        self.render_button.set_sensitive(video_enabled or audio_enabled)
+        self.render_button.set_sensitive(self._is_filename_valid and
+                                         (video_enabled or audio_enabled))
 
     def _frameRateComboChangedCb(self, combo):
         if self._setting_encoding_profile:
