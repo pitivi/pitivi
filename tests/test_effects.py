@@ -22,6 +22,7 @@
 import os
 
 from gi.repository import GES
+from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.effects import AUDIO_EFFECT
@@ -172,3 +173,39 @@ class EffectsPropertiesManagerTest(common.TestCase):
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(self.prop.default_value, prop_value)
         self.assertEqual(self.prop.default_value, wrapped_spin_button.getWidgetValue())
+
+    def test_dependent_properties(self):
+        """Checks dependent properties updating is handled correctly."""
+        mainloop = common.create_main_loop()
+        app = common.create_pitivi()
+        app.project_manager.new_blank_project()
+        manager = EffectsPropertiesManager(app)
+
+        called = False
+
+        def set_child_property(prop_name, value):
+            nonlocal called
+            called = True
+
+            self.assertEqual(prop_name, "aspect-ratio")
+            GES.Effect.set_child_property(effect, prop_name, value)
+
+            # When setting the aspect-ratio property, and the stars align,
+            # the effect also changes the left/right properties.
+            # Here we simulate the updating of the dependent properties.
+            GES.Effect.set_child_property(effect, "left", 100)
+            GES.Effect.set_child_property(effect, "right", 100)
+
+        effect = GES.Effect.new("aspectratiocrop")
+        effect.set_child_property = set_child_property
+
+        effect_widget = manager.getEffectConfigurationUI(effect)
+
+        widgets = {prop.name: widget
+                   for prop, widget in effect_widget.properties.items()}
+        # Simulate the user choosing an aspect-ratio.
+        widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(4, 3))
+
+        mainloop.run(until_empty=True)
+
+        self.assertTrue(called)
