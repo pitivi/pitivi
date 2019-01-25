@@ -66,8 +66,8 @@ in `pitivi-dev/pitivi/mesonbuild`
 Now that you are in the development environment, try running the
 [unittests](Testing.md):
 ```
-(ptv-flatpak) $ ninja -C mesonbuild/ test
-Running in sandbox: ninja -C mesonbuild/ test
+(ptv-flatpak) $ ptvtests
+Running in sandbox: gst-validate-launcher .../pitivi/tests/ptv_testsuite.py
 ```
 
 Hack away, and check the effect of your changes by simply running:
