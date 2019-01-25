@@ -22,6 +22,7 @@
 import os
 
 from gi.repository import GES
+from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi.effects import AUDIO_EFFECT
@@ -172,3 +173,42 @@ class EffectsPropertiesManagerTest(common.TestCase):
         _, prop_value = self.alpha_effect.get_child_property(self.prop_name)
         self.assertEqual(self.prop.default_value, prop_value)
         self.assertEqual(self.prop.default_value, wrapped_spin_button.getWidgetValue())
+
+    def test_dependent_properties(self):
+        """Checks ..."""
+        mainloop = common.create_main_loop()
+        app = common.create_pitivi()
+        project = app.project_manager.newBlankProject()
+        mainloop.run(until_empty=True)
+
+        #manager = EffectsPropertiesManager(app)
+        manager = app.gui.editor.clipconfig.effect_expander.effects_properties_manager
+
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        ges_clip = asset.extract()
+
+        # Add the clip to a timeline so it gets tracks.
+        ges_layer = project.ges_timeline.get_layers()[0]
+        ges_layer.add_clip(ges_clip)
+
+        effect = GES.Effect.new("aspectratiocrop")
+        ges_clip.add_effect(effect)
+
+        settings_widget = manager.getEffectConfigurationUI(effect)
+        self.assertFalse(settings_widget.updating_widgets)
+        widgets = {prop.name: widget
+                   for prop, widget in settings_widget.properties.items()}
+        for prop, widget in settings_widget.properties.items():
+            print(prop, widget, widget.getWidgetValue(), effect.get_child_property(prop.name))
+        res, value = effect.get_child_property("aspect-ratio")
+        self.assertTrue(res)
+        widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(value.num + 10, value.denom))
+        # res, value = effect.get_child_property("aspect-ratio")
+        # self.assertTrue(effect.set_child_property("aspect-ratio", Gst.Fraction(value.num + 10, value.denom)))
+
+        print("==================")
+        mainloop.run(until_empty=True)
+        print("==================")
+        for prop, widget in settings_widget.properties.items():
+            print(prop, widget, widget.getWidgetValue(), effect.get_child_property(prop.name))

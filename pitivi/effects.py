@@ -677,24 +677,31 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
 
     def _connectAllWidgetCallbacks(self, effect_settings_widget, effect):
         for prop, widget in effect_settings_widget.properties.items():
-            widget.connectValueChanged(self._onValueChangedCb, widget, prop, effect)
+            widget.connectValueChanged(self._onValueChangedCb, widget, prop, effect, effect_settings_widget)
 
     def _onSetDefaultCb(self, unused_widget, effect_widget):
         effect_widget.setWidgetToDefault()
 
-    def _onValueChangedCb(self, unused_widget, effect_widget, prop, effect):
-        value = effect_widget.getWidgetValue()
+    def _onValueChangedCb(self, unused_widget, effect_widget, prop, effect, effect_settings_widget):
+        if effect_settings_widget.updating_widgets:
+            return
+        effect_settings_widget.updating_widgets = False
+        try:
+            value = effect_widget.getWidgetValue()
 
-        # FIXME Workaround in order to make aspectratiocrop working
-        if isinstance(value, Gst.Fraction):
-            value = Gst.Fraction(int(value.num), int(value.denom))
+            # FIXME Workaround in order to make aspectratiocrop working
+            if isinstance(value, Gst.Fraction):
+                value = Gst.Fraction(int(value.num), int(value.denom))
 
-        from pitivi.undo.timeline import CommitTimelineFinalizingAction
-        pipeline = self.app.project_manager.current_project.pipeline
-        with self.app.action_log.started("Effect property change",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
-                                         toplevel=True):
-            effect.set_child_property(prop.name, value)
+            from pitivi.undo.timeline import CommitTimelineFinalizingAction
+            pipeline = self.app.project_manager.current_project.pipeline
+            with self.app.action_log.started("Effect property change",
+                                             finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                             toplevel=True):
+                print ("SET", effect, prop.name, effect.get_child_property(prop.name), "->", value)
+                effect.set_child_property(prop.name, value)
+        finally:
+            effect_settings_widget.updating_widgets = False
 
     def create_property_widget(self, element_settings_widget, prop, prop_value):
         prop_widget = self.emit("create_property_widget", element_settings_widget, element_settings_widget.element,
