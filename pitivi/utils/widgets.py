@@ -38,11 +38,8 @@ from pitivi.utils.misc import is_valid_file
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import disable_scroll
-from pitivi.utils.ui import pack_color_32
-from pitivi.utils.ui import pack_color_64
 from pitivi.utils.ui import SPACING
 from pitivi.utils.ui import time_to_string
-from pitivi.utils.ui import unpack_color
 
 
 ZOOM_SLIDER_PADDING = SPACING * 4 / 5
@@ -435,8 +432,9 @@ class FractionWidget(TextWidget, DynamicWidget):
             return self._parseText(self.last_valid)
         return Gst.Fraction(1, 1)
 
-    def _parseText(self, text):
-        match = self.fraction_regex.match(text)
+    @classmethod
+    def _parseText(cls, text):
+        match = cls.fraction_regex.match(text)
         groups = match.groups()
         num = 1.0
         denom = 1.0
@@ -690,6 +688,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.__widgets_by_reset_button = {}
         self._unhandled_properties = []
         self.uncontrolled_properties = {}
+        self.updating_property = False
 
     def deactivate_keyframe_toggle_buttons(self):
         """Makes sure the keyframe togglebuttons are deactivated."""
