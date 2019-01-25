@@ -417,8 +417,9 @@ class FractionWidget(TextWidget, DynamicWidget):
             return self._parseText(self.last_valid)
         return Gst.Fraction(1, 1)
 
-    def _parseText(self, text):
-        match = self.fraction_regex.match(text)
+    @classmethod
+    def _parseText(cls, text):
+        match = cls.fraction_regex.match(text)
         groups = match.groups()
         num = 1.0
         denom = 1.0
@@ -663,6 +664,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.caps_widgets = {}
         self.__controllable = controllable
         self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.updating_property = False
 
     def deactivate_keyframe_toggle_buttons(self):
         """Makes sure the keyframe togglebuttons are deactivated."""

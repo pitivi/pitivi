@@ -649,27 +649,29 @@ class EffectsPropertiesManager:
                 if isinstance(widget, FractionWidget):
                     widget.addPresets(["4:3", "5:4", "9:3", "16:9", "16:10"])
 
-    def _connectAllWidgetCallbacks(self, effect_settings_widget, effect):
-        for prop, widget in effect_settings_widget.properties.items():
-            widget.connectValueChanged(self._onValueChangedCb, widget, prop, effect)
+    def _connectAllWidgetCallbacks(self, effect_widget, effect):
+        for prop, widget in effect_widget.properties.items():
+            widget.connectValueChanged(self._on_widget_value_changed_cb, widget, prop, effect, effect_widget)
 
-    def _onSetDefaultCb(self, unused_widget, effect_widget):
-        effect_widget.setWidgetToDefault()
+    def _on_widget_value_changed_cb(self, unused_widget, prop_widget, prop, effect, effect_widget):
+        if effect_widget.updating_property:
+            # The widget is updated as a side-effect of setting one of its
+            # properties. Ignore.
+            return
 
-    def _onValueChangedCb(self, unused_widget, effect_widget, prop, effect):
-        value = effect_widget.getWidgetValue()
+        effect_widget.updating_property = True
+        try:
+            value = prop_widget.getWidgetValue()
 
-        # FIXME Workaround in order to make aspectratiocrop working
-        if isinstance(value, Gst.Fraction):
-            value = Gst.Fraction(int(value.num), int(value.denom))
+            # FIXME Workaround in order to make aspectratiocrop working
+            if isinstance(value, Gst.Fraction):
+                value = Gst.Fraction(int(value.num), int(value.denom))
 
-        res, current_value = effect.get_child_property(prop.name)
-        assert res
-        if value != current_value:
             from pitivi.undo.timeline import CommitTimelineFinalizingAction
-
             pipeline = self.app.project_manager.current_project.pipeline
             with self.app.action_log.started("Effect property change",
                                              finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                              toplevel=True):
                 effect.set_child_property(prop.name, value)
+        finally:
+            effect_widget.updating_property = False
