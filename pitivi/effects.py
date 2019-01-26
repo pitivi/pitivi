@@ -649,8 +649,7 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
             GstElementSettingsWidget: A container for configuring the effect.
         """
         if effect not in self.cache_dict:
-            effect_widget = GstElementSettingsWidget()
-            effect_widget.setElement(effect, PROPS_TO_IGNORE)
+            effect_widget = GstElementSettingsWidget(effect, PROPS_TO_IGNORE)
             widget = self.emit("create_widget", effect_widget, effect)
             # The default handler of `create_widget` handles visibility
             # itself and returns None

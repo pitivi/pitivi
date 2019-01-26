@@ -50,8 +50,7 @@ class TestCustomEffectUI(common.TestCase):
 
         self.effects_prop_manager = EffectsPropertiesManager(self.app)
         self.effects_prop_manager.connect("create-widget", self.create_alpha_widget_cb, widgets)
-        self.element_settings_widget = GstElementSettingsWidget()
-        self.element_settings_widget.setElement(self.alpha_effect, PROPS_TO_IGNORE)
+        self.element_settings_widget = GstElementSettingsWidget(self.alpha_effect, PROPS_TO_IGNORE)
 
         self.effects_prop_manager.emit("create-widget", self.element_settings_widget, self.alpha_effect)
         self.effects_prop_manager._connectAllWidgetCallbacks(self.element_settings_widget, self.alpha_effect)
