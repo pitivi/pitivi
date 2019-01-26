@@ -675,11 +675,11 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         "x264enc": {"profile": Gst.ValueList(["high", "main", "baseline"])}
     }
 
-    def __init__(self, controllable=True):
+    def __init__(self, element, props_to_ignore=["name"], controllable=True):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
-        self.element = None
-        self.ignore = []
+        self.element = element
+        self.ignore = props_to_ignore
         self.properties = {}
         # Maps caps fields to the corresponding widgets.
         self.caps_widgets = {}
@@ -701,11 +701,6 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                 keyframe_button.set_active(False)
                 # There can be only one active keyframes button.
                 break
-
-    def setElement(self, element, ignore=['name']):
-        """Sets the element to be edited."""
-        self.element = element
-        self.ignore = ignore
 
     def show_widget(self, widget):
         self.pack_start(widget, True, True, 0)
@@ -1149,7 +1144,7 @@ class GstElementSettingsDialog(Loggable):
         self.ok_btn = self.builder.get_object("okbutton1")
 
         self.window = self.builder.get_object("dialog1")
-        self.elementsettings = GstElementSettingsWidget(controllable=False)
+        self.elementsettings = GstElementSettingsWidget(self.element, self.properties, controllable=False)
         self.builder.get_object("viewport1").add(self.elementsettings)
 
         # set title and frame label
@@ -1167,7 +1162,6 @@ class GstElementSettingsDialog(Loggable):
                     val = caps[0][field]
                     if val is not None and Gst.value_is_fixed(val):
                         caps_values[field] = val
-        self.elementsettings.setElement(self.element, self.properties)
         self.elementsettings.add_widgets(GstElementSettingsWidget.make_property_widget,
                                          with_reset_button=True,
                                          caps_values=caps_values)
