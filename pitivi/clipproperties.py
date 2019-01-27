@@ -52,8 +52,9 @@ from pitivi.utils.ui import SPACING
 class ClipPropertiesError(Exception):
     pass
 
+
 class Keyframes():
-    """Widget for configuring the keyframes of clip"""
+    """Clip keyframes editing functionality"""
 
     def __init__(self):
         self.source = None
@@ -73,7 +74,7 @@ class Keyframes():
     def set_properties(self, props):
         self.props = props
 
-    def remove_control_bindings(self):
+    def remove_time_stamps(self):
         for propname, binding in self._control_bindings.items():
             control_source = binding.props.control_source
             # control_source.unset_all() can't be used here as it doesn't emit
@@ -82,6 +83,10 @@ class Keyframes():
             keyframes_ts = [keyframe.timestamp for keyframe in control_source.get_all()]
             for ts in keyframes_ts:
                 control_source.unset(ts)
+
+    def remove_control_bindings(self):
+        self.remove_time_stamps()
+        for propname, binding in self._control_bindings.items():
             self._own_bindings_change = True
             self.source.remove_control_binding(propname)
             self._own_bindings_change = False
@@ -125,7 +130,7 @@ class Keyframes():
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
-    """Widget for configuring the selected clip.
+    """Widget for configuring the audio of the clip.
 
     Attributes:
         app (Pitivi): The app.
@@ -632,9 +637,6 @@ class EffectProperties(Gtk.Expander, Loggable):
 class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
     """Widget for configuring the placement and size of the clip."""
 
-    __signals__ = {
-        'selection-changed': []}
-
     def __init__(self, app):
         Gtk.Expander.__init__(self)
         Loggable.__init__(self)
@@ -650,10 +652,6 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
         self.builder.add_from_file(os.path.join(get_ui_dir(),
                                                 "videotransformation.ui"))
         self.set_properties(["posx", "posy", "width", "height"])
-        #self.__control_bindings = {}
-        # Used to make sure self.__control_bindings_changed doesn't get called
-        # when bindings are changed from this class
-        #self.__own_bindings_change = False
         self.add(self.builder.get_object("transform_box"))
         self._initButtons()
         self.show_all()
@@ -748,7 +746,7 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
         adding_kfs = not self.__source_uses_keyframes()
 
         if adding_kfs:
-            self.app.action_log.begin("Transformation properties keyframes activate",
+            self.app.action_log.begin("Video Transformation properties keyframes activate",
                                       toplevel=True)
 
         for prop in self.props:
@@ -757,19 +755,19 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
             if not binding:
                 control_source = GstController.InterpolationControlSource()
                 control_source.props.mode = GstController.InterpolationMode.LINEAR
-                self.__own_bindings_change = True
+                self._own_bindings_change = True
                 self.source.set_control_source(control_source, prop, "direct-absolute")
-                self.__own_bindings_change = False
+                self._own_bindings_change = False
                 self.set_default_keyframes_values(control_source, prop)
 
                 binding = self.source.get_control_binding(prop)
             self._control_bindings[prop] = binding
 
         if adding_kfs:
-            self.app.action_log.commit("Transformation properties keyframes activate")
+            self.app.action_log.commit("Video Transformation properties keyframes activate")
 
     def _defaultValuesCb(self, unused_widget):
-        with self.app.action_log.started("Transformation properties reset default",
+        with self.app.action_log.started("Video Transformation properties reset default",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
             if self.__source_uses_keyframes():
@@ -777,7 +775,7 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
 
             for prop in self.props:
                 assert self.source
-                self.source.set_child_property(prop, self.source.ui.default_position[prop])
+                assert self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
         self.__update_keyframes_ui()
 
@@ -829,7 +827,7 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 spin.set_value(value)
 
     def _control_bindings_changed(self, unused_track_element, unused_binding):
-        if self.__own_bindings_change:
+        if self._own_bindings_change:
             # Do nothing if the change occurred from this class
             return
 
@@ -850,7 +848,7 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 source_position = position - start + in_point
 
                 with self.app.action_log.started(
-                        "Transformation property change",
+                        "Video Transformation '" + prop + "' property change",
                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                         toplevel=True):
                     self._control_bindings[prop].props.control_source.set(source_position, value)
@@ -858,10 +856,10 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 self.warning("Could not get pipeline position")
                 return
         else:
-            with self.app.action_log.started("Transformation property change",
+            with self.app.action_log.started("Video Transformation '" + prop + "' property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
-                self.source.set_child_property(prop, value)
+                assert self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -924,15 +922,11 @@ class TransformationProperties(Keyframes, Gtk.Expander, Loggable):
 class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
     """Widget for configuring the placement and size of the clip."""
 
-    __signals__ = {
-        'selection-changed': []}
-
     def __init__(self, app):
         Gtk.Expander.__init__(self)
         Loggable.__init__(self)
         Keyframes.__init__(self)
         self.app = app
-        self._test_flag = False
         self._selection = None
         self._selected_clip = None
         self.set_properties(["volume"])
@@ -943,10 +937,6 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
                                                 "audiotransformation.ui"))
-#        self.__control_bindings = {}
-        # Used to make sure self.__control_bindings_changed doesn't get called
-        # when bindings are changed from this class
-#        self.__own_bindings_change = False
         self.add(self.builder.get_object("transform_box"))
         self._initButtons()
         self.show_all()
@@ -994,47 +984,33 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
         self.__setup_spin_button("volume_spinbtn", "volume")
 
     def __show_keyframes_toggled_cb(self, unused_button):
-        if self._activate_keyframes_btn.props.active:
-            self.__set_control_bindings()
-        # if self._test_flag:
-        #     self._activate_keyframe_btn.props.active = True
         self.__update_keyframes_ui()
 
     def __update_keyframes_ui(self):
-        if self._activate_keyframes_btn.get_active() or self._test_flag:
+        if self._activate_keyframes_btn.props.active:
             self._activate_keyframes_btn.props.label = "◆"
-            self._test_flag = True
         else:
             self._activate_keyframes_btn.props.label = "◇"
 
         if not self._activate_keyframes_btn.props.active:
             self._prev_keyframe_btn.set_sensitive(False)
             self._next_keyframe_btn.set_sensitive(False)
-            if self._test_flag:
-                self._activate_keyframes_btn.set_tooltip_text(_("Show keyframes"))
-            else:
-                self._activate_keyframes_btn.set_tooltip_text(_("Activate keyframes"))
+            self._activate_keyframes_btn.set_tooltip_text(_("Navigate keyframes"))
             self.source.ui_element.showDefaultKeyframes()
         else:
             self._prev_keyframe_btn.set_sensitive(True)
             self._next_keyframe_btn.set_sensitive(True)
-            self._activate_keyframes_btn.set_tooltip_text(_("Hide keyframes"))
+            self._activate_keyframes_btn.set_tooltip_text(_("Hide Navigation"))
             self.source.ui_element.showMultipleKeyframes(
                 list(self._control_bindings.values()))
 
     def __update_control_bindings(self):
         self._control_bindings = {}
-        if self._activate_keyframes_btn.get_active():
-            self._set_control_bindings()
+        self.__set_control_bindings()
 
     def __set_control_bindings(self):
-        adding_kfs = not self._activate_keyframes_btn.get_active()
-
-        if adding_kfs:
-            self.app.action_log.begin("Transformation properties keyframes activate",
-                                      toplevel=True)
-
         binding = self.source.get_control_binding("volume")
+        assert binding
 
         if not binding:
             control_source = GstController.InterpolationControlSource()
@@ -1047,30 +1023,24 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
             binding = self.source.get_control_binding("volume")
         self._control_bindings["volume"] = binding
 
-        if adding_kfs:
-            self.app.action_log.commit("Transformation properties keyframes activate")
-
     def _defaultValuesCb(self, unused_widget):
-        with self.app.action_log.started("Transformation properties reset default",
+        with self.app.action_log.started("Audio Transformation properties reset default",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            # if self._activate_keyframes_btn.get_active():
-            if self._test_flag:
-                self.remove_control_bindings()
+
+            self.remove_time_stamps()
 
             assert self.source
+            assert self.source.set_child_property("mute", False)
 
-            self.source.set_child_property("volume", float(1.00))
-            self.source.set_child_property("mute", False)
             self._mute_button.set_active(False)
             self._activate_keyframes_btn.props.active = False
-            self._test_flag = False
 
         self.__update_keyframes_ui()
 
     def __get_source_property(self, prop):
-        # except mute, all others need keyframes.
-        if self._activate_keyframes_btn.get_active() and prop != "mute":
+        # Only 'volume' property has keyframes.
+        if prop == "volume":
             try:
                 position = self._project.pipeline.getPosition()
                 start = self.source.props.start
@@ -1118,8 +1088,7 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 spin.set_value(value)
 
     def _control_bindings_changed(self, unused_track_element, unused_binding):
-        if self.__own_bindings_change:
-            # Do nothing if the change occurred from this class
+        if self._own_bindings_change:
             return
 
         self.__update_control_bindings()
@@ -1127,8 +1096,7 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
 
     def __set_prop(self, prop, value):
         assert self.source
-        # TODO: Check for mute case.
-        if self._activate_keyframes_btn.get_active() and prop != "mute":
+        if prop == "volume":
             try:
                 position = self._project.pipeline.getPosition()
                 start = self.source.props.start
@@ -1139,7 +1107,7 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 source_position = position - start + in_point
 
                 with self.app.action_log.started(
-                        "Transformation property change",
+                        "Audio Transformation 'volume' property change",
                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                         toplevel=True):
                     self._control_bindings[prop].props.control_source.set(source_position, value)
@@ -1147,10 +1115,10 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
                 self.warning("Could not get pipeline position")
                 return
         else:
-            with self.app.action_log.started("Transformation property change",
+            with self.app.action_log.started("Audio Transformation 'mute' property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
-                self.source.set_child_property(prop, value)
+                assert self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -1173,8 +1141,6 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
         if value != cvalue:
             self.__set_prop(prop, value)
 
-        # print(type(value), value, type(cvalue), cvalue, self.__get_source_property(prop))
-
     def _muteVolumeCb(self, unused_widget):
         if not self.source:
             return
@@ -1189,7 +1155,6 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
             self.__set_prop("mute", value)
 
     def __set_source(self, source):
-        self._test_flag = False
         if self.source:
             try:
                 self.source.disconnect_by_func(self.__source_property_changed_cb)
@@ -1200,7 +1165,7 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
         if self.source:
             self.__update_control_bindings()
             self.__update_spin_btn("volume")
-            # TODO: check what happens if below line is uncommented.
+
             self.__update_keyframes_ui()
             self.source.connect("deep-notify", self.__source_property_changed_cb)
 
@@ -1211,9 +1176,6 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
             if source:
                 self._selected_clip = clip
                 self.__set_source(source)
-                # If it had been video, changing x and y should also change
-                # the appearance thing on the right. But for volume no need.
-                # Thats the reasoning for commenting this out.
                 self.show()
                 return
 
