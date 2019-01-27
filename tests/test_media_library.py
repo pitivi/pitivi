@@ -63,7 +63,7 @@ class BaseTestMediaLibrary(common.TestCase):
         self.medialibrary = medialibrary.MediaLibraryWidget(self.app)
 
         if project_uri:
-            self.app.project_manager.loadProject(project_uri)
+            self.app.project_manager.load_project(project_uri)
         else:
             self.app.project_manager.new_blank_project()
 
