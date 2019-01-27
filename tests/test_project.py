@@ -90,7 +90,7 @@ class TestProjectManager(common.TestCase):
         self.assertEqual(uri, signalUri, self.signals)
 
     def testLoadProject(self):
-        self.manager.newBlankProject()
+        self.manager.new_blank_project()
 
         name, args = self.signals[0]
         self.assertEqual("new-project-loading", name, self.signals)
@@ -177,7 +177,7 @@ class TestProjectManager(common.TestCase):
         self.assertTrue(self.manager.current_project is None)
 
     def testNewBlankProject(self):
-        self.assertTrue(self.manager.newBlankProject())
+        self.assertTrue(self.manager.new_blank_project())
         self.assertEqual(3, len(self.signals))
 
         name, args = self.signals[0]
@@ -196,7 +196,7 @@ class TestProjectManager(common.TestCase):
         self.assertTrue(project is self.manager.current_project)
 
     def testSaveProject(self):
-        self.assertTrue(self.manager.newBlankProject())
+        self.assertTrue(self.manager.new_blank_project())
 
         unused, path = tempfile.mkstemp(suffix=".xges")
         unused, path2 = tempfile.mkstemp(suffix=".xges")
@@ -240,7 +240,7 @@ class TestProjectManager(common.TestCase):
         self.assertEqual(uri + "~", self.manager._makeBackupURI(uri))
 
     def testBackupProject(self):
-        self.manager.newBlankProject()
+        self.manager.new_blank_project()
 
         # Assign an uri to the project where it's saved by default.
         unused, xges_path = tempfile.mkstemp(suffix=".xges")
@@ -296,9 +296,7 @@ class TestProjectLoading(common.TestCase):
 
     def test_asset_added_signal(self):
         app = common.create_pitivi()
-        self.assertTrue(app.project_manager.newBlankProject())
-
-        project = app.project_manager.current_project
+        project = app.project_manager.new_blank_project()
         proxy_manager = app.proxy_manager
 
         mainloop = common.create_main_loop()
