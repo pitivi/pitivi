@@ -72,12 +72,9 @@ class TestProjectManager(common.TestCase):
         self.signals = self.listener.signals
 
     def testLoadProjectFailedUnknownFormat(self):
-        """
-        Check that new-project-failed is emitted when we don't have a suitable
-        formatter.
-        """
+        """Checks new-project-failed is emitted for unsuitable formatters."""
         uri = "file:///Untitled.meh"
-        self.manager.loadProject(uri)
+        self.manager.load_project(uri)
 
         # loading
         name, args = self.signals[0]
@@ -115,7 +112,7 @@ class TestProjectManager(common.TestCase):
         with common.cloned_sample():
             asset_uri = common.get_sample_uri("missing.png")
             with common.created_project_file(asset_uri) as uri:
-                self.assertTrue(self.manager.loadProject(uri))
+                self.assertIsNotNone(self.manager.load_project(uri))
                 mainloop.run()
         self.assertTrue(result[0], "missing-uri has not been emitted")
 
@@ -130,10 +127,10 @@ class TestProjectManager(common.TestCase):
         with common.cloned_sample("flat_colour1_640x480.png"):
             asset_uri = common.get_sample_uri("flat_colour1_640x480.png")
             with common.created_project_file(asset_uri=asset_uri) as uri:
-                self.assertTrue(self.manager.loadProject(uri))
+                project = self.manager.load_project(uri)
+                self.assertIsNotNone(project)
                 mainloop.run()
 
-        project = self.manager.current_project
         self.assertFalse(project.at_least_one_asset_missing)
         self.assertTrue(project.loaded)
         self.assertFalse(project.hasUnsavedModifications())
@@ -380,7 +377,7 @@ class TestProjectLoading(common.TestCase):
         project_manager.connect("closing-project", closing_project_cb)
         proxy_manager.connect_after("proxy-ready", proxy_ready_cb)
 
-        app.project_manager.loadProject(proj_uri)
+        app.project_manager.load_project(proj_uri)
         return mainloop, app, medialib, proxy_uri
 
     def test_load_project_with_missing_proxy(self):
@@ -480,7 +477,7 @@ class TestProjectLoading(common.TestCase):
         project_manager.connect("missing-uri", missing_uri_cb)
         project_manager.connect("new-project-loaded", new_project_loaded_cb)
 
-        project_manager.loadProject(proj_uri)
+        project_manager.load_project(proj_uri)
         with common.cloned_sample("1sec_simpsons_trailer.mp4"):
             mainloop.run()
         self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
@@ -523,7 +520,7 @@ class TestProjectLoading(common.TestCase):
             project_manager.connect("missing-uri", missing_uri_cb)
             project_manager.connect("new-project-loaded", new_project_loaded_cb)
 
-            project_manager.loadProject(proj_uri)
+            project_manager.load_project(proj_uri)
             mainloop.run()
             self.assertEqual(len(missing_uris), 1,
                 "missing_uri_cb should be called only once, got %s." % missing_uris)
