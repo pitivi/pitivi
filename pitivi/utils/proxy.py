@@ -56,8 +56,8 @@ GlobalSettings.addConfigOption("max_cpu_usage",
                                default=10)
 
 
-ENCODING_FORMAT_PRORES = "prores-opus-in-matroska.gep"
-ENCODING_FORMAT_JPEG = "jpeg-opus-in-matroska.gep"
+ENCODING_FORMAT_PRORES = "prores-raw-in-matroska.gep"
+ENCODING_FORMAT_JPEG = "jpeg-raw-in-matroska.gep"
 
 
 def createEncodingProfileSimple(container_caps, audio_caps, video_caps):
@@ -179,15 +179,19 @@ class ProxyManager(GObject.Object, Loggable):
             return None
 
         for profile in encoding_profile.get_profiles():
+            profile_format = profile.get_format()
+            if profile_format.intersect(Gst.Caps("audio/x-raw(ANY)")) or \
+                    profile_format.intersect(Gst.Caps("audio/x-video(ANY)")):
+                continue
             if not Gst.ElementFactory.list_filter(
                 Gst.ElementFactory.list_get_elements(
                     Gst.ELEMENT_FACTORY_TYPE_ENCODER, Gst.Rank.MARGINAL),
-                    profile.get_format(), Gst.PadDirection.SRC, False):
+                    profile_format, Gst.PadDirection.SRC, False):
                 return None
             if not Gst.ElementFactory.list_filter(
                 Gst.ElementFactory.list_get_elements(
                     Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.MARGINAL),
-                    profile.get_format(), Gst.PadDirection.SINK, False):
+                    profile_format, Gst.PadDirection.SINK, False):
                 return None
 
         if asset:
@@ -317,6 +321,16 @@ class ProxyManager(GObject.Object, Loggable):
             transcoder.props.pipeline.props.audio_filter.finalize(proxy)
 
             del transcoder
+
+        if asset.get_info().get_duration() != proxy.get_info().get_duration():
+            self.error(
+                "Asset %s (duration=%s) and created proxy %s (duration=%s) do not"
+                " have the same duration this should *never* happen, please file"
+                " a bug with the media files." % (
+                    asset.get_id(), Gst.TIME_ARGS(asset.get_info().get_duration()),
+                    proxy.get_id(), Gst.TIME_ARGS(proxy.get_info().get_duration())
+                )
+            )
 
         self.emit("proxy-ready", asset, proxy)
         self.__emitProgress(proxy, 100)
