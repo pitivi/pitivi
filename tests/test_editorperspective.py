@@ -99,7 +99,7 @@ class TestEditorPerspective(common.TestCase):
         with common.cloned_sample():
             asset_uri = common.get_sample_uri("missing.png")
             with common.created_project_file(asset_uri) as uri:
-                app.project_manager.loadProject(uri)
+                app.project_manager.load_project(uri)
 
         mainloop.run()
 

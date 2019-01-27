@@ -232,7 +232,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         self.app.shutdown()
 
-    def loadProject(self, uri):
+    def load_project(self, uri):
         """Loads the specified URI as a project.
 
         If a backup file exists, asks if it should be loaded instead, and if so,
@@ -261,7 +261,7 @@ class ProjectManager(GObject.Object, Loggable):
                       _('This might be due to a bug or an unsupported project file format. '
                         'If you were trying to add a media file to your project, '
                         'use the "Import" button instead.'))
-            return False
+            return None
 
         self.current_project = project
         self.emit("new-project-created", project)
@@ -271,7 +271,7 @@ class ProjectManager(GObject.Object, Loggable):
         if is_validate_scenario:
             self.current_project.setupValidateScenario()
 
-        return True
+        return project
 
     def _restoreFromBackupDialog(self, time_diff):
         """Asks if we need to load the autosaved project backup.
@@ -551,7 +551,7 @@ class ProjectManager(GObject.Object, Loggable):
         uri = self.current_project.uri
         self.current_project.setModificationState(False)
         self.closeRunningProject()
-        self.loadProject(uri)
+        self.load_project(uri)
 
     def _projectChangedCb(self, project):
         # _backup_lock is a timer, when a change in the project is done it is

@@ -312,7 +312,7 @@ class GreeterPerspective(Perspective):
         uri = uris[0]
         extension = os.path.splitext(uri)[1][1:]
         if extension in self.__project_filter:
-            self.app.project_manager.loadProject(uri)
+            self.app.project_manager.load_project(uri)
 
     def __new_project_cb(self, unused_action, unused_param):
         self.app.project_manager.new_blank_project()
@@ -323,7 +323,7 @@ class GreeterPerspective(Perspective):
         uri = dialog.get_uri()
         dialog.destroy()
         if response == Gtk.ResponseType.OK:
-            self.app.project_manager.loadProject(uri)
+            self.app.project_manager.load_project(uri)
 
     def __app_version_info_received_cb(self, app, unused_version_information):
         """Handles new version info."""
@@ -360,7 +360,7 @@ class GreeterPerspective(Perspective):
         if row.select_button.get_visible():
             row.select_button.set_active(not row.select_button.get_active())
         else:
-            self.app.project_manager.loadProject(row.uri)
+            self.app.project_manager.load_project(row.uri)
 
     def __projects_button_press_cb(self, listbox, event):
         if event.button == 3:

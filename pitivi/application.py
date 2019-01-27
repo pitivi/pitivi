@@ -219,7 +219,7 @@ class Pitivi(Gtk.Application, Loggable):
             self.warning(
                 "Can open only one project file at a time. Ignoring the rest!")
         project_file = giofiles[0]
-        self.project_manager.loadProject(quote_uri(project_file.get_uri()))
+        self.project_manager.load_project(quote_uri(project_file.get_uri()))
         return True
 
     def shutdown(self):
