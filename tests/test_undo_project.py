@@ -28,9 +28,7 @@ class TestProjectUndo(common.TestCase):
     def setUp(self):
         super(TestProjectUndo, self).setUp()
         self.app = common.create_pitivi()
-        self.assertTrue(self.app.project_manager.newBlankProject())
-
-        self.project = self.app.project_manager.current_project
+        self.project = self.app.project_manager.new_blank_project()
         self.action_log = self.app.action_log
 
     def test_new_project_has_nothing_to_undo(self):

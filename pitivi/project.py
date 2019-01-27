@@ -509,11 +509,11 @@ class ProjectManager(GObject.Object, Loggable):
 
         return True
 
-    def newBlankProject(self):
+    def new_blank_project(self):
         """Creates a new blank project and sets it as the current project.
 
         Returns:
-            bool: Whether the project has been created successfully.
+            Project: The created project.
         """
         self.debug("New blank project")
 
@@ -539,7 +539,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.loaded = True
         self.time_loaded = time.time()
 
-        return True
+        return project
 
     def revertToSavedProject(self):
         """Discards all unsaved changes and reloads the current open project."""

@@ -315,7 +315,7 @@ class GreeterPerspective(Perspective):
             self.app.project_manager.loadProject(uri)
 
     def __new_project_cb(self, unused_action, unused_param):
-        self.app.project_manager.newBlankProject()
+        self.app.project_manager.new_blank_project()
 
     def __open_project_cb(self, unused_action, unused_param):
         dialog = BrowseProjectsDialog(self.app)
