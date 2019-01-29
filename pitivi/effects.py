@@ -124,9 +124,19 @@ VIDEO_EFFECTS_CATEGORIES = (
     )),
 )
 
-BLACKLISTED_EFFECTS = ["colorconvert", "coglogoinsert", "festival",
-                       "alphacolor", "cogcolorspace", "videodetect",
-                       "navigationtest", "videoanalyse", "volume"]
+BLACKLISTED_EFFECTS = [
+    "alphacolor",
+    "cogcolorspace",
+    "coglogoinsert",
+    "colorconvert",
+    "festival",
+    "navigationtest",
+    "videoanalyse",
+    # We prefer to use videocrop, see https://gitlab.gnome.org/GNOME/pitivi/issues/2150
+    "videobox",
+    "videodetect",
+    "volume",
+]
 
 BLACKLISTED_PLUGINS = []
 
