@@ -1110,7 +1110,7 @@ class AudioTransformationProperties(Keyframes, Gtk.Expander, Loggable):
                         "Audio Transformation 'volume' property change",
                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                         toplevel=True):
-                    self._control_bindings[prop].props.control_source.set(source_position, value)
+                    self._control_bindings[prop].props.control_source.set(source_position, (value / 10.0))
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
