@@ -998,7 +998,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
         if value is None:
             value = prop.default_value
-        else:
+        if value is not None:
             widget.setWidgetValue(value)
 
         return widget
