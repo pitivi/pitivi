@@ -178,22 +178,27 @@ class EffectsPropertiesManagerTest(common.TestCase):
         """Checks ..."""
         mainloop = common.create_main_loop()
         app = common.create_pitivi()
-        project = app.project_manager.newBlankProject()
+        project = app.project_manager.new_blank_project()
+
+        uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
+        #project.addUris([uri])
         mainloop.run(until_empty=True)
 
-        #manager = EffectsPropertiesManager(app)
-        manager = app.gui.editor.clipconfig.effect_expander.effects_properties_manager
+        manager = EffectsPropertiesManager(app)
+        #manager = app.gui.editor.clipconfig.effect_expander.effects_properties_manager
 
-        uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         ges_clip = asset.extract()
+        project.videowidth = 2000
+        project.videoheight = 2000
 
         # Add the clip to a timeline so it gets tracks.
         ges_layer = project.ges_timeline.get_layers()[0]
         ges_layer.add_clip(ges_clip)
 
         effect = GES.Effect.new("aspectratiocrop")
-        ges_clip.add_effect(effect)
+        ges_clip.add(effect)
+        mainloop.run(until_empty=True)
 
         settings_widget = manager.getEffectConfigurationUI(effect)
         self.assertFalse(settings_widget.updating_widgets)
@@ -203,7 +208,8 @@ class EffectsPropertiesManagerTest(common.TestCase):
             print(prop, widget, widget.getWidgetValue(), effect.get_child_property(prop.name))
         res, value = effect.get_child_property("aspect-ratio")
         self.assertTrue(res)
-        widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(value.num + 10, value.denom))
+        #widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(value.num + 10, value.denom))
+        widgets["aspect-ratio"].setWidgetValue(Gst.Fraction(4, 3))
         # res, value = effect.get_child_property("aspect-ratio")
         # self.assertTrue(effect.set_child_property("aspect-ratio", Gst.Fraction(value.num + 10, value.denom)))
 
