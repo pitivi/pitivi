@@ -372,12 +372,19 @@ class GreeterPerspective(Perspective):
     def __search_changed_cb(self, search_entry):
         search_hit = False
         search_text = search_entry.get_text().lower()
+        style_context = search_entry.get_style_context()
+
         for recent_project_item in self.__recent_projects_listbox.get_children():
             if search_text in recent_project_item.name.lower():
                 recent_project_item.show()
                 search_hit = True
             else:
                 recent_project_item.hide()
+
+        if not search_hit:
+            style_context.add_class("error")
+        else:
+            style_context.remove_class("error")
 
         self.__recent_projects_labelbox.set_visible(search_hit)
         self.__recent_projects_listbox.set_visible(search_hit)
