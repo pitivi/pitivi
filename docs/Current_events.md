@@ -6,12 +6,12 @@ or
 [HTML](https://www.google.com/calendar/embed?src=m4r5pf5da7c8kdba1cjq2d3jb4%40group.calendar.google.com)).
 For long term plans, see the [Roadmap](Roadmap.md).
 
--   [0.99](releases/0.99.md) “Giant enemy crab” should be released early
-    in 2017.
+-   2018 Aug 29th: [0.999](releases/0.999.md) “Test me please”
 
 Among the current releases, only the latest release is supported at any
 given time (unless otherwise noted):
 
+-   2017 Sep 21st: [0.99](releases/0.99.md) “Ocean Big Chair”
 -   2016 Dec 5th: [0.98](releases/0.98.md) “Getting there”
 -   2016 Aug 8th: [0.97](releases/0.97.md)
 -   2016 Jun 30th: [0.96](releases/0.96.md) “Cogito Ergo Proxy”
