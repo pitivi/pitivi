@@ -22,7 +22,7 @@ Any time estimates here are mostly wild guesses. Do not treat them as
 hard deadlines. This aims mostly at giving an idea of how milestones
 follow each other.
 
--   2018 Q4: release [1.0](releases/1.0.md) with ponies and rainbows
+-   2019 Q1: release [1.0](releases/1.0.md) with ponies and rainbows
 
 See [Current events](Current_events.md) for past items.
 
