@@ -21,6 +21,7 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
+from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
@@ -36,6 +37,9 @@ from pitivi.undo.undo import PropertyChangedAction
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
+
+
+SEPARATOR_ACCEPTING_DROP_INTERVAL_MS = 1000
 
 
 class BaseTestUndoTimeline(common.TestCase):
@@ -1014,6 +1018,16 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.get_button.return_value = True, 1
             timeline_ui._motion_notify_event_cb(None, event)
 
+        GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS,
+                        self.clip_dragged_to_create_layer_below_button_release_cb)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+    def clip_dragged_to_create_layer_below_button_release_cb(self):
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
@@ -1066,6 +1080,15 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.get_button.return_value = True, 1
             timeline_ui._motion_notify_event_cb(None, event)
 
+        GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS,
+                        self.clip_dragged_to_create_layer_above_button_release_cb)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+    def clip_dragged_to_create_layer_above_button_release_cb(self):
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
