@@ -45,9 +45,10 @@ index.md
 		releases/0.10.2.md
 		releases/0.10.1.md
 	Google_Summer_of_Code.md
+		GSoC_Ideas.md
 		Past_GSoCs.md
-		Google_SoC_2007_-_Simple_Timeline.md
-		Feroze_gsoc.md
+			Google_SoC_2007_-_Simple_Timeline.md
+			Feroze_gsoc.md
 	Testing.md
 		QA_Scenarios.md
 	design.md
