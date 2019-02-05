@@ -1,3 +1,7 @@
+---
+short-description: What the GSoC students did in the previous years
+...
+
 # Past GSoCs
 
 See [Google Summer of Code](Google_Summer_of_Code.md) for how to
