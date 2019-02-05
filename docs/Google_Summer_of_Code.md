@@ -6,12 +6,15 @@ project while being paid by Google. Mid-term and end-term we evaluate
 your work.
 
 On the technical side, it might interest you that we use GES/GStreamer
-as backend, GTK for the UI, the Meson build system, and Flatpak to make
-builds for users. Flatpak also allows us to have a sandboxed development
-which means it's very easy to setup, you are set up in no time, and you
-don't have to run a virtual machine or f\*\*k up your system to be able
-to build the latest GStreamer and Pitivi. See the section at the top of
-the [contributing page] for details why Pitivi is important.
+as backend, GTK for the UI, the Meson build system, and Flatpak to
+distribute our own builds to users.
+
+Flatpak also allows us to have a development environment with all the
+dependencies in a sandbox, which is very easy to set up, and you
+don't have to mess your system to be able to build the latest GStreamer.
+
+See the section at the top of the [contributing page] for details why
+Pitivi is important.
 
 While a GSoC with us is one of the most fun and rewarding experiences
 you can get, you need to consider it as *professional work*:
@@ -59,7 +62,7 @@ Knowledge of [Git], GStreamer and [related technologies] is a plus.
 Familiarity with [Test-Driven Development] is a plus.
 
   [riot.im]: https://riot.im/app
-  [IRCCloud]: https://www.irccloud.com/pricing
+  [IRCCloud]: https://www.irccloud.com
   [Git]: Git.md
   [related technologies]: Architecture.md
   [Test-Driven Development]: http://en.wikipedia.org/wiki/Test-driven_development
@@ -107,15 +110,15 @@ Therefore, you should proceed like this:
     doesn't, etc. See how you like it.
 3.  To get a better idea of how comfortable you are with the code and
     community, make some small contributions to the code. Pick some
-    small [bugs] to fix or pick a “small” task in the [fun tasks for
-    newcomers] list and have a go at it. Keep us in the loop. The
+    [small bug to fix] and have a go at it. Keep us in the loop. The
     earlier you start contributing, the more likely you know what you're
     getting into. Don't start contributing in March/April: we highly
     encourage you to start getting involved in January/February, or even
     earlier, to have time to try another team if we are not a good fit
     for you.
 4.  Find a cool feature you need in Pitivi and tell us. Start making a
-    design doc on how you plan to implement it.
+    design doc on how you plan to implement it. Feel free to pick
+    a project from our [selected list of ideas].
 5.  Fill out the [application] and apply officially to the Google's
     Summer of Code [website] under both the GNOME or GStreamer mentoring
     organizations, depending on your project.
