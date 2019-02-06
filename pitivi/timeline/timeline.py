@@ -344,8 +344,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Whether the user is dragging a layer.
         self.__moving_layer = None
 
-        self.__separator_accepting_drop = False
-        self.__separator_accepting_drop_id = 0
+        self.separator_accepting_drop = False
+        self.separator_accepting_drop_id = 0
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
@@ -599,7 +599,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         event_widget = Gtk.get_event_widget(event)
         if event.get_state() & (Gdk.ModifierType.CONTROL_MASK |
-                                  Gdk.ModifierType.MOD1_MASK):
+                                Gdk.ModifierType.MOD1_MASK):
             # Zoom.
             x, unused_y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
             # Figure out first where to scroll at the end.
@@ -1291,19 +1291,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
 
-        self.__separator_accepting_drop = False
-        if self.__separator_accepting_drop_id:
-            GLib.source_remove(self.__separator_accepting_drop_id)
-            self.__separator_accepting_drop_id=0
+        self.separator_accepting_drop = False
+        if self.separator_accepting_drop_id:
+            GLib.source_remove(self.separator_accepting_drop_id)
+            self.separator_accepting_drop_id = 0
         if self.__on_separators:
-            self.__separator_accepting_drop_id = GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS
-                                                 , self.__separator_accepting_drop_timeout_cb)
+            self.separator_accepting_drop_id = GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS,
+                                                                self.separator_accepting_drop_timeout_cb)
 
         self.editing_context.edit_to(position, self._on_layer)
 
-    def __separator_accepting_drop_timeout_cb(self):
+    def separator_accepting_drop_timeout_cb(self):
         self._setSeparatorsPrelight(True)
-        self.__separator_accepting_drop = True
+        self.separator_accepting_drop = True
 
     def create_layer(self, priority):
         """Adds a new layer to the GES timeline."""
@@ -1325,7 +1325,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.editing_context:
             self.__end_snap()
 
-            if self.__separator_accepting_drop and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
+            if self.separator_accepting_drop and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
                 priority = self.separator_priority(self.__on_separators[1])
                 ges_layer = self.create_layer(priority)
                 position = self.editing_context.new_position
