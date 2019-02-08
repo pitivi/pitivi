@@ -625,6 +625,15 @@ class TestProjectSettings(common.TestCase):
         self.assertFalse(project._has_default_video_settings)
         self.assertFalse(project._has_default_audio_settings)
 
+    def test_name(self):
+        project = Project(common.create_pitivi_mock())
+
+        project.uri = "file:///tmp/A%20B.xges"
+        self.assertEqual(project.name, "A B")
+
+        project.uri = "file:///tmp/%40%23%24%5E%26%60.xges"
+        self.assertEqual(project.name, "@#$^&`")
+
 
 class TestExportSettings(common.TestCase):
 
