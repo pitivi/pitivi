@@ -25,6 +25,7 @@ import tarfile
 import time
 import uuid
 from gettext import gettext as _
+from urllib.parse import unquote
 
 from gi.repository import GES
 from gi.repository import GLib
@@ -761,7 +762,8 @@ class Project(Loggable, GES.Project):
     def name(self):
         if not self.uri:
             return DEFAULT_NAME
-        return os.path.splitext(os.path.basename(self.uri))[0]
+        quoted_name = os.path.splitext(os.path.basename(self.uri))[0]
+        return unquote(quoted_name)
 
     @property
     def year(self):
