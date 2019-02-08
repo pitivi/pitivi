@@ -1104,11 +1104,6 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.get_button.return_value = True, 1
             timeline_ui._motion_notify_event_cb(None, event)
 
-        layers = self.timeline.get_layers()
-        self.assertEqual(len(layers), 1)
-        self.check_layers(layers)
-        self.assertEqual(layers[0].get_clips(), [clip])
-
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
@@ -1143,11 +1138,6 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.y = -1
             event.get_button.return_value = True, 1
             timeline_ui._motion_notify_event_cb(None, event)
-
-        layers = self.timeline.get_layers()
-        self.assertEqual(len(layers), 1)
-        self.check_layers(layers)
-        self.assertEqual(layers[0].get_clips(), [clip])
 
         timeline_ui.separator_accepting_drop_timeout_cb()
         timeline_ui._button_release_event_cb(None, event)
