@@ -58,7 +58,7 @@ cdata.set('GITVERSION', GITVERSION)
 cdata.set('VERSION', meson.project_version())
 cdata.set('BUILDDIR', meson.current_build_dir())
 
-module_suffix = ''
+module_suffix = []
 # Python cannot import default .dylib, changed suffix to .so instead
 if ['darwin', 'ios'].contains(host_system)
     module_suffix = 'so'
