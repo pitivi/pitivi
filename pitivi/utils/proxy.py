@@ -82,9 +82,7 @@ class ProxyManager(GObject.Object, Loggable):
         "progress": (GObject.SignalFlags.RUN_LAST, None, (object, int, int)),
         "proxy-ready": (GObject.SignalFlags.RUN_LAST, None, (object, object)),
         "asset-preparing-cancelled": (GObject.SignalFlags.RUN_LAST, None, (object,)),
-        "error-preparing-asset": (GObject.SignalFlags.RUN_LAST, None, (object,
-                                                                  object,
-                                                                  object)),
+        "error-preparing-asset": (GObject.SignalFlags.RUN_LAST, None, (object, object, object)),
     }
 
     WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg",
