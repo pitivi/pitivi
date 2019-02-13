@@ -49,7 +49,7 @@ class Selected(GObject.Object):
     """
 
     __gsignals__ = {
-        "selected-changed": (GObject.SIGNAL_RUN_LAST, None, (bool,)),
+        "selected-changed": (GObject.SignalFlags.RUN_LAST, None, (bool,)),
     }
 
     def __init__(self):
@@ -83,7 +83,7 @@ class Selection(GObject.Object, Loggable):
     """
 
     __gsignals__ = {
-        "selection-changed": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "selection-changed": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self):

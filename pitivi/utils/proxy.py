@@ -79,10 +79,10 @@ class ProxyManager(GObject.Object, Loggable):
     """Transcodes assets and manages proxies."""
 
     __gsignals__ = {
-        "progress": (GObject.SIGNAL_RUN_LAST, None, (object, int, int)),
-        "proxy-ready": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
-        "asset-preparing-cancelled": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "error-preparing-asset": (GObject.SIGNAL_RUN_LAST, None, (object,
+        "progress": (GObject.SignalFlags.RUN_LAST, None, (object, int, int)),
+        "proxy-ready": (GObject.SignalFlags.RUN_LAST, None, (object, object)),
+        "asset-preparing-cancelled": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "error-preparing-asset": (GObject.SignalFlags.RUN_LAST, None, (object,
                                                                   object,
                                                                   object)),
     }

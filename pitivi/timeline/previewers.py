@@ -65,8 +65,8 @@ assert Gst.SECOND % THUMB_PERIOD == 0
 WAVEFORM_SURFACE_EXTRA_PX = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
-    "done": (GObject.SIGNAL_RUN_LAST, None, ()),
-    "error": (GObject.SIGNAL_RUN_LAST, None, ()),
+    "done": (GObject.SignalFlags.RUN_LAST, None, ()),
+    "error": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
 GlobalSettings.addConfigSection("previewers")

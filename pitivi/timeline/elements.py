@@ -87,9 +87,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     __gsignals__ = {
         # Signal the keyframes or the curve are being hovered
-        "enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "enter": (GObject.SignalFlags.RUN_LAST, None, ()),
         # Signal the keyframes or the curve are not being hovered anymore
-        "leave": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "leave": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, timeline, binding):
@@ -595,9 +595,9 @@ class MultipleKeyframeCurve(KeyframeCurve):
 class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
         # Signal the keyframes curve are being hovered
-        "curve-enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "curve-enter": (GObject.SignalFlags.RUN_LAST, None, ()),
         # Signal the keyframes curve are not being hovered anymore
-        "curve-leave": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "curve-leave": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, element, timeline):

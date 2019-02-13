@@ -33,8 +33,8 @@ class FileListErrorDialog(GObject.Object, Loggable):
     """Dialog for showing errors blocking importing media files."""
 
     __gsignals__ = {
-        'close': (GObject.SIGNAL_RUN_LAST, None, ()),
-        'response': (GObject.SIGNAL_RUN_LAST, None, (object,))}
+        'close': (GObject.SignalFlags.RUN_LAST, None, ()),
+        'response': (GObject.SignalFlags.RUN_LAST, None, (object,))}
 
     def __init__(self, title, headline):
         GObject.Object.__init__(self)

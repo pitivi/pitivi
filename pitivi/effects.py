@@ -623,10 +623,10 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         return False, handler_return
 
     __gsignals__ = {
-        "create_widget": (GObject.SIGNAL_RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
+        "create_widget": (GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
                           create_widget_accumulator),
         "create_property_widget": (
-            GObject.SIGNAL_RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
+            GObject.SignalFlags.RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
             create_widget_accumulator),
     }
 

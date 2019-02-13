@@ -292,8 +292,8 @@ def extension_for_muxer(muxer_name):
 class RenderingProgressDialog(GObject.Object):
 
     __gsignals__ = {
-        "pause": (GObject.SIGNAL_RUN_LAST, None, ()),
-        "cancel": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "pause": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "cancel": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, app, parent):

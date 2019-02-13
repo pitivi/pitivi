@@ -166,12 +166,12 @@ class UndoableActionLog(GObject.Object, Loggable):
     """
 
     __gsignals__ = {
-        "begin": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "pre-push": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "push": (GObject.SIGNAL_RUN_LAST, None, (object, object)),
-        "rollback": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "commit": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "move": (GObject.SIGNAL_RUN_LAST, None, (object,)),
+        "begin": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "pre-push": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "push": (GObject.SignalFlags.RUN_LAST, None, (object, object)),
+        "rollback": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "commit": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "move": (GObject.SignalFlags.RUN_LAST, None, (object,)),
     }
 
     def __init__(self):

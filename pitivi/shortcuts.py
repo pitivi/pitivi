@@ -30,7 +30,7 @@ class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-att
     """Manager storing the shortcuts from all across the app."""
 
     __gsignals__ = {
-        "accel-changed": (GObject.SIGNAL_RUN_LAST, None, (str,))
+        "accel-changed": (GObject.SignalFlags.RUN_LAST, None, (str,))
     }
 
     def __init__(self, app):
