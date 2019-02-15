@@ -316,11 +316,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._layers_controls_vbox.props.valign = Gtk.Align.START
         size_group.add_widget(self._layers_controls_vbox)
 
-        add_layer_button = Gtk.Button.new_with_label("Add layer")
-        add_layer_button.connect("clicked", self.__add_layer_cb)
-        add_layer_button.show()
-        self._layers_controls_vbox.pack_end(add_layer_button, True, True, 0)
-
         # Stuff the layers controls in a ScrolledWindow so they can be scrolled.
         # Use self.layout's hadj to scroll the controls in sync with the layers.
         scrolled_window = Gtk.ScrolledWindow(vadjustment=self.vadj)
@@ -1048,8 +1043,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer = Layer(ges_layer, self)
         ges_layer.ui = layer
 
+        add_layer_button_status = 0
         if not self._separators:
             # Make sure the first layer has separators above it.
+            add_layer_button_status = 1
             self.__add_separators()
 
         control = LayerControls(ges_layer, self.app)
@@ -1063,6 +1060,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layer.show()
 
         self.__add_separators()
+
+        if add_layer_button_status:
+            add_layer_button = Gtk.Button.new_with_label("Add layer")
+            add_layer_button.connect("clicked", self.__add_layer_cb)
+            add_layer_button.show()
+            self._layers_controls_vbox.pack_end(add_layer_button, True, True, 0)
 
         ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
 
