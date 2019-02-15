@@ -1844,8 +1844,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             copied_group_shallow_copy.ungroup(recursive=False)
 
     def __addLayerCb(self, unused_action, unused_parameter):
-        priority = len(self.ges_timeline.get_layers())
-        self.timeline.create_layer(priority)
+        with self.app.action_log.started("add layer",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
+            priority = len(self.ges_timeline.get_layers())
+            self.timeline.create_layer(priority)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
