@@ -208,6 +208,8 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
 
         self.snap_position = 0
         self.playhead_position = 0
+        # Bottom Margin for the Add layer button added in Layers control
+        self.bottom_margin = 30
 
         self.layers_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.layers_vbox.get_style_context().add_class("LayersBox")
@@ -278,7 +280,7 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         """Sets the size of the scrollable area to fit the layers_vbox."""
         self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
         self.props.width = allocation.width
-        self.props.height = allocation.height
+        self.props.height = allocation.height + self.bottom_margin
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
