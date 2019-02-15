@@ -1620,6 +1620,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.paste-clips", ["<Primary>v"],
                                _("Paste selected clips"))
 
+        self.add_layer_action = Gio.SimpleAction.new("add-layer", None)
+        self.add_layer_action.connect("activate", self.__addLayerCb)
+        group.add_action(self.add_layer_action)
+        self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
+                               _("Add layer"))
+
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1836,6 +1842,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             copied_group_shallow_copy = self.__copied_group.paste(position)
             self.__copied_group = copied_group_shallow_copy.copy(True)
             copied_group_shallow_copy.ungroup(recursive=False)
+
+    def __addLayerCb(self, unused_action, unused_parameter):
+        priority = len(self.ges_timeline.get_layers())
+        self.timeline.create_layer(priority)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:

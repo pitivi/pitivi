@@ -128,5 +128,20 @@ When enabled, adjacent clips automatically move to fill gaps.</property>
         <property name="homogeneous">True</property>
       </packing>
     </child>
+    <child>
+      <object class="GtkToolButton" id="add_layer_button">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="tooltip_text" translatable="yes">Add layer</property>
+        <property name="action_name">timeline.add-layer</property>
+        <property name="label" translatable="yes">Add layer</property>
+        <property name="use_underline">True</property>
+        <property name="icon_name">list-add</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="homogeneous">True</property>
+      </packing>
+    </child>
   </object>
 </interface>
