@@ -1065,7 +1065,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         if add_layer_button_status:
             add_layer_button = Gtk.Button.new_with_label("Add layer")
-            add_layer_button.connect("clicked", self.__add_layer_cb)
+            add_layer_button.connect("clicked", self._add_layer_cb)
             add_layer_button.show()
             self._layers_controls_vbox.pack_end(add_layer_button, True, True, 0)
 
@@ -1359,7 +1359,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app.action_log.commit("move layer")
         self.__moving_layer = None
 
-    def __add_layer_cb(self, widget):
+    def _add_layer_cb(self, unused_widget=None):
         with self.app.action_log.started("add layer",
                     finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                     toplevel=True):
