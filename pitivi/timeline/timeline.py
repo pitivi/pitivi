@@ -316,6 +316,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._layers_controls_vbox.props.valign = Gtk.Align.START
         size_group.add_widget(self._layers_controls_vbox)
 
+        add_layer_button = Gtk.Button.new_with_label("Add layer")
+        add_layer_button.connect("clicked", self.__add_layer_cb)
+        add_layer_button.show()
+        self._layers_controls_vbox.pack_end(add_layer_button, True, True, 0)
+
         # Stuff the layers controls in a ScrolledWindow so they can be scrolled.
         # Use self.layout's hadj to scroll the controls in sync with the layers.
         scrolled_window = Gtk.ScrolledWindow(vadjustment=self.vadj)
@@ -1349,6 +1354,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app.action_log.commit("move layer")
         self.__moving_layer = None
 
+    def __add_layer_cb(self, widget):
+        with self.app.action_log.started("add layer",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
+            priority = len(self.ges_timeline.get_layers())
+            self.create_layer(priority)
+
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""
@@ -1620,12 +1632,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.paste-clips", ["<Primary>v"],
                                _("Paste selected clips"))
 
-        self.add_layer_action = Gio.SimpleAction.new("add-layer", None)
-        self.add_layer_action.connect("activate", self.__addLayerCb)
-        group.add_action(self.add_layer_action)
-        self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
-                               _("Add layer"))
-
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1842,13 +1848,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             copied_group_shallow_copy = self.__copied_group.paste(position)
             self.__copied_group = copied_group_shallow_copy.copy(True)
             copied_group_shallow_copy.ungroup(recursive=False)
-
-    def __addLayerCb(self, unused_action, unused_parameter):
-        with self.app.action_log.started("add layer",
-                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                    toplevel=True):
-            priority = len(self.ges_timeline.get_layers())
-            self.timeline.create_layer(priority)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
