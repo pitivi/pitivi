@@ -278,7 +278,8 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         """Sets the size of the scrollable area to fit the layers_vbox."""
         self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
         self.props.width = allocation.width
-        self.props.height = allocation.height
+        # The additional space is for the 'Add layer' button.
+        self.props.height = allocation.height + LAYER_HEIGHT / 2
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
@@ -323,6 +324,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         scrolled_window.props.vscrollbar_policy = Gtk.PolicyType.EXTERNAL
         scrolled_window.add(self._layers_controls_vbox)
         hbox.pack_start(scrolled_window, False, False, 0)
+
+        self.add_layer_button = Gtk.Button.new_with_label("Add layer")
+        self.add_layer_button.props.margin = SPACING
+        self.add_layer_button.set_halign(Gtk.Align.CENTER)
+        self.add_layer_button.show()
+        self._layers_controls_vbox.pack_end(self.add_layer_button, False, False, 0)
 
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
@@ -1085,23 +1092,27 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.debug("Layers still being shuffled, not updating widgets: %s", priorities)
             return
         self.debug("Updating layers widgets positions")
-        for ges_layer in self.ges_timeline.get_layers():
+        self.__update_separator(0)
+        for ges_layer in ges_layers:
             self.__update_layer(ges_layer)
+            self.__update_separator(ges_layer.props.priority + 1)
+
+    def __update_separator(self, priority):
+        """Sets the position of the separators in their parent."""
+        position = priority * 2
+        controls_separator, layers_separator = self._separators[priority]
+        vbox = self._layers_controls_vbox
+        vbox.child_set_property(controls_separator, "position", position)
+        vbox = self.layout.layers_vbox
+        vbox.child_set_property(layers_separator, "position", position)
 
     def __update_layer(self, ges_layer):
         """Sets the position of the layer and its controls in their parent."""
         position = ges_layer.props.priority * 2 + 1
-
-        # Update the position of the LayerControls and Layer widgets and
-        # also the position of the separators below them.
-        controls_separator, layers_separator = self._separators[ges_layer.props.priority + 1]
-        vbox = self.layout.layers_vbox
-        vbox.child_set_property(ges_layer.ui, "position", position)
-        vbox.child_set_property(layers_separator, "position", position + 1)
-
         vbox = self._layers_controls_vbox
         vbox.child_set_property(ges_layer.control_ui, "position", position)
-        vbox.child_set_property(controls_separator, "position", position + 1)
+        vbox = self.layout.layers_vbox
+        vbox.child_set_property(ges_layer.ui, "position", position)
 
     def _remove_layer(self, ges_layer):
         self.info("Removing layer: %s", ges_layer.props.priority)
@@ -1620,6 +1631,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.paste-clips", ["<Primary>v"],
                                _("Paste selected clips"))
 
+        self.add_layer_action = Gio.SimpleAction.new("add-layer", None)
+        self.timeline.add_layer_button.connect("clicked", self.__add_layer_cb)
+        self.add_layer_action.connect("activate", self.__add_layer_cb)
+        group.add_action(self.add_layer_action)
+        self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
+                               _("Add layer"))
+
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1836,6 +1854,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             copied_group_shallow_copy = self.__copied_group.paste(position)
             self.__copied_group = copied_group_shallow_copy.copy(True)
             copied_group_shallow_copy.ungroup(recursive=False)
+
+    def __add_layer_cb(self, unused_action, unused_parameter):
+        with self.app.action_log.started("add layer",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
+            priority = len(self.ges_timeline.get_layers())
+            self.timeline.create_layer(priority)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:

@@ -21,7 +21,6 @@ from unittest import mock
 
 from gi.repository import Gdk
 from gi.repository import GES
-from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import GstController
 from gi.repository import Gtk
@@ -360,6 +359,38 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         self.action_log.redo()
         self.assertFalse(clip1 in self.getTimelineClips())
+
+    def test_layer_added(self):
+        self.setup_timeline_container()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+
+        clip = GES.TitleClip()
+        self.layer.add_clip(clip)
+
+        self.timeline_container.add_layer_action.emit("activate", None)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
+
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
 
     def test_ungroup_group_clip(self):
         # This test is in TestLayerObserver because the relevant operations
@@ -1064,8 +1095,6 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
-
-        return clip, event, timeline_ui
 
     def test_clip_dragged_to_create_layer_above_denied(self):
         """Checks clip dropped onto the separator above without hovering."""
