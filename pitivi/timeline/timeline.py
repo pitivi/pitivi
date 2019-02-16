@@ -326,6 +326,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         scrolled_window.add(self._layers_controls_vbox)
         hbox.pack_start(scrolled_window, False, False, 0)
 
+        self.add_layer_button = Gtk.Button.new_with_label("Add layer")
+
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
         self.get_accessible().set_name("timeline canvas")
@@ -1064,10 +1066,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__add_separators()
 
         if add_layer_button_status:
-            add_layer_button = Gtk.Button.new_with_label("Add layer")
-            add_layer_button.connect("clicked", self._add_layer_cb)
-            add_layer_button.show()
-            self._layers_controls_vbox.pack_end(add_layer_button, True, True, 0)
+            self.add_layer_button.show()
+            self._layers_controls_vbox.pack_end(self.add_layer_button, True, True, 0)
 
         ges_layer.connect("notify::priority", self.__layer_priority_changed_cb)
 
@@ -1359,13 +1359,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app.action_log.commit("move layer")
         self.__moving_layer = None
 
-    def _add_layer_cb(self, unused_widget=None):
-        with self.app.action_log.started("add layer",
-                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                    toplevel=True):
-            priority = len(self.ges_timeline.get_layers())
-            self.create_layer(priority)
-
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""
@@ -1637,6 +1630,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.paste-clips", ["<Primary>v"],
                                _("Paste selected clips"))
 
+        self.add_layer_action = Gio.SimpleAction.new("add-layer", None)
+        self.timeline.add_layer_button.connect("clicked", self.__add_layer_cb)
+        self.add_layer_action.connect("activate", self.__add_layer_cb)
+        group.add_action(self.add_layer_action)
+        self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
+                               _("Add layer"))
+
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1853,6 +1853,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             copied_group_shallow_copy = self.__copied_group.paste(position)
             self.__copied_group = copied_group_shallow_copy.copy(True)
             copied_group_shallow_copy.ungroup(recursive=False)
+
+    def __add_layer_cb(self, unused_action, unused_parameter=None):
+        with self.app.action_log.started("add layer",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
+            priority = len(self.ges_timeline.get_layers())
+            self.timeline.create_layer(priority)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
