@@ -571,6 +571,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
+        self.videoflip = GES.Effect.new("videoflip")
+        self.orientation = 0
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -611,6 +613,12 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
+
+        self._rotate_left_keyframe_btn = self.builder.get_object("rotate_left_keyframe_button")
+        self._rotate_left_keyframe_btn.connect("clicked", self.__rotate_keyframe, False)
+
+        self._rotate_right_keyframe_btn = self.builder.get_object("rotate_right_keyframe_button")
+        self._rotate_right_keyframe_btn.connect("clicked", self.__rotate_keyframe, True)
 
         self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
         self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
@@ -663,6 +671,17 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if position > in_point + duration:
             seekval = start + duration
         pipeline.simple_seek(seekval)
+
+    def __rotate_keyframe(self, unused_button, right):
+        if right:
+            self.orientation = (self.orientation + 1) % 4
+        else:
+            self.orientation = (self.orientation - 1) % 4
+
+        with self.app.action_log.started("Rotate clip",
+                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                        toplevel=True):
+            self.videoflip.set_child_property("video-direction", self.orientation)
 
     def __show_keyframes_toggled_cb(self, unused_button):
         if self._activate_keyframes_btn.props.active:
@@ -887,6 +906,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def _selectionChangedCb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
+            clip.add(self.videoflip)
+            self.orientation = 0
             source = clip.find_track_element(None, GES.VideoSource)
             if source:
                 self._selected_clip = clip

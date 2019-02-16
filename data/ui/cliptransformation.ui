@@ -207,6 +207,38 @@
           </packing>
         </child>
         <child>
+          <object class="GtkButton" id="rotate_left_keyframe_button">
+            <property name="label" translatable="yes">&gt;</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Next keyframe</property>
+            <property name="relief">none</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="rotate_right_keyframe_button">
+            <property name="label" translatable="yes">&gt;</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Next keyframe</property>
+            <property name="relief">none</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkButton" id="clear_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -219,14 +251,14 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
       <packing>
         <property name="left_attach">0</property>
-        <property name="top_attach">4</property>
-        <property name="width">4</property>
+        <property name="top_attach">6</property>
+        <property name="width">6</property>
       </packing>
     </child>
   </object>
