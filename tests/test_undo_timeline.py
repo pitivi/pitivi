@@ -362,14 +362,13 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
     def test_layer_added(self):
         self.setup_timeline_container()
-        timeline_ui = self.timeline_container.timeline
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
 
         clip = GES.TitleClip()
         self.layer.add_clip(clip)
 
-        timeline_ui._add_layer_cb()
+        self.timeline_container.add_layer_action.emit("activate", None)
 
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 2)
