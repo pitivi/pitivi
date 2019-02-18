@@ -21,6 +21,7 @@ A collection of objects to use for testing
 """
 import contextlib
 import gc
+import locale
 import os
 import shutil
 import sys
@@ -73,6 +74,7 @@ for category in ["Gtk", "Gdk", "GLib-GObject", "GES"]:
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
+locale.setlocale(locale.LC_ALL, "en_US")
 
 
 def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
