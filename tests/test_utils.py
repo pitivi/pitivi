@@ -17,7 +17,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-from unittest import TestCase
 from unittest.mock import Mock
 
 from gi.repository import GLib
@@ -33,13 +32,15 @@ from pitivi.utils.ui import beautify_length
 from pitivi.utils.ui import format_audiochannels
 from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
+from tests import common
 
 second = Gst.SECOND
 minute = second * 60
 hour = minute * 60
 
 
-class TestBeautifyLength(TestCase):
+class TestBeautifyTime(common.TestCase):
+    """Tests time beautifying utility methods."""
 
     def test_beautify_seconds(self):
         self.assertEqual(beautify_length(second), "1 second")
@@ -65,7 +66,7 @@ class TestBeautifyLength(TestCase):
         self.assertEqual(beautify_length(Gst.CLOCK_TIME_NONE), "")
 
 
-class TestFormatFramerateValue(TestCase):
+class TestFormatFramerateValue(common.TestCase):
 
     def __check(self, num, denom, expected):
         stream = Mock(spec=GstPbutils.DiscovererVideoInfo)
@@ -96,7 +97,7 @@ class TestFormatFramerateValue(TestCase):
         self.__check(120, 1, "120")
 
 
-class TestFormatAudiorate(TestCase):
+class TestFormatAudiorate(common.TestCase):
 
     def __check(self, rate, expected):
         stream = Mock(spec=GstPbutils.DiscovererAudioInfo)
@@ -114,7 +115,7 @@ class TestFormatAudiorate(TestCase):
         self.__check(960000, "960 kHz")
 
 
-class TestFormatAudiochannels(TestCase):
+class TestFormatAudiochannels(common.TestCase):
 
     def __check(self, channels, expected):
         stream = Mock(spec=GstPbutils.DiscovererAudioInfo)
@@ -129,7 +130,7 @@ class TestFormatAudiochannels(TestCase):
         self.__check(6, "6 (5.1)")
 
 
-class TestDependencyChecks(TestCase):
+class TestDependencyChecks(common.TestCase):
 
     def testDependencies(self):
         gi_dep = GstDependency("Gst", "1.0", "1.0.0")
@@ -165,7 +166,7 @@ class TestDependencyChecks(TestCase):
         self.assertTrue(classic_dep.satisfied)
 
 
-class TestMiscUtils(TestCase):
+class TestMiscUtils(common.TestCase):
 
     def test_fixate_caps_with_defalt_values(self):
         voaacenc_caps = Gst.Caps.from_string(
