@@ -207,14 +207,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="rotate_left_keyframe_button">
-            <property name="label" translatable="yes">&gt;</property>
+          <object class="GtkToolButton" id="rotate_left_keyframe_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Next keyframe</property>
-            <property name="relief">none</property>
+            <property name="tooltip_text" translatable="yes">Rotate clip 90° anti-clockwise</property>
+            <property name="icon_name">object-rotate-left-symbolic</property>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -223,14 +222,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="rotate_right_keyframe_button">
-            <property name="label" translatable="yes">&gt;</property>
+          <object class="GtkToolButton" id="rotate_right_keyframe_button">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Next keyframe</property>
-            <property name="relief">none</property>
+            <property name="tooltip_text" translatable="yes">Rotate clip 90° clockwise</property>
+            <property name="icon_name">object-rotate-right-symbolic</property>
           </object>
           <packing>
             <property name="expand">True</property>
