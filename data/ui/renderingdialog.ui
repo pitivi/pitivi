@@ -91,7 +91,7 @@
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
                     <property name="action">select-folder</property>
-                    <signal name="current-folder-changed" handler="_checkForExistingFile" swapped="no"/>
+                    <signal name="current-folder-changed" handler="_current_folder_changed_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -133,7 +133,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="activates_default">True</property>
-                    <signal name="changed" handler="_checkForExistingFile" swapped="no"/>
+                    <signal name="changed" handler="_filename_changed_cb" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
