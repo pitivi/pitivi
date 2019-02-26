@@ -638,7 +638,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         view.drag_source_add_uri_targets()
         view.connect("drag-data-get", self._dndDragDataGetCb)
-        view.connect("drag-begin", self._dndDragBeginCb)
+        view.connect_after("drag-begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
 
     def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
