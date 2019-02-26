@@ -24,6 +24,7 @@ from gettext import gettext as _
 from gettext import ngettext
 from hashlib import md5
 
+import cairo
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
@@ -1456,7 +1457,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = self.modelFilter[paths[0]]
-            Gtk.drag_set_icon_pixbuf(context, row[COL_ICON_64], 0, 0)
+
+            icon = row[COL_ICON_128]
+            icon_height = icon.get_height()
+            icon_width = icon.get_width()
+
+            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, icon_width, icon_height)
+            ctx = cairo.Context(surface)
+            # Center the icon around the cursor.
+            ctx.translate(icon_width / 2, icon_height / 2)
+            surface.set_device_offset(-icon_width / 2, -icon_height / 2)
+
+            Gdk.cairo_set_source_pixbuf(ctx, icon, 0, 0)
+            ctx.paint_with_alpha(0.35)
+
+            Gtk.drag_set_icon_surface(context, surface)
 
     def _dndDragEndCb(self, unused_view, unused_context):
         self.info("Drag operation ended")
