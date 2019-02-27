@@ -696,7 +696,7 @@ class RenderDialog(Loggable):
         set_combo_value(self.muxer_combo,
                         Encoders().factories_by_name.get(self.project.muxer))
 
-    def _checkForExistingFile(self, *unused_args):
+    def _check_filename(self):
         """Displays a warning if the file path already exists."""
         path = self.filebutton.get_current_folder()
         if not path:
@@ -1072,6 +1072,12 @@ class RenderDialog(Loggable):
 
     def _containerContextHelpClickedCb(self, unused_button):
         show_user_manual("codecscontainers")
+
+    def _current_folder_changed_cb(self, *unused_args):
+        self._check_filename()
+
+    def _filename_changed_cb(self, *unused_args):
+        self._check_filename()
 
     # Periodic (timer) callbacks
     def _updateTimeEstimateCb(self):
