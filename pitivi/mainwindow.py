@@ -122,17 +122,18 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         if height == -1 and width == -1:
             self.maximize()
         else:
-            self.set_default_size(width, height)
             # Wait until placing the window, to avoid the window manager
             # ignoring the call. See the documentation for Gtk.Window.move.
             GLib.idle_add(self.__initial_placement_cb,
                           self.app.settings.mainWindowX,
-                          self.app.settings.mainWindowY)
+                          self.app.settings.mainWindowY,
+                          width, height)
 
         self.connect("configure-event", self.__configure_cb)
         self.connect("delete-event", self.__delete_cb)
 
-    def __initial_placement_cb(self, x, y):
+    def __initial_placement_cb(self, x, y, width, height):
+        self.resize(width, height)
         self.move(x, y)
 
     def __check_screen_constraints(self):
@@ -199,17 +200,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def __configure_cb(self, unused_widget, unused_event):
         """Saves the main window position and size."""
-        # Takes window manager decorations into account.
         position = self.get_position()
         self.app.settings.mainWindowX = position.root_x
         self.app.settings.mainWindowY = position.root_y
 
-        # Does not include the size of the window manager decorations.
         size = self.get_size()
         self.app.settings.mainWindowWidth = size.width
         self.app.settings.mainWindowHeight = size.height
 
-    def __delete_cb(self, unused_widget, unused_data=None):
+    def __delete_cb(self, unused_widget, unused_event):
         self.app.settings.mainWindowHPanePosition = self.editor.secondhpaned.get_position()
         self.app.settings.mainWindowMainHPanePosition = self.editor.mainhpaned.get_position()
         self.app.settings.mainWindowVPanePosition = self.editor.toplevel_widget.get_position()
