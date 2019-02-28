@@ -278,6 +278,7 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         """Sets the size of the scrollable area to fit the layers_vbox."""
         self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
         self.props.width = allocation.width
+        """Add additional space for 'Add layer' button"""
         self.props.height = allocation.height + LAYER_HEIGHT / 2
 
 
