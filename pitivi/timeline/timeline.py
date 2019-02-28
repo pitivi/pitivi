@@ -49,7 +49,6 @@ from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import TimelineError
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.timeline import Zoomable
-from pitivi.utils.ui import BUTTON_HEIGHT
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import PLAYHEAD_COLOR
@@ -279,7 +278,7 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         """Sets the size of the scrollable area to fit the layers_vbox."""
         self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
         self.props.width = allocation.width
-        self.props.height = allocation.height + 2 * SPACING + BUTTON_HEIGHT
+        self.props.height = allocation.height + LAYER_HEIGHT / 2
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
@@ -326,8 +325,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         hbox.pack_start(scrolled_window, False, False, 0)
 
         self.add_layer_button = Gtk.Button.new_with_label("Add layer")
-        self.add_layer_button.set_size_request(-1, BUTTON_HEIGHT)
         self.add_layer_button.props.margin = SPACING
+        self.add_layer_button.set_halign(Gtk.Align.CENTER)
         self.add_layer_button.show()
 
         self.get_style_context().add_class("Timeline")
