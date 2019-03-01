@@ -325,10 +325,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         scrolled_window.add(self._layers_controls_vbox)
         hbox.pack_start(scrolled_window, False, False, 0)
 
-        self.add_layer_button = Gtk.Button.new_with_label("Add layer")
+        self.add_layer_button = Gtk.Button.new_with_label(_("Add layer"))
         self.add_layer_button.props.margin = SPACING
         self.add_layer_button.set_halign(Gtk.Align.CENTER)
         self.add_layer_button.show()
+        self.add_layer_button.set_action_name("timeline.add-layer")
         self._layers_controls_vbox.pack_end(self.add_layer_button, False, False, 0)
 
         self.get_style_context().add_class("Timeline")
@@ -474,6 +475,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         for ges_layer in self.ges_timeline.get_layers():
             self._add_layer(ges_layer)
+        self.__update_layers()
 
         self.ges_timeline.connect("notify::duration", self._durationChangedCb)
         self.ges_timeline.connect("layer-added", self._layer_added_cb)
@@ -1087,6 +1089,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def __update_layers(self):
         """Updates the layer widgets if their priorities are in good order."""
         ges_layers = self.ges_timeline.get_layers()
+        if not ges_layers:
+            # Nothing to update.
+            return
+
         priorities = [ges_layer.props.priority for ges_layer in ges_layers]
         if priorities != list(range(len(priorities))):
             self.debug("Layers still being shuffled, not updating widgets: %s", priorities)
@@ -1591,6 +1597,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # controls) and the timeline toolbar.
         group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("timeline", group)
+        self.timeline.add_layer_button.insert_action_group("timeline", group)
         self.toolbar.insert_action_group("timeline", group)
         self.app.shortcuts.register_group("timeline", _("Timeline"), position=30)
 
@@ -1632,7 +1639,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                _("Paste selected clips"))
 
         self.add_layer_action = Gio.SimpleAction.new("add-layer", None)
-        self.timeline.add_layer_button.connect("clicked", self.__add_layer_cb)
         self.add_layer_action.connect("activate", self.__add_layer_cb)
         group.add_action(self.add_layer_action)
         self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
