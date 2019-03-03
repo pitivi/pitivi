@@ -8,6 +8,16 @@ These ideas can be used as a base for writing a detailed project proposal if you
 
 To create a detailed proposal, use [GNOME's GSoC application template](https://wiki.gnome.org/Outreach/SummerOfCode/Students#Fill_out_the_Application).
 
+## Focus on the music
+ * Brief explanation: Often people want to pick a nice tune and then sync their weekend clips on it. To make this easy, Pitivi can detect the beats using a 3rd party library, and allow aligning and cutting the clips to the beat. It might sound easy, but the entire experience should be super-polished so everybody can do it.
+ * Requirements: Python, C. Minimal experience contributing to Pitivi.
+ * Mentor: Mathieu Duponchelle
+
+## Face blurring
+ * Brief explanation: We should make it easy to blur faces. We can use an existing 3rd party plugin to analyze the video and report the location of the faces. The resulting data can be used to blur a specific face. The challenge is making this process as friendly as possible.
+ * Requirements: Python. Minimal experience contributing to Pitivi.
+ * Mentor: Mathieu Duponchelle
+
 ## Media Library improvements
  * Brief explanation: The first task would be to refactor the Media Library, to [replace the two separate widgets](https://gitlab.gnome.org/GNOME/pitivi/issues/1343) we use for the list view and the icon view with a single flexible [Gtk.FlowBox](https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/FlowBox.html#Gtk.FlowBox) widget. The second task would be to [allow basic tagging of clips in the Media Library](https://gitlab.gnome.org/GNOME/pitivi/issues/537), and extend the search functionality to work on tags. The remaining time could be allocated to prepare for advanced clips filtering in the Media Library, based on tags.
  * Requirements: Python, eye for detail. Minimal experience contributing to Pitivi.
