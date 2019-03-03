@@ -571,8 +571,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
-        self.videoflip = GES.Effect.new("videoflip")
-        self.orientation = 0
+        self.rotate_effect = GES.Effect.new("rotate")
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -614,12 +613,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._activate_keyframes_btn = self.builder.get_object("activate_keyframes_button")
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
 
-        self._rotate_left_keyframe_btn = self.builder.get_object("rotate_left_keyframe_button")
-        self._rotate_left_keyframe_btn.connect("clicked", self.__rotate_keyframe, False)
-
-        self._rotate_right_keyframe_btn = self.builder.get_object("rotate_right_keyframe_button")
-        self._rotate_right_keyframe_btn.connect("clicked", self.__rotate_keyframe, True)
-
         self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
         self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
         self._next_keyframe_btn.set_sensitive(False)
@@ -633,6 +626,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         self.__setup_spin_button("width_spinbtn", "width")
         self.__setup_spin_button("height_spinbtn", "height")
+
+        self.__setup_spin_button("rotate_spinbtn", "angle")
 
     def __get_keyframes_timestamps(self):
         keyframes_ts = []
@@ -672,17 +667,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
             seekval = start + duration
         pipeline.simple_seek(seekval)
 
-    def __rotate_keyframe(self, unused_button, right):
-        if right:
-            self.orientation = (self.orientation + 1) % 4
-        else:
-            self.orientation = (self.orientation - 1) % 4
-
-        with self.app.action_log.started("Rotate clip",
-                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                        toplevel=True):
-            self.videoflip.set_child_property("video-direction", self.orientation)
-
     def __show_keyframes_toggled_cb(self, unused_button):
         if self._activate_keyframes_btn.props.active:
             self.__set_control_bindings()
@@ -719,7 +703,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if self.source is None:
             return False
 
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["posx", "posy", "width", "height", "angle"]:
             binding = self.source.get_control_binding(prop)
             if binding is None:
                 return False
@@ -747,7 +731,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.app.action_log.begin("Transformation properties keyframes activate",
                                       toplevel=True)
 
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["posx", "posy", "width", "height", "angle"]:
             binding = self.source.get_control_binding(prop)
 
             if not binding:
@@ -780,6 +764,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
             for prop in ["posx", "posy", "width", "height"]:
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
+            self.rotate_effect.set_child_property("angle", 0)
+            self.__update_spin_btn("angle")
         self.__update_keyframes_ui()
 
     def __get_source_property(self, prop):
@@ -798,13 +784,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 return res, value
             except PipelineError:
                 pass
+        elif prop == "angle":
+            return self.rotate_effect.get_child_property(prop)
 
         return self.source.get_child_property(prop)
 
     def _position_cb(self, unused_pipeline, unused_position):
         if not self.__source_uses_keyframes():
             return
-        for prop in ["posx", "posy", "width", "height"]:
+        for prop in ["posx", "posy", "width", "height", "angle"]:
             self.__update_spin_btn(prop)
         # Keep the overlay stack in sync with the spin buttons values
         self.app.gui.editor.viewer.overlay_stack.update(self.source)
@@ -858,11 +846,15 @@ class TransformationProperties(Gtk.Expander, Loggable):
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
+
         else:
             with self.app.action_log.started("Transformation property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
-                self.source.set_child_property(prop, value)
+                if prop == "angle":
+                    self.rotate_effect.set_child_property(prop, value)
+                else:
+                    self.source.set_child_property(prop, value)
 
     def __setup_spin_button(self, widget_name, property_name):
         """Creates a SpinButton for editing a property value."""
@@ -906,8 +898,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def _selectionChangedCb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
-            clip.add(self.videoflip)
-            self.orientation = 0
+            clip.add(self.rotate_effect)
             source = clip.find_track_element(None, GES.VideoSource)
             if source:
                 self._selected_clip = clip
