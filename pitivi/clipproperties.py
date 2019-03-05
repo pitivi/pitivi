@@ -501,6 +501,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _updateTreeview(self):
         self.storemodel.clear()
+        # To avoid displaying default rotate effect in effect tab
         for effect in self.clip.get_top_effects():
             if effect.props.bin_description in HIDDEN_EFFECTS:
                 continue
@@ -571,7 +572,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons = {}
         self.spin_buttons_handler_ids = {}
         self.set_label(_("Transformation"))
-        self.rotate_effect = GES.Effect.new("rotate")
+        self.rotate_effect = None
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(),
@@ -765,6 +766,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
             self.rotate_effect.set_child_property("angle", 0)
+            # TODO: make it work with undo button
             self.__update_spin_btn("angle")
         self.__update_keyframes_ui()
 
@@ -898,7 +900,16 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def _selectionChangedCb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
-            clip.add(self.rotate_effect)
+
+            self.rotate_effect = None
+            for effect in clip.get_top_effects():
+                if effect.props.bin_description == "rotate":
+                    self.rotate_effect = effect
+                    break
+            if not self.rotate_effect:
+                self.rotate_effect = GES.Effect.new("rotate")
+                clip.add(self.rotate_effect)
+
             source = clip.find_track_element(None, GES.VideoSource)
             if source:
                 self._selected_clip = clip
