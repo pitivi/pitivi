@@ -99,7 +99,7 @@ VIDEO_EFFECTS_CATEGORIES = (
         "cogscale", "aspectratiocrop", "cogdownsample", "videoscale",
         "videocrop", "videoflip", "videobox", "gdkpixbufscale",
         "kaleidoscope", "mirror", "pinch", "sphere", "square", "fisheye",
-        "stretch", "twirl", "waterriple", "rotate", "bulge", "circle",
+        "stretch", "twirl", "waterriple", "bulge", "circle",
         "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
         "frei0r-filter-lens-correction", "frei0r-filter-defish0r",
         "frei0r-filter-perspective", "frei0r-filter-c0rners",
@@ -142,7 +142,7 @@ BLACKLISTED_PLUGINS = []
 
 HIDDEN_EFFECTS = [
     # Overlaying an image onto a video stream can already be done.
-    "gdkpixbufoverlay"]
+    "gdkpixbufoverlay", "rotate"]
 
 GlobalSettings.addConfigSection('effect-library')
 
