@@ -764,9 +764,13 @@ class TransformationProperties(Gtk.Expander, Loggable):
             for prop in ["posx", "posy", "width", "height"]:
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
-            self.rotate_effect.set_child_property("angle", 0)
-            # TODO: make it work with undo button
-            self.__update_spin_btn("angle")
+            if self.rotate_effect:
+                self.rotate_effect.set_child_property("angle", 0)
+                # TODO: make it work with undo button
+                self.__update_spin_btn("angle")
+                clip = list(self._selection)[0]
+                clip.add(self.rotate_effect)
+
         self.__update_keyframes_ui()
 
     def __get_source_property(self, prop):
@@ -865,9 +869,23 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons[property_name] = spinbtn
         self.spin_buttons_handler_ids[property_name] = handler_id
 
+    def _get_rotate_effect(self):
+        clip = list(self._selection)[0]
+        self.rotate_effect = None
+        for effect in clip.get_top_effects():
+            if effect.props.bin_description == "rotate":
+                self.rotate_effect = effect
+                break
+        if not self.rotate_effect:
+            self.rotate_effect = GES.Effect.new("rotate")
+            clip.add(self.rotate_effect)
+
     def _onValueChangedCb(self, spinbtn, prop):
         if not self.source:
             return
+
+        if prop == "angle":
+            self._get_rotate_effect()
 
         value = spinbtn.get_value()
 
@@ -890,7 +908,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if self.source:
             self.__update_control_bindings()
             for prop in self.spin_buttons:
-                self.__update_spin_btn(prop)
+                if prop != "angle":
+                    self.__update_spin_btn(prop)
             self.__update_keyframes_ui()
             self.source.connect("deep-notify", self.__source_property_changed_cb)
             self.source.connect("control-binding-added", self._control_bindings_changed)
@@ -899,16 +918,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def _selectionChangedCb(self, unused_timeline):
         if len(self._selection) == 1:
             clip = list(self._selection)[0]
-
-            self.rotate_effect = None
-            for effect in clip.get_top_effects():
-                if effect.props.bin_description == "rotate":
-                    self.rotate_effect = effect
-                    break
-            if not self.rotate_effect:
-                self.rotate_effect = GES.Effect.new("rotate")
-                clip.add(self.rotate_effect)
-
             source = clip.find_track_element(None, GES.VideoSource)
             if source:
                 self._selected_clip = clip
