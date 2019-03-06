@@ -18,15 +18,12 @@
 # Boston, MA 02110-1301, USA.
 import os
 import tempfile
-from gettext import gettext as _
-from unittest import mock
 
 from gi.repository import GES
 from gi.repository import Gst
 
 from pitivi import medialibrary
 from pitivi.project import ProjectManager
-from pitivi.timeline import timeline
 from pitivi.utils.proxy import ProxyingStrategy
 from tests import common
 
