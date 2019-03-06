@@ -24,6 +24,7 @@ import gc
 import locale
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import traceback
@@ -158,6 +159,29 @@ def create_main_loop():
     return mainloop
 
 
+class OperationTimeout(Exception):
+    pass
+
+
+class checked_operation_duration:
+
+    def __init__(self, seconds, error_message=None):
+        if error_message is None:
+            error_message = "operation timed out after %s seconds" % seconds
+        self.seconds = seconds
+        self.error_message = error_message
+
+    def __handle_sigalrm(self, signum, frame):
+        raise OperationTimeout(self.error_message)
+
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.__handle_sigalrm)
+        signal.alarm(self.seconds)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        signal.alarm(0)
+
+
 class TestCase(unittest.TestCase, Loggable):
     _tracked_types = (Gst.MiniObject, Gst.Element, Gst.Pad, Gst.Caps)
 
@@ -237,6 +261,16 @@ class TestCase(unittest.TestCase, Loggable):
             result = self.defaultTestResult()
         self._result = result
         unittest.TestCase.run(self, result)
+
+    def create_project_file_from_xges(self, app, xges):
+        unused, xges_path = tempfile.mkstemp(suffix=".xges")
+        proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
+        app.project_manager.saveProject(uri=proj_uri)
+
+        with open(xges_path, "w") as f:
+            f.write(xges)
+
+        return proj_uri
 
     def toggle_clip_selection(self, ges_clip, expect_selected):
         """Toggles the selection state of @ges_clip."""

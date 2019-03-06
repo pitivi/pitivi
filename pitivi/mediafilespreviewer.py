@@ -191,10 +191,10 @@ class PreviewWidget(Gtk.Grid, Loggable):
         self.clear_preview()
         self.current_selected_uri = uri
 
-        if not self._discover_sync:
-            GES.UriClipAsset.new(uri, None, self.__asset_loaded_cb)
-        else:
+        if self._discover_sync:
             self._handle_new_asset(uri=uri)
+        else:
+            GES.UriClipAsset.new(uri, None, self.__asset_loaded_cb)
 
     def _handle_new_asset(self, async_result=None, uri=None):
         try:
