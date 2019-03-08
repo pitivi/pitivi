@@ -280,8 +280,8 @@ class TransformationPropertiesTest(BaseTestTimeline):
         prev_index = 0
         next_index = 1
         for position in range(duration + 1):
-            prev_keyframe_ts = offsets[prev_index] + inpoint
-            next_keyframe_ts = offsets[next_index] + inpoint
+            prev_keyframe_ts = offsets[prev_index] + inpoint + start
+            next_keyframe_ts = offsets[next_index] + inpoint + start
 
             with mock.patch.object(pipeline, "getPosition") as get_position:
                 get_position.return_value = start + position
@@ -291,7 +291,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
                     transformation_box._next_keyframe_btn.clicked()
                     simple_seek.assert_called_with(next_keyframe_ts)
 
-            if position + 1 == next_keyframe_ts and next_index + 1 < len(offsets):
+            if start + position + 1 == next_keyframe_ts and next_index + 1 < len(offsets):
                 next_index += 1
             if position in offsets and position != 0:
                 prev_index += 1
@@ -353,15 +353,12 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         prev_kf_button = audio_box._prev_keyframe_btn
         next_kf_button = audio_box._next_keyframe_btn
 
-        # Add an audio clip and select it
-        ges_layer_1 = timeline.ges_timeline.append_layer()
-        ges_layer_2 = timeline.ges_timeline.append_layer()
+        # Add two clips and select the first one
+        clips = self.addClipsSimple(timeline, 2, clip_type=GES.TrackType.AUDIO)
 
-        clip_1 = self.add_clip(ges_layer_1, 10, clip_type=GES.TrackType.AUDIO)
-        clip_2 = self.add_clip(ges_layer_2, 20, clip_type=GES.TrackType.AUDIO)
         self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
 
-        timeline.selection.select([clip_1])
+        timeline.selection.select([clips[0]])
         source = audio_box.source
         self.assertIsNotNone(source)
 
@@ -374,7 +371,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         self.assertEqual(False, prev_kf_button.get_sensitive() or next_kf_button.get_sensitive())
 
         # Select the second clip and check the check button updates correctly.
-        timeline.selection.select([clip_2])
+        timeline.selection.select([clips[1]])
         source = audio_box.source
         self.assertIsNotNone(source)
 
@@ -382,7 +379,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         self.assertEqual(False, mute_button.get_active())
 
         # Select the first clip again and check check button value.
-        timeline.selection.select([clip_1])
+        timeline.selection.select([clips[0]])
         self.assertEqual(True, mute_button.get_active())
 
     def test_keyframes_add(self):
@@ -394,8 +391,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         spin_buttons = audio_box.spin_buttons
 
         # Add an audio clip and select it
-        ges_layer = timeline.ges_timeline.append_layer()
-        clip = self.add_clip(ges_layer, 10, clip_type=GES.TrackType.AUDIO)
+        clip = self.addClipsSimple(timeline, 1, clip_type=GES.TrackType.AUDIO)[0]
         self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
         timeline.selection.select([clip])
         source = audio_box.source
@@ -427,8 +423,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         pipeline = timeline._project.pipeline
 
         # Add an audio clip and select it
-        ges_layer = timeline.ges_timeline.append_layer()
-        clip = self.add_clip(ges_layer, 10, clip_type=GES.TrackType.AUDIO)
+        clip = self.addClipsSimple(timeline, 1, clip_type=GES.TrackType.AUDIO)[0]
         self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
         timeline.selection.select([clip])
         source = audio_box.source
@@ -454,8 +449,8 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         prev_index = 0
         next_index = 1
         for position in range(duration + 1):
-            prev_keyframe_ts = offsets[prev_index] + inpoint
-            next_keyframe_ts = offsets[next_index] + inpoint
+            prev_keyframe_ts = offsets[prev_index] + inpoint + start
+            next_keyframe_ts = offsets[next_index] + inpoint + start
 
             with mock.patch.object(pipeline, "getPosition") as get_position:
                 get_position.return_value = start + position
@@ -465,7 +460,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
                     audio_box._next_keyframe_btn.clicked()
                     simple_seek.assert_called_with(next_keyframe_ts)
 
-            if position + 1 == next_keyframe_ts and next_index + 1 < len(offsets):
+            if start + position + 1 == next_keyframe_ts and next_index + 1 < len(offsets):
                 next_index += 1
             if position in offsets and position != 0:
                 prev_index += 1
@@ -480,8 +475,7 @@ class AudioTransformationPropertiesTest(BaseTestTimeline):
         mute_button = audio_box.builder.get_object("mute_button")
 
         # Add an audio clip and select it
-        ges_layer = timeline.ges_timeline.append_layer()
-        clip = self.add_clip(ges_layer, 10, clip_type=GES.TrackType.AUDIO)
+        clip = self.addClipsSimple(timeline, 1, clip_type=GES.TrackType.AUDIO)[0]
         self.assertEqual(timeline.media_types, GES.TrackType.AUDIO)
         timeline.selection.select([clip])
         source = audio_box.source

@@ -42,10 +42,10 @@ class BaseTestTimeline(common.TestCase):
             common.get_sample_uri("tears_of_steel.webm"))
         return layer.add_asset(asset, start, inpoint, duration, clip_type)
 
-    def addClipsSimple(self, timeline, num_clips):
+    def addClipsSimple(self, timeline, num_clips, **kwargs):
         """Creates a number of clips on a new layer."""
         layer = timeline.ges_timeline.append_layer()
-        clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
+        clips = [self.add_clip(layer, i * 10, **kwargs) for i in range(num_clips)]
         self.assertEqual(len(clips), num_clips)
         return clips
 
