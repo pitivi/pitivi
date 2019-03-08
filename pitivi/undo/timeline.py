@@ -286,13 +286,21 @@ class ClipAction(UndoableAction):
 
     def add(self):
         self.clip.set_name(None)
+        timeline = self.layer.get_timeline()
         children = self.clip.get_children(False)
-        self.layer.add_clip(self.clip)
-        # GES adds children if the clip had none. Make sure they are removed.
-        for child in self.clip.get_children(False):
-            if child not in children:
-                self.clip.remove(child)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
+
+        def child_added_cb(clip, elem):
+            if elem not in children:
+                clip.remove(elem)
+                GObject.signal_stop_emission_by_name(clip, "child-added")
+
+        self.clip.connect("child-added", child_added_cb)
+        try:
+            res = self.layer.add_clip(self.clip)
+            assert(res)
+        finally:
+            self.clip.disconnect_by_func(child_added_cb)
+        timeline.get_asset().pipeline.commit_timeline()
 
     def _child_added_cb(self, clip, track_element):
         clip.remove(track_element)
