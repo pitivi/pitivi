@@ -36,16 +36,19 @@ THICK = LAYER_HEIGHT
 class BaseTestTimeline(common.TestCase):
     """Test case with tools for setting up a timeline."""
 
-    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN):
+    def add_clip(self, layer, start, inpoint=0, duration=10, clip_type=GES.TrackType.UNKNOWN, **kwargs):
         """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
+        if kwargs is not None:
+            if "cliptype" in kwargs.keys():
+                clip_type = kwargs["cliptype"]
         return layer.add_asset(asset, start, inpoint, duration, clip_type)
 
-    def addClipsSimple(self, timeline, num_clips):
+    def addClipsSimple(self, timeline, num_clips, **kwargs):
         """Creates a number of clips on a new layer."""
         layer = timeline.ges_timeline.append_layer()
-        clips = [self.add_clip(layer, i * 10) for i in range(num_clips)]
+        clips = [self.add_clip(layer, i * 10, **kwargs) for i in range(num_clips)]
         self.assertEqual(len(clips), num_clips)
         return clips
 

@@ -579,6 +579,7 @@ class SourceProperties(Gtk.Expander, Loggable):
         # Used to make sure _control_bindings_changed_cb doesn't get called
         # when bindings are changed from this class
         self._own_bindings_change = False
+        self._set_initial_settings = False
 
         self.builder = Gtk.Builder()
         self.builder.add_from_file(os.path.join(get_ui_dir(), ui_file))
@@ -671,6 +672,9 @@ class SourceProperties(Gtk.Expander, Loggable):
 
     def _update_keyframes_ui(self):
         if self.source_type == GES.AudioSource:
+            if not self._set_initial_settings:
+                self._set_initial_settings = True
+                self._activate_keyframes_btn.props.active = True
             res, cvalue = self.source.get_child_property("mute")
             assert res
 
@@ -871,8 +875,6 @@ class SourceProperties(Gtk.Expander, Loggable):
                 pass
         self.source = source
         if self.source:
-            if self.source_type == GES.AudioSource:
-                self._activate_keyframes_btn.props.active = True
             self.__update_control_bindings()
             for prop in self.spin_buttons:
                 self.__update_spin_btn(prop)
@@ -978,6 +980,7 @@ class AudioTransformationProperties(SourceProperties):
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
             self._reset_control_bindings(remove=False)
+            self._set_initial_settings = False
 
             assert self.source.set_child_property("mute", False)
 
