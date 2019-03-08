@@ -141,11 +141,14 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip2 = asset.extract()
+        clip2.props.start = 1 * Gst.SECOND
 
-        self.layer.add_clip(clip1)
-        self.layer.add_clip(clip2)
+        self.assertTrue(self.layer.add_clip(clip1))
+        self.assertTrue(self.layer.add_clip(clip2))
         # The selection does not care about GES.Groups, only about GES.Clips.
         self.timeline_container.timeline.selection.select([clip1, clip2])
+        self.assertEqual(clip1.props.timeline, self.layer.get_timeline())
+        self.assertEqual(clip2.props.timeline, self.layer.get_timeline())
 
         self.timeline_container.group_action.activate(None)
         self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
@@ -558,7 +561,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         clip2 = asset.extract()
         clip2.set_start(clip1.props.duration / 2)
-        clip2.set_duration(10 * Gst.SECOND)
+        clip2.set_duration(clip2.props.max_duration)
         with self.action_log.started("add second clip"):
             self.layer.add_clip(clip2)
 

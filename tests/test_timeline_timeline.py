@@ -40,7 +40,10 @@ class BaseTestTimeline(common.TestCase):
         """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
-        return layer.add_asset(asset, start, inpoint, duration, clip_type)
+        clip = layer.add_asset(asset, start, inpoint, duration, clip_type)
+        self.assertIsNotNone(clip)
+
+        return clip
 
     def addClipsSimple(self, timeline, num_clips):
         """Creates a number of clips on a new layer."""
