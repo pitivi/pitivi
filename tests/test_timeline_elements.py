@@ -30,8 +30,8 @@ from matplotlib.backend_bases import MouseEvent
 from pitivi.timeline.elements import GES_TYPE_UI_TYPE
 from pitivi.undo.undo import UndoableActionLog
 from pitivi.utils.timeline import Zoomable
-from tests.test_timeline_timeline import BaseTestTimeline
 from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestKeyframeCurve(BaseTestTimeline):
@@ -45,22 +45,19 @@ class TestKeyframeCurve(BaseTestTimeline):
         ges_layer = timeline.ges_timeline.append_layer()
         ges_clip1 = self.add_clip(ges_layer, 0, duration=2 * Gst.SECOND)
         ges_clip2 = self.add_clip(ges_layer, 10, duration=2 * Gst.SECOND)
-        ges_clip3 = self.add_clip(ges_layer, 20, inpoint=100, duration=2 * Gst.SECOND)
         # For variety, add TitleClip to the list of clips.
-        ges_clip4 = common.create_test_clip(GES.TitleClip)
-        ges_clip4.props.start = 30
-        ges_clip4.props.duration = int(0.9 * Gst.SECOND)
-        ges_layer.add_clip(ges_clip4)
+        ges_clip3 = common.create_test_clip(GES.TitleClip)
+        ges_clip3.props.start = 30
+        ges_clip3.props.duration = int(0.9 * Gst.SECOND)
+        ges_layer.add_clip(ges_clip3)
 
         self.check_keyframe_toggle(ges_clip1, timeline_container)
         self.check_keyframe_toggle(ges_clip2, timeline_container)
         self.check_keyframe_toggle(ges_clip3, timeline_container)
-        self.check_keyframe_toggle(ges_clip4, timeline_container)
 
         self.check_keyframe_ui_toggle(ges_clip1, timeline_container)
         self.check_keyframe_ui_toggle(ges_clip2, timeline_container)
         self.check_keyframe_ui_toggle(ges_clip3, timeline_container)
-        self.check_keyframe_ui_toggle(ges_clip4, timeline_container)
 
     def check_keyframe_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling on the specified clip."""

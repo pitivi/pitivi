@@ -294,9 +294,6 @@ class ClipAction(UndoableAction):
                 self.clip.remove(child)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
 
-    def _child_added_cb(self, clip, track_element):
-        clip.remove(track_element)
-
     def remove(self):
         self.layer.remove_clip(self.clip)
         self.layer.get_timeline().get_asset().pipeline.commit_timeline()
