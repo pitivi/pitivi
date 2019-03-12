@@ -1502,7 +1502,8 @@ class Project(Loggable, GES.Project):
 
                 for prop, value in settings.items():
                     encoder.set_property(prop, value)
-                assert encoder.save_preset(preset)
+                save_preset = encoder.save_preset(preset)
+                assert save_preset
 
         return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
 
