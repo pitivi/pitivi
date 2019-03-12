@@ -174,7 +174,8 @@ class TrackElementAction(UndoableAction):
             self.track_element_props.append((prop_name, value))
 
     def add(self):
-        assert self.clip.add(self.track_element)
+        res = self.clip.add(self.track_element)
+        assert res
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
 
@@ -614,7 +615,8 @@ class ControlSourceSetAction(UndoableAction):
                                               self.property_name, self.binding_type)
 
     def undo(self):
-        assert self.track_element.remove_control_binding(self.property_name)
+        res = self.track_element.remove_control_binding(self.property_name)
+        assert res
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("set-control-source")
@@ -636,7 +638,8 @@ class ControlSourceRemoveAction(UndoableAction):
         self.binding_type = "direct-absolute" if binding.props.absolute else "direct"
 
     def do(self):
-        assert self.track_element.remove_control_binding(self.property_name)
+        res = self.track_element.remove_control_binding(self.property_name)
+        assert res
 
     def undo(self):
         self.track_element.set_control_source(self.control_source,
