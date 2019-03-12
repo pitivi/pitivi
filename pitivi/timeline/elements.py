@@ -708,8 +708,10 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                 (self.__controlledProperty.maximum -
                  self.__controlledProperty.minimum)
             inpoint = self._ges_elem.props.in_point
-            assert source.set(inpoint, val)
-            assert source.set(inpoint + self._ges_elem.props.duration, val)
+            set_inpoint_keyframe = source.set(inpoint, val)
+            assert set_inpoint_keyframe
+            set_end_keyframe = source.set(inpoint + self._ges_elem.props.duration, val)
+            assert set_end_keyframe
 
     def __create_keyframe_curve(self, bindings=[]):
         """Creates required keyframe curve."""
