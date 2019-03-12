@@ -1504,7 +1504,8 @@ class Project(Loggable, GES.Project):
 
                 for prop, value in settings.items():
                     encoder.set_property(prop, value)
-                assert encoder.save_preset(preset)
+                res = encoder.save_preset(preset)
+                assert res
 
         return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
 
@@ -1813,7 +1814,7 @@ class Project(Loggable, GES.Project):
                                                       ref_restrictions,
                                                       defaults,
                                                       prev_vals)
-        assert(restriction)
+        assert restriction
         preset_name = encoder.get_factory().get_name()
         profile.set_restriction(restriction)
         profile.set_preset_name(preset_name)

@@ -1025,7 +1025,7 @@ class RenderDialog(Loggable):
 
     # -- UI callbacks
     def _okButtonClickedCb(self, unused_button, media_type):
-        assert(media_type in ("audio", "video"))
+        assert media_type in ("audio", "video")
         setattr(self.project, media_type[0] + 'codecsettings', self.dialog.getSettings())
 
         caps = self.dialog.get_caps()
