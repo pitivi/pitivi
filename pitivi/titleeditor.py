@@ -120,7 +120,8 @@ class TitleEditor(Loggable):
                                          toplevel=True):
             self._setting_props = True
             try:
-                assert self.source.set_child_property(name, value)
+                set_child_property = self.source.set_child_property(name, value)
+                assert set_child_property
             finally:
                 self._setting_props = False
 
@@ -228,12 +229,15 @@ class TitleEditor(Loggable):
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
         source = title_clip.get_children(False)[0]
-        assert source.set_child_property("text", "")
-        assert source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("color", FOREGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION)
-        assert source.set_child_property("valignment", DEFAULT_VALIGNMENT)
-        assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
+        properties = {"text": "",
+                      "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                      "color": FOREGROUND_DEFAULT_COLOR,
+                      "font-desc": DEFAULT_FONT_DESCRIPTION,
+                      "valignment": DEFAULT_VALIGNMENT,
+                      "halignment": DEFAULT_HALIGNMENT}
+        for prop, value in properties.items():
+            set_property = source.set_child_property(prop, value)
+            assert set_property
         # Select it so the Title editor becomes active.
         self._selection.setSelection([title_clip], SELECT)
         self.app.gui.editor.timeline_ui.timeline.resetSelectionGroup()

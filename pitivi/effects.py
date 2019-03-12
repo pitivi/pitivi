@@ -290,7 +290,8 @@ class EffectsManager(Loggable):
             bus = pipeline.get_bus()
             bus.add_signal_watch()
             bus.connect("message", self._gl_pipeline_message_cb, pipeline)
-            assert pipeline.set_state(Gst.State.PAUSED) == Gst.StateChangeReturn.ASYNC
+            set_pipeline_state = pipeline.set_state(Gst.State.PAUSED)
+            assert set_pipeline_state == Gst.StateChangeReturn.ASYNC
 
     def _gl_pipeline_message_cb(self, bus, message, pipeline):
         """Handles a `message` event on the pipeline for checking gl effects."""
