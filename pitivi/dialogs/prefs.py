@@ -625,6 +625,7 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
             self._description_label.set_text(description)
 
         self.switch = Gtk.Switch()
+        self.switch.props.valign = Gtk.Align.CENTER
         self.switch_handler_id = None
 
         # Pack widgets.
