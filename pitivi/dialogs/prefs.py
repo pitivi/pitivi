@@ -694,6 +694,7 @@ class PluginsBox(Gtk.ListBox):
         self.bind_model(self.list_store, self._create_widget_func, None)
 
         self.props.margin = PADDING * 3
+        self.props.margin_top = 0
 
         # Activate the plugins' switches for plugins that are already loaded.
         loaded_plugins = self.app.plugin_manager.engine.get_loaded_plugins()
@@ -755,25 +756,42 @@ class PluginsBox(Gtk.ListBox):
         else:
             previous_type = None
         if previous_type != current_type:
-            self._set_header(row, str(current_type))
+            self._set_header(row, current_type)
 
-    def _set_header(self, row, group_title):
+    def _set_header(self, row, group):
+        group_title = str(group)
         header = Gtk.Label()
         header.set_use_markup(True)
 
         header.set_markup("<b>%s</b>" % group_title)
-        header.props.margin_top = PADDING * 3
-        header.props.margin_bottom = PADDING
-        header.props.margin_left = PADDING * 2
-        header.props.margin_right = PADDING * 2
-        header.props.xalign = 0
+        header.props.valign = Gtk.Align.CENTER
+        header.props.halign = Gtk.Align.START
         alter_style_class("group_title", header, "font-size: small;")
         header.get_style_context().add_class("group_title")
+
+        button = Gtk.Button.new()
+        button.props.valign = Gtk.Align.CENTER
+        button.props.relief = Gtk.ReliefStyle.NONE
+        button.add(Gtk.Image.new_from_icon_name("folder-open-symbolic", 1))
+        button.connect("clicked", self.__location_clicked_cb, group.get_dir())
+
+        inner_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        inner_box.set_halign(Gtk.Align.FILL)
+        inner_box.props.margin_top = PADDING * 3
+        inner_box.props.margin_bottom = PADDING
+        inner_box.props.margin_right = PADDING * 2
+        inner_box.pack_start(header, True, True, 0)
+        inner_box.pack_start(button, False, False, 0)
+
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        box.add(header)
+        box.add(inner_box)
         box.get_style_context().add_class("background")
         box.show_all()
         row.set_header(box)
+
+    def __location_clicked_cb(self, unused_button, directory):
+        uri = GLib.filename_to_uri(directory, None)
+        Gio.AppInfo.launch_default_for_uri(uri, None)
 
 
 class PluginPreferencesPage(Gtk.ScrolledWindow):
