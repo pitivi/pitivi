@@ -1895,7 +1895,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         If clips are selected, split them at the current playhead position.
         Otherwise, split all clips at the playhead position.
         """
-        with self.app.action_log.started("split clip", toplevel=True):
+        with self.app.action_log.started("split clip", toplevel=True,
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
             self._splitElements(self.timeline.selection.selected)
 
     def _splitElements(self, clips=None):
