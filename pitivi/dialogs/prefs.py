@@ -690,6 +690,7 @@ class PluginsBox(Gtk.ListBox):
         self.title_size_group = None
         self.switch_size_group = None
 
+        self.set_selection_mode(Gtk.SelectionMode.NONE)
         self.set_header_func(self._add_header_func, None)
         self.bind_model(self.list_store, self._create_widget_func, None)
 
