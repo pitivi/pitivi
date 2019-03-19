@@ -524,6 +524,7 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
+                "-Daom=disabled",
                 "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
