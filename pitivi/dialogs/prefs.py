@@ -30,6 +30,8 @@ from gi.repository import Gtk
 from gi.repository import Peas
 
 from pitivi.configure import get_ui_dir
+from pitivi.configure import get_plugins_dir
+from pitivi.configure import get_user_plugins_dir
 from pitivi.pluginmanager import PluginManager
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
@@ -692,6 +694,7 @@ class PluginsBox(Gtk.ListBox):
 
         self.set_selection_mode(Gtk.SelectionMode.NONE)
         self.set_header_func(self._add_header_func, None)
+        self.set_placeholder(PluginPlaceHolder())
         self.bind_model(self.list_store, self._create_widget_func, None)
 
         self.props.margin = PADDING * 3
@@ -795,6 +798,52 @@ class PluginsBox(Gtk.ListBox):
         Gio.AppInfo.launch_default_for_uri(uri, None)
 
 
+class PluginPlaceHolder(Gtk.Box):
+    """Placeholder widget if no plugins are available."""
+
+    def __init__(self):
+        Gtk.Box.__init__(self, orientation=Gtk.Orientation.VERTICAL)
+        self.set_spacing(SPACING)
+        self.get_style_context().add_class("background")
+
+        label = Gtk.Label.new('<span size="x-large">No plugins available</span>')
+        label.set_use_markup(True)
+        label.props.margin_top = PADDING * 10
+        label.set_halign(Gtk.Align.CENTER)
+        description = Gtk.Label.new("Plugins can be installed at a user or system level. To add them, you have to drop them in the corresponding plugin directory.")
+        description.set_line_wrap(True)
+        self.pack_start(label, False, False, 0)
+        self.pack_start(description, False, False, 0)
+
+        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        button_box.set_halign(Gtk.Align.CENTER)
+        button_box.set_spacing(SPACING)
+        self.pack_start(button_box, False, False, 0)
+
+        user_button = Gtk.Button("User directory")
+        user_button.connect('clicked', self.__open_directory_clicked,
+                            get_user_plugins_dir())
+
+        system_button = Gtk.Button("System directory")
+        system_button.connect('clicked', self.__open_directory_clicked,
+                              get_plugins_dir())
+
+        doc_button = Gtk.LinkButton.new_with_label(
+            "http://developer.pitivi.org/Plugins.html",
+            "Documentation")
+
+        button_box.pack_start(doc_button, False, False, 0)
+        button_box.pack_start(user_button, False, False, 0)
+        button_box.pack_start(system_button, False, False, 0)
+
+        self.show_all()
+
+    def __open_directory_clicked(self, button, directory):
+        parent_dir = os.path.dirname(directory)  # "plugins" might not exist
+        uri = GLib.filename_to_uri(parent_dir, None)
+        Gio.AppInfo.launch_default_for_uri(uri, None)
+
+
 class PluginPreferencesPage(Gtk.ScrolledWindow):
     """The page that displays the list of available plugins."""
 
@@ -804,10 +853,8 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         list_store = PluginManagerStore.new(app, preferences_dialog)
 
-        viewport = Gtk.Viewport()
         self._wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         plugins_box = PluginsBox(list_store)
-        viewport.add(self._wrapper_box)
 
         self._infobar_revealer = Gtk.Revealer()
         self._infobar = Gtk.InfoBar()
@@ -815,7 +862,7 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
         self._infobar_label = Gtk.Label()
         self._setup_infobar()
 
-        self.add_with_viewport(viewport)
+        self.add_with_viewport(self._wrapper_box)
         self.set_min_content_height(500)
         self.set_min_content_width(600)
 
