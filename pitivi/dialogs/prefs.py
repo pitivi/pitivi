@@ -647,9 +647,9 @@ class CustomShortcutDialog(Gtk.Dialog):
 class PluginPreferencesRow(Gtk.ListBoxRow):
     """A row in the plugins list allowing activating and deactivating a plugin."""
 
-    def __init__(self, model):
+    def __init__(self, item):
         Gtk.Bin.__init__(self)
-        self.plugin_info = model.plugin_info
+        self.plugin_info = item.plugin_info
 
         self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self._container)
@@ -690,9 +690,8 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
 class PluginItem(GObject.Object):
     """Holds the data of a plugin info for a Gio.ListStore."""
 
-    def __init__(self, app, plugin_info):
+    def __init__(self, plugin_info):
         GObject.Object.__init__(self)
-        self.app = app
         self.plugin_info = plugin_info
 
 
@@ -719,11 +718,11 @@ class PluginManagerStore(Gio.ListStore):
         # pluginmanager.PluginType object. Secondly, sort alphabetically.
         for plugin_info in sorted(plugins,
                                   key=lambda x: (PluginManager.get_plugin_type(x), x.get_name())):
-            item = PluginItem(self.app, plugin_info)
-            self.append(item)
+            self.append(PluginItem(plugin_info))
 
 
 class PluginsBox(Gtk.ListBox):
+    """A ListBox for showing plugins grouped by type."""
 
     def __init__(self, list_store):
         Gtk.ListBox.__init__(self)
@@ -849,12 +848,18 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
 
     def __init__(self, app, preferences_dialog):
         Gtk.ScrolledWindow.__init__(self)
-        list_store = PluginManagerStore.new(app, preferences_dialog)
 
-        viewport = Gtk.Viewport()
-        self._wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        plugins_box = PluginsBox(list_store)
-        viewport.add(self._wrapper_box)
+        list_store = PluginManagerStore.new(app, preferences_dialog)
+        if list_store.get_n_items():
+            plugins_box = PluginsBox(list_store)
+        else:
+            # We could use Gtk.ListBox.set_placeholder, but it
+            # appears bad inside the list widget.
+            placeholder_label = Gtk.Label.new(_("No plugins available"))
+            placeholder_label.props.margin = 4 * PADDING
+            placeholder_label.props.margin_top = 10 * PADDING
+            placeholder_label.show()
+            plugins_box = placeholder_label
 
         self._infobar_revealer = Gtk.Revealer()
         self._infobar = Gtk.InfoBar()
@@ -862,12 +867,13 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
         self._infobar_label = Gtk.Label()
         self._setup_infobar()
 
-        self.add_with_viewport(viewport)
+        wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(wrapper_box)
         self.set_min_content_height(500)
         self.set_min_content_width(600)
 
-        self._wrapper_box.pack_start(self._infobar_revealer, False, False, 0)
-        self._wrapper_box.pack_start(plugins_box, False, False, 0)
+        wrapper_box.pack_start(self._infobar_revealer, expand=False, fill=False, padding=0)
+        wrapper_box.pack_start(plugins_box, expand=False, fill=False, padding=0)
 
         # Helpers
         self._infobar_timer = None
