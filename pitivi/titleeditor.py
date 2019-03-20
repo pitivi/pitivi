@@ -188,7 +188,7 @@ class TitleEditor(Loggable):
                 else:
                     value = obj.get_value()
 
-                self._setChildProperty(name, value)
+                self._setChildProperty(name, int(value))
                 return
 
     def _updateWidgetsVisibility(self):
