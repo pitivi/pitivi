@@ -12,6 +12,8 @@ index.md
 	release.md
 	Architecture.md
 		GES.md
+	Plugins.md
+		Advanced_plugin.md
 	crossplatform.md
 		Mac_OS_X.md
 	Praise.md
