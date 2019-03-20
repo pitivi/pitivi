@@ -18,6 +18,11 @@ To create a detailed proposal, use [GNOME's GSoC application template](https://w
  * Requirements: Python. Minimal experience contributing to Pitivi.
  * Mentor: Mathieu Duponchelle
 
+## Closing credits
+* Brief explanation: For [end credits](https://en.wikipedia.org/wiki/Closing_credits) and other advanced text display, we could use the new [GStreamer WPE](https://www.youtube.com/watch?v=no7rvUk8GqM) element in [gst-plugins-bad](https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/tree/master/ext/wpe), which can display an HTML page as a video element. The first task would be to create a scroll mechanism by extending the GStreamer navigation event API with a scroll event type, and adding support in GstWPE. As GstWPE is a live source it does not allow seeking (getting frames at random positions), so the second task would be to add logic in Pitivi for creating an HQ proxy file out of the page being scrolled, which can be used in the project timeline as any other video clip. The third part would be a simple UI in Pitivi for easily creating the closing credits HTML, and managing the proxy file.
+* Requirements: C, Python. Minimal experience contributing to Pitivi.
+* Mentor: Philippe Normand
+
 ## Media Library improvements
  * Brief explanation: The first task would be to refactor the Media Library, to [replace the two separate widgets](https://gitlab.gnome.org/GNOME/pitivi/issues/1343) we use for the list view and the icon view with a single flexible [Gtk.FlowBox](https://lazka.github.io/pgi-docs/#Gtk-3.0/classes/FlowBox.html#Gtk.FlowBox) widget. The second task would be to [allow basic tagging of clips in the Media Library](https://gitlab.gnome.org/GNOME/pitivi/issues/537), and extend the search functionality to work on tags. The remaining time could be allocated to prepare for advanced clips filtering in the Media Library, based on tags.
  * Requirements: Python, eye for detail. Minimal experience contributing to Pitivi.
