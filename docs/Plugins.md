@@ -10,7 +10,7 @@ Pitivi's [Plugin Manager](https://gitlab.gnome.org/GNOME/pitivi/blob/master/piti
 
 There are two directories where Pitivi is looking for plugins. One is the system plugins directory, where normally you'll find the [plugins we ship by default](https://gitlab.gnome.org/GNOME/pitivi/blob/master/plugins). The other is the user plugins directory, where you can hack your own plugin.
 
-Depending on how you installed Pitivi, these directories can have different locations. In the Plugins tab in the Preferences window you should be able to find out the location of the two directories. Normally the user plugins should be in `~/.local/share/pitivi/plugins/`, which should be created if it does not exist.
+Depending on how you installed Pitivi, these directories can have different locations. In the Plugins tab in the Preferences window you should be able to find out the location of the two directories.
 
 ## Hello World
 
