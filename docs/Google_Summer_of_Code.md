@@ -23,9 +23,9 @@ you can get, you need to consider it as *professional work*:
     is unreliable, and you can't fix it, tell us so we can terminate
     your GSoC.
 
-Since 2014, our official policy is to ignore “theoretical” applications
-— to be eligible, you **must** have gotten involved early-on and made at
-least one contribution prior to applying. Read more about our stance in
+Our policy is to ignore “theoretical” applications — to be eligible,
+you must show you're capable. Best is to get involved early-on and
+make one or more contributions prior to applying. Read more about our stance in
 this blog post: “[Applying for a GSoC project is all about early
 involvement and commitment]”. If you are interested, the best thing you
 can do is to come to our [IRC channel] now, to make sure we have enough
@@ -77,13 +77,8 @@ This means you won't have to mess your system to be able to build
 the latest GStreamer. Since all of us will be using the same
 dependencies, there will be no friction due to the complex dependencies.
 
-You have the opportunity to present your accomplishments to others at
-[GUADEC] where you can also meet with us. In past years the travel
-expenses for GSoC students have been covered by GNOME.
-
   [development environment]: HACKING.md
   [technologies]: Architecture.md
-  [GUADEC]: http://en.wikipedia.org/wiki/GNOME_Users_And_Developers_European_Conference
 
 ## How to apply and get started
 
