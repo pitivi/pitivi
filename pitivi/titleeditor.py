@@ -49,8 +49,8 @@ PreferencesDialog.addNumericPreference('titleClipLength',
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 DEFAULT_FONT_DESCRIPTION = "Sans 36"
-DEFAULT_VALIGNMENT = GES.TextVAlign.ABSOLUTE.real
-DEFAULT_HALIGNMENT = GES.TextHAlign.ABSOLUTE.real
+DEFAULT_VALIGNMENT = 5
+DEFAULT_HALIGNMENT = 5
 
 
 class TitleEditor(Loggable):
@@ -180,10 +180,24 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    value = getattr(GES.TextVAlign, obj.get_active_id().upper())
+                    boo,child,pspec = GES.TimelineElement.lookup_child(self.source,'valignment')
+                    choices = []
+                    for key, val in pspec.enum_class.__enum_values__.items():
+                        choices.append([val.value_name, int(val)])
+
+                    va = [val[1] for val in choices if val[0]==obj.get_active_id()]
+                    value = va[0]
+
                     self._updateWidgetsVisibility()
                 elif name == "halignment":
-                    value = getattr(GES.TextHAlign, obj.get_active_id().upper())
+                    boo,child,pspec = GES.TimelineElement.lookup_child(self.source,'halignment')
+                    choices = []
+                    for key, val in pspec.enum_class.__enum_values__.items():
+                        choices.append([val.value_name, int(val)])
+
+                    va = [val[1] for val in choices if val[0]==obj.get_active_id()]
+                    value = va[0]
+                    
                     self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
