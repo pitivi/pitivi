@@ -49,8 +49,8 @@ PreferencesDialog.addNumericPreference('titleClipLength',
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 DEFAULT_FONT_DESCRIPTION = "Sans 36"
-DEFAULT_VALIGNMENT = GES.TextVAlign.ABSOLUTE.real
-DEFAULT_HALIGNMENT = GES.TextHAlign.ABSOLUTE.real
+DEFAULT_VALIGNMENT = "absolute"
+DEFAULT_HALIGNMENT = "absolute"
 
 
 class TitleEditor(Loggable):
@@ -180,14 +180,13 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    value = getattr(GES.TextVAlign, obj.get_active_id().upper())
+                    value = obj.get_active_id()
                     self._updateWidgetsVisibility()
                 elif name == "halignment":
-                    value = getattr(GES.TextHAlign, obj.get_active_id().upper())
+                    value = obj.get_active_id()
                     self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
-
                 self._setChildProperty(name, value)
                 return
 
