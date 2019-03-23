@@ -172,19 +172,13 @@ class TitleEditor(Loggable):
         self._setChildProperty("text", text)
         
     def _get_alignment_options(self,name,obj):
-        boo,child,pspec = GES.TimelineElement.lookup_child(self.source,name)
-        choices = []
+        pspec = list(GES.TimelineElement.lookup_child(self.source, name))[2]
         for key, val in pspec.enum_class.__enum_values__.items():
-            choices.append([val.value_name, int(val)])
-
-        va = [val[1] for val in choices if val[0]==obj.get_active_id()]
-        value = va[0]
-
-        return value
+            if val.value_name == obj.get_active_id():
+                return int(val)
 
     def _update_source_cb(self, updated_obj):
         """Handles changes in the advanced property widgets at the bottom."""
-
         if not self.source:
             # Nothing to update.
             return
@@ -192,16 +186,13 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    value = self._get_alignment_options(name,obj)
-                    #value = getattr(GES.TextVAlign, obj.get_active_id().upper()) GES.TextHAlign is deprecated
+                    value = self._get_alignment_options(name, obj)
                     self._updateWidgetsVisibility()
                 elif name == "halignment":
-                    value = self._get_alignment_options(name,obj)
-                    #value = getattr(GES.TextHAlign, obj.get_active_id().upper())
+                    value = self._get_alignment_options(name, obj)
                     self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
-
                 self._setChildProperty(name, value)
                 return
 
