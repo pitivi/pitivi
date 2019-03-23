@@ -171,11 +171,12 @@ class TitleEditor(Loggable):
         self.log("Source text updated to %s", text)
         self._setChildProperty("text", text)
         
-    def _get_alignment_options(self,name,obj):
-        pspec = list(GES.TimelineElement.lookup_child(self.source, name))[2]
+    def _source_alignment_option(self, prop_name, item_name):
+        res, child, pspec = GES.TimelineElement.lookup_child(self.source, prop_name)
+        assert res
         for key, val in pspec.enum_class.__enum_values__.items():
-            if val.value_name == obj.get_active_id():
-                return int(val)
+            if val.value_name == item_name:
+                return val
 
     def _update_source_cb(self, updated_obj):
         """Handles changes in the advanced property widgets at the bottom."""
@@ -186,10 +187,10 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    value = self._get_alignment_options(name, obj)
+                    value = self._source_alignment_option(name, obj.get_active_id())
                     self._updateWidgetsVisibility()
                 elif name == "halignment":
-                    value = self._get_alignment_options(name, obj)
+                    value = self._source_alignment_option(name, obj.get_active_id())
                     self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
