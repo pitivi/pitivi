@@ -587,6 +587,7 @@
             "builddir": true,
             "config-opts": [
                 "-Dgtk_doc=disabled",
+                "-Ddebug_viewer=false",
                 "--libdir=lib"
             ],
             "sources": [
