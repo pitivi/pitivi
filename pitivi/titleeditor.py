@@ -32,6 +32,7 @@ from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
+from pitivi.utils.widgets import ColorPickerButton
 
 GlobalSettings.addConfigOption('titleClipLength',
                                section="user-interface",
@@ -86,10 +87,9 @@ class TitleEditor(Loggable):
         self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         fix_infobar(self.infobar)
-        self.editing_box = builder.get_object("editing_box")
+        self.editing_box = builder.get_object("base_table")
+
         self.textarea = builder.get_object("textview")
-        toolbar = builder.get_object("toolbar")
-        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
         self.textbuffer = self.textarea.props.buffer
         self.textbuffer.connect("changed", self._textChangedCb)
@@ -97,6 +97,18 @@ class TitleEditor(Loggable):
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
+
+        self.color_picker_foreground_widget = ColorPickerButton()
+        self.color_picker_foreground_widget.show()
+        self.color_picker_foreground = builder.get_object("color_picker_foreground")
+        self.color_picker_foreground.add(self.color_picker_foreground_widget)
+        self.color_picker_foreground_widget.connect("value-changed", self._color_picker_value_changed_cb, self.foreground_color_button, "color")
+
+        self.color_picker_background_widget = ColorPickerButton()
+        self.color_picker_background_widget.show()
+        self.background_color_picker = builder.get_object("color_picker_background")
+        self.background_color_picker.add(self.color_picker_background_widget)
+        self.color_picker_background_widget.connect("value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
 
         settings = ["valignment", "halignment", "x-absolute", "y-absolute"]
         for setting in settings:
@@ -124,6 +136,17 @@ class TitleEditor(Loggable):
                 assert res
             finally:
                 self._setting_props = False
+
+    def _color_picker_value_changed_cb(self, widget, colorButton, colorLayer):
+        argb = 0
+        argb += (1 * 255) * 256 ** 3
+        argb += float(widget.color_r) * 256 ** 2
+        argb += float(widget.color_g) * 256 ** 1
+        argb += float(widget.color_b) * 256 ** 0
+        self.debug("Setting text %s to %x", colorLayer, argb)
+        self._setChildProperty(colorLayer, argb)
+        rgba = argb_to_gdk_rgba(argb)
+        colorButton.set_rgba(rgba)
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
