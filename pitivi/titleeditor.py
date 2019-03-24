@@ -33,6 +33,8 @@ from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
 
+from pitivi.utils.widgets import ColorPickerButton
+
 GlobalSettings.addConfigOption('titleClipLength',
                                section="user-interface",
                                key="title-clip-length",
@@ -83,13 +85,11 @@ class TitleEditor(Loggable):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
-        self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         fix_infobar(self.infobar)
-        self.editing_box = builder.get_object("editing_box")
+        self.editing_grid = builder.get_object("base_table")
+        self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.textarea = builder.get_object("textview")
-        toolbar = builder.get_object("toolbar")
-        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
         self.textbuffer = self.textarea.props.buffer
         self.textbuffer.connect("changed", self._textChangedCb)
@@ -97,6 +97,18 @@ class TitleEditor(Loggable):
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
+
+        self.color_picker_front_widget = ColorPickerButton()
+        self.color_picker_front_widget.show()
+        self.color_picker_front = builder.get_object("color_picker_front")
+        self.color_picker_front.add(self.color_picker_front_widget )
+        self.color_picker_front_widget.connect("value-changed", self._frontColorButtonPicker)
+
+        self.color_picker_back_widget = ColorPickerButton()
+        self.color_picker_back_widget.show()
+        self.background_color_picker = builder.get_object("color_picker_back")
+        self.background_color_picker.add(self.color_picker_back_widget)
+        self.color_picker_back_widget.connect("value-changed", self._backgroundColorButtonPicker)
 
         settings = ["valignment", "halignment", "x-absolute", "y-absolute"]
         for setting in settings:
@@ -124,6 +136,34 @@ class TitleEditor(Loggable):
                 assert res
             finally:
                 self._setting_props = False
+
+    def _frontColorButtonPicker(self, widget):
+        color_r = widget.color_r
+        color_g = widget.color_g
+        color_b = widget.color_b
+        color_int = 0
+        color_int += (1 * 255) * 256 ** 3
+        color_int += float(color_r) * 256 ** 2
+        color_int += float(color_g) * 256 ** 1
+        color_int += float(color_b) * 256 ** 0
+        self.debug("Setting text color to %x", color_int)
+        self._setChildProperty("color", color_int)
+        color = argb_to_gdk_rgba(color_int)
+        self.foreground_color_button.set_rgba(color)
+
+    def _backgroundColorButtonPicker(self, widget):
+        color_r = widget.color_r
+        color_g = widget.color_g
+        color_b = widget.color_b
+        color_int = 0
+        color_int += (1 * 255) * 256 ** 3
+        color_int += float(color_r) * 256 ** 2
+        color_int += float(color_g) * 256 ** 1
+        color_int += float(color_b) * 256 ** 0
+        self.debug("Setting title background color to %x", color_int)
+        self._setChildProperty("foreground-color", color_int)
+        color = argb_to_gdk_rgba(color_int)
+        self.background_color_button.set_rgba(color)
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
@@ -214,12 +254,14 @@ class TitleEditor(Loggable):
             self._updateFromSource(source)
             self.source = source
             self.infobar.hide()
-            self.editing_box.show()
+            #self.editing_box.show()
+            self.editing_grid.show()
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._propertyChangedCb)
         else:
             self.infobar.show()
-            self.editing_box.hide()
+            #self.editing_box.hide()
+            self.editing_grid.hide()
 
     def _createCb(self, unused_button):
         title_clip = GES.TitleClip()
@@ -279,6 +321,11 @@ class TitleEditor(Loggable):
             if color == self.foreground_color_button.get_rgba():
                 return
             self.foreground_color_button.set_rgba(color)
+ #       elif pspec.name == "color_picker":
+ #           color = argb_to_gdk_rgba(value)
+ #           if color == self.foreground_color_button_picker.get_rgba():
+ #               return
+ #           self.foreground_color_button.set_rgba(color)
         elif pspec.name == "foreground-color":
             color = argb_to_gdk_rgba(value)
             if color == self.background_color_button.get_rgba():
