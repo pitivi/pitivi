@@ -321,11 +321,6 @@ class TitleEditor(Loggable):
             if color == self.foreground_color_button.get_rgba():
                 return
             self.foreground_color_button.set_rgba(color)
- #       elif pspec.name == "color_picker":
- #           color = argb_to_gdk_rgba(value)
- #           if color == self.foreground_color_button_picker.get_rgba():
- #               return
- #           self.foreground_color_button.set_rgba(color)
         elif pspec.name == "foreground-color":
             color = argb_to_gdk_rgba(value)
             if color == self.background_color_button.get_rgba():
