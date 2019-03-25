@@ -174,7 +174,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.preferences_action = Gio.SimpleAction.new("preferences", None)
         self.preferences_action.connect("activate", self.__preferences_cb)
         self.add_action(self.preferences_action)
-        self.app.shortcuts.add("win.preferences", ["F9"], _("Preferences"), group="app")
+        self.app.shortcuts.add("win.preferences", ["<Primary>comma"], _("Preferences"), group="app")
 
     @staticmethod
     def __user_manual_cb(unused_action, unused_param):
