@@ -176,7 +176,7 @@ class TitleEditor(Loggable):
         assert res
         for key, val in pspec.enum_class.__enum_values__.items():
             if val.value_name == item_name:
-                return val
+                return val.value_name
 
     def _update_source_cb(self, updated_obj):
         """Handles changes in the advanced property widgets at the bottom."""
