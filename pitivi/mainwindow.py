@@ -176,6 +176,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.add_action(self.preferences_action)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.app.shortcuts.add("win.preferences", ["<Primary>comma"], _("Preferences"), group="app")
         
 
@@ -185,6 +186,11 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 =======
         self.app.shortcuts.add("win.preferences", ["<Primary>comma"], _("Preferences"), group="app")
 >>>>>>> eee01375... changed default primary key to ctrl+,
+=======
+        self.app.shortcuts.add("win.preferences", ["<Primary>comma"], _("Preferences"), group="app")
+        
+
+>>>>>>> 3a3cd26a21aba832e5971f7f542385e01cc8e83e
 
     @staticmethod
     def __user_manual_cb(unused_action, unused_param):
