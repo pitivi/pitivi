@@ -141,15 +141,15 @@ class TitleEditor(Loggable):
         color_r = widget.color_r
         color_g = widget.color_g
         color_b = widget.color_b
-        color_int = 0
-        color_int += (1 * 255) * 256 ** 3
-        color_int += float(color_r) * 256 ** 2
-        color_int += float(color_g) * 256 ** 1
-        color_int += float(color_b) * 256 ** 0
-        self.debug("Setting text %s to %x", colorLayer, color_int)
-        self._setChildProperty(colorLayer, color_int)
-        color = argb_to_gdk_rgba(color_int)
-        colorButton.set_rgba(color)
+        argb = 0
+        argb += (1 * 255) * 256 ** 3
+        argb += float(color_r) * 256 ** 2
+        argb += float(color_g) * 256 ** 1
+        argb += float(color_b) * 256 ** 0
+        self.debug("Setting text %s to %x", colorLayer, argb)
+        self._setChildProperty(colorLayer, argb)
+        rgba = argb_to_gdk_rgba(argb)
+        colorButton.set_rgba(rgba)
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
@@ -255,12 +255,15 @@ class TitleEditor(Loggable):
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
         source = title_clip.get_children(False)[0]
-        assert source.set_child_property("text", "")
-        assert source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("color", FOREGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION)
-        assert source.set_child_property("valignment", DEFAULT_VALIGNMENT)
-        assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
+        properties = {"text": "",
+                      "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                      "color": FOREGROUND_DEFAULT_COLOR,
+                      "font-desc": DEFAULT_FONT_DESCRIPTION,
+                      "valignment": DEFAULT_VALIGNMENT,
+                      "halignment": DEFAULT_HALIGNMENT}
+        for prop, value in properties.items():
+            res = source.set_child_property(prop, value)
+            assert res
         # Select it so the Title editor becomes active.
         self._selection.setSelection([title_clip], SELECT)
         self.app.gui.editor.timeline_ui.timeline.resetSelectionGroup()
@@ -329,3 +332,4 @@ class TitleEditor(Loggable):
                     break
 
         self.set_source(source)
+        
