@@ -258,7 +258,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkAspectFrame" id="color_picker_front">
+                  <object class="GtkAspectFrame" id="color_picker_foreground">
                     <property name="name">picker1</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -290,7 +290,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkAspectFrame" id="color_picker_back">
+                  <object class="GtkAspectFrame" id="color_picker_background">
                     <property name="name">picker2</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
