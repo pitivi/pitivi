@@ -84,10 +84,11 @@ class TitleEditor(Loggable):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "titleeditor.ui"))
         builder.connect_signals(self)
+        self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         fix_infobar(self.infobar)
         self.editing_grid = builder.get_object("base_table")
-        self.widget = builder.get_object("box1")  # To be used by tabsmanager
+
         self.textarea = builder.get_object("textview")
 
         self.textbuffer = self.textarea.props.buffer
@@ -131,7 +132,8 @@ class TitleEditor(Loggable):
                                          toplevel=True):
             self._setting_props = True
             try:
-                assert self.source.set_child_property(name, value)
+                res = self.source.set_child_property(name, value)
+                assert res
             finally:
                 self._setting_props = False
 
