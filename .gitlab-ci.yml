@@ -9,7 +9,7 @@ variables:
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.30
+  image: registry.gitlab.gnome.org/gnome/pitivi:master-sdk_3.32
   stage: build
   artifacts:
     paths:
@@ -51,7 +51,7 @@ deploy:
   only:
     - master@GNOME/pitivi
     - 1.0@GNOME/pitivi
-    - thiblahute/sdk3.30@GNOME/pitivi
+    - thiblahute/sdk3.32@GNOME/pitivi
 
 # Not using a Dockerfile because we need the container to be privileged to run flatpak inside of it
 # and it is not possible to use a privileged `docker build`.
@@ -60,9 +60,9 @@ deploy:
     services:
         - docker:dind
     script:
-        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.30"
-        - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.30"
-        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.30"
+        - export IMAGE="${CI_REGISTRY}/${NAMESPACE}/${CI_PROJECT_NAME}:${BRANCH}-sdk_3.32"
+        - export BASE_IMAGE="registry.gitlab.gnome.org/gnome/gnome-runtime-images/gnome:3.32"
+        - export TMPIMAGENAME="tmp-pitivi-${BRANCH}-sdk_3.32"
         - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
         - export BUILDDIR="\${HOME}/pitivi"
         - export CLONE_PITIVI="git clone ${CI_PROJECT_URL}.git --single-branch \${HOME}/pitivi -b ${CI_COMMIT_REF_NAME}"

@@ -99,7 +99,7 @@ gdb python3 -ex "run $PITIVI_REPO_DIR/bin/pitivi"
 1. Make sure you have the GNOME Sdk and Debug symbols installed:
 
 ```
-GNOME_REPO=$(flatpak info org.gnome.Platform//3.24 | grep Origin | awk '{ print $2 }')
+GNOME_REPO=$(flatpak info org.gnome.Platform//3.32 | grep Origin | awk '{ print $2 }')
 for i in $(flatpak list | grep org.pitivi.Pitivi/ | awk '{ print $1 }'); do
   flatpak install --user $GNOME_REPO $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
   flatpak update --user $(flatpak info $i |grep Runtime |awk '{ print $2 }' |sed s/Platform/Sdk/)
