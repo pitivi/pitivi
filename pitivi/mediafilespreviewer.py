@@ -313,7 +313,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.player.simple_seek(0)
         self.player.setState(Gst.State.PLAYING)
         self.is_playing = True
-        self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PAUSE)
+        self.play_button.set_icon_name("media-playback-pause")
         GLib.timeout_add(250, self._update_position)
         self.debug("Preview started")
 
@@ -321,7 +321,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if state is not None:
             self.player.setState(state)
         self.is_playing = False
-        self.play_button.set_stock_id(Gtk.STOCK_MEDIA_PLAY)
+        self.play_button.set_icon_name("media-playback-start")
         self.log("Preview paused")
 
     def togglePlayback(self):
