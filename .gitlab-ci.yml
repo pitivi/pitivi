@@ -7,7 +7,7 @@ variables:
   XUNIT_PATH: ${CI_PROJECT_DIR}/xunit.xml
 
 build:
-  image: registry.gitlab.gnome.org/gnome/pitivi:1.0-sdk_3.30
+  image: registry.gitlab.gnome.org/gnome/pitivi:1.0-sdk_3.32
   stage: build
   artifacts:
     paths:
