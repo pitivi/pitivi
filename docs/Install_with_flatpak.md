@@ -36,7 +36,7 @@ $ flatpak install flathub org.pitivi.Pitivi
 
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak install flathub org.gnome.Platform//3.28
+$ flatpak install flathub org.gnome.Platform//3.32
 $ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
 ```
 
@@ -44,7 +44,7 @@ $ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
 
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak install flathub org.gnome.Platform//3.28
+$ flatpak install flathub org.gnome.Platform//3.32
 $ flatpak install http://flatpak.pitivi.org/pitivi-master.flatpakref
 ```
 
