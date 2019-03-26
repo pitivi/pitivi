@@ -87,7 +87,7 @@ class TitleEditor(Loggable):
         self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         fix_infobar(self.infobar)
-        self.editing_grid = builder.get_object("base_table")
+        self.editing_box = builder.get_object("base_table")
 
         self.textarea = builder.get_object("textview")
 
@@ -138,14 +138,11 @@ class TitleEditor(Loggable):
                 self._setting_props = False
 
     def _color_picker_value_changed_cb(self, widget, colorButton, colorLayer):
-        color_r = widget.color_r
-        color_g = widget.color_g
-        color_b = widget.color_b
         argb = 0
         argb += (1 * 255) * 256 ** 3
-        argb += float(color_r) * 256 ** 2
-        argb += float(color_g) * 256 ** 1
-        argb += float(color_b) * 256 ** 0
+        argb += float(widget.color_r) * 256 ** 2
+        argb += float(widget.color_g) * 256 ** 1
+        argb += float(widget.color_b) * 256 ** 0
         self.debug("Setting text %s to %x", colorLayer, argb)
         self._setChildProperty(colorLayer, argb)
         rgba = argb_to_gdk_rgba(argb)
@@ -239,12 +236,12 @@ class TitleEditor(Loggable):
             self._updateFromSource(source)
             self.source = source
             self.infobar.hide()
-            self.editing_grid.show()
+            self.editing_box.show()
             self._children_props_handler = self.source.connect('deep-notify',
                                                                self._propertyChangedCb)
         else:
             self.infobar.show()
-            self.editing_grid.hide()
+            self.editing_box.hide()
 
     def _createCb(self, unused_button):
         title_clip = GES.TitleClip()
@@ -331,4 +328,3 @@ class TitleEditor(Loggable):
                     break
 
         self.set_source(source)
-        
