@@ -909,6 +909,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     Gst.SECOND / 1000.0
             else:
                 clip_duration = asset.get_duration()
+                ges_layer = self.ges_timeline.get_layers()
+                if ges_layer[-1].is_empty() == 1:
+                    with self.app.action_log.started("add layer",
+                                finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                toplevel=True):
+                        priority = len(self.ges_timeline.get_layers())
+                        self.create_layer(priority)
 
             ges_layer, unused_on_sep = self._get_layer_at(y)
             if not placement:
@@ -1046,6 +1053,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for i, ges_layer in enumerate(ges_layers):
             if ges_layer.props.priority != i:
                 ges_layer.props.priority = i
+        ges_layer = self.ges_timeline.get_layers()
+        if ges_layer[-1].is_empty() == 0:
+            with self.app.action_log.started("add layer",
+                        finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                        toplevel=True):
+                priority = len(self.ges_timeline.get_layers())
+                self.create_layer(priority)
 
     def _add_layer(self, ges_layer):
         """Adds widgets for controlling and showing the specified layer."""
