@@ -365,7 +365,7 @@ class AssetThumbnail(Loggable):
             icon = icon_theme.load_icon("dialog-question", size, 0)
         return icon
 
-    def _setState(self):
+    def _set_state(self):
         asset = self.__asset
         target = asset.get_proxy_target()
 
@@ -387,7 +387,7 @@ class AssetThumbnail(Loggable):
             self.state = self.NO_PROXY
 
     def decorate(self):
-        self._setState()
+        self._set_state()
         if self.state == self.NO_PROXY:
             self.small_thumb = self.src_small
             self.large_thumb = self.src_large
@@ -943,7 +943,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._addAsset(asset)
 
         if self._project.loaded:
-            self.app.gui.editor.timeline_ui.switchProxies(asset, proxy)
+            self.app.gui.editor.timeline_ui.switch_proxies(asset, proxy)
 
     def _assetAddedCb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""

@@ -1338,7 +1338,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def switchProxies(self, asset, proxy):
+    def switch_proxies(self, asset, proxy):
         proxied = asset.props.proxy
         unproxy = False
 
@@ -1348,14 +1348,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 self.debug("Proxy does not have an asset associated")
                 return
 
-        layers = self.ges_timeline.get_layers()
-        for layer in layers:
-            for clip in layer.get_clips():
-                if unproxy:
-                    if clip.get_asset() == proxy:
-                        clip.set_asset(asset)
-                elif clip.get_asset() == proxy.get_proxy_target():
-                    clip.set_asset(proxy)
+        for clip in self.app.project_manager.current_project.clips():
+            if unproxy:
+                if clip.get_asset() == proxy:
+                    clip.set_asset(asset)
+            elif clip.get_asset() == proxy.get_proxy_target():
+                clip.set_asset(proxy)
         self._project.pipeline.commit_timeline()
 
     def insertAssets(self, assets, position=None):
