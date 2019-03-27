@@ -211,7 +211,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = len(self.ges_timeline.get_layers()) - 1
+            index = len(self.ges_timeline.get_layers()) - 2
         self.ges_timeline.ui.moveLayer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
