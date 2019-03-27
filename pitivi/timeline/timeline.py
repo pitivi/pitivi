@@ -1338,7 +1338,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Public API
 
-    def switchProxies(self, asset, proxy):
+    def switch_proxies(self, asset, proxy):
         proxied = asset.props.proxy
         unproxy = False
 

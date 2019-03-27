@@ -154,7 +154,7 @@ class ProxyManager(GObject.Object, Loggable):
             self.error("Not supporting any proxy formats!")
             return
 
-    def _get_scaled_res(self, asset, max_width, max_height):
+    def _scale_asset_resolution(self, asset, max_width, max_height):
         stream = asset.get_info().get_video_streams()[0]
         width = stream.get_width()
         height = stream.get_height()
@@ -162,10 +162,10 @@ class ProxyManager(GObject.Object, Loggable):
 
         if aspect_ratio.numerator >= width or aspect_ratio.denominator >= height:
             self.log("Unscalable aspect ratio.")
-            return(width, height)
+            return (width, height)
         if aspect_ratio.numerator >= max_width or aspect_ratio.denominator >= max_height:
             self.log("Cannot scale to target resolution.")
-            return(width, height)
+            return (width, height)
 
         if height > max_height:
             scaling_factor = max_height // aspect_ratio.denominator
@@ -258,10 +258,7 @@ class ProxyManager(GObject.Object, Loggable):
 
     @classmethod
     def is_proxy_asset(cls, obj):
-        if cls.is_scaled_proxy(obj) or cls.is_hq_proxy(obj):
-            return True
-
-        return False
+        return cls.is_scaled_proxy(obj) or cls.is_hq_proxy(obj)
 
     @classmethod
     def is_scaled_proxy(cls, obj):
@@ -313,7 +310,7 @@ class ProxyManager(GObject.Object, Loggable):
         if scaled:
             max_w = self.app.project_manager.current_project.scaled_proxy_width
             max_h = self.app.project_manager.current_project.scaled_proxy_height
-            t_width, t_height = self._get_scaled_res(asset, max_w, max_h)
+            t_width, t_height = self._scale_asset_resolution(asset, max_w, max_h)
             proxy_res = "%sx%s" % (t_width, t_height)
             return "%s.%s.%s.%s" % (asset.get_id(), file_size, proxy_res,
                 self.scaled_proxy_extension)
@@ -333,14 +330,11 @@ class ProxyManager(GObject.Object, Loggable):
         stream = asset.get_info().get_video_streams()[0]
 
         asset_res = (stream.get_width(), stream.get_height())
-        target_res = self._get_scaled_res(asset,
+        target_res = self._scale_asset_resolution(asset,
             self.app.project_manager.current_project.scaled_proxy_width,
             self.app.project_manager.current_project.scaled_proxy_height)
 
-        if asset_res == target_res:
-            return True
-
-        return False
+        return asset_res == target_res
 
     def __assetNeedsTranscoding(self, asset, scaled=False):
         if self.proxyingUnsupported:
@@ -520,40 +514,37 @@ class ProxyManager(GObject.Object, Loggable):
             return True
         return False
 
-    def is_asset_queued_for_scaling(self, asset):
-        all_transcoders = self.__running_transcoders + self.__pending_transcoders
-        for transcoder in all_transcoders:
-            ext = transcoder.props.dest_uri
-            scaling = ext.endswith("." + self.scaled_proxy_extension + ".part")
-            if scaling and asset.props.id == transcoder.props.src_uri:
-                return True
-
-        return False
-
-    def is_asset_queued_for_optimization(self, asset):
-        all_transcoders = self.__running_transcoders + self.__pending_transcoders
-        for transcoder in all_transcoders:
-            ext = transcoder.props.dest_uri
-            optimisation = ext.endswith("." + self.hq_proxy_extension + ".part")
-            if optimisation and asset.props.id == transcoder.props.src_uri:
-                return True
-
-        return False
-
-    def is_asset_queued(self, asset):
+    def is_asset_queued(self, asset, optimisation=True, scaling=True):
         """Returns whether the specified asset is queued for transcoding.
 
         Args:
             asset (GES.Asset): The asset to check.
+            optimisation(bool): Whether to check optimisation queue
+            scaling(bool): Whether to check scaling queue
 
         Returns:
             bool: True if the asset is being transcoded or pending.
         """
-        if self.is_asset_queued_for_scaling(asset) or \
-                self.is_asset_queued_for_optimization(asset):
-            return True
+        all_transcoders = self.__running_transcoders + self.__pending_transcoders
+        is_queued = False
+        for transcoder in all_transcoders:
+            transcoder_uri = transcoder.props.dest_uri
+            scaling_ext = "." + self.scaled_proxy_extension + ".part"
+            optimisation_ext = "." + self.hq_proxy_extension + ".part"
 
-        return False
+            scaling_transcoder = transcoder_uri.endswith(scaling_ext)
+            optimisation_transcoder = transcoder_uri.endswith(optimisation_ext)
+
+            if transcoder.props.src_uri == asset.props.id:
+                if optimisation and optimisation_transcoder:
+                    is_queued = True
+                    break
+
+                if scaling and scaling_transcoder:
+                    is_queued = True
+                    break
+
+        return is_queued
 
     def __createTranscoder(self, asset, width=None, height=None, shadow=False):
         self._total_time_to_transcode += asset.get_duration() / Gst.SECOND
@@ -652,12 +643,12 @@ class ProxyManager(GObject.Object, Loggable):
                 self.add_job(asset, shadow=True)
 
         if scaled:
-            if self.is_asset_queued_for_scaling(asset):
+            if self.is_asset_queued(asset, optimisation=False):
                 self.log("Asset already queued for scaling: %s", asset)
                 return
 
         else:
-            if self.is_asset_queued_for_optimization(asset):
+            if self.is_asset_queued(asset, scaling=False):
                 self.log("Asset already queued for optimization: %s", asset)
                 return
 
@@ -684,7 +675,7 @@ class ProxyManager(GObject.Object, Loggable):
         if scaled:
             w = self.app.project_manager.current_project.scaled_proxy_width
             h = self.app.project_manager.current_project.scaled_proxy_height
-            t_width, t_height = self._get_scaled_res(asset, w, h)
+            t_width, t_height = self._scale_asset_resolution(asset, w, h)
             self.__createTranscoder(asset, width=t_width, height=t_height, shadow=shadow)
         else:
             self.__createTranscoder(asset, shadow=shadow)

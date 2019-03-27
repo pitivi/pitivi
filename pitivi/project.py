@@ -1802,6 +1802,11 @@ class Project(Loggable, GES.Project):
         if not aencoder == "" and not aencoder == self.aencoder:
             self.aencoder = aencoder
 
+    def clips(self):
+        for layer in self.ges_timeline.get_layers():
+            for clip in layer.get_clips():
+                yield clip
+
     @property
     def containersettings(self):
         cache_key = (self.container_profile, self.muxer)

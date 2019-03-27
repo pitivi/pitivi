@@ -285,7 +285,7 @@ class PreferencesDialog(Loggable):
         self._add_page("_plugins", page)
 
     def __add_proxies_section(self):
-        """Adds a section for proxy settings"""
+        """Adds a section for proxy settings."""
 
         grid = Gtk.Grid()
         grid.set_border_width(SPACING)
@@ -374,8 +374,7 @@ class PreferencesDialog(Loggable):
         project = self.app.project_manager.current_project
 
         label = content.get_children()[0]
-        label.set_text(_("The setting below only affects new projects by"
-            " default.\nScaled Proxy resolution for the current project is "
+        label.set_text(_("Scaled Proxy resolution for the current project is "
             "%dx%d px" % (project.scaled_proxy_width,
             project.scaled_proxy_height)))
 
@@ -383,14 +382,11 @@ class PreferencesDialog(Loggable):
             height_input):
         project = self.app.project_manager.current_project
 
-        width = width_input.getWidgetValue()
-        height = height_input.getWidgetValue()
-
-        project.scaled_proxy_width = width
-        project.scaled_proxy_height = height
+        project.scaled_proxy_width = width_input.getWidgetValue()
+        project.scaled_proxy_height = height_input.getWidgetValue()
 
         self.__update_infobar_content(infobar.get_content_area())
-        Gtk.Widget.do_hide(infobar)
+        infobar.hide()
 
     def __set_transcoding_jobs_cb(self, _unused, num_input):
         num = num_input.getWidgetValue()

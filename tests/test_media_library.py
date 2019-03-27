@@ -123,7 +123,7 @@ class BaseTestMediaLibrary(common.TestCase):
                 was_in_progress = True
 
         try:
-            old_set_state = medialibrary.AssetThumbnail._setState
+            old_set_state = medialibrary.AssetThumbnail._set_state
 
             # Check proxy creation progress and thumbnail icon
             self.assertFalse("Proxy creation progress:" in
@@ -135,7 +135,7 @@ class BaseTestMediaLibrary(common.TestCase):
                 self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state == no_proxy or
                 self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state == unsupported)
 
-            medialibrary.AssetThumbnail._setState = check_set_state
+            medialibrary.AssetThumbnail._set_state = check_set_state
             project.use_proxies_for_assets([asset], scaled)
 
             self.assertTrue("Proxy creation progress:" in
@@ -143,7 +143,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
             self.mainloop.run(timeout_seconds=10)
         finally:
-            medialibrary.AssetThumbnail._setState = old_set_state
+            medialibrary.AssetThumbnail._set_state = old_set_state
 
         if check_progress:
             self.assertTrue(was_in_progress)
