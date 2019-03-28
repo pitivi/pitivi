@@ -279,7 +279,7 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         self.log("The size of the layers_vbox changed: %sx%s", allocation.width, allocation.height)
         self.props.width = allocation.width
         # The additional space is for the 'Add layer' button.
-        self.props.height = allocation.height + LAYER_HEIGHT / 2
+        self.props.height = allocation.height
 
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
@@ -324,13 +324,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         scrolled_window.props.vscrollbar_policy = Gtk.PolicyType.EXTERNAL
         scrolled_window.add(self._layers_controls_vbox)
         hbox.pack_start(scrolled_window, False, False, 0)
-
-        self.add_layer_button = Gtk.Button.new_with_label(_("Add layer"))
-        self.add_layer_button.props.margin = SPACING
-        self.add_layer_button.set_halign(Gtk.Align.CENTER)
-        self.add_layer_button.show()
-        self.add_layer_button.set_action_name("timeline.add-layer")
-        self._layers_controls_vbox.pack_end(self.add_layer_button, False, False, 0)
 
         self.get_style_context().add_class("Timeline")
         self.props.expand = True
@@ -1533,6 +1526,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.forward_one_frame_action.set_enabled(project_loaded)
         self.backward_one_second_action.set_enabled(project_loaded)
         self.forward_one_second_action.set_enabled(project_loaded)
+        self.add_layer_action.set_enabled(1)
 
     # Internal API
 
@@ -1604,7 +1598,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # controls) and the timeline toolbar.
         group = Gio.SimpleActionGroup()
         self.timeline.layout.insert_action_group("timeline", group)
-        self.timeline.add_layer_button.insert_action_group("timeline", group)
         self.toolbar.insert_action_group("timeline", group)
         self.app.shortcuts.register_group("timeline", _("Timeline"), position=30)
 
