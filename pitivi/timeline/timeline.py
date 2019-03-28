@@ -1046,6 +1046,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         for i, ges_layer in enumerate(ges_layers):
             if ges_layer.props.priority != i:
                 ges_layer.props.priority = i
+        self.autoAddLayer()
 
     def _add_layer(self, ges_layer):
         """Adds widgets for controlling and showing the specified layer."""
@@ -1361,11 +1362,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._setSeparatorsPrelight(False)
         self.__on_separators = []
+        self.autoAddLayer()
 
     def __endMovingLayer(self):
         self.app.action_log.commit("move layer")
         self.__moving_layer = None
 
+    def autoAddLayer(self):
+        ges_layer = self.ges_timeline.get_layers()
+        if ges_layer[-1].is_empty() == 0:
+            priority = len(self.ges_timeline.get_layers())
+            self.create_layer(priority)
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""
