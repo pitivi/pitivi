@@ -1344,6 +1344,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.editing_context.edit_to(position, ges_layer)
 
             self.editing_context.finish()
+            self.autoAddLayer()
 
         self.draggingElement = None
         self.__clickedHandle = None
@@ -1355,7 +1356,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._setSeparatorsPrelight(False)
         self.__on_separators = []
-        self.autoAddLayer()
 
     def __endMovingLayer(self):
         self.app.action_log.commit("move layer")
