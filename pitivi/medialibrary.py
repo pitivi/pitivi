@@ -786,6 +786,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         default.add_pattern("*")
         dialog.add_filter(default)
 
+        # Add a shortcut for the project folder (if saved)
+        if self._project.uri:
+            shortcut = os.path.dirname(self._project.uri)
+            dialog.add_shortcut_folder_uri(shortcut)
+
         dialog.show()
 
     def _addAsset(self, asset):
