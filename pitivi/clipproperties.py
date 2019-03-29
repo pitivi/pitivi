@@ -703,7 +703,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if self.source is None:
             return False
 
-        for prop in ["posx", "posy", "width", "height", "angle"]:
+        for prop in ["posx", "posy", "width", "height"]:
             binding = self.source.get_control_binding(prop)
             if binding is None:
                 return False
@@ -731,7 +731,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.app.action_log.begin("Transformation properties keyframes activate",
                                       toplevel=True)
 
-        for prop in ["posx", "posy", "width", "height", "angle"]:
+        for prop in ["posx", "posy", "width", "height"]:
             binding = self.source.get_control_binding(prop)
 
             if not binding:
@@ -765,10 +765,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self.source.set_child_property(prop, self.source.ui.default_position[prop])
 
             if self.__rotate_effect:
-                self.__rotate_effect.set_child_property("angle", 0)
-                # TODO: make it work with undo button
-                self.__update_spin_btn("angle")
                 self._selected_clip.remove(self.__rotate_effect)
+                self.__update_spin_btn("angle")
 
         self.__update_keyframes_ui()
 
@@ -854,12 +852,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
             except PipelineError:
                 self.warning("Could not get pipeline position")
                 return
-
         else:
             with self.app.action_log.started("Transformation property change",
                                              finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                              toplevel=True):
                 if prop == "angle":
+                    if not self._get_rotate_effect():
+                        self.__rotate_effect = GES.Effect.new("rotate")
+                        self._selected_clip.add(self.__rotate_effect)
                     self.__rotate_effect.set_child_property(prop, value)
                 else:
                     self.source.set_child_property(prop, value)
@@ -883,13 +883,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if not self.source:
             return
 
-        if prop == "angle":
-            if not self._get_rotate_effect():
-                self.__rotate_effect = GES.Effect.new("rotate")
-                self._selected_clip.add(self.__rotate_effect)
-
         value = spinbtn.get_value()
-
         res, cvalue = self.__get_source_property(prop)
         if not res:
             return

@@ -142,7 +142,9 @@ BLACKLISTED_PLUGINS = []
 
 HIDDEN_EFFECTS = [
     # Overlaying an image onto a video stream can already be done.
-    "gdkpixbufoverlay", "rotate"]
+    "gdkpixbufoverlay",
+    # This effect was moved to transformation box.
+    "rotate"]
 
 GlobalSettings.addConfigSection('effect-library')
 
