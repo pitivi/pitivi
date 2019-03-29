@@ -481,6 +481,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.connect("motion-notify-event", self._motion_notify_event_cb)
 
         self.layout.update_width()
+        self.autoAddLayer()
 
     def _durationChangedCb(self, ges_timeline, pspec):
         self.layout.update_width()
