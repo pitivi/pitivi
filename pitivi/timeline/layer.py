@@ -152,8 +152,12 @@ class LayerControls(Gtk.EventBox, Loggable):
         last = priority == layers_count - 1
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
-        self.delete_layer_action.props.enabled = layers_count > 1
-
+        ges_layer = self.ges_timeline.get_layers()
+        if self.ges_layer.get_priority() != layers_count-1:
+            self.delete_layer_action.props.enabled = layers_count > 1
+        else:
+            self.delete_layer_action.props.enabled = not ges_layer[-1].is_empty()
+            
     def __updateName(self):
         self.name_entry.set_text(self.ges_layer.ui.getName())
 
@@ -211,7 +215,7 @@ class LayerControls(Gtk.EventBox, Loggable):
         elif step == -2:
             index = 0
         else:
-            index = len(self.ges_timeline.get_layers()) - 1
+            index = len(self.ges_timeline.get_layers()) - 2
         self.ges_timeline.ui.moveLayer(self.ges_layer, index)
         self.app.project_manager.current_project.pipeline.commit_timeline()
 
