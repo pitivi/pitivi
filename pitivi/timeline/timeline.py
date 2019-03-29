@@ -1363,10 +1363,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__moving_layer = None
 
     def autoAddLayer(self):
+        layers_count = len(self.ges_timeline.get_layers())
         ges_layer = self.ges_timeline.get_layers()
-        if ges_layer[-1].is_empty() == 0:
-            priority = len(self.ges_timeline.get_layers())
-            self.create_layer(priority)
+        if not self.ges_timeline.get_layer(layers_count - 1).is_empty():
+            self.ges_timeline.append_layer()
 
 class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     """Widget for zoom box, ruler, timeline, scrollbars and toolbar."""

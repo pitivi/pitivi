@@ -156,7 +156,7 @@ class LayerControls(Gtk.EventBox, Loggable):
             self.delete_layer_action.props.enabled = layers_count > 1
         else:
             self.delete_layer_action.props.enabled = not self.ges_layer.is_empty()
-                        
+
     def __updateName(self):
         self.name_entry.set_text(self.ges_layer.ui.getName())
 
@@ -245,6 +245,7 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         Loggable.__init__(self)
 
         self.ges_layer = ges_layer
+        self.ges_timeline = self.ges_layer.get_timeline()
         self.ges_layer.ui = self
         self.timeline = timeline
         self.app = timeline.app
@@ -373,6 +374,12 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
 
         self.timeline.selection.unselect([ges_clip])
+
+        layers_count = len(self.ges_timeline.get_layers())
+        if self.ges_layer.get_priority() == layers_count - 2 and self.ges_layer.is_empty():
+            name = self.ges_timeline.get_layer(layers_count - 1).get_meta("video::name")
+            if not name:
+                self.ges_timeline.remove_layer(self.ges_timeline.get_layer(layers_count - 1))
 
     def updatePosition(self):
         for ges_clip in self.ges_layer.get_clips():
