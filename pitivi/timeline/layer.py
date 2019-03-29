@@ -152,12 +152,11 @@ class LayerControls(Gtk.EventBox, Loggable):
         last = priority == layers_count - 1
         self.__move_layer_down_action.props.enabled = not last
         self.__move_layer_bottom_action.props.enabled = not last
-        ges_layer = self.ges_timeline.get_layers()
-        if self.ges_layer.get_priority() != layers_count-1:
+        if self.ges_layer.get_priority() != layers_count - 1:
             self.delete_layer_action.props.enabled = layers_count > 1
         else:
-            self.delete_layer_action.props.enabled = not ges_layer[-1].is_empty()
-            
+            self.delete_layer_action.props.enabled = not self.ges_layer.is_empty()
+                        
     def __updateName(self):
         self.name_entry.set_text(self.ges_layer.ui.getName())
 
