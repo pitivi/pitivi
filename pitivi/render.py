@@ -430,6 +430,11 @@ class RenderDialog(Loggable):
         else:
             self.updateFilename(self.project.name)
 
+        # Add a shortcut for the project folder (if saved)
+        if self.project.uri:
+            shortcut = os.path.dirname(self.project.uri)
+            self.filebutton.add_shortcut_folder_uri(shortcut)
+
         self._setting_encoding_profile = False
 
         # We store these so that when the user tries various container formats,
