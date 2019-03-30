@@ -325,6 +325,8 @@ class RenderingProgressDialog(GObject.Object):
         self.window.set_transient_for(self.app.gui)
         self.window.set_icon_name("system-run-symbolic")
 
+        self.play_rendered_file_button.get_style_context().add_class("suggested-action")
+
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
         self.close_button.hide()
