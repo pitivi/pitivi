@@ -506,7 +506,7 @@ class TestGrouping(BaseTestTimeline):
         event = mock.Mock()
         event.get_button.return_value = True, 1
         timeline._button_release_event_cb(None, event)
-        self.assertEqual(len(timeline.ges_timeline.get_layers()), 2,
+        self.assertEqual(len(timeline.ges_timeline.get_layers()), 3,
                          "No new layer should have been created")
 
 
@@ -603,7 +603,7 @@ class TestEditing(BaseTestTimeline):
         event = mock.Mock()
         event.get_button.return_value = True, 1
         timeline._button_release_event_cb(None, event)
-        self.assertEqual(len(timeline.ges_timeline.get_layers()), 1,
+        self.assertEqual(len(timeline.ges_timeline.get_layers()), 2,
                          "No new layer should have been created")
 
 
