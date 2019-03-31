@@ -1362,9 +1362,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.app.action_log.commit("move layer")
         self.__moving_layer = None
 
-    def autoAddLayer(self):
+    def autoAddLayer(self):        
         layers_count = len(self.ges_timeline.get_layers())
-        if layer_count > 0:
+        if layers_count > 0:
             if not self.ges_timeline.get_layer(layers_count - 1).is_empty():
                 self.ges_timeline.append_layer()
 

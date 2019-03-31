@@ -255,7 +255,7 @@ class TestLayers(BaseTestTimeline):
         ges_layers = []
         # Pitivi doesn't support removing the last remaining layer,
         # that's why we create an extra layer.
-        for priority in range(len(removal_order) + 1):
+        for priority in range(len(removal_order) + 2):
             ges_layer = timeline.create_layer(priority)
             ges_layers.append(ges_layer)
 
