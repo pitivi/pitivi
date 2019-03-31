@@ -304,8 +304,7 @@ class ClipAction(UndoableAction):
 
     def remove(self):
         self.layer.remove_clip(self.clip)
-
-
+                
 class ClipAdded(ClipAction):
 
     def __repr__(self):

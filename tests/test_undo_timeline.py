@@ -1061,7 +1061,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
-        self.assertEqual(len(layers), 1)
+        self.assertEqual(len(layers), 2)
         self.assertEqual(layers[0], self.layer)
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
@@ -1106,7 +1106,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
-        self.assertEqual(len(layers), 1)
+        self.assertEqual(len(layers), 2)
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
@@ -1197,7 +1197,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         layers = self.timeline.get_layers()
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [])
-        self.assertEqual(len(layers), 2)
+        self.assertEqual(len(layers), 3)
         self.assertEqual(len(layers[1].get_clips()), 1)
 
         self.action_log.undo()
