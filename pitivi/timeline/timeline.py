@@ -992,6 +992,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 with self.app.action_log.started("add clip",
                                                  finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                                  toplevel=True):
+                    layers_count = len(self.ges_timeline.get_layers())                    
+                    if (self.__on_separators and self.separator_priority(self.__on_separators[1]) != 0 \
+                                                 and self.separator_priority(self.__on_separators[1]) != (layers_count - 1) \
+                                                 and self.separator_priority(self.__on_separators[1]) != layers_count) \
+                                                 or (self.__on_separators and self.separator_priority(self.__on_separators[1]) == 0 \
+                                                 and layers_count > 1):
                     if self.__on_separators:
                         priority = self.separator_priority(self.__on_separators[1])
                         created_layer = self.create_layer(priority)
