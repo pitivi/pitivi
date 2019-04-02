@@ -20,16 +20,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-03-03 17:03+0000\n"
-"PO-Revision-Date: 2019-03-10 09:58-0300\n"
+"POT-Creation-Date: 2019-04-02 09:58+0000\n"
+"PO-Revision-Date: 2019-04-02 06:59-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
-"Language-Team: Portuguese - Brazil <gnome-pt_br-list@gnome.org>\n"
+"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"X-Generator: Gtranslator 3.31.90\n"
+"X-Generator: Gtranslator 3.32.0\n"
 "X-Project-Style: gnome\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -119,11 +119,6 @@ msgstr "A equipe do Pitivi"
 msgid "Video Editor"
 msgstr "Editor de vídeo"
 
-#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-#: data/org.pitivi.Pitivi.desktop.in:11
-msgid "org.pitivi.Pitivi"
-msgstr "org.pitivi.Pitivi"
-
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
 #: data/org.pitivi.Pitivi.desktop.in:16
 msgid "video;film;movie;editor;"
@@ -137,7 +132,7 @@ msgstr "Iniciando auto-alinhamento"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Realizando autoalinhamento</big></b>"
 
-#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1172
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1177
 msgid "Estimating..."
 msgstr "Estimando…"
 
@@ -198,35 +193,13 @@ msgstr "Altura:"
 msgid "X:"
 msgstr "X:"
 
-#: data/ui/cliptransformation.ui:164
-msgid "<"
-msgstr "<"
-
 #: data/ui/cliptransformation.ui:169
 msgid "Previous keyframe"
 msgstr "Quadro chave anterior"
 
-#: data/ui/cliptransformation.ui:180
-msgid ">"
-msgstr ">"
-
 #: data/ui/cliptransformation.ui:185
 msgid "Next keyframe"
 msgstr "Próximo quadro chave"
-
-#: data/ui/cliptransformation.ui:196 data/ui/customwidgets/alpha.ui:255
-#: data/ui/customwidgets/alpha.ui:269 data/ui/customwidgets/alpha.ui:282
-#: data/ui/customwidgets/alpha.ui:295
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:225
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:239
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:252
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:265
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:490
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:503
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:516
-#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:529
-msgid "◇"
-msgstr "◇"
 
 #: data/ui/cliptransformation.ui:215
 msgid "Reset to default values"
@@ -247,6 +220,19 @@ msgstr "Sensibilidade a branco:"
 #: data/ui/customwidgets/alpha.ui:179
 msgid "Black sensitivity:"
 msgstr "Sensibilidade a preto:"
+
+#: data/ui/customwidgets/alpha.ui:255 data/ui/customwidgets/alpha.ui:269
+#: data/ui/customwidgets/alpha.ui:282 data/ui/customwidgets/alpha.ui:295
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:225
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:239
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:252
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:265
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:490
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:503
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:516
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:529
+msgid "◇"
+msgstr "◇"
 
 #: data/ui/customwidgets/alpha.ui:321
 msgid "Alpha:"
@@ -381,7 +367,7 @@ msgstr "Pesquisar…"
 msgid "Reset all"
 msgstr "Redefinir tudo"
 
-#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:59
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:62
 msgid "OK"
 msgstr "OK"
 
@@ -449,6 +435,7 @@ msgid "Project Settings"
 msgstr "Configurações do projeto"
 
 #: data/ui/mainmenubutton.ui:81 data/ui/preferences.ui:7
+#: pitivi/mainwindow.py:178
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -542,7 +529,7 @@ msgstr "Fechar"
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Algumas alterações não terão efeito até que você reinicie o Pitivi"
 
-#: data/ui/projectsettings.ui:46 data/ui/renderingprogress.ui:41
+#: data/ui/projectsettings.ui:49 data/ui/renderingprogress.ui:41
 #: pitivi/editorperspective.py:503 pitivi/editorperspective.py:686
 #: pitivi/editorperspective.py:734 pitivi/editorperspective.py:787
 #: pitivi/greeterperspective.py:233 pitivi/medialibrary.py:761
@@ -550,58 +537,63 @@ msgstr "Algumas alterações não terão efeito até que você reinicie o Pitivi
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: data/ui/projectsettings.ui:112 data/ui/projectsettings.ui:385
+#: data/ui/projectsettings.ui:115 data/ui/projectsettings.ui:389
 #: data/ui/renderingdialog.ui:231
 msgid "Preset:"
 msgstr "Predefinição:"
 
-#: data/ui/projectsettings.ui:184
+#: data/ui/projectsettings.ui:187
 msgid "Size:"
 msgstr "Tamanho:"
 
-#: data/ui/projectsettings.ui:244
+#: data/ui/projectsettings.ui:247
 msgid "pixels"
 msgstr "pixels"
 
 #. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
-#: data/ui/projectsettings.ui:261
-msgid "Link"
-msgstr "Vincular"
+#: data/ui/projectsettings.ui:264
+msgid "Constrain proportions"
+msgstr "Proporções de restrição"
 
-#: data/ui/projectsettings.ui:295
+#: data/ui/projectsettings.ui:268
+#| msgid "Display aspect ratio"
+msgid "Maintain aspect ratio"
+msgstr "Manter proporção de aspecto"
+
+#: data/ui/projectsettings.ui:299
 msgid "Frame Rate:"
 msgstr "Taxa de quadros:"
 
 #. The title of the section with the video settings
-#: data/ui/projectsettings.ui:348 data/ui/renderingdialog.ui:466
+#: data/ui/projectsettings.ui:352 data/ui/renderingdialog.ui:466
 #: pitivi/effects.py:239
 msgid "Video"
 msgstr "Vídeo"
 
-#: data/ui/projectsettings.ui:451 data/ui/renderingdialog.ui:505
+#: data/ui/projectsettings.ui:455 data/ui/renderingdialog.ui:505
 msgid "Channels:"
 msgstr "Canais:"
 
-#: data/ui/projectsettings.ui:485 data/ui/renderingdialog.ui:614
+#: data/ui/projectsettings.ui:489 data/ui/renderingdialog.ui:614
 msgid "Sample rate:"
 msgstr "Taxa da amostra:"
 
 #. The title of the section with the audio settings
-#: data/ui/projectsettings.ui:529 data/ui/renderingdialog.ui:632
+#: data/ui/projectsettings.ui:533 data/ui/renderingdialog.ui:632
 #: pitivi/effects.py:239
 msgid "Audio"
 msgstr "Áudio"
 
-#: data/ui/projectsettings.ui:574
+#: data/ui/projectsettings.ui:578
 msgid "Author:"
 msgstr "Autor:"
 
-#: data/ui/projectsettings.ui:586
+#: data/ui/projectsettings.ui:590
 msgid "Year:"
 msgstr "Ano:"
 
 #. The title of the section with the name, author, year fields
-#: data/ui/projectsettings.ui:618
+#: data/ui/projectsettings.ui:622
 msgid "Info"
 msgstr "Informações"
 
@@ -804,41 +796,33 @@ msgstr "Modo sem espaçamento"
 msgid "Create"
 msgstr "Criar"
 
-#: data/ui/titleeditor.ui:67
+#: data/ui/titleeditor.ui:64
 msgid "Select a title clip to edit or create a new one."
 msgstr "Selecione um título de clipe para editar ou criar um novo."
 
-#: data/ui/titleeditor.ui:124
+#: data/ui/titleeditor.ui:139
 msgid "Choose a font"
 msgstr "Escolhe uma fonte"
 
-#: data/ui/titleeditor.ui:140 data/ui/titleeditor.ui:141
-msgid "Text color"
-msgstr "Cor do texto"
-
-#: data/ui/titleeditor.ui:149
+#: data/ui/titleeditor.ui:156
 msgid "Pick a text color"
 msgstr "Escolha uma cor do texto"
 
-#: data/ui/titleeditor.ui:165 data/ui/titleeditor.ui:166
-msgid "Background color"
-msgstr "Cor do plano de fundo"
-
-#: data/ui/titleeditor.ui:174
+#: data/ui/titleeditor.ui:191
 msgid "Pick a background color"
 msgstr "Escolhe uma cor para o plano de fundo"
 
-#: data/ui/titleeditor.ui:234
+#: data/ui/titleeditor.ui:232
+msgid "Alignment"
+msgstr "Alinhamento"
+
+#: data/ui/titleeditor.ui:268
 msgid "Horizontal:"
 msgstr "Horizontal:"
 
-#: data/ui/titleeditor.ui:246
+#: data/ui/titleeditor.ui:292
 msgid "Vertical:"
 msgstr "Vertical:"
-
-#: data/ui/titleeditor.ui:320
-msgid "Alignment"
-msgstr "Alinhamento"
 
 #: pitivi/application.py:162
 msgid "General"
@@ -1162,11 +1146,11 @@ msgid "effect"
 msgstr "efeito"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:342 pitivi/effects.py:363
+#: pitivi/effects.py:343 pitivi/effects.py:364
 msgid "Uncategorized"
 msgstr "Sem categoria"
 
-#: pitivi/effects.py:343 pitivi/effects.py:360
+#: pitivi/effects.py:344 pitivi/effects.py:361
 msgid "All effects"
 msgstr "Todos os efeitos"
 
@@ -1219,7 +1203,7 @@ msgstr "Sobre"
 msgid "Show the menu button content"
 msgstr "Mostrar o botão do menu de conteúdo"
 
-#: pitivi/mainwindow.py:223
+#: pitivi/mainwindow.py:225
 #, python-format
 msgid "Unable to load project \"%s\""
 msgstr "Não é possível carregar o projeto “%s”"
@@ -1243,7 +1227,7 @@ msgstr "<b>Resolução</b>: %d×%d"
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duração</b>: %s"
 
-#: pitivi/mediafilespreviewer.py:464 pitivi/medialibrary.py:1091
+#: pitivi/mediafilespreviewer.py:464 pitivi/medialibrary.py:1096
 msgid "Error while analyzing a file"
 msgid_plural "Error while analyzing files"
 msgstr[0] "Erro ao analisar um arquivo"
@@ -1292,7 +1276,7 @@ msgstr ""
 msgid "Do not use proxy files"
 msgstr "Não usa arquivos intermediários"
 
-#: pitivi/medialibrary.py:394 pitivi/medialibrary.py:950
+#: pitivi/medialibrary.py:394 pitivi/medialibrary.py:955
 msgid "Unknown"
 msgstr "Desconhecido"
 
@@ -1334,56 +1318,56 @@ msgstr "Todos os arquivos"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals)
-#: pitivi/medialibrary.py:856
+#: pitivi/medialibrary.py:861
 #, python-format
 msgid "Transcoding %d asset: %d%% (About %s left)"
 msgid_plural "Transcoding %d assets: %d%% (About %s left)"
 msgstr[0] "Transcodificando %d ativo: %d%% (Cerca de %s restantes)"
 msgstr[1] "Transcodificando %d ativos: %d%% (Cerca de %s restantes)"
 
-#: pitivi/medialibrary.py:962
+#: pitivi/medialibrary.py:967
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Ver erro"
 msgstr[1] "Ver erros"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: pitivi/medialibrary.py:964
+#: pitivi/medialibrary.py:969
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Um erro ocorreu durante a importação."
 msgstr[1] "{0:d} erros ocorreram durante a importação."
 
-#: pitivi/medialibrary.py:980
+#: pitivi/medialibrary.py:985
 #, python-format
 msgid "The project settings have been set to match file '%s'"
 msgstr ""
 "As configurações do projeto foram definidas para corresponder ao arquivo “%s”"
 
-#: pitivi/medialibrary.py:1094
+#: pitivi/medialibrary.py:1099
 msgid "The following file can not be used with Pitivi."
 msgid_plural "The following files can not be used with Pitivi."
 msgstr[0] "O seguinte arquivo não pode ser usado com o Pitivi."
 msgstr[1] "Os seguintes arquivos não podem ser usados com o Pitivi."
 
-#: pitivi/medialibrary.py:1203
+#: pitivi/medialibrary.py:1208
 msgid "Open containing folder"
 msgstr "Abrir pasta contendo"
 
-#: pitivi/medialibrary.py:1221
+#: pitivi/medialibrary.py:1226
 msgid "Do not use proxy for selected asset"
 msgid_plural "Do not use proxies for selected assets"
 msgstr[0] "Não usar intermediário para o ativo selecionado"
 msgstr[1] "Não usar intermediários para os ativos selecionados"
 
-#: pitivi/medialibrary.py:1232
+#: pitivi/medialibrary.py:1237
 msgid "Delete corresponding proxy file"
 msgid_plural "Delete corresponding proxy files"
 msgstr[0] "Excluir o arquivo intermediário correspondente"
 msgstr[1] "Excluir os arquivos intermediários correspondentes"
 
-#: pitivi/medialibrary.py:1243
+#: pitivi/medialibrary.py:1248
 msgid "Use proxy for selected asset"
 msgid_plural "Use proxies for selected assets"
 msgstr[0] "Usar intermediário para o ativo selecionado"
@@ -1419,7 +1403,7 @@ msgstr "novo-perfil-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:174 pitivi/render.py:891
+#: pitivi/project.py:174 pitivi/render.py:896
 msgid "Sorry, something didn’t work right."
 msgstr "Desculpe, algo não funcionou direito."
 
@@ -1520,15 +1504,15 @@ msgstr "Renderizando no momento"
 #. Translators: This item appears in a combobox's popup and
 #. contains as children the unsupported (but still available)
 #. muxers and encoders.
-#: pitivi/render.py:656
+#: pitivi/render.py:661
 msgid "Unsupported"
 msgstr "Sem suporte"
 
-#: pitivi/render.py:715
+#: pitivi/render.py:720
 msgid "A file name is required."
 msgstr "É necessário um nome de arquivo."
 
-#: pitivi/render.py:718
+#: pitivi/render.py:723
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
@@ -1537,23 +1521,23 @@ msgstr ""
 "Se você não deseja sobrescrevê-lo, selecione um nome de arquivo ou pasta "
 "diferente."
 
-#: pitivi/render.py:722
+#: pitivi/render.py:727
 #, python-format
 msgid "Remove invalid characters from the filename: %s"
 msgstr "Remova caracteres inválidos do nome do arquivo: %s"
 
-#: pitivi/render.py:753
+#: pitivi/render.py:758
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: pitivi/render.py:758
+#: pitivi/render.py:763
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: pitivi/render.py:885
+#: pitivi/render.py:890
 msgid ""
 "<b>Make sure your rendering size is even, x264enc might not be able to "
 "render otherwise.</b>\n"
@@ -1563,11 +1547,11 @@ msgstr ""
 "contrário o x264enc pode não ser capaz de renderizar.</b>\n"
 "\n"
 
-#: pitivi/render.py:892
+#: pitivi/render.py:897
 msgid "An error occurred while trying to render your project."
 msgstr "Ocorreu um erro ao tentar renderizar seu projeto."
 
-#: pitivi/render.py:894
+#: pitivi/render.py:899
 msgid ""
 "You might want to check our troubleshooting guide or file a bug report. The "
 "GStreamer error was:"
@@ -1575,20 +1559,20 @@ msgstr ""
 "Você pode querer verificar o nosso guia de solução de problemas ou enviar um "
 "relatório de erro. O erro GStreamer foi:"
 
-#: pitivi/render.py:1120 pitivi/render.py:1121 pitivi/render.py:1127
+#: pitivi/render.py:1125 pitivi/render.py:1126 pitivi/render.py:1132
 msgid "Render complete"
 msgstr "Renderização completa"
 
-#: pitivi/render.py:1125
+#: pitivi/render.py:1130
 #, python-format
 msgid "\"%s\" has finished rendering."
 msgstr "A renderização de “%s” foi finalizada."
 
-#: pitivi/titleeditor.py:44
+#: pitivi/titleeditor.py:45
 msgid "Title clip duration"
 msgstr "Duração do clipe de título"
 
-#: pitivi/titleeditor.py:46
+#: pitivi/titleeditor.py:47
 msgid ""
 "Default clip length (in milliseconds) of titles when inserting on the "
 "timeline."
@@ -1596,31 +1580,31 @@ msgstr ""
 "Comprimento padrão do clipe (em milissegundos) de títulos quando inserida na "
 "linha de tempo."
 
-#: pitivi/titleeditor.py:105 pitivi/titleeditor.py:112
+#: pitivi/titleeditor.py:117 pitivi/titleeditor.py:124
 msgid "Absolute"
 msgstr "Absoluto"
 
-#: pitivi/titleeditor.py:106
+#: pitivi/titleeditor.py:118
 msgid "Top"
 msgstr "Cima"
 
-#: pitivi/titleeditor.py:107 pitivi/titleeditor.py:114
+#: pitivi/titleeditor.py:119 pitivi/titleeditor.py:126
 msgid "Center"
 msgstr "Centro"
 
-#: pitivi/titleeditor.py:108
+#: pitivi/titleeditor.py:120
 msgid "Bottom"
 msgstr "Baixo"
 
-#: pitivi/titleeditor.py:109
+#: pitivi/titleeditor.py:121
 msgid "Baseline"
 msgstr "Linha de base"
 
-#: pitivi/titleeditor.py:113
+#: pitivi/titleeditor.py:125
 msgid "Left"
 msgstr "Esquerda"
 
-#: pitivi/titleeditor.py:115
+#: pitivi/titleeditor.py:127
 msgid "Right"
 msgstr "Direita"
 
@@ -1727,7 +1711,7 @@ msgstr ""
 msgid "Timestamp: %s"
 msgstr "Timestamp: %s"
 
-#: pitivi/timeline/elements.py:1455
+#: pitivi/timeline/elements.py:1457
 msgid "Audio crossfade"
 msgstr "Fade cruzado de áudio"
 
@@ -1796,7 +1780,6 @@ msgstr ""
 "editar clipes."
 
 #: pitivi/timeline/timeline.py:328 pitivi/timeline/timeline.py:1645
-#| msgid "Add a Keyframe"
 msgid "Add layer"
 msgstr "Adicionar camada"
 
@@ -2068,7 +2051,7 @@ msgstr ""
 msgid "No description available."
 msgstr "Nenhuma descrição disponível."
 
-#: pitivi/dialogs/prefs.py:728
+#: pitivi/dialogs/prefs.py:731
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "Não foi possível carregar o plugin “{module_name}”"
@@ -2300,6 +2283,24 @@ msgstr ""
 "Não foi possível se sobrepor a {key}, porque comandos de atalhos são somente "
 "leitura."
 
+#~ msgid "org.pitivi.Pitivi"
+#~ msgstr "org.pitivi.Pitivi"
+
+#~ msgid "<"
+#~ msgstr "<"
+
+#~ msgid ">"
+#~ msgstr ">"
+
+#~ msgid "Link"
+#~ msgstr "Vincular"
+
+#~ msgid "Text color"
+#~ msgstr "Cor do texto"
+
+#~ msgid "Background color"
+#~ msgstr "Cor do plano de fundo"
+
 #~ msgid "Pixel aspect ratio:"
 #~ msgstr "Proporção de aspecto de pixel:"
 
@@ -2404,9 +2405,6 @@ msgstr ""
 
 #~ msgid "Aspect Ratio:"
 #~ msgstr "Taxa de proporção:"
-
-#~ msgid "Display aspect ratio"
-#~ msgstr "Proporção de aspecto da tela"
 
 #~ msgid ""
 #~ "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
