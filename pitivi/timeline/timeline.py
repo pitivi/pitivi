@@ -1321,7 +1321,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _separator_accepting_drop_timeout_cb(self):
         self._separator_accepting_drop_id = 0
-        self._setSeparatorsPrelight(True)
+        if len(self.ges_timeline.get_layers()) == 1:
+            self._setSeparatorsPrelight(False)
+        else:
+            print(len(self.ges_timeline.get_layers()))
+            self._setSeparatorsPrelight(True)
         self._separator_accepting_drop = True
 
     def create_layer(self, priority):
@@ -1533,7 +1537,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.forward_one_frame_action.set_enabled(project_loaded)
         self.backward_one_second_action.set_enabled(project_loaded)
         self.forward_one_second_action.set_enabled(project_loaded)
-        self.add_layer_action.set_enabled(1)
 
     # Internal API
 
