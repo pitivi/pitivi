@@ -304,13 +304,18 @@ class ClipAction(UndoableAction):
 
     def remove(self):
         self.layer.remove_clip(self.clip)
-                
+
 class ClipAdded(ClipAction):
 
     def __repr__(self):
         return "<ClipAdded %s>" % self.clip
 
     def do(self):
+        #for accomodating redo action in auto addition of last layer
+        self.ges_timeline = self.layer.get_timeline()
+        layers_count = len(self.ges_timeline.get_layers())
+        if self.ges_timeline.get_layer(layers_count - 1).is_empty() and self.layer.get_priority() == layers_count - 1:
+            self.ges_timeline.append_layer()
         self.add()
 
     def undo(self):
