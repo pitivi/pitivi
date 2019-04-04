@@ -500,7 +500,7 @@ class EditorPerspective(Perspective, Loggable):
 
         dialog = Gtk.MessageDialog(transient_for=self.app.gui, modal=True)
         reject_btn = dialog.add_button(_("Close without saving"),
-                                   Gtk.ResponseType.REJECT)
+                                       Gtk.ResponseType.REJECT)
 
         dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                            save, Gtk.ResponseType.YES)
