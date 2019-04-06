@@ -186,6 +186,8 @@ class Console(GObject.GObject, Peas.Activatable):
 
     def remove_menu_item(self):
         """Removes a menu item from the Pitivi menu."""
+
+        self.app.remove_action("open_console")
         menu = self.app.gui.editor.builder.get_object("menu_box")
         menu.remove(self.menu_item)
         self.menu_item = None
