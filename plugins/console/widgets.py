@@ -70,6 +70,11 @@ class ConsoleWidget(Gtk.ScrolledWindow):
         buf.connect("mark-set", self.__mark_set_cb)
         buf.connect("insert-text", self.__insert_text_cb)
 
+        self._view.set_top_margin(20)
+        self._view.set_bottom_margin(20)
+        self._view.set_left_margin(20)
+        self._view.set_right_margin(20)
+
         # Font color and style.
         self._provider = Gtk.CssProvider()
         self._css_values = {
