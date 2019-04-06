@@ -21,6 +21,7 @@ import sys
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import Gio
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
@@ -157,6 +158,10 @@ class Console(GObject.GObject, Peas.Activatable):
                                             description=None,
                                             section="console")
 
+        open_action = Gio.SimpleAction.new("open_console", None)
+        open_action.connect("activate", self.__menu_item_activate_cb)
+        self.app.add_action(open_action)
+
         self._setup_dialog()
         self.add_menu_item()
         self.menu_item.show()
@@ -175,7 +180,8 @@ class Console(GObject.GObject, Peas.Activatable):
         menu = self.app.gui.editor.builder.get_object("menu_box")
         self.menu_item = Gtk.ModelButton.new()
         self.menu_item.props.text = _("Developer Console")
-        self.menu_item.connect("activate", self.__menu_item_activate_cb)
+        self.menu_item.set_action_name("app.open_console")
+
         menu.add(self.menu_item)
 
     def remove_menu_item(self):
@@ -246,7 +252,7 @@ class Console(GObject.GObject, Peas.Activatable):
         if self.terminal:
             self.terminal.set_font(settings.consoleFont)
 
-    def __menu_item_activate_cb(self, unused_data):
+    def __menu_item_activate_cb(self, unused_data, unused_param):
         self.window.show_all()
         self.window.set_keep_above(True)
 
