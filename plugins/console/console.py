@@ -101,7 +101,7 @@ class Console(GObject.GObject, Peas.Activatable):
                                               key="console-color",
                                               notify=True,
                                               default=Console.DEFAULT_COLOR)
-        except ConfigError:
+        except (ConfigError, RuntimeError):
             pass
 
         try:
@@ -110,7 +110,7 @@ class Console(GObject.GObject, Peas.Activatable):
                                               key="console-error-color",
                                               notify=True,
                                               default=Console.DEFAULT_STDERR_COLOR)
-        except ConfigError:
+        except (ConfigError, RuntimeError):
             pass
 
         try:
@@ -119,7 +119,7 @@ class Console(GObject.GObject, Peas.Activatable):
                                               key="console-output-color",
                                               notify=True,
                                               default=Console.DEFAULT_STDOUT_COLOR)
-        except ConfigError:
+        except (ConfigError, RuntimeError):
             pass
 
         try:
@@ -128,7 +128,7 @@ class Console(GObject.GObject, Peas.Activatable):
                                               key="console-font",
                                               notify=True,
                                               default=Console.DEFAULT_FONT.to_string())
-        except ConfigError:
+        except (ConfigError, RuntimeError):
             pass
 
         self.app.settings.reload_attribute_from_file("console", "consoleColor")
