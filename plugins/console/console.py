@@ -172,7 +172,6 @@ class Console(GObject.GObject, Peas.Activatable):
         self.remove_menu_item()
         self.window = None
         self.terminal = None
-        self.menu_item = None
         self.app = None
 
     def add_menu_item(self):
