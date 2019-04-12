@@ -220,9 +220,6 @@
         },
         {
             "name": "gsound",
-            "build-options" : {
-                "cflags": "-O2"
-            },
             "ensure-writable": [
                 "easy-install.pth"
             ],
@@ -278,6 +275,10 @@
                 {
                     "type": "patch",
                     "path": "gavl/gavl-armel-ftbfs.patch"
+                },
+                {
+                    "type": "shell",
+                    "commands": ["pwd", "cp -p /usr/share/automake-*/config.{sub,guess} ."]
                 },
                 {
                     "type": "script",
@@ -349,10 +350,12 @@
             "name": "ffmpeg",
             "config-opts": [
                 "--disable-static",
+                "--enable-shared",
+                "--enable-pic",
                 "--disable-avdevice",
                 "--disable-postproc",
+                "--disable-swscale",
                 "--disable-programs",
-                "--disable-ffserver",
                 "--disable-ffplay",
                 "--disable-ffprobe",
                 "--disable-ffmpeg",
@@ -364,8 +367,8 @@
                 "--disable-dxva2",
                 "--disable-vdpau",
                 "--disable-filters",
+                "--enable-filter=yadif",
                 "--disable-doc",
-                "--disable-vda",
                 "--disable-d3d11va",
                 "--disable-dxva2",
                 "--disable-audiotoolbox",
@@ -383,15 +386,15 @@
                 "--disable-libnpp",
                 "--disable-iconv",
                 "--disable-jni",
-                "--enable-optimizations",
+                "--disable-v4l2_m2m",
                 "--enable-gpl",
-                "--enable-shared"
+                "--enable-optimizations"
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://ffmpeg.org/releases/ffmpeg-3.4.5.tar.xz",
-                    "sha256": "741cbd6394eaed370774ca4cc089eaafbc54d0824b9aa360d4b3b0cbcbc4a92c"
+                    "type": "git",
+                    "url": "https://github.com/FFmpeg/FFmpeg.git",
+                    "commit": "10506de9"
                 }
             ]
         },
@@ -440,13 +443,13 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer.git"
                 }
             ]
@@ -455,15 +458,15 @@
             "name": "gst-plugins-base",
             "buildsystem": "meson",
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
-                "-Duse_orc=yes",
+                "-Dgtk_doc=disabled",
+                "-Dorc=enabled",
                 "--libdir=lib"
             ],
             "builddir": true,
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git"
                 }
             ]
@@ -473,13 +476,13 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git"
                 }
             ]
@@ -489,13 +492,13 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git"
                 }
             ]
@@ -505,13 +508,14 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Daom=disabled",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git"
                 }
             ]
@@ -521,14 +525,27 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "disable-shallow-clone": true,
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-libav.git"
+                },
+                {
+                    "type": "git",
+                    "url": "https://git.ffmpeg.org/ffmpeg.git",
+                    "disable-shallow-clone": true,
+                    "branch": "master"
+                },
+                {
+                    "type": "git",
+                    "url": "git://git.libav.org/gas-preprocessor.git",
+                    "disable-shallow-clone": true,
+                    "branch": "master"
                 }
             ]
         },
@@ -543,7 +560,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "master",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-python.git"
                 }
             ]
@@ -553,13 +570,14 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
+                "-Ddebug_viewer=false",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-devtools.git"
                 }
             ]
@@ -569,13 +587,13 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi.git"
                 }
             ]
@@ -585,13 +603,13 @@
             "buildsystem": "meson",
             "builddir": true,
             "config-opts": [
-                "-Ddisable_gtkdoc=true",
+                "-Dgtk_doc=disabled",
                 "--libdir=lib"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-editing-services.git"
                 }
             ]
@@ -607,7 +625,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "branch": "1.14",
+                    "branch": "1.15.90",
                     "url": "https://github.com/pitivi/gst-transcoder"
                 }
             ]
