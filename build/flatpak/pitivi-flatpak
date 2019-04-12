@@ -41,7 +41,7 @@ FLATPAK_REQ = [
     ("flatpak-builder", "0.10.0"),
 ]
 FLATPAK_VERSION = {}
-DEFAULT_GST_BRANCH = "1.14"
+DEFAULT_GST_BRANCH = "1.16"
 
 
 class Colors:  # pylint: disable=too-few-public-methods
