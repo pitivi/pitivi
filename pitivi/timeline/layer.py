@@ -220,10 +220,10 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         if media_types & GES.TrackType.VIDEO or not media_types:
             # The layer has video or is empty.
-            icon = "video-x-generic"
+            icon = "video-x-generic-symbolic"
         else:
             # The layer has audio and nothing else.
-            icon = "audio-x-generic"
+            icon = "audio-x-generic-symbolic"
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
