@@ -161,6 +161,8 @@ class Console(GObject.GObject, Peas.Activatable):
         open_action = Gio.SimpleAction.new("open_console", None)
         open_action.connect("activate", self.__menu_item_activate_cb)
         self.app.add_action(open_action)
+        self.app.shortcuts.add("app.open_console", ["<Primary>d"],
+                               _("Console"))
 
         self._setup_dialog()
         self.add_menu_item()
