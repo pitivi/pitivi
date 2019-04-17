@@ -252,7 +252,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="GstAlpha::angle::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -266,7 +266,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="GstAlpha::noise-level::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -279,7 +279,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="GstAlpha::white-sensitivity::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -292,7 +292,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="GstAlpha::black-sensitivity::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
