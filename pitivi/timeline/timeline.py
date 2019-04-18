@@ -191,6 +191,9 @@ class Marquee(Gtk.Box, Loggable):
 class LayersLayout(Gtk.Layout, Zoomable, Loggable):
     """Layout for displaying scrollable layers, the playhead, snap indicator.
 
+    The layers are actual widgets in a vertical Gtk.Box.
+    The playhead and the snap indicator are drawn on top in do_draw().
+
     Args:
         timeline (Timeline): The timeline indirectly containing the layout.
 
@@ -281,6 +284,9 @@ class LayersLayout(Gtk.Layout, Zoomable, Loggable):
         # The additional space is for the 'Add layer' button.
         self.props.height = allocation.height + LAYER_HEIGHT / 2
 
+        if self._timeline.delayed_scroll:
+            self._timeline.scrollToPlayhead(**self._timeline.delayed_scroll)
+
 
 class Timeline(Gtk.EventBox, Zoomable, Loggable):
     """Container for the the layers controls and representation.
@@ -357,6 +363,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__last_position = 0
         self._scrubbing = False
         self._scrolling = False
+        # The parameters for the delayed scroll to be performed after
+        # the layers box is allocated a size.
+        self.delayed_scroll = {}
         self.__next_seek_position = None
 
         # Clip selection.
@@ -492,7 +501,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _durationChangedCb(self, ges_timeline, pspec):
         self.layout.update_width()
 
-    def scrollToPlayhead(self, align=None, when_not_in_view=False):
+    def scrollToPlayhead(self, align=None, when_not_in_view=False, delayed=False):
         """Scrolls so that the playhead is in view.
 
         Args:
@@ -500,8 +509,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 post-scroll.
             when_not_in_view (Optional[bool]): When True, scrolls only if
                 the playhead is not in view.
+            delayed (Optional[bool]): When True, the scroll will be done only
+                after the layers box size allocation is updated.
         """
-        self.debug("Scrolling to playhead")
+        self.debug("Scrolling to playhead, delayed=%s", delayed)
+        if delayed:
+            self.delayed_scroll = {"align": align, "when_not_in_view": when_not_in_view}
+            return
+
+        # If a scroll is forced, forget about the delayed scroll, if any.
+        self.delayed_scroll = {}
+
         layout_width = self.layout.get_allocation().width
         if when_not_in_view:
             x = self.nsToPixel(self.__last_position) - self.hadj.get_value()

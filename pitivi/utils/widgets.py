@@ -1272,8 +1272,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
                                        level=adjustment.get_value(),
                                        optional_action_type=True)
 
-        if self._manual_set is False:
-            self.timeline.timeline.scrollToPlayhead()
+        if not self._manual_set:
+            self.timeline.timeline.scrollToPlayhead(delayed=True)
 
     def _zoomFitCb(self, unused_button):
         self.timeline.timeline.set_best_zoom_ratio(allow_zoom_in=True)
@@ -1297,8 +1297,10 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoomLevel = self.getCurrentZoomLevel()
         if int(self._zoomAdjustment.get_value()) != zoomLevel:
             self._manual_set = True
-            self._zoomAdjustment.set_value(zoomLevel)
-            self._manual_set = False
+            try:
+                self._zoomAdjustment.set_value(zoomLevel)
+            finally:
+                self._manual_set = False
 
     def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
         # We assume the width of the ruler is exactly the width of the
