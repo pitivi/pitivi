@@ -555,24 +555,28 @@ class MoveScaleOverlay(Overlay):
             return
 
         cr.save()
-        # clear background
+
+        # Clear background
         cr.set_operator(cairo.OPERATOR_OVER)
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.0)
+        cr.set_source_rgba(0, 0, 0, 0)
         cr.paint()
 
-        if hovered:
-            brightness = 0.65
-        else:
-            brightness = 0.3
+        if not selected:
+            cr.set_dash((5, 5))
 
-        # clip away outer mask
+        # Black outline around the box
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3)
         self.__draw_rectangle(cr)
-        cr.clip()
-        cr.set_source_rgba(brightness, brightness, brightness, 0.6)
-        self.__draw_rectangle(cr)
-
-        cr.set_line_width(16)
         cr.stroke()
+
+        # Inner white line
+        color = (0.8, 0.8, 0.8) if not selected else (1, 1, 1)
+        cr.set_source_rgb(*color)
+        cr.set_line_width(1)
+        self.__draw_rectangle(cr)
+        cr.stroke()
+
         cr.restore()
 
         if selected:
