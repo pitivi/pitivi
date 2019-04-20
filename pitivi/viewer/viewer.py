@@ -703,6 +703,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
         Loggable.__init__(self)
         self.image = Gtk.Image()
         self.add(self.image)
+        self.set_relief(Gtk.ReliefStyle.NONE)
         self.playing = False
         self.setPlay()
 
