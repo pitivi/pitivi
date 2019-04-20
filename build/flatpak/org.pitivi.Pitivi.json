@@ -534,18 +534,6 @@
                     "branch": "1.16",
                     "disable-shallow-clone": true,
                     "url": "https://gitlab.freedesktop.org/gstreamer/gst-libav.git"
-                },
-                {
-                    "type": "git",
-                    "url": "https://git.ffmpeg.org/ffmpeg.git",
-                    "disable-shallow-clone": true,
-                    "branch": "master"
-                },
-                {
-                    "type": "git",
-                    "url": "git://git.libav.org/gas-preprocessor.git",
-                    "disable-shallow-clone": true,
-                    "branch": "master"
                 }
             ]
         },
