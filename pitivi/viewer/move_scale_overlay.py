@@ -36,9 +36,8 @@ class Edge:
 
 
 class Handle:
-    GLOW = 0.9
-    INITIAL_RADIUS = 15
-    MINIMAL_RADIUS = 5
+    INITIAL_SIZE = 30
+    MINIMAL_SIZE = 5
     CURSORS = {
         (Edge.top, Edge.left): "nw-resize",
         (Edge.bottom, Edge.left): "sw-resize",
@@ -51,7 +50,7 @@ class Handle:
     }
 
     def __init__(self, overlay):
-        self.__radius = Handle.INITIAL_RADIUS
+        self.__size = Handle.INITIAL_SIZE
         self.__clicked = False
         self.__window_position = numpy.array([0, 0])
         self.__translation = numpy.array([0, 0])
@@ -102,7 +101,7 @@ class Handle:
         return cursor_position
 
     def _get_normalized_minimal_size(self):
-        return 4 * Handle.MINIMAL_RADIUS / self._overlay.stack.window_size
+        return 4 * Handle.MINIMAL_SIZE / self._overlay.stack.window_size
 
     def get_window_position(self):
         return self.__window_position.tolist()
@@ -151,7 +150,7 @@ class Handle:
     def on_hover(self, cursor_pos):
         distance = numpy.linalg.norm(self.__window_position - cursor_pos)
 
-        if distance < self.__radius:
+        if distance < (self.__size / 2):
             self.hovered = True
             self._overlay.stack.set_cursor(Handle.CURSORS[self.placement])
         else:
@@ -173,46 +172,36 @@ class Handle:
         self._opposite_position = None
         self._opposite_to_handle = None
 
-    def restrict_radius_to_size(self, size):
-        if size < Handle.INITIAL_RADIUS * 5:
-            radius = size / 5
-            if radius < Handle.MINIMAL_RADIUS:
-                radius = Handle.MINIMAL_RADIUS
-            self.__radius = radius
+    def restrict_to_size(self, size):
+        if size < Handle.INITIAL_SIZE * 5:
+            self.__size = max(size / 5, Handle.MINIMAL_SIZE)
         else:
-            self.__radius = Handle.INITIAL_RADIUS
+            self.__size = Handle.INITIAL_SIZE
 
     def reset_size(self):
-        self.__radius = Handle.INITIAL_RADIUS
+        self.__size = Handle.INITIAL_SIZE
 
     def draw(self, cr):
-        if self.__clicked:
-            outer_color = .2
-            glow_radius = 1.08
-        elif self.hovered:
-            outer_color = .8
-            glow_radius = 1.08
-        else:
-            outer_color = .5
-            glow_radius = 1.01
+        src_x, src_y = self.get_window_position()
+        x = src_x - (self.__size / 2)
+        y = src_y - (self.__size / 2)
 
-        cr.set_source_rgba(Handle.GLOW, Handle.GLOW, Handle.GLOW, 0.9)
-        x, y = self.get_window_position()
-        cr.arc(x, y, self.__radius * glow_radius, 0, 2 * pi)
-        cr.fill()
+        if self.hovered:
+            cr.set_source_rgba(1, 1, 1, 0.25)
+            cr.rectangle(x, y, self.__size, self.__size)
+            cr.fill()
 
-        from_point = (x, y - self.__radius)
-        to_point = (x, y + self.__radius)
-        linear = cairo.LinearGradient(*(from_point + to_point))
-        linear.add_color_stop_rgba(0.00, outer_color, outer_color, outer_color, 1)
-        linear.add_color_stop_rgba(0.55, .1, .1, .1, 1)
-        linear.add_color_stop_rgba(0.65, .1, .1, .1, 1)
-        linear.add_color_stop_rgba(1.00, outer_color, outer_color, outer_color, 1)
+        # Black outline around the boxes
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3)
+        cr.rectangle(x, y, self.__size, self.__size)
+        cr.stroke()
 
-        cr.set_source(linear)
-
-        cr.arc(x, y, self.__radius * .9, 0, 2 * pi)
-        cr.fill()
+        # Inner white line
+        cr.set_source_rgb(1, 1, 1)
+        cr.set_line_width(1)
+        cr.rectangle(x, y, self.__size, self.__size)
+        cr.stroke()
 
 
 class CornerHandle(Handle):
@@ -427,7 +416,7 @@ class MoveScaleOverlay(Overlay):
         smaller_size = numpy.amin(size)
 
         for handle in self.handles.values():
-            handle.restrict_radius_to_size(smaller_size)
+            handle.restrict_to_size(smaller_size)
 
     def __update_edges_from_corners(self):
         half_w = numpy.array([self.__get_width() * 0.5, 0])
