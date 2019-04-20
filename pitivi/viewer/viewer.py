@@ -247,7 +247,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.pack_end(bbox, False, False, 0)
 
         self.goToStart_button = Gtk.ToolButton()
-        self.goToStart_button.set_icon_name("media-skip-backward")
+        self.goToStart_button.set_icon_name("media-skip-backward-symbolic")
         self.goToStart_button.connect("clicked", self._goToStartCb)
         self.goToStart_button.set_tooltip_text(
             _("Go to the beginning of the timeline"))
@@ -255,7 +255,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.pack_start(self.goToStart_button, False, False, 0)
 
         self.back_button = Gtk.ToolButton()
-        self.back_button.set_icon_name("media-seek-backward")
+        self.back_button.set_icon_name("media-seek-backward-symbolic")
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
@@ -267,14 +267,14 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.playpause_button.set_sensitive(False)
 
         self.forward_button = Gtk.ToolButton()
-        self.forward_button.set_icon_name("media-seek-forward")
+        self.forward_button.set_icon_name("media-seek-forward-symbolic")
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, False, 0)
 
         self.goToEnd_button = Gtk.ToolButton()
-        self.goToEnd_button.set_icon_name("media-skip-forward")
+        self.goToEnd_button.set_icon_name("media-skip-forward-symbolic")
         self.goToEnd_button.connect("clicked", self._goToEndCb)
         self.goToEnd_button.set_tooltip_text(
             _("Go to the end of the timeline"))
@@ -290,7 +290,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.pack_start(self.timecode_entry, False, 10, 0)
 
         self.undock_button = Gtk.ToolButton()
-        self.undock_button.set_icon_name("view-restore")
+        self.undock_button.set_icon_name("view-restore-symbolic")
         self.undock_button.connect("clicked", self.undock_cb)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
@@ -718,7 +718,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.log("Displaying the play image")
         self.playing = True
         self.set_image(Gtk.Image.new_from_icon_name(
-            "media-playback-start", Gtk.IconSize.BUTTON))
+            "media-playback-start-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Play"))
         self.playing = False
 
@@ -726,6 +726,6 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.log("Displaying the pause image")
         self.playing = False
         self.set_image(Gtk.Image.new_from_icon_name(
-            "media-playback-pause", Gtk.IconSize.BUTTON))
+            "media-playback-pause-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True
