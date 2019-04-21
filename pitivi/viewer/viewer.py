@@ -293,7 +293,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             _('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
         self.timecode_entry.connect("key_press_event", self._entry_key_press_event_cb)
-        bbox.pack_start(self.timecode_entry, False, 10, 0)
+        bbox.pack_start(self.timecode_entry, False, False, 15)
 
         self.undock_button = Gtk.Button.new_from_icon_name("view-restore-symbolic",
                                                            Gtk.IconSize.BUTTON)
