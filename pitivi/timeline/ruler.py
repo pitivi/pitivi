@@ -166,6 +166,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                            (color_normal.green, color_insensitive.green),
                            (color_normal.blue, color_insensitive.blue))])
 
+        self._color_subtle = Gdk.RGBA(
+            *[(x * 3 + y * 2) / 10
+              for x, y in ((color_normal.red, color_insensitive.red),
+                           (color_normal.green, color_insensitive.green),
+                           (color_normal.blue, color_insensitive.blue))])
+
         # Two colors with high contrast.
         self._color_frame = gtk_style_context_get_color(context, Gtk.StateFlags.LINK)
 
@@ -280,13 +286,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             (min_interval_width, Zoomable.zoomratio))
 
     def drawTicks(self, context, offset, spacing, interval_seconds, ticks):
-        for tick_interval, height_ratio in ticks:
+        for tick_interval, height_ratio in reversed(ticks):
             count_per_interval = interval_seconds / tick_interval
             space = spacing / count_per_interval
             if space < MIN_TICK_SPACING_PIXELS:
                 break
             paintpos = 0.5 - offset
-            set_cairo_color(context, self._color_normal)
+
+            color = (self._color_normal if height_ratio == 1
+                     else self._color_subtle)
+
+            set_cairo_color(context, color)
             while paintpos < context.get_target().get_width():
                 self._drawTick(context, paintpos, height_ratio)
                 paintpos += space
