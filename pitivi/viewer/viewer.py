@@ -246,16 +246,20 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_margin_right(SPACING)
         self.pack_end(bbox, False, False, 0)
 
-        self.goToStart_button = Gtk.ToolButton()
-        self.goToStart_button.set_icon_name("media-skip-backward-symbolic")
+        self.goToStart_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
+                                                              Gtk.IconSize.BUTTON)
+
         self.goToStart_button.connect("clicked", self._goToStartCb)
+        self.goToStart_button.set_relief(Gtk.ReliefStyle.NONE)
         self.goToStart_button.set_tooltip_text(
             _("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
         bbox.pack_start(self.goToStart_button, False, False, 0)
 
-        self.back_button = Gtk.ToolButton()
-        self.back_button.set_icon_name("media-seek-backward-symbolic")
+        self.back_button = Gtk.Button.new_from_icon_name("media-seek-backward-symbolic",
+                                                         Gtk.IconSize.BUTTON)
+
+        self.back_button.set_relief(Gtk.ReliefStyle.NONE)
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
@@ -266,15 +270,17 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.pack_start(self.playpause_button, False, False, 0)
         self.playpause_button.set_sensitive(False)
 
-        self.forward_button = Gtk.ToolButton()
-        self.forward_button.set_icon_name("media-seek-forward-symbolic")
+        self.forward_button = Gtk.Button.new_from_icon_name("media-seek-forward-symbolic",
+                                                            Gtk.IconSize.BUTTON)
+        self.forward_button.set_relief(Gtk.ReliefStyle.NONE)
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, False, 0)
 
-        self.goToEnd_button = Gtk.ToolButton()
-        self.goToEnd_button.set_icon_name("media-skip-forward-symbolic")
+        self.goToEnd_button = Gtk.Button.new_from_icon_name("media-skip-forward-symbolic",
+                                                            Gtk.IconSize.BUTTON)
+        self.goToEnd_button.set_relief(Gtk.ReliefStyle.NONE)
         self.goToEnd_button.connect("clicked", self._goToEndCb)
         self.goToEnd_button.set_tooltip_text(
             _("Go to the end of the timeline"))
@@ -289,8 +295,10 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.timecode_entry.connect("key_press_event", self._entry_key_press_event_cb)
         bbox.pack_start(self.timecode_entry, False, 10, 0)
 
-        self.undock_button = Gtk.ToolButton()
-        self.undock_button.set_icon_name("view-restore-symbolic")
+        self.undock_button = Gtk.Button.new_from_icon_name("view-restore-symbolic",
+                                                           Gtk.IconSize.BUTTON)
+
+        self.undock_button.set_relief(Gtk.ReliefStyle.NONE)
         self.undock_button.connect("clicked", self.undock_cb)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
