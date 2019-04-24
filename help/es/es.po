@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2019-03-02 20:51+0000\n"
-"PO-Revision-Date: 2019-04-02 12:43+0200\n"
+"POT-Creation-Date: 2019-04-02 10:54+0000\n"
+"PO-Revision-Date: 2019-04-24 12:41+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: es <gnome-es-list@gnome.org>\n"
 "Language: es\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgctxt "_"
 msgid "translator-credits"
 msgstr ""
-"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2017\n"
+"Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2019\n"
 "Milagros Alessandra Infante Montero <maim92@gmail.com>, 2012, 2013"
 
 #. (itstool) path: credit/name
@@ -111,13 +111,6 @@ msgstr "Los parches son bienvenidos"
 
 #. (itstool) path: section/p
 #: C/about.page:30
-#| msgid ""
-#| "If you happen to find errors, missing information or unclear passages in "
-#| "this manual, please feel free to submit corrections. You can find contact "
-#| "information on <link href=\"http://jeff.ecchi.ca/\">my personal website</"
-#| "link>. You can also <link href=\"https://phabricator.freedesktop.org/"
-#| "maniphest/task/create/?projects=pitivi,pitivi_documentation\">file bugs "
-#| "in our bug tracker</link>."
 msgid ""
 "If you happen to find errors, missing information or unclear passages in "
 "this manual, please feel free to submit corrections. You can find contact "
@@ -728,10 +721,15 @@ msgid ""
 "changed them yourself already. An infobar appears when this happens. Click "
 "the <gui>Project Settings</gui> button in the infobar for details."
 msgstr ""
+"Cuando crea un proyecto nuevo e importa el primer archivo de vídeo sus "
+"propiedades se aplican a la <link xref=\"workwithprojects#projectsettings"
+"\">configuración del proyecto</link>, a menos que ya las haya cambiado. "
+"Aparecerá una barra de información cuando esto suceda. Pulse en el botón "
+"<gui>Configuración del proyecto</gui> en la barra de información para "
+"obtener más detalles."
 
 #. (itstool) path: note/p
 #: C/importing.page:31
-#, fuzzy
 #| msgid ""
 #| "At the time of this writing, the only supported method is importing files "
 #| "from your hard drive. As such, you cannot use <app>Pitivi</app> to "
@@ -748,10 +746,13 @@ msgid ""
 "connection, you may use <app>Kino</app> or <app>dvgrab</app> to capture "
 "footage."
 msgstr ""
-"En el momento de escribir esto, el único método soportado es importar "
-"archivos de su disco duro. Por lo tanto, no puede usar <app>Pitivi</app> "
-"para capturar directamente desde una cámara de vídeo. Para cámaras de vídeo "
-"DV/HDV que usen una conexión IEEE 1394, debe usar <app>Kino</app> o "
+"Debido a nuestros recursos limitados y la rápida evolución del hardware de "
+"grabación de vídeo en los pasados años y para asegurar que <app>Pitivi</app> "
+"sigue siendo robusto y fácil de usar no intentamos dar soporte a cada "
+"elemento de hardware posible que exista. Por lo tanto, actualmente no puede "
+"usar <app>Pitivi</app> para capturar directamente desde una cámara de vídeo. "
+"Hay aplicaciones especializadas y más adecuadas para esto. Para cámaras de "
+"vídeo DV/HDV que usen una conexión IEEE 1394, debe usar <app>Kino</app> o "
 "<app>dvgrab</app> para capturar imágenes."
 
 #. (itstool) path: section/title
@@ -1076,9 +1077,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
-#| msgid ""
-#| "click-and-drag on a segment of a curve between two keyframes to adjust "
-#| "the vertical position of the segment"
 msgid ""
 "Click-and-drag on a segment of a curve between two keyframes to adjust the "
 "vertical position of the segment."
@@ -2254,9 +2252,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/movearoundtimeline.page:100
-#| msgid ""
-#| "To scrub, click on the ruler and move the mouse with the button still "
-#| "held down."
 msgid ""
 "To scrub, click on the ruler with the right mouse button and move the mouse "
 "with the button still held down."
@@ -2278,7 +2273,6 @@ msgstr "Preajustes"
 
 #. (itstool) path: page/p
 #: C/presets.page:24
-#, fuzzy
 #| msgid ""
 #| "Both the project settings dialog and the rendering dialog allow you to "
 #| "save presets for later use. If you often deal with the same kind of "
@@ -2290,11 +2284,11 @@ msgid ""
 "same kind of project settings, with different cameras or target devices for "
 "rendering, you may want to create custom presets."
 msgstr ""
-"Las configuraciones del proyecto y el diálogo de renderizado le permiten "
-"guardar ajustes predefinidos para su uso posterior. Si trata con frecuencia "
-"con el mismo tipo de configuraciones del proyecto, con diferentes cámaras o "
-"dispositivos de destino para renderizado, es posible que quiera crear "
-"ajustes predefinidos personalizados."
+"Los diálogos de <gui>Ajustes del proyecto</gui> y <gui>Renderizado</gui> le "
+"permiten guardar ajustes predefinidos para su uso posterior. Si trata con "
+"frecuencia con el mismo tipo de configuraciones del proyecto, con diferentes "
+"cámaras o dispositivos de destino para renderizado, es posible que quiera "
+"crear ajustes predefinidos personalizados."
 
 #. (itstool) path: note/p
 #: C/presets.page:26
@@ -2333,7 +2327,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/presets.page:39
-#, fuzzy
 #| msgid ""
 #| "Give your preset a unique name: while the preset is selected in the list, "
 #| "click on its name to toggle editing mode. When you're done, press "
@@ -2342,9 +2335,8 @@ msgid ""
 "Give your preset a unique name: click on the combobox to edit the name. When "
 "you're done, press <key>Enter</key>."
 msgstr ""
-"Asigne al ajuste predefinido un nombre único: mientras se selecciona este "
-"ajuste predefinido, pulse en su nombre para cambiar el modo de edición. "
-"Cuando haya terminado, pulse <key>Intro</key>."
+"Asigne al ajuste predefinido un nombre único: pulse en la caja combinada "
+"para editar el nombre. Cuando haya terminado, pulse <key>Intro</key>."
 
 #. (itstool) path: section/p
 #: C/presets.page:42
@@ -2640,6 +2632,15 @@ msgid ""
 "to move the playhead, as before, see <link xref="
 "\"movearoundtimeline#movingplayhead\"/> for details."
 msgstr ""
+"De manera predeterminada, al pulsar en la línea de tiempo se cambia la "
+"selección y también se mueve se posición actual. Para controlar mejor dicha "
+"posición puede desactivar la búsqueda cuando pulse con el botón izquierdo "
+"del ratón. De este modo, al pulsar sólo se cambia la selección y la posición "
+"no se perderá cuando haga las selecciones. Esto se puede especificar en "
+"<guiseq><gui>Botón de menú</gui><gui>Preferencias</gui><gui>La pulsación "
+"izquierda también busca</gui></guiseq>. Puede seguir usando el botón derecho "
+"para mover la posición como antes. Consulte <link xref="
+"\"movearoundtimeline#movingplayhead\"/> para obtener más detalles."
 
 #. (itstool) path: section/title
 #: C/selectiongrouping.page:56
@@ -2778,8 +2779,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/splitting.page:43
-#| msgid ""
-#| "If no clips are selected, all the clips under the playhead will be split."
 msgid ""
 "If clips are selected, only the selected clips under the playhead are split."
 msgstr ""
@@ -2809,7 +2808,6 @@ msgstr "Cortar por la mitad"
 
 #. (itstool) path: note/p
 #: C/splitting.page:52
-#, fuzzy
 #| msgid ""
 #| "When you want to cut out a middle section of a clip, split the clip twice "
 #| "on the positions where the part you want to remove begins and ends. "
@@ -2823,11 +2821,11 @@ msgid ""
 "between the remaining two parts by moving one of them towards the other "
 "until they snap."
 msgstr ""
-"Cuando se quiere cortar una sección media de un clip, dividir el clip en dos "
-"ocasiones en las posiciones en las que la parte que quiere eliminar comience "
-"y termine. Seleccione la parte media y pulse <key>Supr</key>. Ahora, elimine "
-"el espacio vacío entre las dos partes restantes moviendo uno de ellos hacia "
-"el otro hasta que se alineen."
+"Cuando quiera cortar una sección media de un clip, divida el clip dos veces "
+"en las posiciones que quiere eliminar para quitar el principio y el final. "
+"Seleccione la parte media y pulse <key>Supr</key>. Ahora, elimine el espacio "
+"vacío entre las dos partes restantes moviendo uno de ellos hacia el otro "
+"hasta que se alineen."
 
 #. (itstool) path: info/desc
 #: C/sysreq.page:18
@@ -2841,7 +2839,6 @@ msgstr "Requerimientos del sistema"
 
 #. (itstool) path: page/p
 #: C/sysreq.page:26
-#, fuzzy
 #| msgid ""
 #| "Editing HD (High Definition) video usually requires (at the time of this "
 #| "writing) state of the art hardware (depending on the codec used), while "
@@ -2860,12 +2857,16 @@ msgid ""
 "equipment is adequate. It should at least be able to playback your media in "
 "<app>Totem</app> without lagging."
 msgstr ""
-"Editar vídeos en HD (Alta Definición) generalmente requiere (en el momento "
-"de escribir esto) un hardware potente (dependiendo del códec utilizado), "
-"mientras que la edición de vídeos en SD (Definición Estándar) se puede hacer "
-"con configuraciones medias de hardware. Depende de usted asegurarse que su "
-"equipo sea el adecuado. Este debe ser, por lo menos, apto para reproducir "
-"sus medios en <app>Totem</app> sin retrasos."
+"En términos de hardware la edición de vídeo requiere habitualmente un equipo "
+"potente, dependiendo del vídeo que esté editando. Aunque la potencia de "
+"procesador de los equipos ha aumentado enormemente en los últimos años se ha "
+"demandado una mayor calidad de vídeo. Editar vídeos en HD (Alta Definición) "
+"generalmente requiere (en el momento de escribir esto) un hardware potente "
+"(dependiendo del codificador utilizado), mientras que la edición de vídeos "
+"en SD (Definición Estándar) se puede hacer con configuraciones medias de "
+"hardware. Depende de usted asegurarse que su equipo sea el adecuado. Este "
+"debe ser, por lo menos, apto para reproducir sus medios en <app>Totem</app> "
+"sin retrasos."
 
 #. (itstool) path: page/p
 #: C/sysreq.page:27
@@ -2956,11 +2957,6 @@ msgstr "Mezclar clips"
 
 #. (itstool) path: section/p
 #: C/transitions.page:28
-#| msgid ""
-#| "To do a crossfade between two clips on the same layer, simply drag one of "
-#| "the clips onto the other so that it overlaps. The overlapping region will "
-#| "be used for transitions (crossfade by default) between the two clips. You "
-#| "can adjust the length of the transition by moving or trimming the clips."
 msgid ""
 "To do a crossfade between two clips on the same layer, simply drag one of "
 "the clips onto the other so that it overlaps. The overlapping region will be "
@@ -2978,9 +2974,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/transitions.page:30
-#| msgid ""
-#| "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
-#| "which use keyframes to control the opacity of clips."
 msgid ""
 "Crossfades are achieved using <app>Pitivi</app>'s video mixing features, "
 "which use keyframes to control the opacity of clips. This means that if you "
@@ -3027,6 +3020,8 @@ msgid ""
 "The transitions can be further adjusted with the following options from the "
 "bottom of the <gui>Transition</gui> tab:"
 msgstr ""
+"Las transiciones se pueden ajustar posteriormente con las siguientes "
+"opciones de la parte inferior de la pestaña <gui>Transición</gui>:"
 
 #. (itstool) path: item/p
 #: C/transitions.page:50
@@ -3068,6 +3063,11 @@ msgid ""
 "<gui>Transition</gui> tab. This will show only transitions whose name or "
 "description match your search terms."
 msgstr ""
+"Cada transición tiene su nombre y su descripción. Se muestran cuando pasa el "
+"ratón por encima del icono de la transición. También puede filtrarlas "
+"escribiendo en la caja de búsqueda en la parte superior de la sepaña "
+"<gui>Transición</gui>. Esto mostrará sólo aquellas transiciones que "
+"coincidan con la búsqueda."
 
 #. (itstool) path: section/title
 #: C/transitions.page:64
@@ -3107,6 +3107,8 @@ msgid ""
 "The default curve is flat indicating the same opacity at any position within "
 "the clip."
 msgstr ""
+"La curva predeterminada es planta, lo que indica la misma opacidad en "
+"cualquier posición del clip."
 
 #. (itstool) path: figure/title
 #: C/transitions.page:72
@@ -3127,9 +3129,6 @@ msgstr ""
 
 #. (itstool) path: figure/desc
 #: C/transitions.page:74
-#| msgid ""
-#| "You can add a new keyframe by double-clicking on an empty portion of a "
-#| "curve."
 msgid ""
 "Create a new keyframe by clicking the curve in a position where you want to "
 "start the fade-out."
@@ -3676,7 +3675,6 @@ msgstr ""
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:23
-#, fuzzy
 #| msgid ""
 #| "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
 #| "into the search entry filters the contents of the <gui>Media Library</"
@@ -3689,12 +3687,12 @@ msgid ""
 "name or description match your search terms. To reset the search entry, "
 "click the <gui>Clear</gui> icon in the search entry."
 msgstr ""
-"En la parte superior de la <gui>Biblioteca de medios</gui> se muestra una "
-"barra de búsqueda. Escriba en los filtros de entrada de búsqueda los "
-"contenidos de la <gui>Biblioteca de medios</gui> para mostrar solo los clips "
-"cuyos nombres de archivo coincidan con sus términos de búsqueda. Para "
-"restablecer la entrada de búsqueda, pulse en el icono \"limpiar\" en la "
-"entrada de búsqueda."
+"Alternativamente, puede usar la <gui>Barra de búsqueda</gui> que se muestra "
+"en la parte superior de la <gui>Biblioteca de efectos</gui>. Escriba en los "
+"filtros de entrada de búsqueda los contenidos de la <gui>Biblioteca de "
+"medios</gui> para mostrar solo los efectos cuyos nombres de archivo "
+"coincidan con sus términos de búsqueda. Para restablecer la entrada de "
+"búsqueda, pulse en el icono <gui>Limpiar</gui> en la entrada de búsqueda."
 
 #. (itstool) path: section/title
 #: C/usingeffects.page:26
@@ -3745,6 +3743,8 @@ msgid ""
 "If there is no <gui>Show keyframes for this value</gui> button next to the "
 "effect variable, it cannot be controlled with keyframes."
 msgstr ""
+"Si no aparece el botón <gui>Mostrar fotogramas clave para este valor</gui> "
+"junto a la variable de efecto no se puede controlar con fotogramas clave."
 
 #. (itstool) path: info/desc
 #: C/welcomedialog.page:14
@@ -3904,7 +3904,6 @@ msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
-#, fuzzy
 #| msgid ""
 #| "When starting a new project, you should make sure to adjust the project "
 #| "settings, such as framerate, resolution and preferred codecs. The video "
@@ -3919,12 +3918,13 @@ msgid ""
 "changed at any time by using <guiseq><gui>App menu</gui><gui>Project "
 "Settings</gui></guiseq>."
 msgstr ""
-"Cuando inicie un nuevo proyecto, debe asegurarse de modificar las "
-"configuraciones del proyecto, tales como imágenes por segundo, resolución y "
-"códecs preferidos. La resolución del vídeo y la proporción del aspecto "
-"afectarán a la apariencia de la vista previa. Si no configura la resolución "
-"y la proporción del aspecto para que coincidan con los de sus imágenes, el "
-"vídeo puede verse aplastado o encajado."
+"La configuración del proyecto define principalmente cómo aparece el vídeo "
+"mientras edita el proyecto. La resolución del vídeo y la proporción del "
+"aspecto afectarán a la apariencia de la vista previa. Si no configura la "
+"resolución y la proporción del aspecto para que coincidan con los de sus "
+"imágenes, el vídeo puede verse aplastado o encajado. Esta configuración se "
+"puede cambiar en cualquier momento usando <guiseq><gui>Menú de aplicación</"
+"gui><gui>Configuración del proyecto</gui></guiseq>."
 
 #. (itstool) path: note/p
 #: C/workwithprojects.page:44
@@ -3933,6 +3933,9 @@ msgid ""
 "changed to match. See <link xref=\"importing\">Getting media</link> for "
 "details."
 msgstr ""
+"Cuando importa el primer archivo de vídeo la configuración del proyecto se "
+"ajusta automáticamente para que coincida. Consulte los detalles en <link "
+"xref=\"importing\">Obtener medios</link>."
 
 #. (itstool) path: section/title
 #: C/workwithprojects.page:48
