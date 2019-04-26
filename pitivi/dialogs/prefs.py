@@ -37,6 +37,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import alter_style_class
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
+from pitivi.utils.ui import PREFERENCES_CSS
 from pitivi.utils.ui import SPACING
 
 
@@ -93,6 +94,7 @@ class PreferencesDialog(Loggable):
 
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
+        self.__setup_css()
         self.dialog.set_transient_for(app.gui)
 
     def run(self):
@@ -100,6 +102,14 @@ class PreferencesDialog(Loggable):
         PreferencesDialog._instance = self
         self.dialog.run()
         PreferencesDialog._instance = None
+
+    def __setup_css(self):
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(PREFERENCES_CSS.encode('UTF-8'))
+        screen = Gdk.Screen.get_default()
+        style_context = self.app.gui.get_style_context()
+        style_context.add_provider_for_screen(screen, css_provider,
+                                              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 # Public API
     @property

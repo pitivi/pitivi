@@ -228,6 +228,17 @@ EDITOR_PERSPECTIVE_CSS = """
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
 
 
+PREFERENCES_CSS = """
+    .sidebar list {
+        background: rgb(45, 45, 45);
+    }
+
+    .sidebar row {
+        padding: 10px 40px 10px 4px;
+    }
+"""
+
+
 def format_framerate_value(framerate):
     """Formats the framerate or returns 0 if unable to determine it."""
     if isinstance(framerate, DiscovererVideoInfo):
