@@ -330,14 +330,19 @@ class PreferencesDialog(Loggable):
         accel_label = Gtk.Label()
         title_label.set_text(item.title)
         accel_label.set_text(item.get_accel())
+
         if not accel_changed:
             accel_label.set_state_flags(Gtk.StateFlags.INSENSITIVE, True)
+
         title_label.props.xalign = 0
-        title_label.props.margin_left = PADDING * 2
-        title_label.props.margin_right = PADDING * 2
+        title_label.props.margin_left = PADDING * 3
+        title_label.props.margin_right = PADDING * 3
+        title_label.props.margin_top = PADDING * 2
+        title_label.props.margin_bottom = PADDING * 2
         self.description_size_group.add_widget(title_label)
+
         accel_label.props.xalign = 0
-        accel_label.props.margin_left = PADDING * 2
+        accel_label.props.margin_left = PADDING * 3
         accel_label.props.margin_right = PADDING * 2
         self.accel_size_group.add_widget(accel_label)
 
@@ -345,6 +350,7 @@ class PreferencesDialog(Loggable):
         button = Gtk.Button.new_from_icon_name("edit-clear-all-symbolic",
                                                Gtk.IconSize.MENU)
         button.set_tooltip_text(_("Reset the shortcut to the default accelerator"))
+        button.props.margin_right = PADDING / 2
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.__reset_accelerator_cb, item)
         button.set_sensitive(accel_changed)
@@ -374,9 +380,9 @@ class PreferencesDialog(Loggable):
             header.set_use_markup(True)
             group_title = self.app.shortcuts.group_titles[group]
             header.set_markup("<b>%s</b>" % group_title)
-            header.props.margin_top = PADDING * 3
-            header.props.margin_bottom = PADDING
-            header.props.margin_left = PADDING * 2
+            header.props.margin_top = PADDING if not prev_group else PADDING * 10
+            header.props.margin_bottom = PADDING * 2
+            header.props.margin_left = 1
             header.props.margin_right = PADDING * 2
             header.props.xalign = 0
             alter_style_class("group_title", header, "font-size: small;")
