@@ -201,6 +201,16 @@ EDITOR_PERSPECTIVE_CSS = """
         background-image: url('%(trimbar_focused)s');
     }
 
+    /* Background inside the timeline */
+    .Timeline {
+        background: shade(@theme_bg_color, 0.75);
+    }
+
+    /* Background in the layers list */
+    .Timeline viewport {
+        background: @theme_bg_color;
+    }
+
     .Clip {
     }
 
