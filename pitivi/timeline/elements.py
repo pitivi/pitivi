@@ -51,12 +51,14 @@ from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import unset_children_state_recurse
 
-KEYFRAME_LINE_HEIGHT = 2
-KEYFRAME_LINE_ALPHA = 0.5
-KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
-KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
-SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
-HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
+KEYFRAME_LINE_HEIGHT = 1
+KEYFRAME_LINE_ALPHA = 0.75
+KEYFRAME_LINE_COLOR = "#f6d32d"  # Gnome HIG Yellow 1
+KEYFRAME_NODE_COLOR = "#f6d32d"
+KEYFRAME_NODE_SIZE = 30
+KEYFRAME_NODE_HOVER_SIZE = 50
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87"
+HOVERED_KEYFRAME_NODE_COLOR = "#f9f06b"
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -128,7 +130,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         figure.patch.set_visible(False)
 
         # The PathCollection object holding the keyframes dots.
-        sizes = [50]
+        sizes = KEYFRAME_NODE_SIZE
         self._keyframes = self._ax.scatter([], [], marker='D', s=sizes,
                                            c=KEYFRAME_NODE_COLOR, zorder=2)
 
@@ -454,7 +456,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
         self._project = timeline.app.project_manager.current_project
         self._project.pipeline.connect("position", self._position_cb)
 
-        sizes = [80]
+        sizes = KEYFRAME_NODE_HOVER_SIZE
         self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
                                                     c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
         self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
