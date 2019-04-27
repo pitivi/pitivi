@@ -128,7 +128,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
         figure.patch.set_visible(False)
 
         # The PathCollection object holding the keyframes dots.
-        sizes = [50]
+        sizes = [30]
         self._keyframes = self._ax.scatter([], [], marker='D', s=sizes,
                                            c=KEYFRAME_NODE_COLOR, zorder=2)
 
