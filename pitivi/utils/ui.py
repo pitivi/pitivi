@@ -172,7 +172,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .AudioBackground {
-        background-color: #496c21;
+        background-color: rgb(60, 97, 43);
     }
 
     .VideoBackground {
@@ -180,11 +180,19 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .AudioBackground:selected {
-        background-color: #1b2e0e;
+        background-color: rgb(33, 61, 45);
     }
 
     .VideoBackground:selected {
         background-color: #0f0f0f;
+    }
+
+    .TitleClip .VideoBackground {
+        background-color: rgb(94, 78, 102);
+    }
+
+    .TitleClip .VideoBackground:selected  {
+        background-color: shade(rgb(94, 78, 102), 0.4);
     }
 
     .KeyframeCurve {
