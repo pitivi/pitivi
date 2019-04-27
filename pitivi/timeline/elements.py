@@ -51,12 +51,12 @@ from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import unset_children_state_recurse
 
-KEYFRAME_LINE_HEIGHT = 2
-KEYFRAME_LINE_ALPHA = 0.5
-KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
-KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
-SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
-HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
+KEYFRAME_LINE_HEIGHT = 1
+KEYFRAME_LINE_ALPHA = 0.75
+KEYFRAME_LINE_COLOR = "#f6d32d"  # Gnome HIG Yellow 1
+KEYFRAME_NODE_COLOR = "#f6d32d"
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87"
+HOVERED_KEYFRAME_NODE_COLOR = "#f9f06b"
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
