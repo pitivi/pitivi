@@ -1231,7 +1231,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoom_fit_btn.set_tooltip_text(_("Zoom Fit"))
         zoom_fit_btn_grid = Gtk.Grid()
         zoom_fit_icon = Gtk.Image.new_from_icon_name(
-            "zoom-fit-best", Gtk.IconSize.BUTTON)
+            "zoom-fit-best-symbolic", Gtk.IconSize.BUTTON)
         zoom_fit_btn_grid.add(zoom_fit_icon)
         zoom_fit_btn_label = Gtk.Label(label=_("Zoom"))
         zoom_fit_btn_grid.add(zoom_fit_btn_label)
