@@ -1416,6 +1416,10 @@ class UriClip(SourceClip):
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
 
+    def __init__(self, layer, ges_clip):
+        SourceClip.__init__(self, layer, ges_clip)
+        self.get_style_context().add_class("TitleClip")
+
     def _add_child(self, ges_timeline_element):
         SourceClip._add_child(self, ges_timeline_element)
 
