@@ -180,6 +180,14 @@ EDITOR_PERSPECTIVE_CSS = """
         background-color: #0f0f0f;
     }
 
+    .TitleClip .VideoBackground {
+        background-color: rgb(255, 190, 111);
+    }
+
+    .TitleClip .VideoBackground:selected  {
+        background-color: rgb(104, 85, 62);
+    }
+
     .KeyframeCurve {
         background-color: rgba(0, 0, 0, 0);
     }
