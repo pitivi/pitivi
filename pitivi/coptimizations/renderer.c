@@ -36,7 +36,7 @@ py_fill_surface (PyObject * self, PyObject * args)
 
   ctx = cairo_create (surface);
 
-  cairo_set_source_rgb (ctx, 0.2, 0.6, 0.0);
+  cairo_set_source_rgb (ctx, 0.15, 0.6, 0.4);
   cairo_set_line_width (ctx, 0.5);
   cairo_move_to (ctx, 0, height);
 
