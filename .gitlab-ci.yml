@@ -27,6 +27,7 @@ build:
     - flatpak-builder ${FLATPAK_BUILDER_CACHE} --ccache --repo=${CI_PROJECT_DIR}/repo --force-clean app build/flatpak/org.pitivi.Pitivi.json --subject="Rolling update for pitivi 1.0" --body="See ${CI_JOB_URL}"
     - ${RUN_IN_SANDBOX} meson mesonbuild/
     - ${RUN_IN_SANDBOX} ninja -C mesonbuild/
+    - ${RUN_IN_SANDBOX} rm /app/lib/gstreamer-1.0/libgstopengl.so
     - xvfb-run -n 32 -s "-screen 0 640x480x24" ${RUN_IN_SANDBOX} gst-validate-launcher $PWD/tests/ptv_testsuite.py --dump-on-failure --timeout-factor 4 --xunit-file ${XUNIT_PATH} --logs-dir=${CI_PROJECT_DIR}/tests-logs
   cache:
     paths:
