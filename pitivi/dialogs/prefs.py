@@ -226,32 +226,51 @@ class PreferencesDialog(Loggable):
         """Adds a page for the preferences in the specified section."""
         options = self.prefs[section_id]
 
-        grid = Gtk.Grid()
-        grid.set_border_width(SPACING)
-        grid.props.column_spacing = SPACING
-        grid.props.row_spacing = SPACING / 2
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        container.set_border_width(SPACING)
+
+        listbox = Gtk.ListBox()
+        listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        listbox.props.margin = PADDING * 2
+        listbox.get_style_context().add_class('prefs_list')
+
+        container.add(listbox)
+
+        label_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
+        prop_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
 
         prefs = []
         for attrname in options:
             label, description, widget_class, args = options[attrname]
             widget = widget_class(**args)
             widget.setWidgetValue(getattr(self.settings, attrname))
-            widget.connectValueChanged(
-                self._valueChangedCb, widget, attrname)
+            widget.connectValueChanged(self._valueChangedCb, widget, attrname)
             widget.set_tooltip_text(description)
             self.widgets[attrname] = widget
-            # Add a semicolon, except for checkbuttons.
+
+            widget.props.margin_left = PADDING * 3
+            widget.props.margin_right = PADDING * 3
+            widget.props.margin_top = PADDING * 2
+            widget.props.margin_bottom = PADDING * 2
+
+            prop_size_group.add_widget(widget)
+
             if isinstance(widget, widgets.ToggleWidget):
                 widget.check_button.set_label(label)
                 label_widget = None
             else:
-                # Translators: This adds a semicolon to an already
-                # translated name of a preference.
-                label = _("%(preference_label)s:") % {"preference_label": label}
                 label_widget = Gtk.Label(label=label)
                 label_widget.set_tooltip_text(description)
-                label_widget.set_alignment(1.0, 0.5)
+                label_widget.set_alignment(0.0, 0.5)
+
+                label_widget.props.margin_left = PADDING * 3
+                label_widget.props.margin_right = PADDING * 3
+                label_widget.props.margin_top = PADDING * 2
+                label_widget.props.margin_bottom = PADDING * 2
+
                 label_widget.show()
+                label_size_group.add_widget(label_widget)
+
             icon = Gtk.Image()
             icon.set_from_icon_name(
                 "edit-clear-all-symbolic", Gtk.IconSize.MENU)
@@ -262,6 +281,7 @@ class PreferencesDialog(Loggable):
             revert.set_sensitive(not self.settings.isDefault(attrname))
             revert.connect("clicked", self.__reset_option_cb, attrname)
             revert.show_all()
+
             self.resets[attrname] = revert
             row_widgets = (label_widget, widget, revert)
             # Construct the prefs list so that it can be sorted.
@@ -273,17 +293,24 @@ class PreferencesDialog(Loggable):
         # but then I may be wrong
         for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
             label, widget, revert = row_widgets
-            if not label:
-                grid.attach(widget, 0, y, 2, 1)
-                grid.attach(revert, 2, y, 1, 1)
-            else:
-                grid.attach(label, 0, y, 1, 1)
-                grid.attach(widget, 1, y, 1, 1)
-                grid.attach(revert, 2, y, 1, 1)
-            widget.show()
-            revert.show()
-        grid.show()
-        self._add_page(section_id, grid)
+            box = Gtk.Box()
+
+            if label:
+                box.pack_start(label, True, True, 0)
+
+            box.pack_start(widget, False, False, 0)
+            box.pack_start(revert, False, False, 0)
+
+            row = Gtk.ListBoxRow()
+            row.set_activatable(False)
+            row.add(box)
+            listbox.add(row)
+
+            if y == 0:
+                row.get_style_context().add_class('first')
+
+        container.show_all()
+        self._add_page(section_id, container)
 
     def __add_plugin_manager_section(self):
         page = PluginPreferencesPage(self.app, self)
