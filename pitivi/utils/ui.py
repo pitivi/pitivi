@@ -236,6 +236,24 @@ PREFERENCES_CSS = """
     .sidebar row {
         padding: 10px 40px 10px 4px;
     }
+
+    .prefs_list row {
+        border-left: 1px solid rgb(32, 32, 32);
+        border-right: 1px solid rgb(32, 32, 32);
+        border-bottom: 1px solid rgba(25, 25, 25, 0.2);
+    }
+
+    .prefs_list .first {
+        border-top: 1px solid rgb(32, 32, 32);
+    }
+
+    /* This covers the case for the last item in a group,
+       and the last item in the list */
+    .prefs_list,
+    .prefs_list .last {
+        border-bottom: 1px solid rgb(32, 32, 32);
+    }
+
 """
 
 
