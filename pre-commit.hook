@@ -87,6 +87,6 @@ export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
 
 git-pylint-commit-hook --pylint="$TOPLEVEL/build/flatpak/pitivi-flatpak" --pylint-params="pylint" --pylintrc=$RCFILE $IGNORE_ARGS --limit=10.0 --suppress-report || exit 1
 
-git_pep8_commit_hook --pep8-params="--repeat --ignore=E501,E128" || exit 1
+git_pep8_commit_hook --pep8-params="--repeat --ignore=E501,E128,E402" || exit 1
 
 pre-commit run --config .pre-commit-config.yaml || exit 1
