@@ -307,11 +307,14 @@ class PreferencesDialog(Loggable):
                 self.list_store.append(item)
                 self.action_ids[action] = index
                 index += 1
+
         self.content_box.bind_model(self.list_store, self._create_widget_func, None)
         self.content_box.set_header_func(self._add_header_func, None)
         self.content_box.connect("row_activated", self.__row_activated_cb)
         self.content_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.content_box.props.margin = PADDING * 3
+        self.content_box.get_style_context().add_class('prefs_list')
+
         viewport = Gtk.Viewport()
         viewport.add(self.content_box)
 
@@ -386,6 +389,9 @@ class PreferencesDialog(Loggable):
             prev_group = None
 
         if prev_group != group:
+            if before is not None:
+                before.get_style_context().add_class("last")
+
             header = Gtk.Label()
             header.set_use_markup(True)
             group_title = self.app.shortcuts.group_titles[group]
@@ -402,8 +408,7 @@ class PreferencesDialog(Loggable):
             box.get_style_context().add_class("background")
             box.show_all()
             row.set_header(box)
-        else:
-            row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+            row.get_style_context().add_class("first")
 
     def __reset_accelerator_cb(self, unused_button, item):
         """Resets the accelerator to the default value."""
