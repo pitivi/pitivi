@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """User preferences."""
-import itertools
 import os
 from gettext import gettext as _
 from threading import Timer
@@ -27,7 +26,6 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
-from gi.repository import Peas
 
 from pitivi.configure import get_ui_dir
 from pitivi.pluginmanager import PluginManager
@@ -718,6 +716,8 @@ class PluginsBox(Gtk.ListBox):
         self.props.margin = PADDING * 3
         self.props.margin_top = 0
 
+        self.get_style_context().add_class('prefs_list')
+
         # Activate the plugins' switches for plugins that are already loaded.
         loaded_plugins = self.app.plugin_manager.engine.get_loaded_plugins()
         for row in self.get_children():
@@ -779,6 +779,8 @@ class PluginsBox(Gtk.ListBox):
             previous_type = None
         if previous_type != current_type:
             self._set_header(row, current_type)
+            if before is not None:
+                before.get_style_context().add_class("last")
 
     def _set_header(self, row, group):
         group_title = str(group)
@@ -810,6 +812,7 @@ class PluginsBox(Gtk.ListBox):
         box.get_style_context().add_class("background")
         box.show_all()
         row.set_header(box)
+        row.get_style_context().add_class("first")
 
     def __location_clicked_cb(self, unused_button, directory):
         uri = GLib.filename_to_uri(directory, None)
