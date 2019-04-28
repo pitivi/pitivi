@@ -30,6 +30,9 @@
 """
 import os
 import re
+import threading
+import subprocess
+import sys
 from gettext import gettext as _
 
 from gi.repository import Gdk
@@ -284,31 +287,18 @@ class EffectsManager(Loggable):
         self.gl_effects = [element_factory.get_name()
                            for element_factory in gl_element_factories]
         if self.gl_effects:
-            # Checking whether the GL effects can be used
-            # by setting a pipeline with "gleffects" to PAUSED.
-            pipeline = Gst.parse_launch("videotestsrc ! glupload ! gleffects ! fakesink")
-            bus = pipeline.get_bus()
-            bus.add_signal_watch()
-            bus.connect("message", self._gl_pipeline_message_cb, pipeline)
-            assert pipeline.set_state(Gst.State.PAUSED) == Gst.StateChangeReturn.ASYNC
+            thread = threading.Thread(target=self._check_gleffects))
+            thread.start()
 
-    def _gl_pipeline_message_cb(self, bus, message, pipeline):
-        """Handles a `message` event on the pipeline for checking gl effects."""
-        done = False
-        if message.type == Gst.MessageType.ASYNC_DONE:
-            self.debug("GL effects check pipeline successfully PAUSED")
-            done = True
-        elif message.type == Gst.MessageType.ERROR:
-            # The pipeline cannot be set to PAUSED.
-            error, detail = message.parse_error()
-            self.debug("Hiding the GL effects because: %s, %s", error, detail)
+    def _check_gleffects(self):
+        try:
+            res = subprocess.check_output([sys.executable,
+                os.path.join(os.path.dirname(__file__), "check_pipeline.py"),
+                    "videotestsrc ! glupload ! gleffects ! fakesink"])
+            self.debug(res)
+        except subprocess.CalledProcessError as e:
+            self.error("Can not use GL effects: %s" % e)
             HIDDEN_EFFECTS.extend(self.gl_effects)
-            done = True
-
-        if done:
-            bus.remove_signal_watch()
-            bus.disconnect_by_func(self._gl_pipeline_message_cb)
-            pipeline.set_state(Gst.State.NULL)
 
     def getInfo(self, bin_description):
         """Gets the info for an effect which can be applied.
