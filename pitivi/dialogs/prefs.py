@@ -721,6 +721,8 @@ class PluginsBox(Gtk.ListBox):
         self.props.margin = PADDING * 3
         self.props.margin_top = 0
 
+        self.get_style_context().add_class('prefs_list')
+
         # Activate the plugins' switches for plugins that are already loaded.
         loaded_plugins = self.app.plugin_manager.engine.get_loaded_plugins()
         for row in self.get_children():
@@ -813,6 +815,7 @@ class PluginsBox(Gtk.ListBox):
         box.get_style_context().add_class("background")
         box.show_all()
         row.set_header(box)
+        row.get_style_context().add_class("first")
 
     def __location_clicked_cb(self, unused_button, directory):
         uri = GLib.filename_to_uri(directory, None)
