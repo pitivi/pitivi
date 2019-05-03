@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.0 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.18"/>
   <object class="GtkPopoverMenu" id="menu">
@@ -8,102 +8,198 @@
       <object class="GtkBox" id="menu_box">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="margin">6</property>
+        <property name="margin_left">12</property>
+        <property name="margin_right">12</property>
+        <property name="margin_top">8</property>
+        <property name="margin_bottom">8</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="menu_save_as">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
             <property name="tooltip_text" translatable="yes">Save the current project under a new name or a different location</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">editor.save-as</property>
             <property name="text" translatable="yes">Save As...</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_revert_to_saved">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
             <property name="tooltip_text" translatable="yes">Reload the current project</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">editor.revert-to-saved</property>
             <property name="text" translatable="yes">Revert to saved version</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_export_tarball">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
             <property name="tooltip_text" translatable="yes">Export the current project and all its media in a .tar archive</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">editor.export-project</property>
             <property name="text" translatable="yes">Export as Archive...</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
         </child>
         <child>
           <object class="GtkSeparator" id="menu_sep2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_top">2</property>
+            <property name="margin_bottom">2</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_save_frame">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
             <property name="tooltip_text" translatable="yes">Export the frame at the current playhead position as an image file.</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">editor.save-frame</property>
             <property name="text" translatable="yes">Export current frame...</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
         </child>
         <child>
           <object class="GtkSeparator" id="menu_sep3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_top">2</property>
+            <property name="margin_bottom">2</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_project_settings">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
             <property name="tooltip_text" translatable="yes">Edit the project settings</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">editor.project-settings</property>
             <property name="text" translatable="yes">Project Settings</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
+          </packing>
         </child>
         <child>
           <object class="GtkSeparator" id="menu_sep4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_top">2</property>
+            <property name="margin_bottom">2</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">7</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_preferences">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">win.preferences</property>
             <property name="text" translatable="yes">Preferences</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">8</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_shortcuts">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">app.shortcuts_window</property>
             <property name="text" translatable="yes">Keyboard Shortcuts</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">9</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_help">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">win.help</property>
             <property name="text" translatable="yes">User Manual</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">10</property>
+          </packing>
         </child>
         <child>
           <object class="GtkModelButton" id="menu_about">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
             <property name="action_name">win.about</property>
             <property name="text" translatable="yes">About Pitivi</property>
           </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">11</property>
+          </packing>
         </child>
       </object>
       <packing>
