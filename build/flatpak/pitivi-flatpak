@@ -651,7 +651,8 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         pip_modules = ["pylint"]
         Console.message(
             "Installing development tools in the sandbox: %s", pip_modules)
-        self.run_in_sandbox("pip3", "install", "-q", "-U", "--user", *pip_modules,
+        self.run_in_sandbox("pip3", "install", "-q", "-U", "--user",
+                            "--no-warn-script-location", *pip_modules,
                             exit_on_failure=True)
 
     def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None, mount_tmp=False):
