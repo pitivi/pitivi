@@ -440,14 +440,17 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
-        self.fullscreen_button = Gtk.ToggleToolButton()
-        self.fullscreen_button.set_icon_name("view-fullscreen")
+        self.fullscreen_button = Gtk.ToggleButton()
+        fullscreen_image = Gtk.Image.new_from_icon_name(
+            "view-fullscreen-symbolic", Gtk.IconSize.BUTTON)
+        self.fullscreen_button.set_image(fullscreen_image)
         self.fullscreen_button.set_tooltip_text(
             _("Show this window in fullscreen"))
+        self.fullscreen_button.set_relief(Gtk.ReliefStyle.NONE)
         self.buttons_container.pack_end(
             self.fullscreen_button, expand=False, fill=False, padding=6)
         self.fullscreen_button.show()
-        self.fullscreen_button.connect("toggled", self._toggleFullscreen)
+        self.fullscreen_button.connect("toggled", self._toggle_fullscreen_cb)
 
         self.external_window.show()
         self.hide()
@@ -490,7 +493,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.project.pipeline.pause()
             self.project.pipeline.simple_seek(position)
 
-    def _toggleFullscreen(self, widget):
+    def _toggle_fullscreen_cb(self, widget):
         if widget.get_active():
             self.external_window.hide()
             # GTK doesn't let us fullscreen utility windows
