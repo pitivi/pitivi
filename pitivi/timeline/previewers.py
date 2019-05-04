@@ -20,8 +20,10 @@ import hashlib
 import os
 import random
 import sqlite3
+from gettext import gettext as _
 
 import cairo
+import gi
 import numpy
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
@@ -30,6 +32,9 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
+gi.require_version("PangoCairo", "1.0")
+from gi.repository import Pango
+from gi.repository import PangoCairo
 
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
@@ -1313,3 +1318,83 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         """Stops preview generation and cleans the object."""
         self.stop_generation()
         Zoomable.__del__(self)
+
+
+class TitlePreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
+    """Title Clip previewer using Pango to draw text on the clip."""
+
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
+    def __init__(self, ges_elem):
+        Previewer.__init__(self, GES.TrackType.VIDEO, None)
+        Zoomable.__init__(self)
+        Loggable.__init__(self)
+
+        self.ges_elem = ges_elem
+        self._font = Gtk.Settings.get_default().get_property("gtk-font-name")
+        self._selected = False
+        self._context = None
+
+        self.ges_elem.connect("deep-notify", self._text_changed_cb)
+
+    def _text_changed_cb(self, prop_object, prop, user_data):
+        """Force a redraw when the clip's text is changed."""
+        if prop.name == "titlsrc-text":
+            self.queue_draw()
+
+    def do_draw(self, context):
+        rect = Gdk.cairo_get_clip_rectangle(context)[1]
+        context.set_source_rgb(1, 1, 1)
+
+        # Get text
+        has_text, text = self.ges_elem.get_child_property("text")
+        text = text.strip().split("\n", 1)[0] or _("Title Clip")
+
+        # Adapt to RTL/LTR direction
+        direction = Pango.unichar_direction(text[0])
+
+        if direction == Pango.Direction.LTR:
+            stops = (0, 1)
+            x_pos = 10
+            grad = cairo.LinearGradient(rect.width / 1.5, 0,
+                                        rect.width / 1.1, 0)
+        else:
+            stops = (1, 0)
+            x_pos = -10
+            grad = cairo.LinearGradient(50, 0, 300, 0)
+
+        # Gradient to make text "fade out"
+        if self._selected:
+            color = (0.14, 0.133, 0.15)
+        else:
+            color = (0.368, 0.305, 0.4)
+
+        grad.add_color_stop_rgba(stops[0], color[0], color[1], color[2], 0)
+        grad.add_color_stop_rgba(stops[1], color[0], color[1], color[2], 1)
+
+        # Setup Pango layout
+        layout = PangoCairo.create_layout(context)
+        layout.set_auto_dir(True)
+        font_desc = Pango.font_description_from_string(self._font)
+        layout.set_font_description(font_desc)
+        layout.set_width(rect.width * Pango.SCALE)
+
+        # Prevent lines from being wrapped
+        layout.set_ellipsize(Pango.EllipsizeMode.END)
+
+        # Draw text
+        layout.set_text(text, -1)
+        context.move_to(x_pos, (rect.height / 2) - 11)
+        PangoCairo.show_layout(context, layout)
+
+        # Draw gradient
+        context.rectangle(0, 0, rect.width, rect.height)
+        context.set_source(grad)
+        context.fill()
+
+    def set_selected(self, select):
+        self._selected = select
+
+    def release(self):
+        # Nothing to release
+        pass
