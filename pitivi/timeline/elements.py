@@ -33,6 +33,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
 from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import ImagePreviewer
+from pitivi.timeline.previewers import TitlePreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
@@ -964,6 +965,11 @@ class TitleSource(VideoSource):
                 return spec
             return None
 
+    def _get_previewer(self):
+        previewer = TitlePreviewer(self._ges_elem)
+        previewer.get_style_context().add_class("TitleSource")
+        return previewer
+
     def _get_default_position(self):
         return {"posx": 0,
                 "posy": 0,
@@ -984,8 +990,6 @@ class VideoUriSource(VideoSource):
             previewer = ImagePreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         else:
             previewer = VideoPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
-        previewer.get_style_context().add_class("VideoUriSource")
-
         return previewer
 
     def _get_default_mixing_property(self):
@@ -1012,8 +1016,6 @@ class AudioUriSource(TimelineElement):
 
     def _get_previewer(self):
         previewer = AudioPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
-        previewer.get_style_context().add_class("AudioPreviewer")
-
         return previewer
 
     def _get_background(self):
