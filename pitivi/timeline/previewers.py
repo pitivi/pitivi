@@ -85,8 +85,10 @@ class PreviewerBin(Gst.Bin, Loggable):
 
         self.internal_bin = Gst.parse_bin_from_description(bin_desc, True)
         self.add(self.internal_bin)
-        self.add_pad(Gst.GhostPad.new(None, self.internal_bin.sinkpads[0]))
-        self.add_pad(Gst.GhostPad.new(None, self.internal_bin.srcpads[0]))
+        sinkpad, = [pad for pad in self.internal_bin.iterate_sink_pads()]
+        self.add_pad(Gst.GhostPad.new(None, sinkpad))
+        srcpad, = [pad for pad in self.internal_bin.iterate_src_pads()]
+        self.add_pad(Gst.GhostPad.new(None, srcpad))
 
     def finalize(self, proxy=None):
         """Finalizes the previewer, saving data to the disk if needed."""
