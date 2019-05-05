@@ -92,6 +92,7 @@ class Selection(GObject.Object, Loggable):
         self.selected = set()
         self.can_group = False
         self.can_ungroup = False
+        self.current_selection = None
 
     def setSelection(self, objs, mode):
         """Updates the current selection.
@@ -210,6 +211,22 @@ class Selection(GObject.Object, Loggable):
 
     def __iter__(self):
         return iter(self.selected)
+
+    def resetSelection(self):
+        print("selectionGroup(self)")
+        if self.current_selection:
+            self.current_selection.ungroup(recursive=False)
+
+        self.current_selection = GES.Group()
+        self.current_selection.props.serialize = False
+
+    def addSelection(self, clip):
+        print("addSelection(self, a)")
+        self.current_selection.add(clip.get_toplevel_parent())
+
+    def selectionGroup(self):
+        print("selectionGroup(self)")
+        return self.current_selection
 
 
 class EditingContext(GObject.Object, Loggable):

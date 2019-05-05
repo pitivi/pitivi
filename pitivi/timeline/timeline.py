@@ -873,11 +873,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.vadj.set_value(self.vadj.get_value() + y_diff)
 
     def _selectUnderMarquee(self):
-        self.resetSelectionGroup()
+        self.selection.resetSelection()
         if self.layout.marquee.props.width_request > 0:
             clips = self.layout.marquee.find_clips()
             for clip in clips:
-                self.current_group.add(clip.get_toplevel_parent())
+                self.selection.addSelection(clip)
         else:
             clips = []
         self.selection.setSelection(clips, SELECT)
