@@ -149,8 +149,12 @@ class Handle:
         self.__update_window_position()
 
     def on_hover(self, cursor_pos):
-        distance = numpy.linalg.norm(self.__window_position - cursor_pos)
+        if cursor_pos is None:
+            # The cursor is out of the widget.
+            self.hovered = False
+            return
 
+        distance = numpy.linalg.norm(self.__window_position - cursor_pos)
         if distance < self.__radius:
             self.hovered = True
             self._overlay.stack.set_cursor(Handle.CURSORS[self.placement])
@@ -544,6 +548,11 @@ class MoveScaleOverlay(Overlay):
 
         self.queue_draw()
         return self._is_hovered()
+
+    def unhover(self):
+        if self.hovered_handle:
+            self.hovered_handle.on_hover(None)
+        Overlay.unhover(self)
 
     def update_from_source(self):
         self.__set_size(self.__get_source_size() / self.project_size)
