@@ -306,7 +306,6 @@ class MoveScaleOverlay(Overlay):
 
         self.__clicked_handle = None
         self.__click_diagonal_sign = None
-        self.__box_hovered = False
 
         self.__action_log = action_log
         self.hovered_handle = None
@@ -456,7 +455,8 @@ class MoveScaleOverlay(Overlay):
         self.click_source_position = self.__get_source_position()
         self.__clicked_handle = None
 
-        if self.hovered_handle or self.__box_hovered:
+        hovered = self._is_hovered()
+        if self.hovered_handle or hovered:
             self.__action_log.begin("Video position change",
                                     finalizing_action=CommitTimelineFinalizingAction(
                                         self._source.get_timeline().get_parent()),
@@ -465,7 +465,7 @@ class MoveScaleOverlay(Overlay):
         if self.hovered_handle:
             self.hovered_handle.on_click()
             self.__clicked_handle = self.hovered_handle
-        elif self.__box_hovered:
+        elif hovered:
             self._select()
             self.stack.set_cursor("grabbing")
             self.stack.selected_overlay = self
@@ -520,7 +520,8 @@ class MoveScaleOverlay(Overlay):
     def on_hover(self, cursor_pos):
         if not self.is_visible():
             return
-        # handles hover check
+
+        # Check if one of the handles is hovered.
         self.hovered_handle = None
         if self._is_selected():
             for handle in self.handles.values():
@@ -532,21 +533,17 @@ class MoveScaleOverlay(Overlay):
                 self.queue_draw()
                 return True
 
-        # box hover check
+        # Check if self is hovered
         source = self.__get_normalized_source_position()
         cursor = self.stack.get_normalized_cursor_position(cursor_pos)
-
-        self.__box_hovered = False
         if (source < cursor).all() and (cursor < source + self.__get_size()).all():
-            self.__box_hovered = True
             self.stack.set_cursor("grab")
             self._hover()
         else:
-            self.__box_hovered = False
             self.unhover()
 
         self.queue_draw()
-        return self.__box_hovered
+        return self._is_hovered()
 
     def update_from_source(self):
         self.__set_size(self.__get_source_size() / self.project_size)
@@ -555,7 +552,9 @@ class MoveScaleOverlay(Overlay):
         self.queue_draw()
 
     def do_draw(self, cr):
-        if not self._is_selected() and not self._is_hovered():
+        selected = self._is_selected()
+        hovered = self._is_hovered()
+        if not selected and not hovered:
             return
 
         cr.save()
@@ -564,7 +563,7 @@ class MoveScaleOverlay(Overlay):
         cr.set_source_rgba(0.0, 0.0, 0.0, 0.0)
         cr.paint()
 
-        if self.__box_hovered:
+        if hovered:
             brightness = 0.65
         else:
             brightness = 0.3
@@ -579,6 +578,6 @@ class MoveScaleOverlay(Overlay):
         cr.stroke()
         cr.restore()
 
-        if self._is_selected():
+        if selected:
             for handle in self.handles.values():
                 handle.draw(cr)
