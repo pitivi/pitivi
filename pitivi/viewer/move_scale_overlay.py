@@ -103,7 +103,12 @@ class Handle:
         return 2 * Handle.MINIMAL_SIZE / self._overlay.stack.window_size
 
     def get_window_position(self):
-        return self.__window_position.tolist()
+        x, y = [int(v) + 0.5 for v in self.__window_position]
+        if Edge.right in self.placement:
+            x -= 1
+        if Edge.bottom in self.placement:
+            y -= 1
+        return x, y
 
     def get_source_position(self):
         """Returns a source translation when handles at TOP or LEFT are dragged.
@@ -194,16 +199,16 @@ class Handle:
             cr.rectangle(x, y, self.__size, self.__size)
             cr.fill()
 
-        # Black outline around the boxes
+        # Black outline around the box
         cr.set_source_rgb(0, 0, 0)
         cr.set_line_width(3)
-        cr.rectangle(x, y, self.__size, self.__size)
+        cr.rectangle(x, y, self.__size + 1, self.__size + 1)
         cr.stroke()
 
         # Inner white line
         cr.set_source_rgb(1, 1, 1)
         cr.set_line_width(1)
-        cr.rectangle(x, y, self.__size, self.__size)
+        cr.rectangle(x, y, self.__size + 1, self.__size + 1)
         cr.stroke()
 
 

@@ -27,7 +27,6 @@ class TitleOverlay(Overlay):
 
     def __init__(self, stack, source):
         Overlay.__init__(self, stack, source)
-        self.__corners = []
         self.__position = numpy.array([0, 0])
         self.__size = None
         self.__click_source_position = None
@@ -43,9 +42,9 @@ class TitleOverlay(Overlay):
         self.update_from_source()
 
     def __draw_rectangle(self, cr):
-        cr.move_to(*self.__corners[-1])
-        for corner in self.__corners:
-            cr.line_to(*corner.tolist())
+        x, y = [int(v) + 0.5 for v in self.__position]
+        w, h = [int(v) - 1 for v in self.__size]
+        cr.rectangle(x, y, w, h)
 
     def __get_source_position(self):
         res_x, x = self._source.get_child_property("x-absolute")
@@ -69,17 +68,8 @@ class TitleOverlay(Overlay):
         self._source.set_child_property("x-absolute", float(position[0]))
         self._source.set_child_property("y-absolute", float(position[1]))
 
-    def __update_corners(self):
-        self.__corners = [
-            self.__position,
-            self.__position + numpy.array([self.__size[0], 0]),
-            self.__position + self.__size,
-            self.__position + numpy.array([0, self.__size[1]])
-        ]
-
     def __update_from_motion(self, title_position):
         self.__position = title_position
-        self.__update_corners()
 
     def update_from_source(self):
         position = self.__get_text_position()
@@ -87,7 +77,6 @@ class TitleOverlay(Overlay):
 
         self.__position = position * self.stack.window_size / self.project_size
         self.__size = size * self.stack.window_size / self.project_size
-        self.__update_corners()
         self.queue_draw()
 
     def on_hover(self, cursor_position):
@@ -119,7 +108,7 @@ class TitleOverlay(Overlay):
 
     def on_motion_notify(self, cursor_position):
         if not isinstance(self.stack.click_position, numpy.ndarray):
-                return
+            return
 
         self.__update_from_motion(self.__click_window_position + self.stack.get_drag_distance(cursor_position))
         self.queue_draw()
