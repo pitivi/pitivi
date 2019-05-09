@@ -43,9 +43,9 @@ class TitleOverlay(Overlay):
         self.update_from_source()
 
     def __draw_rectangle(self, cr):
+        cr.move_to(*self.__corners[-1])
         for corner in self.__corners:
             cr.line_to(*corner.tolist())
-        cr.line_to(*self.__position.tolist())
 
     def __get_source_position(self):
         res_x, x = self._source.get_child_property("x-absolute")

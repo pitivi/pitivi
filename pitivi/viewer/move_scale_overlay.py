@@ -430,9 +430,9 @@ class MoveScaleOverlay(Overlay):
         self.handles[(Edge.top,)].set_position(self.handles[(Edge.top, Edge.right)].position - half_w)
 
     def __draw_rectangle(self, cr):
+        cr.move_to(*self.handles[(Edge.top, Edge.right)].get_window_position())
         for handle in self.corner_handles.values():
             cr.line_to(*handle.get_window_position())
-        cr.line_to(*self.handles[(Edge.top, Edge.left)].get_window_position())
 
     def get_center(self):
         diagonal = self.handles[(Edge.bottom, Edge.right)].position - self.handles[(Edge.top, Edge.left)].position
