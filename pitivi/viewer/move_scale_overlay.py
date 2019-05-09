@@ -573,8 +573,11 @@ class MoveScaleOverlay(Overlay):
         cr.stroke()
 
         # Inner white line
-        cr.set_source_rgb(1, 1, 1)
+        color = (0.6, 0.6, 0.6) if not selected else (1, 1, 1)
+        cr.set_source_rgb(*color)
         cr.set_line_width(1)
+        if not selected:
+            cr.set_dash((5, 5))
         self.__draw_rectangle(cr)
         cr.stroke()
 
