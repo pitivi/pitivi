@@ -201,6 +201,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         if not self.revealer.get_reveal_child():
             self.revealer.set_transition_duration(10)
             self.revealer.set_reveal_child(True)
+            self.hide_overlays()
 
         video_width = self.app.project_manager.current_project.videowidth
         percent = int(allocation.width / video_width * 100)
@@ -215,4 +216,5 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.__resizing_id = 0
         self.revealer.set_transition_duration(500)
         self.revealer.set_reveal_child(False)
+        self.show_overlays()
         return False
