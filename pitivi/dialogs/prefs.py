@@ -258,22 +258,18 @@ class PreferencesDialog(Loggable):
             prop_size_group.add_widget(widget)
 
             # Add a semicolon, except for checkbuttons.
-            if isinstance(widget, widgets.ToggleWidget):
-                widget.check_button.set_label(label)
-                label_widget = None
-            else:
-                label = _("%(preference_label)s") % {"preference_label": label}
-                label_widget = Gtk.Label(label=label)
-                label_widget.set_tooltip_text(description)
-                label_widget.set_alignment(0.0, 0.5)
+            label = _("%(preference_label)s") % {"preference_label": label}
+            label_widget = Gtk.Label(label=label)
+            label_widget.set_tooltip_text(description)
+            label_widget.set_alignment(0.0, 0.5)
 
-                label_widget.props.margin_left = PADDING * 3
-                label_widget.props.margin_right = PADDING * 3
-                label_widget.props.margin_top = PADDING * 2
-                label_widget.props.margin_bottom = PADDING * 2
+            label_widget.props.margin_left = PADDING * 3
+            label_widget.props.margin_right = PADDING * 3
+            label_widget.props.margin_top = PADDING * 2
+            label_widget.props.margin_bottom = PADDING * 2
 
-                label_widget.show()
-                label_size_group.add_widget(label_widget)
+            label_widget.show()
+            label_size_group.add_widget(label_widget)
 
             icon = Gtk.Image()
             icon.set_from_icon_name(

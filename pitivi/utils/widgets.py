@@ -452,25 +452,25 @@ class FractionWidget(TextWidget, DynamicWidget):
 class ToggleWidget(Gtk.Box, DynamicWidget):
     """Widget for entering an on/off value."""
 
-    def __init__(self, default=None, check_button=None):
+    def __init__(self, default=None, switch_button=None):
         Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
-        if check_button is None:
-            self.check_button = Gtk.CheckButton()
-            self.pack_start(self.check_button, expand=False, fill=False, padding=0)
-            self.check_button.show()
+        if switch_button is None:
+            self.switch_button = Gtk.Switch()
+            self.pack_start(self.switch_button, expand=False, fill=False, padding=0)
+            self.switch_button.show()
         else:
-            self.check_button = check_button
+            self.switch_button = switch_button
             self.setWidgetToDefault()
 
     def connectValueChanged(self, callback, *args):
-        self.check_button.connect("toggled", callback, *args)
+        self.switch_button.connect("activate", callback, *args)
 
     def setWidgetValue(self, value):
-        self.check_button.set_active(value)
+        self.switch_button.set_active(value)
 
     def getWidgetValue(self):
-        return self.check_button.get_active()
+        return self.switch_button.get_active()
 
 
 class ChoiceWidget(Gtk.Box, DynamicWidget):
