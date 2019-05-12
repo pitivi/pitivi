@@ -169,7 +169,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .VideoBackground {
-        background-color: #2d2d2d;
+        background-color: rgb(25, 25, 25);
     }
 
     .AudioBackground:selected {
@@ -177,7 +177,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .VideoBackground:selected {
-        background-color: #0f0f0f;
+        background-color: rgb(5, 5, 5);
     }
 
     .TitleClip .VideoBackground {
