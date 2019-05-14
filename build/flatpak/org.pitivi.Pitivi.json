@@ -460,7 +460,8 @@
             "config-opts": [
                 "-Dgtk_doc=disabled",
                 "-Dorc=enabled",
-                "--libdir=lib"
+                "--libdir=lib",
+                "--wrap-mode=nodownload"
             ],
             "builddir": true,
             "sources": [
