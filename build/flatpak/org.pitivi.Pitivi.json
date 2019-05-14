@@ -216,8 +216,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://files.pythonhosted.org/packages/f6/3f/4cc08fcfb1f6615279a3fbdf48720c77eeed8427aef37d28830f35548427/meson-0.47.1.tar.gz",
-                    "sha256": "97f72573ec6c7a761ff04cc544e828178b434c95c548542679944eb6d0551b24"
+                    "url": "https://files.pythonhosted.org/packages/d9/5b/3e1844ecb9f4872c2aa0ea8ec180c71a8b8bd60d6ea758f3339d9c659f86/meson-0.50.1.tar.gz",
+                    "sha256": "242af7cd9088e8aeca7ff1a93e029c4d16d89880fdcf62913ad85a26bbe66316"
                 }
             ]
         },
@@ -476,7 +476,8 @@
             "config-opts": [
                 "-Dgtk_doc=disabled",
                 "-Dorc=enabled",
-                "--libdir=lib"
+                "--libdir=lib",
+                "--wrap-mode=nodownload"
             ],
             "builddir": true,
             "sources": [
