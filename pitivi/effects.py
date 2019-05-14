@@ -287,8 +287,11 @@ class EffectsManager(Loggable):
         self.gl_effects = [element_factory.get_name()
                            for element_factory in gl_element_factories]
         if self.gl_effects:
-            thread = threading.Thread(target=self._check_gleffects)
-            thread.start()
+            if "gleffects" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
+                thread = threading.Thread(target=self._check_gleffects)
+                thread.start()
+            else:
+                HIDDEN_EFFECTS.extend(self.gl_effects)
 
     def _check_gleffects(self):
         try:
