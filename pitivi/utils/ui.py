@@ -171,6 +171,11 @@ EDITOR_PERSPECTIVE_CSS = """
         background: transparent;
     }
 
+    .AudioBackground,
+    .VideoBackground {
+        transition: background-color 200ms ease-out;
+    }
+
     .AudioBackground {
         background-color: rgb(60, 97, 43);
     }
@@ -179,12 +184,22 @@ EDITOR_PERSPECTIVE_CSS = """
         background-color: rgb(25, 25, 25);
     }
 
+    .VideoUriSource image {
+        transition: opacity 200ms linear;
+        opacity: 1;
+     }
+
+    .VideoUriSource:selected image,
+    .AudioUriSource:selected .AudioUriSource {
+        opacity: 0.15;
+    }
+
     .AudioBackground:selected {
-        background-color: rgb(33, 61, 45);
+        background-color: shade(rgb(60, 97, 43), 0.4);
     }
 
     .VideoBackground:selected {
-        background-color: rgb(5, 5, 5);
+        background-color: shade(rgb(25, 25, 25), 0.4);
     }
 
     .TitleClip .VideoBackground {
