@@ -1020,8 +1020,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     __gtype_name__ = "PitiviTrimHandle"
 
-    SELECTED_WIDTH = 5
-    DEFAULT_WIDTH = 1
+    DEFAULT_WIDTH = 5
     PIXBUF = None
 
     def __init__(self, clip, edge):
@@ -1038,29 +1037,12 @@ class TrimHandle(Gtk.EventBox, Loggable):
             css_class = "left"
         self.get_style_context().add_class(css_class)
 
+        self.props.width_request = TrimHandle.DEFAULT_WIDTH
         self.props.valign = Gtk.Align.FILL
-        self.shrink()
         if edge == GES.Edge.EDGE_END:
             self.props.halign = Gtk.Align.END
         else:
             self.props.halign = Gtk.Align.START
-
-    def do_draw(self, cr):
-        Gtk.EventBox.do_draw(self, cr)
-        if TrimHandle.PIXBUF is None:
-            TrimHandle.PIXBUF = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(get_pixmap_dir(), "trimbar-focused.png"))
-        Gdk.cairo_set_source_pixbuf(cr, TrimHandle.PIXBUF, 10, 10)
-
-    def enlarge(self):
-        self.props.width_request = TrimHandle.SELECTED_WIDTH
-        if self.props.window:
-            self.props.window.set_cursor(CURSORS[self.edge])
-
-    def shrink(self):
-        self.props.width_request = TrimHandle.DEFAULT_WIDTH
-        if self.props.window:
-            self.props.window.set_cursor(NORMAL_CURSOR)
 
 
 class Clip(Gtk.EventBox, Zoomable, Loggable):
@@ -1234,10 +1216,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
 
-    def shrinkTrimHandles(self):
-        for handle in self.handles:
-            handle.shrink()
-
     def do_map(self):
         Gtk.EventBox.do_map(self)
         self.updatePosition()
@@ -1313,13 +1291,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline._scrubbing):
             set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL):
             unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.shrink()
 
         return False
 

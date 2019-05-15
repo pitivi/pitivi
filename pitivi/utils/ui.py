@@ -198,8 +198,9 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .Trimbar {
-        background-image: url('%(trimbar_normal)s');
-        opacity:0.5;
+        background-color: white;
+        transition: opacity 200ms ease-out;
+        opacity: 0;
     }
 
     .Trimbar.left {
@@ -211,7 +212,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .Trimbar:hover {
-        background-image: url('%(trimbar_focused)s');
+        opacity: 0.7;
     }
 
     /* Background inside the timeline */
