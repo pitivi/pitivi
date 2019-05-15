@@ -164,6 +164,11 @@ EDITOR_PERSPECTIVE_CSS = """
         opacity: 0.8;
     }
 
+    .AudioBackground,
+    .VideoBackground {
+        transition: background-color 200ms ease-out;
+    }
+
     .AudioBackground {
         background-color: rgb(60, 97, 43);
     }
