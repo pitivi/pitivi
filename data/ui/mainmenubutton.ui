@@ -46,7 +46,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Reload the current project</property>
-            <property name="action_name">editor.revert-to-saved</property>
+            <property name="action_name">win.revert-to-saved</property>
             <property name="text" translatable="yes">Revert to saved version</property>
           </object>
         </child>
@@ -55,7 +55,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Export the current project and all its media in a .tar archive</property>
-            <property name="action_name">editor.export-project</property>
+            <property name="action_name">win.export-project</property>
             <property name="text" translatable="yes">Export as Archive...</property>
           </object>
         </child>
@@ -70,7 +70,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Export the frame at the current playhead position as an image file.</property>
-            <property name="action_name">editor.save-frame</property>
+            <property name="action_name">win.save-frame</property>
             <property name="text" translatable="yes">Export current frame...</property>
           </object>
         </child>
@@ -85,7 +85,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes">Edit the project settings</property>
-            <property name="action_name">editor.project-settings</property>
+            <property name="action_name">win.project-settings</property>
             <property name="text" translatable="yes">Project Settings</property>
           </object>
         </child>
