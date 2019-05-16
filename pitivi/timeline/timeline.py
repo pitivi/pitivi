@@ -1292,54 +1292,55 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if not self.draggingElement:
             return
 
-        with self.selection.grouped() as current_group:
-            if not self.selection.getSingleClip():
-                clips = self.selection
-                for clip in clips:
-                    current_group.add(clip.get_toplevel_parent())
+        current_group = GES.Group()
+        if not self.selection.getSingleClip():
+            clips = self.selection
+            for clip in clips:
+                current_group.add(clip.get_toplevel_parent())
 
-            if self.__got_dragged is False:
-                self.__got_dragged = True
-                if self.__clickedHandle:
-                    edit_mode = GES.EditMode.EDIT_TRIM
-                    dragging_edge = self.__clickedHandle.edge
-                else:
-                    edit_mode = GES.EditMode.EDIT_NORMAL
-                    dragging_edge = GES.Edge.EDGE_NONE
-
-                self.editing_context = EditingContext(self.draggingElement.ges_clip,
-                                                      self.ges_timeline,
-                                                      edit_mode,
-                                                      dragging_edge,
-                                                      self.app,
-                                                      not self.dropping_clips)
-
-            mode = self.__getEditingMode()
-            self.editing_context.setMode(mode)
-
-            if self.editing_context.edge is GES.Edge.EDGE_END:
-                position = self.pixelToNs(x)
+        if self.__got_dragged is False:
+            self.__got_dragged = True
+            if self.__clickedHandle:
+                edit_mode = GES.EditMode.EDIT_TRIM
+                dragging_edge = self.__clickedHandle.edge
             else:
-                position = self.pixelToNs(x - self.__drag_start_x)
+                edit_mode = GES.EditMode.EDIT_NORMAL
+                dragging_edge = GES.Edge.EDGE_NONE
 
-            self._setSeparatorsPrelight(False)
-            res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
-            self._on_layer, self.__on_separators = res
-            if (mode != GES.EditMode.EDIT_NORMAL or
-                    current_group.props.height > 1):
-                # When dragging clips from more than one layer, do not allow
-                # them to be dragged between layers to create a new layer.
-                self.__on_separators = []
+            self.editing_context = EditingContext(self.draggingElement.ges_clip,
+                                                  self.ges_timeline,
+                                                  edit_mode,
+                                                  dragging_edge,
+                                                  self.app,
+                                                  not self.dropping_clips)
 
-            self._separator_accepting_drop = False
-            if self._separator_accepting_drop_id:
-                GLib.source_remove(self._separator_accepting_drop_id)
-                self._separator_accepting_drop_id = 0
-            if self.__on_separators:
-                self._separator_accepting_drop_id = GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS,
-                                                                     self._separator_accepting_drop_timeout_cb)
+        mode = self.__getEditingMode()
+        self.editing_context.setMode(mode)
 
-            self.editing_context.edit_to(position, self._on_layer)
+        if self.editing_context.edge is GES.Edge.EDGE_END:
+            position = self.pixelToNs(x)
+        else:
+            position = self.pixelToNs(x - self.__drag_start_x)
+
+        self._setSeparatorsPrelight(False)
+        res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
+        self._on_layer, self.__on_separators = res
+        if (mode != GES.EditMode.EDIT_NORMAL or
+                current_group.props.height > 1):
+            # When dragging clips from more than one layer, do not allow
+            # them to be dragged between layers to create a new layer.
+            self.__on_separators = []
+
+        self._separator_accepting_drop = False
+        if self._separator_accepting_drop_id:
+            GLib.source_remove(self._separator_accepting_drop_id)
+            self._separator_accepting_drop_id = 0
+        if self.__on_separators:
+            self._separator_accepting_drop_id = GLib.timeout_add(SEPARATOR_ACCEPTING_DROP_INTERVAL_MS,
+                                                                 self._separator_accepting_drop_timeout_cb)
+
+        self.editing_context.edit_to(position, self._on_layer)
+        current_group.ungroup(recursive = False)
 
     def _separator_accepting_drop_timeout_cb(self):
         self._separator_accepting_drop_id = 0
@@ -1856,12 +1857,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.updateActions()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
-        with self.timeline.selection.grouped() as current_group:
-            clips = self.timeline.selection
-            for clip in clips:
-                current_group.add(clip.get_toplevel_parent())
-            self.__copied_group = current_group.copy(True)
+        clips = self.timeline.selection
+        current_group = GES.Group()
+        for clip in clips:
+            current_group.add(clip.get_toplevel_parent())
+        self.__copied_group = current_group.copy(True)
         self.updateActions()
+        current_group.ungroup(recursive = False)
 
     def __pasteClipsCb(self, unused_action, unused_parameter):
         if not self.__copied_group:

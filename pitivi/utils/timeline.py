@@ -26,8 +26,6 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import unset_children_state_recurse
 
-from contextlib import contextmanager
-
 
 # Selection modes
 # Set the selection to the given set.
@@ -212,16 +210,6 @@ class Selection(GObject.Object, Loggable):
 
     def __iter__(self):
         return iter(self.selected)
-
-    @contextmanager
-    def grouped(self):        
-        try:
-            current_group = GES.Group()
-            current_group.props.serialize = False
-            yield current_group
-        finally:
-            current_group.ungroup(recursive = False)
-            del current_group
 
 
 class EditingContext(GObject.Object, Loggable):

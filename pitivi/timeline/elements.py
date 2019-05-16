@@ -1124,8 +1124,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         if target.name() == EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(self.ges_clip)
             self.timeline.selection.setSelection([self.ges_clip], SELECT)
             self.app.gui.editor.switchContextTab(self.ges_clip)
 
@@ -1257,26 +1255,20 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         if self.timeline.get_parent()._controlMask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
                 mode = SELECT_ADD
-                self.timeline.current_group.add(
-                    self.ges_clip.get_toplevel_parent())
             else:
-                self.timeline.current_group.remove(
-                    self.ges_clip.get_toplevel_parent())
                 mode = UNSELECT
             clicked_layer, click_pos = self.timeline.get_clicked_layer_and_pos(event)
             self.timeline.set_selection_meta_info(clicked_layer, click_pos, mode)
         else:
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(self.ges_clip.get_toplevel_parent())
             self.app.gui.editor.switchContextTab(self.ges_clip)
 
         parent = self.ges_clip.get_parent()
-        if parent == self.timeline.current_group or parent is None:
+        if not parent:
             selection = [self.ges_clip]
         else:
             while True:
                 grandparent = parent.get_parent()
-                if not grandparent or grandparent == self.timeline.current_group:
+                if not grandparent:
                     break
 
                 parent = grandparent
