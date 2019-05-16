@@ -80,6 +80,8 @@ for i in range(2, GLib.MAXINT):
 # Properties of encoders that should be ignored when saving/loading
 # a project.
 IGNORED_PROPS = ["name", "parent"]
+DEFAULT_VIDEO_SETTINGS = "video/x-raw,width=1920,height=1080,framerate=(GstFraction)30/1"
+DEFAULT_AUDIO_SETTINGS = "audio/x-raw,channels=2,rate=48000"
 
 
 class ProjectManager(GObject.Object, Loggable):
@@ -706,12 +708,15 @@ class Project(Loggable, GES.Project):
         self.container_profile = \
             GstPbutils.EncodingContainerProfile.new("pitivi-profile",
                                                     _("Pitivi encoding profile"),
-                                                    Gst.Caps("application/ogg"),
+                                                    Gst.Caps("video/webm"),
                                                     None)
+        has_default_settings = not bool(uri) and not bool(scenario)
+        vsettings = DEFAULT_VIDEO_SETTINGS if has_default_settings else "video/x-raw"
         self.video_profile = GstPbutils.EncodingVideoProfile.new(
-            Gst.Caps("video/x-theora"), None, Gst.Caps("video/x-raw"), 0)
+            Gst.Caps("video/x-vp8"), None, Gst.Caps(vsettings), 0)
+        asettings = DEFAULT_AUDIO_SETTINGS if has_default_settings else "audio/x-raw"
         self.audio_profile = GstPbutils.EncodingAudioProfile.new(
-            Gst.Caps("audio/x-vorbis"), None, Gst.Caps("audio/x-raw"), 0)
+            Gst.Caps("audio/x-vorbis"), None, Gst.Caps(asettings), 0)
         self.container_profile.add_profile(self.video_profile)
         self.container_profile.add_profile(self.audio_profile)
         self.add_encoding_profile(self.container_profile)
@@ -721,7 +726,6 @@ class Project(Loggable, GES.Project):
         self.aencoder = Encoders().default_audio_encoder
         self._ensureAudioRestrictions()
         self._ensureVideoRestrictions()
-        has_default_settings = not bool(uri) and not bool(scenario)
         self._has_default_audio_settings = has_default_settings
         self._has_default_video_settings = has_default_settings
 
