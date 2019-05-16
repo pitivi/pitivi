@@ -94,9 +94,9 @@ class Encoders(Loggable):
     X264 = "x264enc"
 
     SUPPORTED_ENCODERS_COMBINATIONS = [
+        (WEBM, VORBIS, VP8),
         (OGG, VORBIS, THEORA),
         (OGG, OPUS, THEORA),
-        (WEBM, VORBIS, VP8),
         (WEBM, OPUS, VP8),
         (MP4, AAC, X264),
         (MP4, AC3, X264),
