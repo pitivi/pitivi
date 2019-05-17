@@ -42,6 +42,7 @@ from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
+from pitivi.utils.ui import CLIP_BORDER_WIDTH
 from pitivi.utils.ui import EXPANDED_SIZE
 
 # Our C module optimizing waveforms rendering
@@ -54,8 +55,9 @@ except ImportError:
 
 SAMPLE_DURATION = Gst.SECOND / 100
 
+# Horizontal space between thumbs.
 THUMB_MARGIN_PX = 3
-THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+THUMB_HEIGHT = EXPANDED_SIZE - 2 * CLIP_BORDER_WIDTH
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
@@ -1246,7 +1248,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
 
         zoom = self.get_current_zoom_level()
-        height = self.get_allocation().height
+        height = self.get_allocation().height - 2 * CLIP_BORDER_WIDTH
+
         if not self.surface or \
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \
@@ -1275,7 +1278,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         # 2. - inpoint, because we're drawing a clip, not the entire asset.
         context.set_operator(cairo.OPERATOR_OVER)
         offset = self.ns_to_pixel(self._surface_start_ns - inpoint)
-        context.set_source_surface(self.surface, offset, 0)
+        context.set_source_surface(self.surface, offset, CLIP_BORDER_WIDTH)
         context.paint()
 
     def _emit_done_on_idle(self):
