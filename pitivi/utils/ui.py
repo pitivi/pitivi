@@ -196,11 +196,11 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .TitleClip .VideoBackground {
-        background-color: rgb(194, 168, 92);
+        background-color: rgb(94, 78, 102);
     }
 
     .TitleClip .VideoBackground:selected  {
-        background-color: rgb(104, 85, 62);
+        background-color: shade(rgb(94, 78, 102), 0.4);
     }
 
     .KeyframeCurve {
