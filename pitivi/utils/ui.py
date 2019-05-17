@@ -191,10 +191,12 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .AudioBackground:selected {
         background-color: shade(rgb(60, 97, 43), 0.4);
+        border-color: shade(rgb(60, 97, 43), 1.5);
     }
 
     .VideoBackground:selected {
         background-color: shade(rgb(25, 25, 25), 0.4);
+        border-color: shade(rgb(25, 25, 25), 6);
     }
 
     .TitleClip .VideoBackground {
@@ -204,6 +206,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .TitleClip .VideoBackground:selected  {
         background-color: shade(rgb(94, 78, 102), 0.4);
+        border-color: shade(rgb(94, 78, 102), 1.75);
     }
 
     .KeyframeCurve {
