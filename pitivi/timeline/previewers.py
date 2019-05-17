@@ -730,15 +730,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Handles the changing of the duration of the clip."""
         self._update_thumbnails()
 
-    def set_selected(self, selected):
-        if selected:
-            opacity = 0.5
-        else:
-            opacity = 1.0
-
-        for thumb in self.get_children():
-            thumb.props.opacity = opacity
-
     def start_generation(self):
         self.debug("Waiting for UI to become idle for: %s",
                    path_from_uri(self.uri))
