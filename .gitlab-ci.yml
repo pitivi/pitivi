@@ -15,7 +15,7 @@ build:
   script:
     - export BUILDDIR=${HOME}/pitivi
     - export MANIFEST=${BUILDDIR}/build/flatpak/org.pitivi.Pitivi.json
-    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --run app ${MANIFEST}"
+    - export RUN_IN_SANDBOX="flatpak-builder --filesystem=${BUILDDIR} --filesystem=${CI_PROJECT_DIR} --env=PITIVI_DEVELOPMENT=1 --env=GST_DEBUG=2 --run app ${MANIFEST}"
 
     # Working around the fact that flatpak-builder *requires* the cache dir
     # to be on the same filesystem as the build dir
