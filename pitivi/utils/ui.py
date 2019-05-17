@@ -216,16 +216,8 @@ EDITOR_PERSPECTIVE_CSS = """
         opacity: 0;
     }
 
-    .Trimbar.left {
-        border-radius: 5px 0px 0px 5px;
-    }
-
-    .Trimbar.right {
-        border-radius: 0px 5px 5px 0px;
-    }
-
     .Trimbar:hover {
-        opacity: 0.7;
+        opacity: 0.8;
     }
 
     /* Background inside the timeline */
