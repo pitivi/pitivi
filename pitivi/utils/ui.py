@@ -173,15 +173,17 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .AudioBackground,
     .VideoBackground {
-        transition: background-color 200ms ease-out;
+        transition: background-color 200ms ease-out, border-color 200ms ease-out;
     }
 
     .AudioBackground {
         background-color: rgb(60, 97, 43);
+        border: 1px solid shade(rgb(60, 97, 43), 1.2);
     }
 
     .VideoBackground {
         background-color: rgb(25, 25, 25);
+        border: 1px solid shade(rgb(25, 25, 25), 2.5);
     }
 
     .VideoUriSource image {
@@ -197,6 +199,13 @@ EDITOR_PERSPECTIVE_CSS = """
     .AudioBackground:selected {
         background-color: shade(rgb(60, 97, 43), 0.4);
     }
+
+    .AudioBackground:selected,
+    .VideoBackground:selected,
+    .TitleClip .VideoBackground:selected {
+        border-color: rgb(132, 131, 79)
+    }
+
 
     .VideoBackground:selected {
         background-color: shade(rgb(25, 25, 25), 0.4);
@@ -245,11 +254,17 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .TransitionClip {
-        background-color: rgba(127, 153, 204, 0.5);
+        border: 1px solid rgb(180, 180, 180);
+        background-image: linear-gradient(45deg,
+                                          rgba(220,220,220,0.5) 52%,
+                                          rgba(255,255,255,0.5) 52%);
     }
 
     .TransitionClip:selected {
-        background-color: rgba(127, 200, 204, 0.7);
+        border: 1px solid shade(rgb(180, 180, 180), 1.75);
+        background-image: linear-gradient(45deg,
+                                          rgba(100,100,100,0.75) 52%,
+                                          rgba(130,130,130,0.75) 52%);
     }
 
     .SpacedSeparator:hover {

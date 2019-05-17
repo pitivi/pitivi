@@ -57,8 +57,8 @@ except ImportError:
 
 SAMPLE_DURATION = Gst.SECOND / 100
 
-THUMB_MARGIN_PX = 3
-THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+THUMB_MARGIN_PX = 0
+THUMB_HEIGHT = EXPANDED_SIZE - 2
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
@@ -900,6 +900,12 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     def zoom_changed(self):
         self._update_thumbnails()
 
+    def set_size_request(self, width, height):
+        """Set size request, leaving space for the outline."""
+        # Take one px off the width so the thumbnails aren't drawn on
+        # top of the outline in the timeline
+        super().set_size_request(width - 1, height)
+
 
 class Thumbnail(Gtk.Image):
     """Simple widget representing a Thumbnail."""
@@ -1225,7 +1231,8 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         end_ns = min(max(0, self.pixel_to_ns(rect.x + rect.width) + inpoint), max_duration)
 
         zoom = self.get_current_zoom_level()
-        height = self.get_allocation().height
+        height = self.get_allocation().height - 1
+
         if not self.surface or \
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \
