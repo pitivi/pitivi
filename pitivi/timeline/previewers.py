@@ -56,8 +56,8 @@ except ImportError:
 
 SAMPLE_DURATION = Gst.SECOND / 100
 
-THUMB_MARGIN_PX = 3
-THUMB_HEIGHT = EXPANDED_SIZE - 2 * THUMB_MARGIN_PX
+THUMB_MARGIN_PX = 0
+THUMB_HEIGHT = EXPANDED_SIZE - 2
 THUMB_PERIOD = int(Gst.SECOND / 2)
 assert Gst.SECOND % THUMB_PERIOD == 0
 # For the waveforms, ensures we always have a little extra surface when
@@ -632,9 +632,9 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         interval = self.thumb_interval
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
-        y = (self.props.height_request - self.thumb_height) / 2
+        y = 1
         for position in range(element_left, element_right, interval):
-            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
+            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point) + 1
             try:
                 thumb = self.thumbs.pop(position)
                 self.move(thumb, x, y)
@@ -780,6 +780,13 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Stops preview generation and cleans the object."""
         self.stop_generation()
         Zoomable.__del__(self)
+
+    def set_size_request(self, width, height):
+        """Set size request, leaving space for the outline."""
+
+        # Take one px off the width so the thumbnails aren't drawn on
+        # top of the outline in the timeline
+        super(Gtk.Widget, self).set_size_request(width - 1, height)
 
 
 class Thumbnail(Gtk.Image):
@@ -1071,7 +1078,7 @@ class AudioPreviewer(Previewer, Zoomable, Loggable):
         end_ns = min(max(0, self.pixelToNs(rect.x + rect.width) + inpoint), max_duration)
 
         zoom = self.getCurrentZoomLevel()
-        height = self.get_allocation().height
+        height = self.get_allocation().height - 1
         if not self.surface or \
                 height != self.surface.get_height() or \
                 zoom != self._surface_zoom_level or \

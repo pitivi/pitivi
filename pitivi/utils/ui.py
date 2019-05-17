@@ -171,10 +171,12 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .AudioBackground {
         background-color: rgb(60, 97, 43);
+        border: 1px solid shade(rgb(60, 97, 43), 1.2);
     }
 
     .VideoBackground {
         background-color: rgb(25, 25, 25);
+        border: 1px solid shade(rgb(25, 25, 25), 2.5);
     }
 
     .VideoUriSource image {
@@ -197,6 +199,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .TitleClip .VideoBackground {
         background-color: rgb(94, 78, 102);
+        border: solid 1px shade(rgb(94, 78, 102), 1.2);
     }
 
     .TitleClip .VideoBackground:selected  {
