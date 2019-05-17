@@ -625,7 +625,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         self.__previewer = self._get_previewer()
         if self.__previewer:
-            self.add(self.__previewer)
+            self.put(self.__previewer, x=1, y=1)
 
         self.__background = self._get_background()
         if self.__background:
@@ -655,7 +655,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         self.set_size_request(width, height)
 
         if self.__previewer:
-            self.__previewer.set_size_request(width, height)
+            self.__previewer.set_size_request(width - 1, height - 1)
 
         if self.__background:
             self.__background.set_size_request(width, height)
