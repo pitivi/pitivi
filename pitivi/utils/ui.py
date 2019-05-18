@@ -238,17 +238,17 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .TransitionClip {
         transition: background-image 200ms ease-out;
-        border: 1px solid rgb(180, 180, 180);
+        border: 1px solid rgb(130, 130, 130);
         background-image: linear-gradient(45deg,
-                                          rgba(220,220,220,0.5) 52%,
-                                          rgba(255,255,255,0.5) 52%);
+                                          rgba(90,90,90,0.75) 50%,
+                                          rgba(125,125,125,0.75) 50%);
     }
 
     .TransitionClip:selected {
-        border: 1px solid shade(rgb(180, 180, 180), 1.75);
+        border: 1px solid shade(rgb(130, 130, 130), 1.25);
         background-image: linear-gradient(45deg,
-                                          rgba(100,100,100,0.75) 52%,
-                                          rgba(130,130,130,0.75) 52%);
+                                          rgba(30,30,30,0.80) 50%,
+                                          rgba(70,70,70,0.80) 50%);
     }
 
     .SpacedSeparator:hover {
