@@ -159,7 +159,7 @@ GREETER_PERSPECTIVE_CSS = """
 
 EDITOR_PERSPECTIVE_CSS = """
     #resize_status {
-        font-size: 200%%;
+        font-size: 200%;
         background-color: black;
         opacity: 0.8;
     }
@@ -256,9 +256,7 @@ EDITOR_PERSPECTIVE_CSS = """
         background-color: rgba(224, 224, 224, 0.7);
     }
 
-""" % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
-        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
-
+"""
 
 def format_framerate_value(framerate):
     """Formats the framerate or returns 0 if unable to determine it."""
