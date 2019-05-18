@@ -180,7 +180,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .VideoUriSource image {
-        transition: opacity 200ms linear;
+        transition: opacity 200ms ease-out;
         opacity: 1;
      }
 
@@ -237,6 +237,7 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .TransitionClip {
+        transition: background-image 200ms ease-out;
         border: 1px solid rgb(180, 180, 180);
         background-image: linear-gradient(45deg,
                                           rgba(220,220,220,0.5) 52%,
