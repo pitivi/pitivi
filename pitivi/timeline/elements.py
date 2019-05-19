@@ -1044,6 +1044,9 @@ class TrimHandle(Gtk.EventBox, Loggable):
         else:
             self.props.halign = Gtk.Align.START
 
+    def do_draw(self, cr):
+        Gtk.EventBox.do_draw(self, cr)
+        self.props.window.set_cursor(CURSORS[self.edge])
 
 class Clip(Gtk.EventBox, Zoomable, Loggable):
 
