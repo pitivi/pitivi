@@ -166,7 +166,7 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .AudioBackground,
     .VideoBackground {
-        transition: background-color 200ms ease-out;
+        transition: background-color 200ms ease-out, border-color 200ms ease-out;
     }
 
     .AudioBackground {
@@ -191,22 +191,25 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .AudioBackground:selected {
         background-color: shade(rgb(60, 97, 43), 0.4);
-        border-color: shade(rgb(60, 97, 43), 1.5);
     }
+
+    .AudioBackground:selected,
+    .VideoBackground:selected,
+    .TitleClip .VideoBackground:selected {
+        border-color: rgb(132, 131, 79)
+    }
+
 
     .VideoBackground:selected {
         background-color: shade(rgb(25, 25, 25), 0.4);
-        border-color: shade(rgb(25, 25, 25), 6);
     }
 
     .TitleClip .VideoBackground {
         background-color: rgb(94, 78, 102);
-        border: solid 1px shade(rgb(94, 78, 102), 1.2);
     }
 
     .TitleClip .VideoBackground:selected  {
         background-color: shade(rgb(94, 78, 102), 0.4);
-        border-color: shade(rgb(94, 78, 102), 1.75);
     }
 
     .KeyframeCurve {
