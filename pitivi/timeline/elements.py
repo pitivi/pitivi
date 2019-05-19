@@ -168,6 +168,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self._update_selected_keyframe()
         self.__hovered_keyframe.set_visible(False)
+        self.__selected_keyframe.set_visible(False)
         self.__hovered = False
 
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
@@ -420,9 +421,10 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self._dragged = False
 
     def __show_special_keyframe(self, keyframe, offsets):
-        keyframe.set_offsets(offsets)
-        keyframe.set_visible(True)
-        self.queue_draw()
+        if isinstance(offsets, numpy.ndarray):
+            keyframe.set_offsets(offsets)
+            keyframe.set_visible(True)
+            self.queue_draw()
 
     def __hide_special_keyframe(self, keyframe):
         keyframe.set_visible(False)
