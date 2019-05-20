@@ -290,7 +290,7 @@ class TestRender(BaseTestMediaLibrary):
                         dialog._renderButtonClickedCb(None)
 
             message = dialog._pipeline.get_bus().timed_pop_filtered(
-                10 * Gst.SECOND,
+                Gst.CLOCK_TIME_NONE,
                 Gst.MessageType.EOS | Gst.MessageType.ERROR)
             self.assertIsNotNone(message)
             Gst.debug_bin_to_dot_file_with_ts(
