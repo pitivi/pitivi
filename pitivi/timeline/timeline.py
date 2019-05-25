@@ -858,7 +858,21 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dragEnd()
                 return False
 
-            if self.got_dragged or self.__drag_start_x != event.x:
+            # Wait for the user to drag at least 3 pixels in any direction
+            # before dragging when using a stylus. This avoids issues
+            # with digitizer tablets where there may be some movement in
+            # the stylus while clicking.
+            try:
+                tool = event.get_device_tool().get_tool_type()
+                threshold = (3 if tool in {Gdk.DeviceToolType.PEN,
+                                           Gdk.DeviceToolType.ERASER}
+                             else 0)
+            except AttributeError:
+                threshold = 0
+
+            delta_x = abs(self.__drag_start_x - event.x)
+
+            if self.got_dragged or delta_x > threshold:
                 event_widget = Gtk.get_event_widget(event)
                 x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
                 self.__drag_update(x, y)
