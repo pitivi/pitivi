@@ -478,7 +478,7 @@ class TestGrouping(BaseTestTimeline):
         # Click the first clip in the group.
         with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
-            event.x = 0
+            event.x = 100
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip1.ui
             timeline._button_press_event_cb(None, event)
@@ -486,6 +486,7 @@ class TestGrouping(BaseTestTimeline):
 
             # Move it to the right, on the separator below.
             event = mock.Mock()
+            event.x = 101
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip1.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (40, 0)
@@ -576,6 +577,7 @@ class TestEditing(BaseTestTimeline):
         # Click the right trim handle of the clip.
         with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
+            event.x = 100
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip.ui.rightHandle
             timeline._button_press_event_cb(None, event)
@@ -583,6 +585,7 @@ class TestEditing(BaseTestTimeline):
 
             # Drag it to the left, on the separator below.
             event = mock.Mock()
+            event.x = 99
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)

@@ -44,7 +44,6 @@ from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.timeline import EditingContext
 from pitivi.utils.timeline import SELECT
-from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import TimelineError
 from pitivi.utils.timeline import UNSELECT
@@ -847,7 +846,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.dragEnd()
                 return False
 
-            if self.got_dragged or self.__drag_start_x != event.x:
+            if self.got_dragged or self.__past_threshold(event):
                 event_widget = Gtk.get_event_widget(event)
                 x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
                 self.__drag_update(x, y)
@@ -869,6 +868,22 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.__scroll(event)
 
         return False
+
+    def __past_threshold(self, event):
+        threshold = 0
+        tool = event.get_device_tool()
+        if tool:
+            if tool.get_tool_type() in {Gdk.DeviceToolType.PEN,
+                                        Gdk.DeviceToolType.ERASER}:
+                # Wait for the user to drag at least 3 pixels in any direction
+                # before dragging when using a stylus. This avoids issues
+                # with digitizer tablets where there may be some movement in
+                # the stylus while clicking.
+                threshold = 3
+
+        delta_x = abs(self.__drag_start_x - event.x)
+
+        return delta_x > threshold
 
     def _seek(self, event):
         event_widget = Gtk.get_event_widget(event)
