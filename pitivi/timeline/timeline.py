@@ -367,12 +367,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # Clip selection.
         self.selection = Selection()
-        self.current_group = None
         # The last layer where the user clicked.
         self.last_clicked_layer = None
         # Position where the user last clicked.
         self.last_click_pos = 0
-        self.resetSelectionGroup()
 
         # Clip editing.
         # Which clip is being edited.
@@ -444,14 +442,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 break
 
         return media_types
-
-    def resetSelectionGroup(self):
-        self.debug("Reset selection group")
-        if self.current_group:
-            self.current_group.ungroup(recursive=False)
-
-        self.current_group = GES.Group()
-        self.current_group.props.serialize = False
 
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
@@ -781,13 +771,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
                     self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
                 else:
-                    self.resetSelectionGroup()
                     last_click_pos = self.last_click_pos
                     cur_clicked_layer, cur_click_pos = self.get_clicked_layer_and_pos(event)
                     clips = self.get_clips_in_between(
                         last_clicked_layer, cur_clicked_layer, last_click_pos, cur_click_pos)
-                    for clip in clips:
-                        self.current_group.add(clip.get_toplevel_parent())
                     self.selection.setSelection(clips, SELECT)
             elif not self.get_parent()._controlMask:
                 clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
@@ -838,7 +825,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Also include those clips which are grouped with currently selected clips.
         for clip in clips:
             toplevel = clip.get_toplevel_parent()
-            if isinstance(toplevel, GES.Group) and toplevel != self.current_group:
+            if isinstance(toplevel, GES.Group):
                 grouped_clips.update([c for c in toplevel.get_children(True)
                                 if isinstance(c, GES.Clip)])
 
@@ -895,11 +882,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.vadj.set_value(self.vadj.get_value() + y_diff)
 
     def _selectUnderMarquee(self):
-        self.resetSelectionGroup()
         if self.layout.marquee.props.width_request > 0:
             clips = self.layout.marquee.find_clips()
-            for clip in clips:
-                self.current_group.add(clip.get_toplevel_parent())
         else:
             clips = []
         self.selection.setSelection(clips, SELECT)
@@ -919,7 +903,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         placement = 0
         self.draggingElement = None
-        self.resetSelectionGroup()
         self.selection.setSelection([], SELECT)
         assets = self._project.assetsForUris(self.dropData)
         if not assets:
@@ -945,7 +928,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                            clip_duration,
                                            asset.get_supported_formats())
             placement += clip_duration
-            self.current_group.add(ges_clip.get_toplevel_parent())
             self.selection.setSelection([], SELECT_ADD)
             ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
@@ -984,13 +966,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         target = self.drag_dest_find_target(context, None)
         if self.draggingElement:
-            self.__last_clips_on_leave = [(clip.get_layer(), clip)
-                                          for clip in self.current_group.get_children(False)]
+            clip = self.draggingElement.ges_clip
+            self.__last_clips_on_leave = [(clip.get_layer(), clip)]
             self.dropDataReady = False
             if self.dropping_clips:
-                clips = self.current_group.get_children(False)
-                self.resetSelectionGroup()
-                self.selection.setSelection([], SELECT)
+                clips = self.selection
                 for clip in clips:
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
@@ -1296,6 +1276,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         if not self.draggingElement:
             return
+        current_group = GES.Group()
+        toplevel = self.draggingElement.ges_clip.get_toplevel_parent()
+        if toplevel != current_group:
+            current_group.add(toplevel)
+
+        for clip in self.selection:
+            toplevel = clip.get_toplevel_parent()
+            if toplevel != current_group:
+                current_group.add(toplevel)
 
         if self.__got_dragged is False:
             self.__got_dragged = True
@@ -1324,8 +1313,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._setSeparatorsPrelight(False)
         res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
         self._on_layer, self.__on_separators = res
-        if (mode != GES.EditMode.EDIT_NORMAL or
-                self.current_group.props.height > 1):
+        if mode != GES.EditMode.EDIT_NORMAL:
             # When dragging clips from more than one layer, do not allow
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
@@ -1339,6 +1327,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                                                  self._separator_accepting_drop_timeout_cb)
 
         self.editing_context.edit_to(position, self._on_layer)
+        clips = []
+        for child in current_group.get_children(False):
+            if isinstance(child, GES.Group):
+                grandChildren = child.get_children(False)
+                for clip in grandChildren:
+                    clips.append(clip)
+            else:
+                clips.append(child)
+        self.selection.setSelection(clips, SELECT)
+        current_group.ungroup(recursive = False)
 
     def _separator_accepting_drop_timeout_cb(self):
         self._separator_accepting_drop_id = 0
@@ -1761,7 +1759,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
-            self.timeline.resetSelectionGroup()
             with Previewer.manager.paused():
                 with self.app.action_log.started("delete clip",
                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
@@ -1826,11 +1823,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                          toplevel=True):
             for obj in self.timeline.selection:
                 toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        child.ungroup(recursive=False)
+                if isinstance(toplevel, GES.Group):
+                    toplevel.ungroup(recursive = False)
 
-        self.timeline.resetSelectionGroup()
         self.timeline.selection.setSelection([], SELECT)
 
     def _group_selected_cb(self, unused_action, unused_parameter):
@@ -1845,20 +1840,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             new_group = None
             for obj in self.timeline.selection:
                 toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        containers.add(child)
-                    toplevel.ungroup(False)
-                else:
-                    containers.add(toplevel)
+                containers.add(toplevel)
 
             if containers:
                 new_group = GES.Container.group(list(containers))
-
-            self.timeline.resetSelectionGroup()
-
-            if new_group:
-                self.timeline.current_group.add(new_group)
 
             # timeline.selection doesn't change during grouping,
             # we need to manually update group actions.
@@ -1866,9 +1851,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.updateActions()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
-        if self.timeline.current_group:
-            self.__copied_group = self.timeline.current_group.copy(True)
-            self.updateActions()
+        clips = self.timeline.selection
+        current_group = GES.Group()
+        for clip in clips:
+            current_group.add(clip.get_toplevel_parent())
+        self.__copied_group = current_group.copy(True)
+        current_group.ungroup(recursive = False)
+        self.updateActions()
 
     def __pasteClipsCb(self, unused_action, unused_parameter):
         if not self.__copied_group:

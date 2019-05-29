@@ -262,8 +262,6 @@ class TitleEditor(Loggable):
             assert res
         # Select it so the Title editor becomes active.
         self._selection.setSelection([title_clip], SELECT)
-        self.app.gui.editor.timeline_ui.timeline.resetSelectionGroup()
-        self.app.gui.editor.timeline_ui.timeline.current_group.add(title_clip)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
