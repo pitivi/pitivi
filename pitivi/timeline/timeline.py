@@ -1276,7 +1276,12 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         if not self.draggingElement:
             return
+
         current_group = GES.Group()
+
+        if not (self.draggingElement.ges_clip in self.selection):
+            self.selection.setSelection([self.draggingElement.ges_clip], SELECT)
+
         toplevel = self.draggingElement.ges_clip.get_toplevel_parent()
         if toplevel != current_group:
             current_group.add(toplevel)
@@ -1823,8 +1828,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                          toplevel=True):
             for obj in self.timeline.selection:
                 toplevel = obj.get_toplevel_parent()
+                if len(self.timeline.selection) == 1:
+                    toplevel.ungroup(False)
                 if isinstance(toplevel, GES.Group):
                     toplevel.ungroup(recursive = False)
+                    break
 
         self.timeline.selection.setSelection([], SELECT)
 

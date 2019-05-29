@@ -336,23 +336,15 @@ class TestGrouping(BaseTestTimeline):
         for clip in clips:
             self.toggle_clip_selection(clip, expect_selected=True)
 
-        before_grouping_timeline_group = timeline.current_group
-
-        for clip in clips:
-            self.assertEqual(clip.get_parent(), timeline.current_group)
-
         timeline_container.group_action.emit("activate", None)
 
-        self.assertNotEqual(timeline.current_group, before_grouping_timeline_group)
         for clip in clips:
-            # Check that we created a new group and that this group is not
-            # the timeline current_group
+            # Check that we created a new group
             self.assertTrue(isinstance(clip.get_parent(), GES.Group))
-            self.assertNotEqual(clip.get_parent(), timeline.current_group)
             # The newly created group has been selected
-            self.assertEqual(clip.get_toplevel_parent(), timeline.current_group)
+            for selectedClip in timeline.selection:
+                self.assertEqual(clip.get_toplevel_parent(), selectedClip.get_toplevel_parent())
 
-        for clip in clips:
             self.assertEqual(clips[0].get_parent(), clip.get_parent())
             self.assertTrue(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
             self.assertTrue(clip.selected.selected)
@@ -684,7 +676,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simiulate shift+click before first and after fourth clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 1 * Gst.SECOND)
@@ -693,7 +684,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2, ges_clip3, ges_clip4], [])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simiulate shift+click on first, after fourth and before third clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
@@ -704,7 +694,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simulate shift+click twice on the same clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
@@ -760,7 +749,6 @@ class TestShiftSelection(BaseTestTimeline):
             self.__check_selected([ges_clip11, ges_clip12, ges_clip22, ges_clip23],
                 [ges_clip13, ges_clip21, ges_clip31, ges_clip32, ges_clip33])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 3 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
