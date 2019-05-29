@@ -49,7 +49,6 @@ The interesting part is the `__clicked_cb` callback method, which is connected t
         timeline = self.app.gui.editor.timeline_ui.timeline
         clips = sorted(timeline.selection, key=lambda x : x.get_start())
         if len(clips) >= 2:
-            timeline.current_group.ungroup(False)  # https://gitlab.gnome.org/GNOME/pitivi/issues/2288
             previous = clips[0]
             for clip in clips[1:]:
                 clip.set_start(previous.get_start() + previous.get_duration())

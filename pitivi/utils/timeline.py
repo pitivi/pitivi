@@ -143,11 +143,14 @@ class Selection(GObject.Object, Loggable):
     def set_can_group_ungroup(self):
         can_ungroup = False
         toplevels = self.toplevels
-        for toplevel in toplevels:
-            if isinstance(toplevel, GES.Group) or len(toplevel.get_children(False)) > 1:
-                can_ungroup = True
-                break
         self.can_group = len(toplevels) > 1
+        # If we allow grouping, we disallow ungrouping.
+        if not self.can_group:
+            for toplevel in toplevels:
+                if (isinstance(toplevel, GES.Group) or
+                        (isinstance(toplevel, GES.Container) and len(toplevel.get_children(False)) > 1)):
+                    can_ungroup = True
+                    break
         self.can_ungroup = can_ungroup and not self.can_group
 
     def __get_selection_changes(self, old_selection):
@@ -211,6 +214,27 @@ class Selection(GObject.Object, Loggable):
             for element in toplevel.get_children(False):
                 for child in self.__serializable_toplevels(element):
                     yield child
+
+    def group(self):
+        """Groups the serializable toplevel elements into a new GES.Group.
+
+        Returns:
+            GES.Group: The serializable elements which have no parent or
+            have only non-serializable ancestors.
+        """
+        toplevels = set()
+        for obj in self.selected:
+            if not obj.timeline:
+                # The element has been removed from the timeline. Ignore it.
+                continue
+            toplevel = obj.get_toplevel_parent()
+            toplevels.add(toplevel)
+
+        group = GES.Group()
+        group.props.serialize = False
+        for toplevel in toplevels:
+            group.add(toplevel)
+        return group
 
     def __len__(self):
         return len(self.selected)

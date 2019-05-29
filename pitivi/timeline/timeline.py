@@ -367,16 +367,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # Clip selection.
         self.selection = Selection()
-        self.current_group = None
         # The last layer where the user clicked.
         self.last_clicked_layer = None
         # Position where the user last clicked.
         self.last_click_pos = 0
-        self.resetSelectionGroup()
 
         # Clip editing.
-        # Which clip is being edited.
+        # Which clip widget is being edited.
         self.draggingElement = None
+        # The GES.Group in case there are one or more clips being dragged.
+        self.dragging_group = None
         # Which handle of the draggingElement has been clicked, if any.
         # If set, it means we are in a trim operation.
         self.__clickedHandle = None
@@ -444,14 +444,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 break
 
         return media_types
-
-    def resetSelectionGroup(self):
-        self.debug("Reset selection group")
-        if self.current_group:
-            self.current_group.ungroup(recursive=False)
-
-        self.current_group = GES.Group()
-        self.current_group.props.serialize = False
 
     def setProject(self, project):
         """Connects to the GES.Timeline holding the project."""
@@ -709,6 +701,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.__next_seek_position = next_seek_position
 
     def _button_press_event_cb(self, unused_widget, event):
+        """Handles a mouse button press event."""
         self.debug("PRESSED %s", event)
         self.app.gui.editor.focusTimeline()
 
@@ -721,9 +714,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.__clickedHandle = event_widget
             self.debug("Dragging element is %s", self.draggingElement)
 
-            if self.draggingElement is not None:
+            if self.draggingElement:
                 self.__drag_start_x = event.x
                 self._on_layer = self.draggingElement.layer.ges_layer
+                self.dragging_group = self.selection.group()
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
                 if layer_controls:
@@ -745,8 +739,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self._scrolling:
             self._scroll_start_x = event.x
             self._scroll_start_y = event.y
-
-        return False
 
     def _button_release_event_cb(self, unused_widget, event):
         allow_seek = not self.__got_dragged
@@ -781,13 +773,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
                     self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
                 else:
-                    self.resetSelectionGroup()
                     last_click_pos = self.last_click_pos
                     cur_clicked_layer, cur_click_pos = self.get_clicked_layer_and_pos(event)
                     clips = self.get_clips_in_between(
                         last_clicked_layer, cur_clicked_layer, last_click_pos, cur_click_pos)
-                    for clip in clips:
-                        self.current_group.add(clip.get_toplevel_parent())
                     self.selection.setSelection(clips, SELECT)
             elif not self.get_parent()._controlMask:
                 clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
@@ -838,7 +827,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Also include those clips which are grouped with currently selected clips.
         for clip in clips:
             toplevel = clip.get_toplevel_parent()
-            if isinstance(toplevel, GES.Group) and toplevel != self.current_group:
+            if isinstance(toplevel, GES.Group):
                 grouped_clips.update([c for c in toplevel.get_children(True)
                                       if isinstance(c, GES.Clip)])
 
@@ -895,11 +884,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self.vadj.set_value(self.vadj.get_value() + y_diff)
 
     def _selectUnderMarquee(self):
-        self.resetSelectionGroup()
         if self.layout.marquee.props.width_request > 0:
             clips = self.layout.marquee.find_clips()
-            for clip in clips:
-                self.current_group.add(clip.get_toplevel_parent())
         else:
             clips = []
         self.selection.setSelection(clips, SELECT)
@@ -919,12 +905,13 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """
         placement = 0
         self.draggingElement = None
-        self.resetSelectionGroup()
-        self.selection.setSelection([], SELECT)
+
         assets = self._project.assetsForUris(self.dropData)
         if not assets:
             self._project.addUris(self.dropData)
             return False
+
+        ges_clips = []
         for asset in assets:
             if asset.is_image():
                 clip_duration = self.app.settings.imageClipLength * \
@@ -945,16 +932,20 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                                            clip_duration,
                                            asset.get_supported_formats())
             placement += clip_duration
-            self.current_group.add(ges_clip.get_toplevel_parent())
-            self.selection.setSelection([], SELECT_ADD)
             ges_clip.first_placement = True
             self._project.pipeline.commit_timeline()
 
-            if not self.draggingElement:
-                self.draggingElement = ges_clip.ui
-                self._on_layer = ges_layer
+            ges_clips.append(ges_clip)
 
+        if ges_clips:
+            ges_clip = ges_clips[0]
+            self.draggingElement = ges_clip.ui
+            self._on_layer = ges_layer
             self.dropping_clips = True
+
+            self.selection.setSelection(ges_clips, SELECT)
+
+            self.dragging_group = self.selection.group()
 
         return True
 
@@ -985,19 +976,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         target = self.drag_dest_find_target(context, None)
         if self.draggingElement:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
-                                          for clip in self.current_group.get_children(False)]
+                                          for clip in self.dragging_group.get_children(False)]
             self.dropDataReady = False
             if self.dropping_clips:
-                clips = self.current_group.get_children(False)
-                self.resetSelectionGroup()
                 self.selection.setSelection([], SELECT)
-                for clip in clips:
+                for clip in self.dragging_group.get_children(False):
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
 
             self.draggingElement = None
             self.__got_dragged = False
             self.dropping_clips = False
+            self.dragging_group.ungroup(recursive=False)
+            self.dragging_group = None
         elif target == URI_TARGET_ENTRY.target:
             self.cleanDropData()
 
@@ -1325,7 +1316,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
         self._on_layer, self.__on_separators = res
         if (mode != GES.EditMode.EDIT_NORMAL or
-                self.current_group.props.height > 1):
+                self.dragging_group.props.height > 1):
             # When dragging clips from more than one layer, do not allow
             # them to be dragged between layers to create a new layer.
             self.__on_separators = []
@@ -1374,6 +1365,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.editing_context.finish()
 
         self.draggingElement = None
+        if self.dragging_group is not None:
+            self.dragging_group.ungroup(recursive=False)
+            self.dragging_group = None
         self.__clickedHandle = None
         self.__got_dragged = False
         self.editing_context = None
@@ -1761,7 +1755,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _deleteSelected(self, unused_action, unused_parameter):
         if self.ges_timeline:
-            self.timeline.resetSelectionGroup()
             with Previewer.manager.paused():
                 with self.app.action_log.started("delete clip",
                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
@@ -1824,13 +1817,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         with self.app.action_log.started("ungroup",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            for obj in self.timeline.selection:
-                toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        child.ungroup(recursive=False)
+            toplevels = self.timeline.selection.toplevels
+            for toplevel in toplevels:
+                if isinstance(toplevel, GES.Group) or len(toplevels) == 1:
+                    toplevel.ungroup(recursive=False)
 
-        self.timeline.resetSelectionGroup()
         self.timeline.selection.setSelection([], SELECT)
 
     def _group_selected_cb(self, unused_action, unused_parameter):
@@ -1841,24 +1832,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         with self.app.action_log.started("group",
                                          finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                          toplevel=True):
-            containers = set()
-            new_group = None
-            for obj in self.timeline.selection:
-                toplevel = obj.get_toplevel_parent()
-                if toplevel == self.timeline.current_group:
-                    for child in toplevel.get_children(False):
-                        containers.add(child)
-                    toplevel.ungroup(False)
-                else:
-                    containers.add(toplevel)
-
-            if containers:
-                new_group = GES.Container.group(list(containers))
-
-            self.timeline.resetSelectionGroup()
-
-            if new_group:
-                self.timeline.current_group.add(new_group)
+            toplevels = self.timeline.selection.toplevels
+            if toplevels:
+                GES.Container.group(list(toplevels))
 
             # timeline.selection doesn't change during grouping,
             # we need to manually update group actions.
@@ -1866,9 +1842,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.updateActions()
 
     def __copyClipsCb(self, unused_action, unused_parameter):
-        if self.timeline.current_group:
-            self.__copied_group = self.timeline.current_group.copy(True)
-            self.updateActions()
+        group = self.timeline.selection.group()
+        try:
+            self.__copied_group = group.copy(deep=True)
+            self.__copied_group.props.serialize = False
+        finally:
+            group.ungroup(recursive=False)
+        self.updateActions()
 
     def __pasteClipsCb(self, unused_action, unused_parameter):
         if not self.__copied_group:
@@ -1880,8 +1860,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     toplevel=True):
             position = self._project.pipeline.getPosition()
             copied_group_shallow_copy = self.__copied_group.paste(position)
-            self.__copied_group = copied_group_shallow_copy.copy(True)
-            copied_group_shallow_copy.ungroup(recursive=False)
+            try:
+                self.__copied_group = copied_group_shallow_copy.copy(True)
+                self.__copied_group.props.serialize = False
+            finally:
+                copied_group_shallow_copy.ungroup(recursive=False)
 
     def __add_layer_cb(self, unused_action, unused_parameter):
         with self.app.action_log.started("add layer",

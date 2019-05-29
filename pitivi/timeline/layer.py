@@ -377,8 +377,6 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         ges_clip.disconnect_by_func(self._childAddedToClipCb)
         ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
 
-        self.timeline.selection.unselect([ges_clip])
-
     def updatePosition(self):
         for ges_clip in self.ges_layer.get_clips():
             if hasattr(ges_clip, "ui"):

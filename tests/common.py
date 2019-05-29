@@ -256,6 +256,7 @@ class TestCase(unittest.TestCase, Loggable):
                 with mock.patch.object(ges_clip.ui.timeline, "_get_layer_at") as _get_layer_at:
                     _get_layer_at.return_value = ges_clip.props.layer, None
                     ges_clip.ui._button_release_event_cb(None, event)
+                    ges_clip.ui.timeline._button_release_event_cb(None, event)
 
         self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)
