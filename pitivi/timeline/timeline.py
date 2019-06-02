@@ -1278,6 +1278,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return
 
         current_group = GES.Group()
+        current_group.props.serialize = False
 
         if not (self.draggingElement.ges_clip in self.selection):
             self.selection.setSelection([self.draggingElement.ges_clip], SELECT)
@@ -1861,6 +1862,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def __copyClipsCb(self, unused_action, unused_parameter):
         clips = self.timeline.selection
         current_group = GES.Group()
+        current_group.props.serialize = False
         for clip in clips:
             current_group.add(clip.get_toplevel_parent())
         self.__copied_group = current_group.copy(True)
