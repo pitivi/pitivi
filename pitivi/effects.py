@@ -33,6 +33,7 @@ import sys
 import threading
 from gettext import gettext as _
 
+import cairo
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
@@ -40,7 +41,6 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 from gi.repository import Gtk
-from gi.repository import Pango
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
@@ -53,75 +53,83 @@ from pitivi.utils.widgets import GstElementSettingsWidget
 
 (VIDEO_EFFECT, AUDIO_EFFECT) = list(range(1, 3))
 
-AUDIO_EFFECTS_CATEGORIES = ()
-
 ALLOWED_ONLY_ONCE_EFFECTS = ['videoflip']
 
-VIDEO_EFFECTS_CATEGORIES = (
+EFFECTS_CATEGORIES = (
     (_("Colors"), (
         # Mostly "serious" stuff that relates to correction/adjustments
         # Fancier stuff goes into the "fancy" category
-        "cogcolorspace", "videobalance", "chromahold", "gamma",
-        "coloreffects", "exclusion", "burn", "dodge", "videomedian",
-        "frei0r-filter-color-distance", "frei0r-filter-threshold0r",
-        "frei0r-filter-contrast0r", "frei0r-filter-saturat0r",
-        "frei0r-filter-white-balance", "frei0r-filter-brightness",
-        "frei0r-filter-gamma", "frei0r-filter-invert0r",
-        "frei0r-filter-hueshift0r", "frei0r-filter-equaliz0r",
-        "frei0r-filter-bw0r", "frei0r-filter-glow",
-        "frei0r-filter-twolay0r", "frei0r-filter-3-point-color-balance",
-        "frei0r-filter-coloradj-rgb", "frei0r-filter-curves",
-        "frei0r-filter-levels", "frei0r-filter-primaries",
-        "frei0r-filter-sop-sat", "frei0r-filter-threelay0r",
-        "frei0r-filter-tint0r",
+        'burn', 'chromahold', 'cogcolorspace', 'coloreffects', 'dodge',
+        'exclusion', 'frei0r-filter-3-point-color-balance',
+        'frei0r-filter-brightness', 'frei0r-filter-bw0r',
+        'frei0r-filter-color-distance', 'frei0r-filter-coloradj-rgb',
+        'frei0r-filter-contrast0r', 'frei0r-filter-curves',
+        'frei0r-filter-equaliz0r', 'frei0r-filter-gamma', 'frei0r-filter-glow',
+        'frei0r-filter-hueshift0r', 'frei0r-filter-invert0r',
+        'frei0r-filter-levels', 'frei0r-filter-primaries',
+        'frei0r-filter-saturat0r', 'frei0r-filter-sop-sat',
+        'frei0r-filter-threelay0r', 'frei0r-filter-threshold0r',
+        'frei0r-filter-tint0r', 'frei0r-filter-twolay0r',
+        'frei0r-filter-white-balance', 'gamma', 'videobalance', 'videomedian',
     )),
     (_("Compositing"), (
-        "alpha", "alphacolor", "gdkpixbufoverlay",
-        "frei0r-filter-transparency", "frei0r-filter-mask0mate",
-        "frei0r-filter-alpha0ps", "frei0r-filter-alphagrad",
-        "frei0r-filter-alphaspot", "frei0r-filter-bluescreen0r",
-        "frei0r-filter-select0r",
+        'alpha', 'alphacolor', 'frei0r-filter-alpha0ps',
+        'frei0r-filter-alphagrad', 'frei0r-filter-alphaspot',
+        'frei0r-filter-bluescreen0r', 'frei0r-filter-mask0mate',
+        'frei0r-filter-select0r', 'frei0r-filter-transparency',
+        'gdkpixbufoverlay',
     )),
     (_("Noise & blur"), (
-        "gaussianblur", "diffuse", "dilate", "marble", "smooth",
-        "frei0r-filter-hqdn3d", "frei0r-filter-squareblur",
-        "frei0r-filter-sharpness", "frei0r-filter-edgeglow",
-        "frei0r-filter-facebl0r",
+        'diffuse', 'dilate', 'frei0r-filter-edgeglow', 'frei0r-filter-facebl0r',
+        'frei0r-filter-hqdn3d', 'frei0r-filter-sharpness',
+        'frei0r-filter-squareblur', 'gaussianblur', 'marble', 'smooth',
     )),
     (_("Analysis"), (
-        "videoanalyse", "videodetect", "videomark", "revtv",
-        "navigationtest", "frei0r-filter-rgb-parade",
-        "frei0r-filter-r", "frei0r-filter-g", "frei0r-filter-b",
-        "frei0r-filter-vectorscope", "frei0r-filter-luminance",
-        "frei0r-filter-opencvfacedetect", "frei0r-filter-pr0be",
-        "frei0r-filter-pr0file",
+        'frei0r-filter-b', 'frei0r-filter-g', 'frei0r-filter-luminance',
+        'frei0r-filter-opencvfacedetect', 'frei0r-filter-pr0be',
+        'frei0r-filter-pr0file', 'frei0r-filter-r', 'frei0r-filter-rgb-parade',
+        'frei0r-filter-vectorscope', 'navigationtest', 'revtv', 'videoanalyse',
+        'videodetect', 'videomark',
     )),
     (_("Geometry"), (
-        "cogscale", "aspectratiocrop", "cogdownsample", "videoscale",
-        "videocrop", "videoflip", "videobox", "gdkpixbufscale",
-        "kaleidoscope", "mirror", "pinch", "sphere", "square", "fisheye",
-        "stretch", "twirl", "waterriple", "rotate", "bulge", "circle",
-        "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
-        "frei0r-filter-lens-correction", "frei0r-filter-defish0r",
-        "frei0r-filter-perspective", "frei0r-filter-c0rners",
-        "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
-        "frei0r-filter-flippo", "frei0r-filter-3dflippo",
+        'aspectratiocrop', 'bulge', 'circle', 'cogdownsample', 'cogscale',
+        'fisheye', 'frei0r-filter-3dflippo', 'frei0r-filter-c0rners',
+        'frei0r-filter-defish0r', 'frei0r-filter-flippo',
+        'frei0r-filter-k-means-clustering', 'frei0r-filter-lens-correction',
+        'frei0r-filter-letterb0xed', 'frei0r-filter-perspective',
+        'frei0r-filter-pixeliz0r', 'frei0r-filter-scale0tilt', 'gdkpixbufscale',
+        'kaleidoscope', 'mirror', 'pinch', 'rotate', 'sphere', 'square',
+        'stretch', 'twirl', 'videobox', 'videocrop', 'videoflip', 'videoscale',
+        'waterriple',
     )),
     (_("Fancy"), (
-        "rippletv", "streaktv", "radioactv", "optv", "solarize",
-        "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
-        "agingtv", "edgetv", "bulge", "circle", "fisheye", "tunnel",
-        "kaleidoscope", "mirror", "pinch", "sphere", "square",
-        "stretch", "twirl", "waterripple", "glfiltersobel", "chromium",
-        "frei0r-filter-sobel", "frei0r-filter-cartoon",
-        "frei0r-filter-water", "frei0r-filter-nosync0r",
-        "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
-        "frei0r-filter-distort0r", "frei0r-filter-light-graffiti",
-        "frei0r-filter-tehroxx0r", "frei0r-filter-vertigo",
+        'agingtv', 'bulge', 'chromium', 'circle', 'dicetv', 'edgetv', 'fisheye',
+        'frei0r-filter-cartoon', 'frei0r-filter-delay0r',
+        'frei0r-filter-distort0r', 'frei0r-filter-k-means-clustering',
+        'frei0r-filter-light-graffiti', 'frei0r-filter-nosync0r',
+        'frei0r-filter-sobel', 'frei0r-filter-tehroxx0r',
+        'frei0r-filter-vertigo', 'frei0r-filter-water', 'glfiltersobel',
+        'kaleidoscope', 'mirror', 'optv', 'pinch', 'quarktv', 'radioactv',
+        'rippletv', 'shagadelictv', 'solarize', 'sphere', 'square', 'streaktv',
+        'stretch', 'tunnel', 'twirl', 'vertigotv', 'warptv', 'waterripple',
     )),
     (_("Time"), (
-        "videorate", "frei0r-filter-delay0r", "frei0r-filter-baltan",
-        "frei0r-filter-nervous",
+        'frei0r-filter-baltan', 'frei0r-filter-delay0r',
+        'frei0r-filter-nervous', 'videorate',
+    )),
+    (_("Audio"), (
+        "pitch", "freeverb", "removesilence", "festival", "speed",
+        "audiorate", "volume", "equalizer-nbands", "equalizer-3bands",
+        "equalizer-10bands", "rglimiter", "rgvolume", "audiopanorama",
+        "audioinvert", "audiokaraoke", "audioamplify", "audiodynamic",
+        "audiocheblimit", "audiochebband", "audioiirfilter", "audiowsinclimit",
+        "audiowsincband", "audiofirfilter", "audioecho", "scaletempo", "stereo",
+        'audioamplify', 'audiochebband', 'audiocheblimit', 'audiodynamic',
+        'audioecho', 'audiofirfilter', 'audioiirfilter', 'audioinvert',
+        'audiokaraoke', 'audiopanorama', 'audiorate', 'audiowsincband',
+        'audiowsinclimit', 'equalizer-10bands', 'equalizer-3bands',
+        'equalizer-nbands', 'festival', 'freeverb', 'pitch', 'removesilence',
+        'rglimiter', 'rgvolume', 'scaletempo', 'speed', 'stereo', 'volume',
     )),
 )
 
@@ -147,14 +155,8 @@ HIDDEN_EFFECTS = [
 
 GlobalSettings.add_config_section('effect-library')
 
-(COL_NAME_TEXT,
- COL_DESC_TEXT,
- COL_EFFECT_TYPE,
- COL_EFFECT_CATEGORIES,
- COL_ELEMENT_NAME,
- COL_ICON) = list(range(6))
-
-ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
+ICON_WIDTH = 80
+ICON_HEIGHT = 45
 
 
 class EffectInfo:
@@ -182,8 +184,9 @@ class EffectInfo:
                 os.path.join(pixdir, self.effect_name + ".png"),
                 ICON_WIDTH, ICON_WIDTH)
         except GLib.Error:
-            icon = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(pixdir, "defaultthumbnail.svg"))
+            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(pixdir, "defaultthumbnail.svg"), ICON_WIDTH, ICON_HEIGHT)
+
         return icon
 
     @property
@@ -323,32 +326,22 @@ class EffectsManager(Loggable):
             List[str]: The categories which contain the effect.
         """
         categories = []
-        for category_name, effects in AUDIO_EFFECTS_CATEGORIES:
-            if effect_name in effects:
-                categories.append(category_name)
-        for category_name, effects in VIDEO_EFFECTS_CATEGORIES:
+        for category_name, effects in EFFECTS_CATEGORIES:
             if effect_name in effects:
                 categories.append(category_name)
         if not categories:
             categories.append(_("Uncategorized"))
-        categories.insert(0, _("All effects"))
         return categories
 
     @property
-    def video_categories(self):
-        """Gets all video effect categories names."""
-        return EffectsManager._get_categories_names(VIDEO_EFFECTS_CATEGORIES)
-
-    @property
-    def audio_categories(self):
-        """Gets all audio effect categories names."""
-        return EffectsManager._get_categories_names(AUDIO_EFFECTS_CATEGORIES)
+    def categories(self):
+        """Gets the name of all effect categories."""
+        return EffectsManager._get_categories_names(EFFECTS_CATEGORIES)
 
     @staticmethod
     def _get_categories_names(categories):
         ret = [category_name for category_name, unused_effects in categories]
         ret.sort()
-        ret.insert(0, _("All effects"))
         if categories:
             # Add Uncategorized only if there are other categories defined.
             ret.append(_("Uncategorized"))
@@ -367,8 +360,9 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         self.app = instance
 
-        self._dragged_items = None
-        self._effect_type = VIDEO_EFFECT
+        self._drag_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "effects", "defaultthumbnail.svg"),
+            ICON_WIDTH, ICON_HEIGHT)
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -376,64 +370,21 @@ class EffectListWidget(Gtk.Box, Loggable):
         builder.connect_signals(self)
         toolbar = builder.get_object("effectslibrary_toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
-        self.video_togglebutton = builder.get_object("video_togglebutton")
-        self.audio_togglebutton = builder.get_object("audio_togglebutton")
-        self.categories_widget = builder.get_object("categories")
         self.search_entry = builder.get_object("search_entry")
 
-        # Store
-        self.storemodel = Gtk.ListStore(
-            str, str, int, object, str, GdkPixbuf.Pixbuf)
-        self.storemodel.set_sort_column_id(
-            COL_NAME_TEXT, Gtk.SortType.ASCENDING)
+        self.main_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.category_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.search_view = Gtk.ListBox(activate_on_single_click=False)
+        self.search_view.connect("row-activated", self.effects_listbox_row_activated_cb)
+        self.search_view.set_filter_func(self._search_filter)
 
-        # Create the filter for searching the storemodel.
-        self.model_filter = self.storemodel.filter_new()
-        self.model_filter.set_visible_func(self._set_row_visible_func, data=None)
-
-        self.view = Gtk.TreeView(model=self.model_filter)
-        self.view.props.headers_visible = False
-        self.view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-
-        icon_col = Gtk.TreeViewColumn()
-        icon_col.set_spacing(SPACING)
-        icon_col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
-        icon_col.props.fixed_width = ICON_WIDTH
-        icon_cell = Gtk.CellRendererPixbuf()
-        icon_cell.props.xpad = 6
-        icon_col.pack_start(icon_cell, True)
-        icon_col.add_attribute(icon_cell, "pixbuf", COL_ICON)
-
-        text_col = Gtk.TreeViewColumn()
-        text_col.set_expand(True)
-        text_col.set_spacing(SPACING)
-        text_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        text_cell = Gtk.CellRendererText()
-        text_cell.props.yalign = 0.0
-        text_cell.props.xpad = 6
-        text_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
-        text_col.pack_start(text_cell, True)
-        text_col.set_cell_data_func(
-            text_cell, self.view_description_cell_data_func, None)
-
-        self.view.append_column(icon_col)
-        self.view.append_column(text_col)
-
-        self.view.connect("query-tooltip", self._tree_view_query_tooltip_cb)
-        self.view.props.has_tooltip = True
-
-        # Make the treeview a drag source which provides effects.
-        self.view.enable_model_drag_source(
-            Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
-
-        self.view.connect("button-press-event", self._button_press_event_cb)
-        self.view.connect("select-cursor-row", self._enter_press_event_cb)
-        self.view.connect("drag-data-get", self._dnd_drag_data_get_cb)
+        self.main_view.pack_start(self.category_view, True, True, 0)
+        self.main_view.pack_start(self.search_view, True, True, 0)
 
         scrollwin = Gtk.ScrolledWindow()
         scrollwin.props.hscrollbar_policy = Gtk.PolicyType.NEVER
         scrollwin.props.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC
-        scrollwin.add(self.view)
+        scrollwin.add(self.main_view)
 
         self.pack_start(toolbar, False, False, 0)
         self.pack_start(scrollwin, True, True, 0)
@@ -441,108 +392,116 @@ class EffectListWidget(Gtk.Box, Loggable):
         # Delay the loading of the available effects so the application
         # starts faster.
         GLib.idle_add(self._load_available_effects_cb)
-        self.populate_categories_widget()
 
-        # Individually show the tab's widgets.
-        # If you use self.show_all(), the tab will steal focus on startup.
         scrollwin.show_all()
         toolbar.show_all()
-
-    def _tree_view_query_tooltip_cb(self, view, x, y, keyboard_mode, tooltip):
-        is_row, x, y, model, path, tree_iter = view.get_tooltip_context(
-            x, y, keyboard_mode)
-        if not is_row:
-            return False
-
-        view.set_tooltip_row(tooltip, path)
-        tooltip.set_markup(self.format_description(model, tree_iter))
-        return True
-
-    def view_description_cell_data_func(self, unused_column, cell, model, iter_, unused_data):
-        cell.props.markup = self.format_description(model, iter_)
-
-    def format_description(self, model, iter_):
-        name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
-        escape = GLib.markup_escape_text
-        return "<b>%s</b>\n%s" % (escape(name), escape(desc))
+        self.search_view.hide()
 
     def _load_available_effects_cb(self):
-        self._add_factories(self.app.effects.video_effects, VIDEO_EFFECT)
-        self._add_factories(self.app.effects.audio_effects, AUDIO_EFFECT)
-        return False
+        self._set_up_category_view()
+        self._add_effects_to_listbox(self.search_view)
 
-    def _add_factories(self, elements, effect_type):
-        for element in elements:
-            name = element.get_name()
+    def _set_up_category_view(self):
+        # Add category expanders
+        for category in self.app.effects.categories:
+            widget = self._create_category_widget(category)
+            self.category_view.add(widget)
+
+        # Add effects to category expanders
+        for expander in self.category_view.get_children():
+            listbox = expander.get_child()
+            category_name = expander.get_label()
+
+            self._add_effects_to_listbox(listbox, category_name)
+
+        self.category_view.show_all()
+
+    def _add_effects_to_listbox(self, listbox, category=None):
+        effects = self.app.effects.video_effects + self.app.effects.audio_effects
+        for effect in effects:
+            name = effect.get_name()
+
             if name in HIDDEN_EFFECTS:
                 continue
+
             effect_info = self.app.effects.get_info(name)
-            self.storemodel.append([effect_info.human_name,
-                                    effect_info.description,
-                                    effect_type,
-                                    effect_info.categories,
-                                    name,
-                                    effect_info.icon])
 
-    def populate_categories_widget(self):
-        self.categories_widget.get_model().clear()
-        icon_column = self.view.get_column(0)
+            if not category or category in effect_info.categories:
+                widget = self._create_effect_widget(name)
+                listbox.add(widget)
 
-        if self._effect_type is VIDEO_EFFECT:
-            for category in self.app.effects.video_categories:
-                self.categories_widget.append_text(category)
-            icon_column.props.visible = True
-        else:
-            for category in self.app.effects.audio_categories:
-                self.categories_widget.append_text(category)
-            icon_column.props.visible = False
+    def _create_category_widget(self, category):
+        expander = Gtk.Expander(label=category, margin=SPACING)
 
-        self.categories_widget.set_active(0)
+        listbox = Gtk.ListBox(activate_on_single_click=False)
+        listbox.connect("row-activated", self.effects_listbox_row_activated_cb)
 
-    def _dnd_drag_data_get_cb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
-        data = bytes(self.get_selected_effect(), "UTF-8")
+        expander.add(listbox)
+
+        return expander
+
+    def _create_effect_widget(self, effect_name):
+        effect_info = self.app.effects.get_info(effect_name)
+
+        effect_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, margin=SPACING / 2)
+        effect_box.effect_name = effect_name
+        effect_box.set_tooltip_text(effect_info.description)
+        label = Gtk.Label(effect_info.human_name, xalign=0)
+        icon = Gtk.Image.new_from_pixbuf(effect_info.icon)
+
+        effect_box.pack_start(icon, False, True, SPACING / 2)
+        effect_box.pack_start(label, True, True, 0)
+
+        # Set up drag behavoir
+        eventbox = Gtk.EventBox(visible_window=False)
+        eventbox.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
+        eventbox.connect("drag-data-get", self._drag_data_get_cb)
+        eventbox.connect("drag-begin", self._drag_begin_cb)
+        eventbox.add(effect_box)
+
+        row = Gtk.ListBoxRow(selectable=False)
+        row.add(eventbox)
+
+        return row
+
+    def _drag_data_get_cb(self, eventbox, drag_context, selection_data, unused_info, unused_timestamp):
+        effect_box = eventbox.get_child()
+        data = bytes(effect_box.effect_name, "UTF-8")
         selection_data.set(drag_context.list_targets()[0], 0, data)
 
-    def _row_under_mouse_selected(self, view, event):
-        result = view.get_path_at_pos(int(event.x), int(event.y))
-        if result:
-            path = result[0]
-            selection = view.get_selection()
-            return selection.path_is_selected(path) and\
-                selection.count_selected_rows() > 0
-        return False
+    def _drag_begin_cb(self, eventbox, context):
+        # Draw drag-icon
+        icon = self._drag_icon
+        icon_height = icon.get_height()
+        icon_width = icon.get_width()
 
-    def _enter_press_event_cb(self, unused_view, unused_event=None):
-        self._add_selected_effect()
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, icon_width, icon_height)
+        ctx = cairo.Context(surface)
+        # Center the icon around the cursor.
+        ctx.translate(icon_width / 2, icon_height / 2)
+        surface.set_device_offset(-icon_width / 2, -icon_height / 2)
 
-    def _button_press_event_cb(self, view, event):
-        chain_up = True
+        Gdk.cairo_set_source_pixbuf(ctx, icon, 0, 0)
+        ctx.paint_with_alpha(0.35)
 
-        if event.button == 3:
-            chain_up = False
-        elif event.type == getattr(Gdk.EventType, '2BUTTON_PRESS'):
-            self._add_selected_effect()
-        else:
-            chain_up = not self._row_under_mouse_selected(view, event)
+        Gtk.drag_set_icon_surface(context, surface)
 
-        if chain_up:
-            self._dragged_items = None
-        else:
-            self._dragged_items = self.get_selected_effect()
+    def effects_listbox_row_activated_cb(self, listbox, row):
+        """Handles the activation of a row representing an effect."""
+        effect_box = row.get_child().get_child()
+        self.apply_effect(effect_box.effect_name)
 
-        Gtk.TreeView.do_button_press_event(view, event)
-        return True
-
-    def _add_selected_effect(self):
+    def apply_effect(self, effect_name):
         """Adds the selected effect to the single selected clip, if any."""
-        effect = self.get_selected_effect()
-        effect_info = self.app.effects.get_info(effect)
+        effect_info = self.app.effects.get_info(effect_name)
         if not effect_info:
             return
+
         timeline = self.app.gui.editor.timeline_ui.timeline
         clip = timeline.selection.get_single_clip()
         if not clip:
             return
+
         pipeline = timeline.ges_timeline.get_parent()
         from pitivi.undo.timeline import CommitTimelineFinalizingAction
         with self.app.action_log.started("add effect",
@@ -550,50 +509,26 @@ class EffectListWidget(Gtk.Box, Loggable):
                                          toplevel=True):
             clip.ui.add_effect(effect_info)
 
-    def get_selected_effect(self):
-        if self._dragged_items:
-            return self._dragged_items
-        unused_model, rows = self.view.get_selection().get_selected_rows()
-        path = self.model_filter.convert_path_to_child_path(rows[0])
-        return self.storemodel[path][COL_ELEMENT_NAME]
+    def _search_filter(self, row):
+        effect_box = row.get_child().get_child()
+        label = effect_box.get_children()[1]
 
-    def _toggle_view_type_cb(self, widget):
-        """Switches the view mode between video and audio.
+        label_text = label.get_text().lower()
+        search_key = self.search_entry.get_text().lower()
 
-        This makes the two togglebuttons behave like a group of radiobuttons.
-        """
-        if widget is self.video_togglebutton:
-            self.audio_togglebutton.set_active(not widget.get_active())
+        return search_key in label_text
+
+    def _search_entry_changed_cb(self, search_entry):
+        if search_entry.get_text():
+            self.search_view.invalidate_filter()
+            self.search_view.show_all()
+            self.category_view.hide()
         else:
-            assert widget is self.audio_togglebutton
-            self.video_togglebutton.set_active(not widget.get_active())
+            self.category_view.show()
+            self.search_view.hide()
 
-        if self.video_togglebutton.get_active():
-            self._effect_type = VIDEO_EFFECT
-        else:
-            self._effect_type = AUDIO_EFFECT
-        self.populate_categories_widget()
-        self.model_filter.refilter()
-
-    def _category_changed_cb(self, combobox):
-        self.model_filter.refilter()
-
-    def _search_entry_changed_cb(self, unused_entry):
-        self.model_filter.refilter()
-
-    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
+    def _search_entry_icon_release_cb(self, entry, icon_pos, event):
         entry.set_text("")
-
-    def _set_row_visible_func(self, model, model_iter, data):
-        if not self._effect_type == model.get_value(model_iter, COL_EFFECT_TYPE):
-            return False
-        if model.get_value(model_iter, COL_EFFECT_CATEGORIES) is None:
-            return False
-        if self.categories_widget.get_active_text() not in model.get_value(model_iter, COL_EFFECT_CATEGORIES):
-            return False
-        text = self.search_entry.get_text().lower()
-        return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
-            text in model.get_value(model_iter, COL_NAME_TEXT).lower()
 
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
