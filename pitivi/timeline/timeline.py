@@ -1401,6 +1401,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._settings = self.app.settings
         self._shiftMask = False
         self._controlMask = False
+        self.markers = GES.MarkerList.new()
 
         self._project = None
         self.ges_timeline = None

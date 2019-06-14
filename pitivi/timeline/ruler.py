@@ -215,6 +215,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             self.app.gui.editor.focusTimeline()
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
+            if button == 3:
+                self.__addMarker(position)
         return False
 
     def do_motion_notify_event(self, event):
@@ -253,6 +255,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         human_time = beautify_length(position)
         cur_frame = int(position / self.ns_per_frame) + 1
         self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
+
+    def __addMarker(self, position):
+        """Add a marker to the timeline markers """
+        marker = self.timeline.markers.add(position)
+        self.debug('size of marker list is %d', self.timeline.markers.size())
 
 # Drawing methods
 
