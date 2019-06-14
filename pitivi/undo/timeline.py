@@ -860,7 +860,7 @@ class GroupObserver(Loggable):
         self.action_log.push(action)
 
 
-class TimelineObserver(Loggable):
+class TimelineObserver(MetaContainerObserver, Loggable):
     """Monitors a project's timeline and reports UndoableActions.
 
     Attributes:
@@ -869,12 +869,14 @@ class TimelineObserver(Loggable):
     """
 
     def __init__(self, ges_timeline, action_log):
+        MetaContainerObserver.__init__(self, ges_timeline, action_log)
         Loggable.__init__(self)
         self.ges_timeline = ges_timeline
         self.action_log = action_log
 
         self.layer_observers = {}
         self.group_observers = {}
+
         for ges_layer in ges_timeline.get_layers():
             self._connect_to_layer(ges_layer)
 

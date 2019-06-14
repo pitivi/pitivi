@@ -19,6 +19,7 @@
 """Undo/redo."""
 import contextlib
 
+from gi.repository import GES
 from gi.repository import GObject
 
 from pitivi.utils.loggable import Loggable
@@ -366,20 +367,19 @@ class UndoableActionLog(GObject.Object, Loggable):
         return False
 
 
-class MetaChangedAction(UndoableAction):
+class MetaChangedAction(UndoableAutomaticObjectAction):
 
     def __init__(self, meta_container, item, current_value, new_value):
-        UndoableAction.__init__(self)
-        self.meta_container = meta_container
+        UndoableAutomaticObjectAction.__init__(self, meta_container)
         self.item = item
         self.old_value = current_value
         self.new_value = new_value
 
     def do(self):
-        self.meta_container.set_meta(self.item, self.new_value)
+        self.auto_object.set_meta(self.item, self.new_value)
 
     def undo(self):
-        self.meta_container.set_meta(self.item, self.old_value)
+        self.auto_object.set_meta(self.item, self.old_value)
 
 
 class MetaContainerObserver(GObject.Object):
@@ -396,8 +396,10 @@ class MetaContainerObserver(GObject.Object):
 
         self.metas = {}
 
+        self.marker_list_observers = {}
+
         def set_meta(unused_meta_container, item, value):
-            self.metas[item] = value
+            self.__update_meta(item, value)
         meta_container.foreach(set_meta)
 
         meta_container.connect("notify-meta", self._notify_meta_cb)
@@ -405,12 +407,19 @@ class MetaContainerObserver(GObject.Object):
     def _notify_meta_cb(self, meta_container, item, value):
         current_value = self.metas.get(item)
         action = MetaChangedAction(meta_container, item, current_value, value)
-        self.metas[item] = value
+        self.__update_meta(item, value)
         self.action_log.push(action)
 
     def release(self):
         self.meta_container.disconnect_by_func(self._notify_meta_cb)
         self.meta_container = None
+
+    def __update_meta(self, item, value):
+        self.metas[item] = value
+        if isinstance(self.metas[item], GES.MarkerList):
+            from pitivi.undo.markers import MarkerListObserver
+            observer = MarkerListObserver(self.metas[item], self.action_log)
+            self.marker_list_observers[self.metas[item]] = observer
 
 
 class PropertyChangedAction(UndoableAutomaticObjectAction):

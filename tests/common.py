@@ -305,6 +305,18 @@ class TestCase(unittest.TestCase, Loggable):
         self.assertTrue(caps1.is_equal(caps2),
                         "%s != %s" % (caps1.to_string(), caps2.to_string()))
 
+    def assert_markers(self, ges_marker_list, expected_properties):
+        """Asserts the content of a GES.MarkerList."""
+        markers = ges_marker_list.get_markers()
+        expected_positions = [properties[0] for properties in expected_properties]
+        expected_comments = [properties[1] for properties in expected_properties]
+
+        positions = [ges_marker.props.position for ges_marker in markers]
+        self.assertListEqual(positions, expected_positions)
+
+        comments = [ges_marker.get_string("comment") for ges_marker in markers]
+        self.assertListEqual(comments, expected_comments)
+
 
 @contextlib.contextmanager
 def created_project_file(asset_uri):

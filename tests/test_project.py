@@ -192,6 +192,12 @@ class TestProjectManager(common.TestCase):
         project = args[0]
         self.assertTrue(project is self.manager.current_project)
 
+    def test_marker_container(self):
+        project = self.manager.new_blank_project()
+        self.assertIsNotNone(project)
+        self.assertIsNotNone(project.ges_timeline)
+        self.assertIsNotNone(project.ges_timeline.get_marker_list("markers"))
+
     def testSaveProject(self):
         self.manager.new_blank_project()
 

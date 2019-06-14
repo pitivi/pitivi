@@ -43,6 +43,7 @@ pitivi/viewer/viewer.py
 
 pitivi/timeline/elements.py
 pitivi/timeline/layer.py
+pitivi/timeline/markers.py
 pitivi/timeline/ruler.py
 pitivi/timeline/timeline.py
 

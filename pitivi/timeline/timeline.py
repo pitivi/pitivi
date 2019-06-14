@@ -38,6 +38,7 @@ from pitivi.timeline.elements import TrimHandle
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.layer import SpacedSeparator
+from pitivi.timeline.markers import MarkersBox
 from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -1539,6 +1540,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 pass  # We were not connected no problem
 
             self.timeline._pipeline = None
+            self.markers.markers_container = None
 
         self._project = project
 
@@ -1558,6 +1560,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
+            self.markers.markers_container = project.ges_timeline.get_marker_list("markers")
 
     def updateActions(self):
         selection = self.timeline.selection
@@ -1607,12 +1610,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.gapless_button = builder.get_object("gapless_button")
         self.gapless_button.set_active(self._settings.timelineAutoRipple)
 
-        self.attach(zoom_box, 0, 0, 1, 1)
-        self.attach(self.ruler, 1, 0, 1, 1)
-        self.attach(self.timeline, 0, 1, 2, 1)
-        self.attach(self.vscrollbar, 2, 1, 1, 1)
-        self.attach(hscrollbar, 1, 2, 1, 1)
-        self.attach(self.toolbar, 3, 1, 1, 1)
+        self.markers = MarkersBox(self.app, hadj=self.timeline.hadj)
+
+        self.attach(self.markers, 1, 0, 1, 1)
+        self.attach(zoom_box, 0, 1, 1, 1)
+        self.attach(self.ruler, 1, 1, 1, 1)
+        self.attach(self.timeline, 0, 2, 2, 1)
+        self.attach(self.vscrollbar, 2, 2, 1, 1)
+        self.attach(hscrollbar, 1, 3, 1, 1)
+        self.attach(self.toolbar, 3, 2, 1, 1)
 
         self.set_margin_top(SPACING)
 
