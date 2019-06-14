@@ -219,6 +219,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 self.__addMarker(position)
         return False
 
+    def __addMarker(self, position):
+        """Add a marker to the timeline markers """
+        self.timeline.markers.connect("marker-added", self._markerAddedToRulerCb)
+        marker = self.timeline.markers.add(position)
+        self.timeline.markers.disconnect_by_func(self._markerAddedToRulerCb)
+        self.debug('size of marker list is %d', self.timeline.markers.size())
+
+    def _markerAddedToRulerCb(self, markers, position, marker):
+        self.debug('size of marker list is %d', markers.size())
+        self.debug('position is %d', position)
+
     def do_motion_notify_event(self, event):
         if not self._pipeline:
             return False
@@ -255,11 +266,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         human_time = beautify_length(position)
         cur_frame = int(position / self.ns_per_frame) + 1
         self.set_tooltip_text(human_time + "\n" + _("Frame #%d") % cur_frame)
-
-    def __addMarker(self, position):
-        """Add a marker to the timeline markers """
-        marker = self.timeline.markers.add(position)
-        self.debug('size of marker list is %d', self.timeline.markers.size())
 
 # Drawing methods
 
