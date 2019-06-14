@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import os
+import tempfile
 from unittest import mock
 
 from gi.repository import Gdk
@@ -26,6 +28,9 @@ from gi.repository import GstController
 from gi.repository import Gtk
 
 from pitivi.timeline.layer import Layer
+from pitivi.timeline.markers import Marker
+from pitivi.timeline.markers import MarkerPopover
+from pitivi.timeline.markers import MarkersBox
 from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.undo.project import AssetAddedAction
@@ -33,6 +38,7 @@ from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
+from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -1209,3 +1215,312 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(len(layers[1].get_clips()), 1)
+
+
+class TestMarkers(BaseTestUndoTimeline):
+
+    def assert_markers(self, ges_marker_list, expected_properties):
+        positions = [ges_marker.props.position for ges_marker in ges_marker_list.get_markers()]
+        expected_positions = [properties[0] for properties in expected_properties]
+        self.assertListEqual(positions, expected_positions)
+
+        comments = [ges_marker.get_string("comment") for ges_marker in ges_marker_list.get_markers()]
+        expected_comments = [properties[1] for properties in expected_properties]
+        self.assertListEqual(comments, expected_comments)
+
+    def test_marker_container(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        self.assertIsNotNone(markers)
+
+    def test_marker_added(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+
+        with self.action_log.started("Added marker"):
+            marker1 = markers.add(10)
+        self.assert_markers(markers, [(10, None)])
+
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+        self.assert_markers(markers, [(10, "comment 1")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1")])
+
+        with self.action_log.started("Added marker"):
+            marker2 = markers.add(20)
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.action_log.undo()
+            self.action_log.undo()
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1")])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+    def test_marker_removed(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+
+        with self.action_log.started("Removed marker"):
+            markers.remove(marker1)
+        self.assert_markers(markers, [(20, None)])
+
+        with self.action_log.started("Removed marker"):
+            markers.remove(marker2)
+        self.assert_markers(markers, [])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [])
+
+    def test_marker_moved(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+
+        with self.action_log.started("Move marker"):
+            markers.move(marker1, 40)
+            markers.move(marker1, 30)
+
+        stack, = self.action_log.undo_stacks
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
+
+        self.assert_markers(markers, [(20, None), (30, None)])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(20, None), (30, None)])
+
+    def test_marker_comment(self):
+        self.setup_timeline_container()
+
+        markers = self.timeline.get_marker_list("markers")
+
+        with self.action_log.started("Added marker"):
+            marker1 = markers.add(10)
+        with self.action_log.started("Added marker"):
+            marker2 = markers.add(20)
+
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+    def test_marker_load_project(self):
+        # TODO: When there is nothing connected to closing-project,
+        # the default reply is "False", which means "abort saving". It should mean
+        # "OK" to get rid off the handler.  The meaning of the default (False)
+        # must be changed
+        def closing(manager, project):
+            return True
+
+        app = common.create_pitivi()
+        project = app.project_manager.new_blank_project()
+        timeline = project.ges_timeline
+
+        markers = timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+        app.project_manager.saveProject(project_uri)
+        app.project_manager.connect("closing-project", closing)
+
+        app.project_manager.closeRunningProject()
+        project = app.project_manager.new_blank_project()
+        markers = project.ges_timeline.get_marker_list("markers")
+        self.assert_markers(markers, [])
+
+        app.project_manager.closeRunningProject()
+        project = app.project_manager.load_project(project_uri)
+        timeline = project.ges_timeline
+        markers = timeline.get_marker_list("markers")
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+    def test_marker_added_ui(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker_box = self.timeline_container.markers
+        marker_box.markers_container = markers
+
+        x = 100
+        event = mock.Mock(spec=Gdk.EventButton)
+        event.x = x
+        event.y = 1
+        event.button = Gdk.BUTTON_PRIMARY
+
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = marker_box
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            marker_box.do_button_press_event(event)
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            marker_box.do_button_release_event(event)
+
+        position = Zoomable.pixelToNs(event.x)
+        self.assert_markers(markers, [(position, None)])
+
+    def test_marker_removed_ui(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker_box = self.timeline_container.markers
+        marker_box.markers_container = markers
+
+        x = 200
+        position = Zoomable.pixelToNs(x)
+        marker = marker_box.markers_container.add(position)
+        self.assert_markers(markers, [(position, None)])
+
+        event = mock.Mock(spec=Gdk.EventButton)
+        event.x = x
+        event.y = 1
+        event.button = Gdk.BUTTON_SECONDARY
+
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = marker.ui
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            marker_box.do_button_press_event(event)
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
+            marker_box.do_button_release_event(event)
+
+        self.assert_markers(markers, [])
+
+    def test_marker_moved_ui(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker_box = self.timeline_container.markers
+        marker_box.markers_container = markers
+
+        x1 = 300
+        position1 = Zoomable.pixelToNs(x1)
+        marker = marker_box.markers_container.add(position1)
+        self.assert_markers(markers, [(position1, None)])
+
+        x2 = 400
+        position2 = Zoomable.pixelToNs(x2)
+
+        event = mock.Mock(spec=Gdk.EventButton)
+        event.x = x2
+        event.y = 1
+        event.type = Gdk.EventType.BUTTON_PRESS
+        event.button = Gdk.BUTTON_PRIMARY
+
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = marker.ui
+            event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+            marker_box.do_button_press_event(event)
+
+            with mock.patch.object(marker.ui, "translate_coordinates") as translate_coordinates:
+                translate_coordinates.return_value = (x2, 0)
+                marker_box.do_motion_notify_event(event)
+                marker_box.do_button_release_event(event)
+
+        self.assert_markers(markers, [(position2, None)])
+
+    def test_marker_comment_ui(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker_box = self.timeline_container.markers
+        marker_box.markers_container = markers
+
+        x = 500
+        position = Zoomable.pixelToNs(x)
+        marker = marker_box.markers_container.add(position)
+
+        self.assert_markers(markers, [(position, None)])
+
+        event = mock.Mock(spec=Gdk.EventButton)
+        event.x = x
+        event.y = 1
+        event.type = Gdk.EventType.BUTTON_PRESS
+        event.button = Gdk.BUTTON_PRIMARY
+
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
+            get_event_widget.return_value = marker.ui
+
+            def fake_method(markerpopover):
+                    markerpopover.marker.comment = "comment"
+            original_popover_menu = Gtk.Popover.popup
+            Gtk.Popover.popup = fake_method
+            try:
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
+                marker_box.do_button_press_event(event)
+                event.guiEvent = Gdk.Event.new(Gdk.EventType.DOUBLE_BUTTON_PRESS)
+                event.type = Gdk.EventType.DOUBLE_BUTTON_PRESS
+                marker_box.do_button_press_event(event)
+            finally:
+                    Gtk.Popover.popup = original_popover_menu
+
+        self.assert_markers(markers, [(position, "comment")])
