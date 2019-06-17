@@ -120,6 +120,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.scales = SCALES
 
+        self.timeline.markers.connect("marker-added", self._markerAddedToRulerCb)
+
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
         self.pixbuf_offset = hadj.get_value()
@@ -189,6 +191,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         self.drawBackground(drawing_context)
         self.drawRuler(drawing_context)
         self.drawPosition(drawing_context)
+        self.drawMarkers(drawing_context)
         pixbuf.flush()
 
         context.set_source_surface(self.pixbuf, 0.0, 0.0)
@@ -216,19 +219,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
             if button == 3:
-                self.__addMarker(position)
+                timeline_duration = self.timeline.ges_timeline.props.duration
+                if position <= timeline_duration:
+                    self.__addMarker(position)
         return False
 
     def __addMarker(self, position):
         """Add a marker to the timeline markers """
-        self.timeline.markers.connect("marker-added", self._markerAddedToRulerCb)
         marker = self.timeline.markers.add(position)
-        self.timeline.markers.disconnect_by_func(self._markerAddedToRulerCb)
-        self.debug('size of marker list is %d', self.timeline.markers.size())
 
     def _markerAddedToRulerCb(self, markers, position, marker):
-        self.debug('size of marker list is %d', markers.size())
-        self.debug('position is %d', position)
+        self.queue_draw()
 
     def do_motion_notify_event(self, event):
         if not self._pipeline:
@@ -440,3 +441,25 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.line_to(xpos - semi_width, y - semi_height)
         context.close_path()
         context.stroke()
+
+    def drawMarkers(self, context):
+        """Draws the ruler markers """
+
+        height = self.pixbuf.get_height()
+
+        semi_width = 4
+        semi_height = int(semi_width * 1.61803)
+        y = int(3 * height / 4)
+
+        markers = self.timeline.markers.get_range(0, self.timeline.ges_timeline.props.duration)
+        for marker in markers:
+            xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
+            set_cairo_color(context, PLAYHEAD_COLOR)
+
+            context.set_line_width(PLAYHEAD_WIDTH * 2)
+            context.move_to(xpos, y)
+            context.line_to(xpos + semi_width, y - semi_height)
+            context.line_to(xpos, y - semi_height * 2)
+            context.line_to(xpos - semi_width, y - semi_height)
+            context.close_path()
+            context.fill()
