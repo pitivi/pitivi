@@ -1252,7 +1252,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             # Only the left mouse button selects.
             return False
 
-        # TODO : Let's be more specific, masks etc ..
         mode = SELECT
         if self.timeline.get_parent()._controlMask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
@@ -1270,20 +1269,13 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             self.timeline.current_group.add(self.ges_clip.get_toplevel_parent())
             self.app.gui.editor.switchContextTab(self.ges_clip)
 
-        parent = self.ges_clip.get_parent()
-        if parent == self.timeline.current_group or parent is None:
+        parent = self.ges_clip.get_toplevel_parent()
+        if parent is self.ges_clip:
             selection = [self.ges_clip]
         else:
-            while True:
-                grandparent = parent.get_parent()
-                if not grandparent or grandparent == self.timeline.current_group:
-                    break
-
-                parent = grandparent
-            children = parent.get_children(True)
-            selection = [elem for elem in children if isinstance(elem, GES.SourceClip) or
+            selection = [elem for elem in parent.get_children(True)
+                         if isinstance(elem, GES.SourceClip) or
                          isinstance(elem, GES.TransitionClip)]
-
         self.timeline.selection.setSelection(selection, mode)
 
         return False
