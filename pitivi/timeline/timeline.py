@@ -840,7 +840,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             toplevel = clip.get_toplevel_parent()
             if isinstance(toplevel, GES.Group) and toplevel != self.current_group:
                 grouped_clips.update([c for c in toplevel.get_children(True)
-                                if isinstance(c, GES.Clip)])
+                                      if isinstance(c, GES.Clip)])
 
         return clips.union(grouped_clips)
 
@@ -1538,7 +1538,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.delete_action.set_enabled(selection_non_empty)
         self.delete_and_shift_action.set_enabled(selection_non_empty)
         self.group_action.set_enabled(selection.can_group)
-        self.ungroup_action.set_enabled(selection.can_ungroup and not selection.can_group)
+        self.ungroup_action.set_enabled(selection.can_ungroup)
         self.copy_action.set_enabled(selection_non_empty)
         can_paste = bool(self.__copied_group)
         self.paste_action.set_enabled(can_paste)
@@ -1767,9 +1767,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                                                 toplevel=True):
                     for clip in self.timeline.selection:
-                        layer = clip.get_layer()
                         if isinstance(clip, GES.TransitionClip):
                             continue
+                        layer = clip.get_layer()
                         layer.remove_clip(clip)
 
             self.timeline.selection.setSelection([], SELECT)

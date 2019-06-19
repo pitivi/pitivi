@@ -141,18 +141,14 @@ class Selection(GObject.Object, Loggable):
         self.emit("selection-changed")
 
     def set_can_group_ungroup(self):
-        containers = set()
-        for obj in self.selected:
-            toplevel = obj.get_toplevel_parent()
-            if not toplevel.props.serialize:
-                for child in toplevel.get_children(False):
-                    containers.add(child)
-            else:
-                containers.add(toplevel)
-            if len(containers) > 1:
+        can_ungroup = False
+        toplevels = self.toplevels
+        for toplevel in toplevels:
+            if isinstance(toplevel, GES.Group) or len(toplevel.get_children(False)) > 1:
+                can_ungroup = True
                 break
-        self.can_group = len(containers) > 1
-        self.can_ungroup = len(self.getSelectedTrackElements()) > 1
+        self.can_group = len(toplevels) > 1
+        self.can_ungroup = can_ungroup and not self.can_group
 
     def __get_selection_changes(self, old_selection):
         for obj in old_selection - self.selected:
@@ -182,17 +178,6 @@ class Selection(GObject.Object, Loggable):
 
         return set(objects)
 
-    def getSelectedTrackElementsAtPosition(self, position, element_type=GObject.Object,
-                                           track_type=GES.TrackType.UNKNOWN):
-        selected = []
-        for clip in self.selected:
-            if clip.props.start <= position and position <= clip.props.start + clip.props.duration:
-                elements = clip.find_track_elements(None, track_type, element_type)
-                if elements:
-                    selected.extend(elements)
-
-        return selected
-
     def getSingleClip(self, clip_type=GES.SourceClip):
         """Returns the single-selected clip, if any.
 
@@ -204,6 +189,28 @@ class Selection(GObject.Object, Loggable):
             if isinstance(clip, clip_type):
                 return clip
         return None
+
+    @property
+    def toplevels(self):
+        """Returns the toplevel elements of the selection."""
+        toplevels = set()
+        for obj in self.selected:
+            if not obj.timeline:
+                # The element has been removed from the timeline. Ignore it.
+                continue
+            toplevel = obj.get_toplevel_parent()
+            toplevels.update(self.__serializable_toplevels(toplevel))
+
+        return toplevels
+
+    def __serializable_toplevels(self, toplevel):
+        """Generates the specified element if serializable, or its children."""
+        if toplevel.props.serialize:
+            yield toplevel
+        else:
+            for element in toplevel.get_children(False):
+                for child in self.__serializable_toplevels(element):
+                    yield child
 
     def __len__(self):
         return len(self.selected)
