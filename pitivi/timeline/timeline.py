@@ -1406,8 +1406,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ges_timeline = None
         self.__copied_group = None
 
-        self.markers = GES.MarkerList.new()
-
         self._createUi()
         self._createActions()
 
@@ -2047,6 +2045,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.setPipeline(project.pipeline)
             self.ruler.zoomChanged()
             self._update_ruler(project.videorate)
+            self.ruler.markersLoaded(self.ges_timeline.get_marker_list("markersTimeline"))
 
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()

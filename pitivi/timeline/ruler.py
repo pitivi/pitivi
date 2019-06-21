@@ -120,7 +120,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.scales = SCALES
 
-        self.timeline.markers.connect("marker-added", self._markerAddedToRulerCb)
+        self.markers = None
 
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
@@ -140,6 +140,13 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def timelinePositionCb(self, unused_pipeline, position):
         self.position = position
+        self.queue_draw()
+
+# Markerlist has been loaded
+
+    def markersLoaded(self, markers):
+        self.markers = markers
+        self.markers.connect("marker-added", self._markerAddedToRulerCb)
         self.queue_draw()
 
 # Gtk.Widget overrides
@@ -190,8 +197,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         drawing_context = cairo.Context(pixbuf)
         self.drawBackground(drawing_context)
         self.drawRuler(drawing_context)
-        self.drawPosition(drawing_context)
         self.drawMarkers(drawing_context)
+        self.drawPosition(drawing_context)
         pixbuf.flush()
 
         context.set_source_surface(self.pixbuf, 0.0, 0.0)
@@ -226,7 +233,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def __addMarker(self, position):
         """Add a marker to the timeline markers """
-        marker = self.timeline.markers.add(position)
+        marker = self.markers.add(position)
 
     def _markerAddedToRulerCb(self, markers, position, marker):
         self.queue_draw()
@@ -451,15 +458,16 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         semi_height = int(semi_width * 1.61803)
         y = int(3 * height / 4)
 
-        markers = self.timeline.markers.get_range(0, self.timeline.ges_timeline.props.duration)
-        for marker in markers:
-            xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
-            set_cairo_color(context, PLAYHEAD_COLOR)
+        if self.markers is not None:
+            rangeMarkers = self.markers.get_range(0, self.timeline.ges_timeline.props.duration)
+            for marker in rangeMarkers:
+                xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
+                set_cairo_color(context, (0, 0, 255))
 
-            context.set_line_width(PLAYHEAD_WIDTH * 2)
-            context.move_to(xpos, y)
-            context.line_to(xpos + semi_width, y - semi_height)
-            context.line_to(xpos, y - semi_height * 2)
-            context.line_to(xpos - semi_width, y - semi_height)
-            context.close_path()
-            context.fill()
+                context.set_line_width(PLAYHEAD_WIDTH * 2)
+                context.move_to(xpos, y)
+                context.line_to(xpos + semi_width, y - semi_height)
+                context.line_to(xpos, y - semi_height * 2)
+                context.line_to(xpos - semi_width, y - semi_height)
+                context.close_path()
+                context.fill()
