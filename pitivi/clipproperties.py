@@ -809,13 +809,22 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __update_spin_btn(self, prop):
         assert self.source
 
+        if prop == "alpha":
+            prop = "angle"
+
         try:
             spin = self.spin_buttons[prop]
             spin_handler_id = self.spin_buttons_handler_ids[prop]
         except KeyError:
             return
 
-        res, value = self.__get_source_property(prop)
+        if prop == "angle":
+            self.__rotate_effect = self._get_rotate_effect()
+            if self.__rotate_effect:
+                res, value = self.__rotate_effect.get_child_property(prop)
+        else:
+            res, value = self.__get_source_property(prop)
+
         assert res
         if spin.get_value() != value:
             # Make sure self._onValueChangedCb doesn't get called here. If that
@@ -853,9 +862,10 @@ class TransformationProperties(Gtk.Expander, Loggable):
                 self.warning("Could not get pipeline position")
                 return
         else:
-            with self.app.action_log.started("Transformation property change",
-                                             finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                             toplevel=True):
+            with self.app.action_log.started(
+                    "Transformation property change",
+                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                    toplevel=True):
                 if prop == "angle":
                     if not self._get_rotate_effect():
                         self.__rotate_effect = GES.Effect.new("rotate")
