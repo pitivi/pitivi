@@ -808,7 +808,6 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
     def __update_spin_btn(self, prop):
         assert self.source
-
         if prop == "alpha":
             prop = "angle"
 
@@ -822,6 +821,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
             self.__rotate_effect = self._get_rotate_effect()
             if self.__rotate_effect:
                 res, value = self.__rotate_effect.get_child_property(prop)
+            else:
+                res, value = True, 0
         else:
             res, value = self.__get_source_property(prop)
 
@@ -883,11 +884,9 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self.spin_buttons_handler_ids[property_name] = handler_id
 
     def _get_rotate_effect(self):
-        clip = list(self._selection)[0]
-        for effect in clip.get_top_effects():
+        for effect in self._selected_clip.get_top_effects():
             if effect.props.bin_description == "rotate":
                 return effect
-        return None
 
     def _onValueChangedCb(self, spinbtn, prop):
         if not self.source:
