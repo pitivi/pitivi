@@ -227,8 +227,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             self.__set_tooltip_text(position)
             if button == 3:
                 timeline_duration = self.timeline.ges_timeline.props.duration
-                if position <= timeline_duration:
-                    self.__addMarker(position)
+                self.__addMarker(position)
         return False
 
     def __addMarker(self, position):
@@ -288,6 +287,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.set_font_size(NORMAL_FONT_SIZE)
 
         spacing, interval_seconds, ticks = self._getSpacing(context)
+
         offset = self.pixbuf_offset % spacing
         self.drawFrameBoundaries(context)
         self.drawTicks(context, offset, spacing, interval_seconds, ticks)
@@ -297,6 +297,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # The longest timestamp we display is 0:00:00 because
         # when we display millis, they are displayed by themselves.
         min_interval_width = context.text_extents("0:00:00")[2] * 1.3
+        self.debug("min_interval_width %s", min_interval_width)
         zoom = Zoomable.zoomratio
         for interval_seconds, ticks in SCALES:
             interval_width = interval_seconds * zoom
@@ -458,8 +459,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         semi_height = int(semi_width * 1.61803)
         y = int(3 * height / 4)
 
+        start = self.pixelToNs(self.pixbuf_offset)
+        end = self.pixelToNs(context.get_target().get_width()) + start
+
         if self.markers is not None:
-            rangeMarkers = self.markers.get_range(0, self.timeline.ges_timeline.props.duration)
+            rangeMarkers = self.markers.get_range(start, end)
             for marker in rangeMarkers:
                 xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
                 set_cairo_color(context, (0, 0, 255))
