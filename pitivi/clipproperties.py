@@ -806,10 +806,14 @@ class TransformationProperties(Gtk.Expander, Loggable):
     def __source_property_changed_cb(self, unused_source, unused_element, param):
         self.__update_spin_btn(param.name)
 
-    def __update_spin_btn(self, prop):
-        assert self.source
-        if prop == "alpha":
-            prop = "angle"
+    def __effect_property_changed_cb(self, unused_source, unused_element, param):
+        self.__update_spin_btn(param.name, False)
+
+    def __update_spin_btn(self, prop, source_prop=True):
+        if source_prop:
+            assert self.source
+        else:
+            assert self.__rotate_effect
 
         try:
             spin = self.spin_buttons[prop]
@@ -871,6 +875,8 @@ class TransformationProperties(Gtk.Expander, Loggable):
                     if not self._get_rotate_effect():
                         self.__rotate_effect = GES.Effect.new("rotate")
                         self._selected_clip.add(self.__rotate_effect)
+                        self.__rotate_effect.connect("deep-notify", self.__effect_property_changed_cb)
+
                     self.__rotate_effect.set_child_property(prop, value)
                 else:
                     self.source.set_child_property(prop, value)
