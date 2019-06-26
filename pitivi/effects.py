@@ -62,67 +62,63 @@ EFFECTS_CATEGORIES = (
     (_("Colors"), (
         # Mostly "serious" stuff that relates to correction/adjustments
         # Fancier stuff goes into the "fancy" category
-        "cogcolorspace", "videobalance", "chromahold", "gamma",
-        "coloreffects", "exclusion", "burn", "dodge", "videomedian",
-        "frei0r-filter-color-distance", "frei0r-filter-threshold0r",
-        "frei0r-filter-contrast0r", "frei0r-filter-saturat0r",
-        "frei0r-filter-white-balance", "frei0r-filter-brightness",
-        "frei0r-filter-gamma", "frei0r-filter-invert0r",
-        "frei0r-filter-hueshift0r", "frei0r-filter-equaliz0r",
-        "frei0r-filter-bw0r", "frei0r-filter-glow",
-        "frei0r-filter-twolay0r", "frei0r-filter-3-point-color-balance",
-        "frei0r-filter-coloradj-rgb", "frei0r-filter-curves",
-        "frei0r-filter-levels", "frei0r-filter-primaries",
-        "frei0r-filter-sop-sat", "frei0r-filter-threelay0r",
-        "frei0r-filter-tint0r",
+        'burn', 'chromahold', 'cogcolorspace', 'coloreffects', 'dodge',
+        'exclusion', 'frei0r-filter-3-point-color-balance',
+        'frei0r-filter-brightness', 'frei0r-filter-bw0r',
+        'frei0r-filter-color-distance', 'frei0r-filter-coloradj-rgb',
+        'frei0r-filter-contrast0r', 'frei0r-filter-curves',
+        'frei0r-filter-equaliz0r', 'frei0r-filter-gamma', 'frei0r-filter-glow',
+        'frei0r-filter-hueshift0r', 'frei0r-filter-invert0r',
+        'frei0r-filter-levels', 'frei0r-filter-primaries',
+        'frei0r-filter-saturat0r', 'frei0r-filter-sop-sat',
+        'frei0r-filter-threelay0r', 'frei0r-filter-threshold0r',
+        'frei0r-filter-tint0r', 'frei0r-filter-twolay0r',
+        'frei0r-filter-white-balance', 'gamma', 'videobalance', 'videomedian',
     )),
     (_("Compositing"), (
-        "alpha", "alphacolor", "gdkpixbufoverlay",
-        "frei0r-filter-transparency", "frei0r-filter-mask0mate",
-        "frei0r-filter-alpha0ps", "frei0r-filter-alphagrad",
-        "frei0r-filter-alphaspot", "frei0r-filter-bluescreen0r",
-        "frei0r-filter-select0r",
+        'alpha', 'alphacolor', 'frei0r-filter-alpha0ps',
+        'frei0r-filter-alphagrad', 'frei0r-filter-alphaspot',
+        'frei0r-filter-bluescreen0r', 'frei0r-filter-mask0mate',
+        'frei0r-filter-select0r', 'frei0r-filter-transparency',
+        'gdkpixbufoverlay',
     )),
     (_("Noise & blur"), (
-        "gaussianblur", "diffuse", "dilate", "marble", "smooth",
-        "frei0r-filter-hqdn3d", "frei0r-filter-squareblur",
-        "frei0r-filter-sharpness", "frei0r-filter-edgeglow",
-        "frei0r-filter-facebl0r",
+        'diffuse', 'dilate', 'frei0r-filter-edgeglow', 'frei0r-filter-facebl0r',
+        'frei0r-filter-hqdn3d', 'frei0r-filter-sharpness',
+        'frei0r-filter-squareblur', 'gaussianblur', 'marble', 'smooth',
     )),
     (_("Analysis"), (
-        "videoanalyse", "videodetect", "videomark", "revtv",
-        "navigationtest", "frei0r-filter-rgb-parade",
-        "frei0r-filter-r", "frei0r-filter-g", "frei0r-filter-b",
-        "frei0r-filter-vectorscope", "frei0r-filter-luminance",
-        "frei0r-filter-opencvfacedetect", "frei0r-filter-pr0be",
-        "frei0r-filter-pr0file",
+        'frei0r-filter-b', 'frei0r-filter-g', 'frei0r-filter-luminance',
+        'frei0r-filter-opencvfacedetect', 'frei0r-filter-pr0be',
+        'frei0r-filter-pr0file', 'frei0r-filter-r', 'frei0r-filter-rgb-parade',
+        'frei0r-filter-vectorscope', 'navigationtest', 'revtv', 'videoanalyse',
+        'videodetect', 'videomark',
     )),
     (_("Geometry"), (
-        "cogscale", "aspectratiocrop", "cogdownsample", "videoscale",
-        "videocrop", "videoflip", "videobox", "gdkpixbufscale",
-        "kaleidoscope", "mirror", "pinch", "sphere", "square", "fisheye",
-        "stretch", "twirl", "waterriple", "rotate", "bulge", "circle",
-        "frei0r-filter-letterb0xed", "frei0r-filter-k-means-clustering",
-        "frei0r-filter-lens-correction", "frei0r-filter-defish0r",
-        "frei0r-filter-perspective", "frei0r-filter-c0rners",
-        "frei0r-filter-scale0tilt", "frei0r-filter-pixeliz0r",
-        "frei0r-filter-flippo", "frei0r-filter-3dflippo",
+        'aspectratiocrop', 'bulge', 'circle', 'cogdownsample', 'cogscale',
+        'fisheye', 'frei0r-filter-3dflippo', 'frei0r-filter-c0rners',
+        'frei0r-filter-defish0r', 'frei0r-filter-flippo',
+        'frei0r-filter-k-means-clustering', 'frei0r-filter-lens-correction',
+        'frei0r-filter-letterb0xed', 'frei0r-filter-perspective',
+        'frei0r-filter-pixeliz0r', 'frei0r-filter-scale0tilt', 'gdkpixbufscale',
+        'kaleidoscope', 'mirror', 'pinch', 'rotate', 'sphere', 'square',
+        'stretch', 'twirl', 'videobox', 'videocrop', 'videoflip', 'videoscale',
+        'waterriple',
     )),
     (_("Fancy"), (
-        "rippletv", "streaktv", "radioactv", "optv", "solarize",
-        "quarktv", "vertigotv", "shagadelictv", "warptv", "dicetv",
-        "agingtv", "edgetv", "bulge", "circle", "fisheye", "tunnel",
-        "kaleidoscope", "mirror", "pinch", "sphere", "square",
-        "stretch", "twirl", "waterripple", "glfiltersobel", "chromium",
-        "frei0r-filter-sobel", "frei0r-filter-cartoon",
-        "frei0r-filter-water", "frei0r-filter-nosync0r",
-        "frei0r-filter-k-means-clustering", "frei0r-filter-delay0r",
-        "frei0r-filter-distort0r", "frei0r-filter-light-graffiti",
-        "frei0r-filter-tehroxx0r", "frei0r-filter-vertigo",
+        'agingtv', 'bulge', 'chromium', 'circle', 'dicetv', 'edgetv', 'fisheye',
+        'frei0r-filter-cartoon', 'frei0r-filter-delay0r',
+        'frei0r-filter-distort0r', 'frei0r-filter-k-means-clustering',
+        'frei0r-filter-light-graffiti', 'frei0r-filter-nosync0r',
+        'frei0r-filter-sobel', 'frei0r-filter-tehroxx0r',
+        'frei0r-filter-vertigo', 'frei0r-filter-water', 'glfiltersobel',
+        'kaleidoscope', 'mirror', 'optv', 'pinch', 'quarktv', 'radioactv',
+        'rippletv', 'shagadelictv', 'solarize', 'sphere', 'square', 'streaktv',
+        'stretch', 'tunnel', 'twirl', 'vertigotv', 'warptv', 'waterripple',
     )),
     (_("Time"), (
-        "videorate", "frei0r-filter-delay0r", "frei0r-filter-baltan",
-        "frei0r-filter-nervous",
+        'frei0r-filter-baltan', 'frei0r-filter-delay0r',
+        'frei0r-filter-nervous', 'videorate',
     )),
     (_("Audio"), (
         "pitch", "freeverb", "removesilence", "festival", "speed",
@@ -131,6 +127,13 @@ EFFECTS_CATEGORIES = (
         "audioinvert", "audiokaraoke", "audioamplify", "audiodynamic",
         "audiocheblimit", "audiochebband", "audioiirfilter", "audiowsinclimit",
         "audiowsincband", "audiofirfilter", "audioecho", "scaletempo", "stereo",
+
+        'audioamplify', 'audiochebband', 'audiocheblimit', 'audiodynamic',
+        'audioecho', 'audiofirfilter', 'audioiirfilter', 'audioinvert',
+        'audiokaraoke', 'audiopanorama', 'audiorate', 'audiowsincband',
+        'audiowsinclimit', 'equalizer-10bands', 'equalizer-3bands',
+        'equalizer-nbands', 'festival', 'freeverb', 'pitch', 'removesilence',
+        'rglimiter', 'rgvolume', 'scaletempo', 'speed', 'stereo', 'volume',
     )),
 )
 
@@ -156,7 +159,8 @@ HIDDEN_EFFECTS = [
 
 GlobalSettings.addConfigSection('effect-library')
 
-ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
+ICON_WIDTH = 80
+ICON_HEIGHT = 45
 
 
 class EffectInfo(object):
@@ -182,11 +186,11 @@ class EffectInfo(object):
             # We can afford to scale the images here, the impact is negligible
             icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(pixdir, self.effect_name + ".png"),
-                ICON_WIDTH, ICON_WIDTH)
+                ICON_WIDTH, ICON_HEIGHT)
         # An empty except clause is bad, but "gi._glib.GError" is not helpful.
         except:
-            icon = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(pixdir, "defaultthumbnail.svg"))
+            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(pixdir, "defaultthumbnail.svg"), ICON_WIDTH, ICON_HEIGHT)
 
         return icon
 
@@ -332,7 +336,6 @@ class EffectsManager(Loggable):
                 categories.append(category_name)
         if not categories:
             categories.append(_("Uncategorized"))
-        categories.insert(0, _("All effects"))
         return categories
 
     @property
@@ -344,7 +347,6 @@ class EffectsManager(Loggable):
     def _getCategoriesNames(categories):
         ret = [category_name for category_name, unused_effects in categories]
         ret.sort()
-        ret.insert(0, _("All effects"))
         if categories:
             # Add Uncategorized only if there are other categories defined.
             ret.append(_("Uncategorized"))
@@ -362,6 +364,10 @@ class EffectListWidget(Gtk.Box, Loggable):
         Loggable.__init__(self)
 
         self.app = instance
+
+        self._drag_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "effects", "defaultthumbnail.svg"),
+            ICON_WIDTH, ICON_HEIGHT)
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -403,8 +409,6 @@ class EffectListWidget(Gtk.Box, Loggable):
     def _set_up_category_view(self):
         # Add category expanders
         for category in self.app.effects.categories:
-            if category == "All effects":
-                continue
             widget = self._create_category_widget(category)
             self.category_view.add(widget)
 
@@ -417,7 +421,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         self.category_view.show_all()
 
-    def _add_effects_to_listbox(self, listbox, category="All effects"):
+    def _add_effects_to_listbox(self, listbox, category=None):
         effects = self.app.effects.video_effects + self.app.effects.audio_effects
         for effect in effects:
             name = effect.get_name()
@@ -427,7 +431,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
             effect_info = self.app.effects.getInfo(name)
 
-            if category in effect_info.categories:
+            if not category or category in effect_info.categories:
                 widget = self._create_effect_widget(name)
                 listbox.add(widget)
 
@@ -471,11 +475,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         selection_data.set(drag_context.list_targets()[0], 0, data)
 
     def _drag_begin_cb(self, eventbox, context):
-        effect_box = eventbox.get_child()
-        effect_info = self.app.effects.getInfo(effect_box.effect_name)
-
         # Draw drag-icon
-        icon = effect_info.icon
+        icon = self._drag_icon
         icon_height = icon.get_height()
         icon_width = icon.get_width()
 
