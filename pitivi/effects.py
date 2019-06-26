@@ -156,7 +156,8 @@ HIDDEN_EFFECTS = [
 
 GlobalSettings.addConfigSection('effect-library')
 
-ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
+ICON_WIDTH = 80
+ICON_HEIGHT = 45
 
 
 class EffectInfo(object):
@@ -182,11 +183,11 @@ class EffectInfo(object):
             # We can afford to scale the images here, the impact is negligible
             icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(pixdir, self.effect_name + ".png"),
-                ICON_WIDTH, ICON_WIDTH)
+                ICON_WIDTH, ICON_HEIGHT)
         # An empty except clause is bad, but "gi._glib.GError" is not helpful.
         except:
-            icon = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(pixdir, "defaultthumbnail.svg"))
+            icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                os.path.join(pixdir, "defaultthumbnail.svg"), ICON_WIDTH, ICON_HEIGHT)
 
         return icon
 
@@ -363,6 +364,10 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         self.app = instance
 
+        self._drag_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "effects", "defaultthumbnail.svg"),
+            ICON_WIDTH, ICON_HEIGHT)
+
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "effectslibrary.ui"))
@@ -475,7 +480,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         effect_info = self.app.effects.getInfo(effect_box.effect_name)
 
         # Draw drag-icon
-        icon = effect_info.icon
+        icon = self._drag_icon
         icon_height = icon.get_height()
         icon_width = icon.get_width()
 
