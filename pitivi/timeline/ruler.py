@@ -122,6 +122,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.markers = None
 
+        self.selectedMarker = None
+
         self._build_context_menu()
 
     def _hadj_value_changed_cb(self, hadj):
@@ -213,11 +215,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             return False
 
         button = event.button
+
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button pressed at x:%d", event.x)
             position = self.pixelToNs(event.x + self.pixbuf_offset)
-            self._pipeline.simple_seek(position)
+            if button == 1:
+                if(not self.selectMarker(position)):
+                    self._pipeline.simple_seek(position)
+            else:
+                self._pipeline.simple_seek(position)
             self.__set_tooltip_text(position, True)
+
         return False
 
     def do_button_release_event(self, event):
@@ -247,6 +255,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         marker = self.markers.add(position)
 
     def _markerAddedToRulerCb(self, markers, position, marker):
+        self.selectedMarker = marker
         self.queue_draw()
 
     def do_motion_notify_event(self, event):
@@ -477,8 +486,12 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         if self.markers is not None:
             rangeMarkers = self.markers.get_range(start, end)
             for marker in rangeMarkers:
-                xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
-                set_cairo_color(context, (0, 0, 255))
+                if marker == self.selectedMarker:
+                    xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
+                    set_cairo_color(context, (0, 255, 0))
+                else:
+                    xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
+                    set_cairo_color(context, (0, 0, 255))
 
                 context.set_line_width(PLAYHEAD_WIDTH * 2)
                 context.move_to(xpos, y)
@@ -487,3 +500,17 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
                 context.line_to(xpos - semi_width, y - semi_height)
                 context.close_path()
                 context.fill()
+
+    def selectMarker(self, position):
+
+        offset = self.pixelToNs(4)
+
+        rangeMarkers = self.markers.get_range(position - offset, position + offset)
+
+        if len(rangeMarkers) is 0:
+            self.selectedMarker = None
+            return False
+        else:
+            self.selectedMarker = rangeMarkers[0]
+            self.queue_draw()
+            return True
