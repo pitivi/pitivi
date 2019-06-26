@@ -122,6 +122,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.markers = None
 
+        self._build_context_menu()
+
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
         self.pixbuf_offset = hadj.get_value()
@@ -226,9 +228,19 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
             if button == 3:
+                self.cmenu.popup_at_pointer()
                 timeline_duration = self.timeline.ges_timeline.props.duration
-                self.__addMarker(position)
         return False
+
+    def _build_context_menu(self):
+        self.cmenu = Gtk.Menu.new()
+        self.cm_item1 = Gtk.MenuItem.new_with_label('add marker')
+        self.cmenu.append(self.cm_item1)
+        self.cm_item1.connect("activate", self._menu_add_marker_cb)
+        self.cmenu.show_all()
+
+    def _menu_add_marker_cb(self, unused):
+        self.__addMarker(self.position)
 
     def __addMarker(self, position):
         """Add a marker to the timeline markers """
