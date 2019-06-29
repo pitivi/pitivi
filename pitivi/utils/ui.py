@@ -224,6 +224,10 @@ EDITOR_PERSPECTIVE_CSS = """
         background-color: rgba(224, 224, 224, 0.7);
     }
 
+    .MarkersContainer {
+        background-color: rgba(224, 224, 224, 0.5);
+    }
+
 """ % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
 

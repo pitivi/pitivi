@@ -120,12 +120,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
         self.scales = SCALES
 
-        self.markers = None
-
-        self.selectedMarker = None
-
-        self._build_context_menu()
-
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
         self.pixbuf_offset = hadj.get_value()
@@ -144,13 +138,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
 
     def timelinePositionCb(self, unused_pipeline, position):
         self.position = position
-        self.queue_draw()
-
-# Markerlist has been loaded
-
-    def markersLoaded(self, markers):
-        self.markers = markers
-        self.markers.connect("marker-added", self._markerAddedToRulerCb)
         self.queue_draw()
 
 # Gtk.Widget overrides
@@ -201,7 +188,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         drawing_context = cairo.Context(pixbuf)
         self.drawBackground(drawing_context)
         self.drawRuler(drawing_context)
-        self.drawMarkers(drawing_context)
         self.drawPosition(drawing_context)
         pixbuf.flush()
 
@@ -215,17 +201,11 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             return False
 
         button = event.button
-
         if button == 3 or (button == 1 and self.app.settings.leftClickAlsoSeeks):
             self.debug("button pressed at x:%d", event.x)
             position = self.pixelToNs(event.x + self.pixbuf_offset)
-            if button == 1:
-                if(not self.selectMarker(position)):
-                    self._pipeline.simple_seek(position)
-            else:
-                self._pipeline.simple_seek(position)
+            self._pipeline.simple_seek(position)
             self.__set_tooltip_text(position, True)
-
         return False
 
     def do_button_release_event(self, event):
@@ -235,28 +215,7 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
             self.app.gui.editor.focusTimeline()
             position = self.pixelToNs(event.x + self.pixbuf_offset)
             self.__set_tooltip_text(position)
-            if button == 3:
-                self.cmenu.popup_at_pointer()
-                timeline_duration = self.timeline.ges_timeline.props.duration
         return False
-
-    def _build_context_menu(self):
-        self.cmenu = Gtk.Menu.new()
-        self.cm_item1 = Gtk.MenuItem.new_with_label('add marker')
-        self.cmenu.append(self.cm_item1)
-        self.cm_item1.connect("activate", self._menu_add_marker_cb)
-        self.cmenu.show_all()
-
-    def _menu_add_marker_cb(self, unused):
-        self.__addMarker(self.position)
-
-    def __addMarker(self, position):
-        """Add a marker to the timeline markers """
-        marker = self.markers.add(position)
-
-    def _markerAddedToRulerCb(self, markers, position, marker):
-        self.selectedMarker = marker
-        self.queue_draw()
 
     def do_motion_notify_event(self, event):
         if not self._pipeline:
@@ -308,7 +267,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.set_font_size(NORMAL_FONT_SIZE)
 
         spacing, interval_seconds, ticks = self._getSpacing(context)
-
         offset = self.pixbuf_offset % spacing
         self.drawFrameBoundaries(context)
         self.drawTicks(context, offset, spacing, interval_seconds, ticks)
@@ -318,7 +276,6 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # The longest timestamp we display is 0:00:00 because
         # when we display millis, they are displayed by themselves.
         min_interval_width = context.text_extents("0:00:00")[2] * 1.3
-        self.debug("min_interval_width %s", min_interval_width)
         zoom = Zoomable.zoomratio
         for interval_seconds, ticks in SCALES:
             interval_width = interval_seconds * zoom
@@ -470,47 +427,3 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         context.line_to(xpos - semi_width, y - semi_height)
         context.close_path()
         context.stroke()
-
-    def drawMarkers(self, context):
-        """Draws the ruler markers """
-
-        height = self.pixbuf.get_height()
-
-        semi_width = 4
-        semi_height = int(semi_width * 1.61803)
-        y = int(3 * height / 4)
-
-        start = self.pixelToNs(self.pixbuf_offset)
-        end = self.pixelToNs(context.get_target().get_width()) + start
-
-        if self.markers is not None:
-            rangeMarkers = self.markers.get_range(start, end)
-            for marker in rangeMarkers:
-                if marker == self.selectedMarker:
-                    xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
-                    set_cairo_color(context, (0, 255, 0))
-                else:
-                    xpos = self.nsToPixel(marker.props.position) - self.pixbuf_offset
-                    set_cairo_color(context, (0, 0, 255))
-
-                context.set_line_width(PLAYHEAD_WIDTH * 2)
-                context.move_to(xpos, y)
-                context.line_to(xpos + semi_width, y - semi_height)
-                context.line_to(xpos, y - semi_height * 2)
-                context.line_to(xpos - semi_width, y - semi_height)
-                context.close_path()
-                context.fill()
-
-    def selectMarker(self, position):
-
-        offset = self.pixelToNs(4)
-
-        rangeMarkers = self.markers.get_range(position - offset, position + offset)
-
-        if len(rangeMarkers) is 0:
-            self.selectedMarker = None
-            return False
-        else:
-            self.selectedMarker = rangeMarkers[0]
-            self.queue_draw()
-            return True
