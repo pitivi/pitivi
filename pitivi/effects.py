@@ -154,6 +154,10 @@ HIDDEN_EFFECTS = [
     "gdkpixbufoverlay"]
 
 GlobalSettings.add_config_section('effect-library')
+GlobalSettings.add_config_option('favourite_effects',
+                                 section='effect-library',
+                                 key='favourite-effects',
+                                 default=[])
 
 ICON_WIDTH = 80
 ICON_HEIGHT = 45
@@ -363,6 +367,10 @@ class EffectListWidget(Gtk.Box, Loggable):
         self._drag_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
             os.path.join(get_pixmap_dir(), "effects", "defaultthumbnail.svg"),
             ICON_WIDTH, ICON_HEIGHT)
+        self._star_icon_regular = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "star-regular.svg"), 15, 15)
+        self._star_icon_solid = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "star-solid.svg"), 15, 15)
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -371,12 +379,20 @@ class EffectListWidget(Gtk.Box, Loggable):
         toolbar = builder.get_object("effectslibrary_toolbar")
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self.search_entry = builder.get_object("search_entry")
+        self.fav_view_toggle = builder.get_object("favourites_toggle")
+        self.fav_view_toggle.set_image(Gtk.Image.new_from_pixbuf(self._star_icon_solid))
 
         self.main_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
         self.category_view = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        # Used for showing search results and favourites
         self.search_view = Gtk.ListBox(activate_on_single_click=False)
         self.search_view.connect("row-activated", self.effects_listbox_row_activated_cb)
-        self.search_view.set_filter_func(self._search_filter)
+
+        placeholder_text = Gtk.Label(_("No effects"))
+        placeholder_text.props.visible = True
+        self.search_view.set_placeholder(placeholder_text)
 
         self.main_view.pack_start(self.category_view, True, True, 0)
         self.main_view.pack_start(self.search_view, True, True, 0)
@@ -402,6 +418,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         self._add_effects_to_listbox(self.search_view)
 
     def _set_up_category_view(self):
+        """Adds expanders and effects to the category view."""
         # Add category expanders
         for category in self.app.effects.categories:
             widget = self._create_category_widget(category)
@@ -417,6 +434,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         self.category_view.show_all()
 
     def _add_effects_to_listbox(self, listbox, category=None):
+        """Adds effect rows to the given listbox."""
         effects = self.app.effects.video_effects + self.app.effects.audio_effects
         for effect in effects:
             name = effect.get_name()
@@ -431,6 +449,7 @@ class EffectListWidget(Gtk.Box, Loggable):
                 listbox.add(widget)
 
     def _create_category_widget(self, category):
+        """Creates an expander for the given category."""
         expander = Gtk.Expander(label=category, margin=SPACING)
 
         listbox = Gtk.ListBox(activate_on_single_click=False)
@@ -441,6 +460,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         return expander
 
     def _create_effect_widget(self, effect_name):
+        """Creates list box row for the given effect."""
         effect_info = self.app.effects.get_info(effect_name)
 
         effect_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, margin=SPACING / 2)
@@ -449,8 +469,20 @@ class EffectListWidget(Gtk.Box, Loggable):
         label = Gtk.Label(effect_info.human_name, xalign=0)
         icon = Gtk.Image.new_from_pixbuf(effect_info.icon)
 
+        # Set up favourite button
+        fav_button = Gtk.Button()
+        fav_button.props.relief = Gtk.ReliefStyle.NONE
+        fav_button.props.halign = Gtk.Align.CENTER
+        fav_button.props.valign = Gtk.Align.CENTER
+        fav_button.set_tooltip_text(_("Add to Favourites"))
+
+        starred = effect_name in self.app.settings.favourite_effects
+        self._set_fav_button_state(fav_button, starred)
+        fav_button.connect("clicked", self._fav_button_clicked_cb, effect_box.effect_name)
+
         effect_box.pack_start(icon, False, True, SPACING / 2)
         effect_box.pack_start(label, True, True, 0)
+        effect_box.pack_end(fav_button, False, True, SPACING / 2)
 
         # Set up drag behavoir
         eventbox = Gtk.EventBox(visible_window=False)
@@ -461,6 +493,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         row = Gtk.ListBoxRow(selectable=False)
         row.add(eventbox)
+        row.show_all()
 
         return row
 
@@ -509,7 +542,65 @@ class EffectListWidget(Gtk.Box, Loggable):
                                          toplevel=True):
             clip.ui.add_effect(effect_info)
 
+    def _set_fav_button_state(self, button, is_active):
+        """Manages the state of the favourite button."""
+        button.active = is_active
+
+        if button.active:
+            image = Gtk.Image.new_from_pixbuf(self._star_icon_solid)
+        else:
+            image = Gtk.Image.new_from_pixbuf(self._star_icon_regular)
+
+        button.props.image = image
+
+    def _fav_button_clicked_cb(self, clicked_button, effect):
+        """Adds effect to favourites and syncs the state of favourite button."""
+        # Toggle the state of clicked button
+        self._set_fav_button_state(clicked_button, not clicked_button.active)
+
+        # Get all listboxes which contain the effect
+        effect_info = self.app.effects.get_info(effect)
+        all_effect_listboxes = [category_expander.get_child()
+                                for category_expander in self.category_view.get_children()
+                                if category_expander.get_label() in effect_info.categories]
+        all_effect_listboxes.append(self.search_view)
+
+        # Find and sync state in other listboxes
+        for listbox in all_effect_listboxes:
+            for row in listbox.get_children():
+                effect_box = row.get_child().get_child()
+                if effect == effect_box.effect_name:
+                    fav_button = effect_box.get_children()[2]
+                    # Sync the state with the clicked button
+                    self._set_fav_button_state(fav_button, clicked_button.active)
+
+        # Update the favourites list
+        if clicked_button.active:
+            self.app.settings.favourite_effects.append(effect)
+        else:
+            self.app.settings.favourite_effects = \
+                [fav for fav in self.app.settings.favourite_effects if fav != effect]
+        self.search_view.invalidate_filter()
+
+    def _favourites_filter(self, row):
+        """Filters search_view to show favourites."""
+        effect_box = row.get_child().get_child()
+        effect_name = effect_box.effect_name
+
+        return effect_name in self.app.settings.favourite_effects
+
+    def _favourites_toggle_cb(self, toggle):
+        """Manages the visiblity and filtering of Favourites in search_view."""
+        if toggle.get_active():
+            self.search_entry.set_text("")
+            self.search_view.set_filter_func(self._favourites_filter)
+            self.search_view.invalidate_filter()
+            self._switch_to_view(self.search_view)
+        else:
+            self._switch_to_view(self.category_view)
+
     def _search_filter(self, row):
+        """Filters search_view to show search results."""
         effect_box = row.get_child().get_child()
         label = effect_box.get_children()[1]
 
@@ -519,16 +610,26 @@ class EffectListWidget(Gtk.Box, Loggable):
         return search_key in label_text
 
     def _search_entry_changed_cb(self, search_entry):
+        """Manages the visiblity and filtering search results in search_view."""
         if search_entry.get_text():
+            self.fav_view_toggle.props.active = False
+            self.search_view.set_filter_func(self._search_filter)
             self.search_view.invalidate_filter()
-            self.search_view.show_all()
-            self.category_view.hide()
+            self._switch_to_view(self.search_view)
         else:
-            self.category_view.show()
-            self.search_view.hide()
+            self._switch_to_view(self.category_view)
 
     def _search_entry_icon_release_cb(self, entry, icon_pos, event):
         entry.set_text("")
+
+    def _switch_to_view(self, next_view):
+        """Shows next_view and hides all other views."""
+        if next_view.props.visible:
+            # It's already visible, no need to switch to it.
+            return
+
+        for child_view in self.main_view.get_children():
+            child_view.props.visible = child_view == next_view
 
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
