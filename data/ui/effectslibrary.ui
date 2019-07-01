@@ -12,7 +12,14 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <placeholder/>
+          <object class="GtkToggleButton" id="favourites_toggle">
+            <property name="label" translatable="yes">Favourites</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="always_show_image">True</property>
+            <signal name="toggled" handler="_favourites_toggle_cb" swapped="no"/>
+          </object>
         </child>
       </object>
       <packing>
