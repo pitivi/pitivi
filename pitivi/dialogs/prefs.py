@@ -28,6 +28,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from pitivi.configure import get_ui_dir
+from pitivi.configure import get_user_plugins_dir
 from pitivi.pluginmanager import PluginManager
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
@@ -867,6 +868,13 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
         self._infobar_label = Gtk.Label()
         self._setup_infobar()
 
+        note_label = Gtk.Label.new()
+        note_label.set_markup(_("You can create <a href='{doc_url}'>plugins</a> into your <a href='{dir_url}'>plugins directory</a>.").format(
+            doc_url="http://developer.pitivi.org/Plugins.html",
+            dir_url=GLib.filename_to_uri(get_user_plugins_dir(), None)))
+        note_label.props.margin_top = PADDING * 4
+        note_label.props.margin_bottom = PADDING * 2
+
         wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(wrapper_box)
         self.set_min_content_height(500)
@@ -874,6 +882,7 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
 
         wrapper_box.pack_start(self._infobar_revealer, expand=False, fill=False, padding=0)
         wrapper_box.pack_start(plugins_box, expand=False, fill=False, padding=0)
+        wrapper_box.pack_start(note_label, expand=False, fill=False, padding=0)
 
         # Helpers
         self._infobar_timer = None
