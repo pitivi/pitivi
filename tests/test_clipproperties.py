@@ -85,7 +85,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks the spin buttons update when the source properties change."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
 
         # Add a clip and select it
@@ -114,7 +114,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks the spin buttons changing updates the source properties."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
 
         # Add a clip and select it
@@ -148,7 +148,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks the spin buttons update when the selected clip changes."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         spin_buttons = transformation_box.spin_buttons
 
         # Add two clips and select the first one
@@ -181,7 +181,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks transformation properties keyframes activation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
         clip = self.addClipsSimple(timeline, 1)[0]
@@ -216,7 +216,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks keyframe creation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
         spin_buttons = transformation_box.spin_buttons
 
@@ -249,7 +249,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks keyframe navigation."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
         pipeline = timeline._project.pipeline
 
         # Add a clip and select it
@@ -298,7 +298,7 @@ class TransformationPropertiesTest(BaseTestTimeline):
         """Checks "reset to default" button."""
         # Create transformation box
         transformation_box = self.setup_transformation_box()
-        timeline = transformation_box.app.gui.timeline_ui.timeline
+        timeline = transformation_box.app.gui.editor.timeline_ui.timeline
 
         # Add a clip and select it
         clip = self.addClipsSimple(timeline, 1)[0]

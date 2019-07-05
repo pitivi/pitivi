@@ -936,7 +936,7 @@ class TestGObjectObserver(BaseTestUndoTimeline):
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
         # We are not dropping clips here...
-        self.app.gui.timeline_ui.timeline.dropping_clips = False
+        self.app.gui.editor.timeline_ui.timeline.dropping_clips = False
 
         clip1 = GES.TitleClip()
         clip1.set_start(5 * Gst.SECOND)
