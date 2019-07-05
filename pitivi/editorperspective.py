@@ -498,29 +498,20 @@ class EditorPerspective(Perspective, Loggable):
         else:
             save = _("Save as...")
 
-        dialog = Gtk.Dialog(title="", transient_for=self.app.gui, modal=True)
-        dialog.add_buttons(_("Close without saving"), Gtk.ResponseType.REJECT,
-                           _("Cancel"), Gtk.ResponseType.CANCEL,
+        dialog = Gtk.MessageDialog(transient_for=self.app.gui, modal=True)
+        reject_btn = dialog.add_button(_("Close without saving"),
+                                       Gtk.ResponseType.REJECT)
+
+        dialog.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                            save, Gtk.ResponseType.YES)
-        # Even though we set the title to an empty string when creating dialog,
-        # seems we really have to do it once more so it doesn't show
-        # "pitivi"...
-        dialog.set_resizable(False)
+
         dialog.set_default_response(Gtk.ResponseType.CANCEL)
         dialog.get_accessible().set_name("unsaved changes dialog")
+        reject_btn.get_style_context().add_class("destructive-action")
 
-        primary = Gtk.Label()
-        primary.set_line_wrap(True)
-        primary.set_use_markup(True)
-        primary.set_alignment(0, 0.5)
-
-        message = _("Save changes to the current project before closing?")
-        primary.set_markup("<span weight=\"bold\">" + message + "</span>")
-
-        secondary = Gtk.Label()
-        secondary.set_line_wrap(True)
-        secondary.set_use_markup(True)
-        secondary.set_alignment(0, 0.5)
+        primary = _("Save changes to the current project before closing?")
+        dialog.props.use_markup = True
+        dialog.props.text = "<span weight=\"bold\">" + primary + "</span>"
 
         if project.uri:
             path = unquote(project.uri).split("file://")[1]
@@ -532,31 +523,12 @@ class EditorPerspective(Perspective, Loggable):
                 beautify_time_delta(time_delta)
         else:
             message = _("If you don't save, your changes will be lost.")
-        secondary.props.label = message
 
-        # put the text in a vbox
-        vbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
-        vbox.set_orientation(Gtk.Orientation.VERTICAL)
-        vbox.pack_start(primary, True, True, 0)
-        vbox.pack_start(secondary, True, True, 0)
-
-        # make the [[image] text] hbox
-        image = Gtk.Image.new_from_icon_name(
-            "dialog-question", Gtk.IconSize.DIALOG)
-        hbox = Gtk.Box(homogeneous=False, spacing=SPACING * 2)
-        hbox.set_orientation(Gtk.Orientation.HORIZONTAL)
-        hbox.pack_start(image, False, False, 0)
-        hbox.pack_start(vbox, True, True, 0)
-        hbox.set_border_width(SPACING)
-
-        # stuff the hbox in the dialog
-        content_area = dialog.get_content_area()
-        content_area.pack_start(hbox, True, True, 0)
-        content_area.set_spacing(SPACING * 2)
-        hbox.show_all()
+        dialog.props.secondary_text = message
 
         response = dialog.run()
         dialog.destroy()
+
         if response == Gtk.ResponseType.YES:
             if project.uri is not None and project_manager.disable_save is False:
                 res = self.app.project_manager.saveProject()

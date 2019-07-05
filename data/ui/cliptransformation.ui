@@ -161,7 +161,7 @@
         <property name="layout_style">expand</property>
         <child>
           <object class="GtkButton" id="prev_keyframe_button">
-            <property name="label" translatable="yes">&lt;</property>
+            <property name="label" translatable="no">&lt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -177,7 +177,7 @@
         </child>
         <child>
           <object class="GtkButton" id="next_keyframe_button">
-            <property name="label" translatable="yes">&gt;</property>
+            <property name="label" translatable="no">&gt;</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>
@@ -193,7 +193,7 @@
         </child>
         <child>
           <object class="GtkToggleButton" id="activate_keyframes_button">
-            <property name="label" translatable="yes">◇</property>
+            <property name="label" translatable="no">◇</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="focus_on_click">False</property>

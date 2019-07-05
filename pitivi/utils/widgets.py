@@ -452,25 +452,28 @@ class FractionWidget(TextWidget, DynamicWidget):
 class ToggleWidget(Gtk.Box, DynamicWidget):
     """Widget for entering an on/off value."""
 
-    def __init__(self, default=None, check_button=None):
+    def __init__(self, default=None, switch_button=None):
         Gtk.Box.__init__(self)
         DynamicWidget.__init__(self, default)
-        if check_button is None:
-            self.check_button = Gtk.CheckButton()
-            self.pack_start(self.check_button, expand=False, fill=False, padding=0)
-            self.check_button.show()
+        if switch_button is None:
+            self.switch_button = Gtk.Switch()
+            self.pack_start(self.switch_button, expand=False, fill=False, padding=0)
+            self.switch_button.show()
         else:
-            self.check_button = check_button
+            self.switch_button = switch_button
             self.setWidgetToDefault()
 
     def connectValueChanged(self, callback, *args):
-        self.check_button.connect("toggled", callback, *args)
+        def callback_wrapper(switch_button, unused_state):
+            callback(switch_button, *args)
+
+        self.switch_button.connect("state-set", callback_wrapper)
 
     def setWidgetValue(self, value):
-        self.check_button.set_active(value)
+        self.switch_button.set_active(value)
 
     def getWidgetValue(self):
-        return self.check_button.get_active()
+        return self.switch_button.get_active()
 
 
 class ChoiceWidget(Gtk.Box, DynamicWidget):
@@ -645,7 +648,7 @@ def make_widget_wrapper(prop, widget):
         widget_lower = widget_adjustment.props.lower
         widget_upper = widget_adjustment.props.upper
         return NumericWidget(upper=widget_upper, lower=widget_lower, adjustment=widget_adjustment, default=prop.default_value)
-    elif isinstance(widget, Gtk.CheckButton):
+    elif isinstance(widget, Gtk.Switch):
         return ToggleWidget(prop.default_value, widget)
     else:
         Loggable().fixme("%s has not been wrapped into a Dynamic Widget", widget)
@@ -899,15 +902,10 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             except KeyError:
                 widget = prop_widget
 
-            if isinstance(prop_widget, ToggleWidget):
-                prop_widget.check_button.set_label(prop.nick)
-                grid.attach(widget, 0, y, 2, 1)
-            else:
-                text = _("%(preference_label)s:") % {"preference_label": prop.nick}
-                label = Gtk.Label(label=text)
-                label.set_alignment(0.0, 0.5)
-                grid.attach(label, 0, y, 1, 1)
-                grid.attach(widget, 1, y, 1, 1)
+            label = Gtk.Label(label=prop.nick)
+            label.set_alignment(0.0, 0.5)
+            grid.attach(label, 0, y, 1, 1)
+            grid.attach(widget, 1, y, 1, 1)
             if hasattr(prop, 'blurb'):
                 widget.set_tooltip_text(prop.blurb)
 
@@ -1212,88 +1210,6 @@ class GstElementSettingsDialog(Loggable):
             widget.setWidgetToDefault()
 
 
-class BaseTabs(Gtk.Notebook):
-
-    def __init__(self, app, hide_hpaned=False):
-        Gtk.Notebook.__init__(self)
-        self.set_border_width(SPACING)
-
-        self.connect("create-window", self._createWindowCb)
-        self._hide_hpaned = hide_hpaned
-        self.app = app
-        self._createUi()
-
-    def _createUi(self):
-        """Sets up the GUI."""
-        settings = self.get_settings()
-        settings.props.gtk_dnd_drag_threshold = 1
-        self.set_tab_pos(Gtk.PositionType.TOP)
-
-    def append_page(self, child, label):
-        Gtk.Notebook.append_page(self, child, label)
-        self._set_child_properties(child, label)
-        child.show()
-        label.show()
-
-    def _set_child_properties(self, child, label):
-        self.child_set_property(child, "detachable", True)
-        self.child_set_property(child, "tab-expand", False)
-        self.child_set_property(child, "tab-fill", True)
-        label.props.xalign = 0.0
-
-    def _detachedComponentWindowDestroyCb(self, window, child,
-                                          original_position, label):
-        notebook = window.get_child()
-        position = notebook.child_get_property(child, "position")
-        notebook.remove_page(position)
-        label = Gtk.Label(label=label)
-        self.insert_page(child, label, original_position)
-        self._set_child_properties(child, label)
-        self.child_set_property(child, "detachable", True)
-
-        if self._hide_hpaned:
-            self._showSecondHpanedInMainWindow()
-
-    def _createWindowCb(self, unused_from_notebook, child, x, y):
-        original_position = self.child_get_property(child, "position")
-        label = self.child_get_property(child, "tab-label")
-        window = Gtk.Window()
-        window.set_type_hint(Gdk.WindowTypeHint.UTILITY)
-
-        window.set_title(label)
-        window.set_default_size(600, 400)
-        window.connect("destroy", self._detachedComponentWindowDestroyCb,
-                       child, original_position, label)
-        notebook = Gtk.Notebook()
-        notebook.props.show_tabs = False
-        window.add(notebook)
-
-        window.show_all()
-        # set_uposition is deprecated but what should I use instead?
-        window.set_uposition(x, y)
-
-        if self._hide_hpaned:
-            self._hideSecondHpanedInMainWindow()
-
-        return notebook
-
-    def _hideSecondHpanedInMainWindow(self):
-        self.app.gui.editor.mainhpaned.remove(self.app.gui.editor.secondhpaned)
-        self.app.gui.editor.secondhpaned.remove(self.app.gui.editor.projecttabs)
-        self.app.gui.editor.secondhpaned.remove(self.app.gui.editor.propertiestabs)
-        self.app.gui.editor.mainhpaned.pack1(self.app.gui.editor.projecttabs,
-                                             resize=True, shrink=False)
-
-    def _showSecondHpanedInMainWindow(self):
-        self.app.gui.editor.mainhpaned.remove(self.app.gui.editor.projecttabs)
-        self.app.gui.editor.secondhpaned.pack1(self.app.gui.editor.projecttabs,
-                                               resize=True, shrink=False)
-        self.app.gui.editor.secondhpaned.pack2(self.app.gui.editor.propertiestabs,
-                                               resize=True, shrink=False)
-        self.app.gui.editor.mainhpaned.pack1(self.app.gui.editor.secondhpaned,
-                                             resize=True, shrink=False)
-
-
 class ZoomBox(Gtk.Grid, Zoomable):
     """Container holding the widgets for zooming.
 
@@ -1354,8 +1270,8 @@ class ZoomBox(Gtk.Grid, Zoomable):
                                        level=adjustment.get_value(),
                                        optional_action_type=True)
 
-        if self._manual_set is False:
-            self.timeline.timeline.scrollToPlayhead()
+        if not self._manual_set:
+            self.timeline.timeline.scrollToPlayhead(delayed=True)
 
     def _zoomFitCb(self, unused_button):
         self.timeline.timeline.set_best_zoom_ratio(allow_zoom_in=True)
@@ -1379,8 +1295,10 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoomLevel = self.getCurrentZoomLevel()
         if int(self._zoomAdjustment.get_value()) != zoomLevel:
             self._manual_set = True
-            self._zoomAdjustment.set_value(zoomLevel)
-            self._manual_set = False
+            try:
+                self._zoomAdjustment.set_value(zoomLevel)
+            finally:
+                self._manual_set = False
 
     def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
         # We assume the width of the ruler is exactly the width of the

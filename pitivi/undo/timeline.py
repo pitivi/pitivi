@@ -174,7 +174,8 @@ class TrackElementAction(UndoableAction):
             self.track_element_props.append((prop_name, value))
 
     def add(self):
-        assert self.clip.add(self.track_element)
+        res = self.clip.add(self.track_element)
+        assert res
         for prop_name, prop_value in self.track_element_props:
             self.track_element.set_child_property(prop_name, prop_value)
 
@@ -286,20 +287,23 @@ class ClipAction(UndoableAction):
 
     def add(self):
         self.clip.set_name(None)
+        timeline = self.layer.get_timeline()
         children = self.clip.get_children(False)
-        self.layer.add_clip(self.clip)
-        # GES adds children if the clip had none. Make sure they are removed.
-        for child in self.clip.get_children(False):
-            if child not in children:
-                self.clip.remove(child)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
 
-    def _child_added_cb(self, clip, track_element):
-        clip.remove(track_element)
+        def child_added_cb(clip, elem):
+            if elem not in children:
+                clip.remove(elem)
+                GObject.signal_stop_emission_by_name(clip, "child-added")
+
+        self.clip.connect("child-added", child_added_cb)
+        try:
+            res = self.layer.add_clip(self.clip)
+            assert res
+        finally:
+            self.clip.disconnect_by_func(child_added_cb)
 
     def remove(self):
         self.layer.remove_clip(self.clip)
-        self.layer.get_timeline().get_asset().pipeline.commit_timeline()
 
 
 class ClipAdded(ClipAction):
@@ -609,7 +613,8 @@ class ControlSourceSetAction(UndoableAction):
                                               self.property_name, self.binding_type)
 
     def undo(self):
-        assert self.track_element.remove_control_binding(self.property_name)
+        res = self.track_element.remove_control_binding(self.property_name)
+        assert res
 
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("set-control-source")
@@ -631,7 +636,8 @@ class ControlSourceRemoveAction(UndoableAction):
         self.binding_type = "direct-absolute" if binding.props.absolute else "direct"
 
     def do(self):
-        assert self.track_element.remove_control_binding(self.property_name)
+        res = self.track_element.remove_control_binding(self.property_name)
+        assert res
 
     def undo(self):
         self.track_element.set_control_source(self.control_source,

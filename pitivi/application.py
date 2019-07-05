@@ -65,7 +65,7 @@ class Pitivi(Gtk.Application, Loggable):
     """
 
     __gsignals__ = {
-        "version-info-received": (GObject.SIGNAL_RUN_LAST, None, (object,))
+        "version-info-received": (GObject.SignalFlags.RUN_LAST, None, (object,))
     }
 
     def __init__(self):

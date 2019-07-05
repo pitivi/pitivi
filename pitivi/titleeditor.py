@@ -32,6 +32,7 @@ from pitivi.utils.timeline import SELECT
 from pitivi.utils.ui import argb_to_gdk_rgba
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import gdk_rgba_to_argb
+from pitivi.utils.widgets import ColorPickerButton
 
 GlobalSettings.addConfigOption('titleClipLength',
                                section="user-interface",
@@ -49,8 +50,8 @@ PreferencesDialog.addNumericPreference('titleClipLength',
 FOREGROUND_DEFAULT_COLOR = 0xFFFFFFFF  # White
 BACKGROUND_DEFAULT_COLOR = 0x00000000  # Transparent
 DEFAULT_FONT_DESCRIPTION = "Sans 36"
-DEFAULT_VALIGNMENT = GES.TextVAlign.ABSOLUTE.real
-DEFAULT_HALIGNMENT = GES.TextHAlign.ABSOLUTE.real
+DEFAULT_VALIGNMENT = "absolute"
+DEFAULT_HALIGNMENT = "absolute"
 
 
 class TitleEditor(Loggable):
@@ -86,10 +87,9 @@ class TitleEditor(Loggable):
         self.widget = builder.get_object("box1")  # To be used by tabsmanager
         self.infobar = builder.get_object("infobar")
         fix_infobar(self.infobar)
-        self.editing_box = builder.get_object("editing_box")
+        self.editing_box = builder.get_object("base_table")
+
         self.textarea = builder.get_object("textview")
-        toolbar = builder.get_object("toolbar")
-        toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
 
         self.textbuffer = self.textarea.props.buffer
         self.textbuffer.connect("changed", self._textChangedCb)
@@ -97,6 +97,18 @@ class TitleEditor(Loggable):
         self.font_button = builder.get_object("fontbutton1")
         self.foreground_color_button = builder.get_object("fore_text_color")
         self.background_color_button = builder.get_object("back_color")
+
+        self.color_picker_foreground_widget = ColorPickerButton()
+        self.color_picker_foreground_widget.show()
+        self.color_picker_foreground = builder.get_object("color_picker_foreground")
+        self.color_picker_foreground.add(self.color_picker_foreground_widget)
+        self.color_picker_foreground_widget.connect("value-changed", self._color_picker_value_changed_cb, self.foreground_color_button, "color")
+
+        self.color_picker_background_widget = ColorPickerButton()
+        self.color_picker_background_widget.show()
+        self.background_color_picker = builder.get_object("color_picker_background")
+        self.background_color_picker.add(self.color_picker_background_widget)
+        self.color_picker_background_widget.connect("value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
 
         settings = ["valignment", "halignment", "x-absolute", "y-absolute"]
         for setting in settings:
@@ -120,9 +132,21 @@ class TitleEditor(Loggable):
                                          toplevel=True):
             self._setting_props = True
             try:
-                assert self.source.set_child_property(name, value)
+                res = self.source.set_child_property(name, value)
+                assert res
             finally:
                 self._setting_props = False
+
+    def _color_picker_value_changed_cb(self, widget, colorButton, colorLayer):
+        argb = 0
+        argb += (1 * 255) * 256 ** 3
+        argb += float(widget.color_r) * 256 ** 2
+        argb += float(widget.color_g) * 256 ** 1
+        argb += float(widget.color_b) * 256 ** 0
+        self.debug("Setting text %s to %x", colorLayer, argb)
+        self._setChildProperty(colorLayer, argb)
+        rgba = argb_to_gdk_rgba(argb)
+        colorButton.set_rgba(rgba)
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())
@@ -179,14 +203,13 @@ class TitleEditor(Loggable):
         for name, obj in list(self.settings.items()):
             if obj == updated_obj:
                 if name == "valignment":
-                    value = getattr(GES.TextVAlign, obj.get_active_id().upper())
+                    value = obj.get_active_id()
                     self._updateWidgetsVisibility()
                 elif name == "halignment":
-                    value = getattr(GES.TextHAlign, obj.get_active_id().upper())
+                    value = obj.get_active_id()
                     self._updateWidgetsVisibility()
                 else:
                     value = obj.get_value()
-
                 self._setChildProperty(name, value)
                 return
 
@@ -228,16 +251,17 @@ class TitleEditor(Loggable):
         # Now that the clip is inserted in the timeline, it has a source which
         # can be used to set its properties.
         source = title_clip.get_children(False)[0]
-        assert source.set_child_property("text", "")
-        assert source.set_child_property("foreground-color", BACKGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("color", FOREGROUND_DEFAULT_COLOR)
-        assert source.set_child_property("font-desc", DEFAULT_FONT_DESCRIPTION)
-        assert source.set_child_property("valignment", DEFAULT_VALIGNMENT)
-        assert source.set_child_property("halignment", DEFAULT_HALIGNMENT)
+        properties = {"text": "",
+                      "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                      "color": FOREGROUND_DEFAULT_COLOR,
+                      "font-desc": DEFAULT_FONT_DESCRIPTION,
+                      "valignment": DEFAULT_VALIGNMENT,
+                      "halignment": DEFAULT_HALIGNMENT}
+        for prop, value in properties.items():
+            res = source.set_child_property(prop, value)
+            assert res
         # Select it so the Title editor becomes active.
         self._selection.setSelection([title_clip], SELECT)
-        self.app.gui.editor.timeline_ui.timeline.resetSelectionGroup()
-        self.app.gui.editor.timeline_ui.timeline.current_group.add(title_clip)
 
     def _propertyChangedCb(self, source, unused_gstelement, pspec):
         if self._setting_props:
@@ -283,7 +307,7 @@ class TitleEditor(Loggable):
 
         self._project.pipeline.commit_timeline()
 
-    def _newProjectLoadedCb(self, app, project):
+    def _newProjectLoadedCb(self, unused_project_manager, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selectionChangedCb)
             self._selection = None

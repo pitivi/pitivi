@@ -36,6 +36,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.__overlays = {}
         self.__visible_overlays = []
         self.__hide_all_overlays = False
+        self.__last_allocation = None
         self.app = app
         self.window_size = numpy.array([1, 1])
         self.click_position = None
@@ -188,12 +189,19 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.__show_resize_status = enabled
 
     def __sink_widget_size_allocate_cb(self, unused_widget, allocation):
+        previous_allocation = self.__last_allocation
+        self.__last_allocation = (allocation.width, allocation.height)
+        if previous_allocation == self.__last_allocation:
+            # The allocation did not actually change. Ignore the event.
+            return
+
         if not self.__show_resize_status:
             return
 
         if not self.revealer.get_reveal_child():
             self.revealer.set_transition_duration(10)
             self.revealer.set_reveal_child(True)
+            self.hide_overlays()
 
         video_width = self.app.project_manager.current_project.videowidth
         percent = int(allocation.width / video_width * 100)
@@ -208,4 +216,5 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.__resizing_id = 0
         self.revealer.set_transition_duration(500)
         self.revealer.set_reveal_child(False)
+        self.show_overlays()
         return False

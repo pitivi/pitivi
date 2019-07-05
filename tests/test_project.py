@@ -316,16 +316,6 @@ class TestProjectLoading(common.TestCase):
 
         self.assertEqual(len(assets), 1, assets)
 
-    def create_project_file_from_xges(self, app, xges):
-        unused, xges_path = tempfile.mkstemp(suffix=".xges")
-        proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
-        app.project_manager.saveProject(uri=proj_uri)
-
-        with open(xges_path, "w") as f:
-            f.write(xges)
-
-        return proj_uri
-
     def load_project_with_missing_proxy(self):
         """Loads a project with missing proxies."""
         uris = [common.get_sample_uri("1sec_simpsons_trailer.mp4")]

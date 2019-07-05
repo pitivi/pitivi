@@ -90,9 +90,9 @@ class MissingAssetDialog(Gtk.Dialog, Loggable):
         self.get_content_area().pack_start(vbox, False, False, 0)
         vbox.show_all()
 
-        self.__chooser = self.__setup_file_chooser(uri, app.settings)
-        self.get_content_area().pack_start(self.__chooser, True, True, 0)
-        self.__chooser.show()
+        self._chooser = self.__setup_file_chooser(uri, app.settings)
+        self.get_content_area().pack_start(self._chooser, True, True, 0)
+        self._chooser.show()
 
         # If the window is too big, the window manager will resize it so that
         # it fits on the screen.
@@ -128,4 +128,4 @@ class MissingAssetDialog(Gtk.Dialog, Loggable):
         response = self.run()
         if response == Gtk.ResponseType.OK:
             self.log("User chose a new URI for the missing file")
-        return self.__chooser.get_uri()
+        return self._chooser.get_uri()

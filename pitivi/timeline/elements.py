@@ -87,9 +87,9 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
     __gsignals__ = {
         # Signal the keyframes or the curve are being hovered
-        "enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "enter": (GObject.SignalFlags.RUN_LAST, None, ()),
         # Signal the keyframes or the curve are not being hovered anymore
-        "leave": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "leave": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, timeline, binding):
@@ -595,9 +595,9 @@ class MultipleKeyframeCurve(KeyframeCurve):
 class TimelineElement(Gtk.Layout, Zoomable, Loggable):
     __gsignals__ = {
         # Signal the keyframes curve are being hovered
-        "curve-enter": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "curve-enter": (GObject.SignalFlags.RUN_LAST, None, ()),
         # Signal the keyframes curve are not being hovered anymore
-        "curve-leave": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "curve-leave": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, element, timeline):
@@ -708,8 +708,10 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
                 (self.__controlledProperty.maximum -
                  self.__controlledProperty.minimum)
             inpoint = self._ges_elem.props.in_point
-            assert source.set(inpoint, val)
-            assert source.set(inpoint + self._ges_elem.props.duration, val)
+            res = source.set(inpoint, val)
+            assert res
+            res = source.set(inpoint + self._ges_elem.props.duration, val)
+            assert res
 
     def __create_keyframe_curve(self, bindings=[]):
         """Creates required keyframe curve."""
@@ -1122,8 +1124,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         if target.name() == EFFECT_TARGET_ENTRY.target:
             self.info("Adding effect %s", self.timeline.dropData)
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(self.ges_clip)
             self.timeline.selection.setSelection([self.ges_clip], SELECT)
             self.app.gui.editor.switchContextTab(self.ges_clip)
 
@@ -1250,38 +1250,24 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             # Only the left mouse button selects.
             return False
 
-        # TODO : Let's be more specific, masks etc ..
         mode = SELECT
         if self.timeline.get_parent()._controlMask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
                 mode = SELECT_ADD
-                self.timeline.current_group.add(
-                    self.ges_clip.get_toplevel_parent())
             else:
-                self.timeline.current_group.remove(
-                    self.ges_clip.get_toplevel_parent())
                 mode = UNSELECT
             clicked_layer, click_pos = self.timeline.get_clicked_layer_and_pos(event)
             self.timeline.set_selection_meta_info(clicked_layer, click_pos, mode)
         else:
-            self.timeline.resetSelectionGroup()
-            self.timeline.current_group.add(self.ges_clip.get_toplevel_parent())
             self.app.gui.editor.switchContextTab(self.ges_clip)
 
-        parent = self.ges_clip.get_parent()
-        if parent == self.timeline.current_group or parent is None:
+        parent = self.ges_clip.get_toplevel_parent()
+        if parent is self.ges_clip:
             selection = [self.ges_clip]
         else:
-            while True:
-                grandparent = parent.get_parent()
-                if not grandparent or grandparent == self.timeline.current_group:
-                    break
-
-                parent = grandparent
-            children = parent.get_children(True)
-            selection = [elem for elem in children if isinstance(elem, GES.SourceClip) or
+            selection = [elem for elem in parent.get_children(True)
+                         if isinstance(elem, GES.SourceClip) or
                          isinstance(elem, GES.TransitionClip)]
-
         self.timeline.selection.setSelection(selection, mode)
 
         return False

@@ -141,11 +141,14 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         uri = common.get_sample_uri("tears_of_steel.webm")
         asset = GES.UriClipAsset.request_sync(uri)
         clip2 = asset.extract()
+        clip2.props.start = 1 * Gst.SECOND
 
-        self.layer.add_clip(clip1)
-        self.layer.add_clip(clip2)
+        self.assertTrue(self.layer.add_clip(clip1))
+        self.assertTrue(self.layer.add_clip(clip2))
         # The selection does not care about GES.Groups, only about GES.Clips.
         self.timeline_container.timeline.selection.select([clip1, clip2])
+        self.assertEqual(clip1.props.timeline, self.layer.get_timeline())
+        self.assertEqual(clip2.props.timeline, self.layer.get_timeline())
 
         self.timeline_container.group_action.activate(None)
         self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
@@ -196,9 +199,6 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertEqual(len(clips[1].get_children(False)), 1)
 
         timeline.selection.select(clips)
-        timeline.resetSelectionGroup()
-        for clip in clips:
-            timeline.current_group.add(clip)
         self.timeline_container.group_action.activate(None)
         clips = list(self.getTimelineClips())
         self.assertEqual(len(clips), 1, clips)
@@ -359,6 +359,38 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         self.action_log.redo()
         self.assertFalse(clip1 in self.getTimelineClips())
+
+    def test_layer_added(self):
+        self.setup_timeline_container()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+
+        clip = GES.TitleClip()
+        self.layer.add_clip(clip)
+
+        self.timeline_container.add_layer_action.emit("activate", None)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
+
+        self.action_log.undo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+        self.action_log.redo()
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 2)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+        self.assertEqual(layers[1].get_clips(), [])
 
     def test_ungroup_group_clip(self):
         # This test is in TestLayerObserver because the relevant operations
@@ -526,7 +558,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
         clip2 = asset.extract()
         clip2.set_start(clip1.props.duration / 2)
-        clip2.set_duration(10 * Gst.SECOND)
+        clip2.set_duration(clip2.props.max_duration)
         with self.action_log.started("add second clip"):
             self.layer.add_clip(clip2)
 
@@ -904,7 +936,7 @@ class TestGObjectObserver(BaseTestUndoTimeline):
         self.action_log.connect("commit", BaseTestUndoTimeline.commit_cb, stacks)
 
         # We are not dropping clips here...
-        self.app.gui.timeline_ui.timeline.dropping_clips = False
+        self.app.gui.editor.timeline_ui.timeline.dropping_clips = False
 
         clip1 = GES.TitleClip()
         clip1.set_start(5 * Gst.SECOND)
@@ -985,7 +1017,8 @@ class TestGObjectObserver(BaseTestUndoTimeline):
 
 class TestDragDropUndo(BaseTestUndoTimeline):
 
-    def test_clip_dragged_to_create_layer_below(self):
+    def clip_dragged_to_create_layer(self, below):
+        """Simulates dragging a clip on a separator, without dropping it."""
         self.setup_timeline_container()
         timeline_ui = self.timeline_container.timeline
         layers = self.timeline.get_layers()
@@ -995,7 +1028,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.layer.add_clip(clip)
 
         # Drag a clip on a separator to create a layer.
-        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = clip.ui
 
             event = mock.Mock()
@@ -1009,10 +1042,36 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event = mock.Mock()
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             event.x = 1
-            event.y = LAYER_HEIGHT * 2
+            if below:
+                event.y = LAYER_HEIGHT * 2
+            else:
+                event.y = -1
             event.get_button.return_value = True, 1
             timeline_ui._motion_notify_event_cb(None, event)
 
+        return clip, event, timeline_ui
+
+    def test_clip_dragged_to_create_layer_below_denied(self):
+        """Checks clip dropped onto the separator below without hovering."""
+        clip, event, timeline_ui = self.clip_dragged_to_create_layer(True)
+
+        timeline_ui._button_release_event_cb(None, event)
+
+        layers = self.timeline.get_layers()
+        self.assertEqual(len(layers), 1)
+        self.assertEqual(layers[0], self.layer)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
+
+        stack, = self.action_log.undo_stacks
+        # Only the clip creation action should be on the stack.
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
+
+    def test_clip_dragged_to_create_layer_below(self):
+        """Checks clip dropped onto the separator below after hovering."""
+        clip, event, timeline_ui = self.clip_dragged_to_create_layer(True)
+
+        timeline_ui._separator_accepting_drop_timeout_cb()
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()
@@ -1037,34 +1096,26 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(layers[1].get_clips(), [clip])
 
-    def test_clip_dragged_to_create_layer_above(self):
-        self.setup_timeline_container()
-        timeline_ui = self.timeline_container.timeline
+    def test_clip_dragged_to_create_layer_above_denied(self):
+        """Checks clip dropped onto the separator above without hovering."""
+        clip, event, timeline_ui = self.clip_dragged_to_create_layer(False)
+
+        timeline_ui._button_release_event_cb(None, event)
+
         layers = self.timeline.get_layers()
         self.assertEqual(len(layers), 1)
+        self.check_layers(layers)
+        self.assertEqual(layers[0].get_clips(), [clip])
 
-        clip = GES.TitleClip()
-        self.layer.add_clip(clip)
+        stack, = self.action_log.undo_stacks
+        # Only the clip creation action should be on the stack.
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
-        # Drag a clip on a separator to create a layer.
-        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
-            get_event_widget.return_value = clip.ui
+    def test_clip_dragged_to_create_layer_above(self):
+        """Checks clip dropped onto the separator above after hovering."""
+        clip, event, timeline_ui = self.clip_dragged_to_create_layer(False)
 
-            event = mock.Mock()
-            event.x = 0
-            event.get_button.return_value = True, 1
-            timeline_ui._button_press_event_cb(None, event)
-
-            def translate_coordinates(widget, x, y):
-                return x, y
-            clip.ui.translate_coordinates = translate_coordinates
-            event = mock.Mock()
-            event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
-            event.x = 1
-            event.y = -1
-            event.get_button.return_value = True, 1
-            timeline_ui._motion_notify_event_cb(None, event)
-
+        timeline_ui._separator_accepting_drop_timeout_cb()
         timeline_ui._button_release_event_cb(None, event)
 
         layers = self.timeline.get_layers()

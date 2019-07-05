@@ -348,7 +348,7 @@ class GlobalSettings(GObject.Object, Loggable):
             setattr(cls, "_" + attrname, default)
             GObject.signal_new(notification.signame,
                                cls,
-                               GObject.SIGNAL_RUN_LAST,
+                               GObject.SignalFlags.RUN_LAST,
                                None,
                                ())
         else:

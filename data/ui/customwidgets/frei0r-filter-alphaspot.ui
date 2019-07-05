@@ -222,7 +222,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::position-x::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -236,7 +236,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::position-y::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -249,7 +249,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::size-x::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -262,7 +262,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::size-y::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -311,7 +311,7 @@
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">x</property>
+        <property name="label" translatable="no">x</property>
       </object>
       <packing>
         <property name="left_attach">0</property>
@@ -322,7 +322,7 @@
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">y</property>
+        <property name="label" translatable="no">y</property>
       </object>
       <packing>
         <property name="left_attach">0</property>
@@ -487,7 +487,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::transition-width::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -500,7 +500,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::tilt::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -513,7 +513,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::min::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
@@ -526,7 +526,7 @@
     </child>
     <child>
       <object class="GtkToggleButton" id="frei0r-filter-alphaspot::max::keyframe">
-        <property name="label" translatable="yes">◇</property>
+        <property name="label" translatable="no">◇</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>

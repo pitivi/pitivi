@@ -32,7 +32,7 @@ class Thread(threading.Thread, GObject.Object, Loggable):
     """Event-powered thread."""
 
     __gsignals__ = {
-        "done": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "done": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self):

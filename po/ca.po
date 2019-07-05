@@ -1076,8 +1076,8 @@ msgstr ""
 "Pau Iranzo <paugnu@gmail.com>, 2010\n"
 "Joan Duran <jodufi@gmail.com>, 2011, 2012\n"
 "Pere Orga <pere@orga.cat>, 2012\n"
-"Jordi Mas i Hernàndez <jmas@softcatala.org>, 2016 Carles Ferrando Garcia "
-"<carles.ferrando@gmail.com>, 2017"
+"Jordi Mas i Hernàndez <jmas@softcatala.org>, 2016-2017\n"
+"Carles Ferrando Garcia <carles.ferrando@gmail.com>, 2017"
 
 #. The user has not made a decision, don't do anything
 #: ../pitivi/mainwindow.py:668
@@ -1549,7 +1549,7 @@ msgstr "«%s» ha acabat de renderitzar."
 
 #: ../pitivi/titleeditor.py:44
 msgid "Title clip duration"
-msgstr "Duració de la seqüencia d'imatges"
+msgstr "Duració de la seqüència d'imatges"
 
 #: ../pitivi/titleeditor.py:46
 msgid ""
@@ -1757,7 +1757,7 @@ msgstr "El botó esquerre també cerca"
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Si prement el botó esquerre també feu cerques a més de seleccionar i editar "
-"seqüencies."
+"seqüències."
 
 #: ../pitivi/timeline/timeline.py:1501 ../pitivi/dialogs/prefs.py:61
 msgid "Timeline"
@@ -1951,7 +1951,7 @@ msgid ""
 "happen."
 msgstr ""
 "La configuració local del sistema que esteu usant no té capacitat UTF-8.  La "
-"compatibilitat Unicode es requerida per programari Python3 com Pitivi. "
+"compatibilitat Unicode és requerida per programari Python3 com Pitivi. "
 "Corregiu el paràmetre del vostre sistema; si useu Pitivi amb una "
 "localització trencada, tindreu errors estranys."
 

@@ -21,8 +21,10 @@ A collection of objects to use for testing
 """
 import contextlib
 import gc
+import locale
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import traceback
@@ -73,6 +75,7 @@ for category in ["Gtk", "Gdk", "GLib-GObject", "GES"]:
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
+locale.setlocale(locale.LC_ALL, "en_US")
 
 
 def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
@@ -116,8 +119,8 @@ def create_pitivi(**settings):
     return app
 
 
-def create_timeline_container():
-    app = create_pitivi_mock(leftClickAlsoSeeks=False)
+def create_timeline_container(**settings):
+    app = create_pitivi_mock(leftClickAlsoSeeks=False, **settings)
     app.project_manager = ProjectManager(app)
     project = app.project_manager.new_blank_project()
 
@@ -127,7 +130,7 @@ def create_timeline_container():
     timeline = timeline_container.timeline
     timeline.get_parent = mock.MagicMock(return_value=timeline_container)
 
-    app.gui.timeline_ui = timeline_container
+    app.gui.editor.timeline_ui = timeline_container
 
     return timeline_container
 
@@ -154,6 +157,29 @@ def create_main_loop():
 
     mainloop.run = run
     return mainloop
+
+
+class OperationTimeout(Exception):
+    pass
+
+
+class checked_operation_duration:
+
+    def __init__(self, seconds, error_message=None):
+        if error_message is None:
+            error_message = "operation timed out after %s seconds" % seconds
+        self.seconds = seconds
+        self.error_message = error_message
+
+    def __handle_sigalrm(self, signum, frame):
+        raise OperationTimeout(self.error_message)
+
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.__handle_sigalrm)
+        signal.alarm(self.seconds)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        signal.alarm(0)
 
 
 class TestCase(unittest.TestCase, Loggable):
@@ -236,6 +262,16 @@ class TestCase(unittest.TestCase, Loggable):
         self._result = result
         unittest.TestCase.run(self, result)
 
+    def create_project_file_from_xges(self, app, xges):
+        unused, xges_path = tempfile.mkstemp(suffix=".xges")
+        proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
+        app.project_manager.saveProject(uri=proj_uri)
+
+        with open(xges_path, "w") as f:
+            f.write(xges)
+
+        return proj_uri
+
     def toggle_clip_selection(self, ges_clip, expect_selected):
         """Toggles the selection state of @ges_clip."""
         selected = bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED)
@@ -254,6 +290,7 @@ class TestCase(unittest.TestCase, Loggable):
                 with mock.patch.object(ges_clip.ui.timeline, "_get_layer_at") as _get_layer_at:
                     _get_layer_at.return_value = ges_clip.props.layer, None
                     ges_clip.ui._button_release_event_cb(None, event)
+                    ges_clip.ui.timeline._button_release_event_cb(None, event)
 
         self.assertEqual(bool(ges_clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED),
                          expect_selected)

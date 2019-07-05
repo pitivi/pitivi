@@ -27,6 +27,7 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import Selection
 from pitivi.utils.timeline import UNSELECT
 from tests import common
+from tests.test_timeline_timeline import BaseTestTimeline
 
 
 class TestSelected(common.TestCase):
@@ -42,7 +43,7 @@ class TestSelected(common.TestCase):
         self.assertFalse(selected)
 
 
-class TestSelection(common.TestCase):
+class TestSelection(BaseTestTimeline):
 
     def testBoolEvaluation(self):
         clip1 = mock.MagicMock()
@@ -81,14 +82,17 @@ class TestSelection(common.TestCase):
         self.assertIsNone(selection.getSingleClip(GES.TitleClip))
 
     def test_can_group_ungroup(self):
-        clip1 = common.create_test_clip(GES.UriClip)
-        clip2 = common.create_test_clip(GES.UriClip)
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        clip1, clip2 = self.addClipsSimple(timeline, 2)
+
         selection = Selection()
-        self.assertFalse(selection)
+        self.assertFalse(selection.can_group)
+        self.assertFalse(selection.can_ungroup)
 
         selection.setSelection([clip1], SELECT)
-        self.assertFalse(selection.can_ungroup)
         self.assertFalse(selection.can_group)
+        self.assertTrue(selection.can_ungroup)
 
         selection.setSelection([clip2], SELECT_ADD)
         self.assertTrue(selection.can_group)
@@ -97,6 +101,36 @@ class TestSelection(common.TestCase):
         selection.setSelection([], SELECT)
         self.assertFalse(selection.can_group)
         self.assertFalse(selection.can_ungroup)
+
+    def test_toplevels(self):
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        clip1, clip2, clip3, clip4 = self.addClipsSimple(timeline, 4)
+
+        selection = Selection()
+
+        selection.setSelection([clip1, clip2, clip3, clip4], SELECT)
+        self.assertSetEqual(selection.toplevels, {clip1, clip2, clip3, clip4})
+
+        group1 = GES.Container.group([clip1, clip2])
+        group1.props.serialize = True
+        self.assertSetEqual(selection.toplevels, {group1, clip3, clip4})
+
+        group2 = GES.Container.group([group1, clip3])
+        group2.props.serialize = True
+        self.assertSetEqual(selection.toplevels, {group2, clip4})
+
+        group1.props.serialize = True
+        group1.props.serialize = False
+        self.assertSetEqual(selection.toplevels, {group2, clip4})
+
+        group1.props.serialize = False
+        group2.props.serialize = False
+        self.assertSetEqual(selection.toplevels, {clip1, clip2, clip3, clip4})
+
+        group1.props.serialize = True
+        group2.props.serialize = False
+        self.assertSetEqual(selection.toplevels, {group1, clip3, clip4})
 
 
 class TestEditingContext(common.TestCase):

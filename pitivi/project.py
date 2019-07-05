@@ -108,16 +108,16 @@ class ProjectManager(GObject.Object, Loggable):
     """
 
     __gsignals__ = {
-        "new-project-loading": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "new-project-created": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "new-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, str)),
-        "new-project-loaded": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "save-project-failed": (GObject.SIGNAL_RUN_LAST, None, (str, object)),
-        "project-saved": (GObject.SIGNAL_RUN_LAST, None, (object, str)),
-        "closing-project": (GObject.SIGNAL_RUN_LAST, bool, (object,)),
-        "project-closed": (GObject.SIGNAL_RUN_LAST, None, (object,)),
-        "missing-uri": (GObject.SIGNAL_RUN_LAST, str, (object, str, object)),
-        "reverting-to-saved": (GObject.SIGNAL_RUN_LAST, bool, (object,)),
+        "new-project-loading": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "new-project-created": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "new-project-failed": (GObject.SignalFlags.RUN_LAST, None, (str, str)),
+        "new-project-loaded": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "save-project-failed": (GObject.SignalFlags.RUN_LAST, None, (str, object)),
+        "project-saved": (GObject.SignalFlags.RUN_LAST, None, (object, str)),
+        "closing-project": (GObject.SignalFlags.RUN_LAST, bool, (object,)),
+        "project-closed": (GObject.SignalFlags.RUN_LAST, None, (object,)),
+        "missing-uri": (GObject.SignalFlags.RUN_LAST, str, (object, str, object)),
+        "reverting-to-saved": (GObject.SignalFlags.RUN_LAST, bool, (object,)),
     }
 
     def __init__(self, app):
@@ -1504,7 +1504,8 @@ class Project(Loggable, GES.Project):
 
                 for prop, value in settings.items():
                     encoder.set_property(prop, value)
-                assert encoder.save_preset(preset)
+                res = encoder.save_preset(preset)
+                assert res
 
         return GES.Project.save(self, ges_timeline, uri, formatter_asset, overwrite)
 
@@ -1813,7 +1814,7 @@ class Project(Loggable, GES.Project):
                                                       ref_restrictions,
                                                       defaults,
                                                       prev_vals)
-        assert(restriction)
+        assert restriction
         preset_name = encoder.get_factory().get_name()
         profile.set_restriction(restriction)
         profile.set_preset_name(preset_name)

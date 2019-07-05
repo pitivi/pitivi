@@ -53,6 +53,12 @@ class PluginType(IntEnum):
         elif self.value == PluginType.SYSTEM:
             return _("System plugins")
 
+    def get_dir(self):
+        if self.value == PluginType.USER:
+            return get_user_plugins_dir()
+        elif self.value == PluginType.SYSTEM:
+            return get_plugins_dir()
+
 
 class PluginManager(Loggable):
     """Pitivi Plugin Manager to handle a set of plugins.

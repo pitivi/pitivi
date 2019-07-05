@@ -85,6 +85,14 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__updateName()
         name_row.pack_start(self.name_entry, True, True, 0)
 
+        entry_provider = Gtk.CssProvider()
+        entry_css = ("entry:not(:focus) { border: 1px solid transparent;"
+                     "background: transparent; }").encode("UTF-8")
+        entry_provider.load_from_data(entry_css)
+        Gtk.StyleContext.add_provider(self.name_entry.get_style_context(),
+                                      entry_provider,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
@@ -220,10 +228,10 @@ class LayerControls(Gtk.EventBox, Loggable):
 
         if media_types & GES.TrackType.VIDEO or not media_types:
             # The layer has video or is empty.
-            icon = "video-x-generic"
+            icon = "video-x-generic-symbolic"
         else:
             # The layer has audio and nothing else.
-            icon = "audio-x-generic"
+            icon = "audio-x-generic-symbolic"
 
         if icon != self.__icon:
             image = Gtk.Image.new_from_icon_name(icon, Gtk.IconSize.BUTTON)
@@ -368,8 +376,6 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
 
         ges_clip.disconnect_by_func(self._childAddedToClipCb)
         ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
-
-        self.timeline.selection.unselect([ges_clip])
 
     def updatePosition(self):
         for ges_clip in self.ges_layer.get_clips():

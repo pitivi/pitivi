@@ -54,8 +54,9 @@ def create_custom_prop_widget_cb(unused_effect_prop_manager, effect_widget, effe
     effect_name = effect.get_property("bin-description")
     if effect_name == "alpha":
         return create_custom_alpha_prop_widget(effect_widget, effect, prop, prop_value)
-    elif effect_name == "frei0r-filter-alphaspot":
+    if effect_name == "frei0r-filter-alphaspot":
         return create_custom_alphaspot_prop_widget(effect_widget, effect, prop, prop_value)
+    return None
 
 
 def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
@@ -67,17 +68,18 @@ def create_custom_widget_cb(effect_prop_manager, effect_widget, effect):
     if effect_name == "alpha":
         widget = create_alpha_widget(effect_prop_manager, effect_widget, effect)
         return widget
-    elif effect_name == "frei0r-filter-3-point-color-balance":
+    if effect_name == "frei0r-filter-3-point-color-balance":
         widget = create_3point_color_balance_widget(effect_prop_manager, effect_widget, effect)
         return widget
-    elif effect_name == "frei0r-filter-alphaspot":
+    if effect_name == "frei0r-filter-alphaspot":
         widget = create_alphaspot_widget(effect_prop_manager, effect_widget, effect)
         return widget
 
     # Check if there is a UI file available as a glade file
-    # Assuming a GtkGrid called base_table exists
     if not os.path.isfile(path):
         return None
+
+    # Assuming a GtkGrid called base_table exists
     builder = setup_from_ui_file(effect_widget, path)
     widget = builder.get_object("base_table")
     return widget
@@ -373,7 +375,7 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
         for index, vals in reversed(list(enumerate(shape_list))):
             if flid >= vals[1]:
                 return index
-        assert False
+        raise Exception()
 
     shape_picker.set_active(get_current_shape())
 
@@ -414,7 +416,7 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
         for index, vals in reversed(list(enumerate(op_list))):
             if flid >= vals[1]:
                 return index
-        assert False
+        raise Exception()
 
     op_picker.set_active(get_current_op())
 

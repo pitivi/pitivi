@@ -37,7 +37,7 @@ class TestPluginManager(common.TestCase):
         class App(GObject.Object):
             """A representation of the Pitivi Application for test purposes."""
             __gsignals__ = {
-                "window-added": (GObject.SIGNAL_RUN_LAST, None, (object, ))
+                "window-added": (GObject.SignalFlags.RUN_LAST, None, (object, ))
             }
 
             def __init__(self):

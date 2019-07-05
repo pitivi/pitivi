@@ -292,8 +292,8 @@ def extension_for_muxer(muxer_name):
 class RenderingProgressDialog(GObject.Object):
 
     __gsignals__ = {
-        "pause": (GObject.SIGNAL_RUN_LAST, None, ()),
-        "cancel": (GObject.SIGNAL_RUN_LAST, None, ()),
+        "pause": (GObject.SignalFlags.RUN_LAST, None, ()),
+        "cancel": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
     def __init__(self, app, parent):
@@ -324,6 +324,8 @@ class RenderingProgressDialog(GObject.Object):
         # It allows this dialog to properly minimize together with mainwindow
         self.window.set_transient_for(self.app.gui)
         self.window.set_icon_name("system-run-symbolic")
+
+        self.play_rendered_file_button.get_style_context().add_class("suggested-action")
 
         # We will only show the close/play buttons when the render is done:
         self.play_rendered_file_button.hide()
@@ -410,6 +412,7 @@ class RenderDialog(Loggable):
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
+        self._is_filename_valid = True
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
@@ -428,6 +431,11 @@ class RenderDialog(Loggable):
             self.updateFilename(_("Untitled"))
         else:
             self.updateFilename(self.project.name)
+
+        # Add a shortcut for the project folder (if saved)
+        if self.project.uri:
+            shortcut = os.path.dirname(self.project.uri)
+            self.filebutton.add_shortcut_folder_uri(shortcut)
 
         self._setting_encoding_profile = False
 
@@ -695,7 +703,7 @@ class RenderDialog(Loggable):
         set_combo_value(self.muxer_combo,
                         Encoders().factories_by_name.get(self.project.muxer))
 
-    def _checkForExistingFile(self, *unused_args):
+    def _check_filename(self):
         """Displays a warning if the file path already exists."""
         path = self.filebutton.get_current_folder()
         if not path:
@@ -709,20 +717,24 @@ class RenderDialog(Loggable):
         invalid_chars = "".join([ch for ch in blacklist if ch in filename])
 
         warning_icon = "dialog-warning"
+        self._is_filename_valid = True
         if not filename:
             tooltip_text = _("A file name is required.")
+            self._is_filename_valid = False
         elif os.path.exists(os.path.join(path, filename)):
             tooltip_text = _("This file already exists.\n"
                              "If you don't want to overwrite it, choose a "
                              "different file name or folder.")
         elif invalid_chars:
             tooltip_text = _("Remove invalid characters from the filename: %s") % invalid_chars
+            self._is_filename_valid = False
         else:
             warning_icon = None
             tooltip_text = None
 
         self.fileentry.set_icon_from_icon_name(1, warning_icon)
         self.fileentry.set_icon_tooltip_text(1, tooltip_text)
+        self.__updateRenderButtonSensitivity()
 
     def _getFilesizeEstimate(self):
         """Estimates the final file size.
@@ -1020,7 +1032,7 @@ class RenderDialog(Loggable):
 
     # -- UI callbacks
     def _okButtonClickedCb(self, unused_button, media_type):
-        assert(media_type in ("audio", "video"))
+        assert media_type in ("audio", "video")
         setattr(self.project, media_type[0] + 'codecsettings', self.dialog.getSettings())
 
         caps = self.dialog.get_caps()
@@ -1066,6 +1078,12 @@ class RenderDialog(Loggable):
 
     def _containerContextHelpClickedCb(self, unused_button):
         show_user_manual("codecscontainers")
+
+    def _current_folder_changed_cb(self, *unused_args):
+        self._check_filename()
+
+    def _filename_changed_cb(self, *unused_args):
+        self._check_filename()
 
     # Periodic (timer) callbacks
     def _updateTimeEstimateCb(self):
@@ -1208,7 +1226,8 @@ class RenderDialog(Loggable):
     def __updateRenderButtonSensitivity(self):
         video_enabled = self.video_output_checkbutton.get_active()
         audio_enabled = self.audio_output_checkbutton.get_active()
-        self.render_button.set_sensitive(video_enabled or audio_enabled)
+        self.render_button.set_sensitive(self._is_filename_valid and
+                                         (video_enabled or audio_enabled))
 
     def _frameRateComboChangedCb(self, combo):
         if self._setting_encoding_profile:

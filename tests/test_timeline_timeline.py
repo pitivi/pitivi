@@ -27,7 +27,6 @@ from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
 from tests import common
-from tests.common import create_timeline_container
 
 THIN = LAYER_HEIGHT / 2
 THICK = LAYER_HEIGHT
@@ -40,7 +39,10 @@ class BaseTestTimeline(common.TestCase):
         """Creates a clip on the specified layer."""
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("tears_of_steel.webm"))
-        return layer.add_asset(asset, start, inpoint, duration, clip_type)
+        clip = layer.add_asset(asset, start, inpoint, duration, clip_type)
+        self.assertIsNotNone(clip)
+
+        return clip
 
     def addClipsSimple(self, timeline, num_clips):
         """Creates a number of clips on a new layer."""
@@ -84,7 +86,7 @@ class TestLayers(BaseTestTimeline):
                              [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2])
 
     def checkGetLayerAt(self, heights, preferred, past_middle_when_adjacent, expectations):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
         # Allocate layers
@@ -143,7 +145,7 @@ class TestLayers(BaseTestTimeline):
         assertLayerAt(ges_layers[expectations[15]], h[0] + s + h[1] + s + h[2] - 1)
 
     def testSetSeparatorsPrelight(self):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         timeline.__on_separators = [mock.Mock()]
         timeline._setSeparatorsPrelight(False)
@@ -151,7 +153,7 @@ class TestLayers(BaseTestTimeline):
                          "The separators must be forgotten only in dragEnd()")
 
     def test_media_types(self):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
         ges_layer_1 = timeline.ges_timeline.append_layer()
@@ -191,7 +193,7 @@ class TestLayers(BaseTestTimeline):
         self.check_create_layer([0, 1, 2, 3], [0, 1, 2, 3])
 
     def check_create_layer(self, start_priorities, expected_priorities):
-        timeline = create_timeline_container().timeline
+        timeline = common.create_timeline_container().timeline
         ges_layers = []
         for priority in start_priorities:
             ges_layer = timeline.create_layer(priority)
@@ -246,7 +248,7 @@ class TestLayers(BaseTestTimeline):
         self.check_remove_layer([3, 2, 1])
 
     def check_remove_layer(self, removal_order):
-        timeline = create_timeline_container().timeline
+        timeline = common.create_timeline_container().timeline
 
         # Add layers to remove them later.
         ges_layers = []
@@ -273,7 +275,7 @@ class TestLayers(BaseTestTimeline):
         self.check_move_layer(4, 3, [0, 1, 2, 4, 3])
 
     def check_move_layer(self, from_priority, to_priority, expected_priorities):
-        timeline = create_timeline_container().timeline
+        timeline = common.create_timeline_container().timeline
 
         # Add layers to move them later.
         ges_layers = []
@@ -288,11 +290,11 @@ class TestLayers(BaseTestTimeline):
 class TestGrouping(BaseTestTimeline):
 
     def __check_can_group_ungroup(self, timeline_container, can_group, can_ungroup):
-        self.assertEqual(can_group, timeline_container.group_action.props.enabled)
-        self.assertEqual(can_ungroup, timeline_container.ungroup_action.props.enabled)
+        self.assertEqual(timeline_container.group_action.props.enabled, can_group)
+        self.assertEqual(timeline_container.ungroup_action.props.enabled, can_ungroup)
 
     def test_can_group_ungroup(self):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         self.__check_can_group_ungroup(timeline_container, False, False)
         ges_clip, = self.addClipsSimple(timeline, 1)
@@ -331,25 +333,18 @@ class TestGrouping(BaseTestTimeline):
 
         # Select the 2 clips
         for clip in clips:
+            self.assertIsNone(clip.get_parent())
             self.toggle_clip_selection(clip, expect_selected=True)
-
-        before_grouping_timeline_group = timeline.current_group
-
-        for clip in clips:
-            self.assertEqual(clip.get_parent(), timeline.current_group)
 
         timeline_container.group_action.emit("activate", None)
 
-        self.assertNotEqual(timeline.current_group, before_grouping_timeline_group)
         for clip in clips:
-            # Check that we created a new group and that this group is not
-            # the timeline current_group
+            # Check that we created a new group
             self.assertTrue(isinstance(clip.get_parent(), GES.Group))
-            self.assertNotEqual(clip.get_parent(), timeline.current_group)
             # The newly created group has been selected
-            self.assertEqual(clip.get_toplevel_parent(), timeline.current_group)
+            for selected_clip in timeline.selection:
+                self.assertEqual(clip.get_toplevel_parent(), selected_clip.get_toplevel_parent())
 
-        for clip in clips:
             self.assertEqual(clips[0].get_parent(), clip.get_parent())
             self.assertTrue(bool(clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED))
             self.assertTrue(clip.selected.selected)
@@ -358,14 +353,14 @@ class TestGrouping(BaseTestTimeline):
         self.assertEqual(len(group.get_children(False)), len(clips))
 
     def testGroup(self):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.addClipsSimple(timeline, 2)
         self.group_clips(timeline_container, clips)
 
     def testGroupSelection(self):
         num_clips = 2
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.addClipsSimple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
@@ -383,7 +378,7 @@ class TestGrouping(BaseTestTimeline):
 
     def testGroupUngroup(self):
         num_clips = 2
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.addClipsSimple(timeline, num_clips)
         self.group_clips(timeline_container, clips)
@@ -401,7 +396,7 @@ class TestGrouping(BaseTestTimeline):
     def testGroupSplittedClipAndSelectGroup(self):
         position = 5
 
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clips = self.addClipsSimple(timeline, 1)
         self.toggle_clip_selection(clips[0], expect_selected=True)
@@ -436,7 +431,7 @@ class TestGrouping(BaseTestTimeline):
         self.toggle_clip_selection(clips[1], expect_selected=True)
 
     def testUngroupClip(self):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         ges_clip, = self.addClipsSimple(timeline, 1)
 
@@ -469,7 +464,7 @@ class TestGrouping(BaseTestTimeline):
 
     def test_dragging_group_on_separator(self):
         # Create two clips on different layers and group them.
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clip1, = self.addClipsSimple(timeline, 1)
         layer1 = clip1.get_layer()
@@ -483,7 +478,7 @@ class TestGrouping(BaseTestTimeline):
         # Click the first clip in the group.
         with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
-            event.x = 0
+            event.x = 100
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip1.ui
             timeline._button_press_event_cb(None, event)
@@ -491,6 +486,7 @@ class TestGrouping(BaseTestTimeline):
 
             # Move it to the right, on the separator below.
             event = mock.Mock()
+            event.x = 101
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip1.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (40, 0)
@@ -510,7 +506,7 @@ class TestGrouping(BaseTestTimeline):
 class TestCopyPaste(BaseTestTimeline):
 
     def copyClips(self, num_clips):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
 
         clips = self.addClipsSimple(timeline, num_clips)
@@ -573,7 +569,7 @@ class TestEditing(BaseTestTimeline):
 
     def test_trimming_on_layer_separator(self):
         # Create a clip
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         clip, = self.addClipsSimple(timeline, 1)
         layer = clip.get_layer()
@@ -581,6 +577,7 @@ class TestEditing(BaseTestTimeline):
         # Click the right trim handle of the clip.
         with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
             event = mock.Mock()
+            event.x = 100
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip.ui.rightHandle
             timeline._button_press_event_cb(None, event)
@@ -588,6 +585,7 @@ class TestEditing(BaseTestTimeline):
 
             # Drag it to the left, on the separator below.
             event = mock.Mock()
+            event.x = 99
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
@@ -621,7 +619,7 @@ class TestShiftSelection(BaseTestTimeline):
             self.assertEqual(clip.selected._selected, False)
 
     def __check_simple(self, left_click_also_seeks):
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         timeline.app.settings.leftClickAlsoSeeks = left_click_also_seeks
         ges_layer = timeline.ges_timeline.append_layer()
@@ -655,7 +653,7 @@ class TestShiftSelection(BaseTestTimeline):
 
     def __check_shift_selection_single_layer(self, left_click_also_seeks):
         """Checks group clips selection across a single layer."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         timeline.app.settings.leftClickAlsoSeeks = left_click_also_seeks
         ges_layer = timeline.ges_timeline.append_layer()
@@ -681,7 +679,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simiulate shift+click before first and after fourth clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 1 * Gst.SECOND)
@@ -690,7 +687,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2, ges_clip3, ges_clip4], [])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simiulate shift+click on first, after fourth and before third clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
@@ -701,7 +697,6 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2], [ges_clip3, ges_clip4])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             # Simulate shift+click twice on the same clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 6 * Gst.SECOND)
@@ -716,7 +711,7 @@ class TestShiftSelection(BaseTestTimeline):
 
     def __check_shift_selection_multiple_layers(self, left_click_also_seeks):
         """Checks group clips selection across multiple layers."""
-        timeline_container = create_timeline_container()
+        timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         timeline.app.settings.leftClickAlsoSeeks = left_click_also_seeks
         ges_layer1 = timeline.ges_timeline.append_layer()
@@ -757,7 +752,6 @@ class TestShiftSelection(BaseTestTimeline):
             self.__check_selected([ges_clip11, ges_clip12, ges_clip22, ges_clip23],
                 [ges_clip13, ges_clip21, ges_clip31, ges_clip32, ges_clip33])
             self.__reset_clips_selection(timeline)
-            timeline.resetSelectionGroup()
 
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 3 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)

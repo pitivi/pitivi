@@ -24,6 +24,7 @@ from gettext import gettext as _
 from gettext import ngettext
 from hashlib import md5
 
+import cairo
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import GES
@@ -638,7 +639,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         view.drag_source_add_uri_targets()
         view.connect("drag-data-get", self._dndDragDataGetCb)
-        view.connect("drag-begin", self._dndDragBeginCb)
+        view.connect_after("drag-begin", self._dndDragBeginCb)
         view.connect("drag-end", self._dndDragEndCb)
 
     def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
@@ -784,6 +785,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         default.set_name(_("All files"))
         default.add_pattern("*")
         dialog.add_filter(default)
+
+        # Add a shortcut for the project folder (if saved)
+        if self._project.uri:
+            shortcut = os.path.dirname(self._project.uri)
+            dialog.add_shortcut_folder_uri(shortcut)
 
         dialog.show()
 
@@ -1456,7 +1462,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = self.modelFilter[paths[0]]
-            Gtk.drag_set_icon_pixbuf(context, row[COL_ICON_64], 0, 0)
+
+            icon = row[COL_ICON_128]
+            icon_height = icon.get_height()
+            icon_width = icon.get_width()
+
+            surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, icon_width, icon_height)
+            ctx = cairo.Context(surface)
+            # Center the icon around the cursor.
+            ctx.translate(icon_width / 2, icon_height / 2)
+            surface.set_device_offset(-icon_width / 2, -icon_height / 2)
+
+            Gdk.cairo_set_source_pixbuf(ctx, icon, 0, 0)
+            ctx.paint_with_alpha(0.35)
+
+            Gtk.drag_set_icon_surface(context, surface)
 
     def _dndDragEndCb(self, unused_view, unused_context):
         self.info("Drag operation ended")

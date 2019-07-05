@@ -246,16 +246,20 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_margin_right(SPACING)
         self.pack_end(bbox, False, False, 0)
 
-        self.goToStart_button = Gtk.ToolButton()
-        self.goToStart_button.set_icon_name("media-skip-backward")
+        self.goToStart_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
+                                                              Gtk.IconSize.BUTTON)
+
         self.goToStart_button.connect("clicked", self._goToStartCb)
+        self.goToStart_button.set_relief(Gtk.ReliefStyle.NONE)
         self.goToStart_button.set_tooltip_text(
             _("Go to the beginning of the timeline"))
         self.goToStart_button.set_sensitive(False)
         bbox.pack_start(self.goToStart_button, False, False, 0)
 
-        self.back_button = Gtk.ToolButton()
-        self.back_button.set_icon_name("media-seek-backward")
+        self.back_button = Gtk.Button.new_from_icon_name("media-seek-backward-symbolic",
+                                                         Gtk.IconSize.BUTTON)
+
+        self.back_button.set_relief(Gtk.ReliefStyle.NONE)
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_tooltip_text(_("Go back one second"))
         self.back_button.set_sensitive(False)
@@ -266,15 +270,17 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.pack_start(self.playpause_button, False, False, 0)
         self.playpause_button.set_sensitive(False)
 
-        self.forward_button = Gtk.ToolButton()
-        self.forward_button.set_icon_name("media-seek-forward")
+        self.forward_button = Gtk.Button.new_from_icon_name("media-seek-forward-symbolic",
+                                                            Gtk.IconSize.BUTTON)
+        self.forward_button.set_relief(Gtk.ReliefStyle.NONE)
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_tooltip_text(_("Go forward one second"))
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, False, 0)
 
-        self.goToEnd_button = Gtk.ToolButton()
-        self.goToEnd_button.set_icon_name("media-skip-forward")
+        self.goToEnd_button = Gtk.Button.new_from_icon_name("media-skip-forward-symbolic",
+                                                            Gtk.IconSize.BUTTON)
+        self.goToEnd_button.set_relief(Gtk.ReliefStyle.NONE)
         self.goToEnd_button.connect("clicked", self._goToEndCb)
         self.goToEnd_button.set_tooltip_text(
             _("Go to the end of the timeline"))
@@ -287,10 +293,12 @@ class ViewerContainer(Gtk.Box, Loggable):
             _('Enter a timecode or frame number\nand press "Enter" to go to that position'))
         self.timecode_entry.connectActivateEvent(self._entryActivateCb)
         self.timecode_entry.connect("key_press_event", self._entry_key_press_event_cb)
-        bbox.pack_start(self.timecode_entry, False, 10, 0)
+        bbox.pack_start(self.timecode_entry, False, False, 15)
 
-        self.undock_button = Gtk.ToolButton()
-        self.undock_button.set_icon_name("view-restore")
+        self.undock_button = Gtk.Button.new_from_icon_name("view-restore-symbolic",
+                                                           Gtk.IconSize.BUTTON)
+
+        self.undock_button.set_relief(Gtk.ReliefStyle.NONE)
         self.undock_button.connect("clicked", self.undock_cb)
         self.undock_button.set_tooltip_text(
             _("Detach the viewer\nYou can re-attach it by closing the newly created window."))
@@ -432,14 +440,17 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.external_vbox.pack_end(self.buttons_container, False, False, 0)
 
         self.undock_button.hide()
-        self.fullscreen_button = Gtk.ToggleToolButton()
-        self.fullscreen_button.set_icon_name("view-fullscreen")
+        self.fullscreen_button = Gtk.ToggleButton()
+        fullscreen_image = Gtk.Image.new_from_icon_name(
+            "view-fullscreen-symbolic", Gtk.IconSize.BUTTON)
+        self.fullscreen_button.set_image(fullscreen_image)
         self.fullscreen_button.set_tooltip_text(
             _("Show this window in fullscreen"))
+        self.fullscreen_button.set_relief(Gtk.ReliefStyle.NONE)
         self.buttons_container.pack_end(
             self.fullscreen_button, expand=False, fill=False, padding=6)
         self.fullscreen_button.show()
-        self.fullscreen_button.connect("toggled", self._toggleFullscreen)
+        self.fullscreen_button.connect("toggled", self._toggle_fullscreen_cb)
 
         self.external_window.show()
         self.hide()
@@ -482,7 +493,7 @@ class ViewerContainer(Gtk.Box, Loggable):
             self.project.pipeline.pause()
             self.project.pipeline.simple_seek(position)
 
-    def _toggleFullscreen(self, widget):
+    def _toggle_fullscreen_cb(self, widget):
         if widget.get_active():
             self.external_window.hide()
             # GTK doesn't let us fullscreen utility windows
@@ -703,6 +714,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
         Loggable.__init__(self)
         self.image = Gtk.Image()
         self.add(self.image)
+        self.set_relief(Gtk.ReliefStyle.NONE)
         self.playing = False
         self.setPlay()
 
@@ -718,7 +730,7 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.log("Displaying the play image")
         self.playing = True
         self.set_image(Gtk.Image.new_from_icon_name(
-            "media-playback-start", Gtk.IconSize.BUTTON))
+            "media-playback-start-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Play"))
         self.playing = False
 
@@ -726,6 +738,6 @@ class PlayPauseButton(Gtk.Button, Loggable):
         self.log("Displaying the pause image")
         self.playing = False
         self.set_image(Gtk.Image.new_from_icon_name(
-            "media-playback-pause", Gtk.IconSize.BUTTON))
+            "media-playback-pause-symbolic", Gtk.IconSize.BUTTON))
         self.set_tooltip_text(_("Pause"))
         self.playing = True

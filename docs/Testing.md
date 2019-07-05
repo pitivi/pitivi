@@ -1,6 +1,6 @@
 # Testing
 
-We have tree sets of tests:
+We have three sets of tests:
  - the normal unit tests (ninja test)
  - integration tests using GstValidate.
  - [manual tests](QA_Scenarios.md)

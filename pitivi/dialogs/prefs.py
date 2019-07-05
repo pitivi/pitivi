@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """User preferences."""
-import itertools
 import os
 from gettext import gettext as _
 from threading import Timer
@@ -27,9 +26,9 @@ from gi.repository import Gio
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
-from gi.repository import Peas
 
 from pitivi.configure import get_ui_dir
+from pitivi.configure import get_user_plugins_dir
 from pitivi.pluginmanager import PluginManager
 from pitivi.settings import GlobalSettings
 from pitivi.utils import widgets
@@ -37,6 +36,7 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import alter_style_class
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
+from pitivi.utils.ui import PREFERENCES_CSS
 from pitivi.utils.ui import SPACING
 
 
@@ -93,6 +93,7 @@ class PreferencesDialog(Loggable):
 
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
+        self.__setup_css()
         self.dialog.set_transient_for(app.gui)
 
     def run(self):
@@ -100,6 +101,14 @@ class PreferencesDialog(Loggable):
         PreferencesDialog._instance = self
         self.dialog.run()
         PreferencesDialog._instance = None
+
+    def __setup_css(self):
+        css_provider = Gtk.CssProvider()
+        css_provider.load_from_data(PREFERENCES_CSS.encode('UTF-8'))
+        screen = Gdk.Screen.get_default()
+        style_context = self.app.gui.get_style_context()
+        style_context.add_provider_for_screen(screen, css_provider,
+                                              Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 # Public API
     @property
@@ -218,32 +227,47 @@ class PreferencesDialog(Loggable):
         """Adds a page for the preferences in the specified section."""
         options = self.prefs[section_id]
 
-        grid = Gtk.Grid()
-        grid.set_border_width(SPACING)
-        grid.props.column_spacing = SPACING
-        grid.props.row_spacing = SPACING / 2
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        container.set_border_width(SPACING)
+
+        listbox = Gtk.ListBox()
+        listbox.set_selection_mode(Gtk.SelectionMode.NONE)
+        listbox.props.margin = PADDING * 2
+        listbox.get_style_context().add_class('prefs_list')
+
+        container.add(listbox)
+
+        label_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
+        prop_size_group = Gtk.SizeGroup(mode=Gtk.SizeGroupMode.HORIZONTAL)
 
         prefs = []
         for attrname in options:
             label, description, widget_class, args = options[attrname]
             widget = widget_class(**args)
             widget.setWidgetValue(getattr(self.settings, attrname))
-            widget.connectValueChanged(
-                self._valueChangedCb, widget, attrname)
+            widget.connectValueChanged(self._valueChangedCb, widget, attrname)
             widget.set_tooltip_text(description)
             self.widgets[attrname] = widget
-            # Add a semicolon, except for checkbuttons.
-            if isinstance(widget, widgets.ToggleWidget):
-                widget.check_button.set_label(label)
-                label_widget = None
-            else:
-                # Translators: This adds a semicolon to an already
-                # translated name of a preference.
-                label = _("%(preference_label)s:") % {"preference_label": label}
-                label_widget = Gtk.Label(label=label)
-                label_widget.set_tooltip_text(description)
-                label_widget.set_alignment(1.0, 0.5)
-                label_widget.show()
+
+            widget.props.margin_left = PADDING * 3
+            widget.props.margin_right = PADDING * 3
+            widget.props.margin_top = PADDING * 2
+            widget.props.margin_bottom = PADDING * 2
+
+            prop_size_group.add_widget(widget)
+
+            label_widget = Gtk.Label(label=label)
+            label_widget.set_tooltip_text(description)
+            label_widget.set_alignment(0.0, 0.5)
+
+            label_widget.props.margin_left = PADDING * 3
+            label_widget.props.margin_right = PADDING * 3
+            label_widget.props.margin_top = PADDING * 2
+            label_widget.props.margin_bottom = PADDING * 2
+
+            label_widget.show()
+            label_size_group.add_widget(label_widget)
+
             icon = Gtk.Image()
             icon.set_from_icon_name(
                 "edit-clear-all-symbolic", Gtk.IconSize.MENU)
@@ -254,6 +278,7 @@ class PreferencesDialog(Loggable):
             revert.set_sensitive(not self.settings.isDefault(attrname))
             revert.connect("clicked", self.__reset_option_cb, attrname)
             revert.show_all()
+
             self.resets[attrname] = revert
             row_widgets = (label_widget, widget, revert)
             # Construct the prefs list so that it can be sorted.
@@ -265,17 +290,24 @@ class PreferencesDialog(Loggable):
         # but then I may be wrong
         for y, (_1, _2, row_widgets) in enumerate(sorted(prefs)):
             label, widget, revert = row_widgets
-            if not label:
-                grid.attach(widget, 0, y, 2, 1)
-                grid.attach(revert, 2, y, 1, 1)
-            else:
-                grid.attach(label, 0, y, 1, 1)
-                grid.attach(widget, 1, y, 1, 1)
-                grid.attach(revert, 2, y, 1, 1)
-            widget.show()
-            revert.show()
-        grid.show()
-        self._add_page(section_id, grid)
+            box = Gtk.Box()
+
+            if label:
+                box.pack_start(label, True, True, 0)
+
+            box.pack_start(widget, False, False, 0)
+            box.pack_start(revert, False, False, 0)
+
+            row = Gtk.ListBoxRow()
+            row.set_activatable(False)
+            row.add(box)
+            listbox.add(row)
+
+            if y == 0:
+                row.get_style_context().add_class('first')
+
+        container.show_all()
+        self._add_page(section_id, container)
 
     def __add_plugin_manager_section(self):
         page = PluginPreferencesPage(self.app, self)
@@ -297,11 +329,14 @@ class PreferencesDialog(Loggable):
                 self.list_store.append(item)
                 self.action_ids[action] = index
                 index += 1
+
         self.content_box.bind_model(self.list_store, self._create_widget_func, None)
         self.content_box.set_header_func(self._add_header_func, None)
         self.content_box.connect("row_activated", self.__row_activated_cb)
         self.content_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.content_box.props.margin = PADDING * 3
+        self.content_box.get_style_context().add_class('prefs_list')
+
         viewport = Gtk.Viewport()
         viewport.add(self.content_box)
 
@@ -330,14 +365,19 @@ class PreferencesDialog(Loggable):
         accel_label = Gtk.Label()
         title_label.set_text(item.title)
         accel_label.set_text(item.get_accel())
+
         if not accel_changed:
             accel_label.set_state_flags(Gtk.StateFlags.INSENSITIVE, True)
+
         title_label.props.xalign = 0
-        title_label.props.margin_left = PADDING * 2
-        title_label.props.margin_right = PADDING * 2
+        title_label.props.margin_left = PADDING * 3
+        title_label.props.margin_right = PADDING * 3
+        title_label.props.margin_top = PADDING * 2
+        title_label.props.margin_bottom = PADDING * 2
         self.description_size_group.add_widget(title_label)
+
         accel_label.props.xalign = 0
-        accel_label.props.margin_left = PADDING * 2
+        accel_label.props.margin_left = PADDING * 3
         accel_label.props.margin_right = PADDING * 2
         self.accel_size_group.add_widget(accel_label)
 
@@ -345,6 +385,7 @@ class PreferencesDialog(Loggable):
         button = Gtk.Button.new_from_icon_name("edit-clear-all-symbolic",
                                                Gtk.IconSize.MENU)
         button.set_tooltip_text(_("Reset the shortcut to the default accelerator"))
+        button.props.margin_right = PADDING / 2
         button.set_relief(Gtk.ReliefStyle.NONE)
         button.connect("clicked", self.__reset_accelerator_cb, item)
         button.set_sensitive(accel_changed)
@@ -370,13 +411,16 @@ class PreferencesDialog(Loggable):
             prev_group = None
 
         if prev_group != group:
+            if before is not None:
+                before.get_style_context().add_class("last")
+
             header = Gtk.Label()
             header.set_use_markup(True)
             group_title = self.app.shortcuts.group_titles[group]
             header.set_markup("<b>%s</b>" % group_title)
-            header.props.margin_top = PADDING * 3
-            header.props.margin_bottom = PADDING
-            header.props.margin_left = PADDING * 2
+            header.props.margin_top = PADDING if not prev_group else PADDING * 10
+            header.props.margin_bottom = PADDING * 2
+            header.props.margin_left = 1
             header.props.margin_right = PADDING * 2
             header.props.xalign = 0
             alter_style_class("group_title", header, "font-size: small;")
@@ -386,8 +430,7 @@ class PreferencesDialog(Loggable):
             box.get_style_context().add_class("background")
             box.show_all()
             row.set_header(box)
-        else:
-            row.set_header(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+            row.get_style_context().add_class("first")
 
     def __reset_accelerator_cb(self, unused_button, item):
         """Resets the accelerator to the default value."""
@@ -605,9 +648,9 @@ class CustomShortcutDialog(Gtk.Dialog):
 class PluginPreferencesRow(Gtk.ListBoxRow):
     """A row in the plugins list allowing activating and deactivating a plugin."""
 
-    def __init__(self, model):
+    def __init__(self, item):
         Gtk.Bin.__init__(self)
-        self.plugin_info = model.plugin_info
+        self.plugin_info = item.plugin_info
 
         self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.add(self._container)
@@ -625,6 +668,7 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
             self._description_label.set_text(description)
 
         self.switch = Gtk.Switch()
+        self.switch.props.valign = Gtk.Align.CENTER
         self.switch_handler_id = None
 
         # Pack widgets.
@@ -647,9 +691,8 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
 class PluginItem(GObject.Object):
     """Holds the data of a plugin info for a Gio.ListStore."""
 
-    def __init__(self, app, plugin_info):
+    def __init__(self, plugin_info):
         GObject.Object.__init__(self)
-        self.app = app
         self.plugin_info = plugin_info
 
 
@@ -676,11 +719,11 @@ class PluginManagerStore(Gio.ListStore):
         # pluginmanager.PluginType object. Secondly, sort alphabetically.
         for plugin_info in sorted(plugins,
                                   key=lambda x: (PluginManager.get_plugin_type(x), x.get_name())):
-            item = PluginItem(self.app, plugin_info)
-            self.append(item)
+            self.append(PluginItem(plugin_info))
 
 
 class PluginsBox(Gtk.ListBox):
+    """A ListBox for showing plugins grouped by type."""
 
     def __init__(self, list_store):
         Gtk.ListBox.__init__(self)
@@ -689,10 +732,14 @@ class PluginsBox(Gtk.ListBox):
         self.title_size_group = None
         self.switch_size_group = None
 
+        self.set_selection_mode(Gtk.SelectionMode.NONE)
         self.set_header_func(self._add_header_func, None)
         self.bind_model(self.list_store, self._create_widget_func, None)
 
         self.props.margin = PADDING * 3
+        self.props.margin_top = 0
+
+        self.get_style_context().add_class('prefs_list')
 
         # Activate the plugins' switches for plugins that are already loaded.
         loaded_plugins = self.app.plugin_manager.engine.get_loaded_plugins()
@@ -754,25 +801,45 @@ class PluginsBox(Gtk.ListBox):
         else:
             previous_type = None
         if previous_type != current_type:
-            self._set_header(row, str(current_type))
+            self._set_header(row, current_type)
+            if before is not None:
+                before.get_style_context().add_class("last")
 
-    def _set_header(self, row, group_title):
+    def _set_header(self, row, group):
+        group_title = str(group)
         header = Gtk.Label()
         header.set_use_markup(True)
 
         header.set_markup("<b>%s</b>" % group_title)
-        header.props.margin_top = PADDING * 3
-        header.props.margin_bottom = PADDING
-        header.props.margin_left = PADDING * 2
-        header.props.margin_right = PADDING * 2
-        header.props.xalign = 0
+        header.props.valign = Gtk.Align.CENTER
+        header.props.halign = Gtk.Align.START
         alter_style_class("group_title", header, "font-size: small;")
         header.get_style_context().add_class("group_title")
+
+        button = Gtk.Button.new()
+        button.props.valign = Gtk.Align.CENTER
+        button.props.relief = Gtk.ReliefStyle.NONE
+        button.add(Gtk.Image.new_from_icon_name("folder-open-symbolic", 1))
+        button.connect("clicked", self.__location_clicked_cb, group.get_dir())
+
+        inner_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        inner_box.set_halign(Gtk.Align.FILL)
+        inner_box.props.margin_top = PADDING * 3
+        inner_box.props.margin_bottom = PADDING
+        inner_box.props.margin_right = PADDING * 2
+        inner_box.pack_start(header, True, True, 0)
+        inner_box.pack_start(button, False, False, 0)
+
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        box.add(header)
+        box.add(inner_box)
         box.get_style_context().add_class("background")
         box.show_all()
         row.set_header(box)
+        row.get_style_context().add_class("first")
+
+    def __location_clicked_cb(self, unused_button, directory):
+        uri = GLib.filename_to_uri(directory, None)
+        Gio.AppInfo.launch_default_for_uri(uri, None)
 
 
 class PluginPreferencesPage(Gtk.ScrolledWindow):
@@ -782,12 +849,18 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
 
     def __init__(self, app, preferences_dialog):
         Gtk.ScrolledWindow.__init__(self)
-        list_store = PluginManagerStore.new(app, preferences_dialog)
 
-        viewport = Gtk.Viewport()
-        self._wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        plugins_box = PluginsBox(list_store)
-        viewport.add(self._wrapper_box)
+        list_store = PluginManagerStore.new(app, preferences_dialog)
+        if list_store.get_n_items():
+            plugins_box = PluginsBox(list_store)
+        else:
+            # We could use Gtk.ListBox.set_placeholder, but it
+            # appears bad inside the list widget.
+            placeholder_label = Gtk.Label.new(_("No plugins available"))
+            placeholder_label.props.margin = 4 * PADDING
+            placeholder_label.props.margin_top = 10 * PADDING
+            placeholder_label.show()
+            plugins_box = placeholder_label
 
         self._infobar_revealer = Gtk.Revealer()
         self._infobar = Gtk.InfoBar()
@@ -795,12 +868,21 @@ class PluginPreferencesPage(Gtk.ScrolledWindow):
         self._infobar_label = Gtk.Label()
         self._setup_infobar()
 
-        self.add_with_viewport(viewport)
+        note_label = Gtk.Label.new()
+        note_label.set_markup(_("You can create <a href='{doc_url}'>plugins</a> into your <a href='{dir_url}'>plugins directory</a>.").format(
+            doc_url="http://developer.pitivi.org/Plugins.html",
+            dir_url=GLib.filename_to_uri(get_user_plugins_dir(), None)))
+        note_label.props.margin_top = PADDING * 4
+        note_label.props.margin_bottom = PADDING * 2
+
+        wrapper_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(wrapper_box)
         self.set_min_content_height(500)
         self.set_min_content_width(600)
 
-        self._wrapper_box.pack_start(self._infobar_revealer, False, False, 0)
-        self._wrapper_box.pack_start(plugins_box, False, False, 0)
+        wrapper_box.pack_start(self._infobar_revealer, expand=False, fill=False, padding=0)
+        wrapper_box.pack_start(plugins_box, expand=False, fill=False, padding=0)
+        wrapper_box.pack_start(note_label, expand=False, fill=False, padding=0)
 
         # Helpers
         self._infobar_timer = None

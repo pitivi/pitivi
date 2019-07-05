@@ -27,7 +27,6 @@ class TitleOverlay(Overlay):
 
     def __init__(self, stack, source):
         Overlay.__init__(self, stack, source)
-        self.__corners = []
         self.__position = numpy.array([0, 0])
         self.__size = None
         self.__click_source_position = None
@@ -43,9 +42,9 @@ class TitleOverlay(Overlay):
         self.update_from_source()
 
     def __draw_rectangle(self, cr):
-        for corner in self.__corners:
-            cr.line_to(*corner.tolist())
-        cr.line_to(*self.__position.tolist())
+        x, y = [int(v) + 0.5 for v in self.__position]
+        w, h = [int(v) - 1 for v in self.__size]
+        cr.rectangle(x, y, w, h)
 
     def __get_source_position(self):
         res_x, x = self._source.get_child_property("x-absolute")
@@ -69,17 +68,8 @@ class TitleOverlay(Overlay):
         self._source.set_child_property("x-absolute", float(position[0]))
         self._source.set_child_property("y-absolute", float(position[1]))
 
-    def __update_corners(self):
-        self.__corners = [
-            self.__position,
-            self.__position + numpy.array([self.__size[0], 0]),
-            self.__position + self.__size,
-            self.__position + numpy.array([0, self.__size[1]])
-        ]
-
     def __update_from_motion(self, title_position):
         self.__position = title_position
-        self.__update_corners()
 
     def update_from_source(self):
         position = self.__get_text_position()
@@ -87,7 +77,6 @@ class TitleOverlay(Overlay):
 
         self.__position = position * self.stack.window_size / self.project_size
         self.__size = size * self.stack.window_size / self.project_size
-        self.__update_corners()
         self.queue_draw()
 
     def on_hover(self, cursor_position):
@@ -119,7 +108,7 @@ class TitleOverlay(Overlay):
 
     def on_motion_notify(self, cursor_position):
         if not isinstance(self.stack.click_position, numpy.ndarray):
-                return
+            return
 
         self.__update_from_motion(self.__click_window_position + self.stack.get_drag_distance(cursor_position))
         self.queue_draw()
@@ -130,26 +119,32 @@ class TitleOverlay(Overlay):
         self._commit()
 
     def do_draw(self, cr):
-        if not self._is_selected() and not self._is_hovered():
+        selected = self._is_selected()
+        hovered = self._is_hovered()
+        if not selected and not hovered:
             return
 
         cr.save()
-        # clear background
+
+        # Clear background
         cr.set_operator(cairo.OPERATOR_OVER)
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.0)
+        cr.set_source_rgba(0, 0, 0, 0)
         cr.paint()
 
-        if self._is_hovered():
-            brightness = 0.65
-        else:
-            brightness = 0.3
+        if not selected:
+            cr.set_dash((5, 5))
 
-        # clip away outer mask
+        # Black outline around the box
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3)
         self.__draw_rectangle(cr)
-        cr.clip()
-        cr.set_source_rgba(brightness, brightness, brightness, 0.6)
-        self.__draw_rectangle(cr)
-
-        cr.set_line_width(16)
         cr.stroke()
+
+        # Inner white line
+        color = (0.8, 0.8, 0.8) if not selected else (1, 1, 1)
+        cr.set_source_rgb(*color)
+        cr.set_line_width(1)
+        self.__draw_rectangle(cr)
+        cr.stroke()
+
         cr.restore()

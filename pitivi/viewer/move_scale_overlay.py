@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 from collections import OrderedDict
-from math import pi
 
 import cairo
 import numpy
@@ -36,9 +35,8 @@ class Edge:
 
 
 class Handle:
-    GLOW = 0.9
-    INITIAL_RADIUS = 15
-    MINIMAL_RADIUS = 5
+    INITIAL_SIZE = 30
+    MINIMAL_SIZE = 10
     CURSORS = {
         (Edge.top, Edge.left): "nw-resize",
         (Edge.bottom, Edge.left): "sw-resize",
@@ -51,7 +49,7 @@ class Handle:
     }
 
     def __init__(self, overlay):
-        self.__radius = Handle.INITIAL_RADIUS
+        self.__size = Handle.INITIAL_SIZE
         self.__clicked = False
         self.__window_position = numpy.array([0, 0])
         self.__translation = numpy.array([0, 0])
@@ -102,10 +100,15 @@ class Handle:
         return cursor_position
 
     def _get_normalized_minimal_size(self):
-        return 4 * Handle.MINIMAL_RADIUS / self._overlay.stack.window_size
+        return 2 * Handle.MINIMAL_SIZE / self._overlay.stack.window_size
 
     def get_window_position(self):
-        return self.__window_position.tolist()
+        x, y = [int(v) + 0.5 for v in self.__window_position]
+        if Edge.right in self.placement:
+            x -= 1
+        if Edge.bottom in self.placement:
+            y -= 1
+        return x, y
 
     def get_source_position(self):
         """Returns a source translation when handles at TOP or LEFT are dragged.
@@ -149,9 +152,13 @@ class Handle:
         self.__update_window_position()
 
     def on_hover(self, cursor_pos):
-        distance = numpy.linalg.norm(self.__window_position - cursor_pos)
+        if cursor_pos is None:
+            # The cursor is out of the widget.
+            self.hovered = False
+            return
 
-        if distance < self.__radius:
+        distance = numpy.linalg.norm(self.__window_position - cursor_pos)
+        if distance < self.__size / 2:
             self.hovered = True
             self._overlay.stack.set_cursor(Handle.CURSORS[self.placement])
         else:
@@ -173,46 +180,36 @@ class Handle:
         self._opposite_position = None
         self._opposite_to_handle = None
 
-    def restrict_radius_to_size(self, size):
-        if size < Handle.INITIAL_RADIUS * 5:
-            radius = size / 5
-            if radius < Handle.MINIMAL_RADIUS:
-                radius = Handle.MINIMAL_RADIUS
-            self.__radius = radius
+    def restrict_size(self, size):
+        if size < Handle.INITIAL_SIZE * 5:
+            self.__size = max(Handle.MINIMAL_SIZE, size / 5)
         else:
-            self.__radius = Handle.INITIAL_RADIUS
+            self.__size = Handle.INITIAL_SIZE
 
     def reset_size(self):
-        self.__radius = Handle.INITIAL_RADIUS
+        self.__size = Handle.INITIAL_SIZE
 
     def draw(self, cr):
-        if self.__clicked:
-            outer_color = .2
-            glow_radius = 1.08
-        elif self.hovered:
-            outer_color = .8
-            glow_radius = 1.08
-        else:
-            outer_color = .5
-            glow_radius = 1.01
+        src_x, src_y = self.get_window_position()
+        x = src_x - (self.__size / 2)
+        y = src_y - (self.__size / 2)
 
-        cr.set_source_rgba(Handle.GLOW, Handle.GLOW, Handle.GLOW, 0.9)
-        x, y = self.get_window_position()
-        cr.arc(x, y, self.__radius * glow_radius, 0, 2 * pi)
-        cr.fill()
+        if self.hovered:
+            cr.set_source_rgba(1, 1, 1, 0.25)
+            cr.rectangle(x, y, self.__size, self.__size)
+            cr.fill()
 
-        from_point = (x, y - self.__radius)
-        to_point = (x, y + self.__radius)
-        linear = cairo.LinearGradient(*(from_point + to_point))
-        linear.add_color_stop_rgba(0.00, outer_color, outer_color, outer_color, 1)
-        linear.add_color_stop_rgba(0.55, .1, .1, .1, 1)
-        linear.add_color_stop_rgba(0.65, .1, .1, .1, 1)
-        linear.add_color_stop_rgba(1.00, outer_color, outer_color, outer_color, 1)
+        # Black outline around the box
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3)
+        cr.rectangle(x, y, self.__size + 1, self.__size + 1)
+        cr.stroke()
 
-        cr.set_source(linear)
-
-        cr.arc(x, y, self.__radius * .9, 0, 2 * pi)
-        cr.fill()
+        # Inner white line
+        cr.set_source_rgb(1, 1, 1)
+        cr.set_line_width(1)
+        cr.rectangle(x, y, self.__size + 1, self.__size + 1)
+        cr.stroke()
 
 
 class CornerHandle(Handle):
@@ -306,7 +303,6 @@ class MoveScaleOverlay(Overlay):
 
         self.__clicked_handle = None
         self.__click_diagonal_sign = None
-        self.__box_hovered = False
 
         self.__action_log = action_log
         self.hovered_handle = None
@@ -427,7 +423,7 @@ class MoveScaleOverlay(Overlay):
         smaller_size = numpy.amin(size)
 
         for handle in self.handles.values():
-            handle.restrict_radius_to_size(smaller_size)
+            handle.restrict_size(smaller_size)
 
     def __update_edges_from_corners(self):
         half_w = numpy.array([self.__get_width() * 0.5, 0])
@@ -439,9 +435,9 @@ class MoveScaleOverlay(Overlay):
         self.handles[(Edge.top,)].set_position(self.handles[(Edge.top, Edge.right)].position - half_w)
 
     def __draw_rectangle(self, cr):
+        cr.move_to(*self.handles[(Edge.top, Edge.right)].get_window_position())
         for handle in self.corner_handles.values():
             cr.line_to(*handle.get_window_position())
-        cr.line_to(*self.handles[(Edge.top, Edge.left)].get_window_position())
 
     def get_center(self):
         diagonal = self.handles[(Edge.bottom, Edge.right)].position - self.handles[(Edge.top, Edge.left)].position
@@ -456,7 +452,8 @@ class MoveScaleOverlay(Overlay):
         self.click_source_position = self.__get_source_position()
         self.__clicked_handle = None
 
-        if self.hovered_handle or self.__box_hovered:
+        hovered = self._is_hovered()
+        if self.hovered_handle or hovered:
             self.__action_log.begin("Video position change",
                                     finalizing_action=CommitTimelineFinalizingAction(
                                         self._source.get_timeline().get_parent()),
@@ -465,7 +462,7 @@ class MoveScaleOverlay(Overlay):
         if self.hovered_handle:
             self.hovered_handle.on_click()
             self.__clicked_handle = self.hovered_handle
-        elif self.__box_hovered:
+        elif hovered:
             self._select()
             self.stack.set_cursor("grabbing")
             self.stack.selected_overlay = self
@@ -520,7 +517,8 @@ class MoveScaleOverlay(Overlay):
     def on_hover(self, cursor_pos):
         if not self.is_visible():
             return
-        # handles hover check
+
+        # Check if one of the handles is hovered.
         self.hovered_handle = None
         if self._is_selected():
             for handle in self.handles.values():
@@ -532,21 +530,22 @@ class MoveScaleOverlay(Overlay):
                 self.queue_draw()
                 return True
 
-        # box hover check
+        # Check if self is hovered
         source = self.__get_normalized_source_position()
         cursor = self.stack.get_normalized_cursor_position(cursor_pos)
-
-        self.__box_hovered = False
         if (source < cursor).all() and (cursor < source + self.__get_size()).all():
-            self.__box_hovered = True
             self.stack.set_cursor("grab")
             self._hover()
         else:
-            self.__box_hovered = False
             self.unhover()
 
         self.queue_draw()
-        return self.__box_hovered
+        return self._is_hovered()
+
+    def unhover(self):
+        if self.hovered_handle:
+            self.hovered_handle.on_hover(None)
+        Overlay.unhover(self)
 
     def update_from_source(self):
         self.__set_size(self.__get_source_size() / self.project_size)
@@ -555,30 +554,36 @@ class MoveScaleOverlay(Overlay):
         self.queue_draw()
 
     def do_draw(self, cr):
-        if not self._is_selected() and not self._is_hovered():
+        selected = self._is_selected()
+        hovered = self._is_hovered()
+        if not selected and not hovered:
             return
 
         cr.save()
-        # clear background
+
+        # Clear background
         cr.set_operator(cairo.OPERATOR_OVER)
-        cr.set_source_rgba(0.0, 0.0, 0.0, 0.0)
+        cr.set_source_rgba(0, 0, 0, 0)
         cr.paint()
 
-        if self.__box_hovered:
-            brightness = 0.65
-        else:
-            brightness = 0.3
+        if not selected:
+            cr.set_dash((5, 5))
 
-        # clip away outer mask
+        # Black outline around the box
+        cr.set_source_rgb(0, 0, 0)
+        cr.set_line_width(3)
         self.__draw_rectangle(cr)
-        cr.clip()
-        cr.set_source_rgba(brightness, brightness, brightness, 0.6)
-        self.__draw_rectangle(cr)
-
-        cr.set_line_width(16)
         cr.stroke()
+
+        # Inner white line
+        color = (0.8, 0.8, 0.8) if not selected else (1, 1, 1)
+        cr.set_source_rgb(*color)
+        cr.set_line_width(1)
+        self.__draw_rectangle(cr)
+        cr.stroke()
+
         cr.restore()
 
-        if self._is_selected():
+        if selected:
             for handle in self.handles.values():
                 handle.draw(cr)
