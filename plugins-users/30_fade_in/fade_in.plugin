@@ -1,0 +1,9 @@
+[Plugin]
+Name=Fade in
+Description= Create a fade in video and audio in the selected clip
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=fade_in
