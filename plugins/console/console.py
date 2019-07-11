@@ -96,38 +96,42 @@ class Console(GObject.GObject, Peas.Activatable):
             pass
 
         try:
-            self.app.settings.addConfigOption(attrname="consoleColor",
-                                              section="console",
-                                              key="console-color",
-                                              notify=True,
-                                              default=Console.DEFAULT_COLOR)
+            if "consoleColorChanged" not in GObject.signal_list_names(self.app.settings):
+                self.app.settings.addConfigOption(attrname="consoleColor",
+                                                  section="console",
+                                                  key="console-color",
+                                                  notify=True,
+                                                  default=Console.DEFAULT_COLOR)
         except ConfigError:
             pass
 
         try:
-            self.app.settings.addConfigOption(attrname="consoleErrorColor",
-                                              section="console",
-                                              key="console-error-color",
-                                              notify=True,
-                                              default=Console.DEFAULT_STDERR_COLOR)
+            if "consoleErrorColorChanged" not in GObject.signal_list_names(self.app.settings):
+                self.app.settings.addConfigOption(attrname="consoleErrorColor",
+                                                  section="console",
+                                                  key="console-error-color",
+                                                  notify=True,
+                                                  default=Console.DEFAULT_STDERR_COLOR)
         except ConfigError:
             pass
 
         try:
-            self.app.settings.addConfigOption(attrname="consoleOutputColor",
-                                              section="console",
-                                              key="console-output-color",
-                                              notify=True,
-                                              default=Console.DEFAULT_STDOUT_COLOR)
+            if "consoleOutputColorChanged" not in GObject.signal_list_names(self.app.settings):
+                self.app.settings.addConfigOption(attrname="consoleOutputColor",
+                                                  section="console",
+                                                  key="console-output-color",
+                                                  notify=True,
+                                                  default=Console.DEFAULT_STDOUT_COLOR)
         except ConfigError:
             pass
 
         try:
-            self.app.settings.addConfigOption(attrname="consoleFont",
-                                              section="console",
-                                              key="console-font",
-                                              notify=True,
-                                              default=Console.DEFAULT_FONT.to_string())
+            if "consoleFontChanged" not in GObject.signal_list_names(self.app.settings):
+                self.app.settings.addConfigOption(attrname="consoleFont",
+                                                  section="console",
+                                                  key="console-font",
+                                                  notify=True,
+                                                  default=Console.DEFAULT_FONT.to_string())
         except ConfigError:
             pass
 
