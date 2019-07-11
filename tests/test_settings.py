@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.settings module."""
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,no-self-use
 import os
 import tempfile
 from unittest import mock
@@ -68,8 +68,7 @@ class TestGlobalSettings(common.TestCase):
 
     def test_add_section(self):
         GlobalSettings.addConfigSection("section-a")
-        with self.assertRaises(ConfigError):
-            GlobalSettings.addConfigSection("section-a")
+        GlobalSettings.addConfigSection("section-a")
 
     def test_add_config_option(self):
         def add_option():
