@@ -346,11 +346,12 @@ class GlobalSettings(GObject.Object, Loggable):
             notification = Notification(attrname)
             setattr(cls, attrname, notification)
             setattr(cls, "_" + attrname, default)
-            GObject.signal_new(notification.signame,
-                               cls,
-                               GObject.SignalFlags.RUN_LAST,
-                               None,
-                               ())
+            if notification.signame not in GObject.signal_list_names(cls):
+                GObject.signal_new(notification.signame,
+                                   cls,
+                                   GObject.SignalFlags.RUN_LAST,
+                                   None,
+                                   ())
         else:
             setattr(cls, attrname, default)
         if section and key:
@@ -364,12 +365,9 @@ class GlobalSettings(GObject.Object, Loggable):
 
         Args:
             section (str): The section name.
-
-        Raises:
-            ConfigError: If the section already exists.
         """
         if section in cls.options:
-            raise ConfigError("Duplicate Section \"%s\"." % section)
+            return
         cls.options[section] = {}
 
     @classmethod
