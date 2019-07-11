@@ -33,9 +33,8 @@ from matplotlib.figure import Figure
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.effects import ALLOWED_ONLY_ONCE_EFFECTS
-from pitivi.effects import AUDIO_EFFECT
-from pitivi.effects import VIDEO_EFFECT
 from pitivi.timeline.previewers import AudioPreviewer
+from pitivi.timeline.previewers import ImagePreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils import pipeline
@@ -973,7 +972,10 @@ class VideoUriSource(VideoSource):
         self.get_style_context().add_class("VideoUriSource")
 
     def _getPreviewer(self):
-        previewer = VideoPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
+        if isinstance(self._ges_elem, GES.ImageSource):
+            previewer = ImagePreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
+        else:
+            previewer = VideoPreviewer(self._ges_elem, self.timeline.app.settings.previewers_max_cpu)
         previewer.get_style_context().add_class("VideoUriSource")
 
         return previewer

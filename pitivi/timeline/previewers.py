@@ -92,7 +92,6 @@ class PreviewerBin(Gst.Bin, Loggable):
 
     def finalize(self, proxy=None):
         """Finalizes the previewer, saving data to the disk if needed."""
-        pass
 
 
 class ThumbnailBin(PreviewerBin):
@@ -409,11 +408,142 @@ class Previewer(Gtk.Layout):
 
     def set_selected(self, selected):
         """Marks this instance as being selected."""
-        pass
 
     def pause_generation(self):
         """Pauses preview generation."""
-        pass
+
+    @staticmethod
+    def thumb_interval(thumb_width):
+        """Gets the interval for which a thumbnail is displayed.
+
+        Returns:
+            int: a duration in nanos, multiple of THUMB_PERIOD.
+        """
+        interval = Zoomable.pixelToNs(thumb_width + THUMB_MARGIN_PX)
+        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
+        quantized = quantize(interval, THUMB_PERIOD)
+        # Make sure the quantized thumb interval fits
+        # the thumb and the margin.
+        if quantized < interval:
+            quantized += THUMB_PERIOD
+        # Make sure we don't show thumbs more often than THUMB_PERIOD.
+        return max(THUMB_PERIOD, quantized)
+
+
+class ImagePreviewer(Previewer, Zoomable, Loggable):
+    """An image previewer widget, drawing thumbnails."""
+
+    # We could define them in Previewer, but for some reason they are ignored.
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
+    def __init__(self, ges_elem, max_cpu_usage):
+        Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
+        Zoomable.__init__(self)
+        Loggable.__init__(self)
+
+        self.ges_elem = ges_elem
+
+        # Guard against malformed URIs
+        self.uri = quote_uri(get_proxy_target(ges_elem).props.id)
+
+        self.__start_id = 0
+
+        self.__image_pixbuf = None
+
+        self.thumbs = {}
+        self.thumb_height = THUMB_HEIGHT
+        self.thumb_width = 0
+
+        self.ges_elem.connect("notify::duration", self._duration_changed_cb)
+
+        self.become_controlled()
+
+        self.connect("notify::height-request", self._height_changed_cb)
+
+    def _start_thumbnailing_cb(self):
+        if not self.__start_id:
+            # Can happen if stopGeneration is called because the clip has been
+            # removed from the timeline after the PreviewGeneratorManager
+            # started this job.
+            return False
+
+        self.__start_id = None
+
+        self.debug("Generating thumbnail for image: %s", path_from_uri(self.uri))
+        self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+            Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
+        self.thumb_width = self.__image_pixbuf.props.width
+        self._update_thumbnails()
+        self.emit("done")
+
+        # Stop calling me, I started already.
+        return False
+
+    def _update_thumbnails(self):
+        """Updates the thumbnail widgets for the clip at the current zoom."""
+        if not self.thumb_width:
+            # The __image_pixbuf is not ready yet.
+            return
+
+        thumbs = {}
+        interval = self.thumb_interval(self.thumb_width)
+        element_left = quantize(self.ges_elem.props.in_point, interval)
+        element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
+        y = (self.props.height_request - self.thumb_height) / 2
+        for position in range(element_left, element_right, interval):
+            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
+            try:
+                thumb = self.thumbs.pop(position)
+                self.move(thumb, x, y)
+            except KeyError:
+                thumb = Thumbnail(self.thumb_width, self.thumb_height)
+                self.put(thumb, x, y)
+
+            thumbs[position] = thumb
+            thumb.set_from_pixbuf(self.__image_pixbuf)
+            thumb.set_visible(True)
+
+        for thumb in self.thumbs.values():
+            self.remove(thumb)
+        self.thumbs = thumbs
+
+    def zoomChanged(self):
+        self._update_thumbnails()
+
+    def _height_changed_cb(self, unused_widget, unused_param_spec):
+        self._update_thumbnails()
+
+    def _duration_changed_cb(self, unused_ges_timeline_element, unused_param_spec):
+        """Handles the changing of the duration of the clip."""
+        self._update_thumbnails()
+
+    def set_selected(self, selected):
+        if selected:
+            opacity = 0.5
+        else:
+            opacity = 1.0
+
+        for thumb in self.get_children():
+            thumb.props.opacity = opacity
+
+    def start_generation(self):
+        self.debug("Waiting for UI to become idle for: %s",
+                   path_from_uri(self.uri))
+        self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
+                                        priority=GLib.PRIORITY_LOW)
+
+    def stop_generation(self):
+        if self.__start_id:
+            # Cancel the starting.
+            GLib.source_remove(self.__start_id)
+            self.__start_id = None
+
+        self.emit("done")
+
+    def release(self):
+        """Stops preview generation and cleans the object."""
+        self.stop_generation()
+        Zoomable.__del__(self)
 
 
 class VideoPreviewer(Previewer, Zoomable, Loggable):
@@ -454,11 +584,9 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.thumb_height = THUMB_HEIGHT
         self.thumb_width = 0
 
-        self.__image_pixbuf = None
-        if not isinstance(ges_elem, GES.ImageSource):
-            self.thumb_cache = ThumbnailCache.get(self.uri)
-            self._ensure_proxy_thumbnails_cache()
-            self.thumb_width, unused_height = self.thumb_cache.image_size
+        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._ensure_proxy_thumbnails_cache()
+        self.thumb_width, unused_height = self.thumb_cache.image_size
         self.pipeline = None
         self.gdkpixbufsink = None
 
@@ -555,28 +683,20 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         self.__start_id = None
 
-        if isinstance(self.ges_elem, GES.ImageSource):
-            self.debug("Generating thumbnail for image: %s", path_from_uri(self.uri))
-            self.__image_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                Gst.uri_get_location(self.uri), -1, self.thumb_height, True)
-            self.thumb_width = self.__image_pixbuf.props.width
-            self._update_thumbnails()
-            self.emit("done")
-        else:
-            if not self.thumb_width:
-                self.debug("Finding thumb width")
-                self._setup_pipeline()
-                return False
+        if not self.thumb_width:
+            self.debug("Finding thumb width")
+            self._setup_pipeline()
+            return False
 
-            # Update the thumbnails with what we already have, if anything.
-            self._update_thumbnails()
-            if self.queue:
-                self.debug("Generating thumbnails for video: %s, %s", path_from_uri(self.uri), self.queue)
-                # When the pipeline status is set to PAUSED,
-                # the first thumbnail generation will be scheduled.
-                self._setup_pipeline()
-            else:
-                self.emit("done")
+        # Update the thumbnails with what we already have, if anything.
+        self._update_thumbnails()
+        if self.queue:
+            self.debug("Generating thumbnails for video: %s, %s", path_from_uri(self.uri), self.queue)
+            # When the pipeline status is set to PAUSED,
+            # the first thumbnail generation will be scheduled.
+            self._setup_pipeline()
+        else:
+            self.emit("done")
 
         # Stop calling me, I started already.
         return False
@@ -605,33 +725,15 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # and then the next thumbnail generation operation will be scheduled.
         return False
 
-    @property
-    def thumb_interval(self):
-        """Gets the interval for which a thumbnail is displayed.
-
-        Returns:
-            int: a duration in nanos, multiple of THUMB_PERIOD.
-        """
-        interval = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
-        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
-        quantized = quantize(interval, THUMB_PERIOD)
-        # Make sure the quantized thumb interval fits
-        # the thumb and the margin.
-        if quantized < interval:
-            quantized += THUMB_PERIOD
-        # Make sure we don't show thumbs more often than THUMB_PERIOD.
-        return max(THUMB_PERIOD, quantized)
-
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
         if not self.thumb_width:
             # The thumb_width will be available when pipeline has been started
-            # or the __image_pixbuf is ready.
             return
 
         thumbs = {}
         queue = []
-        interval = self.thumb_interval
+        interval = self.thumb_interval(self.thumb_width)
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
         y = (self.props.height_request - self.thumb_height) / 2
@@ -645,10 +747,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
                 self.put(thumb, x, y)
 
             thumbs[position] = thumb
-            if isinstance(self.ges_elem, GES.ImageSource):
-                thumb.set_from_pixbuf(self.__image_pixbuf)
-                thumb.set_visible(True)
-            elif position in self.thumb_cache:
+            if position in self.thumb_cache:
                 pixbuf = self.thumb_cache[position]
                 thumb.set_from_pixbuf(pixbuf)
                 thumb.set_visible(True)
@@ -868,7 +967,7 @@ class ThumbnailCache(Loggable):
         Returns:
             List[int]: The width and height of the images in the cache.
         """
-        if self._image_size[0] is 0:
+        if self._image_size[0] == 0:
             self._cur.execute("SELECT * FROM Thumbs LIMIT 1")
             row = self._cur.fetchone()
             if row:
