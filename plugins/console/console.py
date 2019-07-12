@@ -30,7 +30,6 @@ from utils import Namespace
 from widgets import ConsoleWidget
 
 from pitivi.dialogs.prefs import PreferencesDialog
-from pitivi.settings import ConfigError
 
 
 class PitiviNamespace(Namespace):
@@ -90,50 +89,30 @@ class Console(GObject.GObject, Peas.Activatable):
     def do_activate(self):
         api = self.object
         self.app = api.app
-        try:
-            self.app.settings.addConfigSection("console")
-        except ConfigError:
-            pass
+        self.app.settings.addConfigSection("console")
+        self.app.settings.addConfigOption(attrname="consoleColor",
+                                          section="console",
+                                          key="console-color",
+                                          notify=True,
+                                          default=Console.DEFAULT_COLOR)
 
-        try:
-            if "consoleColorChanged" not in GObject.signal_list_names(self.app.settings):
-                self.app.settings.addConfigOption(attrname="consoleColor",
-                                                  section="console",
-                                                  key="console-color",
-                                                  notify=True,
-                                                  default=Console.DEFAULT_COLOR)
-        except ConfigError:
-            pass
+        self.app.settings.addConfigOption(attrname="consoleErrorColor",
+                                          section="console",
+                                          key="console-error-color",
+                                          notify=True,
+                                          default=Console.DEFAULT_STDERR_COLOR)
 
-        try:
-            if "consoleErrorColorChanged" not in GObject.signal_list_names(self.app.settings):
-                self.app.settings.addConfigOption(attrname="consoleErrorColor",
-                                                  section="console",
-                                                  key="console-error-color",
-                                                  notify=True,
-                                                  default=Console.DEFAULT_STDERR_COLOR)
-        except ConfigError:
-            pass
+        self.app.settings.addConfigOption(attrname="consoleOutputColor",
+                                          section="console",
+                                          key="console-output-color",
+                                          notify=True,
+                                          default=Console.DEFAULT_STDOUT_COLOR)
 
-        try:
-            if "consoleOutputColorChanged" not in GObject.signal_list_names(self.app.settings):
-                self.app.settings.addConfigOption(attrname="consoleOutputColor",
-                                                  section="console",
-                                                  key="console-output-color",
-                                                  notify=True,
-                                                  default=Console.DEFAULT_STDOUT_COLOR)
-        except ConfigError:
-            pass
-
-        try:
-            if "consoleFontChanged" not in GObject.signal_list_names(self.app.settings):
-                self.app.settings.addConfigOption(attrname="consoleFont",
-                                                  section="console",
-                                                  key="console-font",
-                                                  notify=True,
-                                                  default=Console.DEFAULT_FONT.to_string())
-        except ConfigError:
-            pass
+        self.app.settings.addConfigOption(attrname="consoleFont",
+                                          section="console",
+                                          key="console-font",
+                                          notify=True,
+                                          default=Console.DEFAULT_FONT.to_string())
 
         self.app.settings.reload_attribute_from_file("console", "consoleColor")
         self.app.settings.reload_attribute_from_file("console",
