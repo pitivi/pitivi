@@ -365,9 +365,6 @@ class GlobalSettings(GObject.Object, Loggable):
 
         Args:
             section (str): The section name.
-
-        Raises:
-            ConfigError: If the section already exists.
         """
         if section in cls.options:
             return
