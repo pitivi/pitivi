@@ -449,9 +449,6 @@ class ImagePreviewer(Previewer, Zoomable, Loggable):
 
         self.__start_id = 0
 
-        # The thumbs to be generated.
-        self.queue = []
-
         self.__image_pixbuf = None
 
         self.thumbs = {}
@@ -490,7 +487,6 @@ class ImagePreviewer(Previewer, Zoomable, Loggable):
             return
 
         thumbs = {}
-        queue = []
         interval = self.thumb_interval(self.thumb_width)
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
@@ -511,9 +507,6 @@ class ImagePreviewer(Previewer, Zoomable, Loggable):
         for thumb in self.thumbs.values():
             self.remove(thumb)
         self.thumbs = thumbs
-        self.queue = queue
-        if queue:
-            self.become_controlled()
 
     def zoomChanged(self):
         self._update_thumbnails()
