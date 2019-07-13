@@ -415,8 +415,24 @@ class Previewer(Gtk.Layout):
         """Pauses preview generation."""
         pass
 
+    def thumb_interval(self, thumb_width):
+        """Gets the interval for which a thumbnail is displayed.
+
+        Returns:
+            int: a duration in nanos, multiple of THUMB_PERIOD.
+        """
+        interval = Zoomable.pixelToNs(thumb_width + THUMB_MARGIN_PX)
+        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
+        quantized = quantize(interval, THUMB_PERIOD)
+        # Make sure the quantized thumb interval fits
+        # the thumb and the margin.
+        if quantized < interval:
+            quantized += THUMB_PERIOD
+        # Make sure we don't show thumbs more often than THUMB_PERIOD.
+        return max(THUMB_PERIOD, quantized)
+
 class ImagePreviewer(Previewer, Zoomable, Loggable):
-    """A image previewer widget, drawing thumbnails"""
+    """An image previewer widget, drawing thumbnails."""
 
     # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
@@ -467,33 +483,15 @@ class ImagePreviewer(Previewer, Zoomable, Loggable):
         # Stop calling me, I started already.
         return False
 
-    @property
-    def thumb_interval(self):
-        """Gets the interval for which a thumbnail is displayed.
-
-        Returns:
-            int: a duration in nanos, multiple of THUMB_PERIOD.
-        """
-        interval = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
-        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
-        quantized = quantize(interval, THUMB_PERIOD)
-        # Make sure the quantized thumb interval fits
-        # the thumb and the margin.
-        if quantized < interval:
-            quantized += THUMB_PERIOD
-        # Make sure we don't show thumbs more often than THUMB_PERIOD.
-        return max(THUMB_PERIOD, quantized)
-
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
         if not self.thumb_width:
-            # The thumb_width will be available when pipeline has been started
-            # or the __image_pixbuf is ready.
+            # When the __image_pixbuf is ready.
             return
 
         thumbs = {}
         queue = []
-        interval = self.thumb_interval
+        interval = self.thumb_interval(self.thumb_width)
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
         y = (self.props.height_request - self.thumb_height) / 2
@@ -735,23 +733,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # and then the next thumbnail generation operation will be scheduled.
         return False
 
-    @property
-    def thumb_interval(self):
-        """Gets the interval for which a thumbnail is displayed.
-
-        Returns:
-            int: a duration in nanos, multiple of THUMB_PERIOD.
-        """
-        interval = Zoomable.pixelToNs(self.thumb_width + THUMB_MARGIN_PX)
-        # Make sure the thumb interval is a multiple of THUMB_PERIOD.
-        quantized = quantize(interval, THUMB_PERIOD)
-        # Make sure the quantized thumb interval fits
-        # the thumb and the margin.
-        if quantized < interval:
-            quantized += THUMB_PERIOD
-        # Make sure we don't show thumbs more often than THUMB_PERIOD.
-        return max(THUMB_PERIOD, quantized)
-
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
         if not self.thumb_width:
@@ -760,7 +741,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
 
         thumbs = {}
         queue = []
-        interval = self.thumb_interval
+        interval = self.thumb_interval(self.thumb_width)
         element_left = quantize(self.ges_elem.props.in_point, interval)
         element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
         y = (self.props.height_request - self.thumb_height) / 2
