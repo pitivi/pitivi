@@ -113,7 +113,7 @@ class TestVideoPreviewer(common.TestCase):
             """Runs thumb_interval."""
             with mock.patch("pitivi.utils.timeline.Zoomable.pixelToNs") as pixel_to_ns:
                 pixel_to_ns.return_value = interval
-                return previewer.thumb_interval
+                return previewer.thumb_interval(previewer.thumb_width)
 
         self.assertEqual(run_thumb_interval(1), THUMB_PERIOD)
         self.assertEqual(run_thumb_interval(THUMB_PERIOD - 1), THUMB_PERIOD)
