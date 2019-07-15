@@ -546,17 +546,8 @@ class ImagePreviewer(Previewer, Zoomable, Loggable):
         Zoomable.__del__(self)
 
 
-class VideoPreviewer(Previewer, Zoomable, Loggable):
-    """A video previewer widget, drawing thumbnails.
-
-    Attributes:
-        ges_elem (GES.TrackElement): The previewed element.
-        thumbs (dict): Maps (quantized) times to Thumbnail widgets.
-        thumb_cache (ThumbnailCache): The pixmaps persistent cache.
-    """
-
-    # We could define them in Previewer, but for some reason they are ignored.
-    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+class AssetPreviewer(Previewer, Zoomable, Loggable):
+    """AssetPreviewer for creating thumbnails."""
 
     def __init__(self, ges_elem, max_cpu_usage):
         Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
@@ -585,7 +576,7 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.thumb_width = 0
 
         self.thumb_cache = ThumbnailCache.get(self.uri)
-        self._ensure_proxy_thumbnails_cache()
+
         self.thumb_width, unused_height = self.thumb_cache.image_size
         self.pipeline = None
         self.gdkpixbufsink = None
@@ -593,14 +584,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.cpu_usage_tracker = CPUUsageTracker()
         # Initial delay before generating the next thumbnail, in millis.
         self.interval = 500
-
-        # Connect signals and fire things up
-        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
-        self.ges_elem.connect("notify::duration", self._duration_changed_cb)
-
-        self.become_controlled()
-
-        self.connect("notify::height-request", self._height_changed_cb)
 
     def pause_generation(self):
         if self.pipeline:
@@ -617,7 +600,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
             # bringing the pipeline back to PAUSED.
             self.pipeline.set_state(Gst.State.PAUSED)
             return
-
         pipeline = Gst.parse_launch(
             "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
@@ -725,42 +707,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         # and then the next thumbnail generation operation will be scheduled.
         return False
 
-    def _update_thumbnails(self):
-        """Updates the thumbnail widgets for the clip at the current zoom."""
-        if not self.thumb_width:
-            # The thumb_width will be available when pipeline has been started
-            return
-
-        thumbs = {}
-        queue = []
-        interval = self.thumb_interval(self.thumb_width)
-        element_left = quantize(self.ges_elem.props.in_point, interval)
-        element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
-        y = (self.props.height_request - self.thumb_height) / 2
-        for position in range(element_left, element_right, interval):
-            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
-            try:
-                thumb = self.thumbs.pop(position)
-                self.move(thumb, x, y)
-            except KeyError:
-                thumb = Thumbnail(self.thumb_width, self.thumb_height)
-                self.put(thumb, x, y)
-
-            thumbs[position] = thumb
-            if position in self.thumb_cache:
-                pixbuf = self.thumb_cache[position]
-                thumb.set_from_pixbuf(pixbuf)
-                thumb.set_visible(True)
-            else:
-                if position not in self.failures and position != self.position:
-                    queue.append(position)
-        for thumb in self.thumbs.values():
-            self.remove(thumb)
-        self.thumbs = thumbs
-        self.queue = queue
-        if queue:
-            self.become_controlled()
-
     def _set_pixbuf(self, pixbuf):
         """Sets the pixbuf for the thumbnail at the expected position."""
         position = self.position
@@ -846,12 +792,6 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
                                         priority=GLib.PRIORITY_LOW)
 
-    def _ensure_proxy_thumbnails_cache(self):
-        """Ensures that both the target asset and the proxy assets have caches."""
-        uri = quote_uri(self.ges_elem.props.uri)
-        if self.uri != uri:
-            self.thumb_cache.copy(uri)
-
     def stop_generation(self):
         if self.__start_id:
             # Cancel the starting.
@@ -881,6 +821,74 @@ class VideoPreviewer(Previewer, Zoomable, Loggable):
         """Stops preview generation and cleans the object."""
         self.stop_generation()
         Zoomable.__del__(self)
+
+
+class VideoPreviewer(AssetPreviewer):
+    """A video previewer widget, drawing thumbnails.
+
+    Attributes:
+        ges_elem (GES.TrackElement): The previewed element.
+        thumbs (dict): Maps (quantized) times to Thumbnail widgets.
+        thumb_cache (ThumbnailCache): The pixmaps persistent cache.
+    """
+
+    # We could define them in Previewer, but for some reason they are ignored.
+    __gsignals__ = PREVIEW_GENERATOR_SIGNALS
+
+    def __init__(self, ges_elem, max_cpu_usage):
+        AssetPreviewer.__init__(self, ges_elem, max_cpu_usage)
+
+        self._ensure_proxy_thumbnails_cache()
+
+        # Connect signals and fire things up
+        self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
+        self.ges_elem.connect("notify::duration", self._duration_changed_cb)
+
+        self.become_controlled()
+
+        self.connect("notify::height-request", self._height_changed_cb)
+
+    def _update_thumbnails(self):
+        """Updates the thumbnail widgets for the clip at the current zoom."""
+        if not self.thumb_width:
+            # The thumb_width will be available when pipeline has been started
+            return
+
+        thumbs = {}
+        queue = []
+        interval = self.thumb_interval(self.thumb_width)
+        element_left = quantize(self.ges_elem.props.in_point, interval)
+        element_right = self.ges_elem.props.in_point + self.ges_elem.props.duration
+        y = (self.props.height_request - self.thumb_height) / 2
+        for position in range(element_left, element_right, interval):
+            x = Zoomable.nsToPixel(position) - self.nsToPixel(self.ges_elem.props.in_point)
+            try:
+                thumb = self.thumbs.pop(position)
+                self.move(thumb, x, y)
+            except KeyError:
+                thumb = Thumbnail(self.thumb_width, self.thumb_height)
+                self.put(thumb, x, y)
+
+            thumbs[position] = thumb
+            if position in self.thumb_cache:
+                pixbuf = self.thumb_cache[position]
+                thumb.set_from_pixbuf(pixbuf)
+                thumb.set_visible(True)
+            else:
+                if position not in self.failures and position != self.position:
+                    queue.append(position)
+        for thumb in self.thumbs.values():
+            self.remove(thumb)
+        self.thumbs = thumbs
+        self.queue = queue
+        if queue:
+            self.become_controlled()
+
+    def _ensure_proxy_thumbnails_cache(self):
+        """Ensures that both the target asset and the proxy assets have caches."""
+        uri = quote_uri(self.ges_elem.props.uri)
+        if self.uri != uri:
+            self.thumb_cache.copy(uri)
 
 
 class Thumbnail(Gtk.Image):
