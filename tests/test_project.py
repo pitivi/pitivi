@@ -477,8 +477,12 @@ class TestProjectLoading(common.TestCase):
 
         mainloop = common.create_main_loop()
 
+        created_proxies = []
+
         def proxy_ready_cb(unused_proxy_manager, asset, proxy):
-            mainloop.quit()
+            created_proxies.append(asset)
+            if len(created_proxies) == 2:
+                mainloop.quit()
 
         app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
         app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
@@ -518,10 +522,9 @@ class TestProjectLoading(common.TestCase):
             mainloop.run()
             self.assertEqual(len(medialib.storemodel), 2,
                 "We should have one asset displayed in the MediaLibrary.")
-            self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
-                             medialibrary.AssetThumbnail.PROXIED)
-            self.assertEqual(medialib.storemodel[1][medialibrary.COL_THUMB_DECORATOR].state,
-                             medialibrary.AssetThumbnail.IN_PROGRESS)
+
+            self.assertEqual(medialib.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state, medialibrary.AssetThumbnail.PROXIED)
+            self.assertEqual(medialib.storemodel[1][medialibrary.COL_THUMB_DECORATOR].state, medialibrary.AssetThumbnail.PROXIED)
 
 
 class TestProjectSettings(common.TestCase):
