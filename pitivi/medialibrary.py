@@ -42,7 +42,7 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.previewers import ThumbnailCache
+from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import path_from_uri
@@ -189,9 +189,65 @@ class AssetThumbnail(Loggable):
     def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
         self.__asset = asset
+        self.asset_previewer = AssetPreviewer(self.__asset.props.id, 90)
         self.src_small, self.src_large = self.__get_thumbnails()
         self.proxy_manager = proxy_manager
         self.decorate()
+
+        self.asset_previewer.connect("done_thumbnailing", self.empty_cache_thumbnailer)
+
+    def empty_cache_thumbnailer(self, unused):
+        # thumb_cache = self.asset_previewer.thumb_cache
+        # small_thumb = thumb_cache.get_preview_thumbnail()
+        self.src_small, self.src_large = self.__get_thumbnails()
+        print("quite far")
+        # if small_thumb:
+        #     print("a bit further")
+        #     width = small_thumb.props.width
+        #     height = small_thumb.props.height
+        #     large_thumb = small_thumb.scale_simple(
+        #         LARGE_THUMB_WIDTH,
+        #         LARGE_THUMB_WIDTH * height / width,
+        #         GdkPixbuf.InterpType.BILINEAR)
+        #     if width > SMALL_THUMB_WIDTH:
+        #         small_thumb = small_thumb.scale_simple(
+        #             SMALL_THUMB_WIDTH,
+        #             SMALL_THUMB_WIDTH * height / width,
+        #             GdkPixbuf.InterpType.BILINEAR)
+        # self.src_small = small_thumb
+        # self.src_large = large_thumb
+        # if self.src_small:
+        #     print("shit works yo")
+        # self.small_thumb = self.src_small.copy()
+        # self.large_thumb = self.src_large.copy()
+        # print("--->>>", self.state)
+        # self.state = "no-proxy"
+        # print("--->>>", self.state)
+        # for thumb in [self.small_thumb, self.large_thumb]:
+        #     emblem = self.EMBLEMS[self.state]
+        #     if thumb.get_height() < emblem.get_height() or \
+        #             thumb.get_width() < emblem.get_width():
+        #         print("thumb.get_width() < emblem.get_width()")
+        #         width = min(emblem.get_width(), thumb.get_width())
+        #         height = min(emblem.get_height(), thumb.get_height())
+        #         # Crop the emblem to fit the thumbnail.
+        #         emblem = emblem.new_subpixbuf(0, emblem.get_height() - height,
+        #                 width, height)
+
+        #     # The dest_* arguments define the area of thumb to change.
+        #     # The offset_* arguments define the emblem offset so its
+        #     # bottom-left corner matches the thumb's bottom-left corner.
+        #     emblem.composite(thumb,
+        #                      dest_x=0,
+        #                      dest_y=thumb.get_height() - emblem.get_height(),
+        #                      dest_width=emblem.get_width(),
+        #                      dest_height=emblem.get_height(),
+        #                      offset_x=0,
+        #                      offset_y=thumb.get_height() - emblem.get_height(),
+        #                      scale_x=1.0, scale_y=1.0,
+        #                      interp_type=GdkPixbuf.InterpType.BILINEAR,
+        #                      overall_alpha=self.DEFAULT_ALPHA)
+
 
     def __get_thumbnails(self):
         """Gets the base source thumbnails.
@@ -208,6 +264,7 @@ class AssetThumbnail(Loggable):
             # Check if the files have thumbnails in the user's cache directory.
             real_uri = get_proxy_target(self.__asset).props.id
             small_thumb, large_thumb = self.get_thumbnails_from_xdg_cache(real_uri)
+            small_thumb = None
             if not small_thumb:
                 if self.__asset.is_image():
                     path = Gst.uri_get_location(real_uri)
@@ -228,11 +285,13 @@ class AssetThumbnail(Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    thumb_cache = ThumbnailCache.get(self.__asset)
+                    print("# Build or reuse a ThumbnailCache")
+                    thumb_cache = self.asset_previewer.thumb_cache
                     small_thumb = thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
                     else:
+                        print("generate large_thumb")
                         width = small_thumb.props.width
                         height = small_thumb.props.height
                         large_thumb = small_thumb.scale_simple(
@@ -330,8 +389,11 @@ class AssetThumbnail(Loggable):
             self.state = self.NO_PROXY
 
     def decorate(self):
+        print("decorate(self)")
         self.__setState()
         if self.state == self.NO_PROXY:
+            print("--------------------->", self.state)
+            print("if self.state == self.NO_PROXY")
             self.small_thumb = self.src_small
             self.large_thumb = self.src_large
             return
@@ -340,9 +402,12 @@ class AssetThumbnail(Loggable):
         self.large_thumb = self.src_large.copy()
 
         for thumb in [self.small_thumb, self.large_thumb]:
+            print(self.state, "THE ANSWER TO ALL OUR PROBLEMS")
             emblem = self.EMBLEMS[self.state]
+            print(self.state, "THE ANSWER TO ALL OUR PROBLEMS")
             if thumb.get_height() < emblem.get_height() or \
                     thumb.get_width() < emblem.get_width():
+                print("thumb.get_width() < emblem.get_width()")
                 width = min(emblem.get_width(), thumb.get_width())
                 height = min(emblem.get_height(), thumb.get_height())
                 # Crop the emblem to fit the thumbnail.
