@@ -42,6 +42,7 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
+from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
@@ -228,7 +229,7 @@ class AssetThumbnail(Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    thumb_cache = ThumbnailCache.get(self.__asset)
+                    thumb_cache = AssetPreviewer(self.__asset).get_thumbs_cache()
                     small_thumb = thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
@@ -778,6 +779,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filter.add_custom(Gtk.FileFilterFlags.URI |
                           Gtk.FileFilterFlags.MIME_TYPE,
                           self.__filter_unsupported)
+        filter.add_pattern("*.xges")
         dialog.add_filter(filter)
 
         # ...and allow the user to override our whitelists
