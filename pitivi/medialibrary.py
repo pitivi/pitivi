@@ -42,7 +42,7 @@ from pitivi.dialogs.clipmediaprops import ClipMediaPropsDialog
 from pitivi.dialogs.filelisterrordialog import FileListErrorDialog
 from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
-from pitivi.timeline.previewers import ThumbnailCache
+from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import path_from_uri
@@ -168,8 +168,12 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
             self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
 
 
-class AssetThumbnail(Loggable):
+class AssetThumbnail(GObject.Object, Loggable):
     """Provider of decorated thumbnails for an asset."""
+
+    __gsignals__ = {
+        "thumb-updated": (GObject.SignalFlags.RUN_LAST, None, ()),
+    }
 
     EMBLEMS = {}
     PROXIED = "asset-proxied"
@@ -187,10 +191,15 @@ class AssetThumbnail(Loggable):
             os.path.join(get_pixmap_dir(), "%s.svg" % status), 64, 64)
 
     def __init__(self, asset, proxy_manager):
+        GObject.Object.__init__(self)
         Loggable.__init__(self)
         self.__asset = asset
-        self.src_small, self.src_large = self.__get_thumbnails()
         self.proxy_manager = proxy_manager
+        self.previewer = None
+        self.refresh()
+
+    def refresh(self):
+        self.src_small, self.src_large = self.__get_thumbnails()
         self.decorate()
 
     def __get_thumbnails(self):
@@ -228,10 +237,14 @@ class AssetThumbnail(Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    thumb_cache = ThumbnailCache.get(self.__asset)
-                    small_thumb = thumb_cache.get_preview_thumbnail()
+                    previewer = AssetPreviewer(self.__asset, 90)
+                    small_thumb = previewer.thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
+                        # Only try once to generate the thumbnail.
+                        if not self.previewer:
+                            self.previewer = previewer
+                            previewer.connect("done", self.__done_cb)
                     else:
                         width = small_thumb.props.width
                         height = small_thumb.props.height
@@ -247,6 +260,11 @@ class AssetThumbnail(Loggable):
         else:
             small_thumb, large_thumb = self.__get_icons("audio-x-generic")
         return small_thumb, large_thumb
+
+    def __done_cb(self, unused_asset_previewer):
+        """Handles the done signal of our AssetPreviewer."""
+        self.refresh()
+        self.emit("thumb-updated")
 
     @staticmethod
     def get_asset_thumbnails_path(real_uri):
@@ -794,8 +812,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         dialog.show()
 
     def _addAsset(self, asset):
-        info = asset.get_info()
-
         if self.app.proxy_manager.is_proxy_asset(asset) and \
                 not asset.props.proxy_target:
             self.info("%s is a proxy asset but has no target, "
@@ -823,7 +839,27 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                     name,
                                     thumbs_decorator))
 
+            thumbs_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
+
         del self._pending_assets[:]
+
+    def __thumb_updated_cb(self, asset_thumbnail, asset):
+        """Handles the thumb-updated signal of the AssetThumbnails in the model."""
+        tree_iter = None
+        for row in self.storemodel:
+            if asset == row[COL_ASSET]:
+                tree_iter = row.iter
+                break
+
+        if not tree_iter:
+            return
+
+        self.storemodel.set_value(tree_iter,
+                                  COL_ICON_64,
+                                  asset_thumbnail.small_thumb)
+        self.storemodel.set_value(tree_iter,
+                                  COL_ICON_128,
+                                  asset_thumbnail.large_thumb)
 
     # medialibrary callbacks
 
@@ -838,10 +874,10 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if not asset.ready:
                 proxying_files.append(asset)
                 if row[COL_THUMB_DECORATOR].state != AssetThumbnail.IN_PROGRESS:
-                    thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-                    row[COL_ICON_64] = thumbs_decorator.small_thumb
-                    row[COL_ICON_128] = thumbs_decorator.large_thumb
-                    row[COL_THUMB_DECORATOR] = thumbs_decorator
+                    asset_previewer = row[COL_THUMB_DECORATOR]
+                    asset_previewer.refresh()
+                    row[COL_ICON_64] = asset_previewer.small_thumb
+                    row[COL_ICON_128] = asset_previewer.large_thumb
 
         if progress == 0:
             self._startImporting(project)

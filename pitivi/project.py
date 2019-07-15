@@ -45,6 +45,7 @@ from pitivi.preset import VideoPresetManager
 from pitivi.render import Encoders
 from pitivi.settings import get_dir
 from pitivi.settings import xdg_cache_home
+from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
@@ -489,26 +490,27 @@ class ProjectManager(GObject.Object, Loggable):
                 "Could not close project - this could be because there were unsaved changes and the user cancelled when prompted about them")
             return False
 
-        self.current_project.finalize()
+        with Previewer.manager.paused(interrupt=True):
+            self.current_project.finalize()
 
-        project = self.current_project
-        self.current_project = None
-        project.create_thumb()
-        self.emit("project-closed", project)
-        # We should never choke on silly stuff like disconnecting signals
-        # that were already disconnected. It blocks the UI for nothing.
-        # This can easily happen when a project load/creation failed.
-        try:
-            project.disconnect_by_function(self._projectChangedCb)
-        except Exception:
-            self.debug(
-                "Tried disconnecting signals, but they were not connected")
-        try:
-            project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
-        except Exception:
-            self.fixme("Handle better the errors and not get to this point")
-        self._cleanBackup(project.uri)
-        self.exitcode = project.release()
+            project = self.current_project
+            self.current_project = None
+            project.create_thumb()
+            self.emit("project-closed", project)
+            # We should never choke on silly stuff like disconnecting signals
+            # that were already disconnected. It blocks the UI for nothing.
+            # This can easily happen when a project load/creation failed.
+            try:
+                project.disconnect_by_function(self._projectChangedCb)
+            except Exception:
+                self.debug(
+                    "Tried disconnecting signals, but they were not connected")
+            try:
+                project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
+            except Exception:
+                self.fixme("Handle better the errors and not get to this point")
+            self._cleanBackup(project.uri)
+            self.exitcode = project.release()
 
         return True
 
