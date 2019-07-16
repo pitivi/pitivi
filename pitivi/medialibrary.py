@@ -779,7 +779,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filter.add_custom(Gtk.FileFilterFlags.URI |
                           Gtk.FileFilterFlags.MIME_TYPE,
                           self.__filter_unsupported)
-        filter.add_pattern("*.xges")
         dialog.add_filter(filter)
 
         # ...and allow the user to override our whitelists
