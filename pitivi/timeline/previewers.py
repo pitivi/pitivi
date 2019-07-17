@@ -561,7 +561,7 @@ class AssetPreviewer(Previewer, Loggable):
 
         self.__start_id = 0
         self.__preroll_timeout_id = 0
-        self.__thumb_cb_id = 0
+        self.__thumb_cb_id = None
 
         # The thumbs to be generated.
         self.queue = []
