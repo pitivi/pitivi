@@ -225,6 +225,16 @@ class EffectProperties(Gtk.Expander, Loggable):
             _("Select a clip on the timeline to configure its associated effects"))
         self._infobar.show_all()
 
+        # Add effect popover button
+        self.add_effect_button = Gtk.Button(_("Add Effect"))
+        self.effect_search_entry = Gtk.SearchEntry()
+        self.effect_search_entry.connect("search-changed", self._search_entry_cb)
+        self.effect_listbox = Gtk.ListBox()
+        self.effect_listbox.connect("row-activated", self.effect_row_activate_cb)
+        self.effect_listbox.set_filter_func(self._search_filter)
+        self.effect_popover = self._create_effects_popover(self.effect_listbox, self.effect_search_entry)
+        self.effect_popover.set_relative_to(self.add_effect_button)
+
         # Prepare the main container widgets and lay out everything
         self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -238,6 +248,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._vbox.show_all()
         self._expander_box.pack_start(self.no_effect_infobar, expand=False, fill=False, padding=0)
         self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
+        self._expander_box.pack_end(self.add_effect_button, False, False, PADDING)
         self._expander_box.show_all()
         self.add(self._expander_box)
         self.hide()
@@ -255,6 +266,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.remove_effect_action.set_enabled(False)
         remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
 
+        self.open_effect_popover_action = Gio.SimpleAction.new("open-effect-popover", None)
+        self.open_effect_popover_action.connect("activate", self.popover_action_cb)
+        self.app.add_action(self.open_effect_popover_action)
+        self.app.shortcuts.add("app.open-effect-popover", ["<Primary>e"],
+            _("Open the Effects Popover"))
+
         # Connect all the widget signals
         self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)
         self.connect("drag-motion", self._drag_motion_cb)
@@ -267,6 +284,52 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.app.project_manager.connect_after(
             "new-project-loaded", self._newProjectLoadedCb)
         self.connect('notify::expanded', self._expandedCb)
+        self.add_effect_button.connect("clicked", self.add_effect_cb)
+
+    def _create_effects_popover(self, listbox, search_entry):
+        popover = Gtk.Popover()
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        scroll_window = Gtk.ScrolledWindow()
+        scroll_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroll_window.props.max_content_height = 350
+        scroll_window.props.propagate_natural_height = True
+
+        self.app.gui.editor.effectlist.add_effects_to_listbox(listbox, only_text=True)
+        scroll_window.add(listbox)
+
+        vbox.pack_start(search_entry, False, False, 0)
+        vbox.pack_end(scroll_window, True, True, 0)
+        vbox.show_all()
+
+        popover.add(vbox)
+        return popover
+
+    def add_effect_cb(self, button):
+        self.effect_search_entry.set_text("")
+        self.effect_popover.popup()
+
+    def popover_action_cb(self, _unused1, _unused2):
+        if self.clip:
+            self.app.gui.editor.switchContextTab(self.clip)
+            self.add_effect_cb(self.add_effect_button)
+
+    def effect_row_activate_cb(self, listbox, row):
+        self.app.gui.editor.effectlist.apply_selected_effect(listbox, row)
+        self.effect_popover.hide()
+
+    def _search_filter(self, row):
+        effect_box = row.get_child().get_child()
+        label = effect_box.get_children()[0]
+
+        label_text = label.get_text().lower()
+        search_key = self.effect_search_entry.get_text().lower()
+
+        return search_key in label_text
+
+    def _search_entry_cb(self, search_entry):
+        self.effect_listbox.invalidate_filter()
 
     def _newProjectLoadedCb(self, unused_app, project):
         if self._selection is not None:
