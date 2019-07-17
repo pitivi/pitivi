@@ -31,6 +31,7 @@ from pitivi.clip_properties.alignment import AlignmentEditor
 from pitivi.clip_properties.color import ColorProperties
 from pitivi.clip_properties.title import TitleProperties
 from pitivi.configure import get_ui_dir
+from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -321,6 +322,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.treeview_selection = self.treeview.get_selection()
         self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
 
+        # Add effect popover button
+        self.effect_popover = EffectsPopover(app)
+        self.add_effect_button = Gtk.MenuButton(_("Add Effect"))
+        self.add_effect_button.set_popover(self.effect_popover)
+        self.add_effect_button.props.halign = Gtk.Align.CENTER
+
         # Prepare the main container widgets and lay out everything
         self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -334,6 +341,7 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._vbox.show_all()
         self._expander_box.pack_start(self.no_effect_infobar, expand=False, fill=False, padding=0)
         self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
+        self._expander_box.pack_end(self.add_effect_button, False, False, PADDING)
         self._expander_box.show_all()
         self.add(self._expander_box)
         self.hide()
@@ -368,6 +376,12 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.app.project_manager.connect_after(
             "new-project-loaded", self._new_project_loaded_cb)
         self.connect('notify::expanded', self._expanded_cb)
+        self.add_effect_button.connect("toggled", self.add_effect_button_cb)
+
+    def add_effect_button_cb(self, button):
+        # MenuButton interacts directly with the popover, bypassing our subclassed method
+        if button.props.active:
+            self.effect_popover.search_entry.set_text("")
 
     def _new_project_loaded_cb(self, unused_app, project):
         if self._selection is not None:

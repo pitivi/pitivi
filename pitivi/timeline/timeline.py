@@ -30,6 +30,7 @@ from pitivi.autoaligner import AutoAligner
 from pitivi.configure import get_ui_dir
 from pitivi.configure import in_devel
 from pitivi.dialogs.prefs import PreferencesDialog
+from pitivi.effects import EffectsPopover
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.elements import Clip
 from pitivi.timeline.elements import TransitionClip
@@ -1619,6 +1620,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         left_size_group.add_widget(self.zoom_box)
 
         self.timeline = Timeline(self.app, left_size_group, self.editor_state)
+        self.effects_popover = EffectsPopover(self.app)
 
         # Vertical Scrollbar. It will be displayed only when needed.
         self.vscrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL,
@@ -1757,6 +1759,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
                                self.seek_backward_clip_action,
                                _("Seeks to the first clip edge before the playhead."))
+
+        self.add_effect_action = Gio.SimpleAction.new("add-effect", None)
+        self.add_effect_action.connect("activate", self.__add_effect_cb)
+        group.add_action(self.add_effect_action)
+        self.app.shortcuts.add("timeline.add-effect", ["<Primary>e"],
+                               self.add_effect_action,
+                               _("Add an effect to the selected clip"))
 
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
@@ -2037,6 +2046,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self._project.pipeline.simple_seek(position)
         self.timeline.scroll_to_playhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def __add_effect_cb(self, unused_action, unused_parameter):
+        clip = self.timeline.selection.getSingleClip()
+        if clip:
+            self.effects_popover.set_relative_to(clip.ui)
+            self.effects_popover.popup()
 
     def _align_selected_cb(self, unused_action, unused_parameter):
         if not self.ges_timeline:

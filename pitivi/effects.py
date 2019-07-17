@@ -47,6 +47,7 @@ from pitivi.configure import get_ui_dir
 from pitivi.settings import GlobalSettings
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
+from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 from pitivi.utils.widgets import FractionWidget
 from pitivi.utils.widgets import GstElementSettingsWidget
@@ -415,7 +416,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
     def _load_available_effects_cb(self):
         self._set_up_category_view()
-        self._add_effects_to_listbox(self.search_view)
+        self.add_effects_to_listbox(self.search_view)
 
     def _set_up_category_view(self):
         """Adds expanders and effects to the category view."""
@@ -429,11 +430,11 @@ class EffectListWidget(Gtk.Box, Loggable):
             listbox = expander.get_child()
             category_name = expander.get_label()
 
-            self._add_effects_to_listbox(listbox, category_name)
+            self.add_effects_to_listbox(listbox, category_name)
 
         self.category_view.show_all()
 
-    def _add_effects_to_listbox(self, listbox, category=None):
+    def add_effects_to_listbox(self, listbox, category=None, only_text=False):
         """Adds effect rows to the given listbox."""
         effects = self.app.effects.video_effects + self.app.effects.audio_effects
         for effect in effects:
@@ -445,7 +446,7 @@ class EffectListWidget(Gtk.Box, Loggable):
             effect_info = self.app.effects.get_info(name)
 
             if not category or category in effect_info.categories:
-                widget = self._create_effect_widget(name)
+                widget = self._create_effect_widget(name, only_text)
                 listbox.add(widget)
 
     def _create_category_widget(self, category):
@@ -459,7 +460,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         return expander
 
-    def _create_effect_widget(self, effect_name):
+    def _create_effect_widget(self, effect_name, only_text):
         """Creates list box row for the given effect."""
         effect_info = self.app.effects.get_info(effect_name)
 
@@ -467,22 +468,25 @@ class EffectListWidget(Gtk.Box, Loggable):
         effect_box.effect_name = effect_name
         effect_box.set_tooltip_text(effect_info.description)
         label = Gtk.Label(effect_info.human_name, xalign=0)
-        icon = Gtk.Image.new_from_pixbuf(effect_info.icon)
 
-        # Set up favourite button
-        fav_button = Gtk.Button()
-        fav_button.props.relief = Gtk.ReliefStyle.NONE
-        fav_button.props.halign = Gtk.Align.CENTER
-        fav_button.props.valign = Gtk.Align.CENTER
-        fav_button.set_tooltip_text(_("Add to Favourites"))
+        if not only_text:
+            # Show effect thumbnail
+            icon = Gtk.Image.new_from_pixbuf(effect_info.icon)
+            effect_box.pack_start(icon, False, True, SPACING / 2)
 
-        starred = effect_name in self.app.settings.favourite_effects
-        self._set_fav_button_state(fav_button, starred)
-        fav_button.connect("clicked", self._fav_button_clicked_cb, effect_box.effect_name)
+            # Set up favourite button
+            fav_button = Gtk.Button()
+            fav_button.props.relief = Gtk.ReliefStyle.NONE
+            fav_button.props.halign = Gtk.Align.CENTER
+            fav_button.props.valign = Gtk.Align.CENTER
+            fav_button.set_tooltip_text(_("Add to Favourites"))
 
-        effect_box.pack_start(icon, False, True, SPACING / 2)
+            starred = effect_name in self.app.settings.favourite_effects
+            self._set_fav_button_state(fav_button, starred)
+            fav_button.connect("clicked", self._fav_button_clicked_cb, effect_box.effect_name)
+            effect_box.pack_end(fav_button, False, True, SPACING / 2)
+
         effect_box.pack_start(label, True, True, 0)
-        effect_box.pack_end(fav_button, False, True, SPACING / 2)
 
         # Set up drag behavoir
         eventbox = Gtk.EventBox(visible_window=False)
@@ -631,6 +635,62 @@ class EffectListWidget(Gtk.Box, Loggable):
         for child_view in self.main_view.get_children():
             child_view.props.visible = child_view == next_view
 
+
+class EffectsPopover(Gtk.Popover, Loggable):
+    """Popover for adding effects."""
+
+    def __init__(self, app):
+        Gtk.Popover.__init__(self)
+        Loggable.__init__(self)
+
+        self.app = app
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=PADDING)
+
+        self.search_entry = Gtk.SearchEntry()
+        self.search_entry.connect("search-changed", self._search_entry_cb)
+
+        scroll_window = Gtk.ScrolledWindow()
+        scroll_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scroll_window.props.max_content_height = 350
+        scroll_window.props.propagate_natural_height = True
+
+        self.listbox = Gtk.ListBox()
+        self.listbox.connect("row-activated", self._effect_row_activate_cb)
+        self.listbox.set_filter_func(self._search_filter)
+        placeholder_text = Gtk.Label(_("No effects"))
+        placeholder_text.props.visible = True
+        self.listbox.set_placeholder(placeholder_text)
+
+        self.app.gui.editor.effectlist.add_effects_to_listbox(self.listbox, only_text=True)
+        scroll_window.add(self.listbox)
+
+        vbox.pack_start(self.search_entry, False, False, 0)
+        vbox.pack_end(scroll_window, True, True, 0)
+        vbox.show_all()
+
+        self.add(vbox)
+
+    def _effect_row_activate_cb(self, listbox, row):
+        effect_box = row.get_child().get_child()
+        self.app.gui.editor.effectlist.apply_effect(effect_box.effect_name)
+        self.hide()
+
+    def _search_entry_cb(self, search_entry):
+        self.listbox.invalidate_filter()
+
+    def _search_filter(self, row):
+        effect_box = row.get_child().get_child()
+        label = effect_box.get_children()[0]
+
+        label_text = label.get_text().lower()
+        search_key = self.search_entry.get_text().lower()
+
+        return search_key in label_text
+
+    def popup(self):
+        self.search_entry.set_text("")
+        Gtk.Popover.popup(self)
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
