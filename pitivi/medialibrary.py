@@ -189,9 +189,33 @@ class AssetThumbnail(Loggable):
     def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
         self.__asset = asset
+        self.asset_previewer = AssetPreviewer(self.__asset.props.id, 90)
         self.src_small, self.src_large = self.__get_thumbnails()
         self.proxy_manager = proxy_manager
         self.decorate()
+
+        self.asset_previewer.connect("done_thumbnailing", self.empty_cache_thumbnailer)
+
+    def empty_cache_thumbnailer(self, unused):
+        thumb_cache = self.asset_previewer.thumb_cache
+        small_thumb = thumb_cache.get_preview_thumbnail()
+        print("quite far")
+        if small_thumb:
+            width = small_thumb.props.width
+            height = small_thumb.props.height
+            large_thumb = small_thumb.scale_simple(
+                LARGE_THUMB_WIDTH,
+                LARGE_THUMB_WIDTH * height / width,
+                GdkPixbuf.InterpType.BILINEAR)
+            if width > SMALL_THUMB_WIDTH:
+                small_thumb = small_thumb.scale_simple(
+                    SMALL_THUMB_WIDTH,
+                    SMALL_THUMB_WIDTH * height / width,
+                    GdkPixbuf.InterpType.BILINEAR)
+            self.src_small = small_thumb
+            self.src_large = large_thumb
+        self.decorate()
+
 
     def __get_thumbnails(self):
         """Gets the base source thumbnails.
@@ -208,6 +232,7 @@ class AssetThumbnail(Loggable):
             # Check if the files have thumbnails in the user's cache directory.
             real_uri = get_proxy_target(self.__asset).props.id
             small_thumb, large_thumb = self.get_thumbnails_from_xdg_cache(real_uri)
+            small_thumb = None
             if not small_thumb:
                 if self.__asset.is_image():
                     path = Gst.uri_get_location(real_uri)
@@ -228,7 +253,7 @@ class AssetThumbnail(Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    thumb_cache = AssetPreviewer(self.__asset.props.id, 90).get_thumbs_cache()
+                    thumb_cache = self.asset_previewer.thumb_cache
                     small_thumb = thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")

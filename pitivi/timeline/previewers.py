@@ -66,6 +66,7 @@ WAVEFORM_SURFACE_EXTRA_PX = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SignalFlags.RUN_LAST, None, ()),
+    "done_thumbnailing": (GObject.SignalFlags.RUN_LAST, None, ()),
     "error": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
@@ -796,6 +797,7 @@ class AssetPreviewer(Previewer, Loggable):
             self.pipeline = None
 
         self.emit("done")
+        self.emit("done_thumbnailing")
 
     def pause_generation(self):
         if self.pipeline:
