@@ -1574,8 +1574,8 @@ class Project(Loggable, GES.Project):
             self.warning("Failed to set the pipeline's timeline: %s", self.ges_timeline)
             return False
 
-        if (self.ges_timeline.get_marker_list("markersTimeline") is None):
-            self.ges_timeline.set_marker_list("markersTimeline", GES.MarkerList.new())
+        if self.ges_timeline.get_marker_list("markers") is None:
+            self.ges_timeline.set_marker_list("markers", GES.MarkerList.new())
 
         return True
 

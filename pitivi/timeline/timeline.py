@@ -20,6 +20,7 @@ import os
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
@@ -1530,7 +1531,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ges_timeline = project.ges_timeline
         else:
             self.ges_timeline = None
-            self.markerContainer.remove_all_markers()
 
         self.timeline.setProject(self._project)
 
@@ -1582,12 +1582,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.gapless_button = builder.get_object("gapless_button")
         self.gapless_button.set_active(self._settings.timelineAutoRipple)
 
-        self.marker_box = Gtk.EventBox()
-        self.markerContainer = MarkersContainer(self)
-        self.marker_box.add(self.markerContainer)
-        self.marker_box.get_style_context().add_class("MarkersContainer")
+        self.markers_box = MarkersBox(self)
 
-        self.attach(self.marker_box, 1, 0, 1, 1)
+        self.attach(self.markers_box, 1, 0, 1, 1)
         self.attach(zoom_box, 0, 1, 1, 1)
         self.attach(self.ruler, 1, 1, 1, 1)
         self.attach(self.timeline, 0, 2, 2, 1)
@@ -2054,7 +2051,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.ruler.zoomChanged()
             self._update_ruler(project.videorate)
 
-            self.markerContainer.markers_loaded(self.ges_timeline.get_marker_list("markersTimeline"))
+            self.markers_box.markerContainer.markers_container = self.ges_timeline.get_marker_list("markers")
 
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
@@ -2079,68 +2076,73 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.info("Automatic ripple: %s", self._settings.timelineAutoRipple)
 
 
-class Marker(Gtk.EventBox, Zoomable, Loggable):
+class Marker(Gtk.EventBox, Loggable):
 
     def __init__(self, ges_marker):
         Gtk.EventBox.__init__(self)
-        Zoomable.__init__(self)
         Loggable.__init__(self)
 
         self.ges_marker = ges_marker
         self.position_ns = self.ges_marker.props.position
         self.selected = False
 
-        self.image_marker_unselect = os.path.join(get_pixmap_dir(), "marker-unselect.png")
-        self.image_marker_select = os.path.join(get_pixmap_dir(), "marker-select.png")
-        self.image_marker_hover = os.path.join(get_pixmap_dir(), "marker-hover.png")
+        self.__unselect_pixbuf = None
+        self.__select_pixbuf = None
+        self.__hover_pixbuf = None
+
         self.image = Gtk.Image()
-        self.image.set_from_file(self.image_marker_unselect)
-        self.set_visible_window(False)
+        self._set_image_unselect()
         self.add(self.image)
 
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
         self.connect("motion-notify-event", self._mouse_move_over_cb)
-        self.connect('leave-notify-event', self._mouse_leave_cb)
+        self.connect("leave-notify-event", self._mouse_leave_cb)
+
+    @property
+    def position(self):
+        """Returns the position of the marker, in nanoseconds."""
+        return self.ges_marker.props.position
 
     def _mouse_move_over_cb(self, widget, event):
-        if self.selected is False:
+        if not self.selected:
             self._set_image_hover()
 
     def _mouse_leave_cb(self, widget, event):
-        if self.selected is False:
+        if not self.selected:
             self._set_image_unselect()
-
-    def get_position(self):
-        return self.position_ns
-
-    def get_ges_marker(self):
-        return self.ges_marker
 
     def configure_unselected_marker(self):
         self._set_image_unselect()
         self.selected = False
 
     def _set_image_unselect(self):
-        self.image.set_from_file(self.image_marker_unselect)
+        if self.__unselect_pixbuf is None:
+            self.__unselect_pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(), "marker-unselect.png"))
+        self.image.set_from_pixbuf(self.__unselect_pixbuf)
 
     def configure_selected_marker(self):
         self._set_image_select()
         self.selected = True
 
     def _set_image_select(self):
-        self.image.set_from_file(self.image_marker_select)
+        if self.__select_pixbuf is None:
+            self.__select_pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(), "marker-select.png"))
+        self.image.set_from_pixbuf(self.__select_pixbuf)
 
     def _set_image_hover(self):
-        self.image.set_from_file(self.image_marker_hover)
+        if self.__hover_pixbuf is None:
+            self.__hover_pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(get_pixmap_dir(), "marker-hover.png"))
+        self.image.set_from_pixbuf(self.__hover_pixbuf)
 
-    def update_position(self):
-        self.position_ns = self.ges_marker.props.position
-
-    def set_comment(self, text):
-        self.ges_marker.set_string("comment", text)
-
-    def get_comment(self):
+    @property
+    def comment(self):
         return self.ges_marker.get_string("comment")
+
+    @comment.setter
+    def comment(self, text):
+        if text == self.comment:
+            return
+        self.ges_marker.set_string("comment", text)
 
 
 class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
@@ -2160,7 +2162,7 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
         self.offset = 0
         self.props.height_request = 10
 
-        self.ges_marker_container = None
+        self.__markers_container = None
         self.marker_selected = None
         self.marker_pressed = None
 
@@ -2175,19 +2177,28 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
         self.text_view = Gtk.TextView()
         self._init_popover()
 
-    def markers_loaded(self, markers):
-        self.ges_marker_container = markers
-        self._draw_markers()
-        self.ges_marker_container.connect("marker-added", self._marker_added_cb)
+    @property
+    def markers_container(self):
+        return self.__markers_container
 
-    def _draw_markers(self):
+    @markers_container.setter
+    def markers_container(self, ges_markers_container):
+        if self.__markers_container:
+            for marker in self.get_children():
+                self.remove(marker)
+            self.__markers_container.disconnect_by_func(self._marker_added_cb)
+        self.__markers_container = ges_markers_container
+        self._create_marker_widgets()
+        self.__markers_container.connect("marker-added", self._marker_added_cb)
+
+    def _create_marker_widgets(self):
         start = self.pixelToNs(self.offset)
         end = self.pixelToNs(self.get_allocated_width()) + start
-        range_markers = self.ges_marker_container.get_range(start, end)
+        range_markers = self.__markers_container.get_range(start, end)
 
         for ges_marker in range_markers:
             marker = Marker(ges_marker)
-            position = self.nsToPixel(marker.get_position())
+            position = self.nsToPixel(marker.position)
             self.put(marker, position, 0)
         self.show_all()
 
@@ -2201,9 +2212,8 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
 
     def _update_position(self):
         for marker in self.get_children():
-            position = self.nsToPixel(marker.get_position()) - self.offset - 5
+            position = self.nsToPixel(marker.position) - self.offset - 5
             self.move(marker, position, 0)
-        self.show_all()
 
     def _click_cb(self, unused_widget, event):
         event_widget = Gtk.get_event_widget(event)
@@ -2220,7 +2230,7 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
                     self.marker_pressed = None
 
                     self.text_buffer = self.text_view.get_buffer()
-                    text = self.marker_selected.get_comment()
+                    text = self.marker_selected.comment
                     if text is None:
                         text = "your comments"
                     self.text_buffer.set_text(text)
@@ -2230,10 +2240,8 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
                     self.popover.popup()
 
             else:
-                self.__add_marker(position)
+                self.__markers_container.add(position)
                 self.marker_pressed = self.marker_selected
-
-        return False
 
     def _release_cb(self, unused_widget, event):
         button = event.button
@@ -2242,28 +2250,24 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
         if button == 1 and self.marker_pressed:
             self.marker_pressed = None
 
-        elif button == 3 and isinstance(event_widget, Marker):
+        elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
             self._remove_marker(event_widget)
 
     def _drag_cb(self, unused_widget, event):
         if self.marker_pressed:
             event_widget = Gtk.get_event_widget(event)
-            position_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
-            position_pix = int(position_x) - 5
-            position_ns = self.pixelToNs(position_pix + self.offset)
-            if position_pix >= -5:
-                self.ges_marker_container.move(self.marker_selected.get_ges_marker(), position_ns)
-                self.marker_selected.update_position()
-                self.move(self.marker_pressed, position_pix, 0)
-
-    def __add_marker(self, position):
-        self.ges_marker_container.add(position)
+            event_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
+            x = int(event_x) - 5
+            if x >= -5:
+                position_ns = self.pixelToNs(x + self.offset)
+                self.__markers_container.move(self.marker_pressed.ges_marker, position_ns)
+                self.move(self.marker_pressed, x, 0)
 
     def _marker_added_cb(self, unused_markers, position, ges_marker):
         marker = Marker(ges_marker)
         self._change_selected_marker(marker)
-        drawPosition = self.nsToPixel(position) - self.offset - 5
-        self.put(marker, drawPosition, 0)
+        x = self.nsToPixel(position) - self.offset - 5
+        self.put(marker, x, 0)
         self.show_all()
 
     def _change_selected_marker(self, marker):
@@ -2273,12 +2277,8 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
         marker.configure_selected_marker()
         self.marker_selected = marker
 
-    def remove_all_markers(self):
-        for marker in self.get_children():
-            self.remove(marker)
-
     def _remove_marker(self, marker):
-        self.ges_marker_container.remove(marker.get_ges_marker())
+        self.__markers_container.remove(marker.ges_marker)
         self.remove(marker)
 
     def _init_popover(self):
@@ -2286,14 +2286,21 @@ class MarkersContainer(Gtk.Layout, Zoomable, Loggable):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.pack_start(self.text_view, False, True, 10)
 
-        save_button = Gtk.Button.new_with_label("Save")
-        save_button.connect('clicked', self._on_save_cb)
-        vbox.pack_start(save_button, False, True, 10)
-
         self.popover.add(vbox)
         self.popover.set_position(Gtk.PositionType.LEFT)
+        self.popover.connect('closed', self._save_text_cb)
 
-    def _on_save_cb(self, unused_element):
+    def _save_text_cb(self, unused_element):
         buffer = self.text_view.get_buffer()
         text = buffer.props.text
-        self.marker_selected.set_comment(text)
+        self.marker_selected.comment = text
+
+
+class MarkersBox(Gtk.EventBox):
+
+    def __init__(self, timeline):
+        Gtk.EventBox.__init__(self)
+
+        self.markerContainer = MarkersContainer(timeline)
+        self.add(self.markerContainer)
+        self.get_style_context().add_class("MarkersContainer")
