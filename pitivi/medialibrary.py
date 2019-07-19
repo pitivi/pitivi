@@ -189,65 +189,10 @@ class AssetThumbnail(Loggable):
     def __init__(self, asset, proxy_manager):
         Loggable.__init__(self)
         self.__asset = asset
-        self.asset_previewer = AssetPreviewer(self.__asset.props.id, 90)
+        self.generic_vid_thumb = False
         self.src_small, self.src_large = self.__get_thumbnails()
         self.proxy_manager = proxy_manager
         self.decorate()
-
-        self.asset_previewer.connect("done_thumbnailing", self.empty_cache_thumbnailer)
-
-    def empty_cache_thumbnailer(self, unused):
-        # thumb_cache = self.asset_previewer.thumb_cache
-        # small_thumb = thumb_cache.get_preview_thumbnail()
-        self.src_small, self.src_large = self.__get_thumbnails()
-        print("quite far")
-        # if small_thumb:
-        #     print("a bit further")
-        #     width = small_thumb.props.width
-        #     height = small_thumb.props.height
-        #     large_thumb = small_thumb.scale_simple(
-        #         LARGE_THUMB_WIDTH,
-        #         LARGE_THUMB_WIDTH * height / width,
-        #         GdkPixbuf.InterpType.BILINEAR)
-        #     if width > SMALL_THUMB_WIDTH:
-        #         small_thumb = small_thumb.scale_simple(
-        #             SMALL_THUMB_WIDTH,
-        #             SMALL_THUMB_WIDTH * height / width,
-        #             GdkPixbuf.InterpType.BILINEAR)
-        # self.src_small = small_thumb
-        # self.src_large = large_thumb
-        # if self.src_small:
-        #     print("shit works yo")
-        # self.small_thumb = self.src_small.copy()
-        # self.large_thumb = self.src_large.copy()
-        # print("--->>>", self.state)
-        # self.state = "no-proxy"
-        # print("--->>>", self.state)
-        # for thumb in [self.small_thumb, self.large_thumb]:
-        #     emblem = self.EMBLEMS[self.state]
-        #     if thumb.get_height() < emblem.get_height() or \
-        #             thumb.get_width() < emblem.get_width():
-        #         print("thumb.get_width() < emblem.get_width()")
-        #         width = min(emblem.get_width(), thumb.get_width())
-        #         height = min(emblem.get_height(), thumb.get_height())
-        #         # Crop the emblem to fit the thumbnail.
-        #         emblem = emblem.new_subpixbuf(0, emblem.get_height() - height,
-        #                 width, height)
-
-        #     # The dest_* arguments define the area of thumb to change.
-        #     # The offset_* arguments define the emblem offset so its
-        #     # bottom-left corner matches the thumb's bottom-left corner.
-        #     emblem.composite(thumb,
-        #                      dest_x=0,
-        #                      dest_y=thumb.get_height() - emblem.get_height(),
-        #                      dest_width=emblem.get_width(),
-        #                      dest_height=emblem.get_height(),
-        #                      offset_x=0,
-        #                      offset_y=thumb.get_height() - emblem.get_height(),
-        #                      scale_x=1.0, scale_y=1.0,
-        #                      interp_type=GdkPixbuf.InterpType.BILINEAR,
-        #                      overall_alpha=self.DEFAULT_ALPHA)
-
 
     def __get_thumbnails(self):
         """Gets the base source thumbnails.
@@ -285,13 +230,12 @@ class AssetThumbnail(Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    print("# Build or reuse a ThumbnailCache")
-                    thumb_cache = self.asset_previewer.thumb_cache
+                    thumb_cache = AssetPreviewer(self.__asset, 90).thumb_cache
                     small_thumb = thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
+                        self.generic_vid_thumb = True
                     else:
-                        print("generate large_thumb")
                         width = small_thumb.props.width
                         height = small_thumb.props.height
                         large_thumb = small_thumb.scale_simple(
@@ -389,11 +333,8 @@ class AssetThumbnail(Loggable):
             self.state = self.NO_PROXY
 
     def decorate(self):
-        print("decorate(self)")
         self.__setState()
         if self.state == self.NO_PROXY:
-            print("--------------------->", self.state)
-            print("if self.state == self.NO_PROXY")
             self.small_thumb = self.src_small
             self.large_thumb = self.src_large
             return
@@ -402,12 +343,9 @@ class AssetThumbnail(Loggable):
         self.large_thumb = self.src_large.copy()
 
         for thumb in [self.small_thumb, self.large_thumb]:
-            print(self.state, "THE ANSWER TO ALL OUR PROBLEMS")
             emblem = self.EMBLEMS[self.state]
-            print(self.state, "THE ANSWER TO ALL OUR PROBLEMS")
             if thumb.get_height() < emblem.get_height() or \
                     thumb.get_width() < emblem.get_width():
-                print("thumb.get_width() < emblem.get_width()")
                 width = min(emblem.get_width(), thumb.get_width())
                 height = min(emblem.get_height(), thumb.get_height())
                 # Crop the emblem to fit the thumbnail.
@@ -874,11 +812,26 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if self._project.loaded:
             self._flushPendingAssets()
 
+    def __signal_stop_generation_cb(self, unused, asset):
+        self.__removeAsset(asset)
+        thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+        name = info_name(asset)
+        self.storemodel.append((thumbs_decorator.small_thumb,
+                                thumbs_decorator.large_thumb,
+                                beautify_asset(asset),
+                                asset,
+                                asset.props.id,
+                                name,
+                                thumbs_decorator))
+
     def _flushPendingAssets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
             thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
             name = info_name(asset)
+            if thumbs_decorator.generic_vid_thumb:
+                asset_previewer = AssetPreviewer(asset, 90)
+                asset_previewer.connect("done_thumbnailing", self.__signal_stop_generation_cb)
 
             self.storemodel.append((thumbs_decorator.small_thumb,
                                     thumbs_decorator.large_thumb,
@@ -891,7 +844,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         del self._pending_assets[:]
 
     # medialibrary callbacks
-
     def _assetLoadingProgressCb(self, project, progress, estimated_time):
         self._progressbar.set_fraction(progress / 100)
 

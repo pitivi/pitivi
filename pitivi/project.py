@@ -854,6 +854,7 @@ class Project(Loggable, GES.Project):
                 return thumb
 
     def create_thumb(self):
+        print("create_thumb(self)")
         """Creates project thumbnails."""
         if not self.uri:
             return

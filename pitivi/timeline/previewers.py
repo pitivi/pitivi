@@ -66,7 +66,7 @@ WAVEFORM_SURFACE_EXTRA_PX = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SignalFlags.RUN_LAST, None, ()),
-    "done_thumbnailing": (GObject.SignalFlags.RUN_LAST, None, ()),
+    "done_thumbnailing": (GObject.SignalFlags.RUN_LAST, None, (object,)),
     "error": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
@@ -553,12 +553,13 @@ class AssetPreviewer(Previewer, Loggable):
     # We could define them in Previewer, but for some reason they are ignored.
     __gsignals__ = PREVIEW_GENERATOR_SIGNALS
 
-    def __init__(self, uri, max_cpu_usage):
+    def __init__(self, asset, max_cpu_usage):
         Previewer.__init__(self, GES.TrackType.VIDEO, max_cpu_usage)
         Loggable.__init__(self)
 
         # Guard against malformed URIs
-        self.uri = quote_uri(uri)
+        self.asset = asset
+        self.uri = quote_uri(get_proxy_target(self.asset).props.id)
 
         self.__start_id = 0
         self.__preroll_timeout_id = 0
@@ -588,14 +589,12 @@ class AssetPreviewer(Previewer, Loggable):
         self.become_controlled()
 
     def _update_thumbnails(self):
-        print("_update_thumbnails(self)")
         """Updates the thumbnails if the AssetPreviewer subclass has any."""
         thumbs = {}
         queue = []
         interval = self.thumb_interval(self.thumb_width)
-        print(interval)
         element_left = 0
-        element_right = 2*interval
+        element_right = self.asset.get_duration()
         for position in range(element_left, element_right, interval):
             try:
                 thumb = self.thumbs.pop(position)
@@ -618,7 +617,6 @@ class AssetPreviewer(Previewer, Loggable):
             self.become_controlled()
 
     def _setup_pipeline(self):
-        print("_setup_pipeline(self)")
         """Creates the pipeline.
 
         It has the form "playbin ! thumbnailsink" where thumbnailsink
@@ -655,7 +653,6 @@ class AssetPreviewer(Previewer, Loggable):
         self.pipeline = pipeline
 
     def _schedule_next_thumb_generation(self):
-        print("_schedule_next_thumb_generation(self)")
         """Schedules the generation of the next thumbnail, or stop.
 
         Checks the CPU usage and adjusts the waiting time at which the next
@@ -687,7 +684,6 @@ class AssetPreviewer(Previewer, Loggable):
                                               priority=GLib.PRIORITY_LOW)
 
     def _start_thumbnailing_cb(self):
-        print("_start_thumbnailing_cb(self)")
         if not self.__start_id:
             # Can happen if stopGeneration is called because the clip has been
             # removed from the timeline after the PreviewGeneratorManager
@@ -715,7 +711,6 @@ class AssetPreviewer(Previewer, Loggable):
         return False
 
     def _create_next_thumb_cb(self):
-        print("_create_next_thumb_cb(self)")
         """Creates a missing thumbnail."""
         self.__thumb_cb_id = None
 
@@ -740,7 +735,6 @@ class AssetPreviewer(Previewer, Loggable):
         return False
 
     def _set_pixbuf(self, pixbuf):
-        print("_set_pixbuf(self, pixbuf)")
         """Sets the pixbuf for the thumbnail at the expected position."""
         position = self.position
         self.position = -1
@@ -755,10 +749,8 @@ class AssetPreviewer(Previewer, Loggable):
         self.thumb_cache[position] = pixbuf
 
     def __bus_message_cb(self, unused_bus, message):
-        print("__bus_message_cb(self, unused_bus, message)")
         if message.src == self.pipeline and \
                 message.type == Gst.MessageType.STATE_CHANGED:
-            print("A----->")
             if message.parse_state_changed()[1] == Gst.State.PAUSED:
                 # The pipeline is ready to be used.
                 if self.__preroll_timeout_id:
@@ -772,7 +764,6 @@ class AssetPreviewer(Previewer, Loggable):
         elif message.src == self.gdkpixbufsink and \
                 message.type == Gst.MessageType.ELEMENT and \
                 self.__preroll_timeout_id == 0:
-            print("B----->")
             # We got a thumbnail pixbuf.
             struct = message.get_structure()
             struct_name = struct.get_name()
@@ -781,7 +772,6 @@ class AssetPreviewer(Previewer, Loggable):
                 self._set_pixbuf(pixbuf)
         elif message.src == self.pipeline and \
                 message.type == Gst.MessageType.ASYNC_DONE:
-            print("C----->")
             if self.position >= 0:
                 self.warning("Thumbnail generation failed at %s", self.position)
                 self.failures.add(self.position)
@@ -790,31 +780,26 @@ class AssetPreviewer(Previewer, Loggable):
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
-        print("__preroll_timed_out_cb(self)")
         self.stop_generation()
 
     # pylint: disable=no-self-use
     def _autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory):
-        print("_autoplug_select_cb(self, unused_decode, unused_pad, unused_caps, factory)")
         # Don't plug audio decoders / parsers.
         if "Audio" in factory.get_klass():
             return True
         return False
 
     def get_thumbs_cache(self):
-        print("get_thumbs_cache(self)")
         """returns the thumbs cache"""
         return self.thumb_cache
 
     def start_generation(self):
-        print("start_generation(self)")
         self.debug("Waiting for UI to become idle for: %s",
                    path_from_uri(self.uri))
         self.__start_id = GLib.idle_add(self._start_thumbnailing_cb,
                                         priority=GLib.PRIORITY_LOW)
 
     def stop_generation(self):
-        print("stop_generation(self)")
         if self.__start_id:
             # Cancel the starting.
             GLib.source_remove(self.__start_id)
@@ -837,10 +822,9 @@ class AssetPreviewer(Previewer, Loggable):
             self.pipeline = None
 
         self.emit("done")
-        self.emit("done_thumbnailing")
+        self.emit("done_thumbnailing", self.asset)
 
     def pause_generation(self):
-        print("pause_generation(self)")
         if self.pipeline:
             self.pipeline.set_state(Gst.State.READY)
 
@@ -861,7 +845,7 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     def __init__(self, ges_elem, max_cpu_usage):
         Gtk.Layout.__init__(self)
         Zoomable.__init__(self)
-        AssetPreviewer.__init__(self, get_proxy_target(ges_elem).props.id, max_cpu_usage)
+        AssetPreviewer.__init__(self, ges_elem, max_cpu_usage)
 
         self.ges_elem = ges_elem
 
