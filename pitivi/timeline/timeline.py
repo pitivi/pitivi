@@ -20,7 +20,6 @@ import os
 from gettext import gettext as _
 
 from gi.repository import Gdk
-from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GLib
@@ -29,7 +28,6 @@ from gi.repository import Gtk
 
 from pitivi.autoaligner import AlignmentProgressDialog
 from pitivi.autoaligner import AutoAligner
-from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.configure import in_devel
 from pitivi.dialogs.prefs import PreferencesDialog
@@ -40,7 +38,7 @@ from pitivi.timeline.elements import TrimHandle
 from pitivi.timeline.layer import Layer
 from pitivi.timeline.layer import LayerControls
 from pitivi.timeline.layer import SpacedSeparator
-from pitivi.timeline.markers import MarkersContainer
+from pitivi.timeline.markers import MarkersBox
 from pitivi.timeline.previewers import Previewer
 from pitivi.timeline.ruler import ScaleRuler
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -1583,7 +1581,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.gapless_button = builder.get_object("gapless_button")
         self.gapless_button.set_active(self._settings.timelineAutoRipple)
 
-        self.markers = MarkersContainer(self)
+        self.markers = MarkersBox(self)
 
         self.attach(self.markers.marker_box, 1, 0, 1, 1)
         self.attach(zoom_box, 0, 1, 1, 1)
