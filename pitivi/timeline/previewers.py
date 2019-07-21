@@ -66,7 +66,6 @@ WAVEFORM_SURFACE_EXTRA_PX = 500
 
 PREVIEW_GENERATOR_SIGNALS = {
     "done": (GObject.SignalFlags.RUN_LAST, None, ()),
-    "done_thumbnailing": (GObject.SignalFlags.RUN_LAST, None, ()),
     "error": (GObject.SignalFlags.RUN_LAST, None, ()),
 }
 
@@ -593,7 +592,8 @@ class AssetPreviewer(Previewer, Loggable):
         queue = []
         interval = self.thumb_interval(self.thumb_width)
         element_left = 0
-        element_right = 2*interval
+        """replace with the duration of the clip"""
+        element_right = 2 * interval
         for position in range(element_left, element_right, interval):
             try:
                 thumb = self.thumbs.pop(position)
@@ -841,7 +841,7 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     def __init__(self, ges_elem, max_cpu_usage):
         Gtk.Layout.__init__(self)
         Zoomable.__init__(self)
-        AssetPreviewer.__init__(self, get_proxy_target(ges_elem), max_cpu_usage)
+        AssetPreviewer.__init__(self, get_proxy_target(ges_elem).props.id, max_cpu_usage)
 
         self.ges_elem = ges_elem
 

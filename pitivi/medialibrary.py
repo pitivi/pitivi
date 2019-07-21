@@ -814,22 +814,21 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def __signal_stop_generation_cb(self, unused):
         for row in self.storemodel:
-            if row[COL_THUMB_DECORATOR].generic_vid_thumb == True:
+            if row[COL_THUMB_DECORATOR].generic_vid_thumb:
                 asset = row[COL_ASSET]
-            self.__removeAsset(asset)
-            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-            name = info_name(asset)
-            self.storemodel.append((thumbs_decorator.small_thumb,
-                                    thumbs_decorator.large_thumb,
-                                    beautify_asset(asset),
-                                    asset,
-                                    asset.props.id,
-                                    name,
-                                    thumbs_decorator))
+                self.__removeAsset(asset)
+                thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
+                name = info_name(asset)
+                self.storemodel.append((thumbs_decorator.small_thumb,
+                                        thumbs_decorator.large_thumb,
+                                        beautify_asset(asset),
+                                        asset,
+                                        asset.props.id,
+                                        name,
+                                        thumbs_decorator))
 
     def _flushPendingAssets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
-        
         for asset in self._pending_assets:
             thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
             name = info_name(asset)
@@ -850,7 +849,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # medialibrary callbacks
     def _assetLoadingProgressCb(self, project, progress, estimated_time):
-        print("_assetLoadingProgressCb(self, project, progress, estimated_time)")
         self._progressbar.set_fraction(progress / 100)
 
         proxying_files = []
