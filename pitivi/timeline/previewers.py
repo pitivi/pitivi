@@ -590,10 +590,10 @@ class AssetPreviewer(Previewer, Loggable):
         """Updates the thumbnails if the AssetPreviewer subclass has any."""
         thumbs = {}
         queue = []
+        asset = GES.Asset.request(GES.UriClip, self.uri)
         interval = self.thumb_interval(self.thumb_width)
         element_left = 0
-        """replace with the duration of the clip"""
-        element_right = 2 * interval
+        element_right = asset.get_duration()
         for position in range(element_left, element_right, interval):
             try:
                 thumb = self.thumbs.pop(position)

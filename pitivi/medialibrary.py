@@ -833,7 +833,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                         thumbs_decorator))
 
     def _flushPendingAssets(self):
-        print("_flushPendingAssets(self)")
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
             thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
@@ -855,7 +854,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # medialibrary callbacks
     def _assetLoadingProgressCb(self, project, progress, estimated_time):
-        print("_assetLoadingProgressCb(self, project, progress, estimated_time)")
         self._progressbar.set_fraction(progress / 100)
 
         proxying_files = []
