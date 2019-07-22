@@ -194,6 +194,11 @@ class AssetThumbnail(Loggable):
         self.proxy_manager = proxy_manager
         self.decorate()
 
+    def update_assetThumbnail(self):
+        self.src_small, self.src_large = self.__get_thumbnails()
+        self.proxy_manager = proxy_manager
+        self.decorate()
+
     def __get_thumbnails(self):
         """Gets the base source thumbnails.
 
@@ -828,6 +833,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                         thumbs_decorator))
 
     def _flushPendingAssets(self):
+        print("_flushPendingAssets(self)")
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
         for asset in self._pending_assets:
             thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
@@ -849,6 +855,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     # medialibrary callbacks
     def _assetLoadingProgressCb(self, project, progress, estimated_time):
+        print("_assetLoadingProgressCb(self, project, progress, estimated_time)")
         self._progressbar.set_fraction(progress / 100)
 
         proxying_files = []
@@ -859,10 +866,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if not asset.ready:
                 proxying_files.append(asset)
                 if row[COL_THUMB_DECORATOR].state != AssetThumbnail.IN_PROGRESS:
-                    thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-                    row[COL_ICON_64] = thumbs_decorator.small_thumb
-                    row[COL_ICON_128] = thumbs_decorator.large_thumb
-                    row[COL_THUMB_DECORATOR] = thumbs_decorator
+                    row[COL_THUMB_DECORATOR].update_assetThumbnail()
+                    row[COL_ICON_64] = row[COL_THUMB_DECORATOR].small_thumb
+                    row[COL_ICON_128] = row[COL_THUMB_DECORATOR].large_thumb
 
         if progress == 0:
             self._startImporting(project)
