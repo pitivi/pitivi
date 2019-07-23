@@ -587,18 +587,18 @@ class AssetPreviewer(Previewer, Loggable):
         self.become_controlled()
 
     def _update_thumbnails(self):
-        """Updates the thumbnails if the AssetPreviewer subclass has any."""
+        """Updates the queue of thumbnails to be produced.
+
+        Subclasses can also update the managed UI, if any.
+
+        The contract is that if the method sets a queue,
+        it also calls become_controlled().
+        """
+
         thumbs = {}
         queue = []
         asset = GES.Asset.request(GES.UriClip, self.uri)
-        interval = self.thumb_interval(self.thumb_width)
-        element_left = 0
-        element_right = asset.get_duration()
-        positions = []
-        for position in range(element_left, element_right, interval):
-            positions.append(position)
-        middle = int(len(positions) / 2)
-        position = positions[middle]
+        position = asset.get_duration() / 2
         try:
             thumb = self.thumbs.pop(position)
         except KeyError:
