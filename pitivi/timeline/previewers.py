@@ -594,20 +594,23 @@ class AssetPreviewer(Previewer, Loggable):
         interval = self.thumb_interval(self.thumb_width)
         element_left = 0
         element_right = asset.get_duration()
+        positions = []
         for position in range(element_left, element_right, interval):
-            try:
-                thumb = self.thumbs.pop(position)
-            except KeyError:
-                thumb = Thumbnail(self.thumb_width, self.thumb_height)
-
-            thumbs[position] = thumb
-            if position in self.thumb_cache:
-                pixbuf = self.thumb_cache[position]
-                thumb.set_from_pixbuf(pixbuf)
-                thumb.set_visible(True)
-            else:
-                if position not in self.failures and position != self.position:
-                    queue.append(position)
+            positions.append(position)
+        middle = int(len(positions) / 2)
+        position = positions[middle]
+        try:
+            thumb = self.thumbs.pop(position)
+        except KeyError:
+            thumb = Thumbnail(self.thumb_width, self.thumb_height)
+        thumbs[position] = thumb
+        if position in self.thumb_cache:
+            pixbuf = self.thumb_cache[position]
+            thumb.set_from_pixbuf(pixbuf)
+            thumb.set_visible(True)
+        else:
+            if position not in self.failures and position != self.position:
+                queue.append(position)
         self.thumbs = thumbs
         self.queue = queue
         if queue:
