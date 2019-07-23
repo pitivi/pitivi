@@ -196,7 +196,6 @@ class AssetThumbnail(Loggable):
 
     def update_assetThumbnail(self):
         self.src_small, self.src_large = self.__get_thumbnails()
-        self.proxy_manager = proxy_manager
         self.decorate()
 
     def __get_thumbnails(self):
