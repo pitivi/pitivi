@@ -13,15 +13,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-05-12 04:25+0000\n"
-"PO-Revision-Date: 2019-05-13 15:31+0200\n"
+"POT-Creation-Date: 2019-07-07 12:11+0000\n"
+"PO-Revision-Date: 2019-07-25 11:54+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: es <gnome-es-list@gnome.org>\n"
-"Language: es\n"
+"Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Gtranslator 3.32.0\n"
+"X-Generator: Gtranslator 3.32.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/org.pitivi.Pitivi-mime.xml.in:4
@@ -467,19 +467,19 @@ msgstr ""
 "Añadir multimedia a su proyecto arrastrando archivos y carpetas aquí o "
 "usando el botón «Importar»."
 
-#: data/ui/preferences.ui:23
+#: data/ui/preferences.ui:26
 msgid "Reset to Factory Settings"
 msgstr "Restaurar a los ajustes de fábrica"
 
-#: data/ui/preferences.ui:29
+#: data/ui/preferences.ui:32
 msgid "Reset all settings to their default values"
 msgstr "Restablecer toda la configuración a sus valores predeterminados"
 
-#: data/ui/preferences.ui:41
+#: data/ui/preferences.ui:44
 msgid "Revert"
 msgstr "Revertir"
 
-#: data/ui/preferences.ui:47
+#: data/ui/preferences.ui:50
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
@@ -487,12 +487,12 @@ msgstr ""
 "Revertir toda la configuración a los valores anteriores (antes de que "
 "abriera el diálogo de preferencias)"
 
-#: data/ui/preferences.ui:58 data/ui/renderingdialog.ui:38
+#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:38
 #: data/ui/renderingprogress.ui:85
 msgid "Close"
 msgstr "Cerrar"
 
-#: data/ui/preferences.ui:159
+#: data/ui/preferences.ui:162
 msgid "Some changes will not take effect until you restart Pitivi"
 msgstr "Algunos cambios no tendrán efecto hasta que reinicie Pitivi"
 
@@ -523,7 +523,6 @@ msgid "Constrain proportions"
 msgstr "Restringir proporciones"
 
 #: data/ui/projectsettings.ui:268
-#| msgid "Display aspect ratio"
 msgid "Maintain aspect ratio"
 msgstr "Mantener la proporción de aspecto"
 
@@ -672,7 +671,7 @@ msgid "Pause"
 msgstr "Pausar"
 
 #: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:734
-#: pitivi/timeline/timeline.py:1715
+#: pitivi/timeline/timeline.py:1724
 msgid "Play"
 msgstr "Reproducir"
 
@@ -1113,11 +1112,11 @@ msgid "effect"
 msgstr "efecto"
 
 #. Add Uncategorized only if there are other categories defined.
-#: pitivi/effects.py:333 pitivi/effects.py:354
+#: pitivi/effects.py:336 pitivi/effects.py:357
 msgid "Uncategorized"
 msgstr "Sin categorizar"
 
-#: pitivi/effects.py:334 pitivi/effects.py:351
+#: pitivi/effects.py:337 pitivi/effects.py:354
 msgid "All effects"
 msgstr "Todos los efectos"
 
@@ -1189,7 +1188,7 @@ msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Resolución</b>: %d × %d"
 
 #: pitivi/mediafilespreviewer.py:273 pitivi/mediafilespreviewer.py:290
-#: pitivi/utils/ui.py:432
+#: pitivi/utils/ui.py:461
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Duración:</b>: %s"
@@ -1679,7 +1678,7 @@ msgstr ""
 msgid "Timestamp: %s"
 msgstr "Marca de tiempo: %s"
 
-#: pitivi/timeline/elements.py:1457
+#: pitivi/timeline/elements.py:1441
 msgid "Audio crossfade"
 msgstr "Fundido de sonido"
 
@@ -1713,11 +1712,11 @@ msgstr "Capa %d"
 msgid "Frame #%d"
 msgstr "Fotograma nº %d"
 
-#: pitivi/timeline/timeline.py:80
+#: pitivi/timeline/timeline.py:79
 msgid "Snap distance"
 msgstr "Ajustar distancia"
 
-#: pitivi/timeline/timeline.py:81
+#: pitivi/timeline/timeline.py:80
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
@@ -1725,11 +1724,11 @@ msgstr ""
 "Umbral (en píxeles) en el que dos vídeos se juntarán al arrastrarlos o "
 "recortarlos."
 
-#: pitivi/timeline/timeline.py:93
+#: pitivi/timeline/timeline.py:92
 msgid "Image clip duration"
 msgstr "Duración del vídeo de imagen"
 
-#: pitivi/timeline/timeline.py:95
+#: pitivi/timeline/timeline.py:94
 msgid ""
 "Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
@@ -1737,86 +1736,86 @@ msgstr ""
 "Duración predeterminada (el milisegundos) del vídeo de imágenes al "
 "insertarlo en la línea de tiempo."
 
-#: pitivi/timeline/timeline.py:106
+#: pitivi/timeline/timeline.py:105
 msgid "Left click also seeks"
 msgstr "La pulsación izquierda también busca"
 
-#: pitivi/timeline/timeline.py:108
+#: pitivi/timeline/timeline.py:107
 msgid "Whether left-clicking also seeks besides selecting and editing clips."
 msgstr ""
 "Indica si la pulsación izquierda también busca más allá de seleccionar y "
 "editar vídeos."
 
-#: pitivi/timeline/timeline.py:331 pitivi/timeline/timeline.py:1667
+#: pitivi/timeline/timeline.py:330 pitivi/timeline/timeline.py:1676
 msgid "Add layer"
 msgstr "Añadir capa"
 
-#: pitivi/timeline/timeline.py:1624 pitivi/dialogs/prefs.py:61
+#: pitivi/timeline/timeline.py:1633 pitivi/dialogs/prefs.py:61
 msgid "Timeline"
 msgstr "Línea de tiempo"
 
-#: pitivi/timeline/timeline.py:1631
+#: pitivi/timeline/timeline.py:1640
 msgid "Delete selected clips"
 msgstr "Eliminar los vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1637
+#: pitivi/timeline/timeline.py:1646
 msgid "Delete selected clips and shift following ones"
 msgstr "Eliminar los vídeos seleccionados y desplazar los siguientes"
 
-#: pitivi/timeline/timeline.py:1643
+#: pitivi/timeline/timeline.py:1652
 msgid "Group selected clips together"
 msgstr "Agrupar juntos los vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1649
+#: pitivi/timeline/timeline.py:1658
 msgid "Ungroup selected clips"
 msgstr "Desagrupar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1655
+#: pitivi/timeline/timeline.py:1664
 msgid "Copy selected clips"
 msgstr "Copiar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1661
+#: pitivi/timeline/timeline.py:1670
 msgid "Paste selected clips"
 msgstr "Pegar vídeos seleccionados"
 
-#: pitivi/timeline/timeline.py:1680
+#: pitivi/timeline/timeline.py:1689
 msgid "Split the clip at the position"
 msgstr "Cortar el vídeo en la posición"
 
-#: pitivi/timeline/timeline.py:1686
+#: pitivi/timeline/timeline.py:1695
 msgid "Add keyframe to the keyframe curve of selected clip"
 msgstr ""
 "Añadir fotograma clave a la curva de fotogramas clave del vídeo seleccionado"
 
-#: pitivi/timeline/timeline.py:1691
+#: pitivi/timeline/timeline.py:1700
 msgid "Timeline Navigation"
 msgstr "Navegación por la línea de tiempo"
 
-#: pitivi/timeline/timeline.py:1698
+#: pitivi/timeline/timeline.py:1707
 msgid "Zoom in"
 msgstr "Acercar"
 
-#: pitivi/timeline/timeline.py:1704
+#: pitivi/timeline/timeline.py:1713
 msgid "Zoom out"
 msgstr "Alejar"
 
-#: pitivi/timeline/timeline.py:1710
+#: pitivi/timeline/timeline.py:1719
 msgid "Adjust zoom to fit the project to the window"
 msgstr "Ajustar nivel de ampliación para coincidir con la ventana"
 
-#: pitivi/timeline/timeline.py:1721
+#: pitivi/timeline/timeline.py:1730
 msgid "Seek backward one frame"
 msgstr "Retroceder un fotograma"
 
-#: pitivi/timeline/timeline.py:1727
+#: pitivi/timeline/timeline.py:1736
 msgid "Seek forward one frame"
 msgstr "Avanzar un fotograma"
 
-#: pitivi/timeline/timeline.py:1734
+#: pitivi/timeline/timeline.py:1743
 msgid "Seek backward one second"
 msgstr "Retroceder un segundo"
 
-#: pitivi/timeline/timeline.py:1741
+#: pitivi/timeline/timeline.py:1750
 msgid "Seek forward one second"
 msgstr "Avanzar un segundo"
 
@@ -1939,40 +1938,32 @@ msgstr "Complementos"
 msgid "Shortcuts"
 msgstr "Atajos"
 
-#. Translators: This adds a semicolon to an already
-#. translated name of a preference.
-#: pitivi/dialogs/prefs.py:242 pitivi/utils/widgets.py:805
-#: pitivi/utils/widgets.py:906
-#, python-format
-msgid "%(preference_label)s:"
-msgstr "%(preference_label)s:"
-
-#: pitivi/dialogs/prefs.py:252 pitivi/utils/widgets.py:983
+#: pitivi/dialogs/prefs.py:276 pitivi/utils/widgets.py:981
 msgid "Reset to default value"
 msgstr "Restablecer al valor predeterminado"
 
-#: pitivi/dialogs/prefs.py:347
+#: pitivi/dialogs/prefs.py:387
 msgid "Reset the shortcut to the default accelerator"
 msgstr "Restablecer el atajo al acelerador predeterminado"
 
-#: pitivi/dialogs/prefs.py:504
+#: pitivi/dialogs/prefs.py:547
 msgid "Set Shortcut"
 msgstr "Establecer atajo"
 
 #. Setup the widgets used in the dialog.
-#: pitivi/dialogs/prefs.py:519
+#: pitivi/dialogs/prefs.py:562
 msgid "Apply"
 msgstr "Aplicar"
 
-#: pitivi/dialogs/prefs.py:522
+#: pitivi/dialogs/prefs.py:565
 msgid "Apply the accelerator to this shortcut."
 msgstr "Aplicar el acelerador a este atajo."
 
-#: pitivi/dialogs/prefs.py:525
+#: pitivi/dialogs/prefs.py:568
 msgid "Replace"
 msgstr "Reemplazar"
 
-#: pitivi/dialogs/prefs.py:528
+#: pitivi/dialogs/prefs.py:571
 msgid ""
 "Remove this accelerator from where it was used previously and set it for "
 "this shortcut."
@@ -1980,12 +1971,12 @@ msgstr ""
 "Quite este acelerador de donde se usara anteriormente y establézcalo a este "
 "atajo."
 
-#: pitivi/dialogs/prefs.py:535
+#: pitivi/dialogs/prefs.py:578
 #, python-format
 msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
 msgstr "Introduzca el nuevo atajo para <b>%s</b> o pulse Esc para cancelar."
 
-#: pitivi/dialogs/prefs.py:544
+#: pitivi/dialogs/prefs.py:587
 msgid ""
 "The accelerator you are trying to set might interfere with typing. Try using "
 "Control, Shift or Alt with some other key, please."
@@ -1993,7 +1984,7 @@ msgstr ""
 "El acelerador que intenta establecer puede interferir al escribir. Pruebe a "
 "usar Ctrl, Mayús o Alt junto con alguna otra tecla."
 
-#: pitivi/dialogs/prefs.py:578
+#: pitivi/dialogs/prefs.py:621
 #, python-format
 msgid ""
 "This key combination is already used by <b>%s</b>. Press Replace to use it "
@@ -2002,14 +1993,30 @@ msgstr ""
 "Esta combinación de teclas ya la está usando <b>%s</b>. Pulse Reemplazar "
 "para usarla para <b>%s</b> en su lugar."
 
-#: pitivi/dialogs/prefs.py:621
+#: pitivi/dialogs/prefs.py:664
 msgid "No description available."
 msgstr "No hay descripción disponible."
 
-#: pitivi/dialogs/prefs.py:731
+#: pitivi/dialogs/prefs.py:775
 #, python-brace-format
 msgid "Unable to load the plugin '{module_name}'"
 msgstr "No se pudo cargar el complemento «{module_name}»"
+
+#. We could use Gtk.ListBox.set_placeholder, but it
+#. appears bad inside the list widget.
+#: pitivi/dialogs/prefs.py:859
+#| msgid "No description available."
+msgid "No plugins available"
+msgstr "No hay complementos disponibles"
+
+#: pitivi/dialogs/prefs.py:872
+#, python-brace-format
+msgid ""
+"You can create <a href='{doc_url}'>plugins</a> into your <a "
+"href='{dir_url}'>plugins directory</a>."
+msgstr ""
+"Puede crear <a href='{doc_url}'>complementos</a> en su <a "
+"href='{dir_url}'>carpeta de complementos</a>."
 
 #: pitivi/utils/misc.py:283
 msgid ""
@@ -2036,117 +2043,117 @@ msgid "Error while decoding a string"
 msgstr "Error al decodificar una cadena"
 
 #. Translators: 'fps' is for 'frames per second'
-#: pitivi/utils/ui.py:250
+#: pitivi/utils/ui.py:279
 msgid "{0:s} fps"
 msgstr "{0:s} fps"
 
-#: pitivi/utils/ui.py:270
+#: pitivi/utils/ui.py:299
 #, python-brace-format
 msgid "{0:n} kHz"
 msgstr "{0:n} kHz"
 
-#: pitivi/utils/ui.py:279
+#: pitivi/utils/ui.py:308
 msgid "Mono"
 msgstr "Mono"
 
-#: pitivi/utils/ui.py:280
+#: pitivi/utils/ui.py:309
 msgid "Stereo"
 msgstr "Estéreo"
 
-#: pitivi/utils/ui.py:281
+#: pitivi/utils/ui.py:310
 msgid "6 (5.1)"
 msgstr "6 (5.1)"
 
-#: pitivi/utils/ui.py:282
+#: pitivi/utils/ui.py:311
 msgid "8 (7.1)"
 msgstr "8 (7.1)"
 
-#: pitivi/utils/ui.py:412
+#: pitivi/utils/ui.py:441
 #, python-format
 msgid "<b>Duration:</b> %s"
 msgstr "<b>Duración:</b> %s"
 
-#: pitivi/utils/ui.py:415
+#: pitivi/utils/ui.py:444
 #, python-format
 msgid "<b>Proxy creation progress:</b> %d%%"
 msgstr "<b>Progreso de creación del proxy:</b> %d%%"
 
-#: pitivi/utils/ui.py:428
+#: pitivi/utils/ui.py:457
 #, python-format
 msgid "<b>Path</b>: %s"
 msgstr "<b>Ruta</b>: %s"
 
-#: pitivi/utils/ui.py:437
+#: pitivi/utils/ui.py:466
 #, python-format
 msgid "<b>Size</b>: %s"
 msgstr "<b>Tamaño:</b> %s"
 
-#: pitivi/utils/ui.py:471
+#: pitivi/utils/ui.py:500
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Audio:</b> %d canales a %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: pitivi/utils/ui.py:483
+#: pitivi/utils/ui.py:512
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
 msgstr "<b>Vídeo:</b> %d×%d <i>píxels</i> a %s <i>fps</i>"
 
-#: pitivi/utils/ui.py:486
+#: pitivi/utils/ui.py:515
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Imagen:</b> %d x %d <i>píxeles</i>"
 
-#: pitivi/utils/ui.py:540 pitivi/utils/ui.py:567 pitivi/utils/ui.py:591
+#: pitivi/utils/ui.py:569 pitivi/utils/ui.py:596 pitivi/utils/ui.py:620
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: pitivi/utils/ui.py:543 pitivi/utils/ui.py:570 pitivi/utils/ui.py:594
+#: pitivi/utils/ui.py:572 pitivi/utils/ui.py:599 pitivi/utils/ui.py:623
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: pitivi/utils/ui.py:546 pitivi/utils/ui.py:573 pitivi/utils/ui.py:597
+#: pitivi/utils/ui.py:575 pitivi/utils/ui.py:602 pitivi/utils/ui.py:626
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d segundo"
 msgstr[1] "%d segundos"
 
-#: pitivi/utils/ui.py:565
+#: pitivi/utils/ui.py:594
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d día"
 msgstr[1] "%d días"
 
-#: pitivi/utils/ui.py:606
+#: pitivi/utils/ui.py:635
 msgid "Just now"
 msgstr "Ahora mismo"
 
-#: pitivi/utils/ui.py:609
+#: pitivi/utils/ui.py:638
 msgid "An hour ago"
 msgstr "Hace una hora"
 
-#: pitivi/utils/ui.py:612
+#: pitivi/utils/ui.py:641
 msgid "Today"
 msgstr "Hoy"
 
-#: pitivi/utils/ui.py:615
+#: pitivi/utils/ui.py:644
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: pitivi/utils/ui.py:624
+#: pitivi/utils/ui.py:653
 msgid "About a year ago"
 msgstr "Hace un año"
 
-#: pitivi/utils/ui.py:627
+#: pitivi/utils/ui.py:656
 #, python-format
 msgid "About %d year ago"
 msgid_plural "About %d years ago"
@@ -2157,35 +2164,40 @@ msgstr[1] "Hace aproximadamente %d años"
 msgid "Implement Me"
 msgstr "Impleméntame"
 
-#: pitivi/utils/widgets.py:838
+#: pitivi/utils/widgets.py:808
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: pitivi/utils/widgets.py:841
 msgid "No properties."
 msgstr "No hay propiedades."
 
 #. Avoid the ugly selection outline
-#: pitivi/utils/widgets.py:968
+#: pitivi/utils/widgets.py:966
 msgid "Show keyframes for this value"
 msgstr "Mostrar marcos clave para este valor"
 
-#: pitivi/utils/widgets.py:1151
+#: pitivi/utils/widgets.py:1149
 #, python-format
 msgid "Properties for %s"
 msgstr "Propiedades para %s"
 
-#: pitivi/utils/widgets.py:1231
+#: pitivi/utils/widgets.py:1229
 msgid "Zoom Fit"
 msgstr "Ajustar ampliación"
 
-#: pitivi/utils/widgets.py:1236
+#: pitivi/utils/widgets.py:1234
 msgid "Zoom"
 msgstr "Ampliación"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: pitivi/utils/widgets.py:1312
+#: pitivi/utils/widgets.py:1310
 #, python-format
 msgid "%s displayed"
 msgstr "Mostrados %s"
 
-#: pitivi/utils/widgets.py:1316
+#: pitivi/utils/widgets.py:1314
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Mostrados %d nanosegundos, porque podemos"
