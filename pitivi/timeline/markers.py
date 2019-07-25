@@ -42,24 +42,20 @@ class Marker(Gtk.EventBox, Loggable):
         self.position_ns = self.ges_marker.props.position
         self.get_style_context().add_class("Marker")
 
-        self.connect("leave-notify-event", self._leave_notify_event_cb)
-
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.CONSTANT_SIZE
 
     def do_get_preferred_height(self):
-        result = (10, 10)
-        return result
+        return (10, 10)
 
     def do_get_preferred_width(self):
-        result = (10, 10)
-        return result
+        return (10, 10)
 
     def do_enter_notify_event(self, unused_event):
-        self.set_state_flags(Gtk.StateFlags.PRELIGHT, True)
+        self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
 
-    def _leave_notify_event_cb(self, widget, event):
+    def do_leave_notify_event(self, unused_event):
         self.unset_state_flags(Gtk.StateFlags.PRELIGHT)
 
     @property
@@ -107,10 +103,6 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                         Gdk.EventMask.BUTTON_PRESS_MASK |
                         Gdk.EventMask.BUTTON_RELEASE_MASK)
 
-        self.connect("button-press-event", self._button_press_event_cb)
-        self.connect("button-release-event", self._button_release_event_cb)
-        self.connect("motion-notify-event", self._motion_notify_event_cb)
-
     @property
     def markers_container(self):
         """Gets the GESMarkerContainer"""
@@ -150,13 +142,15 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
             position = self.nsToPixel(marker.position) - self.offset - MARKER_WIDTH / 2
             self.layout.move(marker, position, 0)
 
-    def _button_press_event_cb(self, unused_widget, event):
+    # pylint: disable=arguments-differ
+    def do_button_press_event(self, event):
         event_widget = Gtk.get_event_widget(event)
         button = event.button
 
         if button == Gdk.BUTTON_PRIMARY:
             if isinstance(event_widget, Marker):
                 if event.type == Gdk.EventType.BUTTON_PRESS:
+                    # with self.app.action_log.begin("Move marker", toplevel=True):
                     self.marker_pressed = event_widget
 
                 elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
@@ -165,21 +159,21 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
             else:
                 position = self.pixelToNs(event.x + self.offset)
-
+                # with self.app.action_log.started("Added marker", toplevel=True):
                 self.__markers_container.add(position)
 
-    def _button_release_event_cb(self, unused_widget, event):
+    def do_button_release_event(self, event):
         button = event.button
         event_widget = Gtk.get_event_widget(event)
 
         if button == Gdk.BUTTON_PRIMARY and self.marker_pressed:
+            # self.app.action_log.commit("Move marker")
             self.marker_pressed = None
 
         elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
             self._remove_marker(event_widget)
 
-    def _motion_notify_event_cb(self, unused_widget, event):
-
+    def do_motion_notify_event(self, event):
         if self.marker_pressed:
             event_widget = Gtk.get_event_widget(event)
             event_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
@@ -198,10 +192,9 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.show_all()
 
     def _remove_marker(self, marker):
-        with self.app.action_log.started("Remove marker",
-                                         toplevel=True):
-            self.__markers_container.remove(marker.ges_marker)
-            self.layout.remove(marker)
+        # with self.app.action_log.started("Remove marker", toplevel=True):
+        self.__markers_container.remove(marker.ges_marker)
+        self.layout.remove(marker)
 
 
 class MarkerPopover(Gtk.Popover):
@@ -214,7 +207,6 @@ class MarkerPopover(Gtk.Popover):
 
         self.marker = marker
 
-        self.popover = Gtk.Popover()
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         vbox.pack_start(self.text_view, False, True, SPACING * 2)
 
@@ -224,9 +216,8 @@ class MarkerPopover(Gtk.Popover):
 
         text_buffer = self.text_view.get_buffer()
         text = self.marker.comment
-        if text is None:
-            text = ""
-        text_buffer.set_text(text)
+        if text:
+            text_buffer.set_text(text)
 
         self.set_relative_to(self.marker)
         self.show_all()
