@@ -222,14 +222,30 @@ EDITOR_PERSPECTIVE_CSS = """
 
     .Marquee {
         background-color: rgba(224, 224, 224, 0.7);
+        color: rgba(224, 224, 224, 1);
     }
 
-    .MarkersContainer {
+    .MarkersBox {
         background-color: rgba(224, 224, 224, 0.5);
     }
 
+    .Marker {
+        background-image: url('%(marker_unselected)s');
+    }
+
+    .Marker:hover {
+        background-image: url('%(marker_hovered)s');
+    }
+
+    .Marker:selected {
+        background-image: url('%(marker_selected)s');
+    }
+
 """ % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
-        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
+        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
+        'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),
+        'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png"),
+        'marker_selected': os.path.join(get_pixmap_dir(), "marker-select.png")})
 
 
 def format_framerate_value(framerate):
