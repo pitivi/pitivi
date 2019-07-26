@@ -730,9 +730,6 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._scrubbing = res and button == 3
         if self._scrubbing:
             self._seek(event)
-            clip = self._getParentOfType(event_widget, Clip)
-            if clip:
-                clip.shrinkTrimHandles()
 
         self._scrolling = res and button == 2
         if self._scrolling:

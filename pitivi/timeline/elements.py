@@ -50,12 +50,14 @@ from pitivi.utils.ui import EFFECT_TARGET_ENTRY
 from pitivi.utils.ui import set_children_state_recurse
 from pitivi.utils.ui import unset_children_state_recurse
 
-KEYFRAME_LINE_HEIGHT = 2
-KEYFRAME_LINE_ALPHA = 0.5
-KEYFRAME_LINE_COLOR = "#EDD400"  # "Tango" medium yellow
-KEYFRAME_NODE_COLOR = "#F57900"  # "Tango" medium orange
-SELECTED_KEYFRAME_NODE_COLOR = "#204A87"  # "Tango" dark sky blue
-HOVERED_KEYFRAME_NODE_COLOR = "#3465A4"  # "Tango" medium sky blue
+KEYFRAME_LINE_HEIGHT = 1
+KEYFRAME_LINE_ALPHA = 0.75
+KEYFRAME_LINE_COLOR = "#f6d32d"  # Gnome HIG Yellow 1
+KEYFRAME_NODE_COLOR = "#f6d32d"
+KEYFRAME_NODE_SIZE = 30
+KEYFRAME_NODE_HOVER_SIZE = 60
+SELECTED_KEYFRAME_NODE_COLOR = "#204A87"
+HOVERED_KEYFRAME_NODE_COLOR = "#f9f06b"
 
 CURSORS = {
     GES.Edge.EDGE_START: Gdk.Cursor.new(Gdk.CursorType.LEFT_SIDE),
@@ -98,6 +100,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self._timeline = timeline
         self.__source = binding.props.control_source
+        self._project = timeline.app.project_manager.current_project
         self._connect_sources()
         self.__propertyName = binding.props.name
         self.__paramspec = binding.pspec
@@ -127,8 +130,8 @@ class KeyframeCurve(FigureCanvas, Loggable):
         figure.patch.set_visible(False)
 
         # The PathCollection object holding the keyframes dots.
-        sizes = [50]
-        self._keyframes = self._ax.scatter([], [], marker='D', s=sizes,
+        self._keyframes = self._ax.scatter([], [], marker='D',
+                                           s=KEYFRAME_NODE_SIZE,
                                            c=KEYFRAME_NODE_COLOR, zorder=2)
 
         # matplotlib weirdness, simply here to avoid a warning ..
@@ -151,6 +154,20 @@ class KeyframeCurve(FigureCanvas, Loggable):
         # Whether the mouse events go to the keyframes logic.
         self.handling_motion = False
 
+        # Hold dots for hover and selected keyframes
+        self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D',
+                                                    s=KEYFRAME_NODE_SIZE,
+                                                    c=SELECTED_KEYFRAME_NODE_COLOR,
+                                                    zorder=3)
+
+        self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D',
+                                                    s=KEYFRAME_NODE_HOVER_SIZE,
+                                                    c=HOVERED_KEYFRAME_NODE_COLOR,
+                                                    zorder=3)
+
+        self._update_selected_keyframe()
+        self.__hovered_keyframe.set_visible(False)
+        self.__selected_keyframe.set_visible(False)
         self.__hovered = False
 
         self.connect("motion-notify-event", self.__gtkMotionEventCb)
@@ -356,6 +373,14 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self._timeline.get_window().set_cursor(cursor)
 
+        result = self._keyframes.contains(event)
+        if result[0]:
+            keyframe_index = result[1]['ind'][0]
+            offset = self._keyframes.get_offsets()[keyframe_index]
+            self.__show_special_keyframe(self.__hovered_keyframe, offset)
+        else:
+            self.__hide_special_keyframe(self.__hovered_keyframe)
+
     def _mpl_button_release_event_cb(self, event):
         if event.button != 1:
             return
@@ -393,6 +418,37 @@ class KeyframeCurve(FigureCanvas, Loggable):
         self._offset = None
         self.__clicked_line = ()
         self._dragged = False
+
+    def __show_special_keyframe(self, keyframe, offsets):
+        if isinstance(offsets, numpy.ndarray):
+            keyframe.set_offsets(offsets)
+            keyframe.set_visible(True)
+            self.queue_draw()
+
+    def __hide_special_keyframe(self, keyframe):
+        keyframe.set_visible(False)
+        self.queue_draw()
+
+    def _update_selected_keyframe(self):
+        try:
+            position = self._project.pipeline.getPosition()
+        except pipeline.PipelineError:
+            self.warning("Could not get pipeline position")
+            return
+
+        source = self._timeline.selection.getSingleClip()
+        if source is None:
+            return
+        source_position = position - source.props.start + source.props.in_point
+
+        offsets = self._keyframes.get_offsets()
+        keyframes = offsets[:, 0]
+
+        index = numpy.searchsorted(keyframes, source_position)
+        if 0 <= index < len(keyframes) and keyframes[index] == source_position:
+            self.__show_special_keyframe(self.__selected_keyframe, source_position)
+        else:
+            self.__hide_special_keyframe(self.__selected_keyframe)
 
     def _update_tooltip(self, event):
         """Sets or clears the tooltip showing info about the hovered line."""
@@ -450,16 +506,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
         super().__init__(timeline, bindings[0])
 
         self._timeline = timeline
-        self._project = timeline.app.project_manager.current_project
         self._project.pipeline.connect("position", self._position_cb)
-
-        sizes = [80]
-        self.__selected_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
-                                                    c=SELECTED_KEYFRAME_NODE_COLOR, zorder=3)
-        self.__hovered_keyframe = self._ax.scatter([0], [0.5], marker='D', s=sizes,
-                                                   c=HOVERED_KEYFRAME_NODE_COLOR, zorder=3)
-        self.__update_selected_keyframe()
-        self.__hovered_keyframe.set_visible(False)
 
     def release(self):
         super().release()
@@ -531,56 +578,13 @@ class MultipleKeyframeCurve(KeyframeCurve):
 
         super()._mpl_button_release_event_cb(event)
 
-    def _mpl_motion_event_cb(self, event):
-        super()._mpl_motion_event_cb(event)
-
-        result = self._keyframes.contains(event)
-        if result[0]:
-            # A keyframe is hovered
-            keyframe_index = result[1]['ind'][0]
-            offset = self._keyframes.get_offsets()[keyframe_index][0]
-            self.__show_special_keyframe(self.__hovered_keyframe, offset)
-        else:
-            self.__hide_special_keyframe(self.__hovered_keyframe)
-
-    def __show_special_keyframe(self, keyframe, offset):
-        offsets = numpy.array([[offset, 0.5]])
-        keyframe.set_offsets(offsets)
-        keyframe.set_visible(True)
-        self.queue_draw()
-
-    def __hide_special_keyframe(self, keyframe):
-        keyframe.set_visible(False)
-        self.queue_draw()
-
     def _controlSourceChangedCb(self, control_source, timed_value):
         super()._controlSourceChangedCb(control_source, timed_value)
-        self.__update_selected_keyframe()
+        self._update_selected_keyframe()
         self.__hide_special_keyframe(self.__hovered_keyframe)
 
     def _position_cb(self, unused_pipeline, unused_position):
-        self.__update_selected_keyframe()
-
-    def __update_selected_keyframe(self):
-        try:
-            position = self._project.pipeline.getPosition()
-        except pipeline.PipelineError:
-            self.warning("Could not get pipeline position")
-            return
-
-        source = self._timeline.selection.getSingleClip()
-        if source is None:
-            return
-        source_position = position - source.props.start + source.props.in_point
-
-        offsets = self._keyframes.get_offsets()
-        keyframes = offsets[:, 0]
-
-        index = numpy.searchsorted(keyframes, source_position)
-        if 0 <= index < len(keyframes) and keyframes[index] == source_position:
-            self.__show_special_keyframe(self.__selected_keyframe, source_position)
-        else:
-            self.__hide_special_keyframe(self.__selected_keyframe)
+        self._update_selected_keyframe()
 
     def _update_tooltip(self, event):
         markup = None
@@ -1020,8 +1024,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     __gtype_name__ = "PitiviTrimHandle"
 
-    SELECTED_WIDTH = 5
-    DEFAULT_WIDTH = 1
+    DEFAULT_WIDTH = 5
     PIXBUF = None
 
     def __init__(self, clip, edge):
@@ -1038,8 +1041,8 @@ class TrimHandle(Gtk.EventBox, Loggable):
             css_class = "left"
         self.get_style_context().add_class(css_class)
 
+        self.props.width_request = TrimHandle.DEFAULT_WIDTH
         self.props.valign = Gtk.Align.FILL
-        self.shrink()
         if edge == GES.Edge.EDGE_END:
             self.props.halign = Gtk.Align.END
         else:
@@ -1047,21 +1050,7 @@ class TrimHandle(Gtk.EventBox, Loggable):
 
     def do_draw(self, cr):
         Gtk.EventBox.do_draw(self, cr)
-        if TrimHandle.PIXBUF is None:
-            TrimHandle.PIXBUF = GdkPixbuf.Pixbuf.new_from_file(
-                os.path.join(get_pixmap_dir(), "trimbar-focused.png"))
-        Gdk.cairo_set_source_pixbuf(cr, TrimHandle.PIXBUF, 10, 10)
-
-    def enlarge(self):
-        self.props.width_request = TrimHandle.SELECTED_WIDTH
-        if self.props.window:
-            self.props.window.set_cursor(CURSORS[self.edge])
-
-    def shrink(self):
-        self.props.width_request = TrimHandle.DEFAULT_WIDTH
-        if self.props.window:
-            self.props.window.set_cursor(NORMAL_CURSOR)
-
+        self.props.window.set_cursor(CURSORS[self.edge])
 
 class Clip(Gtk.EventBox, Zoomable, Loggable):
 
@@ -1232,10 +1221,6 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.handles.append(self.leftHandle)
         self.handles.append(self.rightHandle)
 
-    def shrinkTrimHandles(self):
-        for handle in self.handles:
-            handle.shrink()
-
     def do_map(self):
         Gtk.EventBox.do_map(self)
         self.updatePosition()
@@ -1297,13 +1282,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline._scrubbing):
             set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL):
             unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
-            for handle in self.handles:
-                handle.shrink()
 
         return False
 
@@ -1401,6 +1382,10 @@ class UriClip(SourceClip):
 
 class TitleClip(SourceClip):
     __gtype_name__ = "PitiviTitleClip"
+
+    def __init__(self, layer, ges_clip):
+        SourceClip.__init__(self, layer, ges_clip)
+        self.get_style_context().add_class("TitleClip")
 
     def _add_child(self, ges_timeline_element):
         SourceClip._add_child(self, ges_timeline_element)

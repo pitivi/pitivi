@@ -60,7 +60,7 @@ SNAPBAR_WIDTH = 5
 SNAPBAR_COLOR = (127, 153, 204)
 LAYER_HEIGHT = 130
 # The space between two layers.
-SEPARATOR_HEIGHT = PADDING
+SEPARATOR_HEIGHT = 1
 
 SMALL_THUMB_WIDTH = 64
 # 128 is the normal size for thumbnails, but for *icons* it looks insane.
@@ -159,25 +159,57 @@ GREETER_PERSPECTIVE_CSS = """
 
 EDITOR_PERSPECTIVE_CSS = """
     #resize_status {
-        font-size: 200%%;
+        font-size: 200%;
         background-color: black;
         opacity: 0.8;
     }
 
+    .AudioBackground,
+    .VideoBackground {
+        transition: background-color 200ms ease-out, border-color 200ms ease-out;
+    }
+
     .AudioBackground {
-        background-color: #496c21;
+        background-color: rgb(60, 97, 43);
+        border: 1px solid shade(rgb(60, 97, 43), 1.2);
     }
 
     .VideoBackground {
-        background-color: #2d2d2d;
+        background-color: rgb(25, 25, 25);
+        border: 1px solid shade(rgb(25, 25, 25), 2.5);
+    }
+
+    .VideoUriSource image {
+        transition: opacity 200ms ease-out;
+        opacity: 1;
+     }
+
+    .VideoUriSource:selected image,
+    .AudioUriSource:selected .AudioUriSource {
+        opacity: 0.15;
     }
 
     .AudioBackground:selected {
-        background-color: #1b2e0e;
+        background-color: shade(rgb(60, 97, 43), 0.4);
     }
 
+    .AudioBackground:selected,
+    .VideoBackground:selected,
+    .TitleClip .VideoBackground:selected {
+        border-color: rgb(132, 131, 79)
+    }
+
+
     .VideoBackground:selected {
-        background-color: #0f0f0f;
+        background-color: shade(rgb(25, 25, 25), 0.4);
+    }
+
+    .TitleClip .VideoBackground {
+        background-color: rgb(94, 78, 102);
+    }
+
+    .TitleClip .VideoBackground:selected  {
+        background-color: shade(rgb(94, 78, 102), 0.4);
     }
 
     .KeyframeCurve {
@@ -185,31 +217,41 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .Trimbar {
-        background-image: url('%(trimbar_normal)s');
-        opacity:0.5;
-    }
-
-    .Trimbar.left {
-        border-radius: 5px 0px 0px 5px;
-    }
-
-    .Trimbar.right {
-        border-radius: 0px 5px 5px 0px;
+        background-color: white;
+        transition: opacity 200ms ease-out;
+        opacity: 0;
     }
 
     .Trimbar:hover {
-        background-image: url('%(trimbar_focused)s');
+        opacity: 0.8;
+    }
+
+    /* Background inside the timeline */
+    .Timeline {
+        background: shade(@theme_bg_color, 0.75);
+    }
+
+    /* Background in the layers list */
+    .Timeline viewport {
+        background: @theme_bg_color;
     }
 
     .Clip {
     }
 
     .TransitionClip {
-        background-color: rgba(127, 153, 204, 0.5);
+        transition: background-image 200ms ease-out;
+        border: 1px solid rgb(130, 130, 130);
+        background-image: linear-gradient(45deg,
+                                          rgba(90,90,90,0.75) 50%,
+                                          rgba(125,125,125,0.75) 50%);
     }
 
     .TransitionClip:selected {
-        background-color: rgba(127, 200, 204, 0.7);
+        border: 1px solid shade(rgb(130, 130, 130), 1.25);
+        background-image: linear-gradient(45deg,
+                                          rgba(30,30,30,0.80) 50%,
+                                          rgba(70,70,70,0.80) 50%);
     }
 
     .SpacedSeparator:hover {
@@ -217,16 +259,14 @@ EDITOR_PERSPECTIVE_CSS = """
     }
 
     .SpacedSeparator {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(0, 0, 0, 0.3);
     }
 
     .Marquee {
         background-color: rgba(224, 224, 224, 0.7);
     }
 
-""" % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
-        'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png")})
-
+"""
 
 PREFERENCES_CSS = """
     .sidebar list {
