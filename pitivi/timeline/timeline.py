@@ -1583,7 +1583,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.markers = MarkersBox(self)
 
-        self.attach(self.markers.marker_box, 1, 0, 1, 1)
+        self.attach(self.markers, 1, 0, 1, 1)
         self.attach(zoom_box, 0, 1, 1, 1)
         self.attach(self.ruler, 1, 1, 1, 1)
         self.attach(self.timeline, 0, 2, 2, 1)
