@@ -638,6 +638,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
 class EffectsPopover(Gtk.Popover, Loggable):
     """Popover for adding effects."""
+
     def __init__(self, app):
         Gtk.Popover.__init__(self)
         Loggable.__init__(self)
