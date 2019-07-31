@@ -1931,16 +1931,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         forward_positions = []
         for layer in self.ges_timeline.layers:
             for clip in layer.get_clips():
-                if(clip.start > self._project.pipeline.getPosition()):
+                if clip.start > self._project.pipeline.getPosition():
                     forward_positions.append(clip.start)
                     break
-                elif(clip.start + clip.duration > self._project.pipeline.getPosition()):
+                elif clip.start + clip.duration > self._project.pipeline.getPosition():
                     forward_positions.append(clip.start + clip.duration)
                     break
         if(forward_positions != []):
             position = min(forward_positions)
         else:
-            position = self._project.pipeline.getPosition()
+            return
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
@@ -1949,16 +1949,16 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips()
             for i in range(len(clips) - 1, -1, -1):
-                if(clips[i].start + clips[i].duration < self._project.pipeline.getPosition()):
+                if clips[i].start + clips[i].duration < self._project.pipeline.getPosition():
                     backward_positions.append(clips[i].start + clips[i].duration)
                     break
-                elif(clips[i].start < self._project.pipeline.getPosition()):
+                elif clips[i].start < self._project.pipeline.getPosition():
                     backward_positions.append(clips[i].start)
                     break
-        if(backward_positions != []):
+        if backward_positions != []:
             position = max(backward_positions)
         else:
-            position = self._project.pipeline.getPosition()
+            return
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
