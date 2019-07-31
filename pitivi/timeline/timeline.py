@@ -1699,6 +1699,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
                                _("Add layer"))
 
+        self.seek_forward_clip_action = Gio.SimpleAction.new("seek-forward-clip", None)
+        self.seek_forward_clip_action.connect("activate", self._seek_forward_clip)
+        group.add_action(self.seek_forward_clip_action)
+        self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
+                               _("Seek clips' exteremes forward"))
+
+        self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
+        self.seek_backward_clip_action.connect("activate", self._seek_backward_clip)
+        group.add_action(self.seek_backward_clip_action)
+        self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
+                               _("Seek clips' exteremes backward"))
+
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1911,6 +1923,41 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     toplevel=True):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
+
+    def _seek_forward_clip(self, unused_action, unused_parameter):
+        forward_positions = []
+        for layer in self.ges_timeline.layers:
+            for clip in layer.get_clips():
+                if(clip.start > self._project.pipeline.getPosition()):
+                    forward_positions.append(clip.start)
+                    break
+                elif(clip.start + clip.duration > self._project.pipeline.getPosition()):
+                    forward_positions.append(clip.start + clip.duration)
+                    break
+        if(forward_positions != []):
+            position = min(forward_positions)
+        else:
+            position = self._project.pipeline.getPosition()
+        self._project.pipeline.simple_seek(position)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_backward_clip(self, unused_action, unused_parameter):
+        backward_positions = []
+        for layer in self.ges_timeline.layers:
+            clips = layer.get_clips()
+            for i in range(len(clips) - 1, -1, -1):
+                if(clips[i].start + clips[i].duration < self._project.pipeline.getPosition()):
+                    backward_positions.append(clips[i].start + clips[i].duration)
+                    break
+                elif(clips[i].start < self._project.pipeline.getPosition()):
+                    backward_positions.append(clips[i].start)
+                    break
+        if(backward_positions != []):
+            position = max(backward_positions)
+        else:
+            position = self._project.pipeline.getPosition()
+        self._project.pipeline.simple_seek(position)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
