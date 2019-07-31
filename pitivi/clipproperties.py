@@ -21,12 +21,14 @@ import os
 from gettext import gettext as _
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
 from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
@@ -177,6 +179,14 @@ class EffectProperties(Gtk.Expander, Loggable):
         # Without this, the treeview hides the border of its parent.
         # I should file a bug about this.
         self.treeview.props.margin_right = 1
+
+        drag_icon_cell = Gtk.CellRendererPixbuf()
+        drag_icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "grip-lines-solid.svg"),
+            10, 5)
+        drag_icon_cell.props.pixbuf = drag_icon
+        self.treeview.insert_column_with_attributes(-1,
+                                                    _("Drag"), drag_icon_cell)
 
         activated_cell = Gtk.CellRendererToggle()
         activated_cell.props.xalign = 0
