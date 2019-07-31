@@ -1676,13 +1676,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                                _("Add layer"))
 
         self.seek_forward_clip_action = Gio.SimpleAction.new("seek-forward-clip", None)
-        self.seek_forward_clip_action.connect("activate", self._seek_forward_clip)
+        self.seek_forward_clip_action.connect("activate", self._seek_forward_clip_cb)
         group.add_action(self.seek_forward_clip_action)
         self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
                                _("Seek clips' exteremes forward"))
 
         self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
-        self.seek_backward_clip_action.connect("activate", self._seek_backward_clip)
+        self.seek_backward_clip_action.connect("activate", self._seek_backward_clip_cb)
         group.add_action(self.seek_backward_clip_action)
         self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
                                _("Seek clips' exteremes backward"))
@@ -1900,7 +1900,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def _seek_forward_clip(self, unused_action, unused_parameter):
+    def _seek_forward_clip_cb(self, unused_action, unused_parameter):
         forward_positions = []
         for layer in self.ges_timeline.layers:
             for clip in layer.get_clips():
@@ -1917,7 +1917,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
-    def _seek_backward_clip(self, unused_action, unused_parameter):
+    def _seek_backward_clip_cb(self, unused_action, unused_parameter):
         backward_positions = []
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips()
