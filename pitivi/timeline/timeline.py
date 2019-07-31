@@ -1698,6 +1698,18 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.app.shortcuts.add("timeline.add-layer", ["<Primary>n"],
                                _("Add layer"))
 
+        self.seek_forward_clip_action = Gio.SimpleAction.new("seek-forward-clip", None)
+        self.seek_forward_clip_action.connect("activate", self._seek_forward_clip_cb)
+        group.add_action(self.seek_forward_clip_action)
+        self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
+                               _("Seeks to the first clip edge after the playhead."))
+
+        self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
+        self.seek_backward_clip_action.connect("activate", self._seek_backward_clip_cb)
+        group.add_action(self.seek_backward_clip_action)
+        self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
+                               _("Seeks to the first clip edge before the playhead."))
+
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
             self.gapless_action.connect("activate", self._gaplessmode_toggled_cb)
@@ -1914,6 +1926,52 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     toplevel=True):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
+
+    def first_clip_edge(self, before=None, after=None):
+        assert (after is not None) != (before is not None)
+
+        if after is not None:
+            start = after
+            end = self.ges_timeline.props.duration
+            edges = [end]
+        else:
+            start = 0
+            end = before
+            edges = [start]
+
+        if start >= end:
+            return None
+
+        for layer in self.ges_timeline.layers:
+            clips = layer.get_clips_in_interval(start, end)
+            for clip in clips:
+                if clip.start > start:
+                    edges.append(clip.start)
+                if clip.start + clip.duration < end:
+                    edges.append(clip.start + clip.duration)
+
+        if after is not None:
+            return min(edges)
+        else:
+            return max(edges)
+
+    def _seek_forward_clip_cb(self, unused_action, unused_parameter):
+        """Seeks to the first clip edge at the right of the playhead."""
+        position = self.first_clip_edge(after=self._project.pipeline.getPosition())
+        if position is None:
+            return
+
+        self._project.pipeline.simple_seek(position)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
+
+    def _seek_backward_clip_cb(self, unused_action, unused_parameter):
+        """Seeks to the first clip edge at the left of the playhead."""
+        position = self.first_clip_edge(before=self._project.pipeline.getPosition())
+        if position is None:
+            return
+
+        self._project.pipeline.simple_seek(position)
+        self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
         if not self.ges_timeline:
