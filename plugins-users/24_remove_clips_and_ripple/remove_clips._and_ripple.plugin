@@ -1,0 +1,9 @@
+[Plugin]
+Name=Remove clips and ripple
+Description= Remove the selected clips\nand move all the clips after the start of the first clip
+Authors=Jean-Paul Favier
+website=...
+Copyright=
+
+Loader=python3
+Module=remove_clips_and_ripple
