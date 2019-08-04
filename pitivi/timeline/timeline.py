@@ -1903,13 +1903,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
         forward_positions = []
         for layer in self.ges_timeline.layers:
-            for clip in layer.get_clips():
-                if clip.start > self._project.pipeline.getPosition():
-                    forward_positions.append(clip.start)
-                    break
-                elif clip.start + clip.duration > self._project.pipeline.getPosition():
-                    forward_positions.append(clip.start + clip.duration)
-                    break
+            clips = layer.get_clips_in_interval(self._project.pipeline.getPosition(),self.ges_timeline.props.duration+1)
+            if len(clips) > 0 and self._project.pipeline.getPosition() < clips[0].start:
+                forward_positions.append(clips[0].start)
+            elif len(clips) > 0 and self._project.pipeline.getPosition() >= clips[0].start:
+                forward_positions.append(clips[0].start + clips[0].duration)
         if(forward_positions != []):
             position = min(forward_positions)
         else:
@@ -1920,14 +1918,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _seek_backward_clip_cb(self, unused_action, unused_parameter):
         backward_positions = []
         for layer in self.ges_timeline.layers:
-            clips = layer.get_clips()
-            for i in range(len(clips) - 1, -1, -1):
-                if clips[i].start + clips[i].duration < self._project.pipeline.getPosition():
-                    backward_positions.append(clips[i].start + clips[i].duration)
-                    break
-                elif clips[i].start < self._project.pipeline.getPosition():
-                    backward_positions.append(clips[i].start)
-                    break
+            clips = layer.get_clips_in_interval(0,self._project.pipeline.getPosition())
+            if len(clips) > 0 and self._project.pipeline.getPosition() > clips[len(clips)-1].start+clips[len(clips)-1].duration:
+                backward_positions.append(clips[len(clips)-1].start + clips[len(clips)-1].duration)
+            elif len(clips) > 0 and self._project.pipeline.getPosition() > clips[len(clips)-1].start:
+                backward_positions.append(clips[len(clips)-1].start)
         if backward_positions != []:
             position = max(backward_positions)
         else:
