@@ -1,7 +1,7 @@
 [Plugin]
 Name=Remove end of selected clip and ripple
 Description= Remove the end of the selected clip\nand move all the clips after the headplay
-Authors=jpf
+Authors=Jean-Paul Favier
 website=...
 Copyright=
 
