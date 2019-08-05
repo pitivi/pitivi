@@ -506,6 +506,7 @@ class LayerRemoved(UndoableAction):
     def asScenarioAction(self):
         st = Gst.Structure.new_empty("remove-layer")
         st.set_value("priority", self.ges_layer.props.priority)
+
         return st
 
 
@@ -860,7 +861,7 @@ class GroupObserver(Loggable):
         self.action_log.push(action)
 
 
-class TimelineObserver(Loggable):
+class TimelineObserver(MetaContainerObserver, Loggable):
     """Monitors a project's timeline and reports UndoableActions.
 
     Attributes:
@@ -869,12 +870,14 @@ class TimelineObserver(Loggable):
     """
 
     def __init__(self, ges_timeline, action_log):
+        MetaContainerObserver.__init__(self, ges_timeline, action_log)
         Loggable.__init__(self)
         self.ges_timeline = ges_timeline
         self.action_log = action_log
 
         self.layer_observers = {}
         self.group_observers = {}
+
         for ges_layer in ges_timeline.get_layers():
             self._connect_to_layer(ges_layer)
 
@@ -887,6 +890,8 @@ class TimelineObserver(Loggable):
         ges_timeline.connect("group-added", self.__group_added_cb)
         # We don't care about the group-removed signal because this greatly
         # simplifies the logic.
+
+        self._connect_to_marker_list()
 
     def __layer_added_cb(self, ges_timeline, ges_layer):
         action = LayerAdded(self.ges_timeline, ges_layer)
@@ -922,3 +927,92 @@ class TimelineObserver(Loggable):
         for ges_clip in ges_group.get_children(recursive=False):
             action = TimelineElementAddedToGroup(ges_group, ges_clip)
             self.action_log.push(action)
+
+    def _connect_to_marker_list(self):
+        ges_marker_list = self.ges_timeline.get_marker_list("markers")
+        marker_list_observer = MarkerListObserver(ges_marker_list, self.action_log)
+
+
+class MarkerListObserver(Loggable):
+    """Monitors a MarkerList and reports UndoableActions.
+
+    Args:
+        ges_marker_list (GES.MarkerList): The markerlist to observe.
+
+    Attributes:
+        action_log (UndoableActionLog): The action log where to report actions.
+    """
+
+    def __init__(self, ges_marker_list, action_log):
+        Loggable.__init__(self)
+
+        self.ges_marker_list = ges_marker_list
+        self.action_log = action_log
+
+        self.ges_marker_list.connect("marker-added", self._marker_added_cb)
+        self.ges_marker_list.connect("marker-removed", self._marker_removed_cb)
+        self.ges_marker_list.connect("marker-moved", self._marker_moved_cb)
+
+    def _marker_added_cb(self, ges_marker_list, position, ges_marker):
+        action = MarkerAdded(ges_marker_list, ges_marker)
+        self.action_log.push(action)
+
+    def _marker_removed_cb(self, ges_marker_list, ges_marker):
+        action = MarkerRemoved(ges_marker_list, ges_marker)
+        self.action_log.push(action)
+
+    def _marker_moved_cb(self, ges_marker_list, position, ges_marker):
+        action = MarkerMoved(self.ges_marker_list, ges_marker)
+        self.action_log.push(action)
+        self.debug("marker position is %s", ges_marker.props.position)
+
+
+class MarkerAction(UndoableAutomaticObjectAction):
+
+    def __init__(self, ges_marker_list, ges_marker):
+        UndoableAutomaticObjectAction.__init__(self, ges_marker)
+        self.ges_marker_list = ges_marker_list
+        self.position = ges_marker.props.position
+        self.ges_marker = ges_marker
+
+    def add(self):
+        ges_marker = self.ges_marker_list.add(self.position)
+        self.update_object(self.auto_object, ges_marker)
+
+    def remove(self):
+        self.ges_marker_list.remove(self.auto_object)
+
+    def move(self):
+        self.ges_marker_list.move(self.auto_object, self.position)
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("move-marker")
+        st.set_value("position", float(self.ges_marker.props.position / Gst.SECOND))
+        return st
+
+
+class MarkerAdded(MarkerAction):
+
+    def do(self):
+        self.add()
+
+    def undo(self):
+        self.remove()
+
+
+class MarkerRemoved(MarkerAction):
+
+    def do(self):
+        self.remove()
+
+    def undo(self):
+        self.add()
+
+
+class MarkerMoved(MarkerAction):
+
+    def do(self):
+        self.move()
+
+    def undo(self):
+        self.move()
