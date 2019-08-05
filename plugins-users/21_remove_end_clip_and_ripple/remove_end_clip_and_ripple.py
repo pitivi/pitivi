@@ -1,6 +1,8 @@
-# Tested with Pitivi 0.98-827-gdd262c24
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 # Copyright (c) 2019 Pitivi project
+# Author Jean-Paul Favier
+# Tested with Pitivi 0.98-827-gdd262c24
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,22 +19,23 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.from gi.repository import GObject
 from gi.repository import GObject
+from gi.repository import Gst
 from gi.repository import Gtk
 from gi.repository import Peas
 
+from pitivi.utils.timeline import SELECT
+from pitivi.utils.user_utils import Alert
+
 
 class EndClipRemoverAndMove(GObject.Object, Peas.Activatable):
+    # pylint: disable=attribute-defined-outside-init
+    # pylint: disable=too-many-instance-attributes
     """ Put the playhead on the last image of the new clip
         Select the clip and click on the toolbar button
         The end of the clip is removed
         The clips whose start is after the playhead position are also moved to keep the relative positions
-        Limitation ! if a clip is in another layer and there is a gap with the next clip
-            if the gap is < the removed part
-        it is moved but  makes  a crossfade with the next clip
-        TODO
-            The playhead comes back for 2 seconds before the new end of the clip (playhead position)
-            The play becomes on to verify the result
-
+            The playhead comes back for 3 seconds before the new end of the clip (playhead position)
+            The play starts to verify the result
         Print is used for debugging goal
         """
 
@@ -51,61 +54,123 @@ class EndClipRemoverAndMove(GObject.Object, Peas.Activatable):
     def __clicked_end_part_cb(self, unused_button):
         """ The playhead need to be inside a selected clip """
 
+        # Undoing action :
+        # http://developer.pitivi.org/Advanced_plugin.html#making-it-shine
         with self.app.action_log.started("add clip", toplevel=True):
-            timeline = self.app.gui.editor.timeline_ui.timeline
-            duration_timeline = timeline.ges_timeline.props.duration
-            position = timeline.layout.playhead_position
+            self.timeline = self.app.gui.editor.timeline_ui.timeline
+            duration_timeline = self.timeline.ges_timeline.props.duration
+            self.position = self.timeline.layout.playhead_position
             print("duration_timeline = ", duration_timeline)
-            print("position = ", position)
-            clips = sorted(timeline.selection, key=lambda x: x.get_start())
-            # If only a clip selected
+            print("position = ", self.position)
+
+            clips = sorted(self.timeline.selection, key=lambda x: x.get_start())
+            print("clips = ", clips)
             if len(clips) == 1:
-                clip = clips[0]
-                start = clip.get_start()
-                end = start + clip.get_duration()
-                gap = end - position
-                # if the playhead is inside the selected clip, operate
-                if start < position and end > position:
-                    # We create a new clip wich was the end of the selected clip
-                    clip.split(position)
+                self.clip = clips[0]
+                self.layer_c = self.clip.get_layer()
+                self.start = self.clip.get_start()
+                self.end = self.start + self.clip.get_duration()
+                self.gap = self.end - self.position
+                clips_after_s = self.clip_after_position_sort()
+                # check if any other clips occur during the clip
+                found_overlapping = self.test_overlapping()
+                print("found_overlapping = ", found_overlapping)
+                if not found_overlapping:
+                    # operate if the playhead is inside the selected clip
+                    # pylint: disable=chained-comparison
+                    if self.start < self.position and self.end > self.position:
+                        # We create a new clip wich was the end of the selected clip and remove it
+                        clip_r = self.clip.split(self.position)
+                        self.layer_c.remove_clip(clip_r)
+                        for clip_aa in clips_after_s:
+                            ec = clip_aa.get_start() - self.gap
+                            print("start", clip_aa.get_start(), "gap = ", self.gap, "ec = ", ec, "\n")
+                            clip_aa.set_start(ec)
+                            print("clip modif = ", clip_aa, "\n")
+                        if self.app.settings.PlayAfterModif:
+                            self.verif()
+                    else:
+                        title = "Playhead out of clip"
+                        message = "You have to put the playhead inside the clip."
+                        Alert(title, message, "service-logout.oga")
+                else:
+                    title = "Overlapping Error"
+                    message = " No action\n\
+                Clip(s) on another layer(s)\n \
+                between the start and the end of selected clip.\n\n\
+                Use delete only and not delete and slide"
+                    Alert(title, message, "service-logout.oga")
+            else:
+                Alert("No or too clips", "You have to select one clip.", "service-logout.oga")
+                # End of Slide the clips after the playhead position
 
+    def test_overlapping(self):
+        found_overlapping = False
+        for layer_e in self.timeline.ges_timeline.layers:
+            print("Layer = ", layer_e)
+            for clip in layer_e.get_clips():
+                print("clip = ", clip)
+                if clip in self.timeline.selection:
+                    continue
+                clip_end = clip.start + clip.duration
+                # Test like TimelineContainer  def _delete_selected_and_shift()
+                if clip_end > self.position and clip.start < self.end:
+                    found_overlapping = True
+                    print("bk", self.end, clip.start, "---", self.start, clip_end)
+                    break
+            if found_overlapping:
+                print("break")
+                break
+        return found_overlapping
+
+    def clip_after_position_sort(self):
+        # List of the clips after the playhead_position
+        clips_after = []
+        layers = self.timeline.ges_timeline.get_layers()
+        for layer in layers:
+            for clip_a in layer.get_clips():
+                if clip_a.get_start() >= self.position:
+                    clips_after.append(clip_a)
+                    print("clip append = ", clip_a, "\n")
+        # clips sorted by the starts of the clips
+        clips_after = sorted(clips_after, key=lambda x: x.get_start())
+        print("------- fin append")
+        return clips_after
+
+    def operate(self):
+        self.clip.split(self.position)
         # Slide the clips after the playhead position
-                    clips_after = []  # List of the clips after the playhead_position
-                    layers = timeline.ges_timeline.get_layers()
-                    for layer in layers:
-                        for clip_a in layer.get_clips():
-                            if clip_a.get_start() >= position:
-                                clips_after.append(clip_a)
-                                print("clip append = ", clip_a, "\n")
-                    # clips sorted by the starts of the clips
-                    clips_after = sorted(clips_after, key=lambda x: x.get_start())
-                    print("------- fin append")
-
-                    for clip_aa in clips_after:
-                        # The first clip (= end of the selected clip) is removed
-                        if clip_aa == clips_after[0]:
-                            l_parent = clip_aa.get_layer()
-                            print("Parent = ", l_parent)
-                            l_parent.remove_clip(clip_aa)
-                            continue
-                        ec = clip_aa.get_start() - gap
-                        print("start", clip_aa.get_start(), "gap = ", gap, "ec = ", ec, "\n")
-                        clip_aa.set_start(ec)
-                        print("clip modif = ", clip_aa, "\n")
-                    duration_timeline = timeline.ges_timeline.props.duration
-                    print("duration_timeline = ", duration_timeline)
+        for layer in self.timeline.ges_timeline.layers:
+            for clip_aa in layer.get_clips():
+                if clip_aa.get_start() >= self.start:
+                    # The first clip (= start of the selected clip) is removed
+                    if clip_aa.get_start() == self.start and clip_aa.get_layer() == self.layer_c:
+                        self.layer_c.remove_clip(clip_aa)
+                        continue
+                    # If the start of the first clip is 0 ec = 0
+                    if clip_aa.get_start() == 0:
+                        ec = 0
+                    else:
+                        ec = clip_aa.get_start() - self.gap
+                    clip_aa.set_start(ec)
+                    print("start", clip_aa.get_start(), "gap = ", self.gap, "ec = ", ec, "\n")
+                    print("clip modif = ", clip_aa, "\n")
+        if self.app.settings.PlayAfterModif:
+            self.verif()
         # End of Slide the clips after the playhead position
 
-#        # Verify
-#                    # put the playhead 2 seconds before the start of the clip
-#                    timeline.layout.playhead_position = start - SEC_2
-# TODO The play bar moves but not the position in the pipeline
-# #                    print(self.app.project_manager.current_project.pipeline.getPosition())
-#                    print("position - 2 = ", position, start, timeline.layout.playhead_position)
-#                    # Play to easily verify the cut
-#                    self.app.project_manager.current_project.pipeline.play()
-#                    self.app.gui.editor.focusTimeline()
-#        # End of Verify
+    def verif(self):
+        # Verify
+        if self.position >= 2 * Gst.SECOND:
+            self.app.project_manager.current_project.pipeline.simple_seek(self.position - 2 * Gst.SECOND)
+        else:
+            self.app.project_manager.current_project.pipeline.simple_seek(0)
+        # Play to easily verify the cut
+        self.app.project_manager.current_project.pipeline.play()
+        self.app.gui.editor.focusTimeline()
+        # End of Verify
+        # Deselect the clip
+        self.timeline.selection.setSelection([], SELECT)
 
     def do_deactivate(self):
         self.app.gui.editor.timeline_ui.toolbar.remove(self.button)
