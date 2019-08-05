@@ -1,0 +1,9 @@
+[Plugin]
+Name=Remove start clip and ripple
+Description= Remove the start of the selected clip\nand move all the clips after the headplay
+Authors=jpf
+website=...
+Copyright=
+
+Loader=python3
+Module=remove_start_clip_and_ripple
