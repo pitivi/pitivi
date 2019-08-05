@@ -379,7 +379,6 @@ class TransitionClipAction(UndoableAction):
         self.start = ges_clip.props.start
         self.duration = ges_clip.props.duration
         self.track_element = track_element
-        self.debug("TRANSICIONNNNNNNNNN")
 
     @staticmethod
     def get_video_element(ges_clip):
