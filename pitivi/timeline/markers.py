@@ -152,11 +152,12 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         if button == Gdk.BUTTON_PRIMARY:
             if isinstance(event_widget, Marker):
                 if event.type == Gdk.EventType.BUTTON_PRESS:
-                    # with self.app.action_log.begin("Move marker", toplevel=True):
                     self.marker_pressed = event_widget
+                    self.app.action_log.begin("Move marker", toplevel=True)
 
                 elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
                     self.marker_pressed = None
+                    self.app.action_log.rollback("Move marker")
                     MarkerPopover(event_widget)
 
             else:
@@ -169,12 +170,12 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         event_widget = Gtk.get_event_widget(event)
 
         if button == Gdk.BUTTON_PRIMARY and self.marker_pressed:
-            # self.app.action_log.commit("Move marker")
             self.marker_pressed = None
+            self.app.action_log.commit("Move marker")
 
         elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
-            self.__markers_container.remove(event_widget.ges_marker)
-            # self._remove_marker(event_widget)
+            with self.app.action_log.started("Removed marker", toplevel=True):
+                self.__markers_container.remove(event_widget.ges_marker)
 
     def do_motion_notify_event(self, event):
         if self.marker_pressed:
@@ -189,7 +190,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
     def _add_marker(self, position, ges_marker):
         marker = Marker(ges_marker)
-        self.marker_pressed = marker
+        # self.marker_pressed = marker
         x = self.nsToPixel(position) - self.offset - MARKER_WIDTH / 2
         self.layout.put(marker, x, 0)
         marker.show()
