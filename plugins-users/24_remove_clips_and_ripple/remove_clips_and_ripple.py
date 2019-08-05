@@ -115,12 +115,8 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
                 if clip in self.timeline.selection:
                     continue
                 clip_end = clip.start + clip.duration
-                # Test modified like TimelineContainer  def _delete_selected_and_shift()
-                # which doesnt work as I want
-                # Test if start or end of a clip in another layer in the range of selected clips
-                start_inside = clip.start > self.start_sel and clip.start < self.end_sel
-                end_inside = clip_end > self.start_sel and clip_end < self.end_sel
-                if end_inside or start_inside:
+                # Test  like TimelineContainer  def _delete_selected_and_shift()
+                if clip_end > self.start_sel and clip.start < self.end_sel:
                     found_overlapping = True
                     print("bk", self.end_sel, clip.start, "---", self.start_sel, clip_end)
                     break
