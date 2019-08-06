@@ -1900,31 +1900,33 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def _seek_forward_clip_cb(self, unused_action, unused_parameter):
-        forward_positions = []
+    def timeline_clips_extremites(self,start,end):
+        points=[]
         for layer in self.ges_timeline.layers:
-            clips = layer.get_clips_in_interval(self._project.pipeline.getPosition(),self.ges_timeline.props.duration+1)
-            if len(clips) > 0 and self._project.pipeline.getPosition() < clips[0].start:
-                forward_positions.append(clips[0].start)
-            elif len(clips) > 0 and self._project.pipeline.getPosition() >= clips[0].start:
-                forward_positions.append(clips[0].start + clips[0].duration)
+            clips=layer.get_clips_in_interval(start, end)
+            for clip in clips:
+                if start < clip.start:
+                    points.append(clip.start)
+                if end > clip.start + clip.duration:
+                    points.append(clip.start + clip.duration)
+        points.sort()
+        if(end == self.ges_timeline.props.duration and end != self._project.pipeline.getPosition()):
+            points.append(self.ges_timeline.props.duration)
+        return points
+
+    def _seek_forward_clip_cb(self, unused_action, unused_parameter):
+        forward_positions = self.timeline_clips_extremites(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
         if(forward_positions != []):
-            position = min(forward_positions)
+            position = forward_positions[0]
         else:
             return
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_backward_clip_cb(self, unused_action, unused_parameter):
-        backward_positions = []
-        for layer in self.ges_timeline.layers:
-            clips = layer.get_clips_in_interval(0,self._project.pipeline.getPosition())
-            if len(clips) > 0 and self._project.pipeline.getPosition() > clips[len(clips)-1].start+clips[len(clips)-1].duration:
-                backward_positions.append(clips[len(clips)-1].start + clips[len(clips)-1].duration)
-            elif len(clips) > 0 and self._project.pipeline.getPosition() > clips[len(clips)-1].start:
-                backward_positions.append(clips[len(clips)-1].start)
+        backward_positions = self.timeline_clips_extremites(0, self._project.pipeline.getPosition())
         if backward_positions != []:
-            position = max(backward_positions)
+            position = backward_positions[-1]
         else:
             return
         self._project.pipeline.simple_seek(position)
