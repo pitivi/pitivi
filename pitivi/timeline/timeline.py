@@ -1924,23 +1924,23 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def timeline_clips_extremites(self,start,end):
-        points=[]
+    def timeline_clips_extremites(self, start, end):
+        points = []
         for layer in self.ges_timeline.layers:
-            clips=layer.get_clips_in_interval(start, end)
+            clips = layer.get_clips_in_interval(start, end)
             for clip in clips:
                 if start < clip.start:
                     points.append(clip.start)
                 if end > clip.start + clip.duration:
                     points.append(clip.start + clip.duration)
         points.sort()
-        if(end == self.ges_timeline.props.duration and end != self._project.pipeline.getPosition()):
+        if end == self.ges_timeline.props.duration and end != self._project.pipeline.getPosition():
             points.append(self.ges_timeline.props.duration)
         return points
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
         forward_positions = self.timeline_clips_extremites(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
-        if(forward_positions != []):
+        if forward_positions != []:
             position = forward_positions[0]
         else:
             return
