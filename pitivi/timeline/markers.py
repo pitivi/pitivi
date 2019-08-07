@@ -123,7 +123,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
     def __create_marker_widgets(self):
         markers = self.__markers_container.get_markers()
-        self.debug("markers %s", markers)
+
         for ges_marker in markers:
             position = ges_marker.props.position
             self._add_marker(position, ges_marker)

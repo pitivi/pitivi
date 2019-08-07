@@ -946,14 +946,16 @@ class MarkerListObserver(Loggable):
     def __init__(self, ges_marker_list, action_log):
         Loggable.__init__(self)
 
-        self.ges_marker_list = ges_marker_list
         self.action_log = action_log
 
-        self.ges_marker_list.connect("marker-added", self._marker_added_cb)
-        self.ges_marker_list.connect("marker-removed", self._marker_removed_cb)
-        self.ges_marker_list.connect("marker-moved", self._marker_moved_cb)
+        self.markers_position = {}
+
+        ges_marker_list.connect("marker-added", self._marker_added_cb)
+        ges_marker_list.connect("marker-removed", self._marker_removed_cb)
+        ges_marker_list.connect("marker-moved", self._marker_moved_cb)
 
     def _marker_added_cb(self, ges_marker_list, position, ges_marker):
+        self.markers_position[ges_marker] = ges_marker.props.position
         action = MarkerAdded(ges_marker_list, ges_marker)
         self.action_log.push(action)
 
@@ -962,9 +964,10 @@ class MarkerListObserver(Loggable):
         self.action_log.push(action)
 
     def _marker_moved_cb(self, ges_marker_list, position, ges_marker):
-        action = MarkerMoved(self.ges_marker_list, ges_marker)
+        old_position = self.markers_position[ges_marker]
+        action = MarkerMoved(ges_marker_list, ges_marker, old_position)
         self.action_log.push(action)
-        self.debug("marker position is %s", ges_marker.props.position)
+        self.markers_position[ges_marker] = ges_marker.props.position
 
 
 class MarkerAction(UndoableAutomaticObjectAction):
@@ -982,14 +985,6 @@ class MarkerAction(UndoableAutomaticObjectAction):
     def remove(self):
         self.ges_marker_list.remove(self.auto_object)
 
-    def move(self):
-        self.ges_marker_list.move(self.auto_object, self.position)
-
-    def asScenarioAction(self):
-        st = Gst.Structure.new_empty("move-marker")
-        st.set_value("position", float(self.ges_marker.props.position / Gst.SECOND))
-        return st
-
 
 class MarkerAdded(MarkerAction):
 
@@ -998,6 +993,10 @@ class MarkerAdded(MarkerAction):
 
     def undo(self):
         self.remove()
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("add-marker")
+        return st
 
 
 class MarkerRemoved(MarkerAction):
@@ -1008,11 +1007,32 @@ class MarkerRemoved(MarkerAction):
     def undo(self):
         self.add()
 
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("remove-marker")
+        return st
 
-class MarkerMoved(MarkerAction):
+
+class MarkerMoved(UndoableAutomaticObjectAction):
+
+    def __init__(self, ges_marker_list, ges_marker, old_position):
+        UndoableAutomaticObjectAction.__init__(self, ges_marker)
+        self.ges_marker_list = ges_marker_list
+        self.new_position = ges_marker.props.position
+        self.old_position = old_position
+        self.ges_marker = ges_marker
 
     def do(self):
-        self.move()
+        self.ges_marker_list.move(self.auto_object, self.new_position)
 
     def undo(self):
-        self.move()
+        self.ges_marker_list.move(self.auto_object, self.old_position)
+
+    def asScenarioAction(self):
+        st = Gst.Structure.new_empty("move-marker")
+        return st
+
+    def expand(self, action):
+        if not isinstance(action, MarkerMoved):
+            return False
+        self.new_position = action.ges_marker.props.position
+        return True
