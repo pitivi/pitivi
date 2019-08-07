@@ -127,7 +127,7 @@ class ClipsRemoverAndRipple(GObject.Object, Peas.Activatable):
 
     def verif(self):
         # Verify
-        if self.position >= 2 * Gst.SECOND:
+        if self.start_sel >= 2 * Gst.SECOND:
             self.app.project_manager.current_project.pipeline.simple_seek(self.start_sel - 2 * Gst.SECOND)
         else:
             self.app.project_manager.current_project.pipeline.simple_seek(0)
