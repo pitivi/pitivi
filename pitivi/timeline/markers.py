@@ -122,11 +122,9 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.__markers_container.connect("marker-moved", self._marker_moved_cb)
 
     def __create_marker_widgets(self):
-        start = self.pixelToNs(self.offset)
-        end = self.pixelToNs(self.get_allocated_width() + MARKER_WIDTH / 2) + start
-        range_markers = self.__markers_container.get_range(start, end)
-
-        for ges_marker in range_markers:
+        markers = self.__markers_container.get_markers()
+        self.debug("markers %s", markers)
+        for ges_marker in markers:
             position = ges_marker.props.position
             self._add_marker(position, ges_marker)
         self.marker_pressed = None
