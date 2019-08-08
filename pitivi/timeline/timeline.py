@@ -1916,10 +1916,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
         forward_positions = self.timeline_clips_extremites(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
-        if forward_positions != []:
-            position = forward_positions[0]
-        else:
+        if not forward_positions:
             return
+
+        position = forward_positions[0]
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
