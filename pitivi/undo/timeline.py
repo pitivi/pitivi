@@ -1034,5 +1034,5 @@ class MarkerMoved(UndoableAutomaticObjectAction):
     def expand(self, action):
         if not isinstance(action, MarkerMoved):
             return False
-        self.new_position = action.ges_marker.props.position
+        self.new_position = action.new_position
         return True
