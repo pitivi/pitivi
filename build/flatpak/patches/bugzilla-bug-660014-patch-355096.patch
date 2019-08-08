@@ -1,28 +1,122 @@
-From a06723d7524c939cde34966f5173465e3e495f20 Mon Sep 17 00:00:00 2001
-From: Fabian Orccon <cfoch.fabian@gmail.com>
-Date: Mon, 30 Jan 2017 12:01:43 -0500
-Subject: [PATCH] Add peas_extension_set_new_with_properties and test valid and
- invalid properties
-
-https://bugzilla.gnome.org/show_bug.cgi?id=780685
-
-https://bugzilla.gnome.org/show_bug.cgi?id=660014
----
- libpeas/peas-extension-set.c  | 63 +++++++++++++++++++++++++++++++++++++++++++
- libpeas/peas-extension-set.h  |  5 ++++
- libpeas/peas-utils.c          | 39 +++++++++++++++++++++++++++
- libpeas/peas-utils.h          |  7 +++++
- tests/libpeas/extension-set.c | 52 +++++++++++++++++++++++++++++++++++
- 5 files changed, 166 insertions(+)
-
+diff --git a/libpeas/peas-engine.c b/libpeas/peas-engine.c
+index de0b3c4..a5f87e8 100644
+--- a/libpeas/peas-engine.c
++++ b/libpeas/peas-engine.c
+@@ -1353,6 +1353,83 @@ peas_engine_create_extensionv (PeasEngine     *engine,
+ }
+ G_GNUC_END_IGNORE_DEPRECATIONS
+ 
++/**
++ * peas_engine_create_extension_with_properties: (rename-to peas_engine_create_extension)
++ * @engine: A #PeasEngine.
++ * @info: A loaded #PeasPluginInfo.
++ * @extension_type: The implemented extension #GType.
++ * @n_properties: the length of the @prop_names and @prop_values array.
++ * @prop_names: (array length=n_properties): an array of property names.
++ * @prop_values: (array length=n_properties): an array of property values.
++ *
++ * If the plugin identified by @info implements the @extension_type,
++ * then this function will return a new instance of this implementation,
++ * wrapped in a new #PeasExtension instance. Otherwise, it will return %NULL.
++ *
++ * Since libpeas 1.22, @extension_type can be an Abstract #GType
++ * and not just an Interface #GType.
++ *
++ * See peas_engine_create_extension() for more information.
++ *
++ * Returns: (transfer full): a new instance of #PeasExtension wrapping
++ * the @extension_type instance, or %NULL.
++ *
++ * Since: 1.24
++ */
++PeasExtension *
++peas_engine_create_extension_with_properties (PeasEngine     *engine,
++                                              PeasPluginInfo *info,
++                                              GType           extension_type,
++                                              guint           n_properties,
++                                              const gchar   **prop_names,
++                                              const GValue   *prop_values)
++{
++  PeasPluginLoader *loader;
++  PeasExtension *extension;
++  GParameter *parameters = NULL;
++
++  g_return_val_if_fail (PEAS_IS_ENGINE (engine), NULL);
++  g_return_val_if_fail (info != NULL, NULL);
++  g_return_val_if_fail (G_TYPE_IS_INTERFACE (extension_type) ||
++                        G_TYPE_IS_ABSTRACT (extension_type), NULL);
++  g_return_val_if_fail (peas_plugin_info_is_loaded (info), NULL);
++  g_return_val_if_fail (n_properties == 0 || prop_names != NULL, NULL);
++  g_return_val_if_fail (n_properties == 0 || prop_values != NULL, NULL);
++
++  if (n_properties > 0)
++    {
++      parameters = g_new (GParameter, n_properties);
++      if (!peas_utils_properties_array_to_parameter_list (extension_type,
++                                                          n_properties,
++                                                          prop_names,
++                                                          prop_values,
++                                                          parameters))
++        {
++          /* Already warned */
++          g_free (parameters);
++          return NULL;
++        }
++    }
++
++  loader = get_plugin_loader (engine, info->loader_id);
++  extension = peas_plugin_loader_create_extension (loader, info, extension_type,
++                                                   n_properties, parameters);
++
++  while (n_properties-- > 0)
++    g_value_unset (&parameters[n_properties].value);
++  g_free (parameters);
++
++  if (!G_TYPE_CHECK_INSTANCE_TYPE (extension, extension_type))
++    {
++      g_warning ("Plugin '%s' does not provide a '%s' extension",
++                 peas_plugin_info_get_module_name (info),
++                 g_type_name (extension_type));
++      return NULL;
++    }
++
++  return extension;
++}
++
+ /**
+  * peas_engine_create_extension_valist: (skip)
+  * @engine: A #PeasEngine.
+diff --git a/libpeas/peas-engine.h b/libpeas/peas-engine.h
+index 8ccab1d..3c9162c 100644
+--- a/libpeas/peas-engine.h
++++ b/libpeas/peas-engine.h
+@@ -134,8 +134,16 @@ PeasExtension    *peas_engine_create_extensionv   (PeasEngine      *engine,
+                                                    GType            extension_type,
+                                                    guint            n_parameters,
+                                                    GParameter      *parameters);
+-G_GNUC_END_IGNORE_DEPRECATIONS
++PEAS_AVAILABLE_IN_1_24
++PeasExtension    *peas_engine_create_extension_with_properties
++                                                  (PeasEngine     *engine,
++                                                   PeasPluginInfo *info,
++                                                   GType           extension_type,
++                                                   guint           n_properties,
++                                                   const gchar   **prop_names,
++                                                   const GValue   *prop_values);
+ 
++G_GNUC_END_IGNORE_DEPRECATIONS
+ PEAS_AVAILABLE_IN_ALL
+ PeasExtension    *peas_engine_create_extension_valist
+                                                   (PeasEngine      *engine,
 diff --git a/libpeas/peas-extension-set.c b/libpeas/peas-extension-set.c
-index a4e0f3f..171470e 100644
+index 027e9d1..8a8de14 100644
 --- a/libpeas/peas-extension-set.c
 +++ b/libpeas/peas-extension-set.c
-@@ -642,6 +642,69 @@ peas_extension_set_newv (PeasEngine *engine,
+@@ -650,6 +650,72 @@ peas_extension_set_newv (PeasEngine *engine,
+                                            NULL));
  }
  
- /**
++/**
 + * peas_extension_set_new_with_properties: (rename-to peas_extension_set_new)
 + * @engine: (allow-none): A #PeasEngine, or %NULL.
 + * @exten_type: the extension #GType.
@@ -41,7 +135,7 @@ index a4e0f3f..171470e 100644
 + *
 + * Returns: (transfer full): a new instance of #PeasExtensionSet.
 + *
-+ * Since 1.22.0
++ * Since 1.24.0
 + */
 +PeasExtensionSet *
 +peas_extension_set_new_with_properties (PeasEngine    *engine,
@@ -62,7 +156,7 @@ index a4e0f3f..171470e 100644
 +
 +  if (n_properties > 0)
 +    {
-+      parameters = g_newa (GParameter, n_properties);
++      parameters = g_new0 (GParameter, n_properties);
 +      if (!peas_utils_properties_array_to_parameter_list (exten_type,
 +                                                          n_properties,
 +                                                          prop_names,
@@ -70,6 +164,7 @@ index a4e0f3f..171470e 100644
 +                                                          parameters))
 +        {
 +          /* Already warned */
++          g_free (parameters);
 +          return NULL;
 +        }
 +    }
@@ -77,42 +172,48 @@ index a4e0f3f..171470e 100644
 +  construct_properties.n_parameters = n_properties;
 +  construct_properties.parameters = parameters;
 +
-+  ret = PEAS_EXTENSION_SET (g_object_new (PEAS_TYPE_EXTENSION_SET,
-+                                          "engine", engine,
-+                                          "extension-type", exten_type,
-+                                          "construct-properties", &construct_properties,
-+                                          NULL));
++  ret = g_object_new (PEAS_TYPE_EXTENSION_SET,
++                      "engine", engine,
++                      "extension-type", exten_type,
++                      "construct-properties", &construct_properties,
++                      NULL);
++
++  g_free (parameters);
 +  return ret;
 +}
 +
-+/**
+ /**
   * peas_extension_set_new_valist: (skip)
   * @engine: (allow-none): A #PeasEngine, or %NULL.
-  * @exten_type: the extension #GType.
 diff --git a/libpeas/peas-extension-set.h b/libpeas/peas-extension-set.h
-index 302609c..9c04092 100644
+index 4b35e65..cd25382 100644
 --- a/libpeas/peas-extension-set.h
 +++ b/libpeas/peas-extension-set.h
-@@ -137,6 +137,11 @@ PeasExtensionSet  *peas_extension_set_newv        (PeasEngine       *engine,
+@@ -147,8 +147,14 @@ PeasExtensionSet  *peas_extension_set_newv        (PeasEngine       *engine,
                                                     GType             exten_type,
                                                     guint             n_parameters,
                                                     GParameter       *parameters);
+-G_GNUC_END_IGNORE_DEPRECATIONS
+ 
++PEAS_AVAILABLE_IN_1_24
 +PeasExtensionSet  *peas_extension_set_new_with_properties (PeasEngine    *engine,
 +                                                           GType          exten_type,
 +                                                           guint          n_properties,
 +                                                           const gchar  **prop_names,
 +                                                           const GValue  *prop_values);
++G_GNUC_END_IGNORE_DEPRECATIONS
+ PEAS_AVAILABLE_IN_ALL
  PeasExtensionSet  *peas_extension_set_new_valist  (PeasEngine       *engine,
                                                     GType             exten_type,
-                                                    const gchar      *first_property,
 diff --git a/libpeas/peas-utils.c b/libpeas/peas-utils.c
-index 7d3bd91..e19be7d 100644
+index e0dcf49..31e9a55 100644
 --- a/libpeas/peas-utils.c
 +++ b/libpeas/peas-utils.c
-@@ -141,6 +141,45 @@ find_param_spec_for_prerequisites (const gchar  *name,
+@@ -181,6 +181,60 @@ find_param_spec_for_prerequisites (const gchar  *name,
  }
  
- gboolean
+ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
++gboolean
 +peas_utils_properties_array_to_parameter_list (GType          exten_type,
 +                                               guint          n_properties,
 +                                               const gchar  **prop_names,
@@ -120,24 +221,39 @@ index 7d3bd91..e19be7d 100644
 +                                               GParameter    *parameters)
 +{
 +  guint i;
++  gpointer *ifaces;
++  GObjectClass *base_class;
 +
++  g_return_val_if_fail (n_properties == 0 || prop_names != NULL, FALSE);
++  g_return_val_if_fail (n_properties == 0 || prop_values != NULL, FALSE);
++  g_return_val_if_fail (n_properties == 0 || parameters != NULL, FALSE);
++
++  ifaces = get_base_class_and_interfaces (exten_type, &base_class);
++  memset (parameters, 0, sizeof (GParameter) * n_properties);
 +  for (i = 0; i < n_properties; i++)
 +    {
++      GParamSpec *pspec;
 +      if (prop_names[i] == NULL)
 +        {
-+          g_warning ("The property name at index %d should not be NULL.", i);
++          g_warning ("The property name at index %u should not be NULL.", i);
 +          goto error;
 +        }
 +      if (!G_IS_VALUE (&prop_values[i]))
 +        {
-+          g_warning ("The property value at index %d should be an initialized"
-+                     " GValue.", i);
++          g_warning ("The property value at index %u should be an initialized GValue.", i);
++          goto error;
++        }
++      pspec = find_param_spec_for_prerequisites (prop_names[i], base_class,
++                                                 ifaces);
++      if (!pspec)
++        {
++          g_warning ("%s: type '%s' has no property named '%s'",
++                     G_STRFUNC, g_type_name (exten_type), prop_names[i]);
 +          goto error;
 +        }
 +
 +      parameters[i].name = prop_names[i];
 +
-+      memset (&parameters[i].value, 0, sizeof (GValue));
 +      g_value_init (&parameters[i].value,
 +                    G_VALUE_TYPE (&prop_values[i]));
 +      g_value_copy (&prop_values[i], &parameters[i].value);
@@ -151,12 +267,11 @@ index 7d3bd91..e19be7d 100644
 +  return FALSE;
 +}
 +
-+gboolean
+ gboolean
  peas_utils_valist_to_parameter_list (GType         exten_type,
                                       const gchar  *first_property,
-                                      va_list       args,
 diff --git a/libpeas/peas-utils.h b/libpeas/peas-utils.h
-index 5a19ba0..8f37600 100644
+index 52c6875..249ca75 100644
 --- a/libpeas/peas-utils.h
 +++ b/libpeas/peas-utils.h
 @@ -27,6 +27,13 @@
@@ -170,61 +285,97 @@ index 5a19ba0..8f37600 100644
 +                                               const GValue  *prop_values,
 +                                               GParameter    *params);
 +
+ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
  gboolean  peas_utils_valist_to_parameter_list (GType         exten_type,
                                                 const gchar  *first_property,
-                                                va_list       var_args,
 diff --git a/tests/libpeas/extension-set.c b/tests/libpeas/extension-set.c
-index c4d4d3c..778f220 100644
+index c4d4d3c..fece711 100644
 --- a/tests/libpeas/extension-set.c
 +++ b/tests/libpeas/extension-set.c
-@@ -147,6 +147,26 @@ test_extension_set_create_valid (PeasEngine *engine)
+@@ -26,6 +26,7 @@
+ #include <stdlib.h>
+ 
+ #include <glib.h>
++#include <glib-object.h>
+ #include <libpeas/peas.h>
+ 
+ #include "testing/testing.h"
+@@ -146,6 +147,48 @@ test_extension_set_create_valid (PeasEngine *engine)
+   g_object_unref (extension_set);
  }
  
- static void
++static void
++valid_extension_added_cb (PeasExtensionSet *extension_set,
++                          PeasPluginInfo   *info,
++                          PeasExtension    *extension,
++                          GObject          **obj_ptr)
++{
++  g_object_get (PEAS_ACTIVATABLE (extension), "object", obj_ptr, NULL);
++}
++
++static void
 +test_extension_set_create_valid_with_properties (PeasEngine *engine)
 +{
++  PeasPluginInfo *info;
 +  PeasExtensionSet *extension_set;
-+  GValue prop_values[1] = { G_VALUE_INIT };
++  GValue prop_value = G_VALUE_INIT;
++  GObject *obj, *obj_cmp;
 +  const gchar *prop_names[1] = { "object" };
 +
-+  g_value_init (&prop_values[0], G_TYPE_POINTER);
-+  g_value_set_pointer (&prop_values[0], NULL);
++  obj = g_object_new (G_TYPE_OBJECT, NULL);
++  g_value_init (&prop_value, G_TYPE_OBJECT);
++  g_value_set_object (&prop_value, obj);
 +
 +  extension_set = peas_extension_set_new_with_properties (engine,
 +                                                          PEAS_TYPE_ACTIVATABLE,
-+                                                          1, prop_names,
-+                                                          prop_values);
++                                                          G_N_ELEMENTS (&prop_names),
++                                                          prop_names,
++                                                          &prop_value);
++  g_signal_connect (extension_set,
++                    "extension-added",
++                    G_CALLBACK (valid_extension_added_cb),
++                    &obj_cmp);
++  info = peas_engine_get_plugin_info (engine, "builtin");
++
++  g_assert (peas_engine_load_plugin (engine, info));
++  g_assert (obj == obj_cmp);
++
 +  g_assert (PEAS_IS_EXTENSION_SET (extension_set));
 +  g_object_unref (extension_set);
-+  g_value_unset (&prop_values[0]);
++  g_value_unset (&prop_value);
 +}
 +
 +
-+static void
+ static void
  test_extension_set_create_invalid (PeasEngine *engine)
  {
-   PeasExtensionSet *extension_set;
-@@ -173,6 +193,36 @@ test_extension_set_create_invalid (PeasEngine *engine)
+@@ -172,6 +215,62 @@ test_extension_set_create_invalid (PeasEngine *engine)
+   g_assert (!PEAS_IS_EXTENSION_SET (extension_set));
  }
  
- static void
++static void
 +test_extension_set_create_invalid_with_properties (PeasEngine *engine)
 +{
 +  PeasExtensionSet *extension_set;
 +  GValue prop_values[2] = { G_VALUE_INIT };
 +  const gchar *prop_names[2] = { "object", NULL };
++  const gchar *prop_names_not_exist[1] = { "aleb" };
++  guint n_elements;
 +
 +  testing_util_push_log_hook ("*property name*should not be NULL.");
 +  testing_util_push_log_hook ("*assertion*G_TYPE_IS_INTERFACE*failed");
-+
++  testing_util_push_log_hook ("*should be an initialized GValue.");
++  testing_util_push_log_hook ("*has no property named 'aleb'*");
 +
 +  g_value_init (&prop_values[0], G_TYPE_POINTER);
 +  g_value_set_pointer (&prop_values[0], NULL);
 +
 +  /* Interface has a NULL property name*/
++  n_elements = G_N_ELEMENTS (prop_values);
 +  extension_set = peas_extension_set_new_with_properties (engine,
 +                                                          PEAS_TYPE_ACTIVATABLE,
-+                                                          2, prop_names,
++                                                          n_elements,
++                                                          prop_names,
 +                                                          prop_values);
 +  g_assert (!PEAS_IS_EXTENSION_SET (extension_set));
 +  g_value_unset (&prop_values[0]);
@@ -234,14 +385,34 @@ index c4d4d3c..778f220 100644
 +                                                          G_TYPE_INVALID,
 +                                                          0, NULL, NULL);
 +  g_assert (!PEAS_IS_EXTENSION_SET (extension_set));
++
++  /* Uninitialized GValue */
++  n_elements = 1;
++  extension_set = peas_extension_set_new_with_properties (engine,
++                                                          PEAS_TYPE_ACTIVATABLE,
++                                                          n_elements,
++                                                          prop_names,
++                                                          prop_values);
++  g_assert (!PEAS_IS_EXTENSION_SET (extension_set));
++
++  /* Uninitialized GValue*/
++  g_value_init (&prop_values[0], G_TYPE_POINTER);
++  g_value_set_pointer (&prop_values[0], NULL);
++  n_elements = G_N_ELEMENTS (prop_names_not_exist);
++  extension_set = peas_extension_set_new_with_properties (engine,
++                                                          PEAS_TYPE_ACTIVATABLE,
++                                                          n_elements,
++                                                          prop_names_not_exist,
++                                                          prop_values);
++  g_assert (!PEAS_IS_EXTENSION_SET (extension_set));
++  g_value_unset (&prop_values[0]);
 +}
 +
 +
-+static void
+ static void
  test_extension_set_extension_added (PeasEngine *engine)
  {
-   gint active;
-@@ -345,6 +395,8 @@ main (int    argc,
+@@ -345,6 +444,8 @@ main (int    argc,
  
    TEST ("create-valid", create_valid);
    TEST ("create-invalid", create_invalid);
@@ -250,5 +421,144 @@ index c4d4d3c..778f220 100644
  
    TEST ("extension-added", extension_added);
    TEST ("extension-removed", extension_removed);
--- 
-2.9.4
+diff --git a/tests/libpeas/testing/testing-extension.c b/tests/libpeas/testing/testing-extension.c
+index e00588b..122c274 100644
+--- a/tests/libpeas/testing/testing-extension.c
++++ b/tests/libpeas/testing/testing-extension.c
+@@ -144,6 +144,49 @@ test_extension_create_valid (PeasEngine     *engine,
+   g_object_unref (extension);
+ }
+ 
++static void
++test_extension_create_valid_without_properties (PeasEngine     *engine,
++                                                PeasPluginInfo *info)
++{
++  PeasExtension *extension;
++
++  extension =
++    peas_engine_create_extension_with_properties (engine, info,
++                                                  INTROSPECTION_TYPE_CALLABLE,
++                                                  0, NULL, NULL);
++
++  g_assert (PEAS_IS_EXTENSION (extension));
++  g_assert (INTROSPECTION_IS_CALLABLE (extension));
++
++  g_object_unref (extension);
++}
++
++static void
++test_extension_create_valid_with_properties (PeasEngine     *engine,
++                                             PeasPluginInfo *info)
++{
++  PeasExtension *extension;
++  IntrospectionAbstract *abstract;
++  GValue prop_values[1] = { G_VALUE_INIT };
++  const gchar *prop_names[1] = { "abstract-property" };
++
++  g_assert (peas_engine_load_plugin (engine, info));
++
++  g_value_init (&prop_values[0], G_TYPE_INT);
++  g_value_set_int (&prop_values[0], 47);
++  extension =
++      peas_engine_create_extension_with_properties (engine, info,
++                                                    INTROSPECTION_TYPE_ABSTRACT,
++                                                    G_N_ELEMENTS (prop_values),
++                                                    prop_names,
++                                                    prop_values);
++  abstract = INTROSPECTION_ABSTRACT (extension);
++  g_assert_cmpint (introspection_abstract_get_value (abstract), ==, 47);
++
++  g_object_unref (extension);
++  g_value_unset (&prop_values[0]);
++}
++
+ static void
+ test_extension_create_invalid (PeasEngine     *engine,
+                                PeasPluginInfo *info)
+@@ -186,6 +229,72 @@ test_extension_create_invalid (PeasEngine     *engine,
+   g_assert (!PEAS_IS_EXTENSION (extension));
+ }
+ 
++static void
++test_extension_create_invalid_with_properties (PeasEngine     *engine,
++                                               PeasPluginInfo *info)
++{
++  PeasExtension *extension;
++  GValue prop_values[1] = { G_VALUE_INIT };
++  const gchar *prop_names[1] = { NULL };
++  GValue prop_values2[1] = { G_VALUE_INIT };
++  const gchar *prop_names2[1] = { "does-not-exist" };
++
++  g_value_init (&prop_values[0], G_TYPE_STRING);
++  g_value_set_string (&prop_values[0], "foo");
++
++  testing_util_push_log_hook ("*assertion*G_TYPE_IS_INTERFACE*failed");
++  testing_util_push_log_hook ("*does not provide a 'IntrospectionUnimplemented' extension");
++  testing_util_push_log_hook ("*property name*should not be NULL.");
++  testing_util_push_log_hook ("*property value*should*initialized GValue.");
++  testing_util_push_log_hook ("*assertion*peas_plugin_info_is_loaded*failed");
++
++  /* Invalid GType */
++  extension = peas_engine_create_extension_with_properties (engine, info,
++                                                            G_TYPE_INVALID, 0,
++                                                            NULL, NULL);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  /* GObject but not a GInterface */
++  extension = peas_engine_create_extension_with_properties (engine, info,
++                                                            PEAS_TYPE_ENGINE, 0,
++                                                            NULL, NULL);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  /* Does not implement this GType */
++  extension =
++    peas_engine_create_extension_with_properties (engine, info,
++                                                  INTROSPECTION_TYPE_UNIMPLEMENTED,
++                                                  0, NULL, NULL);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  /* Interface has a NULL property name*/
++  extension =
++    peas_engine_create_extension_with_properties (engine, info,
++                                                  INTROSPECTION_TYPE_CALLABLE,
++                                                  G_N_ELEMENTS (prop_names2),
++                                                  prop_names, prop_values);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  /* Interface has a not initialiazed GValue */
++  extension =
++    peas_engine_create_extension_with_properties (engine, info,
++                                                  INTROSPECTION_TYPE_CALLABLE,
++                                                  G_N_ELEMENTS (prop_names2),
++                                                  prop_names2, prop_values2);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  /* Not loaded */
++  g_assert (peas_engine_unload_plugin (engine, info));
++  extension =
++    peas_engine_create_extension_with_properties (engine, info,
++                                                  INTROSPECTION_TYPE_CALLABLE,
++                                                  0, NULL, NULL);
++  g_assert (!PEAS_IS_EXTENSION (extension));
++
++  g_value_unset (&prop_values[0]);
++
++}
++
+ static void
+ test_extension_create_with_prerequisite (PeasEngine     *engine,
+                                          PeasPluginInfo *info)
+@@ -573,7 +682,13 @@ testing_extension_basic (const gchar *loader_)
+   _EXTENSION_TEST (loader, "provides-invalid", provides_invalid);
+ 
+   _EXTENSION_TEST (loader, "create-valid", create_valid);
++  _EXTENSION_TEST (loader, "create-valid-without-properties",
++                   create_valid_without_properties);
++  _EXTENSION_TEST (loader, "create-valid-with-properties",
++                   create_valid_with_properties);
+   _EXTENSION_TEST (loader, "create-invalid", create_invalid);
++  _EXTENSION_TEST (loader, "create-invalid-with-properties",
++                   create_invalid_with_properties);
+   _EXTENSION_TEST (loader, "create-with-prerequisite", create_with_prerequisite);
+ 
+   _EXTENSION_TEST (loader, "reload", reload);
