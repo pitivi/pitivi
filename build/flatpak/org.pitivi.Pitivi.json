@@ -649,6 +649,7 @@
         },
         {
             "name": "libpeas",
+            "buildsystem": "meson",
             "sources": [
                 {
                     "type": "git",
