@@ -1216,9 +1216,14 @@ class TestDragDropUndo(BaseTestUndoTimeline):
 
 class TestMarkers(BaseTestUndoTimeline):
 
-    def assert_markers_position(self, ges_marker_list, expected_positions):
+    def assert_markers(self, ges_marker_list, expected_properties):
         positions = [ges_marker.props.position for ges_marker in ges_marker_list.get_markers()]
+        expected_positions = [properties[0] for properties in expected_properties]
         self.assertListEqual(positions, expected_positions)
+
+        comments = [ges_marker.get_string("comment") for ges_marker in ges_marker_list.get_markers()]
+        expected_comments = [properties[1] for properties in expected_properties]
+        self.assertListEqual(comments, expected_comments)
 
     def test_marker_container(self):
         self.setup_timeline_container()
@@ -1231,29 +1236,33 @@ class TestMarkers(BaseTestUndoTimeline):
         markers = self.timeline.get_marker_list("markers")
 
         with self.action_log.started("Added marker"):
-            markers.add(10)
+            marker1 = markers.add(10)
 
-        self.assert_markers_position(markers, [10])
+        marker1.set_string("comment", "comment 1")
+
+        self.assert_markers(markers, [(10, "comment 1")])
 
         self.action_log.undo()
-        self.assert_markers_position(markers, [])
+        self.assert_markers(markers, [])
 
         self.action_log.redo()
 
         with self.action_log.started("Added marker"):
-            markers.add(20)
+            marker2 = markers.add(20)
 
-        self.assert_markers_position(markers, [10, 20])
+        marker2.set_string("comment", "comment 2")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
         self.action_log.undo()
         self.action_log.undo()
-        self.assert_markers_position(markers, [])
+        self.assert_markers(markers, [])
 
         self.action_log.redo()
-        self.assert_markers_position(markers, [10])
+        self.assert_markers(markers, [(10, "comment 1")])
 
         self.action_log.redo()
-        self.assert_markers_position(markers, [10, 20])
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
     def test_marker_removed(self):
         self.setup_timeline_container()
@@ -1269,19 +1278,19 @@ class TestMarkers(BaseTestUndoTimeline):
         with self.action_log.started("Removed marker"):
             markers.remove(marker2)
 
-        self.assert_markers_position(markers, [])
+        self.assert_markers(markers, [])
 
         self.action_log.undo()
-        self.assert_markers_position(markers, [20])
+        self.assert_markers(markers, [(20, None)])
 
         self.action_log.undo()
-        self.assert_markers_position(markers, [10, 20])
+        self.assert_markers(markers, [(10, None), (20, None)])
 
         self.action_log.redo()
-        self.assert_markers_position(markers, [20])
+        self.assert_markers(markers, [(20, None)])
 
         self.action_log.redo()
-        self.assert_markers_position(markers, [])
+        self.assert_markers(markers, [])
 
     def test_marker_moved(self):
         self.setup_timeline_container()
@@ -1295,10 +1304,43 @@ class TestMarkers(BaseTestUndoTimeline):
         markers.move(marker1, 30)
         self.app.action_log.commit("Move marker")
 
-        self.assert_markers_position(markers, [20, 30])
+        self.assert_markers(markers, [(20, None), (30, None)])
 
         self.action_log.undo()
-        self.assert_markers_position(markers, [10, 20])
+        self.assert_markers(markers, [(10, None), (20, None)])
 
         self.action_log.redo()
-        self.assert_markers_position(markers, [20, 30])
+        self.assert_markers(markers, [(20, None), (30, None)])
+
+    def test_marker_comment(self):
+        self.setup_timeline_container()
+
+        markers = self.timeline.get_marker_list("markers")
+
+        with self.action_log.started("Added marker"):
+            marker1 = markers.add(10)
+        with self.action_log.started("Added marker"):
+            marker2 = markers.add(20)
+
+        self.assert_markers(markers, [(10, ""), (20, "")])
+
+        marker1.set_string("comment", "comment 1")
+        marker2.set_string("comment", "comment 2")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        self.action_log.undo()
+
+        self.assert_markers(markers, [(10, "comment 1")])
+
+        self.action_log.undo()
+
+        self.assert_markers(markers, [])
+
+        self.action_log.redo()
+
+        self.assert_markers(markers, [(10, "comment 1")])
+
+        self.action_log.redo()
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
