@@ -1216,13 +1216,13 @@ class TestDragDropUndo(BaseTestUndoTimeline):
 
 class TestMarkers(BaseTestUndoTimeline):
 
-    def assert_marker(self, marker, position):
-        self.assertEqual(marker.props.position, position)
+    def assert_markers_position(self, ges_marker_list, expected_positions):
+        positions = [ges_marker.props.position for ges_marker in ges_marker_list.get_markers()]
+        self.assertListEqual(positions, expected_positions)
 
     def test_marker_container(self):
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
-
         self.assertIsNotNone(markers)
 
     def test_marker_added(self):
@@ -1231,61 +1231,74 @@ class TestMarkers(BaseTestUndoTimeline):
         markers = self.timeline.get_marker_list("markers")
 
         with self.action_log.started("Added marker"):
-            marker = markers.add(10)
+            markers.add(10)
 
-        self.assert_marker(marker, 10)
-        self.assertEqual(markers.size(), 1)
+        self.assert_markers_position(markers, [10])
 
         self.action_log.undo()
-        self.assertEqual(markers.size(), 0)
+        self.assert_markers_position(markers, [])
 
         self.action_log.redo()
-        self.assertEqual(markers.size(), 1)
-        marker_range = markers.get_range(10, 10)
-        for marker in marker_range:
-            self.assert_marker(marker, 10)
+
+        with self.action_log.started("Added marker"):
+            markers.add(20)
+
+        self.assert_markers_position(markers, [10, 20])
 
         self.action_log.undo()
-        self.assertEqual(markers.size(), 0)
+        self.action_log.undo()
+        self.assert_markers_position(markers, [])
+
+        self.action_log.redo()
+        self.assert_markers_position(markers, [10])
+
+        self.action_log.redo()
+        self.assert_markers_position(markers, [10, 20])
 
     def test_marker_removed(self):
         self.setup_timeline_container()
 
         markers = self.timeline.get_marker_list("markers")
 
-        marker = markers.add(10)
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
 
         with self.action_log.started("Removed marker"):
-            markers.remove(marker)
+            markers.remove(marker1)
 
-        self.assert_marker(marker, 10)
-        self.assertEqual(markers.size(), 0)
+        with self.action_log.started("Removed marker"):
+            markers.remove(marker2)
+
+        self.assert_markers_position(markers, [])
 
         self.action_log.undo()
-        self.assertEqual(markers.size(), 1)
-        marker_range = markers.get_range(10, 10)
-        for marker in marker_range:
-            self.assert_marker(marker, 10)
+        self.assert_markers_position(markers, [20])
+
+        self.action_log.undo()
+        self.assert_markers_position(markers, [10, 20])
 
         self.action_log.redo()
-        self.assertEqual(markers.size(), 0)
+        self.assert_markers_position(markers, [20])
+
+        self.action_log.redo()
+        self.assert_markers_position(markers, [])
 
     def test_marker_moved(self):
         self.setup_timeline_container()
 
         markers = self.timeline.get_marker_list("markers")
 
-        marker = markers.add(10)
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
 
         self.app.action_log.begin("Move marker", toplevel=True)
-        markers.move(marker, 20)
+        markers.move(marker1, 30)
         self.app.action_log.commit("Move marker")
 
-        self.assert_marker(marker, 20)
-        self.assertEqual(markers.size(), 1)
+        self.assert_markers_position(markers, [20, 30])
 
         self.action_log.undo()
-        self.assert_marker(marker, 10)
+        self.assert_markers_position(markers, [10, 20])
 
         self.action_log.redo()
-        self.assert_marker(marker, 20)
+        self.assert_markers_position(markers, [20, 30])
