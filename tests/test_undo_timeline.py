@@ -1277,13 +1277,13 @@ class TestMarkers(BaseTestUndoTimeline):
         self.assert_markers(markers, [])
 
         self.action_log.undo()
-        self.assert_markers(markers, [20])
+        self.assert_markers(markers, [(20, None)])
 
         self.action_log.undo()
-        self.assert_markers(markers, [10, 20])
+        self.assert_markers(markers, [(10, None), (20, None)])
 
         self.action_log.redo()
-        self.assert_markers(markers, [20])
+        self.assert_markers(markers, [(20, None)])
 
         self.action_log.redo()
         self.assert_markers(markers, [])
@@ -1300,13 +1300,13 @@ class TestMarkers(BaseTestUndoTimeline):
         markers.move(marker1, 30)
         self.app.action_log.commit("Move marker")
 
-        self.assert_markers(markers, [20, 30])
+        self.assert_markers(markers, [(20, None), (30, None)])
 
         self.action_log.undo()
-        self.assert_markers(markers, [10, 20])
+        self.assert_markers(markers, [(10, None), (20, None)])
 
         self.action_log.redo()
-        self.assert_markers(markers, [20, 30])
+        self.assert_markers(markers, [(20, None), (30, None)])
 
     def test_marker_comment(self):
         self.setup_timeline_container()
