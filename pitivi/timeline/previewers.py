@@ -106,6 +106,7 @@ class ThumbnailBin(PreviewerBin):
     }
 
     def __init__(self, bin_desc="videoconvert ! videorate ! "
+                 "videoflip method=automatic ! "
                  "videoscale method=lanczos ! "
                  "capsfilter caps=video/x-raw,format=(string)RGBA,"
                  "height=(int)%d,pixel-aspect-ratio=(fraction)1/1,"
@@ -161,7 +162,7 @@ class TeedThumbnailBin(ThumbnailBin):
 
     def __init__(self):
         ThumbnailBin.__init__(
-            self, bin_desc="tee name=t ! queue  "
+            self, bin_desc="videoconvert ! videoflip method=automatic ! tee name=t ! queue  "
             "max-size-buffers=0 max-size-bytes=0 max-size-time=0  ! "
             "videoconvert ! videorate ! videoscale method=lanczos ! "
             "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int)%d,"
