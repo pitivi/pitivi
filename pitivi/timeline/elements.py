@@ -898,8 +898,8 @@ class VideoSource(TimelineElement):
         video_source = self._ges_elem
         sinfo = video_source.get_asset().get_stream_info()
 
-        asset_width = sinfo.get_square_width()
-        asset_height = sinfo.get_height()
+        asset_width = sinfo.get_natural_width()
+        asset_height = sinfo.get_natural_height()
         parent = video_source.get_parent()
         if parent and not self.__videoflip:
             for track_element in parent.find_track_elements(
@@ -918,8 +918,8 @@ class VideoSource(TimelineElement):
             res, method = self.__videoflip.get_child_property("method")
             assert res
             if "clockwise" in method.value_nick and self.__videoflip.props.active:
-                asset_width = sinfo.get_height()
-                asset_height = sinfo.get_square_width()
+                asset_width = sinfo.get_natural_height()
+                asset_height = sinfo.get_natural_width()
 
         # Find the biggest size of the video inside the
         # final view (project size) keeping the aspect ratio

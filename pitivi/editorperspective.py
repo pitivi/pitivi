@@ -840,7 +840,7 @@ class PreviewAssetWindow(Gtk.Window):
         # For videos and images, automatically resize the window
         # Try to keep it 1:1 if it can fit within 85% of the parent window
         video = video_streams[0]
-        img_width = video.get_square_width()
+        img_width = video.get_natural_width()
         img_height = video.get_height()
         mainwindow_width, mainwindow_height = self.app.gui.get_size()
         max_width = 0.85 * mainwindow_width

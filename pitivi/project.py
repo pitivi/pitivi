@@ -1884,8 +1884,8 @@ class Project(Loggable, GES.Project):
         if video_streams and self._has_default_video_settings:
             video = video_streams[0]
             if not video.is_image():
-                self.videowidth = video.get_square_width()
-                self.videoheight = video.get_height()
+                self.videowidth = video.get_natural_width()
+                self.videoheight = video.get_natural_height()
                 if video.get_framerate_num() > 0:
                     # The asset has a non-variable framerate.
                     self.videorate = Gst.Fraction(video.get_framerate_num(),
