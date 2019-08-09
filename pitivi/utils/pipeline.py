@@ -514,6 +514,7 @@ class AssetPipeline(SimplePipeline):
 
     def __init__(self, uri=None, name=None):
         ges_pipeline = Gst.ElementFactory.make("playbin", name)
+        ges_pipeline.props.video_filter = Gst.parse_bin_from_description("videoflip method=automatic", True)
         SimplePipeline.__init__(self, ges_pipeline)
 
         self.__uri = None
