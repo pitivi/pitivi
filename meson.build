@@ -71,10 +71,10 @@ install_subdir('pitivi', install_dir: pitivi_install_dir)
 
 configure_file(input: 'pitivi/configure.py.in',
                output: 'configure.py',
-               configuration: cdata)
+               configuration: cdata,
+               install_dir: pitivi_install_dir + 'pitivi')
 
 configure_file = '@0@/configure.py'.format(meson.current_build_dir())
-install_data(configure_file, install_dir: pitivi_install_dir + 'pitivi')
 
 # FIXME work around to get testsuite working
 run_command('cp', configure_file, meson.current_source_dir() + '/pitivi')

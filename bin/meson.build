@@ -1,9 +1,9 @@
 configure_file(input: 'pitivi.in',
                output: 'pitivi',
-               configuration: cdata)
+               configuration: cdata,
+               install_dir: get_option('bindir'))
 
 pitivi_bin = '@0@/pitivi'.format(meson.current_build_dir())
-install_data(pitivi_bin, install_dir: get_option('bindir'))
 
 # Create `pitivi` in the current dir at build time to be able to
 # run uninstalled in the dev env.
