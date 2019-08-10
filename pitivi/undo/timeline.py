@@ -949,6 +949,7 @@ class MarkerListObserver(Loggable):
         self.action_log = action_log
 
         self.markers_position = {}
+        self.marker_observers = {}
 
         ges_marker_list.connect("marker-added", self._marker_added_cb)
         ges_marker_list.connect("marker-removed", self._marker_removed_cb)
@@ -958,6 +959,11 @@ class MarkerListObserver(Loggable):
         self.markers_position[ges_marker] = ges_marker.props.position
         action = MarkerAdded(ges_marker_list, ges_marker)
         self.action_log.push(action)
+        self._connect_to_markers(ges_marker)
+
+    def _connect_to_markers(self, ges_marker):
+            marker_observer = MarkerObserver(ges_marker, self.action_log)
+            self.marker_observers[ges_marker] = marker_observer
 
     def _marker_removed_cb(self, ges_marker_list, ges_marker):
         action = MarkerRemoved(ges_marker_list, ges_marker)
@@ -970,6 +976,14 @@ class MarkerListObserver(Loggable):
         self.markers_position[ges_marker] = ges_marker.props.position
 
 
+class MarkerObserver(MetaContainerObserver, Loggable):
+
+    def __init__(self, ges_marker, action_log):
+        MetaContainerObserver.__init__(self, ges_marker, action_log)
+        Loggable.__init__(self)
+        self.action_log = action_log
+
+
 class MarkerAction(UndoableAutomaticObjectAction):
 
     def __init__(self, ges_marker_list, ges_marker):
@@ -980,6 +994,8 @@ class MarkerAction(UndoableAutomaticObjectAction):
 
     def add(self):
         ges_marker = self.ges_marker_list.add(self.position)
+        comment = self.auto_object.get_string("comment")
+        ges_marker.set_string("comment", comment)
         self.update_object(self.auto_object, ges_marker)
 
     def remove(self):

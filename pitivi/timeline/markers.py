@@ -42,6 +42,7 @@ class Marker(Gtk.EventBox, Loggable):
         self.ges_marker.ui = self
         self.position_ns = self.ges_marker.props.position
         self.get_style_context().add_class("Marker")
+        self.comment = ""
 
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
@@ -55,6 +56,7 @@ class Marker(Gtk.EventBox, Loggable):
 
     def do_enter_notify_event(self, unused_event):
         self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
+        self.set_tooltip_text(self.comment)
 
     def do_leave_notify_event(self, unused_event):
         self.unset_state_flags(Gtk.StateFlags.PRELIGHT)
@@ -87,6 +89,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.layout = Gtk.Layout()
         self.add(self.layout)
         self.get_style_context().add_class("MarkersBox")
+
+        self.app = timeline.app
 
         self.hadj = timeline.timeline.hadj
         self.hadj.connect("value-changed", self._hadj_value_changed_cb)
@@ -155,8 +159,9 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
                 elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
                     self.marker_pressed = None
-                    self.app.action_log.rollback("Move marker")
-                    MarkerPopover(event_widget)
+                    self.app.action_log.rollback()
+
+                    MarkerPopover(self, event_widget)
 
             else:
                 position = self.pixelToNs(event.x + self.offset)
@@ -188,7 +193,6 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
     def _add_marker(self, position, ges_marker):
         marker = Marker(ges_marker)
-        # self.marker_pressed = marker
         x = self.nsToPixel(position) - self.offset - MARKER_WIDTH / 2
         self.layout.put(marker, x, 0)
         marker.show()
@@ -214,8 +218,10 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 class MarkerPopover(Gtk.Popover):
     """A popover menu to edit markers metadata"""
 
-    def __init__(self, marker):
+    def __init__(self, marker_box, marker):
         Gtk.Popover.__init__(self)
+
+        self.app = marker_box.app
 
         self.text_view = Gtk.TextView()
 
@@ -240,4 +246,5 @@ class MarkerPopover(Gtk.Popover):
     def _save_text_cb(self, unused_element):
         buffer = self.text_view.get_buffer()
         text = buffer.props.text
-        self.marker.comment = text
+        with self.app.action_log.started("new comment", toplevel=True):
+            self.marker.comment = text
