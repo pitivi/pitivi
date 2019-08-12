@@ -409,3 +409,65 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
     res = res.fixate()
     log.debug("utils", "Fixated %s", res)
     return res
+
+
+# GstDiscovererInfo helpers
+def _get_square_width(video_info):
+    width = video_info.get_width()
+    par_num = video_info.get_par_num()
+    par_denom = video_info.get_par_denom()
+    # We observed GStreamer does a simple int(), so we leave it like this.
+    return int(width * par_num / par_denom)
+
+
+def video_info_get_rotation(video_info):
+    tags = video_info.get_tags()
+    if not tags:
+        return 0
+
+    is_rotated, rotation_string = tags.get_string(Gst.TAG_IMAGE_ORIENTATION)
+    if is_rotated:
+        try:
+            return int(rotation_string.replace('rotate-', ''))
+        except ValueError as e:
+            log.error("utils", "Did not understand orientation: %s (%s)", rotation_string, e)
+            return 0
+
+    return 0
+
+
+def video_info_get_natural_width(video_info):
+    """Applies the pixel aspect ratio and rotation information
+       to the width of the video info.
+
+    Args:
+        video_info (GstPbutils.DiscovererVideoInfo): The video info.
+
+    Returns:
+        int: The width calculated exactly as GStreamer does.
+    """
+    rotation = video_info.get_rotation()
+    if rotation in [90, 270]:
+        width = video_info.get_height()
+        par_num = video_info.get_par_num()
+        par_denom = video_info.get_par_denom()
+        # We observed GStreamer does a simple int(), so we leave it like this.
+        return int(width * par_num / par_denom)
+
+    return _get_square_width(video_info)
+
+
+def video_info_get_natural_height(video_info):
+    """Applies the rotation information to the height of the video.
+
+    Args:
+        video_info (GstPbutils.DiscovererVideoInfo): The video info.
+
+    Returns:
+        int: The height calculated exactly as GStreamer does.
+    """
+    rotation = video_info.get_rotation()
+    if rotation in [90, 270]:
+        return _get_square_width(video_info)
+
+    return video_info.get_height()

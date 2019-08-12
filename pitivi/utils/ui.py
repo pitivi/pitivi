@@ -505,8 +505,8 @@ def beautify_stream(stream):
 
     elif type(stream) is DiscovererVideoInfo:
         par = stream.get_par_num() / stream.get_par_denom()
-        width = stream.get_width()
-        height = stream.get_height()
+        width = stream.get_natural_width()
+        height = stream.get_natural_height()
         if not stream.is_image():
             fps = format_framerate_value(stream)
             templ = _("<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>")

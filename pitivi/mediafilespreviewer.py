@@ -256,8 +256,8 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.player.uri = self.current_selected_uri
                 self.player.setState(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
-                video_width = video.get_square_width()
-                video_height = video.get_height()
+                video_width = video.get_natural_width()
+                video_height = video.get_natural_height()
                 w, h = self.__get_best_size(video_width, video_height)
                 self.preview_video.set_size_request(w, h)
                 self.preview_video.props.ratio = video_width / video_height

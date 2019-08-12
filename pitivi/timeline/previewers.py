@@ -94,7 +94,7 @@ class PreviewerBin(Gst.Bin, Loggable):
         """Finalizes the previewer, saving data to the disk if needed."""
 
 
-class ThumbnailBin(PreviewerBin):
+class TeedThumbnailBin(PreviewerBin):
     """Bin to generate and save thumbnails to an SQLite database."""
 
     __gproperties__ = {
@@ -105,12 +105,13 @@ class ThumbnailBin(PreviewerBin):
                 GObject.ParamFlags.READWRITE),
     }
 
-    def __init__(self, bin_desc="videoconvert ! videorate ! "
-                 "videoscale method=lanczos ! "
-                 "capsfilter caps=video/x-raw,format=(string)RGBA,"
-                 "height=(int)%d,pixel-aspect-ratio=(fraction)1/1,"
-                 "framerate=2/1 ! gdkpixbufsink name=gdkpixbufsink " %
-                 THUMB_HEIGHT):
+    def __init__(self, bin_desc="videoconvert ! videoflip method=automatic ! tee name=t ! queue  "
+                 "max-size-buffers=0 max-size-bytes=0 max-size-time=0  ! "
+                 "videoconvert ! videorate ! videoscale method=lanczos ! "
+                 "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int)%d,"
+                 "pixel-aspect-ratio=(fraction)1/1,"
+                 "framerate=2/1 ! gdkpixbufsink name=gdkpixbufsink "
+                 "t. ! queue " % THUMB_HEIGHT):
         PreviewerBin.__init__(self, bin_desc)
 
         self.uri = None
@@ -154,20 +155,6 @@ class ThumbnailBin(PreviewerBin):
             self.thumb_cache = ThumbnailCache.get(self.uri)
         else:
             raise AttributeError('unknown property %s' % prop.name)
-
-
-class TeedThumbnailBin(ThumbnailBin):
-    """Bin to generate and save thumbnails to an SQLite database."""
-
-    def __init__(self):
-        ThumbnailBin.__init__(
-            self, bin_desc="tee name=t ! queue  "
-            "max-size-buffers=0 max-size-bytes=0 max-size-time=0  ! "
-            "videoconvert ! videorate ! videoscale method=lanczos ! "
-            "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int)%d,"
-            "pixel-aspect-ratio=(fraction)1/1,"
-            "framerate=2/1 ! gdkpixbufsink name=gdkpixbufsink "
-            "t. ! queue " % THUMB_HEIGHT)
 
 
 # pylint: disable=too-many-instance-attributes
@@ -290,8 +277,6 @@ class WaveformPreviewer(PreviewerBin):
 
 Gst.Element.register(None, "waveformbin", Gst.Rank.NONE,
                      WaveformPreviewer)
-Gst.Element.register(None, "thumbnailbin", Gst.Rank.NONE,
-                     ThumbnailBin)
 Gst.Element.register(None, "teedthumbnailbin", Gst.Rank.NONE,
                      TeedThumbnailBin)
 
@@ -620,6 +605,7 @@ class AssetPreviewer(Previewer, Loggable):
             "uridecodebin uri={uri} name=decode ! "
             "videoconvert ! "
             "videorate ! "
+            "videoflip method=automatic ! "
             "videoscale method=lanczos ! "
             "capsfilter caps=video/x-raw,format=(string)RGBA,height=(int){height},"
             "pixel-aspect-ratio=(fraction)1/1,framerate={thumbs_per_second}/1 ! "

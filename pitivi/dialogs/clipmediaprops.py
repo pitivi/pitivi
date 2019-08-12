@@ -82,8 +82,8 @@ class ClipMediaPropsDialog(object):
             break
 
         for stream in self.video_streams:
-            self.size_width.set_text(str(stream.get_square_width()))
-            self.size_height.set_text(str(stream.get_height()))
+            self.size_width.set_text(str(stream.get_natural_width()))
+            self.size_height.set_text(str(stream.get_natural_height()))
             self.is_image = stream.is_image()
             if not self.is_image:
                 num = stream.get_framerate_num()
@@ -138,8 +138,8 @@ class ClipMediaPropsDialog(object):
             # This also handles the case where the video is a still image
             video = self.video_streams[0]
             if self.size_checkbutton.get_active():
-                project.videowidth = video.get_square_width()
-                project.videoheight = video.get_height()
+                project.videowidth = video.get_natural_width()
+                project.videoheight = video.get_natural_height()
             if self.framerate_checkbutton.get_active() and not self.is_image:
                 project.videorate = Gst.Fraction(video.get_framerate_num(),
                                                  video.get_framerate_denom())
