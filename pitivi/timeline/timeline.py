@@ -1957,7 +1957,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if not backward_positions:
             return
 
-            position = backward_positions[-2]
+        position = backward_positions[-2]
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
