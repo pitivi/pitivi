@@ -42,7 +42,6 @@ class Marker(Gtk.EventBox, Loggable):
         self.ges_marker.ui = self
         self.position_ns = self.ges_marker.props.position
         self.get_style_context().add_class("Marker")
-        self.comment = ""
 
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
@@ -56,7 +55,6 @@ class Marker(Gtk.EventBox, Loggable):
 
     def do_enter_notify_event(self, unused_event):
         self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
-        self.set_tooltip_text(self.comment)
 
     def do_leave_notify_event(self, unused_event):
         self.unset_state_flags(Gtk.StateFlags.PRELIGHT)
@@ -76,6 +74,7 @@ class Marker(Gtk.EventBox, Loggable):
         if text == self.comment:
             return
         self.ges_marker.set_string("comment", text)
+        self.set_tooltip_text(self.comment)
 
 
 class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
@@ -161,7 +160,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                     self.marker_pressed = None
                     self.app.action_log.rollback()
 
-                    MarkerPopover(self, event_widget)
+                    MarkerPopover(self.app, event_widget)
 
             else:
                 position = self.pixelToNs(event.x + self.offset)
@@ -218,10 +217,10 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 class MarkerPopover(Gtk.Popover):
     """A popover menu to edit markers metadata"""
 
-    def __init__(self, marker_box, marker):
+    def __init__(self, app, marker):
         Gtk.Popover.__init__(self)
 
-        self.app = marker_box.app
+        self.app = app
 
         self.text_view = Gtk.TextView()
 
@@ -245,6 +244,6 @@ class MarkerPopover(Gtk.Popover):
 
     def _save_text_cb(self, unused_element):
         buffer = self.text_view.get_buffer()
-        text = buffer.props.text
-        with self.app.action_log.started("new comment", toplevel=True):
-            self.marker.comment = text
+        if buffer.props.text != self.marker.comment:
+            with self.app.action_log.started("new comment", toplevel=True):
+                self.marker.comment = buffer.props.text
