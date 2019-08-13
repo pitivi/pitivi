@@ -1915,11 +1915,11 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         return points
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
-        forward_positions = self.timeline_clips_extremites(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
+        forward_positions = self.clips_edges(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
         if not forward_positions:
             return
 
-        position = forward_positions[0]
+        position = forward_positions[1]
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
@@ -1927,10 +1927,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """Scrolls playhead to backward edge points of clips.
         """
         backward_positions = self.clips_edges(0, self._project.pipeline.getPosition())
-        if backward_positions != []:
-            position = backward_positions[-2]
-        else:
+        if not backward_positions:
             return
+
+            position = backward_positions[-2]
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
