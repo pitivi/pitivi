@@ -1927,8 +1927,9 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def timeline_clips_extremites(self, start, end):
+    def clips_edges(self, start, end):
         points = []
+        points.append(start)
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips_in_interval(start, end)
             for clip in clips:
@@ -1936,24 +1937,27 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     points.append(clip.start)
                 if end > clip.start + clip.duration:
                     points.append(clip.start + clip.duration)
+        points.append(end)
         points.sort()
-        if end == self.ges_timeline.props.duration and end != self._project.pipeline.getPosition():
-            points.append(self.ges_timeline.props.duration)
         return points
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
-        forward_positions = self.timeline_clips_extremites(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
+        """Scrolls playhead to forward edge points of clips.
+        """
+        forward_positions = self.clips_edges(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
         if forward_positions != []:
-            position = forward_positions[0]
+            position = forward_positions[1]
         else:
             return
         self._project.pipeline.simple_seek(position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_backward_clip_cb(self, unused_action, unused_parameter):
-        backward_positions = self.timeline_clips_extremites(0, self._project.pipeline.getPosition())
+        """Scrolls playhead to backward edge points of clips.
+        """
+        backward_positions = self.clips_edges(0, self._project.pipeline.getPosition())
         if backward_positions != []:
-            position = backward_positions[-1]
+            position = backward_positions[-2]
         else:
             return
         self._project.pipeline.simple_seek(position)
