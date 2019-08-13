@@ -372,7 +372,6 @@ class MetaChangedAction(UndoableAutomaticObjectAction):
 
     def __init__(self, meta_container, item, current_value, new_value):
         UndoableAutomaticObjectAction.__init__(self, meta_container)
-        self.meta_container = meta_container
         self.item = item
         self.old_value = current_value
         self.new_value = new_value
@@ -398,10 +397,10 @@ class MetaContainerObserver(GObject.Object):
 
         self.metas = {}
 
+        self.marker_list_observers = {}
+
         def set_meta(unused_meta_container, item, value):
-            self.metas[item] = value
-            if isinstance(self.metas[item], GES.MarkerList):
-                MarkerListObserver(self.metas[item], self.action_log)
+            self.__update_meta(item, value)
         meta_container.foreach(set_meta)
 
         meta_container.connect("notify-meta", self._notify_meta_cb)
@@ -409,14 +408,18 @@ class MetaContainerObserver(GObject.Object):
     def _notify_meta_cb(self, meta_container, item, value):
         current_value = self.metas.get(item)
         action = MetaChangedAction(meta_container, item, current_value, value)
-        self.metas[item] = value
-        if isinstance(self.metas[item], GES.MarkerList):
-            MarkerListObserver(self.metas[item], self.action_log)
+        self.__update_meta(item, value)
         self.action_log.push(action)
 
     def release(self):
         self.meta_container.disconnect_by_func(self._notify_meta_cb)
         self.meta_container = None
+
+    def __update_meta(self, item, value):
+        self.metas[item] = value
+        if isinstance(self.metas[item], GES.MarkerList):
+            marker_list_observer = MarkerListObserver(self.metas[item], self.action_log)
+            self.marker_list_observers[self.metas[item]] = marker_list_observer
 
 
 class PropertyChangedAction(UndoableAutomaticObjectAction):
@@ -499,6 +502,7 @@ class MarkerListObserver(Loggable):
         self.action_log = action_log
 
         self.markers_position = {}
+        self.marker_observers = {}
 
         ges_marker_list.connect("marker-added", self._marker_added_cb)
         ges_marker_list.connect("marker-removed", self._marker_removed_cb)
@@ -509,10 +513,14 @@ class MarkerListObserver(Loggable):
         action = MarkerAdded(ges_marker_list, ges_marker)
         self.action_log.push(action)
         marker_observer = MetaContainerObserver(ges_marker, self.action_log)
+        self.marker_observers[ges_marker] = marker_observer
 
     def _marker_removed_cb(self, ges_marker_list, ges_marker):
         action = MarkerRemoved(ges_marker_list, ges_marker)
         self.action_log.push(action)
+        marker_observer = self.marker_observers.pop(ges_marker)
+        marker_observer.release()
+        marker = self.markers_position.pop(ges_marker)
 
     def _marker_moved_cb(self, ges_marker_list, position, ges_marker):
         old_position = self.markers_position[ges_marker]

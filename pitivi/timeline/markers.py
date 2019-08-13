@@ -42,16 +42,17 @@ class Marker(Gtk.EventBox, Loggable):
         self.ges_marker.ui = self
         self.position_ns = self.ges_marker.props.position
         self.get_style_context().add_class("Marker")
+        self.ges_marker.connect("notify-meta", self._notify_meta_cb)
 
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
         return Gtk.SizeRequestMode.CONSTANT_SIZE
 
     def do_get_preferred_height(self):
-        return (10, 10)
+        return MARKER_WIDTH, MARKER_WIDTH
 
     def do_get_preferred_width(self):
-        return (10, 10)
+        return MARKER_WIDTH, MARKER_WIDTH
 
     def do_enter_notify_event(self, unused_event):
         self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
@@ -74,6 +75,9 @@ class Marker(Gtk.EventBox, Loggable):
         if text == self.comment:
             return
         self.ges_marker.set_string("comment", text)
+        self.set_tooltip_text(self.comment)
+
+    def _notify_meta_cb(self, unused_ges_marker, item, value):
         self.set_tooltip_text(self.comment)
 
 
