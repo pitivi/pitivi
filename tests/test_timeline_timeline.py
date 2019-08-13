@@ -767,3 +767,21 @@ class TestShiftSelection(BaseTestTimeline):
     def test_shift_selection_multiple_layers(self):
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=False)
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=True)
+
+
+class TestClipsEdges(BaseTestTimeline):
+
+    def test_clips_edges(self):
+        """Test function for function clips_edges."""
+        timeline_container = common.create_timeline_container()
+        timeline = timeline_container.timeline
+        clips = self.addClipsSimple(timeline, 5)
+        points = []
+
+        for clip in clips:
+            points.append(clip.start)
+            points.append(clip.start + clip.duration)
+
+        points.sort()
+        print(timeline_container.clips_edges(points[0], points[-1]))
+        self.assertEqual(timeline_container.clips_edges(points[0], points[-1]), points)
