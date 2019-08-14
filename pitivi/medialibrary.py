@@ -19,6 +19,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
+import subprocess
+import sys
 import time
 from gettext import gettext as _
 from gettext import ngettext
@@ -796,6 +798,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filter.add_custom(Gtk.FileFilterFlags.URI |
                           Gtk.FileFilterFlags.MIME_TYPE,
                           self.__filter_unsupported)
+        filter.add_pattern("*.xges")
         dialog.add_filter(filter)
 
         # ...and allow the user to override our whitelists
@@ -1226,6 +1229,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         parent_path = os.path.dirname(path_from_uri(assets[0].get_id()))
         Gio.AppInfo.launch_default_for_uri(Gst.filename_to_uri(parent_path), None)
 
+    def __open_nested_timeline(self, unused_action, unused_parameter):
+        assets = self.getSelectedAssets()
+        if len(assets) != 1:
+            return
+        parent_path = os.path.abspath(path_from_uri(assets[0].get_id()))
+        subprocess.call([sys.argv[0], parent_path])
+
     def __createMenuModel(self):
         if self.app.proxy_manager.proxyingUnsupported:
             return None, None
@@ -1242,6 +1252,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             action.connect("activate", self.__open_containing_folder_cb)
             action_group.insert(action)
             text = _("Open containing folder")
+            menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
+
+        if len(assets) == 1 and assets[0].props.is_nested_timeline:
+            action = Gio.SimpleAction.new("open-nested-timeline", None)
+            action.connect("activate", self.__open_nested_timeline)
+            action_group.insert(action)
+            text = _("Edit Nested Clip")
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
         image_assets = [asset for asset in assets
