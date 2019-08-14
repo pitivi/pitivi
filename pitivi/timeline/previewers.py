@@ -740,6 +740,16 @@ class AssetPreviewer(Previewer, Loggable):
                 self.failures.add(self.position)
                 self.position = -1
             self._schedule_next_thumb_generation()
+        elif message.type == Gst.MessageType.STREAM_COLLECTION and isinstance(message.src, GES.Timeline):
+            # Make sure we only work with the video track when thumbnailing
+            # nested timelines.
+            collection = message.parse_stream_collection()
+            for i in range(collection.get_size()):
+                stream = collection.get_stream(i)
+                if stream.get_stream_type() == Gst.StreamType.VIDEO:
+                    message.src.send_event(Gst.Event.new_select_streams([stream.get_stream_id()]))
+                    break
+
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
@@ -821,6 +831,12 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
         for thumb in self.get_children():
             thumb.props.opacity = opacity
+
+    def refresh(self):
+        """Recreates the thumbnails cache."""
+        self.stop_generation()
+        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._update_thumbnails()
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
@@ -933,6 +949,22 @@ class ThumbnailCache(Loggable):
         filename = hash_file(Gst.uri_get_location(uri))
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         return os.path.join(thumbs_cache_dir, filename)
+
+    @classmethod
+    def update_caches(cls):
+        """Trashes the obsolete caches, for assets which changed.
+
+        Returns:
+            list[str]: The URIs of the assets which changed.
+        """
+        changed_files_uris = []
+        for uri, cache in cls.caches_by_uri.items():
+            dbfile = cls.dbfile_name(uri)
+            if cache.dbfile != dbfile:
+                changed_files_uris.append(uri)
+        for uri in changed_files_uris:
+            del cls.caches_by_uri[uri]
+        return changed_files_uris
 
     @classmethod
     def get(cls, obj):
@@ -1084,6 +1116,16 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         self._uri = quote_uri(get_proxy_target(ges_elem).props.id)
 
         self._num_failures = 0
+        self.become_controlled()
+
+    def refresh(self):
+        """Discards the audio samples so they are recreated."""
+        self.stop_generation()
+
+        self.samples = None
+        self.surface = None
+        self.queue_draw()
+
         self.become_controlled()
 
     def _startLevelsDiscovery(self):
