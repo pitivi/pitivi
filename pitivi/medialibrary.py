@@ -19,6 +19,8 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 import os
+import subprocess
+import sys
 import time
 from gettext import gettext as _
 from gettext import ngettext
@@ -169,9 +171,14 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
 
 
 class AssetThumbnail(GObject.Object, Loggable):
-    """Provider of decorated thumbnails for an asset."""
+    """Provider of decorated thumbnails for an asset.
+
+    The small_thumb and large_thumb fields hold the thumbs decorated
+    according to the status of the asset.
+    """
 
     __gsignals__ = {
+        # Emitted when small_thumb and large_thumb changed.
         "thumb-updated": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
@@ -195,12 +202,22 @@ class AssetThumbnail(GObject.Object, Loggable):
         Loggable.__init__(self)
         self.__asset = asset
         self.proxy_manager = proxy_manager
-        self.previewer = None
+        self.__previewer = None
         self.refresh()
 
     def refresh(self):
+        """Updates the shown icon. To be called when a new icon is available."""
         self.src_small, self.src_large = self.__get_thumbnails()
         self.decorate()
+
+    def disregard_previewer(self):
+        if self.__previewer:
+            self.__previewer.disconnect_by_func(self.__done_cb)
+            self.__previewer.stop_generation()
+            self.__previewer = None
+
+        self.refresh()
+        self.emit("thumb-updated")
 
     def __get_thumbnails(self):
         """Gets the base source thumbnails.
@@ -237,14 +254,13 @@ class AssetThumbnail(GObject.Object, Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    previewer = AssetPreviewer(self.__asset, 90)
-                    small_thumb = previewer.thumb_cache.get_preview_thumbnail()
+                    if not self.__previewer:
+                        self.__previewer = AssetPreviewer(self.__asset, 90)
+                        self.__previewer.connect("done", self.__done_cb)
+                    small_thumb = self.__previewer.thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
+                        # We'll be notified when the thumbnail is available.
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
-                        # Only try once to generate the thumbnail.
-                        if not self.previewer:
-                            self.previewer = previewer
-                            previewer.connect("done", self.__done_cb)
                     else:
                         width = small_thumb.props.width
                         height = small_thumb.props.height
@@ -796,6 +812,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         filter.add_custom(Gtk.FileFilterFlags.URI |
                           Gtk.FileFilterFlags.MIME_TYPE,
                           self.__filter_unsupported)
+        for formatter in GES.list_assets(GES.Formatter):
+            for extension in formatter.get_meta("extension").split(","):
+                if not extension:
+                    continue
+                filter.add_pattern("*.%s" % extension)
         dialog.add_filter(filter)
 
         # ...and allow the user to override our whitelists
@@ -824,6 +845,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if self._project.loaded:
             self._flushPendingAssets()
+
+    def update_asset_thumbs(self, asset_uris):
+        for row in self.storemodel:
+            if row[COL_ASSET].props.id in asset_uris:
+                row[COL_THUMB_DECORATOR].disregard_previewer()
 
     def _flushPendingAssets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
@@ -1226,6 +1252,14 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         parent_path = os.path.dirname(path_from_uri(assets[0].get_id()))
         Gio.AppInfo.launch_default_for_uri(Gst.filename_to_uri(parent_path), None)
 
+    def __edit_nested_clip_cb(self, unused_action, unused_parameter):
+        assets = self.getSelectedAssets()
+        if len(assets) != 1:
+            return
+
+        path = os.path.abspath(path_from_uri(assets[0].get_id()))
+        subprocess.Popen([sys.argv[0], path])
+
     def __createMenuModel(self):
         if self.app.proxy_manager.proxyingUnsupported:
             return None, None
@@ -1242,6 +1276,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             action.connect("activate", self.__open_containing_folder_cb)
             action_group.insert(action)
             text = _("Open containing folder")
+            menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
+
+        if len(assets) == 1 and assets[0].props.is_nested_timeline:
+            action = Gio.SimpleAction.new("edit-nested-clip", None)
+            action.connect("activate", self.__edit_nested_clip_cb)
+            action_group.insert(action)
+            text = _("Edit")
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
         image_assets = [asset for asset in assets

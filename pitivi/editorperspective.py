@@ -37,6 +37,7 @@ from pitivi.perspective import Perspective
 from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
+from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
@@ -45,8 +46,6 @@ from pitivi.utils.misc import path_from_uri
 from pitivi.utils.ui import beautify_time_delta
 from pitivi.utils.ui import EDITOR_PERSPECTIVE_CSS
 from pitivi.utils.ui import info_name
-from pitivi.utils.ui import PADDING
-from pitivi.utils.ui import SPACING
 from pitivi.viewer.viewer import ViewerContainer
 
 
@@ -102,6 +101,7 @@ class EditorPerspective(Perspective, Loggable):
         """Sets up the UI."""
         self.__setup_css()
         self._createUi()
+        self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
         self.app.gui.connect("destroy", self._destroyedCb)
 
     def refresh(self):
@@ -115,6 +115,28 @@ class EditorPerspective(Perspective, Loggable):
         style_context = self.app.gui.get_style_context()
         style_context.add_provider_for_screen(screen, css_provider,
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def __focus_in_event_cb(self, unused_widget, unused_event):
+        ges_timeline = self.timeline_ui.timeline.ges_timeline
+        if not ges_timeline:
+            # Nothing to work with, Pitivi is starting up.
+            return
+
+        # Commit the timeline so its nested timelines assets are refreshed.
+        ges_timeline.commit()
+
+        # We need to track the changed assets ourselves.
+        changed_files_uris = ThumbnailCache.update_caches()
+        if changed_files_uris:
+            self.medialibrary.update_asset_thumbs(changed_files_uris)
+
+            for ges_layer in ges_timeline.get_layers():
+                for ges_clip in ges_layer.get_clips():
+                    if ges_clip.get_asset().props.id in changed_files_uris:
+                        if ges_clip.ui._audioSource:
+                            ges_clip.ui._audioSource.update_previewer()
+                        if ges_clip.ui._videoSource:
+                            ges_clip.ui._videoSource.update_previewer()
 
     def _destroyedCb(self, unused_main_window):
         """Cleanup before destroying this window."""
