@@ -38,6 +38,7 @@ from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
+from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
@@ -98,10 +99,39 @@ class EditorPerspective(Perspective, Loggable):
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
+    def __focus_in_event_cb(self, unused_widget, event):
+        ges_timeline = self.timeline_ui.timeline.ges_timeline
+
+        # To avoid commit during pitivi startup and moving to Editors Perspective
+        if ges_timeline == None:
+            return
+
+        GES.Timeline.commit(ges_timeline)
+        changed_files_uris = ThumbnailCache.update_caches()
+
+        project = self.app.project_manager.current_project
+        assets = []
+        for uri in changed_files_uris:
+            asset = GES.Project.get_asset(project, uri, GES.UriClip)
+            if not asset:
+                continue
+            assets.append(asset)
+        if assets:
+            self.medialibrary.update_nested_clip_thumbs(assets)
+
+            for ges_layer in ges_timeline.get_layers():
+                for ges_clip in ges_layer.get_clips():
+                    if ges_clip.get_asset() in assets:
+                        if ges_clip.ui._audioSource != None:
+                            ges_clip.ui._audioSource.update_previewer()
+                        if ges_clip.ui._videoSource != None:
+                            ges_clip.ui._videoSource.update_previewer()
+
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
         self._createUi()
+        self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
         self.app.gui.connect("destroy", self._destroyedCb)
 
     def refresh(self):
