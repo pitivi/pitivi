@@ -29,7 +29,6 @@ from urllib.parse import urlparse
 from urllib.parse import urlsplit
 
 from gi.repository import GdkPixbuf
-from gi.repository import GES
 from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
@@ -37,7 +36,6 @@ from gi.repository import Gtk
 import pitivi.utils.loggable as log
 from pitivi.configure import APPMANUALURL_OFFLINE
 from pitivi.configure import APPMANUALURL_ONLINE
-from pitivi.configure import APPNAME
 from pitivi.utils.threads import Thread
 
 
