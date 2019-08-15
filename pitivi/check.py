@@ -255,17 +255,15 @@ def _check_videosink():
     return videosink_factory
 
 
-def _check_vaapi():
-    from gi.repository import Gst
-    if "vaapi" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
-        print("Vaapi decoders enabled.")
+def _check_hardware_decoders():
+    if "hwdecoders" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
+        print("Hardware decoders enabled.")
         return
 
-    for feature in Gst.Registry.get().get_feature_list_by_plugin("vaapi"):
-        if isinstance(feature, Gst.ElementFactory):
-            klass = feature.get_klass()
-            if "Decoder" in klass and "Video" in klass:
-                feature.set_rank(Gst.Rank.MARGINAL)
+    from gi.repository import Gst
+    for e in Gst.ElementFactory.list_get_elements(Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.NONE):
+        if "Hardware" in e.get_metadata("klass"):
+            e.set_rank(Gst.Rank.NONE)
 
 
 def _check_gst_python():
@@ -325,7 +323,7 @@ def check_requirements():
                 "Make sure you have a gtksink available."))
         return False
 
-    _check_vaapi()
+    _check_hardware_decoders()
 
     return True
 
