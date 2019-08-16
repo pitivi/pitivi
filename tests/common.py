@@ -262,10 +262,9 @@ class TestCase(unittest.TestCase, Loggable):
         self._result = result
         unittest.TestCase.run(self, result)
 
-    def create_project_file_from_xges(self, app, xges):
+    def create_project_file_from_xges(self, xges):
         unused, xges_path = tempfile.mkstemp(suffix=".xges")
         proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
-        app.project_manager.saveProject(uri=proj_uri)
 
         with open(xges_path, "w") as f:
             f.write(xges)

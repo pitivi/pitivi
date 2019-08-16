@@ -360,7 +360,7 @@ class TestProjectLoading(common.TestCase):
 
         mainloop = common.create_main_loop()
 
-        proj_uri = self.create_project_file_from_xges(app, PROJECT_STR)
+        proj_uri = self.create_project_file_from_xges(PROJECT_STR)
 
         def closing_project_cb(*args, **kwargs):
             # Do not ask whether to save project on closing.
@@ -451,7 +451,7 @@ class TestProjectLoading(common.TestCase):
         """Loads a project with moved asset."""
         app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.NOTHING)
 
-        proj_uri = self.create_project_file_from_xges(app, """<ges version='0.3'>
+        proj_uri = self.create_project_file_from_xges("""<ges version='0.3'>
             <project properties='properties;' metadatas='metadatas;'>
                 <ressources>
                     <asset id='file://this/is/a/moved/asset.mp4' extractable-type-name='GESUriClip'
@@ -493,7 +493,7 @@ class TestProjectLoading(common.TestCase):
         app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
         app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
-        proj_uri = self.create_project_file_from_xges(app, """<ges version='0.3'>
+        proj_uri = self.create_project_file_from_xges("""<ges version='0.3'>
   <project properties='properties;' metadatas='metadatas, name=(string)&quot;New\ Project&quot;, author=(string)Unknown, render-scale=(double)100, format-version=(string)0.3;'>
     <ressources>
       <asset id='file:///nop/1sec_simpsons_trailer.mp4' extractable-type-name='GESUriClip' properties='properties, supported-formats=(int)6, duration=(guint64)1228000000;' metadatas='metadatas, audio-codec=(string)&quot;MPEG-4\ AAC\ audio&quot;, maximum-bitrate=(uint)130625, bitrate=(uint)130625, datetime=(datetime)2007-02-19T05:03:04Z, encoder=(string)Lavf54.6.100, container-format=(string)&quot;ISO\ MP4/M4A&quot;, video-codec=(string)&quot;H.264\ /\ AVC&quot;, file-size=(guint64)232417;'  proxy-id='file:///nop/1sec_simpsons_trailer.mp4.232417.proxy.mkv' />
