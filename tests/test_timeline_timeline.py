@@ -783,5 +783,15 @@ class TestClipsEdges(BaseTestTimeline):
             points.append(clip.start + clip.duration)
 
         points.sort()
-        print(timeline_container.clips_edges(points[0], points[-1]))
-        self.assertEqual(timeline_container.clips_edges(points[0], points[-1]), points)
+
+        self.assertListEqual(timeline_container.clips_edges(after=0), points)
+        self.assertListEqual(timeline_container.clips_edges(after=9), [9, 10, 10, 20, 20, 30, 30, 40, 40, 50])
+        self.assertListEqual(timeline_container.clips_edges(after=10), [10, 20, 20, 30, 30, 40, 40, 50])
+        self.assertListEqual(timeline_container.clips_edges(after=48), [48, 50])
+        self.assertListEqual(timeline_container.clips_edges(after=49), [49, 50])
+
+        self.assertListEqual(timeline_container.clips_edges(before=0), [])
+        self.assertListEqual(timeline_container.clips_edges(before=1), [0, 1])
+        self.assertListEqual(timeline_container.clips_edges(before=9), [0, 9])
+        self.assertListEqual(timeline_container.clips_edges(before=10), [0, 10])
+        self.assertListEqual(timeline_container.clips_edges(before=11), [0, 10, 10, 11])

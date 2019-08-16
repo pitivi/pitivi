@@ -1924,22 +1924,36 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def clips_edges(self, start, end):
+    def clips_edges(self, before=None, after=None):
+        assert after is not None or before is not None
+
+        if after is not None:
+            start = after
+            end = self.ges_timeline.props.duration
+        else:
+            start = 0
+            end = before
+
         points = []
         points.append(start)
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips_in_interval(start, end)
             for clip in clips:
+                clip_end = clip.start + clip.duration
                 if start < clip.start:
                     points.append(clip.start)
-                if end > clip.start + clip.duration:
-                    points.append(clip.start + clip.duration)
-        points.append(end)
-        points.sort()
+                if end > clip_end:
+                    points.append(clip_end)
+        if end not in points:
+            points.append(end)
+        if start == end:
+            points = []
+        else:
+            points.sort()
         return points
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
-        forward_positions = self.clips_edges(self._project.pipeline.getPosition(), self.ges_timeline.props.duration)
+        forward_positions = self.clips_edges(after=self._project.pipeline.getPosition())
         if not forward_positions:
             return
 
@@ -1950,7 +1964,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _seek_backward_clip_cb(self, unused_action, unused_parameter):
         """Scrolls playhead to backward edge points of clips.
         """
-        backward_positions = self.clips_edges(0, self._project.pipeline.getPosition())
+        backward_positions = self.clips_edges(before=self._project.pipeline.getPosition())
         if not backward_positions:
             return
 
