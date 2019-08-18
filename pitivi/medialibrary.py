@@ -1229,12 +1229,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         parent_path = os.path.dirname(path_from_uri(assets[0].get_id()))
         Gio.AppInfo.launch_default_for_uri(Gst.filename_to_uri(parent_path), None)
 
-    def __open_nested_timeline(self, unused_action, unused_parameter):
+    def __edit_nested_clip_cb(self, unused_action, unused_parameter):
         assets = self.getSelectedAssets()
         if len(assets) != 1:
             return
         parent_path = os.path.abspath(path_from_uri(assets[0].get_id()))
-        subprocess.call([sys.argv[0], parent_path])
+        subprocess.Popen([sys.argv[0], parent_path])
 
     def __createMenuModel(self):
         if self.app.proxy_manager.proxyingUnsupported:
@@ -1255,8 +1255,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))
 
         if len(assets) == 1 and assets[0].props.is_nested_timeline:
-            action = Gio.SimpleAction.new("open-nested-timeline", None)
-            action.connect("activate", self.__open_nested_timeline)
+            action = Gio.SimpleAction.new("edit-nested-clip", None)
+            action.connect("activate", self.__edit_nested_clip_cb)
             action_group.insert(action)
             text = _("Edit Nested Clip")
             menu_model.append(text, "assets.%s" % action.get_name().replace(" ", "."))

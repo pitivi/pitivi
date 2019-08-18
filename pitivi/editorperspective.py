@@ -98,10 +98,17 @@ class EditorPerspective(Perspective, Loggable):
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
+    def update_timeline(self, unused_widget, event):
+        timeline = self.timeline_ui.timeline
+        if timeline.ges_timeline == None:
+            return
+        GES.Timeline.commit(timeline.ges_timeline)
+
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
         self._createUi()
+        self.app.gui.connect("focus-in-event", self.update_timeline)
         self.app.gui.connect("destroy", self._destroyedCb)
 
     def refresh(self):
