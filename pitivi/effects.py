@@ -692,6 +692,7 @@ class EffectsPopover(Gtk.Popover, Loggable):
         self.search_entry.set_text("")
         Gtk.Popover.popup(self)
 
+
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
 
@@ -702,7 +703,7 @@ def create_widget_accumulator_func(ihint, return_accu, handler_return, *args):
 
 
 class EffectsPropertiesManager(GObject.Object, Loggable):
-    """Provides and caches UIs for editing effects.
+    """Provides UIs for editing effects.
 
     Attributes:
         app (Pitivi): The app.
@@ -732,7 +733,6 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
     def __init__(self, app):
         GObject.Object.__init__(self)
         Loggable.__init__(self)
-        self.cache_dict = {}
         self.app = app
 
     def get_effect_configuration_ui(self, effect):
@@ -744,21 +744,15 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         Returns:
             GstElementSettingsWidget: A container for configuring the effect.
         """
-        if effect not in self.cache_dict:
-            effect_widget = GstElementSettingsWidget(effect, PROPS_TO_IGNORE)
-            widget = self.emit("create_widget", effect_widget, effect)
-            # The default handler of `create_widget` handles visibility
-            # itself and returns None
-            if widget is not None:
-                effect_widget.show_widget(widget)
-            self.cache_dict[effect] = effect_widget
-            self._connect_all_widget_callbacks(effect_widget, effect)
+        effect_widget = GstElementSettingsWidget(effect, PROPS_TO_IGNORE)
+        widget = self.emit("create_widget", effect_widget, effect)
+        # The default handler of `create_widget` handles visibility
+        # itself and returns None
+        if widget is not None:
+            effect_widget.show_widget(widget)
+        self._connect_all_widget_callbacks(effect_widget, effect)
 
-        return self.cache_dict[effect]
-
-    def clean_cache(self, effect):
-        if effect in self.cache_dict:
-            self.cache_dict.pop(effect)
+        return effect_widget
 
     def _post_configuration(self, effect, effect_set_ui):
         effect_name = effect.get_property("bin-description")

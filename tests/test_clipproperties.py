@@ -19,54 +19,12 @@
 from unittest import mock
 
 from gi.repository import GES
-from gi.repository import Gtk
 
 from pitivi.clipproperties import ClipProperties
-from pitivi.clipproperties import EffectProperties
 from pitivi.clipproperties import TransformationProperties
 from tests import common
 from tests.test_timeline_timeline import BaseTestTimeline
 from tests.test_undo_timeline import BaseTestUndoTimeline
-
-
-class EffectPropertiesTest(common.TestCase):
-    """Tests for the EffectProperties class."""
-
-    def test_calculate_effect_priority(self):
-        """Checks the effect priority calculation."""
-        # Dragging 1 onto itself and nearby.
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 0, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 1, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            1, 2, Gtk.TreeViewDropPosition.BEFORE))
-
-        # Dragging 0 and 3 between rows 1 and 2.
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            0, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            0, 2, Gtk.TreeViewDropPosition.BEFORE))
-        self.assertEqual(2, EffectProperties.calculate_effect_priority(
-            3, 1, Gtk.TreeViewDropPosition.AFTER))
-        self.assertEqual(2, EffectProperties.calculate_effect_priority(
-            3, 2, Gtk.TreeViewDropPosition.BEFORE))
-
-        # Dragging 0 and 2 onto 1.
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            0, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            0, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            2, 1, Gtk.TreeViewDropPosition.INTO_OR_BEFORE))
-        self.assertEqual(1, EffectProperties.calculate_effect_priority(
-            2, 1, Gtk.TreeViewDropPosition.INTO_OR_AFTER))
 
 
 class TransformationPropertiesTest(BaseTestTimeline):
