@@ -804,23 +804,16 @@ class TestClipsEdges(BaseTestTimeline):
         """Test function for function clips_edges."""
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        clips = self.addClipsSimple(timeline, 5)
-        points = []
+        _ = self.addClipsSimple(timeline, 5)
 
-        for clip in clips:
-            points.append(clip.start)
-            points.append(clip.start + clip.duration)
+        self.assertEqual(timeline_container.first_clip_edge(after=0), 10)
+        self.assertEqual(timeline_container.first_clip_edge(after=9), 10)
+        self.assertEqual(timeline_container.first_clip_edge(after=10), 20)
+        self.assertEqual(timeline_container.first_clip_edge(after=48), 50)
+        self.assertEqual(timeline_container.first_clip_edge(after=49), 50)
 
-        points.sort()
-
-        self.assertListEqual(timeline_container.clips_edges(after=0), points)
-        self.assertListEqual(timeline_container.clips_edges(after=9), [9, 10, 10, 20, 20, 30, 30, 40, 40, 50])
-        self.assertListEqual(timeline_container.clips_edges(after=10), [10, 20, 20, 30, 30, 40, 40, 50])
-        self.assertListEqual(timeline_container.clips_edges(after=48), [48, 50])
-        self.assertListEqual(timeline_container.clips_edges(after=49), [49, 50])
-
-        self.assertListEqual(timeline_container.clips_edges(before=0), [])
-        self.assertListEqual(timeline_container.clips_edges(before=1), [0, 1])
-        self.assertListEqual(timeline_container.clips_edges(before=9), [0, 9])
-        self.assertListEqual(timeline_container.clips_edges(before=10), [0, 10])
-        self.assertListEqual(timeline_container.clips_edges(before=11), [0, 10, 10, 11])
+        self.assertEqual(timeline_container.first_clip_edge(before=0), None)
+        self.assertEqual(timeline_container.first_clip_edge(before=1), 0)
+        self.assertEqual(timeline_container.first_clip_edge(before=9), 0)
+        self.assertEqual(timeline_container.first_clip_edge(before=10), 0)
+        self.assertEqual(timeline_container.first_clip_edge(before=11), 10)

@@ -1702,13 +1702,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.seek_forward_clip_action.connect("activate", self._seek_forward_clip_cb)
         group.add_action(self.seek_forward_clip_action)
         self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
-                               _("Seek clips' exteremes forward"))
+                               _("Seeks to the first clip edge at the right of the playhead."))
 
         self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
         self.seek_backward_clip_action.connect("activate", self._seek_backward_clip_cb)
         group.add_action(self.seek_backward_clip_action)
         self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
-                               _("Seek clips' exteremes backward"))
+                               _("Seeks to the first clip edge at the left of the playhead."))
 
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
@@ -1927,8 +1927,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
-    def clips_edges(self, before=None, after=None):
-        assert after is not None or before is not None
+    def first_clip_edge(self, before=None, after=None):
+        assert (after is not None) != (before is not None)
 
         if after is not None:
             start = after
@@ -1950,29 +1950,30 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if end not in points:
             points.append(end)
         if start == end:
-            points = []
+            points = None
+            return points
+        points.sort()
+        if after is not None:
+            return points[1]
         else:
-            points.sort()
-        return points
+            return points[-2]
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
-        forward_positions = self.clips_edges(after=self._project.pipeline.getPosition())
-        if not forward_positions:
+        """Seeks to the first clip edge at the right of the playhead."""
+        forward_position = self.first_clip_edge(after=self._project.pipeline.getPosition())
+        if forward_position is None:
             return
 
-        position = forward_positions[1]
-        self._project.pipeline.simple_seek(position)
+        self._project.pipeline.simple_seek(forward_position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_backward_clip_cb(self, unused_action, unused_parameter):
-        """Scrolls playhead to backward edge points of clips.
-        """
-        backward_positions = self.clips_edges(before=self._project.pipeline.getPosition())
-        if not backward_positions:
+        """Seeks to the first clip edge at the left of the playhead."""
+        backward_position = self.first_clip_edge(before=self._project.pipeline.getPosition())
+        if backward_position is None:
             return
 
-        position = backward_positions[-2]
-        self._project.pipeline.simple_seek(position)
+        self._project.pipeline.simple_seek(backward_position)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _alignSelectedCb(self, unused_action, unused_parameter):
