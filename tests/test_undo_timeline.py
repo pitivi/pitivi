@@ -1243,28 +1243,45 @@ class TestMarkers(BaseTestUndoTimeline):
         with self.action_log.started("Added marker"):
             marker1 = markers.add(10)
 
-        marker1.set_string("comment", "comment 1")
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
 
         self.assert_markers(markers, [(10, "comment 1")])
+
+        self.action_log.undo()
+        self.assert_markers(markers, [(10, None)])
 
         self.action_log.undo()
         self.assert_markers(markers, [])
 
         self.action_log.redo()
+        self.assert_markers(markers, [(10, None)])
+
+        self.action_log.redo()
+        self.assert_markers(markers, [(10, "comment 1")])
 
         with self.action_log.started("Added marker"):
             marker2 = markers.add(20)
 
-        marker2.set_string("comment", "comment 2")
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
 
         self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
         self.action_log.undo()
         self.action_log.undo()
+        self.action_log.undo()
+        self.action_log.undo()
         self.assert_markers(markers, [])
 
         self.action_log.redo()
+        self.assert_markers(markers, [(10, None)])
+
+        self.action_log.redo()
         self.assert_markers(markers, [(10, "comment 1")])
+
+        self.action_log.redo()
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
 
         self.action_log.redo()
         self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
@@ -1331,28 +1348,42 @@ class TestMarkers(BaseTestUndoTimeline):
 
         self.assert_markers(markers, [(10, None), (20, None)])
 
-        marker1.set_string("comment", "comment 1")
-        marker2.set_string("comment", "comment 2")
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
 
         self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
         self.action_log.undo()
-        self.assert_markers(markers, [(10, "comment 1")])
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+        self.action_log.undo()
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        self.action_log.undo()
+        self.assert_markers(markers, [(10, None)])
 
         self.action_log.undo()
         self.assert_markers(markers, [])
 
         self.action_log.redo()
-        self.assert_markers(markers, [(10, "comment 1")])
+        self.assert_markers(markers, [(10, None)])
+
+        self.action_log.redo()
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        self.action_log.redo()
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
 
         self.action_log.redo()
         self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
 
     def test_marker_load_project(self):
-
         # TODO: When there is nothing connected to closing-project,
         # the default reply is "False", which means "abort saving". It should mean
-        # "OK" to get rid off the handler. It should return "True"
+        # "OK" to get rid off the handler.  The meaning of the default (False)
+        # must be changed
         def closing(manager, project):
             return True
 
@@ -1373,74 +1404,67 @@ class TestMarkers(BaseTestUndoTimeline):
         project = app.project_manager.new_blank_project()
         timeline = project.ges_timeline
         markers = timeline.get_marker_list("markers")
-        self.assertEqual(markers.size(), 0)
+        self.assert_markers(markers, [])
 
         app.project_manager.closeRunningProject()
         project = app.project_manager.load_project(project_uri)
         timeline = project.ges_timeline
         markers = timeline.get_marker_list("markers")
-        self.assertEqual(markers.size(), 2)
         self.assert_markers(markers, [(10, None), (20, None)])
 
     def test_marker_ui(self):
-
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
         marker_box.markers_container = markers
 
         # Add marker simulating mouse clicks
+        x1 = 300
         event = mock.Mock(spec=Gdk.EventButton)
-        event.x = 300
+        event.x = x1
         event.y = 1
         event.button = Gdk.BUTTON_PRIMARY
 
-        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = marker_box
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
             marker_box.do_button_press_event(event)
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
             marker_box.do_button_release_event(event)
 
-        self.assertEqual(markers.size(), 1)
-        position_1 = Zoomable.pixelToNs(event.x)
-        self.assert_markers(markers, [(position_1, None)])
+        position1 = Zoomable.pixelToNs(event.x)
+        self.assert_markers(markers, [(position1, None)])
 
         # Delete marker simulating mouse clicks
-        x = 1000
-        position_2 = Zoomable.pixelToNs(x)
-        marker = marker_box.markers_container.add(position_2)
-        self.assertEqual(markers.size(), 2)
-        self.assert_markers(markers, [(position_1, None), (position_2, None)])
+        x2 = 1000
+        position2 = Zoomable.pixelToNs(x2)
+        marker = marker_box.markers_container.add(position2)
+        self.assert_markers(markers, [(position1, None), (position2, None)])
 
         event = mock.Mock(spec=Gdk.EventButton)
-        event.x = x
+        event.x = x2
         event.y = 1
         event.button = Gdk.BUTTON_SECONDARY
 
-        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = marker.ui
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
             marker_box.do_button_press_event(event)
             event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_RELEASE)
             marker_box.do_button_release_event(event)
 
-        self.assertEqual(markers.size(), 1)
-        self.assert_markers(markers, [(position_1, None)])
-
         # Move marker simulating mouse displacement
-        x = 600
-        position_3 = Zoomable.pixelToNs(x)
-        marker = marker_box.markers_container.add(position_3)
-        self.assertEqual(markers.size(), 2)
-        self.assert_markers(markers, [(position_1, None), (position_3, None)])
+        x3 = 600
+        position3 = Zoomable.pixelToNs(x3)
+        marker = marker_box.markers_container.add(position3)
+        self.assert_markers(markers, [(position1, None), (position3, None)])
 
-        x = 900
-        position_3 = Zoomable.pixelToNs(x)
+        x4 = 900
+        position3 = Zoomable.pixelToNs(x4)
 
-        with mock.patch.object(Gtk, 'get_event_widget') as get_event_widget:
+        with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             event = mock.Mock(spec=Gdk.EventButton)
-            event.x = x
+            event.x = x4
             event.y = 1
             event.type = Gdk.EventType.BUTTON_PRESS
             event.button = Gdk.BUTTON_PRIMARY
@@ -1449,8 +1473,7 @@ class TestMarkers(BaseTestUndoTimeline):
             marker_box.do_button_press_event(event)
 
             with mock.patch.object(marker.ui, "translate_coordinates") as translate_coordinates:
-                translate_coordinates.return_value = (x, 0)
+                translate_coordinates.return_value = (x4, 0)
                 marker_box.do_motion_notify_event(event)
 
-        self.assertEqual(markers.size(), 2)
-        self.assert_markers(markers, [(position_1, None), (position_3, None)])
+        self.assert_markers(markers, [(position1, None), (position3, None)])
