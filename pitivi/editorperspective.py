@@ -98,17 +98,20 @@ class EditorPerspective(Perspective, Loggable):
         pm.connect("project-closed", self._projectManagerProjectClosedCb)
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
-    def update_timeline(self, unused_widget, event):
+    def __focus_in_event_cb(self, unused_widget, event):
+        print("focus in")
         timeline = self.timeline_ui.timeline
+        """To avoid commit during pitivi startup and moving to Editors Perspective"""
         if timeline.ges_timeline == None:
             return
+        print(GES.Timeline.commit(timeline.ges_timeline))
         GES.Timeline.commit(timeline.ges_timeline)
 
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
         self._createUi()
-        self.app.gui.connect("focus-in-event", self.update_timeline)
+        self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
         self.app.gui.connect("destroy", self._destroyedCb)
 
     def refresh(self):
