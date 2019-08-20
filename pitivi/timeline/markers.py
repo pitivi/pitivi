@@ -153,7 +153,6 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
     def do_button_press_event(self, event):
         event_widget = Gtk.get_event_widget(event)
         button = event.button
-
         if button == Gdk.BUTTON_PRIMARY:
             if isinstance(event_widget, Marker):
                 if event.type == Gdk.EventType.BUTTON_PRESS:
@@ -163,8 +162,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                 elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
                     self.marker_pressed = None
                     self.app.action_log.rollback()
-
-                    MarkerPopover(self.app, event_widget)
+                    marker_popover = MarkerPopover(self.app, event_widget)
+                    marker_popover.popup()
 
             else:
                 position = self.pixelToNs(event.x + self.offset)
@@ -174,7 +173,6 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
     def do_button_release_event(self, event):
         button = event.button
         event_widget = Gtk.get_event_widget(event)
-
         if button == Gdk.BUTTON_PRIMARY and self.marker_pressed:
             self.marker_pressed = None
             self.app.action_log.commit("Move marker")
@@ -244,7 +242,6 @@ class MarkerPopover(Gtk.Popover):
 
         self.set_relative_to(self.marker)
         self.show_all()
-        self.popup()
 
     def _save_text_cb(self, unused_element):
         buffer = self.text_view.get_buffer()
