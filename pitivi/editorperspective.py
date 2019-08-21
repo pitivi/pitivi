@@ -38,6 +38,8 @@ from pitivi.project import ProjectSettingsDialog
 from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
+from pitivi.timeline.previewers import ThumbnailCache
+from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
@@ -99,13 +101,12 @@ class EditorPerspective(Perspective, Loggable):
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
     def __focus_in_event_cb(self, unused_widget, event):
-        print("focus in")
         timeline = self.timeline_ui.timeline
         """To avoid commit during pitivi startup and moving to Editors Perspective"""
         if timeline.ges_timeline == None:
             return
-        print(GES.Timeline.commit(timeline.ges_timeline))
         GES.Timeline.commit(timeline.ges_timeline)
+        ThumbnailCache.update_caches()
 
     def setup_ui(self):
         """Sets up the UI."""

@@ -763,6 +763,14 @@ class AssetPreviewer(Previewer, Loggable):
                 self.failures.add(self.position)
                 self.position = -1
             self._schedule_next_thumb_generation()
+        elif message.type == Gst.MessageType.STREAM_COLLECTION and isinstance(message.src, GES.Timeline):
+            collection = message.parse_stream_collection()
+            for i in range(collection.get_size()):
+                stream = collection.get_stream(i)
+                if stream.get_stream_type() == Gst.StreamType.VIDEO:
+                    message.src.send_event(Gst.Event.new_select_streams([stream.get_stream_id()]))
+                    break
+
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
@@ -837,6 +845,10 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         self.ges_elem.connect("notify::duration", self._duration_changed_cb)
 
         self.connect("notify::height-request", self._height_changed_cb)
+
+    @classmethod
+    def update_thum(cls):
+        cls._update_thumbnails(self)
 
     def set_selected(self, selected):
         if selected:
@@ -957,6 +969,11 @@ class ThumbnailCache(Loggable):
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
         return {row[0] for row in self._cur.fetchall()}
+
+    @classmethod
+    def update_caches(cls):
+        for uri in cls.caches_by_uri:
+            cls.caches_by_uri[uri] = ThumbnailCache(uri)
 
     @classmethod
     def get(cls, obj):
