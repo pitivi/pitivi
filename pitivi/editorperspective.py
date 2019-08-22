@@ -39,7 +39,6 @@ from pitivi.settings import GlobalSettings
 from pitivi.tabsmanager import BaseTabs
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.timeline.previewers import ThumbnailCache
-from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.titleeditor import TitleEditor
 from pitivi.transitions import TransitionsListWidget
 from pitivi.utils.loggable import Loggable
@@ -107,6 +106,16 @@ class EditorPerspective(Perspective, Loggable):
             return
         GES.Timeline.commit(timeline.ges_timeline)
         changed_files_uris = ThumbnailCache.update_caches()
+
+        project = self.app.project_manager.current_project
+        assets = []
+        for uri in changed_files_uris:
+            asset = GES.Project.get_asset(project, uri, GES.UriClip)
+            if not asset:
+                continue
+            assets.append(asset)
+        if assets:
+            self.medialibrary.update_nested_clip_thumbs(assets)
 
     def setup_ui(self):
         """Sets up the UI."""
