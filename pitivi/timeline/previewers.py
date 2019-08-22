@@ -973,7 +973,11 @@ class ThumbnailCache(Loggable):
     @classmethod
     def update_caches(cls):
         for uri in cls.caches_by_uri:
-            cls.caches_by_uri[uri] = ThumbnailCache(uri)
+            filehash = hash_file(Gst.uri_get_location(uri))
+            thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+            dbfile = os.path.join(thumbs_cache_dir, filehash)
+            if cls.caches_by_uri[uri]._dbfile != dbfile:
+                cls.caches_by_uri[uri] = ThumbnailCache(uri)
 
     @classmethod
     def get(cls, obj):
