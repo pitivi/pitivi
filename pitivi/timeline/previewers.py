@@ -951,9 +951,7 @@ class ThumbnailCache(Loggable):
 
     def __init__(self, uri):
         Loggable.__init__(self)
-        self._filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
+        self._filehash, self._dbfile = self.dbfile_name(uri)
         self._db = sqlite3.connect(self._dbfile)
         self._cur = self._db.cursor()
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs "
@@ -970,14 +968,23 @@ class ThumbnailCache(Loggable):
         self._cur.execute("SELECT Time FROM Thumbs")
         return {row[0] for row in self._cur.fetchall()}
 
+    @staticmethod
+    def dbfile_name(uri):
+        filehash = hash_file(Gst.uri_get_location(uri))
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        dbfile = os.path.join(thumbs_cache_dir, filehash)
+        return filehash, dbfile
+
     @classmethod
     def update_caches(cls):
-        for uri in cls.caches_by_uri:
-            filehash = hash_file(Gst.uri_get_location(uri))
-            thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-            dbfile = os.path.join(thumbs_cache_dir, filehash)
-            if cls.caches_by_uri[uri]._dbfile != dbfile:
-                cls.caches_by_uri[uri] = ThumbnailCache(uri)
+        uri_edited = list()
+        for uri, cache in cls.caches_by_uri.items():
+            filehash, dbfile = cls.dbfile_name(uri)
+            if cache._dbfile != dbfile:
+                uri_edited.append(uri)
+        for uri in uri_edited:
+            cls.caches_by_uri.pop(uri)
+        return uri_edited
 
     @classmethod
     def get(cls, obj):

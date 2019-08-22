@@ -106,7 +106,8 @@ class EditorPerspective(Perspective, Loggable):
         if timeline.ges_timeline == None:
             return
         GES.Timeline.commit(timeline.ges_timeline)
-        ThumbnailCache.update_caches()
+        uri_changed = ThumbnailCache.update_caches()
+        print("in EditorPerspective", uri_changed)
 
     def setup_ui(self):
         """Sets up the UI."""
