@@ -47,20 +47,26 @@ class MarkerListObserver(Loggable):
         ges_marker_list.connect("marker-moved", self._marker_moved_cb)
 
     def _marker_added_cb(self, ges_marker_list, position, ges_marker):
-        self.markers_position[ges_marker] = ges_marker.props.position
         action = MarkerAdded(ges_marker_list, ges_marker)
         self.action_log.push(action)
+        self.markers_position[ges_marker] = ges_marker.props.position
         marker_observer = MetaContainerObserver(ges_marker, self.action_log)
         self.marker_observers[ges_marker] = marker_observer
 
     def _marker_removed_cb(self, ges_marker_list, ges_marker):
         action = MarkerRemoved(ges_marker_list, ges_marker)
         self.action_log.push(action)
-        marker_observer = self.marker_observers.pop(ges_marker)
-        marker_observer.release()
-        self.markers_position.pop(ges_marker)
+        if ges_marker in self.marker_observers:
+            marker_observer = self.marker_observers.pop(ges_marker)
+            marker_observer.release()
+            self.markers_position.pop(ges_marker)
 
     def _marker_moved_cb(self, ges_marker_list, position, ges_marker):
+        if ges_marker not in self.markers_position:
+            self.markers_position[ges_marker] = ges_marker.props.position
+            marker_observer = MetaContainerObserver(ges_marker, self.action_log)
+            self.marker_observers[ges_marker] = marker_observer
+
         old_position = self.markers_position[ges_marker]
         action = MarkerMoved(ges_marker_list, ges_marker, old_position)
         self.action_log.push(action)

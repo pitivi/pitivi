@@ -1510,12 +1510,13 @@ class TestMarkers(BaseTestUndoTimeline):
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = marker.ui
 
-            def fake_method(markerpopover):
+            def popup(markerpopover):
                     text_buffer = markerpopover.text_view.get_buffer()
+                    text_buffer.set_text("com")
                     text_buffer.set_text("comment")
                     markerpopover.popdown()
             original_popover_menu = Gtk.Popover.popup
-            Gtk.Popover.popup = fake_method
+            Gtk.Popover.popup = popup
             try:
                 event.guiEvent = Gdk.Event.new(Gdk.EventType.BUTTON_PRESS)
                 marker_box.do_button_press_event(event)
@@ -1524,5 +1525,8 @@ class TestMarkers(BaseTestUndoTimeline):
                 marker_box.do_button_press_event(event)
             finally:
                     Gtk.Popover.popup = original_popover_menu
+
+        stack, = self.action_log.undo_stacks
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
         self.assert_markers(markers, [(position, "comment")])

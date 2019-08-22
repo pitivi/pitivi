@@ -94,8 +94,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
         self.app = timeline.app
 
-        self.hadj = timeline.timeline.hadj
-        self.hadj.connect("value-changed", self._hadj_value_changed_cb)
+        hadj = timeline.timeline.hadj
+        hadj.connect("value-changed", self._hadj_value_changed_cb)
         self.props.hexpand = True
         self.props.valign = Gtk.Align.START
 
