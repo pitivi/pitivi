@@ -951,7 +951,7 @@ class ThumbnailCache(Loggable):
 
     def __init__(self, uri):
         Loggable.__init__(self)
-        self._filehash, self._dbfile = self.dbfile_name(uri)
+        self._dbfile = self.dbfile_name(uri)
         self._db = sqlite3.connect(self._dbfile)
         self._cur = self._db.cursor()
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs "
@@ -973,18 +973,18 @@ class ThumbnailCache(Loggable):
         filehash = hash_file(Gst.uri_get_location(uri))
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
         dbfile = os.path.join(thumbs_cache_dir, filehash)
-        return filehash, dbfile
+        return dbfile
 
     @classmethod
     def update_caches(cls):
-        uri_edited = list()
+        changed_files_uris = []
         for uri, cache in cls.caches_by_uri.items():
-            filehash, dbfile = cls.dbfile_name(uri)
+            dbfile = cls.dbfile_name(uri)
             if cache._dbfile != dbfile:
-                uri_edited.append(uri)
-        for uri in uri_edited:
-            cls.caches_by_uri.pop(uri)
-        return uri_edited
+                changed_files_uris.append(uri)
+        for uri in changed_files_uris:
+            del cls.caches_by_uri[uri]
+        return changed_files_uris
 
     @classmethod
     def get(cls, obj):
@@ -1014,9 +1014,7 @@ class ThumbnailCache(Loggable):
         Args:
             uri (str): The place where to copy/save the ThumbnailCache
         """
-        filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        dbfile = os.path.join(thumbs_cache_dir, filehash)
+        dbfile = self.dbfile_name(uri)
 
         try:
             os.remove(dbfile)
@@ -1106,7 +1104,7 @@ class ThumbnailCache(Loggable):
     def commit(self):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
-        self.log("Saved thumbnail cache file: %s", self._filehash)
+        self.log("Saved thumbnail cache file: %s", self._dbfile)
 
 
 def get_wavefile_location_for_uri(uri):
