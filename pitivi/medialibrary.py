@@ -830,8 +830,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def update_nested_clip_thumbs(self, assets):
         for asset in assets:
-            thumbs_decorator = AssetThumbnail(asset, self.app.proxy_manager)
-            thumbs_decorator.connect("thumb-updated", self.__thumb_updated_cb, asset)
+            for row in self.storemodel:
+                if asset == row[COL_ASSET]:
+                    row[COL_THUMB_DECORATOR].previewer = None
+                    row[COL_THUMB_DECORATOR].refresh()
+                    break
 
     def _flushPendingAssets(self):
         self.debug("Flushing %d pending model rows", len(self._pending_assets))
