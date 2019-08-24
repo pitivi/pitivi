@@ -636,6 +636,11 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
         # and override that one.
         self.showDefaultKeyframes(lazy_render=True)
 
+    def update_previewer(self):
+        self.__previewer = self._getPreviewer()
+        if self.__previewer:
+            self.add(self.__previewer)
+
     def release(self):
         if self.__previewer:
             self.__previewer.release()

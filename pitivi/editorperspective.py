@@ -100,11 +100,11 @@ class EditorPerspective(Perspective, Loggable):
         pm.connect("missing-uri", self._projectManagerMissingUriCb)
 
     def __focus_in_event_cb(self, unused_widget, event):
-        timeline = self.timeline_ui.timeline
+        ges_timeline = self.timeline_ui.timeline.ges_timeline
         """To avoid commit during pitivi startup and moving to Editors Perspective"""
-        if timeline.ges_timeline == None:
+        if ges_timeline == None:
             return
-        GES.Timeline.commit(timeline.ges_timeline)
+        GES.Timeline.commit(ges_timeline)
         changed_files_uris = ThumbnailCache.update_caches()
 
         project = self.app.project_manager.current_project
@@ -117,6 +117,16 @@ class EditorPerspective(Perspective, Loggable):
         if assets:
             self.medialibrary.update_nested_clip_thumbs(assets)
 
+        for ges_layer in ges_timeline.get_layers():
+            widgets = ges_layer.ui._children
+            for ges_clip in ges_layer.get_clips():
+                if ges_clip.get_asset() in assets:
+                    for widget in widgets:
+                        if widget.ges_clip == ges_clip:
+                            widget._videoSource.update_previewer()
+
+            # for widget in widgets:
+            #     widget.ges_clip.ui
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()

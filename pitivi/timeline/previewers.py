@@ -846,10 +846,6 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
         self.connect("notify::height-request", self._height_changed_cb)
 
-    @classmethod
-    def update_thum(cls):
-        cls._update_thumbnails(self)
-
     def set_selected(self, selected):
         if selected:
             opacity = 0.5
