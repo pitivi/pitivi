@@ -237,15 +237,10 @@ EDITOR_PERSPECTIVE_CSS = """
         background-image: url('%(marker_hovered)s');
     }
 
-    .Marker:selected {
-        background-image: url('%(marker_selected)s');
-    }
-
 """ % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
         'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),
-        'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png"),
-        'marker_selected': os.path.join(get_pixmap_dir(), "marker-select.png")})
+        'marker_hovered': os.path.join(get_pixmap_dir(), "marker-hover.png")})
 
 
 PREFERENCES_CSS = """

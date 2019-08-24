@@ -41,8 +41,11 @@ class Marker(Gtk.EventBox, Loggable):
         self.ges_marker = ges_marker
         self.ges_marker.ui = self
         self.position_ns = self.ges_marker.props.position
+
         self.get_style_context().add_class("Marker")
         self.ges_marker.connect("notify-meta", self._notify_meta_cb)
+
+        self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
 
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
@@ -223,6 +226,7 @@ class MarkerPopover(Gtk.Popover):
         self.app = app
 
         self.text_view = Gtk.TextView()
+        self.text_view.set_size_request(100, -1)
 
         self.marker = marker
 
@@ -230,7 +234,7 @@ class MarkerPopover(Gtk.Popover):
         vbox.pack_start(self.text_view, False, True, SPACING * 2)
 
         self.add(vbox)
-        self.set_position(Gtk.PositionType.LEFT)
+        self.set_position(Gtk.PositionType.TOP)
         self.connect("closed", self._save_text_cb)
 
         text_buffer = self.text_view.get_buffer()
