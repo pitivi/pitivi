@@ -118,15 +118,12 @@ class EditorPerspective(Perspective, Loggable):
             self.medialibrary.update_nested_clip_thumbs(assets)
 
         for ges_layer in ges_timeline.get_layers():
-            widgets = ges_layer.ui._children
             for ges_clip in ges_layer.get_clips():
                 if ges_clip.get_asset() in assets:
-                    for widget in widgets:
-                        if widget.ges_clip == ges_clip:
-                            widget._videoSource.update_previewer()
+                        ges_clip.ui._videoSource.update_previewer()
+                        ges_layer.ui._changed = True
+                        ges_clip.ui.show_all()
 
-            # for widget in widgets:
-            #     widget.ges_clip.ui
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
