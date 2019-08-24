@@ -237,6 +237,7 @@ EDITOR_PERSPECTIVE_CSS = """
         background-image: url('%(marker_hovered)s');
     }
 
+
 """ % ({'trimbar_normal': os.path.join(get_pixmap_dir(), "trimbar-normal.png"),
         'trimbar_focused': os.path.join(get_pixmap_dir(), "trimbar-focused.png"),
         'marker_unselected': os.path.join(get_pixmap_dir(), "marker-unselect.png"),

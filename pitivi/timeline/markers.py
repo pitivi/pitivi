@@ -107,10 +107,18 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
         self.__markers_container = None
         self.marker_pressed = None
+        self.marker_new = None
 
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
                         Gdk.EventMask.BUTTON_PRESS_MASK |
                         Gdk.EventMask.BUTTON_RELEASE_MASK)
+
+        self.app.project_manager.connect_after(
+            "project-closed", self.__project_closed_cb)
+
+    def __project_closed_cb(self, unused_project_manager, unused_project):
+        for marker in self.layout.get_children():
+            self.layout.remove(marker)
 
     @property
     def markers_container(self):
