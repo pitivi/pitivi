@@ -102,7 +102,7 @@ class EditorPerspective(Perspective, Loggable):
     def __focus_in_event_cb(self, unused_widget, event):
         ges_timeline = self.timeline_ui.timeline.ges_timeline
 
-        """To avoid commit during pitivi startup and moving to Editors Perspective"""
+        # To avoid commit during pitivi startup and moving to Editors Perspective
         if ges_timeline == None:
             return
 
@@ -119,13 +119,14 @@ class EditorPerspective(Perspective, Loggable):
         if assets:
             self.medialibrary.update_nested_clip_thumbs(assets)
 
-        for ges_layer in ges_timeline.get_layers():
-            for ges_clip in ges_layer.get_clips():
-                if ges_clip.get_asset() in assets:
-                        ges_clip.ui._audioSource.update_previewer()
-                        ges_clip.ui._videoSource.update_previewer()
-                        ges_clip.ui.show_all()
-                        ges_layer.ui._changed = True
+            for ges_layer in ges_timeline.get_layers():
+                for ges_clip in ges_layer.get_clips():
+                    print(ges_clip)
+                    if ges_clip.get_asset() in assets:
+                        if ges_clip.ui._audioSource != None:
+                            ges_clip.ui._audioSource.update_previewer()
+                        if ges_clip.ui._videoSource != None:
+                            ges_clip.ui._videoSource.update_previewer()
 
     def setup_ui(self):
         """Sets up the UI."""
