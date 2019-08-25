@@ -45,7 +45,7 @@ class Marker(Gtk.EventBox, Loggable):
         self.get_style_context().add_class("Marker")
         self.ges_marker.connect("notify-meta", self._notify_meta_cb)
 
-        self.set_state_flags(Gtk.StateFlags.PRELIGHT, clear=False)
+        self._selected = False
 
     # pylint: disable=arguments-differ
     def do_get_request_mode(self):
@@ -63,6 +63,9 @@ class Marker(Gtk.EventBox, Loggable):
     def do_leave_notify_event(self, unused_event):
         self.unset_state_flags(Gtk.StateFlags.PRELIGHT)
 
+    def _notify_meta_cb(self, unused_ges_marker, item, value):
+        self.set_tooltip_text(self.comment)
+
     @property
     def position(self):
         """Returns the position of the marker, in nanoseconds."""
@@ -79,8 +82,18 @@ class Marker(Gtk.EventBox, Loggable):
             return
         self.ges_marker.set_string("comment", text)
 
-    def _notify_meta_cb(self, unused_ges_marker, item, value):
-        self.set_tooltip_text(self.comment)
+    @property
+    def selected(self):
+        """Returns true is the marker is marked as selected"""
+        return self._selected
+
+    @selected.setter
+    def selected(self, selected):
+        self._selected = selected
+        if self._selected:
+            self.set_state_flags(Gtk.StateFlags.SELECTED, clear=False)
+        else:
+            self.unset_state_flags(Gtk.StateFlags.SELECTED)
 
 
 class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
@@ -106,7 +119,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.props.height_request = 10
 
         self.__markers_container = None
-        self.marker_pressed = None
+        self.marker_moving = None
         self.marker_new = None
 
         self.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
@@ -143,7 +156,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         for ges_marker in markers:
             position = ges_marker.props.position
             self._add_marker(position, ges_marker)
-        self.marker_pressed = None
+        self.marker_new = None
 
     def _hadj_value_changed_cb(self, hadj):
         """Handles the adjustment value change."""
@@ -165,11 +178,12 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         if button == Gdk.BUTTON_PRIMARY:
             if isinstance(event_widget, Marker):
                 if event.type == Gdk.EventType.BUTTON_PRESS:
-                    self.marker_pressed = event_widget
+                    self.marker_moving = event_widget
+                    self.marker_moving.selected = True
                     self.app.action_log.begin("Move marker", toplevel=True)
 
                 elif event.type == Gdk.EventType.DOUBLE_BUTTON_PRESS:
-                    self.marker_pressed = None
+                    self.marker_moving = None
                     self.app.action_log.rollback()
                     marker_popover = MarkerPopover(self.app, event_widget)
                     marker_popover.popup()
@@ -178,25 +192,31 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                 position = self.pixelToNs(event.x + self.offset)
                 with self.app.action_log.started("Added marker", toplevel=True):
                     self.__markers_container.add(position)
+                self.marker_new.selected = True
 
     def do_button_release_event(self, event):
         button = event.button
         event_widget = Gtk.get_event_widget(event)
-        if button == Gdk.BUTTON_PRIMARY and self.marker_pressed:
-            self.marker_pressed = None
-            self.app.action_log.commit("Move marker")
+        if button == Gdk.BUTTON_PRIMARY:
+            if self.marker_moving:
+                self.marker_moving.selected = False
+                self.marker_moving = None
+                self.app.action_log.commit("Move marker")
+            elif self.marker_new:
+                self.marker_new.selected = False
+                self.marker_new = None
 
         elif button == Gdk.BUTTON_SECONDARY and isinstance(event_widget, Marker):
             with self.app.action_log.started("Removed marker", toplevel=True):
                 self.__markers_container.remove(event_widget.ges_marker)
 
     def do_motion_notify_event(self, event):
-        if self.marker_pressed:
-            event_widget = Gtk.get_event_widget(event)
+        event_widget = Gtk.get_event_widget(event)
+        if event_widget is self.marker_moving:
             event_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
             event_x = max(0, event_x)
             position_ns = self.pixelToNs(event_x + self.offset)
-            self.__markers_container.move(self.marker_pressed.ges_marker, position_ns)
+            self.__markers_container.move(self.marker_moving.ges_marker, position_ns)
 
     def _marker_added_cb(self, unused_markers, position, ges_marker):
         self._add_marker(position, ges_marker)
@@ -206,6 +226,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         x = self.nsToPixel(position) - self.offset - MARKER_WIDTH / 2
         self.layout.put(marker, x, 0)
         marker.show()
+        self.marker_new = marker
 
     def _marker_removed_cb(self, unused_markers, ges_marker):
         self._remove_marker(ges_marker)
@@ -258,3 +279,4 @@ class MarkerPopover(Gtk.Popover):
         if buffer.props.text != self.marker.comment:
             with self.app.action_log.started("new comment", toplevel=True):
                 self.marker.comment = buffer.props.text
+        self.marker.selected = False
