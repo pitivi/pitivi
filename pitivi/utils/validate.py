@@ -486,7 +486,7 @@ def select_clips(scenario, action):
     return 1
 
 
-def Parametter(name, desc, mandatory=False, possible_variables=None, types=None):
+def Parameter(name, desc, mandatory=False, possible_variables=None, types=None):
     p = GstValidate.ActionParameter()
     p.description = desc
     p.mandatory = mandatory
@@ -548,7 +548,7 @@ def init():
                                          "Remove clip",
                                          GstValidate.ActionTypeFlags.NONE)
         GstValidate.register_action_type("select-clips", "pitivi",
-                                         select_clips, [Parametter("clip-name",
+                                         select_clips, [Parameter("clip-name",
                                                                    "The name of the clip to select",
                                                                    True, None, "str")],
                                          "Select clips",
