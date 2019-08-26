@@ -47,9 +47,9 @@ from pitivi.utils.widgets import TextWidget
 
 
 class Encoders(Loggable):
-    """Registry of avalaible Muxers, Audio encoders and Video encoders.
+    """Registry of available Muxers, Audio encoders and Video encoders.
 
-    Also keeps the avalaible combinations of those.
+    Also keeps the available combinations of those.
 
     It is a singleton. Use `Encoders()` to access the instance.
 

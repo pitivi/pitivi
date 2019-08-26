@@ -169,7 +169,7 @@ It seriously needs to be rethinked.
             of an audio track)
             -   The 'media-converted' ones could maybe done on the fly
                 if you add a file of a given media type (ex:audio) into
-                a track of anothe media type (ex:video).
+                a track of another media type (ex:video).
 -   Allow easy transcoding, re-rendering or re-muxing of
     SubObjectFactory.
 -   Allow adding extra (meta)data

@@ -51,7 +51,7 @@ The browsers CAN also offer these functionality:
     `ObjectFactory` with the given uri. It returns an `ObjectFactory`
     which might be the same as the input, or a new one, or a a temporary
     new one.
--   Searching/Browsing functionnalities
+-   Searching/Browsing functionalities
 
 Browsers should use the **UI Bundle** system to provide adequate UI
 interfaces if needed.

@@ -54,7 +54,7 @@ want to create.
 
 1. In the [GitLab UI](https://gitlab.gnome.org/GNOME/pitivi) press the "fork"
    button (*WARNING: Make sure to be authenticated otherwise the button won't be
-   avalaible*)
+   available*)
 
 2. Add the remote git repository you just forked as a remote to your local git repository:
 

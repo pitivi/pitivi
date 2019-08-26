@@ -121,7 +121,7 @@ configuration dialog.
 
 ### Current implementation
 
-The current implimentation is a mix-in object that replaces the
+The current implementation is a mix-in object that replaces the
 configure() method with our own gui-builder code (plugin authors that
 need more flexibility can create their own configure() method)
 

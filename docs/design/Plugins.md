@@ -2,7 +2,7 @@
 
 The PiTiVi plugin system will help keep the core to a minimum codebase
 required for normal editing. The plugins will add various kind of
-functionnalities/interfaces for new features, special hardwares, online
+functionalities/interfaces for new features, special hardwares, online
 services, ....
 
 # Use Cases for Plugins
@@ -307,7 +307,7 @@ the most freedom.
 
 The main advantage of using interfaces over class inheritance is that
 the former defines relationships between items and keeps the system
-higly decoupled, while the latter constrains thee partecipants to a gree
+highly decoupled, while the latter constrains thee partecipants to a gree
 an “is a” relationship, thus creating strong coupling between classes.
 
 # Pluggable architecture proposal
