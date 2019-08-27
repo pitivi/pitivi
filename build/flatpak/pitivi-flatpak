@@ -637,23 +637,23 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             venv.create(venv_path, with_pip=True)
 
         activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git_pep8_commit_hook git-pylint-commit-hook pre-commit pylint"
-        Console.message(
-            "Installing development tools in the Python virtual env: %s", pip_modules)
-        subprocess.check_call(
-            ". %s && pip install -U %s" % (activate_script, pip_modules),
-            shell=True)
+        # pip_modules = "git_pep8_commit_hook git-pylint-commit-hook pre-commit pylint"
+        # Console.message(
+        #     "Installing development tools in the Python virtual env: %s", pip_modules)
+        # subprocess.check_call(
+        #     ". %s && pip install -U %s" % (activate_script, pip_modules),
+        #     shell=True)
 
-        git-pylint-commit-hook must run pylint in the sandbox so it uses
-        the gi Python modules in there. At the same time it also has to be
-        installed in the development pyvenv which is outside the sandbox
-        because git-pylint-commit-hook needs to import pylint.config.
-        pip_modules = ["pylint"]
-        Console.message(
-            "Installing development tools in the sandbox: %s", pip_modules)
-        self.run_in_sandbox("pip3", "install", "-q", "-U", "--user",
-                            "--no-warn-script-location", *pip_modules,
-                            exit_on_failure=True)
+        # git-pylint-commit-hook must run pylint in the sandbox so it uses
+        # the gi Python modules in there. At the same time it also has to be
+        # installed in the development pyvenv which is outside the sandbox
+        # because git-pylint-commit-hook needs to import pylint.config.
+        # pip_modules = ["pylint"]
+        # Console.message(
+        #     "Installing development tools in the sandbox: %s", pip_modules)
+        # self.run_in_sandbox("pip3", "install", "-q", "-U", "--user",
+        #                     "--no-warn-script-location", *pip_modules,
+        #                     exit_on_failure=True)
 
     def run_in_sandbox(self, *args, exit_on_failure=False, cwd=None, mount_tmp=False):
         if not args:

@@ -26,7 +26,6 @@ import tarfile
 import time
 import uuid
 from gettext import gettext as _
-from hashlib import md5
 from urllib.parse import unquote
 
 from gi.repository import GdkPixbuf
@@ -808,10 +807,10 @@ class Project(Loggable, GES.Project):
     @staticmethod
     def get_thumb_path(uri, resolution):
         """Returns path of thumbnail of specified resolution in the cache."""
-        thumb_hash = md5(quote_uri(uri).encode()).hexdigest()
+        thumb_mtime = str(os.path.getmtime(Gst.uri_get_location(uri)))
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(),
                                    "project_thumbs", resolution))
-        return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
+        return os.path.join(thumbs_cache_dir, thumb_mtime) + ".png"
 
     @classmethod
     def get_thumb(cls, uri):

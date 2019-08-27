@@ -24,7 +24,6 @@ import sys
 import time
 from gettext import gettext as _
 from gettext import ngettext
-from hashlib import md5
 
 import cairo
 from gi.repository import Gdk
@@ -49,7 +48,6 @@ from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
-from pitivi.utils.misc import quote_uri
 from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
@@ -275,11 +273,11 @@ class AssetThumbnail(GObject.Object, Loggable):
         Returns:
             List[str]: The path of normal thumbnail and large thumbnail.
         """
-        quoted_uri = quote_uri(real_uri)
-        thumbnail_hash = md5(quoted_uri.encode()).hexdigest()
+        thumbnail_mtime = str(os.path.getmtime(Gst.uri_get_location(real_uri)))
         thumb_dir = os.path.join(GLib.get_user_cache_dir(), "thumbnails")
-        return os.path.join(thumb_dir, "normal", thumbnail_hash + ".png"),\
-            os.path.join(thumb_dir, "large", thumbnail_hash + ".png")
+
+        return os.path.join(thumb_dir, "normal", thumbnail_mtime + ".png"),\
+            os.path.join(thumb_dir, "large", thumbnail_mtime + ".png")
 
     @classmethod
     def get_thumbnails_from_xdg_cache(cls, real_uri):

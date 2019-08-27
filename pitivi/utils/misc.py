@@ -230,18 +230,6 @@ class PathWalker(Thread):
         self.stopme.set()
 
 
-def hash_file(uri):
-    """Hashes the first 256KB of the specified file."""
-    sha256 = hashlib.sha256()
-    with open(uri, "rb") as file:
-        for _ in range(1024):
-            chunk = file.read(256)
-            if not chunk:
-                break
-            sha256.update(chunk)
-    return sha256.hexdigest()
-
-
 def quantize(input, interval):
     return (input // interval) * interval
 

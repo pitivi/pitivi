@@ -36,7 +36,6 @@ from pitivi.settings import get_dir
 from pitivi.settings import GlobalSettings
 from pitivi.settings import xdg_cache_home
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import hash_file
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
@@ -970,9 +969,9 @@ class ThumbnailCache(Loggable):
 
     @staticmethod
     def dbfile_name(uri):
-        filehash = hash_file(Gst.uri_get_location(uri))
+        file_mtime = str(os.path.getmtime(Gst.uri_get_location(uri)))
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        dbfile = os.path.join(thumbs_cache_dir, filehash)
+        dbfile = os.path.join(thumbs_cache_dir, file_mtime)
         return dbfile
 
     @classmethod
@@ -984,6 +983,7 @@ class ThumbnailCache(Loggable):
                 changed_files_uris.append(uri)
         for uri in changed_files_uris:
             del cls.caches_by_uri[uri]
+
         return changed_files_uris
 
     @classmethod
@@ -1109,7 +1109,7 @@ class ThumbnailCache(Loggable):
 
 def get_wavefile_location_for_uri(uri):
     """Computes the URI where the wave.npy file should be stored."""
-    filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
+    filename = str(os.path.getmtime(Gst.uri_get_location(uri))) + ".wave.npy"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
     return os.path.join(cache_dir, filename)
