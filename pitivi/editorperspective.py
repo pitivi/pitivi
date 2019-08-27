@@ -121,7 +121,6 @@ class EditorPerspective(Perspective, Loggable):
 
             for ges_layer in ges_timeline.get_layers():
                 for ges_clip in ges_layer.get_clips():
-                    print(ges_clip)
                     if ges_clip.get_asset() in assets:
                         if ges_clip.ui._audioSource != None:
                             ges_clip.ui._audioSource.update_previewer()

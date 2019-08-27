@@ -855,6 +855,10 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         for thumb in self.get_children():
             thumb.props.opacity = opacity
 
+    def refresh(self):
+        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._update_thumbnails()
+
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
         if not self.thumb_width:
@@ -1142,6 +1146,12 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         self._num_failures = 0
         self.become_controlled()
+
+    def refresh(self):
+        self.samples = None
+        self.surface = None
+
+        self.start_generation()
 
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)

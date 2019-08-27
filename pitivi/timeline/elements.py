@@ -638,14 +638,13 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
     def update_previewer(self):
         if self.__previewer:
-            print(self.__previewer)
             self.__previewer.stop_generation()
             self.remove(self.__previewer)
 
-        self.__previewer = self._getPreviewer()
+        self.__previewer.refresh()
         if self.__previewer:
             self.add(self.__previewer)
-        self.show_all()
+        self.show()
 
     def release(self):
         if self.__previewer:
