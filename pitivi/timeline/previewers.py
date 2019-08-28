@@ -1113,10 +1113,18 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
                 self.samples = list(numpy.load(samples))
+                self._scale_samples_to_max()
             self.queue_draw()
         else:
             self.wavefile = filename
             self._launchPipeline()
+
+    def _scale_samples_to_max(self):
+        max_value = max(self.samples)
+        has_sound = max_value > 0.0001
+        if has_sound:
+            factor = 100.0 / max_value
+            self.samples = [i * factor for i in self.samples]
 
     def _launchPipeline(self):
         self.debug(
@@ -1146,6 +1154,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
         self._wavebin.finalize(proxy=proxy)
         self.samples = self._wavebin.samples
+        self._scale_samples_to_max()
 
     def _busMessageCb(self, bus, message):
         if message.type == Gst.MessageType.EOS:
