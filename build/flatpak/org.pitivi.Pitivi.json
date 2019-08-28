@@ -632,22 +632,6 @@
             ]
         },
         {
-            "name": "gst-transcoder",
-            "buildsystem": "meson",
-            "builddir": true,
-            "config-opts": [
-                "-Ddisable_doc=true",
-                "--libdir=lib"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "branch": "master",
-                    "url": "https://github.com/pitivi/gst-transcoder"
-                }
-            ]
-        },
-        {
             "name": "libpeas",
             "buildsystem": "meson",
             "sources": [
