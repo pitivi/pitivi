@@ -438,7 +438,7 @@ class EditorPerspective(Perspective, Loggable):
 # Project management callbacks
 
     def _projectManagerNewProjectLoadedCb(self, project_manager, project):
-        """Starts connecting the UI to the specified project.
+        """Connects the UI to the specified project.
 
         Args:
             project_manager (ProjectManager): The project manager.
@@ -448,7 +448,15 @@ class EditorPerspective(Perspective, Loggable):
 
         self._connectToProject(project)
         project.pipeline.activatePositionListener()
-        self._setProject(project)
+
+        self.clipconfig.project = project
+
+        self.timeline_ui.setProject(project)
+
+        # When creating a blank project there's no project URI yet.
+        if project.uri:
+            folder_path = os.path.dirname(path_from_uri(project.uri))
+            self.settings.lastProjectFolder = folder_path
 
         self.updateTitle()
 
@@ -618,23 +626,6 @@ class EditorPerspective(Perspective, Loggable):
         project.connect("project-changed", self._projectChangedCb)
         project.ges_timeline.connect("notify::duration",
                                      self._timelineDurationChangedCb)
-
-    def _setProject(self, project):
-        """Disconnects and then reconnects callbacks to the specified project.
-
-        Args:
-            project (Project): The new current project.
-        """
-        if not project:
-            self.warning("Current project instance does not exist")
-            return False
-
-        self.clipconfig.project = project
-
-        # When creating a blank project there's no project URI yet.
-        if project.uri:
-            folder_path = os.path.dirname(path_from_uri(project.uri))
-            self.settings.lastProjectFolder = folder_path
 
     def _disconnectFromProject(self, project):
         project.disconnect_by_func(self._projectChangedCb)

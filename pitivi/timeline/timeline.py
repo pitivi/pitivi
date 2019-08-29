@@ -1416,8 +1416,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self._createUi()
         self._createActions()
 
-        self.app.project_manager.connect("new-project-loaded",
-                                         self._projectLoadedCb)
         self.timeline.connect("size-allocate", self.__timeline_size_allocate_cb)
 
     # Public API
@@ -1529,15 +1527,37 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self._scrollToPixel(x)
 
     def setProject(self, project):
-        self._project = project
+        """Connects to the project's timeline and pipeline."""
         if self._project:
-            self._project.connect("rendering-settings-changed",
-                                  self._rendering_settings_changed_cb)
+            self._project.disconnect_by_func(self._rendering_settings_changed_cb)
+            try:
+                self.timeline._pipeline.disconnect_by_func(
+                    self.timeline.positionCb)
+            except AttributeError:
+                pass
+            except TypeError:
+                pass  # We were not connected no problem
+
+            self.timeline._pipeline = None
+
+        self._project = project
+
+        if project:
+            project.connect("rendering-settings-changed",
+                            self._rendering_settings_changed_cb)
             self.ges_timeline = project.ges_timeline
         else:
             self.ges_timeline = None
 
-        self.timeline.setProject(self._project)
+        self.timeline.setProject(project)
+
+        if project:
+            self.ruler.setPipeline(project.pipeline)
+            self.ruler.zoomChanged()
+            self._update_ruler(project.videorate)
+
+            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
+            self.timeline.update_snapping_distance()
 
     def updateActions(self):
         selection = self.timeline.selection
@@ -2021,29 +2041,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def __timeline_size_allocate_cb(self, unused_widget, allocation):
         fits = self.timeline.layout.props.height <= allocation.height
         self.vscrollbar.set_opacity(0 if fits else 1)
-
-    def _projectLoadedCb(self, unused_project_manager, project):
-        """Connects to the project's timeline and pipeline."""
-        if self._project:
-            self._project.disconnect_by_func(self._rendering_settings_changed_cb)
-            try:
-                self.timeline._pipeline.disconnect_by_func(
-                    self.timeline.positionCb)
-            except AttributeError:
-                pass
-            except TypeError:
-                pass  # We were not connected no problem
-
-            self.timeline._pipeline = None
-
-        self.setProject(project)
-        if project:
-            self.ruler.setPipeline(project.pipeline)
-            self.ruler.zoomChanged()
-            self._update_ruler(project.videorate)
-
-            self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
-            self.timeline.update_snapping_distance()
 
     def _zoom_in_cb(self, unused_action, unused_parameter):
         Zoomable.zoomIn()
