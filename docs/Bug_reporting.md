@@ -62,20 +62,38 @@ process:**
     the future!
 
 
-## Stack traces for crashes and deadlocks
+## Back traces for crashes and deadlocks
 
-When reporting a **crash** or a **deadlock** (application is frozen),
-we can't do much without a **stack trace** (also known as back trace).
+When reporting a **crash** (application window disappears) or a
+**deadlock** (application is frozen), we can't do much without a
+**back trace**.
 
-The back trace can be obtained with `gdb`. Below are instructions on
-how to properly start Pitivi in gdb.
+First try to see if you can locate a coredump file created by your
+system automatically when a **crash** takes place. For example:
 
-Once Pitivi is started in gdb and you reproduce the crash or deadlock:
-- When Pitivi crashes, run `bt full` to get the backtrace.
-- When Pitivi freezes, press Ctrl+Z and run `thread apply all bt` to
-get the backtraces for all the threads.
+```
+$ coredumpctl list | tail
+Wed 2019-08-28 23:02:20 CEST  31783  1000   100  11 present   /usr/bin/python3.7
+$ coredumpctl info 31783
+           PID: 31783 (python3)
+       Storage: /var/lib/systemd/coredump/core.python3.1000.e907bb24f9c14aafb3ec0c900ee5bc4a.31783.1567026134000000.lz4
+$ lz4 -d /var/lib/systemd/coredump/core.python3.1000.e907bb24f9c14aafb3ec0c900ee5bc4a.31783.1567026134000000.lz4 ~/coredump
+```
 
-> To avoid the need to press Enter to “scroll” in gdb, run `set pagination 0`.
+A coredump can be investigated using gdb. Look below for the proper way
+to start gdb, but at the end instead of `gdb python3 -ex ...` simply run
+`gdb python3 ~/coredump`.
+
+Alternatively, if you are missing a coredump, start Pitivi in gdb as
+described below, then try to reproduce the crash.
+
+Finally, in gdb run `bt full` to get the back trace for the crash.
+
+> Tip: To avoid the need to press Enter to “scroll” in gdb,
+> run `set pagination 0`.
+
+For a **deadlock**, start Pitivi in gdb as described below, press Ctrl+Z
+and run `thread apply all bt` to get the backtraces for all the threads.
 
 ### When running in the development environment
 
@@ -117,7 +135,7 @@ flatpak run -d --command=bash org.pitivi.Pitivi
 3. Start Pitivi inside gdb:
 
 ```
-gdb python3 -ex 'run /app/bin/pitivi'
+gdb python3 -ex "run /app/bin/pitivi"
 ```
 
 ### When running from the packages of your Linux distro
