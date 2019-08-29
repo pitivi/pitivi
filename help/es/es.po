@@ -10,16 +10,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2019-04-02 10:54+0000\n"
-"PO-Revision-Date: 2019-04-24 12:41+0200\n"
+"POT-Creation-Date: 2019-07-05 01:30+0000\n"
+"PO-Revision-Date: 2019-08-29 09:59+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: es <gnome-es-list@gnome.org>\n"
-"Language: es\n"
+"Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
+"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 3.32.0\n"
+"X-Generator: Gtranslator 3.32.1\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
 msgctxt "_"
@@ -730,12 +730,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/importing.page:31
-#| msgid ""
-#| "At the time of this writing, the only supported method is importing files "
-#| "from your hard drive. As such, you cannot use <app>Pitivi</app> to "
-#| "capture directly from a camcorder. For DV/HDV camcorders using an IEEE "
-#| "1394 connection, you may use <app>Kino</app> or <app>dvgrab</app> to "
-#| "capture footage."
 msgid ""
 "Due to our limited resources and the rapid evolution of filmmaking hardware "
 "in the past few years, and to ensure <app>Pitivi</app> remains robust and "
@@ -938,7 +932,7 @@ msgstr "Cambiar las propiedades de un clip en el tiempo."
 #. (itstool) path: figure/title
 #: C/keyframecurves.page:31 C/keyframecurves.page:34
 msgid "Keyframe curves"
-msgstr "Curvas de fotograma clave"
+msgstr "Curvas de fotograma"
 
 #. (itstool) path: page/p
 #: C/keyframecurves.page:32
@@ -948,9 +942,9 @@ msgid ""
 "be used to change opacity or volume just as well as effect properties at any "
 "point in the clip's duration."
 msgstr ""
-"Usando curvas de fotogramas clave, puede cambiar el valor de una propiedad "
-"con el tiempo, en vez de tener un valor fijo para la duración completa de un "
-"clip. Esto puede usarse para cambiar la opacidad o el volumen así como las "
+"Usando curvas de fotogramas, puede cambiar el valor de una propiedad con el "
+"tiempo, en vez de tener un valor fijo para la duración completa de un clip. "
+"Esto puede usarse para cambiar la opacidad o el volumen así como las "
 "propiedades de un efecto en cualquier punto en la  duración del clip."
 
 #. (itstool) path: figure/media
@@ -978,8 +972,8 @@ msgid ""
 "<em>Keyframes</em> are the points that are used to determine the property "
 "value at a specific point in time."
 msgstr ""
-"Los <em>fotogramas clave</em> son los puntos que se usan para determinar el "
-"valor de las propiedades de un punto específico en el tiempo."
+"Los <em>fotogramas</em> son los puntos que se usan para determinar el valor "
+"de las propiedades de un punto específico en el tiempo."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:43
@@ -987,8 +981,8 @@ msgid ""
 "<em>Keyframe curves</em> are the lines connecting the points providing "
 "smooth transitions between them."
 msgstr ""
-"Las <em>curvas de fotogramas clave</em> son las líneas que conectan los "
-"puntos haciendo transiciones suaves entre ellos."
+"Las <em>curvas de fotogramas</em> son las líneas que conectan los puntos "
+"haciendo transiciones suaves entre ellos."
 
 #. (itstool) path: page/p
 #: C/keyframecurves.page:46
@@ -1000,13 +994,13 @@ msgid ""
 "default alpha or volume keyframe curves are an intrinsic property of clips "
 "and cannot be removed."
 msgstr ""
-"De manera predeterminada, las curvas de fotogramas clave de un clip de "
-"sonido controlan el volumen (en una escala del 0 al 200) y las curvas de "
-"fotogramas clave de un clip de vídeo controlan el alfa (la opacidad) del "
-"vídeo (en una escala del 0 al 100%). Consulte la sección <link xref=\"layers"
-"\">Entender las capas</link> para obtener más información sobre la opacidad. "
-"El alfa predeterminado o el volumen de las curvas de fotogramas clave son "
-"una propiedad intrínseca de los clips y no se pueden quitar."
+"De manera predeterminada, las curvas de fotogramas de un clip de sonido "
+"controlan el volumen (en una escala del 0 al 200) y las curvas de fotogramas "
+"de un clip de vídeo controlan el alfa (la opacidad) del vídeo (en una escala "
+"del 0 al 100%). Consulte la sección <link xref=\"layers\">Entender las "
+"capas</link> para obtener más información sobre la opacidad. El alfa "
+"predeterminado o el volumen de las curvas de fotogramas son una propiedad "
+"intrínseca de los clips y no se pueden quitar."
 
 #. (itstool) path: note/p
 #: C/keyframecurves.page:48
@@ -1026,9 +1020,9 @@ msgid ""
 "properties. See the <link xref=\"usingeffects#keyframes\">Using effects</"
 "link> page for details."
 msgstr ""
-"Además del volumen y el alfa, puede usar los fotogramas clave para controlar "
-"las propiedades de los efectos. Para obtener más detalles consulte la "
-"sección <link xref=\"usingeffects#keyframes\">Usando los efectos</link>."
+"Además del volumen y el alfa, puede usar los fotogramas para controlar las "
+"propiedades de los efectos. Para obtener más detalles consulte la sección "
+"<link xref=\"usingeffects#keyframes\">Usando los efectos</link>."
 
 #. (itstool) path: section/title
 #: C/keyframecurves.page:52
@@ -1046,13 +1040,13 @@ msgid ""
 "can add one or more keyframes to the clip and drag them to appropriate "
 "vertical positions representing their values."
 msgstr ""
-"El comienzo y el final de los fotogramas claves están fijos a los puntos de "
+"El comienzo y el final de los fotogramas están fijos a los puntos de "
 "comienzo y final del clip y no se pueden quitar. La curva entre esos dos "
-"fotogramas claves es inicialmente una línea horizontal plana, indicando que "
-"el valor de la propiedad controlada es la misma en cada punto en el tiempo "
+"fotogramas es inicialmente una línea horizontal plana, indicando que el "
+"valor de la propiedad controlada es la misma en cada punto en el tiempo "
 "dentro de la duración del clip. Para cambiar éste valor (y su velocidad de "
-"cambio) en cualquier punto, puede agregar uno o mas fotogramas clave al clip "
-"y arrastrarlo a una posición vertical apropiada representando sus valores."
+"cambio) en cualquier punto, puede agregar uno o mas fotogramas al clip y "
+"arrastrarlo a una posición vertical apropiada representando sus valores."
 
 #. (itstool) path: section/p
 #: C/keyframecurves.page:54
@@ -1062,18 +1056,17 @@ msgstr "Puede:"
 #. (itstool) path: item/p
 #: C/keyframecurves.page:57
 msgid "Add a new keyframe by clicking on the line."
-msgstr "Añadir un nuevo fotograma clave, pulsando en la línea."
+msgstr "Añadir un nuevo fotograma, pulsando en la línea."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:60
 msgid "Remove a keyframe by double-clicking on it."
-msgstr "Quitar un fotograma clave pulsando dos veces en él."
+msgstr "Quitar un fotograma pulsando dos veces en él."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:63
 msgid "Adjust the time and value of a keyframe by moving it with the mouse."
-msgstr ""
-"Ajustar el tiempo y el valor de un fotograma clave moviéndolo con el ratón."
+msgstr "Ajustar el tiempo y el valor de un fotograma moviéndolo con el ratón."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:66
@@ -1081,13 +1074,13 @@ msgid ""
 "Click-and-drag on a segment of a curve between two keyframes to adjust the "
 "vertical position of the segment."
 msgstr ""
-"Pulse y arrastre un segmento de una curva entre dos fotogramas clave para "
-"ajustar la posición vertical del segmento."
+"Pulse y arrastre un segmento de una curva entre dos fotogramas para ajustar "
+"la posición vertical del segmento."
 
 #. (itstool) path: note/p
 #: C/keyframecurves.page:70
 msgid "Currently only linear keyframe curves are supported."
-msgstr "Actualmente solo los fotogramas claves lineales están disponibles."
+msgstr "Actualmente solo los fotogramas lineales están disponibles."
 
 #. (itstool) path: info/desc
 #: C/layers.page:18
@@ -2273,11 +2266,6 @@ msgstr "Preajustes"
 
 #. (itstool) path: page/p
 #: C/presets.page:24
-#| msgid ""
-#| "Both the project settings dialog and the rendering dialog allow you to "
-#| "save presets for later use. If you often deal with the same kind of "
-#| "project settings, with different cameras or target devices for rendering, "
-#| "you may want to create custom presets."
 msgid ""
 "Both the <gui>Project settings</gui> dialog and the <gui>Rendering</gui> "
 "dialog allow you to save presets for later use. If you often deal with the "
@@ -2327,10 +2315,6 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/presets.page:39
-#| msgid ""
-#| "Give your preset a unique name: while the preset is selected in the list, "
-#| "click on its name to toggle editing mode. When you're done, press "
-#| "<key>Enter</key>."
 msgid ""
 "Give your preset a unique name: click on the combobox to edit the name. When "
 "you're done, press <key>Enter</key>."
@@ -2808,12 +2792,6 @@ msgstr "Cortar por la mitad"
 
 #. (itstool) path: note/p
 #: C/splitting.page:52
-#| msgid ""
-#| "When you want to cut out a middle section of a clip, split the clip twice "
-#| "on the positions where the part you want to remove begins and ends. "
-#| "Select the middle part and hit <key>delete</key>. Now, eliminate the "
-#| "empty space between the remaining two parts by moving one of them towards "
-#| "the other until they align."
 msgid ""
 "When you want to cut out a middle section of a clip, split the clip twice on "
 "the positions where the part you want to remove begins and ends. Select the "
@@ -2839,13 +2817,6 @@ msgstr "Requerimientos del sistema"
 
 #. (itstool) path: page/p
 #: C/sysreq.page:26
-#| msgid ""
-#| "Editing HD (High Definition) video usually requires (at the time of this "
-#| "writing) state of the art hardware (depending on the codec used), while "
-#| "SD (Standard Definition) video editing can be done on modest hardware "
-#| "configurations. It is up to you to make sure that your equipment is "
-#| "adequate. It should at least be able to playback your media in "
-#| "<app>Totem</app> without lagging."
 msgid ""
 "In terms of hardware, video editing typically requires a powerful computer, "
 "depending on the type of video you are editing. While the processing power "
@@ -2914,7 +2885,6 @@ msgstr ""
 
 #. (itstool) path: note/p
 #: C/sysreq.page:44
-#, fuzzy
 #| msgid ""
 #| "Other types of transitions (such as wipes) are not yet implemented (see "
 #| "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
@@ -2923,9 +2893,8 @@ msgid ""
 "You can track the state of proxy editing in <app>Pitivi</app> through <link "
 "href=\"https://phabricator.freedesktop.org/T2455\">task T2455</link>."
 msgstr ""
-"Otros tipos de transiciones (tales como transiciones de una película) no "
-"están aún implementadas (consulte el <link href=\"https://bugzilla.gnome.org/"
-"show_bug.cgi?id=609353\">error nº 609353</link>)."
+"Puede seguir el estado de la edición del proxy en <app>Pitivi</app> en la "
+"<link href=\"https://phabricator.freedesktop.org/T2455\">tarea T2455</link>."
 
 #. (itstool) path: page/p
 #: C/sysreq.page:46
@@ -2981,9 +2950,9 @@ msgid ""
 "crossfade."
 msgstr ""
 "Las mezclas se logran utilizando las funciones de mezcla de vídeo de "
-"<app>Pitivi</app>, que usan fotogramas clave para controlar la opacidad de "
-"los clips. Esto significa que si establece opacidad para los fotogramas "
-"clave de un clip estos se tendrán en cuenta para la mezcla."
+"<app>Pitivi</app>, que usan fotogramas para controlar la opacidad de los "
+"clips. Esto significa que si establece opacidad para los fotogramas de un "
+"clip estos se tendrán en cuenta para la mezcla."
 
 #. (itstool) path: section/title
 #: C/transitions.page:34
@@ -3083,11 +3052,17 @@ msgid ""
 "opacity, see <link xref=\"layers\">Understanding layers</link>. The "
 "following images illustrate how to fade a clip to black:"
 msgstr ""
+"Puede crear transiciones de aparición y desvanecimiento en clips "
+"individuales usando fotogramas que controlen la opacidad del clip. Para "
+"obtener más información sobre los fotogramas consulte las <link xref="
+"\"keyframecurves\">Curvas de fotogramas</link>. Para entender la opacidad, "
+"consulte <link xref=\"layers\">Entendiendo las capas</link>. Las siguientes "
+"imágenes ilustran cómo desvanecer un clip a negro."
 
 #. (itstool) path: figure/title
 #: C/transitions.page:67
 msgid "Keyframe curves controlling the video opacity"
-msgstr "Curvas de fotogramas clave controlando la opacidad del vídeo"
+msgstr "Curvas de fotogramas controlando la opacidad del vídeo"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3113,7 +3088,7 @@ msgstr ""
 #. (itstool) path: figure/title
 #: C/transitions.page:72
 msgid "Adding a new keyframe"
-msgstr "Añadir un fotograma clave nuevo"
+msgstr "Añadir un fotograma nuevo"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3139,7 +3114,7 @@ msgstr ""
 #. (itstool) path: figure/title
 #: C/transitions.page:77
 msgid "Moving the keyframe"
-msgstr "Mover el fotograma clave"
+msgstr "Mover el fotograma"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3156,7 +3131,7 @@ msgstr ""
 #. (itstool) path: figure/desc
 #: C/transitions.page:79
 msgid "Click and drag the last keyframe downwards."
-msgstr "Pulse y arrastre el último fotograma clave hacia abajo."
+msgstr "Pulse y arrastre el último fotograma hacia abajo."
 
 #. (itstool) path: section/p
 #: C/transitions.page:81
@@ -3165,6 +3140,9 @@ msgid ""
 "in a position where the fade-in should end and the first keyframe dragged "
 "down) at the beginning of the clip."
 msgstr ""
+"Para conseguir un efecto de aparición simplemente cree una curva del "
+"fotograma en espejo (fotograma nuevo en la posición donde debe terminar la "
+"transición y arrastrado el primer fotograma) al principio del clip."
 
 #. (itstool) path: note/p
 #: C/transitions.page:83
@@ -3672,14 +3650,16 @@ msgid ""
 "drop down list next to the two buttons. By default, the list is set to show "
 "all effects."
 msgstr ""
+"La <gui>biblioteca de efectos</gui> contiene todos los efectos de sonido y "
+"vídeo disponibles en el sistema. Esta biblioteca muestra efectos de vídeo o "
+"de sonido dependiendo de qué botón (<gui>Mostrar efectos de vídeo</gui> o "
+"<gui>Mostrar efectos de sonido</gui>) en la esquina superior izquierda está "
+"activado. Cuando elija los efectos de vídeo o sonido puede ordenarlos "
+"eligiendo una de las categorías de la lista desplegable que está junto a a "
+"los dos botones. De manera predeterminada la lista muestra todos los efectos."
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:23
-#| msgid ""
-#| "A search bar is shown at the top of the <gui>Media Library</gui>. Typing "
-#| "into the search entry filters the contents of the <gui>Media Library</"
-#| "gui> to show only clips whose filenames match your search terms. To reset "
-#| "the search entry, click the \"cleanup\" icon in the search entry."
 msgid ""
 "Alternatively, you can use the <gui>Search Bar</gui> that is shown at the "
 "top of the <gui>Effect Library</gui>. Typing into the search entry filters "
@@ -3708,11 +3688,16 @@ msgid ""
 "put back to its original value by clicking the corresponding <gui>Reset to "
 "default value</gui> button."
 msgstr ""
+"Para configurar un efecto selecciónelo en el <guiseq><gui>panel central</"
+"gui><gui>Configuración del clip</gui><gui>Efectos</gui></guiseq>.  Las "
+"propiedades que se puedan ajustar aparecerán debajo en la misma pestaña. "
+"Cada variable se puede devolver a su valor original pulsando en el botón "
+"<gui>Restablecer al valor predeterminado</gui> correspondiente."
 
 #. (itstool) path: section/title
 #: C/usingeffects.page:30
 msgid "Animating effects with keyframes"
-msgstr "Animar efectos con fotogramas clave"
+msgstr "Animar efectos con fotogramas"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:31
@@ -3726,6 +3711,14 @@ msgid ""
 "by the adjusted keyframe curve (which is indicated by the filled shape on "
 "the button)."
 msgstr ""
+"Las propiedades de los efectos que se pueden controlar usando curvas de "
+"fotogramas tienen un botón <gui>Mostrar fotogramas para esta propiedad</"
+"gui>. Cuando lo pulsa las curvas de los fotogramas del clip empiezan a "
+"controlar la propiedad. Puede editar los fotogramas para conseguir el efecto "
+"que quiere. Una vez que termine la edición puede pulsar el botón otra vez y "
+"la curva del fotograma desaparecerá del clip. Sin embargo, la propiedad del "
+"efecto sigue controlada por la curva del fotograma ajustado (que se indica "
+"por la forma rellena del botón)."
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:32
@@ -3736,6 +3729,12 @@ msgid ""
 "to default value</gui> button. For more information on how to use keyframes "
 "see the <link xref=\"keyframecurves\">Keyframe curves</link> page."
 msgstr ""
+"Una vez que una propiedad está controlada el widget para editar su valor "
+"directamente se desactiva. Para quitar fotogramas y poder establecerla "
+"directamente a un valor constante usando el widget debe pulsar el botón "
+"<gui>restablecer al valor predeterminado</gui>. Para obtener más información "
+"sobre cómo usar los fotogramas consulte la página <link xref=\"keyframecurves"
+"\">Curvas de fotogramas</link>."
 
 #. (itstool) path: note/p
 #: C/usingeffects.page:34
@@ -3743,8 +3742,8 @@ msgid ""
 "If there is no <gui>Show keyframes for this value</gui> button next to the "
 "effect variable, it cannot be controlled with keyframes."
 msgstr ""
-"Si no aparece el botón <gui>Mostrar fotogramas clave para este valor</gui> "
-"junto a la variable de efecto no se puede controlar con fotogramas clave."
+"Si no aparece el botón <gui>Mostrar fotogramas para este valor</gui> junto a "
+"la variable de efecto no se puede controlar con fotogramas."
 
 #. (itstool) path: info/desc
 #: C/welcomedialog.page:14
@@ -3904,12 +3903,6 @@ msgstr "Editar la configuración del proyecto"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
-#| msgid ""
-#| "When starting a new project, you should make sure to adjust the project "
-#| "settings, such as framerate, resolution and preferred codecs. The video "
-#| "resolution and aspect ratio will affect the appearance of the previewer. "
-#| "If you do not set the resolution and aspect ratio to match those of your "
-#| "footage, the video may look squished or letterboxed."
 msgid ""
 "The project settings define mainly how the video appears while you edit the "
 "project. The video resolution and aspect ratio affect the appearance of the "
