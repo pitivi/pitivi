@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
-"POT-Creation-Date: 2019-07-07 12:11+0000\n"
-"PO-Revision-Date: 2019-07-25 11:54+0200\n"
+"POT-Creation-Date: 2019-07-25 10:00+0000\n"
+"PO-Revision-Date: 2019-08-29 09:48+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -81,8 +81,7 @@ msgstr ""
 msgid ""
 "Can animate hundreds of special effects and filters with keyframable "
 "properties"
-msgstr ""
-"Puede animar cientos de efectos especiales y filtros con fotogramas clave"
+msgstr "Puede animar cientos de efectos especiales y filtros con fotogramas"
 
 #: data/org.pitivi.Pitivi.appdata.xml.in:17
 msgid "Ability to set custom aspect ratios, framerates and rendering presets"
@@ -985,7 +984,7 @@ msgstr "Deshacer"
 
 #: pitivi/editorperspective.py:296 pitivi/editorperspective.py:497
 #: pitivi/editorperspective.py:659 pitivi/editorperspective.py:707
-#: pitivi/editorperspective.py:760 pitivi/preset.py:116 pitivi/project.py:191
+#: pitivi/editorperspective.py:760 pitivi/preset.py:116 pitivi/project.py:193
 msgid "Save"
 msgstr "Guardar"
 
@@ -1006,7 +1005,7 @@ msgstr "Guardar el proyecto actual como"
 msgid "Unable to save project \"%s\""
 msgstr "No se pudo guardar el proyecto «%s»"
 
-#: pitivi/editorperspective.py:499 pitivi/project.py:190
+#: pitivi/editorperspective.py:499 pitivi/project.py:192
 msgid "Save as..."
 msgstr "Guardar como…"
 
@@ -1369,11 +1368,11 @@ msgstr "perfil-nuevo-%d"
 
 #. GTK does not allow an empty string as the dialog title, so we use the
 #. same translatable one as render.py's pipeline error message dialog:
-#: pitivi/project.py:174 pitivi/render.py:898
+#: pitivi/project.py:176 pitivi/render.py:898
 msgid "Sorry, something didn’t work right."
 msgstr "Algo no ha funcionado correctamente."
 
-#: pitivi/project.py:177
+#: pitivi/project.py:179
 msgid ""
 "Pitivi detected a serious backend problem and could not recover from it, "
 "even after multiple tries. The only thing that can be done at this point is "
@@ -1399,11 +1398,11 @@ msgstr ""
 "Antes de cerrar Pitivi puede guardar los cambios en el archivo del proyecto "
 "existente o como un archivo de proyecto separado."
 
-#: pitivi/project.py:192
+#: pitivi/project.py:194
 msgid "Close Pitivi"
 msgstr "Cerrar Pitivi"
 
-#: pitivi/project.py:262
+#: pitivi/project.py:264
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
@@ -1413,15 +1412,15 @@ msgstr ""
 "soportado. Si está intentando añadir un archivo multimedia a su proyecto, "
 "use el botón «Importar» en su lugar."
 
-#: pitivi/project.py:284
+#: pitivi/project.py:286
 msgid "Ignore backup"
 msgstr "Ignorar respaldo"
 
-#: pitivi/project.py:285
+#: pitivi/project.py:287
 msgid "Restore from backup"
 msgstr "Restaurar desde un respaldo"
 
-#: pitivi/project.py:301
+#: pitivi/project.py:303
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
@@ -1434,16 +1433,16 @@ msgstr ""
 "\n"
 "¿Quiere cargarla en su lugar?"
 
-#: pitivi/project.py:377
+#: pitivi/project.py:379
 msgid "You do not have permissions to write to this folder."
 msgstr "No tiene permiso para escribir en esta carpeta."
 
 #. Save the project to a temporary file.
-#: pitivi/project.py:410
+#: pitivi/project.py:412
 msgid "project"
 msgstr "proyecto"
 
-#: pitivi/project.py:712
+#: pitivi/project.py:714
 msgid "Pitivi encoding profile"
 msgstr "Perfil de codificación de Pitivi"
 
@@ -1662,7 +1661,7 @@ msgstr "Salir del modo a pantalla completa"
 #. Translators: This is a tooltip for a clip's keyframe curve,
 #. showing what the keyframe curve affects, the timestamp at
 #. the mouse cursor location, and the value at that timestamp.
-#: pitivi/timeline/elements.py:416
+#: pitivi/timeline/elements.py:415
 #, python-format
 msgid ""
 "Property: %s\n"
@@ -1673,12 +1672,12 @@ msgstr ""
 "Hora: %s\n"
 "Valor: %s"
 
-#: pitivi/timeline/elements.py:591
+#: pitivi/timeline/elements.py:590
 #, python-format
 msgid "Timestamp: %s"
 msgstr "Marca de tiempo: %s"
 
-#: pitivi/timeline/elements.py:1441
+#: pitivi/timeline/elements.py:1443
 msgid "Audio crossfade"
 msgstr "Fundido de sonido"
 
@@ -1784,8 +1783,7 @@ msgstr "Cortar el vídeo en la posición"
 
 #: pitivi/timeline/timeline.py:1695
 msgid "Add keyframe to the keyframe curve of selected clip"
-msgstr ""
-"Añadir fotograma clave a la curva de fotogramas clave del vídeo seleccionado"
+msgstr "Añadir fotograma a la curva de fotogramas del vídeo seleccionado"
 
 #: pitivi/timeline/timeline.py:1700
 msgid "Timeline Navigation"
@@ -2005,7 +2003,6 @@ msgstr "No se pudo cargar el complemento «{module_name}»"
 #. We could use Gtk.ListBox.set_placeholder, but it
 #. appears bad inside the list widget.
 #: pitivi/dialogs/prefs.py:859
-#| msgid "No description available."
 msgid "No plugins available"
 msgstr "No hay complementos disponibles"
 
@@ -2176,7 +2173,7 @@ msgstr "No hay propiedades."
 #. Avoid the ugly selection outline
 #: pitivi/utils/widgets.py:966
 msgid "Show keyframes for this value"
-msgstr "Mostrar marcos clave para este valor"
+msgstr "Mostrar fotogramas para este valor"
 
 #: pitivi/utils/widgets.py:1149
 #, python-format
@@ -2202,41 +2199,41 @@ msgstr "Mostrados %s"
 msgid "%d nanoseconds displayed, because we can"
 msgstr "Mostrados %d nanosegundos, porque podemos"
 
-#: plugins/console/console.py:141
+#: plugins/console/console.py:125
 msgid "Console"
 msgstr "Consola"
 
-#: plugins/console/console.py:143
+#: plugins/console/console.py:127
 msgid "Color"
 msgstr "Color"
 
 #. Translators: The color of the content from stderr.
-#: plugins/console/console.py:148
+#: plugins/console/console.py:132
 msgid "Standard error color"
 msgstr "Color de error estándar"
 
 #. Translators: The color of the content from stdout.
-#: plugins/console/console.py:153
+#: plugins/console/console.py:137
 msgid "Standard output color"
 msgstr "Color de salida estándar"
 
-#: plugins/console/console.py:157
+#: plugins/console/console.py:141
 msgid "Font"
 msgstr "Tipografía"
 
-#: plugins/console/console.py:164 plugins/console/console.py:182
+#: plugins/console/console.py:148 plugins/console/console.py:166
 msgid "Developer Console"
 msgstr "Consola de desarrollo"
 
-#: plugins/console/console.py:206
+#: plugins/console/console.py:190
 msgid "Pitivi Console"
 msgstr "Consola de Pitivi"
 
-#: plugins/console/console.py:217
+#: plugins/console/console.py:201
 msgid "You can use the following shortcuts:"
 msgstr "Puede usar los siguientes atajos:"
 
-#: plugins/console/console.py:222
+#: plugins/console/console.py:206
 #, python-brace-format
 msgid "Type \"{help}(<command>)\" for more information."
 msgstr "Escriba «{help}(<comando>)» para obtener más información."
