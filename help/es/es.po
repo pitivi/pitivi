@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi master\n"
-"POT-Creation-Date: 2019-07-05 01:30+0000\n"
-"PO-Revision-Date: 2019-08-29 09:59+0200\n"
+"POT-Creation-Date: 2019-08-29 08:01+0000\n"
+"PO-Revision-Date: 2019-08-29 10:04+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
@@ -451,12 +451,15 @@ msgstr "Para quitar un efecto:"
 
 #. (itstool) path: item/p
 #: C/effects.page:42
+#| msgid ""
+#| "Select the effect you want to remove in the <guiseq><gui>middle pane</"
+#| "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
 msgid ""
 "Select the effect you want to remove in the <guiseq><gui>middle pane</"
-"gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>"
+"gui><gui>Clip</gui><gui>Effects</gui></guiseq>"
 msgstr ""
 "Seleccione el efecto que quiere quitar en el <guiseq><gui>panel central</"
-"gui><gui>Configuración del clip</gui> <gui>Efectos</gui></guiseq>"
+"gui><gui>Clip</gui> <gui>Efectos</gui></guiseq>"
 
 #. (itstool) path: item/p
 #: C/effects.page:45
@@ -470,16 +473,20 @@ msgstr "Activar y desactivar efectos"
 
 #. (itstool) path: section/p
 #: C/effects.page:51
+#| msgid ""
+#| "If you want to temporarily disable an effect (to compare with and without "
+#| "the effect, or for performance reasons), click the corresponding checkbox "
+#| "in the <guiseq><gui>middle pane</gui><gui>Clip configuration</"
+#| "gui><gui>Effects</gui></guiseq>."
 msgid ""
 "If you want to temporarily disable an effect (to compare with and without "
 "the effect, or for performance reasons), click the corresponding checkbox in "
-"the <guiseq><gui>middle pane</gui><gui>Clip configuration</gui><gui>Effects</"
-"gui></guiseq>."
+"the <guiseq><gui>middle pane</gui><gui>Clip</gui><gui>Effects</gui></guiseq>."
 msgstr ""
 "Si quiere desactivar temporalmente un efecto (para comparar con y sin el "
 "efecto, o por razones de rendimiento), pulse en la casilla correspondiente "
-"en el <guiseq><gui>panel central</gui><gui>Configuración del clip</gui> "
-"<gui>Efectos</gui></guiseq>."
+"en el <guiseq><gui>panel central</gui><gui>Clip</gui> <gui>Efectos</gui></"
+"guiseq>."
 
 #. (itstool) path: info/desc
 #: C/gstreamer.page:18
@@ -1452,9 +1459,9 @@ msgid ""
 "gui>, <gui>Project settings</gui> or <gui>Preferences</gui>."
 msgstr ""
 "La barra de cabecera es un lugar donde fácilmente puede acceder a funciones "
-"básicas tales como <gui>Deshacer</gui>, <gui>Rehacer</gui>, <gui>Grabar</gui>, o "
-"<gui>Renderizar</gui>. Ésta barra contiene también el <gui>botón de menú</"
-"gui> principal donde puede encontrar otras funciones tales como "
+"básicas tales como <gui>Deshacer</gui>, <gui>Rehacer</gui>, <gui>Grabar</"
+"gui>, o <gui>Renderizar</gui>. Ésta barra contiene también el <gui>botón de "
+"menú</gui> principal donde puede encontrar otras funciones tales como "
 "<gui>Proyecto nuevo</gui>, <gui>Abrir proyecto</gui>, <gui>Ajustes del "
 "Proyecto</gui> o <gui>Preferencias</gui>."
 
@@ -1865,12 +1872,18 @@ msgstr "Modos de vistas"
 
 #. (itstool) path: section/p
 #: C/medialibrary.page:43
+#| msgid ""
+#| "The <gui>Media Library</gui> can display your clips in a list or in an "
+#| "icon view. The default mode is icon view because it display more clips "
+#| "without needing to scroll down. However, the list view mode shows more "
+#| "details about each clip. To activate/deactivate it, click on the "
+#| "<gui>Show clips as a detailed list</gui> button next to the search bar."
 msgid ""
 "The <gui>Media Library</gui> can display your clips in a list or in an icon "
 "view. The default mode is icon view because it display more clips without "
 "needing to scroll down. However, the list view mode shows more details about "
 "each clip. To activate/deactivate it, click on the <gui>Show clips as a "
-"detailed list</gui> button next to the search bar."
+"detailed list</gui> button to the left of search bar."
 msgstr ""
 "La <gui>Biblioteca de medios</gui> puede mostrar sus vídeos en una vista de "
 "lista o de iconos. El modo predeterminado es la vista de iconos, ya que "
@@ -2886,15 +2899,16 @@ msgstr ""
 #. (itstool) path: note/p
 #: C/sysreq.page:44
 #| msgid ""
-#| "Other types of transitions (such as wipes) are not yet implemented (see "
-#| "<link href=\"https://bugzilla.gnome.org/show_bug.cgi?id=609353\">bug "
-#| "#609353</link>)."
+#| "You can track the state of proxy editing in <app>Pitivi</app> through "
+#| "<link href=\"https://phabricator.freedesktop.org/T2455\">task T2455</"
+#| "link>."
 msgid ""
 "You can track the state of proxy editing in <app>Pitivi</app> through <link "
-"href=\"https://phabricator.freedesktop.org/T2455\">task T2455</link>."
+"href=\"https://gitlab.gnome.org/GNOME/pitivi/issues/743\">task 743</link>."
 msgstr ""
 "Puede seguir el estado de la edición del proxy en <app>Pitivi</app> en la "
-"<link href=\"https://phabricator.freedesktop.org/T2455\">tarea T2455</link>."
+"<link href=\"https://gitlab.gnome.org/GNOME/pitivi/issues/743\">tarea 743</"
+"link>."
 
 #. (itstool) path: page/p
 #: C/sysreq.page:46
@@ -3064,20 +3078,8 @@ msgstr ""
 msgid "Keyframe curves controlling the video opacity"
 msgstr "Curvas de fotogramas controlando la opacidad del vídeo"
 
-#. (itstool) path: figure/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:68
-msgctxt "_"
-msgid ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-msgstr ""
-"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
-
 #. (itstool) path: figure/desc
-#: C/transitions.page:69
+#: C/transitions.page:68
 msgid ""
 "The default curve is flat indicating the same opacity at any position within "
 "the clip."
@@ -3085,25 +3087,25 @@ msgstr ""
 "La curva predeterminada es planta, lo que indica la misma opacidad en "
 "cualquier posición del clip."
 
-#. (itstool) path: figure/title
-#: C/transitions.page:72
-msgid "Adding a new keyframe"
-msgstr "Añadir un fotograma nuevo"
-
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:73
+#: C/transitions.page:69
 msgctxt "_"
 msgid ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
 msgstr ""
-"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+"external ref='figures/fadestep1.png' md5='4bdb320d2ef57e3d09c67fcdba8ab103'"
+
+#. (itstool) path: figure/title
+#: C/transitions.page:72
+msgid "Adding a new keyframe"
+msgstr "Añadir un fotograma nuevo"
 
 #. (itstool) path: figure/desc
-#: C/transitions.page:74
+#: C/transitions.page:73
 msgid ""
 "Create a new keyframe by clicking the curve in a position where you want to "
 "start the fade-out."
@@ -3111,27 +3113,39 @@ msgstr ""
 "Cree un nuevo fotograma pulsando en la curva en la posición donde quiere "
 "iniciar el desvanecimiento."
 
+#. (itstool) path: figure/media
+#. This is a reference to an external file such as an image or video. When
+#. the file changes, the md5 hash will change to let you know you need to
+#. update your localized copy. The msgstr is not used at all. Set it to
+#. whatever you like once you have updated your copy of the file.
+#: C/transitions.page:74
+msgctxt "_"
+msgid ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+msgstr ""
+"external ref='figures/fadestep2.png' md5='c4bafbd98aee44ec93cb41c857b501c5'"
+
 #. (itstool) path: figure/title
 #: C/transitions.page:77
 msgid "Moving the keyframe"
 msgstr "Mover el fotograma"
+
+#. (itstool) path: figure/desc
+#: C/transitions.page:78
+msgid "Click and drag the last keyframe downwards."
+msgstr "Pulse y arrastre el último fotograma hacia abajo."
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
 #. the file changes, the md5 hash will change to let you know you need to
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
-#: C/transitions.page:78
+#: C/transitions.page:79
 msgctxt "_"
 msgid ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
 msgstr ""
 "external ref='figures/fadestep3.png' md5='5aa08a9539d2d7bb6e39be379e88d778'"
-
-#. (itstool) path: figure/desc
-#: C/transitions.page:79
-msgid "Click and drag the last keyframe downwards."
-msgstr "Pulse y arrastre el último fotograma hacia abajo."
 
 #. (itstool) path: section/p
 #: C/transitions.page:81
@@ -3681,18 +3695,24 @@ msgstr "Configurar efectos"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:27
+#| msgid ""
+#| "To configure an effect, simply select it in the <guiseq><gui>middle pane</"
+#| "gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The "
+#| "properties that can be adjusted will appear below in the same tab. Each "
+#| "variable can be put back to its original value by clicking the "
+#| "corresponding <gui>Reset to default value</gui> button."
 msgid ""
 "To configure an effect, simply select it in the <guiseq><gui>middle pane</"
-"gui><gui>Clip configuration</gui><gui>Effects</gui></guiseq>. The properties "
-"that can be adjusted will appear below in the same tab. Each variable can be "
-"put back to its original value by clicking the corresponding <gui>Reset to "
-"default value</gui> button."
+"gui><gui>Clip</gui><gui>Effects</gui></guiseq>. The properties that can be "
+"adjusted will appear below in the same tab. Each variable can be put back to "
+"its original value by clicking the corresponding <gui>Reset to default "
+"value</gui> button."
 msgstr ""
 "Para configurar un efecto selecciónelo en el <guiseq><gui>panel central</"
-"gui><gui>Configuración del clip</gui><gui>Efectos</gui></guiseq>.  Las "
-"propiedades que se puedan ajustar aparecerán debajo en la misma pestaña. "
-"Cada variable se puede devolver a su valor original pulsando en el botón "
-"<gui>Restablecer al valor predeterminado</gui> correspondiente."
+"gui><gui>Clip</gui><gui>Efectos</gui></guiseq>.  Las propiedades que se "
+"puedan ajustar aparecerán debajo en la misma pestaña. Cada variable se puede "
+"devolver a su valor original pulsando en el botón <gui>Restablecer al valor "
+"predeterminado</gui> correspondiente."
 
 #. (itstool) path: section/title
 #: C/usingeffects.page:30
@@ -3701,15 +3721,24 @@ msgstr "Animar efectos con fotogramas"
 
 #. (itstool) path: section/p
 #: C/usingeffects.page:31
+#| msgid ""
+#| "The effect properties which can be controlled using keyframe curves have "
+#| "a <gui>Show keyframes for this property</gui> button. When you click it, "
+#| "the keyframe curves on the clip start controlling the respective "
+#| "property. You can now edit the keyframes to achieve the desired effect. "
+#| "Once you are done with editing, you can click the button again and the "
+#| "keyframe curve disappears from the clip. However, the effect property is "
+#| "still controlled by the adjusted keyframe curve (which is indicated by "
+#| "the filled shape on the button)."
 msgid ""
 "The effect properties which can be controlled using keyframe curves have a "
-"<gui>Show keyframes for this property</gui> button. When you click it, the "
-"keyframe curves on the clip start controlling the respective property. You "
-"can now edit the keyframes to achieve the desired effect. Once you are done "
-"with editing, you can click the button again and the keyframe curve "
-"disappears from the clip. However, the effect property is still controlled "
-"by the adjusted keyframe curve (which is indicated by the filled shape on "
-"the button)."
+"<gui>Show keyframes for this property</gui> button in diamond shape. When "
+"you click it, the keyframe curves on the clip start controlling the "
+"respective property. You can now edit the keyframes to achieve the desired "
+"effect. Once you are done with editing, you can click the button again and "
+"the keyframe curve disappears from the clip. However, the effect property is "
+"still controlled by the adjusted keyframe curve (which is indicated by the "
+"filled shape on the button)."
 msgstr ""
 "Las propiedades de los efectos que se pueden controlar usando curvas de "
 "fotogramas tienen un botón <gui>Mostrar fotogramas para esta propiedad</"
@@ -3796,7 +3825,8 @@ msgstr ""
 
 #. (itstool) path: item/p
 #: C/welcomedialog.page:32
-msgid "<gui>Help</gui> opens the user documenation on the index page."
+#| msgid "<gui>Help</gui> opens the user documenation on the index page."
+msgid "<gui>Help</gui> opens the user documentation on the index page."
 msgstr ""
 "<gui>Ayuda</gui> abre la documentación de usuario en la página del índice."
 
