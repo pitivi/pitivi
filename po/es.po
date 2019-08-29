@@ -1,1807 +1,3966 @@
-# Spanish translation for recipes.
-# Copyright (C) 2017 recipes's COPYRIGHT HOLDER
-# This file is distributed under the same license as the recipes package.
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2017-2019.
+# translation of pitivi to Spanish
+# Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
+# Jesse Aviles <jesseaviles@gmail.com>, 2008, 2009, 2010.
+# Jesse Avilés <jesseaviles@gmail.com>, 2011.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2009, 2010, 2011.
+# Adolfo Jayme Barrientos <fitoschido@gmail.com>, 2012.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2011-2019.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: recipes master\n"
-"POT-Creation-Date: 2019-03-03 11:30+0000\n"
-"PO-Revision-Date: 2019-08-29 10:05+0200\n"
+"Project-Id-Version: pitivi.master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
+"POT-Creation-Date: 2019-07-25 10:00+0000\n"
+"PO-Revision-Date: 2019-08-29 09:48+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 3.32.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
-msgctxt "_"
+#: data/org.pitivi.Pitivi-mime.xml.in:4
+msgid "Pitivi video project (legacy)"
+msgstr "Proyecto de vídeo Pitivi (heredado)"
+
+#: data/org.pitivi.Pitivi-mime.xml.in:12
+msgid "Pitivi/GES video project"
+msgstr "Proyecto de vídeo Pitivi/GES"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:8 data/org.pitivi.Pitivi.desktop.in:4
+#: pitivi/greeterperspective.py:264
+msgid "Pitivi"
+msgstr "Pitivi"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:9 data/org.pitivi.Pitivi.desktop.in:6
+msgid "Create and edit your own movies"
+msgstr "Cree y edite sus propias películas"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:11
+msgid ""
+"Pitivi is a video editor that aims to appeal to hobbyists and professionals "
+"alike, with a strong focus on efficiency, quality and usability. It "
+"integrates well with other applications and sports a beautiful user "
+"interface designed to be powerful yet easy to learn."
+msgstr ""
+"Pitivi es un editor de vídeo que pretende atraer a aficionados y "
+"profesionales por igual, orientado a la usabilidad, la eficiencia y la "
+"calidad. Se integra bien con otras aplicaciones y tiene una bonita interfaz "
+"diseñada para ser potente y fácil de usar."
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:12
+msgid ""
+"With a non-modal editing workflow, a framerate-independent and playhead-"
+"centric timeline, Pitivi allows you quickly and accurately trim, split and "
+"review your scenes. Pitivi's ripple and roll editing features allow spending "
+"more time on storytelling and less time on \"pushing clips around\"."
+msgstr ""
+"Con un flujo de trabajo de edición no modal, una tasa de fotogramas "
+"independiente y una línea de tiempo centrada, Pitivi le permite recortar, "
+"dividir y revisar sus películas rápidamente. Las características de edición "
+"de remolino y de desplazamiento permiten invertir más tiempo en contar la "
+"historia y menos en recortar los vídeos."
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:13
+msgid "Some other features include:"
+msgstr "Entre otras características se incluyen:"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:15
+msgid ""
+"Accepts any file formats supported by the GStreamer multimedia framework"
+msgstr ""
+"Acepta cualquier formato de archivo soportado por el entorno de trabajo "
+"multimedia GStreamer"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:16
+msgid ""
+"Can animate hundreds of special effects and filters with keyframable "
+"properties"
+msgstr "Puede animar cientos de efectos especiales y filtros con fotogramas"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:17
+msgid "Ability to set custom aspect ratios, framerates and rendering presets"
+msgstr ""
+"Posibilidad de establecer relaciones de aspecto personalizadas, y "
+"configuraciones predefinidas de tasas de fotogramas y renderizado"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:18
+msgid "Easy to use crossfades and SMPTE transitions"
+msgstr "Posibilidad de usar fundidos y transiciones SMPTE"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:19
+msgid "Multihead-friendly with detachable user interface components"
+msgstr ""
+"Adaptado para varias pantallas con componentes de la interfaz de usuario "
+"desacoplables"
+
+#: data/org.pitivi.Pitivi.appdata.xml.in:41
+msgid "The Pitivi Team"
+msgstr "El equipo de Pitivi"
+
+#: data/org.pitivi.Pitivi.desktop.in:5
+msgid "Video Editor"
+msgstr "Editor de vídeo"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.pitivi.Pitivi.desktop.in:16
+msgid "video;film;movie;editor;"
+msgstr "vídeo;film;película;editor;"
+
+#: data/ui/alignmentprogress.ui:8
+msgid "Auto-Alignment Starting"
+msgstr "Iniciando el alineamiento automático"
+
+#: data/ui/alignmentprogress.ui:25
+msgid "<b><big>Performing Auto-Alignment</big></b>"
+msgstr "<b><big>Realizando alineamiento automático</big></b>"
+
+#: data/ui/alignmentprogress.ui:38 pitivi/render.py:1179
+msgid "Estimating..."
+msgstr "Estimando…"
+
+#: data/ui/clipmediaprops.ui:8
+msgid "Clip Properties"
+msgstr "Propiedades del vídeo"
+
+#: data/ui/clipmediaprops.ui:23
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: data/ui/clipmediaprops.ui:37
+msgid "_Apply to project"
+msgstr "_Aplicar al proyecto"
+
+#: data/ui/clipmediaprops.ui:124
+msgid "Size (pixels)"
+msgstr "Tamaño (píxeles)"
+
+#: data/ui/clipmediaprops.ui:139
+msgid "Frame rate"
+msgstr "Tasa de fotogramas"
+
+#. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
+#: data/ui/clipmediaprops.ui:154
+msgid "Pixel aspect ratio"
+msgstr "Proporción de aspecto de los píxeles"
+
+#: data/ui/clipmediaprops.ui:197
+msgid "Video:"
+msgstr "Vídeo:"
+
+#: data/ui/clipmediaprops.ui:249
+msgid "Sample rate"
+msgstr "Frecuencia de muestreo"
+
+#: data/ui/clipmediaprops.ui:264
+msgid "Channels"
+msgstr "Canales"
+
+#: data/ui/clipmediaprops.ui:285
+msgid "Audio:"
+msgstr "Sonido:"
+
+#: data/ui/cliptransformation.ui:50
+msgid "Y:"
+msgstr "Y:"
+
+#: data/ui/cliptransformation.ui:94
+msgid "Width:"
+msgstr "Anchura:"
+
+#: data/ui/cliptransformation.ui:106
+msgid "Height:"
+msgstr "Altura:"
+
+#: data/ui/cliptransformation.ui:149
+msgid "X:"
+msgstr "X:"
+
+#: data/ui/cliptransformation.ui:169
+msgid "Previous keyframe"
+msgstr "Fotograma anterior"
+
+#: data/ui/cliptransformation.ui:185
+msgid "Next keyframe"
+msgstr "Siguiente fotograma"
+
+#: data/ui/cliptransformation.ui:215
+msgid "Reset to default values"
+msgstr "Restablecer a los valores predeterminados"
+
+#: data/ui/customwidgets/alpha.ui:143
+msgid "Angle:"
+msgstr "Ángulo:"
+
+#: data/ui/customwidgets/alpha.ui:155
+msgid "Noise level:"
+msgstr "Nivel de ruido:"
+
+#: data/ui/customwidgets/alpha.ui:167
+msgid "White sensitivity:"
+msgstr "Sensibilidad de blancos:"
+
+#: data/ui/customwidgets/alpha.ui:179
+msgid "Black sensitivity:"
+msgstr "Sensibilidad de negros:"
+
+#: data/ui/customwidgets/alpha.ui:321
+msgid "Alpha:"
+msgstr "Alfa:"
+
+#: data/ui/customwidgets/alpha.ui:350
+msgid "Target chroma key:"
+msgstr "Clave de croma de destino:"
+
+#: data/ui/customwidgets/alpha.ui:362
+msgid "Red"
+msgstr "Rojo"
+
+#: data/ui/customwidgets/alpha.ui:373
+msgid "Green"
+msgstr "Verde"
+
+#: data/ui/customwidgets/alpha.ui:395
+msgid "Select a color"
+msgstr "Seleccionar un color"
+
+#: data/ui/customwidgets/alpha.ui:407
+msgid "Blue"
+msgstr "Azul"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:218
+msgid "Split preview"
+msgstr "Dividir vista previa"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:232
+msgid "Source image on left"
+msgstr "Imagen fuente a la izquierda"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:253
+msgid "R"
+msgstr "R"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:266
+msgid "G"
+msgstr "G"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:279
+msgid "B"
+msgstr "B"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:448
+msgid "Shadows"
+msgstr "Sombras"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:459
+msgid "Midtones"
+msgstr "Tonos medios"
+
+#: data/ui/customwidgets/frei0r-filter-3-point-color-balance.ui:470
+msgid "Highlights"
+msgstr "Puntos de luz"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:303
+msgid "Shape:"
+msgstr "Forma:"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:336
+msgid "width"
+msgstr "anchura"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:347
+msgid "height"
+msgstr "altura"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:358
+msgid "Operation:"
+msgstr "Operación:"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:380
+msgid "tilt"
+msgstr "inclinación"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:391
+msgid "trans. width"
+msgstr "anchura de la trasición"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:402
+msgid "min alpha"
+msgstr "alfa mínimo"
+
+#: data/ui/customwidgets/frei0r-filter-alphaspot.ui:413
+msgid "max alpha"
+msgstr "alfa máximo"
+
+#: data/ui/depsmanager.ui:8
+msgid "Missing Dependencies"
+msgstr "Dependencias faltantes"
+
+#: data/ui/depsmanager.ui:36
+msgid "Install"
+msgstr "Instalar"
+
+#: data/ui/depsmanager.ui:68
+msgid ""
+"To enable additional features, please install the following packages and "
+"restart Pitivi:"
+msgstr ""
+"Para activar características adicionales instale los siguientes paquetes y "
+"reinicie Pitivi:"
+
+#: data/ui/effectslibrary.ui:14
+msgid "Show video effects"
+msgstr "Mostrar efectos de vídeo"
+
+#: data/ui/effectslibrary.ui:34
+msgid "Show audio effects"
+msgstr "Mostrar efectos de sonido"
+
+#: data/ui/effectslibrary.ui:84
+msgid "Clear the current search"
+msgstr "Limpiar la búsqueda actual"
+
+#: data/ui/effectslibrary.ui:85 data/ui/medialibrary.ui:124
+#: pitivi/transitions.py:76
+msgid "Search..."
+msgstr "Buscar…"
+
+#: data/ui/elementsettingsdialog.ui:24
+msgid "Reset all"
+msgstr "Reiniciar todo"
+
+#: data/ui/elementsettingsdialog.ui:39 data/ui/projectsettings.ui:62
+msgid "OK"
+msgstr "Aceptar"
+
+#: data/ui/greeter.ui:40
+msgid "Recent Projects"
+msgstr "Proyectos recientes"
+
+#: data/ui/greeter.ui:55
+msgid "Updated"
+msgstr "Actualizado"
+
+#: data/ui/greeter.ui:190 pitivi/preset.py:110
+msgid "Remove"
+msgstr "Quitar"
+
+#: data/ui/greeter.ui:232
+msgid "Welcome to Pitivi"
+msgstr "Bienvenido a Pitivi"
+
+#: data/ui/greeter.ui:246
+msgid "Beautiful, powerful and intuitive movie editor"
+msgstr "Un editor de vídeo bonito, potente e intuitivo"
+
+#: data/ui/mainmenubutton.ui:21
+msgid "Save the current project under a new name or a different location"
+msgstr "Guardar el proyecto actual con un nombre nuevo en otra ubicación"
+
+#: data/ui/mainmenubutton.ui:25 pitivi/editorperspective.py:703
+#: pitivi/editorperspective.py:757
+msgid "Save As..."
+msgstr "Guardar como…"
+
+#: data/ui/mainmenubutton.ui:38
+msgid "Reload the current project"
+msgstr "Recargar el proyecto actual"
+
+#: data/ui/mainmenubutton.ui:42
+msgid "Revert to saved version"
+msgstr "Revertir a una versión guardad"
+
+#: data/ui/mainmenubutton.ui:55
+msgid "Export the current project and all its media in a .tar archive"
+msgstr "Exportar el proyecto actual y todos sus medios a un archivador .tar"
+
+#: data/ui/mainmenubutton.ui:59
+msgid "Export as Archive..."
+msgstr "Exportar como archivo…"
+
+#: data/ui/mainmenubutton.ui:85
+msgid "Export the frame at the current playhead position as an image file."
+msgstr "Exportar el marco en la posición actual como un archivo de imagen."
+
+#: data/ui/mainmenubutton.ui:89
+msgid "Export current frame..."
+msgstr "Exportar fotograma actual…"
+
+#: data/ui/mainmenubutton.ui:115
+msgid "Edit the project settings"
+msgstr "Editar los ajustes del proyecto"
+
+#: data/ui/mainmenubutton.ui:119 data/ui/projectsettings.ui:29
+#: pitivi/medialibrary.py:406
+msgid "Project Settings"
+msgstr "Ajustes del proyecto"
+
+#: data/ui/mainmenubutton.ui:148 data/ui/preferences.ui:7
+#: pitivi/mainwindow.py:178
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: data/ui/mainmenubutton.ui:164
+msgid "Keyboard Shortcuts"
+msgstr "Atajo del teclado"
+
+#: data/ui/mainmenubutton.ui:180
+msgid "User Manual"
+msgstr "Manual del usuario"
+
+#: data/ui/mainmenubutton.ui:196
+msgid "About Pitivi"
+msgstr "Acerca de Pitivi"
+
+#: data/ui/medialibrary.ui:14 pitivi/editorperspective.py:364
+msgid "Add media files to your project"
+msgstr "Añadir archivos multimedia a su proyecto"
+
+#: data/ui/medialibrary.ui:16
+msgid "Import"
+msgstr "Importar"
+
+#: data/ui/medialibrary.ui:35
+msgid "Remove selected clips from the project"
+msgstr "Quitar los vídeos seleccionados del proyecto"
+
+#: data/ui/medialibrary.ui:37
+msgid "_Remove from Project"
+msgstr "_Quitar del proyecto"
+
+#: data/ui/medialibrary.ui:55
+msgid "Clip properties..."
+msgstr "Propiedades del vídeo…"
+
+#: data/ui/medialibrary.ui:74
+msgid "Insert the selected clips at the end of the timeline"
+msgstr "Insertar los vídeos seleccionados al final de la línea de tiempo"
+
+#: data/ui/medialibrary.ui:76
+msgid "Insert at _End of Timeline"
+msgstr "Insertar al _final de la línea de tiempo"
+
+#: data/ui/medialibrary.ui:94
+msgid "Show clips as a detailed list"
+msgstr "Mostrar vídeos como una lista detallada"
+
+#. This is used as a toolbar button tooltip. Here, "select" means "find" rather than "choose". It is not the user who selects, but rather the user requesting the application to select the relevant items.
+#: data/ui/medialibrary.ui:122
+msgid "Select clips that have not been used in the project"
+msgstr "Seleccionar vídeos que no se han usado en el proyecto"
+
+#: data/ui/medialibrary.ui:123
+msgid "Show all clips"
+msgstr "Mostrar todos los vídeos"
+
+#: data/ui/medialibrary.ui:237
+msgid ""
+"Add media to your project by dragging files and folders here or by using the "
+"\"Import\" button."
+msgstr ""
+"Añadir multimedia a su proyecto arrastrando archivos y carpetas aquí o "
+"usando el botón «Importar»."
+
+#: data/ui/preferences.ui:26
+msgid "Reset to Factory Settings"
+msgstr "Restaurar a los ajustes de fábrica"
+
+#: data/ui/preferences.ui:32
+msgid "Reset all settings to their default values"
+msgstr "Restablecer toda la configuración a sus valores predeterminados"
+
+#: data/ui/preferences.ui:44
+msgid "Revert"
+msgstr "Revertir"
+
+#: data/ui/preferences.ui:50
+msgid ""
+"Revert all settings to the previous values (before you opened the "
+"preferences dialog)"
+msgstr ""
+"Revertir toda la configuración a los valores anteriores (antes de que "
+"abriera el diálogo de preferencias)"
+
+#: data/ui/preferences.ui:61 data/ui/renderingdialog.ui:38
+#: data/ui/renderingprogress.ui:85
+msgid "Close"
+msgstr "Cerrar"
+
+#: data/ui/preferences.ui:162
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Algunos cambios no tendrán efecto hasta que reinicie Pitivi"
+
+#: data/ui/projectsettings.ui:49 data/ui/renderingprogress.ui:41
+#: pitivi/editorperspective.py:505 pitivi/editorperspective.py:658
+#: pitivi/editorperspective.py:706 pitivi/editorperspective.py:759
+#: pitivi/greeterperspective.py:233 pitivi/medialibrary.py:761
+#: pitivi/dialogs/browseprojects.py:41 pitivi/dialogs/missingasset.py:49
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: data/ui/projectsettings.ui:115 data/ui/projectsettings.ui:389
+#: data/ui/renderingdialog.ui:231
+msgid "Preset:"
+msgstr "Configuración predefinida:"
+
+#: data/ui/projectsettings.ui:187
+msgid "Size:"
+msgstr "Tamaño:"
+
+#: data/ui/projectsettings.ui:247
+msgid "pixels"
+msgstr "píxeles"
+
+#. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
+#: data/ui/projectsettings.ui:264
+msgid "Constrain proportions"
+msgstr "Restringir proporciones"
+
+#: data/ui/projectsettings.ui:268
+msgid "Maintain aspect ratio"
+msgstr "Mantener la proporción de aspecto"
+
+#: data/ui/projectsettings.ui:299
+msgid "Frame Rate:"
+msgstr "Tasa de fotogramas:"
+
+#. The title of the section with the video settings
+#: data/ui/projectsettings.ui:352 data/ui/renderingdialog.ui:466
+#: pitivi/effects.py:242
+msgid "Video"
+msgstr "Vídeo"
+
+#: data/ui/projectsettings.ui:455 data/ui/renderingdialog.ui:505
+msgid "Channels:"
+msgstr "Canales:"
+
+#: data/ui/projectsettings.ui:489 data/ui/renderingdialog.ui:614
+msgid "Sample rate:"
+msgstr "Frecuencia de muestreo:"
+
+#. The title of the section with the audio settings
+#: data/ui/projectsettings.ui:533 data/ui/renderingdialog.ui:632
+#: pitivi/effects.py:242
+msgid "Audio"
+msgstr "Sonido"
+
+#: data/ui/projectsettings.ui:578
+msgid "Author:"
+msgstr "Autor:"
+
+#: data/ui/projectsettings.ui:590
+msgid "Year:"
+msgstr "Año:"
+
+#. The title of the section with the name, author, year fields
+#: data/ui/projectsettings.ui:622
+msgid "Info"
+msgstr "Información"
+
+#: data/ui/renderingdialog.ui:20 data/ui/renderingdialog.ui:52
+#: pitivi/editorperspective.py:302
+msgid "Render"
+msgstr "Renderizar"
+
+#: data/ui/renderingdialog.ui:106
+msgid "Folder:"
+msgstr "Carpeta:"
+
+#: data/ui/renderingdialog.ui:121
+msgid "File name:"
+msgstr "Nombre del archivo:"
+
+#: data/ui/renderingdialog.ui:148
+msgid "Container format:"
+msgstr "Formato del contenedor:"
+
+#: data/ui/renderingdialog.ui:181 pitivi/mainwindow.py:160
+msgid "Help"
+msgstr "Ayuda"
+
+#: data/ui/renderingdialog.ui:280
+msgid "Scale:"
+msgstr "Escala:"
+
+#: data/ui/renderingdialog.ui:313
+msgid "Scale"
+msgstr "Escala"
+
+#: data/ui/renderingdialog.ui:333
+msgid "Height"
+msgstr "Altura"
+
+#: data/ui/renderingdialog.ui:352
+msgid "Project Settings..."
+msgstr "Configuración del proyecto…"
+
+#: data/ui/renderingdialog.ui:367 data/ui/renderingdialog.ui:537
+msgid "Advanced..."
+msgstr "Avanzadas…"
+
+#: data/ui/renderingdialog.ui:406 data/ui/renderingdialog.ui:577
+msgid "Codec:"
+msgstr "Códec:"
+
+#: data/ui/renderingdialog.ui:432
+msgid "Framerate"
+msgstr "Tasa de fotogramas"
+
+#: data/ui/renderingdialog.ui:448
+msgid "Frame rate:"
+msgstr "Tasa de fotogramas:"
+
+#: data/ui/renderingdialog.ui:656
+msgid "Automatically render from proxy files"
+msgstr "Renderizar automáticamente desde archivos de proxy"
+
+#: data/ui/renderingdialog.ui:660
+msgid ""
+"Use proxy files if they are available and the source asset media format is "
+"not officially supported.\n"
+"\n"
+"This option is a good trade-off between quality of the rendered video and "
+"stability."
+msgstr ""
+"Usar archivos de proxy si están disponibles y el formato de medios del "
+"recurso fuente no está soportado oficialmente.\n"
+"\n"
+"Esta opción es intermedia entre la calidad del vídeo renderizado y la "
+"estabilidad."
+
+#: data/ui/renderingdialog.ui:675
+msgid "Always render from proxy files"
+msgstr "Renderizar siempre desde archivos de proxy"
+
+#: data/ui/renderingdialog.ui:679
+msgid ""
+"Render all proxied clips from the proxy assets. There might be some quality "
+"loss during the rendering process."
+msgstr ""
+"Renderizar todos los vídeos de los recursos del proxy. Esto puede provocar "
+"algo de pérdida de calidad durante el proceso de renderizado."
+
+#: data/ui/renderingdialog.ui:692
+msgid "Never render from proxy files"
+msgstr "No renderizar nunca desde archivos de proxy"
+
+#: data/ui/renderingdialog.ui:696
+msgid ""
+"Always use source assets for rendering. It is the best choice for the "
+"quality of the rendered video, but you might hit some bugs because of the "
+"use of not officially supported media formats.\n"
+"<i>Use at your own risk!</i>"
+msgstr ""
+"Usar siempre recursos fuente para el renderizado. Esta es la mejor opción "
+"para la calidad del vídeo renderizado, pero puede encontrarse con algunos "
+"errores debido al uso de formatos de medios no soportados.\n"
+"<i>Úselo bajo su propia responsabilidad</i>"
+
+#: data/ui/renderingprogress.ui:8
+msgid "Rendering"
+msgstr "Renderizando"
+
+#: data/ui/renderingprogress.ui:27 pitivi/viewer/viewer.py:742
+msgid "Pause"
+msgstr "Pausar"
+
+#: data/ui/renderingprogress.ui:55 pitivi/viewer/viewer.py:734
+#: pitivi/timeline/timeline.py:1724
+msgid "Play"
+msgstr "Reproducir"
+
+#: data/ui/renderingprogress.ui:70
+msgid "Open Folder"
+msgstr "Abrir carpeta"
+
+#: data/ui/renderingprogress.ui:110
+msgid ""
+"<small>This process may take a long time depending on the selected codecs, "
+"the image resolution, your computer's processing power, applied effects and "
+"the length of your movie.</small>"
+msgstr ""
+"<small>Este proceso puede tardar mucho tiempo, dependiendo de los códecs "
+"seleccionados, la resolución de la imagen, la capacidad de procesamiento de "
+"su equipo, los efectos aplicados y la duración de la película.</small>"
+
+#: data/ui/renderingprogress.ui:126
+msgid "Initializing..."
+msgstr "Inicializando…"
+
+#: data/ui/renderingprogress.ui:155
+msgid "Estimated filesize:"
+msgstr "Tamaño de archivo estimado:"
+
+#: data/ui/timelinetoolbar.ui:15
+msgid "Split clips at playhead position"
+msgstr "Cortar vídeos en la posición actual"
+
+#: data/ui/timelinetoolbar.ui:17
+msgid "Split"
+msgstr "Dividir"
+
+#: data/ui/timelinetoolbar.ui:30
+msgid "Delete clips"
+msgstr "Eliminar vídeos"
+
+#: data/ui/timelinetoolbar.ui:32
+msgid "Delete"
+msgstr "Eliminar"
+
+#: data/ui/timelinetoolbar.ui:45
+msgid "Group clips"
+msgstr "Agrupar vídeos"
+
+#: data/ui/timelinetoolbar.ui:47
+msgid "Group"
+msgstr "Agrupar"
+
+#: data/ui/timelinetoolbar.ui:60
+msgid "Ungroup clips"
+msgstr "Desagrupar vídeos"
+
+#: data/ui/timelinetoolbar.ui:62
+msgid "Ungroup"
+msgstr "Desagrupar"
+
+#: data/ui/timelinetoolbar.ui:75
+msgid "Copy clips"
+msgstr "Copiar vídeos"
+
+#: data/ui/timelinetoolbar.ui:89
+msgid "Paste clips"
+msgstr "Pegar vídeos"
+
+#: data/ui/timelinetoolbar.ui:103
+msgid "Align clips based on their soundtracks"
+msgstr "Alinear vídeos basándose en sus pistas de sonido"
+
+#: data/ui/timelinetoolbar.ui:106
+msgid "Align"
+msgstr "Alinear"
+
+#: data/ui/timelinetoolbar.ui:119
+msgid ""
+"Toggle gapless mode\n"
+"When enabled, adjacent clips automatically move to fill gaps."
+msgstr ""
+"Conmutar el modo sin espacios\n"
+"Cuando está activado, los vídeos adyacentes se mueven automáticamente para "
+"rellenar los espacios."
+
+#: data/ui/timelinetoolbar.ui:122
+msgid "Gapless mode"
+msgstr "Modo sin espacios"
+
+#: data/ui/titleeditor.ui:36
+msgid "Create"
+msgstr "Crear"
+
+#: data/ui/titleeditor.ui:64
+msgid "Select a title clip to edit or create a new one."
+msgstr "Seleccione un vídeo para editarlo o cree uno nuevo."
+
+#: data/ui/titleeditor.ui:139
+msgid "Choose a font"
+msgstr "Escoja una tipografía"
+
+#: data/ui/titleeditor.ui:156
+msgid "Pick a text color"
+msgstr "Escoja un color de texto"
+
+#: data/ui/titleeditor.ui:191
+msgid "Pick a background color"
+msgstr "Escoja un color de fondo"
+
+#: data/ui/titleeditor.ui:232
+msgid "Alignment"
+msgstr "Alineación"
+
+#: data/ui/titleeditor.ui:268
+msgid "Horizontal:"
+msgstr "Horizontal:"
+
+#: data/ui/titleeditor.ui:292
+msgid "Vertical:"
+msgstr "Vertical:"
+
+#: pitivi/application.py:162
+msgid "General"
+msgstr "General"
+
+#: pitivi/application.py:167
+msgid "Undo the most recent action"
+msgstr "Deshacer la acción más reciente"
+
+#: pitivi/application.py:173
+msgid "Redo the most recent action"
+msgstr "Rehacer la acción más reciente"
+
+#: pitivi/application.py:178
+msgid "Quit"
+msgstr "Salir"
+
+#: pitivi/application.py:185
+msgid "Show the Shortcuts Window"
+msgstr "Mostrar la ventana de atajos"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:109
+#, python-format
+msgid "- %s not found on the system"
+msgstr "- %s no encontrado en el sistema"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:112
+#, python-format
+msgid "- %s version %s is installed but Pitivi requires at least version %s"
+msgstr ""
+"- %s la versión %s está instalada, pero Pitivi necesita al menos la versión "
+"%s"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:185
+#, python-format
+msgid "- %s GStreamer plug-in not found on the system"
+msgstr "- Complemento de GStreamer %s no encontrado en el sistema"
+
+#. Translators: %s is a Python module name or another os component
+#: pitivi/check.py:188
+#, python-format
+msgid ""
+"- %s Gstreamer plug-in version %s is installed but Pitivi requires at least "
+"version %s"
+msgstr ""
+"- El complemento de GStreamer %s, versión %s está instalada, pero Pitivi "
+"necesita al menos la versión %s"
+
+#: pitivi/check.py:298
+msgid "ERROR - The following hard dependencies are unmet:"
+msgstr "Error: no se cumplen las siguientes dependencias fuertes:"
+
+#: pitivi/check.py:307
+msgid "Missing soft dependency:"
+msgstr "Falta la dependencia débil:"
+
+#: pitivi/check.py:314
+msgid ""
+"ERROR — Could not create a Gst.Fraction — this means gst-python is not "
+"installed correctly."
+msgstr ""
+"Error. No se pudo crear una Gst.Fraction. Esto siginifica que gst-python no "
+"está instalado correctamente."
+
+#: pitivi/check.py:319
+msgid ""
+"Could not create audio output sink. Make sure you have a valid one "
+"(pulsesink, alsasink or osssink)."
+msgstr ""
+"No se pudo crear el sumidero de salida de sonido. Asegúrese de que tiene al "
+"menos uno disponible (pulsesink, alsasink u osssink)."
+
+#: pitivi/check.py:324
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink available."
+msgstr ""
+"No se pudo crear el sumidero de salida de vídeo. Asegúrese de que tiene al "
+"menos un gtksink disponible."
+
+#: pitivi/check.py:339
+#, python-format
+msgid "Could not import '%s'. Make sure you have it available."
+msgstr "No se pudo importar «%s». Asegúrese de que tiene uno disponible."
+
+#: pitivi/check.py:369
+msgid "Could not import 'gi'. Make sure you have pygobject available."
+msgstr "No se pudo importar «gi». Asegúrese de que tiene pygobject disponible."
+
+#: pitivi/check.py:457
+msgid "enables sound notifications when rendering is complete"
+msgstr "activa las notificaciones sonoras cuando termina el renderizado"
+
+#: pitivi/check.py:459
+msgid "enables visual notifications when rendering is complete"
+msgstr "activa las notificaciones visuales cuando termina el renderizado"
+
+#: pitivi/check.py:461
+msgid "additional multimedia codecs through the GStreamer Libav library"
+msgstr "códecs multimedia adicionales mediante la biblioteca GStreamer Libav"
+
+#: pitivi/check.py:463
+msgid ""
+"enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
+"in GStreamer and recover from them"
+msgstr ""
+"activa una alerta en la tubería de GStreamer. Usado para detectar errores en "
+"GStreamer y recuperarse de ellos"
+
+#: pitivi/clipproperties.py:117
+msgid "Effects"
+msgstr "Efectos"
+
+#: pitivi/clipproperties.py:132
+msgid "To apply an effect to the clip, drag it from the Effect Library."
+msgstr ""
+"Para aplicar un efecto al clip arrástrelo desde la biblioteca de efectos."
+
+#: pitivi/clipproperties.py:150
+msgid "Remove effect"
+msgstr "Quitar efecto"
+
+#: pitivi/clipproperties.py:185
+msgid "Active"
+msgstr "Activar"
+
+#: pitivi/clipproperties.py:188
+msgid "Type"
+msgstr "Tipo"
+
+#: pitivi/clipproperties.py:197
+msgid "Effect name"
+msgstr "Nombre del efecto"
+
+#: pitivi/clipproperties.py:225
+msgid "Select a clip on the timeline to configure its associated effects"
+msgstr ""
+"Seleccionar un vídeo en la línea de tiempo para configurar sus efectos "
+"asociados"
+
+#: pitivi/clipproperties.py:248
+msgid "Clip Effects"
+msgstr "Efectos de vídeo"
+
+#: pitivi/clipproperties.py:254
+msgid "Remove the selected effect"
+msgstr "Quitar el efecto seleccionado"
+
+#: pitivi/clipproperties.py:573
+msgid "Transformation"
+msgstr "Transformación"
+
+#: pitivi/clipproperties.py:683
+msgid "Show keyframes"
+msgstr "Mostrar fotogramas"
+
+#: pitivi/clipproperties.py:685
+msgid "Activate keyframes"
+msgstr "Activar fotogramas"
+
+#: pitivi/clipproperties.py:690
+msgid "Hide keyframes"
+msgstr "Ocultar fotogramas"
+
+#: pitivi/editorperspective.py:173 pitivi/medialibrary.py:558
+msgid "Media Library"
+msgstr "Biblioteca multimedia"
+
+#: pitivi/editorperspective.py:175
+msgid "Effect Library"
+msgstr "Biblioteca de efectos"
+
+#: pitivi/editorperspective.py:186
+msgid "Clip"
+msgstr "Vídeo"
+
+#: pitivi/editorperspective.py:188
+msgid "Transition"
+msgstr "Transición"
+
+#: pitivi/editorperspective.py:190
+msgid "Title"
+msgstr "Título"
+
+#: pitivi/editorperspective.py:278
+msgid "Close project"
+msgstr "Cerrar proyecto"
+
+#: pitivi/editorperspective.py:286
+msgid "Undo"
+msgstr "Deshacer"
+
+#: pitivi/editorperspective.py:296 pitivi/editorperspective.py:497
+#: pitivi/editorperspective.py:659 pitivi/editorperspective.py:707
+#: pitivi/editorperspective.py:760 pitivi/preset.py:116 pitivi/project.py:193
+msgid "Save"
+msgstr "Guardar"
+
+#: pitivi/editorperspective.py:304
+msgid "Export your project as a finished movie"
+msgstr "Exportar su proyecto como película terminada"
+
+#: pitivi/editorperspective.py:335
+msgid "Save the current project"
+msgstr "Guardar el proyecto actual"
+
+#: pitivi/editorperspective.py:342
+msgid "Save the current project as"
+msgstr "Guardar el proyecto actual como"
+
+#: pitivi/editorperspective.py:469
+#, python-format
+msgid "Unable to save project \"%s\""
+msgstr "No se pudo guardar el proyecto «%s»"
+
+#: pitivi/editorperspective.py:499 pitivi/project.py:192
+msgid "Save as..."
+msgstr "Guardar como…"
+
+#: pitivi/editorperspective.py:502
+msgid "Close without saving"
+msgstr "Cerrar sin guardar"
+
+#: pitivi/editorperspective.py:512
+msgid "Save changes to the current project before closing?"
+msgstr "¿Guardar el proyecto actual antes de cerrar?"
+
+#: pitivi/editorperspective.py:521
+#, python-format
+msgid "If you don't save, the changes from the last %s will be lost."
+msgstr "Si no guarda se perderán sus cambios desde el último %s."
+
+#: pitivi/editorperspective.py:525
+msgid "If you don't save, your changes will be lost."
+msgstr "Si no guarda sus cambios se perderán"
+
+#: pitivi/editorperspective.py:573
+msgid "Revert to saved project version?"
+msgstr "¿Revertir a una versión guardad del proyecto?"
+
+#: pitivi/editorperspective.py:578
+msgid "This will reload the current project. All unsaved changes will be lost."
+msgstr ""
+"Esto recargará el proyecto actual. Se perderán todos los cambios sin guardar."
+
+#. Signal the project loading failure.
+#. You have to do this *after* successfully creating a blank project,
+#. or the startupwizard will still be connected to that signal too.
+#: pitivi/editorperspective.py:609
+#, python-format
+msgid ""
+"No replacement file was provided for \"<i>%s</i>\".\n"
+"\n"
+"Pitivi does not currently support partial projects."
+msgstr ""
+"No se ha proporcionado un reemplazo para «<i>%s</i>».\n"
+"\n"
+"Actualmente, Pitivi no soporta proyectos parciales."
+
+#: pitivi/editorperspective.py:655
+msgid "Export To..."
+msgstr "Exportar a…"
+
+#: pitivi/editorperspective.py:672
+msgid "Tar archive"
+msgstr "Archivador tar"
+
+#: pitivi/editorperspective.py:676 pitivi/editorperspective.py:722
+msgid "Detect automatically"
+msgstr "Detectar automáticamente"
+
+#: pitivi/editorperspective.py:716 pitivi/editorperspective.py:763
+#: pitivi/project.py:72 pitivi/render.py:431
+msgid "Untitled"
+msgstr "Sin título"
+
+#: pitivi/editorperspective.py:765
+msgid "PNG image"
+msgstr "Imagen PNG"
+
+#: pitivi/editorperspective.py:766
+msgid "JPEG image"
+msgstr "Imagen JPEG"
+
+#: pitivi/editorperspective.py:807
+msgid "Preview"
+msgstr "Previsualizar"
+
+#: pitivi/effects.py:63
+msgid "Colors"
+msgstr "Colores"
+
+#: pitivi/effects.py:80
+msgid "Compositing"
+msgstr "Composición"
+
+#: pitivi/effects.py:87
+msgid "Noise & blur"
+msgstr "Ruido y desenfoque"
+
+#: pitivi/effects.py:93
+msgid "Analysis"
+msgstr "Análisis"
+
+#: pitivi/effects.py:101
+msgid "Geometry"
+msgstr "Geometría"
+
+#: pitivi/effects.py:112
+msgid "Fancy"
+msgstr "Fantasía"
+
+#: pitivi/effects.py:124
+msgid "Time"
+msgstr "Duración"
+
+#: pitivi/effects.py:242
+msgid "effect"
+msgstr "efecto"
+
+#. Add Uncategorized only if there are other categories defined.
+#: pitivi/effects.py:336 pitivi/effects.py:357
+msgid "Uncategorized"
+msgstr "Sin categorizar"
+
+#: pitivi/effects.py:337 pitivi/effects.py:354
+msgid "All effects"
+msgstr "Todos los efectos"
+
+#: pitivi/greeterperspective.py:220 pitivi/preset.py:104
+msgid "New"
+msgstr "Nuevo"
+
+#: pitivi/greeterperspective.py:221 pitivi/greeterperspective.py:275
+msgid "Create a new project"
+msgstr "Crear un proyecto nuevo"
+
+#: pitivi/greeterperspective.py:224
+msgid "Open…"
+msgstr "Abrir…"
+
+#: pitivi/greeterperspective.py:225
+msgid "Open an existing project"
+msgstr "Abrir un proyecto existente"
+
+#: pitivi/greeterperspective.py:230
+msgid "Select projects for removal"
+msgstr "Seleccionar proyectos para eliminar"
+
+#: pitivi/greeterperspective.py:258
+msgid "Click an item to select"
+msgstr "Pulse en un elemento para seleccionarlo"
+
+#: pitivi/greeterperspective.py:262
+msgid "Select a Project"
+msgstr "Seleccionar un proyecto"
+
+#: pitivi/greeterperspective.py:281
+msgid "Open a project"
+msgstr "Abrir un proyecto"
+
+#: pitivi/greeterperspective.py:349
+#, python-format
+msgid "Pitivi %s is available."
+msgstr "Pitivi %s está disponible."
+
+#: pitivi/mainwindow.py:155
+msgid "Project"
+msgstr "Proyecto"
+
+#: pitivi/mainwindow.py:166
+msgid "About"
+msgstr "Acerca de"
+
+#: pitivi/mainwindow.py:172
+msgid "Show the menu button content"
+msgstr "Mostrar el contenido del botón del menú"
+
+#: pitivi/mainwindow.py:225
+#, python-format
+msgid "Unable to load project \"%s\""
+msgstr "No se pudo cargar el proyecto «%s»"
+
+#: pitivi/mediafilespreviewer.py:160
+msgid "Pitivi can not preview this file."
+msgstr "Pitivi no puede previsualizar este archivo."
+
+#: pitivi/mediafilespreviewer.py:161
+msgid "More info"
+msgstr "Más información"
+
+#: pitivi/mediafilespreviewer.py:271
+#, python-format
+msgid "<b>Resolution</b>: %d×%d"
+msgstr "<b>Resolución</b>: %d × %d"
+
+#: pitivi/mediafilespreviewer.py:273 pitivi/mediafilespreviewer.py:290
+#: pitivi/utils/ui.py:461
+#, python-format
+msgid "<b>Duration</b>: %s"
+msgstr "<b>Duración:</b>: %s"
+
+#: pitivi/mediafilespreviewer.py:464 pitivi/medialibrary.py:1096
+msgid "Error while analyzing a file"
+msgid_plural "Error while analyzing files"
+msgstr[0] "Error al analizar un archivo"
+msgstr[1] "Error al analizar los archivos"
+
+#: pitivi/medialibrary.py:125
+msgid "Close after importing files"
+msgstr "Cerrar después de importar los archivos"
+
+#: pitivi/medialibrary.py:130
+msgid "Create proxies when the media format is not supported officially"
+msgstr ""
+"Crear proxies cuando el formato del medio no esté soportado oficialmente"
+
+#: pitivi/medialibrary.py:132
+msgid ""
+"Let Pitivi decide when to create proxy files and when not. The decision will "
+"be made depending on the file format, and how well it is supported. For "
+"example H.264, FLAC files contained in QuickTime will not be proxied, but "
+"AAC, H.264 contained in MPEG-TS will.\n"
+"\n"
+"<i>This is the only option officially supported by the Pitivi developers and "
+"thus is the safest.</i>"
+msgstr ""
+"Dejar que Pitivi decida cuándo crear archivos de proxy y cuándo no. La "
+"decisión se hará dependiendo del formato del archivo y de cómo se soporta. "
+"Por ejemplo, H.264, archivos FLAC contenidos en Quicktime no se pondrán el "
+"el proxy, pero AAC, H.264 contenido el MPEG-TS sí.\n"
+"\n"
+"<i>Esta es la única opción soportada oficialmente por los desarrolladores de "
+"Pitivi y por lo tanto la más segura.</i>"
+
+#: pitivi/medialibrary.py:142
+msgid "Create proxies for all files"
+msgstr "Crear proxies para todos los archivos"
+
+#: pitivi/medialibrary.py:144
+msgid ""
+"Use proxies for every imported file whatever its current media format is."
+msgstr ""
+"Usar proxies para archivo importado, independientemente del fomato de medios "
+"actual."
+
+#: pitivi/medialibrary.py:147
+msgid "Do not use proxy files"
+msgstr "No usar archivos de proxy"
+
+#: pitivi/medialibrary.py:394 pitivi/medialibrary.py:955
+msgid "Unknown"
+msgstr "Desconocido"
+
+#: pitivi/medialibrary.py:474
+msgid "Icon"
+msgstr "Icono"
+
+#: pitivi/medialibrary.py:485
+msgid "Information"
+msgstr "Información"
+
+#: pitivi/medialibrary.py:564
+msgid "Remove the selected assets"
+msgstr "Quitar los recursos seleccionados"
+
+#: pitivi/medialibrary.py:570
+msgid "Insert selected assets at the end of the timeline"
+msgstr "Insertar los recursos seleccionados al final de la línea de tiempo"
+
+#: pitivi/medialibrary.py:758
+msgid "Select One or More Files"
+msgstr "Seleccionar uno o más archivos"
+
+#: pitivi/medialibrary.py:762
+msgid "Add"
+msgstr "Añadir"
+
+#: pitivi/medialibrary.py:777
+msgid "Supported file formats"
+msgstr "Formatos de archivo soportados"
+
+#: pitivi/medialibrary.py:785 pitivi/dialogs/missingasset.py:120
+msgid "All files"
+msgstr "Todos los archivos"
+
+#. Translators: this string indicates the estimated time
+#. remaining until an action (such as rendering) completes.
+#. The "%s" is an already-localized human-readable duration,
+#. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+#. In some languages, "About %s left" can be expressed roughly as
+#. "There remains approximatively %s" (to handle gender and plurals)
+#: pitivi/medialibrary.py:861
+#, python-format
+msgid "Transcoding %d asset: %d%% (About %s left)"
+msgid_plural "Transcoding %d assets: %d%% (About %s left)"
+msgstr[0] "Transcodificando %d recurso: %d%% (Queda %s aprox.)"
+msgstr[1] "Transcodificando %d recursos: %d%% (Queda %s aprox.)"
+
+#: pitivi/medialibrary.py:967
+msgid "View error"
+msgid_plural "View errors"
+msgstr[0] "Ver error"
+msgstr[1] "Ver errores"
+
+#. Translators: {0:d} is just like %d (integer number variable)
+#: pitivi/medialibrary.py:969
+#, python-brace-format
+msgid "An error occurred while importing."
+msgid_plural "{0:d} errors occurred while importing."
+msgstr[0] "Ha habido un error al importar."
+msgstr[1] "Ha habido {0:d}  errores al importar."
+
+#: pitivi/medialibrary.py:985
+#, python-format
+msgid "The project settings have been set to match file '%s'"
+msgstr ""
+"Se ha ajustado la configuración del proyecto para que coincida con el "
+"archivo «%s»"
+
+#: pitivi/medialibrary.py:1099
+msgid "The following file can not be used with Pitivi."
+msgid_plural "The following files can not be used with Pitivi."
+msgstr[0] "El siguiente archivo no se puede usar con Pitivi."
+msgstr[1] "Los siguientes archivos no se pueden usar con Pitivi."
+
+#: pitivi/medialibrary.py:1208
+msgid "Open containing folder"
+msgstr "Abrir la carpeta contenedora"
+
+#: pitivi/medialibrary.py:1226
+msgid "Do not use proxy for selected asset"
+msgid_plural "Do not use proxies for selected assets"
+msgstr[0] "No usar proxy para el recurso seleccionado"
+msgstr[1] "No usar proxies para los recursos seleccionados"
+
+#: pitivi/medialibrary.py:1237
+msgid "Delete corresponding proxy file"
+msgid_plural "Delete corresponding proxy files"
+msgstr[0] "Eliminar el archivo de proxy correspondiente"
+msgstr[1] "Eliminar los archivos de proxy correspondientes"
+
+#: pitivi/medialibrary.py:1248
+msgid "Use proxy for selected asset"
+msgid_plural "Use proxies for selected assets"
+msgstr[0] "Usar proxy para el recurso seleccionado"
+msgstr[1] "Usar proxies para los recursos seleccionados"
+
+#: pitivi/pluginmanager.py:52
+msgid "User plugins"
+msgstr "Complementos de usuario"
+
+#: pitivi/pluginmanager.py:54
+msgid "System plugins"
+msgstr "Complementos del sistema"
+
+#: pitivi/preset.py:230
+msgid "New preset"
+msgstr "Configuración nueva"
+
+#: pitivi/preset.py:233
+#, python-format
+msgid "New preset %d"
+msgstr "Configuración nueva %d"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/preset.py:541
+msgid "new-profile"
+msgstr "perfil-nuevo"
+
+#. Translators: This must contain exclusively low case alphanum and '-'
+#: pitivi/preset.py:545
+#, python-format
+msgid "new-profile-%d"
+msgstr "perfil-nuevo-%d"
+
+#. GTK does not allow an empty string as the dialog title, so we use the
+#. same translatable one as render.py's pipeline error message dialog:
+#: pitivi/project.py:176 pitivi/render.py:898
+msgid "Sorry, something didn’t work right."
+msgstr "Algo no ha funcionado correctamente."
+
+#: pitivi/project.py:179
+msgid ""
+"Pitivi detected a serious backend problem and could not recover from it, "
+"even after multiple tries. The only thing that can be done at this point is "
+"to <b>restart Pitivi</b>.\n"
+"\n"
+"This is a rare and severe kind of bug. Please see our <a href=\"http://"
+"developer.pitivi.org/Bug_reporting.html\">bug reporting guide</a> and take "
+"the time to report it! We will be very happy to fix this bug and make sure "
+"it does not occur again in future versions.\n"
+"\n"
+"Before closing Pitivi, you can save changes to the existing project file or "
+"as a separate project file."
+msgstr ""
+"Pitivi ha detectado un error grave del «backend» y no se pudo recuperar tras "
+"varios intentos. Lo único que se puede hacer en este punto es \n"
+"<b>reiniciar Pitivi</b>.\n"
+"\n"
+"Esto es un tipo de error muy raro y grave. Consulte la \n"
+"<a href=\"http://developer.pitivi.org/Bug_reporting.html\">guía de informes "
+"de error</a> e informe de él. Nos alegrará mucho arreglarlo y asegurarnos de "
+"que nos reproduce en versiones futuras.\n"
+"\n"
+"Antes de cerrar Pitivi puede guardar los cambios en el archivo del proyecto "
+"existente o como un archivo de proyecto separado."
+
+#: pitivi/project.py:194
+msgid "Close Pitivi"
+msgstr "Cerrar Pitivi"
+
+#: pitivi/project.py:264
+msgid ""
+"This might be due to a bug or an unsupported project file format. If you "
+"were trying to add a media file to your project, use the \"Import\" button "
+"instead."
+msgstr ""
+"Esto puede deberse a un error o a un formato de archivo de proyecto no "
+"soportado. Si está intentando añadir un archivo multimedia a su proyecto, "
+"use el botón «Importar» en su lugar."
+
+#: pitivi/project.py:286
+msgid "Ignore backup"
+msgstr "Ignorar respaldo"
+
+#: pitivi/project.py:287
+msgid "Restore from backup"
+msgstr "Restaurar desde un respaldo"
+
+#: pitivi/project.py:303
+#, python-format
+msgid ""
+"An autosaved version of your project file was found. It is %s newer than the "
+"saved project.\n"
+"\n"
+"Would you like to load it instead?"
+msgstr ""
+"Se ha encontrado una versión autoguardada de su proyecto. Es %s más nueva "
+"que el proyecto guardado.\n"
+"\n"
+"¿Quiere cargarla en su lugar?"
+
+#: pitivi/project.py:379
+msgid "You do not have permissions to write to this folder."
+msgstr "No tiene permiso para escribir en esta carpeta."
+
+#. Save the project to a temporary file.
+#: pitivi/project.py:412
+msgid "project"
+msgstr "proyecto"
+
+#: pitivi/project.py:714
+msgid "Pitivi encoding profile"
+msgstr "Perfil de codificación de Pitivi"
+
+#: pitivi/render.py:338
+#, python-format
+msgid "Rendering — %d%% complete"
+msgstr "Renderizando — %d%% completado"
+
+#. Translators: this string indicates the estimated time
+#. remaining until an action (such as rendering) completes.
+#. The "%s" is an already-localized human-readable duration,
+#. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+#. In some languages, "About %s left" can be expressed roughly as
+#. "There remains approximatively %s" (to handle gender and plurals).
+#: pitivi/render.py:347
+#, python-format
+msgid "About %s left"
+msgstr "Quedan alrededor de %s"
+
+#: pitivi/render.py:394
+msgid "Currently rendering"
+msgstr "Renderizando actualmente"
+
+#. Translators: This item appears in a combobox's popup and
+#. contains as children the unsupported (but still available)
+#. muxers and encoders.
+#: pitivi/render.py:663
+msgid "Unsupported"
+msgstr "No soportado"
+
+#: pitivi/render.py:722
+msgid "A file name is required."
+msgstr "Se necesita un nombre de archivo."
+
+#: pitivi/render.py:725
+msgid ""
+"This file already exists.\n"
+"If you don't want to overwrite it, choose a different file name or folder."
+msgstr ""
+"Este archivo ya existe.\n"
+"Si no quiere sobrescribirlo, elija un nombre de archivo o una carpeta "
+"diferentes."
+
+#: pitivi/render.py:729
+#, python-format
+msgid "Remove invalid characters from the filename: %s"
+msgstr "Quitar los caracteres no válidos del nombre del archivo: %s"
+
+#: pitivi/render.py:760
+#, python-format
+msgid "%.2f GB"
+msgstr "%.2f GB"
+
+#. -1 means round to 10
+#: pitivi/render.py:765
+#, python-format
+msgid "%d MB"
+msgstr "%d MB"
+
+#: pitivi/render.py:892
+msgid ""
+"<b>Make sure your rendering size is even, x264enc might not be able to "
+"render otherwise.</b>\n"
+"\n"
+msgstr ""
+"<b>Asegúrese de que el tamaño del renderizado es par, x264enc puede no ser "
+"capaz de hacerlo si no es así.</b>\n"
+"\n"
+
+#: pitivi/render.py:899
+msgid "An error occurred while trying to render your project."
+msgstr "Ha ocurrido un error al intentar renderizar su proyecto."
+
+#: pitivi/render.py:901
+msgid ""
+"You might want to check our troubleshooting guide or file a bug report. The "
+"GStreamer error was:"
+msgstr ""
+"Es posible que quiera consultar la guía de resolución de problemas o "
+"informar de un error.El error de GStreamer ha sido:"
+
+#: pitivi/render.py:1127 pitivi/render.py:1128 pitivi/render.py:1134
+msgid "Render complete"
+msgstr "Renderizado completo"
+
+#: pitivi/render.py:1132
+#, python-format
+msgid "\"%s\" has finished rendering."
+msgstr "«%s» ha terminado el renderizado."
+
+#: pitivi/titleeditor.py:45
+msgid "Title clip duration"
+msgstr "Duración del vídeo de título"
+
+#: pitivi/titleeditor.py:47
+msgid ""
+"Default clip length (in milliseconds) of titles when inserting on the "
+"timeline."
+msgstr ""
+"Duración predeterminada (en milisegundos) del vídeo de títulos al insertarlo "
+"en la línea de tiempo."
+
+#: pitivi/titleeditor.py:117 pitivi/titleeditor.py:124
+msgid "Absolute"
+msgstr "Absoluto"
+
+#: pitivi/titleeditor.py:118
+msgid "Top"
+msgstr "Arriba"
+
+#: pitivi/titleeditor.py:119 pitivi/titleeditor.py:126
+msgid "Center"
+msgstr "Centrado"
+
+#: pitivi/titleeditor.py:120
+msgid "Bottom"
+msgstr "Abajo"
+
+#: pitivi/titleeditor.py:121
+msgid "Baseline"
+msgstr "Línea base"
+
+#: pitivi/titleeditor.py:125
+msgid "Left"
+msgstr "Izquierda"
+
+#: pitivi/titleeditor.py:127
+msgid "Right"
+msgstr "Derecha"
+
+#: pitivi/transitions.py:84
+msgid "Normal"
+msgstr "Normal"
+
+#: pitivi/transitions.py:89
+msgid "Loop"
+msgstr "Circular"
+
+#: pitivi/transitions.py:96
+msgid "Reverse direction"
+msgstr "Invertir dirección"
+
+#: pitivi/transitions.py:109
+msgid ""
+"Create a transition by overlapping two adjacent clips on the same layer. "
+"Click the transition on the timeline to change the transition type."
+msgstr ""
+"Crear una transición superponiendo dos vídeos adyacentes en la misma capa. "
+"Pulse en la transición en la línea de tiempo para cambiar el tipo de "
+"transición."
+
+#: pitivi/transitions.py:234
+msgid "Slow"
+msgstr "Lenta"
+
+#: pitivi/transitions.py:236
+msgid "Fast"
+msgstr "Rápida"
+
+#: pitivi/transitions.py:238
+msgid "Epileptic"
+msgstr "Epiléptica"
+
+#: pitivi/transitions.py:242
+msgid "Sharp"
+msgstr "Brusca"
+
+#: pitivi/transitions.py:244
+msgid "Smooth"
+msgstr "Suave"
+
+#: pitivi/viewer/viewer.py:76
+msgid "Currently playing"
+msgstr "Reproduciendo actualmente"
+
+#: pitivi/viewer/viewer.py:255
+msgid "Go to the beginning of the timeline"
+msgstr "Ir al comienzo de la línea de tiempo"
+
+#: pitivi/viewer/viewer.py:264
+msgid "Go back one second"
+msgstr "Ir al segundo anterior"
+
+#: pitivi/viewer/viewer.py:277
+msgid "Go forward one second"
+msgstr "Ir al siguiente segundo"
+
+#: pitivi/viewer/viewer.py:286
+msgid "Go to the end of the timeline"
+msgstr "Ir al final de la línea de tiempo"
+
+#: pitivi/viewer/viewer.py:293
+msgid ""
+"Enter a timecode or frame number\n"
+"and press \"Enter\" to go to that position"
+msgstr ""
+"Introduzca un código de tiempo o un número de marco\n"
+"y pulse «Intro» para ir a esa posición"
+
+#: pitivi/viewer/viewer.py:304
+msgid ""
+"Detach the viewer\n"
+"You can re-attach it by closing the newly created window."
+msgstr ""
+"Desacoplar el visor\n"
+"Puede volver a acoplarlo cerrando la nueva ventana creada."
+
+#: pitivi/viewer/viewer.py:448 pitivi/viewer/viewer.py:506
+msgid "Show this window in fullscreen"
+msgstr "Mostrar esta ventana en pantalla completa"
+
+#: pitivi/viewer/viewer.py:503
+msgid "Exit fullscreen mode"
+msgstr "Salir del modo a pantalla completa"
+
+#. Translators: This is a tooltip for a clip's keyframe curve,
+#. showing what the keyframe curve affects, the timestamp at
+#. the mouse cursor location, and the value at that timestamp.
+#: pitivi/timeline/elements.py:415
+#, python-format
+msgid ""
+"Property: %s\n"
+"Timestamp: %s\n"
+"Value: %s"
+msgstr ""
+"Propiedad: %s\n"
+"Hora: %s\n"
+"Valor: %s"
+
+#: pitivi/timeline/elements.py:590
+#, python-format
+msgid "Timestamp: %s"
+msgstr "Marca de tiempo: %s"
+
+#: pitivi/timeline/elements.py:1443
+msgid "Audio crossfade"
+msgstr "Fundido de sonido"
+
+#: pitivi/timeline/layer.py:176
+msgid "Move layer to top"
+msgstr "Subir la capa"
+
+#: pitivi/timeline/layer.py:182
+msgid "Move layer up"
+msgstr "Mover capa hacia arriba"
+
+#: pitivi/timeline/layer.py:188
+msgid "Move layer down"
+msgstr "Mover capa hacia abajo"
+
+#: pitivi/timeline/layer.py:194
+msgid "Move layer to bottom"
+msgstr "Bajar la capa"
+
+#: pitivi/timeline/layer.py:200
+msgid "Delete layer"
+msgstr "Eliminar capa"
+
+#: pitivi/timeline/layer.py:292
+#, python-format
+msgid "Layer %d"
+msgstr "Capa %d"
+
+#: pitivi/timeline/ruler.py:255
+#, python-format
+msgid "Frame #%d"
+msgstr "Fotograma nº %d"
+
+#: pitivi/timeline/timeline.py:79
+msgid "Snap distance"
+msgstr "Ajustar distancia"
+
+#: pitivi/timeline/timeline.py:80
+msgid ""
+"Threshold (in pixels) at which two clips will snap together when dragging or "
+"trimming."
+msgstr ""
+"Umbral (en píxeles) en el que dos vídeos se juntarán al arrastrarlos o "
+"recortarlos."
+
+#: pitivi/timeline/timeline.py:92
+msgid "Image clip duration"
+msgstr "Duración del vídeo de imagen"
+
+#: pitivi/timeline/timeline.py:94
+msgid ""
+"Default clip length (in milliseconds) of images when inserting on the "
+"timeline."
+msgstr ""
+"Duración predeterminada (el milisegundos) del vídeo de imágenes al "
+"insertarlo en la línea de tiempo."
+
+#: pitivi/timeline/timeline.py:105
+msgid "Left click also seeks"
+msgstr "La pulsación izquierda también busca"
+
+#: pitivi/timeline/timeline.py:107
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
+msgstr ""
+"Indica si la pulsación izquierda también busca más allá de seleccionar y "
+"editar vídeos."
+
+#: pitivi/timeline/timeline.py:330 pitivi/timeline/timeline.py:1676
+msgid "Add layer"
+msgstr "Añadir capa"
+
+#: pitivi/timeline/timeline.py:1633 pitivi/dialogs/prefs.py:61
+msgid "Timeline"
+msgstr "Línea de tiempo"
+
+#: pitivi/timeline/timeline.py:1640
+msgid "Delete selected clips"
+msgstr "Eliminar los vídeos seleccionados"
+
+#: pitivi/timeline/timeline.py:1646
+msgid "Delete selected clips and shift following ones"
+msgstr "Eliminar los vídeos seleccionados y desplazar los siguientes"
+
+#: pitivi/timeline/timeline.py:1652
+msgid "Group selected clips together"
+msgstr "Agrupar juntos los vídeos seleccionados"
+
+#: pitivi/timeline/timeline.py:1658
+msgid "Ungroup selected clips"
+msgstr "Desagrupar vídeos seleccionados"
+
+#: pitivi/timeline/timeline.py:1664
+msgid "Copy selected clips"
+msgstr "Copiar vídeos seleccionados"
+
+#: pitivi/timeline/timeline.py:1670
+msgid "Paste selected clips"
+msgstr "Pegar vídeos seleccionados"
+
+#: pitivi/timeline/timeline.py:1689
+msgid "Split the clip at the position"
+msgstr "Cortar el vídeo en la posición"
+
+#: pitivi/timeline/timeline.py:1695
+msgid "Add keyframe to the keyframe curve of selected clip"
+msgstr "Añadir fotograma a la curva de fotogramas del vídeo seleccionado"
+
+#: pitivi/timeline/timeline.py:1700
+msgid "Timeline Navigation"
+msgstr "Navegación por la línea de tiempo"
+
+#: pitivi/timeline/timeline.py:1707
+msgid "Zoom in"
+msgstr "Acercar"
+
+#: pitivi/timeline/timeline.py:1713
+msgid "Zoom out"
+msgstr "Alejar"
+
+#: pitivi/timeline/timeline.py:1719
+msgid "Adjust zoom to fit the project to the window"
+msgstr "Ajustar nivel de ampliación para coincidir con la ventana"
+
+#: pitivi/timeline/timeline.py:1730
+msgid "Seek backward one frame"
+msgstr "Retroceder un fotograma"
+
+#: pitivi/timeline/timeline.py:1736
+msgid "Seek forward one frame"
+msgstr "Avanzar un fotograma"
+
+#: pitivi/timeline/timeline.py:1743
+msgid "Seek backward one second"
+msgstr "Retroceder un segundo"
+
+#: pitivi/timeline/timeline.py:1750
+msgid "Seek forward one second"
+msgstr "Avanzar un segundo"
+
+#: pitivi/dialogs/about.py:50
+#, python-format
+msgid "Development version: %s"
+msgstr "Versión de desarrollo: %s"
+
+#: pitivi/dialogs/about.py:52
+#, python-format
+msgid "Version %(cur_ver)s — %(new_ver)s is available"
+msgstr "Versión %(cur_ver)s — %(new_ver)s disponible"
+
+#: pitivi/dialogs/about.py:56 pitivi/dialogs/about.py:58
+#, python-format
+msgid "Version %s"
+msgstr "Versión %s"
+
+#: pitivi/dialogs/about.py:67
+msgid "Current maintainers:"
+msgstr "Mantenedores actuales:"
+
+#: pitivi/dialogs/about.py:72
+msgid "Past maintainers:"
+msgstr "Mantenedores anteriores:"
+
+#. Translators: this paragraph is to be translated, the list
+#. of contributors is shown dynamically as a clickable link
+#. below it
+#: pitivi/dialogs/about.py:81
+msgid ""
+"Contributors:\n"
+"A handwritten list here would...\n"
+"• be too long,\n"
+"• be frequently outdated,\n"
+"• not show their relative merit.\n"
+"\n"
+"Out of respect for our contributors, we point you instead to:\n"
+msgstr ""
+"Colaboradores:\n"
+"Una lista escrita a mano...\n"
+"• sería demasiado larga\n"
+"• estaría desactualizada\n"
+"• no reflejaría el mérito\n"
+"\n"
+"Por respeto a nuestro colaboradores, indicamos que en lugar de:\n"
+
+#. Translators: keep the %s at the end of the 1st line
+#: pitivi/dialogs/about.py:88
+#, python-format
+msgid ""
+"The list of contributors on Ohloh %s\n"
+"Or you can run: git shortlog -s -n"
+msgstr ""
+"La lista de colaboradores en Ohloh %s\n"
+"O puede ejecutar: git shortlog -s -n"
+
+#. Translators: See
+#. https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
+#. for details on how this is used.
+#: pitivi/dialogs/about.py:95
 msgid "translator-credits"
-msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2017 - 2019"
-
-#. (itstool) path: info/desc
-#: C/add-recipe-description.page:12
-msgid "How to add a recipe description and dietary restrictions."
-msgstr "Cómo añadir la descripción de una receta y restricciones alimentarias."
-
-#. (itstool) path: credit/name
-#: C/add-recipe-description.page:15 C/add-recipe-details.page:16
-#: C/add-recipe-directions.page:15 C/add-recipe-images.page:15
-#: C/add-recipe-ingredients.page:15 C/add-recipe.page:11 C/chef.page:14
-#: C/common-problems.page:11 C/contribute.page:12 C/cooking.page:12
-#: C/find-recipe.page:11 C/index.page:10 C/notes.page:11 C/share.page:12
-#: C/shop.page:12
-msgid "Paul Cutler"
-msgstr "Paul Cutler"
-
-#. (itstool) path: license/p
-#: C/add-recipe-description.page:19 C/add-recipe-details.page:20
-#: C/add-recipe-directions.page:19 C/add-recipe-images.page:19
-#: C/add-recipe-ingredients.page:19 C/add-recipe.page:15 C/chef.page:18
-#: C/common-problems.page:15 C/contribute.page:16 C/cooking.page:16
-#: C/find-recipe.page:15 C/index.page:15 C/notes.page:15 C/share.page:24
-#: C/shop.page:16
-msgid "Creative Commons Share Alike 4.0"
-msgstr "Creative Commons Compartir Igual 4.0"
-
-#. (itstool) path: page/title
-#: C/add-recipe-description.page:23
-msgid "Add a Description"
-msgstr "Añadir una descripción"
-
-#. (itstool) path: page/p
-#: C/add-recipe-description.page:25
-msgid ""
-"Press the <gui>New Recipe</gui> in the upper left corner of <app>Recipes</"
-"app>. In the <gui>Description</gui> section, use the text box to describe "
-"the recipe in detail."
-msgstr ""
-"Pulse en <gui>Receta nueva</gui> en la esquina superior izquierda de "
-"<app>Recetas</app>. En el apartado <gui>Descripción</gui> use la caja de "
-"texto para describir con detalle la receta."
-
-#. (itstool) path: page/p
-#: C/add-recipe-description.page:28
-msgid ""
-"Below the Description field you can select a checkbox if the recipe meets "
-"any dietary restrictions. The dietary restrictions will help for searching "
-"recipes later."
-msgstr ""
-"Debajo del campo Descripción puede seleccionar una casilla si la receta "
-"cumple alguna restricción alimentaria. Este tipo de restricciones ayudarán a "
-"la hora de buscar recetas."
-
-#. (itstool) path: item/p
-#: C/add-recipe-description.page:33
-msgid ""
-"<gui>Gluten-free</gui>: Select for recipes that do not include wheat or "
-"related grains."
-msgstr ""
-"<gui>Sin gluten</gui>: seleccionar para recetas que no incluyan trigo o "
-"cereales relacionados."
-
-#. (itstool) path: item/p
-#: C/add-recipe-description.page:35
-msgid ""
-"<gui>Vegetarian</gui>: Select for recipes that only include vegetables and "
-"do not include meat, poultry or seafood. Vegetarian recipes may include "
-"dairy or eggs."
-msgstr ""
-"<gui>Vegetariana</gui>: seleccionar para recetas que sólo incluyen vegetales "
-"y no incluyen carne, aves de corral ni mariscos. Las recetas vegetarianas "
-"pueden contener huevos o lácteos."
-
-#. (itstool) path: item/p
-#: C/add-recipe-description.page:38
-msgid "<gui>Nut-free</gui>: Select for recipes that do not include any nuts."
-msgstr ""
-"<gui>Sin nueces</gui>: seleccionar para recetas que no contienen ningún tipo "
-"de nueces."
-
-#. (itstool) path: item/p
-#: C/add-recipe-description.page:40
-msgid ""
-"<gui>Milk-free</gui>: Select for recipes that do not include dairy products, "
-"such as milk or cheese."
-msgstr ""
-"<gui>Sin lácteos</gui>: seleccionar para recetas que no contienen productos "
-"lácteos, como la leche o el queso."
-
-#. (itstool) path: item/p
-#: C/add-recipe-description.page:42
-msgid ""
-"<gui>Vegan</gui>: Recipes that do not include any product from an animal. "
-"This includes meat, dairy, eggs and more."
-msgstr ""
-"<gui>Vegana</gui>: recetas que no incluyen ningún producto procedente de "
-"ningún animal. Esto incluye carne, lácteos, huevos y más cosas."
-
-#. (itstool) path: info/desc
-#: C/add-recipe-details.page:12
-msgid "Add recipe name, serving size, cooking and preparation time, and more."
-msgstr ""
-"Añada el nombre de la receta, la cantidad, el tiempo de preparación y "
-"cocinado y más."
-
-#. (itstool) path: page/title
-#: C/add-recipe-details.page:24
-msgid "Add Recipe Details"
-msgstr "Añadir detalles de la receta"
-
-#. (itstool) path: page/p
-#: C/add-recipe-details.page:25
-msgid ""
-"Press the <gui>New Recipe</gui> in the upper left corner of <app>Recipes</"
-"app> and include the following information about your recipe in the "
-"<gui>Details</gui> section. The recipe name and serving size is required and "
-"all other fields are optional. It is helpful to fill as many fields as "
-"possible to help when searching <app>Recipes</app>."
-msgstr ""
-"Puse en <gui>Receta nueva</gui> en la esquina superior izquierda de "
-"<app>Recetas</app> e incluya la siguiente información sobre su receta en la "
-"sección <gui>Detalles</gui>. El nombre de la receta y el tamaño de las "
-"raciones es obligatorio, y el resto de campos son opcionales. Sirve de ayuda "
-"rellenar todos los campos posibles, para facilitar la búsqueda de "
-"<app>Recetas</app>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:32
-msgid ""
-"<gui>Name Your Recipe</gui>: Enter the name of the recipe in the text box."
-msgstr ""
-"<gui>Nombre de la receta</gui>: introduzca el nombre de la receta en el "
-"campo de texto."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:35
-msgid ""
-"<gui>Serves</gui>: Enter a number or press the <gui style=\"button\">+</gui> "
-"button to enter how many servings the recipe will make."
-msgstr ""
-"<gui>Raciones</gui>: introduzca un número o pulse el botón <gui style="
-"\"button\">+</gui> para indicar cuántas raciones saldrán de la receta."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:39
-msgid ""
-"<gui>Preparation Time</gui>: From the drop down box, choose how long it "
-"takes to pepare the ingredients prior to cooking."
-msgstr ""
-"<gui>Tiempo de preparación</gui>: en el menú desplegable, elija cuánto "
-"tiempo se tarda en preparar los ingredientes antes de cocinarlos."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:42
-msgid ""
-"<gui>Cooking Time</gui>: From the drop down box, choose how long it takes to "
-"cook the recipe."
-msgstr ""
-"<gui>Tiempo de cocción</gui>: en el menú desplegable, elija cuánto tiempo se "
-"tarda en cocinar la receta."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:45
-msgid ""
-"<gui>Cuisine</gui>: From the drop down box, choose the type of food or the "
-"region from where the recipe comes from. You can also enter the type of "
-"cuisine if it is not included in the list."
-msgstr ""
-"<gui>Cocina</gui>: en el menú desplegable, elija el tipo de comida o la "
-"región de la que procede la receta. También puede introducir el tipo de "
-"cocina si no está incluido en la lista."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:49
-msgid ""
-"<gui>Meal</gui>: From the drop down box, choose what type of meal the recipe "
-"makes. Examples include breakfast or dinner; or types of food such as pasta "
-"or cocktails. You can also enter the type of meal if it is not included in "
-"the list."
-msgstr ""
-"<gui>Comida</gui>: en el menú desplegable, elija para qué comida es la "
-"receta. Los ejemplos incluyen desayuno o cena; o tipos de comida como pasta "
-"o cócteles. También puede introducir el tipo de comida si no aparece en la "
-"lista."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:54
-msgid ""
-"<gui>Season</gui>: From the drop down box, choose from the season or holiday "
-"that the recipe is typically associated with. You can also enter the season "
-"or holiday if it is not included in the list."
-msgstr ""
-"<gui>Temporada</gui>:en el menú desplegable, elija con qué temporada se "
-"asocia habitualmente la receta. También puede introducir la temporada si no "
-"aparece en la lista."
-
-#. (itstool) path: item/p
-#: C/add-recipe-details.page:59
-msgid ""
-"<gui>Spiciness</gui>: From the drop down menu, choose how spicy the recipe "
-"is."
-msgstr ""
-"<gui>Picante</gui>: en el menú desplegable, indique cómo de picante es la "
-"receta."
-
-#. (itstool) path: info/desc
-#: C/add-recipe-directions.page:12
-msgid "How to add each step to cook a recipe and at what temperature."
-msgstr "Cómo añadir cada paso para cocinar una receta y a qué temperatura."
-
-#. (itstool) path: page/title
-#: C/add-recipe-directions.page:23
-msgid "Add Cooking Directions"
-msgstr "Añadir instrucciones de preparación"
-
-#. (itstool) path: section/title
-#: C/add-recipe-directions.page:26
-msgid "Add steps"
-msgstr "Añadir pasos"
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:27
-msgid ""
-"Press the <gui>New Recipe</gui> in the upper left corner of <app>Recipes</"
-"app>. In the Directions text box, type the steps needed to create the "
-"recipe. To separate each step, press <key>Enter</key> twice to create a new "
-"paragraph for each step. <app>Recipes</app> will automatically create a "
-"separate steps for each paragraph in your recipe. These steps will be used "
-"when it is time to cook using full screen mode in <app>Recipes</app>."
-msgstr ""
-"Pulse en <gui>Receta nueva</gui> en la esquina superior izquierda de "
-"<app>Recetas</app>. En la caja de texto Instrucciones escriba los pasos "
-"necesarios para elaborar la receta. Para separar los pasos entre sí, pulse "
-"<key>Intro</key> dos veces para crear un nuevo párrafo.<app>Recetas</app> "
-"creará automáticamente un paso separado por cada párrafo en su receta. Estos "
-"pasos se usarán cuando vaya a cocinar usando el modo a pantalla completa de "
-"<app>Recetas</app>."
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:34
-msgid ""
-"In each paragraph for each step, you can include the following tags for "
-"adding images, timers or temperature. You can only use an image or a timer, "
-"but not both in an individual step. The information in the tags will be "
-"available when viewing the recipe or when in hands-free mode. All tags are "
-"enclosed within brackets."
-msgstr ""
-"En cada párrafo para cada paso puede incluir las siguientes etiquetas o "
-"añadir imágenes, tiempos o temperatura. Sólo puede usar una imagen o un "
-"tiempo, pero no ambos en un único paso. La información en las etiquetas "
-"estará disponible cuando vea la receta o cuando esté en modo manos libres. "
-"Todas las etiquetas deben ir entre corchetes."
-
-#. (itstool) path: section/title
-#: C/add-recipe-directions.page:42
-msgid "Add timers"
-msgstr "Añadir tiempos"
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:43
-msgid ""
-"To create a timer, enter how long the timer should be within brackets. The "
-"format is [timer:hours:minutes:seconds, description]."
-msgstr ""
-"Para crear una indicación de tiempo, introduzca cuánto debe durar entre "
-"corchetes. El formato es [timer:horas:minutos:segundos, descripción]."
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:46
-msgid "Timer examples:"
-msgstr "Ejemplos de tiempos:"
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:50
-msgid ""
-"<cmd>[timer:00:30, stir ingredients]</cmd> - Stir ingredients for thirty "
-"seconds."
-msgstr ""
-"<cmd>[timer:00:30, remover]</cmd> - Remover los ingredientes durante 30 "
-"segundos."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:55
-msgid ""
-"<cmd>[timer:01:30, stir ingredients]</cmd> - Stir ingredients for one minute "
-"and thirty seconds."
-msgstr ""
-"<cmd>[timer:01:30, remover]</cmd> - Remover los ingredientes durante un "
-"minuto y 30 segundos."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:60
-msgid ""
-"<cmd>[timer:01:01:30, preheat oven]</cmd> - Preheat oven for one hour, one "
-"minute and thirty seconds."
-msgstr ""
-"<cmd>[timer:01:01:30, precalentar horno]</cmd> - Precalentar el horno "
-"durante una hora, un minuto y 30 segundos"
-
-#. (itstool) path: section/title
-#: C/add-recipe-directions.page:68
-msgid "Add images to each step"
-msgstr "Añadir imágenes a cada paso"
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:69
-msgid ""
-"You can add an image or photo of the finished recipe and also a photo of "
-"each each step of making a recipe. See <link xref=\"add-recipe-images\"/> "
-"for how to add an image or images to your recipe."
-msgstr ""
-"Puede añadir una imagen o una foto para la receta terminada y también una "
-"foto para cada paso de su elaboración. Consulte la <link xref=\"add-recipe-"
-"images\"/> para saber cómo añadir imágenes a su receta."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:76
-msgid ""
-"To assign one of the photos you have added, you will need to know the "
-"image's number. Press the <gui>Add Image</gui> button at the bottom "
-"<app>Recipes</app> window. Thumbnails of each photo you have added will be "
-"displayed. The first image would be number one, the second would be number "
-"two and so on."
-msgstr ""
-"Para asignar una de las imágenes que ha añadido necesita saber el número de "
-"imagen. Pulse el botón <gui>Añadir imagen</gui> en la parte inferior de la "
-"ventana de <app>Recetas</app>. Se mostrarán las miniaturas de cada foto que "
-"haya añadido. La primera imagen debe ser la número uno, la segunda la número "
-"dos, y así sucesivamente."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:84
-msgid "Add the tag <cmd>[image:1]</cmd> to add the first image to a step."
-msgstr ""
-"Añada la etiqueta <cmd>[image:1]</cmd> para añadir la primera imagen a un "
-"paso."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:89
-msgid ""
-"Add additional image tags with the correct number for as many steps as you "
-"wish."
-msgstr ""
-"Añada etiquetas de imágenes adicionales con el número correcto para tantos "
-"pasos como quieras."
-
-#. (itstool) path: section/title
-#: C/add-recipe-directions.page:98
-msgid "Temperature"
-msgstr "Temperatura"
-
-#. (itstool) path: section/p
-#: C/add-recipe-directions.page:99
-msgid ""
-"You can add the temperature a step needs to be cooked at by adding a "
-"temperature tag."
-msgstr ""
-"Puede añadir la temperatura que un paso necesita añadiendo una etiqueta de "
-"temperatura."
-
-#. (itstool) path: item/p
-#: C/add-recipe-directions.page:103
-msgid ""
-"Add the tag <cmd>[temperature:200C]</cmd>. You can set the temperature in "
-"Celsius with a C or Fahrenheit with an F following the temperature."
-msgstr ""
-"Añada la etiqueta <cmd>[temperature:200C]</cmd>. Puede indicar la "
-"temperatura en grados Celsius con una C o Fahrenheit con una F a "
-"continuación de la temperatura."
-
-#. (itstool) path: info/desc
-#: C/add-recipe-images.page:12
-msgid "How to add images to a recipe and for each step when cooking."
-msgstr ""
-"Cómo añadir imágenes a una receta para cada paso cuando se está cocinando."
-
-#. (itstool) path: page/title
-#: C/add-recipe-images.page:23
-msgid "Add Images and Photos"
-msgstr "Añadir imágenes y fotos"
-
-#. (itstool) path: page/p
-#: C/add-recipe-images.page:24
-msgid ""
-"Press the <gui>New Recipe</gui> in the upper left corner of <app>Recipes</"
-"app>. To add an image to your recipe:"
-msgstr ""
-"Pulse en <gui>Receta nueva</gui> en la esquina superior izquierda de "
-"<app>Recetas</app>. Para añadir una imagen:"
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:28 C/add-recipe-images.page:49
-msgid ""
-"Press the <gui style=\"button\">+</gui> button below the camera icon or "
-"press <guiseq> <gui>Add Image</gui> <gui style=\"button\">+</gui></guiseq> "
-"at the bottom of the <app>Recipes</app> window."
-msgstr ""
-"Pulse el botón <gui style=\"button\">+</gui> que hay debajo del icono de la "
-"cámara o pulse <guiseq> <gui>Añadir imagen</gui> <gui style=\"button\">+</"
-"gui></guiseq> en la parte inferior de la ventana de <app>Recetas</app>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:35
-msgid "Select the image you would like to add."
-msgstr "Seleccione la imagen que quiere añadir."
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:39 C/add-recipe-images.page:61
-msgid "Press <gui>Open</gui>"
-msgstr "Pulse <gui>Abrir</gui>"
-
-#. (itstool) path: page/p
-#: C/add-recipe-images.page:44
-msgid ""
-"You may want to add multiple images to the recipe. When using hands-free "
-"mode, <app>Recipes</app> can display an image for each step when cooking. To "
-"add multiple images:"
-msgstr ""
-"Puede querer añadir varias imágenes a una receta. Cuando use el modo manos "
-"libres, <app>Recetas</app> puede mostrar una imagen por cada paso al "
-"cocinar. Para añadir varias imágenes:"
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:56
-msgid ""
-"Select multiple images by pressing <key>Control</key> and the images you "
-"would like to add."
-msgstr ""
-"Seleccione varias imágenes pulsando la tecla <key>Ctrl</key> y en las "
-"imágenes que quiere añadir."
-
-#. (itstool) path: page/p
-#: C/add-recipe-images.page:65
-msgid ""
-"After adding an image, you can rotate it, make it the default image for the "
-"recipe, or remove it from the recipe."
-msgstr ""
-"Después de añadir una imagen, puede rotarla, hacer que sea la predeterminada "
-"para esa receta o quitarla."
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/add-recipe-images.page:73
-msgctxt "_"
-msgid ""
-"external ref='images/rotate-left.png' md5='b939aa1d6573f18f6e85672c9406346f'"
-msgstr ""
-"external ref='images/rotate-left.png' md5='b939aa1d6573f18f6e85672c9406346f'"
+msgstr "Daniel Mustieles <daniel.mustieles@gmail.com>, 2011 - 2016"
 
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:70
-msgid ""
-"To rotate an image to the left press the <gui>Rotate Image</gui> button: "
-"<media type=\"image\" mime=\"image/png\" src=\"images/rotate-left.png\" its:"
-"translate=\"yes\"><span its:translate=\"yes\">Rotate Image</span> </media>"
-msgstr ""
-"Para rotar una imagen a la izquierda pulse el botón <gui>Rotar imagen</gui>: "
-"<media type=\"image\" mime=\"image/png\" src=\"images/rotate-left.png\" its:"
-"translate=\"yes\"><span its:translate=\"yes\">Rotar imagen</span> </media>"
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/add-recipe-images.page:80
-msgctxt "_"
-msgid ""
-"external ref='images/rotate-right.png' md5='f459dc336c62fe96e3ab6edd90a0b1ea'"
-msgstr ""
-"external ref='images/rotate-right.png' md5='f459dc336c62fe96e3ab6edd90a0b1ea'"
+#: pitivi/dialogs/browseprojects.py:37
+msgid "Open File..."
+msgstr "Abrir archivo…"
 
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:77
-msgid ""
-"To rotate an image to the right press the <gui>Rotate Image</gui> button: "
-"<media type=\"image\" mime=\"image/png\" src=\"images/rotate-right.png\" its:"
-"translate=\"yes\"><span its:translate=\"yes\">Rotate Image</span> </media>"
-msgstr ""
-"Para rotar una imagen a la derecha pulse el botón <gui>Rotar imagen</gui>: "
-"<media type=\"image\" mime=\"image/png\" src=\"images/rotate-right.png\" its:"
-"translate=\"yes\"><span its:translate=\"yes\">Rotar imagen</span> </media>"
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/add-recipe-images.page:87
-msgctxt "_"
-msgid "external ref='images/star.png' md5='d117abab03b6751c30a15e7fc8d2df51'"
-msgstr "external ref='images/star.png' md5='d117abab03b6751c30a15e7fc8d2df51'"
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:84
-msgid ""
-"To make an image the default image for the recipe, press the <gui>Default "
-"Image</gui> button: <media type=\"image\" mime=\"image/png\" src=\"images/"
-"star.png\" its:translate=\"yes\"><span its:translate=\"yes\">Default Image </"
-"span></media>"
-msgstr ""
-"Para hacer que una imagen sea la predeterminada de una receta pulse el botón "
-"<gui>Imagen predeterminada</gui>: <media type=\"image\" mime=\"image/png\" "
-"src=\"images/star.png\" its:translate=\"yes\"><span its:translate=\"yes"
-"\">Imagen predeterminada </span></media>"
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/add-recipe-images.page:94 C/shop.page:89
-msgctxt "_"
-msgid "external ref='images/trash.png' md5='803809373918657f15776ff05db8f33c'"
-msgstr "external ref='images/trash.png' md5='803809373918657f15776ff05db8f33c'"
-
-#. (itstool) path: item/p
-#: C/add-recipe-images.page:91
-msgid ""
-"To remove an image from the the recipe, press the <gui>Remove Image</gui> "
-"button: <media type=\"image\" mime=\"image/png\" src=\"images/trash.png\" "
-"its:translate=\"yes\"><span its:translate=\"yes\">Remove Image </span></"
-"media>"
-msgstr ""
-"Para quitar una imagen de una receta pulse el botón <gui>Quitar imagen</"
-"gui>: <media type=\"image\" mime=\"image/png\" src=\"images/trash.png\" its:"
-"translate=\"yes\"><span its:translate=\"yes\">Quitar imagen </span></media>"
-
-#. (itstool) path: info/desc
-#: C/add-recipe-ingredients.page:12
-msgid "How to add ingredients and lists."
-msgstr "Cómo añadir ingredientes y listas."
-
-#. (itstool) path: page/title
-#: C/add-recipe-ingredients.page:23
-msgid "Add Ingredients"
-msgstr "Añadir ingredientes"
-
-#. (itstool) path: page/p
-#: C/add-recipe-ingredients.page:24
-msgid ""
-"You can add the ingredients and create lists for the recipe. Lists are used "
-"for recipes that have different parts, such as a cake that has an ingredient "
-"list for the cake and an ingredient list for the frosting. To create a list:"
-msgstr ""
-"Puede añadir los ingredientes y crear una lista para cada receta. Las listas "
-"se usan para recetas que tienen diferentes partes, por ejemplo un pastel que "
-"tiene una lista de ingredientes para el bizcocho y otra para la cobertura. "
-"Para crear una lista:"
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:29
-msgid ""
-"Press the <gui>New Recipe</gui> in the upper left corner of <app>Recipes</"
-"app>."
-msgstr ""
-"Pulse en <gui>Receta nueva</gui> en la esquina superior izquierda de "
-"<app>Recetas</app>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:32
-msgid ""
-"Press the <gui>Add List</gui> button in the <gui>Ingredients</gui> section."
-msgstr ""
-"Pulse el botón <gui>Añadir lista</gui> en la sección <gui>Ingredientes</gui>."
+#: pitivi/dialogs/browseprojects.py:42 pitivi/dialogs/missingasset.py:50
+msgid "Open"
+msgstr "Abrir"
 
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:35
-msgid ""
-"Enter the name of the list, such as cake, in the <gui>Name of the List</gui> "
-"text box."
-msgstr ""
-"Introduzca el nombre de la receta, por ejemplo «Pastel» en la caja de texto "
-"<gui>Nombre de la lista</gui>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:38
-msgid "Repeat this step for as many lists as you may need."
-msgstr "Repita este paso para todas las listas que pueda necesitar."
-
-#. (itstool) path: page/p
-#: C/add-recipe-ingredients.page:41
-msgid "To add ingredients to a recipe or to a list:"
-msgstr "Para añadir un ingrediente a una receta o una lista:"
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:43
-msgid "Press the <gui style=\"button\">+</gui> button."
-msgstr "Pulse <gui style=\"button\">+</gui>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:45
-msgid ""
-"Choose the ingredient from the list or enter the ingredient in the "
-"<gui>Search</gui> box."
-msgstr ""
-"Elija el ingrediente de la lista o introdúzcalo en la caja <gui>Buscar</gui>."
+#: pitivi/dialogs/browseprojects.py:58
+msgid "All supported formats"
+msgstr "Todos los formatos soportados"
 
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:48
-msgid ""
-"Press the <gui>Add</gui> button to add the ingredient to the list or click "
-"<gui>Amount</gui> to how much of the ingredient is needed."
-msgstr ""
-"Pulse el botón <gui>Añadir</gui> para añadirlo a la lista o pulse en "
-"<gui>Cantidad</gui> para indicar qué cantidad se necesita."
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:52
-msgid ""
-"In the <gui>Amount</gui> drop down box you can enter the quantity needed and "
-"then press <gui>Add</gui>. Or you can enter the amount and choose the "
-"measurement from the list and then press the <gui>Add</gui> button."
-msgstr ""
-"En la caja desplegable <gui>Cantidad</gui> puede introducir la cantidad "
-"necesaria y pulsar <gui>Añadir</gui>. O puede introducir la cantidad y "
-"elegir la medida en la lista y luego pulsar el botón <gui>Añadir</gui>."
-
-#. (itstool) path: item/p
-#: C/add-recipe-ingredients.page:58
-msgid ""
-"Repeat these steps until all ingredients have been added to the list or "
-"recipe."
-msgstr ""
-"Repita estos pasos hasta que se hayan añadido todos los ingredientes a la "
-"lista o a la receta."
-
-#. (itstool) path: note/p
-#: C/add-recipe-ingredients.page:63
-msgid ""
-"<app>Recipes</app> does not currently support the ability to convert between "
-"metric units and imperial units."
-msgstr ""
-"<app>Recetas</app> no soporta actualmente la posibilidad de convertir entre "
-"unidades métricas e imperiales."
-
-#. (itstool) path: info/desc
-#: C/add-recipe.page:8
-msgid "Learn how to add your own recipe."
-msgstr "Aprender como añadir su propia receta."
-
-#. (itstool) path: page/title
-#: C/add-recipe.page:19
-msgid "Add a Recipe"
-msgstr "Añadir una receta"
-
-#. (itstool) path: page/p
-#: C/add-recipe.page:21
-msgid ""
-"If you are new to <app>Recipes</app>, these topics will help you to add the "
-"following categories to a recipe."
-msgstr ""
-"Si es la primera vez que usa <app>Recetas</app>, estos temas le ayudarán a "
-"añadir las siguientes categorías a una receta."
-
-#. (itstool) path: info/desc
-#: C/chef.page:11
-msgid "How to add your personal information to recipes."
-msgstr "Cómo añadir su información personal a las recetas."
-
-#. (itstool) path: page/title
-#: C/chef.page:22
-msgid "Add Chef Information"
-msgstr "Añadir información sobre el cocinero"
-
-#. (itstool) path: page/p
-#: C/chef.page:24
-msgid ""
-"You can add your personal information including your full name, short name "
-"and a photo to <app>Recipes</app>. This will create a chef profile that is "
-"used when you create a recipe. This will also help to search for recipes you "
-"have created or to share recipes with friends and family. To add your chef "
-"information:"
-msgstr ""
-"Puede añadir un su información personal a <app>Recetas</app>, incluyendo su "
-"nombre completo, su nombre corto y una foto. Esto creará un perfil de "
-"cocinero. que se usará cuando cree una receta. También le ayudará a buscar "
-"recetas que ha creado o compartido con familiares y amigos. Para añadir su "
-"información de cocinero:"
-
-#. (itstool) path: item/p
-#: C/chef.page:33
-#| msgid "Press the <gui>Share</gui> button in the bottom-right corner."
-msgid "Press the menu button in the top-right corner of the window."
-msgstr "Pulse el botón de menú en la esquina superior derecha de la ventana."
-
-#. (itstool) path: item/p
-#: C/chef.page:37
-msgid "Select <gui>Chef Informaton</gui>."
-msgstr "Seleccione <gui>Información del cocinero</gui>."
-
-#. (itstool) path: item/p
-#: C/chef.page:41
-msgid "Enter your full name in the <gui>Name..</gui> text box."
-msgstr "Introduzca su nombre completo en la caja de texto <gui>Nombre..</gui>."
-
-#. (itstool) path: item/p
-#: C/chef.page:45
-msgid ""
-"Enter your first name or nickname in the <gui>Short Name..</gui> text box."
-msgstr ""
-"Introduzca su nombre o alias en la caja de texto <gui>Nombre corto..</gui>."
+#: pitivi/dialogs/clipmediaprops.py:102
+msgid "Variable"
+msgstr "Variable"
 
-#. (itstool) path: item/p
-#: C/chef.page:50
-msgid ""
-"Press the camera icon and select an image to add as your personal photo and "
-"then press <gui>Open</gui>."
-msgstr ""
-"Pulse el icono de la cámara y elija una imagen para añadirla como su foto "
-"personal y pulse <gui>Abrir</gui>."
-
-#. (itstool) path: item/p
-#: C/chef.page:55
-msgid ""
-"Press the <gui>Save</gui> button to finish entering your chef information."
-msgstr ""
-"Pulse el botón <gui>Guardar</gui> cuando haya terminado de introducir su "
-"información de cocinero."
-
-#. (itstool) path: info/desc
-#: C/common-problems.page:8
-msgid "Solutions to common problems with <app>Recipes</app>."
-msgstr "Soluciones a problemas comunes con <app>Recetas</app>."
-
-#. (itstool) path: page/title
-#. (itstool) path: section/title
-#: C/common-problems.page:19 C/index.page:46
-msgid "Common Problems"
-msgstr "Problemas comunes"
-
-#. (itstool) path: section/title
-#: C/common-problems.page:22
-msgid "Editing Your Recipes"
-msgstr "Editar sus recetas"
-
-#. (itstool) path: section/p
-#: C/common-problems.page:23
-msgid ""
-"If you have change the login or user ID you use to log into your computer, "
-"and you can no longer edit the recipes you have created, you will need to "
-"update the <app>Recipes</app> database."
-msgstr ""
-"Si h cambiado el ID de usuario o de inicio de sesión que usa para usar su "
-"equipo, y no puede volver a editar las recetas que ha creado, necesitará "
-"actualizar la base de datos de <app>Recetas</app>."
-
-#. (itstool) path: note/p
-#: C/common-problems.page:28
-msgid ""
-"You must have the <sys>dconf-editor</sys> package installed. Be very careful "
-"editing application data in <app>dconf-editor</app>. By editing an "
-"application's settings, you may cause that application to stop working "
-"correctly."
-msgstr ""
-"Debe tener instalado el paquete <sys>dconf-editor</sys>. Tenga mucho cuidado "
-"al editar datos de la aplicación con <app>dconf-editor</app>. Al modificar "
-"la configuración de una aplicación puede hacer que ésta deje de funcionar "
-"correctamente."
-
-#. (itstool) path: section/p
-#: C/common-problems.page:34
-msgid ""
-"To update <app>Recipes</app> to use the old user to allow you to edit your "
-"recipes:"
-msgstr ""
-"Para actualizar <app>Recetas</app> y hacer que use el anterior usuario para "
-"permitirle editar sus recetas:"
-
-#. (itstool) path: item/p
-#: C/common-problems.page:38
-msgid "Open <app>dconf-editor</app>."
-msgstr "Abra <app>dconf-editor</app>."
-
-#. (itstool) path: item/p
-#: C/common-problems.page:41
-msgid ""
-"Select <guiseq><gui>org</gui> <gui>gnome</gui> <gui>recipes</gui> <gui>user</"
-"gui></guiseq>."
-msgstr ""
-"Seleccione <guiseq><gui>org</gui> <gui>gnome</gui> <gui>recipes</gui> "
-"<gui>user</gui></guiseq>."
-
-#. (itstool) path: item/p
-#: C/common-problems.page:45
-msgid "In the <gui>Custom value</gui> field, enter the old user ID."
-msgstr ""
-"En el campo <gui>Custom value</gui> introduzca el ID del anterior usuario."
-
-#. (itstool) path: item/p
-#: C/common-problems.page:48
-msgid "Close <app>dconf-editor</app>."
-msgstr "Cierre <app>dconf-editor</app>."
-
-#. (itstool) path: item/p
-#: C/common-problems.page:51
-msgid ""
-"Open <app>Recipes</app>. You will now be able to open and edit recipes you "
-"have created."
-msgstr ""
-"Abra <app>Recetas</app>. Ya podrá abrir y editar las recetas que ha creado."
-
-#. (itstool) path: section/title
-#: C/common-problems.page:58
-msgid "Remove or Edit Included Recipes"
-msgstr "Quitar o editar las recetas incluidas"
-
-#. (itstool) path: section/p
-#: C/common-problems.page:59
-msgid ""
-"You can only remove or edit the recipes you create, not the recipes included."
-msgstr ""
-"Sólo puede quitar o editar las recetas que haya creado, no las que vienen "
-"incluidas."
-
-#. (itstool) path: info/desc
-#: C/contribute.page:9
-msgid "How to share your recipes with the GNOME community."
-msgstr "Cómo compartir sus recetas con la comunidad GNOME."
-
-#. (itstool) path: page/title
-#: C/contribute.page:20
-msgid "Contribute Recipes"
-msgstr "Colaborar con Recetas"
-
-#. (itstool) path: page/p
-#: C/contribute.page:22
-msgid ""
-"You can share your recipe with the <app>Recipes</app> developers who may "
-"include your recipe in the <app>Recipes</app> application. Recipes you share "
-"should be of your own creation. To send your recipe:"
-msgstr ""
-"Puede compartir su receta con los desarrolladores de <app>Recetas</app>, "
-"para que la incluyan dentro de la aplicación <app>Recetas</app>, pero que "
-"sean de su creación. Para enviar su receta:"
-
-#. (itstool) path: item/p
-#: C/contribute.page:28
-msgid "Open the recipe you want to share."
-msgstr "Abra la receta que quiere compartir."
-
-#. (itstool) path: item/p
-#: C/contribute.page:32 C/share.page:47
-msgid "Press the <gui>Share</gui> button."
-msgstr "Pulse el botón <gui>Compartir</gui>."
-
-#. (itstool) path: item/p
-#: C/contribute.page:36 C/share.page:51
-msgid ""
-"If you would like to share multiple recipes, press the <gui>Add More</gui> "
-"button in the top-right window and open another recipe and then press "
-"<gui>Share</gui> again."
-msgstr ""
-"Si quiere compartir varias recetas, pulse el botón <gui>Añadir más</gui> en "
-"la parte superior derecha de la ventana, abra otra receta y pulse de nuevo "
-"en <gui>Compartir</gui>."
-
-#. (itstool) path: item/p
-#: C/contribute.page:42
-msgid "Press the <gui>Share</gui> button in the upper-right corner."
-msgstr "Pulse el botón <gui>Compartir</gui> en la esquina superior derecha."
-
-#. (itstool) path: item/p
-#: C/contribute.page:46
-msgid "Select <gui>Contribute to Recipes</gui> in the bottom-right corner."
-msgstr ""
-"Elija <gui>Contribuir con Recetas de GNOME</gui> en la esquina inferior "
-"derecha."
-
-#. (itstool) path: item/p
-#: C/contribute.page:50 C/share.page:61
-msgid ""
-"Choose the email application from the list you want to use to email the "
-"recipe and press the <gui>Select</gui> button."
-msgstr ""
-"Elija en la lista la aplicación de correo-e que quiere usar para enviar por "
-"correo la receta y pulse el botón  <gui>Seleccionar</gui>."
-
-#. (itstool) path: item/p
-#: C/contribute.page:55
-msgid ""
-"Your email application will open and a new email message will be composed. "
-"<app>Recipes</app> will have included the recipe as an attachment and the "
-"<em>Subject</em> and <em>To:</em> line will be automatically filled out for "
-"you."
-msgstr ""
-"Su aplicación de correo-e se abrirá y se redactará un mensaje nuevo. "
-"<app>Recetas</app> habrá incluido la receta como adjunto y las líneas de "
-"<em>Asunto</em> y <em>Para:</em> se rellenarán automáticamente."
-
-#. (itstool) path: item/p
-#: C/contribute.page:62
-msgid ""
-"Press <gui>Send</gui> to email your recipe to the <app>Recipe</app> "
-"developers who will review your recipe for possible inclusion."
-msgstr ""
-"Pulse <gui>Enviar</gui> para enviar su receta a los desarrolladores de "
-"<app>Recetas</app>, que la evaluarán para su posible inclusión."
-
-#. (itstool) path: info/desc
-#: C/cooking.page:9
-msgid "Use hands-free mode or timers to help you cook."
-msgstr "Use el modo manos libres o los tiempos apara ayudarle a cocinar."
-
-#. (itstool) path: page/title
-#: C/cooking.page:20
-msgid "Start Cooking"
-msgstr "Empezar a cocinar"
-
-#. (itstool) path: page/p
-#: C/cooking.page:22
-msgid ""
-"<app>Recipes</app> features a hands-free mode to help you with recipe "
-"directions when you want to cook a recipe. Hands-free mode makes it easy to "
-"view the steps to make a recipe, including starting timers or seeing photos "
-"of each step, if they were included in the recipe."
-msgstr ""
-"<app>Recetas</app> incluye un modo de manos libres par ayudarle con las "
-"instrucciones de una receta cuando vaya a prepararla. Este modo hace que sea "
-"más sencillo ver los pasos de elaboración, incluyendo iniciar los tiempos o "
-"ver las fotos de cada paso, si estaban incluidas en la receta."
-
-#. (itstool) path: page/p
-#: C/cooking.page:27
-msgid "To start cooking with hands-free mode:"
-msgstr "Para empezar a cocinar en modo manos libres:"
-
-#. (itstool) path: item/p
-#: C/cooking.page:30
-msgid "Open the recipe you want to cook."
-msgstr "Abra la receta que quiere preparar."
-
-#. (itstool) path: item/p
-#: C/cooking.page:34
-msgid "Press the <gui>Start Cooking</gui> button in the top right corner."
-msgstr ""
-"Pulse el botón <gui>Empezar a cocinar</gui> en la esquina superior derecha."
+#: pitivi/dialogs/clipmediaprops.py:128
+msgid "Image:"
+msgstr "Imagen:"
 
-#. (itstool) path: item/p
-#: C/cooking.page:38
-msgid ""
-"<app>Recipes</app> will change to full screen mode, also known as hands-free "
-"mode and display the first step to cook the recipe."
-msgstr ""
-"<app>Recetas</app> cambiará al modo de pantalla completa, también conocido "
-"como modo de manos libres y mostrará el primer paso para preparar la receta."
-
-#. (itstool) path: item/p
-#: C/cooking.page:43 C/cooking.page:67
-msgid "To move to the next step of the recipe, press any key on the keyboard."
-msgstr "Para avanzar al siguiente paso, pulse cualquier tecla."
-
-#. (itstool) path: item/p
-#: C/cooking.page:48
-msgid "To move to the previous step, press the left arrow key on the keyboard."
-msgstr ""
-"Para retroceder al paso anterior, pulse la tecla de flecha izquierda en el "
-"teclado."
-
-#. (itstool) path: item/p
-#: C/cooking.page:53
-msgid ""
-"To start a timer, press the <gui>Start</gui> button or <key>Spacebar</key>. "
-"Once you have started a timer, you can press <gui>Pause</gui> to pause the "
-"timer or <gui>Reset</gui> to re-start the timer from the beginning. You can "
-"have multiple timers running and the names of the step associated with each "
-"timer will be shown in the upper left corner of <app>Recipes</app>. When the "
-"timer is done, your computer will beep and <gui>Time is up!</gui> will be "
-"shown."
-msgstr ""
-"Para iniciar un temporizador, pulse el botón <gui>Comenzar</gui> "
-"<key>Espacio</key>. Una vez que lo haya iniciado, puede pulsar <gui>Pausa</"
-"gui> o <gui>Reiniciar</gui> para que empiece de nuevo desde el principio. "
-"Puede tener varios temporizadores al a vez y los nombres de cada apso "
-"asociados a cada uno de ellos se mostrará en la esquina superior izquierda "
-"de <app>Recetas</app>. Cuando termine, el equipo emitirá un sonido y se "
-"mostrará el mensaje <gui>¡Se acabó el tiempo!</gui>."
-
-#. (itstool) path: item/p
-#: C/cooking.page:62
-msgid ""
-"When a timer is running, the name of the timer will be shown in the upper "
-"left corner of hands-free mode. You can move to the next steps while a timer "
-"is running."
-msgstr ""
-"Cuando un temporizador está corriendo, su nombre se mostrará en la esquina "
-"superior izquierda del modo manos libres. Puede pasar a los pasos siguientes "
-"aunque el temporizador esté corriendo."
-
-#. (itstool) path: item/p
-#: C/cooking.page:72
-msgid ""
-"When you have completed all the steps or to exit hands-free mode at any "
-"time, press the <key>Escape</key> key or press the <gui>x</gui> button in "
-"the top-right corner."
-msgstr ""
-"Cuando haya completado todos los pasos, o para salir del modo manos libres "
-"en cualquier momento, pulse la tecla <key>Esc</key> o el botón <gui>x</gui> "
-"en la esquina superior derecha."
-
-#. (itstool) path: info/desc
-#: C/find-recipe.page:8
-msgid "Find a recipe by name, category, cuisine, or chef."
-msgstr "Buscar una receta por nombre, categoría, tipo de cocina o cocinero."
-
-#. (itstool) path: page/title
-#: C/find-recipe.page:19
-msgid "Search Recipes"
-msgstr "Buscar recetas"
-
-#. (itstool) path: section/title
-#: C/find-recipe.page:22
-msgid "Search by Recipe Name, Ingredient or Chef"
-msgstr "Buscar por nombre de la receta, ingrediente o cocinero"
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/find-recipe.page:24 C/find-recipe.page:42
-msgctxt "_"
-msgid "external ref='images/search.png' md5='b0c894f87d0a0bca717b52ecf0b4a12e'"
-msgstr ""
-"external ref='images/search.png' md5='b0c894f87d0a0bca717b52ecf0b4a12e'"
+#: pitivi/dialogs/filelisterrordialog.py:54
+msgid "Unknown reason"
+msgstr "Razón desconocida"
 
-#. (itstool) path: section/p
-#: C/find-recipe.page:23
-msgid ""
-"Press the search button <media type=\"image\" mime=\"image/png\" src="
-"\"images/search.png\" its:translate=\"yes\"> <span its:translate=\"yes"
-"\">Search</span></media> and enter your search query. The search results can "
-"include:"
-msgstr ""
-"Pulse el botón de búsqueda <media type=\"image\" mime=\"image/png\" src="
-"\"images/search.png\" its:translate=\"yes\"> <span its:translate=\"yes"
-"\">Buscar</span></media> e introduzca su consulta. Los resultados de la "
-"búsqueda pueden incluir:"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:30
-msgid "Recipes that include the text you searched for."
-msgstr "Recetas que incluyen el texto que ha buscado."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:33
-msgid "Ingredients that include the text you searched for."
-msgstr "Ingredientes que incluyen el texto que ha buscado."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:36
-msgid "Chef names."
-msgstr "Nombres de los cocineros."
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/find-recipe.page:45 C/find-recipe.page:84 C/find-recipe.page:113
-#: C/find-recipe.page:152
-msgctxt "_"
-msgid "external ref='images/down.png' md5='384329e0a17b79aca6085fe4aab1361f'"
-msgstr "external ref='images/down.png' md5='384329e0a17b79aca6085fe4aab1361f'"
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:40
-msgid ""
-"You can also do a more narrow search by category. Press the search button "
-"<media type=\"image\" mime=\"image/png\" src=\"images/search.png\" its:"
-"translate=\"yes\"> <span its:translate=\"yes\">Search</span></media> and "
-"down icon <media type=\"image\" mime=\"image/png\" src=\"images/down.png\" "
-"its:translate=\"yes\"> <span its:translate=\"yes\">Down</span></media> and "
-"choose from one or more categories."
-msgstr ""
-"También puede acotar la búsqueda por categoría. Pulse el botón <media type="
-"\"image\" mime=\"image/png\" src=\"images/search.png\" its:translate=\"yes"
-"\"> <span its:translate=\"yes\">Buscar</span></media> y el icono <media type="
-"\"image\" mime=\"image/png\" src=\"images/down.png\" its:translate=\"yes\"> "
-"<span its:translate=\"yes\">Abajo</span></media> y elija una o más "
-"categorías.."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:50
-msgid "Meal"
-msgstr "Comida"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:54
-msgid "Spiciness"
-msgstr "Picante"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:58
-msgid "Dietary restrictions"
-msgstr "Restricciones alimentarias"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:62
-msgid "Ingredients"
-msgstr "Ingredientes"
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:66
-msgid ""
-"<app>Recipes</app> will add a tag for the category you selected and display "
-"it in the search bar. You can then enter text to search within that category "
-"and tag."
-msgstr ""
-"<app>Recetas</app> añadirá una etiqueta para la categoría que seleccione y "
-"la mostrará en la barra de búsqueda. Puede introducir texto o buscar dentro "
-"de esa categoría y etiqueta."
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:69
-msgid ""
-"To remove the tag from search, press <gui>x</gui> on the tag in the search "
-"bar."
-msgstr ""
-"Para quitar la etiqueta de la búsqueda, pulse <gui>x</gui> en la etiqueta "
-"junto a la barra de búsqueda."
-
-#. (itstool) path: section/title
-#: C/find-recipe.page:74
-msgid "Search by Categories"
-msgstr "Buscar por categorías"
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:75
-msgid ""
-"When you create a recipe, you can select if a recipe is in a category, such "
-"as vegan or nut free. To search by category:"
-msgstr ""
-"Cuando crea una receta puede elegir si pertenece a una categoría, como "
-"vegetariana o sin nueces. Para buscar por categoría:"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:78
-msgid ""
-"From the main <app>Recipes</app> window scroll down to <gui>Categories</gui>."
-msgstr ""
-"En la ventana principal de <app>Recetas</app> baje hasta <gui>Categorías</"
-"gui>."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:82
-msgid ""
-"You can also expand the Categories list by pressing the down icon<media type="
-"\"image\" mime=\"image/png\" src=\"images/down.png\" its:translate=\"yes\"> "
-"<span its:translate=\"yes\">Down</span></media> to show all Categories."
-msgstr ""
-"Puede expandir la lista de categorías pulsando el botón <media type=\"image"
-"\" mime=\"image/png\" src=\"images/down.png\" its:translate=\"yes\"> <span "
-"its:translate=\"yes\">Abajo</span></media> para mostrar todas las categorías."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:89
-msgid "Press the <gui>Category</gui> to view all recipes in that Category."
-msgstr ""
-"Pulse en <gui>Categoria</gui> para ver todas las recetas de esa categoría."
+#: pitivi/dialogs/filelisterrordialog.py:86
+msgid "Problem:"
+msgstr "Problema: "
 
-#. (itstool) path: section/p
-#: C/find-recipe.page:95
-msgid ""
-"If you choose from the vegan, vegetarian, dairy-free, gluten-free or nut-"
-"free categories, the search results will also display a description of the "
-"Category with a <gui>Read More</gui> link you can click to learn more about "
-"the Category."
-msgstr ""
-"Si elige alguna de las categorías vegana, vegetariana, sin lactosa, sin "
-"gluten o sin nueces, los resultados de la búsqueda también mostrarán una "
-"descripción de la categoría, con un enlace <gui>Ver más</gui> que puede "
-"pulsar para saber más sobre esa categoría."
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:100
-msgid ""
-"Note that the information about dietary restrictions is provided by the "
-"recipe authors themselves and cannot be guaranteed to be accurate. Please "
-"always double-check the ingredients if you are serving a person with a "
-"gluten or dairy intolerance."
-msgstr ""
-"Tenga en cuenta que la información sobre restricciones alimentarias la "
-"proporcionan los propios autores de las recetas y no se garantiza que sean "
-"precisas. Compruebe bien siempre los ingredientes si cocina para personas "
-"con intolerancia al gluten o a la lactosa."
-
-#. (itstool) path: section/title
-#: C/find-recipe.page:107
-msgid "Search for recipes with or without a specific ingredient"
-msgstr "Buscar recetas con o sin un ingrediente específico"
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:108
-msgid ""
-"You can search for recipes that include or do not include a specific "
-"ingredient."
-msgstr "Puede buscar recetas que incluyen o no un ingrediente concreto."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:112
-msgid ""
-"Press the down arrow <media type=\"image\" mime=\"image/png\" src=\"images/"
-"down.png\" its:translate=\"yes\"> <span its:translate=\"yes\">Down</span></"
-"media> in the search bar."
-msgstr ""
-"Pulse la flecha hacia abajo <media type=\"image\" mime=\"image/png\" src="
-"\"images/down.png\" its:translate=\"yes\"> <span its:translate=\"yes"
-"\">Abajo</span></media> en la barra de búsqueda."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:117
-msgid "Select the <gui>Ingredients</gui> drop down box."
-msgstr "Seleccione los <gui>Ingredientes</gui> en la caja desplegable."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:120
-msgid "Select an ingredient from the list, such as <em>Banana</em>."
-msgstr "Seleccione un ingrediente de la lista, por ejemplo <em>Plátano</em>."
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:123
-msgid ""
-"A tag for that ingredient, such as <em>Banana</em>, will be displayed in the "
-"search bar and all recipes that include that bananas will be displayed. If "
-"there are no recipes that match, <gui>No recipes found</gui> will be "
-"displayed. Press the tag in the search bar for <gui>Banana</gui> and the tag "
-"will now show <gui>No Banana</gui> and all recipes that do not include "
-"bananas in the recipe will be displayed. To remove the tag from search, "
-"press <gui>x</gui> on the tag in the search bar."
-msgstr ""
-"LA etiqueta para ese ingrediente, como por ejemplo <em>plátano</em>, se "
-"mostrará en la barra de búsqueda y todas las recetas que contengan plátano "
-"se mostrarán. Si no hay recetas que coincidan, se mostrará el mensaje "
-"<gui>No se han encontrado recetas</gui>. Pulse en la etiqueta <gui>Plátano</"
-"gui> en la barra de búsqueda y cambiará a <gui>Sin plátano</gui>, y se "
-"mostrarán todas las recetas que no contengan plátano. Para quitar la "
-"etiqueta de la búsqueda, pulse <gui>x</gui> sobre la etiqueta en la barra de "
-"búsqueda."
-
-#. (itstool) path: section/title
-#: C/find-recipe.page:134
-msgid "Search by Cuisines"
-msgstr "Buscar por tipo de cocina"
-
-#. (itstool) path: section/p
-#: C/find-recipe.page:135
-msgid ""
-"You can also search for a recipe by what type of cuisine the recipe is or "
-"region it is from. This also includes searching for seasonal recipes that "
-"might be made during certain holidays or times of year."
-msgstr ""
-"También puede buscar una receta por el tipo de cocina o región a la que "
-"pertenece. Esto también incluye buscar recetas estacionales que se pueden "
-"elaborar durante ciertas fiestas o veces al año."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:140
-msgid ""
-"In the top menu bar of <app>Recipes</app>, press the <gui style=\"button"
-"\">Cuisines</gui> button."
-msgstr ""
-"En la barra de menú superior de <app>Recetas</app>, pulse el botón <gui "
-"style=\"button\">Cocinas</gui>"
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:144
-msgid ""
-"A list of cuisines from around the world with brief descriptions are "
-"displayed. Click on a world cuisine to see all recipes in that category "
-"sorted by the type of dish."
-msgstr ""
-"Se muestra una lista de cocinas de todo el mundo con una breve descripción. "
-"Pulse en un tipo de cocina para ver todas la recetas de esa categoría "
-"ordenadas por el tipo de plato."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:150
-msgid ""
-"Scroll down to see a list of seasonal categories and press the down icon "
-"<media type=\"image\" mime=\"image/png\" src=\"images/down.png\" its:"
-"translate=\"yes\"> <span its:translate=\"yes\">Down</span></media> to see "
-"all seasonal categories."
-msgstr ""
-"Desplácese hacia abajo para ver una lista de categorías estacionales y pulse "
-"el icono <media type=\"image\" mime=\"image/png\" src=\"images/down.png\" "
-"its:translate=\"yes\"> <span its:translate=\"yes\">Abajo</span></media> para "
-"ver todas las categorías."
-
-#. (itstool) path: item/p
-#: C/find-recipe.page:157
-msgid "Select a holiday or season to show all recipes that match."
-msgstr "Seleccione la temporada para mostrar todas las recetas que coincidan."
-
-#. (itstool) path: info/title
-#: C/index.page:7
-msgctxt "text"
-msgid "Recipes"
-msgstr "Recetas"
-
-#. (itstool) path: info/desc
-#: C/index.page:19
-msgid "A recipe manager to help you cook."
-msgstr "Un gestor de recetas que le ayuda a cocinar."
-
-#. (itstool) path: page/title
-#: C/index.page:22
-msgid "<_:media-1/> Recipes"
-msgstr "<_:media-1/> Recetas"
-
-#. (itstool) path: page/p
-#: C/index.page:27
-msgid ""
-"<app>Recipes</app> is an easy to use application that will help you discover "
-"what to cook today, tomorrow, the rest of the week, and for special "
-"occasions."
-msgstr ""
-"<app>Recetas</app> es una aplicación fácil de usar que le ayudará a "
-"descubrir qué cocinar hoy, mañana, el resto de la semana y en ocasiones "
-"especiales."
-
-#. (itstool) path: section/title
-#: C/index.page:32
-msgid "Managing Recipes"
-msgstr "Gestionar las recetas"
-
-#. (itstool) path: section/title
-#: C/index.page:37
-msgid "Cooking"
-msgstr "Cocinar"
-
-#. (itstool) path: section/title
-#. (itstool) path: page/title
-#: C/index.page:41 C/share.page:28
-msgid "Printing and Sharing"
-msgstr "Imprimir y compartir"
-
-#. (itstool) path: p/link
-#: C/legal.xml:5
-msgid "Creative Commons Attribution-ShareAlike 4.0 International"
-msgstr "Creative Commons Atribución - Compartir igual 4.0 internacional"
-
-#. (itstool) path: license/p
-#: C/legal.xml:4
-msgid "This work is licensed under a <_:link-1/> license."
-msgstr "Este trabajo está licenciado bajo la <_:link-1/>."
-
-#. (itstool) path: license/p
-#: C/legal.xml:8
-msgid ""
-"As a special exception, the copyright holders give you permission to copy, "
-"modify, and distribute the example code contained in this documentation "
-"under the terms of your choosing, without restriction."
-msgstr ""
-"Como excepción especial, los poseedores de los derechos de autor le dan "
-"permiso para copiar, modificar y distribuir el código de ejemplo contenido "
-"en este documento bajo los términos que usted elija, sin restricción."
-
-#. (itstool) path: info/desc
-#: C/notes.page:8
-msgid "How to add notes to a recipe or make it a favorite."
-msgstr "Cómo añadir notas a una receta o marcarla como favorita."
-
-#. (itstool) path: page/title
-#: C/notes.page:19
-msgid "Add Notes"
-msgstr "Añadir notas"
-
-#. (itstool) path: section/title
-#: C/notes.page:22
-msgid "Add a Note to a Recipe."
-msgstr "Añadir una nota a una receta."
-
-#. (itstool) path: section/p
-#: C/notes.page:23
-msgid ""
-"You can add personal notes to any recipe. You may want to make a note how "
-"you changed the recipe, or if a recipe needed to be cooked shorter or "
-"longer, or if it became a favorite of a friend or family member. To add a "
-"note to a recipe:"
-msgstr ""
-"Puede añadir notas personales a una receta. Puede querer anotar un cambio "
-"que ha hecho, si la receta necesita un tiempo diferente de cocinado o si es "
-"el plato favorito de un amigo o un familiar. Para añadir una nota a una "
-"receta:"
-
-#. (itstool) path: item/p
-#: C/notes.page:29 C/notes.page:52 C/shop.page:26
-msgid "Open a recipe."
-msgstr "Abra una receta."
-
-#. (itstool) path: item/p
-#: C/notes.page:32
-msgid ""
-"Press the <gui style=\"button\">Notes</gui> button in the lower-left corner."
-msgstr ""
-"Pulse el botón <gui style=\"button\">Notas</gui> en la esquina inferior "
-"izquierda."
-
-#. (itstool) path: item/p
-#: C/notes.page:36
-msgid "Enter your notes in the text box."
-msgstr "Introduzca sus notas en la caja de texto."
-
-#. (itstool) path: item/p
-#: C/notes.page:39
-msgid ""
-"Press the <gui style=\"button\">Notes</gui> button again lower-left corner "
-"when finished."
-msgstr ""
-"Pulse otra vez el botón <gui style=\"button\">Notas</gui> en la esquina "
-"inferior izquierda cuando haya terminado."
-
-#. (itstool) path: section/p
-#: C/notes.page:43
-msgid ""
-"Your note will now be displayed below the recipe description and above the "
-"recipe directions."
-msgstr ""
-"Su nota se mostrará debajo de la descripción de la receta, encima del modo "
-"de preparación."
-
-#. (itstool) path: section/title
-#: C/notes.page:48
-msgid "Make a recipe a favorite."
-msgstr "Marcar una receta como favorita."
-
-#. (itstool) path: section/p
-#: C/notes.page:49
-msgid "You can make a recipe a favorite. To favorite a recipe:"
-msgstr "Puede marcar una receta como favorita. Para hacerlo:"
-
-#. (itstool) path: p/media
-#. This is a reference to an external file such as an image or video. When
-#. the file changes, the md5 hash will change to let you know you need to
-#. update your localized copy. The msgstr is not used at all. Set it to
-#. whatever you like once you have updated your copy of the file.
-#: C/notes.page:57
-msgctxt "_"
-msgid "external ref='images/love.png' md5='2ae9287b28d11513d16239afc00147b7'"
-msgstr "external ref='images/love.png' md5='2ae9287b28d11513d16239afc00147b7'"
-
-#. (itstool) path: item/p
-#: C/notes.page:55
-msgid ""
-"Press the <gui>Add to Favorites</gui> <media type=\"image\" mime=\"image/png"
-"\" src=\"images/love.png\" its:translate=\"yes\"> <span its:translate=\"yes"
-"\">Add to Favorites</span></media> button."
-msgstr ""
-"Pulse el botón <gui>Añadir a favoritos</gui> <media type=\"image\" mime="
-"\"image/png\" src=\"images/love.png\" its:translate=\"yes\"> <span its:"
-"translate=\"yes\">Añadir a favoritos</span></media>."
-
-#. (itstool) path: section/p
-#: C/notes.page:62
-msgid ""
-"To remove from favorites, press the <gui>Add to Favorites</gui> button again."
-msgstr ""
-"Para quitarla de favoritos, pulse de nuevo el botón <gui>Añadir a favoritos</"
-"gui>."
-
-#. (itstool) path: info/desc
-#: C/share.page:9
-msgid "How to print or share recipes and shopping lists."
-msgstr "Cómo imprimir o compartir recetas y listas de la compra."
-
-#. (itstool) path: credit/name
-#: C/share.page:16
-msgid "Jim Campbell"
-msgstr "Jim Campbell"
-
-#. (itstool) path: credit/name
-#: C/share.page:20
-msgid "Sindhu S"
-msgstr "Sindhu S"
-
-#. (itstool) path: section/title
-#: C/share.page:31
-msgid "Share a Recipe or Shopping List Using Email"
-msgstr "Compartir una receta o lista de la compra por correo-e"
-
-#. (itstool) path: section/p
-#: C/share.page:32
-msgid ""
-"You can email a shopping list or recipe to a friend. Shopping lists will "
-"email all of the ingredients needed in the body of an email. If you email a "
-"recipe, the email recipient will receive the recipe as an email attachment. "
-"They can download the attachment and double-click it to import the recipe "
-"you shared into <app>Recipes</app>."
-msgstr ""
-"Puede enviar por correo una lista de la compra o una receta a un amigo. Las "
-"listas de la compra contendrán todos los ingredientes necesarios en el "
-"cuerpo del correo. Si envía una receta, el destinatario del correo la "
-"recibirá como un adjunto. La puede descargar y pulsa sobre ella dos veces "
-"para importarla en <app>Recetas</app>."
-
-#. (itstool) path: note/p
-#: C/share.page:38
-msgid ""
-"You must use an email application to share recipes. Web based email, like "
-"Gmail or Yahoo!, will not work to share recipes."
-msgstr ""
-"Debe usar una aplicación de correo para compartir recetas. Los sistemas de "
-"correo web, como Gmail o Yahoo! no funcionarán."
-
-#. (itstool) path: item/p
-#: C/share.page:43
-msgid "Open the recipe or shopping list you want to email."
-msgstr "Abra la receta o la lista de la compra que quiere enviar por correo."
-
-#. (itstool) path: item/p
-#: C/share.page:57
-msgid "Press the <gui>Share</gui> button in the bottom-right corner."
-msgstr "Pulse el botón <gui>Compartir</gui> en la esquina inferior derecha."
-
-#. (itstool) path: item/p
-#: C/share.page:66
-msgid ""
-"A new email message will be opened composed. The <em>Subject</em> line and "
-"email body will be automatically filled out for you. If you are emailing a "
-"shopping list, the shopping list will be included in the body of the email. "
-"If you are sharing a recipe, the recipe will be attached to the email."
-msgstr ""
-"Se abrirá un mensaje nuevo ya redactado. La línea del <em>asunto</em> y el "
-"cuerpo se rellenarán automáticamente. Si está enviando una lista de la "
-"compra ésta se incluirá en el cuerpo del correo. Si está compartiendo una "
-"receta se enviará como adjunto en el correo."
-
-#. (itstool) path: item/p
-#: C/share.page:74
-msgid ""
-"Enter the email address of the person you would like to share with and any "
-"additional information in the email body and send your email."
-msgstr ""
-"Introduzca la dirección de correo de la persona con la que quiere "
-"compartirla con cualquier información adicional en el cuerpo del correo y "
-"envíelo."
-
-#. (itstool) path: section/title
-#: C/share.page:82
-msgid "Print a Recipe"
-msgstr "Imprimir una receta"
-
-#. (itstool) path: note/p
-#: C/share.page:85
-msgid ""
-"Printing a recipe requires that you have connected and configured your "
-"printer. If you have not done this, please consult the <link href=\"help:"
-"gnome-help/printing\">printing help for GNOME</link>."
-msgstr ""
-"Para imprimir una receta es necesario que tenga conectada y configurada una "
-"impresora. Si no lo ha hecho, consulte la <link href=\"help:gnome-help/"
-"printing\">ayuda para imprimir en GNOME</link>."
-
-#. (itstool) path: section/p
-#: C/share.page:90
-msgid ""
-"You can print your recipes using a local or remote printer. To print a "
-"recipe:"
-msgstr ""
-"Puede imprimir sus recetas usando una impresora local o remota. Para "
-"imprimir una receta:"
-
-#. (itstool) path: item/p
-#: C/share.page:95
-msgid ""
-"Press the <gui style=\"menuitem\">Print</gui> button in the bottom-right "
-"corner when viewing a recipe."
-msgstr ""
-"Pulse el botón <gui style=\"menuitem\">Imprimir</gui> en la esquina inferior "
-"derecha cuando esté viendo una receta."
-
-#. (itstool) path: item/p
-#: C/share.page:99
-msgid "Select the desired printer from the list of printers available."
-msgstr ""
-"Seleccione la impresora que quiere de la lista de impresoras disponibles."
+#: pitivi/dialogs/filelisterrordialog.py:94
+msgid "Extra information:"
+msgstr "Información extra: "
 
-#. (itstool) path: item/p
-#: C/share.page:102
-msgid ""
-"You can preview the file using <gui style=\"button\">Print Preview</gui> and "
-"once you are satisfied with the settings, press <gui style=\"button\">Print</"
-"gui> to send the file to printer."
-msgstr ""
-"Puede previsualizar el archivo usando el botón de <gui style=\"button"
-"\">Vista previa de impresión</gui> y, una vez que esté satisfecho con la "
-"configuración, pulse <gui style=\"button\">Imprimir</gui> para enviar el "
-"archivo a la impresora."
-
-#. (itstool) path: info/desc
-#: C/shop.page:8
-msgid ""
-"Automatically create a shopping list with the ingredients needed for a "
-"recipe."
-msgstr ""
-"Crear automáticamente una lista de la compra con los ingredientes necesarios "
-"para una receta."
-
-#. (itstool) path: page/title
-#: C/shop.page:20
-msgid "Create a Shopping List"
-msgstr "Crear una lista de la compra"
-
-#. (itstool) path: page/p
-#: C/shop.page:22
-msgid ""
-"<app>Recipes</app> will help you create shopping list based on the "
-"ingredients in a recipe. To create a shopping list:"
-msgstr ""
-"<app>Recetas</app> le ayudará a crear un lista de la compra basada en los "
-"ingredientes de una receta. Para crear una lista de la compra:"
-
-#. (itstool) path: item/p
-#: C/shop.page:29
-msgid ""
-"Press the <gui>Buy Ingredients</gui> button located under the ingredient "
-"list."
-msgstr ""
-"Pulse el botón <gui>Comprar ingredientes</gui> situado debajo de la lista de "
-"ingredientes."
-
-#. (itstool) path: item/p
-#: C/shop.page:33
-msgid ""
-"<app>Recipes</app> will display a pop-up at the top. To view the shopping "
-"list, press the <gui>View Shopping List</gui> button or press <gui>x</gui> "
-"to close the pop-up."
-msgstr ""
-"<app>Recetas</app> mostrará un ventana emergente en la parte superior. Para "
-"ver la lista de la compra, pulse el botón <gui>Ver lista de la compra</gui> "
-"o pulse <gui>x</gui> para cerrar la ventana emergente."
-
-#. (itstool) path: item/p
-#: C/shop.page:38
-msgid ""
-"Repeat steps for any other recipes you would like the ingredients to be "
-"added to your shopping list."
-msgstr ""
-"Repita estos pasos para cualquier otra receta para la que quiera añadir sus "
-"ingredientes a la lista de la compra."
-
-#. (itstool) path: page/p
-#: C/shop.page:43
-msgid ""
-"When you are finished adding to the shopping list, press the <gui>View "
-"Shopping List</gui> button, or return to the main <app>Recipes</app> window "
-"and click the <gui>Buy ingredients</gui> bar in the <gui>Today</gui> section."
-msgstr ""
-"Cuando termine de añadir la lista de la compra, pulse el botón <gui>Ver "
-"lista de la compra</gui> o vuelva a la página principal de <app>Recetas</"
-"app> y pulse en la barra <gui>Comprar ingredientes</gui> en la sección "
-"<gui>Hoy</gui>."
-
-#. (itstool) path: page/p
-#: C/shop.page:48
-msgid ""
-"<app>Recipes</app> will display the <gui>Buy Ingredients</gui> page. The "
-"ingredients you need to purchase for all of the recipes will be displayed in "
-"a list below the recipes that require them."
-msgstr ""
-"<app>Recetas</app> mostrará la página <gui>Comprar ingredientes</gui>. Los "
-"ingredientes que necesite comprar para todas las recetas se mostrarán en una "
-"lista debajo de las recetas que los requieren."
-
-#. (itstool) path: section/title
-#: C/shop.page:55
-msgid "Edit the Shopping List"
-msgstr "Editar la lista de la compra"
-
-#. (itstool) path: section/p
-#: C/shop.page:56
-msgid ""
-"You can increase the serving side of a recipe and the shopping list will "
-"automatically increase the quantities of the ingredients you need to "
-"purchase."
-msgstr ""
-"Puede aumentar la cantidad de las raciones de una receta y la lista de la "
-"compra aumentará automáticamente la cantidad de ingredientes que necesita "
-"comprar."
-
-#. (itstool) path: item/p
-#: C/shop.page:62
-msgid ""
-"The recipes you have added to the shopping list are shown at the top. In the "
-"upper right corner of the recipe the serving size is shown. Click the number "
-"displayed in the recipe."
-msgstr ""
-"Las recetas que ha añadido a la lista de la compra se muestran en la parte "
-"superior. En la esquina superior derecha de la receta se muestra el tamaño "
-"de la ración. Pulse en el número mostrado en la receta."
-
-#. (itstool) path: item/p
-#: C/shop.page:68
-msgid ""
-"Increase or decrease the serving size of the recipe by pressing <gui>+</gui> "
-"or <gui>-</gui>."
-msgstr ""
-"Aumente o disminuya el número de raciones de la receta pulsando <gui>+</gui> "
-"o <gui>-</gui>."
-
-#. (itstool) path: section/p
-#: C/shop.page:74
+#: pitivi/dialogs/missingasset.py:47
+msgid "Locate missing file..."
+msgstr "Encontrar archivo perdido…"
+
+#: pitivi/dialogs/missingasset.py:61
+msgid "The following file could not be found:"
+msgstr "El siguiente archivo no se puede encontrar:"
+
+#: pitivi/dialogs/missingasset.py:85
+msgid "Please specify its new location:"
+msgstr "Especifique su nueva ubicación:"
+
+#. Translators: this is a format filter in a filechooser. Ex: "AVI files"
+#: pitivi/dialogs/missingasset.py:116
+#, python-format
+msgid "%s files"
+msgstr "Archivos %s"
+
+#: pitivi/dialogs/prefs.py:62
+msgid "Plugins"
+msgstr "Complementos"
+
+#: pitivi/dialogs/prefs.py:63
+msgid "Shortcuts"
+msgstr "Atajos"
+
+#: pitivi/dialogs/prefs.py:276 pitivi/utils/widgets.py:981
+msgid "Reset to default value"
+msgstr "Restablecer al valor predeterminado"
+
+#: pitivi/dialogs/prefs.py:387
+msgid "Reset the shortcut to the default accelerator"
+msgstr "Restablecer el atajo al acelerador predeterminado"
+
+#: pitivi/dialogs/prefs.py:547
+msgid "Set Shortcut"
+msgstr "Establecer atajo"
+
+#. Setup the widgets used in the dialog.
+#: pitivi/dialogs/prefs.py:562
+msgid "Apply"
+msgstr "Aplicar"
+
+#: pitivi/dialogs/prefs.py:565
+msgid "Apply the accelerator to this shortcut."
+msgstr "Aplicar el acelerador a este atajo."
+
+#: pitivi/dialogs/prefs.py:568
+msgid "Replace"
+msgstr "Reemplazar"
+
+#: pitivi/dialogs/prefs.py:571
 msgid ""
-"The shopping list will automatically adjust the ingredients needed to "
-"purchase based on the new serving size of the recipe."
+"Remove this accelerator from where it was used previously and set it for "
+"this shortcut."
 msgstr ""
-"La lista de la compra ajustará automáticamente los ingredientes que hace "
-"falta comprar, basándose en el nuevo número de raciones de la receta."
-
-#. (itstool) path: section/title
-#: C/shop.page:80
-msgid "Remove an Item"
-msgstr "Quitar un elemento"
-
-#. (itstool) path: section/p
-#: C/shop.page:81
-msgid "To remove an item from the shopping list:"
-msgstr "Para quitar un elemento de la lista de la compra:"
-
-#. (itstool) path: item/p
-#: C/shop.page:84
-msgid "Select an item from the list."
-msgstr "Seleccione un elemento de la lista."
-
-#. (itstool) path: item/p
-#: C/shop.page:87
+"Quite este acelerador de donde se usara anteriormente y establézcalo a este "
+"atajo."
+
+#: pitivi/dialogs/prefs.py:578
+#, python-format
+msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
+msgstr "Introduzca el nuevo atajo para <b>%s</b> o pulse Esc para cancelar."
+
+#: pitivi/dialogs/prefs.py:587
 msgid ""
-"Press the Trash <media type=\"image\" mime=\"image/png\" src=\"images/trash."
-"png\" its:translate=\"yes\"> <span its:translate=\"yes\">Trash</span></"
-"media> button and the ingredient is removed from the shopping list."
+"The accelerator you are trying to set might interfere with typing. Try using "
+"Control, Shift or Alt with some other key, please."
 msgstr ""
-"Pulse el botón de la papelera <media type=\"image\" mime=\"image/png\" src="
-"\"images/trash.png\" its:translate=\"yes\"> <span its:translate=\"yes"
-"\">Papelera</span></media> y el ingrediente se quitará de la lista de la "
-"compra."
-
-#. (itstool) path: section/p
-#: C/shop.page:94
-msgid "To add an ingredient back to the shopping list after you removed it:"
-msgstr "Para volver a añadir a la lista un ingrediente que ha quitado:"
-
-#. (itstool) path: item/p
-#: C/shop.page:97
-msgid "Press the <gui>+</gui> at the bottom of the shopping list."
-msgstr "Pulse el botón <gui>+</gui> de debajo de la lista de la compra."
-
-#. (itstool) path: item/p
-#: C/shop.page:100
+"El acelerador que intenta establecer puede interferir al escribir. Pruebe a "
+"usar Ctrl, Mayús o Alt junto con alguna otra tecla."
+
+#: pitivi/dialogs/prefs.py:621
+#, python-format
 msgid ""
-"Select the item you would like added and it will appear in the shopping list."
+"This key combination is already used by <b>%s</b>. Press Replace to use it "
+"for <b>%s</b> instead."
 msgstr ""
-"Seleccione el elemento que quiere añadir y éste aparecerá en la lista de la "
-"compra."
-
-#. (itstool) path: section/p
-#: C/shop.page:104
+"Esta combinación de teclas ya la está usando <b>%s</b>. Pulse Reemplazar "
+"para usarla para <b>%s</b> en su lugar."
+
+#: pitivi/dialogs/prefs.py:664
+msgid "No description available."
+msgstr "No hay descripción disponible."
+
+#: pitivi/dialogs/prefs.py:775
+#, python-brace-format
+msgid "Unable to load the plugin '{module_name}'"
+msgstr "No se pudo cargar el complemento «{module_name}»"
+
+#. We could use Gtk.ListBox.set_placeholder, but it
+#. appears bad inside the list widget.
+#: pitivi/dialogs/prefs.py:859
+msgid "No plugins available"
+msgstr "No hay complementos disponibles"
+
+#: pitivi/dialogs/prefs.py:872
+#, python-brace-format
+msgid ""
+"You can create <a href='{doc_url}'>plugins</a> into your <a "
+"href='{dir_url}'>plugins directory</a>."
+msgstr ""
+"Puede crear <a href='{doc_url}'>complementos</a> en su <a "
+"href='{dir_url}'>carpeta de complementos</a>."
+
+#: pitivi/utils/misc.py:283
+msgid ""
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"documentation viewer or a web browser installed"
+msgstr ""
+"Falló al abrir el manual del usuario. Asegúrese de que tiene instalado el "
+"visor de documentación de GNOME «yelp» o un navegador web."
+
+#: pitivi/utils/misc.py:292
+msgid ""
+"The system's locale that you are using is not UTF-8 capable. Unicode support "
+"is required for Python3 software like Pitivi. Please correct your system "
+"settings; if you try to use Pitivi with a broken locale, weird bugs will "
+"happen."
+msgstr ""
+"La condifuración regional del sistema que está usando no soporta UTF-8. Se "
+"requiere soporte de Unicode para el software de Python3, como Pitivi. "
+"Corrija la configuración de su sistema; si intenta usar Pitivi con una "
+"configuración regional incorrecta aparecerán errores extraños."
+
+#: pitivi/utils/misc.py:302
+msgid "Error while decoding a string"
+msgstr "Error al decodificar una cadena"
+
+#. Translators: 'fps' is for 'frames per second'
+#: pitivi/utils/ui.py:279
+msgid "{0:s} fps"
+msgstr "{0:s} fps"
+
+#: pitivi/utils/ui.py:299
+#, python-brace-format
+msgid "{0:n} kHz"
+msgstr "{0:n} kHz"
+
+#: pitivi/utils/ui.py:308
+msgid "Mono"
+msgstr "Mono"
+
+#: pitivi/utils/ui.py:309
+msgid "Stereo"
+msgstr "Estéreo"
+
+#: pitivi/utils/ui.py:310
+msgid "6 (5.1)"
+msgstr "6 (5.1)"
+
+#: pitivi/utils/ui.py:311
+msgid "8 (7.1)"
+msgstr "8 (7.1)"
+
+#: pitivi/utils/ui.py:441
+#, python-format
+msgid "<b>Duration:</b> %s"
+msgstr "<b>Duración:</b> %s"
+
+#: pitivi/utils/ui.py:444
+#, python-format
+msgid "<b>Proxy creation progress:</b> %d%%"
+msgstr "<b>Progreso de creación del proxy:</b> %d%%"
+
+#: pitivi/utils/ui.py:457
+#, python-format
+msgid "<b>Path</b>: %s"
+msgstr "<b>Ruta</b>: %s"
+
+#: pitivi/utils/ui.py:466
+#, python-format
+msgid "<b>Size</b>: %s"
+msgstr "<b>Tamaño:</b> %s"
+
+#: pitivi/utils/ui.py:500
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Audio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[1] "<b>Audio:</b> %d canales a %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: pitivi/utils/ui.py:512
+#, python-format
+msgid "<b>Video:</b> %d×%d <i>pixels</i> at %s <i>fps</i>"
+msgstr "<b>Vídeo:</b> %d×%d <i>píxels</i> a %s <i>fps</i>"
+
+#: pitivi/utils/ui.py:515
+#, python-format
+msgid "<b>Image:</b> %d×%d <i>pixels</i>"
+msgstr "<b>Imagen:</b> %d x %d <i>píxeles</i>"
+
+#: pitivi/utils/ui.py:569 pitivi/utils/ui.py:596 pitivi/utils/ui.py:620
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d hora"
+msgstr[1] "%d horas"
+
+#: pitivi/utils/ui.py:572 pitivi/utils/ui.py:599 pitivi/utils/ui.py:623
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuto"
+msgstr[1] "%d minutos"
+
+#: pitivi/utils/ui.py:575 pitivi/utils/ui.py:602 pitivi/utils/ui.py:626
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d segundo"
+msgstr[1] "%d segundos"
+
+#: pitivi/utils/ui.py:594
+#, python-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d día"
+msgstr[1] "%d días"
+
+#: pitivi/utils/ui.py:635
+msgid "Just now"
+msgstr "Ahora mismo"
+
+#: pitivi/utils/ui.py:638
+msgid "An hour ago"
+msgstr "Hace una hora"
+
+#: pitivi/utils/ui.py:641
+msgid "Today"
+msgstr "Hoy"
+
+#: pitivi/utils/ui.py:644
+msgid "Yesterday"
+msgstr "Ayer"
+
+#: pitivi/utils/ui.py:653
+msgid "About a year ago"
+msgstr "Hace un año"
+
+#: pitivi/utils/ui.py:656
+#, python-format
+msgid "About %d year ago"
+msgid_plural "About %d years ago"
+msgstr[0] "Hace aproximadamente %d año"
+msgstr[1] "Hace aproximadamente %d años"
+
+#: pitivi/utils/widgets.py:76
+msgid "Implement Me"
+msgstr "Impleméntame"
+
+#: pitivi/utils/widgets.py:808
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: pitivi/utils/widgets.py:841
+msgid "No properties."
+msgstr "No hay propiedades."
+
+#. Avoid the ugly selection outline
+#: pitivi/utils/widgets.py:966
+msgid "Show keyframes for this value"
+msgstr "Mostrar fotogramas para este valor"
+
+#: pitivi/utils/widgets.py:1149
+#, python-format
+msgid "Properties for %s"
+msgstr "Propiedades para %s"
+
+#: pitivi/utils/widgets.py:1229
+msgid "Zoom Fit"
+msgstr "Ajustar ampliación"
+
+#: pitivi/utils/widgets.py:1234
+msgid "Zoom"
+msgstr "Ampliación"
+
+#. Translators: %s represents a duration, for example "10 minutes"
+#: pitivi/utils/widgets.py:1310
+#, python-format
+msgid "%s displayed"
+msgstr "Mostrados %s"
+
+#: pitivi/utils/widgets.py:1314
+#, python-format
+msgid "%d nanoseconds displayed, because we can"
+msgstr "Mostrados %d nanosegundos, porque podemos"
+
+#: plugins/console/console.py:125
+msgid "Console"
+msgstr "Consola"
+
+#: plugins/console/console.py:127
+msgid "Color"
+msgstr "Color"
+
+#. Translators: The color of the content from stderr.
+#: plugins/console/console.py:132
+msgid "Standard error color"
+msgstr "Color de error estándar"
+
+#. Translators: The color of the content from stdout.
+#: plugins/console/console.py:137
+msgid "Standard output color"
+msgstr "Color de salida estándar"
+
+#: plugins/console/console.py:141
+msgid "Font"
+msgstr "Tipografía"
+
+#: plugins/console/console.py:148 plugins/console/console.py:166
+msgid "Developer Console"
+msgstr "Consola de desarrollo"
+
+#: plugins/console/console.py:190
+msgid "Pitivi Console"
+msgstr "Consola de Pitivi"
+
+#: plugins/console/console.py:201
+msgid "You can use the following shortcuts:"
+msgstr "Puede usar los siguientes atajos:"
+
+#: plugins/console/console.py:206
+#, python-brace-format
+msgid "Type \"{help}(<command>)\" for more information."
+msgstr "Escriba «{help}(<comando>)» para obtener más información."
+
+#: plugins/console/utils.py:84
+#, python-brace-format
 msgid ""
-"After you have completed your shopping, press the <gui> Done Shopping</gui> "
-"to clear your shopping list."
+"Not possible to override {key}, because shortcuts commands are read-only."
 msgstr ""
-"Después de hacer la compra, pulse el botón <gui>Compra hecha</gui> para "
-"limpiar su lista de la compra."
+"No es posible omitir {key} porque los comandos de los atajos son de sólo "
+"lectura."
+
+#~ msgid "org.pitivi.Pitivi"
+#~ msgstr "org.pitivi.Pitivi"
+
+#~ msgid "<"
+#~ msgstr "<"
+
+#~ msgid ">"
+#~ msgstr ">"
+
+#~ msgid "◇"
+#~ msgstr "◇"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid "y"
+#~ msgstr "y"
+
+#~ msgid "Link"
+#~ msgstr "Unir"
+
+#~ msgid "Text color"
+#~ msgstr "Color de texto"
+
+#~ msgid "Background color"
+#~ msgstr "Color de fondo"
+
+#~ msgid "New project"
+#~ msgstr "Proyecto nuevo"
+
+#~ msgid "Open project..."
+#~ msgstr "Abrir proyecto…"
+
+#~ msgid "Welcome"
+#~ msgstr "Bienvenido"
+
+#~ msgid "Double-click a project below to load it:"
+#~ msgstr "Pulsar abajo dos veces sobre un proyecto para cargarlo:"
+
+#~ msgid "Browse projects..."
+#~ msgstr "Examinar proyectos…"
+
+#~ msgid "Keyboard shortcuts"
+#~ msgstr "Atajo de teclado"
+
+#~ msgid "Missing dependencies..."
+#~ msgstr "Dependencias faltantes…"
+
+#~ msgid "Projects"
+#~ msgstr "Proyectos"
+
+#~ msgid "Pixel aspect ratio:"
+#~ msgstr "Proporción de aspecto de los píxeles:"
+
+#~ msgid "Project title:"
+#~ msgstr "Título del proyecto:"
+
+#~ msgid "New Project"
+#~ msgstr "Proyecto nuevo"
+
+#~ msgid "Aspect Ratio:"
+#~ msgstr "Proporción de aspecto:"
+
+#~ msgid "Redo"
+#~ msgstr "Rehacer"
+
+#~ msgid "invalid (%s fps)"
+#~ msgstr "no válido (%s fps)"
+
+#~ msgid "%d fps"
+#~ msgstr "%d fps"
+
+#~ msgid "%.3f fps"
+#~ msgstr "%.3f fps"
+
+#~ msgid "%.2f fps"
+#~ msgstr "%.2f fps"
+
+#~ msgid "%d kHz"
+#~ msgstr "%d kHz"
+
+#~ msgid "%.1f kHz"
+#~ msgstr "%.1f kHz"
+
+#~ msgid "4 Channels (4.0)"
+#~ msgstr "4 canales (4.0)"
+
+#~ msgid "Square"
+#~ msgstr "Cuadrado"
+
+#~ msgid "480p"
+#~ msgstr "480p"
+
+#~ msgid "480i"
+#~ msgstr "480i"
+
+#~ msgid "480p Wide"
+#~ msgstr "480p ancha"
+
+#~ msgid "480i Wide"
+#~ msgstr "480i ancha"
+
+#~ msgid "576p"
+#~ msgstr "576p"
+
+#~ msgid "576i"
+#~ msgstr "576i"
+
+#~ msgid "576p Wide"
+#~ msgstr "576p ancha"
+
+#~ msgid "576i Wide"
+#~ msgstr "576i ancha"
+
+#~ msgid "Standard (4:3)"
+#~ msgstr "Estándar (4:3)"
+
+#~ msgid "DV (15:11)"
+#~ msgstr "DV (15:11)"
+
+#~ msgid "DV Widescreen (16:9)"
+#~ msgstr "DV pantalla ancha (16:9)"
+
+#~ msgid "Cinema (1.37)"
+#~ msgstr "Cine (1.37)"
+
+#~ msgid "Cinema (1.66)"
+#~ msgstr "Cine (1.66)"
+
+#~ msgid "Cinema (1.85)"
+#~ msgstr "Cine (1.85)"
+
+#~ msgid "Anamorphic (2.35)"
+#~ msgstr "Anamórphico (2.35)"
+
+#~ msgid "Anamorphic (2.39)"
+#~ msgstr "Anamórphico (2.39)"
+
+#~ msgid "Anamorphic (2.4)"
+#~ msgstr "Anamórphico (2.4)"
+
+#~ msgid "Advanced positioning"
+#~ msgstr "Posicionamiento avanzado"
 
 #~ msgid ""
-#~ "Open the <app>Recipes</app> menu from the top bar in the top-right next "
-#~ "to <link href=\"help:gnome-help/shell-introduction#activities"
-#~ "\">Activites</link>."
+#~ "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
+#~ "Please specify its new location:"
 #~ msgstr ""
-#~ "Abra el menú de <app>Recetas</app> desde la barra superior a la derecha, "
-#~ "junto a la vista de <link href=\"help:gnome-help/shell-"
-#~ "introduction#activities\">Actividades</link>."
+#~ "El siguiente archivo se ha movido: «<b>%s</b>» (duración: %s)\n"
+#~ "Especifique su nueva ubicación:"
 
-#~ msgid "Images"
-#~ msgstr "Imágenes"
+#~ msgid "Duration"
+#~ msgstr "Duración"
 
-#~ msgid "<_:p-1/>."
-#~ msgstr "<_:p-1/>."
+#~ msgid "Error while analyzing files"
+#~ msgstr "Error al analizar los archivos"
 
-#~ msgid "<_:info-1/> <_:title-2/> <_:p-3/> <_:p-4/>. <_:steps-5/>"
-#~ msgstr "<_:info-1/> <_:title-2/> <_:p-3/> <_:p-4/>. <_:steps-5/>"
+#~ msgid "The following files can not be used with Pitivi."
+#~ msgstr "Los siguientes archivos no se pueden usar con Pitivi."
+
+#~ msgid "Properties for <element>"
+#~ msgstr "Propiedades para <element>"
+
+#~ msgid "1900"
+#~ msgstr "1900"
+
+#~ msgid "File name"
+#~ msgstr "Nombre de archivo"
+
+#~ msgid "Container format"
+#~ msgstr "Formato del contenedor:"
+
+#~ msgid "1.0"
+#~ msgstr "1.0"
+
+#~ msgid "1000 x 1000"
+#~ msgstr "1000 x 1000"
+
+#~ msgid "file thumbnails provided by GNOME's thumbnailers"
+#~ msgstr ""
+#~ "miniaturas de archivos proporcionadas por los creadores de miniaturas de "
+#~ "GNOME"
+
+#~ msgid "%s doesn't yet handle non-local projects"
+#~ msgstr "%s no puede manipular aún proyectos no locales"
+
+#~ msgid "Standard PAL"
+#~ msgstr "PAL estándar"
+
+#~ msgid "MP4"
+#~ msgstr "MP4"
+
+#~ msgid "H.264"
+#~ msgstr "H.264"
+
+#~ msgid "29.97 fps"
+#~ msgstr "29.97 fps"
+
+#~ msgid "AC-3"
+#~ msgstr "AC-3"
+
+#~ msgid "AAC"
+#~ msgstr "AAC"
+
+#~ msgid "6 channels (5.1)"
+#~ msgstr "6 canales (5.1)"
+
+#~ msgid "Setting property: %s"
+#~ msgstr "Configurando propiedad: %s"
+
+#~| msgid "_Timeline"
+#~ msgid "timeline"
+#~ msgstr "línea de tiempo"
+
+#~ msgid "Close this message"
+#~ msgstr "Cerrar este mensaje"
+
+#~ msgid "Section"
+#~ msgstr "Sección"
+
+#~ msgid "Custom"
+#~ msgstr "Personalizado"
+
+#~ msgid "Behavior"
+#~ msgstr "Comportamiento"
+
+#~ msgid "Position"
+#~ msgstr "Posición"
+
+#~ msgid "Size"
+#~ msgstr "Tamaño"
+
+#~ msgid "All known file formats"
+#~ msgstr "Todos los formatos de archivo conocidos"
+
+#~ msgid "Importing clip %(current_clip)d of %(total)d"
+#~ msgstr "Importando vídeo %(current_clip)d de %(total)d"
+
+#~ msgid "Copy"
+#~ msgstr "Copiar"
+
+#~ msgid "Paste"
+#~ msgstr "Pegar"
+
+#~ msgid "Start Playback"
+#~ msgstr "Iniciar reproducción"
+
+#~ msgid "Viewer Zoom"
+#~ msgstr "Ampliación del visor"
+
+#~ msgid "Crop"
+#~ msgstr "Recortar"
+
+#~ msgid "25 FPS"
+#~ msgstr "25 FPS"
+
+#~ msgid "Video Preset"
+#~ msgstr "Configuración del vídeo"
+
+#~ msgid "Create a new preset"
+#~ msgstr "Crear un preajuste nuevo"
+
+#~ msgid "Save changes to the currently selected preset"
+#~ msgstr "Guardar los cambios al preajuste seleccionado actualmente"
+
+#~ msgid "Audio Preset"
+#~ msgstr "Configuración del sonido"
+
+#~ msgid "Format"
+#~ msgstr "Formato"
+
+#~ msgid "Render Preset"
+#~ msgstr "Preconfiguración de renderizado"
+
+#~ msgid "Render only the selected clips"
+#~ msgstr "Renderizar sólo los vídeos seleccionados"
+
+#~ msgid "Draft (no special effects, single pass)"
+#~ msgstr "Borrador (sin efectos especiales, una sola pasada)"
+
+#~ msgid "Edit Project Settings..."
+#~ msgstr "Editar ajustes del proyecto…"
+
+#~ msgid "Enable video"
+#~ msgstr "Activar vídeo"
+
+#~ msgid "Enable audio"
+#~ msgstr "Activar sonido"
+
+#~ msgid "No preset"
+#~ msgstr "No hay configuración"
+
+#~ msgid "\"%s\" already exists."
+#~ msgstr "«%s» ya existe."
+
+#~ msgid "Set a personalized name for this layer"
+#~ msgstr "Establecer un nombre personalizado para esta capa"
+
+#~| msgid "New project"
+#~ msgid "Save project as"
+#~ msgstr "Guardar proyecto como"
+
+#~ msgid ""
+#~ "<b>Solo mode</b>\n"
+#~ "Other non-soloed layers will be disabled as long as this is enabled."
+#~ msgstr ""
+#~ "<b>Modo solo</b>\n"
+#~ "Sólo se desactivarán en modo no solo mientras esto esté activado."
+
+#~ msgid ""
+#~ "<b>Enable or disable this layer</b>\n"
+#~ "Disabled layers will not play nor render."
+#~ msgstr ""
+#~ "<b>Activar o desactivar esta capa</b>\n"
+#~ "Las capas desactivadas no se reproducirán ni se renderizarán."
+
+#~ msgid "Make layer invisible"
+#~ msgstr "Hacer la capa invisible"
+
+#~ msgid "Make layer visible"
+#~ msgstr "Hacer la capa visible"
+
+#~ msgid "Opacity:"
+#~ msgstr "Opacidad:"
+
+#~ msgid "Change video opacity"
+#~ msgstr "Cambiar la opacidad del vídeo"
+
+#~ msgid "Vol:"
+#~ msgstr "Vol:"
+
+#~ msgid "Pan:"
+#~ msgstr "Pan:"
+
+#~ msgid "Change audio panning"
+#~ msgstr "Cambiar el «panning» del sonido"
+
+#~ msgid "Create and insert"
+#~ msgstr "Crear e insertar"
+
+#~ msgid "Bold"
+#~ msgstr "Negrita"
+
+#~ msgid "Italic"
+#~ msgstr "Cursiva"
+
+#~ msgid "Convert to markup"
+#~ msgstr "Convertir a marcado"
+
+#~ msgid "Audio |audio"
+#~ msgstr "Sonido |sonido"
+
+#~ msgid "Keyframe"
+#~ msgstr "Fotograma clave"
+
+#~ msgid "Details"
+#~ msgstr "Detalles"
+
+#~ msgid ""
+#~ "\n"
+#~ "    %prog [PROJECT_FILE]               # Start the video editor.\n"
+#~ "    %prog -i [-a] [MEDIA_FILE1 ...]    # Start the editor and create a "
+#~ "project."
+#~ msgstr ""
+#~ "\n"
+#~ "    %prog [ARCHIVO_DE_PROYECTO]               # Iniciar el editor de "
+#~ "vídeo.\n"
+#~ "    %prog -i [-a] [ARCHIVO_MULTIMEDIA1 ...]    # Iniciar el editor de "
+#~ "vídeo y crear un proyecto."
+
+#~ msgid "Import each MEDIA_FILE into a new project."
+#~ msgstr ""
+#~ "Añada cada ARCHIVO_MULTIMEDIA a la línea de tiempo después de importarla."
+
+#~ msgid "Add each imported MEDIA_FILE to the timeline."
+#~ msgstr ""
+#~ "Añada cada ARCHIVO_MULTIMEDIA a la línea de tiempo después de importarla."
+
+#~ msgid "Run Pitivi in the Python Debugger."
+#~ msgstr "Ejecutar Pitivi en el depurador de Python"
+
+#~ msgid "-a requires -i"
+#~ msgstr "-a requiere -i"
+
+#~ msgid "Cannot open more than one PROJECT_FILE"
+#~ msgstr "No se puede abrir más de un ARCHIVO_DE_PROYECTO"
+
+#~ msgid "Save _As..."
+#~ msgstr "Guardar co_mo…"
+
+#~ msgid "Export the current project"
+#~ msgstr "Exportar el proyecto actual"
+
+#~ msgid "_Render..."
+#~ msgstr "_Renderizar…"
+
+#~ msgid "Redo the last operation that was undone"
+#~ msgstr "Rehacer la última operación deshecha"
+
+#~ msgid "Information about %s"
+#~ msgstr "Información acerca de %s"
+
+#~ msgid "_Project"
+#~ msgstr "_Proyecto"
+
+#~ msgid "_Edit"
+#~ msgstr "_Editar"
+
+#~ msgid "_View"
+#~ msgstr "_Ver"
+
+#~ msgid "_Library"
+#~ msgstr "_Biblioteca"
+
+#~ msgid "Previe_w"
+#~ msgstr "Revisa_r"
+
+#~ msgid "_Help"
+#~ msgstr "Ay_uda"
+
+#~ msgid "View the main window on the whole screen"
+#~ msgstr "Ver la ventana principal en la pantalla completa"
+
+#~ msgid "Undock Viewer"
+#~ msgstr "Desbloquear visor"
+
+#~ msgid "Put the viewer in a separate window"
+#~ msgstr "Poner el visor en una ventana separada"
+
+#~ msgid "Dock Viewer"
+#~ msgstr "Anclar el visor"
+
+#~ msgid "Move to the previous keyframe"
+#~ msgstr "Mover al fotograma clave anterior"
+
+#~ msgid "Move to the next keyframe"
+#~ msgstr "Mover al siguiente fotograma clave"
+
+#~ msgid ""
+#~ "There is already a %s instance, please inform the developers by filing a "
+#~ "bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+#~ msgstr ""
+#~ "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
+#~ "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+
+#~ msgid "additional video effects, clip transformation feature"
+#~ msgstr ""
+#~ "efectos de vídeo adicionales, característica de transformación del clip"
+
+#~ msgid "Remove the selected layer from the project"
+#~ msgstr "Quitar la capa seleccionada del proyecto"
+
+#~ msgid "Clip configuration"
+#~ msgstr "Configuraciones del vídeo"
+
+#~ msgid "Title editor"
+#~ msgstr "Editor de títulos"
+
+#~ msgid "Preview - click outside to close"
+#~ msgstr "Vista previa; pulse fuera para cerrar"
+
+#~ msgid "Zoom Timeline"
+#~ msgstr "Cronología de la ampliación"
+
+#~ msgid "Errors occurred while importing."
+#~ msgstr "Hubo errores al importar."
+
+#~ msgid "View errors"
+#~ msgstr "Ver errores"
+
+#~ msgid ""
+#~ "<p>Integrating well with the GNOME desktop environment and other "
+#~ "applications, Pitivi sports a beautiful user interface designed to be "
+#~ "powerful yet easy to learn.</p> <p>With a non-modal editing workflow, a "
+#~ "framerate-independent and playhead-centric timeline, Pitivi allows you "
+#~ "quickly and accurately trim, split and review your scenes. Pitivi's "
+#~ "ripple and roll editing features allow spending more time on storytelling "
+#~ "and less time on \"pushing clips around\".</p> <p>Some other features "
+#~ "include:</p> <ul> <li>Accepts any file formats supported by the GStreamer "
+#~ "multimedia framework</li> <li>Can animate hundreds of special effects and "
+#~ "filters with keyframable properties</li> <li>Ability to set custom aspect "
+#~ "ratios, framerates and rendering presets</li> <li>Easy to use crossfades "
+#~ "and SMPTE transitions</li> <li>Multihead-friendly with detachable user "
+#~ "interface components</li> </ul>"
+#~ msgstr ""
+#~ "<p> Bien integrado con el entorno de escritorio GNOME y otras "
+#~ "aplicaciones, Pitivi muestra interfaz de usuario bonita y diseñada para "
+#~ "ser potente y fácil de aprender.</p> <p>Con un flujo de trabajo de "
+#~ "edición no modal, una tasa de fotogramas independiente y barra de "
+#~ "reproducción línea de tiempo céntrica, Pitivi le permite dividir de "
+#~ "manera rápida y precisa dividir y revisa las escenas. Las característica "
+#~ "de ondulación y de edición rollo le permiten pasar más tiempo en la "
+#~ "narración y menos tiempo «colocando clips».</p> <p>Algunas otras "
+#~ "características incluyen:</p> <ul> <li> Acepta los formatos de archivo "
+#~ "compatibles con el entorno de trabajo multimedia GStreamer</li> <li>Puede "
+#~ "animar cientos de efectos y filtros especiales con propiedades de marcos "
+#~ "clave</li> <li> Capacidad para establecer relaciones de aspecto "
+#~ "personalizadas, tasas de fotogramas y configuraciones predeterminadas de "
+#~ "renderizado </li> <li> Transiciones y fundidos cruzados SMPTE fáciles de "
+#~ "usar</li> <li> Fácil de usar varias cabeceras con componentes de interfaz "
+#~ "de usuario desacoplables </li> </ul>"
+
+#~ msgid "Contributors:\n"
+#~ msgstr "Colaboradores:\n"
+
+#~ msgid "<b><big>Rendering movie</big></b>"
+#~ msgstr "<b><big>Renderizando película</big></b>"
+
+#~ msgid "Unknown Mib"
+#~ msgstr "Mib desconocido"
+
+#~ msgid "Rendering first pass"
+#~ msgstr "Renderizando la primera pasada"
+
+#~ msgid "Frames per second:"
+#~ msgstr "Fotogramas por segundo:"
+
+#~ msgid "Phase:"
+#~ msgstr "Fase:"
+
+#~ msgid "Cannot save with this file format."
+#~ msgstr "No se puede guardar con este formato de archivo."
+
+#~ msgid "Cannot save with this file format. %s"
+#~ msgstr "No se puede guardar con este formato de archivo. %s"
+
+#~ msgid "Cannot save with this file format"
+#~ msgstr "No se puede guardar con este formato de archivo"
+
+#~ msgid "%d%% Rendered"
+#~ msgstr "%d%% renderizado"
+
+#~ msgid "enables the autoalign feature"
+#~ msgstr "actva la característica de alineamiento automático"
+
+#~ msgid "Sample depth:"
+#~ msgstr "Profundidad del muestreo:"
+
+#~ msgid "%d bit"
+#~ msgstr "%d bit"
+
+#~ msgid "Error Saving Project"
+#~ msgstr "Error al guardar el proyecto"
+
+#~ msgid "Do you want to reload current project?"
+#~ msgstr "¿Quiere recargar el proyecto actual?"
+
+#~ msgid "Error Loading Project"
+#~ msgstr "Error al cargar el proyecto"
+
+#~ msgid "Appearance"
+#~ msgstr "Apariencia"
+
+#~ msgid "Thumbnail gap"
+#~ msgstr "Desfase de la miniatura"
+
+#~ msgid "The spacing between thumbnails, in pixels"
+#~ msgstr "El espaciado entre las miniaturas, en píxeles"
+
+#~ msgid "Performance"
+#~ msgstr "Rendimiento"
+
+#~ msgid "Thumbnail every"
+#~ msgstr "Miniaturizar todo"
+
+#~ msgid "1/100 second"
+#~ msgstr "1/100 segundo"
+
+#~ msgid "1/10 second"
+#~ msgstr "1/10 segundo"
+
+#~ msgid "1/4 second"
+#~ msgstr "1/4 segundo"
+
+#~ msgid "1/2 second"
+#~ msgstr "1/2 segundo"
+
+#~ msgid "1 second"
+#~ msgstr "1 segundo"
+
+#~ msgid "5 seconds"
+#~ msgstr "5 segundos"
+
+#~ msgid "10 seconds"
+#~ msgstr "10 segundos"
+
+#~ msgid "minute"
+#~ msgstr "minuto"
+
+#~ msgid "The interval, in seconds, between thumbnails."
+#~ msgstr "El intervalor, en segundos, entre las miniaturas"
+
+#~ msgid "Enable video thumbnails"
+#~ msgstr "Activar las miniaturas de vídeo"
+
+#~ msgid "Show thumbnails on video clips"
+#~ msgstr "Mostrar miniaturas en los vídeos"
+
+#~ msgid "Enable audio waveforms"
+#~ msgstr "Activar formas de onda de sonido"
+
+#~ msgid "Show waveforms on audio clips"
+#~ msgstr "Mostrar formas de onda en los clips de sonido"
+
+#~ msgid "One or more GStreamer errors occured!"
+#~ msgstr "Ocurrieron uno o más errores de GStreamer"
+
+#~ msgid "Error List"
+#~ msgstr "Lista de errores"
+
+#~ msgid "The following errors have been reported:"
+#~ msgstr "Se han encontrado los siguientes errores:"
+
+#~ msgid "Color for video clips"
+#~ msgstr "Color para clips de vídeo"
+
+#~ msgid "The background color for clips in video tracks."
+#~ msgstr "El color de fondo para vídeos en las pistas de vídeo."
+
+#~ msgid "Color for audio clips"
+#~ msgstr "Color para clips de sonido"
+
+#~ msgid "The background color for clips in audio tracks."
+#~ msgstr "El color de fondo para vídeos en las pistas de sonido."
+
+#~ msgid "Color for title clips"
+#~ msgstr "Color para el clips de título"
+
+#~ msgid "The background color for clips in title tracks."
+#~ msgstr "El color de fondo para clips en las pistas de título."
+
+#~ msgid "Selected clips will be tinted with this color."
+#~ msgstr "Vídeos seleccionados se colorearán con este color."
+
+#~ msgid "Clip font"
+#~ msgstr "Tipografía del vídeo"
+
+#~ msgid "The font to use for clip titles"
+#~ msgstr "La fuente para usar en los títulos del vídeo"
+
+#~ msgid "Choose..."
+#~ msgstr "Elegir…"
+
+#~ msgid "Noise"
+#~ msgstr "Ruido"
+
+#~ msgid "Blur"
+#~ msgstr "Desenfoque"
+
+#~ msgid "Subtitles"
+#~ msgstr "Subtítulos"
+
+#~ msgid "%s is already running"
+#~ msgstr "%s ya está en ejecución."
+
+#~ msgid "An instance of %s is already running in this script."
+#~ msgstr "Ya se está ejecutando una instancia de %s en este script."
+
+#~ msgid "Could not find the GNonLin plugins"
+#~ msgstr "No se pudieron encontrar los complementos GNOnLin"
+
+#~ msgid ""
+#~ "Make sure the plugins were installed and are available in the GStreamer "
+#~ "plugins path."
+#~ msgstr ""
+#~ "Asegúrese de que los complementos fueron instalados y están disponibles "
+#~ "en la ruta de complementos de GStreamer."
+
+#~ msgid "Could not find the autodetect plugins"
+#~ msgstr "No se pudieron encontrar los complementos de autodetección."
+
+#~ msgid ""
+#~ "Make sure you have installed gst-plugins-good and that it's available in "
+#~ "the GStreamer plugin path."
+#~ msgstr ""
+#~ "Asegúrese de que ha instalado los complementos «gst-plugins-good» y que "
+#~ "están disponibles en la ruta de complementos de GStreamer."
+
+#~ msgid "PyGTK doesn't have cairo support"
+#~ msgstr "PyGTK no tiene soporte para Cairo"
+
+#~ msgid ""
+#~ "Please use a version of the GTK+ Python bindings built with cairo support."
+#~ msgstr ""
+#~ "Use una versión de los bindings de Python para GTK+ compilados con "
+#~ "soporte para Cairo."
+
+#~ msgid "Could not initiate the video output plugins"
+#~ msgstr "No se pudo iniciar los complementos de salida de vídeo"
+
+#~ msgid ""
+#~ "Make sure you have at least one valid video output sink available "
+#~ "(xvimagesink or ximagesink)."
+#~ msgstr ""
+#~ "Asegúrese de que al menos un sumidero válido de salida de vídeo está "
+#~ "disponible (xvimagesink o ximagesink)."
+
+#~ msgid "Could not initiate the audio output plugins"
+#~ msgstr "No se pudo iniciar los complementos de salida de sonido"
+
+#~ msgid "Could not import the cairo Python bindings"
+#~ msgstr "No se pudieron importar los bindings de Python para Cairo"
+
+#~ msgid "Make sure you have the cairo Python bindings installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para Cairo "
+#~ "instalados."
+
+#~ msgid "Could not import the goocanvas Python bindings"
+#~ msgstr "No se pudieron importar los bindings de Python para goocanvas"
+
+#~ msgid "Make sure you have the goocanvas Python bindings installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para goocanvas."
+
+#~ msgid "Could not import the xdg Python library"
+#~ msgstr "No se pudo importar la biblioteca xdg de Python"
+
+#~ msgid "Make sure you have the xdg Python library installed."
+#~ msgstr "Asegúrese de que tiene instalada la biblioteca xdg de Python."
+
+#~ msgid "You do not have a recent enough version of GTK+ (your version %s)"
+#~ msgstr "No tiene una versión reciente de GTK+ (su versión es %s)"
+
+#~ msgid "Install a version of GTK+ greater than or equal to %s."
+#~ msgstr "Instale una versión de GTK+ mayor o igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of GStreamer Python bindings "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente de los bindings de Python para GStreamer "
+#~ "(su versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the GStreamer Python bindings greater than or equal "
+#~ "to %s."
+#~ msgstr ""
+#~ "Instale una versión de los bindings de Python para GStreamer mayor o "
+#~ "igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of GStreamer (your version %s)"
+#~ msgstr "No tiene una versión reciente de GStreamer (su versión es %s)"
+
+#~ msgid "Install a version of the GStreamer greater than or equal to %s."
+#~ msgstr "Instale una versión de GStreamer mayor o igual a %s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of the cairo Python bindings "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente de los bindings de Python para Cairo (su "
+#~ "versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the cairo Python bindings greater than or equal to "
+#~ "%s."
+#~ msgstr ""
+#~ "Instale una versión de los bindings de Python para Cairo mayor o igual a "
+#~ "%s."
+
+#~ msgid ""
+#~ "You do not have a recent enough version of the GNonLin GStreamer plugin "
+#~ "(your version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente del complemento de GStreamer GNonLin (su "
+#~ "versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the GNonLin GStreamer plugin greater than or equal "
+#~ "to %s."
+#~ msgstr ""
+#~ "Instale una versión del complemento GNonLin para GStreamer mayor o igual "
+#~ "a %s."
+
+#~ msgid "Could not import GStreamer Editing Services "
+#~ msgstr "No se pudieron importar los servicios de edición de GStreamer "
+
+#~ msgid "Make sure you have GStreamer Editing Services installed."
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados servicios de edición de GStreamer."
+
+#~ msgid "Could not import the distutils modules"
+#~ msgstr "No se pudieron importar los módulos distutils"
+
+#~ msgid "Make sure you have the distutils Python module installed."
+#~ msgstr "Asegúrese de que tiene instalado el módulo distutils de Python."
+
+#~ msgid "Additional video effects"
+#~ msgstr "Efectos de vídeo adicionales"
+
+#~ msgid "Could not initialize GStreamer Editing Services"
+#~ msgstr "No se pudieron inicializar los servicios de edición de GStreamer"
+
+#~ msgid "Make sure you have the gst-editing-services installed."
+#~ msgstr "Asegúrese de que tiene instalado «gst-editing-services»."
+
+#~ msgid "label"
+#~ msgstr "etiqueta"
+
+#~ msgid "Unlink"
+#~ msgstr "Desunir"
+
+#~ msgid "Main Toolbar"
+#~ msgstr "Barra de herramientas principal"
+
+#~ msgid "Timeline Toolbar"
+#~ msgstr "Barra de herramientas de la cronología"
+
+#~ msgid "Break links between clips"
+#~ msgstr "Romper enlaces entre los vídeos"
+
+#~ msgid "Link together arbitrary clips"
+#~ msgstr "Enlazar vídeos arbitrariamente"
+
+#, fuzzy
+#~| msgid "Insert at _End of Timeline"
+#~ msgid "Insert at End of Timeline"
+#~ msgstr "Insertar al _final de la cronología"
+
+#~| msgid "Rendering"
+#~ msgid "Underline"
+#~ msgstr "Subrayado"
+
+#~ msgid "Settings"
+#~ msgstr "Ajustes"
+
+#~ msgid "_Preview Clip"
+#~ msgstr "_Previsualizar clip"
+
+#~ msgid "Hide"
+#~ msgstr "Ocultar"
+
+#~ msgid "_Import Files..."
+#~ msgstr "Importar _archivos…"
+
+#~ msgid "Import _Folders..."
+#~ msgstr "Importar _carpetas…"
+
+#~ msgid "Add the contents of a folder as clips in your project"
+#~ msgstr "Añadir el contenido de una carpeta como vídeo en su proyecto"
+
+#~ msgid "Select Unused Media"
+#~ msgstr "Seleccionar archivos multimedia sin usar"
+
+#~ msgid "Show Clips as Icons"
+#~ msgstr "Mostrar clips como iconos"
+
+#~ msgid "Select One or More Folders"
+#~ msgstr "Seleccionar una o más carpetas"
+
+#~ msgid ""
+#~ "You do not have a recent enough version of the GTK+ Python bindings (your "
+#~ "version %s)"
+#~ msgstr ""
+#~ "No tiene una versión reciente de los bindings de Python para GTK+ (su "
+#~ "versión es %s)"
+
+#~ msgid ""
+#~ "Install a version of the GTK+ Python bindings greater than or equal to %s."
+#~ msgstr ""
+#~ "Instale una versión de los bindings de Python para GTK+ mayor o igual a "
+#~ "%s."
+
+#~ msgid ""
+#~ "GNU Lesser General Public License\n"
+#~ "See http://www.gnu.org/copyleft/lesser.html for more details"
+#~ msgstr ""
+#~ "GNU Lesser General Public License\n"
+#~ "Vea http://www.gnu.org/copyleft/lesser.html para más detalles"
+
+#~ msgid "<b>Solo mode</b>\n"
+#~ msgstr "<b>Modo solitario</b>\n"
+
+#~ msgid "Could not import the Zope interface module"
+#~ msgstr "No se pudo importar el módulo de interfaz de Zope"
+
+#~ msgid "Make sure you have the zope.interface module installed."
+#~ msgstr "Asegúrese de que tiene el módulo zope.interface instalado."
+
+#~ msgid "Name"
+#~ msgstr "Nombre"
+
+#~ msgid "Description"
+#~ msgstr "Descripción"
+
+#~ msgid "Show Video Effects as a List"
+#~ msgstr "Mostrar efectos de vídeo como una lista"
+
+#~ msgid "Show Video Effects as Icons"
+#~ msgstr "Mostrar efectos de vídeo como iconos"
+
+#~ msgid "Text:"
+#~ msgstr "Texto:"
+
+#~ msgid "<b>Crop</b>"
+#~ msgstr "<b>Cortar</b>"
+
+#~ msgid "Number of channels:"
+#~ msgstr "Número de canales:"
+
+#~ msgid "Sample Rate:"
+#~ msgstr "Frecuencia de muestreo:"
+
+#~ msgid "Sample Depth:"
+#~ msgstr "Profundidad del muestreo:"
+
+#~ msgid "<b>Phase:</b>"
+#~ msgstr "<b>Fase:</b>"
+
+#~ msgid "<b>Video Preset</b>"
+#~ msgstr "<b>Preconfiguración de vídeo</b>"
+
+#~ msgid "<b>Aspect Ratio</b>"
+#~ msgstr "<b>Proporción</b>"
+
+#~ msgid "<b>Frame Rate</b>"
+#~ msgstr "<b>Frecuencia de fotogramas</b>"
+
+#~ msgid "<b>Audio Preset</b>"
+#~ msgstr "<b>Preconfiguración de sonido</b>"
+
+#~ msgid "<b>Format</b>"
+#~ msgstr "<b>Formato</b>"
+
+#~ msgid "Project loaded."
+#~ msgstr "Proyecto cargado."
+
+#~ msgid "Rendering..."
+#~ msgstr "Renderizando…"
+
+#~ msgid "Render the specified project to OUTPUT_FILE with no GUI."
+#~ msgstr ""
+#~ "Renderizar en ARCHIVO_DE_SALIDA el archivo de proyecto proporcionado sin "
+#~ "IGU."
+
+#~ msgid "Preview the specified project file without the full UI."
+#~ msgstr ""
+#~ "Previsualizar el archivo de proyecto proporcionado sin el IU completo."
+
+#~ msgid "-p and -r cannot be used simultaneously"
+#~ msgstr "-p y -r no se pueden usar a la vez"
+
+#~ msgid "-r or -p and -i are incompatible"
+#~ msgstr "-r o -p y -i son incompatibles"
+
+#~ msgid "-r requires exactly one PROJECT_FILE"
+#~ msgstr "-r requiere exactamente un ARCHIVO_DE_PROYECTO"
+
+#~ msgid "-p requires exactly one PROJECT_FILE"
+#~ msgstr "-p requiere exactamente un ARCHIVO_DE_PROYECTO"
+
+#~ msgid ""
+#~ "Missing plugins:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Faltan los complementos:\n"
+#~ "%s"
+
+#~ msgid "Cannot decode file."
+#~ msgstr "No se puede descodificar el archivo."
+
+#~ msgid "The given file does not contain audio, video or picture streams."
+#~ msgstr ""
+#~ "El archivo proporconado no contiene flujo de datos de sonido, vídeo o "
+#~ "foto."
+
+#~ msgid "Could not establish the duration of the file."
+#~ msgstr "No se pudo establecer la duración del archivo."
+
+#~ msgid ""
+#~ "This clip seems to be in a format which cannot be accessed in a random "
+#~ "fashion."
+#~ msgstr ""
+#~ "Este vídeo parece estar en un formato que no puede ser accedido de una "
+#~ "manera aleatoria."
+
+#~ msgid "Timeout while analyzing file."
+#~ msgstr "Se sobrepasó el límite de tiempo al analizar el archivo."
+
+#~ msgid "Analyzing the file took too long."
+#~ msgstr "Llevó demasiado tiempo analizar el archivo."
+
+#~ msgid "No available source handler."
+#~ msgstr "No hay disponible un manejador de la fuente."
+
+#~ msgid ""
+#~ "You do not have a GStreamer source element to handle the \"%s\" protocol"
+#~ msgstr ""
+#~ "No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
+
+#~ msgid "File does not exist"
+#~ msgstr "El archivo no existe"
+
+#~ msgid "File not readable by current user"
+#~ msgstr "Archivo no legible por el usuario actual"
+
+#~ msgid "Pipeline didn't want to go to PAUSED."
+#~ msgstr "La tubería no quiso PAUSAR."
+
+#~ msgid "An internal error occurred while analyzing this file: %s"
+#~ msgstr "Ocurrió un error interno al analizar este archivo: %s"
+
+#~ msgid "File contains a redirection to another clip."
+#~ msgstr "El archivo contiene una redirección a otro vídeo."
+
+#~ msgid "Pitivi currently does not handle redirection files."
+#~ msgstr "Pitivi no puede manejar archivos de redirección actualmente."
+
+#~ msgid "Pipeline didn't want to go to PLAYING."
+#~ msgstr "La tubería no quiso REPRODUCIR."
+
+#~ msgid "Playlist format"
+#~ msgstr "Formato de la lista de reproducción"
+
+#~ msgid "The project contains effects which are not available on the system."
+#~ msgstr ""
+#~ "El proyecto contiene efectos que no están disponibles en el sistema."
+
+#~ msgid "Failed loading %(uri)s."
+#~ msgstr "Falló al cargar %(uri)s."
+
+#~ msgid "Not a valid project file."
+#~ msgstr "No es un archivo de proyecto válido."
+
+#~ msgid "Couldn't close current project"
+#~ msgstr "No se pudo cerrar el proyecto actual"
+
+#~ msgid "No URI specified."
+#~ msgstr "No se especificó el URI."
+
+#~ msgid "Export Settings\n"
+#~ msgstr "Exportar ajustes\n"
+
+#~ msgid "Video: "
+#~ msgstr "Vídeo:"
+
+#~ msgid ""
+#~ "\n"
+#~ "Audio: "
+#~ msgstr ""
+#~ "\n"
+#~ "Sonido: "
+
+#~ msgid ""
+#~ "\n"
+#~ "Muxer: "
+#~ msgstr ""
+#~ "\n"
+#~ "Mezclador:"
+
+#~ msgid "%d%% Analyzed"
+#~ msgstr "%d%% analizado"
+
+#~ msgid "<b>Unknown Audio format:</b> %s"
+#~ msgstr "<b>Formato de audio desconocido:</b> %s"
+
+#~ msgid "<b>Unknown Video format:</b> %s"
+#~ msgstr "<b>Formato de vídeo desconocido:</b> %s"
+
+#~ msgid "_Undo"
+#~ msgstr "_Deshacer"
+
+#~ msgid "_Redo"
+#~ msgstr "_Rehacer"
+
+#~ msgid "_Preferences"
+#~ msgstr "Prefere_ncias"
+
+#~ msgid "Untitled project"
+#~ msgstr "Proyecto sin título"
+
+#~ msgid "Import Files..."
+#~ msgstr "Importar archivos…"
+
+#~ msgid "Play Clip"
+#~ msgstr "Reproducir vídeo"
+
+#~ msgid "Stop Playback"
+#~ msgstr "Parar reproducción"
+
+#~ msgid "_Render Project..."
+#~ msgstr "_Renderizar proyecto…"
+
+#~ msgid "Transformation configuration"
+#~ msgstr "Configuración de la transformación"
+
+#~ msgid "Show Thumbnails (Video)"
+#~ msgstr "Mostrar miniaturas (vídeo)"
+
+#~ msgid "Show Waveforms (Audio)"
+#~ msgstr "Mostrar formas de onda (sonido)"
+
+#~ msgid "Threshold distance (in pixels) used for all snapping operations"
+#~ msgstr ""
+#~ "Umbral de distancia (en píxeles) usado para todas las operaciones de "
+#~ "ajuste a la rejilla"
+
+#~ msgid "Clip Background (Audio)"
+#~ msgstr "Fondo del vídeo (sonido)"
+
+#~ msgid "15 fps"
+#~ msgstr "15 fps"
+
+#~ msgid "23,976 fps"
+#~ msgstr "23,976 fps"
+
+#~ msgid "24 fps"
+#~ msgstr "24 fps"
+
+#~ msgid "25 fps"
+#~ msgstr "25 fps"
+
+#~ msgid "29,97 fps"
+#~ msgstr "29,97 fps"
+
+#~ msgid "50 fps"
+#~ msgstr "50 fps"
+
+#~ msgid "59,94 fps"
+#~ msgstr "59,94 fps"
+
+#~ msgid "60 fps"
+#~ msgstr "60 fps"
+
+#~ msgid "120 fps"
+#~ msgstr "120 fps"
+
+#~ msgid "11 kHz"
+#~ msgstr "11 kHz"
+
+#~ msgid "22 kHz"
+#~ msgstr "22 kHz"
+
+#~ msgid "48 kHz"
+#~ msgstr "48 kHz"
+
+#~ msgid "96 kHz"
+#~ msgstr "96 kHz"
+
+#~ msgid "16 bit"
+#~ msgstr "16 bit"
+
+#~ msgid "24 bit"
+#~ msgstr "24 bit"
+
+#~ msgid "32 bit"
+#~ msgstr "32 bit"
+
+#~ msgid "Properties For: %d object"
+#~ msgid_plural "Properties For: %d objects"
+#~ msgstr[0] "Propiedades para: %d objeto"
+#~ msgstr[1] "Propiedades para: %d objetos"
+
+#~ msgid "<b>Width/Height</b>: %dx%d"
+#~ msgstr "<b>Anchura/altura</b>: %dx%d"
+
+#~ msgid "_Render project"
+#~ msgstr "_Renderizar proyecto"
+
+#~ msgid "_Plugins..."
+#~ msgstr "Co_mplementos…"
+
+#~ msgid "_File"
+#~ msgstr "_Archivo"
+
+#~ msgid "Category"
+#~ msgstr "Categoría"
+
+#~ msgid "All categories"
+#~ msgstr "Todas las categorías"
+
+#~ msgid "Are you sure you want to remove the selected plugins?"
+#~ msgstr "¿Está seguro que quiere quitar los complementos seleccionados?"
+
+#~ msgid "Confirm remove operation"
+#~ msgstr "Confirmar la operación de eliminación"
+
+#~ msgid "Cannot remove %s"
+#~ msgstr "No se puede eliminar %s"
+
+#~ msgid "Update the existing plugin?"
+#~ msgstr "¿Actualizar el complemento existente?"
+
+#~ msgid ""
+#~ "This plugin is already installed in your system.\n"
+#~ "If you agree, version %(v1)s will be replaced with version %(v2)s"
+#~ msgstr ""
+#~ "Este complemento ya está instalado en su sistema.\n"
+#~ "Si está de acuerdo, la versión %(v1)s se reemplazará por la versión %(v2)s"
+
+#~ msgid "Duplicate plugin found"
+#~ msgstr "Se encontró un complemento duplicado"
+
+#~ msgid ""
+#~ "Cannot install %s\n"
+#~ "The file is not a valid plugin"
+#~ msgstr ""
+#~ "No se pudo instalar %s.\n"
+#~ "El archivo no es un complemento válido."
+
+#~ msgid "No Objects Selected"
+#~ msgstr "No hay objetos seleccionados"
+
+#~ msgid ""
+#~ "<span>Import your clips by dragging them here or by using the buttons "
+#~ "above.</span>"
+#~ msgstr ""
+#~ "<span>Importar sus vídeos arrastrándolos aquí o usando los botones de "
+#~ "abajo.</span>"
+
+#~ msgid "Import clips to use"
+#~ msgstr "Importar vídeos a usar"
+
+#~ msgid "Import folder of clips to use"
+#~ msgstr "Importar carpeta de vídeos a usar"
+
+#~ msgid "Import a folder"
+#~ msgstr "Importa una carpeta"
+
+#~ msgid "<b>Text:</b>"
+#~ msgstr "<b>Texto:</b>"
+
+#~ msgid "Could not import the libglade Python bindings"
+#~ msgstr "No se pudieron importar los bindings de Python para libglade"
+
+#~ msgid "Make sure you have the libglade Python bindings installed"
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para libglade"
+
+#~ msgid "Audio Capture Device:"
+#~ msgstr "Dispositivo de entrada de sonido:"
+
+#~ msgid "Video Capture Device:"
+#~ msgstr "El dispositivo de entrada de vídeo:"
+
+#~ msgid "<b>Properties For Plugin</b>"
+#~ msgstr "<b>Propiedades del complemento</b>"
+
+#~ msgid "Import from _Webcam..."
+#~ msgstr "Importar de la cámara _web…"
+
+#~ msgid "Import Camera stream"
+#~ msgstr "Importar flujo de datos de la cámara"
+
+#~ msgid "_Make screencast..."
+#~ msgstr "Crear un _screencast…"
+
+#~ msgid "Capture the desktop"
+#~ msgstr "Capturar el escritorio"
+
+#~ msgid "_Capture Network Stream..."
+#~ msgstr "_Capturar flujo de datos de la red…"
+
+#~ msgid "Capture Network Stream"
+#~ msgstr "Capturar flujo de datos de la red…"
+
+#~ msgid "Capture"
+#~ msgstr "Capturar"
+
+#~ msgid "Capture Stream from URI"
+#~ msgstr "Capturar flujo de datos de un URI"
+
+#~ msgid "Capture network stream"
+#~ msgstr "Capturar flujo de datos de la red"
+
+#~ msgid "Customize:"
+#~ msgstr "Personalizar:"
+
+#~ msgid "HTTP / HTTPS"
+#~ msgstr "HTTP / HTTPS"
+
+#~ msgid "Network stream video"
+#~ msgstr "Vídeo de flujo de la red"
+
+#~ msgid "Other protocol"
+#~ msgstr "Otro protocolo"
+
+#~ msgid "Port"
+#~ msgstr "Puerto"
+
+#~ msgid "Preview Stream from URI"
+#~ msgstr "Revisar flujo de datos de el URI"
+
+#~ msgid "Protocol"
+#~ msgstr "Protocolo"
+
+#~ msgid "RTSP"
+#~ msgstr "RTSP"
+
+#~ msgid "UDP / RDP"
+#~ msgstr "UDP / RDP"
+
+#~ msgid "http://"
+#~ msgstr "http://"
+
+#~ msgid "Plugin manager"
+#~ msgstr "Gestor de complementos"
+
+#~ msgid ""
+#~ "You may drag plugin files into the list to install them,\n"
+#~ "or type text to search for a specific plugin."
+#~ msgstr ""
+#~ "Puede arrastrar los archivos de los complementos a la lista para "
+#~ "instalarlos\n"
+#~ "o introducir texto para buscar un complemento específico."
+
+#~ msgid "Screencast"
+#~ msgstr "Screencast"
+
+#~ msgid "Screencast Desktop"
+#~ msgstr "Screencast al escritorio"
+
+#~ msgid "Start Istanbul"
+#~ msgstr "Iniciar Istanbul"
+
+#~ msgid "%(width)d x %(height)d pixels at %(framerate).2f fps"
+#~ msgstr "%(width)d x %(height)d píxeles a %(framerate).2f fps"
+
+#~| msgid "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+#~ msgid "%(channels)d channel at %(frequency)d Hz (%(depth)d bits)"
+#~ msgid_plural "%(channels)d channels at %(frequency)d Hz (%(depth)d bits)"
+#~ msgstr[0] "%(channels)d canal at %(frequency)d Hz (%(depth)d bits)"
+#~ msgstr[1] "%(channels)d canales a %(frequency)d Hz (%(depth)d bits)"
+
+#~ msgid "Summary"
+#~ msgstr "Resumen"
+
+#~ msgid "The following file has moved, please tell Pitivi where to find it."
+#~ msgstr "Se movió el siguiente archivo, diga dónde se puede encontrar."
+
+#~ msgid "URI:"
+#~ msgstr "URI: "
+
+#~ msgid "Importing clips..."
+#~ msgstr "Importando vídeos…"
+
+#~ msgid "Skip"
+#~ msgstr "Omitir"
+
+#~ msgid "Startup Wizard"
+#~ msgstr "Asistente de inicio"
+
+#~ msgid ""
+#~ "\n"
+#~ "      %prog [-r OUTPUT_FILE] [PROJECT_FILE]\n"
+#~ "      %prog -p [PROJECT_FILE]\n"
+#~ "      %prog -i [-a] [MEDIA_FILE]..."
+#~ msgstr ""
+#~ "\n"
+#~ "      %prog [-r ARCHIVO_DE_SALIDA] [ARCHIVO_DE_PROYECTO]\n"
+#~ "      %prog [-p ARCHIVO_DE_PROYECTO]\n"
+#~ "      %prog -i [-a] [ARCHIVO_MULTIMEDIA]…"
+
+#~ msgid ""
+#~ "Starts the video editor, optionally loading PROJECT_FILE. If\n"
+#~ "no project is given, %prog creates a new project.\n"
+#~ "Alternatively, when -i is specified, arguments are treated as clips to "
+#~ "be\n"
+#~ "imported into the project. If -a is specified, these clips will also be "
+#~ "added to\n"
+#~ "the end of the project timeline.\n"
+#~ "When -r is specified, the given project file is rendered without opening "
+#~ "the GUI."
+#~ msgstr ""
+#~ "Inicia el editor de vídeo, cargando opcionalmente el "
+#~ "ARCHIVO_DE_PROYECTO.\n"
+#~ "Si no se proporciona ningún proyecto, %prog crea un nuevo proyecto.\n"
+#~ "Alternativamente, cuando se especifica -i, los argumentos se tratan como\n"
+#~ "vídeos para ser importados dentro del proyecto. Si se especifica -a, "
+#~ "estos\n"
+#~ "vídeos se añadirán al final de la cronología.\n"
+#~ "Al especificar -r se renderiza el archivo de proyecto especificado sin "
+#~ "abrir el IGU."
+
+#~ msgid "Run pitivi with no gui"
+#~ msgstr "Ejecutar Pitivi sin IGU"
+
+#~ msgid "<b>Author:</b>"
+#~ msgstr "<b>Autor:</b>"
+
+#~ msgid "<b>Plugin Name</b>"
+#~ msgstr "<b>Nombre del complemento</b>"
+
+#~ msgid "<b>Nothing yet</b>"
+#~ msgstr "<b>Nada aún</b>"
+
+#~ msgid "Choose File"
+#~ msgstr "Elegir un archivo"
+
+#~ msgid "Modify"
+#~ msgstr "Modificar"
+
+#~ msgid "Output file:"
+#~ msgstr "Archivo de salida:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "Elegir un archivo de salida"
+
+#~ msgid "Render project"
+#~ msgstr "Renderizar proyecto"
+
+#~ msgid "Choose file to render to"
+#~ msgstr "Elegir un archivo que renderizar"
+
+#~ msgid "0% rendered"
+#~ msgstr "0% renderizado"
+
+#~ msgid ""
+#~ "12 fps\n"
+#~ "23.97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29.97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+#~ msgstr ""
+#~ "12 fps\n"
+#~ "23,97 fps\n"
+#~ "24 fps\n"
+#~ "25 fps\n"
+#~ "29,97 fps\n"
+#~ "30 fps\n"
+#~ "60 fps"
+
+#~ msgid ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+#~ msgstr ""
+#~ "8 bit\n"
+#~ "16 bit\n"
+#~ "24 bit\n"
+#~ "32 bit"
+
+#~ msgid ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+#~ msgstr ""
+#~ "8000 Hz\n"
+#~ "11025 Hz\n"
+#~ "22050 Hz\n"
+#~ "44100 Hz\n"
+#~ "48000 Hz\n"
+#~ "96000 Hz"
+
+#~ msgid "<b>Audio Output</b>"
+#~ msgstr "<b>Salida de sonido</b>"
+
+#~ msgid "<b>Video Output</b>"
+#~ msgstr "<b>Salida de vídeo</b>"
+
+#~ msgid ""
+#~ "Mono (1)\n"
+#~ "Stereo (2)"
+#~ msgstr ""
+#~ "Mono (1)\n"
+#~ "Estéreo (2)"
+
+#~ msgid "Muxer"
+#~ msgstr "Mezclador"
+
+#~ msgid "Rate:"
+#~ msgstr "Tasa:"
+
+#~ msgid "Video Codec"
+#~ msgstr "Códec de vídeo"
+
+#~ msgid "Video Codec:"
+#~ msgstr "Códec de vídeo:"
+
+#~ msgid "576p (PAL DV/DVD)"
+#~ msgstr "576p (PAL DV/DVD)"
+
+#~ msgid "480p (NTSC DV/DVD)"
+#~ msgstr "480p (NTSC DV/DVD)"
+
+#~ msgid "720p HD"
+#~ msgstr "720p HD"
+
+#~ msgid "1080p full HD"
+#~ msgstr "1080p full HD"
+
+#~ msgid "QVGA (320x240)"
+#~ msgstr "QVGA (320x240)"
+
+#~ msgid "VGA (640x480)"
+#~ msgstr "VGA (640x480)"
+
+#~ msgid "SVGA (800x600)"
+#~ msgstr "SVGA (800x600)"
+
+#~ msgid "XGA (1024x768)"
+#~ msgstr "XGA (1024x768)"
+
+#~ msgid "Raw Video"
+#~ msgstr "Vídeo RAW"
+
+#~ msgid "Raw Audio"
+#~ msgstr "Sonido RAW"
+
+#~ msgid "Export settings"
+#~ msgstr "Ajustes de exportación"
+
+#~ msgid "Description:"
+#~ msgstr "Descripción:"
+
+#~ msgid "Name:"
+#~ msgstr "Nombre:"
+
+#~ msgid "Add Clips..."
+#~ msgstr "Añadir vídeos…"
+
+#~ msgid "Razor"
+#~ msgstr "Navaja"
+
+#~ msgid "Please locate the missing file, '%s'"
+#~ msgstr "Encuentra el archivo perdido, «%s»"
+
+#~ msgid "Undo %s"
+#~ msgstr "Deshacer %s"
+
+#~ msgid "Redo %s"
+#~ msgstr "Rehacer %s"
+
+#~ msgid "No streams found"
+#~ msgstr "No se encontró ningún flujo"
+
+#~ msgid "FIXME: no output streams"
+#~ msgstr "FIXME: no hay flujo de datos de salida"
+
+#~ msgid "see above"
+#~ msgstr "ver arriba"
+
+#~ msgid "No location given."
+#~ msgstr "No se proporcionó una ubicación."
+
+#~ msgid "There was an error loading the file."
+#~ msgstr "Ocurrió un error al cargar el archivo."
+
+#~ msgid ""
+#~ "Open project file specified by PROJECT instead of creating a\n"
+#~ "new project."
+#~ msgstr ""
+#~ "Abre el archivo del proyecto especificado por PROYECTO en vez de crear\n"
+#~ "un proyecto nuevo."
+
+#~ msgid "Finished in %dm%ds"
+#~ msgstr "Terminado en %dm%ds"
+
+#~ msgid "Fast Forward"
+#~ msgstr "Adelantar"
+
+#~ msgid "Frame Backward"
+#~ msgstr "Fotograma atrás"
+
+#~ msgid "1 Second Forward"
+#~ msgstr "1 segundo hacia adelante"
+
+#~ msgid "1 Second Backward"
+#~ msgstr "1 segundo hacia atrás"
+
+#~ msgid "End of Clip"
+#~ msgstr "Fín del vídeo"
+
+#~ msgid "Start of Clip"
+#~ msgstr "Comienzo del vídeo"
+
+#~ msgid "The project has unsaved changes. Do you wish to close the project?"
+#~ msgstr "El proyecto tiene cambios sin guardar. ¿Quiere cerrar el proyecto?"
+
+#~ msgid "http / https"
+#~ msgstr "http / https"
+
+#~ msgid "rtsp"
+#~ msgstr "rtsp"
+
+#~ msgid "udp / rtp"
+#~ msgstr "udp / rtp"
+
+#~ msgid "Could not import the Python bindings for libglade"
+#~ msgstr "No se pudieron importar los bindings de Python para libglade"
+
+#~ msgid "Make sure you have the Python bindings for libglade installed"
+#~ msgstr ""
+#~ "Asegúrese de que tiene instalados los bindings de Python para libglade"
+
+#, fuzzy
+#~ msgid "Could not import the Python bindings for goocanvas"
+#~ msgstr "No se pudieron importar los bindings de Python para Cairo"
+
+#, fuzzy
+#~ msgid "Make sure you have the Python bindings for goocanvas installed"
+#~ msgstr "Asegúrese de que tiene los bindings de Python para Cairo instalados"
+
+#~ msgid "Couldn't construct pipeline."
+#~ msgstr "No se pudo construir la tubería."
+
+#~ msgid ""
+#~ "GStreamer does not have an element to handle files coming from this type "
+#~ "of file system."
+#~ msgstr ""
+#~ "GStreamer no tiene un elemento para manejar archivos con este tipo de "
+#~ "sistema de archivo."
+
+#~ msgid "Got unknown stream type : %s"
+#~ msgstr "Se obtuvo un tipo de flujo desconocido: %s"
+
+#~ msgid "You are missing an element to handle this media type."
+#~ msgstr "Le falta un elemento para manejar este tipo de medio."
+
+#~ msgid "<b>%s</b><small>"
+#~ msgstr "<b>%s</b><small>"
+
+#~ msgid "<b>%s</b> (%s)"
+#~ msgstr "<b>%s</b> (%s)"
+
+#~ msgid "<small><b>File:</b> %s"
+#~ msgstr "<small><b>Archivo:</b> %s"
+
+#~ msgid "Video output is busy"
+#~ msgstr "La salida de vídeo está ocupada"
+
+#~ msgid ""
+#~ "Please check that your video output device isn't already used by another "
+#~ "application"
+#~ msgstr ""
+#~ "Compruebe que su dispositivo de salida de vídeo no lo esté usando ya otra "
+#~ "aplicación"
+
+#~ msgid "Video output problem"
+#~ msgstr "Problema de salida de vídeo"
+
+#~ msgid "There is a problem with your video output device"
+#~ msgstr "Hay un problema con su dispositivo de salida de vídeo"
+
+#~ msgid "Audio output device is busy"
+#~ msgstr "El dispositivo de salida de audio"
+
+#~ msgid ""
+#~ "Please check that your audio output device isn't already used by another "
+#~ "application."
+#~ msgstr ""
+#~ "Compruebe que su dispositivo de salida de audio no lo esté usando ya otra "
+#~ "aplicación."
+
+#~ msgid "Audio output problem"
+#~ msgstr "Problema con la salida de sonido"
+
+#~ msgid "There is a problem with your audio output device"
+#~ msgstr "Hay un problema con su dispositivo de salida de audio"
+
+#~ msgid " <i>(%s)</i>"
+#~ msgstr " <i>(%s)</i>"
+
+#~ msgid "gtk-close"
+#~ msgstr "gtk-close"
+
+#~ msgid "Project settings"
+#~ msgstr "Ajustes del proyecto"
+
+#~ msgid "Do you wish to overwrite existing file \"%s\"?"
+#~ msgstr "¿Quiere sobrescribir el archivo existente «%s»?"
+
+#~ msgid "Overwrite Existing File?"
+#~ msgstr "¿Sobrescribir el archivo ya existente?"
+
+#~ msgid "This plugin is already installed in your system.\n"
+#~ msgstr "Este complemento ya está instalado en su sistema.\n"
+
+#~ msgid "Cannot install %s\n"
+#~ msgstr "No se puede instalar %s\n"
+
+#~ msgid "Audio Track"
+#~ msgstr "Pista de audio"
+
+#~ msgid "Video Track"
+#~ msgstr "Pista de vídeo"
+
+#~ msgid "Empty"
+#~ msgstr "Vacío"
+
+#~ msgid "Switch to advanced view"
+#~ msgstr "Cambia a la vista avanzada"
+
+#~ msgid "Done"
+#~ msgstr "Hecho"
+
+#~ msgid "End"
+#~ msgstr "Fin"
+
+#~ msgid "Edit"
+#~ msgstr "Editar"
+
+#~ msgid "Sound"
+#~ msgstr "Sonido"
+
+#~ msgid "Cut"
+#~ msgstr "Cortar"
+
+#~ msgid "gtk-about"
+#~ msgstr "gtk-about"
+
+#~ msgid "gtk-delete"
+#~ msgstr "gtk-delete"
+
+#~ msgid ""
+#~ "<span size='x-large'>Add clips to the timeline by dragging them here.</"
+#~ "span>"
+#~ msgstr ""
+#~ "<span size='x-large'>Añada vídeos a la línea de tiempos arrastrándolos "
+#~ "aquí.</span>"
