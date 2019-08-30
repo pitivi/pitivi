@@ -272,14 +272,6 @@ class EditorPerspective(Perspective, Loggable):
         headerbar = Gtk.HeaderBar()
         headerbar.set_show_close_button(True)
 
-        back_button = Gtk.Button.new_from_icon_name(
-            "go-previous-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
-        back_button.set_always_show_image(True)
-        back_button.set_tooltip_text(_("Close project"))
-        back_button.connect("clicked", self.__close_project_cb)
-        back_button.set_margin_right(4 * PADDING)
-        headerbar.pack_start(back_button)
-
         undo_button = Gtk.Button.new_from_icon_name(
             "edit-undo-symbolic", Gtk.IconSize.SMALL_TOOLBAR)
         undo_button.set_always_show_image(True)
@@ -395,10 +387,6 @@ class EditorPerspective(Perspective, Loggable):
         self.updateTitle()
 
 # Toolbar/Menu actions callback
-
-    def __close_project_cb(self, unused_button):
-        """Closes the current project."""
-        self.app.project_manager.closeRunningProject()
 
     def __save_project_cb(self, unused_action, unused_param):
         self.saveProject()
