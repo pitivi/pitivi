@@ -474,6 +474,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             return
 
         self.ges_timeline.ui = self
+
         for ges_layer in self.ges_timeline.get_layers():
             self._add_layer(ges_layer)
         self.__update_layers()

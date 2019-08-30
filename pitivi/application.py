@@ -213,9 +213,6 @@ class Pitivi(Gtk.Application, Loggable):
         assert giofiles
         self.create_main_window()
         self.gui.show()
-        if len(giofiles) > 1:
-            self.warning(
-                "Can open only one project file at a time. Ignoring the rest!")
         project_file = giofiles[0]
         self.project_manager.load_project(quote_uri(project_file.get_uri()))
         return True

@@ -799,7 +799,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                           Gtk.FileFilterFlags.MIME_TYPE,
                           self.__filter_unsupported)
         for formatter in GES.list_assets(GES.Formatter):
-            for extension in formatter.get_meta('extension').split(','):
+            for extension in formatter.get_meta("extension").split(","):
                 filter.add_pattern("*.%s" % extension)
         dialog.add_filter(filter)
 
