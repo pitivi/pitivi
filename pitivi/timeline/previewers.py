@@ -750,6 +750,14 @@ class AssetPreviewer(Previewer, Loggable):
                 self.failures.add(self.position)
                 self.position = -1
             self._schedule_next_thumb_generation()
+        elif message.type == Gst.MessageType.STREAM_COLLECTION and isinstance(message.src, GES.Timeline):
+            collection = message.parse_stream_collection()
+            for i in range(collection.get_size()):
+                stream = collection.get_stream(i)
+                if stream.get_stream_type() == Gst.StreamType.VIDEO:
+                    message.src.send_event(Gst.Event.new_select_streams([stream.get_stream_id()]))
+                    break
+
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
@@ -833,6 +841,10 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
         for thumb in self.get_children():
             thumb.props.opacity = opacity
+
+    def refresh(self):
+        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._update_thumbnails()
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
@@ -926,9 +938,7 @@ class ThumbnailCache(Loggable):
 
     def __init__(self, uri):
         Loggable.__init__(self)
-        self._filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
+        self._dbfile = self.dbfile_name(uri)
         self._db = sqlite3.connect(self._dbfile)
         self._cur = self._db.cursor()
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs "
@@ -944,6 +954,24 @@ class ThumbnailCache(Loggable):
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
         return {row[0] for row in self._cur.fetchall()}
+
+    @staticmethod
+    def dbfile_name(uri):
+        filename = hash_file(Gst.uri_get_location(uri))
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        dbfile = os.path.join(thumbs_cache_dir, filename)
+        return dbfile
+
+    @classmethod
+    def update_caches(cls):
+        changed_files_uris = []
+        for uri, cache in cls.caches_by_uri.items():
+            dbfile = cls.dbfile_name(uri)
+            if cache._dbfile != dbfile:
+                changed_files_uris.append(uri)
+        for uri in changed_files_uris:
+            del cls.caches_by_uri[uri]
+        return changed_files_uris
 
     @classmethod
     def get(cls, obj):
@@ -973,9 +1001,7 @@ class ThumbnailCache(Loggable):
         Args:
             uri (str): The place where to copy/save the ThumbnailCache
         """
-        filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        dbfile = os.path.join(thumbs_cache_dir, filehash)
+        dbfile = self.dbfile_name(uri)
 
         try:
             os.remove(dbfile)
@@ -1065,7 +1091,7 @@ class ThumbnailCache(Loggable):
     def commit(self):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
-        self.log("Saved thumbnail cache file: %s", self._filehash)
+        self.log("Saved thumbnail cache file: %s", self._dbfile)
 
 
 def get_wavefile_location_for_uri(uri):
@@ -1107,6 +1133,12 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
         self._num_failures = 0
         self.become_controlled()
+
+    def refresh(self):
+        self.samples = None
+        self.surface = None
+
+        self.start_generation()
 
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
