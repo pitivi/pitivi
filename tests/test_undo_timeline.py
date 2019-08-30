@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+import os
+import tempfile
 from unittest import mock
 
 from gi.repository import Gdk
@@ -26,6 +28,8 @@ from gi.repository import GstController
 from gi.repository import Gtk
 
 from pitivi.timeline.layer import Layer
+from pitivi.timeline.markers import Marker
+from pitivi.timeline.markers import MarkersBox
 from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.timeline import TimelineContainer
 from pitivi.undo.project import AssetAddedAction
@@ -33,6 +37,7 @@ from pitivi.undo.timeline import ClipAdded
 from pitivi.undo.timeline import ClipRemoved
 from pitivi.undo.timeline import TrackElementAdded
 from pitivi.undo.undo import PropertyChangedAction
+from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import URI_TARGET_ENTRY
 from tests import common
@@ -1209,3 +1214,227 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.assertEqual(layers[0], self.layer)
         self.assertEqual(layers[0].get_clips(), [])
         self.assertEqual(len(layers[1].get_clips()), 1)
+
+
+class TestMarkers(BaseTestUndoTimeline):
+
+    def assert_markers(self, ges_marker_list, expected_properties):
+        positions = [ges_marker.props.position for ges_marker in ges_marker_list.get_markers()]
+        expected_positions = [properties[0] for properties in expected_properties]
+        self.assertListEqual(positions, expected_positions)
+
+        comments = [ges_marker.get_string("comment") for ges_marker in ges_marker_list.get_markers()]
+        expected_comments = [properties[1] for properties in expected_properties]
+        self.assertListEqual(comments, expected_comments)
+
+    def test_marker_container(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        self.assertIsNotNone(markers)
+
+    def test_marker_added(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+
+        with self.action_log.started("Added marker"):
+            marker1 = markers.add(10)
+        self.assert_markers(markers, [(10, None)])
+
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+        self.assert_markers(markers, [(10, "comment 1")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1")])
+
+        with self.action_log.started("Added marker"):
+            marker2 = markers.add(20)
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.action_log.undo()
+            self.action_log.undo()
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1")])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+    def test_marker_removed(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+
+        with self.action_log.started("Removed marker"):
+            markers.remove(marker1)
+        self.assert_markers(markers, [(20, None)])
+
+        with self.action_log.started("Removed marker"):
+            markers.remove(marker2)
+        self.assert_markers(markers, [])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [])
+
+    def test_marker_moved(self):
+        self.setup_timeline_container()
+        markers = self.timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+
+        with self.action_log.started("Move marker"):
+            markers.move(marker1, 40)
+            markers.move(marker1, 30)
+
+        stack, = self.action_log.undo_stacks
+        self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
+
+        self.assert_markers(markers, [(20, None), (30, None)])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(20, None), (30, None)])
+
+    def test_marker_comment(self):
+        self.setup_timeline_container()
+
+        markers = self.timeline.get_marker_list("markers")
+
+        with self.action_log.started("Added marker"):
+            marker1 = markers.add(10)
+        with self.action_log.started("Added marker"):
+            marker2 = markers.add(20)
+
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+    def test_marker_load_project(self):
+        # TODO: When there is nothing connected to closing-project,
+        # the default reply is "False", which means "abort saving". It should mean
+        # "OK" to get rid off the handler.  The meaning of the default (False)
+        # must be changed
+        def closing(manager, project):
+            return True
+
+        def loaded_cb(project, timeline):
+            mainloop.quit()
+
+        markers = self.timeline.get_marker_list("markers")
+        marker1 = markers.add(10)
+        marker2 = markers.add(20)
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+        self.app.project_manager.saveProject(project_uri)
+        self.app.project_manager.connect("closing-project", closing)
+
+        self.app.project_manager.closeRunningProject()
+        project = self.app.project_manager.new_blank_project()
+        markers = project.ges_timeline.get_marker_list("markers")
+        self.assert_markers(markers, [])
+
+        self.app.project_manager.closeRunningProject()
+        project = self.app.project_manager.load_project(project_uri)
+        project.connect("loaded", loaded_cb)
+        mainloop = common.create_main_loop()
+        mainloop.run()
+        self.action_log = self.app.action_log
+
+        markers = project.ges_timeline.get_marker_list("markers")
+        self.assert_markers(markers, [(10, None), (20, None)])
+
+        ges_markers = markers.get_markers()
+        marker1 = ges_markers[0]
+        marker2 = ges_markers[1]
+
+        with self.action_log.started("new comment"):
+            marker1.set_string("comment", "comment 1")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+        with self.action_log.started("new comment"):
+            marker2.set_string("comment", "comment 2")
+
+        self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
+
+        for _ in range(4):
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.undo()
+            self.assert_markers(markers, [(10, None), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, None)])
+
+            self.action_log.redo()
+            self.assert_markers(markers, [(10, "comment 1"), (20, "comment 2")])
