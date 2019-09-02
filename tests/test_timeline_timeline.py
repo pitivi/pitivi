@@ -775,7 +775,8 @@ class TestClipsEdges(BaseTestTimeline):
         """Test function for function clips_edges."""
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
-        _ = self.addClipsSimple(timeline, 5)
+        clips = self.addClipsSimple(timeline, 5)
+        timeline.ges_timeline.layers[0].remove_clip(clips[0])
 
         self.assertEqual(timeline_container.first_clip_edge(after=0), 10)
         self.assertEqual(timeline_container.first_clip_edge(after=9), 10)
