@@ -184,7 +184,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _create_effect_row(self, effect):
         effect_info = self.app.effects.getInfo(effect.props.bin_description)
 
-        box = Gtk.Box()
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         row_drag_icon = Gtk.Image.new_from_pixbuf(self.drag_lines_pixbuf)
 
@@ -194,32 +194,39 @@ class EffectProperties(Gtk.Expander, Loggable):
         effect_label = Gtk.Label(effect_info.human_name)
         effect_label.set_tooltip_text(effect_info.description)
 
-        expander = Gtk.Expander()
-        expander.set_label_widget(effect_label)
-
+        # Set up revealer + expander
         effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(
             effect)
-        expander.add(effect_config_ui)
+        config_ui_revealer = Gtk.Revealer()
+        config_ui_revealer.add(effect_config_ui)
+
+        expander = Gtk.Expander()
+        expander.set_label_widget(effect_label)
+        expander.props.valign = Gtk.Align.CENTER
+        expander.props.vexpand = True
+
+        config_ui_revealer.props.halign = Gtk.Align.CENTER
+        expander.connect("notify::expanded", self._toggle_expander_cb, config_ui_revealer)
 
         remove_effect_button = Gtk.Button.new_from_icon_name("window-close",
             Gtk.IconSize.BUTTON)
+        remove_effect_button.props.margin_right = PADDING
 
-        # Make sure that opening the expander doesn't move other widgets.
-        row_drag_icon.props.valign = Gtk.Align.START
-        toggle.props.valign = Gtk.Align.START
-        expander.props.valign = Gtk.Align.START
-        remove_effect_button.props.valign = Gtk.Align.START
+        row_widgets_box = Gtk.Box()
+        row_widgets_box.pack_start(row_drag_icon, False, False, PADDING)
+        row_widgets_box.pack_start(toggle, False, False, PADDING)
+        row_widgets_box.pack_start(expander, True, True, PADDING)
+        row_widgets_box.pack_end(remove_effect_button, False, False, 0)
 
-        box.pack_start(row_drag_icon, False, False, PADDING)
-        box.pack_start(toggle, False, False, PADDING)
-        box.pack_start(expander, True, True, PADDING)
-        box.pack_end(remove_effect_button, False, False, 0)
+        vbox.pack_start(row_widgets_box, False, False, 0)
+        vbox.pack_start(config_ui_revealer, False, False, 0)
 
         event_box = Gtk.EventBox()
-        event_box.add(box)
+        event_box.add(vbox)
 
         row = Gtk.ListBoxRow(selectable=False, activatable=False)
         row.effect = effect
+        row.toggle = toggle
         row.add(event_box)
 
         # Set up drag&drop
@@ -232,7 +239,7 @@ class EffectProperties(Gtk.Expander, Loggable):
             Gdk.DragAction.MOVE | Gdk.DragAction.COPY)
         row.connect("drag-data-received", self._drag_data_received_cb)
 
-        remove_effect_button.connect("clicked", self._remove_effect_cb, row)
+        remove_effect_button.connect("clicked", self._remove_button_cb, row)
         toggle.connect("toggled", self._effect_active_toggle_cb, row)
 
         return row
@@ -259,9 +266,30 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         self.effects_listbox.show_all()
 
-    def _remove_effect_cb(self, button, row):
-        effect = row.effect
+    def _toggle_expander_cb(self, expander, unused_prop, revealer):
+        revealer.props.reveal_child = expander.props.expanded
+
+    def _get_effect_row(self, effect):
+        for row in self.effects_listbox.get_children():
+            if row.effect == effect:
+                return row
+
+    def _add_effect_row(self, effect):
+        row = self._create_effect_row(effect)
+        self.effects_listbox.add(row)
+        self.effects_listbox.show_all()
+
+    def _remove_effect_row(self, effect):
+        row = self._get_effect_row(effect)
         self.effects_listbox.remove(row)
+
+    def _move_effect_row(self, effect, new_index):
+        row = self._get_effect_row(effect)
+        self.effects_listbox.remove(row)
+        self.effects_listbox.insert(row, new_index)
+
+    def _remove_button_cb(self, button, row):
+        effect = row.effect
         self._remove_effect(effect)
 
     def _remove_effect(self, effect):
@@ -279,7 +307,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                                          toplevel=True):
             effect.props.active = toggle.props.active
 
-    def _new_project_loaded_cb(self, unused_app, project):
+    def _new_project_loaded_cb(self, unused_project_manager, project):
         if self._selection is not None:
             self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
@@ -310,7 +338,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     def _track_element_added_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._connect_to_track_element(track_element)
-            self._update_all()
+            self._add_effect_row(track_element)
 
     def _connect_to_track_element(self, track_element):
         track_element.connect("notify::active", self._notify_active_cb)
@@ -320,16 +348,24 @@ class EffectProperties(Gtk.Expander, Loggable):
         track_element.disconnect_by_func(self._notify_active_cb)
         track_element.disconnect_by_func(self._notify_priority_cb)
 
-    def _notify_active_cb(self, unused_track_element, unused_param_spec):
-        self._update_listbox()
+    def _notify_active_cb(self, track_element, unused_param_spec):
+        row = self._get_effect_row(track_element)
+        row.toggle.props.active = track_element.props.active
 
-    def _notify_priority_cb(self, unused_track_element, unused_param_spec):
-        self._update_listbox()
+    def _notify_priority_cb(self, track_element, unused_param_spec):
+        index = self.clip.get_top_effect_index(track_element)
+        row = self.effects_listbox.get_row_at_index(index)
+
+        if not row:
+            return
+
+        if row.effect != track_element:
+            self._move_effect_row(track_element, index)
 
     def _track_element_removed_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._disconnect_from_track_element(track_element)
-            self._update_all()
+            self._remove_effect_row(track_element)
 
     def _drag_begin_cb(self, eventbox, context):
         """Draws the drag icon"""
@@ -410,23 +446,22 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _move_effect(self, clip, source_index, drop_index):
         # Handle edge cases
-        if source_index == drop_index:
-            # Noop.
-            return
         if drop_index < 0:
             drop_index = 0
         if drop_index > len(clip.get_top_effects()) - 1:
             drop_index = len(clip.get_top_effects()) - 1
+        if source_index == drop_index:
+            # Noop.
+            return
 
         effects = clip.get_top_effects()
         effect = effects[source_index]
         pipeline = self._project.ges_timeline.get_parent()
+
         with self.app.action_log.started("move effect",
                                          finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                          toplevel=True):
             clip.set_top_effect_index(effect, drop_index)
-
-        self._update_all()
 
 
 class TransformationProperties(Gtk.Expander, Loggable):
