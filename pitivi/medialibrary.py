@@ -169,9 +169,14 @@ class FileChooserExtraWidget(Gtk.Grid, Loggable):
 
 
 class AssetThumbnail(GObject.Object, Loggable):
-    """Provider of decorated thumbnails for an asset."""
+    """Provider of decorated thumbnails for an asset.
+
+    The small_thumb and large_thumb fields hold the thumbs decorated
+    according to the status of the asset.
+    """
 
     __gsignals__ = {
+        # Emitted when small_thumb and large_thumb changed.
         "thumb-updated": (GObject.SignalFlags.RUN_LAST, None, ()),
     }
 
@@ -195,10 +200,11 @@ class AssetThumbnail(GObject.Object, Loggable):
         Loggable.__init__(self)
         self.__asset = asset
         self.proxy_manager = proxy_manager
-        self.previewer = None
+        self.__previewer = None
         self.refresh()
 
     def refresh(self):
+        """Updates the shown icon. To be called when a new icon is available."""
         self.src_small, self.src_large = self.__get_thumbnails()
         self.decorate()
 
@@ -237,14 +243,13 @@ class AssetThumbnail(GObject.Object, Loggable):
                         small_thumb, large_thumb = self.__get_icons("image-x-generic")
                 else:
                     # Build or reuse a ThumbnailCache.
-                    previewer = AssetPreviewer(self.__asset, 90)
-                    small_thumb = previewer.thumb_cache.get_preview_thumbnail()
+                    if not self.__previewer:
+                        self.__previewer = AssetPreviewer(self.__asset, 90)
+                        self.__previewer.connect("done", self.__done_cb)
+                    small_thumb = self.__previewer.thumb_cache.get_preview_thumbnail()
                     if not small_thumb:
+                        # We'll be notified when the thumbnail is available.
                         small_thumb, large_thumb = self.__get_icons("video-x-generic")
-                        # Only try once to generate the thumbnail.
-                        if not self.previewer:
-                            self.previewer = previewer
-                            previewer.connect("done", self.__done_cb)
                     else:
                         width = small_thumb.props.width
                         height = small_thumb.props.height
