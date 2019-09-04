@@ -730,7 +730,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _connectToProject(self, project):
         """Connects signal handlers to the specified project."""
         project.connect("asset-added", self._assetAddedCb)
-        project.connect("asset-loading-progress", self._assetLoadingProgressCb)
+        project.connect_after("asset-loading-progress", self._assetLoadingProgressCb)
         project.connect("asset-removed", self._assetRemovedCb)
         project.connect("error-loading-asset", self._errorCreatingAssetCb)
         project.connect("proxying-error", self._proxyingErrorCb)
@@ -873,8 +873,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             if not asset.ready:
                 proxying_files.append(asset)
-                if row[COL_THUMB_DECORATOR].state != AssetThumbnail.IN_PROGRESS:
-                    asset_previewer = row[COL_THUMB_DECORATOR]
+                asset_previewer = row[COL_THUMB_DECORATOR]
+                if asset_previewer.state != AssetThumbnail.IN_PROGRESS:
                     asset_previewer.refresh()
                     row[COL_ICON_64] = asset_previewer.small_thumb
                     row[COL_ICON_128] = asset_previewer.large_thumb
