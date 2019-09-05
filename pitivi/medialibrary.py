@@ -339,11 +339,11 @@ class AssetThumbnail(GObject.Object, Loggable):
     def __setState(self):
         asset = self.__asset
         target = asset.get_proxy_target()
-        if self.proxy_manager.is_proxy_asset(asset) and target \
-                and not target.get_error():
+        asset_is_proxy = self.proxy_manager.is_proxy_asset(asset)
+        if asset_is_proxy and target and not target.get_error():
             # The asset is a proxy.
             self.state = self.PROXIED
-        elif asset.proxying_error:
+        elif not asset_is_proxy and asset.proxying_error:
             self.state = self.ASSET_PROXYING_ERROR
         elif self.proxy_manager.is_asset_queued(asset):
             self.state = self.IN_PROGRESS
@@ -878,8 +878,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             if not asset.ready:
                 proxying_files.append(asset)
-                if row[COL_THUMB_DECORATOR].state != AssetThumbnail.IN_PROGRESS:
-                    asset_previewer = row[COL_THUMB_DECORATOR]
+                asset_previewer = row[COL_THUMB_DECORATOR]
+                if asset_previewer.state != AssetThumbnail.IN_PROGRESS:
                     asset_previewer.refresh()
                     row[COL_ICON_64] = asset_previewer.small_thumb
                     row[COL_ICON_128] = asset_previewer.large_thumb
