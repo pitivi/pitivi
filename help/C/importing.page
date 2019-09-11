@@ -35,6 +35,19 @@
     <p>You can import media into the <gui>Media Library</gui> by using the file chooser dialog, which has the advantage of letting you preview the files you want to import. To do so, use the <gui>Import</gui> button in the <gui>Media Library</gui> header.</p>
     <p>A file chooser dialog window will appear. You can press <key>Ctrl</key> or <key>Shift</key> to select multiple files at the same time.</p>
   </section>
+  <section id="optimizedmedia">
+    <title>How to work with unsupported media</title>
+    <p>The following media containers and formats are officially supported:</p>
+    <list>
+      <item><p>Containers: MJPEG, Matroska, Ogg, QuickTime, WebM</p></item>
+      <item><p>Audio formats: FLAC, MPEG, Raw, Vorbis, WAV</p></item>
+      <item><p>Video formats: H.264, JPEG, Raw, Theora, VP8</p></item>
+    </list>
+    <p>Working with other containers and formats is slow and lacks precision. Fortunately most of the time the unsupported media can still be played. Taking advantage of this, <app>Pitivi</app> allows transcoding the unsupported media into a supported format. The result is a separate file placed in the same folder. The automatic creation of <em>optimized media</em> is controlled with the <gui>Optimize</gui> checkbox at the bottom of the <gui>file chooser dialog</gui>. The <em>optimized media</em> can be managed at any time with the <link xref="medialibrary">media library</link>.</p>
+    <note>
+      <p>Most of the cameras nowadays create <code>.mts</code> and <code>.m2ts</code> files which use the MPEG Transport Stream container. This container is not optimal for video editing. This media is not supported as such and must be <em>optimized</em> for a smooth editing experience.</p>
+    </note>
+  </section>
   <section id="dragdrop">
     <title>Importing files using drag and drop</title>
     <p>The concept of drag and drop is a well-established method of bridging the gap between software applications. Simply select the files you want to import in another application (such as a file manager or a multimedia app) and drag them with your mouse onto <app>Pitivi</app>'s <gui>Media Library</gui>.</p>
