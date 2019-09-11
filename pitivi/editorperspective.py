@@ -815,7 +815,6 @@ class PreviewAssetWindow(Gtk.Window):
         self._previewer.show()
 
         self.connect("focus-out-event", self._leavePreviewCb)
-        self.connect("key-press-event", self._keyPressCb)
 
     def preview(self):
         """Shows the window and starts the playback."""
@@ -859,11 +858,4 @@ class PreviewAssetWindow(Gtk.Window):
 
     def _leavePreviewCb(self, window, unused):
         self.destroy()
-        return True
-
-    def _keyPressCb(self, unused_widget, event):
-        if event.keyval in (Gdk.KEY_Escape, Gdk.KEY_Q, Gdk.KEY_q):
-            self.destroy()
-        elif event.keyval == Gdk.KEY_space:
-            self._previewer.togglePlayback()
         return True
