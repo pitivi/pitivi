@@ -39,17 +39,9 @@
   </section>
   <section id="projectsettings">
     <title>Editing the project settings</title>
-    <p>The project settings define mainly how the video appears while you edit the project. The video resolution and aspect ratio affect the appearance of the previewer. If the resolution and aspect ratio do not match those of your footage, the video may look squished or letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
+    <p>The project settings define mainly how the video appears while you edit the project. The video resolution affects how much detail the previewer can show. If the resolution of the project does not match that of your footage, the video may look letterboxed. These settings can be changed at any time by using <guiseq><gui>App menu</gui><gui>Project Settings</gui></guiseq>.</p>
     <note>
       <p>When you import the first video file the project settings are automatically changed to match. See <link xref="importing">Getting media</link> for details.</p>
-    </note>
-  </section>
-  <section id="pardar">
-    <title>Pixel aspect ratio vs display aspect ratio</title>
-    <p>Digital images are composed of a grid of <link href="http://en.wikipedia.org/wiki/Pixel">pixels</link>, which may or may not be square. In some cases, you may need to set the <link href="http://en.wikipedia.org/wiki/Pixel_aspect_ratio">pixel aspect ratio</link> (PAR) for the image to display correctly. On the other hand, <link href="http://en.wikipedia.org/wiki/Display_aspect_ratio">display aspect ratio</link> (DAR) is the mathematical ratio of width:height for the whole image.</p>
-    <p>In <app>Pitivi</app>, pixel aspect ratio and display aspect ratio are related to each other through video resolution (width and height). Once your resolution is set, setting the DAR will influence the PAR and vice versa. You can use either DAR or PAR, whichever you are most comfortable with.</p>
-    <note>
-      <p>You can use the ratios already provided in the combo boxes, or input a custom aspect ratio in the text entry below (using a syntax such as "4:3" or "1.3333", although the decimal version is less precise).</p>
     </note>
   </section>
 </page>
