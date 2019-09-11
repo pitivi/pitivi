@@ -23,7 +23,6 @@ sources = [
     'trimming.page',
     'usingclips.page',
     'usingeffects.page',
-    'welcomedialog.page',
     'workwithprojects.page'
 ]
 
