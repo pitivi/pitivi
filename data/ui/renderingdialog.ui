@@ -653,6 +653,7 @@
               <object class="GtkBox" id="box5">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">start</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="automatically_use_proxies">
@@ -663,8 +664,7 @@
                     <property name="tooltip_markup" translatable="yes">Use proxy files if they are available and the source asset media format is not officially supported.
 
 This option is a good trade-off between quality of the rendered video and stability.</property>
-                    <property name="xalign">0.05000000074505806</property>
-                    <property name="yalign">0</property>
+                    <property name="halign">start</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -680,8 +680,7 @@ This option is a good trade-off between quality of the rendered video and stabil
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="tooltip_markup" translatable="yes">Render all proxied clips from the proxy assets. There might be some quality loss during the rendering process.</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
+                    <property name="halign">start</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -698,8 +697,7 @@ This option is a good trade-off between quality of the rendered video and stabil
                     <property name="receives_default">False</property>
                     <property name="tooltip_markup" translatable="yes">Always use source assets for rendering. It is the best choice for the quality of the rendered video, but you might hit some bugs because of the use of not officially supported media formats.
 &lt;i&gt;Use at your own risk!&lt;/i&gt;</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
+                    <property name="halign">start</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
