@@ -254,15 +254,21 @@ def show_user_manual(page=None):
             for contextual help.
     """
     def get_page_uri(uri, page):
-        if page is not None:
-            return uri + "#" + page
+        if page:
+            if uri.startswith("http://"):
+                return "%s/%s.html" % (uri, page)
+            if uri.startswith("ghelp://"):
+                return "%s/%s" % (uri, page)
+            if uri.startswith("help:"):
+                return "%s/%s" % (uri, page)
         return uri
 
     time_now = int(time.time())
     uris = (APPMANUALURL_OFFLINE, APPMANUALURL_ONLINE)
     for uri in uris:
+        page_uri = get_page_uri(uri, page)
         try:
-            Gtk.show_uri(None, get_page_uri(uri, page), time_now)
+            Gtk.show_uri(None, page_uri, time_now)
             return
         except Exception as e:
             log.info("utils", "Failed loading URI %s: %s", uri, e)
@@ -271,10 +277,10 @@ def show_user_manual(page=None):
     try:
         # Last try calling yelp directly (used in flatpak while we do
         # not have a portal to access system wild apps)
-        subprocess.Popen(["yelp",
-                          get_page_uri(APPMANUALURL_OFFLINE, page)])
-    except FileNotFoundError:
-        log.warning("utils", "Failed loading URIs")
+        page_uri = get_page_uri(APPMANUALURL_OFFLINE, page)
+        subprocess.Popen(["yelp", page_uri])
+    except FileNotFoundError as e:
+        log.warning("utils", "Failed loading %s: %s", page_uri, e)
         dialog = Gtk.MessageDialog(modal=True,
                                    message_type=Gtk.MessageType.ERROR,
                                    buttons=Gtk.ButtonsType.OK,
