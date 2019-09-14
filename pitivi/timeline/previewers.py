@@ -211,9 +211,9 @@ class WaveformPreviewer(PreviewerBin):
 
     # pylint: disable=arguments-differ
     def do_post_message(self, message):
-        if not self.passthrough and \
-                message.type == Gst.MessageType.ELEMENT and \
-                message.src == self.level:
+        if message.type == Gst.MessageType.ELEMENT and \
+                message.src == self.level and \
+                not self.passthrough:
             struct = message.get_structure()
             peaks = None
             if struct:
