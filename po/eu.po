@@ -14,91 +14,83 @@
 # Zuberoa Iturburu Lopez-Pantoja <zubetxu1@gmail.com>, 2015.
 # Elhuyar fundazioa <itzulpenak@elhuyar.com>, 2015.
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2015.
+# Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2019.
 #
 msgid ""
-msgstr ""
-"Project-Id-Version: pitivi master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-05-28 10:08+0200\n"
-"PO-Revision-Date: 2015-05-28 10:26+0200\n"
-"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
+msgstr "Project-Id-Version: pitivi master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/pitivi/issues\n"
+"POT-Creation-Date: 2019-08-29 08:02+0000\n"
+"PO-Revision-Date: 2019-09-16 10:00+0100\n"
+"Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Generator: Lokalize 1.5\n"
 
-#: ../data/pitivi.appdata.xml.in.h:1
+#: ../data/pitivi.appdata.xml.in.h:1 ../data/pitivi.desktop.in.h:1
+msgid "Pitivi"
+msgstr "Pitivi"
+
+#: ../data/pitivi.appdata.xml.in.h:2 ../data/pitivi.desktop.in.h:3
+msgid "Create and edit your own movies"
+msgstr "Sortu eta editatu zure filmak"
+
+#: ../data/pitivi.appdata.xml.in.h:3
 msgid ""
 "Pitivi is a video editor that aims to appeal to hobbyists and professionals "
 "alike, with a strong focus on efficiency, quality and usability. It "
 "integrates well with other applications and sports a beautiful user "
 "interface designed to be powerful yet easy to learn."
-msgstr ""
-"Pitivi zaleentzako nahiz profesionalentzako bideo-editore bat da, eta "
-"eraginkortasuna, kalitatea eta erabilgarritasuna lehenesten ditu. Ondo "
-"integratzen da beste aplikazioekin; eta erabiltzaile-interfaze polita dauka, "
-"ahaltsua eta ikasteko erraza izateko diseinatua."
+msgstr "Pitivi zaleentzako nahiz profesionalentzako bideo-editore bat da, eta eraginkortasuna, kalitatea eta erabilgarritasuna lehenesten ditu. Ondo integratzen da beste aplikazioekin; eta erabiltzaile-interfaze polita dauka, ahaltsua eta ikasteko erraza izateko diseinatua."
 
-#: ../data/pitivi.appdata.xml.in.h:2
+#: ../data/pitivi.appdata.xml.in.h:4
 msgid ""
 "With a non-modal editing workflow, a framerate-independent and playhead-"
 "centric timeline, Pitivi allows you quickly and accurately trim, split and "
 "review your scenes. Pitivi's ripple and roll editing features allow spending "
 "more time on storytelling and less time on \"pushing clips around\"."
-msgstr ""
-"Pitivi-n, ediziorako lan-fuxua ez-modala da, eta denbora-lerroa, berriz, "
-"fotograma-abiadurarekiko independentea eta erreprodukzio-puntuan zentratua; "
-"hala, Pitivi-rekin, bizkor eta zehazki moztu, zatitu eta berrikus daitezke "
-"eszenak. Mozketak egitean sekuentziak egokitzeko Pitivi-k dituen \"ripple\" "
-"eta \"roll\" edizio-tresnei esker, denbora gehiago emango duzu istorioak "
-"kontatzen eta gutxiago sekuentziak eskuz moldatzen."
+msgstr "Pitivi-n, ediziorako lan-fluxua ez-modala da, eta denbora-lerroa, berriz, fotograma-abiadurarekiko independentea eta erreprodukzio-puntuan zentratua; hala, Pitivi-rekin, bizkor eta zehazki moztu, zatitu eta berrikus daitezke eszenak. Mozketak egitean sekuentziak egokitzeko Pitivi-k dituen \"ripple\" eta \"roll\" edizio-tresnei esker, denbora gehiago emango duzu istorioak kontatzen eta gutxiago sekuentziak eskuz moldatzen."
 
-#: ../data/pitivi.appdata.xml.in.h:3
+#: ../data/pitivi.appdata.xml.in.h:5
 msgid "Some other features include:"
 msgstr "Ezaugarri hauek ere baditu, besteak beste:"
 
-#: ../data/pitivi.appdata.xml.in.h:4
+#: ../data/pitivi.appdata.xml.in.h:6
 msgid ""
 "Accepts any file formats supported by the GStreamer multimedia framework"
-msgstr ""
-"GStreamer multimedia-sistemak onartzen duen edozein fitxategi-formatu "
-"onartzen du"
+msgstr "GStreamer multimedia-sistemak onartzen duen edozein fitxategi-formatu onartzen du"
 
-#: ../data/pitivi.appdata.xml.in.h:5
+#: ../data/pitivi.appdata.xml.in.h:7
 msgid ""
 "Can animate hundreds of special effects and filters with keyframable "
 "properties"
-msgstr ""
-"Ehunka efektu berezi eta iragazki anima ditzake, fotograma gakoen "
-"propietateak erabiliz"
-
-#: ../data/pitivi.appdata.xml.in.h:6
-msgid "Ability to set custom aspect ratios, framerates and rendering presets"
-msgstr ""
-"Aukera ematen du aspektu-erlazio pertsonalizatuak, fotograma-abiadurak eta "
-"errendatze lehenetsiak ezartzeko"
-
-#: ../data/pitivi.appdata.xml.in.h:7
-msgid "Easy to use crossfades and SMPTE transitions"
-msgstr "Erraz egiten dira nahaste gurutzatuak eta SMPTE trantsizioak"
+msgstr "Ehunka efektu berezi eta iragazki anima ditzake, fotograma gakoen propietateak erabiliz"
 
 #: ../data/pitivi.appdata.xml.in.h:8
-msgid "Multihead-friendly with detachable user interface components"
-msgstr ""
-"Aldi berean pantaila bat baino gehiagotan erabiltzeko egokia da, "
-"erabiltzaile-interfazearen osagaiak desuztartzen baitzaizkio"
+msgid "Ability to set custom aspect ratios, framerates and rendering presets"
+msgstr "Aukera ematen du aspektu-erlazio pertsonalizatuak, fotograma-abiadurak eta errendatze lehenetsiak ezartzeko"
 
-#: ../data/pitivi.desktop.in.in.h:1
+#: ../data/pitivi.appdata.xml.in.h:9
+msgid "Easy to use crossfades and SMPTE transitions"
+msgstr "Erraz erabiltzeko nahaste gurutzatuak eta SMPTE trantsizioak"
+
+#: ../data/pitivi.appdata.xml.in.h:10
+msgid "Multihead-friendly with detachable user interface components"
+msgstr "Aldi berean pantaila bat baino gehiagotan erabiltzeko egokia da, erabiltzaile-interfazearen osagaiak desuztartzen baitzaizkio"
+
+#: ../data/pitivi.appdata.xml.in.h:11
+msgid "The Pitivi Team"
+msgstr "Pitivi taldea"
+
+#: ../data/pitivi.desktop.in.h:2
 msgid "Video Editor"
 msgstr "Bideo-editorea"
 
-#: ../data/pitivi.desktop.in.in.h:2
-msgid "Create and edit your own movies"
-msgstr "Sortu eta editatu zure filmak"
+#: ../data/pitivi.desktop.in.h:4
+msgid "video;film;movie;editor;"
+msgstr "bideoa;filma;zinema;editorea;"
 
 #: ../data/ui/alignmentprogress.ui.h:1
 msgid "Auto-Alignment Starting"
@@ -108,9 +100,9 @@ msgstr "Lerrokatze automatikoa hasten"
 msgid "<b><big>Performing Auto-Alignment</big></b>"
 msgstr "<b><big>Lerrokatze automatikoa egiten</big></b>"
 
-#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1068
+#: ../data/ui/alignmentprogress.ui.h:3 ../pitivi/render.py:1035
 msgid "Estimating..."
-msgstr "Kalkulatzen..."
+msgstr "Kalkulatzen…"
 
 #: ../data/ui/clipmediaprops.ui.h:1
 msgid "Clip Properties"
@@ -124,11 +116,11 @@ msgstr "_Utzi"
 msgid "_Apply to project"
 msgstr "_Aplikatu proiektuari"
 
-#: ../data/ui/clipmediaprops.ui.h:4 ../data/ui/projectsettings.ui.h:11
+#: ../data/ui/clipmediaprops.ui.h:4
 msgid "Size (pixels):"
 msgstr "Tamaina (pixelak):"
 
-#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:30
+#: ../data/ui/clipmediaprops.ui.h:5 ../data/ui/renderingdialog.ui.h:15
 msgid "Frame rate:"
 msgstr "Fotograma-abiadura:"
 
@@ -141,51 +133,35 @@ msgstr "Pixelen aspektu-erlazioa:"
 msgid "Video:"
 msgstr "Bideoa:"
 
-#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:23
-#: ../data/ui/renderingdialog.ui.h:34
+#: ../data/ui/clipmediaprops.ui.h:9 ../data/ui/projectsettings.ui.h:17
+#: ../data/ui/renderingdialog.ui.h:17
 msgid "Channels:"
 msgstr "Kanalak:"
 
-#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:24
-#: ../data/ui/renderingdialog.ui.h:35
+#: ../data/ui/clipmediaprops.ui.h:10 ../data/ui/projectsettings.ui.h:18
+#: ../data/ui/renderingdialog.ui.h:18
 msgid "Sample rate:"
-msgstr "Laginketa-maiztasuna:"
+msgstr "Lagin-maiztasuna:"
 
 #: ../data/ui/clipmediaprops.ui.h:11
 msgid "Audio:"
 msgstr "Audioa:"
 
 #: ../data/ui/cliptransformation.ui.h:1
-msgid "Viewer Zoom"
-msgstr "Ikustailearen zooma"
-
-#: ../data/ui/cliptransformation.ui.h:2
 msgid "X:"
 msgstr "X:"
 
-#: ../data/ui/cliptransformation.ui.h:3
+#: ../data/ui/cliptransformation.ui.h:2
 msgid "Y:"
 msgstr "Y:"
 
-#: ../data/ui/cliptransformation.ui.h:4
-msgid "Position"
-msgstr "Posizioa"
-
-#: ../data/ui/cliptransformation.ui.h:5
+#: ../data/ui/cliptransformation.ui.h:3
 msgid "Width:"
 msgstr "Zabalera:"
 
-#: ../data/ui/cliptransformation.ui.h:6
+#: ../data/ui/cliptransformation.ui.h:4
 msgid "Height:"
-msgstr "Garaiera:"
-
-#: ../data/ui/cliptransformation.ui.h:7
-msgid "Size"
-msgstr "Tamaina"
-
-#: ../data/ui/cliptransformation.ui.h:8
-msgid "Crop"
-msgstr "Moztu"
+msgstr "Altuera:"
 
 #: ../data/ui/depsmanager.ui.h:1
 msgid "Missing Dependencies"
@@ -199,8 +175,7 @@ msgstr "Instalatu"
 msgid ""
 "To enable additional features, please install the following packages and "
 "restart Pitivi:"
-msgstr ""
-"Aukera gehiago gaitzeko, instalatu pakete hauek eta berrabiarazi Pitivi:"
+msgstr "Aukera gehiago gaitzeko, instalatu pakete hauek eta berrabiarazi Pitivi:"
 
 #: ../data/ui/effectslibrary.ui.h:1
 msgid "Show video effects"
@@ -215,19 +190,15 @@ msgid "Clear the current search"
 msgstr "Garbitu uneko bilaketa"
 
 #: ../data/ui/effectslibrary.ui.h:4 ../data/ui/medialibrary.ui.h:12
-#: ../pitivi/transitions.py:74
+#: ../pitivi/transitions.py:76
 msgid "Search..."
-msgstr "Bilatu..."
+msgstr "Bilatu…"
 
 #: ../data/ui/elementsettingsdialog.ui.h:1
-msgid "Properties for <element>"
-msgstr "<element>-(r)en propietateak"
-
-#: ../data/ui/elementsettingsdialog.ui.h:2
 msgid "Reset all"
 msgstr "Berrezarri dena"
 
-#: ../data/ui/elementsettingsdialog.ui.h:3 ../data/ui/projectsettings.ui.h:6
+#: ../data/ui/elementsettingsdialog.ui.h:2 ../data/ui/projectsettings.ui.h:3
 msgid "OK"
 msgstr "Ados"
 
@@ -237,16 +208,16 @@ msgstr "Proiektu berria"
 
 #: ../data/ui/mainmenubutton.ui.h:2
 msgid "Open project..."
-msgstr "Ireki proiektua..."
+msgstr "Ireki proiektua…"
 
 #: ../data/ui/mainmenubutton.ui.h:3
 msgid "Save the current project under a new name or a different location"
 msgstr "Gorde uneko proiektua beste izen batekin edo beste kokaleku batean"
 
-#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1163
-#: ../pitivi/mainwindow.py:1221
+#: ../data/ui/mainmenubutton.ui.h:4 ../pitivi/mainwindow.py:1145
+#: ../pitivi/mainwindow.py:1199
 msgid "Save As..."
-msgstr "Gorde honela..."
+msgstr "Gorde honela…"
 
 #: ../data/ui/mainmenubutton.ui.h:5
 msgid "Reload the current project"
@@ -258,28 +229,26 @@ msgstr "Itzuli gordetako bertsiora"
 
 #: ../data/ui/mainmenubutton.ui.h:7
 msgid "Export the current project and all its media in a .tar archive"
-msgstr ""
-"Esportatu uneko proiektua eta haren multimedia-fitxategi guztiak .tar "
-"artxibo batera"
+msgstr "Esportatu uneko proiektua eta haren multimedia-fitxategi guztiak .tar artxibo batera"
 
 #: ../data/ui/mainmenubutton.ui.h:8
 msgid "Export as Archive..."
-msgstr "Esportatu fitxategi gisa..."
+msgstr "Esportatu fitxategi gisa…"
 
 #: ../data/ui/mainmenubutton.ui.h:9
 msgid "Export the frame at the current playhead position as an image file."
-msgstr ""
-"Esportatu uneko erreprodukzio-puntuan dagoen fotograma irudi-fitxategi gisa."
+msgstr "Esportatu uneko erreprodukzio-puntuan dagoen fotograma irudi-fitxategi gisa."
 
 #: ../data/ui/mainmenubutton.ui.h:10
 msgid "Export current frame..."
-msgstr "Esportatu uneko fotograma..."
+msgstr "Esportatu uneko fotograma…"
 
 #: ../data/ui/mainmenubutton.ui.h:11
 msgid "Edit the project settings"
 msgstr "Editatu proiektuaren ezarpenak"
 
-#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:4
+#: ../data/ui/mainmenubutton.ui.h:12 ../data/ui/projectsettings.ui.h:1
+#: ../pitivi/medialibrary.py:376
 msgid "Project Settings"
 msgstr "Proiektuaren ezarpenak"
 
@@ -288,14 +257,18 @@ msgid "Preferences"
 msgstr "Hobespenak"
 
 #: ../data/ui/mainmenubutton.ui.h:14
+msgid "Keyboard Shortcuts"
+msgstr "Laster-teklak"
+
+#: ../data/ui/mainmenubutton.ui.h:15
 msgid "User Manual"
 msgstr "Erabiltzailearen eskuliburua"
 
-#: ../data/ui/mainmenubutton.ui.h:15
+#: ../data/ui/mainmenubutton.ui.h:16
 msgid "About"
 msgstr "Honi buruz"
 
-#: ../data/ui/medialibrary.ui.h:1
+#: ../data/ui/medialibrary.ui.h:1 ../pitivi/mainwindow.py:481
 msgid "Add media files to your project"
 msgstr "Gehitu multimedia-fitxategiak  proiektuari"
 
@@ -307,19 +280,19 @@ msgstr "Inportatu"
 msgid "Remove selected clips from the project"
 msgstr "Kendu hautatutako klipak proiektutik"
 
-#: ../data/ui/medialibrary.ui.h:4 ../pitivi/medialibrary.py:289
+#: ../data/ui/medialibrary.ui.h:4
 msgid "_Remove from Project"
 msgstr "_Kendu proiektutik"
 
 #: ../data/ui/medialibrary.ui.h:5
-msgid "Clip Properties..."
-msgstr "Kliparen propietateak..."
+msgid "Clip properties..."
+msgstr "Clip properties…"
 
 #: ../data/ui/medialibrary.ui.h:6
 msgid "Insert the selected clips at the end of the timeline"
 msgstr "Txertatu hautatutako klipak denbora-lerroaren bukaeran"
 
-#: ../data/ui/medialibrary.ui.h:7 ../pitivi/medialibrary.py:292
+#: ../data/ui/medialibrary.ui.h:7
 msgid "Insert at _End of Timeline"
 msgstr "Txertatu denbora-lerroaren _bukaeran"
 
@@ -337,257 +310,196 @@ msgid "Show all clips"
 msgstr "Erakutsi klip guztiak"
 
 #: ../data/ui/medialibrary.ui.h:13
-msgid "Close this message"
-msgstr "Itxi mezu hau"
-
-#: ../data/ui/medialibrary.ui.h:14
 msgid ""
 "Add media to your project by dragging files and folders here or by using the "
 "\"Import\" button."
-msgstr ""
-"Gehitu multimedia-fitxategiak proiektuari, fitxategiak eta karpetak hona "
-"arrastatuz edo \"Inportatu\" botoia erabiliz."
+msgstr "Gehitu multimedia-fitxategiak proiektuari, fitxategiak eta karpetak hona arrastatuz edo \"Inportatu\" botoia erabiliz."
 
 #: ../data/ui/preferences.ui.h:2
-msgid "Section"
-msgstr "Atala"
-
-#: ../data/ui/preferences.ui.h:3
-msgid "Some changes will not take effect until you restart Pitivi"
-msgstr "Aldaketa batzuk ez dira aplikatuko Pitivi berrabiarazi arte"
-
-#: ../data/ui/preferences.ui.h:4
 msgid "Reset to Factory Settings"
 msgstr "Berrezarri fabrikako ezarpenak"
 
-#: ../data/ui/preferences.ui.h:5
+#: ../data/ui/preferences.ui.h:3
 msgid "Reset all settings to their default values"
 msgstr "Berrezarri ezarpen guztien balio lehenetsiak"
 
-#: ../data/ui/preferences.ui.h:6
+#: ../data/ui/preferences.ui.h:4
 msgid "Revert"
-msgstr "Itzuli"
+msgstr "Alderantzikatu"
 
-#: ../data/ui/preferences.ui.h:7
+#: ../data/ui/preferences.ui.h:5
 msgid ""
 "Revert all settings to the previous values (before you opened the "
 "preferences dialog)"
-msgstr ""
-"Itzuli ezarpen guztiak haien aurreko balioetara (hobespenen elkarrizketa-"
-"koadroa ireki aurretik zeudenetara)"
+msgstr "Itzuli ezarpen guztiak haien aurreko balioetara (hobespenen elkarrizketa-koadroa ireki aurretik zeudenetara)"
 
-#: ../data/ui/preferences.ui.h:8 ../data/ui/renderingdialog.ui.h:8
+#: ../data/ui/preferences.ui.h:6 ../data/ui/renderingdialog.ui.h:2
 #: ../data/ui/renderingprogress.ui.h:6
 msgid "Close"
 msgstr "Itxi"
 
-#: ../data/ui/projectsettings.ui.h:1 ../pitivi/utils/ui.py:451
-msgid "Standard (4:3)"
-msgstr "Estandarra (4:3)"
+#: ../data/ui/preferences.ui.h:7
+msgid "Some changes will not take effect until you restart Pitivi"
+msgstr "Aldaketa batzuk ez dira aplikatuko Pitivi berrabiarazi arte"
 
-#: ../data/ui/projectsettings.ui.h:2
-msgid "Standard PAL"
-msgstr "PAL estandarra"
-
-#: ../data/ui/projectsettings.ui.h:3
-msgid "25 FPS"
-msgstr "25 FPS"
-
-#: ../data/ui/projectsettings.ui.h:5 ../data/ui/renderingprogress.ui.h:4
-#: ../pitivi/mainwindow.py:679 ../pitivi/mainwindow.py:796
-#: ../pitivi/mainwindow.py:932 ../pitivi/mainwindow.py:1114
-#: ../pitivi/mainwindow.py:1166 ../pitivi/mainwindow.py:1223
-#: ../pitivi/medialibrary.py:470
+#: ../data/ui/projectsettings.ui.h:2 ../data/ui/renderingprogress.ui.h:4
+#: ../pitivi/mainwindow.py:671 ../pitivi/mainwindow.py:788
+#: ../pitivi/mainwindow.py:926 ../pitivi/mainwindow.py:1096
+#: ../pitivi/mainwindow.py:1148 ../pitivi/mainwindow.py:1201
+#: ../pitivi/medialibrary.py:736
 msgid "Cancel"
 msgstr "Utzi"
 
-#: ../data/ui/projectsettings.ui.h:7
-msgid "Video Preset"
-msgstr "Bideoaren aurrezarpenak"
+#: ../data/ui/projectsettings.ui.h:4 ../data/ui/renderingdialog.ui.h:7
+msgid "Preset:"
+msgstr "Aurrezarpena:"
 
-#: ../data/ui/projectsettings.ui.h:8 ../data/ui/renderingdialog.ui.h:10
-msgid "Create a new preset"
-msgstr "Sortu aurrezarpen berri bat"
+#: ../data/ui/projectsettings.ui.h:5
+msgid "Size:"
+msgstr "Tamaina:"
 
-#: ../data/ui/projectsettings.ui.h:9 ../data/ui/renderingdialog.ui.h:11
-msgid "Remove the selected preset"
-msgstr "Kendu hautatutako aurrezarpena"
+#: ../data/ui/projectsettings.ui.h:6
+msgid "pixels"
+msgstr "pixel"
 
-#: ../data/ui/projectsettings.ui.h:10 ../data/ui/renderingdialog.ui.h:12
-msgid "Save changes to the currently selected preset"
-msgstr "Gorde orain hautatua dagoen aurrezarpenari egindako aldaketak"
+#. When checked, changing the width or height affects also the other so that the aspect ratio value (width / height) does not change.
+#: ../data/ui/projectsettings.ui.h:8
+msgid "Link"
+msgstr "Esteka"
 
-#: ../data/ui/projectsettings.ui.h:12
+#: ../data/ui/projectsettings.ui.h:9
 msgid "Aspect Ratio:"
 msgstr "Aspektu-erlazioa:"
 
 #. DAR is the aspect ratio of the image being displayed to the viewer. "Display" is used as a noun, not as a verb/action.
-#: ../data/ui/projectsettings.ui.h:14
+#: ../data/ui/projectsettings.ui.h:11
 msgid "Display aspect ratio"
 msgstr "Bistaratzearen aspektu-erlazioa"
 
 #. PAR is the aspect ratio "of the pixels", not an aspect ratio "in pixels".
-#: ../data/ui/projectsettings.ui.h:16
+#: ../data/ui/projectsettings.ui.h:13
 msgid "Pixel aspect ratio"
 msgstr "Pixelen aspektu-erlazioa"
 
-#: ../data/ui/projectsettings.ui.h:17
-msgid "x"
-msgstr "x"
-
-#: ../data/ui/projectsettings.ui.h:18
-msgid "Link"
-msgstr "Esteka"
-
-#: ../data/ui/projectsettings.ui.h:19
+#: ../data/ui/projectsettings.ui.h:14
 msgid "Frame Rate:"
 msgstr "Fotograma-abiadura:"
 
-#: ../data/ui/projectsettings.ui.h:20 ../data/ui/renderingdialog.ui.h:33
-#: ../pitivi/effects.py:260
+#. The title of the section with the video settings
+#: ../data/ui/projectsettings.ui.h:16 ../data/ui/renderingdialog.ui.h:16
+#: ../pitivi/effects.py:210
 msgid "Video"
 msgstr "Bideoa"
 
-#: ../data/ui/projectsettings.ui.h:21
-msgid "Audio Preset"
-msgstr "Audioaren aurrezarpenak"
-
-#: ../data/ui/projectsettings.ui.h:22
-msgid "Format"
-msgstr "Formatua"
-
-#: ../data/ui/projectsettings.ui.h:25 ../data/ui/renderingdialog.ui.h:37
-#: ../pitivi/effects.py:261
+#. The title of the section with the audio settings
+#: ../data/ui/projectsettings.ui.h:20 ../data/ui/renderingdialog.ui.h:19
+#: ../pitivi/effects.py:210
 msgid "Audio"
 msgstr "Audioa"
 
-#: ../data/ui/projectsettings.ui.h:26
+#: ../data/ui/projectsettings.ui.h:21
 msgid "Author:"
 msgstr "Egilea:"
 
-#: ../data/ui/projectsettings.ui.h:27
-msgid "Year:"
-msgstr "Urtea:"
-
-#: ../data/ui/projectsettings.ui.h:28
+#: ../data/ui/projectsettings.ui.h:22
 msgid "Project title:"
 msgstr "Proiektuaren izenburua:"
 
-#: ../data/ui/projectsettings.ui.h:29
+#: ../data/ui/projectsettings.ui.h:23
+msgid "Year:"
+msgstr "Urtea:"
+
+#. The title of the section with the name, author, year fields
+#: ../data/ui/projectsettings.ui.h:25
 msgid "Info"
 msgstr "Informazioa"
 
-#: ../data/ui/renderingdialog.ui.h:1
-msgid "MP4"
-msgstr "MP4"
-
-#: ../data/ui/renderingdialog.ui.h:2
-msgid "H.264"
-msgstr "H.264"
-
-#: ../data/ui/renderingdialog.ui.h:3
-msgid "29.97 fps"
-msgstr "29,97 FPS"
-
-#: ../data/ui/renderingdialog.ui.h:4
-msgid "AC-3"
-msgstr "AC-3"
-
-#: ../data/ui/renderingdialog.ui.h:5
-msgid "AAC"
-msgstr "AAC"
-
-#: ../data/ui/renderingdialog.ui.h:6
-msgid "6 channels (5.1)"
-msgstr "6 kanal (5.1)"
-
-#: ../data/ui/renderingdialog.ui.h:7 ../pitivi/mainwindow.py:441
+#: ../data/ui/renderingdialog.ui.h:1 ../pitivi/mainwindow.py:426
 msgid "Render"
 msgstr "Errendatu"
 
-#: ../data/ui/renderingdialog.ui.h:9
-msgid "Render Preset"
-msgstr "Errendatzearen aurrezarpenak"
-
-#: ../data/ui/renderingdialog.ui.h:13
-msgid "Folder"
-msgstr "Karpeta"
-
-#: ../data/ui/renderingdialog.ui.h:14
-msgid "Container format:"
-msgstr "Edukitzailearen formatua:"
-
-#: ../data/ui/renderingdialog.ui.h:15
+#: ../data/ui/renderingdialog.ui.h:3
 msgid "Folder:"
 msgstr "Karpeta:"
 
-#: ../data/ui/renderingdialog.ui.h:16
+#: ../data/ui/renderingdialog.ui.h:4
 msgid "File name:"
 msgstr "Fitxategi-izena:"
 
-#: ../data/ui/renderingdialog.ui.h:17
-msgid "File name"
-msgstr "Fitxategi-izena"
+#: ../data/ui/renderingdialog.ui.h:5
+msgid "Container format:"
+msgstr "Edukitzailearen formatua:"
 
-#: ../data/ui/renderingdialog.ui.h:18
-msgid "Container format"
-msgstr "Edukitzailearen formatua"
-
-#: ../data/ui/renderingdialog.ui.h:19 ../data/ui/startupwizard.ui.h:5
+#: ../data/ui/renderingdialog.ui.h:6 ../data/ui/startupwizard.ui.h:5
+#: ../pitivi/mainwindow.py:468
 msgid "Help"
 msgstr "Laguntza"
 
-#: ../data/ui/renderingdialog.ui.h:20
-msgid "Render only the selected clips"
-msgstr "Errendatu klip hautatuak soilik"
-
-#: ../data/ui/renderingdialog.ui.h:21
-msgid "Draft (no special effects, single pass)"
-msgstr "Zirriborroa (efektu berezirik ez, iraganaldi bakarra)"
-
-#: ../data/ui/renderingdialog.ui.h:22
-msgid "General"
-msgstr "Orokorra"
-
-#: ../data/ui/renderingdialog.ui.h:23
-msgid "Advanced..."
-msgstr "Aurreratua..."
-
-#: ../data/ui/renderingdialog.ui.h:24
-msgid "Codec:"
-msgstr "Kodeka:"
-
-#: ../data/ui/renderingdialog.ui.h:25
-msgid "Framerate"
-msgstr "Fotograma-abiadura"
-
-#: ../data/ui/renderingdialog.ui.h:26
-msgid "Scale"
-msgstr "Eskala"
-
-#: ../data/ui/renderingdialog.ui.h:27
-msgid "1000 x 1000"
-msgstr "1.000 x 1.000"
-
-#: ../data/ui/renderingdialog.ui.h:28
-msgid "Height"
-msgstr "Garaiera"
-
-#: ../data/ui/renderingdialog.ui.h:29
-msgid "Edit Project Settings..."
-msgstr "Editatu proiektuaren ezarpenak..."
-
-#: ../data/ui/renderingdialog.ui.h:31
+#: ../data/ui/renderingdialog.ui.h:8
 msgid "Scale:"
 msgstr "Eskala:"
 
-#: ../data/ui/renderingdialog.ui.h:32
-msgid "Enable video"
-msgstr "Gaitu bideoa"
+#: ../data/ui/renderingdialog.ui.h:9
+msgid "Scale"
+msgstr "Eskalatu"
 
-#: ../data/ui/renderingdialog.ui.h:36
-msgid "Enable audio"
-msgstr "Gaitu audioa"
+#: ../data/ui/renderingdialog.ui.h:10
+msgid "Height"
+msgstr "Altuera"
+
+#: ../data/ui/renderingdialog.ui.h:11
+msgid "Project Settings..."
+msgstr "Project Settings…"
+
+#: ../data/ui/renderingdialog.ui.h:12
+msgid "Advanced..."
+msgstr "Aurreratua…"
+
+#: ../data/ui/renderingdialog.ui.h:13
+msgid "Codec:"
+msgstr "Kodeka:"
+
+#: ../data/ui/renderingdialog.ui.h:14
+msgid "Framerate"
+msgstr "Fotograma-emaria"
+
+#: ../data/ui/renderingdialog.ui.h:20
+msgid "Automatically render from proxy files"
+msgstr "Errendatu automatikoki proxy fitxategietatik"
+
+#: ../data/ui/renderingdialog.ui.h:21
+msgid ""
+"Use proxy files if they are available and the source asset media format is "
+"not officially supported.\n"
+"\n"
+"This option is a good trade-off between quality of the rendered video and "
+"stability."
+msgstr "Erabili proxy fitxategiak haiek erabilgarri badauze eta iturburuko aktiboaren multimedia-formatua ez bada ofizialki onartzen.\n"
+"\n"
+"Aukera hori erdibideko konponbide egokia da errendatutako bideoaren eta egonkortasunaren artean."
+
+#: ../data/ui/renderingdialog.ui.h:24
+msgid "Always render from proxy files"
+msgstr "Errendatu beti proxy fitxategietatik"
+
+#: ../data/ui/renderingdialog.ui.h:25
+msgid ""
+"Render all proxied clips from the proxy assets. There might be some quality "
+"loss during the rendering process."
+msgstr "Errendatu proxy-en aktiboetatik proxy-ak darabiltzaten klip guztiak. Kalitate-galerak gerta daitezke errendatze-prozesuan."
+
+#: ../data/ui/renderingdialog.ui.h:26
+msgid "Never render from proxy files"
+msgstr "Inoiz ez errendatu proxy fitxategietatik"
+
+#: ../data/ui/renderingdialog.ui.h:27
+msgid ""
+"Always use source assets for rendering. It is the best choice for the "
+"quality of the rendered video, but you might hit some bugs because of the "
+"use of not officially supported media formats.\n"
+"<i>Use at your own risk!</i>"
+msgstr "Erabili beti iturburuko aktiboak errendatzeko. Errendatutako bideoaren kalitate onena lortzeko aukera onena da, baina zenbait akatsekin topo egin dezakezu, ofizialki onartuta ez dauden multimedia-formatuak erabiltzen baitira.\n"
+"<i>Akatsak zure kontu!</i>"
 
 #: ../data/ui/renderingprogress.ui.h:1
 msgid "Rendering"
@@ -598,22 +510,20 @@ msgid ""
 "<small>This process may take a long time depending on the selected codecs, "
 "the image resolution, your computer's processing power, applied effects and "
 "the length of your movie.</small>"
-msgstr ""
-"<small>Prozesu honek luze jo dezake, ezaugarri hauen arabera: hautatutako "
-"kodekak, irudi-bereizmena, ekipoaren prozesatze-ahalmena, aplikatutako "
-"efektuak eta filmaren iraupena.</small>"
+msgstr "<small>Prozesu honek luze jo dezake, ezaugarri hauen arabera: hautatutako kodekak, irudi-bereizmena, ekipoaren prozesatze-ahalmena, aplikatutako efektuak eta filmaren iraupena.</small>"
 
-#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer.py:1067
+#: ../data/ui/renderingprogress.ui.h:3 ../pitivi/viewer/viewer.py:544
 msgid "Pause"
 msgstr "Pausatu"
 
-#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer.py:1059
+#: ../data/ui/renderingprogress.ui.h:5 ../pitivi/viewer/viewer.py:536
+#: ../pitivi/timeline/timeline.py:1547
 msgid "Play"
 msgstr "Erreproduzitu"
 
 #: ../data/ui/renderingprogress.ui.h:7
 msgid "Initializing..."
-msgstr "Hasieratzen..."
+msgstr "Hasieratzen…"
 
 #: ../data/ui/renderingprogress.ui.h:8
 msgid "Estimated filesize:"
@@ -627,13 +537,13 @@ msgstr "Ongi etorri"
 msgid "Double-click a project below to load it:"
 msgstr "Egin klik bikoitza beheko proiektu batean, kargatzeko:"
 
-#: ../data/ui/startupwizard.ui.h:3
+#: ../data/ui/startupwizard.ui.h:3 ../pitivi/preset.py:92
 msgid "New"
 msgstr "Berria"
 
 #: ../data/ui/startupwizard.ui.h:4
 msgid "Browse projects..."
-msgstr "Arakatu proiektuak..."
+msgstr "Arakatu proiektuak…"
 
 #: ../data/ui/startupwizard.ui.h:6
 msgid "Keyboard shortcuts"
@@ -641,11 +551,70 @@ msgstr "Laster-teklak"
 
 #: ../data/ui/startupwizard.ui.h:7
 msgid "Missing dependencies..."
-msgstr "Falta diren mendekotasunak..."
+msgstr "Falta diren mendekotasunak…"
+
+#: ../data/ui/timelinetoolbar.ui.h:1
+msgid "Split clips at playhead position"
+msgstr "Zatitu klipak uneko erreprodukzio-puntuan"
+
+#: ../data/ui/timelinetoolbar.ui.h:2
+msgid "Split"
+msgstr "Banandu"
+
+#: ../data/ui/timelinetoolbar.ui.h:3
+msgid "Delete clips"
+msgstr "Ezabatu klipak"
+
+#: ../data/ui/timelinetoolbar.ui.h:4
+msgid "Delete"
+msgstr "Ezabatu"
+
+#: ../data/ui/timelinetoolbar.ui.h:5
+msgid "Group clips"
+msgstr "Taldekatu klipak"
+
+#: ../data/ui/timelinetoolbar.ui.h:6
+msgid "Group"
+msgstr "Taldea"
+
+#: ../data/ui/timelinetoolbar.ui.h:7
+msgid "Ungroup clips"
+msgstr "Banandu klipak"
+
+#: ../data/ui/timelinetoolbar.ui.h:8
+msgid "Ungroup"
+msgstr "Banandu"
+
+#: ../data/ui/timelinetoolbar.ui.h:9
+msgid "Copy clips"
+msgstr "Kopiatu klipak"
+
+#: ../data/ui/timelinetoolbar.ui.h:10
+msgid "Paste clips"
+msgstr "Itsatsi klipak"
+
+#: ../data/ui/timelinetoolbar.ui.h:11
+msgid "Align clips based on their soundtracks"
+msgstr "Lerrokatu klipak haien soinu-pisten arabera"
+
+#: ../data/ui/timelinetoolbar.ui.h:12
+msgid "Align"
+msgstr "Lerrokatu"
+
+#: ../data/ui/timelinetoolbar.ui.h:13
+msgid ""
+"Toggle gapless mode\n"
+"When enabled, adjacent clips automatically move to fill gaps."
+msgstr "Gaitu edo desgaitu hutsunerik gabeko modua\n"
+"Gaituta dagoenean, ondoz ondoko klipak automatikoki mugitzen dira hutsuneak betetzeko."
+
+#: ../data/ui/timelinetoolbar.ui.h:15
+msgid "Gapless mode"
+msgstr "Hutsunerik gabeko modua"
 
 #: ../data/ui/titleeditor.ui.h:1
 msgid "Create"
-msgstr "Sortu"
+msgstr "Sorrera"
 
 #: ../data/ui/titleeditor.ui.h:2
 msgid "Select a title clip to edit or create a new one."
@@ -669,7 +638,7 @@ msgstr "Atzeko planoaren kolorea"
 
 #: ../data/ui/titleeditor.ui.h:7
 msgid "Pick a background color"
-msgstr "Aukeratu atzeko planoaren kolorea"
+msgstr "Hartu atzeko planoaren kolore bat"
 
 #: ../data/ui/titleeditor.ui.h:8
 msgid "Horizontal alignment:"
@@ -683,200 +652,257 @@ msgstr "Lerrokatze bertikala:"
 msgid "Advanced positioning"
 msgstr "Kokatze aurreratua"
 
+#: ../pitivi/application.py:157
+msgid "General"
+msgstr "Orokorra"
+
+#: ../pitivi/application.py:162
+msgid "Undo the most recent action"
+msgstr "Desegin azken ekintza"
+
+#: ../pitivi/application.py:168
+msgid "Redo the most recent action"
+msgstr "Berregin azken ekintza"
+
+#: ../pitivi/application.py:173
+msgid "Quit"
+msgstr "Irten"
+
+#: ../pitivi/application.py:180
+msgid "Show the Shortcuts Window"
+msgstr "Erakutsi lasterbideen leihoa"
+
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:112
+#: ../pitivi/check.py:109
 #, python-format
 msgid "- %s not found on the system"
 msgstr "-%s ez da aurkitu sisteman"
 
 #. Translators: %s is a Python module name or another os component
-#: ../pitivi/check.py:115
+#: ../pitivi/check.py:112
 #, python-format
 msgid "- %s version %s is installed but Pitivi requires at least version %s"
-msgstr ""
-"- %s-(r)en %s bertsioa dago instalatuta, baina Pitivik %s bertsioa edo "
-"berriagoa behar du"
+msgstr "- %s-(r)en %s bertsioa dago instalatuta, baina Pitivik %s bertsioa edo berriagoa behar du"
 
-#: ../pitivi/check.py:220
+#: ../pitivi/check.py:271
 msgid "ERROR - The following hard dependencies are unmet:"
 msgstr "ERROREA - Bete gabe daude mendekotasun estu hauek:"
 
-#: ../pitivi/check.py:229
+#: ../pitivi/check.py:280
 msgid "Missing soft dependency:"
 msgstr "Mendekotasun ahul hau falta da:"
 
-#: ../pitivi/check.py:236
+#: ../pitivi/check.py:287
 msgid ""
 "ERROR — Could not create a Gst.Fraction — this means gst-python is not "
 "installed correctly."
-msgstr ""
-"ERROREA — Ezin izan da sortu Gst.Fraction bat; beraz, gst-python ez da behar "
-"bezala instalatu."
+msgstr "ERROREA — Ezin izan da sortu Gst.Fraction bat; beraz, gst-python ez da behar bezala instalatu."
 
-#: ../pitivi/check.py:241
+#: ../pitivi/check.py:292
 msgid ""
 "Could not create audio output sink. Make sure you have a valid one "
 "(pulsesink, alsasink or osssink)."
-msgstr ""
-"Ezin izan da sortu audio-irteerako kolektorea. Egiaztatu badagoela baliozko "
-"bat (pulsesink, alsasink edo osssink)."
+msgstr "Ezin izan da sortu audio-irteerako kolektorea. Egiaztatu badagoela baliozko bat (pulsesink, alsasink edo osssink)."
 
-#: ../pitivi/check.py:301
+#: ../pitivi/check.py:297
+msgid ""
+"Could not create video output sink. Make sure you have a gtksink available."
+msgstr "Ezin izan da sortu bideo-irteerako kolektorea. Egiaztatu gtksink erabilgarri dagoela."
+
+#: ../pitivi/check.py:310
+#, python-format
+msgid "Could not import '%s'. Make sure you have it available."
+msgstr "Ezin da '%s' inportatu. Ziurtatu hura eskuragarri duzula."
+
+#: ../pitivi/check.py:325
+msgid "Could not import 'gi'. Make sure you have pygobject available."
+msgstr "Ezin da 'gi' inportatu. Ziurtatu pygobject eskuragarri duzula."
+
+#: ../pitivi/check.py:394
 msgid "enables sound notifications when rendering is complete"
 msgstr "soinu-jakinarazpenak gaitzen ditu errendatzea osatutakoan"
 
-#: ../pitivi/check.py:302
-msgid "file thumbnails provided by GNOME's thumbnailers"
-msgstr "GNOMEren aplikazioek egin dituzte fitxategien koadro txikiak"
-
-#: ../pitivi/check.py:303
+#: ../pitivi/check.py:395
 msgid "enables visual notifications when rendering is complete"
 msgstr "ikusizko jakinarazpenak gaitzen ditu errendatzea osatutakoan"
 
-#: ../pitivi/check.py:304
+#: ../pitivi/check.py:396
 msgid "additional multimedia codecs through the GStreamer Libav library"
 msgstr "multimedia-kodek gehiago GStreamer Libav liburutegitik"
 
-#: ../pitivi/check.py:305
+#: ../pitivi/check.py:397
 msgid ""
 "enables a watchdog in the GStreamer pipeline. Use to detect errors happening "
 "in GStreamer and recover from them"
 msgstr ""
 
-#: ../pitivi/clipproperties.py:139
+#: ../pitivi/clipproperties.py:115
 msgid "Effects"
 msgstr "Efektuak"
 
-#: ../pitivi/clipproperties.py:161
+#: ../pitivi/clipproperties.py:140
 msgid "Remove effect"
 msgstr "Kendu efektuak"
 
-#: ../pitivi/clipproperties.py:196
+#: ../pitivi/clipproperties.py:175
 msgid "Active"
 msgstr "Aktibo"
 
-#: ../pitivi/clipproperties.py:198
+#: ../pitivi/clipproperties.py:178
 msgid "Type"
 msgstr "Mota"
 
-#: ../pitivi/clipproperties.py:208
+#: ../pitivi/clipproperties.py:187
 msgid "Effect name"
 msgstr "Efektuaren izena"
 
-#: ../pitivi/clipproperties.py:229
+#: ../pitivi/clipproperties.py:209
 msgid "Select a clip on the timeline to configure its associated effects"
-msgstr ""
-"Hautatu klip bat denbora-lerroan, hari lotutako efektuak konfiguratzeko"
+msgstr "Hautatu klip bat denbora-lerroan, hari lotutako efektuak konfiguratzeko"
 
-#: ../pitivi/clipproperties.py:570
+#: ../pitivi/clipproperties.py:228
+msgid "Clip Effects"
+msgstr "Klip-efektuak"
+
+#: ../pitivi/clipproperties.py:234
+msgid "Remove the selected effect"
+msgstr "Kendu hautatutako efektua"
+
+#: ../pitivi/clipproperties.py:555
 msgid "Transformation"
 msgstr "Eraldaketa"
 
-#: ../pitivi/effects.py:64
+#: ../pitivi/effects.py:59
 msgid "Colors"
 msgstr "Koloreak"
 
-#: ../pitivi/effects.py:81
+#: ../pitivi/effects.py:76
 msgid "Compositing"
 msgstr "Konposizioa"
 
-#: ../pitivi/effects.py:88
+#: ../pitivi/effects.py:83
 msgid "Noise & blur"
 msgstr "Zarata eta desfokuratzea"
 
-#: ../pitivi/effects.py:94
+#: ../pitivi/effects.py:89
 msgid "Analysis"
 msgstr "Analisia"
 
-#: ../pitivi/effects.py:102
+#: ../pitivi/effects.py:97
 msgid "Geometry"
 msgstr "Geometria"
 
-#: ../pitivi/effects.py:113
+#: ../pitivi/effects.py:108
 msgid "Fancy"
-msgstr "Sofistikatua"
+msgstr "Dotorea"
 
-#: ../pitivi/effects.py:125
+#: ../pitivi/effects.py:120
 msgid "Time"
-msgstr "Denbora"
+msgstr "Ordua"
 
-#. Add Uncategorized only if there are other categories defined.
-#: ../pitivi/effects.py:249 ../pitivi/effects.py:289
-msgid "Uncategorized"
-msgstr "Kategorizatu gabe"
-
-#: ../pitivi/effects.py:251 ../pitivi/effects.py:286
-msgid "All effects"
-msgstr "Efektu guztiak"
-
-#: ../pitivi/effects.py:262
+#: ../pitivi/effects.py:210
 msgid "effect"
 msgstr "efektua"
 
-#: ../pitivi/mainwindow.py:296
+#. Add Uncategorized only if there are other categories defined.
+#: ../pitivi/effects.py:282 ../pitivi/effects.py:303
+msgid "Uncategorized"
+msgstr "Kategorizatu gabe"
+
+#: ../pitivi/effects.py:283 ../pitivi/effects.py:300
+msgid "All effects"
+msgstr "Efektu guztiak"
+
+#: ../pitivi/mainwindow.py:262 ../pitivi/medialibrary.py:533
 msgid "Media Library"
 msgstr "Multimedia-liburutegia"
 
-#: ../pitivi/mainwindow.py:298
+#: ../pitivi/mainwindow.py:264
 msgid "Effect Library"
 msgstr "Efektu-liburutegia"
 
-#: ../pitivi/mainwindow.py:309
+#: ../pitivi/mainwindow.py:275
 msgid "Clip"
-msgstr "Klipa"
+msgstr "Mozketa"
 
-#: ../pitivi/mainwindow.py:311
+#: ../pitivi/mainwindow.py:277
 msgid "Transition"
 msgstr "Trantsizioa"
 
-#: ../pitivi/mainwindow.py:313
+#: ../pitivi/mainwindow.py:279
 msgid "Title"
-msgstr "Izenburua"
+msgstr "Titulua"
 
-#: ../pitivi/mainwindow.py:420
+#: ../pitivi/mainwindow.py:402
 msgid "Undo"
 msgstr "Desegin"
 
-#: ../pitivi/mainwindow.py:426
+#: ../pitivi/mainwindow.py:409
 msgid "Redo"
 msgstr "Berregin"
 
-#: ../pitivi/mainwindow.py:434 ../pitivi/mainwindow.py:790
-#: ../pitivi/mainwindow.py:1115 ../pitivi/mainwindow.py:1167
-#: ../pitivi/mainwindow.py:1224
+#: ../pitivi/mainwindow.py:418 ../pitivi/mainwindow.py:782
+#: ../pitivi/mainwindow.py:1097 ../pitivi/mainwindow.py:1149
+#: ../pitivi/mainwindow.py:1202 ../pitivi/preset.py:104
+#: ../pitivi/project.py:156
 msgid "Save"
 msgstr "Gorde"
 
-#: ../pitivi/mainwindow.py:443
+#: ../pitivi/mainwindow.py:428
 msgid "Export your project as a finished movie"
 msgstr "Esportatu proiektua film bukatu gisa"
 
-#: ../pitivi/mainwindow.py:619
-msgid "Development version"
-msgstr "Garapen-bertsioa"
+#: ../pitivi/mainwindow.py:439
+msgid "Project"
+msgstr "Proiektua"
 
-#: ../pitivi/mainwindow.py:621
+#: ../pitivi/mainwindow.py:444
+msgid "Save the current project"
+msgstr "Uneko proiektua gordetzen du"
+
+#: ../pitivi/mainwindow.py:451
+msgid "Create a new project"
+msgstr "Proiektu berria sortzen du"
+
+#: ../pitivi/mainwindow.py:457
+msgid "Open a project"
+msgstr "Proiektu bat irekitzen du"
+
+#: ../pitivi/mainwindow.py:463
+msgid "Save the current project as"
+msgstr "Gorde uneko proiektua honela:"
+
+#: ../pitivi/mainwindow.py:474
+msgid "Show the menu button content"
+msgstr "Erakutsi menu-botoiaren edukia"
+
+#: ../pitivi/mainwindow.py:607
+#, python-format
+msgid "Development version: %s"
+msgstr "Garapen-bertsioa: %s"
+
+#: ../pitivi/mainwindow.py:609
 #, python-format
 msgid "Version %(cur_ver)s — %(new_ver)s is available"
 msgstr "%(cur_ver)s bertsioa — %(new_ver)s bertsioa erabilgarri dago"
 
-#: ../pitivi/mainwindow.py:625
+#: ../pitivi/mainwindow.py:613 ../pitivi/mainwindow.py:615
 #, python-format
 msgid "Version %s"
 msgstr "%s bertsioa"
 
-#: ../pitivi/mainwindow.py:633
+#: ../pitivi/mainwindow.py:624
 msgid "Current maintainers:"
 msgstr "Uneko mantentzaileak:"
 
-#: ../pitivi/mainwindow.py:638
+#: ../pitivi/mainwindow.py:630
 msgid "Past maintainers:"
 msgstr "Aurreko mantentzaileak:"
 
 #. Translators: this paragraph is to be translated, the list
 #. of contributors is shown dynamically as a clickable link
 #. below it
-#: ../pitivi/mainwindow.py:646
+#: ../pitivi/mainwindow.py:638
 msgid ""
 "Contributors:\n"
 "A handwritten list here would...\n"
@@ -885,9 +911,8 @@ msgid ""
 "• not show their relative merit.\n"
 "\n"
 "Out of respect for our contributors, we point you instead to:\n"
-msgstr ""
-"Kolaboratzaileak:\n"
-"Hemen eskuz idatzitako zerrenda bat jarriko bagenu...\n"
+msgstr "Kolaboratzaileak:\n"
+"Hemen eskuz idatzitako zerrenda bat jarriko bagenu…\n"
 "• luzeegia litzateke,\n"
 "•askotan eguneratu gabe legoke,\n"
 "• ez luke bakoitzaren merituaren neurria islatuko.\n"
@@ -895,365 +920,379 @@ msgstr ""
 "Hala, kolaboratzaileekiko errespetuz, informazio hori ikusteko jo hona:\n"
 
 #. Translators: keep the %s at the end of the 1st line
-#: ../pitivi/mainwindow.py:653
+#: ../pitivi/mainwindow.py:645
 #, python-format
 msgid ""
 "The list of contributors on Ohloh %s\n"
 "Or you can run: git shortlog -s -n"
-msgstr ""
-"Laguntzaileen zerrenda, Ohloh %s(e)n\n"
+msgstr "Laguntzaileen zerrenda, Ohloh %s(e)n\n"
 "Edo, hau exekutatu: git shortlog -s -n"
 
-#: ../pitivi/mainwindow.py:657
+#: ../pitivi/mainwindow.py:649
 msgid "translator-credits"
-msgstr ""
-"Ainhoa Eguren <ainhoeguren@gmail.com>\n"
-"Eneko Olazabal<enekolazabal@gmail.com>\n"
-"Gixane Moragues<gmoragues001@ikasle.ehu.es>\n"
-"Idoia Fruniz<idoia.fruniz@gmail.com>\n"
-"Idoia Manterola<idoia.manterola@yahoo.es>\n"
-"Leire Lopez<leirerentzat@hotmail.com>\n"
-"Isabel Barturen<isabel.barturen@gmail.com>\n"
-"Maite Urzaa<maite_urzaa@hotmail.com>\n"
-"Olatz Ugartemendia<olatzotxo@hotmail.com>\n"
-"Zuberoa Iturburu<zubetxu1@gmail.com>"
+msgstr "Asier Sarasua Garmendia <asier.sarasua@gmail.com>"
 
 #. The user has not made a decision, don't do anything
-#: ../pitivi/mainwindow.py:676
+#: ../pitivi/mainwindow.py:668
 msgid "Open File..."
-msgstr "Ireki fitxategia..."
+msgstr "Ireki fitxategia…"
 
-#: ../pitivi/mainwindow.py:680 ../pitivi/mainwindow.py:933
+#: ../pitivi/mainwindow.py:672 ../pitivi/mainwindow.py:927
 msgid "Open"
 msgstr "Ireki"
 
-#: ../pitivi/mainwindow.py:696
+#: ../pitivi/mainwindow.py:688
 msgid "All supported formats"
 msgstr "Onartutako formatu guztiak"
 
-#: ../pitivi/mainwindow.py:759
+#: ../pitivi/mainwindow.py:746
 #, python-format
 msgid "Unable to save project \"%s\""
-msgstr "Ezin da gorde \"%s\" proiektua"
+msgstr "Ezin da gorde “%s” proiektua"
 
-#: ../pitivi/mainwindow.py:792
+#: ../pitivi/mainwindow.py:784 ../pitivi/project.py:155
 msgid "Save as..."
-msgstr "Gorde honela..."
+msgstr "Gorde honela…"
 
-#: ../pitivi/mainwindow.py:795
+#: ../pitivi/mainwindow.py:787
 msgid "Close without saving"
 msgstr "Itxi gorde gabe"
 
-#: ../pitivi/mainwindow.py:810
+#: ../pitivi/mainwindow.py:802
 msgid "Save changes to the current project before closing?"
 msgstr "Gorde aldaketak proiektua itxi aurretik?"
 
-#: ../pitivi/mainwindow.py:823
+#: ../pitivi/mainwindow.py:815
 #, python-format
 msgid "If you don't save, the changes from the last %s will be lost."
 msgstr "Gordetzen ez baduzu, galdu egingo dira azken aldaketak (%s)."
 
-#: ../pitivi/mainwindow.py:827
+#: ../pitivi/mainwindow.py:819
 msgid "If you don't save, your changes will be lost."
 msgstr "Gordetzen ez baduzu, galdu egingo dira aldaketak."
 
-#: ../pitivi/mainwindow.py:893
+#: ../pitivi/mainwindow.py:887
 msgid "Revert to saved project version?"
 msgstr "Gordetako bertsiora itzuli?"
 
-#: ../pitivi/mainwindow.py:898
+#: ../pitivi/mainwindow.py:892
 msgid "This will reload the current project. All unsaved changes will be lost."
-msgstr ""
-"Hala, berriro kargatzen da uneko proiektua. Gorde ez diren aldaketa guztiak "
-"galtzen dira."
+msgstr "Hala, berriro kargatzen da uneko proiektua. Gorde ez diren aldaketa guztiak galtzen dira."
 
-#: ../pitivi/mainwindow.py:913
+#: ../pitivi/mainwindow.py:907
 #, python-format
 msgid "Unable to load project \"%s\""
-msgstr "Ezin da kargatu \"%s\" proiektua"
+msgstr "Ezin da kargatu “%s” proiektua"
 
-#: ../pitivi/mainwindow.py:928
+#: ../pitivi/mainwindow.py:922
 msgid "Locate missing file..."
-msgstr "Bilatu falta den fitxategia..."
+msgstr "Bilatu falta den fitxategia…"
 
 #. The file is probably an image, not video or audio.
-#: ../pitivi/mainwindow.py:960
+#: ../pitivi/mainwindow.py:954
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\"\n"
 "Please specify its new location:"
-msgstr ""
-"Fitxategi hau lekuz aldatu da: \"<b>%s</b>\"\n"
+msgstr "Fitxategi hau lekuz aldatu da: \"<b>%s</b>\"\n"
 "Zehaztu haren kokaleku berria:"
 
-#: ../pitivi/mainwindow.py:965
+#: ../pitivi/mainwindow.py:959
 #, python-format
 msgid ""
 "The following file has moved: \"<b>%s</b>\" (duration: %s)\n"
 "Please specify its new location:"
-msgstr ""
-"Fitxategi hau lekuz aldatu da: \"<b>%s</b>\" (iraupena: %s)\n"
+msgstr "Fitxategi hau lekuz aldatu da: \"<b>%s</b>\" (iraupena: %s)\n"
 "Zehaztu haren kokaleku berria:"
 
 #. Translators: this is a format filter in a filechooser. Ex: "AVI
 #. files"
-#: ../pitivi/mainwindow.py:989
+#: ../pitivi/mainwindow.py:983
 #, python-format
 msgid "%s files"
 msgstr "%s fitxategi"
 
-#: ../pitivi/mainwindow.py:993 ../pitivi/medialibrary.py:499
+#: ../pitivi/mainwindow.py:987 ../pitivi/medialibrary.py:760
 msgid "All files"
-msgstr "Fitxategi guztiak"
+msgstr "Fitxategi denak"
 
 #. Signal the project loading failure.
 #. You have to do this *after* successfully creating a blank project,
 #. or the startupwizard will still be connected to that signal too.
-#: ../pitivi/mainwindow.py:1018
+#: ../pitivi/mainwindow.py:1012
 #, python-format
 msgid ""
 "No replacement file was provided for \"<i>%s</i>\".\n"
 "\n"
 "Pitivi does not currently support partial projects."
-msgstr ""
-"Ez da eman fitxategi honen ordezkorik: \"<i>%s</i>\".\n"
+msgstr "Ez da eman fitxategi honen ordezkorik: \"<i>%s</i>\".\n"
 "\n"
 "Pitivi-k ez du onartzen proiektu partzialik une honetan."
 
-#: ../pitivi/mainwindow.py:1111
+#: ../pitivi/mainwindow.py:1093
 msgid "Export To..."
-msgstr "Esportatu hona..."
+msgstr "Esportatu hona…"
 
-#: ../pitivi/mainwindow.py:1126 ../pitivi/mainwindow.py:1176
-#: ../pitivi/mainwindow.py:1227 ../pitivi/mainwindow.py:1255
-#: ../pitivi/render.py:363
+#: ../pitivi/mainwindow.py:1108 ../pitivi/mainwindow.py:1158
+#: ../pitivi/mainwindow.py:1205 ../pitivi/mainwindow.py:1233
+#: ../pitivi/render.py:421
 msgid "Untitled"
-msgstr "Izenbururik gabe"
+msgstr "Izengabea"
 
-#: ../pitivi/mainwindow.py:1132
+#: ../pitivi/mainwindow.py:1114
 msgid "Tar archive"
-msgstr "Tar fitxategia"
+msgstr "Tar artxiboa"
 
-#: ../pitivi/mainwindow.py:1136 ../pitivi/mainwindow.py:1182
+#: ../pitivi/mainwindow.py:1118 ../pitivi/mainwindow.py:1164
 msgid "Detect automatically"
 msgstr "Detektatu automatikoki"
 
-#: ../pitivi/mainwindow.py:1229
+#: ../pitivi/mainwindow.py:1207
 msgid "PNG image"
 msgstr "PNG irudia"
 
-#: ../pitivi/mainwindow.py:1230
+#: ../pitivi/mainwindow.py:1208
 msgid "JPEG image"
 msgstr "JPEG irudia"
 
-#: ../pitivi/mainwindow.py:1281
+#: ../pitivi/mainwindow.py:1299
 msgid "Preview"
 msgstr "Aurrebista"
 
-#: ../pitivi/mediafilespreviewer.py:164
+#: ../pitivi/mediafilespreviewer.py:159
 msgid "Pitivi can not preview this file."
 msgstr "Pitivik ezin du erakutsi fitxategi honen aurrebista."
 
-#: ../pitivi/mediafilespreviewer.py:165
+#: ../pitivi/mediafilespreviewer.py:160
 msgid "More info"
 msgstr "Informazio gehiago"
 
-#: ../pitivi/mediafilespreviewer.py:264
+#: ../pitivi/mediafilespreviewer.py:261
 #, python-format
 msgid "<b>Resolution</b>: %d×%d"
 msgstr "<b>Bereizmena</b>: %d×%d"
 
-#: ../pitivi/mediafilespreviewer.py:266 ../pitivi/mediafilespreviewer.py:283
+#: ../pitivi/mediafilespreviewer.py:263 ../pitivi/mediafilespreviewer.py:280
 #, python-format
 msgid "<b>Duration</b>: %s"
 msgstr "<b>Iraupena</b>: %s"
 
-#: ../pitivi/mediafilespreviewer.py:451 ../pitivi/medialibrary.py:861
+#: ../pitivi/mediafilespreviewer.py:456 ../pitivi/medialibrary.py:1052
 msgid "Error while analyzing a file"
-msgstr "Errore bat gertatu da fitxategi bat analizatzean"
+msgstr "Errorea fitxategi bat analizatzean"
 
-#: ../pitivi/medialibrary.py:199
-msgid "Icon"
-msgstr "Ikonoa"
-
-#: ../pitivi/medialibrary.py:208
-msgid "Information"
-msgstr "Informazioa"
-
-#: ../pitivi/medialibrary.py:219
-msgid "Duration"
-msgstr "Iraupena"
-
-#: ../pitivi/medialibrary.py:461
-msgid "Select One or More Files"
-msgstr "Hautatu fitxategi bat edo gehiago"
-
-#: ../pitivi/medialibrary.py:463
+#: ../pitivi/medialibrary.py:127
 msgid "Close after importing files"
 msgstr "Itxi, fitxategiak inportatu ondoren"
 
-#: ../pitivi/medialibrary.py:471
+#: ../pitivi/medialibrary.py:132
+msgid "Create proxies when the media format is not supported officially"
+msgstr "Sortu proxy-ak multimedia-formatuak ofizialki onartuta ez daudenean"
+
+#: ../pitivi/medialibrary.py:134
+msgid ""
+"Let Pitivi decide when to create proxy files and when not. The decision will "
+"be made depending on the file format, and how well it is supported. For "
+"example H.264, FLAC files contained in QuickTime will not be proxied, but "
+"AAC, H.264 contained in MPEG-TS will.\n"
+"\n"
+"<i>This is the only option officially supported by the Pitivi developers and "
+"thus is the safest.</i>"
+msgstr ""
+
+#: ../pitivi/medialibrary.py:144
+msgid "Create proxies for all files"
+msgstr "Sortu proxy-ak fitxategi guztietarako"
+
+#: ../pitivi/medialibrary.py:146
+msgid ""
+"Use proxies for every imported file whatever its current media format is."
+msgstr "Erabili proxy-ak inportatu fitxategi guztietarako, berdin dio zein multimedia-formatu duten."
+
+#: ../pitivi/medialibrary.py:149
+msgid "Do not use proxy files"
+msgstr "Ez erabili proxy fitxategiak"
+
+#: ../pitivi/medialibrary.py:364 ../pitivi/medialibrary.py:910
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: ../pitivi/medialibrary.py:444
+msgid "Icon"
+msgstr "Ikonoa"
+
+#: ../pitivi/medialibrary.py:453
+msgid "Information"
+msgstr "Informazioa"
+
+#: ../pitivi/medialibrary.py:464
+msgid "Duration"
+msgstr "Iraupena"
+
+#: ../pitivi/medialibrary.py:539
+msgid "Remove the selected assets"
+msgstr "Kendu hautatutako aktiboak"
+
+#: ../pitivi/medialibrary.py:545
+msgid "Insert selected assets at the end of the timeline"
+msgstr "Txertatu hautatutako aktiboak denbora-lerroaren bukaeran"
+
+#: ../pitivi/medialibrary.py:733
+msgid "Select One or More Files"
+msgstr "Hautatu fitxategi bat edo gehiago"
+
+#: ../pitivi/medialibrary.py:737
 msgid "Add"
 msgstr "Gehitu"
 
-#: ../pitivi/medialibrary.py:488
+#: ../pitivi/medialibrary.py:752
 msgid "Supported file formats"
 msgstr "Onartzen diren fitxategi-formatuak"
 
-#. Also allow showing known but not reliable demuxers
-#: ../pitivi/medialibrary.py:494
-msgid "All known file formats"
-msgstr "Fitxategi-formatu ezagun guztiak"
-
-#: ../pitivi/medialibrary.py:517
+#. Translators: this string indicates the estimated time
+#. remaining until an action (such as rendering) completes.
+#. The "%s" is an already-localized human-readable duration,
+#. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
+#. In some languages, "About %s left" can be expressed roughly as
+#. "There remains approximatively %s" (to handle gender and plurals)
+#: ../pitivi/medialibrary.py:823
 #, python-format
-msgid "Importing clip %(current_clip)d of %(total)d"
-msgstr "%(current_clip)d klipa inportatzen (%(total)d)"
+msgid "Transcoding %d asset: %d%% (About %s left)"
+msgid_plural "Transcoding %d assets: %d%% (About %s left)"
+msgstr[0] "Aktibo %d transkodetzen: %d%% (%s inguru geratzen da)"
+msgstr[1] "%d aktibo transkodetzen: %d%% (%s inguru geratzen da)"
 
-#: ../pitivi/medialibrary.py:695
+#: ../pitivi/medialibrary.py:922
 msgid "View error"
 msgid_plural "View errors"
 msgstr[0] "Ikusi errorea"
 msgstr[1] "Ikusi erroreak"
 
 #. Translators: {0:d} is just like %d (integer number variable)
-#: ../pitivi/medialibrary.py:697
+#: ../pitivi/medialibrary.py:924
 #, python-brace-format
 msgid "An error occurred while importing."
 msgid_plural "{0:d} errors occurred while importing."
 msgstr[0] "Errore bat gertatu da inportatzean."
 msgstr[1] "{0:d} errore gertatu dira inportatzean."
 
-#: ../pitivi/medialibrary.py:858
+#: ../pitivi/medialibrary.py:940
+#, python-format
+msgid "The project settings have been set to match file '%s'"
+msgstr "Proiektuaren ezarpenak '%s' fitxategiko ezarpenekin berdindu dira"
+
+#: ../pitivi/medialibrary.py:1049
 msgid "Error while analyzing files"
-msgstr "Errore bat gertatu da fitxategiak analizatzean"
+msgstr "Errore bat gertatu da fitxategi bat analizatzean"
 
-#: ../pitivi/medialibrary.py:859
+#: ../pitivi/medialibrary.py:1050
 msgid "The following files can not be used with Pitivi."
-msgstr "Fitxategi hauek ezin dira erabili Pitivi-rekin."
-
-#: ../pitivi/medialibrary.py:862
-msgid "The following file can not be used with Pitivi."
 msgstr "Fitxategi hau ezin da erabili Pitivirekin."
 
-#: ../pitivi/preset.py:96 ../pitivi/preset.py:211 ../pitivi/preset.py:216
-#: ../pitivi/preset.py:259 ../pitivi/preset.py:276 ../pitivi/project.py:1573
-#: ../pitivi/project.py:1578 ../pitivi/render.py:427
-msgid "No preset"
-msgstr "Ez dago aurrezarpenik"
+#: ../pitivi/medialibrary.py:1053
+msgid "The following file can not be used with Pitivi."
+msgstr "Hurrengo fitxategia ezin da erabili Pitivi-rekin."
 
-#: ../pitivi/project.py:240
-msgid "Save project as"
-msgstr "Gorde proiektua honela"
+#: ../pitivi/medialibrary.py:1165
+msgid "Do not use proxy for selected asset"
+msgid_plural "Do not use proxies for selected assets"
+msgstr[0] "Ez erabili proxy-a hautatutako aktiborako"
+msgstr[1] "Ez erabili proxy-ak hautatutako aktiboetarako"
 
-#: ../pitivi/project.py:241
-msgid "Save project"
-msgstr "Gorde proiektua"
+#: ../pitivi/medialibrary.py:1176
+msgid "Delete corresponding proxy file"
+msgid_plural "Delete corresponding proxy files"
+msgstr[0] "Ezabatu hari dagokion proxy fitxategia"
+msgstr[1] "Ezabatu haiei dagozkien proxy fitxategiak"
 
-#: ../pitivi/project.py:242
-msgid "Close pitivi"
-msgstr "Itxi pitivi"
+#: ../pitivi/medialibrary.py:1187
+msgid "Use proxy for selected asset"
+msgid_plural "Use proxies for selected assets"
+msgstr[0] "Erabili proxy-a hautatutako aktiborako"
+msgstr[1] "Erabili proxy-ak hautatutako aktiboetarako"
 
-#. Even though we set the title to an empty string when creating dialog,
-#. seems we really have to do it once more so it doesn't show
-#. "pitivi"...
-#: ../pitivi/project.py:246
-msgid "Pitivi died"
-msgstr "Pitivi hil egin da"
+#: ../pitivi/preset.py:98
+msgid "Remove"
+msgstr "Kendu"
 
-#: ../pitivi/project.py:247
+#: ../pitivi/preset.py:213
+msgid "New preset"
+msgstr "Aurrezarpen berria"
+
+#: ../pitivi/preset.py:216
+#, python-format
+msgid "New preset %d"
+msgstr "%d aurrezarpen berria"
+
+#: ../pitivi/project.py:61
+msgid "New Project"
+msgstr "Proiektu berria"
+
+#. GTK does not allow an empty string as the dialog title, so we use the
+#. same translatable one as render.py's pipeline error message dialog:
+#: ../pitivi/project.py:139 ../pitivi/render.py:758
+msgid "Sorry, something didn’t work right."
+msgstr "Zerbaitek huts egin du."
+
+#: ../pitivi/project.py:142
 msgid ""
-"We detected the application had a serious problem.\n"
-"There is no other choice than saving your project and <b>restart\n"
-"the application</b> at this point.\n"
+"Pitivi detected a serious backend problem and could not recover from it, "
+"even after multiple tries. The only thing that can be done at this point is "
+"to <b>restart Pitivi</b>.\n"
 "\n"
-"Note that a severe bug happened and we would be very happy\n"
-"to hear about that to make sure it get fixed.\n"
+"This is a rare and severe kind of bug. Please see our <a href=\"http://wiki."
+"pitivi.org/wiki/Bug_reporting\">bug reporting guide</a> and take the time to "
+"report it! We will be very happy to fix this bug and make sure it does not "
+"occur again in future versions.\n"
 "\n"
-"You are very welcome to follow our guide to report bugs:\n"
-"\n"
-"      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">How to report a "
-"bug</a>\n"
-"\n"
-"and we will make sure to get it fixed!"
+"Before closing Pitivi, you can save changes to the existing project file or "
+"as a separate project file."
 msgstr ""
-"Aplikazioak arazo serioak dituela atzeman da.\n"
-"Egoera honetan zure proiektua gorde eta <b>aplikazioa \n"
-"berrabiarazi</b> bakarrik egin daiteke, ez dago bestelako aukerarik.\n"
-"\n"
-"Akats larria gertatu da, eta poztuko ginateke akatsari buruzko informazioa\n"
-"bidaliko bazenigu akatsa konpon ahal izateko.\n"
-"\n"
-"Eskertuko genizuke akatsei buruz berri emateko gida hau jarraituko bazenu:\n"
-"\n"
-"      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">Nola eman akats "
-"bati buruz berri</a>\n"
-"eta konponduko dela ziurtatuko dugu!"
 
-#: ../pitivi/project.py:334
+#: ../pitivi/project.py:157
+msgid "Close Pitivi"
+msgstr "Itxi Pitivi"
+
+#: ../pitivi/project.py:227
 msgid ""
 "This might be due to a bug or an unsupported project file format. If you "
 "were trying to add a media file to your project, use the \"Import\" button "
 "instead."
-msgstr ""
-"Programazio-errore bat dagoelako edo proiektuaren fitxategi-formatua "
-"onartzen ez delako gerta liteke hori. Proiektuari multimedia-fitxategi bat "
-"gehitzen ari bazinen, erabili \"Inportatu\" botoia, gehitzekoaren ordez."
+msgstr "Programazio-errore bat dagoelako edo proiektuaren fitxategi-formatua onartzen ez delako gerta liteke hori. Proiektuari multimedia-fitxategi bat gehitzen ari bazinen, erabili \"Inportatu\" botoia, gehitzekoaren ordez."
 
-#: ../pitivi/project.py:347
+#: ../pitivi/project.py:249
 msgid "Ignore backup"
 msgstr "Ez ikusi egin babeskopiari"
 
-#: ../pitivi/project.py:348
+#: ../pitivi/project.py:250
 msgid "Restore from backup"
 msgstr "Leheneratu babeskopiatik"
 
-#: ../pitivi/project.py:364
+#: ../pitivi/project.py:266
 #, python-format
 msgid ""
 "An autosaved version of your project file was found. It is %s newer than the "
 "saved project.\n"
 "\n"
 "Would you like to load it instead?"
-msgstr ""
-"Zure proiektu-fitxategiaren bertsio bat aurkitu da, automatikoki gordetakoa. "
-"Gordetako proiektua baino %s berriagoa da.\n"
+msgstr "Zure proiektu-fitxategiaren bertsio bat aurkitu da, automatikoki gordetakoa. Gordetako proiektua baino %s berriagoa da.\n"
 "\n"
 "Automatikoki gordetakoa kargatu?"
 
-#: ../pitivi/project.py:438
+#: ../pitivi/project.py:342
 msgid "You do not have permissions to write to this folder."
 msgstr "Ez duzu baimenik karpeta honetan idazteko."
 
-#. write project file to temporary file
-#: ../pitivi/project.py:474
+#. Save the project to a temporary file.
+#: ../pitivi/project.py:375
 msgid "project"
 msgstr "proiektua"
 
-#. We don't have a URI here, None means we're loading a new project
-#: ../pitivi/project.py:589
-msgid "New Project"
-msgstr "Proiektu berria"
-
-#: ../pitivi/project.py:743
+#: ../pitivi/project.py:672
 msgid "Pitivi encoding profile"
 msgstr "Pitivi-ren kodeketa-profila"
 
-#: ../pitivi/project.py:1594 ../pitivi/render.py:559
-#, python-format
-msgid "\"%s\" already exists."
-msgstr "\"%s\" badago lehendik."
-
-#: ../pitivi/project.py:1667 ../pitivi/render.py:600
-msgid "New preset"
-msgstr "Aurrezarpen berria"
-
-#: ../pitivi/project.py:1670 ../pitivi/render.py:603
-#, python-format
-msgid "New preset %d"
-msgstr "%d aurrezarpen berria"
-
-#: ../pitivi/render.py:275
+#: ../pitivi/render.py:331
 #, python-format
 msgid "Rendering — %d%% complete"
 msgstr "Errendatzen — %% %d egin da"
@@ -1264,353 +1303,306 @@ msgstr "Errendatzen — %% %d egin da"
 #. such as "31 seconds", "1 minute" or "1 hours, 14 minutes".
 #. In some languages, "About %s left" can be expressed roughly as
 #. "There remains approximatively %s" (to handle gender and plurals).
-#: ../pitivi/render.py:284
+#: ../pitivi/render.py:340
 #, python-format
 msgid "About %s left"
 msgstr "%s falta da, gutxi gorabehera"
 
-#: ../pitivi/render.py:324
+#: ../pitivi/render.py:384
 msgid "Currently rendering"
 msgstr "Errendatzen ari da"
 
-#: ../pitivi/render.py:739
+#. Translators: This item appears in a combobox's popup and
+#. contains as children the unsupported (but still available)
+#. muxers and encoders.
+#: ../pitivi/render.py:621
+msgid "Unsupported"
+msgstr "Ez dago onartuta"
+
+#: ../pitivi/render.py:655
 msgid "A file name is required."
 msgstr "Fitxategi-izen bat behar da."
 
-#: ../pitivi/render.py:741
+#: ../pitivi/render.py:657
 msgid ""
 "This file already exists.\n"
 "If you don't want to overwrite it, choose a different file name or folder."
-msgstr ""
-"Fitxategi hori badago lehendik.\n"
-"Ez baduzu gainidatzi nahi, aukeratu beste fitxategi-izen bat edo beste "
-"karpeta bat."
+msgstr "Fitxategi hori badago lehendik.\n"
+"Ez baduzu gainidatzi nahi, aukeratu beste fitxategi-izen bat edo beste karpeta bat."
 
-#: ../pitivi/render.py:770
+#: ../pitivi/render.py:687
 #, python-format
 msgid "%.2f GB"
 msgstr "%.2f GB"
 
 #. -1 means round to 10
-#: ../pitivi/render.py:775
+#: ../pitivi/render.py:692
 #, python-format
 msgid "%d MB"
 msgstr "%d MB"
 
-#: ../pitivi/render.py:830
-msgid "Sorry, something didn’t work right."
-msgstr "Zerbaitek huts egin du."
-
-#: ../pitivi/render.py:831
+#: ../pitivi/render.py:759
 msgid ""
-"An error occured while trying to render your project. You might want to "
+"An error occurred while trying to render your project. You might want to "
 "check our troubleshooting guide or file a bug report. The GStreamer error "
 "was:"
 msgstr ""
-"Errore bat gertatu da proiektua errendatzean. Nahi izanez gero, kontsultatu "
-"akatsak konpontzeko gida edo bidali errore-txosten bat. GStreamer-en errora "
-"hau zen:"
 
-#: ../pitivi/render.py:1017 ../pitivi/render.py:1018 ../pitivi/render.py:1024
+#: ../pitivi/render.py:984 ../pitivi/render.py:985 ../pitivi/render.py:991
 msgid "Render complete"
 msgstr "Osatu da errendatzea"
 
-#: ../pitivi/render.py:1022
+#: ../pitivi/render.py:989
 #, python-format
 msgid "\"%s\" has finished rendering."
-msgstr "\"%s\"(r)en errendatzea osatu da."
+msgstr "“%s”(r)en errendatzea osatu da."
 
-#: ../pitivi/titleeditor.py:92 ../pitivi/titleeditor.py:99
-msgid "Custom"
-msgstr "Pertsonalizatua"
+#: ../pitivi/titleeditor.py:91 ../pitivi/titleeditor.py:98
+msgid "Absolute"
+msgstr "Absolutua"
 
-#: ../pitivi/titleeditor.py:93
+#: ../pitivi/titleeditor.py:92
 msgid "Top"
-msgstr "Goiko aldea"
+msgstr "Goian"
 
-#: ../pitivi/titleeditor.py:94 ../pitivi/titleeditor.py:101
+#: ../pitivi/titleeditor.py:93 ../pitivi/titleeditor.py:100
 msgid "Center"
-msgstr "Erdiko aldea"
+msgstr "Erdian"
+
+#: ../pitivi/titleeditor.py:94
+msgid "Bottom"
+msgstr "Behean"
 
 #: ../pitivi/titleeditor.py:95
-msgid "Bottom"
-msgstr "Beheko aldea"
-
-#: ../pitivi/titleeditor.py:96
 msgid "Baseline"
 msgstr "Oinarri-lerroa"
 
-#: ../pitivi/titleeditor.py:100
+#: ../pitivi/titleeditor.py:99
 msgid "Left"
-msgstr "Ezkerreko aldea"
+msgstr "Ezkerrera"
 
-#: ../pitivi/titleeditor.py:102
+#: ../pitivi/titleeditor.py:101
 msgid "Right"
-msgstr "Eskuineko aldea"
-
-#: ../pitivi/transitions.py:82
-msgid "Normal"
-msgstr "Normala"
+msgstr "Eskuinera"
 
 #: ../pitivi/transitions.py:84
+msgid "Normal"
+msgstr "Arrunta"
+
+#: ../pitivi/transitions.py:89
 msgid "Loop"
 msgstr "Begizta"
 
-#: ../pitivi/transitions.py:97
+#: ../pitivi/transitions.py:96
 msgid "Reverse direction"
 msgstr "Alderantzizko noranzkoa"
 
-#: ../pitivi/transitions.py:111
+#: ../pitivi/transitions.py:109
 msgid ""
 "Create a transition by overlapping two adjacent clips on the same layer. "
 "Click the transition on the timeline to change the transition type."
-msgstr ""
-"Trantsizio bat sortzeko, gainjarri geruza berean ondoz ondoko bi klip. "
-"Trantsizio mota  aldatzeko, egin klik trantsizioan, denbora-lerroan."
+msgstr "Trantsizio bat sortzeko, gainjarri geruza berean ondoz ondoko bi klip. Trantsizio mota  aldatzeko, egin klik trantsizioan, denbora-lerroan."
 
-#: ../pitivi/transitions.py:206
+#: ../pitivi/transitions.py:238
 msgid "Slow"
 msgstr "Motela"
 
-#: ../pitivi/transitions.py:208
+#: ../pitivi/transitions.py:240
 msgid "Fast"
 msgstr "Bizkorra"
 
-#: ../pitivi/transitions.py:210
+#: ../pitivi/transitions.py:242
 msgid "Epileptic"
 msgstr "Epileptikoa"
 
-#: ../pitivi/transitions.py:214
+#: ../pitivi/transitions.py:246
 msgid "Sharp"
 msgstr "Bat-batekoa"
 
-#: ../pitivi/transitions.py:216
+#: ../pitivi/transitions.py:248
 msgid "Smooth"
 msgstr "Leuna"
 
-#: ../pitivi/viewer.py:83
+#: ../pitivi/viewer/viewer.py:76
 msgid "Currently playing"
 msgstr "Orain erreproduzitzen"
 
-#: ../pitivi/viewer.py:219
+#: ../pitivi/viewer/viewer.py:223
 msgid "Go to the beginning of the timeline"
 msgstr "Joan denbora-lerroaren hasierara"
 
-#: ../pitivi/viewer.py:226
+#: ../pitivi/viewer/viewer.py:230
 msgid "Go back one second"
 msgstr "Egin segundo bat atzera"
 
-#: ../pitivi/viewer.py:238
+#: ../pitivi/viewer/viewer.py:242
 msgid "Go forward one second"
 msgstr "Egin segundo bat aurrera"
 
-#: ../pitivi/viewer.py:246
+#: ../pitivi/viewer/viewer.py:250
 msgid "Go to the end of the timeline"
 msgstr "Joan denbora-lerroaren bukaerara"
 
-#: ../pitivi/viewer.py:253
+#: ../pitivi/viewer/viewer.py:257
 msgid ""
 "Enter a timecode or frame number\n"
 "and press \"Enter\" to go to that position"
-msgstr ""
-"Sartu denbora-kode edo fotograma-zenbaki bat,\n"
+msgstr "Sartu denbora-kode edo fotograma-zenbaki bat,\n"
 "eta sakatu \"Sartu\" hara joateko"
 
-#: ../pitivi/viewer.py:261
+#: ../pitivi/viewer/viewer.py:265
 msgid ""
 "Detach the viewer\n"
 "You can re-attach it by closing the newly created window."
-msgstr ""
-"Desuztartu ikustailea\n"
+msgstr "Desuztartu ikustailea\n"
 "Berriz uztartzeko, itxi sortu berri duzun leihoa."
 
-#: ../pitivi/viewer.py:373 ../pitivi/viewer.py:411
+#: ../pitivi/viewer/viewer.py:355 ../pitivi/viewer/viewer.py:405
 msgid "Show this window in fullscreen"
 msgstr "Bistaratu leiho hau pantaila osoan"
 
-#: ../pitivi/viewer.py:408
+#: ../pitivi/viewer/viewer.py:402
 msgid "Exit fullscreen mode"
 msgstr "Atera pantaila osoko modutik"
 
-#: ../pitivi/timeline/layer.py:90
-msgid "Set a personalized name for this layer"
-msgstr "Ezarri izen pertsonalizatu bat geruza honentzat"
-
-#: ../pitivi/timeline/layer.py:99
+#. Translators: This is a tooltip for a clip's keyframe curve,
+#. showing what the keyframe curve affects, the timestamp at
+#. the mouse cursor location, and the value at that timestamp.
+#: ../pitivi/timeline/elements.py:372
+#, python-format
 msgid ""
-"<b>Solo mode</b>\n"
-"Other non-soloed layers will be disabled as long as this is enabled."
-msgstr ""
-"<b>Bakarkako modua</b>\n"
-"Bakarkako moduan ez dauden geruzak desgaituta egongo dira hau gaituta dagoen "
-"bitartean."
+"Property: %s\n"
+"Timestamp: %s\n"
+"Value: %s"
+msgstr "Propietatea: %s\n"
+"Denbora-zigilua: %s\n"
+"Balioa: %s"
 
-#: ../pitivi/timeline/layer.py:115
-msgid ""
-"<b>Enable or disable this layer</b>\n"
-"Disabled layers will not play nor render."
-msgstr ""
-"<b>Gaitu edo desgaitu geruza hau</b>\n"
-"Desgaitutako geruzak ez dira ez erreproduzituko eta ez errendatuko."
+#: ../pitivi/timeline/elements.py:1211
+msgid "Audio crossfade"
+msgstr "Audioaren nahaste gurutzatua"
 
-#: ../pitivi/timeline/layer.py:137
-msgid "_Delete layer"
-msgstr "_Ezabatu geruza"
-
-#: ../pitivi/timeline/layer.py:139
-msgid "Move layer up"
-msgstr "Mugitu geruza gorantz"
-
-#: ../pitivi/timeline/layer.py:141
-msgid "Move layer down"
-msgstr "Mugitu geruza beherantz"
-
-#: ../pitivi/timeline/layer.py:143
+#: ../pitivi/timeline/layer.py:166
 msgid "Move layer to top"
 msgstr "Mugitu geruza goraino"
 
-#: ../pitivi/timeline/layer.py:146
+#: ../pitivi/timeline/layer.py:172
+msgid "Move layer up"
+msgstr "Mugitu geruza gorantz"
+
+#: ../pitivi/timeline/layer.py:178
+msgid "Move layer down"
+msgstr "Mugitu geruza beherantz"
+
+#: ../pitivi/timeline/layer.py:184
 msgid "Move layer to bottom"
 msgstr "Mugitu geruza beheraino"
 
-#: ../pitivi/timeline/layer.py:182
-msgid "Make layer invisible"
-msgstr "Bihurtu geruza ikusezin"
+#: ../pitivi/timeline/layer.py:190
+msgid "Delete layer"
+msgstr "Ezabatu geruza"
 
-#: ../pitivi/timeline/layer.py:184
-msgid "Make layer visible"
-msgstr "Jarri geruza ikusgai"
+#: ../pitivi/timeline/layer.py:274
+#, python-format
+msgid "Layer %d"
+msgstr "%d geruza"
 
-#: ../pitivi/timeline/layer.py:305
-msgid "Opacity:"
-msgstr "Opakutasuna:"
-
-#: ../pitivi/timeline/layer.py:314
-msgid "Change video opacity"
-msgstr "Aldatu bideoaren opakutasuna"
-
-#: ../pitivi/timeline/layer.py:332
-msgid "Vol:"
-msgstr "Bolumena:"
-
-#: ../pitivi/timeline/layer.py:335
-msgid "Pan:"
-msgstr "Panoramika:"
-
-#: ../pitivi/timeline/layer.py:343
-msgid "Change audio panning"
-msgstr "Aldatu audioaren panoramika"
-
-#: ../pitivi/timeline/ruler.py:223
+#: ../pitivi/timeline/ruler.py:224
 #, python-format
 msgid "Frame #%d"
 msgstr "%d. fotograma"
 
-#: ../pitivi/timeline/timeline.py:57 ../pitivi/timeline/timeline.py:70
-msgid "Behavior"
-msgstr "Portaera"
-
-#: ../pitivi/timeline/timeline.py:58
+#: ../pitivi/timeline/timeline.py:74
 msgid "Snap distance"
 msgstr "Atxikitze-distantzia"
 
-#: ../pitivi/timeline/timeline.py:59
+#: ../pitivi/timeline/timeline.py:75
 msgid ""
 "Threshold (in pixels) at which two clips will snap together when dragging or "
 "trimming."
-msgstr ""
-"Atalase horretatik aurrera (pixeletan), bi klip elkarri atxikittzen zaizkio "
-"klipak arrastatzen edo moztean."
+msgstr "Atalase horretatik aurrera (pixeletan), bi klip elkarri atxikitzen zaizkio klipak arrastatzen edo moztean."
 
-#: ../pitivi/timeline/timeline.py:71
+#: ../pitivi/timeline/timeline.py:87
 msgid "Image clip duration"
 msgstr "Irudi-kliparen iraupena"
 
-#: ../pitivi/timeline/timeline.py:73
+#: ../pitivi/timeline/timeline.py:89
 msgid ""
-"Default clip length (in miliseconds) of images when inserting on the "
+"Default clip length (in milliseconds) of images when inserting on the "
 "timeline."
-msgstr ""
-"Irudi-klipen iraupen lehenetsia (milisegundotan), denbora-lerroan sartzen "
-"direnean."
+msgstr "Irudien klip-iraupen lehenetsia (milisegundotan), denbora-lerroan sartzen direnean."
 
-#: ../pitivi/timeline/timeline.py:919
-msgid ""
-"Toggle gapless mode\n"
-"When enabled, adjacent clips automatically move to fill gaps."
-msgstr ""
-"Gaitu edo desgaitu hutsunerik gabeko modua\n"
-"Gaituta dagoenean, ondoz ondoko klipak automatikoki mugitzen dira hutsuneak "
-"betetzeko."
+#: ../pitivi/timeline/timeline.py:100
+msgid "Left click also seeks"
+msgstr "Ezkerreko klika ere bilatzen du"
 
-#. TODO: use GAction + GActionGroup (Gio.SimpleAction +
-#. Gio.SimpleActionGroup)
-#. Action list items can vary in size (1-6 items). The first one is the
-#. name, and it is the only mandatory option. All the other options are
-#. optional, and if omitted will default to None.
-#.
-#. name (required), stock ID, translatable label,
-#. keyboard shortcut, translatable tooltip, callback function
-#: ../pitivi/timeline/timeline.py:1009
-msgid "Zoom In"
+#: ../pitivi/timeline/timeline.py:102
+msgid "Whether left-clicking also seeks besides selecting and editing clips."
+msgstr "Ezkerreko klikak bilaketak ere egingo dituen ala ez, klipak hautatzeaz eta editatzeaz gain."
+
+#: ../pitivi/timeline/timeline.py:1469 ../pitivi/dialogs/prefs.py:53
+msgid "Timeline"
+msgstr "Denbora-lerroa"
+
+#: ../pitivi/timeline/timeline.py:1476
+msgid "Delete selected clips"
+msgstr "Ezabatu hautatutako klipak"
+
+#: ../pitivi/timeline/timeline.py:1482
+msgid "Group selected clips together"
+msgstr "Taldekatu hautatutako klipak"
+
+#: ../pitivi/timeline/timeline.py:1488
+msgid "Ungroup selected clips"
+msgstr "Banandu hautatutako klipak"
+
+#: ../pitivi/timeline/timeline.py:1494
+msgid "Copy selected clips"
+msgstr "Kopiatu hautatutako klipak"
+
+#: ../pitivi/timeline/timeline.py:1500
+msgid "Paste selected clips"
+msgstr "Itsatsi hautatutako klipak"
+
+#: ../pitivi/timeline/timeline.py:1512
+msgid "Split the clip at the position"
+msgstr "Zatitu klipa honako posizioan:"
+
+#: ../pitivi/timeline/timeline.py:1518
+msgid "Add keyframe to the keyframe curve of selected clip"
+msgstr "Gehitu gako-fotograma hautatutako kliparen gako-fotogramen kurbari"
+
+#: ../pitivi/timeline/timeline.py:1523
+msgid "Timeline Navigation"
+msgstr "Denbora-lerroaren nabigazioa"
+
+#: ../pitivi/timeline/timeline.py:1530
+msgid "Zoom in"
 msgstr "Handiagotu"
 
-#: ../pitivi/timeline/timeline.py:1010
-msgid "Zoom Out"
+#: ../pitivi/timeline/timeline.py:1536
+msgid "Zoom out"
 msgstr "Txikiagotu"
 
-#: ../pitivi/timeline/timeline.py:1011 ../pitivi/utils/widgets.py:1035
-msgid "Zoom Fit"
-msgstr "Doitu zooma"
+#: ../pitivi/timeline/timeline.py:1542
+msgid "Adjust zoom to fit the project to the window"
+msgstr "Doitu zooma proiektua leihora egokitzeko"
 
-#: ../pitivi/timeline/timeline.py:1035
-msgid "Delete Selected"
-msgstr "Ezabatu hautatuak"
+#: ../pitivi/timeline/timeline.py:1553
+msgid "Seek backward one frame"
+msgstr "Bilatu fotograma bat atzerantz"
 
-#: ../pitivi/timeline/timeline.py:1037
-msgid "Ungroup"
-msgstr "Banandu"
+#: ../pitivi/timeline/timeline.py:1559
+msgid "Seek forward one frame"
+msgstr "Bilatu fotograma bat aurrerantz"
 
-#: ../pitivi/timeline/timeline.py:1038
-msgid "Ungroup clips"
-msgstr "Banandu klipak"
+#: ../pitivi/timeline/timeline.py:1566
+msgid "Seek backward one second"
+msgstr "Bilatu segundo bat atzerantz"
 
-#. Translators: This is an action, the title of a button
-#: ../pitivi/timeline/timeline.py:1041
-msgid "Group"
-msgstr "Taldekatu"
-
-#: ../pitivi/timeline/timeline.py:1042
-msgid "Group clips"
-msgstr "Taldekatu klipak"
-
-#: ../pitivi/timeline/timeline.py:1044
-msgid "Align"
-msgstr "Lerrokatu"
-
-#: ../pitivi/timeline/timeline.py:1045
-msgid "Align clips based on their soundtracks"
-msgstr "Lerrokatu klipak haien soinu-pisten arabera"
-
-#: ../pitivi/timeline/timeline.py:1050
-msgid "Start Playback"
-msgstr "Hasi erreproduzitzen"
-
-#: ../pitivi/timeline/timeline.py:1052
-msgid "Split"
-msgstr "Zatitu"
-
-#: ../pitivi/timeline/timeline.py:1053
-msgid "Split clip at playhead position"
-msgstr "Zatitu klipa uneko erreprodukzio-puntuan"
-
-#: ../pitivi/timeline/timeline.py:1055
-msgid "Add a Keyframe"
-msgstr "Gehitu gako-fotograma bat"
-
-#: ../pitivi/timeline/timeline.py:1056
-msgid "Add a keyframe"
-msgstr "Gehitu gako-fotograma bat"
+#: ../pitivi/timeline/timeline.py:1573
+msgid "Seek forward one second"
+msgstr "Bilatu segundo bat aurrerantz"
 
 #. Translators: a label showing an invalid framerate value
 #: ../pitivi/dialogs/clipmediaprops.py:112
@@ -1622,251 +1614,501 @@ msgstr "baliogabea (%s fps)"
 msgid "Image:"
 msgstr "Irudia:"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:62
+#: ../pitivi/dialogs/filelisterrordialog.py:54
 msgid "Unknown reason"
 msgstr "Arrazoi ezezaguna"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:92
+#: ../pitivi/dialogs/filelisterrordialog.py:86
 msgid "Problem:"
 msgstr "Arazoa:"
 
-#: ../pitivi/dialogs/filelisterrordialog.py:100
+#: ../pitivi/dialogs/filelisterrordialog.py:94
 msgid "Extra information:"
 msgstr "Informazio gehiago:"
 
-#: ../pitivi/dialogs/prefs.py:283 ../pitivi/utils/widgets.py:760
+#. Translators: This adds a semicolon to an already
+#. translated name of a preference.
+#: ../pitivi/dialogs/prefs.py:179 ../pitivi/utils/widgets.py:677
+#, python-format
+msgid "%(preference_label)s:"
+msgstr "%(preference_label)s:"
+
+#: ../pitivi/dialogs/prefs.py:189 ../pitivi/utils/widgets.py:741
 msgid "Reset to default value"
 msgstr "Berrezarri balio lehenetsia"
 
-#: ../pitivi/dialogs/startupwizard.py:71
+#: ../pitivi/dialogs/prefs.py:250
+msgid "Shortcuts"
+msgstr "Lasterbideak"
+
+#: ../pitivi/dialogs/prefs.py:280
+msgid "Reset the shortcut to the default accelerator"
+msgstr "Berrezarri lasterbidea bizkortzaile lehenetsira"
+
+#: ../pitivi/dialogs/prefs.py:436
+msgid "Set Shortcut"
+msgstr "Ezarri laster-tekla"
+
+#. Setup the widgets used in the dialog.
+#: ../pitivi/dialogs/prefs.py:451
+msgid "Apply"
+msgstr "Aplikatu"
+
+#: ../pitivi/dialogs/prefs.py:454
+msgid "Apply the accelerator to this shortcut."
+msgstr "Aplikatu bizkortzailea lasterbide honi."
+
+#: ../pitivi/dialogs/prefs.py:457
+msgid "Replace"
+msgstr "Ordeztu"
+
+#: ../pitivi/dialogs/prefs.py:460
+msgid ""
+"Remove this accelerator from where it was used previously and set it for "
+"this shortcut."
+msgstr "Kendu bizkortzaile hau lehenago erabiltzen zen tokitik eta ezarri lasterbide honetarako."
+
+#: ../pitivi/dialogs/prefs.py:467
+#, python-format
+msgid "Enter new shortcut for <b>%s</b>, or press Esc to cancel."
+msgstr "Sartu lasterbide berria <b>%s</b> ekintzarako, edo sakatu Esc uzteko."
+
+#: ../pitivi/dialogs/prefs.py:476
+msgid ""
+"The accelerator you are trying to set might interfere with typing. Try using "
+"Control, Shift or Alt with some other key, please."
+msgstr "Ezartzen saiatzen ari zaren bizkortzaileak idazketari traba egin diezaioke. Saiatu Control, Shift edo Alt beste teklaren batekin erabiltzen."
+
+#: ../pitivi/dialogs/prefs.py:510
+#, python-format
+msgid ""
+"This key combination is already used by <b>%s</b>. Press Replace to use it "
+"for <b>%s</b> instead."
+msgstr "Tekla-konbinazio hori jadanik erabiltzen ari da <b>%s</b> ekintzarako. Sakatu 'Ordeztu' hura <b>%s</b> ekintzarako erabiltzeko."
+
+#: ../pitivi/dialogs/startupwizard.py:72
 msgid "Projects"
 msgstr "Proiektuak"
 
-#: ../pitivi/dialogs/startupwizard.py:180
+#: ../pitivi/dialogs/startupwizard.py:163
 #, python-format
 msgid "Pitivi %s is available."
 msgstr "Pitivi %s erabilgarri dago."
 
-#. Translators: "non local" means the project is not stored
-#. on a local filesystem
-#: ../pitivi/utils/misc.py:115
-#, python-format
-msgid "%s doesn't yet handle non-local projects"
-msgstr "%s(e)k oraindik ezin ditu erabili lokalak ez diren proiektuak"
+#: ../pitivi/utils/misc.py:266
+msgid ""
+"Failed to open the user manual. Make sure to have either the `yelp` GNOME  "
+"documentation viewer or a web browser installed"
+msgstr "Huts egin du erabiltzaile-eskuliburua irekitzeak. Ziurtatu `yelp` GNOME dokumentazio-ikustailea edo web arakatzaile bat instalatuta dagoela"
 
-#: ../pitivi/utils/misc.py:244
+#: ../pitivi/utils/misc.py:275
 msgid ""
 "The system's locale that you are using is not UTF-8 capable. Unicode support "
 "is required for Python3 software like Pitivi. Please correct your system "
 "settings; if you try to use Pitivi with a broken locale, weird bugs will "
 "happen."
-msgstr ""
-"Sisteman orain erabiltzen ari zaren eskualdeko ezarpenak ez dira "
-"bateragarriak UTF-8 formatuarekin. Unicode beharrezkoa da Python 3 "
-"softwareak erabiltzeko (adibidez, Pitivi). Zuzendu zure sistemaren "
-"ezarpenak; eskualdeko ezarpenak zuzen ez badaude eta PItivi erabiltzen "
-"saiatzen bazara, errore arraroak gertatuko dira."
+msgstr "Sisteman orain erabiltzen ari zaren eskualdeko ezarpenak ez dira bateragarriak UTF-8 formatuarekin. Unicode beharrezkoa da Python 3 softwareak erabiltzeko (adibidez, Pitivi). Zuzendu zure sistemaren ezarpenak; eskualdeko ezarpenak zuzen ez badaude eta PItivi erabiltzen saiatzen bazara, errore arraroak gertatuko dira."
 
-#: ../pitivi/utils/misc.py:254
+#: ../pitivi/utils/misc.py:285
 msgid "Error while decoding a string"
 msgstr "Errore bat gertatu da kate bat deskodetzean"
 
-#: ../pitivi/utils/ui.py:232
+#: ../pitivi/utils/ui.py:281
+msgid ""
+"\n"
+"<b>Proxy creation progress: "
+msgstr ""
+
+#: ../pitivi/utils/ui.py:308
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audioa:</b> %d kanal, %d <i>Hz</i>-ekin (%d <i>bit</i>)"
 msgstr[1] "<b>Audioa:</b> %d kanal %d <i>Hz</i>-ekin (%d <i>bit</i>)-ra"
 
-#: ../pitivi/utils/ui.py:242
+#: ../pitivi/utils/ui.py:318
 #, python-format
 msgid "<b>Video:</b> %d×%d <i>pixels</i> at %.3f <i>fps</i>"
 msgstr "<b>Bideoa:</b> %d×%d <i>pixel</i> %.3f <i>fps</i>-ean"
 
-#: ../pitivi/utils/ui.py:250
+#: ../pitivi/utils/ui.py:326
 #, python-format
 msgid "<b>Image:</b> %d×%d <i>pixels</i>"
 msgstr "<b>Irudia:</b> %d×%d <i>pixel</i>"
 
-#: ../pitivi/utils/ui.py:297 ../pitivi/utils/ui.py:325
-#: ../pitivi/utils/ui.py:349
+#: ../pitivi/utils/ui.py:381 ../pitivi/utils/ui.py:408
+#: ../pitivi/utils/ui.py:432
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "Ordu %d"
+msgstr[0] "ordu %d"
 msgstr[1] "%d ordu"
 
-#: ../pitivi/utils/ui.py:300 ../pitivi/utils/ui.py:328
-#: ../pitivi/utils/ui.py:352
+#: ../pitivi/utils/ui.py:384 ../pitivi/utils/ui.py:411
+#: ../pitivi/utils/ui.py:435
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "Minutu %d"
+msgstr[0] "minutu %d"
 msgstr[1] "%d minutu"
 
-#: ../pitivi/utils/ui.py:303 ../pitivi/utils/ui.py:331
-#: ../pitivi/utils/ui.py:355
+#: ../pitivi/utils/ui.py:387 ../pitivi/utils/ui.py:414
+#: ../pitivi/utils/ui.py:438
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] "Segundo %d"
+msgstr[0] "segundo %d"
 msgstr[1] "%d segundo"
 
-#: ../pitivi/utils/ui.py:323
+#: ../pitivi/utils/ui.py:406
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] "Egun %d"
+msgstr[0] "egun %d"
 msgstr[1] "%d egun"
 
 #. Translators: fps is for frames per second
-#: ../pitivi/utils/ui.py:408 ../pitivi/utils/ui.py:409
-#: ../pitivi/utils/ui.py:410 ../pitivi/utils/ui.py:412
-#: ../pitivi/utils/ui.py:413 ../pitivi/utils/ui.py:415
-#: ../pitivi/utils/ui.py:416 ../pitivi/utils/ui.py:418
-#: ../pitivi/utils/ui.py:419
+#: ../pitivi/utils/ui.py:542 ../pitivi/utils/ui.py:543
+#: ../pitivi/utils/ui.py:544 ../pitivi/utils/ui.py:546
+#: ../pitivi/utils/ui.py:547 ../pitivi/utils/ui.py:549
+#: ../pitivi/utils/ui.py:550 ../pitivi/utils/ui.py:552
+#: ../pitivi/utils/ui.py:553
 #, python-format
 msgid "%d fps"
 msgstr "%d fps"
 
-#: ../pitivi/utils/ui.py:411
+#: ../pitivi/utils/ui.py:545
 #, python-format
 msgid "%.3f fps"
 msgstr "%.3f fps"
 
-#: ../pitivi/utils/ui.py:414 ../pitivi/utils/ui.py:417
+#: ../pitivi/utils/ui.py:548 ../pitivi/utils/ui.py:551
 #, python-format
 msgid "%.2f fps"
 msgstr "%.2f fps"
 
-#: ../pitivi/utils/ui.py:423 ../pitivi/utils/ui.py:424
-#: ../pitivi/utils/ui.py:425 ../pitivi/utils/ui.py:427
-#: ../pitivi/utils/ui.py:428
+#: ../pitivi/utils/ui.py:557 ../pitivi/utils/ui.py:558
+#: ../pitivi/utils/ui.py:559 ../pitivi/utils/ui.py:561
+#: ../pitivi/utils/ui.py:562
 #, python-format
 msgid "%d kHz"
 msgstr "%d kHz"
 
-#: ../pitivi/utils/ui.py:426
+#: ../pitivi/utils/ui.py:560
 #, python-format
 msgid "%.1f kHz"
 msgstr "%.1f kHz"
 
-#: ../pitivi/utils/ui.py:431
+#: ../pitivi/utils/ui.py:565
 msgid "6 Channels (5.1)"
 msgstr "6 kanal (5.1)"
 
-#: ../pitivi/utils/ui.py:432
+#: ../pitivi/utils/ui.py:566
 msgid "4 Channels (4.0)"
 msgstr "4 kanal (4.0)"
 
-#: ../pitivi/utils/ui.py:433
+#: ../pitivi/utils/ui.py:567
 msgid "Stereo"
 msgstr "Estereoa"
 
-#: ../pitivi/utils/ui.py:434
+#: ../pitivi/utils/ui.py:568
 msgid "Mono"
 msgstr "Monoa"
 
-#: ../pitivi/utils/ui.py:439
+#: ../pitivi/utils/ui.py:573
 msgid "Square"
 msgstr "Karratua"
 
-#: ../pitivi/utils/ui.py:440
+#: ../pitivi/utils/ui.py:574
 msgid "480p"
 msgstr "480p"
 
-#: ../pitivi/utils/ui.py:441
+#: ../pitivi/utils/ui.py:575
 msgid "480i"
 msgstr "480i"
 
-#: ../pitivi/utils/ui.py:442
+#: ../pitivi/utils/ui.py:576
 msgid "480p Wide"
 msgstr "480p zabal"
 
-#: ../pitivi/utils/ui.py:443
+#: ../pitivi/utils/ui.py:577
 msgid "480i Wide"
 msgstr "480i zabal"
 
-#: ../pitivi/utils/ui.py:444
+#: ../pitivi/utils/ui.py:578
 msgid "576p"
 msgstr "576p"
 
-#: ../pitivi/utils/ui.py:445
+#: ../pitivi/utils/ui.py:579
 msgid "576i"
 msgstr "576i"
 
-#: ../pitivi/utils/ui.py:446
+#: ../pitivi/utils/ui.py:580
 msgid "576p Wide"
 msgstr "576p zabal"
 
-#: ../pitivi/utils/ui.py:447
+#: ../pitivi/utils/ui.py:581
 msgid "576i Wide"
 msgstr "576 zabal"
 
-#: ../pitivi/utils/ui.py:452
+#: ../pitivi/utils/ui.py:585
+msgid "Standard (4:3)"
+msgstr "Estandarra (4:3)"
+
+#: ../pitivi/utils/ui.py:586
 msgid "DV (15:11)"
 msgstr "DV (15:11)"
 
-#: ../pitivi/utils/ui.py:453
+#: ../pitivi/utils/ui.py:587
 msgid "DV Widescreen (16:9)"
 msgstr "DV panoramikoa (16:9)"
 
-#: ../pitivi/utils/ui.py:454
+#: ../pitivi/utils/ui.py:588
 msgid "Cinema (1.37)"
 msgstr "Zinema (1,37)"
 
-#: ../pitivi/utils/ui.py:455
+#: ../pitivi/utils/ui.py:589
 msgid "Cinema (1.66)"
 msgstr "Zinema (1,66)"
 
-#: ../pitivi/utils/ui.py:456
+#: ../pitivi/utils/ui.py:590
 msgid "Cinema (1.85)"
 msgstr "Zinema (1,85)"
 
-#: ../pitivi/utils/ui.py:457
+#: ../pitivi/utils/ui.py:591
 msgid "Anamorphic (2.35)"
 msgstr "Anamorfikoa (2,35)"
 
-#: ../pitivi/utils/ui.py:458
+#: ../pitivi/utils/ui.py:592
 msgid "Anamorphic (2.39)"
 msgstr "Anamorfikoa (2,39)"
 
-#: ../pitivi/utils/ui.py:459
+#: ../pitivi/utils/ui.py:593
 msgid "Anamorphic (2.4)"
 msgstr "Anamorfikoa (2,4)"
 
-#: ../pitivi/utils/widgets.py:84
+#: ../pitivi/utils/widgets.py:76
 msgid "Implement Me"
 msgstr "Inplementatu"
 
-#: ../pitivi/utils/widgets.py:661
+#: ../pitivi/utils/widgets.py:642
 msgid "No properties."
 msgstr "Propietaterik ez."
 
 #. Avoid the ugly selection outline
-#: ../pitivi/utils/widgets.py:751
+#: ../pitivi/utils/widgets.py:726
 msgid "Show keyframes for this value"
 msgstr "Erakutsi balio honen gako-fotogramak"
 
-#: ../pitivi/utils/widgets.py:921
+#: ../pitivi/utils/widgets.py:893
 #, python-format
 msgid "Properties for %s"
 msgstr "%s-(r)en propietateak"
 
-#: ../pitivi/utils/widgets.py:1040
+#: ../pitivi/utils/widgets.py:1030
+msgid "Zoom Fit"
+msgstr "Doitu zooma"
+
+#: ../pitivi/utils/widgets.py:1035
 msgid "Zoom"
 msgstr "Zooma"
 
 #. Translators: %s represents a duration, for example "10 minutes"
-#: ../pitivi/utils/widgets.py:1108
+#: ../pitivi/utils/widgets.py:1109
 #, python-format
 msgid "%s displayed"
 msgstr "%s bistaratuta"
 
-#: ../pitivi/utils/widgets.py:1112
+#: ../pitivi/utils/widgets.py:1113
 #, python-format
 msgid "%d nanoseconds displayed, because we can"
 msgstr "%d nanosegundo bistaratu dira"
+
+#~ msgid "Viewer Zoom"
+#~ msgstr "Ikustailearen zooma"
+
+#~ msgid "Position"
+#~ msgstr "Posizioa"
+
+#~ msgid "Crop"
+#~ msgstr "Moztu"
+
+#~ msgid "Properties for <element>"
+#~ msgstr "<element>-(r)en propietateak"
+
+#~ msgid "Close this message"
+#~ msgstr "Itxi mezu hau"
+
+#~ msgid "Section"
+#~ msgstr "Atala"
+
+#~ msgid "Standard PAL"
+#~ msgstr "PAL estandarra"
+
+#~ msgid "25 FPS"
+#~ msgstr "25 FPS"
+
+#~ msgid "Save changes to the currently selected preset"
+#~ msgstr "Gorde orain hautatua dagoen aurrezarpenari egindako aldaketak"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid "Format"
+#~ msgstr "Formatua"
+
+#~ msgid "MP4"
+#~ msgstr "MP4"
+
+#~ msgid "H.264"
+#~ msgstr "H.264"
+
+#~ msgid "29.97 fps"
+#~ msgstr "29,97 FPS"
+
+#~ msgid "AC-3"
+#~ msgstr "AC-3"
+
+#~ msgid "AAC"
+#~ msgstr "AAC"
+
+#~ msgid "6 channels (5.1)"
+#~ msgstr "6 kanal (5.1)"
+
+#~ msgid "Render Preset"
+#~ msgstr "Errendatzearen aurrezarpenak"
+
+#~ msgid "Folder"
+#~ msgstr "Karpeta"
+
+#~ msgid "File name"
+#~ msgstr "Fitxategi-izena"
+
+#~ msgid "Container format"
+#~ msgstr "Edukitzailearen formatua"
+
+#~ msgid "Draft (no special effects, single pass)"
+#~ msgstr "Zirriborroa (efektu berezirik ez, iraganaldi bakarra)"
+
+#~ msgid "1000 x 1000"
+#~ msgstr "1.000 x 1.000"
+
+#~ msgid "Edit Project Settings..."
+#~ msgstr "Editatu proiektuaren ezarpenak..."
+
+#~ msgid "Enable video"
+#~ msgstr "Gaitu bideoa"
+
+#~ msgid "Enable audio"
+#~ msgstr "Gaitu audioa"
+
+#~ msgid "file thumbnails provided by GNOME's thumbnailers"
+#~ msgstr "GNOMEren aplikazioek egin dituzte fitxategien koadro txikiak"
+
+#~ msgid "All known file formats"
+#~ msgstr "Fitxategi-formatu ezagun guztiak"
+
+#~ msgid "Importing clip %(current_clip)d of %(total)d"
+#~ msgstr "%(current_clip)d klipa inportatzen (%(total)d)"
+
+#~ msgid "No preset"
+#~ msgstr "Ez dago aurrezarpenik"
+
+#~ msgid "Save project as"
+#~ msgstr "Gorde proiektua honela"
+
+#~ msgid "Save project"
+#~ msgstr "Gorde proiektua"
+
+#~ msgid ""
+#~ "We detected the application had a serious problem.\n"
+#~ "There is no other choice than saving your project and <b>restart\n"
+#~ "the application</b> at this point.\n"
+#~ "\n"
+#~ "Note that a severe bug happened and we would be very happy\n"
+#~ "to hear about that to make sure it get fixed.\n"
+#~ "\n"
+#~ "You are very welcome to follow our guide to report bugs:\n"
+#~ "\n"
+#~ "      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">How to report "
+#~ "a bug</a>\n"
+#~ "\n"
+#~ "and we will make sure to get it fixed!"
+#~ msgstr ""
+#~ "Aplikazioak arazo serioak dituela atzeman da.\n"
+#~ "Egoera honetan zure proiektua gorde eta <b>aplikazioa \n"
+#~ "berrabiarazi</b> bakarrik egin daiteke, ez dago bestelako aukerarik.\n"
+#~ "\n"
+#~ "Akats larria gertatu da, eta poztuko ginateke akatsari buruzko "
+#~ "informazioa\n"
+#~ "bidaliko bazenigu akatsa konpon ahal izateko.\n"
+#~ "\n"
+#~ "Eskertuko genizuke akatsei buruz berri emateko gida hau jarraituko "
+#~ "bazenu:\n"
+#~ "\n"
+#~ "      <a href=\"http://wiki.pitivi.org/wiki/Bug_reporting\">Nola eman "
+#~ "akats bati buruz berri</a>\n"
+#~ "eta konponduko dela ziurtatuko dugu!"
+
+#~ msgid "\"%s\" already exists."
+#~ msgstr "\"%s\" badago lehendik."
+
+#~ msgid "Custom"
+#~ msgstr "Pertsonalizatua"
+
+#~ msgid "Set a personalized name for this layer"
+#~ msgstr "Ezarri izen pertsonalizatu bat geruza honentzat"
+
+#~ msgid ""
+#~ "<b>Solo mode</b>\n"
+#~ "Other non-soloed layers will be disabled as long as this is enabled."
+#~ msgstr ""
+#~ "<b>Bakarkako modua</b>\n"
+#~ "Bakarkako moduan ez dauden geruzak desgaituta egongo dira hau gaituta "
+#~ "dagoen bitartean."
+
+#~ msgid ""
+#~ "<b>Enable or disable this layer</b>\n"
+#~ "Disabled layers will not play nor render."
+#~ msgstr ""
+#~ "<b>Gaitu edo desgaitu geruza hau</b>\n"
+#~ "Desgaitutako geruzak ez dira ez erreproduzituko eta ez errendatuko."
+
+#~ msgid "Make layer invisible"
+#~ msgstr "Bihurtu geruza ikusezin"
+
+#~ msgid "Make layer visible"
+#~ msgstr "Jarri geruza ikusgai"
+
+#~ msgid "Opacity:"
+#~ msgstr "Opakutasuna:"
+
+#~ msgid "Change video opacity"
+#~ msgstr "Aldatu bideoaren opakutasuna"
+
+#~ msgid "Vol:"
+#~ msgstr "Bolumena:"
+
+#~ msgid "Pan:"
+#~ msgstr "Panoramika:"
+
+#~ msgid "Change audio panning"
+#~ msgstr "Aldatu audioaren panoramika"
+
+#~ msgid "Behavior"
+#~ msgstr "Portaera"
+
+#~ msgid "Start Playback"
+#~ msgstr "Hasi erreproduzitzen"
+
+#~ msgid "Add a Keyframe"
+#~ msgstr "Gehitu gako-fotograma bat"
+
+#~ msgid "Add a keyframe"
+#~ msgstr "Gehitu gako-fotograma bat"
+
+#~ msgid "%s doesn't yet handle non-local projects"
+#~ msgstr "%s(e)k oraindik ezin ditu erabili lokalak ez diren proiektuak"
 
 #~ msgid "Details"
 #~ msgstr "Xehetasunak"
