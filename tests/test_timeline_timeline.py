@@ -777,15 +777,17 @@ class TestClipsEdges(BaseTestTimeline):
         timeline = timeline_container.timeline
         clips = self.addClipsSimple(timeline, 5)
         timeline.ges_timeline.layers[0].remove_clip(clips[0])
+        self.add_clip(timeline.ges_timeline.layers[0], 5, 0, 10)
 
-        self.assertEqual(timeline_container.first_clip_edge(after=0), 10)
+        self.assertEqual(timeline_container.first_clip_edge(after=0), 5)
         self.assertEqual(timeline_container.first_clip_edge(after=9), 10)
-        self.assertEqual(timeline_container.first_clip_edge(after=10), 20)
+        self.assertEqual(timeline_container.first_clip_edge(after=10), 15)
         self.assertEqual(timeline_container.first_clip_edge(after=48), 50)
         self.assertEqual(timeline_container.first_clip_edge(after=49), 50)
 
         self.assertEqual(timeline_container.first_clip_edge(before=0), None)
         self.assertEqual(timeline_container.first_clip_edge(before=1), 0)
-        self.assertEqual(timeline_container.first_clip_edge(before=9), 0)
-        self.assertEqual(timeline_container.first_clip_edge(before=10), 0)
+        self.assertEqual(timeline_container.first_clip_edge(before=9), 5)
+        self.assertEqual(timeline_container.first_clip_edge(before=10), 5)
         self.assertEqual(timeline_container.first_clip_edge(before=11), 10)
+        self.assertEqual(timeline_container.first_clip_edge(before=20), 15)
