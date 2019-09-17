@@ -238,10 +238,14 @@ class NumericWidget(Gtk.Box, DynamicWidget):
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
 
+        self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
+        self.pack_start(self.spinner, expand=False, fill=False, padding=0)
+        self.spinner.show()
+
         if with_slider:
             self.slider = Gtk.Scale.new(
                 Gtk.Orientation.HORIZONTAL, self.adjustment)
-            self.pack_end(self.slider, expand=False, fill=False, padding=0)
+            self.pack_start(self.slider, expand=False, fill=False, padding=0)
             self.slider.show()
             disable_scroll(self.slider)
             self.slider.set_size_request(width=100, height=-1)
@@ -253,9 +257,6 @@ class NumericWidget(Gtk.Box, DynamicWidget):
                 self.slider.set_fill_level(float(default))
                 self.slider.set_show_fill_level(True)
 
-        self.spinner = Gtk.SpinButton(adjustment=self.adjustment)
-        self.pack_start(self.spinner, expand=False, fill=False, padding=0)
-        self.spinner.show()
         disable_scroll(self.spinner)
 
     def block_signals(self):
