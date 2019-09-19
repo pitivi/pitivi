@@ -75,19 +75,9 @@ class AboutDialog(Gtk.AboutDialog):
                    "Brandon Lewis <brandon_lewis@berkeley.edu>",
                    "Jean-François Fortin Tam <nekohayo@gmail.com>",
                    "",
-                   # Translators: this paragraph is to be translated, the list
-                   # of contributors is shown dynamically as a clickable link
-                   # below it
-                   _("Contributors:\n" +
-                     "A handwritten list here would...\n" +
-                     "• be too long,\n" +
-                     "• be frequently outdated,\n" +
-                     "• not show their relative merit.\n\n" +
-                     "Out of respect for our contributors, we point you instead to:\n"),
-                   # Translators: keep the %s at the end of the 1st line
-                   _("The list of contributors on Ohloh %s\n" +
-                     "Or you can run: git shortlog -s -n")
-                   % "http://ohloh.net/p/pitivi/contributors", ]
+                   _("Contributors:"),
+                   "https://gitlab.gnome.org/GNOME/pitivi/-/graphs/master",
+                   ""]
         self.set_authors(authors)
         # Translators: See
         # https://developer.gnome.org/gtk3/stable/GtkAboutDialog.html#gtk-about-dialog-set-translator-credits
