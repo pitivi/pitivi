@@ -259,14 +259,22 @@ class TestMediaLibrary(BaseTestMediaLibrary):
             project = self.app.project_manager.current_project
             self.assertEqual(project.list_assets(GES.Extractable), [])
 
-    def testNewlyImportedAssetSelected(self):
+    def check_selection_post_import(self, **kwargs):
         samples = ["30fps_numeroted_frames_red.mkv",
                    "30fps_numeroted_frames_blue.webm"]
         with common.cloned_sample(*samples):
-            self.check_import(samples)
-
+            self.check_import(samples, **kwargs)
         self.assertEqual(len(list(self.medialibrary.getSelectedPaths())),
                          len(self.samples))
+
+    def test_newly_imported_asset_selected_optimize_all(self):
+        self.check_selection_post_import(proxying_strategy=ProxyingStrategy.ALL)
+
+    def test_newly_imported_asset_selected_optimize_automatic(self):
+        self.check_selection_post_import(proxying_strategy=ProxyingStrategy.AUTOMATIC)
+
+    def test_newly_imported_asset_selected_optimize_nothing(self):
+        self.check_selection_post_import(proxying_strategy=ProxyingStrategy.NOTHING)
 
     def test_stop_using_proxies(self):
         sample_name = "30fps_numeroted_frames_red.mkv"
