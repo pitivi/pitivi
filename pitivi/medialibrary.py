@@ -901,8 +901,6 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 len(proxying_files), progress,
                 self.__last_proxying_estimate_time)
             self._progressbar.set_text(progress_message)
-            self._last_imported_uris.update([asset.props.id for asset in
-                                             project.loading_assets])
 
         if progress == 100:
             self._doneImporting()
@@ -934,6 +932,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def _assetAddedCb(self, unused_project, asset):
         """Checks whether the asset added to the project should be shown."""
+        self._last_imported_uris.add(asset.props.id)
+
         if asset in [row[COL_ASSET] for row in self.storemodel]:
             self.info("Asset %s already in!", asset.props.id)
             return
@@ -1460,15 +1460,19 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project = None
 
     def __paths_walked_cb(self, uris):
-        """Handles the end of the path walking when importing files and dirs."""
+        """Handles the end of the path walking when importing dragged dirs."""
         if not uris:
             return
+
         if not self._project:
-            self.warning("Cannot add URIs, project missing")
+            return
+
+        # At the end of the import operation, these will be selected.
         self._last_imported_uris = set(uris)
         assets = self._project.assetsForUris(uris)
         if assets:
             # All the files have already been added.
+            # This is the only chance we have to select them.
             self._selectLastImportedUris()
         else:
             self._project.addUris(uris)
