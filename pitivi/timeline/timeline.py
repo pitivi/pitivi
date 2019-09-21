@@ -1894,11 +1894,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             self.info("Nothing to paste.")
             return
 
+        position = self._project.pipeline.getPosition()
         with self.app.action_log.started("paste",
                     finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
                     toplevel=True):
-            position = self._project.pipeline.getPosition()
             copied_group_shallow_copy = self.__copied_group.paste(position)
+            if not copied_group_shallow_copy:
+                self.info("The paste is not possible at position: %s", position)
+                return
+
             try:
                 self.__copied_group = copied_group_shallow_copy.copy(True)
                 self.__copied_group.props.serialize = False

@@ -564,6 +564,18 @@ class TestCopyPaste(BaseTestTimeline):
         self.assertEqual(copied_clips[2].props.start, position)
         self.assertEqual(copied_clips[3].props.start, position + 10)
 
+    def test_paste_not_possible(self):
+        timeline_container = self.copyClips(1)
+        timeline = timeline_container.timeline
+        layer = timeline.ges_timeline.get_layers()[0]
+        project = timeline.ges_timeline.get_asset()
+        self.assertEqual(len(layer.get_clips()), 1)
+
+        position = 0
+        project.pipeline.getPosition = mock.Mock(return_value=position)
+        timeline_container.paste_action.emit("activate", None)
+        self.assertEqual(len(layer.get_clips()), 1)
+
 
 class TestEditing(BaseTestTimeline):
 
