@@ -19,10 +19,8 @@
 from gi.repository import GES
 from gi.repository import GObject
 from gi.repository import Gst
-from gi.repository import GstController
 
 from pitivi.effects import PROPS_TO_IGNORE
-from pitivi.undo.undo import Action
 from pitivi.undo.undo import FinalizingAction
 from pitivi.undo.undo import GObjectObserver
 from pitivi.undo.undo import MetaContainerObserver
@@ -287,7 +285,6 @@ class ClipAction(UndoableAction):
 
     def add(self):
         self.clip.set_name(None)
-        timeline = self.layer.get_timeline()
         children = self.clip.get_children(False)
 
         def child_added_cb(clip, elem):
