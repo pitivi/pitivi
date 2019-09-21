@@ -71,22 +71,22 @@ class TestProjectManager(common.TestCase):
         self.listener = ProjectManagerListener(self.manager)
         self.signals = self.listener.signals
 
-    def testLoadProjectFailedUnknownFormat(self):
+    def test_loading_missing_project_file(self):
         """Checks new-project-failed is emitted for unsuitable formatters."""
-        uri = "file:///Untitled.meh"
-        self.manager.load_project(uri)
+        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+        self.manager.load_project(project_uri)
 
         # loading
         name, args = self.signals[0]
-        self.assertEqual(uri, args[0].get_uri(), self.signals)
+        self.assertEqual(project_uri, args[0].get_uri(), self.signals)
 
         # failed
         name, args = self.signals[1]
         self.assertEqual("new-project-failed", name)
         signalUri, unused_message = args
-        self.assertEqual(uri, signalUri, self.signals)
+        self.assertEqual(project_uri, signalUri, self.signals)
 
-    def testLoadProject(self):
+    def test_new_blank_project_signals(self):
         self.manager.new_blank_project()
 
         name, args = self.signals[0]
