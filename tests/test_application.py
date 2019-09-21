@@ -18,7 +18,10 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the application module."""
 # pylint: disable=missing-docstring,protected-access,no-self-use
+import tempfile
 from unittest import mock
+
+from gi.repository import Gst
 
 from pitivi import application
 from pitivi import configure
@@ -108,3 +111,8 @@ class TestPitivi(common.TestCase):
         with mock.patch.object(app, "inhibit") as inhibit_mock:
             app.simple_inhibit("reason1", "flags1")
             self.assertTrue(inhibit_mock.called)
+
+    def test_loading_missing_file(self):
+        app = common.create_pitivi()
+        project_uri = Gst.filename_to_uri(tempfile.NamedTemporaryFile().name)
+        app.project_manager.load_project(project_uri)
