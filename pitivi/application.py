@@ -111,7 +111,8 @@ class Pitivi(Gtk.Application, Loggable):
             # We need to make sure that the waiting time was more than 50 ms.
             st = Gst.Structure.new_empty("wait")
             st["duration"] = float((now - self._last_action_time) / Gst.SECOND)
-            self._scenario_file.write(st.to_string() + "\n")
+            self._scenario_file.write(st.to_string())
+            self._scenario_file.write("\n")
             self._last_action_time = now
 
         if not isinstance(action, Gst.Structure):
@@ -123,7 +124,8 @@ class Pitivi(Gtk.Application, Loggable):
 
             action = structure
 
-        self._scenario_file.write(action.to_string() + "\n")
+        self._scenario_file.write(action.to_string())
+        self._scenario_file.write("\n")
         self._scenario_file.flush()
 
     def do_startup(self):
@@ -149,11 +151,8 @@ class Pitivi(Gtk.Application, Loggable):
         self.system = get_system()
         self.plugin_manager = PluginManager(self)
 
-        self.project_manager.connect(
-            "new-project-loading", self._newProjectLoadingCb)
-        self.project_manager.connect(
-            "new-project-loaded", self._newProjectLoaded)
-        self.project_manager.connect_after("project-closed", self._projectClosed)
+        self.project_manager.connect("new-project-loaded", self._new_project_loaded_cb)
+        self.project_manager.connect_after("project-closed", self._project_closed_cb)
         self.project_manager.connect("project-saved", self.__project_saved_cb)
 
         self._createActions()
@@ -266,10 +265,7 @@ class Pitivi(Gtk.Application, Loggable):
                 self.write_action("load-project",
                                   serialized_content=content)
 
-    def _newProjectLoadingCb(self, unused_project_manager, project):
-        self._setScenarioFile(project.get_uri())
-
-    def _newProjectLoaded(self, unused_project_manager, project):
+    def _new_project_loaded_cb(self, unused_project_manager, project):
         uri = project.get_uri()
         if uri:
             # We remove the project from recent projects list
@@ -282,17 +278,20 @@ class Pitivi(Gtk.Application, Loggable):
                     raise e
                 pass
             self.recent_manager.add_item(uri)
+
         self.action_log = UndoableActionLog()
         self.action_log.connect("pre-push", self._action_log_pre_push_cb)
         self.action_log.connect("commit", self._actionLogCommit)
         self.action_log.connect("move", self._action_log_move_cb)
         self.project_observer = ProjectObserver(project, self.action_log)
 
+        self._setScenarioFile(project.get_uri())
+
     def __project_saved_cb(self, unused_project_manager, unused_project, uri):
         if uri:
             self.recent_manager.add_item(uri)
 
-    def _projectClosed(self, unused_project_manager, project):
+    def _project_closed_cb(self, unused_project_manager, project):
         if project.loaded:
             self.action_log = None
             self._syncDoUndo()
