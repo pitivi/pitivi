@@ -42,6 +42,7 @@ from pitivi.utils.misc import quantize
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.pipeline import MAX_BRINGING_TO_PAUSED_DURATION
 from pitivi.utils.proxy import get_proxy_target
+from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import CPUUsageTracker
 from pitivi.utils.timeline import Zoomable
 from pitivi.utils.ui import EXPANDED_SIZE
@@ -90,7 +91,7 @@ class PreviewerBin(Gst.Bin, Loggable):
         srcpad, = [pad for pad in self.internal_bin.iterate_src_pads()]
         self.add_pad(Gst.GhostPad.new(None, srcpad))
 
-    def finalize(self, proxy=None):
+    def finalize(self):
         """Finalizes the previewer, saving data to the disk if needed."""
 
 
@@ -137,11 +138,9 @@ class TeedThumbnailBin(PreviewerBin):
 
         return Gst.Bin.do_post_message(self, message)
 
-    def finalize(self, proxy=None):
+    def finalize(self):
         """Finalizes the previewer, saving data to file if needed."""
         self.thumb_cache.commit()
-        if proxy:
-            self.thumb_cache.copy(proxy.get_id())
 
     def do_get_property(self, prop):
         if prop.name == 'uri':
@@ -252,7 +251,7 @@ class WaveformPreviewer(PreviewerBin):
 
         return Gst.Bin.do_post_message(self, message)
 
-    def finalize(self, proxy=None):
+    def finalize(self):
         """Finalizes the previewer, saving data to file if needed."""
         if not self.passthrough and self.peaks:
             # Let's go mono.
@@ -265,15 +264,6 @@ class WaveformPreviewer(PreviewerBin):
                 numpy.save(wavefile, samples)
 
             self.samples = samples
-
-        if proxy and not proxy.get_error():
-            proxy_wavefile = get_wavefile_location_for_uri(proxy.get_id())
-            self.debug("symlinking %s and %s", self.wavefile, proxy_wavefile)
-            try:
-                os.remove(proxy_wavefile)
-            except FileNotFoundError:
-                pass
-            os.symlink(self.wavefile, proxy_wavefile)
 
 
 Gst.Element.register(None, "waveformbin", Gst.Rank.NONE,
@@ -750,6 +740,16 @@ class AssetPreviewer(Previewer, Loggable):
                 self.failures.add(self.position)
                 self.position = -1
             self._schedule_next_thumb_generation()
+        elif message.type == Gst.MessageType.STREAM_COLLECTION and isinstance(message.src, GES.Timeline):
+            # Make sure we only work with the video track when thumbnailing
+            # nested timelines.
+            collection = message.parse_stream_collection()
+            for i in range(collection.get_size()):
+                stream = collection.get_stream(i)
+                if stream.get_stream_type() == Gst.StreamType.VIDEO:
+                    message.src.send_event(Gst.Event.new_select_streams([stream.get_stream_id()]))
+                    break
+
         return Gst.BusSyncReply.PASS
 
     def __preroll_timed_out_cb(self):
@@ -817,8 +817,6 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         self.ges_elem = ges_elem
         self.thumbs = {}
 
-        self._ensure_proxy_thumbnails_cache()
-
         # Connect signals and fire things up
         self.ges_elem.connect("notify::in-point", self._inpoint_changed_cb)
         self.ges_elem.connect("notify::duration", self._duration_changed_cb)
@@ -833,6 +831,12 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
 
         for thumb in self.get_children():
             thumb.props.opacity = opacity
+
+    def refresh(self):
+        """Recreates the thumbnails cache."""
+        self.stop_generation()
+        self.thumb_cache = ThumbnailCache.get(self.uri)
+        self._update_thumbnails()
 
     def _update_thumbnails(self):
         """Updates the thumbnail widgets for the clip at the current zoom."""
@@ -869,12 +873,6 @@ class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
         self.queue = queue
         if queue:
             self.become_controlled()
-
-    def _ensure_proxy_thumbnails_cache(self):
-        """Ensures that both the target asset and the proxy assets have caches."""
-        uri = quote_uri(self.ges_elem.props.uri)
-        if self.uri != uri:
-            self.thumb_cache.copy(uri)
 
     def _set_pixbuf(self, pixbuf, position):
         """Sets the pixbuf for the thumbnail at the expected position."""
@@ -926,10 +924,10 @@ class ThumbnailCache(Loggable):
 
     def __init__(self, uri):
         Loggable.__init__(self)
-        self._filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        self._dbfile = os.path.join(thumbs_cache_dir, self._filehash)
-        self._db = sqlite3.connect(self._dbfile)
+        self.uri = uri
+        self.dbfile = self.dbfile_name(uri)
+        self.log("Caching thumbs for %s in %s", uri, self.dbfile)
+        self._db = sqlite3.connect(self.dbfile)
         self._cur = self._db.cursor()
         self._cur.execute("CREATE TABLE IF NOT EXISTS Thumbs "
                           "(Time INTEGER NOT NULL PRIMARY KEY, "
@@ -944,6 +942,29 @@ class ThumbnailCache(Loggable):
     def __existing_positions(self):
         self._cur.execute("SELECT Time FROM Thumbs")
         return {row[0] for row in self._cur.fetchall()}
+
+    @staticmethod
+    def dbfile_name(uri):
+        """Returns the cache file path for the specified URI."""
+        filename = hash_file(Gst.uri_get_location(uri))
+        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
+        return os.path.join(thumbs_cache_dir, filename)
+
+    @classmethod
+    def update_caches(cls):
+        """Trashes the obsolete caches, for assets which changed.
+
+        Returns:
+            list[str]: The URIs of the assets which changed.
+        """
+        changed_files_uris = []
+        for uri, cache in cls.caches_by_uri.items():
+            dbfile = cls.dbfile_name(uri)
+            if cache.dbfile != dbfile:
+                changed_files_uris.append(uri)
+        for uri in changed_files_uris:
+            del cls.caches_by_uri[uri]
+        return changed_files_uris
 
     @classmethod
     def get(cls, obj):
@@ -963,25 +984,12 @@ class ThumbnailCache(Loggable):
         else:
             raise ValueError("Unhandled type: %s" % type(obj))
 
+        if ProxyManager.is_proxy_asset(uri):
+            uri = ProxyManager.getTargetUri(uri)
+
         if uri not in cls.caches_by_uri:
             cls.caches_by_uri[uri] = ThumbnailCache(uri)
         return cls.caches_by_uri[uri]
-
-    def copy(self, uri):
-        """Copies `self` to the specified `uri`.
-
-        Args:
-            uri (str): The place where to copy/save the ThumbnailCache
-        """
-        filehash = hash_file(Gst.uri_get_location(uri))
-        thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(), "thumbs"))
-        dbfile = os.path.join(thumbs_cache_dir, filehash)
-
-        try:
-            os.remove(dbfile)
-        except FileNotFoundError:
-            pass
-        os.symlink(self._dbfile, dbfile)
 
     @property
     def image_size(self):
@@ -1065,11 +1073,13 @@ class ThumbnailCache(Loggable):
     def commit(self):
         """Saves the cache on disk (in the database)."""
         self._db.commit()
-        self.log("Saved thumbnail cache file: %s", self._filehash)
+        self.log("Saved thumbnail cache file")
 
 
 def get_wavefile_location_for_uri(uri):
     """Computes the URI where the wave.npy file should be stored."""
+    if ProxyManager.is_proxy_asset(uri):
+        uri = ProxyManager.getTargetUri(uri)
     filename = hash_file(Gst.uri_get_location(uri)) + ".wave.npy"
     cache_dir = get_dir(os.path.join(xdg_cache_home(), "waves"))
 
@@ -1108,9 +1118,18 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         self._num_failures = 0
         self.become_controlled()
 
+    def refresh(self):
+        """Discards the audio samples so they are recreated."""
+        self.stop_generation()
+
+        self.samples = None
+        self.surface = None
+        self.queue_draw()
+
+        self.become_controlled()
+
     def _startLevelsDiscovery(self):
         filename = get_wavefile_location_for_uri(self._uri)
-
         if os.path.exists(filename):
             with open(filename, "rb") as samples:
                 self.samples = self._scale_samples(numpy.load(samples))
@@ -1136,7 +1155,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
 
     def _launchPipeline(self):
         self.debug(
-            'Now generating waveforms for: %s', path_from_uri(self._uri))
+            "Now generating waveforms for: %s", path_from_uri(self._uri))
         self.pipeline = Gst.parse_launch("uridecodebin name=decode uri=" +
                                          self._uri + " ! waveformbin name=wave"
                                          " ! fakesink qos=false name=faked")
@@ -1159,8 +1178,7 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
         bus.connect("message", self._busMessageCb)
 
     def _prepareSamples(self):
-        proxy = self.ges_elem.get_parent().get_asset().get_proxy_target()
-        self._wavebin.finalize(proxy=proxy)
+        self._wavebin.finalize()
         self.samples = self._scale_samples(self._wavebin.samples)
 
     def _busMessageCb(self, bus, message):

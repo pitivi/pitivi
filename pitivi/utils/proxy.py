@@ -85,7 +85,7 @@ class ProxyManager(GObject.Object, Loggable):
         "error-preparing-asset": (GObject.SignalFlags.RUN_LAST, None, (object, object, object)),
     }
 
-    WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg",
+    WHITELIST_CONTAINER_CAPS = ["video/quicktime", "application/ogg", "application/xges",
                                 "video/x-matroska", "video/webm"]
     WHITELIST_AUDIO_CAPS = ["audio/mpeg", "audio/x-vorbis",
                             "audio/x-raw", "audio/x-flac",
@@ -230,8 +230,14 @@ class ProxyManager(GObject.Object, Loggable):
         self.emit("error-preparing-asset", None, proxy, proxy.get_error())
         return False
 
-    def getTargetUri(self, proxy_asset):
-        return ".".join(proxy_asset.props.id.split(".")[:-3])
+    @classmethod
+    def getTargetUri(cls, obj):
+        if isinstance(obj, GES.Asset):
+            uri = obj.props.id
+        else:
+            uri = obj
+
+        return ".".join(uri.split(".")[:-3])
 
     def getProxyUri(self, asset):
         """Returns the URI of a possible proxy file.
@@ -317,8 +323,8 @@ class ProxyManager(GObject.Object, Loggable):
             if not self.__assetsMatch(asset, proxy):
                 return self.__createTranscoder(asset)
         else:
-            transcoder.props.pipeline.props.video_filter.finalize(proxy)
-            transcoder.props.pipeline.props.audio_filter.finalize(proxy)
+            transcoder.props.pipeline.props.video_filter.finalize()
+            transcoder.props.pipeline.props.audio_filter.finalize()
 
             del transcoder
 
