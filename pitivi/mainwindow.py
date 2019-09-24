@@ -111,7 +111,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Setting up the perspectives.")
 
         self.set_icon_name("pitivi")
-        self.__check_screen_constraints()
         self.__set_keyboard_shortcuts()
 
         self.greeter.setup_ui()
@@ -129,6 +128,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
                           self.app.settings.mainWindowY,
                           width, height)
 
+        self.check_screen_constraints()
+
         self.connect("configure-event", self.__configure_cb)
         self.connect("delete-event", self.__delete_cb)
 
@@ -136,11 +137,16 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.resize(width, height)
         self.move(x, y)
 
-    def __check_screen_constraints(self):
-        """Measures the approximate minimum size required by the main window.
+    def check_screen_constraints(self):
+        """Shrinks some widgets to fit better on smaller screen resolutions."""
+        if self._small_screen():
+            self.greeter.activate_compact_mode()
+            self.editor.activate_compact_mode()
+            min_size, _ = self.get_preferred_size()
+            self.info("Minimum UI size has been reduced to %sx%s",
+                      min_size.width, min_size.height)
 
-        Shrinks some widgets to fit better on smaller screen resolutions.
-        """
+    def _small_screen(self):
         # This code works, but keep in mind get_preferred_size's output
         # is only an approximation. As of 2015, GTK still does not have
         # a way, even with client-side decorations, to tell us the exact
@@ -150,12 +156,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         screen_height = self.get_screen().get_height()
         self.debug("Minimum UI size is %sx%s", min_size.width, min_size.height)
         self.debug("Screen size is %sx%s", screen_width, screen_height)
-        if min_size.width >= 0.9 * screen_width:
-            self.medialibrary.activateCompactMode()
-            self.viewer.activateCompactMode()
-            min_size, _ = self.get_preferred_size()
-            self.info("Minimum UI size has been reduced to %sx%s",
-                      min_size.width, min_size.height)
+        return min_size.width >= 0.9 * screen_width
 
     def __set_keyboard_shortcuts(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
