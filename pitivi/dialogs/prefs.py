@@ -407,15 +407,17 @@ class PreferencesDialog(Loggable):
         self.content_box.connect("row_activated", self.__row_activated_cb)
         self.content_box.set_selection_mode(Gtk.SelectionMode.NONE)
         self.content_box.props.margin = PADDING * 3
+        self.content_box.props.halign = Gtk.Align.CENTER
         self.content_box.get_style_context().add_class('prefs_list')
 
         viewport = Gtk.Viewport()
         viewport.add(self.content_box)
 
         scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.props.hexpand = True
+        scrolled_window.props.min_content_height = 500
+        scrolled_window.props.min_content_width = 600
         scrolled_window.add_with_viewport(viewport)
-        scrolled_window.set_min_content_height(500)
-        scrolled_window.set_min_content_width(600)
 
         outside_box = Gtk.Box()
         outside_box.add(scrolled_window)
@@ -490,7 +492,7 @@ class PreferencesDialog(Loggable):
             header.set_use_markup(True)
             group_title = self.app.shortcuts.group_titles[group]
             header.set_markup("<b>%s</b>" % group_title)
-            header.props.margin_top = PADDING if not prev_group else PADDING * 10
+            header.props.margin_top = PADDING if not prev_group else PADDING * 8
             header.props.margin_bottom = PADDING * 2
             header.props.margin_left = 1
             header.props.margin_right = PADDING * 2
