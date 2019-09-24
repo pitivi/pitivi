@@ -22,6 +22,7 @@ from gettext import gettext as _
 from urllib.parse import unquote
 
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.configure import get_pixmap_dir
@@ -65,6 +66,7 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                default='')
 
 
+# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
 
@@ -97,9 +99,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.greeter = GreeterPerspective(app)
         self.editor = EditorPerspective(app)
         self.__perspective = None
-        self.help_action = None
-        self.about_action = None
-        self.main_menu_action = None
 
         app.project_manager.connect("new-project-loading",
                                     self.__new_project_loading_cb)
@@ -120,15 +119,21 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         width = self.app.settings.mainWindowWidth
         height = self.app.settings.mainWindowHeight
-
         if height == -1 and width == -1:
             self.maximize()
         else:
             self.set_default_size(width, height)
-            self.move(self.app.settings.mainWindowX, self.app.settings.mainWindowY)
+            # Wait until placing the window, to avoid the window manager
+            # ignoring the call. See the documentation for Gtk.Window.move.
+            GLib.idle_add(self.__initial_placement_cb,
+                          self.app.settings.mainWindowX,
+                          self.app.settings.mainWindowY)
 
         self.connect("configure-event", self.__configure_cb)
         self.connect("delete-event", self.__delete_cb)
+
+    def __initial_placement_cb(self, x, y):
+        self.move(x, y)
 
     def __check_screen_constraints(self):
         """Measures the approximate minimum size required by the main window.
