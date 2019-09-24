@@ -19,7 +19,7 @@
 """Interface for different perspectives."""
 
 
-class Perspective(object):
+class Perspective():
     """Interface for different perspectives."""
 
     def __init__(self):
@@ -33,6 +33,9 @@ class Perspective(object):
         Populates the toplevel_widget, headerbar and menu_button attributes.
         """
         raise NotImplementedError()
+
+    def activate_compact_mode(self):
+        """Shrinks widgets to suit better a small screen."""
 
     def refresh(self):
         """Refreshes the perspective while activating it."""
