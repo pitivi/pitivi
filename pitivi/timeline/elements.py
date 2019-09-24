@@ -851,22 +851,15 @@ class VideoSource(TimelineElement):
         parent.connect("child-added", self.__parent_child_added_cb)
         parent.connect("child-removed", self.__parent_child_removed_cb)
 
-    def __parent_child_added_cb(self, parent, child):
-        project = self.timeline.app.project_manager.current_project
-        self.__apply_new_size_if_needed(project)
+    def __parent_child_added_cb(self, unused_parent, unused_child):
+        self.__apply_new_size_if_needed()
 
-    def __parent_child_removed_cb(self, parent, child):
-        project = self.timeline.app.project_manager.current_project
+    def __parent_child_removed_cb(self, unused_parent, child):
         if child == self.__videoflip:
             self.__videoflip = None
-            self.__apply_new_size_if_needed(project)
-            disconnectAllByFunc(child, self.__videoflip_changed_cb)
-
-    def __videoflip_changed_cb(self, unused_child=None,
-                               unused_element=None,
-                               unused_pspec=None):
-        project = self.timeline.app.project_manager.current_project
-        self.__apply_new_size_if_needed(project)
+            self.__apply_new_size_if_needed()
+            disconnectAllByFunc(child, self.__track_element_deep_notify_cb)
+            disconnectAllByFunc(child, self.__track_element_notify_active_cb)
 
     def __retrieve_project_size(self):
         project = self.timeline.app.project_manager.current_project
@@ -874,10 +867,10 @@ class VideoSource(TimelineElement):
         self._project_width = project.videowidth
         self._project_height = project.videoheight
 
-    def _project_video_size_changed_cb(self, project):
-        self.__apply_new_size_if_needed(project)
+    def _project_video_size_changed_cb(self, unused_project):
+        self.__apply_new_size_if_needed()
 
-    def __apply_new_size_if_needed(self, project):
+    def __apply_new_size_if_needed(self):
         using_defaults = True
         for name, default_value in self.default_position.items():
             res, value = self._ges_elem.get_child_property(name)
@@ -915,9 +908,9 @@ class VideoSource(TimelineElement):
                 if res:
                     self.__videoflip = track_element
                     track_element.connect("deep-notify",
-                                          self.__videoflip_changed_cb)
+                                          self.__track_element_deep_notify_cb)
                     track_element.connect("notify::active",
-                                          self.__videoflip_changed_cb)
+                                          self.__track_element_notify_active_cb)
 
         if self.__videoflip:
             res, method = self.__videoflip.get_child_property("method")
@@ -947,6 +940,14 @@ class VideoSource(TimelineElement):
                 "posy": round(y),
                 "width": round(width),
                 "height": round(height)}
+
+    def __track_element_deep_notify_cb(self, unused_source, unused_gstelement,
+                                       unused_pspec):
+        self.__apply_new_size_if_needed()
+
+    def __track_element_notify_active_cb(self, unused_track_element,
+                                         unused_pspec):
+        self.__apply_new_size_if_needed()
 
     def _getBackground(self):
         return VideoBackground()
