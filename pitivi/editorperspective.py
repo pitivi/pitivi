@@ -104,6 +104,11 @@ class EditorPerspective(Perspective, Loggable):
         self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
         self.app.gui.connect("destroy", self._destroyedCb)
 
+    def activate_compact_mode(self):
+        """Shrinks widgets to suit better a small screen."""
+        self.medialibrary.activateCompactMode()
+        self.viewer.activateCompactMode()
+
     def refresh(self):
         """Refreshes the perspective."""
         self.focusTimeline()
