@@ -163,6 +163,11 @@ EDITOR_PERSPECTIVE_CSS = """
         opacity: 0.8;
     }
 
+    .LayerControlEntry:not(:focus) {
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
     .AudioBackground {
         background-color: #496c21;
     }

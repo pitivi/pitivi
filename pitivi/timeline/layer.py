@@ -85,14 +85,6 @@ class LayerControls(Gtk.EventBox, Loggable):
         self.__updateName()
         name_row.pack_start(self.name_entry, True, True, 0)
 
-        entry_provider = Gtk.CssProvider()
-        entry_css = ("entry:not(:focus) { border: 1px solid transparent;"
-                     "background: transparent; }").encode("UTF-8")
-        entry_provider.load_from_data(entry_css)
-        Gtk.StyleContext.add_provider(self.name_entry.get_style_context(),
-                                      entry_provider,
-                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-
         self.menubutton = Gtk.MenuButton.new()
         self.menubutton.props.valign = Gtk.Align.CENTER
         self.menubutton.props.relief = Gtk.ReliefStyle.NONE
