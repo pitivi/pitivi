@@ -55,6 +55,7 @@ pitivi/dialogs/missingasset.py
 pitivi/dialogs/prefs.py
 
 pitivi/utils/misc.py
+pitivi/utils/proxy.py
 pitivi/utils/ui.py
 pitivi/utils/widgets.py
 
