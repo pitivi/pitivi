@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Pitivi's main window."""
+# pylint: disable=too-many-instance-attributes
 import os
 from gettext import gettext as _
 from urllib.parse import unquote
@@ -162,6 +163,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.debug("Screen size is %sx%s", screen_width, screen_height)
         return min_size.width >= 0.9 * screen_width
 
+    # pylint: disable=attribute-defined-outside-init
     def __set_keyboard_shortcuts(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
 
@@ -246,6 +248,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         """Displays the specified perspective."""
         if self.__perspective is perspective:
             return
+
         if self.__perspective:
             # Remove the current perspective before adding the
             # specified perspective because we can only add one
@@ -254,5 +257,8 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Displaying perspective: %s", type(perspective).__name__)
         self.__perspective = perspective
         self.set_titlebar(perspective.headerbar)
+        # The window must be shown only after setting the headerbar with
+        # set_titlebar. Otherwise we get a warning things can go wrong.
+        self.show()
         self.add(perspective.toplevel_widget)
         perspective.refresh()
