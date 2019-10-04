@@ -19,8 +19,7 @@ gst_dep = dependency('gstreamer-1.0', version : '>= 1.14.1',
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
 
-gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1',
-    fallback : ['gst-transcoder', 'gst_transcoder_dep'])
+gst_transcoder_dep = dependency('gstreamer-bad-transcoder-1.0', version : '>= 1.16.1')
 
 gnome = import('gnome')
 i18n = import('i18n')
