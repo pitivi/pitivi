@@ -11,16 +11,12 @@ if get_option('build-gst')
         'gst-plugins-base:disable_gtkdoc=true',
         'gstreamer:disable_gtkdoc=true',
         ])
-    subproject('gst-transcoder')
 endif
 
 gst_dep = dependency('gstreamer-1.0', version : '>= 1.14.1',
     fallback : ['gstreamer', 'gst_dep'])
 cairo_dep = dependency('cairo')
 pycairo_dep = dependency('py3cairo')
-
-gst_transcoder_dep = dependency('gst-transcoder-1.0', version : '>= 1.8.1',
-    fallback : ['gst-transcoder', 'gst_transcoder_dep'])
 
 gnome = import('gnome')
 i18n = import('i18n')

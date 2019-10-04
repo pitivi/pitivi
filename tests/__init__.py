@@ -59,12 +59,8 @@ def setup():
 
     # Make available the compiled C code.
     sys.path.append(configure.BUILDDIR)
-    subproject_paths = os.path.join(configure.BUILDDIR, "subprojects", "gst-transcoder")
 
-    _prepend_env_paths(LD_LIBRARY_PATH=subproject_paths,
-                       GST_PLUGIN_PATH=subproject_paths,
-                       GI_TYPELIB_PATH=subproject_paths,
-                       GST_PRESET_PATH=[os.path.join(pitivi_dir, "data", "videopresets"),
+    _prepend_env_paths(GST_PRESET_PATH=[os.path.join(pitivi_dir, "data", "videopresets"),
                                         os.path.join(pitivi_dir, "data", "audiopresets")],
                        GST_ENCODING_TARGET_PATH=[os.path.join(pitivi_dir, "tests", "test-encoding-targets"),
                                                  os.path.join(pitivi_dir, "data", "encoding-profiles")])
