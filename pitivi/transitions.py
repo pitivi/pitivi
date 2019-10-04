@@ -129,7 +129,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.iconview.connect("query-tooltip", self._queryTooltipCb)
 
         # Speed-up startup by only checking available transitions on idle
-        GLib.idle_add(self._loadAvailableTransitionsCb)
+        GLib.idle_add(self._load_available_transitions_cb)
 
         self.pack_start(self.infobar, False, False, 0)
         self.pack_start(self.searchbar, False, False, 0)
@@ -251,9 +251,9 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
 # UI methods
 
-    def _loadAvailableTransitionsCb(self):
+    def _load_available_transitions_cb(self):
         """Loads the transitions types and icons into the storemodel."""
-        for trans_asset in GES.list_assets(GES.BaseTransitionClip):
+        for trans_asset in GES.list_assets(GES.TransitionClip):
             trans_asset.icon = self._getIcon(trans_asset.get_id())
             self.storemodel.append([trans_asset,
                                     str(trans_asset.get_id()),
