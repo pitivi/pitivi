@@ -22,6 +22,7 @@ from gettext import gettext as _
 from urllib.parse import unquote
 
 from gi.repository import Gio
+from gi.repository import GLib
 from gi.repository import Gtk
 
 from pitivi.configure import get_pixmap_dir
@@ -65,6 +66,7 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                default='')
 
 
+# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
 
@@ -97,9 +99,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.greeter = GreeterPerspective(app)
         self.editor = EditorPerspective(app)
         self.__perspective = None
-        self.help_action = None
-        self.about_action = None
-        self.main_menu_action = None
 
         app.project_manager.connect("new-project-loading",
                                     self.__new_project_loading_cb)
@@ -112,7 +111,6 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Setting up the perspectives.")
 
         self.set_icon_name("pitivi")
-        self.__check_screen_constraints()
         self.__set_keyboard_shortcuts()
 
         self.greeter.setup_ui()
@@ -120,21 +118,39 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
         width = self.app.settings.mainWindowWidth
         height = self.app.settings.mainWindowHeight
-
         if height == -1 and width == -1:
             self.maximize()
         else:
-            self.set_default_size(width, height)
-            self.move(self.app.settings.mainWindowX, self.app.settings.mainWindowY)
+            # Wait until placing the window, to avoid the window manager
+            # ignoring the call. See the documentation for Gtk.Window.move.
+            # If you change this, pay attention opening `pitivi` works
+            # a bit different than opening `pitivi file.xges`. For example
+            # connecting to the "realize" signal instead of idle_add-ing
+            # fails to restore the position when directly loading a project.
+            GLib.idle_add(self.__initial_placement_cb,
+                          self.app.settings.mainWindowX,
+                          self.app.settings.mainWindowY,
+                          width, height)
+
+        self.check_screen_constraints()
 
         self.connect("configure-event", self.__configure_cb)
         self.connect("delete-event", self.__delete_cb)
 
-    def __check_screen_constraints(self):
-        """Measures the approximate minimum size required by the main window.
+    def __initial_placement_cb(self, x, y, width, height):
+        self.resize(width, height)
+        self.move(x, y)
 
-        Shrinks some widgets to fit better on smaller screen resolutions.
-        """
+    def check_screen_constraints(self):
+        """Shrinks some widgets to fit better on smaller screen resolutions."""
+        if self._small_screen():
+            self.greeter.activate_compact_mode()
+            self.editor.activate_compact_mode()
+            min_size, _ = self.get_preferred_size()
+            self.info("Minimum UI size has been reduced to %sx%s",
+                      min_size.width, min_size.height)
+
+    def _small_screen(self):
         # This code works, but keep in mind get_preferred_size's output
         # is only an approximation. As of 2015, GTK still does not have
         # a way, even with client-side decorations, to tell us the exact
@@ -144,12 +160,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         screen_height = self.get_screen().get_height()
         self.debug("Minimum UI size is %sx%s", min_size.width, min_size.height)
         self.debug("Screen size is %sx%s", screen_width, screen_height)
-        if min_size.width >= 0.9 * screen_width:
-            self.medialibrary.activateCompactMode()
-            self.viewer.activateCompactMode()
-            min_size, _ = self.get_preferred_size()
-            self.info("Minimum UI size has been reduced to %sx%s",
-                      min_size.width, min_size.height)
+        return min_size.width >= 0.9 * screen_width
 
     def __set_keyboard_shortcuts(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
@@ -194,17 +205,15 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
 
     def __configure_cb(self, unused_widget, unused_event):
         """Saves the main window position and size."""
-        # Takes window manager decorations into account.
         position = self.get_position()
         self.app.settings.mainWindowX = position.root_x
         self.app.settings.mainWindowY = position.root_y
 
-        # Does not include the size of the window manager decorations.
         size = self.get_size()
         self.app.settings.mainWindowWidth = size.width
         self.app.settings.mainWindowHeight = size.height
 
-    def __delete_cb(self, unused_widget, unused_data=None):
+    def __delete_cb(self, unused_widget, unused_event):
         self.app.settings.mainWindowHPanePosition = self.editor.secondhpaned.get_position()
         self.app.settings.mainWindowMainHPanePosition = self.editor.mainhpaned.get_position()
         self.app.settings.mainWindowVPanePosition = self.editor.toplevel_widget.get_position()
