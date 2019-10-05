@@ -120,6 +120,11 @@ class GreeterPerspective(Perspective):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(get_ui_dir(), "greeter.ui"))
 
+        logo = builder.get_object("logo")
+        icon_theme = Gtk.IconTheme.get_default()
+        pixbuf = icon_theme.load_icon("org.pitivi.Pitivi", 256, Gtk.IconLookupFlags.FORCE_SIZE)
+        logo.set_from_pixbuf(pixbuf)
+
         self.toplevel_widget = builder.get_object("toplevel_vbox")
         self.toplevel_widget.drag_dest_set(
             Gtk.DestDefaults.ALL, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)

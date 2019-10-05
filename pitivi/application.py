@@ -200,9 +200,9 @@ class Pitivi(Gtk.Application, Loggable):
                 self.gui.present()
             # No need to show the welcome wizard.
             return
+
         self.create_main_window()
         self.gui.show_perspective(self.gui.greeter)
-        self.gui.show()
 
     def create_main_window(self):
         if self.gui:
@@ -214,7 +214,6 @@ class Pitivi(Gtk.Application, Loggable):
     def do_open(self, giofiles, unused_count, unused_hint):
         assert giofiles
         self.create_main_window()
-        self.gui.show()
         if len(giofiles) > 1:
             self.warning("Opening only one project at a time. Ignoring the rest!")
         project_file = giofiles[0]
