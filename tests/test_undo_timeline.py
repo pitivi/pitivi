@@ -43,8 +43,8 @@ class BaseTestUndoTimeline(common.TestCase):
     def setUp(self):
         super(BaseTestUndoTimeline, self).setUp()
         self.app = common.create_pitivi()
-        project = self.app.project_manager.new_blank_project()
-        self.timeline = project.ges_timeline
+        self.project = self.app.project_manager.new_blank_project()
+        self.timeline = self.project.ges_timeline
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
 

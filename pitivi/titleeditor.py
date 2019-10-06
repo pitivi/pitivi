@@ -238,7 +238,7 @@ class TitleEditor(Loggable):
             self.infobar.hide()
             self.editing_box.show()
             self._children_props_handler = self.source.connect('deep-notify',
-                                                               self._propertyChangedCb)
+                                                               self._source_deep_notify_cb)
         else:
             self.infobar.show()
             self.editing_box.hide()
@@ -247,59 +247,70 @@ class TitleEditor(Loggable):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
-        self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([title_clip])
-        # Now that the clip is inserted in the timeline, it has a source which
-        # can be used to set its properties.
-        source = title_clip.get_children(False)[0]
-        properties = {"text": "",
-                      "foreground-color": BACKGROUND_DEFAULT_COLOR,
-                      "color": FOREGROUND_DEFAULT_COLOR,
-                      "font-desc": DEFAULT_FONT_DESCRIPTION,
-                      "valignment": DEFAULT_VALIGNMENT,
-                      "halignment": DEFAULT_HALIGNMENT}
-        for prop, value in properties.items():
-            res = source.set_child_property(prop, value)
-            assert res
-        # Select it so the Title editor becomes active.
+        with self.app.action_log.started("add title clip", toplevel=True):
+            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([title_clip])
+            # Now that the clip is inserted in the timeline, it has a source which
+            # can be used to set its properties.
+            source = title_clip.get_children(False)[0]
+            properties = {"text": "",
+                          "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                          "color": FOREGROUND_DEFAULT_COLOR,
+                          "font-desc": DEFAULT_FONT_DESCRIPTION,
+                          "valignment": DEFAULT_VALIGNMENT,
+                          "halignment": DEFAULT_HALIGNMENT}
+            for prop, value in properties.items():
+                res = source.set_child_property(prop, value)
+                assert res, prop
         self._selection.setSelection([title_clip], SELECT)
 
-    def _propertyChangedCb(self, source, unused_gstelement, pspec):
+    def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
+        """Handles updates in the TitleSource backing the current TitleClip."""
         if self._setting_props:
             self._project.pipeline.commit_timeline()
             return
 
         control_binding = self.source.get_control_binding(pspec.name)
         if control_binding:
-            self.debug("Not handling %s as it is being interpollated",
+            self.debug("Not handling %s as it is being interpolated",
                        pspec.name)
             return
 
-        value = self.source.get_child_property(pspec.name)[1]
         if pspec.name == "text":
-            value = value or ""
-            if self.textbuffer.props.text == value:
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
+            if self.textbuffer.props.text == value or "":
                 return
             self.textbuffer.props.text = value
         elif pspec.name in ["x-absolute", "y-absolute"]:
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
             if self.settings[pspec.name].get_value() == value:
                 return
             self.settings[pspec.name].set_value(value)
         elif pspec.name in ["valignment", "halignment"]:
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
             value = value.value_name
             if self.settings[pspec.name].get_active_id() == value:
                 return
             self.settings[pspec.name].set_active_id(value)
         elif pspec.name == "font-desc":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
             if self.font_button.get_font_desc() == value:
                 return
             font_desc = Pango.FontDescription.from_string(value)
             self.font_button.set_font_desc(font_desc)
         elif pspec.name == "color":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
             color = argb_to_gdk_rgba(value)
             if color == self.foreground_color_button.get_rgba():
                 return
             self.foreground_color_button.set_rgba(color)
         elif pspec.name == "foreground-color":
+            res, value = self.source.get_child_property(pspec.name)
+            assert res, pspec.name
             color = argb_to_gdk_rgba(value)
             if color == self.background_color_button.get_rgba():
                 return

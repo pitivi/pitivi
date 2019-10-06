@@ -37,7 +37,7 @@ class PreviewWidgetTest(common.TestCase):
                                    FCpreviewWidth=640,
                                    FCpreviewHeight=480)
 
-        proj_uri = self.create_project_file_from_xges(app, """<ges version='0.3'>
+        proj_uri = self.create_project_file_from_xges("""<ges version='0.3'>
             <project properties='properties;' metadatas='metadatas;'>
                 <ressources>
                     <asset id='file://this/is/a/moved/asset.mp4' extractable-type-name='GESUriClip'
