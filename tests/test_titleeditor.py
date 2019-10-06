@@ -30,6 +30,18 @@ from tests.test_undo_timeline import BaseTestUndoTimeline
 class TitleEditorTest(BaseTestUndoTimeline):
     """Tests for the TitleEditor class."""
 
+    def _get_title_source_child_props(self):
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1, clips)
+        self.assertIsInstance(clips[0], GES.TitleClip)
+        source, = clips[0].get_children(False)
+        return [source.get_child_property(p) for p in ("text",
+                                                       "x-absolute", "y-absolute",
+                                                       "valignment", "halignment",
+                                                       "font-desc",
+                                                       "color",
+                                                       "foreground-color")]
+
     def test_create(self):
         """Exercise creating a title clip."""
         # Wait until the project creates a layer in the timeline.
@@ -46,14 +58,12 @@ class TitleEditorTest(BaseTestUndoTimeline):
         self.project.pipeline.getPosition = mock.Mock(return_value=0)
 
         title_editor._createCb(None)
-        clips = self.layer.get_clips()
-        self.assertEqual(len(clips), 1, clips)
-        self.assertIsInstance(clips[0], GES.TitleClip)
+        ps1 = self._get_title_source_child_props()
 
         self.action_log.undo()
         clips = self.layer.get_clips()
         self.assertEqual(len(clips), 0, clips)
 
         self.action_log.redo()
-        clips = self.layer.get_clips()
-        self.assertEqual(len(clips), 1, clips)
+        ps2 = self._get_title_source_child_props()
+        self.assertListEqual(ps1, ps2)

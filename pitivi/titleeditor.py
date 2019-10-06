@@ -247,19 +247,20 @@ class TitleEditor(Loggable):
         title_clip = GES.TitleClip()
         duration = self.app.settings.titleClipLength * Gst.MSECOND
         title_clip.set_duration(duration)
-        self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([title_clip])
-        # Now that the clip is inserted in the timeline, it has a source which
-        # can be used to set its properties.
-        source = title_clip.get_children(False)[0]
-        properties = {"text": "",
-                      "foreground-color": BACKGROUND_DEFAULT_COLOR,
-                      "color": FOREGROUND_DEFAULT_COLOR,
-                      "font-desc": DEFAULT_FONT_DESCRIPTION,
-                      "valignment": DEFAULT_VALIGNMENT,
-                      "halignment": DEFAULT_HALIGNMENT}
-        for prop, value in properties.items():
-            res = source.set_child_property(prop, value)
-            assert res, prop
+        with self.app.action_log.started("add title clip", toplevel=True):
+            self.app.gui.editor.timeline_ui.insert_clips_on_first_layer([title_clip])
+            # Now that the clip is inserted in the timeline, it has a source which
+            # can be used to set its properties.
+            source = title_clip.get_children(False)[0]
+            properties = {"text": "",
+                          "foreground-color": BACKGROUND_DEFAULT_COLOR,
+                          "color": FOREGROUND_DEFAULT_COLOR,
+                          "font-desc": DEFAULT_FONT_DESCRIPTION,
+                          "valignment": DEFAULT_VALIGNMENT,
+                          "halignment": DEFAULT_HALIGNMENT}
+            for prop, value in properties.items():
+                res = source.set_child_property(prop, value)
+                assert res, prop
         self._selection.setSelection([title_clip], SELECT)
 
     def _source_deep_notify_cb(self, source, unused_gstelement, pspec):
