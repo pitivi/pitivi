@@ -24,27 +24,36 @@ from gi.repository import GES
 
 from pitivi.titleeditor import TitleEditor
 from tests import common
+from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
-class TitleEditorTest(common.TestCase):
+class TitleEditorTest(BaseTestUndoTimeline):
     """Tests for the TitleEditor class."""
 
     def test_create(self):
         """Exercise creating a title clip."""
-        timeline_container = common.create_timeline_container(titleClipLength=1)
-        project = timeline_container._project
-        app = timeline_container.app
-
         # Wait until the project creates a layer in the timeline.
         common.create_main_loop().run(until_empty=True)
 
-        title_editor = TitleEditor(app)
-        title_editor._newProjectLoadedCb(None, project)
-        project.pipeline.getPosition = mock.Mock(return_value=0)
+        title_editor = TitleEditor(self.app)
+
+        from pitivi.timeline.timeline import TimelineContainer
+        timeline_container = TimelineContainer(self.app)
+        timeline_container.setProject(self.project)
+        self.app.gui.editor.timeline_ui = timeline_container
+
+        title_editor._newProjectLoadedCb(None, self.project)
+        self.project.pipeline.getPosition = mock.Mock(return_value=0)
 
         title_editor._createCb(None)
-        layers = timeline_container.ges_timeline.get_layers()
-        self.assertEqual(len(layers), 1, layers)
-        clips = layers[0].get_clips()
+        clips = self.layer.get_clips()
         self.assertEqual(len(clips), 1, clips)
         self.assertIsInstance(clips[0], GES.TitleClip)
+
+        self.action_log.undo()
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 0, clips)
+
+        self.action_log.redo()
+        clips = self.layer.get_clips()
+        self.assertEqual(len(clips), 1, clips)
