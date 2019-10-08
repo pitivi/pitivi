@@ -23,6 +23,7 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
+from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
@@ -779,3 +780,21 @@ class TestShiftSelection(BaseTestTimeline):
     def test_shift_selection_multiple_layers(self):
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=False)
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=True)
+
+
+class TestTimelineContainer(BaseTestTimeline):
+    """Tests for the TimelineContainer class."""
+
+    def test_update_clips_asset(self):
+        timeline_container = common.create_timeline_container()
+        mainloop = common.create_main_loop()
+        mainloop.run(until_empty=True)
+        ges_timeline = timeline_container.ges_timeline
+        layer, = ges_timeline.get_layers()
+        title_clip = GES.TitleClip()
+        title_clip.props.duration = 100
+        layer.add_clip(title_clip)
+        self.assertListEqual(list(timeline_container.timeline.clips()), [title_clip])
+
+        # Check the title clips are ignored.
+        timeline_container.update_clips_asset(mock.Mock(), mock.Mock())
