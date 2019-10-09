@@ -397,6 +397,17 @@ class ProxyManager(GObject.Object, Loggable):
         self.info("%s does not need proxy", asset.get_id())
         return False
 
+    def asset_can_be_proxied(self, asset, scaled=False):
+        """Returns whether the asset is not a proxy nor a proper proxy."""
+        if asset.is_image():
+            return False
+
+        if scaled:
+            return not self.is_scaled_proxy(asset) or \
+                self.asset_matches_target_res(asset)
+        else:
+            return not self.is_hq_proxy(asset)
+
     def __startTranscoder(self, transcoder):
         self.debug("Starting %s", transcoder.props.src_uri)
         if self._start_proxying_time == 0:

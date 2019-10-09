@@ -110,3 +110,30 @@ class TestProxyManager(common.TestCase):
                 app.project_manager.current_project.scaled_proxy_height = stream.get_height() + dh
                 matches = dw >= 0 and dh >= 0
                 self.assertEqual(app.proxy_manager.asset_matches_target_res(asset), matches, (dw, dh))
+
+    def test_asset_can_be_proxied(self):
+        """Checks the asset_can_be_proxied method."""
+        app = common.create_pitivi_mock()
+        manager = app.proxy_manager
+
+        uri = common.get_sample_uri("flat_colour3_320x180.png")
+        image = GES.UriClipAsset.request_sync(uri)
+        self.assertFalse(manager.asset_can_be_proxied(image))
+
+        uri = common.get_sample_uri("30fps_numeroted_frames_blue.webm")
+        video = GES.UriClipAsset.request_sync(uri)
+        self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+        self.assertTrue(manager.asset_can_be_proxied(video))
+        with mock.patch.object(manager, "is_hq_proxy") as hq:
+            hq.return_value = True
+            self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+            self.assertFalse(manager.asset_can_be_proxied(video))
+        with mock.patch.object(manager, "is_scaled_proxy") as scaled:
+            scaled.return_value = True
+            with mock.patch.object(manager, "asset_matches_target_res") as matches:
+                matches.return_value = False
+                self.assertFalse(manager.asset_can_be_proxied(video, scaled=True))
+                self.assertTrue(manager.asset_can_be_proxied(video))
+                matches.return_value = True
+                self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+                self.assertTrue(manager.asset_can_be_proxied(video))
