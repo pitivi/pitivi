@@ -96,3 +96,17 @@ class TestProxyManager(common.TestCase):
         self._check_getProxyUri("file:///home/file.name.mp4",
                                 "file:///home/file.name.mp4.10.1280x720.scaledproxy.mkv",
                                 scaled=True)
+
+    def test_asset_matches_target_res(self):
+        """Checks the asset_matches_target_res method."""
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        stream = asset.get_info().get_video_streams()[0]
+        app = common.create_pitivi_mock()
+
+        for dw in (-1, 0, 1):
+            for dh in (-1, 0, 1):
+                app.project_manager.current_project.scaled_proxy_width = stream.get_width() + dw
+                app.project_manager.current_project.scaled_proxy_height = stream.get_height() + dh
+                matches = dw >= 0 and dh >= 0
+                self.assertEqual(app.proxy_manager.asset_matches_target_res(asset), matches, (dw, dh))

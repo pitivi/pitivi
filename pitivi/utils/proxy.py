@@ -359,6 +359,7 @@ class ProxyManager(GObject.Object, Loggable):
         return False
 
     def asset_matches_target_res(self, asset):
+        """Returns whether the asset's size <= the scaled proxy size."""
         stream = asset.get_info().get_video_streams()[0]
 
         asset_res = (stream.get_width(), stream.get_height())
@@ -658,8 +659,6 @@ class ProxyManager(GObject.Object, Loggable):
                 self.__pending_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
 
-        return
-
     def add_job(self, asset, scaled=False, shadow=False):
         """Adds a transcoding job for the specified asset if needed.
 
@@ -721,7 +720,6 @@ class ProxyManager(GObject.Object, Loggable):
             self.__createTranscoder(asset, width=t_width, height=t_height, shadow=shadow)
         else:
             self.__createTranscoder(asset, shadow=shadow)
-        return
 
 
 def get_proxy_target(obj):
