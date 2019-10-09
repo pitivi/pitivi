@@ -120,6 +120,15 @@ class TestProxyManager(common.TestCase):
         image = GES.UriClipAsset.request_sync(uri)
         self.assertFalse(manager.asset_can_be_proxied(image))
 
+        uri = common.get_sample_uri("mp3_sample.mp3")
+        audio = GES.UriClipAsset.request_sync(uri)
+        self.assertTrue(manager.asset_can_be_proxied(audio))
+        self.assertFalse(manager.asset_can_be_proxied(audio, scaled=True))
+        with mock.patch.object(manager, "is_hq_proxy") as hq:
+            hq.return_value = True
+            self.assertFalse(manager.asset_can_be_proxied(audio))
+            self.assertFalse(manager.asset_can_be_proxied(audio, scaled=True))
+
         uri = common.get_sample_uri("30fps_numeroted_frames_blue.webm")
         video = GES.UriClipAsset.request_sync(uri)
         self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))

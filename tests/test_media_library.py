@@ -420,6 +420,15 @@ class TestMediaLibrary(BaseTestMediaLibrary):
                 # Delete HQ Proxy
                 self.check_disable_proxy(proxy, asset, delete=True)
 
+    def test_scale_proxy_audio_post_import(self):
+        sample = "mp3_sample.mp3"
+        with common.cloned_sample(sample):
+            self.check_import([sample], proxying_strategy=ProxyingStrategy.NOTHING)
+            asset = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
+
+            project = self.app.project_manager.current_project
+            project.use_proxies_for_assets([asset], scaled=True)
+
     def test_supported_out_of_container_audio(self):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):

@@ -403,6 +403,9 @@ class ProxyManager(GObject.Object, Loggable):
             return False
 
         if scaled:
+            if not asset.get_info().get_video_streams():
+                return False
+
             return not self.is_scaled_proxy(asset) or \
                 self.asset_matches_target_res(asset)
         else:
