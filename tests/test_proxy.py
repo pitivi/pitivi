@@ -96,3 +96,53 @@ class TestProxyManager(common.TestCase):
         self._check_getProxyUri("file:///home/file.name.mp4",
                                 "file:///home/file.name.mp4.10.1280x720.scaledproxy.mkv",
                                 scaled=True)
+
+    def test_asset_matches_target_res(self):
+        """Checks the asset_matches_target_res method."""
+        uri = common.get_sample_uri("tears_of_steel.webm")
+        asset = GES.UriClipAsset.request_sync(uri)
+        stream = asset.get_info().get_video_streams()[0]
+        app = common.create_pitivi_mock()
+
+        for dw in (-1, 0, 1):
+            for dh in (-1, 0, 1):
+                app.project_manager.current_project.scaled_proxy_width = stream.get_width() + dw
+                app.project_manager.current_project.scaled_proxy_height = stream.get_height() + dh
+                matches = dw >= 0 and dh >= 0
+                self.assertEqual(app.proxy_manager.asset_matches_target_res(asset), matches, (dw, dh))
+
+    def test_asset_can_be_proxied(self):
+        """Checks the asset_can_be_proxied method."""
+        app = common.create_pitivi_mock()
+        manager = app.proxy_manager
+
+        uri = common.get_sample_uri("flat_colour3_320x180.png")
+        image = GES.UriClipAsset.request_sync(uri)
+        self.assertFalse(manager.asset_can_be_proxied(image))
+
+        uri = common.get_sample_uri("mp3_sample.mp3")
+        audio = GES.UriClipAsset.request_sync(uri)
+        self.assertTrue(manager.asset_can_be_proxied(audio))
+        self.assertFalse(manager.asset_can_be_proxied(audio, scaled=True))
+        with mock.patch.object(manager, "is_hq_proxy") as hq:
+            hq.return_value = True
+            self.assertFalse(manager.asset_can_be_proxied(audio))
+            self.assertFalse(manager.asset_can_be_proxied(audio, scaled=True))
+
+        uri = common.get_sample_uri("30fps_numeroted_frames_blue.webm")
+        video = GES.UriClipAsset.request_sync(uri)
+        self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+        self.assertTrue(manager.asset_can_be_proxied(video))
+        with mock.patch.object(manager, "is_hq_proxy") as hq:
+            hq.return_value = True
+            self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+            self.assertFalse(manager.asset_can_be_proxied(video))
+        with mock.patch.object(manager, "is_scaled_proxy") as scaled:
+            scaled.return_value = True
+            with mock.patch.object(manager, "asset_matches_target_res") as matches:
+                matches.return_value = False
+                self.assertFalse(manager.asset_can_be_proxied(video, scaled=True))
+                self.assertTrue(manager.asset_can_be_proxied(video))
+                matches.return_value = True
+                self.assertTrue(manager.asset_can_be_proxied(video, scaled=True))
+                self.assertTrue(manager.asset_can_be_proxied(video))

@@ -91,10 +91,7 @@ def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
 
 def create_pitivi_mock(**settings):
     app = mock.MagicMock()
-
     app.write_action = mock.MagicMock(spec=Pitivi.write_action)
-    check.check_requirements()
-
     app.settings = __create_settings(**settings)
     app.proxy_manager = ProxyManager(app)
 

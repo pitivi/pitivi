@@ -1432,12 +1432,14 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         Args:
             asset (GES.Asset): Only the clips who's current asset's target is
-                is this will be updated.
+                this will be updated.
             proxy (Ges.Asset): The proxy to use, or None to use the asset itself.
         """
         original_asset = get_proxy_target(asset)
         replacement_asset = proxy or asset
         for clip in self.timeline.clips():
+            if not isinstance(clip, GES.UriClip):
+                continue
             if get_proxy_target(clip) == original_asset:
                 clip.set_asset(replacement_asset)
         self._project.pipeline.commit_timeline()

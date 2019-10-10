@@ -1565,12 +1565,7 @@ class Project(Loggable, GES.Project):
         proxy_manager = self.app.proxy_manager
         originals = []
         for asset in assets:
-            if scaled:
-                is_proxied = proxy_manager.is_scaled_proxy(asset) and \
-                    not proxy_manager.asset_matches_target_res(asset)
-            else:
-                is_proxied = proxy_manager.is_hq_proxy(asset)
-            if not is_proxied:
+            if proxy_manager.asset_can_be_proxied(asset, scaled):
                 target = asset.get_proxy_target()
                 uri = proxy_manager.getProxyUri(asset, scaled=scaled)
                 if target and target.props.id == uri:
@@ -1578,9 +1573,7 @@ class Project(Loggable, GES.Project):
                               " its recreation")
                     target.unproxy(asset)
 
-                if not asset.is_image():
-                    # The asset is not a proxy and not an image.
-                    originals.append(asset)
+                originals.append(asset)
 
         if originals:
             with self.app.action_log.started("Proxying assets"):

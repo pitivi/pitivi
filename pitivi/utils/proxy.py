@@ -324,10 +324,13 @@ class ProxyManager(GObject.Object, Loggable):
         return ".".join(uri.split(".")[:-3])
 
     def getProxyUri(self, asset, scaled=False):
-        """Returns the URI of a possible proxy file.
+        """Gets the URI of the corresponding proxy file for the specified asset.
 
         The name looks like:
-            <filename>.<file_size>.<proxy_extension>
+            <filename>.<file_size>[.<proxy_resolution>].<proxy_extension>
+
+        Returns:
+            str: The URI or None if it can't be computed for any reason.
         """
         asset_file = Gio.File.new_for_uri(asset.get_id())
         try:
@@ -339,7 +342,11 @@ class ProxyManager(GObject.Object, Loggable):
                 return None
             else:
                 raise
+
         if scaled:
+            if not asset.get_info().get_video_streams():
+                return None
+
             max_w = self.app.project_manager.current_project.scaled_proxy_width
             max_h = self.app.project_manager.current_project.scaled_proxy_height
             t_width, t_height = self._scale_asset_resolution(asset, max_w, max_h)
@@ -359,6 +366,7 @@ class ProxyManager(GObject.Object, Loggable):
         return False
 
     def asset_matches_target_res(self, asset):
+        """Returns whether the asset's size <= the scaled proxy size."""
         stream = asset.get_info().get_video_streams()[0]
 
         asset_res = (stream.get_width(), stream.get_height())
@@ -395,6 +403,20 @@ class ProxyManager(GObject.Object, Loggable):
 
         self.info("%s does not need proxy", asset.get_id())
         return False
+
+    def asset_can_be_proxied(self, asset, scaled=False):
+        """Returns whether the asset is not a proxy nor a proper proxy."""
+        if asset.is_image():
+            return False
+
+        if scaled:
+            if not asset.get_info().get_video_streams():
+                return False
+
+            return not self.is_scaled_proxy(asset) or \
+                self.asset_matches_target_res(asset)
+        else:
+            return not self.is_hq_proxy(asset)
 
     def __startTranscoder(self, transcoder):
         self.debug("Starting %s", transcoder.props.src_uri)
@@ -658,8 +680,6 @@ class ProxyManager(GObject.Object, Loggable):
                 self.__pending_transcoders.remove(transcoder)
                 self.emit("asset-preparing-cancelled", asset)
 
-        return
-
     def add_job(self, asset, scaled=False, shadow=False):
         """Adds a transcoding job for the specified asset if needed.
 
@@ -721,7 +741,6 @@ class ProxyManager(GObject.Object, Loggable):
             self.__createTranscoder(asset, width=t_width, height=t_height, shadow=shadow)
         else:
             self.__createTranscoder(asset, shadow=shadow)
-        return
 
 
 def get_proxy_target(obj):
