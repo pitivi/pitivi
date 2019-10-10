@@ -49,14 +49,14 @@ class BaseTestMediaLibrary(common.TestCase):
             self.medialibrary.finalize()
             self.medialibrary = None
 
-    def _customSetUp(self, project_uri=None, **kwargs):
+    def _customSetUp(self, project_uri=None, **settings):
         # Always make sure we start with a clean medialibrary, and no other
         # is connected to some assets.
         self.clean()
 
         self.mainloop = common.create_main_loop()
         self.check_no_transcoding = False
-        self.app = common.create_pitivi_mock(**kwargs)
+        self.app = common.create_pitivi_mock(**settings)
         self.app.project_manager = ProjectManager(self.app)
         self.medialibrary = medialibrary.MediaLibraryWidget(self.app)
 
@@ -420,6 +420,13 @@ class TestMediaLibrary(BaseTestMediaLibrary):
                 # Delete HQ Proxy
                 self.check_disable_proxy(proxy, asset, delete=True)
 
+    def test_load_audio_only(self):
+        audio_sample = "mp3_sample.mp3"
+        with common.cloned_sample(audio_sample):
+            asset_uri = common.get_sample_uri(audio_sample)
+            with common.created_project_file(asset_uri) as uri:
+                self._customSetUp(project_uri=uri)
+
     def test_scale_proxy_audio_post_import(self):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
@@ -436,8 +443,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
                 proxying_strategy=ProxyingStrategy.AUTOMATIC)
 
     def test_missing_uri_displayed(self):
-        with common.cloned_sample():
-            asset_uri = common.get_sample_uri("missing.png")
-            with common.created_project_file(asset_uri) as uri:
-                self._customSetUp(project_uri=uri)
+        asset_uri = common.get_sample_uri("image-which-does-not-exist.png")
+        with common.created_project_file(asset_uri) as uri:
+            self._customSetUp(project_uri=uri)
         self.assertTrue(self.medialibrary._import_warning_infobar.props.visible)

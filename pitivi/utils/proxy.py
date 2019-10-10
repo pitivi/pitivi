@@ -324,10 +324,13 @@ class ProxyManager(GObject.Object, Loggable):
         return ".".join(uri.split(".")[:-3])
 
     def getProxyUri(self, asset, scaled=False):
-        """Returns the URI of a possible proxy file.
+        """Gets the URI of the corresponding proxy file for the specified asset.
 
         The name looks like:
-            <filename>.<file_size>.<proxy_extension>
+            <filename>.<file_size>[.<proxy_resolution>].<proxy_extension>
+
+        Returns:
+            str: The URI or None if it can't be computed for any reason.
         """
         asset_file = Gio.File.new_for_uri(asset.get_id())
         try:
@@ -339,7 +342,11 @@ class ProxyManager(GObject.Object, Loggable):
                 return None
             else:
                 raise
+
         if scaled:
+            if not asset.get_info().get_video_streams():
+                return None
+
             max_w = self.app.project_manager.current_project.scaled_proxy_width
             max_h = self.app.project_manager.current_project.scaled_proxy_height
             t_width, t_height = self._scale_asset_resolution(asset, max_w, max_h)
