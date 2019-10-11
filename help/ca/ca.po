@@ -112,7 +112,7 @@ msgstr "Premeu la primera seqüència."
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:35
 msgid "Hold the <key>Shift</key> key."
-msgstr "Mantingueu premuda la tecla <key>Majúscules</key>."
+msgstr "Mantingueu premuda la tecla <key>Maj</key>."
 
 #. (itstool) path: item/p
 #: C/selectiongrouping.page:38
@@ -130,8 +130,8 @@ msgid ""
 msgstr ""
 "Quan seleccioneu una seqüència prement-la o quan seleccioneu seqüències "
 "adjacents múltiples, la selecció es reinicialitza. La resta de seqüències es "
-"des-seleccionen si estaven prèviament seleccionades. Seleccionar o des-"
-"seleccionar seqüències especifiques sense reinicialitzar la selecció pot fer-"
+"desseleccionen si estaven prèviament seleccionades. Seleccionar o "
+"desseleccionar seqüències específiques sense reinicialitzar la selecció pot fer-"
 "se commutant la selecció individual de la seqüència:"
 
 #. (itstool) path: item/p
@@ -281,7 +281,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/layers.page:29
 msgid "Opacity (how solid “opaque” things are)"
-msgstr "Opacitat (com de «opaques» són les coses solides)"
+msgstr "Opacitat (com d'«opaques» són les coses sòlides)"
 
 #. (itstool) path: section/p
 #: C/layers.page:30
@@ -292,7 +292,7 @@ msgid ""
 "or clip, and an opacity of of 50% means you can partly see them."
 msgstr ""
 "Cada capa ( i cada seqüència) té la seva pròpia transparència. Per continuar "
-"amb la metàfora de la pintura sobre vidre, si la pintura es prou fina es pot "
+"amb la metàfora de la pintura sobre vidre, si la pintura és prou fina es pot "
 "veure a través d'ella. Visualment una opacitat del 100% significa que no "
 "podeu veure les seqüències sota la capa o la seqüència, i una opacitat del "
 "50% significa que les podeu veure de forma parcial."
@@ -346,7 +346,7 @@ msgid ""
 msgstr ""
 "Les seqüències situades sobre una capa boquejaran la visualització de les "
 "seqüències de sota, llevat que tinguin un valor d'opacitat menor que el "
-"100% (com es mostra amb les dos capes superiors a la il·lustració prèvia)."
+"100% (com es mostra amb les dues capes superiors a la il·lustració prèvia)."
 
 #. (itstool) path: section/title
 #: C/layers.page:44
@@ -361,7 +361,7 @@ msgid ""
 "thin space between the layers is highlighted, release the clip."
 msgstr ""
 "Per crear una capa, arrossegueu una seqüència a la meitat de l'espai entre "
-"dos capes ja creades o sobre la part de dalt de la capa superior o per sota "
+"dues capes ja creades o sobre la part de dalt de la capa superior o per sota "
 "de la capa inferior. Una vegada que es ressalti l'espai fi entre les capes, "
 "deixeu anar la seqüència."
 
@@ -389,7 +389,7 @@ msgid ""
 "Controlling the volume of those audio clips simply changes their relative "
 "loudness."
 msgstr ""
-"Al contrari que en la visió, els sons múltiples no bloquegen cap altre só. "
+"Al contrari que en la visió, els sons múltiples no bloquegen cap altre so. "
 "Si teniu múltiples seqüències d'àudio en capes separades, el seu so es "
 "mesclarà sempre. Controlar el volum d'àudio d'aquestes seqüències canvia la "
 "seva sonoritat relativa."
@@ -419,7 +419,7 @@ msgid ""
 "save the project file and how to name it."
 msgstr ""
 "Per desar el vostre projecte, useu el botó <gui>Desa</gui> a la capçalera de "
-"la barra o premeu <keyseq><key>Ctrl</key><key>S</key></keyseq>. Quan desau "
+"la barra o premeu <keyseq><key>Ctrl</key><key>S</key></keyseq>. Quan deseu "
 "un projecte per primera vegada, apareix un diàleg que us pregunta on voleu "
 "desar el projecte i el seu nom."
 
@@ -471,7 +471,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/workwithprojects.page:41
 msgid "Editing the project settings"
-msgstr "Editeu el paràmetres del projectes"
+msgstr "Editeu els paràmetres del projecte"
 
 #. (itstool) path: section/p
 #: C/workwithprojects.page:42
@@ -567,7 +567,7 @@ msgid ""
 "As the name implies, splitting a clip divides it into two adjacent clips, "
 "with new beginning/end points being created accordingly."
 msgstr ""
-"Com el nom implica, dividir una seqüència el parteix en dos seqüències "
+"Com el nom implica, dividir una seqüència el parteix en dues seqüències "
 "adjacents, amb el començament/final creat de forma concordant."
 
 #. (itstool) path: page/p
@@ -723,7 +723,7 @@ msgid ""
 "value at a specific point in time."
 msgstr ""
 "Els <em>fotogrames clau</em> són punts que són usats per determinar el valor "
-"d'una propietats en un punt específic del temps."
+"d'una propietat en un punt específic del temps."
 
 #. (itstool) path: item/p
 #: C/keyframecurves.page:43
@@ -745,7 +745,7 @@ msgid ""
 "and cannot be removed."
 msgstr ""
 "Per defecte, les corbes de fotogrames claus en una seqüència d'àudio "
-"controlen el volum (en una escala des de 0 fins el 200%) i les corbes de "
+"controlen el volum (en una escala des de 0 fins al 200%) i les corbes de "
 "fotogrames claus en una seqüència de vídeo controlen la capa alfa "
 "(opacitat) al vídeo (en una escala del 0 al 100%). Mireu la pàgina <link "
 "xref=\"layers\">Entenent les capes</link> per saber més detalls sobre "
@@ -901,7 +901,7 @@ msgid ""
 "you're done, press <key>Enter</key>."
 msgstr ""
 "Doneu al vostre predefinit un nom únic: Premeu sobre el quadre combinat per "
-"editar el nom. Quan ho hageu fet, premeu <key>Intro</key>."
+"editar el nom. Quan ho hageu fet, premeu <key>Retorn</key>."
 
 #. (itstool) path: section/p
 #: C/presets.page:42
@@ -980,7 +980,7 @@ msgid ""
 "you want to apply other types of transitions than the default (crossfade), "
 "see the <em>Other types of transitions</em> section on this page."
 msgstr ""
-"Per fer un esvaïment creuat entre dos seqüències en la mateixa capa, "
+"Per fer un esvaïment creuat entre dues seqüències en la mateixa capa, "
 "arrossegueu una de les seqüències sobre l'altra fins solapar-la parcialment. "
 "La regió de solapament s'usarà com un espai de transició entre les dos "
 "seqüències. Podeu ajustar la longitud de les transicions movent les "
@@ -999,7 +999,7 @@ msgstr ""
 "Els esvaïments creuats s'aconsegueixen amb les funcions de barreja de vídeo "
 "de <app>Pitivi</app>, les quals utilitzen fotogrames clau per controlar "
 "l'opacitat de les seqüències. Això vol dir que si establiu fotogrames clau "
-"d'opacitat per a una seqüències, es tindran en compte per a l'esvaïment "
+"d'opacitat per a una seqüència, es tindran en compte per a l'esvaïment "
 "creuat."
 
 #. (itstool) path: section/title
@@ -1013,7 +1013,7 @@ msgid ""
 "Assuming that you have two overlapping clips in your timeline, you can "
 "achieve other types of transitions by following these steps:"
 msgstr ""
-"Si assumim que teniu dos seqüències que es solapen en la línia de temps, "
+"Si assumim que teniu dues seqüències que es solapen en la línia de temps, "
 "podeu aconseguir altres tipus de transicions seguint els passos següents:"
 
 #. (itstool) path: item/p
@@ -1084,7 +1084,7 @@ msgstr ""
 "Cada transició té el seu nom i la seva descripció. Aquests es mostren quan "
 "moveu el cursor sobre la icona de transició. També podeu filtrar les "
 "transicions escrivint a l'entrada de la cerca a la part superior de la "
-"pestanya <gui> Transició </gui>. Això només mostrarà transicions en les "
+"pestanya <gui>Transició</gui>. Això només mostrarà transicions en les "
 "quals el nom o la descripció coincideixi amb els termes de cerca."
 
 #. (itstool) path: section/title
@@ -1200,7 +1200,7 @@ msgid ""
 "Fades and crossfading as described here can be applied to both audio and "
 "video clips."
 msgstr ""
-"La transicions esvaeix i esvaïment creuat  descrites aquí  poden aplicar-se "
+"Les transicions esvaeix i esvaïment creuat descrites aquí poden aplicar-se "
 "ambdues a les seqüències d'àudio i vídeo."
 
 #. (itstool) path: info/desc
@@ -1292,7 +1292,7 @@ msgid ""
 "The spaces between components can be clicked and dragged to proportionally "
 "resize the respective adjacent components."
 msgstr ""
-"Els espais entre components es podem prémer i arrossegar per canviar la mida "
+"Els espais entre components es poden prémer i arrossegar per canviar la mida "
 "proporcionalment als seus components adjacents respectius."
 
 #. (itstool) path: note/title
@@ -1306,7 +1306,7 @@ msgid ""
 "Hovering the mouse cursor over an element in the main window usually reveals "
 "an information tooltip regarding its function."
 msgstr ""
-"Passar el cursos del ratolí per damunt d'un element de la finestra principal "
+"Passar el cursor del ratolí per damunt d'un element de la finestra principal "
 "normalment revela informació sobre la seva funció."
 
 #. (itstool) path: section/title
@@ -1717,7 +1717,7 @@ msgstr ""
 #: C/movearoundtimeline.page:45
 msgid "Using the scrollbars located on the right and bottom of the timeline"
 msgstr ""
-"Useu les barres desplaçadores situades a la dreta i a la part inferior de la "
+"Useu les barres de desplaçament situades a la dreta i a la part inferior de la "
 "línia de temps"
 
 #. (itstool) path: section/title
@@ -1769,7 +1769,7 @@ msgid ""
 msgstr ""
 "Manteniu premuda la tecla <key>Ctrl</key> mentre useu la roda del ratolí "
 "sobre la línia de temps, per mantenir el punt de la línia de temps on el "
-"cursor del ratolí està situat al lloc si es possible"
+"cursor del ratolí està situat al lloc si és possible"
 
 #. (itstool) path: item/p
 #: C/movearoundtimeline.page:66
@@ -1858,7 +1858,7 @@ msgstr ""
 "Podeu saltar a una posició exacta en la línia de temps editant el valor del "
 "temps mostrat en la barra d'eines de reproducció ( mireu la descripció de "
 "<link xref=\"mainwindow\">La finestra principal </link>). Per editar-ho "
-"premeu sobre el giny, sobreescriviu el valor i premeu  <key>Intro</key>. El "
+"premeu sobre el giny, sobreescriviu el valor i premeu  <key>Retorn</key>. El "
 "valor pot representar un codi de temps o un número de fotograma. El codi de "
 "temps té el següent formulari: <em>hh:mm:ss.milisec </em>, on les hores són "
 "opcionals. Per inserir un número de fotograma, sobreescriu el codi de temps "
@@ -1945,7 +1945,7 @@ msgstr ""
 #. (itstool) path: section/title
 #: C/about.page:29
 msgid "Patches welcome"
-msgstr "Benvinguts pedaços"
+msgstr "Els pedaços són benvinguts"
 
 #. (itstool) path: section/p
 #: C/about.page:30
@@ -2017,7 +2017,7 @@ msgid ""
 "get productive quickly."
 msgstr ""
 "Aquesta guia té com a finalitat ajudar-vos a comprendre els conceptes que hi "
-"ha darrere del seu disseny i ser de forma ràpida més productiu."
+"ha darrere del seu disseny i ser més productius ràpidament."
 
 #. (itstool) path: section/title
 #: C/index.page:25
@@ -2205,7 +2205,7 @@ msgid ""
 "peculiarities, and choosing the right codec with the right settings for the "
 "right situation is close to be a form of art in itself."
 msgstr ""
-"<em> Còdecs </em> són formes de «codificar« i «descodificar» els fluxos. "
+"Els <em>còdecs</em> són formes de «codificar» i «descodificar» els fluxos. "
 "Normalment, la seva tasca és comprimir dades (i descomprimir-la quan es "
 "reprodueixi) perquè pugui emmagatzemar i transmetre fitxers amb un format de "
 "fitxer més petit. Hi ha molts còdecs disponibles, cadascun amb els seus "
@@ -2357,7 +2357,7 @@ msgid ""
 "systems and architectures."
 msgstr ""
 "Una gran fortalesa de <app>Pitivi</app> rau en el fet que utilitza l'espai "
-"de treball multimèdia <app> GStreamer </app>. <app> GStreamer </app> és "
+"de treball multimèdia <app>GStreamer</app>. <app>GStreamer</app> és "
 "utilitzat per dotzenes d'aplicacions multimèdia en entorns d'escriptori, "
 "sistemes operatius i arquitectures."
 
@@ -2374,7 +2374,7 @@ msgid ""
 "<app>GStreamer</app> (see the sections below for more details)."
 msgstr ""
 "Podeu, en teoria, importar pràcticament qualsevol fitxer multimèdia suportat "
-"per <app> GStreamer </app> (consulteu les seccions següents per obtenir més "
+"per <app>GStreamer</app> (consulteu les seccions següents per obtenir més "
 "detalls)."
 
 #. (itstool) path: item/p
@@ -2384,7 +2384,7 @@ msgid ""
 "combination from <app>GStreamer</app>."
 msgstr ""
 "Podeu renderitzar els vostres projectes usant qualsevol combinació de "
-"contenidors i còdecs compatibles amb <app> GStreamer </app>."
+"contenidors i còdecs compatibles amb <app>GStreamer</app>."
 
 #. (itstool) path: note/p
 #: C/gstreamer.page:37
@@ -2395,11 +2395,11 @@ msgid ""
 "in <app>GStreamer</app> instead of putting temporary workarounds inside "
 "<app>Pitivi</app>."
 msgstr ""
-"Per maximitzar les capacitats de <app> Pitivi </app> i reduir les "
-"possibilitats d'errors, es recomana una versió molt recent de <app> "
-"GStreamer </app>. Això és degut a que els desenvolupadors <app> Pitivi </"
-"app> treballen dur per solucionar problemes directament a <app> GStreamer </"
-"app> en lloc de solucionar-los temporalment a <app> Pitivi </app>."
+"Per maximitzar les capacitats de <app>Pitivi</app> i reduir les "
+"possibilitats d'errors, es recomana una versió molt recent de <app>"
+"GStreamer</app>. Això és degut a que els desenvolupadors <app>Pitivi</"
+"app> treballen de valent per solucionar problemes directament a <app>GStreamer</"
+"app> en lloc de solucionar-los temporalment a <app>Pitivi</app>."
 
 #. (itstool) path: section/title
 #: C/gstreamer.page:40
@@ -2415,11 +2415,11 @@ msgid ""
 "seeking) will not perform as well as they would with frame-independent "
 "compressed video (such as <em>MJPEG</em> or <em>DV</em>)."
 msgstr ""
-"Alguns formats, com ara <em> MPEG </em>, estan orientats a la reproducció "
+"Alguns formats, com ara <em>MPEG</em>, estan orientats a la reproducció "
 "només i no comprimeixen cada fotograma independentment. Tot i que  "
-"l'objectiu de <app> Pitivi </app> és treballar amb aquests fitxers, algunes "
+"l'objectiu de <app>Pitivi</app> és treballar amb aquests fitxers, algunes "
 "operacions (com ara la cerca ràpida) no funcionaran tan bé com ho farien amb "
-"un vídeo comprimit independent del marc (com ara <em> MJPEG  </em> o <em> DV "
+"un vídeo comprimit independent del marc (com ara <em>MJPEG</em> o <em>DV"
 "</em>)."
 
 #. (itstool) path: section/title
@@ -2522,7 +2522,7 @@ msgid ""
 "gui></guiseq> to save a copy of the current frame as an image file."
 msgstr ""
 "Podeu usar el botó <guiseq><gui>Menú</gui><gui>Exporta fotograma actual...</"
-"gui></guiseq> per desar una copia del fotograma actual com un fitxer "
+"gui></guiseq> per desar una còpia del fotograma actual com un fitxer "
 "d'imatge."
 
 #. (itstool) path: page/p
@@ -2564,7 +2564,7 @@ msgstr ""
 "extensions de fitxer com .mts, .m2ts i de vegades .mpg o .mpeg), com les que "
 "utilitzen algunes càmeres de vídeo HD, no es poden reproduir de forma fiable "
 "amb <app>GStreamer</app>. Com a tal, és possible que vulgueu remesclar-los "
-"en un format de contenidor diferent mitjançant <app> ffmpeg </app>. Per "
+"en un format de contenidor diferent mitjançant <app>ffmpeg</app>. Per "
 "convertir sense pèrdues a un contenidor MPEG4, podeu utilitzar el següent "
 "comandament:"
 
@@ -2600,7 +2600,7 @@ msgid ""
 "drop down list next to the two buttons. By default, the list is set to show "
 "all effects."
 msgstr ""
-"La <gui> Biblioteca d'efectes </gui> conté tots els efectes d'àudio i vídeo "
+"La <gui>Biblioteca d'efectes</gui> conté tots els efectes d'àudio i vídeo "
 "disponibles al sistema. La biblioteca mostra efectes d'àudio o de vídeo "
 "segons quin botó estigui activat (<gui>Mostra efectes de vídeo</gui> o "
 "<gui>Mostra efectes d'àudio</gui>) a la cantonada superior esquerra. Un cop "
@@ -2623,7 +2623,7 @@ msgstr ""
 "l'entrada de cerca es filtren els continguts de la <gui>Biblioteca "
 "d'efectes</gui> per mostrar només efectes el nom o la descripció dels quals "
 "coincideixen amb els vostres termes de cerca. Per restablir l'entrada de "
-"cerca, feu clic a la icona <gui> Neteja </gui> a l'entrada de cerca."
+"cerca, feu clic a la icona <gui>Neteja</gui> a l'entrada de cerca."
 
 #. (itstool) path: section/title
 #: C/usingeffects.page:26
@@ -2640,7 +2640,7 @@ msgid ""
 "default value</gui> button."
 msgstr ""
 "Per configurar un efecte, simplement seleccioneu-lo al <guiseq> <gui>centre "
-"del panell </gui> <gui>Configuració de la seqüència</gui> <gui> Efectes </"
+"del panell </gui> <gui>Configuració de la seqüència</gui> <gui>Efectes</"
 "gui> </guiseq>. Les propietats que es poden ajustar es mostraran a "
 "continuació a la mateixa pestanya. Cada variable es pot tornar al seu valor "
 "original fent clic al botó corresponent <gui>Restableix al valor "
@@ -2664,8 +2664,8 @@ msgid ""
 "the button)."
 msgstr ""
 "Les propietats de l'efecte que es poden controlar utilitzant les corbes de "
-"fotogrames clau tenen un botó <gui> Mostra els fotogrames clau per a aquesta "
-"propietat </gui>. Quan feu clic, les corbes del fotograma clau al "
+"fotogrames clau tenen un botó <gui>Mostra els fotogrames clau per a aquesta "
+"propietat</gui>. Quan feu clic, les corbes del fotograma clau al "
 "començament de la seqüència controlen la propietat respectiva. Ara podeu "
 "editar els fotogrames clau per aconseguir l'efecte desitjat. Una vegada que "
 "hàgiu acabat l'edició, podeu fer clic al botó de nou i la corba del "
@@ -2725,13 +2725,13 @@ msgid ""
 "into the <gui>Media Library</gui> are called <em>clips</em>."
 msgstr ""
 "Hi ha dues maneres d'importar fitxers a la <gui>Biblioteca multimèdia</gui>. "
-"La primera manera es prémer al botó <gui> Importa </gui> a l'extrem superior "
+"La primera manera és prémer al botó <gui>Importa</gui> a l'extrem superior "
 "esquerre. Això obrirà un selector de fitxers en el qual podreu veure els "
 "fitxers seleccionats o seleccionar diversos fitxers (mantenint premuda "
 "<key> Maj </key> o la tecla <key> Control </key>). La segona manera és "
 "arrossegar i deixar anar els fitxers des d'un navegador de fitxers a la "
-"<gui>Biblioteca multimèdia</gui>. Els <em> Fitxers </em> importats a la "
-"<gui> Biblioteca multimèdia </gui> s'anomenen  <em>seqüències</em>."
+"<gui>Biblioteca multimèdia</gui>. Els <em>fitxers</em> importats a la "
+"<gui>Biblioteca multimèdia</gui> s'anomenen <em>seqüències</em>."
 
 #. (itstool) path: note/p
 #: C/medialibrary.page:30
@@ -2939,9 +2939,9 @@ msgid ""
 "or click the window's close button. Skipping the dialog will open a new "
 "project with default settings."
 msgstr ""
-"Quan executeu <app> Pitivi </app>, apareixerà un assistent d'inici, que us "
+"Quan executeu <app>Pitivi</app>, apareixerà un assistent d'inici, que us "
 "permetrà crear un projecte nou o obrir un projecte existent amb pocs clics. "
-"Si voleu ometre aquest diàleg, premeu la tecla <key>Escapament </key> al "
+"Si voleu ometre aquest diàleg, premeu la tecla <key>Escapament</key> al "
 "teclat o feu clic al botó tancament de la finestra. En ometre el diàleg "
 "s'obrirà un nou projecte amb la configuració predeterminada."
 
@@ -3044,7 +3044,7 @@ msgstr ""
 "de filmació durant els darrers anys, i per assegurar que <app>Pitivi</app> "
 "segueix sent robust i senzill d'utilitzar, no intentem donar suport a tot "
 "dispositiu de maquinari possible. Com a resultat, actualment no podeu "
-"utilitzar <app> Pitivi </app> per capturar directament des d'una càmera de "
+"utilitzar <app>Pitivi</app> per capturar directament des d'una càmera de "
 "vídeo; les aplicacions especialitzades són més adequades per a aquesta "
 "tasca. Per exemple, per càmeres de vídeo DV/HDV que utilitzen una connexió "
 "IEEE 1394, podeu utilitzar <app>Kino</app> o <app>dvgrab</app> per capturar "
@@ -3096,7 +3096,7 @@ msgstr ""
 "la distància entre les aplicacions de programari. Simplement seleccioneu els "
 "fitxers que voleu importar en una altra aplicació (com ara un gestor de "
 "fitxers o una aplicació multimèdia) i arrossegueu-les amb el ratolí a "
-"la<gui>Biblioteca multimèdia</gui> de <app> Pitivi</app>."
+"la <gui>Biblioteca multimèdia</gui> de <app>Pitivi</app>."
 
 #. (itstool) path: section/p
 #: C/importing.page:41
@@ -3120,7 +3120,7 @@ msgid ""
 "the file chooser dialog."
 msgstr ""
 "Permetre utilitzar un gestor de fitxers de tota mena (com ara <app>Nautilus "
-"</app>, <app> Thunar </app>, <app> Dolphin </app> o <app> Konqueror </app>) "
+"</app>, <app>Thunar</app>, <app>Dolphin</app> o <app>Konqueror</app>) "
 "en comptes del diàleg del selector de fitxers."
 
 #. (itstool) path: item/p
@@ -3136,8 +3136,8 @@ msgid ""
 "<app>GNOME Search Tool</app>, etc.)."
 msgstr ""
 "Aprofiteu la capacitat de cerca d'altres aplicació (com <app>GNOME Shell</"
-"app>, <app>Seguidor</app>, <app>Diari d'activitat de GNOME</app>, <app> Eina "
-"de cerca de GNOME </app> , etc.)."
+"app>, <app>Seguidor</app>, <app>Diari d'activitat de GNOME</app>, <app>Eina "
+"de cerca de GNOME</app> , etc.)."
 
 #. (itstool) path: info/desc
 #: C/effects.page:15
@@ -3161,11 +3161,11 @@ msgid ""
 "containing GStreamer or frei0r effect plugins that are available in the "
 "repositories of your distribution."
 msgstr ""
-"<app> Pitivi </app> ofereix una àmplia varietat d'efectes de vídeo i àudio "
+"<app>Pitivi</app> ofereix una àmplia varietat d'efectes de vídeo i àudio "
 "per donar a conèixer les vostres pel·lícules. Els efectes disponibles "
 "depenen del programari instal·lat a l'ordinador. Si no veieu res (o només "
-"pocs efectes) a la biblioteca d'efectes, assegureu-vos que el paquet <app> "
-"gnome-video-effects </app> estigui instal·lat al vostre sistema. D'altra "
+"pocs efectes) a la biblioteca d'efectes, assegureu-vos que el paquet <app>"
+"gnome-video-effects</app> estigui instal·lat al vostre sistema. D'altra "
 "banda, podeu buscar paquets que continguin connectors d'efectes GStreamer o "
 "frei0r que estiguin disponibles als dipòsits de la vostra distribució."
 
@@ -3191,7 +3191,7 @@ msgstr "Per afegir un efecte:"
 #. (itstool) path: item/p
 #: C/effects.page:30 C/effects.page:39
 msgid "Select an existing clip on the timeline"
-msgstr "Seleccioneu uns seqüència que estigui a la línia de temps"
+msgstr "Seleccioneu una seqüència que estigui a la línia de temps"
 
 #. (itstool) path: item/p
 #: C/effects.page:33
@@ -3232,7 +3232,7 @@ msgid ""
 msgstr ""
 "Si voleu deshabilitar un efecte temporalment ( per comparar amb l'efecte i "
 "sense ell, o per raons de rendiment), premeu la casella de selecció a "
-"<guiseq><gui> centre del panell</gui><gui>Configuració de la seqüència</"
+"<guiseq><gui>centre del panell</gui><gui>Configuració de la seqüència</"
 "gui><gui>Efectes</gui></guiseq>."
 
 #. (itstool) path: info/desc
@@ -3310,7 +3310,7 @@ msgid ""
 msgstr ""
 "Mentre es renderitza, podeu fer una pausa al procés fent clic al botó "
 "<gui>Pausa</gui> i fer-lo anar fent clic novament. També podeu deixar de "
-"renderitzar fent clic al botó <gui> Cancel·la</gui> o prement <key>Esc</"
+"renderitzar fent clic al botó <gui>Cancel·la</gui> o prement <key>Esc</"
 "key>. Si deteniu el procés de renderitzat, la part ja renderitzada del "
 "projecte es desarà a la ubicació especificada. És possible que pugueu "
 "utilitzar un fitxer parcialment renderitzat, depenent del format del "
@@ -3325,7 +3325,7 @@ msgid ""
 "process."
 msgstr ""
 "Si l'equip està configurat per suspendre o hibernar automàticament, "
-"<app>Pitivi</app>inhibirà automàticament les funcions d'estalvi d'energia "
+"<app>Pitivi</app> inhibirà automàticament les funcions d'estalvi d'energia "
 "durant el procés de renderitzat."
 
 #. (itstool) path: section/title
@@ -3344,13 +3344,13 @@ msgid ""
 "closely related, the <gui>Rendering dialog</gui> has a button which opens "
 "the <gui>Project Settings</gui>."
 msgstr ""
-"La <gui> Configuració del projecte </gui> és una base sobre la qual "
+"La <gui>Configuració del projecte</gui> és una base sobre la qual "
 "s'apliquen els paràmetres <gui>Diàleg de renderitzat</gui> quan es fa un "
-"renderitzat. La <gui> Configuració del projecte </gui> es manté separada "
+"renderitzat. La <gui>Configuració del projecte</gui> es manté separada "
 "perquè també determina com visualitzeu el projecte mentre l'editeu. Els "
-"valors especificats al <gui> Diàleg de renderització</gui> són temporals i "
+"valors especificats al <gui>Diàleg de renderització</gui> són temporals i "
 "s'utilitzen només en temps de renderitzat. Com que estan molt relacionats, "
-"el <gui> Diàleg de renderització</gui> té un botó que obre la "
+"el <gui>Diàleg de renderització</gui> té un botó que obre la "
 "<gui>Configuració del projecte</gui>."
 
 #. (itstool) path: info/desc
@@ -3375,7 +3375,7 @@ msgid ""
 "of a clip and a trimming handle will appear. Drag the trimming handle in an "
 "appropriate direction to either reduce or increase the length of the clip."
 msgstr ""
-"El <em> Retallat </em> és l'acte de canviar la longitud d'una seqüència "
+"El <em>Retallat</em> és l'acte de canviar la longitud d'una seqüència "
 "movent el punt d'inici o final a la línia de temps. Moveu el cursor del "
 "ratolí sobre la vora d'una seqüència i apareixerà una eina de tall. "
 "Arrossegueu l'eina de retall en la direcció adequada per reduir o augmentar "
@@ -3420,7 +3420,7 @@ msgid ""
 msgstr ""
 "Els clips agrupats, com les seqüències corresponents d'àudio i de vídeo, es "
 "retallaran al mateix temps quan arrossegueu l'eina de retall. Per retallar "
-"només la seqüència de l'àudio o només el seqüència de vídeo, primer heu de "
+"només la seqüència de l'àudio o només la seqüència de vídeo, primer heu de "
 "desagrupar-los (consulteu la pàgina <link xref=\"selectiongrouping"
 "\">Selecció i agrupament</link>  per obtenir instruccions sobre com fer-ho)."
 
@@ -3451,7 +3451,7 @@ msgstr "Abans"
 #: C/trimming.page:38
 msgid "Relative position of two adjacent clips before ripple editing"
 msgstr ""
-"Posició relativa de dos seqüències adjacents abans de l'edició d'ondulació"
+"Posició relativa de dues seqüències adjacents abans de l'edició d'ondulació"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3476,7 +3476,7 @@ msgstr "Després"
 #: C/trimming.page:43
 msgid "Relative position of two adjacent clips after ripple editing"
 msgstr ""
-"Posició relativa de dos seqüències adjacents després de l'edició d'ondulació"
+"Posició relativa de dues seqüències adjacents després de l'edició d'ondulació"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3562,7 +3562,7 @@ msgstr ""
 #: C/trimming.page:74
 msgid "Relative position of two adjacent clips before roll editing"
 msgstr ""
-"Posició relativa de dos seqüències adjacents abans de fer l'edició de rodet"
+"Posició relativa de dues seqüències adjacents abans de fer l'edició de rodet"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3580,7 +3580,7 @@ msgstr ""
 #: C/trimming.page:79
 msgid "Relative position of two adjacent clips after roll editing"
 msgstr ""
-"Posició relativa de dos seqüències adjacents després de fer l'edició de rodet"
+"Posició relativa de dues seqüències adjacents després de fer l'edició de rodet"
 
 #. (itstool) path: figure/media
 #. This is a reference to an external file such as an image or video. When
@@ -3612,7 +3612,7 @@ msgstr "Per fer una edició de rodet:"
 #: C/trimming.page:88
 msgid "Place the mouse cursor on a trimming handle between two adjacent clips."
 msgstr ""
-"Poseu el cursor del ratolí sobre l'eina de tall entre dos seqüències "
+"Poseu el cursor del ratolí sobre l'eina de tall entre dues seqüències "
 "adjacents."
 
 #. (itstool) path: item/p
@@ -3709,7 +3709,7 @@ msgstr ""
 #. (itstool) path: item/p
 #: C/usingclips.page:45
 msgid "Pressing the <key>Insert</key> key."
-msgstr "Prement la tecla  <key>Insereix</key>."
+msgstr "Prement la tecla <key>Inser</key>."
 
 #. (itstool) path: section/p
 #: C/usingclips.page:48
@@ -3824,7 +3824,7 @@ msgid ""
 "You can release and press <key>Shift</key> at any time during the drag "
 "operation to disable or enable ripple editing."
 msgstr ""
-"Podeu alliberar i prémer <key>Shift</key> en qualsevol moment durant "
+"Podeu alliberar i prémer <key>Maj</key> en qualsevol moment durant "
 "l'operació d'arrossegament per inhabilitar o habilitar l'edició d'ondulació."
 
 #. (itstool) path: page/title
@@ -3898,13 +3898,13 @@ msgstr "Biblioteca multimèdia"
 #. (itstool) path: item/p
 #: C/cheatsheet.page:50
 msgid "<key>Enter</key>: Preview (playback) the selected clip"
-msgstr "<key>Intro</key>:  Visualitzeu (reproducció) la seqüència seleccionada"
+msgstr "<key>Retorn</key>:  Visualitzeu (reproducció) la seqüència seleccionada"
 
 #. (itstool) path: item/p
 #: C/cheatsheet.page:53
 msgid "<key>Insert</key>: Insert the selected clips into the timeline"
 msgstr ""
-"<key>Insereix</key>: Inseriu les seqüències seleccionades dins de la línia "
+"<key>Inser</key>: Inseriu les seqüències seleccionades dins de la línia "
 "de temps"
 
 #. (itstool) path: item/p
