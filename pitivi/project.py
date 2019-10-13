@@ -839,7 +839,7 @@ class Project(Loggable, GES.Project):
         """Returns path of thumbnail of specified resolution in the cache."""
         thumb_hash = md5(quote_uri(uri).encode()).hexdigest()
         thumbs_cache_dir = get_dir(os.path.join(xdg_cache_home(),
-                                   "project_thumbs", resolution))
+                                                "project_thumbs", resolution))
         return os.path.join(thumbs_cache_dir, thumb_hash) + ".png"
 
     @classmethod
@@ -1373,7 +1373,7 @@ class Project(Loggable, GES.Project):
                 self.app.proxy_manager.add_job(asset)
         else:
             self.debug("Project still loading, not using proxies: %s",
-                    asset.props.id)
+                       asset.props.id)
             asset.creation_progress = 100
             self.__updateAssetLoadingProgress()
 
@@ -1789,19 +1789,21 @@ class Project(Loggable, GES.Project):
 
     def setAudioProperties(self, nbchanns=-1, rate=-1):
         """Sets the number of audio channels and the rate."""
+        # pylint: disable=consider-using-in
         self.info("%d x %dHz %dbits", nbchanns, rate)
-        if not nbchanns == -1 and not nbchanns == self.audiochannels:
+        if nbchanns != -1 and nbchanns != self.audiochannels:
             self.audiochannels = nbchanns
-        if not rate == -1 and not rate == self.audiorate:
+        if rate != -1 and rate != self.audiorate:
             self.audiorate = rate
 
     def setEncoders(self, muxer="", vencoder="", aencoder=""):
         """Sets the video and audio encoders and the muxer."""
-        if not muxer == "" and not muxer == self.muxer:
+        # pylint: disable=consider-using-in
+        if muxer != "" and muxer != self.muxer:
             self.muxer = muxer
-        if not vencoder == "" and not vencoder == self.vencoder:
+        if vencoder != "" and vencoder != self.vencoder:
             self.vencoder = vencoder
-        if not aencoder == "" and not aencoder == self.aencoder:
+        if aencoder != "" and aencoder != self.aencoder:
             self.aencoder = aencoder
 
     @property

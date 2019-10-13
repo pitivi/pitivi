@@ -201,8 +201,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
 
         self.element.get_parent().set_asset(transition_asset)
         self.app.write_action("element-set-asset",
-            asset_id=transition_asset.get_id(),
-            element_name=self.element.get_name())
+                              asset_id=transition_asset.get_id(),
+                              element_name=self.element.get_name())
         self.app.project_manager.current_project.pipeline.flushSeek()
 
         return True
@@ -322,7 +322,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         try:
             icon = GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(self._pixdir, name))
-        except:
+        except GLib.Error:
             icon = self._question_icon
         return icon
 

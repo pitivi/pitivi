@@ -183,8 +183,7 @@ class EffectInfo(object):
             icon = GdkPixbuf.Pixbuf.new_from_file_at_size(
                 os.path.join(pixdir, self.effect_name + ".png"),
                 ICON_WIDTH, ICON_WIDTH)
-        # An empty except clause is bad, but "gi._glib.GError" is not helpful.
-        except:
+        except GLib.Error:
             icon = GdkPixbuf.Pixbuf.new_from_file(
                 os.path.join(pixdir, "defaultthumbnail.svg"))
         return icon
@@ -294,11 +293,11 @@ class EffectsManager(Loggable):
                 HIDDEN_EFFECTS.extend(self.gl_effects)
 
     def _check_gleffects(self):
+        check_pipeline_path = os.path.join(os.path.dirname(__file__), "utils", "check_pipeline.py")
         try:
             res = subprocess.check_output([sys.executable,
-                os.path.join(os.path.dirname(__file__), "utils",
-                "check_pipeline.py"),
-                "videotestsrc ! glupload ! gleffects ! fakesink"])
+                                           check_pipeline_path,
+                                           "videotestsrc ! glupload ! gleffects ! fakesink"])
             self.debug(res)
         except subprocess.CalledProcessError as e:
             self.error("Can not use GL effects: %s", e)

@@ -44,7 +44,7 @@ FLATPAK_VERSION = {}
 DEFAULT_GST_BRANCH = 'master'
 
 
-class Colors:  # pylint: disable=too-few-public-methods
+class Colors:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKGREEN = "\033[92m"
@@ -53,7 +53,7 @@ class Colors:  # pylint: disable=too-few-public-methods
     ENDC = "\033[0m"
 
 
-class Console:  # pylint: disable=too-few-public-methods
+class Console:
 
     quiet = False
 
@@ -177,7 +177,7 @@ def check_flatpak(verbose=True):
     return True
 
 
-class FlatpakObject:  # pylint: disable=too-few-public-methods
+class FlatpakObject:
 
     def __init__(self, user):
         self.user = user
@@ -201,7 +201,7 @@ class FlatpakObject:  # pylint: disable=too-few-public-methods
         return subprocess.check_call(command)
 
 
-class FlatpakPackages(FlatpakObject):  # pylint: disable=too-few-public-methods
+class FlatpakPackages(FlatpakObject):
 
     def __init__(self, repos, user=True):
         FlatpakObject.__init__(self, user=user)
@@ -345,7 +345,7 @@ class FlatpakRepos(FlatpakObject):
         return self.repos[name]
 
 
-class FlatpakRepo(FlatpakObject):  # pylint: disable=too-few-public-methods
+class FlatpakRepo(FlatpakObject):
 
     def __init__(self, name, url, desc=None, user=True, repos=None):  # pylint: disable=too-many-arguments
         FlatpakObject.__init__(self, user=user)
@@ -465,7 +465,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         Console.quiet = self.quiet
 
         if not check_flatpak():
-            exit(1)
+            sys.exit(1)
 
         repos = FlatpakRepos()
         self.sdk_repo = repos.add("flathub",
@@ -514,7 +514,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             if missing_prefix:
                 Console.message("%sPrefix missing, create it with: %s --init%s",
                                 Colors.FAIL, __file__, Colors.ENDC)
-                exit(1)
+                sys.exit(1)
 
         if self.coredumpgdb is not None:
             self.run_gdb()
@@ -555,7 +555,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         try:
             subprocess.check_call(build_export_args)
         except subprocess.CalledProcessError:
-            exit(1)
+            sys.exit(1)
 
         update_repo_args = ["flatpak", "build-update-repo"]
 
@@ -568,7 +568,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         try:
             subprocess.check_call(update_repo_args)
         except subprocess.CalledProcessError:
-            exit(1)
+            sys.exit(1)
 
     def setup_sandbox(self):
         """Creates and updates the sandbox."""
@@ -590,7 +590,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
         except FileNotFoundError:
             Console.message("\n%sYou need to install flatpak-builder%s\n",
                             Colors.FAIL, Colors.ENDC)
-            exit(1)
+            sys.exit(1)
         subprocess.check_call(builder_args, cwd=self.scriptdir)
 
         if not os.path.isdir("mesonbuild/"):
@@ -637,7 +637,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             venv.create(venv_path, with_pip=True)
 
         activate_script = os.path.join(venv_path, "bin", "activate")
-        pip_modules = "git_pep8_commit_hook git-pylint-commit-hook pre-commit pylint"
+        pip_modules = "git-pylint-commit-hook pre-commit pylint"
         Console.message(
             "Installing development tools in the Python virtual env: %s", pip_modules)
         subprocess.check_call(
@@ -701,7 +701,7 @@ class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
             subprocess.check_call(flatpak_command, cwd=cwd)
         except subprocess.CalledProcessError as e:
             if exit_on_failure:
-                exit(e.returncode)
+                sys.exit(e.returncode)
 
     def install_flatpak_runtimes(self):
         for runtime in self.packs:

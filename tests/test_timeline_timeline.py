@@ -23,7 +23,6 @@ from gi.repository import GES
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi.timeline.timeline import TimelineContainer
 from pitivi.utils.timeline import UNSELECT
 from pitivi.utils.ui import LAYER_HEIGHT
 from pitivi.utils.ui import SEPARATOR_HEIGHT
@@ -639,9 +638,9 @@ class TestShiftSelection(BaseTestTimeline):
         asset = GES.UriClipAsset.request_sync(
             common.get_sample_uri("1sec_simpsons_trailer.mp4"))
         ges_clip1 = ges_layer.add_asset(asset, 0 * Gst.SECOND, 0,
-            1 * Gst.SECOND, GES.TrackType.UNKNOWN)
+                                        1 * Gst.SECOND, GES.TrackType.UNKNOWN)
         ges_clip2 = ges_layer.add_asset(asset, 1 * Gst.SECOND, 0,
-            1 * Gst.SECOND, GES.TrackType.UNKNOWN)
+                                        1 * Gst.SECOND, GES.TrackType.UNKNOWN)
 
         event = mock.Mock()
         event.get_button.return_value = (True, 1)
@@ -754,16 +753,16 @@ class TestShiftSelection(BaseTestTimeline):
             timeline._button_release_event_cb(None, event)
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 9 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
-            self.__check_selected([ges_clip11, ges_clip22], [ges_clip12, ges_clip13,
-                ges_clip21, ges_clip23, ges_clip31, ges_clip32, ges_clip33])
+            self.__check_selected([ges_clip11, ges_clip22],
+                                  [ges_clip12, ges_clip13, ges_clip21, ges_clip23, ges_clip31, ges_clip32, ges_clip33])
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer3, 12 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
-            self.__check_selected([ges_clip22, ges_clip31, ges_clip32], [ges_clip11,
-                ges_clip12, ges_clip13, ges_clip21, ges_clip23, ges_clip33])
+            self.__check_selected([ges_clip22, ges_clip31, ges_clip32],
+                                  [ges_clip11, ges_clip12, ges_clip13, ges_clip21, ges_clip23, ges_clip33])
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 22 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip11, ges_clip12, ges_clip22, ges_clip23],
-                [ges_clip13, ges_clip21, ges_clip31, ges_clip32, ges_clip33])
+                                  [ges_clip13, ges_clip21, ges_clip31, ges_clip32, ges_clip33])
             self.__reset_clips_selection(timeline)
 
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer1, 3 * Gst.SECOND)
@@ -771,11 +770,12 @@ class TestShiftSelection(BaseTestTimeline):
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer2, 26 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip11, ges_clip12, ges_clip13, ges_clip22, ges_clip23],
-                [ges_clip21, ges_clip31, ges_clip32, ges_clip33])
+                                  [ges_clip21, ges_clip31, ges_clip32, ges_clip33])
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer3, 30 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip11, ges_clip12, ges_clip13, ges_clip22, ges_clip23,
-                ges_clip31, ges_clip32, ges_clip33], [ges_clip21])
+                                   ges_clip31, ges_clip32, ges_clip33],
+                                  [ges_clip21])
 
     def test_shift_selection_multiple_layers(self):
         self.__check_shift_selection_multiple_layers(left_click_also_seeks=False)

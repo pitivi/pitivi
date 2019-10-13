@@ -28,11 +28,11 @@ There are four element states: `gst.STATE_NULL`, `gst.STATE_READY`,
 
 `gst.STATE_PAUSED`
 
-:  
+:
 
 `gst.STATE_PLAYING`
 
-:  
+:
 
 ## The element life-cycle
 

@@ -49,6 +49,7 @@ from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.system import get_system
 from pitivi.utils.threads import ThreadMaster
 from pitivi.utils.timeline import Zoomable
+#import pydevd
 
 
 class Pitivi(Gtk.Application, Loggable):
@@ -96,6 +97,7 @@ class Pitivi(Gtk.Application, Loggable):
 
         Zoomable.app = self
         self.shortcuts = ShortcutsManager(self)
+       # pydevd.settrace()
 
     def write_action(self, action, **kwargs):
         if self._scenario_file is None:
@@ -132,8 +134,7 @@ class Pitivi(Gtk.Application, Loggable):
         Gtk.Application.do_startup(self)
 
         # Init logging as early as possible so we can log startup code
-        enable_color = not os.environ.get(
-            'PITIVI_DEBUG_NO_COLOR', '0') in ('', '1')
+        enable_color = os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') not in ('', '1')
         # Let's show a human-readable Pitivi debug output by default, and only
         # show a crazy unreadable mess when surrounded by gst debug statements.
         enable_crack_output = "GST_DEBUG" in os.environ
@@ -334,7 +335,7 @@ class Pitivi(Gtk.Application, Loggable):
                 status = "CURRENT"
                 self.info(
                     "Running version %s, which is newer than the latest known version. Considering it as the latest current version.", VERSION)
-            elif status is "UNSUPPORTED":
+            elif status == "UNSUPPORTED":
                 self.warning(
                     "Using an outdated version of Pitivi (%s)", VERSION)
 

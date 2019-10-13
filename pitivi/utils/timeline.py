@@ -325,11 +325,11 @@ class EditingContext(GObject.Object, Loggable):
 
         res = self.focus.edit([], priority, self.mode, self.edge, int(position))
         self.app.write_action("edit-container",
-            container_name=self.focus.get_name(),
-            position=float(position / Gst.SECOND),
-            edit_mode=self.mode.value_nick,
-            edge=self.edge.value_nick,
-            new_layer_priority=int(priority))
+                              container_name=self.focus.get_name(),
+                              position=float(position / Gst.SECOND),
+                              edit_mode=self.mode.value_nick,
+                              edge=self.edge.value_nick,
+                              new_layer_priority=int(priority))
 
         if res and self.mode == GES.EditMode.EDIT_TRIM and self.with_video:
             if self.edge == GES.Edge.EDGE_START:
@@ -461,7 +461,7 @@ class Zoomable(object):
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:
             return 0
-        return ((float(duration) / Gst.SECOND) * cls.zoomratio)
+        return (float(duration) / Gst.SECOND) * cls.zoomratio
 
     def zoomChanged(self):
         pass

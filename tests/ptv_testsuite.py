@@ -16,7 +16,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 # pylint: disable=missing-docstring,invalid-name
-"""GstValidateLauncher testsuite to run out unit tests."""
+"""GstValidateLauncher testsuite to run our unit tests."""
 import os
 import sys
 import unittest
@@ -28,12 +28,11 @@ sys.path.insert(0, os.path.join(CDIR, '..'))
 # pylint: disable=wrong-import-position
 # pylint: disable=unused-import
 # Import tests so that the module is initialized
-import tests  # noqa
+import tests
 # pylint: disable=import-error
-from launcher.baseclasses import Test  # noqa
+from launcher.baseclasses import Test
 
 
-# pylint: disable=too-few-public-methods
 class PitiviTest(Test):
     """A launcher.Test subclass for our unit tests."""
     def build_arguments(self):

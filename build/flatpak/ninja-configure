@@ -10,4 +10,3 @@ install:
 	cp ninja /app/bin/
 
 EOF
-

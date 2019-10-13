@@ -37,7 +37,6 @@ from gi.repository import GLib
 from gi.repository import Gst
 from gi.repository import Gtk
 
-from pitivi import check
 from pitivi.application import Pitivi
 from pitivi.project import ProjectManager
 from pitivi.settings import GlobalSettings

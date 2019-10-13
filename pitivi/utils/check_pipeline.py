@@ -16,9 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""
-Simple app to check if a GStreamer pipeline can run.
-"""
+"""Simple tool used by Pitivi to check if a GStreamer pipeline can run."""
 import os
 import sys
 
@@ -26,8 +24,9 @@ import gi
 
 gi.require_version("Gst", "1.0")
 
-from gi.repository import Gst  # pylint: disable-msg=wrong-import-position
-from gi.repository import GLib  # pylint: disable-msg=wrong-import-position
+# pylint: disable-msg=wrong-import-position
+from gi.repository import Gst
+from gi.repository import GLib
 
 
 def pipeline_message_cb(_, msg, pipeline):
@@ -39,14 +38,14 @@ def pipeline_message_cb(_, msg, pipeline):
     elif msg.type == Gst.MessageType.ERROR:
         # The pipeline cannot be set to PAUSED.
         error, detail = msg.parse_error()
-        print("Pipeline failed: %s, %s" % (error, detail), file=sys.stderr)
+        print("check_pipeline: Pipeline failed: %s, %s" % (error, detail), file=sys.stderr)
         pipeline.set_state(Gst.State.NULL)
         sys.exit(1)
 
 
 def timeout_cb(*args, **kwargs):
     """Exit on timeout."""
-    print("Pipeline timed out", file=sys.stderr)
+    print("check_pipeline: Pipeline timed out", file=sys.stderr)
     sys.exit(1)
 
 

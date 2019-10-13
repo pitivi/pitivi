@@ -86,9 +86,9 @@ class PreviewerBin(Gst.Bin, Loggable):
 
         self.internal_bin = Gst.parse_bin_from_description(bin_desc, True)
         self.add(self.internal_bin)
-        sinkpad, = [pad for pad in self.internal_bin.iterate_sink_pads()]
+        sinkpad, = list(self.internal_bin.iterate_sink_pads())
         self.add_pad(Gst.GhostPad.new(None, sinkpad))
-        srcpad, = [pad for pad in self.internal_bin.iterate_src_pads()]
+        srcpad, = list(self.internal_bin.iterate_src_pads())
         self.add_pad(Gst.GhostPad.new(None, srcpad))
 
     def finalize(self):

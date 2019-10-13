@@ -88,10 +88,9 @@ class PreferencesDialog(Loggable):
         self.factory_settings = builder.get_object("resetButton")
         self.restart_warning = builder.get_object("restartWarning")
 
-        for section_id in self.settings_sections:
-            self.add_settings_page(section_id)
         self.factory_settings.set_sensitive(self._canReset())
 
+        self.add_settings_page('timeline')
         self.__add_proxies_section()
         self.__add_shortcuts_section()
         self.__add_plugin_manager_section()
@@ -113,9 +112,6 @@ class PreferencesDialog(Loggable):
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 # Public API
-    @property
-    def settings_sections(self):
-        return [section for section in PreferencesDialog.section_names if not section.startswith("_")]
 
     @classmethod
     def add_section(cls, section, title):
@@ -332,8 +328,8 @@ class PreferencesDialog(Loggable):
         size_box.pack_start(Gtk.Label("×"), False, False, 0)
         size_box.pack_start(self.proxy_height_widget, False, False, 0)
         size_box.set_tooltip_text(_("This resolution will be used as the"
-            " default target resolution for new projects and projects missing"
-            " scaled proxy meta-data."))
+                                    " default target resolution for new projects and projects missing"
+                                    " scaled proxy meta-data."))
         self.scaled_proxy_size_revert_button = self._create_revert_button()
 
         self.proxy_infobar = Gtk.InfoBar.new()
@@ -550,13 +546,9 @@ class PreferencesDialog(Loggable):
         self.factory_settings.set_sensitive(self._canReset())
 
     def _response_cb(self, unused_button, unused_response_id):
-        # Disable missing docstring
-        # pylint: disable=C0111
         self.dialog.destroy()
 
     def _valueChangedCb(self, unused_fake_widget, real_widget, attrname):
-        # Disable missing docstring
-        # pylint: disable=C0111
         value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
             self.original_values[attrname] = value
@@ -573,14 +565,10 @@ class PreferencesDialog(Loggable):
         self.factory_settings.set_sensitive(True)
 
     def _configureCb(self, unused_widget, event):
-        # Disable missing docstring
-        # pylint: disable=C0111
         self.settings.prefsDialogWidth = event.width
         self.settings.prefsDialogHeight = event.height
 
     def _canReset(self):
-        # Disable missing docstring
-        # pylint: disable=C0111
         for section in self.prefs.values():
             for attrname in section:
                 if not self.settings.isDefault(attrname):

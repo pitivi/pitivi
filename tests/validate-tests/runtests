@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-
 """Wrapper script for running the Pitivi integration tests."""
-
 import os
 import subprocess
 import sys

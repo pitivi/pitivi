@@ -186,7 +186,7 @@ class Marquee(Gtk.Box, Loggable):
         end_pos = max(0, self._timeline.pixelToNs(self.end_x))
 
         return self._timeline.get_clips_in_between(start_layer,
-            end_layer, start_pos, end_pos)
+                                                   end_layer, start_pos, end_pos)
 
 
 class LayersLayout(Gtk.Layout, Zoomable, Loggable):
@@ -1807,8 +1807,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if self.ges_timeline:
             with Previewer.manager.paused():
                 with self.app.action_log.started("delete clip",
-                                                finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                                                toplevel=True):
+                                                 finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                                 toplevel=True):
                     for clip in self.timeline.selection:
                         if isinstance(clip, GES.TransitionClip):
                             continue
@@ -1907,8 +1907,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         position = self._project.pipeline.getPosition()
         with self.app.action_log.started("paste",
-                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                    toplevel=True):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             copied_group_shallow_copy = self.__copied_group.paste(position)
             if not copied_group_shallow_copy:
                 self.info("The paste is not possible at position: %s", position)
@@ -1922,8 +1922,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     def __add_layer_cb(self, unused_action, unused_parameter):
         with self.app.action_log.started("add layer",
-                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
-                    toplevel=True):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline),
+                                         toplevel=True):
             priority = len(self.ges_timeline.get_layers())
             self.timeline.create_layer(priority)
 
@@ -2001,7 +2001,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         Otherwise, split all clips at the playhead position.
         """
         with self.app.action_log.started("split clip", toplevel=True,
-                    finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
+                                         finalizing_action=CommitTimelineFinalizingAction(self._project.pipeline)):
             self._splitElements(self.timeline.selection.selected)
 
     def _splitElements(self, clips=None):
@@ -2023,8 +2023,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     layer.splitting_object = True
                     try:
                         self.app.write_action("split-clip",
-                            clip_name=clip.get_name(),
-                            position=float(position / Gst.SECOND))
+                                              clip_name=clip.get_name(),
+                                              position=float(position / Gst.SECOND))
 
                         clip.split(position)
                         splitted = True

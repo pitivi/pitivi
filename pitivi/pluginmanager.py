@@ -1,4 +1,3 @@
-# pylint: disable=missing-docstring
 # -*- coding: utf-8 -*-
 # Copyright (c) 2017, Fabian Orccon <cfoch.fabian@gmail.com>
 #
@@ -16,6 +15,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""PluginManager for loading Pitivi plugins."""
 import os
 from enum import IntEnum
 from gettext import gettext as _
@@ -44,6 +44,9 @@ class API(GObject.GObject):
 
 
 class PluginType(IntEnum):
+    """Types of plugins we support, depending on their directory location."""
+    # pylint: disable=comparison-with-callable,inconsistent-return-statements,no-else-return
+
     SYSTEM = 1
     USER = 2
 
@@ -54,6 +57,7 @@ class PluginType(IntEnum):
             return _("System plugins")
 
     def get_dir(self):
+        """Returns the directory where this type of plugins can be found."""
         if self.value == PluginType.USER:
             return get_user_plugins_dir()
         elif self.value == PluginType.SYSTEM:
@@ -94,6 +98,7 @@ class PluginManager(Loggable):
 
     @classmethod
     def get_plugin_type(cls, plugin_info):
+        """Gets the PluginType for the specified Peas.PluginInfo."""
         paths = [plugin_info.get_data_dir(), get_plugins_dir()]
         if os.path.commonprefix(paths) == get_plugins_dir():
             return PluginType.SYSTEM
@@ -140,11 +145,10 @@ class PluginManager(Loggable):
 
     def _setup_extension_set(self):
         plugin_iface = API(self.app)
-        self.extension_set =\
-            Peas.ExtensionSet.new_with_properties(self.engine,
-                                                  Peas.Activatable,
-                                                  ["object"],
-                                                  [plugin_iface])
+        self.extension_set = Peas.ExtensionSet.new(self.engine,
+                                                   Peas.Activatable,
+                                                   ["object"],
+                                                   [plugin_iface])
         self.extension_set.connect("extension-removed",
                                    self.__extension_removed_cb)
         self.extension_set.connect("extension-added",

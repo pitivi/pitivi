@@ -232,7 +232,7 @@ class ProxyManager(GObject.Object, Loggable):
         return True
 
     def __getEncodingProfile(self, encoding_target_file, asset=None, width=None,
-            height=None):
+                             height=None):
         encoding_target = GstPbutils.EncodingTarget.load_from_file(
             os.path.join(get_gstpresets_dir(), encoding_target_file))
         encoding_profile = encoding_target.get_profile("default")
@@ -352,10 +352,10 @@ class ProxyManager(GObject.Object, Loggable):
             t_width, t_height = self._scale_asset_resolution(asset, max_w, max_h)
             proxy_res = "%sx%s" % (t_width, t_height)
             return "%s.%s.%s.%s" % (asset.get_id(), file_size, proxy_res,
-                self.scaled_proxy_extension)
+                                    self.scaled_proxy_extension)
         else:
             return "%s.%s.%s" % (asset.get_id(), file_size,
-                self.hq_proxy_extension)
+                                 self.hq_proxy_extension)
 
     def isAssetFormatWellSupported(self, asset):
         for encoding_format in self.WHITELIST_FORMATS:
@@ -371,8 +371,8 @@ class ProxyManager(GObject.Object, Loggable):
 
         asset_res = (stream.get_width(), stream.get_height())
         target_res = self._scale_asset_resolution(asset,
-            self.app.project_manager.current_project.scaled_proxy_width,
-            self.app.project_manager.current_project.scaled_proxy_height)
+                                                  self.app.project_manager.current_project.scaled_proxy_width,
+                                                  self.app.project_manager.current_project.scaled_proxy_height)
 
         return asset_res == target_res
 
@@ -512,7 +512,7 @@ class ProxyManager(GObject.Object, Loggable):
                     proxy_uri = waiting_transcoder.props.dest_uri.rstrip(ProxyManager.part_suffix)
                     GES.Asset.needs_reload(GES.UriClip, proxy_uri)
                     GES.Asset.request_async(GES.UriClip, proxy_uri, None,
-                        self.__assetLoadedCb, waiting_asset, waiting_transcoder)
+                                            self.__assetLoadedCb, waiting_asset, waiting_transcoder)
 
                     self.__waiting_transcoders.remove(pair)
                     break
@@ -618,7 +618,7 @@ class ProxyManager(GObject.Object, Loggable):
         dispatcher = GstTranscoder.TranscoderGMainContextSignalDispatcher.new()
 
         enc_profile = self.__getEncodingProfile(self.__encoding_target_file,
-            asset, width, height)
+                                                asset, width, height)
 
         transcoder = GstTranscoder.Transcoder.new_full(
             asset_uri, proxy_uri + ProxyManager.part_suffix, enc_profile,
@@ -713,7 +713,7 @@ class ProxyManager(GObject.Object, Loggable):
         if not force_proxying:
             if not self.__assetNeedsTranscoding(asset, scaled):
                 self.debug("Not proxying asset (proxying disabled: %s)",
-                       self.proxyingUnsupported)
+                           self.proxyingUnsupported)
                 # Make sure to notify we do not need a proxy for that asset.
                 self.emit("proxy-ready", asset, None)
                 return
@@ -722,9 +722,9 @@ class ProxyManager(GObject.Object, Loggable):
         if Gio.File.new_for_uri(proxy_uri).query_exists(None):
             self.debug("Using proxy already generated: %s", proxy_uri)
             GES.Asset.request_async(GES.UriClip,
-                                proxy_uri, None,
-                                self.__assetLoadedCb, asset,
-                                None)
+                                    proxy_uri, None,
+                                    self.__assetLoadedCb, asset,
+                                    None)
             return
 
         self.debug("Creating a proxy for %s (strategy: %s, force: %s, scaled: %s)",
