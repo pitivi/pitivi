@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
+# This is symlinked from .git/hooks/pre-commit when entering
+# the dev env with `source bin/pitivi-env`.
+
 if [ -z "${PITIVI_REPO_DIR}" ]; then
     echo "ERROR: You're not in the Pitivi development environment. Run `source bin/pitivi-env` to enter it. See http://developer.pitivi.org/HACKING.html for details."
     exit 1
 fi
 
 TOPLEVEL=$(git rev-parse --show-toplevel)
-RCFILE=$TOPLEVEL/docs/pylint.rc
+export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
 
-IGNORED_FILES="
+PYLINT_IGNORED_FILES="
 bin/pitivi.in
 pitivi/application.py
 pitivi/autoaligner.py
@@ -70,17 +73,20 @@ tests/validate-tests/manager.py
 tests/validate-tests/suite.py
 "
 
-IGNORE_ARGS=""
-for f in $IGNORED_FILES; do
-    IGNORE_ARGS="$IGNORE_ARGS --ignore=$f"
+PYLINT_IGNORE_ARGS=""
+for f in $PYLINT_IGNORED_FILES; do
+    PYLINT_IGNORE_ARGS="$PYLINT_IGNORE_ARGS --ignore=$f"
 done
-echo "Pylint ignoring files:$IGNORED_FILES" | tr "\n" " "
-echo
 
-export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
+# Print the commands being executed so we have a clue what's going on.
+set -x
 
-git-pylint-commit-hook --pylint="$TOPLEVEL/build/flatpak/pitivi-flatpak" --pylint-params="pylint" --pylintrc=$RCFILE $IGNORE_ARGS --limit=10.0 --suppress-report || exit 1
-
-git_pep8_commit_hook --pep8-params="--repeat --ignore=E501,E128,E402" || exit 1
-
+# Lightweight pre-commit.com checks.
 pre-commit run --config .pre-commit-config.yaml || exit 1
+
+# We keep pylint separate from the pre-commit.com hooks
+# because we have to run it in the sandbox. This is done
+# through git-pylint-commit-hook and pitivi-flatpak.
+git-pylint-commit-hook --pylint="$TOPLEVEL/build/flatpak/pitivi-flatpak" \
+  --pylint-params="pylint" --pylintrc="$TOPLEVEL/pylint.rc" \
+  --limit=10.0 $PYLINT_IGNORE_ARGS --suppress-report || exit 1

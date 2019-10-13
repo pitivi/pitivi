@@ -774,8 +774,8 @@ class RenderDialog(Loggable):
         self.fileentry.set_text(name)
 
     def _update_valid_restriction_values(self, caps, combo, caps_template,
-                               model, combo_value,
-                               caps_template_expander=None):
+                                         model, combo_value,
+                                         caps_template_expander=None):
         def caps_template_expander_func(caps_template, value):
             return caps_template % value
 
@@ -890,7 +890,7 @@ class RenderDialog(Loggable):
         if self.project.vencoder == 'x264enc':
             if self.project.videowidth % 2 or self.project.videoheight % 2:
                 return "\n\n%s\n\n" % _("<b>Make sure your rendering size is even, "
-                         "x264enc might not be able to render otherwise.</b>\n\n")
+                                        "x264enc might not be able to render otherwise.</b>\n\n")
 
         return ""
 
@@ -1022,7 +1022,7 @@ class RenderDialog(Loggable):
                     return None
 
                 hq_proxy = GES.Asset.request(GES.UriClip,
-                    self.app.proxy_manager.getProxyUri(asset_target))
+                                             self.app.proxy_manager.getProxyUri(asset_target))
                 return hq_proxy or None
 
     def __replace_proxies(self):

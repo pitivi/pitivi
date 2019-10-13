@@ -2,10 +2,8 @@
 """
 Pitivi unit tests
 """
-import glob
 import os
 import sys
-import unittest
 from tempfile import mkdtemp
 
 import gi.overrides
@@ -75,6 +73,7 @@ def setup():
     log.init('PITIVI_DEBUG')
 
     return res
+
 
 if not setup():
     raise ImportError("Could not setup testsuite")

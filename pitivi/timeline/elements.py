@@ -1157,7 +1157,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         factory_name = effect_info.effect_name
         if factory_name in ALLOWED_ONLY_ONCE_EFFECTS:
             for effect in self.ges_clip.find_track_elements(None, GES.TrackType.VIDEO,
-                                                   GES.BaseEffect):
+                                                            GES.BaseEffect):
                 for elem in effect.get_nleobject().iterate_recurse():
                     if elem.get_factory().get_name() == factory_name:
                         self.error("Not adding %s as it would be duplicate"

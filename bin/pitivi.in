@@ -42,7 +42,7 @@ BUILDDIR = '@BUILDDIR@'
 
 def _prepend_env_path(name, value):
     os.environ[name] = os.pathsep.join(value +
-            os.environ.get(name, "").split(os.pathsep))
+                                       os.environ.get(name, "").split(os.pathsep))
 
 
 def jump_through_hoops():

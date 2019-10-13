@@ -23,7 +23,6 @@ from gi.repository import GES
 from gi.repository import Gtk
 
 
-# pylint: disable=too-few-public-methods
 class BrowseProjectsDialog(Gtk.FileChooserDialog):
     """Displays the Gtk.FileChooserDialog for browsing projects.
 

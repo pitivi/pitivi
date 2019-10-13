@@ -28,7 +28,6 @@ from gi.repository import Gtk
 
 from pitivi.configure import get_audiopresets_dir
 from pitivi.configure import get_videopresets_dir
-from pitivi.settings import xdg_config_home
 from pitivi.settings import xdg_data_home
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.ui import alter_style_class

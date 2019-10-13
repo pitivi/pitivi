@@ -11,10 +11,16 @@
 # Python code to execute, usually for sys.path manipulation such as
 init-hook='import gi; gi.require_version("Gtk", "3.0"); gi.require_version("Gst", "1.0"); from gi.repository import Gst; Gst.init(None); gi.require_version("GES", "1.0"); from gi.repository import GES; GES.init()'
 
+
 [MESSAGES CONTROL]
 
-# Disable the message(s) with the given id(s).
-disable=E1101,W0142,locally-disabled,fixme,superfluous-parens,too-many-lines
+# Disable useless messages:
+#   no-member - Instance ... has no member ...
+#   similarities - Expensive detection of copy/pasted code
+#   too-few-public-methods
+#   too-many-lines - Modules have more than max-line-length lines
+disable=no-member,similarities,too-few-public-methods,too-many-lines
+
 
 [VARIABLES]
 
@@ -97,7 +103,7 @@ max-parents=7
 max-attributes=7
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20
@@ -138,22 +144,7 @@ int-import-graph=
 [CLASSES]
 
 # List of method names used to declare (i.e. assign) instance attributes.
-defining-attr-methods=__init__,__new__,setUp,_reset,_createUi,_addSource
-
-# checks for similarities and duplicated code. This computation may be
-# memory / CPU intensive, so you should disable it if you experiments some
-# problems.
-#
-[SIMILARITIES]
-
-# Minimum lines number of a similarity.
-min-similarity-lines=4
-
-# Ignore comments when computing similarities.
-ignore-comments=yes
-
-# Ignore docstrings when computing similarities.
-ignore-docstrings=yes
+defining-attr-methods=__init__,__new__,setUp
 
 
 # checks for:
@@ -162,8 +153,8 @@ ignore-docstrings=yes
 #
 [MISCELLANEOUS]
 
-# List of note tags to take in consideration, separated by a comma.
-notes=FIXME,XXX,TODO
+# List of note/comment tags to disallow, separated by a comma.
+notes=XXX
 
 
 # checks for :
@@ -175,7 +166,7 @@ notes=FIXME,XXX,TODO
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=120
+max-line-length=1000
 
 # Maximum number of lines in a module
 max-module-lines=1000

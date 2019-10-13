@@ -17,13 +17,12 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """The developer console widget."""
+from consolebuffer import ConsoleBuffer
 from gi.repository import Gdk
 from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import Pango
-
-from consolebuffer import ConsoleBuffer
 
 
 class ConsoleView(Gtk.TextView):

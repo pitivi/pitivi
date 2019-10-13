@@ -446,7 +446,6 @@ class PreviewWidget(Gtk.Grid, Loggable):
         items.sort()
         text = self.description + "\n\n"
         for key, value in items:
-            capitalized = key.capitalize()
             escaped = html.escape(value)
             text = text + "<b>%s</b>: %s\n" % (key, escaped)
         self.l_tags.set_markup(text)
