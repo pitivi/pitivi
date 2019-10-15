@@ -1144,7 +1144,7 @@ class GstElementSettingsDialog(Loggable):
         self.ok_btn = self.builder.get_object("okbutton1")
 
         self.window = self.builder.get_object("dialog1")
-        self.elementsettings = GstElementSettingsWidget(self.element, self.properties, controllable=False)
+        self.elementsettings = GstElementSettingsWidget(self.element, controllable=False)
         self.builder.get_object("viewport1").add(self.elementsettings)
 
         # set title and frame label
@@ -1164,6 +1164,7 @@ class GstElementSettingsDialog(Loggable):
                         caps_values[field] = val
         self.elementsettings.add_widgets(GstElementSettingsWidget.make_property_widget,
                                          with_reset_button=True,
+                                         values=properties,
                                          caps_values=caps_values)
 
         # Try to avoid scrolling, whenever possible.

@@ -27,6 +27,7 @@ from pitivi.utils.widgets import NumericWidget
 from pitivi.utils.widgets import PathWidget
 from pitivi.utils.widgets import TextWidget
 from pitivi.utils.widgets import ToggleWidget
+from pitivi.utils.widgets import GstElementSettingsDialog
 from tests import common
 
 
@@ -76,3 +77,13 @@ class TestFractionWidget(common.TestCase):
         widget = FractionWidget()
         widget.setWidgetValue(Gst.Fraction(1000000000, 1001))
         self.assertEqual(widget.text.get_text(), "1000000M")
+
+
+class TestGstElementSettingsDialog(common.TestCase):
+
+    def test_reusing_properties(self):
+        """Check that passing values to be used on element to be configured works."""
+
+        dialog = GstElementSettingsDialog(Gst.ElementFactory.find("identity"), {"datarate": 12})
+        v, = [v for (k, v) in dialog.elementsettings.properties.items() if k.name == "datarate"]
+        self.assertEqual(v.getWidgetValue(), 12)
