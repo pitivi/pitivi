@@ -1942,27 +1942,20 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if start >= end:
             return None
 
+        edges = []
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips_in_interval(start, end)
-            if clips != []:
-                if after is not None:
-                    clip = clips[0]
-                    clip_end = clip.start + clip.duration
-                    if start < clip.start and (point == end or clip.start < point):
-                        point = clip.start
-                    elif len(clips) >= 2 and clips[1].start < clip_end and start < clips[1].start and (point == end or clip.start < point):
-                        point = clips[1].start
-                    elif end > clip_end and (point == end or clip_end < point):
-                        point = clip_end
-                else:
-                    clip = clips[-1]
-                    clip_end = clip.start + clip.duration
-                    if end > clip_end and (point == start or clip.start > point):
-                        point = clip_end
-                    elif len(clips) >= 2 and clips[-2].start + clips[-2].duration > clip.start and end > clips[-2].start + clips[-2].duration and (point == start or clip[-2].start + clip[-2].duration > point):
-                        point = clips[-2].start + clips[-2].duration
-                    elif start + 1 < clip.start and (point == start or clip_end > point):
-                        point = clip.start
+            for clip in clips:
+                if clip.start > start:
+                    edges.append(clip.start)
+                if clip.start + clip.duration < end:
+                    edges.append(clip.start + clip.duration)
+        edges.sort()
+        if edges:
+            if after is not None:
+                point = min(edges)
+            else:
+                point = max(edges)
 
         return point
 
