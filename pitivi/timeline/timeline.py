@@ -1950,7 +1950,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                     edges.append(clip.start)
                 if clip.start + clip.duration < end:
                     edges.append(clip.start + clip.duration)
-        edges.sort()
+
         if edges:
             if after is not None:
                 point = min(edges)
