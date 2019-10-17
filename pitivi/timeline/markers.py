@@ -232,7 +232,8 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.layout.remove(ges_marker.ui)
         ges_marker.ui = None
 
-    def _marker_moved_cb(self, unused_markers, position, ges_marker):
+    def _marker_moved_cb(
+            self, unused_markers, unused_prev_position, position, ges_marker):
         self._move_marker(position, ges_marker)
 
     def _move_marker(self, position, ges_marker):
