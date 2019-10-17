@@ -123,10 +123,10 @@ which is built using the Meson build system, first clone it into your
 (ptv-flatpak) $ git clone git://anongit.freedesktop.org/gstreamer/gst-editing-services
 ```
 
-Prepare its build directory. Once it has been set up, you won't have to
-run `meson` again for this build directory.
+Prepare its build directory (Once it has been set up, you won't have to
+run `meson` again for this build directory):
 ```
-(ptv-flatpak) $ setup
+(ptv-flatpak) $ cd gst-editing-services && setup
 Using Pitivi prefix in /.../pitivi-dev/pitivi-prefix
 Running in sandbox: meson mesonbuild/ --prefix=/app --libdir=lib -Ddisable_gtkdoc=true -Ddisable_doc=true
 ```
