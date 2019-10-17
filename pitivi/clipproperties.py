@@ -20,14 +20,18 @@
 import os
 from gettext import gettext as _
 
+import cairo
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import GES
 from gi.repository import Gio
 from gi.repository import GstController
 from gi.repository import Gtk
 from gi.repository import Pango
 
+from pitivi.configure import get_pixmap_dir
 from pitivi.configure import get_ui_dir
+from pitivi.effects import EffectsPopover
 from pitivi.effects import EffectsPropertiesManager
 from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -89,7 +93,7 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         self.effect_expander.set_vexpand(False)
         vbox.pack_start(self.effect_expander, False, False, 0)
 
-    def createInfoBar(self, text):
+    def create_info_bar(self, text):
         """Creates an infobar to be displayed at the top."""
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
@@ -113,6 +117,7 @@ class EffectProperties(Gtk.Expander, Loggable):
     # pylint: disable=too-many-statements
     def __init__(self, app, clip_properties):
         Gtk.Expander.__init__(self)
+
         self.set_expanded(True)
         self.set_label(_("Effects"))
         Loggable.__init__(self)
@@ -123,165 +128,199 @@ class EffectProperties(Gtk.Expander, Loggable):
         self._project = None
         self._selection = None
         self.clip = None
-        self._effect_config_ui = None
+
         self.effects_properties_manager = EffectsPropertiesManager(app)
         setup_custom_effect_widgets(self.effects_properties_manager)
         self.clip_properties = clip_properties
 
-        no_effect_label = Gtk.Label(
-            _("To apply an effect to the clip, drag it from the Effect Library."))
-        no_effect_label.set_line_wrap(True)
-        self.no_effect_infobar = Gtk.InfoBar()
-        fix_infobar(self.no_effect_infobar)
-        self.no_effect_infobar.props.message_type = Gtk.MessageType.OTHER
-        self.no_effect_infobar.get_content_area().add(no_effect_label)
-
-        # The toolbar that will go between the list of effects and properties
-        buttons_box = Gtk.ButtonBox()
-        buttons_box.set_halign(Gtk.Align.END)
-        buttons_box.set_margin_end(SPACING)
-        buttons_box.props.margin_top = SPACING / 2
-
-        remove_effect_button = Gtk.Button()
-        remove_icon = Gtk.Image.new_from_icon_name("list-remove-symbolic",
-                                                   Gtk.IconSize.BUTTON)
-        remove_effect_button.set_image(remove_icon)
-        remove_effect_button.set_always_show_image(True)
-        remove_effect_button.set_label(_("Remove effect"))
-        buttons_box.pack_start(remove_effect_button,
-                               expand=False, fill=False, padding=0)
-
-        # We need to specify Gtk.TreeDragSource because otherwise we are hitting
-        # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
-        class EffectsListStore(Gtk.ListStore, Gtk.TreeDragSource):
-            """Just a work around!"""
-            # pylint: disable=non-parent-init-called
-            def __init__(self, *args):
-                Gtk.ListStore.__init__(self, *args)
-                # Set the source index on the storemodel directly,
-                # to avoid issues with the selection_data API.
-                # FIXME: Work around
-                # https://bugzilla.gnome.org/show_bug.cgi?id=737587
-                self.source_index = None
-
-            def do_drag_data_get(self, path, unused_selection_data):
-                self.source_index = path.get_indices()[0]
-
-        self.storemodel = EffectsListStore(bool, str, str, str, str, object)
-        self.treeview = Gtk.TreeView(model=self.storemodel)
-        self.treeview.set_property("has_tooltip", True)
-        self.treeview.set_headers_visible(False)
-        self.treeview.props.margin_top = SPACING
-        self.treeview.props.margin_left = SPACING
-        # Without this, the treeview hides the border of its parent.
-        # I should file a bug about this.
-        self.treeview.props.margin_right = 1
-
-        activated_cell = Gtk.CellRendererToggle()
-        activated_cell.props.xalign = 0
-        activated_cell.props.xpad = 0
-        activated_cell.connect("toggled", self._effectActiveToggleCb)
-        self.treeview.insert_column_with_attributes(-1,
-                                                    _("Active"), activated_cell,
-                                                    active=COL_ACTIVATED)
-
-        type_col = Gtk.TreeViewColumn(_("Type"))
-        type_col.set_spacing(SPACING)
-        type_col.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
-        type_cell = Gtk.CellRendererText()
-        type_cell.props.xpad = PADDING
-        type_col.pack_start(type_cell, expand=True)
-        type_col.add_attribute(type_cell, "text", COL_TYPE)
-        self.treeview.append_column(type_col)
-
-        name_col = Gtk.TreeViewColumn(_("Effect name"))
-        name_col.set_spacing(SPACING)
-        name_cell = Gtk.CellRendererText()
-        name_cell.props.xpad = PADDING
-        name_cell.set_property("ellipsize", Pango.EllipsizeMode.END)
-        name_col.pack_start(name_cell, expand=True)
-        name_col.add_attribute(name_cell, "text", COL_NAME_TEXT)
-        self.treeview.append_column(name_col)
-
-        # Allow the entire expander to accept EFFECT_TARGET_ENTRY when
-        # drag&dropping.
-        self.drag_dest_set(Gtk.DestDefaults.DROP, [EFFECT_TARGET_ENTRY],
-                           Gdk.DragAction.COPY)
-
-        # Allow also the treeview to accept EFFECT_TARGET_ENTRY when
-        # drag&dropping so the effect can be dragged at a specific position.
-        self.treeview.enable_model_drag_dest([EFFECT_TARGET_ENTRY],
-                                             Gdk.DragAction.COPY)
-
-        # Enable reordering by drag&drop.
-        self.treeview.enable_model_drag_source(Gdk.ModifierType.BUTTON1_MASK,
-                                               [EFFECT_TARGET_ENTRY],
-                                               Gdk.DragAction.MOVE)
-
-        self.treeview_selection = self.treeview.get_selection()
-        self.treeview_selection.set_mode(Gtk.SelectionMode.SINGLE)
-
-        self._infobar = clip_properties.createInfoBar(
+        self._infobar = clip_properties.create_info_bar(
             _("Select a clip on the timeline to configure its associated effects"))
         self._infobar.show_all()
 
-        # Prepare the main container widgets and lay out everything
-        self._expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self._vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self._vbox.pack_start(self.treeview, expand=False, fill=False, padding=0)
-        self._vbox.pack_start(buttons_box, expand=False, fill=False, padding=0)
-        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        separator.set_margin_top(SPACING)
-        separator.set_margin_left(SPACING)
-        separator.set_margin_right(SPACING)
-        self._vbox.pack_start(separator, expand=False, fill=False, padding=0)
-        self._vbox.show_all()
-        self._expander_box.pack_start(self.no_effect_infobar, expand=False, fill=False, padding=0)
-        self._expander_box.pack_start(self._vbox, expand=False, fill=False, padding=0)
-        self._expander_box.show_all()
-        self.add(self._expander_box)
-        self.hide()
+        self.drag_lines_pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(
+            os.path.join(get_pixmap_dir(), "grip-lines-solid.svg"),
+            15, 15)
 
-        effects_actions_group = Gio.SimpleActionGroup()
-        self.treeview.insert_action_group("clipproperties-effects", effects_actions_group)
-        buttons_box.insert_action_group("clipproperties-effects", effects_actions_group)
-        self.app.shortcuts.register_group("clipproperties-effects", _("Clip Effects"), position=60)
+        self.expander_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.effects_listbox = Gtk.ListBox()
 
-        self.remove_effect_action = Gio.SimpleAction.new("remove-effect", None)
-        self.remove_effect_action.connect("activate", self._removeEffectCb)
-        effects_actions_group.add_action(self.remove_effect_action)
-        self.app.shortcuts.add("clipproperties-effects.remove-effect", ["Delete"],
-                               _("Remove the selected effect"))
-        self.remove_effect_action.set_enabled(False)
-        remove_effect_button.set_action_name("clipproperties-effects.remove-effect")
+        placeholder_label = Gtk.Label(
+            _("To apply an effect to the clip, drag it from the Effect Library "
+              "or use the button below."))
+        placeholder_label.set_line_wrap(True)
+        placeholder_label.show()
+        self.effects_listbox.set_placeholder(placeholder_label)
+
+        # Add effect popover button
+        self.effect_popover = EffectsPopover(app)
+        self.add_effect_button = Gtk.MenuButton(_("Add Effect"))
+        self.add_effect_button.set_popover(self.effect_popover)
+        self.add_effect_button.props.halign = Gtk.Align.CENTER
+
+        self.drag_dest_set(Gtk.DestDefaults.DROP, [EFFECT_TARGET_ENTRY],
+                           Gdk.DragAction.COPY)
+
+        self.expander_box.pack_start(self.effects_listbox, False, False, 0)
+        self.expander_box.pack_start(self.add_effect_button, False, False, PADDING)
+
+        self.add(self.expander_box)
 
         # Connect all the widget signals
-        self.treeview_selection.connect("changed", self._treeviewSelectionChangedCb)
         self.connect("drag-motion", self._drag_motion_cb)
         self.connect("drag-leave", self._drag_leave_cb)
         self.connect("drag-data-received", self._drag_data_received_cb)
-        self.treeview.connect("drag-motion", self._drag_motion_cb)
-        self.treeview.connect("drag-leave", self._drag_leave_cb)
-        self.treeview.connect("drag-data-received", self._drag_data_received_cb)
-        self.treeview.connect("query-tooltip", self._treeViewQueryTooltipCb)
-        self.app.project_manager.connect_after(
-            "new-project-loaded", self._newProjectLoadedCb)
-        self.connect('notify::expanded', self._expandedCb)
 
-    def _newProjectLoadedCb(self, unused_app, project):
+        self.app.project_manager.connect_after(
+            "new-project-loaded", self._new_project_loaded_cb)
+        self.add_effect_button.connect("toggled", self._add_effect_button_cb)
+
+        self.show_all()
+
+    def _add_effect_button_cb(self, button):
+        # MenuButton interacts directly with the popover, bypassing our subclassed method
+        if button.props.active:
+            self.effect_popover.search_entry.set_text("")
+
+    def _create_effect_row(self, effect):
+        effect_info = self.app.effects.getInfo(effect.props.bin_description)
+
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+
+        row_drag_icon = Gtk.Image.new_from_pixbuf(self.drag_lines_pixbuf)
+
+        toggle = Gtk.CheckButton()
+        toggle.props.active = effect.props.active
+
+        effect_label = Gtk.Label(effect_info.human_name)
+        effect_label.set_tooltip_text(effect_info.description)
+
+        # Set up revealer + expander
+        effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(
+            effect)
+        config_ui_revealer = Gtk.Revealer()
+        config_ui_revealer.add(effect_config_ui)
+
+        expander = Gtk.Expander()
+        expander.set_label_widget(effect_label)
+        expander.props.valign = Gtk.Align.CENTER
+        expander.props.vexpand = True
+
+        config_ui_revealer.props.halign = Gtk.Align.CENTER
+        expander.connect("notify::expanded", self._toggle_expander_cb, config_ui_revealer)
+
+        remove_effect_button = Gtk.Button.new_from_icon_name("window-close",
+            Gtk.IconSize.BUTTON)
+        remove_effect_button.props.margin_right = PADDING
+
+        row_widgets_box = Gtk.Box()
+        row_widgets_box.pack_start(row_drag_icon, False, False, PADDING)
+        row_widgets_box.pack_start(toggle, False, False, PADDING)
+        row_widgets_box.pack_start(expander, True, True, PADDING)
+        row_widgets_box.pack_end(remove_effect_button, False, False, 0)
+
+        vbox.pack_start(row_widgets_box, False, False, 0)
+        vbox.pack_start(config_ui_revealer, False, False, 0)
+
+        event_box = Gtk.EventBox()
+        event_box.add(vbox)
+
+        row = Gtk.ListBoxRow(selectable=False, activatable=False)
+        row.effect = effect
+        row.toggle = toggle
+        row.add(event_box)
+
+        # Set up drag&drop
+        event_box.drag_source_set(Gdk.ModifierType.BUTTON1_MASK,
+            [EFFECT_TARGET_ENTRY], Gdk.DragAction.MOVE)
+        event_box.connect("drag-begin", self._drag_begin_cb)
+        event_box.connect("drag-data-get", self._drag_data_get_cb)
+
+        row.drag_dest_set(Gtk.DestDefaults.ALL, [EFFECT_TARGET_ENTRY],
+            Gdk.DragAction.MOVE | Gdk.DragAction.COPY)
+        row.connect("drag-data-received", self._drag_data_received_cb)
+
+        remove_effect_button.connect("clicked", self._remove_button_cb, row)
+        toggle.connect("toggled", self._effect_active_toggle_cb, row)
+
+        return row
+
+    def _update_all(self):
+        if self.clip:
+            self._update_listbox()
+            self.show()
+            self._infobar.hide()
+        else:
+            self.hide()
+            self._infobar.show()
+
+    def _update_listbox(self):
+        for row in self.effects_listbox.get_children():
+            self.effects_listbox.remove(row)
+
+        for effect in self.clip.get_top_effects():
+            if effect.props.bin_description in HIDDEN_EFFECTS:
+                continue
+            effect_info = self.app.effects.getInfo(effect.props.bin_description)
+            effect_row = self._create_effect_row(effect)
+            self.effects_listbox.add(effect_row)
+
+        self.effects_listbox.show_all()
+
+    def _toggle_expander_cb(self, expander, unused_prop, revealer):
+        revealer.props.reveal_child = expander.props.expanded
+
+    def _get_effect_row(self, effect):
+        for row in self.effects_listbox.get_children():
+            if row.effect == effect:
+                return row
+
+    def _add_effect_row(self, effect):
+        row = self._create_effect_row(effect)
+        self.effects_listbox.add(row)
+        self.effects_listbox.show_all()
+
+    def _remove_effect_row(self, effect):
+        row = self._get_effect_row(effect)
+        self.effects_listbox.remove(row)
+
+    def _move_effect_row(self, effect, new_index):
+        row = self._get_effect_row(effect)
+        self.effects_listbox.remove(row)
+        self.effects_listbox.insert(row, new_index)
+
+    def _remove_button_cb(self, button, row):
+        effect = row.effect
+        self._remove_effect(effect)
+
+    def _remove_effect(self, effect):
+        pipeline = self._project.pipeline
+        with self.app.action_log.started("remove effect",
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
+            effect.get_parent().remove(effect)
+
+    def _effect_active_toggle_cb(self, toggle, row):
+        effect = row.effect
+        pipeline = self._project.ges_timeline.get_parent()
+        with self.app.action_log.started("change active state",
+                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
+                                         toplevel=True):
+            effect.props.active = toggle.props.active
+
+    def _new_project_loaded_cb(self, unused_project_manager, project):
         if self._selection is not None:
-            self._selection.disconnect_by_func(self._selectionChangedCb)
+            self._selection.disconnect_by_func(self._selection_changed_cb)
             self._selection = None
         self._project = project
         if project:
             self._selection = project.ges_timeline.ui.selection
-            self._selection.connect('selection-changed', self._selectionChangedCb)
-        self.__updateAll()
+            self._selection.connect('selection-changed', self._selection_changed_cb)
+        self._update_all()
 
-    def _selectionChangedCb(self, selection):
+    def _selection_changed_cb(self, selection):
         if self.clip:
-            self.clip.disconnect_by_func(self._trackElementAddedCb)
-            self.clip.disconnect_by_func(self._trackElementRemovedCb)
+            self.clip.disconnect_by_func(self._track_element_added_cb)
+            self.clip.disconnect_by_func(self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
                 if isinstance(track_element, GES.BaseEffect):
                     self._disconnect_from_track_element(track_element)
@@ -289,21 +328,17 @@ class EffectProperties(Gtk.Expander, Loggable):
         clips = list(selection.selected)
         self.clip = clips[0] if len(clips) == 1 else None
         if self.clip:
-            self.clip.connect("child-added", self._trackElementAddedCb)
-            self.clip.connect("child-removed", self._trackElementRemovedCb)
+            self.clip.connect("child-added", self._track_element_added_cb)
+            self.clip.connect("child-removed", self._track_element_removed_cb)
             for track_element in self.clip.get_children(recursive=True):
                 if isinstance(track_element, GES.BaseEffect):
                     self._connect_to_track_element(track_element)
-        self.__updateAll()
+        self._update_all()
 
-    def _trackElementAddedCb(self, unused_clip, track_element):
+    def _track_element_added_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._connect_to_track_element(track_element)
-            self.__updateAll()
-            for path, row in enumerate(self.storemodel):
-                if row[COL_TRACK_EFFECT] == track_element:
-                    self.treeview_selection.select_path(path)
-                    break
+            self._add_effect_row(track_element)
 
     def _connect_to_track_element(self, track_element):
         track_element.connect("notify::active", self._notify_active_cb)
@@ -313,73 +348,82 @@ class EffectProperties(Gtk.Expander, Loggable):
         track_element.disconnect_by_func(self._notify_active_cb)
         track_element.disconnect_by_func(self._notify_priority_cb)
 
-    def _notify_active_cb(self, unused_track_element, unused_param_spec):
-        self._updateTreeview()
+    def _notify_active_cb(self, track_element, unused_param_spec):
+        row = self._get_effect_row(track_element)
+        row.toggle.props.active = track_element.props.active
 
-    def _notify_priority_cb(self, unused_track_element, unused_param_spec):
-        self._updateTreeview()
+    def _notify_priority_cb(self, track_element, unused_param_spec):
+        index = self.clip.get_top_effect_index(track_element)
+        row = self.effects_listbox.get_row_at_index(index)
 
-    def _trackElementRemovedCb(self, unused_clip, track_element):
+        if not row:
+            return
+
+        if row.effect != track_element:
+            self._move_effect_row(track_element, index)
+
+    def _track_element_removed_cb(self, unused_clip, track_element):
         if isinstance(track_element, GES.BaseEffect):
             self._disconnect_from_track_element(track_element)
-            self.__updateAll()
+            self._remove_effect_row(track_element)
 
-    def _removeEffectCb(self, unused_action, unused_param):
-        selected = self.treeview_selection.get_selected()
-        if not selected[1]:
-            # Cannot remove nothing,
-            return
-        effect = self.storemodel.get_value(selected[1], COL_TRACK_EFFECT)
-        selection_path = self.storemodel.get_path(selected[1])
-        # Preserve selection in the tree view.
-        next_selection_index = selection_path.get_indices()[0]
-        effect_count = self.storemodel.iter_n_children()
-        if effect_count - 1 == next_selection_index:
-            next_selection_index -= 1
-        self._removeEffect(effect)
-        if next_selection_index >= 0:
-            self.treeview_selection.select_path(next_selection_index)
+    def _drag_begin_cb(self, eventbox, context):
+        """Draws the drag icon"""
+        row = eventbox.get_parent()
+        alloc = row.get_allocation()
 
-    def _removeEffect(self, effect):
-        pipeline = self._project.pipeline
-        with self.app.action_log.started("remove effect",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
-                                         toplevel=True):
-            self.__remove_configuration_widget()
-            self.effects_properties_manager.cleanCache(effect)
-            effect.get_parent().remove(effect)
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, alloc.width, alloc.height)
+        ctx = cairo.Context(surface)
 
-    def _drag_motion_cb(self, unused_widget, unused_drag_context, unused_x, unused_y, unused_timestamp):
+        row.draw(ctx)
+        ctx.paint_with_alpha(0.35)
+
+        Gtk.drag_set_icon_surface(context, surface)
+
+    def _drag_data_get_cb(self, eventbox, drag_context, selection_data, unused_info, unused_timestamp):
+        row = eventbox.get_parent()
+        effect_info = self.app.effects.getInfo(row.effect.props.bin_description)
+        effect_name = effect_info.human_name
+
+        data = bytes(effect_name, "UTF-8")
+        selection_data.set(drag_context.list_targets()[0], 0, data)
+
+    def _drag_motion_cb(self, unused_widget, unused_drag_context, unused_x, y, unused_timestamp):
         """Highlights some widgets to indicate it can receive drag&drop."""
         self.debug(
             "Something is being dragged in the clip properties' effects list")
-        self.no_effect_infobar.drag_highlight()
-        # It would be nicer to highlight only the treeview, but
-        # it does not seem to have a visible effect.
-        self._vbox.drag_highlight()
+        row = self.effects_listbox.get_row_at_y(y)
+        if row:
+            self.effects_listbox.drag_highlight_row(row)
+            self.expander_box.drag_unhighlight()
+        else:
+            self.effects_listbox.drag_highlight()
 
-    def _drag_leave_cb(self, unused_widget, unused_drag_context, unused_timestamp):
+    def _drag_leave_cb(self, unused_widget, drag_context, unused_timestamp):
         """Unhighlights the widgets which can receive drag&drop."""
         self.debug(
             "The item being dragged has left the clip properties' effects list")
-        self.no_effect_infobar.drag_unhighlight()
-        self._vbox.drag_unhighlight()
+
+        self.effects_listbox.drag_unhighlight_row()
+        self.effects_listbox.drag_unhighlight()
 
     # pylint: disable=too-many-arguments
-    def _drag_data_received_cb(self, widget, drag_context, x, y, selection_data, unused_info, timestamp):
+    def _drag_data_received_cb(self, widget, drag_context, unused_x, y, selection_data, unused_info, timestamp):
         if not self.clip:
             # Indicate that a drop will not be accepted.
             Gdk.drag_status(drag_context, 0, timestamp)
             return
 
-        dest_row = self.treeview.get_dest_row_at_pos(x, y)
+        if self.effects_listbox.get_row_at_y(y):
+            # Drop happened inside the lisbox
+            drop_index = widget.get_index()
+        else:
+            drop_index = len(self.effects_listbox.get_children()) - 1
+
         if drag_context.get_suggested_action() == Gdk.DragAction.COPY:
             # An effect dragged probably from the effects list.
             factory_name = str(selection_data.get_data(), "UTF-8")
-            if widget is self.treeview:
-                drop_index = self.__get_new_effect_index(dest_row)
-            else:
-                drop_index = len(self.storemodel)
+
             self.debug("Effect dragged at position %s", drop_index)
             effect_info = self.app.effects.getInfo(factory_name)
             pipeline = self._project.pipeline
@@ -389,169 +433,35 @@ class EffectProperties(Gtk.Expander, Loggable):
                 effect = self.clip.ui.add_effect(effect_info)
                 if effect:
                     self.clip.set_top_effect_index(effect, drop_index)
+
         elif drag_context.get_suggested_action() == Gdk.DragAction.MOVE:
-            # An effect dragged from the same treeview to change its position.
-            # Source
-            source_index, drop_index = self.__get_move_indexes(
-                dest_row, self.treeview.get_model())
-            self.__move_effect(self.clip, source_index, drop_index)
+            # An effect dragged from the same listbox to change its position.
+            source_eventbox = Gtk.drag_get_source_widget(drag_context)
+            source_row = source_eventbox.get_parent()
+            source_index = source_row.get_index()
+
+            self._move_effect(self.clip, source_index, drop_index)
 
         drag_context.finish(True, False, timestamp)
 
-    # pylint: disable=no-self-use
-    def __get_new_effect_index(self, dest_row):
-        # Target
-        if dest_row:
-            drop_path, drop_pos = dest_row
-            drop_index = drop_path.get_indices()[0]
-            if drop_pos != Gtk.TreeViewDropPosition.BEFORE:
-                drop_index += 1
-        else:
-            # This should happen when dragging after the last row.
-            drop_index = None
-
-        return drop_index
-
-    def __get_move_indexes(self, dest_row, model):
-        source_index = self.storemodel.source_index
-        self.storemodel.source_index = None
-
-        # Target
-        if dest_row:
-            drop_path, drop_pos = dest_row
-            drop_index = drop_path.get_indices()[0]
-            drop_index = self.calculateEffectPriority(
-                source_index, drop_index, drop_pos)
-        else:
-            # This should happen when dragging after the last row.
-            drop_index = len(model) - 1
-
-        return source_index, drop_index
-
-    def __move_effect(self, clip, source_index, drop_index):
+    def _move_effect(self, clip, source_index, drop_index):
+        # Handle edge cases
+        if drop_index < 0:
+            drop_index = 0
+        if drop_index > len(clip.get_top_effects()) - 1:
+            drop_index = len(clip.get_top_effects()) - 1
         if source_index == drop_index:
             # Noop.
             return
-        # The paths are different.
+
         effects = clip.get_top_effects()
         effect = effects[source_index]
         pipeline = self._project.ges_timeline.get_parent()
+
         with self.app.action_log.started("move effect",
                                          finalizing_action=CommitTimelineFinalizingAction(pipeline),
                                          toplevel=True):
             clip.set_top_effect_index(effect, drop_index)
-
-        new_path = Gtk.TreePath.new()
-        new_path.append_index(drop_index)
-        self.__updateAll(path=new_path)
-
-    @staticmethod
-    def calculateEffectPriority(source_index, drop_index, drop_pos):
-        """Calculates where the effect from source_index will end up."""
-        if drop_pos in (Gtk.TreeViewDropPosition.INTO_OR_BEFORE, Gtk.TreeViewDropPosition.INTO_OR_AFTER):
-            return drop_index
-        if drop_pos == Gtk.TreeViewDropPosition.BEFORE:
-            if source_index < drop_index:
-                return drop_index - 1
-        elif drop_pos == Gtk.TreeViewDropPosition.AFTER:
-            if source_index > drop_index:
-                return drop_index + 1
-        return drop_index
-
-    def _effectActiveToggleCb(self, cellrenderertoggle, path):
-        _iter = self.storemodel.get_iter(path)
-        effect = self.storemodel.get_value(_iter, COL_TRACK_EFFECT)
-        pipeline = self._project.ges_timeline.get_parent()
-        with self.app.action_log.started("change active state",
-                                         finalizing_action=CommitTimelineFinalizingAction(pipeline),
-                                         toplevel=True):
-            effect.props.active = not effect.props.active
-        # This is not strictly necessary, but makes sure
-        # the UI reflects the current status.
-        cellrenderertoggle.set_active(effect.is_active())
-
-    def _expandedCb(self, unused_expander, unused_params):
-        self.__updateAll()
-
-    def _treeViewQueryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
-        is_row, x, y, unused_model, path, tree_iter = view.get_tooltip_context(
-            x, y, keyboard_mode)
-        if not is_row:
-            return False
-
-        view.set_tooltip_row(tooltip, path)
-        description = self.storemodel.get_value(tree_iter, COL_DESC_TEXT)
-        bin_description = self.storemodel.get_value(
-            tree_iter, COL_BIN_DESCRIPTION_TEXT)
-        tooltip.set_text("%s\n%s" % (bin_description, description))
-        return True
-
-    def __updateAll(self, path=None):
-        if self.clip:
-            self.show()
-            self._infobar.hide()
-            self._updateTreeview()
-            if path:
-                self.treeview_selection.select_path(path)
-        else:
-            self.hide()
-            self.__remove_configuration_widget()
-            self.storemodel.clear()
-            self._infobar.show()
-
-    def _updateTreeview(self):
-        self.storemodel.clear()
-        for effect in self.clip.get_top_effects():
-            if effect.props.bin_description in HIDDEN_EFFECTS:
-                continue
-            effect_info = self.app.effects.getInfo(effect.props.bin_description)
-            to_append = [effect.props.active]
-            track_type = effect.get_track_type()
-            if track_type == GES.TrackType.AUDIO:
-                to_append.append("Audio")
-            elif track_type == GES.TrackType.VIDEO:
-                to_append.append("Video")
-            to_append.append(effect.props.bin_description)
-            to_append.append(effect_info.human_name)
-            to_append.append(effect_info.description)
-            to_append.append(effect)
-            self.storemodel.append(to_append)
-        has_effects = len(self.storemodel) > 0
-        self.no_effect_infobar.set_visible(not has_effects)
-        self._vbox.set_visible(has_effects)
-
-    def _treeviewSelectionChangedCb(self, unused_treeview):
-        selection_is_emtpy = self.treeview_selection.count_selected_rows() == 0
-        self.remove_effect_action.set_enabled(not selection_is_emtpy)
-
-        self._updateEffectConfigUi()
-
-    def _updateEffectConfigUi(self):
-        model, tree_iter = self.treeview_selection.get_selected()
-        if tree_iter:
-            effect = model.get_value(tree_iter, COL_TRACK_EFFECT)
-            self._showEffectConfigurationWidget(effect)
-        else:
-            self.__remove_configuration_widget()
-
-    def __remove_configuration_widget(self):
-        if not self._effect_config_ui:
-            # Nothing to remove.
-            return
-
-        self._effect_config_ui.deactivate_keyframe_toggle_buttons()
-        self._vbox.remove(self._effect_config_ui)
-        self._effect_config_ui = None
-
-    def _showEffectConfigurationWidget(self, effect):
-        self.__remove_configuration_widget()
-        self._effect_config_ui = self.effects_properties_manager.getEffectConfigurationUI(
-            effect)
-        if not self._effect_config_ui:
-            return
-        self._effect_config_ui.show()
-        self._effect_config_ui.show_all()
-        self._vbox.add(self._effect_config_ui)
 
 
 class TransformationProperties(Gtk.Expander, Loggable):
