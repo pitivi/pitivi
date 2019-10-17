@@ -20,11 +20,11 @@ proper Mac app. Help is welcome!
 
 First install [Homebrew](http://brew.sh/) then run:
 
-` brew install aleb/gui/pitivi`
+` brew install aleb/gui/pitivi`
 
 To run Pitivi, run in a terminal:
 
-` pitivi`
+` pitivi`
 
 Please report bugs to
 [phabricator](https://phabricator.freedesktop.org/project/view/123/).

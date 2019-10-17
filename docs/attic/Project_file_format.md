@@ -37,14 +37,14 @@ welcome!
     <formatversion>1</formatversion>
     <title>Insane video</title>
     <comment>
-        This is my very first video done with PiTiVi.
+        This is my very first video done with PiTiVi.
     </comment>
     <authors>
         <author id="0" name="Edward Hervey" />
         <author id="1" name="George Lucas" />
     </authors>
     <history>
-        <revision id="0" date="Mon 25 Sep 2006 12:00" who="0" >Initial version</revision>
+        <revision id="0" date="Mon 25 Sep 2006 12:00" who="0" >Initial version</revision>
         <revision id="1" date="Mon 25 Sep 2006 12:25" who="1" />
     </history>
     <sources>

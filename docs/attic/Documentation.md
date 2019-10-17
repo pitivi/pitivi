@@ -7,4 +7,4 @@ use “@type parameter\_name: bla bla” to mention it!
 
 To build the API documentation, simply run:
 
-`epydoc pitivi/ -o `<outputdir>
+`epydoc pitivi/ -o `<outputdir>

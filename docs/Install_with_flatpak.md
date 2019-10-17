@@ -37,7 +37,7 @@ $ flatpak install flathub org.pitivi.Pitivi
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install flathub org.gnome.Platform//3.32
-$ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
+$ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
 ```
 
 - **master development snapshot**, which includes the latest features:
@@ -45,7 +45,7 @@ $ flatpak install http://flatpak.pitivi.org/pitivi.flatpakref
 ```
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak install flathub org.gnome.Platform//3.32
-$ flatpak install http://flatpak.pitivi.org/pitivi-master.flatpakref
+$ flatpak install http://flatpak.pitivi.org/pitivi-master.flatpakref
 ```
 
 ## Running Pitivi
@@ -59,14 +59,14 @@ to the latest version.
 To see if warning or error messages are printed in the console, run:
 
 ```
-$ flatpak run org.pitivi.Pitivi//stable
+$ flatpak run org.pitivi.Pitivi//stable
 ```
 
 If for some reason you need to use an older Pitivi version, run:
 
 ```
-$ flatpak install org.pitivi.Pitivi//0.96
-$ flatpak run org.pitivi.Pitivi//0.96
+$ flatpak install org.pitivi.Pitivi//0.96
+$ flatpak run org.pitivi.Pitivi//0.96
 ```
 
 ## Updating Pitivi
@@ -74,7 +74,7 @@ $ flatpak run org.pitivi.Pitivi//0.96
 If your software manager doesn't allow this yet, updating manually by running:
 
 ```
-$ flatpak update org.pitivi.Pitivi
+$ flatpak update org.pitivi.Pitivi
 ```
 
 If a new version is fetched, it will be made current.
@@ -84,7 +84,7 @@ If a new version is fetched, it will be made current.
 If your software manager doesn't allow this yet, run the command below:
 
 ```
-$ flatpak uninstall org.pitivi.Pitivi
+$ flatpak uninstall org.pitivi.Pitivi
 ```
 
 ## Install GStreamer vaapi support
