@@ -1702,13 +1702,13 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.seek_forward_clip_action.connect("activate", self._seek_forward_clip_cb)
         group.add_action(self.seek_forward_clip_action)
         self.app.shortcuts.add("timeline.seek-forward-clip", ["<Primary>Right"],
-                               _("Seeks to the first clip edge at the right of the playhead."))
+                               _("Seeks to the first clip edge after the playhead."))
 
         self.seek_backward_clip_action = Gio.SimpleAction.new("seek-backward-clip", None)
         self.seek_backward_clip_action.connect("activate", self._seek_backward_clip_cb)
         group.add_action(self.seek_backward_clip_action)
         self.app.shortcuts.add("timeline.seek-backward-clip", ["<Primary>Left"],
-                               _("Seeks to the first clip edge at the left of the playhead."))
+                               _("Seeks to the first clip edge before the playhead."))
 
         if in_devel():
             self.gapless_action = Gio.SimpleAction.new("toggle-gapless-mode", None)
@@ -1933,16 +1933,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if after is not None:
             start = after
             end = self.ges_timeline.props.duration
-            point = end
+            edges = [end]
         else:
             start = 0
             end = before
-            point = start
+            edges = [start]
 
         if start >= end:
             return None
 
-        edges = []
         for layer in self.ges_timeline.layers:
             clips = layer.get_clips_in_interval(start, end)
             for clip in clips:
@@ -1951,13 +1950,10 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
                 if clip.start + clip.duration < end:
                     edges.append(clip.start + clip.duration)
 
-        if edges:
-            if after is not None:
-                point = min(edges)
-            else:
-                point = max(edges)
-
-        return point
+        if after is not None:
+            return min(edges)
+        else:
+            return max(edges)
 
     def _seek_forward_clip_cb(self, unused_action, unused_parameter):
         """Seeks to the first clip edge at the right of the playhead."""
