@@ -13,7 +13,6 @@ bin/pitivi.in
 pitivi/application.py
 pitivi/autoaligner.py
 pitivi/check.py
-pitivi/clipproperties.py
 pitivi/configure.py
 pitivi/dialogs/clipmediaprops.py
 pitivi/dialogs/filelisterrordialog.py
