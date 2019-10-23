@@ -31,7 +31,6 @@ pitivi/timeline/ruler.py
 pitivi/timeline/timeline.py
 pitivi/titleeditor.py
 pitivi/transitions.py
-pitivi/undo/project.py
 pitivi/undo/timeline.py
 pitivi/undo/undo.py
 pitivi/utils/extract.py

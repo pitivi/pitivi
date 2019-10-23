@@ -43,7 +43,8 @@ class Action(GObject.Object, Loggable):
         Loggable.__init__(self)
 
     def asScenarioAction(self):
-        raise NotImplementedError()
+        """Converts the action to a Gst.Structure for a `.scenario` file."""
+        return None
 
 
 class UndoableAction(Action):

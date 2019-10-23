@@ -366,13 +366,9 @@ class Pitivi(Gtk.Application, Loggable):
         show_shortcuts(self)
 
     def _action_log_pre_push_cb(self, unused_action_log, action):
-        try:
-            st = action.asScenarioAction()
-        except NotImplementedError:
-            self.warning("No serialization method for action %s", action)
-            return
-        if st:
-            self.write_action(st)
+        scenario_action = action.asScenarioAction()
+        if scenario_action:
+            self.write_action(scenario_action)
 
     def _actionLogCommit(self, action_log, unused_stack):
         if action_log.is_in_transaction():
