@@ -343,7 +343,7 @@ class EditingContext(GObject.Object, Loggable):
 # -------------------------- Interfaces ----------------------------------------#
 
 
-class Zoomable(object):
+class Zoomable:
     """Base class for conversions between timeline timestamps and UI pixels.
 
     Complex Timeline interfaces v2 (01 Jul 2008)

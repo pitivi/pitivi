@@ -2008,7 +2008,7 @@ class Project(Loggable, GES.Project):
 
 # ---------------------- UI classes ----------------------------------------- #
 
-class ProjectSettingsDialog(object):
+class ProjectSettingsDialog:
     """Manager of a dialog for viewing and changing the project settings.
 
     Attributes:
