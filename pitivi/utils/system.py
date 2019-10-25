@@ -136,7 +136,7 @@ def get_system():
     return System()
 
 
-class CPUUsageTracker(object):
+class CPUUsageTracker:
 
     def __init__(self):
         self.reset()
