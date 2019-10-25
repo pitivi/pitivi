@@ -336,7 +336,7 @@ def require_version(modulename, version):
     except ValueError:
         print(_("Could not import '%s'. Make sure you have it available.")
               % modulename)
-        exit(1)
+        sys.exit(1)
 
 
 def initialize_modules():
@@ -350,7 +350,7 @@ def initialize_modules():
     except ImportError:
         print(_("Could not import 'gi'. "
                 "Make sure you have pygobject available."))
-        exit(1)
+        sys.exit(1)
 
     require_version("Gtk", GTK_API_VERSION)
     require_version("Gdk", GTK_API_VERSION)
@@ -376,7 +376,7 @@ def initialize_modules():
     from gi.repository import GstPbutils
     from pitivi.utils.misc import video_info_get_natural_height, video_info_get_natural_width, video_info_get_rotation
 
-    # Monky patch a helper method for retrieving the size of a video
+    # Monkey patch a helper method for retrieving the size of a video
     # when using square pixels.
     GstPbutils.DiscovererVideoInfo.get_natural_width = video_info_get_natural_width
     GstPbutils.DiscovererVideoInfo.get_natural_height = video_info_get_natural_height
@@ -398,9 +398,9 @@ def initialize_modules():
         except IndexError:
             action_type = []
         if validate.GstValidate.print_action_types(action_type):
-            exit(0)
+            sys.exit(0)
         else:
-            exit(1)
+            sys.exit(1)
 
 
 # Package maintainers, this is where you can see the list of requirements.
