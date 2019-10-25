@@ -371,7 +371,7 @@ class PreferencesDialog(Loggable):
         project = self.app.project_manager.current_project
         different = project and \
             (project.scaled_proxy_width != self.app.settings.default_scaled_proxy_width or
-                project.scaled_proxy_height != self.app.settings.default_scaled_proxy_height)
+             project.scaled_proxy_height != self.app.settings.default_scaled_proxy_height)
         self.proxy_infobar.set_visible(different)
         if different:
             self.scaled_proxies_infobar_label.set_text(

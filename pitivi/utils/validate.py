@@ -150,11 +150,10 @@ def positionChangedCb(pipeline, position, scenario, action,
 
     print(str(wanted_position), str(position))
     if wanted_position != position:
-        scenario.report_simple(GLib.quark_from_string(
-            "scenario::execution-error"),
-            "Position after seek (%s) does not match wanted "
-            "one %s" % (Gst.TIME_ARGS(position),
-                        Gst.TIME_ARGS(wanted_position)))
+        scenario.report_simple(
+            GLib.quark_from_string("scenario::execution-error"),
+            "Position after seek (%s) does not match wanted one %s" % (
+                Gst.TIME_ARGS(position), Gst.TIME_ARGS(wanted_position)))
 
     pipeline.disconnect_by_func(positionChangedCb)
     action.set_done()
@@ -564,11 +563,11 @@ def init():
 
         Gst.info("Adding pitivi::wrong-window-creation")
         GstValidate.Issue.register(GstValidate.Issue.new(
-                                   GLib.quark_from_string("pitivi::wrong-window-creation"),
-                                   "A new window for the sink has wrongly been created",
-                                   "All sink should display their images in an embedded "
-                                   "widget and thus not create a new window",
-                                   GstValidate.ReportLevel.CRITICAL))
+            GLib.quark_from_string("pitivi::wrong-window-creation"),
+            "A new window for the sink has wrongly been created",
+            "All sink should display their images in an embedded "
+            "widget and thus not create a new window",
+            GstValidate.ReportLevel.CRITICAL))
         return True
     except ImportError:
         has_validate = False
