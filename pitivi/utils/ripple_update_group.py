@@ -18,7 +18,7 @@
 # Boston, MA 02110-1301, USA.
 
 
-class RippleUpdateGroup(object):
+class RippleUpdateGroup:
     """Allows for event-driven spreadsheet-like ripple updates.
 
     Detects infinite loops.
