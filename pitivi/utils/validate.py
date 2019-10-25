@@ -163,6 +163,7 @@ def positionChangedCb(pipeline, position, scenario, action,
 def seek(scenario, action):
     res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
                                                            "start")
+    assert res
     scenario.get_pipeline().simple_seek(wanted_position)
     scenario.get_pipeline().connect("position", positionChangedCb, scenario,
                                     action, wanted_position)
@@ -181,7 +182,6 @@ def set_state(scenario, action):
 
     if wanted_state == "paused":
         if scenario.__dict__.get("started", None) is None:
-
             return 1
 
     return GstValidate.execute_action(GstValidate.get_action_type(action.type).overriden_type,
