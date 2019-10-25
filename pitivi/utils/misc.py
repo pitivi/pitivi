@@ -212,7 +212,7 @@ class PathWalker(Thread):
     def _scan_dir(self, folder):
         """Scans the folder recursively and yields the URIs of the files."""
         self.log("Scanning folder %s", folder)
-        for path, dirs, files in os.walk(folder):
+        for path, unused_dirs, files in os.walk(folder):
             if self.stopme.is_set():
                 return
             for afile in files:

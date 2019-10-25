@@ -1159,7 +1159,7 @@ class RenderDialog(Loggable):
 
         elif message.type == Gst.MessageType.STATE_CHANGED and self.progress:
             if message.src == self._pipeline:
-                prev, state, pending = message.parse_state_changed()
+                unused_prev, state, pending = message.parse_state_changed()
                 if pending == Gst.State.VOID_PENDING:
                     # State will not change further.
                     if state == Gst.State.PLAYING:

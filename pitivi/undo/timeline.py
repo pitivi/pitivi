@@ -724,7 +724,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
             self.track_element_observers[track_element] = observer
             return
 
-        for prop, binding in track_element.get_all_control_bindings().items():
+        for unused_prop, binding in track_element.get_all_control_bindings().items():
             self._connectToControlSource(track_element, binding)
         track_element.connect("control-binding-added",
                               self._control_binding_added_cb)
@@ -739,7 +739,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
         if not isinstance(track_element, GES.VideoTransition):
             track_element.disconnect_by_func(self._control_binding_added_cb)
             track_element.disconnect_by_func(self._control_binding_removed_cb)
-        for prop, binding in track_element.get_all_control_bindings().items():
+        for unused_prop, binding in track_element.get_all_control_bindings().items():
             self._disconnectFromControlSource(binding)
         observer = self.track_element_observers.pop(track_element, None)
         # We only keep track of some track_elements.

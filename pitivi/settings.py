@@ -197,7 +197,7 @@ class GlobalSettings(GObject.Object, Loggable):
             self.error("Failed to parse %s: %s", self.conf_file_path, e)
             return
 
-        for (section, attrname, typ, key, env, value) in self.iterAllOptions():
+        for (section, attrname, typ, key, unused_env, value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
@@ -232,7 +232,7 @@ class GlobalSettings(GObject.Object, Loggable):
 
     def _readSettingsFromEnvironmentVariables(self):
         """Reads settings from their registered environment variables."""
-        for section, attrname, typ, key, env, value in self.iterAllOptions():
+        for unused_section, attrname, typ, unused_key, env, unused_value in self.iterAllOptions():
             if not env:
                 # This option does not have an environment variable name.
                 continue
@@ -241,7 +241,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 setattr(self, attrname, var)
 
     def _writeSettingsToConfigurationFile(self):
-        for (section, attrname, typ, key, env_var, value) in self.iterAllOptions():
+        for section, unused_attrname, unused_typ, key, unused_env_var, value in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
             if key:

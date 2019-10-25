@@ -388,6 +388,7 @@ def initialize_modules():
     require_version("GES", GST_API_VERSION)
     from gi.repository import GES
     res, sys.argv = GES.init_check(sys.argv)
+    assert res
     # Monkey patch deprecated methods to use the new variant by default
     GES.TrackElement.list_children_properties = GES.TimelineElement.list_children_properties
 
