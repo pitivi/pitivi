@@ -1256,7 +1256,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             path = None
             tup = view.get_path_at_pos(int(event.x), int(event.y))
             if tup:
-                path, column, x, y = tup
+                path, unused_column, unused_x, unused_y = tup
             return path
         elif isinstance(view, Gtk.IconView):
             return view.get_path_at_pos(int(event.x), int(event.y))
@@ -1710,7 +1710,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return self._getSelectedPathsIconView()
 
     def _getSelectedPathsTreeView(self):
-        model, rows = self.treeview.get_selection().get_selected_rows()
+        unused_model, rows = self.treeview.get_selection().get_selected_rows()
         return rows
 
     def _getSelectedPathsIconView(self):
