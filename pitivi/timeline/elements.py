@@ -903,7 +903,7 @@ class VideoSource(TimelineElement):
             for track_element in parent.find_track_elements(
                     None, GES.TrackType.VIDEO, GES.BaseEffect):
 
-                res, videoflip, unused_pspec = track_element.lookup_child(
+                res, unused_videoflip, unused_pspec = track_element.lookup_child(
                     "GstVideoFlip::method")
                 if res:
                     self.__videoflip = track_element

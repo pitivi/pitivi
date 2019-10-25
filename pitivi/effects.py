@@ -464,7 +464,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         cell.props.markup = self.formatDescription(model, iter_)
 
     def formatDescription(self, model, iter_):
-        name, element_name, desc = model.get(iter_, COL_NAME_TEXT, COL_ELEMENT_NAME, COL_DESC_TEXT)
+        name, desc = model.get(iter_, COL_NAME_TEXT, COL_DESC_TEXT)
         escape = GLib.markup_escape_text
         return "<b>%s</b>\n%s" % (escape(name), escape(desc))
 
@@ -555,7 +555,7 @@ class EffectListWidget(Gtk.Box, Loggable):
     def getSelectedEffect(self):
         if self._draggedItems:
             return self._draggedItems
-        model, rows = self.view.get_selection().get_selected_rows()
+        unused_model, rows = self.view.get_selection().get_selected_rows()
         path = self.model_filter.convert_path_to_child_path(rows[0])
         return self.storemodel[path][COL_ELEMENT_NAME]
 
