@@ -75,7 +75,7 @@ class SimplePipeline(GObject.Object, Loggable):
 
     __gsignals__ = PIPELINE_SIGNALS
 
-    class RecoveryState(object):
+    class RecoveryState:
         NOT_RECOVERING = "not-recovering"
         STARTED_RECOVERING = "started-recovering"
         SEEKED_AFTER_RECOVERING = "seeked-after-recovering"

@@ -27,7 +27,7 @@ from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate
 
 
-class ClipMediaPropsDialog(object):
+class ClipMediaPropsDialog:
     """Displays the properties of an asset.
 
     Allows applying them to the project.

@@ -159,7 +159,7 @@ GlobalSettings.addConfigSection('effect-library')
 ICON_WIDTH = 48 + 2 * 6  # 48 pixels, plus a margin on each side
 
 
-class EffectInfo(object):
+class EffectInfo:
     """Info for displaying and using an effect.
 
     Attributes:

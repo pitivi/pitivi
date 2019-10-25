@@ -39,7 +39,7 @@ def _string_to_list(version):
     return [int(x) for x in version.split(".")]
 
 
-class Dependency(object):
+class Dependency:
     """Represents a module or component requirement.
 
     Args:

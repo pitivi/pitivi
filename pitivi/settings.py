@@ -91,7 +91,7 @@ class ConfigError(Exception):
     pass
 
 
-class Notification(object):
+class Notification:
     """A descriptor which emits a signal when set."""
 
     def __init__(self, attrname):
