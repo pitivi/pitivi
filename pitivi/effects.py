@@ -629,7 +629,6 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         self.log('UI is being auto-generated for "%s"', effect_name)
         effect_widget.add_widgets(create_property_widget=self.create_property_widget, with_reset_button=True)
         self._postConfiguration(effect, effect_widget)
-        return None
 
     def do_create_property_widget(self, effect_widget, effect, prop, prop_value):
         """Creates a widget if the `create_property_widget` handlers did not."""
