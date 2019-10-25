@@ -54,7 +54,6 @@ class System(GObject.Object, Loggable):
             icon (str): The icon to be shown with the message
         """
         self.debug("desktopMessage(): %s, %s", title, message)
-        return None
 
     def getUniqueFilename(self, string):
         """Gets a filename which can only be obtained from the specified string.
