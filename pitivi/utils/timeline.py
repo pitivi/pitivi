@@ -433,7 +433,7 @@ class Zoomable:
     def computeZoomLevel(cls, ratio):
         return int((
             (max(0, ratio - cls.min_zoom) /
-                cls.zoom_range) ** (1.0 / 3.0)) * cls.zoom_steps)
+             cls.zoom_range) ** (1.0 / 3.0)) * cls.zoom_steps)
 
     @classmethod
     def pixelToNs(cls, pixel):

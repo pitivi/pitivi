@@ -1306,7 +1306,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             for handle in self.handles:
                 handle.enlarge()
         elif (event.type == Gdk.EventType.LEAVE_NOTIFY and
-                event.mode == Gdk.CrossingMode.NORMAL):
+              event.mode == Gdk.CrossingMode.NORMAL):
             unset_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.shrink()
