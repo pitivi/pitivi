@@ -62,7 +62,6 @@ class Thread(threading.Thread, GObject.Object, Loggable):
 
         Subclass have to implement this method !
         """
-        pass
 
 
 class ThreadMaster(Loggable):
