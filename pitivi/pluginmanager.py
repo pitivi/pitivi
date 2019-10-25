@@ -145,11 +145,10 @@ class PluginManager(Loggable):
 
     def _setup_extension_set(self):
         plugin_iface = API(self.app)
-        self.extension_set =\
-            Peas.ExtensionSet.new_with_properties(self.engine,
-                                                  Peas.Activatable,
-                                                  ["object"],
-                                                  [plugin_iface])
+        self.extension_set = Peas.ExtensionSet.new(self.engine,
+                                                   Peas.Activatable,
+                                                   ["object"],
+                                                   [plugin_iface])
         self.extension_set.connect("extension-removed",
                                    self.__extension_removed_cb)
         self.extension_set.connect("extension-added",

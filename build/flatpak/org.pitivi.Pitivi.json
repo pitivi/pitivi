@@ -638,10 +638,6 @@
                 {
                     "type": "git",
                     "url": "https://git.gnome.org/browse/libpeas"
-                },
-                {
-                    "type": "patch",
-                    "path": "patches/bugzilla-bug-660014-patch-355096.patch"
                 }
             ]
         },
