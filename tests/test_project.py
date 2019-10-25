@@ -34,7 +34,7 @@ from pitivi.utils.proxy import ProxyingStrategy
 from tests import common
 
 
-class ProjectManagerListener(object):
+class ProjectManagerListener():
 
     def __init__(self, manager):
         self.manager = manager
