@@ -248,8 +248,8 @@ class ProxyManager(GObject.Object, Loggable):
                     profile_format.intersect(Gst.Caps("audio/x-video(ANY)")):
                 continue
             if not Gst.ElementFactory.list_filter(
-                Gst.ElementFactory.list_get_elements(
-                    Gst.ELEMENT_FACTORY_TYPE_ENCODER, Gst.Rank.MARGINAL),
+                    Gst.ElementFactory.list_get_elements(
+                        Gst.ELEMENT_FACTORY_TYPE_ENCODER, Gst.Rank.MARGINAL),
                     profile_format, Gst.PadDirection.SRC, False):
                 return None
             if height and width and profile.get_type_nick() == "video":
@@ -257,8 +257,8 @@ class ProxyManager(GObject.Object, Loggable):
                     "video/x-raw, width=%d, height=%d" % (width, height)))
 
             if not Gst.ElementFactory.list_filter(
-                Gst.ElementFactory.list_get_elements(
-                    Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.MARGINAL),
+                    Gst.ElementFactory.list_get_elements(
+                        Gst.ELEMENT_FACTORY_TYPE_DECODER, Gst.Rank.MARGINAL),
                     profile_format, Gst.PadDirection.SINK, False):
                 return None
 

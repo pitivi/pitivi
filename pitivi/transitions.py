@@ -107,8 +107,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         txtlabel.set_line_wrap(True)
         txtlabel.set_text(
             _("Create a transition by overlapping two adjacent clips on the "
-                "same layer. Click the transition on the timeline to change "
-                "the transition type."))
+              "same layer. Click the transition on the timeline to change "
+              "the transition type."))
         self.infobar.get_content_area().add(txtlabel)
 
         self.storemodel = Gtk.ListStore(GES.Asset, str, str, GdkPixbuf.Pixbuf)
