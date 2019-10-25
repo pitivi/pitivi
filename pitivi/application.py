@@ -274,7 +274,6 @@ class Pitivi(Gtk.Application, Loggable):
             except GLib.Error as e:
                 if e.domain != "gtk-recent-manager-error-quark":
                     raise e
-                pass
             self.recent_manager.add_item(uri)
 
         self.action_log = UndoableActionLog()
