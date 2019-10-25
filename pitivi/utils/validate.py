@@ -77,10 +77,8 @@ if GstValidate:
                 except (ImportError, ValueError):
                     print("Wnck not present on the system,"
                           " not checking the sink does not open a new window")
-                    pass
                 except AttributeError:
                     print("Wnck can not be used on the system")
-                    pass
 
         def _windowOpenedCb(self, screen, window):
             global monitor
