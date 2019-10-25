@@ -202,7 +202,7 @@ class PresetManager(GObject.Object, Loggable):
 
     def saveAll(self):
         """Writes changes to disk for all presets."""
-        for preset_name, values in self.ordered:
+        for preset_name, unused_values in self.ordered:
             self._savePreset(preset_name)
 
     def _savePreset(self, preset_name):
@@ -260,7 +260,7 @@ class PresetManager(GObject.Object, Loggable):
             return
         # If there is one already with this name, make way for this one.
         self._forgetPreset(new_name)
-        for i, row in enumerate(self.ordered):
+        for row in self.ordered:
             if row[0] == old_name:
                 row[0] = new_name
                 break
@@ -313,7 +313,7 @@ class PresetManager(GObject.Object, Loggable):
         try:
             values = self.presets[preset]
             self.cur_preset = preset
-            for field, (setter, getter) in self.widget_map.items():
+            for field, (setter, unused_getter) in self.widget_map.items():
                 setter(values[field])
         finally:
             self.ignore_update_requests = False
@@ -330,7 +330,7 @@ class PresetManager(GObject.Object, Loggable):
 
     def _updatePresetValues(self, values):
         """Copies the values from the widgets to the specified values dict."""
-        for field, (setter, getter) in self.widget_map.items():
+        for field, (unused_setter, getter) in self.widget_map.items():
             values[field] = getter()
 
     def _isCurrentPresetChanged(self, name):

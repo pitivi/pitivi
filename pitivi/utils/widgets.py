@@ -513,7 +513,7 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
         self.values = [choice[1] for choice in choices]
         m = Gtk.ListStore(str)
         self.contents.set_model(m)
-        for choice, value in choices:
+        for choice, unused_value in choices:
             self.contents.append_text(_(choice))
         if len(choices) <= 1:
             self.contents.set_sensitive(False)
@@ -771,7 +771,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
             # The "keyframe toggle" button associated with this property
             if not isinstance(widget, (ToggleWidget, ChoiceWidget)):
-                res, element, pspec = self.element.lookup_child(prop.name)
+                res, element, unused_pspec = self.element.lookup_child(prop.name)
                 assert res
                 binding = GstController.DirectControlBinding.new(
                     element, prop.name,
@@ -919,7 +919,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
             keyframe_button = None
             if not isinstance(prop_widget, (ToggleWidget, ChoiceWidget)):
-                res, element, pspec = self.element.lookup_child(prop.name)
+                res, element, unused_pspec = self.element.lookup_child(prop.name)
                 assert res
                 binding = GstController.DirectControlBinding.new(
                     element, prop.name,
@@ -1097,7 +1097,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             widget = ToggleWidget(default=prop.default_value)
         elif type_name == "GEnum":
             choices = []
-            for key, val in prop.enum_class.__enum_values__.items():
+            for unused_key, val in prop.enum_class.__enum_values__.items():
                 choices.append([val.value_name, int(val)])
             widget = ChoiceWidget(choices, default=prop.default_value)
         elif type_name == "GstFraction":
@@ -1210,7 +1210,7 @@ class GstElementSettingsDialog(Loggable):
         self.resetAll()
 
     def resetAll(self):
-        for prop, widget in self.elementsettings.properties.items():
+        for unused_prop, widget in self.elementsettings.properties.items():
             widget.setWidgetToDefault()
 
 
