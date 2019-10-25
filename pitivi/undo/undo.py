@@ -27,12 +27,10 @@ from pitivi.utils.loggable import Loggable
 
 class UndoError(Exception):
     """Base class for undo/redo exceptions."""
-    pass
 
 
 class UndoWrongStateError(UndoError):
     """Exception related to the current state of the undo/redo stack."""
-    pass
 
 
 class Action(GObject.Object, Loggable):

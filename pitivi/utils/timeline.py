@@ -36,7 +36,6 @@ SELECT_ADD = 2
 
 class TimelineError(Exception):
     """Base Exception for errors happening in `Timeline`s or `Clip`s."""
-    pass
 
 
 class Selected(GObject.Object):

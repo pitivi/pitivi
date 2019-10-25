@@ -150,7 +150,6 @@ class SimplePipeline(GObject.Object, Loggable):
             self.simple_seek(self.getPosition())
         except PipelineError as e:
             self.warning("Could not flush because: %s", e)
-            pass
 
     def setState(self, state):
         """Sets the low-level pipeline to the specified state.
@@ -397,7 +396,6 @@ class SimplePipeline(GObject.Object, Loggable):
                     except PipelineError as e:
                         self.warning("Could not get duration because: %s", e)
                         # no sinks??
-                        pass
 
                     if self._recovery_state == self.RecoveryState.STARTED_RECOVERING:
                         if self._attempted_recoveries == MAX_RECOVERIES:
