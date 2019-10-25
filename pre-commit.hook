@@ -56,7 +56,7 @@ tests/common.py
 tests/test_check.py
 tests/test_common.py
 tests/test_log.py
-tests/test_media_library.py
+tests/test_medialibrary.py
 tests/test_prefs.py
 tests/test_preset.py
 tests/test_project.py

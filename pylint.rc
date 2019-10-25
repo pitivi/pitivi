@@ -15,11 +15,12 @@ init-hook='import gi; gi.require_version("Gtk", "3.0"); gi.require_version("Gst"
 [MESSAGES CONTROL]
 
 # Disable useless messages:
+#   import-outside-toplevel
 #   no-member - Instance ... has no member ...
 #   similarities - Expensive detection of copy/pasted code
 #   too-few-public-methods
 #   too-many-lines - Modules have more than max-line-length lines
-disable=no-member,similarities,too-few-public-methods,too-many-lines
+disable=import-outside-toplevel,no-member,similarities,too-few-public-methods,too-many-lines
 
 
 [VARIABLES]
