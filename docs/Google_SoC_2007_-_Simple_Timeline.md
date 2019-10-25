@@ -39,7 +39,7 @@ WebSVN : <http://svn.gnome.org/viewcvs/pitivi/branches/PITIVI_SOC_2007/>
 
 Anonymous checkout :
 
-` svn co `[`svn://svn.gnome.org/svn/pitivi/branches/PITIVI_SOC_2007/`](svn://svn.gnome.org/svn/pitivi/branches/PITIVI_SOC_2007/)` pitivi-soc`
+` svn co `[`svn://svn.gnome.org/svn/pitivi/branches/PITIVI_SOC_2007/`](svn://svn.gnome.org/svn/pitivi/branches/PITIVI_SOC_2007/)` pitivi-soc`
 
 ## Recent Changes
 

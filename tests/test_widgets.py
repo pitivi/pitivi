@@ -23,11 +23,11 @@ from pitivi.utils.widgets import ChoiceWidget
 from pitivi.utils.widgets import ColorWidget
 from pitivi.utils.widgets import FontWidget
 from pitivi.utils.widgets import FractionWidget
+from pitivi.utils.widgets import GstElementSettingsDialog
 from pitivi.utils.widgets import NumericWidget
 from pitivi.utils.widgets import PathWidget
 from pitivi.utils.widgets import TextWidget
 from pitivi.utils.widgets import ToggleWidget
-from pitivi.utils.widgets import GstElementSettingsDialog
 from tests import common
 
 
@@ -55,11 +55,11 @@ class TestWidgets(common.TestCase):
             self.assertEqual(default, widget.getWidgetValue())
 
     def testValidation(self):
-        widget = TextWidget("^([a-zA-Z]+\s*)+$")
+        widget = TextWidget("^([a-zA-Z]+\\s*)+$")
         bad_value = "1"
         self.assertNotEqual(bad_value, widget.getWidgetValue())
 
-        widget = TextWidget("^\d+$", ("12", "14"))
+        widget = TextWidget("^\\d+$", ("12", "14"))
         bad_value = "non-digits"
         self.assertNotEqual(bad_value, widget.getWidgetValue())
 

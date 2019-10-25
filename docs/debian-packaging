@@ -77,4 +77,3 @@ Finally run:
 You will get notified by launchpad about the build status. It usually takes a
 few minutes before launchopad accepts the upload. After that you can also
 monitor the build at https://launchpad.net/~gstreamer-developers/+archive/ppa/
-

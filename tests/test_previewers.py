@@ -33,7 +33,7 @@ from pitivi.timeline.previewers import THUMB_HEIGHT
 from pitivi.timeline.previewers import THUMB_PERIOD
 from pitivi.timeline.previewers import ThumbnailCache
 from tests import common
-from tests.test_media_library import BaseTestMediaLibrary
+from tests.test_medialibrary import BaseTestMediaLibrary
 
 
 SIMPSON_WAVFORM_VALUES = [

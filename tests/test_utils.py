@@ -198,7 +198,7 @@ class TestMiscUtils(common.TestCase):
             "audio/x-raw, format=(string)S16LE, layout=(string)interleaved, rate=(int){ 8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000, 88200, 96000 }, channels=(int)1;"
             "audio/x-raw, format=(string)S16LE, layout=(string)interleaved, rate=(int){ 8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000, 88200, 96000 }, channels=(int)2, channel-mask=(bitmask)0x0000000000000003")
         yt_audiorest = Gst.Caps("audio/x-raw,channels=6,channel-mask=0x3f,rate={48000,96000};"
-            "audio/x-raw,channels=2,rate={48000,96000}")
+                                "audio/x-raw,channels=2,rate={48000,96000}")
 
         vorbis_caps = Gst.Caps("audio/x-raw, format=(string)F32LE, layout=(string)interleaved, rate=(int)[ 1, 200000 ], channels=(int)1;"
                                "audio/x-raw, format=(string)F32LE, layout=(string)interleaved, rate=(int)[ 1, 200000 ], channels=(int)2, channel-mask=(bitmask)0x0000000000000003;"
@@ -211,23 +211,23 @@ class TestMiscUtils(common.TestCase):
                                "audio/x-raw, format=(string)F32LE, layout=(string)interleaved, rate=(int)[ 1, 200000 ], channels=(int)[ 9, 255 ], channel-mask=(bitmask)0x0000000000000000")
 
         avenc_ac3_caps = Gst.Caps("audio/x-raw, channel-mask=(bitmask)0x0000000000000000, channels=(int)1, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000003, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000103, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000007, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c03, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000033, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000107, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c07, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000037, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000000c, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000000b, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000010b, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000000f, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000003b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000010f, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
-                " audio/x-raw, channel-mask=(bitmask)0x000000000000003f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;")
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000003, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000103, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000007, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000c03, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000033, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000107, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000c07, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000037, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000000c, channels=(int)2, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000000b, channels=(int)3, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000010b, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000000f, channels=(int)4, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000003b, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000010f, channels=(int)5, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x0000000000000c0f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;"
+                                  " audio/x-raw, channel-mask=(bitmask)0x000000000000003f, channels=(int)6, rate=(int){ 48000, 44100, 32000 }, layout=(string)interleaved, format=(string)F32LE;")
 
         audio_defaults = {"channels": Gst.IntRange(range(1, 2147483647)),
                           "rate": Gst.IntRange(range(8000, GLib.MAXINT))}

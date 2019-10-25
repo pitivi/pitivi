@@ -72,13 +72,13 @@ mingw-get.
 -   It is a cmd like shell. Pasting sucks. We should install a cooler
     one with transparency and stuff.
 
-`$ mingw-get install mintty`
+`$ mingw-get install mintty`
 
 Now we need to set it as the default shell
 
 Add following line to C:\\MinGW\\msys\\1.0\\mys.bat after line 58:
 
-`set MSYSCON=mintty.exe`
+`set MSYSCON=mintty.exe`
 
 -   Open your new cool shell mintty.
 
@@ -91,12 +91,12 @@ We will need to add everything to our path manually.
 
 Add the following lines at the end of C:\\MinGW\\msys\\1.0\\etc\\profile
 
-`export PATH=$PATH:/c/Python27`\
-`export PATH=$PATH:/c/Program\ Files\ `$x86$`/Git/bin`\
-`export PATH=$PATH:/home/bmonkey/cerbero/`\
-`export PATH=$PATH:/c/Program\ Files\ `$x86$`/CMake/bin`
+`export PATH=$PATH:/c/Python27`\
+`export PATH=$PATH:/c/Program\ Files\ `$x86$`/Git/bin`\
+`export PATH=$PATH:/home/bmonkey/cerbero/`\
+`export PATH=$PATH:/c/Program\ Files\ `$x86$`/CMake/bin`
 
-`alias cerbero=cerbero-uninstalled`
+`alias cerbero=cerbero-uninstalled`
 
 Note that the cerbero path is the path where we will clone cerbero into
 in the next step. You need to change it to your user name.
@@ -107,21 +107,21 @@ Save the file and restart your shell.
 
 The bootstrap will fail if git config is not set up. Do the following:
 
-`$ git config --global user.email `“`you@example.com`”\
-`$ git config --global user.name `“`Your`` ``Name`”
+`$ git config --global user.email `“`you@example.com`”\
+`$ git config --global user.name `“`Your`` ``Name`”
 
 # Compile
 
 ### Checkout cerbero
 
-`$ git clone `[`git://anongit.freedesktop.org/gstreamer/cerbero`](git://anongit.freedesktop.org/gstreamer/cerbero)
+`$ git clone `[`git://anongit.freedesktop.org/gstreamer/cerbero`](git://anongit.freedesktop.org/gstreamer/cerbero)
 
 ## Install dependencies
 
 Now we need to get some extra dependencies from mingw-get to start the
 bootstrap.
 
-`$ mingw-get.exe install msys-perl msys-patch msys-bison msys-flex msys-coreutils`
+`$ mingw-get.exe install msys-perl msys-patch msys-bison msys-flex msys-coreutils`
 
 ## Bootstrap
 
@@ -130,13 +130,13 @@ Now we can start cerbero bootstrap.
 If you cannot access the cerbero command, make sure its in the PATH in
 your bash profile.
 
-`$ cerbero bootstrap`
+`$ cerbero bootstrap`
 
 Go get some coffee.
 
 ## Building GStreamer Editing Services
 
-`$ cerbero build gst-editing-services-1.0`
+`$ cerbero build gst-editing-services-1.0`
 
 Go plant a tree. This can take hours.
 
@@ -145,9 +145,9 @@ Go plant a tree. This can take hours.
 Since GES does not depend on all plugins, you need to build them
 manually.
 
-`$ cerbero build gst-plugins-bad-1.0`\
-`$ cerbero build gst-plugins-ugly-1.0`\
-`$ cerbero build gst-libav-1.0`
+`$ cerbero build gst-plugins-bad-1.0`\
+`$ cerbero build gst-plugins-ugly-1.0`\
+`$ cerbero build gst-libav-1.0`
 
 ### Adding GStreamer tools to the PATH
 
@@ -156,7 +156,7 @@ do this, add the dist folder to the PATH.
 
 In your bash profle:
 
-`export PATH=$PATH:/home/bmonkey/cerbero/dist/windows_x86_64/bin/`
+`export PATH=$PATH:/home/bmonkey/cerbero/dist/windows_x86_64/bin/`
 
 ## Troubleshooting
 
@@ -166,7 +166,7 @@ If you encounter the configure process to freeze, you need to close the
 shell and kill all sh.exe processes in the task manager. Alternatively
 you can log out and log in.
 
-`checking for msgfmt... /c/Users/Lubosz/cerbero/build-tools/bin/msgfmt`\
-`checking for gmsgfmt... /c/Users/Lubosz/cerbero/build-tools/bin/msgfmt`\
-`checking for xgettext... /c/Users/Lubosz/cerbero/build-tools/bin/xgettext`\
-`checking for msgmerge...`
+`checking for msgfmt... /c/Users/Lubosz/cerbero/build-tools/bin/msgfmt`\
+`checking for gmsgfmt... /c/Users/Lubosz/cerbero/build-tools/bin/msgfmt`\
+`checking for xgettext... /c/Users/Lubosz/cerbero/build-tools/bin/xgettext`\
+`checking for msgmerge...`

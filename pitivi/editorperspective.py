@@ -197,9 +197,9 @@ class EditorPerspective(Perspective, Loggable):
         self.medialibrary = MediaLibraryWidget(self.app)
         self.effectlist = EffectListWidget(self.app)
         self.main_tabs.append_page("Media Library",
-            self.medialibrary, Gtk.Label(label=_("Media Library")))
+                                   self.medialibrary, Gtk.Label(label=_("Media Library")))
         self.main_tabs.append_page("Effect Library",
-            self.effectlist, Gtk.Label(label=_("Effect Library")))
+                                   self.effectlist, Gtk.Label(label=_("Effect Library")))
         self.medialibrary.connect('play', self._mediaLibraryPlayCb)
         self.medialibrary.show()
         self.effectlist.show()
@@ -210,11 +210,11 @@ class EditorPerspective(Perspective, Loggable):
         self.trans_list = TransitionsListWidget(self.app)
         self.title_editor = TitleEditor(self.app)
         self.context_tabs.append_page("Clip",
-            self.clipconfig, Gtk.Label(label=_("Clip")))
+                                      self.clipconfig, Gtk.Label(label=_("Clip")))
         self.context_tabs.append_page("Transition",
-            self.trans_list, Gtk.Label(label=_("Transition")))
+                                      self.trans_list, Gtk.Label(label=_("Transition")))
         self.context_tabs.append_page("Title",
-            self.title_editor.widget, Gtk.Label(label=_("Title")))
+                                      self.title_editor.widget, Gtk.Label(label=_("Title")))
         # Show by default the Title tab, as the Clip and Transition tabs
         # are useful only when a clip or transition is selected, but
         # the Title tab allows adding titles.
@@ -761,7 +761,7 @@ class EditorPerspective(Perspective, Loggable):
             List[str]: The full path and the mimetype if successful, None otherwise.
         """
         chooser = Gtk.FileChooserDialog(title=_("Save As..."),
-            transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
+                                        transient_for=self.app.gui, action=Gtk.FileChooserAction.SAVE)
         chooser.add_buttons(_("Cancel"), Gtk.ResponseType.CANCEL,
                             _("Save"), Gtk.ResponseType.OK)
         chooser.set_default_response(Gtk.ResponseType.OK)

@@ -29,7 +29,7 @@ from tests import common
 
 
 class TestPluginManager(common.TestCase):
-    """Tests for the Plugin Manager."""
+    """Tests for the PluginManager class."""
 
     def test_load_plugins_from_settings(self):
         """Checks if the plugin manager loads plugins from GlobalSettings."""

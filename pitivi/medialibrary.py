@@ -103,11 +103,14 @@ STORE_MODEL_STRUCTURE = (
 # http://en.wikipedia.org/wiki/List_of_file_formats#Video
 # ...and looking at the contents of /usr/share/mime
 SUPPORTED_FILE_FORMATS = {
-    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp4", "mpeg", "ogg", "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf", "x-msvideo", "x-ms-wmp", "x-ms-wmv", "x-ogm+ogg", "x-theora+ogg", "mp2t"),  # noqa
+    "video": ("3gpp", "3gpp2", "dv", "mp2t", "mp2t", "mp4", "mpeg", "ogg",
+              "quicktime", "webm", "x-flv", "x-matroska", "x-mng", "x-ms-asf",
+              "x-ms-wmp", "x-ms-wmv", "x-msvideo", "x-ogm+ogg", "x-theora+ogg"),
     "application": ("mxf",),
-    # Don't forget audio formats
-    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg", "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc", "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx", "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),  # noqa
-    # ...and image formats
+    "audio": ("aac", "ac3", "basic", "flac", "mp2", "mp4", "mpeg", "ogg",
+              "opus", "webm", "x-adpcm", "x-aifc", "x-aiff", "x-aiffc",
+              "x-ape", "x-flac+ogg", "x-m4b", "x-matroska", "x-ms-asx",
+              "x-ms-wma", "x-speex", "x-speex+ogg", "x-vorbis+ogg", "x-wav"),
     "image": ("jp2", "jpeg", "png", "svg+xml")}
 
 SUPPORTED_MIMETYPES = []
@@ -448,7 +451,7 @@ class AssetThumbnail(GObject.Object, Loggable):
                 height = min(emblem.get_height(), thumb.get_height())
                 # Crop the emblem to fit the thumbnail.
                 emblem = emblem.new_subpixbuf(0, emblem.get_height() - height,
-                        width, height)
+                                              width, height)
 
             # The dest_* arguments define the area of thumb to change.
             # The offset_* arguments define the emblem offset so its
@@ -1312,7 +1315,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def __use_scaled_proxies_cb(self, unused_action, unused_parameter):
         self._project.use_proxies_for_assets(self.getSelectedAssets(),
-            scaled=True)
+                                             scaled=True)
 
     def __deleteProxiesCb(self, unused_action, unused_parameter):
         prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
@@ -1369,9 +1372,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         proxies = [asset.get_proxy_target() for asset in assets
                    if self.app.proxy_manager.is_proxy_asset(asset)]
         hq_proxies = [asset.get_proxy_target() for asset in assets
-                   if self.app.proxy_manager.is_hq_proxy(asset)]
+                      if self.app.proxy_manager.is_hq_proxy(asset)]
         scaled_proxies = [asset.get_proxy_target() for asset in assets
-                   if self.app.proxy_manager.is_scaled_proxy(asset)]
+                          if self.app.proxy_manager.is_scaled_proxy(asset)]
         in_progress = [asset.creation_progress for asset in assets
                        if asset.creation_progress < 100]
 

@@ -305,68 +305,67 @@ is not necessarily the case, however.
 The equivalent python data structure will look like this (currently
 incomplete):
 
-<code>
-
+```
 project = {
 
-“`timeline`”` : {`\
-`    `“`compositions`”` :`\
-`    (`\
-`        {`\
-`              `“`type`”`: `“`video`”`,`\
-`              `“`sources`”` :`\
-`              (`\
-`                    {`\
-`                        `“`project-source`”` : `<ref to video1.ogm source definition>`,`\
-`                        `“`start`”`:0,`\
-`                        `“`duration`”`: 37000,`\
-`                        `“`media-start`”`: 120000,`\
-`                        `“`media-duration`”`: 37000`\
-`                    }`\
-`                    {`\
-`                        `“`project-source`”` : `<ref to video2.ogm source definition>`,`\
-`                        `“`start`”`: 37000,`\
-`                        `“`duration`”`: 30242,`\
-`                        `“`media-start`”`: 67242,`\
-`                        `“`media-duration`”`: 30242,`\
-`                    }`\
-`                    {`\
-`                        `“`project-source`”` : `<rref to video1.ogm source definition>`,`\
-`                        `“`start`”`: 67242,`\
-`                        `“`duration`”`: 20000,`\
-`                        `“`media-start`”`: 30000,`\
-`                        `“`media-duration`”`: 20000`\
-`                    }`\
-`              )`\
-`         },`
+“timeline” : {
+    “compositions” :
+    (
+        {
+              “type”: “video”,
+              “sources” :
+              (
+                    {
+                        “project-source” : <ref to video1.ogm source definition>,
+                        “start”:0,
+                        “duration”: 37000,
+                        “media-start”: 120000,
+                        “media-duration”: 37000
+                    }
+                    {
+                        “project-source” : <ref to video2.ogm source definition>,
+                        “start”: 37000,
+                        “duration”: 30242,
+                        “media-start”: 67242,
+                        “media-duration”: 30242,
+                    }
+                    {
+                        “project-source” : <rref to video1.ogm source definition>,
+                        “start”: 67242,
+                        “duration”: 20000,
+                        “media-start”: 30000,
+                        “media-duration”: 20000
+                    }
+              )
+         },
 
-`         {`\
-`            `“`type`”` : `“`audio`”`,`\
-`            `“`sources`”` : (`\
-`                  {`\
-`                        `“`project-source`”` : `<ref to audio1.ogg source definition>`,`\
-`                        `“`start`”`: 0,`\
-`                        `“`duration`”`: 87242,`\
-`                        `“`media-start`”`: 0,`\
-`                        `“`media-duration`”`: 87242`\
-`                    }`\
-`                    {`\
-`                        `“`project-source`”` : `<ref to audio2.ogg source definition>`,`\
-`                        `“`start`”`: 45127,`\
-`                        `“`duration`”`: 5200,`\
-`                        `“`media-start`”`: 0,`\
-`                        `“`media-duration`”`: 5200`\
-`                    }`\
-`             )`\
-`         }`\
-`    )`\
-`  },`
+         {
+            “type” : “audio”,
+            “sources” : (
+                  {
+                        “project-source” : <ref to audio1.ogg source definition>,
+                        “start”: 0,
+                        “duration”: 87242,
+                        “media-start”: 0,
+                        “media-duration”: 87242
+                    }
+                    {
+                        “project-source” : <ref to audio2.ogg source definition>,
+                        “start”: 45127,
+                        “duration”: 5200,
+                        “media-start”: 0,
+                        “media-duration”: 5200
+                    }
+             )
+         }
+    )
+  },
 
-`  `“`sources`”` : ....`
+  “sources” : ....
 
-`  `“`settings`”` : ....`
-
-} </code>
+  “settings” : ....
+}
+```
 
 More specifically, the project is composed python dictionaries, tuples,
 and strings. It could be thought of as a “tree” but it is really more of

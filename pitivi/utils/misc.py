@@ -17,7 +17,6 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-import bisect
 import hashlib
 import os
 import subprocess
@@ -232,7 +231,7 @@ def hash_file(uri):
     """Hashes the first 256KB of the specified file."""
     sha256 = hashlib.sha256()
     with open(uri, "rb") as file:
-        for _ in range(1024):
+        for unused in range(1024):
             chunk = file.read(256)
             if not chunk:
                 break

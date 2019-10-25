@@ -37,7 +37,7 @@ from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from tests import common
-from tests.test_media_library import BaseTestMediaLibrary
+from tests.test_medialibrary import BaseTestMediaLibrary
 
 
 def factory_exists(*factories):

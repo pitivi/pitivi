@@ -18,7 +18,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """UI constants and various functions and classes that help with UI drawing."""
-import decimal
 import os
 import time
 import urllib.error
@@ -82,6 +81,7 @@ def get_month_format_string():
         month_format_string = "%B"
     return month_format_string
 
+
 # TODO: Drop this when we depend on glibc 2.27+
 MONTH_FORMAT_STRING = get_month_format_string()
 
@@ -104,6 +104,7 @@ def _get_font(font_spec, default):
             raw_font = settings.get_string(font_spec)
     face = raw_font.rsplit(" ", 1)[0]
     return cairo.ToyFontFace(face)
+
 
 NORMAL_FONT = _get_font("font-name", "Cantarell")
 DOCUMENT_FONT = _get_font("document-font-name", "Sans")
@@ -371,12 +372,12 @@ def pack_color_32(red, green, blue, alpha=0xFFFF):
     green = green >> 8
     blue = blue >> 8
     alpha = alpha >> 8
-    return (red << 24 | green << 16 | blue << 8 | alpha)
+    return red << 24 | green << 16 | blue << 8 | alpha
 
 
 def pack_color_64(red, green, blue, alpha=0xFFFF):
     """Packs the specified 16bit color values in a 64bit RGBA value."""
-    return (red << 48 | green << 32 | blue << 16 | alpha)
+    return red << 48 | green << 32 | blue << 16 | alpha
 
 
 def unpack_color(value):
@@ -385,7 +386,7 @@ def unpack_color(value):
     Args:
         value (int): A 32bit or 64bit RGBA value.
     """
-    if not (value >> 32):
+    if not value >> 32:
         return unpack_color_32(value)
     else:
         return unpack_color_64(value)
@@ -774,33 +775,33 @@ def fix_infobar(infobar):
 
 
 audio_channels = model((str, int),
-    [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
+                       [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
 
 frame_rates = model((str, object),
-    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
-        (12, 1),
-        (15, 1),
-        (20, 1),
-        (24000, 1001),
-        (24, 1),
-        (25, 1),
-        (30000, 1001),
-        (30, 1),
-        (50, 1),
-        (60000, 1001),
-        (60, 1),
-        (120, 1)
-    )])
+                    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
+                        (12, 1),
+                        (15, 1),
+                        (20, 1),
+                        (24000, 1001),
+                        (24, 1),
+                        (25, 1),
+                        (30000, 1001),
+                        (30, 1),
+                        (50, 1),
+                        (60000, 1001),
+                        (60, 1),
+                        (120, 1)
+                    )])
 
 audio_rates = model((str, int),
-    [(format_audiorate(rate), rate) for rate in (
-        8000,
-        11025,
-        12000,
-        16000,
-        22050,
-        24000,
-        44100,
-        48000,
-        96000
-    )])
+                    [(format_audiorate(rate), rate) for rate in (
+                        8000,
+                        11025,
+                        12000,
+                        16000,
+                        22050,
+                        24000,
+                        44100,
+                        48000,
+                        96000
+                    )])

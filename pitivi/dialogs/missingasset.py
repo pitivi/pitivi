@@ -30,7 +30,6 @@ from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
 
 
-# pylint: disable=too-few-public-methods
 class MissingAssetDialog(Gtk.Dialog, Loggable):
     """Dialog for locating a missing asset using Gtk.FileChooserWidget.
 

@@ -75,9 +75,11 @@ You can try and run this pipeline with the following gst-launch command
 (be sure to set `${FILENAME}` to a suitable path before trying these
 examples):
 
-`gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \`\
-`decode. ! ffmpegcolorspace ! ximagesink \`\
-`decode. ! audioconvert ! autoaudiosink`
+```
+gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \
+decode. ! ffmpegcolorspace ! ximagesink \
+decode. ! audioconvert ! autoaudiosink
+```
 
 So far so good. Now suppose we want to transcode instead. This means we
 will pipe decoded audio and video through *encoders* and then into a
@@ -85,19 +87,23 @@ will pipe decoded audio and video through *encoders* and then into a
 raw audio in an avi container. The resulting pipeline looks like this in
 `gst-launch` syntax:
 
-`gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \`\
-`decode. ! ffmpegcolorspace ! jpegenc ! avimux name=muxer \`\
-`decode. ! audioconvert ! muxer. \`\
-`muxer. ! filesink location=${FILENAME}.avi sync=false`
+```
+gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \
+decode. ! ffmpegcolorspace ! jpegenc ! avimux name=muxer \
+decode. ! audioconvert ! muxer. \
+muxer. ! filesink location=${FILENAME}.avi sync=false
+```
 
 This example probably works well enough, but now suppose we want a
 preview of the compressed video, so we can tune our quality settings:
 
-`gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \`\
-`decode. ! ffmpegcolorspace ! jpegenc ! tee ! avimux name=muxer \`\
-`tee0. ! jpegdec ! ffmpegcolorspace ! autovideosink sync=false \`\
-`decode. ! audioconvert !muxer. \`\
-`muxer. ! filesink location=${FILENAME}.avi sync=false`
+```
+gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \
+decode. ! ffmpegcolorspace ! jpegenc ! tee ! avimux name=muxer \
+tee0. ! jpegdec ! ffmpegcolorspace ! autovideosink sync=false \
+decode. ! audioconvert !muxer. \
+muxer. ! filesink location=${FILENAME}.avi sync=false
+```
 
 This looks perfectly reasonable, but probably will not work -- this is
 because you need something else we haven't seen yet: `queues`.
@@ -126,11 +132,13 @@ the pipeline to things like property changes.
 Here's the proper version of the previous transcoding example, complete
 with queues:
 
-`gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \`\
-`decode. ! ffmpegcolorspace ! jpegenc ! tee ! queue ! avimux name=muxer \`\
-`tee0. ! jpegdec ! ffmpegcolorspace ! queue ! autovideosink sync=false \`\
-`decode. ! queue ! audioconvert !muxer. \`\
-`muxer. ! queue ! filesink location=${FILENAME}.avi sync=false`
+```
+gst-launch-0.10 filesrc location=${FILENAME} ! decodebin name=decode \
+decode. ! ffmpegcolorspace ! jpegenc ! tee ! queue ! avimux name=muxer \
+tee0. ! jpegdec ! ffmpegcolorspace ! queue ! autovideosink sync=false \
+decode. ! queue ! audioconvert !muxer. \
+muxer. ! queue ! filesink location=${FILENAME}.avi sync=false
+```
 
 # Movie Player Demo
 

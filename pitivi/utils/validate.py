@@ -62,6 +62,7 @@ def Event(event_type, **kwargs):
 
     return event
 
+
 if GstValidate:
     class PitiviMonitor(GstValidate.Monitor):
         def __init__(self, runner, object):
@@ -161,10 +162,10 @@ def positionChangedCb(pipeline, position, scenario, action,
 
 def seek(scenario, action):
     res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
-                                                      "start")
+                                                           "start")
     scenario.get_pipeline().simple_seek(wanted_position)
     scenario.get_pipeline().connect("position", positionChangedCb, scenario,
-                              action, wanted_position)
+                                    action, wanted_position)
 
     return GstValidate.ActionReturn.ASYNC
 
@@ -548,9 +549,10 @@ def init():
                                          "Remove clip",
                                          GstValidate.ActionTypeFlags.NONE)
         GstValidate.register_action_type("select-clips", "pitivi",
-                                         select_clips, [Parameter("clip-name",
-                                                                   "The name of the clip to select",
-                                                                   True, None, "str")],
+                                         select_clips,
+                                         [Parameter("clip-name",
+                                                    "The name of the clip to select",
+                                                    True, None, "str")],
                                          "Select clips",
                                          GstValidate.ActionTypeFlags.NONE)
 

@@ -105,12 +105,12 @@ class BaseTestMediaLibrary(common.TestCase):
         self.assertFalse(self.medialibrary._progressbar.props.visible)
 
     def check_add_proxy(self, asset, scaled=False, w=160, h=120,
-            check_progress=True):
+                        check_progress=True):
         self.assertFalse(self.app.proxy_manager.is_proxy_asset(asset))
 
         # Check the inital state of the asset, nothing should be going on.
         self.assertNotIn("Proxy creation progress:",
-            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                         self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
         self.assertIn(
             self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
             [medialibrary.AssetThumbnail.NO_PROXY,
@@ -135,7 +135,7 @@ class BaseTestMediaLibrary(common.TestCase):
             project.use_proxies_for_assets([asset], scaled)
 
             self.assertIn("Proxy creation progress:",
-                self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                          self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
 
             self.mainloop.run(timeout_seconds=10)
         finally:
@@ -146,7 +146,7 @@ class BaseTestMediaLibrary(common.TestCase):
 
         # Finally, check the final staus of the asset after proxying.
         self.assertNotIn("Proxy creation progress:",
-            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                         self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
         if scaled:
             self.assertEqual(
                 self.medialibrary.storemodel[0][medialibrary.COL_THUMB_DECORATOR].state,
@@ -303,7 +303,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Check that the info column notifies the user about progress
             self.assertTrue("Proxy creation progress:" in
-                self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
 
             # Run the mainloop and let _progressBarCb stop it when the proxy is
             # ready
@@ -346,7 +346,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             # Enable and delete scaled proxy
             proxy = self.check_add_proxy(asset, scaled=True,
-                check_progress=False)
+                                         check_progress=False)
             self.check_disable_proxy(proxy, asset, delete=True)
 
             # Check that only HQ Proxy exists
@@ -374,7 +374,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
 
             self.app.project_manager.current_project.regenerate_scaled_proxies()
             self.assertTrue("Proxy creation progress:" in
-                self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
+                            self.medialibrary.storemodel[0][medialibrary.COL_INFOTEXT])
             self.mainloop.run()
 
             proxy = self.medialibrary.storemodel[0][medialibrary.COL_ASSET]
@@ -440,7 +440,7 @@ class TestMediaLibrary(BaseTestMediaLibrary):
         sample = "mp3_sample.mp3"
         with common.cloned_sample(sample):
             self.check_import([sample], check_no_transcoding=True,
-                proxying_strategy=ProxyingStrategy.AUTOMATIC)
+                              proxying_strategy=ProxyingStrategy.AUTOMATIC)
 
     def test_missing_uri_displayed(self):
         asset_uri = common.get_sample_uri("image-which-does-not-exist.png")

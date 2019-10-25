@@ -30,7 +30,6 @@ from pitivi.configure import in_devel
 from pitivi.configure import VERSION
 
 
-# pylint: disable=too-few-public-methods
 class AboutDialog(Gtk.AboutDialog):
     """Pitivi's about dialog.
 

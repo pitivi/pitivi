@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Widgets to control clips properties."""
+import bisect
 import os
 from gettext import gettext as _
 
@@ -47,10 +48,6 @@ from pitivi.utils.ui import SPACING
  COL_NAME_TEXT,
  COL_DESC_TEXT,
  COL_TRACK_EFFECT) = list(range(6))
-
-
-class ClipPropertiesError(Exception):
-    pass
 
 
 class ClipProperties(Gtk.ScrolledWindow, Loggable):
@@ -161,7 +158,7 @@ class EffectProperties(Gtk.Expander, Loggable):
                 # Set the source index on the storemodel directly,
                 # to avoid issues with the selection_data API.
                 # FIXME: Work around
-                # https://bugzilla.gnome.org/show_bug.cgi?id=737587
+                # https://gitlab.gnome.org/GNOME/pygobject/issues/90
                 self.source_index = None
 
             def do_drag_data_get(self, path, unused_selection_data):
@@ -613,11 +610,11 @@ class TransformationProperties(Gtk.Expander, Loggable):
         self._activate_keyframes_btn.connect("toggled", self.__show_keyframes_toggled_cb)
 
         self._next_keyframe_btn = self.builder.get_object("next_keyframe_button")
-        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe, True)
+        self._next_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, True)
         self._next_keyframe_btn.set_sensitive(False)
 
         self._prev_keyframe_btn = self.builder.get_object("prev_keyframe_button")
-        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe, False)
+        self._prev_keyframe_btn.connect("clicked", self.__go_to_keyframe_cb, False)
         self._prev_keyframe_btn.set_sensitive(False)
 
         self.__setup_spin_button("xpos_spinbtn", "posx")
@@ -634,34 +631,19 @@ class TransformationProperties(Gtk.Expander, Loggable):
 
         return sorted(set(keyframes_ts))
 
-    def __go_to_keyframe(self, unused_button, next_keyframe):
+    def __go_to_keyframe_cb(self, unused_button, next_keyframe):
         assert self.__control_bindings
         start = self.source.props.start
-        duration = self.source.props.duration
         in_point = self.source.props.in_point
         pipeline = self._project.pipeline
         position = pipeline.getPosition() - start + in_point
-        seekval = start
-
-        if in_point <= position <= in_point + duration:
-            keyframes_ts = self.__get_keyframes_timestamps()
-
-            for i in range(1, len(keyframes_ts)):
-                if keyframes_ts[i - 1] <= position <= keyframes_ts[i]:
-                    prev_kf_ts = keyframes_ts[i - 1]
-                    kf_ts = keyframes_ts[i]
-                    if next_keyframe:
-                        if kf_ts == position:
-                            try:
-                                kf_ts = keyframes_ts[i + 1]
-                            except IndexError:
-                                pass
-                        seekval = kf_ts + start - in_point
-                    else:
-                        seekval = prev_kf_ts + start - in_point
-                    break
-        if position > in_point + duration:
-            seekval = start + duration
+        keyframes_ts = self.__get_keyframes_timestamps()
+        if next_keyframe:
+            i = bisect.bisect_right(keyframes_ts, position)
+        else:
+            i = bisect.bisect_left(keyframes_ts, position) - 1
+        i = max(0, min(i, len(keyframes_ts) - 1))
+        seekval = keyframes_ts[i] + start - in_point
         pipeline.simple_seek(seekval)
 
     def __show_keyframes_toggled_cb(self, unused_button):

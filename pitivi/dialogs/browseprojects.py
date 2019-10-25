@@ -23,7 +23,6 @@ from gi.repository import GES
 from gi.repository import Gtk
 
 
-# pylint: disable=too-few-public-methods
 class BrowseProjectsDialog(Gtk.FileChooserDialog):
     """Displays the Gtk.FileChooserDialog for browsing projects.
 
@@ -34,7 +33,7 @@ class BrowseProjectsDialog(Gtk.FileChooserDialog):
     def __init__(self, app):
         Gtk.FileChooserDialog.__init__(self)
 
-        self.set_title(_("Open File..."))
+        self.set_title(_("Open Project…"))
         self.set_transient_for(app.gui)
         self.set_action(Gtk.FileChooserAction.OPEN)
 
@@ -42,18 +41,18 @@ class BrowseProjectsDialog(Gtk.FileChooserDialog):
                          _("Open"), Gtk.ResponseType.OK)
         self.set_default_response(Gtk.ResponseType.OK)
         self.set_select_multiple(False)
-        # TODO: Remove this set_current_folder call when GTK bug 683999 is
-        # fixed
         self.set_current_folder(app.settings.lastProjectFolder)
         formatter_assets = GES.list_assets(GES.Formatter)
         formatter_assets.sort(
             key=lambda x: - x.get_meta(GES.META_FORMATTER_RANK))
         for format_ in formatter_assets:
-            filt = Gtk.FileFilter()
-            filt.set_name(format_.get_meta(GES.META_DESCRIPTION))
-            filt.add_pattern("*%s" %
-                             format_.get_meta(GES.META_FORMATTER_EXTENSION))
-            self.add_filter(filt)
+            if format_.get_meta(GES.META_FORMATTER_NAME) == "base-formatter":
+                continue
+            file_filter = Gtk.FileFilter()
+            file_filter.set_name(format_.get_meta(GES.META_DESCRIPTION))
+            extension = format_.get_meta(GES.META_FORMATTER_EXTENSION)
+            file_filter.add_pattern("*{}".format(extension))
+            self.add_filter(file_filter)
         default = Gtk.FileFilter()
         default.set_name(_("All supported formats"))
         default.add_custom(Gtk.FileFilterFlags.URI, self.__can_load_uri, None)
