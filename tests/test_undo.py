@@ -16,6 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.undo.undo module."""
 from unittest import mock
 
 from gi.repository import GES
@@ -31,11 +32,10 @@ from tests import common
 
 
 class TestUndoableActionStack(common.TestCase):
+    """Tests for the UndoableActionStack class."""
 
     def testUndoDo(self):
-        """
-        Test an undo() do() sequence.
-        """
+        """Checks an undo() and do() sequence."""
         state = {"actions": 2}
 
         class Action(UndoableAction):
@@ -59,9 +59,7 @@ class TestUndoableActionStack(common.TestCase):
         self.assertEqual(state["actions"], 2)
 
     def testUndoError(self):
-        """
-        Undo a stack containing a failing action.
-        """
+        """Checks undo a stack containing a failing action."""
         stack = UndoableActionStack("meh")
         action1 = mock.Mock(spec=UndoableAction)
         action1.expand.return_value = False
@@ -80,6 +78,7 @@ class TestUndoableActionStack(common.TestCase):
 
 
 class TestUndoableActionLog(common.TestCase):
+    """Tests for the UndoableActionLog class."""
 
     def setUp(self):
         self.log = UndoableActionLog()
@@ -139,9 +138,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertFalse(self.log.dirty())
 
     def testCommit(self):
-        """
-        Commit a stack.
-        """
+        """Checks committing a stack."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
@@ -167,9 +164,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertRaises(UndoWrongStateError, self.log.commit, "notmeh")
 
     def testNestedCommit(self):
-        """
-        Do two nested commits.
-        """
+        """Checks two nested commits."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
@@ -219,9 +214,7 @@ class TestUndoableActionLog(common.TestCase):
         action2.do.assert_not_called()
 
     def testRollback(self):
-        """
-        Test a rollback.
-        """
+        """Checks a rollback."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
@@ -239,9 +232,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
 
     def testNestedRollback(self):
-        """
-        Test two nested rollbacks.
-        """
+        """Checks two nested rollbacks."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
@@ -275,9 +266,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
 
     def testUndoRedo(self):
-        """
-        Try an undo() redo() sequence.
-        """
+        """Tries an undo() redo() sequence."""
         # begin
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
@@ -341,9 +330,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(action2.undo.call_count, 1)
 
     def testOrder(self):
-        """
-        Test that actions are undone and redone in the correct order.
-        """
+        """Checks actions are undone and redone in the correct order."""
         order = mock.Mock()
         order.action1 = mock.Mock(spec=UndoableAction)
         order.action1.expand.return_value = False
@@ -409,6 +396,7 @@ class TestUndoableActionLog(common.TestCase):
 
 
 class TestGObjectObserver(common.TestCase):
+    """Tests for the GObjectObserver class."""
 
     def test_property_change(self):
         action_log = UndoableActionLog()

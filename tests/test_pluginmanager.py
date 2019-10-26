@@ -33,9 +33,9 @@ class TestPluginManager(common.TestCase):
 
     def test_load_plugins_from_settings(self):
         """Checks if the plugin manager loads plugins from GlobalSettings."""
-
         class App(GObject.Object):
             """A representation of the Pitivi Application for test purposes."""
+
             __gsignals__ = {
                 "window-added": (GObject.SignalFlags.RUN_LAST, None, (object, ))
             }

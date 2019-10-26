@@ -15,3 +15,10 @@ repos:
     rev: v1.7.0
     hooks:
     -   id: reorder-python-imports
+-   repo: https://github.com/pycqa/pydocstyle
+    rev: 4.0.1
+    hooks:
+    -   id: pydocstyle
+        args:
+        # http://www.pydocstyle.org/en/latest/error_codes.html
+        -   --ignore=D1,D203,D213,D401,D406,D407,D413

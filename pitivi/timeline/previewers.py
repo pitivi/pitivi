@@ -80,6 +80,7 @@ GlobalSettings.addConfigOption("previewers_max_cpu",
 
 class PreviewerBin(Gst.Bin, Loggable):
     """Baseclass for elements gathering data to create previews."""
+
     def __init__(self, bin_desc):
         Gst.Bin.__init__(self)
         Loggable.__init__(self)

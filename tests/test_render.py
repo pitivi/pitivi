@@ -113,7 +113,7 @@ class TestRender(BaseTestMediaLibrary):
         return project
 
     def create_rendering_dialog(self, project):
-        """Creates a RenderingDialog ready for testing"""
+        """Creates a RenderingDialog ready for testing."""
         from pitivi.render import RenderDialog
 
         class MockedBuilder(Gtk.Builder):

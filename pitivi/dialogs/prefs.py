@@ -55,6 +55,7 @@ GlobalSettings.addConfigOption('prefsDialogHeight',
 
 class PreferencesDialog(Loggable):
     """Preferences for how the app works."""
+
     _instance = None
     prefs = {}
     section_names = {
@@ -599,6 +600,7 @@ class ModelItem(GObject.Object):
 
 class CustomShortcutDialog(Gtk.Dialog):
     """Dialog for customising accelerator invoked by activating a row in preferences."""
+
     FORBIDDEN_KEYVALS = [Gdk.KEY_Escape]
 
     def __init__(self, app, pref_dialog, customised_item):
