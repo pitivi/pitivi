@@ -83,7 +83,7 @@ class BaseTestUndoTimeline(common.TestCase):
         self.assertEqual(len(effects), count)
 
     def get_transition_element(self, ges_layer):
-        """"Gets the first found GES.VideoTransition clip."""
+        """Gets the first found GES.VideoTransition clip."""
         for clip in ges_layer.get_clips():
             if isinstance(clip, GES.TransitionClip):
                 for element in clip.get_children(False):

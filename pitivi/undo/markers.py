@@ -16,7 +16,7 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-"""Undo/redo markers"""
+"""Undo/redo logic for markers."""
 from gi.repository import Gst
 
 from pitivi.undo.undo import MetaContainerObserver
@@ -71,7 +71,7 @@ class MarkerListObserver(Loggable):
 
 # pylint: disable=abstract-method, too-many-ancestors
 class MarkerAction(UndoableAutomaticObjectAction):
-    """Base class for add and remove marker actions"""
+    """Base class for marker actions."""
 
     def __init__(self, ges_marker_list, ges_marker):
         UndoableAutomaticObjectAction.__init__(self, ges_marker)

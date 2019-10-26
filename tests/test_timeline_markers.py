@@ -28,10 +28,10 @@ from tests.test_undo_timeline import BaseTestUndoTimeline
 
 
 class TestMarkers(BaseTestUndoTimeline):
-    """Class for markers tests"""
+    """Tests for markers."""
 
     def test_marker_added_ui(self):
-        "Checks the add marker ui"
+        """Checks the add marker UI."""
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
@@ -54,7 +54,7 @@ class TestMarkers(BaseTestUndoTimeline):
         self.assert_markers(markers, [(position, None)])
 
     def test_marker_removed_ui(self):
-        "Checks the remove marker ui"
+        """Checks the remove marker UI."""
         self.setup_timeline_container()
         markers = self.timeline.get_marker_list("markers")
         marker_box = self.timeline_container.markers
