@@ -151,7 +151,8 @@ class EffectProperties(Gtk.Expander, Loggable):
         # We need to specify Gtk.TreeDragSource because otherwise we are hitting
         # bug https://bugzilla.gnome.org/show_bug.cgi?id=730740.
         class EffectsListStore(Gtk.ListStore, Gtk.TreeDragSource):
-            """Just a work around!"""
+            """Just a work around."""
+
             # pylint: disable=non-parent-init-called
             def __init__(self, *args):
                 Gtk.ListStore.__init__(self, *args)

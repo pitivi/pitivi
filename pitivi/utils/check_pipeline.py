@@ -30,7 +30,7 @@ from gi.repository import GLib
 
 
 def pipeline_message_cb(_, msg, pipeline):
-    """GStreamer bus message handler."""
+    """Handles a GStreamer bus message."""
     if msg.type == Gst.MessageType.ASYNC_DONE:
         print("pipeline successfully PAUSED")
         pipeline.set_state(Gst.State.NULL)
@@ -44,13 +44,13 @@ def pipeline_message_cb(_, msg, pipeline):
 
 
 def timeout_cb(*args, **kwargs):
-    """Exit on timeout."""
+    """Exits on timeout."""
     print("check_pipeline: Pipeline timed out", file=sys.stderr)
     sys.exit(1)
 
 
 def main():
-    """Main function of the small app."""
+    """Runs this small tool."""
     os.environ["G_DEBUG"] = "fatal-criticals"
     Gst.init(None)
     pipeline = Gst.parse_launch(sys.argv[1])
