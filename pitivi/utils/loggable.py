@@ -106,6 +106,7 @@ class TerminalController:
             output; if this stream is not a tty, then the terminal is
             assumed to be a dumb terminal (i.e., have no capabilities).
     """
+
     # Cursor movement:
     BOL = ''             # : Move the cursor to the beginning of the line
     UP = ''              # : Move the cursor up one line
@@ -373,7 +374,6 @@ def setLogSettings(state):
     Args:
         state: The settings to set.
     """
-
     global _DEBUG
     global _log_handlers
     global _log_handlers_limited
@@ -412,9 +412,7 @@ def _canShortcutLogging(category, level):
 
 
 def scrubFilename(filename):
-    '''
-    Scrub the filename to a relative path for all packages in our scrub list.
-    '''
+    """Scrubs the filename to a relative path."""
     global _PACKAGE_SCRUB_LIST
     for package in _PACKAGE_SCRUB_LIST:
         i = filename.rfind(package)
@@ -495,10 +493,15 @@ def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
     return format, debugArgs
 
 
-def doLog(level, object, category, format, args, where=-1, filePath=None, line=None):
+def doLog(level, object, category, message, args, where=-1, filePath=None, line=None):
     """Logs something.
 
     Args:
+        level (int): Debug level.
+        object (str): Object converted to str.
+        category (str): Category such as the name of the object's class.
+        message (str): The message to log.
+        args (list): The args to apply to the message, if any.
         where (int or function): What to log file and line number for;
             -1 for one frame above log.py; -2 and down for higher up;
             a function for a (future) code object.
@@ -516,9 +519,7 @@ def doLog(level, object, category, format, args, where=-1, filePath=None, line=N
     ret = {}
 
     if args:
-        message = format % args
-    else:
-        message = format
+        message = message % args
     funcname = None
 
     if level > getCategoryLevel(category):
@@ -607,10 +608,12 @@ def printHandler(level, object, category, file, line, message):
     in Pitivi's case, that is True when the GST_DEBUG env var is defined.
 
     Args:
-        level (str):
-        object (str): Can be None.
-        category (str):
-        message (str):
+        level (str): The debug level.
+        object (Optional[str]): The object the message is about, or None.
+        category (str): Category such as the name of the object's class.
+        file (str): The source file where the message originates.
+        line (int): The line number in the file where the message originates.
+        message (str): The message to be logged.
     """
     global _outfile
 
@@ -677,6 +680,8 @@ def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
     Args:
         envVarName (str): The name of the environment variable with additional
             settings.
+        enableColorOutput (Optional[bool]): Whether to colorize the output.
+        enableCrackOutput (Optional[bool]): Whether to print detailed info.
     """
     global _initialized
     global _outfile
@@ -767,7 +772,6 @@ def addLogHandler(func):
     Raises:
         TypeError: When func is not a callable.
     """
-
     if not isinstance(func, collections.Callable):
         raise TypeError("func must be callable")
 
@@ -994,8 +998,7 @@ class BaseLoggable:
                   self.logCategory, *self.logFunction(*args))
 
     def doLog(self, level, where, format, *args, **kwargs):
-        """Logs a message at the specified level, with the possibility of going
-        higher up in the stack.
+        """Logs a message at the specified level.
 
         Args:
             level (int): The log level.

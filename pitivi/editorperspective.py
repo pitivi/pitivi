@@ -575,7 +575,6 @@ class EditorPerspective(Perspective, Loggable):
         Args:
             project (Project): The project which has been closed.
         """
-
         # We must disconnect from the project pipeline before it is released:
         if project.pipeline is not None:
             project.pipeline.deactivatePositionListener()

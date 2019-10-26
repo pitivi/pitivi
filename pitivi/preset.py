@@ -546,7 +546,7 @@ class EncodingTargetManager(PresetManager):
         return name
 
     def saveCurrentPreset(self, new_name, validate_name=True):
-        """PresetManager override, saves currently selected profile on disk.
+        """Saves currently selected profile on disk.
 
         Override from PresetManager
 

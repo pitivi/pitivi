@@ -14,6 +14,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this program; if not, see <http://www.gnu.org/licenses/>.
+"""Logic for checking the system features availability."""
 import datetime
 import multiprocessing
 import os
@@ -37,6 +38,7 @@ class System(GObject.Object, Loggable):
 
         self._x11 = False
         try:
+            # pylint: disable=unused-import
             from gi.repository import GdkX11
             self._x11 = True
         except ImportError:
