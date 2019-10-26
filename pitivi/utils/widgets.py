@@ -1192,7 +1192,8 @@ class GstElementSettingsDialog(Loggable):
         """Gets the settings of the `element`.
 
         Returns:
-            dict: A property name to value map."""
+            dict: A property name to value map.
+        """
         return self.elementsettings.getSettings()
 
     def get_caps(self):

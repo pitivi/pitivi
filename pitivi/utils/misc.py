@@ -440,8 +440,7 @@ def video_info_get_rotation(video_info):
 
 
 def video_info_get_natural_width(video_info):
-    """Applies the pixel aspect ratio and rotation information
-       to the width of the video info.
+    """Gets the width by applying the pixel aspect ratio and rotation.
 
     Args:
         video_info (GstPbutils.DiscovererVideoInfo): The video info.

@@ -19,7 +19,7 @@
 # Boston, MA 02110-1301, USA.
 """Effects categorization and management.
 
- There are different types of effects available:
+There are different types of effects available:
   _ Simple Audio/Video Effects
      GStreamer elements that only apply to audio OR video
      Only take the elements who have a straightforward meaning/action

@@ -82,8 +82,7 @@ class TestFractionWidget(common.TestCase):
 class TestGstElementSettingsDialog(common.TestCase):
 
     def test_reusing_properties(self):
-        """Check that passing values to be used on element to be configured works."""
-
+        """Checks passing values to be used on element to be configured works."""
         dialog = GstElementSettingsDialog(Gst.ElementFactory.find("identity"), {"datarate": 12})
         v, = [v for (k, v) in dialog.elementsettings.properties.items() if k.name == "datarate"]
         self.assertEqual(v.getWidgetValue(), 12)
