@@ -446,7 +446,7 @@ class Zoomable:
 
     @classmethod
     def nsToPixel(cls, duration):
-        """Returns the pixel equivalent of the specified duration"""
+        """Returns the pixel equivalent of the specified duration."""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
         if duration == Gst.CLOCK_TIME_NONE:

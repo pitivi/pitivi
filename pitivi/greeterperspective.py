@@ -46,6 +46,7 @@ class ProjectInfoRow(Gtk.ListBoxRow):
     Attributes:
         recent_project_item (Gtk.RecentInfo): Recent project's meta-data.
     """
+
     def __init__(self, recent_project_item):
         Gtk.ListBoxRow.__init__(self)
         self.uri = recent_project_item.get_uri()

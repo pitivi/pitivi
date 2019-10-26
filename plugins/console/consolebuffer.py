@@ -171,9 +171,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
             self.__refresh_prompt(new_command)
 
     def get_autocompletion_matches(self, input_text):
-        """
-        Given an input text, return possible matches for autocompletion.
-        """
+        """Returns possible matches for autocompletion."""
         # pylint: disable=bare-except, eval-used, too-many-branches, too-many-locals
         # Try to get the possible full object to scan.
         # For example, if input_text is "func(circle.ra", we obtain "circle.ra".

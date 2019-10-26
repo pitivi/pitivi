@@ -391,6 +391,7 @@ class RenderDialog(Loggable):
         preferred_aencoder (str): The last audio encoder selected by the user.
         preferred_vencoder (str): The last video encoder selected by the user.
     """
+
     INHIBIT_REASON = _("Currently rendering")
 
     _factory_formats = {}
@@ -877,7 +878,7 @@ class RenderDialog(Loggable):
             factory (Gst.ElementFactory): The factory for editing.
             media_type (str): String describing the media type ('audio' or 'video')
         """
-        # Reconsitute the property name from the media type (vcodecsettings or acodecsettings)
+        # Reconstitute the property name from the media type (vcodecsettings or acodecsettings)
         properties = getattr(self.project, media_type[0] + 'codecsettings')
 
         self.dialog = GstElementSettingsDialog(factory, properties=properties,

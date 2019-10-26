@@ -480,7 +480,6 @@ class TestProjectLoading(common.TestCase):
 
     def test_loading_project_with_moved_assets_and_deleted_proxy(self):
         """Loads a project with moved asset and deleted proxy file."""
-
         mainloop = common.create_main_loop()
 
         created_proxies = []

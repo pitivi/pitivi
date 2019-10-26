@@ -45,6 +45,7 @@ class API(GObject.GObject):
 
 class PluginType(IntEnum):
     """Types of plugins we support, depending on their directory location."""
+
     # pylint: disable=comparison-with-callable,inconsistent-return-statements,no-else-return
 
     SYSTEM = 1

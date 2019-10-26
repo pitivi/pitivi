@@ -2065,7 +2065,6 @@ class ProjectSettingsDialog:
 
     def _setupUiConstraints(self):
         """Creates the dynamic widgets and connects other widgets."""
-
         # Add custom framerate fraction widget.
         frame_rate_box = self.builder.get_object("frame_rate_box")
         self.frame_rate_fraction_widget = FractionWidget()

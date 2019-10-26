@@ -29,7 +29,7 @@ MARKER_WIDTH = 10
 
 # pylint: disable=too-many-instance-attributes
 class Marker(Gtk.EventBox, Loggable):
-    """Widget representing a marker"""
+    """Widget representing a marker."""
 
     def __init__(self, ges_marker):
         Gtk.EventBox.__init__(self)
