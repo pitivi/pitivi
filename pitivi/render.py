@@ -159,19 +159,19 @@ class Encoders(Loggable):
         for muxer in useless_muxers:
             self.muxers.remove(muxer)
 
-        self.factories_by_name = dict([(fact.get_name(), fact)
-                                       for fact in self.muxers + self.aencoders + self.vencoders])
+        self.factories_by_name = {fact.get_name(): fact
+                                  for fact in self.muxers + self.aencoders + self.vencoders}
 
         good_muxers, good_aencoders, good_vencoders = zip(*self.SUPPORTED_ENCODERS_COMBINATIONS)
-        self.supported_muxers = set([muxer
-                                     for muxer in self.muxers
-                                     if muxer.get_name() in good_muxers])
-        self.supported_aencoders = set([encoder
-                                        for encoder in self.aencoders
-                                        if encoder.get_name() in good_aencoders])
-        self.supported_vencoders = set([encoder
-                                        for encoder in self.vencoders
-                                        if encoder.get_name() in good_vencoders])
+        self.supported_muxers = {muxer
+                                 for muxer in self.muxers
+                                 if muxer.get_name() in good_muxers}
+        self.supported_aencoders = {encoder
+                                    for encoder in self.aencoders
+                                    if encoder.get_name() in good_aencoders}
+        self.supported_vencoders = {encoder
+                                    for encoder in self.vencoders
+                                    if encoder.get_name() in good_vencoders}
 
         self.default_muxer, \
             self.default_audio_encoder, \
