@@ -1274,8 +1274,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             selection = [self.ges_clip]
         else:
             selection = [elem for elem in parent.get_children(True)
-                         if isinstance(elem, GES.SourceClip) or
-                         isinstance(elem, GES.TransitionClip)]
+                         if isinstance(elem, (GES.SourceClip, GES.TransitionClip))]
         self.timeline.selection.setSelection(selection, mode)
 
         return False
