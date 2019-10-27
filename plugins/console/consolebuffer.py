@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # pylint: disable=missing-docstring
 # -*- coding: utf-8 -*-
 # Pitivi Developer Console
