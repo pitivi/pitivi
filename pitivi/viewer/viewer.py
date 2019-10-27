@@ -91,8 +91,8 @@ class ViewerContainer(Gtk.Box, Loggable):
         self._compactMode = False
 
         self._haveUI = False
-
-        self._createUi()
+        self.overlay_stack = None
+        self._create_ui()
 
         if not self.settings.viewerDocked:
             self.undock()
@@ -198,7 +198,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.settings.viewerX = event.x
         self.settings.viewerY = event.y
 
-    def _createUi(self):
+    def _create_ui(self):
         """Creates the Viewer GUI."""
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -547,7 +547,6 @@ class ViewerContainer(Gtk.Box, Loggable):
             sink_widget.show()
             self.trim_pipeline.connect("state-change", self._state_change_cb)
             self.trim_pipeline.setState(Gst.State.PAUSED)
-            self._last_trim_ns = 0
 
         self.trim_pipeline.simple_seek(position)
 
@@ -627,6 +626,9 @@ class ViewerWidget(Gtk.AspectFrame, Loggable):
         # The width and height used when snapping the child widget size.
         self.videowidth = 0
         self.videoheight = 0
+        # Sequence of floats representing sizes where the viewer size snaps.
+        # The project natural video size is 1, double size is 2, etc.
+        self.snaps = []
 
         # Set the shadow to None, otherwise it will take space and the
         # child widget size snapping will be a bit off.

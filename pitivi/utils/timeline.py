@@ -272,9 +272,10 @@ class EditingContext(GObject.Object, Loggable):
         self.old_position = self.focus.get_start()
         if edge == GES.Edge.EDGE_END and mode == GES.EditMode.EDIT_TRIM:
             self.old_position += self.focus.get_duration()
-
         self.old_priority = self.focus.get_priority()
+
         self.new_position = None
+        self.new_priority = None
 
         self.timeline = timeline
         self.app = app
