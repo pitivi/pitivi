@@ -72,8 +72,7 @@ class TrackElementPropertyChanged(UndoableAction):
         st['element-name'] = self.track_element.get_name()
         st['property'] = self.property_name
         value = self.new_value
-        if isinstance(self.new_value, GObject.GFlags) or\
-                isinstance(self.new_value, GObject.GEnum):
+        if isinstance(self.new_value, (GObject.GEnum, GObject.GFlags)):
             value = int(self.new_value)
 
         _, _, pspec = self.track_element.lookup_child(self.property_name)
@@ -730,8 +729,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
                               self._control_binding_added_cb)
         track_element.connect("control-binding-removed",
                               self._control_binding_removed_cb)
-        if isinstance(track_element, GES.BaseEffect) or \
-                isinstance(track_element, GES.VideoSource):
+        if isinstance(track_element, (GES.BaseEffect, GES.VideoSource)):
             observer = TrackElementObserver(track_element, self.action_log)
             self.track_element_observers[track_element] = observer
 
