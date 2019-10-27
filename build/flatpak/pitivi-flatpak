@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 # Copyright (c) 2016, Thibault Saunier <tsaunier@gnome.org>
 #
