@@ -47,6 +47,7 @@ class BaseTestUndoTimeline(common.TestCase):
         self.timeline = self.project.ges_timeline
         self.layer = self.timeline.append_layer()
         self.action_log = self.app.action_log
+        self.timeline_container = None
 
     def setup_timeline_container(self):
         project = self.app.project_manager.current_project

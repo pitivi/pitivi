@@ -609,6 +609,9 @@ class CustomShortcutDialog(Gtk.Dialog):
         self.preferences = pref_dialog
         self.customised_item = customised_item
 
+        # The keyboard shortcut typed by the user.
+        self.accelerator = None
+
         self.set_title(_("Set Shortcut"))
         # Set a minimum size.
         self.set_size_request(500, 300)
@@ -697,6 +700,7 @@ class CustomShortcutDialog(Gtk.Dialog):
     def do_response(self, response):
         """Handles the user's response."""
         if response == Gtk.ResponseType.OK:
+            assert self.accelerator
             if self.conflicting_action:
                 # Disable the accelerator in its previous use, set for this action.
                 accels = self.app.get_accels_for_action(self.conflicting_action)

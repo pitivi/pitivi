@@ -132,6 +132,7 @@ class ProjectManager(GObject.Object, Loggable):
         self._backup_lock = 0
         self.exitcode = 0
         self.__start_loading_time = 0
+        self.time_loaded = 0
 
     def _tryUsingBackupFile(self, uri):
         backup_path = self._makeBackupURI(path_from_uri(uri))
@@ -963,6 +964,7 @@ class Project(Loggable, GES.Project):
         video_restrictions = self.video_profile.get_restriction().copy_nth(0)
 
         if self._has_rendering_values != rendering:
+            # pylint: disable=attribute-defined-outside-init
             if rendering:
                 video_restrictions_struct = video_restrictions[0]
                 self.__width = video_restrictions_struct["width"]
@@ -2021,15 +2023,16 @@ class ProjectSettingsDialog:
         self.project = project
         self.audio_presets = AudioPresetManager(app.system)
         self.video_presets = VideoPresetManager(app.system)
-        self._createUi()
+
+        self.sar = 0
+        self.proxy_aspect_ratio = Gst.Fraction(1, 0)
+
+        self._create_ui()
         self.window.set_transient_for(parent_window)
         self._setupUiConstraints()
         self.updateUI()
 
-    def __del__(self):
-        self.video_presets.disconnect_by_func(self.__videoPresetLoadedCb)
-
-    def _createUi(self):
+    def _create_ui(self):
         """Initializes the static parts of the UI."""
         self.builder = Gtk.Builder()
         self.builder.add_from_file(
@@ -2099,7 +2102,7 @@ class ProjectSettingsDialog:
         self.wg.addVertex(self.scaled_proxy_width_spin, signal="value-changed")
         self.wg.addVertex(self.scaled_proxy_height_spin, signal="value-changed")
 
-        # Constrain width and height IFF the Link checkbox is checked.
+        # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
         self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
                         predicate=self.widthHeightLinked,
@@ -2171,7 +2174,7 @@ class ProjectSettingsDialog:
         set_combo_value(combo, fraction.getWidgetValue())
 
     def __videoPresetLoadedCb(self, unused_mgr):
-        self._updateSar()
+        self.sar = self.getSAR()
 
     def getSAR(self):
         width = int(self.width_spinbutton.get_value())
@@ -2179,9 +2182,6 @@ class ProjectSettingsDialog:
         return Gst.Fraction(width, height)
 
     def _constrainSarButtonToggledCb(self, unused_button):
-        self._updateSar()
-
-    def _updateSar(self):
         self.sar = self.getSAR()
 
     def _updatePresetMenuButton(self, unused_source, unused_target, mgr):
