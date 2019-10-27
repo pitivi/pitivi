@@ -83,6 +83,7 @@ class PresetManager(GObject.Object, Loggable):
         self.system = system
 
     def setupUi(self, combo, button):
+        # pylint: disable=attribute-defined-outside-init
         self.combo = combo
         self.button = button
 

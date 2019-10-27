@@ -67,7 +67,7 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                default='')
 
 
-# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
 
@@ -112,7 +112,7 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.log("Setting up the perspectives.")
 
         self.set_icon_name("pitivi")
-        self.__set_keyboard_shortcuts()
+        self._create_actions()
 
         self.greeter.setup_ui()
         self.editor.setup_ui()
@@ -163,10 +163,10 @@ class MainWindow(Gtk.ApplicationWindow, Loggable):
         self.debug("Screen size is %sx%s", screen_width, screen_height)
         return min_size.width >= 0.9 * screen_width
 
-    # pylint: disable=attribute-defined-outside-init
-    def __set_keyboard_shortcuts(self):
+    def _create_actions(self):
         self.app.shortcuts.register_group("win", _("Project"), position=20)
 
+        # pylint: disable=attribute-defined-outside-init
         self.help_action = Gio.SimpleAction.new("help", None)
         self.help_action.connect("activate", self.__user_manual_cb)
         self.add_action(self.help_action)

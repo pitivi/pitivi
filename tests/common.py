@@ -227,6 +227,7 @@ class TestCase(unittest.TestCase, Loggable):
         from pitivi.utils.timeline import Zoomable
         del Zoomable._instances[:]
 
+        self._result = None
         self._num_failures = len(getattr(self._result, 'failures', []))
         self._num_errors = len(getattr(self._result, 'errors', []))
         if detect_leaks:

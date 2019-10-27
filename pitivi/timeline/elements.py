@@ -105,6 +105,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
         self.__ylim_min, self.__ylim_max = KeyframeCurve.YLIM_OVERRIDES.get(
             binding.pspec, (0.0, 1.0))
+        self.__ydata_drag_start = self.__ylim_min
 
         # Curve values, basically separating source.get_values() timestamps
         # and values.
@@ -630,6 +631,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             self.add(self.__background)
 
         self.keyframe_curve = None
+        self.__controlledProperty = None
         self.show_all()
 
         # We set up the default mixing property right here, if a binding was
@@ -1083,6 +1085,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.set_name(name)
         self.get_accessible().set_name(name)
 
+        self._elements_container = None
+        self.leftHandle = None
+        self.rightHandle = None
         self.handles = []
         self.z_order = -1
         self.timeline = layer.timeline
@@ -1214,6 +1219,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
                 child.setSize(width, height / len(elements))
 
             self.__force_position_update = False
+            # pylint: disable=attribute-defined-outside-init
             self._current_x = x
             self._current_y = y
             self._current_width = width

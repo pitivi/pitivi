@@ -155,8 +155,8 @@ class ScaleRuler(Gtk.DrawingArea, Zoomable, Loggable):
         # Create a new buffer
         self.pixbuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
 
+        # pylint: disable=attribute-defined-outside-init
         context = self.app.gui.get_style_context()
-
         color_normal = gtk_style_context_get_color(context, Gtk.StateFlags.NORMAL)
         color_insensitive = gtk_style_context_get_color(context, Gtk.StateFlags.BACKDROP)
         self._color_normal = color_normal
