@@ -699,7 +699,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
     def deactivate_keyframe_toggle_buttons(self):
         """Makes sure the keyframe togglebuttons are deactivated."""
         self.log("Deactivating all keyframe toggle buttons")
-        for keyframe_button in self.__widgets_by_keyframe_button.keys():
+        for keyframe_button in self.__widgets_by_keyframe_button:
             if keyframe_button.get_active():
                 # Deactivate the button. The only effect should be that
                 # the keyframe curve will control again the default property.
@@ -1013,7 +1013,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.log("keyframes togglebutton clicked for %s", prop)
         active = keyframe_button.get_active()
         # Now change the state of the *other* togglebuttons.
-        for toggle_keyframe_button in self.__widgets_by_keyframe_button.keys():
+        for toggle_keyframe_button in self.__widgets_by_keyframe_button:
             if toggle_keyframe_button != keyframe_button:
                 # Don't use set_active directly on the buttons; doing so will
                 # fire off signals that will toggle the others/confuse the UI
