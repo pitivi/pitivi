@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Pitivi video editor
 # Copyright (c) 2017, Thibault Saunier <tsaunier@gnome.org>
 #

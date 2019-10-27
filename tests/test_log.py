@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # -*- Mode: Python; test-case-name: test_log -*-
 # vi:si:et:sw=4:sts=4:ts=4
 #
