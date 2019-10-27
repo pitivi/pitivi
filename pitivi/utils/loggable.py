@@ -917,7 +917,7 @@ def outputToFiles(stdout=None, stderr=None):
     debug('log', 'installing SIGHUP handler')
     from . import signal
     handler = signal.signal(signal.SIGHUP, sighup)
-    if handler == signal.SIG_DFL or handler == signal.SIG_IGN:
+    if handler in (signal.SIG_DFL, signal.SIG_IGN):
         _old_hup_handler = None
     else:
         _old_hup_handler = handler

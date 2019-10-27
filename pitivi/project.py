@@ -1401,8 +1401,8 @@ class Project(Loggable, GES.Project):
         self._ensureLayer()
 
         if self.uri:
-            self.loading_assets = set([asset for asset in self.loading_assets if
-                                       self.app.proxy_manager.is_asset_queued(asset)])
+            self.loading_assets = {asset for asset in self.loading_assets
+                                   if self.app.proxy_manager.is_asset_queued(asset)}
 
             if self.loading_assets:
                 self.debug("The following assets are still being transcoded: %s."
