@@ -284,6 +284,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
 
             if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS:
                 index = result[1]['ind'][0]
+                # pylint: disable=consider-using-in
                 if index == 0 or index == len(offsets) - 1:
                     # It's an edge keyframe. These should not be removed.
                     return
