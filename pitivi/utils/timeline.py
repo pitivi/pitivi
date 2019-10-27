@@ -132,8 +132,7 @@ class Selection(GObject.Object, Loggable):
                     from pitivi.utils.ui import unset_children_state_recurse
                     unset_children_state_recurse(obj.ui, Gtk.StateFlags.SELECTED)
             for element in obj.get_children(False):
-                if isinstance(obj, GES.BaseEffect) or\
-                        isinstance(obj, GES.TextOverlay):
+                if isinstance(obj, (GES.BaseEffect, GES.TextOverlay)):
                     continue
                 element.selected.selected = selected
         self.set_can_group_ungroup()
