@@ -100,7 +100,7 @@ class EditorPerspective(Perspective, Loggable):
     def setup_ui(self):
         """Sets up the UI."""
         self.__setup_css()
-        self._createUi()
+        self._create_ui()
         self.app.gui.connect("focus-in-event", self.__focus_in_event_cb)
         self.app.gui.connect("destroy", self._destroyedCb)
 
@@ -164,7 +164,7 @@ class EditorPerspective(Perspective, Loggable):
         dialog = RenderDialog(self.app, project)
         dialog.window.show()
 
-    def _createUi(self):
+    def _create_ui(self):
         """Creates the graphical interface.
 
         The rough hierarchy is:
@@ -175,6 +175,7 @@ class EditorPerspective(Perspective, Loggable):
         The full hierarchy can be admired by starting the GTK+ Inspector
         with Ctrl+Shift+I.
         """
+        # pylint: disable=attribute-defined-outside-init
         # Main "toolbar" (using client-side window decorations with HeaderBar)
         self.headerbar = self.__create_headerbar()
 
@@ -234,7 +235,7 @@ class EditorPerspective(Perspective, Loggable):
         self.toplevel_widget.pack2(self.timeline_ui, resize=True, shrink=False)
 
         # Setup shortcuts for HeaderBar buttons and menu items.
-        self.__set_keyboard_shortcuts()
+        self._create_actions()
 
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
@@ -312,6 +313,7 @@ class EditorPerspective(Perspective, Loggable):
         redo_button.set_action_name("app.redo")
         redo_button.set_use_underline(True)
 
+        # pylint: disable=attribute-defined-outside-init
         self.save_button = Gtk.Button.new_with_label(_("Save"))
         self.save_button.set_focus_on_click(False)
 
@@ -342,11 +344,12 @@ class EditorPerspective(Perspective, Loggable):
 
         return headerbar
 
-    def __set_keyboard_shortcuts(self):
+    def _create_actions(self):
         group = Gio.SimpleActionGroup()
         self.toplevel_widget.insert_action_group("editor", group)
         self.headerbar.insert_action_group("editor", group)
 
+        # pylint: disable=attribute-defined-outside-init
         self.save_action = Gio.SimpleAction.new("save", None)
         self.save_action.connect("activate", self.__save_project_cb)
         group.add_action(self.save_action)

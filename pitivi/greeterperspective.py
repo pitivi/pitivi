@@ -159,7 +159,7 @@ class GreeterPerspective(Perspective):
 
         self.__setup_css()
         self.headerbar = self.__create_headerbar()
-        self.__set_keyboard_shortcuts()
+        self._create_actions()
 
     def refresh(self):
         """Refreshes the perspective."""
@@ -269,7 +269,7 @@ class GreeterPerspective(Perspective):
             else:
                 self.headerbar.set_title(_("Pitivi"))
 
-    def __set_keyboard_shortcuts(self):
+    def _create_actions(self):
         group = Gio.SimpleActionGroup()
         self.toplevel_widget.insert_action_group("greeter", group)
         self.headerbar.insert_action_group("greeter", group)

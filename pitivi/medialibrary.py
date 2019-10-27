@@ -270,6 +270,8 @@ class AssetThumbnail(GObject.Object, Loggable):
         self.__asset = asset
         self.proxy_manager = proxy_manager
         self.__previewer = None
+        self.small_thumb = None
+        self.large_thumb = None
         self.refresh()
 
     def refresh(self):
@@ -415,6 +417,7 @@ class AssetThumbnail(GObject.Object, Loggable):
         return icon
 
     def _set_state(self):
+        # pylint: disable=attribute-defined-outside-init
         asset = self.__asset
         target = asset.get_proxy_target()
         target_is_valid = target and not target.get_error()
