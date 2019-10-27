@@ -125,6 +125,7 @@ class Encoders(Loggable):
         return cls._instance
 
     def _load_encoders(self):
+        # pylint: disable=attribute-defined-outside-init
         self.aencoders = []
         self.vencoders = []
         self.muxers = Gst.ElementFactory.list_get_elements(
@@ -140,6 +141,7 @@ class Encoders(Loggable):
                 self.aencoders.append(fact)
 
     def _load_combinations(self):
+        # pylint: disable=attribute-defined-outside-init
         self.compatible_audio_encoders = {}
         self.compatible_video_encoders = {}
         useless_muxers = set()
@@ -410,6 +412,7 @@ class RenderDialog(Loggable):
         self._filesizeEstimateTimer = self._timeEstimateTimer = None
         self._is_rendering = False
         self._rendering_is_paused = False
+        self._last_timestamp_when_pausing = 0
         self.current_position = None
         self._time_started = 0
         self._time_spent_paused = 0  # Avoids the ETA being wrong on resume
@@ -424,7 +427,9 @@ class RenderDialog(Loggable):
 
         # Whether encoders changing are a result of changing the muxer.
         self.muxer_combo_changing = False
-        self._createUi()
+        self._create_ui()
+        self.progress = None
+        self.dialog = None
 
         # Directory and Filename
         self.filebutton.set_current_folder(self.app.settings.lastExportFolder)
@@ -564,7 +569,7 @@ class RenderDialog(Loggable):
         set_combo_value(widget, value)
         self.project.videorate = value
 
-    def _createUi(self):
+    def _create_ui(self):
         builder = Gtk.Builder()
         builder.add_from_file(
             os.path.join(configure.get_ui_dir(), "renderingdialog.ui"))
@@ -944,13 +949,11 @@ class RenderDialog(Loggable):
         self._pipeline.set_state(Gst.State.PAUSED)
 
     def _pauseRender(self, unused_progress):
-        self._rendering_is_paused = self.progress.play_pause_button.get_active(
-        )
+        self._rendering_is_paused = self.progress.play_pause_button.get_active()
         if self._rendering_is_paused:
             self._last_timestamp_when_pausing = time.time()
         else:
-            self._time_spent_paused += time.time(
-            ) - self._last_timestamp_when_pausing
+            self._time_spent_paused += time.time() - self._last_timestamp_when_pausing
             self.debug(
                 "Resuming render after %d seconds in pause", self._time_spent_paused)
         self.project.pipeline.togglePlayback()

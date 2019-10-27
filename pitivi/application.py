@@ -143,6 +143,7 @@ class Pitivi(Gtk.Application, Loggable):
         self._checkVersion()
 
     def _setup(self):
+        # pylint: disable=attribute-defined-outside-init
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
         self.effects = EffectsManager()
@@ -154,11 +155,13 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.connect_after("project-closed", self._project_closed_cb)
         self.project_manager.connect("project-saved", self.__project_saved_cb)
 
-        self._createActions()
+        self._create_actions()
         self._syncDoUndo()
 
-    def _createActions(self):
+    def _create_actions(self):
         self.shortcuts.register_group("app", _("General"), position=10)
+
+        # pylint: disable=attribute-defined-outside-init
         self.undo_action = Gio.SimpleAction.new("undo", None)
         self.undo_action.connect("activate", self._undoCb)
         self.add_action(self.undo_action)

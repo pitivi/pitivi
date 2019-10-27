@@ -128,16 +128,14 @@ class Marquee(Gtk.Box, Loggable):
         Loggable.__init__(self)
 
         self._timeline = timeline
+        self.start_x, self.start_y = 0, 0
+        self.end_x, self.end_y = self.start_x, self.start_y
         self.hide()
 
         self.get_style_context().add_class("Marquee")
 
     def hide(self):
         """Hides and resets the widget."""
-        self.start_x = None
-        self.start_y = None
-        self.end_x = None
-        self.end_y = None
         self.props.height_request = -1
         self.props.width_request = -1
         self.set_visible(False)
@@ -152,6 +150,7 @@ class Marquee(Gtk.Box, Loggable):
         event_widget = Gtk.get_event_widget(event)
         self.start_x, self.start_y = event_widget.translate_coordinates(
             self._timeline.layout.layers_vbox, event.x, event.y)
+        self.end_x, self.end_y = self.start_x, self.start_y
 
     def move(self, event):
         """Sets the second corner of the marquee.
@@ -185,8 +184,8 @@ class Marquee(Gtk.Box, Loggable):
         start_pos = max(0, self._timeline.pixelToNs(self.start_x))
         end_pos = max(0, self._timeline.pixelToNs(self.end_x))
 
-        return self._timeline.get_clips_in_between(start_layer,
-                                                   end_layer, start_pos, end_pos)
+        return self._timeline.get_clips_in_between(start_layer, end_layer,
+                                                   start_pos, end_pos)
 
 
 class LayersLayout(Gtk.Layout, Zoomable, Loggable):
@@ -736,6 +735,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self._scrolling = res and button == 2
         if self._scrolling:
+            # pylint: disable=attribute-defined-outside-init
             self._scroll_start_x = event.x
             self._scroll_start_y = event.y
 
@@ -1420,8 +1420,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.ges_timeline = None
         self.__copied_group = None
 
-        self._createUi()
-        self._createActions()
+        self._create_ui()
+        self._create_actions()
 
         self.timeline.connect("size-allocate", self.__timeline_size_allocate_cb)
 
@@ -1555,7 +1555,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         if project:
             self.ruler.setPipeline(project.pipeline)
             self.ruler.zoomChanged()
-            self._update_ruler(project.videorate)
+            self.ruler.setProjectFrameRate(project.videorate)
 
             self.timeline.set_best_zoom_ratio(allow_zoom_in=True)
             self.timeline.update_snapping_distance()
@@ -1580,7 +1580,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
     # Internal API
 
-    def _createUi(self):
+    def _create_ui(self):
         left_size_group = Gtk.SizeGroup.new(Gtk.SizeGroupMode.HORIZONTAL)
         zoom_box = ZoomBox(self)
         left_size_group.add_widget(zoom_box)
@@ -1641,7 +1641,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         unused_longest_time, longest_layer = max(layer_lengths)
         return longest_layer
 
-    def _createActions(self):
+    def _create_actions(self):
         # The actions below are added to this action group and thus
         # are accessible only to the self.timeline.layout and self.toolbar
         # widgets (and their children) using the "timeline" prefix.
@@ -2081,11 +2081,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_backward_one_frame_cb(self, unused_action, unused_parameter):
-        self._project.pipeline.stepFrame(self._framerate, -1)
+        self._project.pipeline.stepFrame(self._project.videorate, -1)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def _seek_forward_one_frame_cb(self, unused_action, unused_parameter):
-        self._project.pipeline.stepFrame(self._framerate, 1)
+
+        self._project.pipeline.stepFrame(self._project.videorate, 1)
         self.timeline.scrollToPlayhead(align=Gtk.Align.CENTER, when_not_in_view=True)
 
     def do_focus_in_event(self, unused_event):
@@ -2099,11 +2100,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
     def _rendering_settings_changed_cb(self, project, item):
         """Handles Project metadata changes."""
         if item == "videorate" or item is None:
-            self._update_ruler(project.videorate)
-
-    def _update_ruler(self, videorate):
-        self._framerate = videorate
-        self.ruler.setProjectFrameRate(self._framerate)
+            self.ruler.setProjectFrameRate(project.videorate)
 
     def __timeline_size_allocate_cb(self, unused_widget, allocation):
         fits = self.timeline.layout.props.height <= allocation.height
