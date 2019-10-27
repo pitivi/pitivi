@@ -231,8 +231,7 @@ class TitleEditor(Loggable):
             self._children_props_handler = None
         self.source = None
         if source:
-            assert isinstance(source, GES.TextOverlay) or \
-                isinstance(source, GES.TitleSource)
+            assert isinstance(source, (GES.TextOverlay, GES.TitleSource))
             self._updateFromSource(source)
             self.source = source
             self.infobar.hide()
