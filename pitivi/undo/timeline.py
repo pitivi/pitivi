@@ -420,11 +420,7 @@ class TransitionClipAddedAction(TransitionClipAction):
 class TransitionClipRemovedAction(TransitionClipAction):
 
     def __init__(self, ges_layer, ges_clip, track_element):
-        UndoableAction.__init__(self)
-        self.ges_layer = ges_layer
-        self.start = ges_clip.props.start
-        self.duration = ges_clip.props.duration
-        self.track_element = track_element
+        TransitionClipAction.__init__(self, ges_layer, ges_clip, track_element)
 
         self.properties = []
         for property_name in TRANSITION_PROPS:

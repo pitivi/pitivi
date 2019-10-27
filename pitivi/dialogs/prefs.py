@@ -714,7 +714,7 @@ class PluginPreferencesRow(Gtk.ListBoxRow):
     """A row in the plugins list allowing activating and deactivating a plugin."""
 
     def __init__(self, item):
-        Gtk.Bin.__init__(self)
+        Gtk.ListBoxRow.__init__(self)
         self.plugin_info = item.plugin_info
 
         self._container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
