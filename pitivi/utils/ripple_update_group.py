@@ -111,6 +111,7 @@ class RippleUpdateGroup:
         See `addEdge`.
         """
         self.addEdge(widget_a, widget_b, predicate, edge_func)
+        # pylint: disable=arguments-out-of-order
         self.addEdge(widget_b, widget_a, predicate, edge_func)
 
     def _widget_value_changed_cb(self, widget, *unused):
