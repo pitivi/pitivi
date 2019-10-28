@@ -236,7 +236,7 @@ class Pitivi(Gtk.Application, Loggable):
             return False
         if self.gui:
             self.gui.destroy()
-        self.threads.stopAllThreads()
+        self.threads.wait_all_threads()
         self.settings.storeSettings()
         self.quit()
         return True
