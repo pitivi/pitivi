@@ -73,14 +73,14 @@ if GstValidate:
                     import gi
                     gi.require_version('Wnck', '3.0')
                     from gi.repository import Wnck
-                    Wnck.Screen.get_default().connect("window-opened", self._windowOpenedCb)
+                    Wnck.Screen.get_default().connect("window-opened", self._window_opened_cb)
                 except (ImportError, ValueError):
                     print("Wnck not present on the system,"
                           " not checking the sink does not open a new window")
                 except AttributeError:
                     print("Wnck can not be used on the system")
 
-        def _windowOpenedCb(self, screen, window):
+        def _window_opened_cb(self, screen, window):
             global monitor
 
             if window.get_name() == 'renderer' and monitor:
@@ -111,7 +111,7 @@ def create_monitor(runner, app):
         GstValidate.Reporter.set_name(monitor, "Pitivi")
 
 
-def stop(scenario, action):
+def stop_func(scenario, action):
     global monitor
 
     if monitor:
@@ -157,7 +157,7 @@ def positionChangedCb(pipeline, position, scenario, action,
     action.set_done()
 
 
-def seek(scenario, action):
+def seek_func(scenario, action):
     res, wanted_position = GstValidate.utils_get_clocktime(action.structure,
                                                            "start")
     assert res
@@ -168,7 +168,7 @@ def seek(scenario, action):
     return GstValidate.ActionReturn.ASYNC
 
 
-def set_state(scenario, action):
+def set_state_func(scenario, action):
     wanted_state = action.structure["state"]
     if wanted_state is None:
         wanted_state = action.structure.get_name()
@@ -199,8 +199,8 @@ def get_edge(structure):
     return edge
 
 
-def _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_prio,
-                           position, y):
+def _release_button_if_needed(scenario, timeline, container, layer_prio,
+                              position, y):
     try:
         next_actions = scenario.get_actions()
         for next_action in next_actions[1:]:
@@ -275,7 +275,7 @@ def setEditingMode(timeline, scenario, action):
     scenario.last_mode = mode
 
 
-def editContainer(scenario, action):
+def edit_container_func(scenario, action):
     timeline = scenario.get_pipeline().props.timeline
     container = timeline.get_element(action.structure["container-name"])
 
@@ -350,33 +350,29 @@ def editContainer(scenario, action):
         get_event_widget.return_value = container.ui
         timeline.ui._motion_notify_event_cb(None, event)
 
-    GstValidate.print_action(action, "Editing %s to %s in %s mode, edge: %s "
+    GstValidate.print_action(action,
+                             "Editing %s to %s in %s mode, edge: %s "
                              "with new layer prio: %d\n" % (action.structure["container-name"],
                                                             Gst.TIME_ARGS(position),
                                                             scenario.last_mode,
                                                             edge,
                                                             layer_prio))
 
-    _releaseButtonIfNeeded(scenario, action, timeline, container, edge, layer_prio,
-                           position, y)
+    _release_button_if_needed(scenario, timeline, container, layer_prio,
+                              position, y)
     scenario.last_edge = edge
 
     return 1
 
 
-# def commit(scenario, action):
-
-#     return True
-
-
-def split_clip(scenario, action):
+def split_clip_func(scenario, action):
     timeline = scenario.get_pipeline().props.timeline.ui
     timeline.get_parent()._splitCb(None, None)
 
     return True
 
 
-def zoom(scenario, action):
+def zoom_func(scenario, action):
     timeline = scenario.get_pipeline().props.timeline
 
     GstValidate.print_action(action, action.type.replace('-', ' ') + "\n")
@@ -388,13 +384,13 @@ def zoom(scenario, action):
     return True
 
 
-def setZoomLevel(scenario, action):
+def set_zoom_level_func(scenario, action):
     Zoomable.setZoomLevel(action.structure["level"])
 
     return True
 
 
-def add_layer(scenario, action):
+def add_layer_func(scenario, action):
     timeline = scenario.get_pipeline().props.timeline
     if len(timeline.get_layers()) == 0:
         GstValidate.print_action(action, "Adding first layer\n")
@@ -405,7 +401,7 @@ def add_layer(scenario, action):
     return True
 
 
-def remove_clip(scenario, action):
+def remove_clip_func(scenario, action):
     try:
         next_action = scenario.get_actions()[1]
     except KeyError:
@@ -424,7 +420,7 @@ def remove_clip(scenario, action):
     return GstValidate.execute_action(action_type.overriden_type, action)
 
 
-def select_clips(scenario, action):
+def select_clips_func(scenario, action):
     should_select = True
     timeline = scenario.get_pipeline().props.timeline
     clip = timeline.get_element(action.structure["clip-name"])
@@ -502,61 +498,62 @@ def init():
         GstValidate.init()
         has_validate = GES.validate_register_action_types()
         GstValidate.register_action_type("stop", "pitivi",
-                                         stop, None,
+                                         stop_func, None,
                                          "Pitivi override for the stop action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("seek", "pitivi",
-                                         seek, None,
+                                         seek_func, None,
                                          "Pitivi override for the seek action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("pause", "pitivi",
-                                         set_state, None,
+                                         set_state_func, None,
                                          "Pitivi override for the pause action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("play", "pitivi",
-                                         set_state, None,
+                                         set_state_func, None,
                                          "Pitivi override for the pause action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("set-state", "pitivi",
-                                         set_state, None,
+                                         set_state_func, None,
                                          "Pitivi override for the set-state action",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("edit-container", "pitivi",
-                                         editContainer, None,
+                                         edit_container_func, None,
                                          "Start dragging a clip in the timeline",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("split-clip", "pitivi",
-                                         split_clip, None,
+                                         split_clip_func, None,
                                          "Split a clip",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("add-layer", "pitivi",
-                                         add_layer, None,
+                                         add_layer_func, None,
                                          "Add layer",
                                          GstValidate.ActionTypeFlags.NONE)
 
         GstValidate.register_action_type("remove-clip", "pitivi",
-                                         remove_clip, None,
+                                         remove_clip_func, None,
                                          "Remove clip",
                                          GstValidate.ActionTypeFlags.NONE)
         GstValidate.register_action_type("select-clips", "pitivi",
-                                         select_clips,
+                                         select_clips_func,
                                          [Parameter("clip-name",
                                                     "The name of the clip to select",
                                                     True, None, "str")],
                                          "Select clips",
                                          GstValidate.ActionTypeFlags.NONE)
 
-        for z in ["zoom-fit", "zoom-out", "zoom-in"]:
-            GstValidate.register_action_type(z, "pitivi", zoom, None, z,
+        for action_type in ["zoom-fit", "zoom-out", "zoom-in"]:
+            GstValidate.register_action_type(action_type, "pitivi",
+                                             zoom_func, None, action_type,
                                              GstValidate.ActionTypeFlags.NO_EXECUTION_NOT_FATAL)
-        GstValidate.register_action_type('set-zoom-level', "pitivi", setZoomLevel, None, z,
+        GstValidate.register_action_type('set-zoom-level', "pitivi", set_zoom_level_func, None, action_type,
                                          GstValidate.ActionTypeFlags.NO_EXECUTION_NOT_FATAL)
 
         Gst.info("Adding pitivi::wrong-window-creation")

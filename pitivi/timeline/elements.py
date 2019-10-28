@@ -1109,27 +1109,27 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         # Connect to Widget signals.
         self.connect("button-release-event", self._button_release_event_cb)
-        self.connect("event", self._eventCb)
+        self.connect("event", self._event_cb)
 
         # Connect to GES signals.
-        self.ges_clip.connect("notify::start", self._startChangedCb)
-        self.ges_clip.connect("notify::inpoint", self._startChangedCb)
-        self.ges_clip.connect("notify::duration", self._durationChangedCb)
-        self.ges_clip.connect("notify::layer", self._layerChangedCb)
+        self.ges_clip.connect("notify::start", self._start_changed_cb)
+        self.ges_clip.connect("notify::inpoint", self._start_changed_cb)
+        self.ges_clip.connect("notify::duration", self._duration_changed_cb)
+        self.ges_clip.connect("notify::layer", self._layer_changed_cb)
 
         self.ges_clip.connect_after("child-added", self._child_added_cb)
         self.ges_clip.connect_after("child-removed", self._child_removed_cb)
 
         # To be able to receive effects dragged on clips.
         self.drag_dest_set(0, [EFFECT_TARGET_ENTRY], Gdk.DragAction.COPY)
-        self.connect("drag-drop", self.__dragDropCb)
+        self.connect("drag-drop", self.__drag_drop_cb)
 
     @property
     def layer(self):
         ges_layer = self.ges_clip.props.layer
         return ges_layer.ui if ges_layer else None
 
-    def __dragDropCb(self, unused_widget, context, x, y, timestamp):
+    def __drag_drop_cb(self, widget, context, x, y, timestamp):
         success = False
 
         target = self.drag_dest_find_target(context, None)
@@ -1290,9 +1290,9 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for child in self.ges_clip.get_children(True):
             self.__disconnectFromChild(child)
 
-        disconnectAllByFunc(self.ges_clip, self._startChangedCb)
-        disconnectAllByFunc(self.ges_clip, self._durationChangedCb)
-        disconnectAllByFunc(self.ges_clip, self._layerChangedCb)
+        disconnectAllByFunc(self.ges_clip, self._start_changed_cb)
+        disconnectAllByFunc(self.ges_clip, self._duration_changed_cb)
+        disconnectAllByFunc(self.ges_clip, self._layer_changed_cb)
         disconnectAllByFunc(self.ges_clip, self._child_added_cb)
         disconnectAllByFunc(self.ges_clip, self._child_removed_cb)
 
@@ -1304,7 +1304,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         for handle in self.handles:
             handle.hide()
 
-    def _eventCb(self, element, event):
+    def _event_cb(self, element, event):
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
                 not self.timeline._scrubbing):
@@ -1319,13 +1319,13 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
 
         return False
 
-    def _startChangedCb(self, unused_clip, unused_pspec):
+    def _start_changed_cb(self, clip, pspec):
         self.updatePosition()
 
-    def _durationChangedCb(self, unused_clip, unused_pspec):
+    def _duration_changed_cb(self, clip, pspec):
         self.updatePosition()
 
-    def _layerChangedCb(self, ges_clip, unused_pspec):
+    def _layer_changed_cb(self, ges_clip, pspec):
         self.updatePosition()
 
     def __disconnectFromChild(self, child):

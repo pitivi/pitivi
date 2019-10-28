@@ -452,7 +452,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.disconnect_by_func(self._button_release_event_cb)
             self.disconnect_by_func(self._motion_notify_event_cb)
 
-            self.ges_timeline.disconnect_by_func(self._durationChangedCb)
+            self.ges_timeline.disconnect_by_func(self._duration_changed_cb)
             self.ges_timeline.disconnect_by_func(self._layer_added_cb)
             self.ges_timeline.disconnect_by_func(self._layer_removed_cb)
             self.ges_timeline.disconnect_by_func(self.__snapping_started_cb)
@@ -480,7 +480,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self._add_layer(ges_layer)
         self.__update_layers()
 
-        self.ges_timeline.connect("notify::duration", self._durationChangedCb)
+        self.ges_timeline.connect("notify::duration", self._duration_changed_cb)
         self.ges_timeline.connect("layer-added", self._layer_added_cb)
         self.ges_timeline.connect("layer-removed", self._layer_removed_cb)
         self.ges_timeline.connect("snapping-started", self.__snapping_started_cb)
@@ -492,7 +492,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         self.layout.update_width()
 
-    def _durationChangedCb(self, ges_timeline, pspec):
+    def _duration_changed_cb(self, ges_timeline, pspec):
         self.layout.update_width()
 
     def scrollToPlayhead(self, align=None, when_not_in_view=False, delayed=False):

@@ -571,12 +571,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             "button-press-event", self._treeViewButtonPressEventCb)
         self.treeview.connect(
             "button-release-event", self._treeViewButtonReleaseEventCb)
-        self.treeview.connect("row-activated", self._itemOrRowActivatedCb)
+        self.treeview.connect("row-activated", self._iconview_item_or_row_activated_cb)
         self.treeview.set_headers_visible(False)
         self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         tsel = self.treeview.get_selection()
         tsel.set_mode(Gtk.SelectionMode.MULTIPLE)
-        tsel.connect("changed", self._viewSelectionChangedCb)
+        tsel.connect("changed", self._iconview_selection_changed_cb)
 
         pixbufcol = Gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
@@ -605,12 +605,11 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.iconview = Gtk.IconView(model=self.modelFilter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect(
-            "button-press-event", self._iconViewButtonPressEventCb)
+            "button-press-event", self._iconview_button_press_event_cb)
         self.iconview.connect(
-            "button-release-event", self._iconViewButtonReleaseEventCb)
-        self.iconview.connect("item-activated", self._itemOrRowActivatedCb)
-        self.iconview.connect(
-            "selection-changed", self._viewSelectionChangedCb)
+            "button-release-event", self._iconview_button_release_event_cb)
+        self.iconview.connect("item-activated", self._iconview_item_or_row_activated_cb)
+        self.iconview.connect("selection-changed", self._iconview_selection_changed_cb)
         self.iconview.set_item_orientation(Gtk.Orientation.VERTICAL)
         self.iconview.set_property("has_tooltip", True)
         self.iconview.set_tooltip_column(COL_INFOTEXT)
@@ -643,9 +642,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         project_manager = self.app.project_manager
         project_manager.connect(
             "new-project-loading", self._new_project_loading_cb)
-        project_manager.connect("new-project-loaded", self._newProjectLoadedCb)
-        project_manager.connect("new-project-failed", self._newProjectFailedCb)
-        project_manager.connect("project-closed", self._projectClosedCb)
+        project_manager.connect("new-project-loaded", self._new_project_loaded_cb)
+        project_manager.connect("new-project-failed", self._new_project_failed_cb)
+        project_manager.connect("project-closed", self._project_closed_cb)
 
         # Drag and Drop
         self.drag_dest_set(Gtk.DestDefaults.DROP | Gtk.DestDefaults.MOTION,
@@ -696,9 +695,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.debug("Finalizing %s", self)
 
         self.app.project_manager.disconnect_by_func(self._new_project_loading_cb)
-        self.app.project_manager.disconnect_by_func(self._newProjectLoadedCb)
-        self.app.project_manager.disconnect_by_func(self._newProjectFailedCb)
-        self.app.project_manager.disconnect_by_func(self._projectClosedCb)
+        self.app.project_manager.disconnect_by_func(self._new_project_loaded_cb)
+        self.app.project_manager.disconnect_by_func(self._new_project_failed_cb)
+        self.app.project_manager.disconnect_by_func(self._project_closed_cb)
 
         if not self._project:
             self.debug("No project set...")
@@ -745,9 +744,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         view.enable_model_drag_source(
             Gdk.ModifierType.BUTTON1_MASK, [URI_TARGET_ENTRY], Gdk.DragAction.COPY)
         view.drag_source_add_uri_targets()
-        view.connect("drag-data-get", self._dndDragDataGetCb)
-        view.connect_after("drag-begin", self._dndDragBeginCb)
-        view.connect("drag-end", self._dndDragEndCb)
+        view.connect("drag-data-get", self._dnd_drag_data_get_cb)
+        view.connect_after("drag-begin", self._dnd_drag_begin_cb)
+        view.connect("drag-end", self._dnd_drag_end_cb)
 
     def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
         if not len(self.storemodel):
@@ -787,7 +786,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     def _insertEndCb(self, unused_action, unused_parameter):
         self.app.gui.editor.timeline_ui.insertAssets(self.getSelectedAssets(), -1)
 
-    def _searchEntryChangedCb(self, entry):
+    def _search_entry_changed_cb(self, entry):
         # With many hundred clips in an iconview with dynamic columns and
         # ellipsizing, doing needless searches is very expensive.
         # Realistically, nobody expects to search for only one character,
@@ -795,7 +794,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if len(entry.get_text()) != 1:
             self.modelFilter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, icon_pos, unused_event):
+    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.SECONDARY:
             entry.set_text("")
         elif icon_pos == Gtk.EntryIconPosition.PRIMARY:
@@ -979,7 +978,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                     row[COL_ICON_128] = asset_previewer.large_thumb
 
         if progress == 0:
-            self._startImporting(project)
+            self._startImporting()
             return
 
         if project.loaded:
@@ -1086,7 +1085,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             error = (id, str(error.domain), error)
             self._errors.append(error)
 
-    def _startImporting(self, project):
+    def _startImporting(self):
         self.__last_proxying_estimate_time = _("Unknown")
         self.import_start_time = time.time()
         self._welcome_infobar.hide()
@@ -1553,7 +1552,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             if path:
                 selection.select_path(path[0])
 
-    def _viewSelectionChangedCb(self, unused):
+    def _iconview_selection_changed_cb(self, unused):
         self._updateActions()
 
     def _updateActions(self):
@@ -1563,7 +1562,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Some actions can only be done on a single item at a time:
         self._clipprops_button.set_sensitive(selected_count == 1)
 
-    def _itemOrRowActivatedCb(self, unused_view, path, *unused_args):
+    def _iconview_item_or_row_activated_cb(self, unused_view, path, *unused_args):
         """Plays the asset identified by the specified path.
 
         This can happen when an item is double-clicked, or
@@ -1573,7 +1572,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         asset = self.modelFilter[path][COL_ASSET]
         self.emit('play', asset)
 
-    def _iconViewButtonPressEventCb(self, iconview, event):
+    def _iconview_button_press_event_cb(self, iconview, event):
         self._updateDraggedPaths(iconview, event)
 
         Gtk.IconView.do_button_press_event(iconview, event)
@@ -1587,7 +1586,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         return True
 
-    def _iconViewButtonReleaseEventCb(self, iconview, event):
+    def _iconview_button_release_event_cb(self, iconview, event):
         self._draggedPaths = None
 
         control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
@@ -1615,7 +1614,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._project.disconnect_by_func(self._errorCreatingAssetCb)
         self._project.disconnect_by_func(self.__projectSettingsSetFromImportedAssetCb)
 
-    def _new_project_loading_cb(self, unused_project_manager, project):
+    def _new_project_loading_cb(self, project_manager, project):
         assert not self._project
 
         self._project = project
@@ -1624,15 +1623,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._welcome_infobar.show_all()
         self._connectToProject(project)
 
-    def _newProjectLoadedCb(self, unused_project_manager, project):
+    def _new_project_loaded_cb(self, project_manager, project):
         # Make sure that the sources added to the project are added
         self._flushPendingAssets()
 
-    def _newProjectFailedCb(self, unused_project_manager, unused_uri, unused_reason):
+    def _new_project_failed_cb(self, project_manager, uri, reason):
         self.storemodel.clear()
         self._project = None
 
-    def _projectClosedCb(self, unused_project_manager, unused_project):
+    def _project_closed_cb(self, project_manager, project):
         self.__disconnectFromProject()
         self._project_settings_infobar.hide()
         self.storemodel.clear()
@@ -1656,8 +1655,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         else:
             self._project.addUris(uris)
 
-    def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
-                               unused_y, selection, targettype, unused_time):
+    def _drag_data_received_cb(self, widget, context, x, y,
+                               selection, targettype, time):
         """Handles data being dragged onto self."""
         self.debug("targettype: %d, selection.data: %r",
                    targettype, selection.get_data())
@@ -1667,12 +1666,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app.threads.addThread(PathWalker, uris, self.__paths_walked_cb)
 
     # Used with TreeView and IconView
-    def _dndDragDataGetCb(self, unused_view, unused_context, data, unused_info, unused_timestamp):
+    def _dnd_drag_data_get_cb(self, view, context, data, info, timestamp):
         paths = self.getSelectedPaths()
         uris = [self.modelFilter[path][COL_URI] for path in paths]
         data.set_uris(uris)
 
-    def _dndDragBeginCb(self, unused_view, context):
+    def _dnd_drag_begin_cb(self, view, context):
         self.info("Drag operation begun")
         self.dragged = True
         paths = self.getSelectedPaths()
@@ -1697,7 +1696,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
             Gtk.drag_set_icon_surface(context, surface)
 
-    def _dndDragEndCb(self, unused_view, unused_context):
+    def _dnd_drag_end_cb(self, view, context):
         self.info("Drag operation ended")
         self.dragged = False
 
