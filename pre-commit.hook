@@ -16,9 +16,7 @@ bin/pitivi.in
 pitivi/application.py
 pitivi/autoaligner.py
 pitivi/check.py
-pitivi/configure.py
 pitivi/dialogs/clipmediaprops.py
-pitivi/dialogs/filelisterrordialog.py
 pitivi/dialogs/prefs.py
 pitivi/editorperspective.py
 pitivi/effects.py
@@ -42,7 +40,6 @@ pitivi/utils/misc.py
 pitivi/utils/pipeline.py
 pitivi/utils/proxy.py
 pitivi/utils/ripple_update_group.py
-pitivi/utils/system.py
 pitivi/utils/threads.py
 pitivi/utils/timeline.py
 pitivi/utils/ui.py
@@ -54,23 +51,17 @@ pitivi/viewer/title_overlay.py
 pitivi/viewer/viewer.py
 tests/common.py
 tests/test_check.py
-tests/test_common.py
 tests/test_log.py
 tests/test_medialibrary.py
-tests/test_prefs.py
 tests/test_preset.py
 tests/test_project.py
-tests/test_system.py
 tests/test_timeline_layer.py
 tests/test_timeline_timeline.py
 tests/test_undo.py
 tests/test_undo_project.py
 tests/test_undo_timeline.py
 tests/test_utils.py
-tests/test_utils_timeline.py
 tests/test_widgets.py
-tests/validate-tests/manager.py
-tests/validate-tests/suite.py
 "
 
 PYLINT_IGNORE_ARGS=""
