@@ -86,15 +86,17 @@ class ThreadMaster(Loggable):
         self.log("thread %r is done", thread)
         self.threads.remove(thread)
 
-    def stopAllThreads(self):
-        """Stops all running Threads controlled by this master."""
-        self.log("stopping all threads")
+    def wait_all_threads(self):
+        """Waits until all running Threads controlled by this master stop."""
+        self.log("Waiting for threads to stop")
         joinedthreads = 0
         while joinedthreads < len(self.threads):
             for thread in self.threads:
-                self.log("Trying to stop thread %r", thread)
+                self.log("Waiting for thread to stop: %r", thread)
                 try:
                     thread.join()
                     joinedthreads += 1
-                except:
-                    self.warning("what happened ??")
+                except RuntimeError:
+                    # Tried to join the current thread, or one
+                    # which did not start yet.
+                    pass
