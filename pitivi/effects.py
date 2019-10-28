@@ -577,13 +577,13 @@ class EffectListWidget(Gtk.Box, Loggable):
         self.populate_categories_widget()
         self.model_filter.refilter()
 
-    def _categoryChangedCb(self, unused_combobox):
+    def _category_changed_cb(self, combobox):
         self.model_filter.refilter()
 
-    def _searchEntryChangedCb(self, unused_entry):
+    def _search_entry_changed_cb(self, unused_entry):
         self.model_filter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, unused, unused1):
+    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         entry.set_text("")
 
     def _setRowVisible(self, model, iter, unused_data):

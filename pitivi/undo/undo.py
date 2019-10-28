@@ -58,6 +58,7 @@ class UndoableAction(Action):
     def undo(self):
         raise NotImplementedError()
 
+    # pylint: disable=unused-argument
     def expand(self, action):
         """Allows the action to expand by including the specified action.
 

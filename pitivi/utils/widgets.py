@@ -72,7 +72,7 @@ class DynamicWidget(Loggable):
 class DefaultWidget(Gtk.Label):
     """When all hope fails...."""
 
-    def __init__(self, *unused, **unused_kwargs):
+    def __init__(self):
         Gtk.Label.__init__(self, _("Implement Me"))
         self.props.halign = Gtk.Align.START
 
@@ -760,7 +760,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         if dynamic_widget:
             self.properties[prop] = dynamic_widget
 
-            self.element.connect("notify::" + prop.name, self._propertyChangedCb,
+            self.element.connect("notify::" + prop.name, self._property_changed_cb,
                                  dynamic_widget)
             # The "reset to default" button associated with this property
             if isinstance(to_default_btn, Gtk.Button):
@@ -935,7 +935,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
                                                                keyframe_button)
                 grid.attach(button, 3, y, 1, 1)
 
-        self.element.connect('deep-notify', self._propertyChangedCb)
+        self.element.connect('deep-notify', self._property_changed_cb)
         self.pack_start(grid, expand=False, fill=False, padding=0)
         self.show_all()
 
@@ -953,7 +953,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
 
         return widget
 
-    def _propertyChangedCb(self, effect, gst_element, pspec):
+    def _property_changed_cb(self, effect, gst_element, pspec):
         if gst_element.get_control_binding(pspec.name):
             self.log("%s controlled, not displaying value", pspec.name)
             return
@@ -1240,7 +1240,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
         zoom_fit_btn_grid.add(zoom_fit_btn_label)
         zoom_fit_btn_grid.set_column_spacing(SPACING / 2)
         zoom_fit_btn.add(zoom_fit_btn_grid)
-        zoom_fit_btn.connect("clicked", self._zoomFitCb)
+        zoom_fit_btn.connect("clicked", self._zoom_fit_cb)
         self.attach(zoom_fit_btn, 0, 0, 1, 1)
 
         # zooming slider
@@ -1253,9 +1253,9 @@ class ZoomBox(Gtk.Grid, Zoomable):
         # zoom slider, otherwise the slider remains at the leftmost position.
         self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
         zoomslider.props.draw_value = False
-        zoomslider.connect("scroll-event", self._zoomSliderScrollCb)
-        zoomslider.connect("value-changed", self._zoomAdjustmentChangedCb)
-        zoomslider.connect("query-tooltip", self._sliderTooltipCb)
+        zoomslider.connect("scroll-event", self._zoom_slider_scroll_cb)
+        zoomslider.connect("value-changed", self._zoom_slider_changed_cb)
+        zoomslider.connect("query-tooltip", self._zoom_slider_query_tooltip_cb)
         zoomslider.set_has_tooltip(True)
         # At least 100px wide for precision
         zoomslider.set_size_request(100, 0)
@@ -1269,7 +1269,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
         self.set_column_spacing(ZOOM_SLIDER_PADDING)
         self.show_all()
 
-    def _zoomAdjustmentChangedCb(self, adjustment):
+    def _zoom_slider_changed_cb(self, adjustment):
         Zoomable.setZoomLevel(adjustment.get_value())
         self.timeline.app.write_action("set-zoom-level",
                                        level=adjustment.get_value(),
@@ -1278,10 +1278,10 @@ class ZoomBox(Gtk.Grid, Zoomable):
         if not self._manual_set:
             self.timeline.timeline.scrollToPlayhead(delayed=True)
 
-    def _zoomFitCb(self, unused_button):
+    def _zoom_fit_cb(self, button):
         self.timeline.timeline.set_best_zoom_ratio(allow_zoom_in=True)
 
-    def _zoomSliderScrollCb(self, unused, event):
+    def _zoom_slider_scroll_cb(self, unused, event):
         delta = 0
         if event.direction in [Gdk.ScrollDirection.UP, Gdk.ScrollDirection.RIGHT]:
             delta = 1
@@ -1305,7 +1305,7 @@ class ZoomBox(Gtk.Grid, Zoomable):
             finally:
                 self._manual_set = False
 
-    def _sliderTooltipCb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
+    def _zoom_slider_query_tooltip_cb(self, unused_slider, unused_x, unused_y, unused_keyboard_mode, tooltip):
         # We assume the width of the ruler is exactly the width of the
         # timeline.
         width_px = self.timeline.ruler.get_allocated_width()
@@ -1439,11 +1439,11 @@ class ColorPickerButton(Gtk.Button):
     def button_release_event_cb(self, widget, event):
         if event.button != Gdk.BUTTON_PRIMARY:
             return False
-        self.grab_color_at_pointer(event.get_screen(), event.get_device(), event.x_root, event.y_root)
+        self.grab_color_at_pointer(event.get_screen(), event.x_root, event.y_root)
         self.emit("value-changed")
         self.shutdown_eyedropper()
 
-    def grab_color_at_pointer(self, screen, device, x, y, *args):
+    def grab_color_at_pointer(self, screen, x, y):
         root_window = screen.get_root_window()
         pixbuf = Gdk.pixbuf_get_from_window(root_window, x, y, 1, 1)
         pixels = pixbuf.get_pixels()
