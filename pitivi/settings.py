@@ -219,13 +219,13 @@ class GlobalSettings(GObject.Object, Loggable):
                 # We don't know the value type in advance, just try them all.
                 try:
                     value = cls._config.getfloat(section, option)
-                except:
+                except ValueError:
                     try:
                         value = cls._config.getint(section, option)
-                    except:
+                    except ValueError:
                         try:
                             value = cls._config.getboolean(section, option)
-                        except:
+                        except ValueError:
                             value = cls._config.get(section, option)
 
                 setattr(cls, section + option, value)
