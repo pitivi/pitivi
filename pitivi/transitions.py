@@ -124,9 +124,9 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.set_property("has_tooltip", True)
 
-        self.searchEntry.connect("changed", self._searchEntryChangedCb)
-        self.searchEntry.connect("icon-press", self._searchEntryIconClickedCb)
-        self.iconview.connect("query-tooltip", self._queryTooltipCb)
+        self.searchEntry.connect("changed", self._search_entry_changed_cb)
+        self.searchEntry.connect("icon-press", self._search_entry_icon_press_cb)
+        self.iconview.connect("query-tooltip", self._iconview_query_tooltip_cb)
 
         # Speed-up startup by only checking available transitions on idle
         GLib.idle_add(self._load_available_transitions_cb)
@@ -243,10 +243,10 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             self.border_scale.add_mark(
                 25000, Gtk.PositionType.BOTTOM, _("Smooth"))
 
-    def _searchEntryChangedCb(self, unused_entry):
+    def _search_entry_changed_cb(self, entry):
         self.modelFilter.refilter()
 
-    def _searchEntryIconClickedCb(self, entry, unused, unused_1):
+    def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         entry.set_text("")
 
 # UI methods
@@ -326,7 +326,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             icon = self._question_icon
         return icon
 
-    def _queryTooltipCb(self, view, x, y, keyboard_mode, tooltip):
+    def _iconview_query_tooltip_cb(self, view, x, y, keyboard_mode, tooltip):
         is_row, x, y, model, path, iter_ = view.get_tooltip_context(
             x, y, keyboard_mode)
         if not is_row:
