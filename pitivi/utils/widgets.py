@@ -1430,7 +1430,7 @@ class ColorPickerButton(Gtk.Button):
         # Get color-picker cursor if it exists in the current theme else fallback to generating it ourself
         try:
             cursor = Gdk.Cursor.new_from_name(screen.get_display(), "color-picker")
-        except:
+        except TypeError:
             pixbuf = GdkPixbuf.Pixbuf.new_from_data(DROPPER_BITS, GdkPixbuf.Colorspace.RGB, True, 8, DROPPER_WIDTH,
                                                     DROPPER_HEIGHT, DROPPER_WIDTH * 4)
             cursor = Gdk.Cursor.new_from_pixbuf(screen.get_display(), pixbuf, DROPPER_X_HOT, DROPPER_Y_HOT)

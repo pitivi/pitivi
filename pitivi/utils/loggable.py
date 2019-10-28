@@ -165,7 +165,7 @@ class TerminalController:
         # terminal has no capabilities.
         try:
             curses.setupterm()
-        except:
+        except curses.error:
             return
 
         # Look up numeric capabilities.
