@@ -39,7 +39,6 @@ pitivi/utils/loggable.py
 pitivi/utils/misc.py
 pitivi/utils/pipeline.py
 pitivi/utils/proxy.py
-pitivi/utils/threads.py
 pitivi/utils/timeline.py
 pitivi/utils/ui.py
 pitivi/utils/validate.py
