@@ -50,7 +50,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
                         Gdk.EventMask.LEAVE_NOTIFY_MASK |
                         Gdk.EventMask.ALL_EVENTS_MASK)
         self.add(sink_widget)
-        self.connect("size-allocate", self.__on_size_allocate)
+        self.connect("size-allocate", self.__size_allocate_cb)
 
         # Whether to show the percent of the size relative to the project size.
         # It is set to false initially because the viewer gets resized
@@ -65,7 +65,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         self.add_overlay(self.revealer)
         sink_widget.connect("size-allocate", self.__sink_widget_size_allocate_cb)
 
-    def __on_size_allocate(self, widget, rectangle):
+    def __size_allocate_cb(self, widget, rectangle):
         self.window_size = numpy.array([rectangle.width,
                                         rectangle.height])
         for overlay in self.__overlays.values():

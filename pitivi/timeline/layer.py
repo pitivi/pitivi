@@ -320,10 +320,10 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         if old_media_types != self.media_types:
             self.updatePosition()
 
-    def _childAddedToClipCb(self, ges_clip, child):
+    def _clip_child_added_cb(self, ges_clip, child):
         self.checkMediaTypes()
 
-    def _childRemovedFromClipCb(self, ges_clip, child):
+    def _clip_child_removed_cb(self, ges_clip, child):
         self.checkMediaTypes()
 
     def _clipAddedCb(self, unused_ges_layer, ges_clip):
@@ -344,8 +344,8 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         self._changed = True
         widget.show_all()
 
-        ges_clip.connect_after("child-added", self._childAddedToClipCb)
-        ges_clip.connect_after("child-removed", self._childRemovedFromClipCb)
+        ges_clip.connect_after("child-added", self._clip_child_added_cb)
+        ges_clip.connect_after("child-removed", self._clip_child_removed_cb)
 
     def _clipRemovedCb(self, unused_ges_layer, ges_clip):
         self._remove_clip(ges_clip)
@@ -366,8 +366,8 @@ class Layer(Gtk.Layout, Zoomable, Loggable):
         ges_clip.ui.release()
         ges_clip.ui = None
 
-        ges_clip.disconnect_by_func(self._childAddedToClipCb)
-        ges_clip.disconnect_by_func(self._childRemovedFromClipCb)
+        ges_clip.disconnect_by_func(self._clip_child_added_cb)
+        ges_clip.disconnect_by_func(self._clip_child_removed_cb)
 
     def updatePosition(self):
         for ges_clip in self.ges_layer.get_clips():
