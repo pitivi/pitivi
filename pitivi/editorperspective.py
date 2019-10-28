@@ -750,9 +750,9 @@ class EditorPerspective(Perspective, Loggable):
 
     def __save_frame_cb(self, unused_action, unused_param):
         """Exports a snapshot of the current frame as an image file."""
-        foo = self._showSaveScreenshotDialog()
-        if foo:
-            path, mime = foo[0], foo[1]
+        res = self._showSaveScreenshotDialog()
+        if res:
+            path, mime = res[0], res[1]
             self.app.project_manager.current_project.pipeline.save_thumbnail(
                 -1, -1, mime, path)
 
