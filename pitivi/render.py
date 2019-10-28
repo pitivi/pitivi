@@ -113,7 +113,7 @@ class Encoders(Loggable):
 
     _instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls):
         """Returns the singleton instance."""
         if not cls._instance:
             cls._instance = super(Encoders, cls).__new__(cls)
@@ -892,7 +892,7 @@ class RenderDialog(Loggable):
         self.dialog.ok_btn.connect(
             "clicked", self._okButtonClickedCb, media_type)
 
-    def __additional_debug_info(self, error):
+    def __additional_debug_info(self):
         if self.project.vencoder == 'x264enc':
             if self.project.videowidth % 2 or self.project.videoheight % 2:
                 return "\n\n%s\n\n" % _("<b>Make sure your rendering size is even, "
@@ -904,7 +904,7 @@ class RenderDialog(Loggable):
         primary_message = _("Sorry, something didn’t work right.")
         secondary_message = "".join([
             _("An error occurred while trying to render your project."),
-            self.__additional_debug_info(str(error)),
+            self.__additional_debug_info(),
             _("You might want to check our troubleshooting guide or file a bug report. "
               "The GStreamer error was:"),
             "\n\n<i>" + str(error) + "</i>"])

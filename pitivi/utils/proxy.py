@@ -475,13 +475,13 @@ class ProxyManager(GObject.Object, Loggable):
             self.emit("proxy-ready", asset, proxy)
             self.__emitProgress(proxy, 100)
 
-    def __transcoderErrorCb(self, transcoder, error, unused_details, asset):
+    def __transcoder_error_cb(self, transcoder, error, unused_details, asset):
         self.emit("error-preparing-asset", asset, None, error)
 
-    def __transcoderDoneCb(self, transcoder, asset):
-        transcoder.disconnect_by_func(self.__proxyingPositionChangedCb)
-        transcoder.disconnect_by_func(self.__transcoderDoneCb)
-        transcoder.disconnect_by_func(self.__transcoderErrorCb)
+    def __transcoder_done_cb(self, transcoder, asset):
+        transcoder.disconnect_by_func(self.__proxying_position_changed_cb)
+        transcoder.disconnect_by_func(self.__transcoder_done_cb)
+        transcoder.disconnect_by_func(self.__transcoder_error_cb)
 
         self.debug("Transcoder done with %s", asset.get_id())
 
@@ -538,7 +538,7 @@ class ProxyManager(GObject.Object, Loggable):
         asset.creation_progress = creation_progress
         self.emit("progress", asset, asset.creation_progress, estimated_time)
 
-    def __proxyingPositionChangedCb(self, transcoder, position, asset):
+    def __proxying_position_changed_cb(self, transcoder, position, asset):
         if transcoder not in self.__running_transcoders:
             self.info("Position changed after job cancelled!")
             return
@@ -642,11 +642,11 @@ class ProxyManager(GObject.Object, Loggable):
 
         transcoder.set_cpu_usage(self.app.settings.max_cpu_usage)
         transcoder.connect("position-updated",
-                           self.__proxyingPositionChangedCb,
+                           self.__proxying_position_changed_cb,
                            asset)
 
-        transcoder.connect("done", self.__transcoderDoneCb, asset)
-        transcoder.connect("error", self.__transcoderErrorCb, asset)
+        transcoder.connect("done", self.__transcoder_done_cb, asset)
+        transcoder.connect("error", self.__transcoder_error_cb, asset)
 
         if len(self.__running_transcoders) < self.app.settings.numTranscodingJobs:
             self.__startTranscoder(transcoder)

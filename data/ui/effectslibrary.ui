@@ -54,7 +54,7 @@
           <object class="GtkComboBoxText" id="categories">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <signal name="changed" handler="_categoryChangedCb" swapped="no"/>
+            <signal name="changed" handler="_category_changed_cb" swapped="no"/>
             <child internal-child="accessible">
               <object class="AtkObject" id="categories-atkobject">
                 <property name="AtkObject::accessible-name">effect category combobox</property>
@@ -83,8 +83,8 @@
             <property name="secondary_icon_name">edit-clear-symbolic</property>
             <property name="secondary_icon_tooltip_text" translatable="yes">Clear the current search</property>
             <property name="placeholder_text" translatable="yes">Search...</property>
-            <signal name="changed" handler="_searchEntryChangedCb" swapped="no"/>
-            <signal name="icon-release" handler="_searchEntryIconClickedCb" swapped="no"/>
+            <signal name="changed" handler="_search_entry_changed_cb" swapped="no"/>
+            <signal name="icon-release" handler="_search_entry_icon_press_cb" swapped="no"/>
             <child internal-child="accessible">
               <object class="AtkObject" id="search_entry-atkobject">
                 <property name="AtkObject::accessible-name">effects library search entry</property>
