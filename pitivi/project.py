@@ -676,7 +676,7 @@ class Project(Loggable, GES.Project):
         self.loading_assets = set()
 
         self.relocated_assets = {}
-        self.app.proxy_manager.connect("progress", self.__assetTranscodingProgressCb)
+        self.app.proxy_manager.connect("progress", self.__asset_transcoding_progress_cb)
         self.app.proxy_manager.connect("error-preparing-asset",
                                        self.__proxyErrorCb)
         self.app.proxy_manager.connect("asset-preparing-cancelled",
@@ -749,7 +749,7 @@ class Project(Loggable, GES.Project):
         # as they apply only for rendering.
         self._has_rendering_values = False
 
-    def _scenarioDoneCb(self, scenario):
+    def _scenario_done_cb(self, scenario):
         if self.pipeline is not None:
             self.pipeline.setForcePositionListener(False)
 
@@ -764,7 +764,7 @@ class Project(Loggable, GES.Project):
         self._scenario = GstValidate.Scenario.factory_create(
             self.runner, self.pipeline, self.scenario)
         self.pipeline.setForcePositionListener(True)
-        self._scenario.connect("done", self._scenarioDoneCb)
+        self._scenario.connect("done", self._scenario_done_cb)
         self._scenario.props.execute_on_idle = True
 
     # --------------- #
@@ -1132,8 +1132,8 @@ class Project(Loggable, GES.Project):
     # ------------------------------#
     # Proxy creation implementation #
     # ------------------------------#
-    def __assetTranscodingProgressCb(self, unused_proxy_manager, asset,
-                                     creation_progress, estimated_time):
+    def __asset_transcoding_progress_cb(self, proxy_manager, asset,
+                                        creation_progress, estimated_time):
         self.__updateAssetLoadingProgress(estimated_time)
 
     def __get_loading_project_progress(self):
@@ -1419,15 +1419,14 @@ class Project(Loggable, GES.Project):
         if profiles:
             # The project just loaded, check the new
             # encoding profile and make use of it now.
-            self.set_container_profile(profiles[0], reset_all=True)
+            self.set_container_profile(profiles[0])
             self._load_encoder_settings(profiles)
 
-    def set_container_profile(self, container_profile, reset_all=False):
+    def set_container_profile(self, container_profile):
         """Sets @container_profile as new profile if usable.
 
         Attributes:
             profile (Gst.EncodingProfile): The Gst.EncodingContainerProfile to use
-            reset_all (bool): Do not use restrictions from the previously set profile
         """
         if container_profile == self.container_profile:
             return False
@@ -1519,8 +1518,8 @@ class Project(Loggable, GES.Project):
         Makes sure the project won't be doing anything after the call.
         """
         if self._scenario:
-            self._scenario.disconnect_by_func(self._scenarioDoneCb)
-        self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingProgressCb)
+            self._scenario.disconnect_by_func(self._scenario_done_cb)
+        self.app.proxy_manager.disconnect_by_func(self.__asset_transcoding_progress_cb)
         self.app.proxy_manager.disconnect_by_func(self.__proxyErrorCb)
         self.app.proxy_manager.disconnect_by_func(self.__assetTranscodingCancelledCb)
         self.app.proxy_manager.disconnect_by_func(self.__proxyReadyCb)
@@ -2083,19 +2082,19 @@ class ProjectSettingsDialog:
         self.wg = RippleUpdateGroup()
         self.wg.addVertex(self.frame_rate_combo,
                           signal="changed",
-                          update_func=self._updateCombo,
+                          update_func=self._update_combo_func,
                           update_func_args=(self.frame_rate_fraction_widget,))
         self.wg.addVertex(self.frame_rate_fraction_widget,
                           signal="value-changed",
-                          update_func=self._updateFraction,
+                          update_func=self._update_fraction_func,
                           update_func_args=(self.frame_rate_combo,))
         self.wg.addVertex(self.width_spinbutton, signal="value-changed")
         self.wg.addVertex(self.height_spinbutton, signal="value-changed")
         self.wg.addVertex(self.audio_preset_menubutton,
-                          update_func=self._updatePresetMenuButton,
+                          update_func=self._update_preset_menu_button_func,
                           update_func_args=(self.audio_presets,))
         self.wg.addVertex(self.video_preset_menubutton,
-                          update_func=self._updatePresetMenuButton,
+                          update_func=self._update_preset_menu_button_func,
                           update_func_args=(self.video_presets,))
         self.wg.addVertex(self.channels_combo, signal="changed")
         self.wg.addVertex(self.sample_rate_combo, signal="changed")
@@ -2167,10 +2166,10 @@ class ProjectSettingsDialog:
     def proxy_res_linked(self):
         return self.proxy_res_linked_check.props.active
 
-    def _updateFraction(self, unused, fraction, combo):
+    def _update_fraction_func(self, unused, fraction, combo):
         fraction.setWidgetValue(get_combo_value(combo))
 
-    def _updateCombo(self, unused, combo, fraction):
+    def _update_combo_func(self, unused, combo, fraction):
         set_combo_value(combo, fraction.getWidgetValue())
 
     def __videoPresetLoadedCb(self, unused_mgr):
@@ -2184,7 +2183,7 @@ class ProjectSettingsDialog:
     def _constrainSarButtonToggledCb(self, unused_button):
         self.sar = self.getSAR()
 
-    def _updatePresetMenuButton(self, unused_source, unused_target, mgr):
+    def _update_preset_menu_button_func(self, unused_source, unused_target, mgr):
         mgr.updateMenuActions()
 
     def updateWidth(self):
