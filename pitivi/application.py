@@ -328,10 +328,10 @@ class Pitivi(Gtk.Application, Loggable):
                     current_version = version
                     self.info("Latest software version is %s", current_version)
 
-            VERSION_split = [int(i) for i in VERSION.split(".")]
+            version_split = [int(i) for i in VERSION.split(".")]
             current_version_split = [int(i)
                                      for i in current_version.split(".")]
-            if VERSION_split > current_version_split:
+            if version_split > current_version_split:
                 status = "CURRENT"
                 self.info(
                     "Running version %s, which is newer than the latest known version. Considering it as the latest current version.", VERSION)

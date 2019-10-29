@@ -54,7 +54,7 @@ class ClipMediaPropsDialog:
         self.size_checkbutton = builder.get_object("size_checkbutton")
         self.framerate_checkbutton = builder.get_object(
             "framerate_checkbutton")
-        self.PAR_checkbutton = builder.get_object("PAR_checkbutton")
+        self.par_checkbutton = builder.get_object("PAR_checkbutton")
         self.channels_checkbutton = builder.get_object("channels_checkbutton")
         self.samplerate_checkbutton = builder.get_object("samplerate_checkbtn")
         # These labels are in a separate table col on the right of checkboxes:
@@ -123,7 +123,7 @@ class ClipMediaPropsDialog:
         if self.is_image:
             self.frame_rate.hide()
             self.aspect_ratio.hide()
-            self.PAR_checkbutton.hide()
+            self.par_checkbutton.hide()
             self.framerate_checkbutton.hide()
             self.video_header_label.set_markup("<b>" + _("Image:") + "</b>")
 
