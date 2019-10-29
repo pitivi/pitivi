@@ -91,6 +91,7 @@ class BaseTestUndoTimeline(common.TestCase):
                 for element in clip.get_children(False):
                     if isinstance(element, GES.VideoTransition):
                         return element
+        return None
 
     def check_layers(self, layers):
         self.assertEqual(self.timeline.get_layers(), layers)

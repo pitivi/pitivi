@@ -738,6 +738,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                 return asset
 
         self.warning("Did not find any asset for uri: %s", uri)
+        return None
 
     def _setupViewAsDragAndDropSource(self, view):
         view.drag_source_set(0, [], Gdk.DragAction.COPY)
@@ -1291,6 +1292,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return pathinfo[0]
         elif self.clip_view == SHOW_ICONVIEW:
             return self.iconview.get_path_at_pos(int(event.x), int(event.y))
+        raise RuntimeError("Unknown view: %s" % self.clip_view)
 
     def _viewSelectPath(self, path):
         if self.clip_view == SHOW_TREEVIEW:
@@ -1709,6 +1711,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return self._getSelectedPathsTreeView()
         elif self.clip_view == SHOW_ICONVIEW:
             return self._getSelectedPathsIconView()
+        raise RuntimeError("Unknown view: %s" % self.clip_view)
 
     def _getSelectedPathsTreeView(self):
         unused_model, rows = self.treeview.get_selection().get_selected_rows()

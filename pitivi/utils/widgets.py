@@ -651,6 +651,7 @@ def make_widget_wrapper(prop, widget):
         return ToggleWidget(prop.default_value, widget)
     else:
         Loggable().fixme("%s has not been wrapped into a Dynamic Widget", widget)
+        return None
 
 
 class GstElementSettingsWidget(Gtk.Box, Loggable):
@@ -1115,6 +1116,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         for prop in self.properties:
             if prop.name == prop_name:
                 return self.properties[prop]
+        return None
 
 
 class GstElementSettingsDialog(Loggable):
@@ -1434,7 +1436,8 @@ class ColorPickerButton(Gtk.Button):
 
     def button_release_event_cb(self, widget, event):
         if event.button != Gdk.BUTTON_PRIMARY:
-            return False
+            return
+
         self.grab_color_at_pointer(event.get_screen(), event.x_root, event.y_root)
         self.emit("value-changed")
         self.shutdown_eyedropper()

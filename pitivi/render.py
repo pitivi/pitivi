@@ -1029,7 +1029,8 @@ class RenderDialog(Loggable):
 
                 hq_proxy = GES.Asset.request(GES.UriClip,
                                              self.app.proxy_manager.getProxyUri(asset_target))
-                return hq_proxy or None
+                return hq_proxy
+        return None
 
     def __replace_proxies(self):
         for clip in self.project.ges_timeline.ui.clips():
