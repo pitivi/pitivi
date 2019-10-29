@@ -965,6 +965,7 @@ class TitleSource(VideoSource):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
+            return None
 
     def _get_default_position(self):
         return {"posx": 0,
@@ -994,7 +995,7 @@ class VideoUriSource(VideoSource):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "alpha":
                 return spec
-
+        return None
 
 class AudioBackground(Gtk.Box):
 
@@ -1024,6 +1025,7 @@ class AudioUriSource(TimelineElement):
         for spec in self._ges_elem.list_children_properties():
             if spec.name == "volume":
                 return spec
+        return None
 
 
 class TrimHandle(Gtk.EventBox, Loggable):

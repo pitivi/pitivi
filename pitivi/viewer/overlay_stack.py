@@ -95,7 +95,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         elif event.type == Gdk.EventType.LEAVE_NOTIFY and event.mode == Gdk.CrossingMode.NORMAL:
             # If we have a click position, the user is dragging, so we don't want to lose focus and return
             if isinstance(self.click_position, numpy.ndarray):
-                return
+                return False
             for overlay in self.__overlays.values():
                 overlay.unhover()
             self.reset_cursor()
@@ -118,7 +118,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
                     if self.selected_overlay.on_hover(cursor_position):
                         if self.selected_overlay.hovered_handle:
                             self.hovered_overlay = self.selected_overlay
-                            return
+                            return False
 
                 for overlay in self.__visible_overlays:
                     if overlay.on_hover(cursor_position):
