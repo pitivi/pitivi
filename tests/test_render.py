@@ -18,7 +18,6 @@
 # Boston, MA 02110-1301, USA.
 """Tests for the render module."""
 # pylint: disable=protected-access,no-self-use
-# pylint: disable=too-many-locals
 import os
 import tempfile
 from unittest import mock

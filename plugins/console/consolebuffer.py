@@ -77,7 +77,6 @@ class ConsoleHistory(GObject.Object):
 
 
 class ConsoleBuffer(Gtk.TextBuffer):
-    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, namespace, welcome_message=""):
         Gtk.TextBuffer.__init__(self)
@@ -173,7 +172,7 @@ class ConsoleBuffer(Gtk.TextBuffer):
 
     def get_autocompletion_matches(self, input_text):
         """Returns possible matches for autocompletion."""
-        # pylint: disable=bare-except, eval-used, too-many-branches, too-many-locals
+        # pylint: disable=bare-except, eval-used
         # Try to get the possible full object to scan.
         # For example, if input_text is "func(circle.ra", we obtain "circle.ra".
         identifiers = re.findall(r"[_A-Za-z][\w\.]*\w$", input_text)

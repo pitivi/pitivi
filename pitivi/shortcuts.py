@@ -26,7 +26,7 @@ from pitivi.settings import xdg_config_home
 from pitivi.utils.misc import show_user_manual
 
 
-class ShortcutsManager(GObject.Object):  # pylint: disable=too-many-instance-attributes
+class ShortcutsManager(GObject.Object):
     """Manager storing the shortcuts from all across the app."""
 
     __gsignals__ = {

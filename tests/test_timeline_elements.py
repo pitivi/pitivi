@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the timeline.elements module."""
-# pylint: disable=protected-access,no-self-use,too-many-locals
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.overrides import GObject
@@ -118,7 +118,6 @@ class TestKeyframeCurve(BaseTestTimeline):
             values = [item.timestamp for item in control_source.get_all()]
             self.assertEqual(values, [inpoint, inpoint + duration])
 
-    # pylint: disable=too-many-statements
     def check_keyframe_ui_toggle(self, ges_clip, timeline_container):
         """Checks keyframes toggling by click events."""
         timeline = timeline_container.timeline

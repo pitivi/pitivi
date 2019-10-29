@@ -76,7 +76,6 @@ class ProjectInfoRow(Gtk.ListBoxRow):
         return False
 
 
-# pylint: disable=too-many-instance-attributes
 class GreeterPerspective(Perspective):
     """Pitivi's Welcome/Greeter perspective.
 

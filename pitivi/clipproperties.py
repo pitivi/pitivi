@@ -98,7 +98,6 @@ class ClipProperties(Gtk.ScrolledWindow, Loggable):
         return infobar
 
 
-# pylint: disable=too-many-instance-attributes
 class EffectProperties(Gtk.Expander, Loggable):
     """Widget for viewing a list of effects and configuring them.
 
@@ -107,7 +106,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         clip (GES.Clip): The clip being configured.
     """
 
-    # pylint: disable=too-many-statements
     def __init__(self, app, clip_properties):
         Gtk.Expander.__init__(self)
         self.set_expanded(True)
@@ -363,7 +361,6 @@ class EffectProperties(Gtk.Expander, Loggable):
         self.no_effect_infobar.drag_unhighlight()
         self._vbox.drag_unhighlight()
 
-    # pylint: disable=too-many-arguments
     def _drag_data_received_cb(self, widget, drag_context, x, y, selection_data, unused_info, timestamp):
         if not self.clip:
             # Indicate that a drop will not be accepted.
