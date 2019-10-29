@@ -772,10 +772,10 @@ class EditorPerspective(Perspective, Loggable):
         chooser.props.do_overwrite_confirmation = True
         formats = {_("PNG image"): ["image/png", ("png",)],
                    _("JPEG image"): ["image/jpeg", ("jpg", "jpeg")]}
-        for format in formats:
+        for image_format in formats:
             filt = Gtk.FileFilter()
-            filt.set_name(format)
-            filt.add_mime_type(formats.get(format)[0])
+            filt.set_name(image_format)
+            filt.add_mime_type(formats.get(image_format)[0])
             chooser.add_filter(filt)
         response = chooser.run()
         if response == Gtk.ResponseType.OK:
