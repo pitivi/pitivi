@@ -520,7 +520,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         """Shows a live preview of a clip being trimmed."""
         if not hasattr(clip, "get_uri") or isinstance(clip, GES.TitleClip) or clip.props.is_image:
             self.log("Not previewing trim for image or title clip: %s", clip)
-            return False
+            return
 
         if self.project.pipeline.getState() == Gst.State.PLAYING:
             self.project.pipeline.setState(Gst.State.PAUSED)
