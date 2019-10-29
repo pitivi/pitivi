@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Utility methods for custom effect UI."""
-# pylint: disable=too-many-statements
 import os
 from colorsys import rgb_to_hsv
 from types import MethodType
@@ -184,7 +183,7 @@ def create_custom_alpha_prop_widget(unused_element_setting_widget, unused_elemen
     return None
 
 
-# pylint: disable=invalid-name, too-many-locals, too-many-arguments
+# pylint: disable=invalid-name
 def create_3point_color_balance_widget(effect_prop_manager, element_setting_widget, element):
     """Creates a widget for the `frei0r-filter-3-point-color-balance` effect."""
     ui_path = os.path.join(CUSTOM_WIDGETS_DIR, "frei0r-filter-3-point-color-balance.ui")

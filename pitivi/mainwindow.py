@@ -17,7 +17,6 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Pitivi's main window."""
-# pylint: disable=too-many-instance-attributes
 import os
 from gettext import gettext as _
 from urllib.parse import unquote
@@ -67,7 +66,6 @@ GlobalSettings.addConfigOption('lastCurrentVersion',
                                default='')
 
 
-# pylint: disable=too-many-instance-attributes
 class MainWindow(Gtk.ApplicationWindow, Loggable):
     """Pitivi's main window.
 
