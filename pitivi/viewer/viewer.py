@@ -88,9 +88,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.trim_pipelines_cache = collections.OrderedDict()
         self.docked = True
         self.target = None
-        self._compactMode = False
 
-        self._haveUI = False
         self.overlay_stack = None
         self._create_ui()
 
@@ -180,11 +178,10 @@ class ViewerContainer(Gtk.Box, Loggable):
 
     def _setUiActive(self, active=True):
         self.debug("active %r", active)
-        if self._haveUI:
-            for item in [self.goToStart_button, self.back_button,
-                         self.playpause_button, self.forward_button,
-                         self.goToEnd_button, self.timecode_entry]:
-                item.set_sensitive(active)
+        for item in [self.start_button, self.back_button,
+                     self.playpause_button, self.forward_button,
+                     self.end_button, self.timecode_entry]:
+            item.set_sensitive(active)
         if active:
             self.emit("activate-playback-controls", True)
 
@@ -246,15 +243,15 @@ class ViewerContainer(Gtk.Box, Loggable):
         bbox.set_margin_right(SPACING)
         self.pack_end(bbox, False, False, 0)
 
-        self.goToStart_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
-                                                              Gtk.IconSize.BUTTON)
+        self.start_button = Gtk.Button.new_from_icon_name("media-skip-backward-symbolic",
+                                                          Gtk.IconSize.BUTTON)
 
-        self.goToStart_button.connect("clicked", self._goToStartCb)
-        self.goToStart_button.set_relief(Gtk.ReliefStyle.NONE)
-        self.goToStart_button.set_tooltip_text(
+        self.start_button.connect("clicked", self._start_button_clicked_cb)
+        self.start_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.start_button.set_tooltip_text(
             _("Go to the beginning of the timeline"))
-        self.goToStart_button.set_sensitive(False)
-        bbox.pack_start(self.goToStart_button, False, False, 0)
+        self.start_button.set_sensitive(False)
+        bbox.pack_start(self.start_button, False, False, 0)
 
         self.back_button = Gtk.Button.new_from_icon_name("media-seek-backward-symbolic",
                                                          Gtk.IconSize.BUTTON)
@@ -278,14 +275,14 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, False, False, 0)
 
-        self.goToEnd_button = Gtk.Button.new_from_icon_name("media-skip-forward-symbolic",
-                                                            Gtk.IconSize.BUTTON)
-        self.goToEnd_button.set_relief(Gtk.ReliefStyle.NONE)
-        self.goToEnd_button.connect("clicked", self._goToEndCb)
-        self.goToEnd_button.set_tooltip_text(
+        self.end_button = Gtk.Button.new_from_icon_name("media-skip-forward-symbolic",
+                                                        Gtk.IconSize.BUTTON)
+        self.end_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.end_button.connect("clicked", self._end_button_clicked_cb)
+        self.end_button.set_tooltip_text(
             _("Go to the end of the timeline"))
-        self.goToEnd_button.set_sensitive(False)
-        bbox.pack_start(self.goToEnd_button, False, False, 0)
+        self.end_button.set_sensitive(False)
+        bbox.pack_start(self.end_button, False, False, 0)
 
         self.timecode_entry = TimeWidget()
         self.timecode_entry.setWidgetValue(0)
@@ -312,15 +309,13 @@ class ViewerContainer(Gtk.Box, Loggable):
         # a video widget to it, it will create a new window!
         self.pack_end(self.hidden_chest, False, False, 0)
 
-        self._haveUI = True
-
         # Identify widgets for AT-SPI, making our test suite easier to develop
         # These will show up in sniff, accerciser, etc.
-        self.goToStart_button.get_accessible().set_name("goToStart_button")
+        self.start_button.get_accessible().set_name("start_button")
         self.back_button.get_accessible().set_name("back_button")
         self.playpause_button.get_accessible().set_name("playpause_button")
         self.forward_button.get_accessible().set_name("forward_button")
-        self.goToEnd_button.get_accessible().set_name("goToEnd_button")
+        self.end_button.get_accessible().set_name("end_button")
         self.timecode_entry.get_accessible().set_name("timecode_entry")
         self.undock_button.get_accessible().set_name("undock_button")
 
@@ -368,7 +363,6 @@ class ViewerContainer(Gtk.Box, Loggable):
     def activateCompactMode(self):
         self.back_button.hide()
         self.forward_button.hide()
-        self._compactMode = True  # Prevent set_size_request later
 
     def _entryActivateCb(self, unused_entry):
         nanoseconds = self.timecode_entry.getWidgetValue()
@@ -389,7 +383,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.app.project_manager.current_project.pipeline.togglePlayback()
         self.app.gui.editor.focusTimeline()
 
-    def _goToStartCb(self, unused_button):
+    def _start_button_clicked_cb(self, unused_button):
         self.app.project_manager.current_project.pipeline.simple_seek(0)
         self.app.gui.editor.focusTimeline()
         self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
@@ -409,7 +403,7 @@ class ViewerContainer(Gtk.Box, Loggable):
         self.app.gui.editor.timeline_ui.timeline.scrollToPlayhead(
             align=Gtk.Align.START, when_not_in_view=True)
 
-    def _goToEndCb(self, unused_button):
+    def _end_button_clicked_cb(self, unused_button):
         end = self.app.project_manager.current_project.pipeline.getDuration()
         self.app.project_manager.current_project.pipeline.simple_seek(end)
         self.app.gui.editor.focusTimeline()
