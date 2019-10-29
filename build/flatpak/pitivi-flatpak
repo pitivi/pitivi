@@ -259,7 +259,6 @@ class FlatpakRepos(FlatpakObject):
         self.repos = {}
         self.update()
 
-    # pylint: disable=too-many-branches
     def update(self):
         self.repos = {}
         if FLATPAK_VERSION["flatpak"] < (1, 1, 2):
@@ -348,7 +347,7 @@ class FlatpakRepos(FlatpakObject):
 
 class FlatpakRepo(FlatpakObject):
 
-    def __init__(self, name, url, desc=None, user=True, repos=None):  # pylint: disable=too-many-arguments
+    def __init__(self, name, url, desc=None, user=True, repos=None):
         FlatpakObject.__init__(self, user=user)
 
         self.name = name
@@ -361,7 +360,7 @@ class FlatpakRepo(FlatpakObject):
 class FlatpakPackage(FlatpakObject):
     """A flatpak app."""
 
-    def __init__(self, name, branch, repo, arch, user=True):  # pylint: disable=too-many-arguments
+    def __init__(self, name, branch, repo, arch, user=True):
         FlatpakObject.__init__(self, user=user)
 
         self.name = name
@@ -416,7 +415,7 @@ class FlatpakPackage(FlatpakObject):
                      comment="Running %s (%s)" % (self.name, self.branch))
 
 
-class PitiviFlatpak:  # pylint: disable=too-many-instance-attributes
+class PitiviFlatpak:
 
     def __init__(self):
         self.name = "Pitivi"

@@ -32,7 +32,6 @@ from tests import common
 class MiscMethodsTest(common.TestCase):
     """Tests methods in utils.misc module."""
 
-    # pylint: disable=too-many-arguments
     def check_pixbuf_scaling(self, pixbuf_width, pixbuf_height,
                              width, height,
                              expected_width, expected_height):
