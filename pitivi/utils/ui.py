@@ -415,9 +415,9 @@ def hex_to_rgb(value):
 
 
 def set_cairo_color(context, color):
-    if type(color) is Gdk.RGBA:
+    if isinstance(color, Gdk.RGBA):
         cairo_color = (float(color.red), float(color.green), float(color.blue))
-    elif type(color) is tuple:
+    elif isinstance(color, tuple):
         # Cairo's set_source_rgb function expects values from 0.0 to 1.0
         cairo_color = [max(0, min(1, x / 255.0)) for x in color]
     else:
@@ -518,7 +518,7 @@ def beautify_project_path(path):
 
 
 def beautify_stream(stream):
-    if type(stream) is DiscovererAudioInfo:
+    if isinstance(stream, DiscovererAudioInfo):
         if stream.get_depth() == 0:
             return None
 
@@ -529,7 +529,7 @@ def beautify_stream(stream):
         return templ % (stream.get_channels(), stream.get_sample_rate(),
                         stream.get_depth())
 
-    elif type(stream) is DiscovererVideoInfo:
+    elif isinstance(stream, DiscovererVideoInfo):
         par = stream.get_par_num() / stream.get_par_denom()
         width = stream.get_natural_width()
         height = stream.get_natural_height()
@@ -541,17 +541,17 @@ def beautify_stream(stream):
             templ = _("<b>Image:</b> %d×%d <i>pixels</i>")
             return templ % (par * width, height)
 
-    elif type(stream) is DiscovererSubtitleInfo:
+    elif isinstance(stream, DiscovererSubtitleInfo):
         # Ignore subtitle streams
         return None
 
-    elif type(stream) is DiscovererStreamInfo:
+    elif isinstance(stream, DiscovererStreamInfo):
         caps = stream.get_caps().to_string()
         if caps in ("application/x-subtitle", "application/x-id3", "text"):
             # Ignore all audio ID3 tags and subtitle tracks, we don't show them
             return None
 
-    raise NotImplementedError
+    raise ValueError("Unsupported stream type: %s" % stream)
 
 
 def time_to_string(value):

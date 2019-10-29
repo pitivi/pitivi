@@ -146,7 +146,7 @@ class TextWidget(Gtk.Box, DynamicWidget):
         self.text.connect("changed", self.__text_changed_cb)
         self.text.connect("activate", self.__activate_cb)
         if matches:
-            if type(matches) is str:
+            if isinstance(matches, str):
                 self.matches = re.compile(matches)
             else:
                 self.matches = matches
@@ -381,7 +381,7 @@ class FractionWidget(TextWidget, DynamicWidget):
         choices = []
         if presets:
             for preset in presets:
-                if type(preset) is str:
+                if isinstance(preset, str):
                     strval = preset
                     preset = self._parseText(preset)
                 else:
@@ -403,7 +403,7 @@ class FractionWidget(TextWidget, DynamicWidget):
     def addPresets(self, presets):
         choices = []
         for preset in presets:
-            if type(preset) is str:
+            if isinstance(preset, str):
                 strval = preset
                 preset = self._parseText(preset)
             else:
@@ -415,7 +415,7 @@ class FractionWidget(TextWidget, DynamicWidget):
         self.addChoices(choices)
 
     def setWidgetValue(self, value):
-        if type(value) is str:
+        if isinstance(value, str):
             value = self._parseText(value)
         elif not hasattr(value, "denom"):
             value = Gst.Fraction(value)
@@ -937,7 +937,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         self.show_all()
 
     def _make_widget_from_gvalue(self, gvalue, default):
-        if type(gvalue) == Gst.ValueList:
+        if isinstance(gvalue, Gst.ValueList):
             choices = []
             for val in gvalue:
                 choices.append([val, val])

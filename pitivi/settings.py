@@ -177,10 +177,10 @@ class GlobalSettings(GObject.Object, Loggable):
         return value
 
     def _write_value(self, section, key, value):
-        if type(value) == list:
+        if isinstance(value, list):
             value = "\n" + "\n".join(value)
             self._config.set(section, key, value)
-        elif type(value) == Gdk.RGBA:
+        elif isinstance(value, Gdk.RGBA):
             self.set_rgba(section, key, value)
         else:
             self._config.set(section, key, str(value))

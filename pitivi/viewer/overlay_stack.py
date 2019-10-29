@@ -75,7 +75,7 @@ class OverlayStack(Gtk.Overlay, Loggable):
         if source in self.__overlays:
             return self.__overlays[source]
 
-        if type(source) == GES.TitleSource:
+        if isinstance(source, GES.TitleSource):
             overlay = TitleOverlay(self, source)
         else:
             overlay = MoveScaleOverlay(self, self.app.action_log, source)
