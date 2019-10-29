@@ -431,7 +431,7 @@ class EditorPerspective(Perspective, Loggable):
             self.app.project_manager.saveProject()
 
     def __revert_to_saved_cb(self, unused_action, unused_param):
-        return self.app.project_manager.revertToSavedProject()
+        self.app.project_manager.revertToSavedProject()
 
     def __export_project_cb(self, unused_action, unused_param):
         uri = self._showExportDialog(self.app.project_manager.current_project)

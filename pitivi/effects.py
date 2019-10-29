@@ -664,7 +664,7 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
 
     def cleanCache(self, effect):
         if effect in self.cache_dict:
-            return self.cache_dict.pop(effect)
+            self.cache_dict.pop(effect)
 
     def _postConfiguration(self, effect, effect_set_ui):
         effect_name = effect.get_property("bin-description")
