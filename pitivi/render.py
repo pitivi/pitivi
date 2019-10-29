@@ -219,7 +219,7 @@ class Encoders(Loggable):
 
     def is_supported(self, factory):
         """Returns whether the specified factory is supported."""
-        if type(factory) is str:
+        if isinstance(factory, str):
             factory = self.factories_by_name[factory]
         return factory in self.supported_muxers or\
             factory in self.supported_aencoders or\
