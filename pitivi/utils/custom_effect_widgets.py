@@ -382,7 +382,6 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
 
     def shape_picker_value_changed_cb(unused):
         """Handles the selection of shape via combobox."""
-        # pylint: disable=unsubscriptable-object
         v = shape_list[shape_picker.get_active()][1]
 
         from pitivi.undo.timeline import CommitTimelineFinalizingAction
@@ -424,7 +423,6 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
 
     def op_picker_value_changed_cb(unused):
         """Handles the selection of op via combobox."""
-        # pylint: disable=unsubscriptable-object
         v = op_list[op_picker.get_active()][1]
 
         from pitivi.undo.timeline import CommitTimelineFinalizingAction
