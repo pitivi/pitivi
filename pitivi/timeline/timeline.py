@@ -1987,12 +1987,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             progress_dialog.window.destroy()
 
         auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
-        try:
-            progress_meter = auto_aligner.start()
-            progress_meter.addWatcher(progress_dialog.updatePosition)
-        except Exception as e:
-            self.error("Could not start the autoaligner: %s", e)
-            progress_dialog.window.destroy()
+        progress_meter = auto_aligner.start()
+        progress_meter.addWatcher(progress_dialog.updatePosition)
 
     def _splitCb(self, unused_action, unused_parameter):
         """Splits clips.

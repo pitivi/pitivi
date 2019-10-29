@@ -50,6 +50,7 @@ from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
+from pitivi.utils.misc import disconnectAllByFunc
 from pitivi.utils.misc import fixate_caps_with_default_values
 from pitivi.utils.misc import isWritable
 from pitivi.utils.misc import path_from_uri
@@ -388,7 +389,7 @@ class ProjectManager(GObject.Object, Loggable):
             saved = self.current_project.save(
                 self.current_project.ges_timeline, uri,
                 formatter_type, overwrite=True)
-        except Exception as e:
+        except GLib.Error as e:
             saved = False
             self.emit("save-project-failed", uri, e)
 
@@ -418,13 +419,13 @@ class ProjectManager(GObject.Object, Loggable):
 
         directory = os.path.dirname(uri)
         tmp_uri = os.path.join(directory, tmp_name)
-        try:
-            # saveProject updates the project URI... so we better back it up:
-            _old_uri = self.current_project.uri
-            self.saveProject(tmp_uri)
-            self.current_project.uri = _old_uri
+        # saveProject updates the project URI... so we better back it up:
+        _old_uri = self.current_project.uri
+        self.saveProject(tmp_uri)
+        self.current_project.uri = _old_uri
 
-            # create tar file
+        # create tar file
+        try:
             with tarfile.open(path_from_uri(uri), mode="w") as tar:
                 # top directory in tar-file
                 top = "%s-export" % project_name
@@ -447,7 +448,7 @@ class ProjectManager(GObject.Object, Loggable):
         # This catches errors with tarring; the GUI already shows errors while
         # saving projects (ex: permissions), so probably no GUI needed here.
         # Keep the exception generic enough to catch programming errors:
-        except Exception as e:
+        except tarfile.TarError as e:
             everything_ok = False
             self.error(e)
             tar_file = path_from_uri(uri)
@@ -498,18 +499,8 @@ class ProjectManager(GObject.Object, Loggable):
             self.current_project = None
             project.create_thumb()
             self.emit("project-closed", project)
-            # We should never choke on silly stuff like disconnecting signals
-            # that were already disconnected. It blocks the UI for nothing.
-            # This can easily happen when a project load/creation failed.
-            try:
-                project.disconnect_by_function(self._projectChangedCb)
-            except Exception:
-                self.debug(
-                    "Tried disconnecting signals, but they were not connected")
-            try:
-                project.pipeline.disconnect_by_function(self._projectPipelineDiedCb)
-            except Exception:
-                self.fixme("Handle better the errors and not get to this point")
+            disconnectAllByFunc(project, self._projectChangedCb)
+            disconnectAllByFunc(project.pipeline, self._projectPipelineDiedCb)
             self._cleanBackup(project.uri)
             self.exitcode = project.release()
 

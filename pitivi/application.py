@@ -308,6 +308,7 @@ class Pitivi(Gtk.Application, Loggable):
         giofile.load_contents_async(None, self._version_info_received_cb, None)
 
     def _version_info_received_cb(self, giofile, result, user_data):
+        # pylint: disable=broad-except
         try:
             raw = giofile.load_contents_finish(result)[1]
             if not isinstance(raw, str):
