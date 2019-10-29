@@ -155,21 +155,17 @@ class TestProjectManager(common.TestCase):
         self.assertTrue(project is self.manager.current_project)
 
     def testCloseRunningProject(self):
-        current = mock.Mock()
-        current.uri = None
-        self.manager.current_project = current
+        project = self.manager.new_blank_project()
         self.assertTrue(self.manager.closeRunningProject())
-        self.assertEqual(2, len(self.signals))
+        self.assertEqual(5, len(self.signals), self.signals)
 
-        name, args = self.signals[0]
+        name, args = self.signals[-2]
         self.assertEqual("closing-project", name)
-        project = args[0]
-        self.assertTrue(project is current)
+        self.assertEqual(args[0], project)
 
-        name, args = self.signals[1]
+        name, args = self.signals[-1]
         self.assertEqual("project-closed", name)
-        project = args[0]
-        self.assertTrue(project is current)
+        self.assertEqual(args[0], project)
 
         self.assertTrue(self.manager.current_project is None)
 
