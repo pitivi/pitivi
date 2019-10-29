@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.clipproperties module."""
-# pylint: disable=protected-access,no-self-use,too-many-locals
+# pylint: disable=protected-access,no-self-use
 from unittest import mock
 
 from gi.repository import Gtk

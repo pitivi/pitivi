@@ -131,7 +131,6 @@ class TeedThumbnailBin(PreviewerBin):
 
         return False
 
-    # pylint: disable=arguments-differ
     def do_post_message(self, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.gdkpixbufsink:
@@ -157,7 +156,6 @@ class TeedThumbnailBin(PreviewerBin):
             raise AttributeError('unknown property %s' % prop.name)
 
 
-# pylint: disable=too-many-instance-attributes
 class WaveformPreviewer(PreviewerBin):
     """Bin to generate and save waveforms as a .npy file."""
 
@@ -210,7 +208,6 @@ class WaveformPreviewer(PreviewerBin):
         else:
             raise AttributeError('unknown property %s' % prop.name)
 
-    # pylint: disable=arguments-differ
     def do_post_message(self, message):
         if message.type == Gst.MessageType.ELEMENT and \
                 message.src == self.level and \
@@ -798,7 +795,6 @@ class AssetPreviewer(Previewer, Loggable):
             self.pipeline.set_state(Gst.State.READY)
 
 
-# pylint: disable=too-many-ancestors
 class VideoPreviewer(Gtk.Layout, AssetPreviewer, Zoomable):
     """A video previewer widget, drawing thumbnails.
 
@@ -1215,7 +1211,6 @@ class AudioPreviewer(Gtk.Layout, Previewer, Zoomable, Loggable):
             return True
         return False
 
-    # pylint: disable=arguments-differ,too-many-locals
     def do_draw(self, context):
         if not self.samples:
             # Nothing to draw.
