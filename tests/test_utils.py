@@ -36,21 +36,16 @@ from pitivi.utils.ui import format_audiorate
 from pitivi.utils.ui import format_framerate_value
 from tests import common
 
-second = Gst.SECOND
-minute = second * 60
-hour = minute * 60
-
 
 class TestBeautifyTime(common.TestCase):
     """Tests time beautifying utility methods."""
 
-    def __check_beautify_last_updated_timestamp(self, seconds, expected):
-        time.time = Mock()
-        time.time.return_value = seconds
-        self.assertEqual(beautify_last_updated_timestamp(0), expected)
-
     def test_beautify_length(self):
         """Tests beautification of time duration."""
+        second = Gst.SECOND
+        minute = second * 60
+        hour = minute * 60
+
         self.assertEqual(beautify_length(second), "1 second")
         self.assertEqual(beautify_length(second * 2), "2 seconds")
 
@@ -89,6 +84,11 @@ class TestBeautifyTime(common.TestCase):
 
         self.__check_beautify_last_updated_timestamp(60 * 60 * 24 * 365 * 1.5, "About 2 years ago")
         self.__check_beautify_last_updated_timestamp(60 * 60 * 24 * 365 * 3, "About 3 years ago")
+
+    def __check_beautify_last_updated_timestamp(self, seconds, expected):
+        time.time = Mock()
+        time.time.return_value = seconds
+        self.assertEqual(beautify_last_updated_timestamp(0), expected)
 
 
 class TestFormatFramerateValue(common.TestCase):
