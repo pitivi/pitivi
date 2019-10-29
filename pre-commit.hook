@@ -30,7 +30,6 @@ pitivi/utils/proxy.py
 pitivi/utils/ui.py
 pitivi/utils/validate.py
 pitivi/utils/widgets.py
-pitivi/viewer/viewer.py
 tests/common.py
 tests/test_medialibrary.py
 tests/test_preset.py
