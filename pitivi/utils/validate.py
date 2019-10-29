@@ -66,12 +66,11 @@ def Event(event_type, **kwargs):
 
 if GstValidate:
     class PitiviMonitor(GstValidate.Monitor):
-        def __init__(self, runner, object):
-            GstValidate.Monitor.__init__(self, object=object, validate_runner=runner)
+        def __init__(self, runner, obj):
+            GstValidate.Monitor.__init__(self, object=obj, validate_runner=runner)
 
             if GstValidate:
                 try:
-                    import gi
                     gi.require_version('Wnck', '3.0')
                     from gi.repository import Wnck
                     Wnck.Screen.get_default().connect("window-opened", self._window_opened_cb)

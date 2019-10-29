@@ -262,7 +262,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
                                     trans_asset.icon])
 
         # Now that the UI is fully ready, enable searching
-        self.model_filter.set_visible_func(self._setRowVisible, data=None)
+        self.model_filter.set_visible_func(self._set_row_visible_func, data=None)
         # Alphabetical/name sorting instead of based on the ID number
         self.storemodel.set_sort_column_id(
             COL_NAME_TEXT, Gtk.SortType.ASCENDING)
@@ -353,8 +353,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
             return None
         return self.model_filter[path[0]][COL_TRANSITION_ASSET]
 
-    def _setRowVisible(self, model, iter, unused_data):
+    def _set_row_visible_func(self, model, model_iter, data):
         """Filters the icon view to show only the search results."""
         text = self.search_entry.get_text().lower()
-        return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-            text in model.get_value(iter, COL_NAME_TEXT).lower()
+        return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
+            text in model.get_value(model_iter, COL_NAME_TEXT).lower()

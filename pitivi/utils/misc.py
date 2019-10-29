@@ -237,8 +237,8 @@ def hash_file(uri):
     return sha256.hexdigest()
 
 
-def quantize(input, interval):
-    return (input // interval) * interval
+def quantize(value, interval):
+    return (value // interval) * interval
 
 
 def show_user_manual(page=None):
