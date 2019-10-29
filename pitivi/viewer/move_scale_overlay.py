@@ -244,6 +244,7 @@ class CornerHandle(Handle):
     def _needs_size_restriction(self, handle_position_compare, cursor_position_compare):
         if (handle_position_compare != cursor_position_compare).any():
             return True
+        return False
 
     def _update_neighbours(self):
         for neighbour in self.neighbours:
@@ -282,6 +283,7 @@ class EdgeHandle(Handle):
             # left right
             if handle_position_compare[0] != cursor_position_compare[0]:
                 return True
+        return False
 
     def _update_neighbours(self):
         if self.placement[0] in (Edge.left, Edge.right):
@@ -516,7 +518,7 @@ class MoveScaleOverlay(Overlay):
 
     def on_hover(self, cursor_pos):
         if not self.is_visible():
-            return
+            return False
 
         # Check if one of the handles is hovered.
         self.hovered_handle = None

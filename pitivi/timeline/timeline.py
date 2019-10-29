@@ -1291,6 +1291,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.debug("Returning layer %s, separators: %s", ges_layer, separators)
                 return ges_layer, separators
 
+        return None
+
     def _setSeparatorsPrelight(self, light):
         for sep in self.__on_separators:
             if light:

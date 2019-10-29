@@ -23,7 +23,6 @@ pitivi/settings.py
 pitivi/timeline/elements.py
 pitivi/timeline/timeline.py
 pitivi/titleeditor.py
-pitivi/undo/timeline.py
 pitivi/utils/extract.py
 pitivi/utils/loggable.py
 pitivi/utils/misc.py
