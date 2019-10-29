@@ -80,6 +80,8 @@ class UndoableAutomaticObjectAction(UndoableAction):
             and might become obsolete later.
     """
 
+    # pylint: disable=abstract-method
+
     __updates = {}
 
     def __init__(self, auto_object):
