@@ -51,7 +51,8 @@ class TestLayerControl(common.TestCase):
 
 class TestLayer(common.TestCase):
 
-    def test_check_media_types_when_no_control_ui(self):
+    def test_check_media_types(self):
+        """Checks media types when there is no control UI."""
         ges_layer = GES.Layer()
         png = common.get_sample_uri("flat_colour1_640x480.png")
         video_clip = GES.UriClipAsset.request_sync(png).extract()
