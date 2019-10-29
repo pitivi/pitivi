@@ -549,6 +549,7 @@ class ProjectManager(GObject.Object, Loggable):
         self.current_project.setModificationState(False)
         self.closeRunningProject()
         self.load_project(uri)
+        return True
 
     def _projectChangedCb(self, project):
         # _backup_lock is a timer, when a change in the project is done it is
@@ -875,6 +876,7 @@ class Project(Loggable, GES.Project):
             if thumb:
                 # First asset that has a preview thumbnail.
                 return thumb
+        return None
 
     def create_thumb(self):
         """Creates project thumbnails."""
@@ -1180,7 +1182,7 @@ class Project(Loggable, GES.Project):
 
         if total_import_duration == 0:
             self.info("No known duration yet")
-            return
+            return 0
 
         asset_loading_progress = 0
         all_ready = True

@@ -398,6 +398,7 @@ class TransitionClipAction(UndoableAction):
                     continue
                 # Double lucky!
                 return track_element
+        return None
 
 
 class TransitionClipAddedAction(TransitionClipAction):
