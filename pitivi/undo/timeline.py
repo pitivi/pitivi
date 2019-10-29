@@ -155,6 +155,7 @@ class TrackElementObserver(TimelineElementObserver):
 
 
 class TrackElementAction(UndoableAction):
+    # pylint: disable=abstract-method
 
     def __init__(self, clip, track_element):
         UndoableAction.__init__(self)
@@ -276,6 +277,7 @@ class ControlSourceObserver(GObject.Object):
 
 
 class ClipAction(UndoableAction):
+    # pylint: disable=abstract-method
 
     def __init__(self, layer, clip):
         UndoableAction.__init__(self)
@@ -368,6 +370,7 @@ class ClipRemoved(ClipAction):
 
 
 class TransitionClipAction(UndoableAction):
+    # pylint: disable=abstract-method
 
     def __init__(self, ges_layer, ges_clip, track_element):
         UndoableAction.__init__(self)
