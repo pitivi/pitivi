@@ -64,7 +64,7 @@ class Handle:
         self.neighbours = []
 
     def _get_minimal_box_size(self):
-        pass
+        raise NotImplementedError
 
     def _needs_size_restriction(self, handle_position_compare, cursor_position_compare):
         pass
@@ -73,7 +73,7 @@ class Handle:
         pass
 
     def _restrict(self, handle_to_cursor):
-        pass
+        raise NotImplementedError
 
     def __update_window_position(self):
         self.__window_position = (self.position + self.__translation) * self._overlay.stack.window_size
