@@ -16,30 +16,28 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-from pitivi import check
+from unittest import mock
+
+from pitivi.check import Dependency
 from tests import common
-
-
-class FakeDependency(check.Dependency):
-    import_result = None
-
-    def _try_importing_component(self):
-        return self.import_result
 
 
 class TestDependency(common.TestCase):
 
     def testBoolEvaluation(self):
-        dependency = FakeDependency(
-            modulename="module1", version_required_string=None)
+        dependency = Dependency(
+            modulename="module1", version_required=None)
         self.assertFalse(dependency)
         self.assertFalse(dependency.satisfied)
 
-        dependency.check()
-        self.assertFalse(dependency)
-        self.assertFalse(dependency.satisfied)
+        with mock.patch.object(dependency, "_try_importing_component") as func:
+            func.return_value = None
+            dependency.check()
+            self.assertFalse(dependency)
+            self.assertFalse(dependency.satisfied)
 
-        dependency.import_result = "something"
-        dependency.check()
-        self.assertTrue(dependency)
-        self.assertTrue(dependency.satisfied)
+        with mock.patch.object(dependency, "_try_importing_component") as func:
+            func.return_value = "something"
+            dependency.check()
+            self.assertTrue(dependency)
+            self.assertTrue(dependency.satisfied)
