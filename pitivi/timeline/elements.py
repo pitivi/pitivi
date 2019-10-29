@@ -1097,8 +1097,8 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
         self.ges_clip.ui = self
         self.ges_clip.selected = Selected()
 
-        self._audioSource = None
-        self._videoSource = None
+        self.audio_widget = None
+        self.video_widget = None
 
         self._setupWidget()
         self.__force_position_update = True
@@ -1400,15 +1400,15 @@ class UriClip(SourceClip):
             return
 
         if ges_timeline_element.get_track_type() == GES.TrackType.AUDIO:
-            self._audioSource = AudioUriSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self._audioSource
-            self._elements_container.pack_end(self._audioSource, True, False, 0)
-            self._audioSource.set_visible(True)
+            self.audio_widget = AudioUriSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self.audio_widget
+            self._elements_container.pack_end(self.audio_widget, True, False, 0)
+            self.audio_widget.set_visible(True)
         elif ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
-            self._videoSource = VideoUriSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self._videoSource
-            self._elements_container.pack_start(self._videoSource, True, False, 0)
-            self._videoSource.set_visible(True)
+            self.video_widget = VideoUriSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self.video_widget
+            self._elements_container.pack_start(self.video_widget, True, False, 0)
+            self.video_widget.set_visible(True)
 
 
 class TitleClip(SourceClip):
@@ -1421,10 +1421,10 @@ class TitleClip(SourceClip):
             return
 
         if ges_timeline_element.get_track_type() == GES.TrackType.VIDEO:
-            self._videoSource = TitleSource(ges_timeline_element, self.timeline)
-            ges_timeline_element.ui = self._videoSource
-            self._elements_container.pack_start(self._videoSource, True, False, 0)
-            self._videoSource.set_visible(True)
+            self.video_widget = TitleSource(ges_timeline_element, self.timeline)
+            ges_timeline_element.ui = self.video_widget
+            self._elements_container.pack_start(self.video_widget, True, False, 0)
+            self.video_widget.set_visible(True)
 
 
 class TransitionClip(Clip):
