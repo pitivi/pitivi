@@ -127,7 +127,7 @@ class PreferencesDialog(Loggable):
     @classmethod
     def remove_section(cls, section):
         if cls._instance is not None:
-            cls._instance._remove_page(section)
+            cls._instance.remove_page(section)
         try:
             del cls.section_names[section]
             del cls.prefs[section]
@@ -157,7 +157,7 @@ class PreferencesDialog(Loggable):
             cls.prefs[section] = {}
         cls.prefs[section][attrname] = (label, description, widget_class, args)
         if cls._instance is not None:
-            cls._instance._remove_page(section)
+            cls._instance.remove_page(section)
             cls._instance.add_settings_page(section)
 
     @classmethod
@@ -213,7 +213,7 @@ class PreferencesDialog(Loggable):
             raise Exception("%s is not a valid section id" % section)
         self.stack.add_titled(widget, section, self.section_names[section])
 
-    def _remove_page(self, section):
+    def remove_page(self, section):
         if section in self.section_names:
             widget = self.stack.get_child_by_name(section)
             if widget is not None:
