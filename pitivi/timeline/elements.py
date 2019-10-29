@@ -283,6 +283,7 @@ class KeyframeCurve(FigureCanvas, Loggable):
             offsets = self._keyframes.get_offsets()
             offset = offsets[keyframe_index][0]
 
+            # pylint: disable=protected-access
             if event.guiEvent.type == Gdk.EventType._2BUTTON_PRESS:
                 index = result[1]['ind'][0]
                 # pylint: disable=consider-using-in
@@ -1266,7 +1267,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
             return False
 
         mode = SELECT
-        if self.timeline.get_parent()._controlMask:
+        if self.timeline.get_parent().control_mask:
             if not self.get_state_flags() & Gtk.StateFlags.SELECTED:
                 mode = SELECT_ADD
             else:
@@ -1307,7 +1308,7 @@ class Clip(Gtk.EventBox, Zoomable, Loggable):
     def _event_cb(self, element, event):
         if (event.type == Gdk.EventType.ENTER_NOTIFY and
                 event.mode == Gdk.CrossingMode.NORMAL and
-                not self.timeline._scrubbing):
+                not self.timeline.scrubbing):
             set_children_state_recurse(self, Gtk.StateFlags.PRELIGHT)
             for handle in self.handles:
                 handle.enlarge()

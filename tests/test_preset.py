@@ -17,7 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
-# TODO: add a specific testcase for audio, video, render presets
+"""Tests for the pitivi.preset module."""
+# pylint: disable=protected-access
 import os.path
 import shutil
 import tempfile

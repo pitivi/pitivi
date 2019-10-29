@@ -179,8 +179,8 @@ class Marquee(Gtk.Box, Loggable):
         Returns:
             List[GES.Clip]: The clips under the marquee.
         """
-        start_layer = self._timeline._get_layer_at(self.start_y)[0]
-        end_layer = self._timeline._get_layer_at(self.end_y)[0]
+        start_layer = self._timeline.get_layer_at(self.start_y)[0]
+        end_layer = self._timeline.get_layer_at(self.end_y)[0]
         start_pos = max(0, self._timeline.pixelToNs(self.start_x))
         end_pos = max(0, self._timeline.pixelToNs(self.end_x))
 
@@ -358,7 +358,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._separator_accepting_drop = False
         self._separator_accepting_drop_id = 0
         self.__last_position = 0
-        self._scrubbing = False
+        self.scrubbing = False
         self._scrolling = False
         # The parameters for the delayed scroll to be performed after
         # the layers box is allocated a size.
@@ -726,8 +726,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 else:
                     self.layout.marquee.set_start_position(event)
 
-        self._scrubbing = res and button == 3
-        if self._scrubbing:
+        self.scrubbing = res and button == 3
+        if self.scrubbing:
             self._seek(event)
             clip = self._getParentOfType(event_widget, Clip)
             if clip:
@@ -751,7 +751,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif res and button == 1:
             self._selectUnderMarquee()
 
-        self._scrubbing = False
+        self.scrubbing = False
 
         self._scrolling = False
 
@@ -766,7 +766,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                         self._seek(event)
 
             # Allowing group clips selection by shift+clicking anywhere on the timeline.
-            if self.get_parent()._shiftMask:
+            if self.get_parent().shift_mask:
                 last_clicked_layer = self.last_clicked_layer
                 if not last_clicked_layer:
                     clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
@@ -777,7 +777,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                     clips = self.get_clips_in_between(
                         last_clicked_layer, cur_clicked_layer, last_click_pos, cur_click_pos)
                     self.selection.setSelection(clips, SELECT)
-            elif not self.get_parent()._controlMask:
+            elif not self.get_parent().control_mask:
                 clicked_layer, click_pos = self.get_clicked_layer_and_pos(event)
                 self.set_selection_meta_info(clicked_layer, click_pos, SELECT)
 
@@ -798,7 +798,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         """Gets layer and position in the timeline where user clicked."""
         event_widget = Gtk.get_event_widget(event)
         x, y = event_widget.translate_coordinates(self.layout.layers_vbox, event.x, event.y)
-        clicked_layer = self._get_layer_at(y)[0]
+        clicked_layer = self.get_layer_at(y)[0]
         click_pos = max(0, self.pixelToNs(x))
         return clicked_layer, click_pos
 
@@ -859,7 +859,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         elif self.__moving_layer:
             event_widget = Gtk.get_event_widget(event)
             unused_x, y = event_widget.translate_coordinates(self, event.x, event.y)
-            layer, unused_on_sep = self._get_layer_at(
+            layer, unused_on_sep = self.get_layer_at(
                 y, prefer_ges_layer=self.__moving_layer,
                 past_middle_when_adjacent=True)
             if layer != self.__moving_layer:
@@ -867,7 +867,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 self.moveLayer(self.__moving_layer, priority)
         elif self.layout.marquee.start_x:
             self.layout.marquee.move(event)
-        elif self._scrubbing:
+        elif self.scrubbing:
             self._seek(event)
         elif self._scrolling:
             self.__scroll(event)
@@ -939,7 +939,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             else:
                 clip_duration = asset.get_duration()
 
-            ges_layer, unused_on_sep = self._get_layer_at(y)
+            ges_layer, unused_on_sep = self.get_layer_at(y)
             if not placement:
                 placement = self.pixelToNs(x)
             placement = max(0, placement)
@@ -1228,15 +1228,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         parent = self.get_parent()
         autoripple_active = self.app.settings.timelineAutoRipple and in_devel()
-        if parent._shiftMask or autoripple_active:
+        if parent.shift_mask or autoripple_active:
             return GES.EditMode.EDIT_RIPPLE
-        if is_handle and parent._controlMask:
+        if is_handle and parent.control_mask:
             return GES.EditMode.EDIT_ROLL
         elif is_handle:
             return GES.EditMode.EDIT_TRIM
         return GES.EditMode.EDIT_NORMAL
 
-    def _get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
+    def get_layer_at(self, y, prefer_ges_layer=None, past_middle_when_adjacent=False):
         ges_layers = self.ges_timeline.get_layers()
         if y < SEPARATOR_HEIGHT:
             # The cursor is at the top, above the first layer.
@@ -1333,7 +1333,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             position = self.pixelToNs(x - self.__drag_start_x)
 
         self._setSeparatorsPrelight(False)
-        res = self._get_layer_at(y, prefer_ges_layer=self._on_layer)
+        res = self.get_layer_at(y, prefer_ges_layer=self._on_layer)
         self._on_layer, self.__on_separators = res
         if (mode != GES.EditMode.EDIT_NORMAL or
                 self.dragging_group.props.height > 1):
@@ -1413,8 +1413,8 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
 
         self.app = app
         self._settings = self.app.settings
-        self._shiftMask = False
-        self._controlMask = False
+        self.shift_mask = False
+        self.control_mask = False
 
         self._project = None
         self.ges_timeline = None
@@ -1530,15 +1530,6 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         """Connects to the project's timeline and pipeline."""
         if self._project:
             self._project.disconnect_by_func(self._rendering_settings_changed_cb)
-            try:
-                self.timeline._pipeline.disconnect_by_func(
-                    self.timeline.positionCb)
-            except AttributeError:
-                pass
-            except TypeError:
-                pass  # We were not connected no problem
-
-            self.timeline._pipeline = None
             self.markers.markers_container = None
 
         self._project = project
@@ -2058,15 +2049,15 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         # This is used both for changing the selection modes and for affecting
         # the seek keyboard shortcuts further below
         if event.keyval == Gdk.KEY_Shift_L:
-            self._shiftMask = True
+            self.shift_mask = True
         elif event.keyval == Gdk.KEY_Control_L:
-            self._controlMask = True
+            self.control_mask = True
 
     def do_key_release_event(self, event):
         if event.keyval == Gdk.KEY_Shift_L:
-            self._shiftMask = False
+            self.shift_mask = False
         elif event.keyval == Gdk.KEY_Control_L:
-            self._controlMask = False
+            self.control_mask = False
 
     def _seek_backward_one_second_cb(self, unused_action, unused_parameter):
         self._project.pipeline.seekRelative(0 - Gst.SECOND)

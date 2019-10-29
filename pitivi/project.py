@@ -524,7 +524,7 @@ class ProjectManager(GObject.Object, Loggable):
         project.author = pwd.getpwuid(os.getuid()).pw_gecos.split(",")[0]
 
         project.createTimeline()
-        project._ensureTracks()
+        project._ensureTracks()  # pylint: disable=protected-access
         project.update_restriction_caps()
         self.current_project = project
         self.emit("new-project-created", project)
