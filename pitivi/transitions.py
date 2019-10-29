@@ -70,11 +70,11 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.searchbar.set_orientation(Gtk.Orientation.HORIZONTAL)
         # Prevents being flush against the notebook
         self.searchbar.set_border_width(3)
-        self.searchEntry = Gtk.Entry()
-        self.searchEntry.set_icon_from_icon_name(
+        self.search_entry = Gtk.Entry()
+        self.search_entry.set_icon_from_icon_name(
             Gtk.EntryIconPosition.SECONDARY, "edit-clear-symbolic")
-        self.searchEntry.set_placeholder_text(_("Search..."))
-        self.searchbar.pack_end(self.searchEntry, True, True, 0)
+        self.search_entry.set_placeholder_text(_("Search..."))
+        self.searchbar.pack_end(self.search_entry, True, True, 0)
 
         self.props_widgets = Gtk.Grid()
         self.props_widgets.props.margin = PADDING
@@ -124,8 +124,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.set_property("has_tooltip", True)
 
-        self.searchEntry.connect("changed", self._search_entry_changed_cb)
-        self.searchEntry.connect("icon-press", self._search_entry_icon_press_cb)
+        self.search_entry.connect("changed", self._search_entry_changed_cb)
+        self.search_entry.connect("icon-press", self._search_entry_icon_press_cb)
         self.iconview.connect("query-tooltip", self._iconview_query_tooltip_cb)
 
         # Speed-up startup by only checking available transitions on idle
@@ -137,8 +137,8 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.pack_start(self.props_widgets, False, False, 0)
 
         # Create the filterModel for searching
-        self.modelFilter = self.storemodel.filter_new()
-        self.iconview.set_model(self.modelFilter)
+        self.model_filter = self.storemodel.filter_new()
+        self.iconview.set_model(self.model_filter)
 
         self.infobar.show_all()
         self.iconview_scrollwin.show_all()
@@ -244,7 +244,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
                 25000, Gtk.PositionType.BOTTOM, _("Smooth"))
 
     def _search_entry_changed_cb(self, entry):
-        self.modelFilter.refilter()
+        self.model_filter.refilter()
 
     def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         entry.set_text("")
@@ -262,7 +262,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
                                     trans_asset.icon])
 
         # Now that the UI is fully ready, enable searching
-        self.modelFilter.set_visible_func(self._setRowVisible, data=None)
+        self.model_filter.set_visible_func(self._setRowVisible, data=None)
         # Alphabetical/name sorting instead of based on the ID number
         self.storemodel.set_sort_column_id(
             COL_NAME_TEXT, Gtk.SortType.ASCENDING)
@@ -351,10 +351,10 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         path = self.iconview.get_selected_items()
         if path == []:
             return None
-        return self.modelFilter[path[0]][COL_TRANSITION_ASSET]
+        return self.model_filter[path[0]][COL_TRANSITION_ASSET]
 
     def _setRowVisible(self, model, iter, unused_data):
         """Filters the icon view to show only the search results."""
-        text = self.searchEntry.get_text().lower()
+        text = self.search_entry.get_text().lower()
         return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
             text in model.get_value(iter, COL_NAME_TEXT).lower()

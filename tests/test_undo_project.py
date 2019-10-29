@@ -31,7 +31,7 @@ class TestProjectUndo(common.TestCase):
         self.project = self.app.project_manager.new_blank_project()
         self.action_log = self.app.action_log
 
-    def test_new_project_has_nothing_to_undo(self):
+    def test_new_project_nothing_to_undo(self):
         mainloop = common.create_main_loop()
 
         def loaded_cb(project, timeline):

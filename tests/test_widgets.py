@@ -83,6 +83,9 @@ class TestGstElementSettingsDialog(common.TestCase):
 
     def test_reusing_properties(self):
         """Checks passing values to be used on element to be configured works."""
-        dialog = GstElementSettingsDialog(Gst.ElementFactory.find("identity"), {"datarate": 12})
-        v, = [v for (k, v) in dialog.elementsettings.properties.items() if k.name == "datarate"]
-        self.assertEqual(v.getWidgetValue(), 12)
+        values = {"datarate": 12}
+        dialog = GstElementSettingsDialog(Gst.ElementFactory.find("identity"),
+                                          values)
+        widgets = {prop.name: widget
+                   for prop, widget in dialog.elementsettings.properties.items()}
+        self.assertEqual(widgets["datarate"].getWidgetValue(), 12)
