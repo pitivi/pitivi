@@ -373,15 +373,11 @@ class FractionWidget(TextWidget, DynamicWidget):
         "^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
     __gtype_name__ = 'FractionWidget'
 
-    def __init__(self, range=None, presets=None, default=None):
+    def __init__(self, presets=None, default=None):
         DynamicWidget.__init__(self, default)
 
-        if range:
-            flow = float(range.low)
-            fhigh = float(range.high)
-        else:
-            flow = float("-Infinity")
-            fhigh = float("Infinity")
+        flow = float("-Infinity")
+        fhigh = float("Infinity")
         choices = []
         if presets:
             for preset in presets:
@@ -1102,7 +1098,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             widget = ChoiceWidget(choices, default=prop.default_value)
         elif type_name == "GstFraction":
             widget = FractionWidget(
-                None, presets=["0:1"], default=prop.default_value)
+                presets=["0:1"], default=prop.default_value)
         else:
             # TODO: implement widgets for: GBoxed, GFlags
             self.fixme("Unsupported property type: %s", type_name)

@@ -965,8 +965,8 @@ class RenderDialog(Loggable):
         self.window.show()  # Show the rendering dialog again
 
     def _disconnectFromGst(self):
-        for obj, id in self._gstSigId.items():
-            obj.disconnect(id)
+        for obj, handler_id in self._gstSigId.items():
+            obj.disconnect(handler_id)
         self._gstSigId = {}
         try:
             self.project.pipeline.disconnect_by_func(self._updatePositionCb)
