@@ -158,4 +158,4 @@ class BaseTabs(Gtk.Notebook, Loggable):
                                        key="y",
                                        default=0)
 
-        GlobalSettings.readSettingSectionFromFile(self.settings, child_name)
+        self.settings.read_setting_section_from_file(child_name)
