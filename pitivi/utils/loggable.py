@@ -603,7 +603,7 @@ def _preformatLevels(enableColorOutput):
     terminal_controller = TerminalController()
     for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
         if enableColorOutput:
-            if type(terminal_controller.BOLD) == bytes:
+            if isinstance(terminal_controller.BOLD, bytes):
                 formatter = ''.join(
                     (terminal_controller.BOLD.decode(),
                      getattr(terminal_controller, COLORS[level]).decode(),

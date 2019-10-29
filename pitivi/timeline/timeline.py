@@ -839,7 +839,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
     def _motion_notify_event_cb(self, unused_widget, event):
         if self.draggingElement:
-            if type(self.draggingElement) == TransitionClip and \
+            if isinstance(self.draggingElement, TransitionClip) and \
                     not self.__clickedHandle:
                 # Don't allow dragging a transition.
                 return False
