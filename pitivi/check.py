@@ -44,14 +44,14 @@ class Dependency:
 
     Args:
         modulename (str): The name identifying the component.
-        version_required_string (Optional[str]): The minimum required version,
+        version_required (Optional[str]): The minimum required version,
             if any, formatted like "X.Y.Z".
         additional_message (Optional[str]): Message displayed to the user to
             further explain the purpose of the missing component.
     """
 
-    def __init__(self, modulename, version_required_string=None, additional_message=None):
-        self.version_required_string = version_required_string
+    def __init__(self, modulename, version_required=None, additional_message=None):
+        self.version_required = version_required
         self.modulename = modulename
         self.satisfied = False
         self.version_installed = None
@@ -67,14 +67,15 @@ class Dependency:
 
         if not self.component:
             self.satisfied = False
-        elif self.version_required_string is None:
-            self.satisfied = True
         else:
-            formatted_version = self._format_version(self.component)
-            self.version_installed = _version_to_string(formatted_version)
-
-            if formatted_version >= _string_to_list(self.version_required_string):
+            if self.version_required is None:
                 self.satisfied = True
+            else:
+                formatted_version = self._format_version(self.component)
+                self.version_installed = _version_to_string(formatted_version)
+
+                if formatted_version >= _string_to_list(self.version_required):
+                    self.satisfied = True
 
     def _try_importing_component(self):
         """Performs the check.
@@ -110,7 +111,7 @@ class Dependency:
         else:
             # Translators: %s is a Python module name or another os component
             message = _("- %s version %s is installed but Pitivi requires at least version %s") % (
-                self.modulename, self.version_installed, self.version_required_string)
+                self.modulename, self.version_installed, self.version_required)
 
         if self.additional_message is not None:
             message += "\n    -> " + self.additional_message
@@ -119,10 +120,11 @@ class Dependency:
 
 
 class GIDependency(Dependency):
+    # pylint: disable=abstract-method
 
-    def __init__(self, modulename, apiversion, version_required_string=None, additional_message=None):
+    def __init__(self, modulename, apiversion, version_required=None, additional_message=None):
         self.__api_version = apiversion
-        Dependency.__init__(self, modulename, version_required_string, additional_message)
+        Dependency.__init__(self, modulename, version_required, additional_message)
 
     def _try_importing_component(self):
         try:
@@ -140,6 +142,7 @@ class GIDependency(Dependency):
 
 
 class ClassicDependency(Dependency):
+    # pylint: disable=abstract-method
 
     def _try_importing_component(self):
         try:
@@ -186,7 +189,7 @@ class GstPluginDependency(Dependency):
         else:
             # Translators: %s is a Python module name or another os component
             message = _("- %s Gstreamer plug-in version %s is installed but Pitivi requires at least version %s") % (
-                self.modulename, self.version_installed, self.version_required_string)
+                self.modulename, self.version_installed, self.version_required)
 
         if self.additional_message is not None:
             message += "\n    -> " + self.additional_message
@@ -208,8 +211,8 @@ class GtkDependency(GIDependency):
 
 class CairoDependency(ClassicDependency):
 
-    def __init__(self, version_required_string):
-        ClassicDependency.__init__(self, "cairo", version_required_string)
+    def __init__(self, version_required):
+        ClassicDependency.__init__(self, "cairo", version_required)
 
     def _format_version(self, module):
         return _string_to_list(module.cairo_version_string())
@@ -276,8 +279,9 @@ def _check_gst_python():
 
 
 class GICheck(ClassicDependency):
-    def __init__(self, version_required_string):
-        ClassicDependency.__init__(self, "gi", version_required_string)
+
+    def __init__(self, version_required):
+        ClassicDependency.__init__(self, "gi", version_required)
 
     def _format_version(self, module):
         return list(module.version_info)
@@ -422,29 +426,35 @@ GST_API_VERSION = "1.0"
 GST_VERSION = "1.14.1"
 GTK_API_VERSION = "3.0"
 GLIB_API_VERSION = "2.0"
-HARD_DEPENDENCIES = [GICheck("3.20.0"),
-                     CairoDependency("1.10.0"),
-                     GstDependency("Gst", GST_API_VERSION, GST_VERSION),
-                     GstDependency("GES", GST_API_VERSION, GST_VERSION),
-                     GIDependency("GstTranscoder", GST_API_VERSION),
-                     GIDependency("GstVideo", GST_API_VERSION),
-                     GtkDependency("Gtk", GTK_API_VERSION, "3.20.0"),
+HARD_DEPENDENCIES = [GICheck(version_required="3.20.0"),
+                     CairoDependency(version_required="1.10.0"),
+                     GstDependency("Gst",
+                                   apiversion=GST_API_VERSION,
+                                   version_required=GST_VERSION),
+                     GstDependency("GES",
+                                   apiversion=GST_API_VERSION,
+                                   version_required=GST_VERSION),
+                     GIDependency("GstTranscoder", apiversion=GST_API_VERSION),
+                     GIDependency("GstVideo", apiversion=GST_API_VERSION),
+                     GtkDependency("Gtk",
+                                   apiversion=GTK_API_VERSION,
+                                   version_required="3.20.0"),
                      ClassicDependency("numpy"),
-                     GIDependency("Gio", "2.0"),
+                     GIDependency("Gio", apiversion="2.0"),
                      GstPluginDependency("gtk"),
                      GstPluginDependency("gdkpixbuf"),
                      ClassicDependency("matplotlib"),
-                     GIDependency("Peas", "1.0"),
+                     GIDependency("Peas", apiversion="1.0"),
                      ]
 
 SOFT_DEPENDENCIES = (
-    GIDependency("GSound", "1.0", None,
-                 _("enables sound notifications when rendering is complete")),
-    GIDependency("Notify", "0.7", None,
-                 _("enables visual notifications when rendering is complete")),
-    GstPluginDependency("libav", None,
-                        _("additional multimedia codecs through the GStreamer Libav library")),
-    GstPluginDependency("debugutilsbad", None,
-                        _("enables a watchdog in the GStreamer pipeline."
-                          " Use to detect errors happening in GStreamer"
-                          " and recover from them")))
+    GIDependency("GSound", apiversion="1.0", version_required=None,
+                 additional_message=_("enables sound notifications when rendering is complete")),
+    GIDependency("Notify", apiversion="0.7", version_required=None,
+                 additional_message=_("enables visual notifications when rendering is complete")),
+    GstPluginDependency("libav", version_required=None,
+                        additional_message=_("additional multimedia codecs through the GStreamer Libav library")),
+    GstPluginDependency("debugutilsbad", version_required=None,
+                        additional_message=_("enables a watchdog in the GStreamer pipeline."
+                                             " Use to detect errors happening in GStreamer"
+                                             " and recover from them")))
