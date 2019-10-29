@@ -424,19 +424,19 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
     def _append_tag(self, taglist, tag, tags):
         if tag in ACCEPTABLE_TAGS:
-            name = Gst.tag_get_nick(tag)
-            type = Gst.tag_get_type(tag)
+            tag_name = Gst.tag_get_nick(tag)
+            tag_type = Gst.tag_get_type(tag)
             type_getters = {GObject.TYPE_STRING: 'get_string',
                             GObject.TYPE_DOUBLE: 'get_double',
                             GObject.TYPE_FLOAT: 'get_float',
                             GObject.TYPE_INT: 'get_int',
                             GObject.TYPE_UINT: 'get_uint'}
-            if type in type_getters:
-                res, value = getattr(taglist, type_getters[type])(tag)
+            if tag_type in type_getters:
+                res, value = getattr(taglist, type_getters[tag_type])(tag)
                 assert res
-                if not type == GObject.TYPE_STRING:
+                if not tag_type == GObject.TYPE_STRING:
                     value = str(value)
-                tags[name] = value
+                tags[tag_name] = value
 
     def _tag_found_cb(self, unused_bus, message):
         tag_list = message.parse_tag()

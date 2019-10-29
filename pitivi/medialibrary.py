@@ -561,7 +561,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Use this instead of using self.storemodel directly
         self.modelFilter = self.storemodel.filter_new()
         self.modelFilter.set_visible_func(
-            self._setRowVisible, data=searchEntry)
+            self._set_row_visible_func, data=searchEntry)
 
         # TreeView
         # Displays icon, name, type, length
@@ -805,7 +805,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             elif self.clip_view == SHOW_ICONVIEW:
                 self.iconview.grab_focus()
 
-    def _setRowVisible(self, model, iter, data):
+    def _set_row_visible_func(self, model, model_iter, data):
         """Toggles the visibility of a liststore row."""
         text = data.get_text().lower()
         if not text:
@@ -813,7 +813,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return True
         # We must convert to markup form to be able to search for &, ', etc.
         text = GLib.markup_escape_text(text)
-        return text in model.get_value(iter, COL_INFOTEXT).lower()
+        return text in model.get_value(model_iter, COL_INFOTEXT).lower()
 
     def _connectToProject(self, project):
         """Connects signal handlers to the specified project."""
@@ -879,17 +879,16 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         dialog.connect('update-preview', previewer.update_preview_cb)
 
         # Filter for the "known good" formats by default
-        filter = Gtk.FileFilter()
-        filter.set_name(_("Supported file formats"))
-        filter.add_custom(Gtk.FileFilterFlags.URI |
-                          Gtk.FileFilterFlags.MIME_TYPE,
-                          self._filter_unsupported)
+        file_filter = Gtk.FileFilter()
+        file_filter.set_name(_("Supported file formats"))
+        file_filter.add_custom(Gtk.FileFilterFlags.URI | Gtk.FileFilterFlags.MIME_TYPE,
+                               self._filter_unsupported)
         for formatter in GES.list_assets(GES.Formatter):
             for extension in formatter.get_meta("extension").split(","):
                 if not extension:
                     continue
-                filter.add_pattern("*.%s" % extension)
-        dialog.add_filter(filter)
+                file_filter.add_pattern("*.%s" % extension)
+        dialog.add_filter(file_filter)
 
         # ...and allow the user to override our whitelists
         default = Gtk.FileFilter()
@@ -1074,16 +1073,15 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.__removeAsset(asset)
         self._addAsset(asset)
 
-    def _errorCreatingAssetCb(self, unused_project, error, id, type):
+    def _errorCreatingAssetCb(self, unused_project, error, asset_id, extractable_type):
         """Gathers asset loading errors."""
-        if GObject.type_is_a(type, GES.UriClip):
-            if self.app.proxy_manager.is_proxy_asset(id):
+        if GObject.type_is_a(extractable_type, GES.UriClip):
+            if self.app.proxy_manager.is_proxy_asset(asset_id):
                 self.debug("Error %s with a proxy"
                            ", not showing the error message", error)
                 return
 
-            error = (id, str(error.domain), error)
-            self._errors.append(error)
+            self._errors.append((asset_id, str(error.domain), error))
 
     def _startImporting(self):
         self.__last_proxying_estimate_time = _("Unknown")

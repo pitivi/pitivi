@@ -391,7 +391,7 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         # Create the filter for searching the storemodel.
         self.model_filter = self.storemodel.filter_new()
-        self.model_filter.set_visible_func(self._setRowVisible, data=None)
+        self.model_filter.set_visible_func(self._set_row_visible_func, data=None)
 
         self.view = Gtk.TreeView(model=self.model_filter)
         self.view.props.headers_visible = False
@@ -586,16 +586,16 @@ class EffectListWidget(Gtk.Box, Loggable):
     def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         entry.set_text("")
 
-    def _setRowVisible(self, model, iter, unused_data):
-        if not self._effectType == model.get_value(iter, COL_EFFECT_TYPE):
+    def _set_row_visible_func(self, model, model_iter, data):
+        if not self._effectType == model.get_value(model_iter, COL_EFFECT_TYPE):
             return False
-        if model.get_value(iter, COL_EFFECT_CATEGORIES) is None:
+        if model.get_value(model_iter, COL_EFFECT_CATEGORIES) is None:
             return False
-        if self.categoriesWidget.get_active_text() not in model.get_value(iter, COL_EFFECT_CATEGORIES):
+        if self.categoriesWidget.get_active_text() not in model.get_value(model_iter, COL_EFFECT_CATEGORIES):
             return False
         text = self.searchEntry.get_text().lower()
-        return text in model.get_value(iter, COL_DESC_TEXT).lower() or\
-            text in model.get_value(iter, COL_NAME_TEXT).lower()
+        return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
+            text in model.get_value(model_iter, COL_NAME_TEXT).lower()
 
 
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']

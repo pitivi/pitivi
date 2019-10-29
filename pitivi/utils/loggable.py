@@ -436,21 +436,21 @@ def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
     for items in list(kwargs.items()):
         debugArgs.extend(items)
     debugArgs.extend(endArgs)
-    format = startFormat \
+    fmt = startFormat \
         + ', '.join(('%s', ) * len(args)) \
         + (kwargs and ', ' or '') \
         + ', '.join(('%s=%r', ) * len(kwargs)) \
         + endFormat
-    return format, debugArgs
+    return fmt, debugArgs
 
 
-def doLog(level, object, category, message, args, where=-1, filePath=None, line=None):
+def doLog(level, obj, category, message, args, where=-1, filePath=None, line=None):
     """Logs something.
 
     Args:
         level (int): Debug level.
-        object (str): Object converted to str.
-        category (str): Category such as the name of the object's class.
+        obj (str): Object converted to str.
+        category (str): Category such as the name of the obj's class.
         message (str): The message to log.
         args (list): The args to apply to the message, if any.
         where (int or function): What to log file and line number for;
@@ -487,7 +487,7 @@ def doLog(level, object, category, message, args, where=-1, filePath=None, line=
             message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
         for handler in handlers:
             try:
-                handler(level, object, category, filePath, line, message)
+                handler(level, obj, category, filePath, line, message)
             except TypeError as e:
                 raise SystemError("handler %r raised a TypeError: %s" % (
                     handler, getExceptionMessage(e)))
@@ -495,55 +495,55 @@ def doLog(level, object, category, message, args, where=-1, filePath=None, line=
     return ret
 
 
-def errorObject(object, cat, format, *args):
+def errorObject(obj, cat, fmt, *args):
     """Logs a fatal error message in the specified category.
 
     This will also raise a `SystemExit`.
     """
-    doLog(ERROR, object, cat, format, args)
+    doLog(ERROR, obj, cat, fmt, args)
 
 
-def warningObject(object, cat, format, *args):
+def warningObject(obj, cat, fmt, *args):
     """Logs a warning message in the specified category.
 
     This is used for non-fatal problems.
     """
-    doLog(WARN, object, cat, format, args)
+    doLog(WARN, obj, cat, fmt, args)
 
 
-def fixmeObject(object, cat, format, *args):
+def fixmeObject(obj, cat, fmt, *args):
     """Logs a fixme message in the specified category.
 
     This is used for not implemented codepaths or known issues in the code.
     """
-    doLog(FIXME, object, cat, format, args)
+    doLog(FIXME, obj, cat, fmt, args)
 
 
-def infoObject(object, cat, format, *args):
+def infoObject(obj, cat, fmt, *args):
     """Logs an informational message in the specified category."""
-    doLog(INFO, object, cat, format, args)
+    doLog(INFO, obj, cat, fmt, args)
 
 
-def debugObject(object, cat, format, *args):
+def debugObject(obj, cat, fmt, *args):
     """Logs a debug message in the specified category."""
-    doLog(DEBUG, object, cat, format, args)
+    doLog(DEBUG, obj, cat, fmt, args)
 
 
-def logObject(object, cat, format, *args):
+def logObject(obj, cat, fmt, *args):
     """Logs a log message.
 
     Used for debugging recurring events.
     """
-    doLog(LOG, object, cat, format, args)
+    doLog(LOG, obj, cat, fmt, args)
 
 
-def safeprintf(file, format, *args):
+def safeprintf(file, fmt, *args):
     """Writes to a file object, ignoring errors."""
     try:
         if args:
-            file.write(format % args)
+            file.write(fmt % args)
         else:
-            file.write(format)
+            file.write(fmt)
     except IOError as e:
         if e.errno == errno.EPIPE:
             # if our output is closed, exit; e.g. when logging over an
@@ -553,7 +553,7 @@ def safeprintf(file, format, *args):
         # otherwise ignore it, there's nothing you can do
 
 
-def printHandler(level, object, category, file, line, message):
+def printHandler(level, obj, category, file, line, message):
     """Writes to stderr.
 
     The output will be different depending the value of "_enableCrackOutput";
@@ -561,8 +561,8 @@ def printHandler(level, object, category, file, line, message):
 
     Args:
         level (str): The debug level.
-        object (Optional[str]): The object the message is about, or None.
-        category (str): Category such as the name of the object's class.
+        obj (Optional[str]): The object the message is about, or None.
+        category (str): Category such as the name of the obj's class.
         file (str): The source file where the message originates.
         line (int): The line number in the file where the message originates.
         message (str): The message to be logged.
@@ -578,11 +578,11 @@ def printHandler(level, object, category, file, line, message):
     if not _enableCrackOutput:
         safeprintf(_outfile, '%s %-8s %-17s %-2s %s %s\n',
                    getFormattedLevelName(level), time.strftime("%H:%M:%S"),
-                   category, object, message, where)
+                   category, obj, message, where)
     else:
         o = ""
-        if object:
-            o = '"' + object + '"'
+        if obj:
+            o = '"' + obj + '"'
         # level   pid     object   cat      time
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
         safeprintf(
@@ -595,8 +595,8 @@ def printHandler(level, object, category, file, line, message):
 
 
 def logLevelName(level):
-    format = '%-5s'
-    return format % (_LEVEL_NAMES[level - 1], )
+    fmt = '%-5s'
+    return fmt % (_LEVEL_NAMES[level - 1], )
 
 
 def _preformatLevels(enableColorOutput):
@@ -716,7 +716,7 @@ def addLogHandler(func):
 
     Args:
         func (function): A function object with prototype
-            (level, object, category, message) where level is either
+            (level, obj, category, message) where level is either
             ERROR, WARN, INFO, DEBUG, or LOG, and the rest of the arguments are
             strings or None. Use getLevelName(level) to get a printable name
             for the log level.
@@ -738,7 +738,7 @@ def addLimitedLogHandler(func):
 
     Args:
         func (function): A function object with prototype
-            (level, object, category, message) where level is either
+            (level, obj, category, message) where level is either
             ERROR, WARN, INFO, DEBUG, or LOG, and the rest of the arguments are
             strings or None. Use getLevelName(level) to get a printable name
             for the log level.
@@ -773,28 +773,28 @@ def removeLimitedLogHandler(func):
 # public log functions
 
 
-def error(cat, format, *args):
-    errorObject(None, cat, format, *args)
+def error(cat, fmt, *args):
+    errorObject(None, cat, fmt, *args)
 
 
-def warning(cat, format, *args):
-    warningObject(None, cat, format, *args)
+def warning(cat, fmt, *args):
+    warningObject(None, cat, fmt, *args)
 
 
-def fixme(cat, format, *args):
-    fixmeObject(None, cat, format, *args)
+def fixme(cat, fmt, *args):
+    fixmeObject(None, cat, fmt, *args)
 
 
-def info(cat, format, *args):
-    infoObject(None, cat, format, *args)
+def info(cat, fmt, *args):
+    infoObject(None, cat, fmt, *args)
 
 
-def debug(cat, format, *args):
-    debugObject(None, cat, format, *args)
+def debug(cat, fmt, *args):
+    debugObject(None, cat, fmt, *args)
 
 
-def log(cat, format, *args):
-    logObject(None, cat, format, *args)
+def log(cat, fmt, *args):
+    logObject(None, cat, fmt, *args)
 
 # public utility functions
 
@@ -949,7 +949,7 @@ class BaseLoggable:
         logObject(self.logObjectName(),
                   self.logCategory, *self.logFunction(*args))
 
-    def doLog(self, level, where, format, *args, **kwargs):
+    def doLog(self, level, where, fmt, *args, **kwargs):
         """Logs a message at the specified level.
 
         Args:
@@ -957,8 +957,8 @@ class BaseLoggable:
             where (int or function): How many frames to go back from
                 the last log frame, must be negative; or a function
                 (to log for a future call).
-            format (str): The string template for the message.
-            *args: The arguments used when converting the `format`
+            fmt (str): The string template for the message.
+            *args: The arguments used when converting the `fmt`
                 string template to the message.
             **kwargs: The pre-calculated values from a previous doLog call.
 
@@ -970,7 +970,7 @@ class BaseLoggable:
             return {}
         args = self.logFunction(*args)
         return doLog(level, self.logObjectName(), self.logCategory,
-                     format, args, where=where, **kwargs)
+                     fmt, args, where=where, **kwargs)
 
     def logFunction(self, *args):
         """Processes the arguments applied to the message template.
@@ -981,7 +981,6 @@ class BaseLoggable:
 
     def logObjectName(self):
         """Gets the name of this object."""
-        # cheat pychecker
         for name in ['logName', 'name']:
             if hasattr(self, name):
                 return getattr(self, name)
@@ -1006,8 +1005,8 @@ class Loggable(BaseLoggable):
             return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
         return res
 
-    def error(self, format, *args):
+    def error(self, fmt, *args):
         if _canShortcutLogging(self.logCategory, ERROR):
             return
         doLog(ERROR, self.logObjectName(), self.logCategory,
-              format, self.logFunction(*args), where=-2)
+              fmt, self.logFunction(*args), where=-2)

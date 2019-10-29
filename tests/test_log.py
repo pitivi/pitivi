@@ -29,8 +29,8 @@ class LogTester(log.Loggable):
 
 class LogFunctionTester(log.Loggable):
 
-    def logFunction(self, format, *args):
-        return (("override " + format), ) + args[1:]
+    def logFunction(self, fmt, *args):
+        return (("override " + fmt), ) + args[1:]
 
 
 class TestWithHandler(unittest.TestCase):
@@ -46,9 +46,9 @@ class TestWithHandler(unittest.TestCase):
         # we want to remove the default handler so it doesn't show up stuff
         log.reset()
 
-    def handler(self, level, object, category, file, line, message):
+    def handler(self, level, obj, category, file, line, message):
         self.level = level
-        self.object = object
+        self.object = obj
         self.category = category
         self.file = file
         self.line = line
