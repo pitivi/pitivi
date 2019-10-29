@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Useful objects for testing."""
+# pylint: disable=protected-access
 import contextlib
 import gc
 import locale
@@ -280,8 +281,8 @@ class TestCase(unittest.TestCase, Loggable):
             ges_clip.ui.timeline._button_press_event_cb(None, event)
             with mock.patch.object(ges_clip.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(ges_clip.ui.timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = ges_clip.props.layer, None
+                with mock.patch.object(ges_clip.ui.timeline, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = ges_clip.props.layer, None
                     ges_clip.ui._button_release_event_cb(None, event)
                     ges_clip.ui.timeline._button_release_event_cb(None, event)
 

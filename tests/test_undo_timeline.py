@@ -17,6 +17,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.undo.timeline module."""
+# pylint: disable=protected-access
 from unittest import mock
 
 from gi.repository import Gdk
@@ -295,8 +297,8 @@ class TestLayerObserver(BaseTestUndoTimeline):
 
             with mock.patch.object(layer1.control_ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(timeline_ui, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer3, None
+                with mock.patch.object(timeline_ui, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = layer3, None
                     timeline_ui._motion_notify_event_cb(None, event=event)
 
             timeline_ui._button_release_event_cb(None, event=event)
