@@ -459,8 +459,8 @@ class TestGrouping(BaseTestTimeline):
             vclip = ges_clip0.ui
             vtrackelem = bTrackElem0.ui
 
-        self.assertEqual(aclip._audioSource, atrackelem)
-        self.assertEqual(vclip._videoSource, vtrackelem)
+        self.assertEqual(aclip.audio_widget, atrackelem)
+        self.assertEqual(vclip.video_widget, vtrackelem)
 
     def test_dragging_group_on_separator(self):
         # Create two clips on different layers and group them.

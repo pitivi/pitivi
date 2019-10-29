@@ -138,10 +138,10 @@ class EditorPerspective(Perspective, Loggable):
             for ges_layer in ges_timeline.get_layers():
                 for ges_clip in ges_layer.get_clips():
                     if ges_clip.get_asset().props.id in changed_files_uris:
-                        if ges_clip.ui._audioSource:
-                            ges_clip.ui._audioSource.update_previewer()
-                        if ges_clip.ui._videoSource:
-                            ges_clip.ui._videoSource.update_previewer()
+                        if ges_clip.ui.audio_widget:
+                            ges_clip.ui.audio_widget.update_previewer()
+                        if ges_clip.ui.video_widget:
+                            ges_clip.ui.video_widget.update_previewer()
 
     def _destroyedCb(self, unused_main_window):
         """Cleanup before destroying this window."""
