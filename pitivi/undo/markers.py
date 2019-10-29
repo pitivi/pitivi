@@ -69,7 +69,7 @@ class MarkerListObserver(Loggable):
         self.action_log.push(action)
 
 
-# pylint: disable=abstract-method, too-many-ancestors
+# pylint: disable=abstract-method
 class MarkerAction(UndoableAutomaticObjectAction):
     """Base class for marker actions."""
 
