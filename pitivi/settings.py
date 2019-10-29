@@ -204,8 +204,7 @@ class GlobalSettings(GObject.Object, Loggable):
                 value = self._read_value(section, key, typ)
                 setattr(self, attrname, value)
 
-    @classmethod
-    def readSettingSectionFromFile(self, cls, section):
+    def read_setting_section_from_file(self, section):
         """Reads a particular section of the settings file.
 
         Use this if you dynamically determine settings sections/keys at runtime.
@@ -214,21 +213,21 @@ class GlobalSettings(GObject.Object, Loggable):
         never be read, thus values would be reset to defaults on every startup
         because GlobalSettings would think they don't exist.
         """
-        if cls._config.has_section(section):
-            for option in cls._config.options(section):
+        if self._config.has_section(section):
+            for option in self._config.options(section):
                 # We don't know the value type in advance, just try them all.
                 try:
-                    value = cls._config.getfloat(section, option)
+                    value = self._config.getfloat(section, option)
                 except ValueError:
                     try:
-                        value = cls._config.getint(section, option)
+                        value = self._config.getint(section, option)
                     except ValueError:
                         try:
-                            value = cls._config.getboolean(section, option)
+                            value = self._config.getboolean(section, option)
                         except ValueError:
-                            value = cls._config.get(section, option)
+                            value = self._config.get(section, option)
 
-                setattr(cls, section + option, value)
+                setattr(self, section + option, value)
 
     def _readSettingsFromEnvironmentVariables(self):
         """Reads settings from their registered environment variables."""
@@ -313,7 +312,8 @@ class GlobalSettings(GObject.Object, Loggable):
         beforehand will be loaded.
 
         If you want to add configuration options after initialization,
-        use the `readSettingSectionFromFile` method to force reading later on.
+        use the `read_setting_section_from_file` method to read them from
+        the file.
 
         Args:
             attrname (str): The attribute of this class for accessing the option.
