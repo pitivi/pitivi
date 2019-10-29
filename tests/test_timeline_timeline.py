@@ -16,6 +16,8 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+"""Tests for the pitivi.timeline.timeline module."""
+# pylint: disable=protected-access
 from unittest import mock
 
 from gi.repository import Gdk
@@ -109,7 +111,7 @@ class TestLayers(BaseTestTimeline):
         s = SEPARATOR_HEIGHT
 
         def assertLayerAt(ges_layer, y):
-            result = timeline._get_layer_at(
+            result = timeline.get_layer_at(
                 int(y),
                 prefer_ges_layer=preferred_ges_layer,
                 past_middle_when_adjacent=past_middle_when_adjacent)
@@ -490,8 +492,8 @@ class TestGrouping(BaseTestTimeline):
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip1.ui, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (40, 0)
-                with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer1, timeline._separators[1]
+                with mock.patch.object(timeline, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = layer1, timeline._separators[1]
                     timeline._motion_notify_event_cb(None, event)
             self.assertTrue(timeline.got_dragged)
 
@@ -601,8 +603,8 @@ class TestEditing(BaseTestTimeline):
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
-                with mock.patch.object(timeline, "_get_layer_at") as _get_layer_at:
-                    _get_layer_at.return_value = layer, timeline._separators[1]
+                with mock.patch.object(timeline, "get_layer_at") as get_layer_at:
+                    get_layer_at.return_value = layer, timeline._separators[1]
                     timeline._motion_notify_event_cb(None, event)
             self.assertTrue(timeline.got_dragged)
 
@@ -654,7 +656,7 @@ class TestShiftSelection(BaseTestTimeline):
             # Simulate click on first and shift+click on second clip.
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 0.5 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
-            timeline.get_parent()._shiftMask = True
+            timeline.get_parent().shift_mask = True
             timeline.get_clicked_layer_and_pos.return_value = (ges_layer, 1.5 * Gst.SECOND)
             timeline._button_release_event_cb(None, event)
             self.__check_selected([ges_clip1, ges_clip2], [])
@@ -676,7 +678,7 @@ class TestShiftSelection(BaseTestTimeline):
 
         event = mock.Mock()
         event.get_button.return_value = (True, 1)
-        timeline.get_parent()._shiftMask = True
+        timeline.get_parent().shift_mask = True
         timeline._seek = mock.Mock()
         timeline._seek.return_value = True
         timeline.get_clicked_layer_and_pos = mock.Mock()
@@ -741,7 +743,7 @@ class TestShiftSelection(BaseTestTimeline):
 
         event = mock.Mock()
         event.get_button.return_value = (True, 1)
-        timeline.get_parent()._shiftMask = True
+        timeline.get_parent().shift_mask = True
         timeline._seek = mock.Mock()
         timeline._seek.return_value = True
         timeline.get_clicked_layer_and_pos = mock.Mock()

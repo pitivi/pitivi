@@ -398,7 +398,7 @@ def getFileLine(where=-1):
         lineno = co.co_firstlineno
         name = co.co_name
     else:
-        stackFrame = sys._getframe()
+        stackFrame = sys._getframe()  # pylint: disable=protected-access
         while stackFrame:
             co = stackFrame.f_code
             if not co.co_filename.endswith('loggable.py'):
@@ -548,6 +548,7 @@ def safeprintf(file, format, *args):
         if e.errno == errno.EPIPE:
             # if our output is closed, exit; e.g. when logging over an
             # ssh connection and the ssh connection is closed
+            # pylint: disable=protected-access
             os._exit(os.EX_OSERR)
         # otherwise ignore it, there's nothing you can do
 

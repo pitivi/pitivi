@@ -17,6 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.undo.undo module."""
+# pylint: disable=protected-access
 from unittest import mock
 
 from gi.repository import GES

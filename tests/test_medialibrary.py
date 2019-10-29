@@ -17,7 +17,7 @@
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 """Tests for the pitivi.medialibrary module."""
-# pylint: disable=attribute-defined-outside-init
+# pylint: disable=attribute-defined-outside-init,protected-access
 import os
 import tempfile
 from unittest import mock
