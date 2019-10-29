@@ -480,7 +480,7 @@ class SimplePipeline(GObject.Object, Loggable):
     def _queryDurationAsync(self, *unused_args, **unused_kwargs):
         try:
             self.getDuration()
-        except Exception as e:
+        except PipelineError as e:
             self.warning("Could not get duration because: %s", e)
         return False
 
