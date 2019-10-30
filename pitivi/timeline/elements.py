@@ -721,7 +721,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
             res = source.set(inpoint + self._ges_elem.props.duration, val)
             assert res
 
-    def __create_keyframe_curve(self, bindings=[]):
+    def __create_keyframe_curve(self, bindings=None):
         """Creates required keyframe curve."""
         self.__removeKeyframes()
         if not bindings:
