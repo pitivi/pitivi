@@ -676,7 +676,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
         "x264enc": {"profile": Gst.ValueList(["high", "main", "baseline"])}
     }
 
-    def __init__(self, element, props_to_ignore=["name"], controllable=True):
+    def __init__(self, element, props_to_ignore=("name",), controllable=True):
         Gtk.Box.__init__(self)
         Loggable.__init__(self)
         self.element = element
@@ -811,7 +811,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             grid.attach(label, 0, y, 1, 1)
             grid.attach(widget, 1, y, 1, 1)
 
-    def add_widgets(self, create_property_widget, values={}, with_reset_button=False, caps_values=None):
+    def add_widgets(self, create_property_widget, values=None, with_reset_button=False, caps_values=None):
         """Prepares a Gtk.Grid containing the property widgets of an element.
 
         Each property is on a separate row.
@@ -826,6 +826,7 @@ class GstElementSettingsWidget(Gtk.Box, Loggable):
             with_reset_button (bool): Whether to show a reset button for each
                 property.
         """
+        values = values or {}
         self.info("element: %s, use values: %s", self.element, values)
         self.properties.clear()
         self.__bindings_by_keyframe_button = {}
