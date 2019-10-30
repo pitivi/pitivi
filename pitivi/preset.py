@@ -176,7 +176,7 @@ class PresetManager(GObject.Object, Loggable):
             os.rename(self.user_path, "%s.old" % self.user_path)
         self._loadFromDir(self.user_path)
 
-    def _loadFromDir(self, presets_dir, extra={}):
+    def _loadFromDir(self, presets_dir, extra=None):
         try:
             files = os.listdir(presets_dir)
         except FileNotFoundError:
@@ -197,8 +197,9 @@ class PresetManager(GObject.Object, Loggable):
                     self.debug("Failed to load preset %s: %s", filepath, e)
                     continue
                 preset["filepath"] = filepath
-                for key, value in extra.items():
-                    preset[key] = value
+                if extra:
+                    for key, value in extra.items():
+                        preset[key] = value
                 self._addPreset(name, preset)
 
     def saveAll(self):
@@ -505,8 +506,8 @@ class EncodingTargetManager(PresetManager):
         self._removed_file_list = os.path.join(xdg_data_home(),
                                                'hidden_encoding_profiles.json')
         try:
-            with open(self._removed_file_list) as f:
-                self._removed_profiles = json.loads(f.read())
+            with open(self._removed_file_list) as removed:
+                self._removed_profiles = json.loads(removed.read())
         except FileNotFoundError:
             self._removed_profiles = []
 
@@ -587,8 +588,8 @@ class EncodingTargetManager(PresetManager):
         self.cur_preset = name
 
     def _save_removed_profiles(self):
-        with open(self._removed_file_list, 'w') as f:
-            json.dump(self._removed_profiles, f)
+        with open(self._removed_file_list, 'w') as removed:
+            json.dump(self._removed_profiles, removed)
 
     def removeCurrentPreset(self):
         self._removed_profiles.append(self.cur_preset)
