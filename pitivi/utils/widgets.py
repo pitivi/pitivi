@@ -308,7 +308,7 @@ class TimeWidget(TextWidget, DynamicWidget):
     # The "timecode" rule is ^([0-9]:[0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$"
     # Combining the two, we get:
     VALID_REGEX = re.compile(
-        "^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
+        r"^([0-9]+)$|^([0-9]:)?([0-5][0-9]:[0-5][0-9])\.[0-9][0-9][0-9]$")
 
     __gtype_name__ = 'TimeWidget'
 
@@ -370,7 +370,7 @@ class FractionWidget(TextWidget, DynamicWidget):
     """Widget for entering a fraction."""
 
     fraction_regex = re.compile(
-        "^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
+        r"^([0-9]*(\.[0-9]+)?)(([:/][0-9]*(\.[0-9]+)?)|M)?$")
     __gtype_name__ = 'FractionWidget'
 
     def __init__(self, presets=None, default=None):
