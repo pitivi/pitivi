@@ -40,13 +40,13 @@ class ProjectManagerListener(object):
 
     def __init__(self, manager):
         self.manager = manager
-        self.connectToProjectManager(self.manager)
+        self.connectToProjectManager()
         self._reset()
 
     def _reset(self):
         self.signals = []
 
-    def connectToProjectManager(self, manager):
+    def connectToProjectManager(self):
         for signal in ("new-project-loading", "new-project-loaded",
                        "new-project-created", "new-project-failed", "missing-uri",
                        "closing-project", "project-closed"):
@@ -91,13 +91,13 @@ class TestProjectManager(common.TestCase):
     def test_new_blank_project_signals(self):
         self.manager.new_blank_project()
 
-        name, args = self.signals[0]
+        name, _args = self.signals[0]
         self.assertEqual("new-project-loading", name, self.signals)
 
-        name, args = self.signals[1]
+        name, _args = self.signals[1]
         self.assertEqual("new-project-created", name, self.signals)
 
-        name, args = self.signals[2]
+        name, _args = self.signals[2]
         self.assertEqual("new-project-loaded", name, self.signals)
 
     def testMissingUriForwarded(self):
@@ -265,13 +265,13 @@ class TestProjectLoading(common.TestCase):
     def test_loaded_callback(self):
         mainloop = common.create_main_loop()
 
-        def loaded(project, timeline):
+        def loaded_cb(project, timeline):
             # If not called, the timeout of the mainloop will fail the test.
             mainloop.quit()
 
         # Create a blank project and save it.
         project = common.create_project()
-        project.connect("loaded", loaded)
+        project.connect("loaded", loaded_cb)
         mainloop.run()
         # The blank project loading succeeded emitting signal "loaded".
 
@@ -286,7 +286,7 @@ class TestProjectLoading(common.TestCase):
             project.save(project.ges_timeline, uri, None, overwrite=True)
 
             project2 = common.create_project()
-            project2.connect("loaded", loaded)
+            project2.connect("loaded", loaded_cb)
             mainloop.run()
             # The blank project loading succeeded emitting signal "loaded".
 
@@ -377,7 +377,7 @@ class TestProjectLoading(common.TestCase):
     def test_load_project_with_missing_proxy(self):
         """Checks loading a project with missing proxies."""
         with common.cloned_sample("1sec_simpsons_trailer.mp4"):
-            mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+            mainloop, _app, medialib, proxy_uri = self.load_project_with_missing_proxy()
             mainloop.run()
 
         self.assertEqual(len(medialib.storemodel), 1)
@@ -395,7 +395,7 @@ class TestProjectLoading(common.TestCase):
             # This way we are sure it will not finish before we test
             # the state while it is being rebuilt.
             with mock.patch.object(GstTranscoder.Transcoder, "run_async"):
-                mainloop, app, medialib, proxy_uri = self.load_project_with_missing_proxy()
+                mainloop, app, medialib, _proxy_uri = self.load_project_with_missing_proxy()
                 uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
 
                 app.project_manager.connect("new-project-loaded", lambda x, y: mainloop.quit())
