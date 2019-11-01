@@ -696,7 +696,7 @@ def clear_styles(widget):
         style.remove_class(css_class)
 
 
-def model(columns, data):
+def create_model(columns, data):
     ret = Gtk.ListStore(*columns)
     for datum in data:
         ret.append(datum)
@@ -774,11 +774,11 @@ def fix_infobar(infobar):
     infobar.forall(make_sure_revealer_does_nothing)
 
 
-AUDIO_CHANNELS = model((str, int),
-                       [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
+AUDIO_CHANNELS = create_model((str, int),
+                              [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
 
-FRAME_RATES = model((str, object),
-                    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
+FRAME_RATES = create_model((str, object),
+                           [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
                         (12, 1),
                         (15, 1),
                         (20, 1),
@@ -793,8 +793,8 @@ FRAME_RATES = model((str, object),
                         (120, 1)
                     )])
 
-AUDIO_RATES = model((str, int),
-                    [(format_audiorate(rate), rate) for rate in (
+AUDIO_RATES = create_model((str, int),
+                           [(format_audiorate(rate), rate) for rate in (
                         8000,
                         11025,
                         12000,

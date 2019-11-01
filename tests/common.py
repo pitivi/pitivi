@@ -94,7 +94,6 @@ def create_pitivi_mock(**settings):
     app.proxy_manager = ProxyManager(app)
 
     # TODO: Get rid of Zoomable.app.
-    from pitivi.utils.timeline import Zoomable
     Zoomable.app = app
 
     return app
@@ -225,7 +224,6 @@ class TestCase(unittest.TestCase, Loggable):
 
     def setUp(self):
         # TODO: Get rid of Zoomable._instances.
-        from pitivi.utils.timeline import Zoomable
         del Zoomable._instances[:]
 
         self._num_failures = len(getattr(self._result, 'failures', []))
