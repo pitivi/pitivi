@@ -608,7 +608,8 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         app (Pitivi): The app.
     """
 
-    def create_widget_accumulator(*args):
+    @staticmethod
+    def create_widget_accumulator_func(*args):
         """Aborts `create_widget` emission if we got a widget."""
         handler_return = args[2]
         if handler_return is None:
@@ -616,11 +617,12 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         return False, handler_return
 
     __gsignals__ = {
-        "create_widget": (GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
-                          create_widget_accumulator),
+        "create_widget": (
+            GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
+            create_widget_accumulator_func),
         "create_property_widget": (
             GObject.SignalFlags.RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
-            create_widget_accumulator),
+            create_widget_accumulator_func),
     }
 
     def do_create_widget(self, effect_widget, effect):
