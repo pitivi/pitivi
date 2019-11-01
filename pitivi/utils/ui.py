@@ -69,7 +69,9 @@ FILE_TARGET_ENTRY = Gtk.TargetEntry.new("text/plain", 0, 0)
 URI_TARGET_ENTRY = Gtk.TargetEntry.new("text/uri-list", 0, 0)
 EFFECT_TARGET_ENTRY = Gtk.TargetEntry.new("pitivi/effect", 0, 0)
 
-TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD, Gdk.InputSource.TRACKPOINT, Gdk.InputSource.TABLET_PAD)
+TOUCH_INPUT_SOURCES = (Gdk.InputSource.TOUCHPAD,
+                       Gdk.InputSource.TRACKPOINT,
+                       Gdk.InputSource.TABLET_PAD)
 
 
 def get_month_format_string():
@@ -466,7 +468,8 @@ def beautify_asset(asset):
         res.append(_("<b>Duration:</b> %s") % duration)
 
     if asset.creation_progress < 100:
-        res.append(_("<b>Proxy creation progress:</b> %d%%") % asset.creation_progress)
+        res.append(_("<b>Proxy creation progress:</b> %d%%") %
+                   asset.creation_progress)
 
     return "\n".join(res)
 
@@ -487,7 +490,8 @@ def beautify_missing_asset(asset):
 
     size = asset.get_meta("file-size")
     if size:
-        file_size = GLib.format_size_full(size, GLib.FormatSizeFlags.LONG_FORMAT)
+        file_size = GLib.format_size_full(
+            size, GLib.FormatSizeFlags.LONG_FORMAT)
         res.append(_("<b>Size</b>: %s") % file_size)
 
     return "\n".join(res)
@@ -501,7 +505,8 @@ def info_name(info):
     """
     if isinstance(info, GES.Asset):
         from pitivi.utils.proxy import get_proxy_target
-        filename = urllib.parse.unquote(os.path.basename(get_proxy_target(info).get_id()))
+        filename = urllib.parse.unquote(
+            os.path.basename(get_proxy_target(info).get_id()))
     elif isinstance(info, DiscovererInfo):
         filename = urllib.parse.unquote(os.path.basename(info.get_uri()))
     else:
@@ -696,7 +701,7 @@ def clear_styles(widget):
         style.remove_class(css_class)
 
 
-def model(columns, data):
+def create_model(columns, data):
     ret = Gtk.ListStore(*columns)
     for datum in data:
         ret.append(datum)
@@ -774,34 +779,35 @@ def fix_infobar(infobar):
     infobar.forall(make_sure_revealer_does_nothing)
 
 
-AUDIO_CHANNELS = model((str, int),
-                       [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
+AUDIO_CHANNELS = create_model((str, int),
+                              [(format_audiochannels(ch), ch)
+                               for ch in (8, 6, 4, 2, 1)])
 
-FRAME_RATES = model((str, object),
-                    [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
-                        (12, 1),
-                        (15, 1),
-                        (20, 1),
-                        (24000, 1001),
-                        (24, 1),
-                        (25, 1),
-                        (30000, 1001),
-                        (30, 1),
-                        (50, 1),
-                        (60000, 1001),
-                        (60, 1),
-                        (120, 1)
-                    )])
+FRAME_RATES = create_model((str, object),
+                           [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
+                               (12, 1),
+                               (15, 1),
+                               (20, 1),
+                               (24000, 1001),
+                               (24, 1),
+                               (25, 1),
+                               (30000, 1001),
+                               (30, 1),
+                               (50, 1),
+                               (60000, 1001),
+                               (60, 1),
+                               (120, 1)
+                           )])
 
-AUDIO_RATES = model((str, int),
-                    [(format_audiorate(rate), rate) for rate in (
-                        8000,
-                        11025,
-                        12000,
-                        16000,
-                        22050,
-                        24000,
-                        44100,
-                        48000,
-                        96000
-                    )])
+AUDIO_RATES = create_model((str, int),
+                           [(format_audiorate(rate), rate) for rate in (
+                               8000,
+                               11025,
+                               12000,
+                               16000,
+                               22050,
+                               24000,
+                               44100,
+                               48000,
+                               96000
+                           )])

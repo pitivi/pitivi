@@ -37,10 +37,10 @@ from pitivi.timeline.previewers import AudioPreviewer
 from pitivi.timeline.previewers import ImagePreviewer
 from pitivi.timeline.previewers import VideoPreviewer
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
-from pitivi.utils import pipeline
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.misc import filename_from_uri
+from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.timeline import SELECT
 from pitivi.utils.timeline import SELECT_ADD
 from pitivi.utils.timeline import Selected
@@ -567,7 +567,7 @@ class MultipleKeyframeCurve(KeyframeCurve):
     def __update_selected_keyframe(self):
         try:
             position = self._project.pipeline.getPosition()
-        except pipeline.PipelineError:
+        except PipelineError:
             self.warning("Could not get pipeline position")
             return
 
