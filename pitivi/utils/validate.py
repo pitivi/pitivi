@@ -40,13 +40,14 @@ try:
 except ImportError:
     GstValidate = None
 except ValueError:
+    # pylint: disable=invalid-name
     GstValidate = None
 
 monitor = None
 has_validate = False
 
 
-def Event(event_type, **kwargs):
+def create_event(event_type, **kwargs):
     event_types_constructors = {
         Gdk.EventType.BUTTON_PRESS: Gdk.EventButton,
         Gdk.EventType.BUTTON_RELEASE: Gdk.EventButton,
@@ -138,8 +139,8 @@ def stop_func(scenario, action):
     return 1
 
 
-def positionChangedCb(pipeline, position, scenario, action,
-                      wanted_position):
+def position_changed_cb(pipeline, position, scenario, action,
+                        wanted_position):
     if pipeline._busy_async:
         return
 
@@ -153,7 +154,7 @@ def positionChangedCb(pipeline, position, scenario, action,
             "Position after seek (%s) does not match wanted one %s" % (
                 Gst.TIME_ARGS(position), Gst.TIME_ARGS(wanted_position)))
 
-    pipeline.disconnect_by_func(positionChangedCb)
+    pipeline.disconnect_by_func(position_changed_cb)
     action.set_done()
 
 
@@ -162,7 +163,7 @@ def seek_func(scenario, action):
                                                            "start")
     assert res
     scenario.get_pipeline().simple_seek(wanted_position)
-    scenario.get_pipeline().connect("position", positionChangedCb, scenario,
+    scenario.get_pipeline().connect("position", position_changed_cb, scenario,
                                     action, wanted_position)
 
     return GstValidate.ActionReturn.ASYNC
@@ -219,7 +220,7 @@ def _release_button_if_needed(scenario, timeline, container, layer_prio,
     if next_action is None or need_release:
         scenario.dragging = False
         x = Zoomable.nsToPixelAccurate(position)
-        event = Event(Gdk.EventType.BUTTON_RELEASE, button=1, x=x, y=y)
+        event = create_event(Gdk.EventType.BUTTON_RELEASE, button=1, x=x, y=y)
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = container.ui
             container.ui._button_release_event_cb(None, event)
@@ -231,21 +232,21 @@ def _release_button_if_needed(scenario, timeline, container, layer_prio,
                                    % (container.get_layer().get_priority(),
                                       layer_prio))
 
-        cleanEditModes(timeline, scenario)
+        clean_edit_modes(timeline, scenario)
 
 
-def cleanEditModes(timeline, scenario):
+def clean_edit_modes(timeline, scenario):
     if scenario.last_mode == GES.EditMode.EDIT_RIPPLE:
-        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L)
+        event = create_event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L)
         timeline.ui.get_parent().do_key_release_event(event)
     elif scenario.last_mode == GES.EditMode.EDIT_ROLL:
-        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
+        event = create_event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
         timeline.ui.get_parent().do_key_release_event(event)
 
     scenario.last_mode = None
 
 
-def setEditingMode(timeline, scenario, action):
+def set_editing_mode(timeline, scenario, action):
     if not hasattr(scenario, "last_mode"):
         scenario.last_mode = None
 
@@ -259,18 +260,18 @@ def setEditingMode(timeline, scenario, action):
         mode = GES.EditMode.EDIT_NORMAL
 
     if mode == GES.EditMode.EDIT_RIPPLE:
-        timeline.ui.get_parent().do_key_press_event(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Shift_L))
+        timeline.ui.get_parent().do_key_press_event(create_event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Shift_L))
 
         if scenario.last_mode == GES.EditMode.EDIT_ROLL:
-            timeline.ui.get_parent().do_key_release_event(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
+            timeline.ui.get_parent().do_key_release_event(create_event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L))
 
     elif mode == GES.EditMode.EDIT_ROLL:
-        timeline.ui.do_key_press_event(Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L))
+        timeline.ui.do_key_press_event(create_event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L))
 
         if scenario.last_mode == GES.EditMode.EDIT_RIPPLE:
-            timeline.ui.do_key_release_event(Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L))
+            timeline.ui.do_key_release_event(create_event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Shift_L))
     else:
-        cleanEditModes(timeline, scenario)
+        clean_edit_modes(timeline, scenario)
 
     scenario.last_mode = mode
 
@@ -299,7 +300,7 @@ def edit_container_func(scenario, action):
     edge = get_edge(action.structure)
     container_ui = container.ui
 
-    setEditingMode(timeline, scenario, action)
+    set_editing_mode(timeline, scenario, action)
 
     y = 21 - container_ui.translate_coordinates(timeline.ui, 0, 0)[1]
 
@@ -332,20 +333,19 @@ def edit_container_func(scenario, action):
         event_widget = container.ui
         if isinstance(container, GES.SourceClip):
             if edge == GES.Edge.EDGE_START:
-                event_widget = container.ui.leftHandle
+                event_widget = container.ui.left_handle
             elif edge == GES.Edge.EDGE_END:
-                event_widget = container.ui.rightHandle
+                event_widget = container.ui.right_handle
 
         scenario.dragging = True
-        event = Event(Gdk.EventType.BUTTON_PRESS, button=1, y=y)
+        event = create_event(Gdk.EventType.BUTTON_PRESS, button=1, y=y)
         with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
             get_event_widget.return_value = event_widget
             timeline.ui._button_press_event_cb(event_widget, event)
 
-    event = Event(Gdk.EventType.MOTION_NOTIFY, button=1,
-                  x=Zoomable.nsToPixelAccurate(position) -
-                  container_ui.translate_coordinates(timeline.ui.layout.layers_vbox, 0, 0)[0],
-                  y=y, state=Gdk.ModifierType.BUTTON1_MASK)
+    x = Zoomable.nsToPixelAccurate(position) - container_ui.translate_coordinates(timeline.ui.layout.layers_vbox, 0, 0)[0]
+    event = create_event(Gdk.EventType.MOTION_NOTIFY, button=1,
+                         x=x, y=y, state=Gdk.ModifierType.BUTTON1_MASK)
     with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
         get_event_widget.return_value = container.ui
         timeline.ui._motion_notify_event_cb(None, event)
@@ -440,10 +440,10 @@ def select_clips_func(scenario, action):
         if clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
             should_select = False
 
-        event = Event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L)
+        event = create_event(Gdk.EventType.KEY_PRESS, keyval=Gdk.KEY_Control_L)
         timeline.ui.get_parent().do_key_press_event(event)
 
-    event = Event(Gdk.EventType.BUTTON_RELEASE, button=1)
+    event = create_event(Gdk.EventType.BUTTON_RELEASE, button=1)
     with mock.patch.object(Gtk, "get_event_widget") as get_event_widget:
         get_event_widget.return_value = clip.ui
         clip.ui._button_release_event_cb(None, event)
@@ -460,35 +460,35 @@ def select_clips_func(scenario, action):
                                    "Clip %s should be UNselected but is not"
                                    % clip.get_name())
     else:
-        for l in timeline.get_layers():
-            for c in l.get_clips():
-                if c.get_name() in selection:
-                    if not c.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
+        for layer in timeline.get_layers():
+            for clip in layer.get_clips():
+                if clip.get_name() in selection:
+                    if not clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
                         scenario.report_simple(GLib.quark_from_string("scenario::execution-error"),
                                                "Clip %s should be selected (as defined in selection %s)"
                                                " but is not" % (selection, clip.get_name()))
                 else:
-                    if c.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
+                    if clip.ui.get_state_flags() & Gtk.StateFlags.SELECTED:
                         scenario.report_simple(GLib.quark_from_string("scenario::execution-error"),
                                                "Clip %s should NOT be selected (as defined in selection %s)"
                                                " but it is" % (selection, clip.get_name()))
 
     if mode == "ctrl":
-        event = Event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
+        event = create_event(Gdk.EventType.KEY_RELEASE, keyval=Gdk.KEY_Control_L)
         timeline.ui.get_parent().do_key_release_event(event)
 
     return 1
 
 
-def Parameter(name, desc, mandatory=False, possible_variables=None, types=None):
-    p = GstValidate.ActionParameter()
-    p.description = desc
-    p.mandatory = mandatory
-    p.name = name
-    p.possible_variables = possible_variables
-    p.types = types
+def create_action_parameter(name, desc, mandatory=False, possible_variables=None, types=None):
+    parameter = GstValidate.ActionParameter()
+    parameter.description = desc
+    parameter.mandatory = mandatory
+    parameter.name = name
+    parameter.possible_variables = possible_variables
+    parameter.types = types
 
-    return p
+    return parameter
 
 
 def init():
@@ -543,9 +543,9 @@ def init():
                                          GstValidate.ActionTypeFlags.NONE)
         GstValidate.register_action_type("select-clips", "pitivi",
                                          select_clips_func,
-                                         [Parameter("clip-name",
-                                                    "The name of the clip to select",
-                                                    True, None, "str")],
+                                         [create_action_parameter("clip-name",
+                                                                  "The name of the clip to select",
+                                                                  True, None, "str")],
                                          "Select clips",
                                          GstValidate.ActionTypeFlags.NONE)
 

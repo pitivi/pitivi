@@ -50,19 +50,19 @@ from pitivi.timeline.previewers import ThumbnailCache
 from pitivi.undo.project import AssetAddedIntention
 from pitivi.undo.project import AssetProxiedIntention
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.misc import fixate_caps_with_default_values
-from pitivi.utils.misc import isWritable
+from pitivi.utils.misc import is_writable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import quote_uri
 from pitivi.utils.misc import scale_pixbuf
 from pitivi.utils.misc import unicode_error_dialog
 from pitivi.utils.pipeline import Pipeline
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import audio_channels
-from pitivi.utils.ui import audio_rates
+from pitivi.utils.ui import AUDIO_CHANNELS
+from pitivi.utils.ui import AUDIO_RATES
 from pitivi.utils.ui import beautify_time_delta
-from pitivi.utils.ui import frame_rates
+from pitivi.utils.ui import FRAME_RATES
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.ui import SPACING
@@ -376,7 +376,7 @@ class ProjectManager(GObject.Object, Loggable):
             # provided URI, so ensure it's properly encoded, or GIO will fail:
             uri = quote_uri(uri)
 
-            if not isWritable(path_from_uri(uri)):
+            if not is_writable(path_from_uri(uri)):
                 # TODO: this will not be needed when GTK+ bug #601451 is fixed
                 self.emit("save-project-failed", uri,
                           _("You do not have permissions to write to this folder."))
@@ -499,8 +499,8 @@ class ProjectManager(GObject.Object, Loggable):
             self.current_project = None
             project.create_thumb()
             self.emit("project-closed", project)
-            disconnectAllByFunc(project, self._projectChangedCb)
-            disconnectAllByFunc(project.pipeline, self._projectPipelineDiedCb)
+            disconnect_all_by_func(project, self._projectChangedCb)
+            disconnect_all_by_func(project.pipeline, self._projectPipelineDiedCb)
             self._cleanBackup(project.uri)
             self.exitcode = project.release()
 
@@ -2031,32 +2031,31 @@ class ProjectSettingsDialog:
             os.path.join(get_ui_dir(), "projectsettings.ui"))
         self.builder.connect_signals(self)
 
-        getObj = self.builder.get_object
-        self.window = getObj("project-settings-dialog")
-        self.frame_rate_combo = getObj("frame_rate_combo")
-        self.channels_combo = getObj("channels_combo")
-        self.sample_rate_combo = getObj("sample_rate_combo")
-        self.year_spinbutton = getObj("year_spinbutton")
-        self.author_entry = getObj("author_entry")
-        self.width_spinbutton = getObj("width_spinbutton")
-        self.height_spinbutton = getObj("height_spinbutton")
-        self.audio_presets_combo = getObj("audio_presets_combo")
-        self.video_presets_combo = getObj("video_presets_combo")
-        self.constrain_sar_button = getObj("constrain_sar_button")
-        self.select_dar_radiobutton = getObj("select_dar_radiobutton")
-        self.year_spinbutton = getObj("year_spinbutton")
+        self.window = self.builder.get_object("project-settings-dialog")
+        self.frame_rate_combo = self.builder.get_object("frame_rate_combo")
+        self.channels_combo = self.builder.get_object("channels_combo")
+        self.sample_rate_combo = self.builder.get_object("sample_rate_combo")
+        self.year_spinbutton = self.builder.get_object("year_spinbutton")
+        self.author_entry = self.builder.get_object("author_entry")
+        self.width_spinbutton = self.builder.get_object("width_spinbutton")
+        self.height_spinbutton = self.builder.get_object("height_spinbutton")
+        self.audio_presets_combo = self.builder.get_object("audio_presets_combo")
+        self.video_presets_combo = self.builder.get_object("video_presets_combo")
+        self.constrain_sar_button = self.builder.get_object("constrain_sar_button")
+        self.select_dar_radiobutton = self.builder.get_object("select_dar_radiobutton")
+        self.year_spinbutton = self.builder.get_object("year_spinbutton")
 
-        self.video_preset_menubutton = getObj("video_preset_menubutton")
+        self.video_preset_menubutton = self.builder.get_object("video_preset_menubutton")
         self.video_presets.setupUi(self.video_presets_combo,
                                    self.video_preset_menubutton)
         self.video_presets.connect("preset-loaded", self.__videoPresetLoadedCb)
-        self.audio_preset_menubutton = getObj("audio_preset_menubutton")
+        self.audio_preset_menubutton = self.builder.get_object("audio_preset_menubutton")
         self.audio_presets.setupUi(self.audio_presets_combo,
                                    self.audio_preset_menubutton)
 
-        self.scaled_proxy_width_spin = getObj("scaled_proxy_width")
-        self.scaled_proxy_height_spin = getObj("scaled_proxy_height")
-        self.proxy_res_linked_check = getObj("proxy_res_linked")
+        self.scaled_proxy_width_spin = self.builder.get_object("scaled_proxy_width")
+        self.scaled_proxy_height_spin = self.builder.get_object("scaled_proxy_height")
+        self.proxy_res_linked_check = self.builder.get_object("proxy_res_linked")
 
     def _setupUiConstraints(self):
         """Creates the dynamic widgets and connects other widgets."""
@@ -2067,53 +2066,53 @@ class ProjectSettingsDialog:
         self.frame_rate_fraction_widget.show()
 
         # Populate comboboxes.
-        self.frame_rate_combo.set_model(frame_rates)
-        self.channels_combo.set_model(audio_channels)
-        self.sample_rate_combo.set_model(audio_rates)
+        self.frame_rate_combo.set_model(FRAME_RATES)
+        self.channels_combo.set_model(AUDIO_CHANNELS)
+        self.sample_rate_combo.set_model(AUDIO_RATES)
 
         # Behavior.
-        self.wg = RippleUpdateGroup()
-        self.wg.addVertex(self.frame_rate_combo,
-                          signal="changed",
-                          update_func=self._update_combo_func,
-                          update_func_args=(self.frame_rate_fraction_widget,))
-        self.wg.addVertex(self.frame_rate_fraction_widget,
-                          signal="value-changed",
-                          update_func=self._update_fraction_func,
-                          update_func_args=(self.frame_rate_combo,))
-        self.wg.addVertex(self.width_spinbutton, signal="value-changed")
-        self.wg.addVertex(self.height_spinbutton, signal="value-changed")
-        self.wg.addVertex(self.audio_preset_menubutton,
-                          update_func=self._update_preset_menu_button_func,
-                          update_func_args=(self.audio_presets,))
-        self.wg.addVertex(self.video_preset_menubutton,
-                          update_func=self._update_preset_menu_button_func,
-                          update_func_args=(self.video_presets,))
-        self.wg.addVertex(self.channels_combo, signal="changed")
-        self.wg.addVertex(self.sample_rate_combo, signal="changed")
-        self.wg.addVertex(self.scaled_proxy_width_spin, signal="value-changed")
-        self.wg.addVertex(self.scaled_proxy_height_spin, signal="value-changed")
+        self.widgets_group = RippleUpdateGroup()
+        self.widgets_group.addVertex(self.frame_rate_combo,
+                                     signal="changed",
+                                     update_func=self._update_combo_func,
+                                     update_func_args=(self.frame_rate_fraction_widget,))
+        self.widgets_group.addVertex(self.frame_rate_fraction_widget,
+                                     signal="value-changed",
+                                     update_func=self._update_fraction_func,
+                                     update_func_args=(self.frame_rate_combo,))
+        self.widgets_group.addVertex(self.width_spinbutton, signal="value-changed")
+        self.widgets_group.addVertex(self.height_spinbutton, signal="value-changed")
+        self.widgets_group.addVertex(self.audio_preset_menubutton,
+                                     update_func=self._update_preset_menu_button_func,
+                                     update_func_args=(self.audio_presets,))
+        self.widgets_group.addVertex(self.video_preset_menubutton,
+                                     update_func=self._update_preset_menu_button_func,
+                                     update_func_args=(self.video_presets,))
+        self.widgets_group.addVertex(self.channels_combo, signal="changed")
+        self.widgets_group.addVertex(self.sample_rate_combo, signal="changed")
+        self.widgets_group.addVertex(self.scaled_proxy_width_spin, signal="value-changed")
+        self.widgets_group.addVertex(self.scaled_proxy_height_spin, signal="value-changed")
 
         # Constrain width and height IFF the Constrain checkbox is checked.
         # Video
-        self.wg.addEdge(self.width_spinbutton, self.height_spinbutton,
-                        predicate=self.widthHeightLinked,
-                        edge_func=self.updateHeight)
-        self.wg.addEdge(self.height_spinbutton, self.width_spinbutton,
-                        predicate=self.widthHeightLinked,
-                        edge_func=self.updateWidth)
+        self.widgets_group.addEdge(self.width_spinbutton, self.height_spinbutton,
+                                   predicate=self.widthHeightLinked,
+                                   edge_func=self.updateHeight)
+        self.widgets_group.addEdge(self.height_spinbutton, self.width_spinbutton,
+                                   predicate=self.widthHeightLinked,
+                                   edge_func=self.updateWidth)
         # Proxy
-        self.wg.addEdge(self.scaled_proxy_width_spin,
-                        self.scaled_proxy_height_spin,
-                        predicate=self.proxy_res_linked,
-                        edge_func=self.update_scaled_proxy_height)
-        self.wg.addEdge(self.scaled_proxy_height_spin,
-                        self.scaled_proxy_width_spin,
-                        predicate=self.proxy_res_linked,
-                        edge_func=self.update_scaled_proxy_width)
+        self.widgets_group.addEdge(self.scaled_proxy_width_spin,
+                                   self.scaled_proxy_height_spin,
+                                   predicate=self.proxy_res_linked,
+                                   edge_func=self.update_scaled_proxy_height)
+        self.widgets_group.addEdge(self.scaled_proxy_height_spin,
+                                   self.scaled_proxy_width_spin,
+                                   predicate=self.proxy_res_linked,
+                                   edge_func=self.update_scaled_proxy_width)
 
         # Keep the framerate combo and fraction widgets in sync.
-        self.wg.addBiEdge(
+        self.widgets_group.addBiEdge(
             self.frame_rate_combo, self.frame_rate_fraction_widget)
 
         # Presets.
@@ -2132,13 +2131,13 @@ class ProjectSettingsDialog:
         self.bindCombo(
             self.audio_presets, "sample-rate", self.sample_rate_combo)
 
-        self.wg.addEdge(
+        self.widgets_group.addEdge(
             self.frame_rate_fraction_widget, self.video_preset_menubutton)
-        self.wg.addEdge(self.width_spinbutton, self.video_preset_menubutton)
-        self.wg.addEdge(self.height_spinbutton, self.video_preset_menubutton)
+        self.widgets_group.addEdge(self.width_spinbutton, self.video_preset_menubutton)
+        self.widgets_group.addEdge(self.height_spinbutton, self.video_preset_menubutton)
 
-        self.wg.addEdge(self.channels_combo, self.audio_preset_menubutton)
-        self.wg.addEdge(self.sample_rate_combo, self.audio_preset_menubutton)
+        self.widgets_group.addEdge(self.channels_combo, self.audio_preset_menubutton)
+        self.widgets_group.addEdge(self.sample_rate_combo, self.audio_preset_menubutton)
 
     def bindFractionWidget(self, mgr, name, widget):
         mgr.bindWidget(name, widget.setWidgetValue, widget.getWidgetValue)

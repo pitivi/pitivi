@@ -85,8 +85,8 @@ class TestProjectManager(common.TestCase):
         # failed
         name, args = self.signals[1]
         self.assertEqual("new-project-failed", name)
-        signalUri, unused_message = args
-        self.assertEqual(project_uri, signalUri, self.signals)
+        signal_uri, unused_message = args
+        self.assertEqual(project_uri, signal_uri, self.signals)
 
     def test_new_blank_project_signals(self):
         self.manager.new_blank_project()
@@ -104,12 +104,12 @@ class TestProjectManager(common.TestCase):
         self.setupApp(app=common.create_pitivi_mock())
         mainloop = common.create_main_loop()
 
-        def missingUriCb(self, project, error, clip_asset, result):
+        def missing_uri_cb(self, project, error, clip_asset, result):
             result[0] = True
             mainloop.quit()
 
         result = [False]
-        self.manager.connect("missing-uri", missingUriCb, result)
+        self.manager.connect("missing-uri", missing_uri_cb, result)
 
         with common.cloned_sample():
             asset_uri = common.get_sample_uri("missing.png")
@@ -142,12 +142,12 @@ class TestProjectManager(common.TestCase):
         self.assertFalse(self.signals)
 
     def testCloseRunningProjectRefuseFromSignal(self):
-        def closing(manager, project):
+        def closing_cb(manager, project):
             return False
 
         self.manager.current_project = mock.Mock()
         self.manager.current_project.uri = "file:///ciao"
-        self.manager.connect("closing-project", closing)
+        self.manager.connect("closing-project", closing_cb)
 
         self.assertFalse(self.manager.closeRunningProject())
         self.assertEqual(1, len(self.signals))
@@ -324,7 +324,7 @@ class TestProjectLoading(common.TestCase):
         """Loads a project with missing proxies."""
         uris = [common.get_sample_uri("1sec_simpsons_trailer.mp4")]
         proxy_uri = uris[0] + ".232417.proxy.mkv"
-        PROJECT_STR = r"""<ges version='0.3'>
+        xges = r"""<ges version='0.3'>
   <project properties='properties;' metadatas='metadatas, name=(string)&quot;New\ Project&quot;, author=(string)Unknown, render-scale=(double)100;'>
     <encoding-profiles>
     </encoding-profiles>
@@ -350,7 +350,7 @@ class TestProjectLoading(common.TestCase):
     </timeline>
 </project>
 </ges>""" % {"uri": uris[0], "proxy_uri": proxy_uri}
-        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
+        app = common.create_pitivi(proxying_strategy=ProxyingStrategy.ALL)
         app.recent_manager.remove_item = mock.Mock(return_value=True)
         proxy_manager = app.proxy_manager
         project_manager = app.project_manager
@@ -358,7 +358,7 @@ class TestProjectLoading(common.TestCase):
 
         mainloop = common.create_main_loop()
 
-        proj_uri = self.create_project_file_from_xges(PROJECT_STR)
+        proj_uri = self.create_project_file_from_xges(xges)
 
         def closing_project_cb(*args, **kwargs):
             # Do not ask whether to save project on closing.
@@ -447,7 +447,7 @@ class TestProjectLoading(common.TestCase):
 
     def test_loading_project_with_moved_asset(self):
         """Loads a project with moved asset."""
-        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.NOTHING)
+        app = common.create_pitivi(proxying_strategy=ProxyingStrategy.NOTHING)
 
         proj_uri = self.create_project_file_from_xges("""<ges version='0.3'>
             <project properties='properties;' metadatas='metadatas;'>
@@ -487,7 +487,7 @@ class TestProjectLoading(common.TestCase):
             if len(created_proxies) == 2:
                 mainloop.quit()
 
-        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.ALL)
+        app = common.create_pitivi(proxying_strategy=ProxyingStrategy.ALL)
         app.proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
         proj_uri = self.create_project_file_from_xges(r"""<ges version='0.3'>
@@ -639,8 +639,8 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(project.scaled_proxy_width, 123)
         self.assertEqual(project.scaled_proxy_height, 456)
 
-        with tempfile.NamedTemporaryFile() as f:
-            uri = Gst.filename_to_uri(f.name)
+        with tempfile.NamedTemporaryFile() as temp_file:
+            uri = Gst.filename_to_uri(temp_file.name)
             manager.saveProject(uri=uri, backup=False)
             app2 = common.create_pitivi_mock(default_scaled_proxy_width=12,
                                              default_scaled_proxy_height=45)
@@ -655,7 +655,7 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(project.scaled_proxy_width, 123)
         self.assertEqual(project.scaled_proxy_height, 456)
 
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile() as temp_file:
             manager.saveProject(uri=uri, backup=False)
             app2 = common.create_pitivi_mock(default_scaled_proxy_width=1,
                                              default_scaled_proxy_height=4)

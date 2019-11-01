@@ -146,10 +146,10 @@ class EffectsPropertiesManagerTest(common.TestCase):
 
         # Control the self.prop property on the timeline
         prop_keyframe_button.set_active(True)
-        self.assertEqual(track_element.ui_element._TimelineElement__controlledProperty, self.prop)
+        self.assertEqual(track_element.ui_element._TimelineElement__controlled_property, self.prop)
         # Revert to controlling the default property
         prop_keyframe_button.set_active(False)
-        self.assertNotEqual(track_element.ui_element._TimelineElement__controlledProperty, self.prop)
+        self.assertNotEqual(track_element.ui_element._TimelineElement__controlled_property, self.prop)
 
     def test_prop_reset(self):
         """Checks the reset button resets the property."""
