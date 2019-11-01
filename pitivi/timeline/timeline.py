@@ -1074,11 +1074,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def moveLayer(self, ges_layer, index):
         self.debug("Moving layer %s to %s", ges_layer.props.priority, index)
         ges_layers = self.ges_timeline.get_layers()
-        ges_layer = ges_layers.pop(ges_layer.props.priority)
+        ges_layers.pop(ges_layer)
         ges_layers.insert(index, ges_layer)
-        for i, ges_layer in enumerate(ges_layers):
-            if ges_layer.props.priority != i:
-                ges_layer.props.priority = i
+        for i, ges_layer2 in enumerate(ges_layers):
+            if ges_layer2.props.priority != i:
+                ges_layer2.props.priority = i
 
     def _add_layer(self, ges_layer):
         """Adds widgets for controlling and showing the specified layer."""
