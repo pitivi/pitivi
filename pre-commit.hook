@@ -15,7 +15,6 @@ PYLINT_IGNORED_FILES="
 bin/pitivi.in
 pitivi/autoaligner.py
 pitivi/medialibrary.py
-pitivi/timeline/timeline.py
 pitivi/utils/extract.py
 pitivi/utils/loggable.py
 tests/test_project.py
