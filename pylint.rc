@@ -41,6 +41,7 @@ disable=arguments-differ, # Pylint fails at this with the Gtk do_* methods, so n
         no-else-return, # Looks better in some cases.
         no-member,
         no-self-use, # We love self.
+        possibly-unused-variable,
         similarities, # It's expensive and not very useful.
         too-few-public-methods,
         too-many-ancestors,
