@@ -331,10 +331,7 @@ class ProjectManager(GObject.Object, Loggable):
 
         response = dialog.run()
         dialog.destroy()
-        if response == Gtk.ResponseType.YES:
-            return True
-        else:
-            return False
+        return response == Gtk.ResponseType.YES
 
     def saveProject(self, uri=None, formatter_type=None, backup=False):
         """Saves the current project.
