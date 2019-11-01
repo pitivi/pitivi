@@ -94,9 +94,9 @@ class BaseTestMediaLibrary(common.TestCase):
 
     def check_import(self, samples, proxying_strategy=ProxyingStrategy.ALL,
                      check_no_transcoding=False):
-        self._customSetUp(proxyingStrategy=proxying_strategy,
-                          numTranscodingJobs=4,
-                          lastClipView=medialibrary.SHOW_TREEVIEW)
+        self._customSetUp(proxying_strategy=proxying_strategy,
+                          num_transcoding_jobs=4,
+                          last_clip_view=medialibrary.SHOW_TREEVIEW)
         self.check_no_transcoding = check_no_transcoding
 
         self.medialibrary._progressbar.connect(

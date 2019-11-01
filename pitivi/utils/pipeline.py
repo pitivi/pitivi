@@ -27,7 +27,7 @@ from gi.repository import GLib
 from gi.repository import GObject
 from gi.repository import Gst
 
-from pitivi.check import videosink_factory
+from pitivi.check import VIDEOSINK_FACTORY
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import format_ns
 
@@ -89,8 +89,8 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
         self._listening = False  # for the position handler
-        self._listeningInterval = DEFAULT_POSITION_LISTENNING_INTERVAL
-        self._listeningSigId = 0
+        self._listening_interval = DEFAULT_POSITION_LISTENNING_INTERVAL
+        self._listening_sig_id = 0
         self._duration = Gst.CLOCK_TIME_NONE
         # The last known position.
         self._last_position = 0 * Gst.SECOND
@@ -108,7 +108,7 @@ class SimplePipeline(GObject.Object, Loggable):
             (Gst.Element, Gtk.Widget): An element of type Gst.ElementFlags.SINK
             and a widget connected to it.
         """
-        factory_name = videosink_factory.get_name()
+        factory_name = VIDEOSINK_FACTORY.get_name()
         sink = Gst.ElementFactory.make(factory_name, None)
         widget = sink.props.widget
 
@@ -116,7 +116,7 @@ class SimplePipeline(GObject.Object, Loggable):
             self.info("Using gtksink")
             video_sink = sink
         else:
-            self.info("Using glsinkbin around %s", videosink_factory.get_name())
+            self.info("Using glsinkbin around %s", VIDEOSINK_FACTORY.get_name())
             video_sink = Gst.ElementFactory.make("glsinkbin", None)
             video_sink.props.sink = sink
 
@@ -266,7 +266,7 @@ class SimplePipeline(GObject.Object, Loggable):
         if self._listening:
             return True
         self._listening = True
-        self._listeningInterval = interval
+        self._listening_interval = interval
         # if we're in playing, switch it on
         self._listenToPosition(self.getState() == Gst.State.PLAYING)
         return True
@@ -292,13 +292,13 @@ class SimplePipeline(GObject.Object, Loggable):
         # stupid and dumm method, not many checks done
         # i.e. it does NOT check for current state
         if listen:
-            if self._listening and self._listeningSigId == 0:
-                self._listeningSigId = GLib.timeout_add(
-                    self._listeningInterval,
+            if self._listening and self._listening_sig_id == 0:
+                self._listening_sig_id = GLib.timeout_add(
+                    self._listening_interval,
                     self._positionListenerCb)
-        elif self._listeningSigId != 0:
-            GLib.source_remove(self._listeningSigId)
-            self._listeningSigId = 0
+        elif self._listening_sig_id != 0:
+            GLib.source_remove(self._listening_sig_id)
+            self._listening_sig_id = 0
 
     def _async_done_not_received_cb(self):
         self.error("we didn't get async done, this is a bug")

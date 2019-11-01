@@ -22,7 +22,7 @@ import cairo
 import numpy
 
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
 from pitivi.viewer.overlay import Overlay
 
@@ -450,7 +450,7 @@ class MoveScaleOverlay(Overlay):
         return size[0] / size[1]
 
     def on_button_press(self):
-        disconnectAllByFunc(self._source, self.__source_property_changed_cb)
+        disconnect_all_by_func(self._source, self.__source_property_changed_cb)
         self.click_source_position = self.__get_source_position()
         self.__clicked_handle = None
 

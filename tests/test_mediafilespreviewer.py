@@ -33,7 +33,7 @@ class PreviewWidgetTest(common.TestCase):
 
     def test_select_missing_asset(self):
         """Exercise the MissingAssetDialog when loading a project."""
-        app = common.create_pitivi(proxyingStrategy=ProxyingStrategy.NOTHING,
+        app = common.create_pitivi(proxying_strategy=ProxyingStrategy.NOTHING,
                                    FCpreviewWidth=640,
                                    FCpreviewHeight=480)
 
@@ -82,7 +82,7 @@ class PreviewWidgetTest(common.TestCase):
             try:
                 # Our mainloop timeout mechanism cannot be used,
                 # because the mainloop gets blocked.
-                with common.checked_operation_duration(seconds=2):
+                with common.CheckedOperationDuration(seconds=2):
                     project_manager.load_project(proj_uri)
                     mainloop.run()
                 self.assertEqual(preview_loaded_for_uri, asset_uri)

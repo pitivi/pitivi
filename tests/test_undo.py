@@ -91,12 +91,12 @@ class TestUndoableActionLog(common.TestCase):
 
     def _undoActionLogSignalCb(self, log, *args):
         args = list(args)
-        signalName = args.pop(-1)
-        self.signals.append((signalName, args))
+        signal_name = args.pop(-1)
+        self.signals.append((signal_name, args))
 
     def _connectToUndoableActionLog(self, log):
-        for signalName in ("begin", "push", "rollback", "commit", "move"):
-            log.connect(signalName, self._undoActionLogSignalCb, signalName)
+        for signal_name in ("begin", "push", "rollback", "commit", "move"):
+            log.connect(signal_name, self._undoActionLogSignalCb, signal_name)
 
     def _disconnectFromUndoableActionLog(self, log):
         self.log.disconnect_by_func(self._undoActionLogSignalCb)
@@ -280,16 +280,16 @@ class TestUndoableActionLog(common.TestCase):
         action1.expand.return_value = False
         self.log.push(action1)
         self.assertEqual(len(self.signals), 2)
-        name, (stack, signalAction) = self.signals[1]
+        name, (stack, signal_action) = self.signals[1]
         self.assertEqual(name, "push")
-        self.assertTrue(action1 is signalAction)
+        self.assertTrue(action1 is signal_action)
 
         action2 = mock.Mock(spec=UndoableAction)
         self.log.push(action2)
         self.assertEqual(len(self.signals), 3)
-        name, (stack, signalAction) = self.signals[2]
+        name, (stack, signal_action) = self.signals[2]
         self.assertEqual(name, "push")
-        self.assertTrue(action2 is signalAction)
+        self.assertTrue(action2 is signal_action)
 
         # commit
         self.assertEqual(len(self.log.undo_stacks), 0)

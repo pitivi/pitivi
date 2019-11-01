@@ -222,7 +222,7 @@ class TerminalController:
             return getattr(self, s[2:-1])
 
 
-def getLevelName(level):
+def get_level_name(level):
     """Returns the name of the specified log level.
 
     Args:
@@ -233,10 +233,10 @@ def getLevelName(level):
     """
     assert isinstance(level, int) and level > 0 and level < 7, \
         TypeError("Bad debug level")
-    return getLevelNames()[level - 1]
+    return get_level_names()[level - 1]
 
 
-def getLevelNames():
+def get_level_names():
     """Returns a list with the level names.
 
     Returns:
@@ -245,27 +245,27 @@ def getLevelNames():
     return _LEVEL_NAMES
 
 
-def getLevelInt(levelName):
+def get_level_int(level_name):
     """Returns the integer value of the levelName.
 
     Args:
-        levelName (str): The string value of the level name.
+        level_name (str): The string value of the level name.
 
     Returns:
         int: The value of the level name we are interested in.
     """
-    assert isinstance(levelName, str) and levelName in getLevelNames(), \
+    assert isinstance(level_name, str) and level_name in get_level_names(), \
         "Bad debug level name"
-    return getLevelNames().index(levelName) + 1
+    return get_level_names().index(level_name) + 1
 
 
-def getFormattedLevelName(level):
+def get_formatted_level_name(level):
     assert isinstance(level, int) and level > 0 and level < len(_LEVEL_NAMES) + 1, \
         TypeError("Bad debug level")
     return _FORMATTED_LEVELS[level - 1]
 
 
-def registerCategory(category):
+def register_category(category):
     """Registers the specified category in the debug system.
 
     A level will be assigned to it based on previous calls to setDebug.
@@ -301,7 +301,7 @@ def registerCategory(category):
     _categories[category] = level
 
 
-def getCategoryLevel(category):
+def get_category_level(category):
     """Gets the debug level at which the specified category is being logged.
 
     Registers the category and thus assigns a log level if it wasn't registered
@@ -312,11 +312,11 @@ def getCategoryLevel(category):
     """
     global _categories
     if category not in _categories:
-        registerCategory(category)
+        register_category(category)
     return _categories[category]
 
 
-def setLogSettings(state):
+def set_log_settings(state):
     """Updates the current log settings.
 
     This can restore an old saved log settings object returned by
@@ -335,10 +335,10 @@ def setLogSettings(state):
      _log_handlers_limited) = state
 
     for category in _categories:
-        registerCategory(category)
+        register_category(category)
 
 
-def getLogSettings():
+def get_log_settings():
     """Fetches the current log settings.
 
     The returned object can be sent to setLogSettings to restore the
@@ -353,16 +353,16 @@ def getLogSettings():
             _log_handlers_limited)
 
 
-def _canShortcutLogging(category, level):
+def _can_shortcut_logging(category, level):
     if _log_handlers:
         # we have some loggers operating without filters, have to do
         # everything
         return False
     else:
-        return level > getCategoryLevel(category)
+        return level > get_category_level(category)
 
 
-def scrubFilename(filename):
+def scrub_filename(filename):
     """Scrubs the filename to a relative path."""
     global _PACKAGE_SCRUB_LIST
     for package in _PACKAGE_SCRUB_LIST:
@@ -373,7 +373,7 @@ def scrubFilename(filename):
     return filename
 
 
-def getFileLine(where=-1):
+def get_file_line(where=-1):
     """Returns the filename and line number for the specified location.
 
     Args:
@@ -398,25 +398,25 @@ def getFileLine(where=-1):
         lineno = co.co_firstlineno
         name = co.co_name
     else:
-        stackFrame = sys._getframe()  # pylint: disable=protected-access
-        while stackFrame:
-            co = stackFrame.f_code
+        stack_frame = sys._getframe()  # pylint: disable=protected-access
+        while stack_frame:
+            co = stack_frame.f_code
             if not co.co_filename.endswith('loggable.py'):
-                co = stackFrame.f_code
-                lineno = stackFrame.f_lineno
+                co = stack_frame.f_code
+                lineno = stack_frame.f_lineno
                 name = co.co_name
                 break
-            stackFrame = stackFrame.f_back
+            stack_frame = stack_frame.f_back
 
     if not co:
         return "<unknown file>", 0, None
 
-    return scrubFilename(co.co_filename), lineno, name
+    return scrub_filename(co.co_filename), lineno, name
 
 
-def ellipsize(o):
+def ellipsize(obj):
     """Ellipsizes the representation of the given object."""
-    r = repr(o)
+    r = repr(obj)
     if len(r) < 800:
         return r
 
@@ -424,27 +424,27 @@ def ellipsize(o):
     return r
 
 
-def getFormatArgs(startFormat, startArgs, endFormat, endArgs, args, kwargs):
+def get_format_args(start_format, start_args, end_format, end_args, args, kwargs):
     """Creates a format and args to use for logging.
 
     This avoids needlessly interpolating variables.
     """
-    debugArgs = startArgs[:]
+    debug_args = start_args[:]
     for a in args:
-        debugArgs.append(ellipsize(a))
+        debug_args.append(ellipsize(a))
 
     for items in list(kwargs.items()):
-        debugArgs.extend(items)
-    debugArgs.extend(endArgs)
-    fmt = startFormat \
-        + ', '.join(('%s', ) * len(args)) \
-        + (kwargs and ', ' or '') \
-        + ', '.join(('%s=%r', ) * len(kwargs)) \
-        + endFormat
-    return fmt, debugArgs
+        debug_args.extend(items)
+    debug_args.extend(end_args)
+    fmt = start_format \
+          + ', '.join(('%s', ) * len(args)) \
+          + (kwargs and ', ' or '') \
+          + ', '.join(('%s=%r', ) * len(kwargs)) \
+          + end_format
+    return fmt, debug_args
 
 
-def doLog(level, obj, category, message, args, where=-1, filePath=None, line=None):
+def do_log(level, obj, category, message, args, where=-1, file_path=None, line=None):
     """Logs something.
 
     Args:
@@ -456,7 +456,7 @@ def doLog(level, obj, category, message, args, where=-1, filePath=None, line=Non
         where (int or function): What to log file and line number for;
             -1 for one frame above log.py; -2 and down for higher up;
             a function for a (future) code object.
-        filePath (Optional[str]): The file to show the message as coming from,
+        file_path (Optional[str]): The file to show the message as coming from,
             if caller knows best.
         line (Optional[int]): The line to show the message as coming from,
             if caller knows best.
@@ -473,68 +473,68 @@ def doLog(level, obj, category, message, args, where=-1, filePath=None, line=Non
         message = message % args
     funcname = None
 
-    if level > getCategoryLevel(category):
+    if level > get_category_level(category):
         handlers = _log_handlers
     else:
         handlers = _log_handlers + _log_handlers_limited
 
     if handlers:
-        if filePath is None and line is None:
-            (filePath, line, funcname) = getFileLine(where=where)
-        ret['filePath'] = filePath
+        if file_path is None and line is None:
+            (file_path, line, funcname) = get_file_line(where=where)
+        ret['filePath'] = file_path
         ret['line'] = line
         if funcname:
             message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
         for handler in handlers:
             try:
-                handler(level, obj, category, filePath, line, message)
+                handler(level, obj, category, file_path, line, message)
             except TypeError as e:
                 raise SystemError("handler %r raised a TypeError: %s" % (
-                    handler, getExceptionMessage(e)))
+                    handler, get_exception_message(e)))
 
     return ret
 
 
-def errorObject(obj, cat, fmt, *args):
+def error_object(obj, cat, fmt, *args):
     """Logs a fatal error message in the specified category.
 
     This will also raise a `SystemExit`.
     """
-    doLog(ERROR, obj, cat, fmt, args)
+    do_log(ERROR, obj, cat, fmt, args)
 
 
-def warningObject(obj, cat, fmt, *args):
+def warning_object(obj, cat, fmt, *args):
     """Logs a warning message in the specified category.
 
     This is used for non-fatal problems.
     """
-    doLog(WARN, obj, cat, fmt, args)
+    do_log(WARN, obj, cat, fmt, args)
 
 
-def fixmeObject(obj, cat, fmt, *args):
+def fixme_object(obj, cat, fmt, *args):
     """Logs a fixme message in the specified category.
 
     This is used for not implemented codepaths or known issues in the code.
     """
-    doLog(FIXME, obj, cat, fmt, args)
+    do_log(FIXME, obj, cat, fmt, args)
 
 
-def infoObject(obj, cat, fmt, *args):
+def info_object(obj, cat, fmt, *args):
     """Logs an informational message in the specified category."""
-    doLog(INFO, obj, cat, fmt, args)
+    do_log(INFO, obj, cat, fmt, args)
 
 
-def debugObject(obj, cat, fmt, *args):
+def debug_object(obj, cat, fmt, *args):
     """Logs a debug message in the specified category."""
-    doLog(DEBUG, obj, cat, fmt, args)
+    do_log(DEBUG, obj, cat, fmt, args)
 
 
-def logObject(obj, cat, fmt, *args):
+def log_object(obj, cat, fmt, *args):
     """Logs a log message.
 
     Used for debugging recurring events.
     """
-    doLog(LOG, obj, cat, fmt, args)
+    do_log(LOG, obj, cat, fmt, args)
 
 
 def safeprintf(file, fmt, *args):
@@ -553,10 +553,10 @@ def safeprintf(file, fmt, *args):
         # otherwise ignore it, there's nothing you can do
 
 
-def printHandler(level, obj, category, file, line, message):
+def print_handler(level, obj, category, file, line, message):
     """Writes to stderr.
 
-    The output will be different depending the value of "_enableCrackOutput";
+    The output will be different depending the value of "_enable_crack_output";
     in Pitivi's case, that is True when the GST_DEBUG env var is defined.
 
     Args:
@@ -575,9 +575,9 @@ def printHandler(level, obj, category, file, line, message):
 
     # If GST_DEBUG is not set, we can assume only PITIVI_DEBUG is set, so don't
     # show a bazillion of debug details that are not relevant to Pitivi.
-    if not _enableCrackOutput:
+    if not _enable_crack_output:
         safeprintf(_outfile, '%s %-8s %-17s %-2s %s %s\n',
-                   getFormattedLevelName(level), time.strftime("%H:%M:%S"),
+                   get_formatted_level_name(level), time.strftime("%H:%M:%S"),
                    category, obj, message, where)
     else:
         o = ""
@@ -587,36 +587,36 @@ def printHandler(level, obj, category, file, line, message):
         # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
         safeprintf(
             _outfile, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
-            getFormattedLevelName(level), os.getpid(),
+            get_formatted_level_name(level), os.getpid(),
             threading.current_thread().ident,
             o[:32], category, time.strftime("%b %d %H:%M:%S"), "",
             message, where)
     _outfile.flush()
 
 
-def logLevelName(level):
+def log_level_name(level):
     fmt = '%-5s'
     return fmt % (_LEVEL_NAMES[level - 1], )
 
 
-def _preformatLevels(enableColorOutput):
+def _preformat_levels(enable_color_output):
     terminal_controller = TerminalController()
     for level in ERROR, WARN, FIXME, INFO, DEBUG, LOG:
-        if enableColorOutput:
+        if enable_color_output:
             if isinstance(terminal_controller.BOLD, bytes):
                 formatter = ''.join(
                     (terminal_controller.BOLD.decode(),
                      getattr(terminal_controller, COLORS[level]).decode(),
-                     logLevelName(level),
+                     log_level_name(level),
                      terminal_controller.NORMAL.decode()))
             else:
                 formatter = ''.join(
                     (terminal_controller.BOLD,
                      getattr(terminal_controller, COLORS[level]),
-                     logLevelName(level),
+                     log_level_name(level),
                      terminal_controller.NORMAL))
         else:
-            formatter = logLevelName(level)
+            formatter = log_level_name(level)
         _FORMATTED_LEVELS.append(formatter)
 
 # "public" useful API
@@ -624,47 +624,47 @@ def _preformatLevels(enableColorOutput):
 # setup functions
 
 
-def init(envVarName, enableColorOutput=True, enableCrackOutput=True):
+def init(env_var_name, enable_color_output=True, enable_crack_output=True):
     """Initializes the logging system.
 
     Needs to be called before using the log methods.
 
     Args:
-        envVarName (str): The name of the environment variable with additional
+        env_var_name (str): The name of the environment variable with additional
             settings.
-        enableColorOutput (Optional[bool]): Whether to colorize the output.
-        enableCrackOutput (Optional[bool]): Whether to print detailed info.
+        enable_color_output (Optional[bool]): Whether to colorize the output.
+        enable_crack_output (Optional[bool]): Whether to print detailed info.
     """
     global _initialized
     global _outfile
-    global _enableCrackOutput
-    _enableCrackOutput = enableCrackOutput
+    global _enable_crack_output
+    _enable_crack_output = enable_crack_output
 
     if _initialized:
         return
 
     global _ENV_VAR_NAME
-    _ENV_VAR_NAME = envVarName
+    _ENV_VAR_NAME = env_var_name
 
-    _preformatLevels(enableColorOutput)
+    _preformat_levels(enable_color_output)
 
-    if envVarName in os.environ:
+    if env_var_name in os.environ:
         # install a log handler that uses the value of the environment var
-        setDebug(os.environ[envVarName])
-    filenameEnvVarName = envVarName + "_FILE"
+        set_debug(os.environ[env_var_name])
+    filename_env_var_name = env_var_name + "_FILE"
 
-    if filenameEnvVarName in os.environ:
+    if filename_env_var_name in os.environ:
         # install a log handler that uses the value of the environment var
-        _outfile = open(os.environ[filenameEnvVarName], "w+")
+        _outfile = open(os.environ[filename_env_var_name], "w+")
     else:
         _outfile = sys.stderr
 
-    addLimitedLogHandler(printHandler)
+    add_limited_log_handler(print_handler)
 
     _initialized = True
 
 
-def setDebug(string):
+def set_debug(string):
     """Sets the DEBUG string.
 
     This controls the log output.
@@ -678,16 +678,16 @@ def setDebug(string):
 
     # reparse all already registered category levels
     for category in _categories:
-        registerCategory(category)
+        register_category(category)
 
 
-def getDebug():
+def get_debug():
     """Returns the currently active DEBUG string."""
     global _DEBUG
     return _DEBUG
 
 
-def setPackageScrubList(*packages):
+def set_package_scrub_list(*packages):
     """Sets the package names to scrub from filenames.
 
     Filenames from these paths in log messages will be scrubbed to their
@@ -709,7 +709,7 @@ def reset():
     _initialized = False
 
 
-def addLogHandler(func):
+def add_log_handler(func):
     """Adds a custom log handler.
 
     The log handler receives all the log messages.
@@ -731,7 +731,7 @@ def addLogHandler(func):
         _log_handlers.append(func)
 
 
-def addLimitedLogHandler(func):
+def add_limited_log_handler(func):
     """Adds a custom limited log handler.
 
     The log handler receives only the messages passing the filter.
@@ -753,7 +753,7 @@ def addLimitedLogHandler(func):
         _log_handlers_limited.append(func)
 
 
-def removeLogHandler(func):
+def remove_log_handler(func):
     """Removes a registered log handler.
 
     Raises:
@@ -762,7 +762,7 @@ def removeLogHandler(func):
     _log_handlers.remove(func)
 
 
-def removeLimitedLogHandler(func):
+def remove_limited_log_handler(func):
     """Removes a registered limited log handler.
 
     Raises:
@@ -774,32 +774,32 @@ def removeLimitedLogHandler(func):
 
 
 def error(cat, fmt, *args):
-    errorObject(None, cat, fmt, *args)
+    error_object(None, cat, fmt, *args)
 
 
 def warning(cat, fmt, *args):
-    warningObject(None, cat, fmt, *args)
+    warning_object(None, cat, fmt, *args)
 
 
 def fixme(cat, fmt, *args):
-    fixmeObject(None, cat, fmt, *args)
+    fixme_object(None, cat, fmt, *args)
 
 
 def info(cat, fmt, *args):
-    infoObject(None, cat, fmt, *args)
+    info_object(None, cat, fmt, *args)
 
 
 def debug(cat, fmt, *args):
-    debugObject(None, cat, fmt, *args)
+    debug_object(None, cat, fmt, *args)
 
 
 def log(cat, fmt, *args):
-    logObject(None, cat, fmt, *args)
+    log_object(None, cat, fmt, *args)
 
 # public utility functions
 
 
-def getExceptionMessage(exception, frame=-1, filename=None):
+def get_exception_message(exception, frame=-1, filename=None):
     """Returns a short message based on an exception.
 
     Useful for debugging.
@@ -810,7 +810,7 @@ def getExceptionMessage(exception, frame=-1, filename=None):
         stack = [f for f in stack if f[0].find(filename) > -1]
     # import code; code.interact(local=locals())
     (filename, line, func, text) = stack[frame]
-    filename = scrubFilename(filename)
+    filename = scrub_filename(filename)
     exc = exception.__class__.__name__
     msg = ""
     # a shortcut to extract a useful message out of most exceptions
@@ -821,8 +821,9 @@ def getExceptionMessage(exception, frame=-1, filename=None):
         % locals()
 
 
-def reopenOutputFiles():
-    """Reopens the stdout and stderr output files, as set by `outputToFiles`."""
+def reopen_output_files():
+    """Reopens the stdout and stderr output files set by `output_to_files`."""
+    global _stdout, _stderr
     if not _stdout and not _stderr:
         debug('log', 'told to reopen log files, but log files not set')
         return
@@ -844,10 +845,10 @@ def reopenOutputFiles():
         debug('log', 'opened log %r', _stderr)
 
 
-def outputToFiles(stdout=None, stderr=None):
+def output_to_files(stdout=None, stderr=None):
     """Redirects stdout and stderr to the specified files.
 
-    Records the file names so that a future call to reopenOutputFiles()
+    Records the file names so that a future call to reopen_output_files()
     can open the same files. Installs a SIGHUP handler that will reopen
     the output files.
 
@@ -857,11 +858,11 @@ def outputToFiles(stdout=None, stderr=None):
     """
     global _stdout, _stderr, _old_hup_handler
     _stdout, _stderr = stdout, stderr
-    reopenOutputFiles()
+    reopen_output_files()
 
     def sighup(signum, frame):
         info('log', "Received SIGHUP, reopening logs")
-        reopenOutputFiles()
+        reopen_output_files()
         if _old_hup_handler:
             info('log', "Calling old SIGHUP handler")
             _old_hup_handler(signum, frame)
@@ -885,7 +886,7 @@ class BaseLoggable:
     to most: log, debug, info, warning, error.
 
     Attributes:
-        logCategory (str): The category under which the messages will be filed.
+        log_category (str): The category under which the messages will be filed.
             Can be used to set a display filter.
     """
 
@@ -894,60 +895,60 @@ class BaseLoggable:
 
         By default this will also raise an exception.
         """
-        if _canShortcutLogging(self.logCategory, ERROR):
+        if _can_shortcut_logging(self.log_category, ERROR):
             return
-        errorObject(self.logObjectName(),
-                    self.logCategory, *self.logFunction(*args))
+        error_object(self.logObjectName(),
+                     self.log_category, *self.logFunction(*args))
 
     def warning(self, *args):
         """Logs a warning.
 
         Used for non-fatal problems.
         """
-        if _canShortcutLogging(self.logCategory, WARN):
+        if _can_shortcut_logging(self.log_category, WARN):
             return
-        warningObject(
-            self.logObjectName(), self.logCategory, *self.logFunction(*args))
+        warning_object(
+            self.logObjectName(), self.log_category, *self.logFunction(*args))
 
     def fixme(self, *args):
         """Logs a fixme.
 
         Used for FIXMEs.
         """
-        if _canShortcutLogging(self.logCategory, FIXME):
+        if _can_shortcut_logging(self.log_category, FIXME):
             return
-        fixmeObject(self.logObjectName(),
-                    self.logCategory, *self.logFunction(*args))
+        fixme_object(self.logObjectName(),
+                     self.log_category, *self.logFunction(*args))
 
     def info(self, *args):
         """Logs an informational message.
 
         Used for normal operation.
         """
-        if _canShortcutLogging(self.logCategory, INFO):
+        if _can_shortcut_logging(self.log_category, INFO):
             return
-        infoObject(self.logObjectName(),
-                   self.logCategory, *self.logFunction(*args))
+        info_object(self.logObjectName(),
+                    self.log_category, *self.logFunction(*args))
 
     def debug(self, *args):
         """Logs a debug message.
 
         Used for debugging.
         """
-        if _canShortcutLogging(self.logCategory, DEBUG):
+        if _can_shortcut_logging(self.log_category, DEBUG):
             return
-        debugObject(self.logObjectName(),
-                    self.logCategory, *self.logFunction(*args))
+        debug_object(self.logObjectName(),
+                     self.log_category, *self.logFunction(*args))
 
     def log(self, *args):
         """Logs a log message.
 
         Used for debugging recurring events.
         """
-        if _canShortcutLogging(self.logCategory, LOG):
+        if _can_shortcut_logging(self.log_category, LOG):
             return
-        logObject(self.logObjectName(),
-                  self.logCategory, *self.logFunction(*args))
+        log_object(self.logObjectName(),
+                   self.log_category, *self.logFunction(*args))
 
     def doLog(self, level, where, fmt, *args, **kwargs):
         """Logs a message at the specified level.
@@ -966,11 +967,11 @@ class BaseLoggable:
             dict: The calculated variables, to be reused in a
                  call to doLog that should show the same location.
         """
-        if _canShortcutLogging(self.logCategory, level):
+        if _can_shortcut_logging(self.log_category, level):
             return {}
         args = self.logFunction(*args)
-        return doLog(level, self.logObjectName(), self.logCategory,
-                     fmt, args, where=where, **kwargs)
+        return do_log(level, self.logObjectName(), self.log_category,
+                      fmt, args, where=where, **kwargs)
 
     def logFunction(self, *args):
         """Processes the arguments applied to the message template.
@@ -988,16 +989,16 @@ class BaseLoggable:
         return None
 
     def handleException(self, exc):
-        self.warning(getExceptionMessage(exc))
+        self.warning(get_exception_message(exc))
 
 
 class Loggable(BaseLoggable):
 
-    def __init__(self, logCategory=None):
-        if logCategory:
-            self.logCategory = logCategory
-        elif not hasattr(self, 'logCategory'):
-            self.logCategory = self.__class__.__name__.lower()
+    def __init__(self, log_category=None):
+        if log_category:
+            self.log_category = log_category
+        elif not hasattr(self, 'log_category'):
+            self.log_category = self.__class__.__name__.lower()
 
     def logObjectName(self):
         res = BaseLoggable.logObjectName(self)
@@ -1006,7 +1007,7 @@ class Loggable(BaseLoggable):
         return res
 
     def error(self, fmt, *args):
-        if _canShortcutLogging(self.logCategory, ERROR):
+        if _can_shortcut_logging(self.log_category, ERROR):
             return
-        doLog(ERROR, self.logObjectName(), self.logCategory,
-              fmt, self.logFunction(*args), where=-2)
+        do_log(ERROR, self.logObjectName(), self.log_category,
+               fmt, self.logFunction(*args), where=-2)

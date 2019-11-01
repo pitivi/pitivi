@@ -26,7 +26,7 @@ from gi.repository import Gtk
 
 from pitivi.configure import get_pixmap_dir
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import PADDING
 from pitivi.utils.ui import SPACING
@@ -182,7 +182,7 @@ class TransitionsListWidget(Gtk.Box, Loggable):
         self.invert_checkbox.disconnect_by_func(self._invertCheckboxCb)
         self.border_mode_normal.disconnect_by_func(self._borderTypeChangedCb)
         self.border_mode_loop.disconnect_by_func(self._borderTypeChangedCb)
-        disconnectAllByFunc(self.element, self.__updated_cb)
+        disconnect_all_by_func(self.element, self.__updated_cb)
 
 # UI callbacks
 

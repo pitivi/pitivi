@@ -24,7 +24,7 @@ __version__ = "$Rev: 7162 $"
 
 
 class LogTester(log.Loggable):
-    logCategory = 'testlog'
+    log_category = 'testlog'
 
 
 class LogFunctionTester(log.Loggable):
@@ -64,15 +64,15 @@ class TestLog(TestWithHandler):
     # just test for parsing semi- or non-valid FLU_DEBUG variables
 
     def testSetDebug(self):
-        log.setDebug(":5")
-        log.setDebug("*")
-        log.setDebug("5")
+        log.set_debug(":5")
+        log.set_debug("*")
+        log.set_debug("5")
 
     # test for adding a log handler
 
     def testLimitInvisible(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLimitedLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_limited_log_handler(self.handler)
 
         # log 2 we shouldn't get
         self.tester.log("not visible")
@@ -86,8 +86,8 @@ class TestLog(TestWithHandler):
         self.assertFalse(self.message)
 
     def testLimitedVisible(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLimitedLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_limited_log_handler(self.handler)
 
         # log 3 we should get
         self.tester.info("visible")
@@ -101,8 +101,8 @@ class TestLog(TestWithHandler):
         self.assertEqual(self.message, 'also visible')
 
     def testFormatStrings(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLimitedLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_limited_log_handler(self.handler)
 
         self.tester.info("%d %s", 42, 'the answer')
         self.assertEqual(self.category, 'testlog')
@@ -110,8 +110,8 @@ class TestLog(TestWithHandler):
         self.assertEqual(self.message, '42 the answer')
 
     def testLimitedError(self):
-        log.setDebug("testlog:%d" % log.ERROR)
-        log.addLimitedLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.ERROR)
+        log.add_limited_log_handler(self.handler)
 
         self.tester.error("error")
         self.assertEqual(self.category, 'testlog')
@@ -119,11 +119,11 @@ class TestLog(TestWithHandler):
         self.assertEqual(self.message, 'error')
 
     def testLogHandlerLimitedLevels(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLimitedLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_limited_log_handler(self.handler)
 
         # now try debug and log again too
-        log.setDebug("testlog:%d" % log.LOG)
+        log.set_debug("testlog:%d" % log.LOG)
 
         self.tester.debug("debug")
         self.assertEqual(self.category, 'testlog')
@@ -138,8 +138,8 @@ class TestLog(TestWithHandler):
     # test that we get all log messages
 
     def testLogHandler(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_log_handler(self.handler)
 
         self.tester.log("visible")
         self.assertEqual(self.message, 'visible')
@@ -157,14 +157,14 @@ class TestOwnLogHandler(TestWithHandler):
     # test if our own log handler correctly mangles the message
 
     def testOwnLogHandlerLimited(self):
-        log.setDebug("testlog:%d" % log.INFO)
-        log.addLogHandler(self.handler)
+        log.set_debug("testlog:%d" % log.INFO)
+        log.add_log_handler(self.handler)
 
         self.tester.log("visible")
         self.assertEqual(self.message, 'override visible')
 
     def testLogHandlerAssertion(self):
-        self.assertRaises(TypeError, log.addLimitedLogHandler, None)
+        self.assertRaises(TypeError, log.add_limited_log_handler, None)
 
 
 class TestGetExceptionMessage(unittest.TestCase):
@@ -193,7 +193,7 @@ class TestGetExceptionMessage(unittest.TestCase):
             self.verifyException(e)
 
     def verifyException(self, e):
-        message = log.getExceptionMessage(e)
+        message = log.get_exception_message(e)
         self.assertTrue("func1()" in message, message)
         self.assertTrue("test_log.py" in message, message)
         self.assertTrue("TypeError" in message, message)
@@ -202,32 +202,32 @@ class TestGetExceptionMessage(unittest.TestCase):
 class TestLogSettings(unittest.TestCase):
 
     def testSet(self):
-        old = log.getLogSettings()
-        log.setDebug('*:5')
-        self.assertNotEqual(old, log.getLogSettings())
+        old = log.get_log_settings()
+        log.set_debug('*:5')
+        self.assertNotEqual(old, log.get_log_settings())
 
-        log.setLogSettings(old)
-        self.assertEqual(old, log.getLogSettings())
+        log.set_log_settings(old)
+        self.assertEqual(old, log.get_log_settings())
 
 
 class TestLogNames(unittest.TestCase):
 
     def testGetLevelNames(self):
         self.assertEqual(['ERROR', 'WARN', 'FIXME', 'INFO', 'DEBUG', 'LOG'],
-                         log.getLevelNames())
+                         log.get_level_names())
 
     def testGetLevelCode(self):
-        self.assertEqual(1, log.getLevelInt('ERROR'))
-        self.assertEqual(2, log.getLevelInt('WARN'))
-        self.assertEqual(3, log.getLevelInt('FIXME'))
-        self.assertEqual(4, log.getLevelInt('INFO'))
-        self.assertEqual(5, log.getLevelInt('DEBUG'))
-        self.assertEqual(6, log.getLevelInt('LOG'))
+        self.assertEqual(1, log.get_level_int('ERROR'))
+        self.assertEqual(2, log.get_level_int('WARN'))
+        self.assertEqual(3, log.get_level_int('FIXME'))
+        self.assertEqual(4, log.get_level_int('INFO'))
+        self.assertEqual(5, log.get_level_int('DEBUG'))
+        self.assertEqual(6, log.get_level_int('LOG'))
 
     def testGetLevelName(self):
-        self.assertEqual('ERROR', log.getLevelName(1))
-        self.assertEqual('WARN', log.getLevelName(2))
-        self.assertEqual('FIXME', log.getLevelName(3))
-        self.assertEqual('INFO', log.getLevelName(4))
-        self.assertEqual('DEBUG', log.getLevelName(5))
-        self.assertEqual('LOG', log.getLevelName(6))
+        self.assertEqual('ERROR', log.get_level_name(1))
+        self.assertEqual('WARN', log.get_level_name(2))
+        self.assertEqual('FIXME', log.get_level_name(3))
+        self.assertEqual('INFO', log.get_level_name(4))
+        self.assertEqual('DEBUG', log.get_level_name(5))
+        self.assertEqual('LOG', log.get_level_name(6))
