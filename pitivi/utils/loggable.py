@@ -232,18 +232,9 @@ def get_level_name(level):
     Returns:
         str: The name of the level.
     """
-    assert isinstance(level, int) and level > 0 and level < 7, \
+    assert isinstance(level, int) and 0 < level <= len(_LEVEL_NAMES), \
         TypeError("Bad debug level")
-    return get_level_names()[level - 1]
-
-
-def get_level_names():
-    """Returns a list with the level names.
-
-    Returns:
-        List[str]: A list with the level names.
-    """
-    return _LEVEL_NAMES
+    return _LEVEL_NAMES[level - 1]
 
 
 def get_level_int(level_name):
@@ -255,13 +246,13 @@ def get_level_int(level_name):
     Returns:
         int: The value of the level name we are interested in.
     """
-    assert isinstance(level_name, str) and level_name in get_level_names(), \
+    assert isinstance(level_name, str) and level_name in _LEVEL_NAMES, \
         "Bad debug level name"
-    return get_level_names().index(level_name) + 1
+    return _LEVEL_NAMES.index(level_name) + 1
 
 
 def get_formatted_level_name(level):
-    assert isinstance(level, int) and level > 0 and level < len(_LEVEL_NAMES) + 1, \
+    assert isinstance(level, int) and 0 < level <= len(_LEVEL_NAMES), \
         TypeError("Bad debug level")
     return _FORMATTED_LEVELS[level - 1]
 
