@@ -26,8 +26,6 @@ pitivi/utils/widgets.py
 tests/common.py
 tests/test_medialibrary.py
 tests/test_project.py
-tests/test_undo.py
-tests/test_undo_timeline.py
 "
 
 PYLINT_IGNORE_ARGS=""

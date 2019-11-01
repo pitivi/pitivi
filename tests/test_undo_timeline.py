@@ -331,7 +331,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
         with self.action_log.started("add clip"):
             self.layer.add_clip(clip1)
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         self.assertEqual(len(stack.done_actions), 2, stack.done_actions)
         self.assertTrue(isinstance(stack.done_actions[0], ClipAdded))
         self.assertTrue(clip1 in self.getTimelineClips())
@@ -567,7 +567,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.layer.add_clip(clip2)
 
         # Make sure the transition asset is ignored.
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         for action in stack.done_actions:
             self.assertNotIsInstance(action, AssetAddedAction,
                                      stack.done_actions)
@@ -1067,7 +1067,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         # Only the clip creation action should be on the stack.
         self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
@@ -1111,7 +1111,7 @@ class TestDragDropUndo(BaseTestUndoTimeline):
         self.check_layers(layers)
         self.assertEqual(layers[0].get_clips(), [clip])
 
-        stack, = self.action_log.undo_stacks
+        stack = self.action_log.undo_stacks[0]
         # Only the clip creation action should be on the stack.
         self.assertEqual(len(stack.done_actions), 1, stack.done_actions)
 
