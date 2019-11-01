@@ -385,8 +385,7 @@ class FractionWidget(TextWidget, DynamicWidget):
                     preset = self._parseText(preset)
                 else:
                     strval = "%g:%g" % (preset.num, preset.denom)
-                fpreset = float(preset)
-                if flow <= fpreset and fpreset <= fhigh:
+                if flow <= float(preset) <= fhigh:
                     choices.append(strval)
         self.low = flow
         self.high = fhigh
@@ -407,8 +406,7 @@ class FractionWidget(TextWidget, DynamicWidget):
                 preset = self._parseText(preset)
             else:
                 strval = "%g:%g" % (preset.num, preset.denom)
-            fpreset = float(preset)
-            if self.low <= fpreset and fpreset <= self.high:
+            if self.low <= float(preset) <= self.high:
                 choices.append(strval)
 
         self.addChoices(choices)
