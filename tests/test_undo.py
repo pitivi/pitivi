@@ -87,19 +87,19 @@ class TestUndoableActionLog(common.TestCase):
         self.signals = []
 
     def tearDown(self):
-        self._disconnectFromUndoableActionLog(self.log)
+        self._disconnect_from_undoable_action_log()
 
-    def _undoActionLogSignalCb(self, log, *args):
+    def _undo_action_log_signal_cb(self, log, *args):
         args = list(args)
         signal_name = args.pop(-1)
         self.signals.append((signal_name, args))
 
     def _connectToUndoableActionLog(self, log):
         for signal_name in ("begin", "push", "rollback", "commit", "move"):
-            log.connect(signal_name, self._undoActionLogSignalCb, signal_name)
+            log.connect(signal_name, self._undo_action_log_signal_cb, signal_name)
 
-    def _disconnectFromUndoableActionLog(self, log):
-        self.log.disconnect_by_func(self._undoActionLogSignalCb)
+    def _disconnect_from_undoable_action_log(self):
+        self.log.disconnect_by_func(self._undo_action_log_signal_cb)
 
     def testRollbackWrongState(self):
         self.assertRaises(UndoWrongStateError, self.log.rollback)
@@ -144,7 +144,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
-        name, (stack,) = self.signals[0]
+        name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
@@ -152,9 +152,9 @@ class TestUndoableActionLog(common.TestCase):
         self.log.push(mock.Mock(spec=UndoableAction))
         self.log.commit("meh")
         self.assertEqual(len(self.signals), 3)
-        name, (stack, action) = self.signals[1]
+        name, (_stack, _action) = self.signals[1]
         self.assertEqual(name, "push")
-        name, (stack,) = self.signals[2]
+        name, (_stack,) = self.signals[2]
         self.assertEqual(name, "commit")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 1)
@@ -170,7 +170,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
-        name, (stack,) = self.signals[0]
+        name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
@@ -178,7 +178,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("nested")
         self.assertEqual(len(self.signals), 2)
-        name, (stack,) = self.signals[1]
+        name, (_stack,) = self.signals[1]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
@@ -186,9 +186,9 @@ class TestUndoableActionLog(common.TestCase):
         self.log.push(mock.Mock(spec=UndoableAction))
         self.log.commit("nested")
         self.assertEqual(len(self.signals), 4)
-        name, (stack, action) = self.signals[2]
+        name, (_stack, _action) = self.signals[2]
         self.assertEqual(name, "push")
-        name, (stack,) = self.signals[3]
+        name, (_stack,) = self.signals[3]
         self.assertEqual(name, "commit")
         self.assertTrue(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 0)
@@ -197,7 +197,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(self.log.undo_stacks, [])
         self.log.commit("meh")
         self.assertEqual(len(self.signals), 5)
-        name, (stack,) = self.signals[4]
+        name, (_stack,) = self.signals[4]
         self.assertEqual(name, "commit")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 1)
@@ -220,13 +220,13 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
-        name, (stack,) = self.signals[0]
+        name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
         self.log.rollback()
         self.assertEqual(len(self.signals), 2)
-        name, (stack,) = self.signals[1]
+        name, (_stack,) = self.signals[1]
         self.assertEqual(name, "rollback")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 0)
@@ -238,7 +238,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
-        name, (stack,) = self.signals[0]
+        name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
@@ -246,13 +246,13 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.begin("nested")
         self.assertEqual(len(self.signals), 2)
-        name, (stack,) = self.signals[1]
+        name, (_stack,) = self.signals[1]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
         self.log.rollback()
         self.assertEqual(len(self.signals), 3)
-        name, (stack,) = self.signals[2]
+        name, (_stack,) = self.signals[2]
         self.assertEqual(name, "rollback")
         self.assertTrue(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 0)
@@ -260,7 +260,7 @@ class TestUndoableActionLog(common.TestCase):
 
         self.log.rollback()
         self.assertEqual(len(self.signals), 4)
-        name, (stack,) = self.signals[3]
+        name, (_stack,) = self.signals[3]
         self.assertEqual(name, "rollback")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 0)
@@ -271,7 +271,7 @@ class TestUndoableActionLog(common.TestCase):
         # begin
         self.log.begin("meh")
         self.assertEqual(len(self.signals), 1)
-        name, (stack,) = self.signals[0]
+        name, (_stack,) = self.signals[0]
         self.assertEqual(name, "begin")
         self.assertTrue(self.log.is_in_transaction())
 
@@ -280,14 +280,14 @@ class TestUndoableActionLog(common.TestCase):
         action1.expand.return_value = False
         self.log.push(action1)
         self.assertEqual(len(self.signals), 2)
-        name, (stack, signal_action) = self.signals[1]
+        name, (_stack, signal_action) = self.signals[1]
         self.assertEqual(name, "push")
         self.assertTrue(action1 is signal_action)
 
         action2 = mock.Mock(spec=UndoableAction)
         self.log.push(action2)
         self.assertEqual(len(self.signals), 3)
-        name, (stack, signal_action) = self.signals[2]
+        name, (_stack, signal_action) = self.signals[2]
         self.assertEqual(name, "push")
         self.assertTrue(action2 is signal_action)
 
@@ -296,7 +296,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.redo_stacks), 0)
         self.log.commit("meh")
         self.assertEqual(len(self.signals), 4)
-        name, (stack,) = self.signals[3]
+        name, (_stack,) = self.signals[3]
         self.assertEqual(name, "commit")
         self.assertFalse(self.log.is_in_transaction())
         self.assertEqual(len(self.log.undo_stacks), 1)
@@ -309,7 +309,7 @@ class TestUndoableActionLog(common.TestCase):
         # undo what we just committed
         self.log.undo()
         self.assertEqual(len(self.signals), 5)
-        name, stack = self.signals[4]
+        name, _args = self.signals[4]
         self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 1)
@@ -321,7 +321,7 @@ class TestUndoableActionLog(common.TestCase):
         # redo
         self.log.redo()
         self.assertEqual(len(self.signals), 6)
-        name, stack = self.signals[5]
+        name, _args = self.signals[5]
         self.assertEqual(name, "move")
         self.assertEqual(len(self.log.undo_stacks), 1)
         self.assertEqual(len(self.log.redo_stacks), 0)
