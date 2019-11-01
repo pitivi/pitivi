@@ -286,7 +286,8 @@ class SimplePipeline(GObject.Object, Loggable):
                 if position != Gst.CLOCK_TIME_NONE:
                     self.emit("position", position)
         finally:
-            return True
+            # Call me again.
+            return True  # pylint: disable=lost-exception
 
     def _listenToPosition(self, listen=True):
         # stupid and dumm method, not many checks done
