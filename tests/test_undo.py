@@ -402,7 +402,7 @@ class TestGObjectObserver(common.TestCase):
     def test_property_change(self):
         action_log = UndoableActionLog()
         action_log.begin("complex stuff")
-        stack, = action_log.stacks
+        stack = action_log.stacks[0]
 
         clip = GES.TitleClip()
         clip.props.start = 1
