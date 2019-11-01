@@ -43,6 +43,7 @@ _log_handlers = []
 _log_handlers_limited = []
 
 _initialized = False
+_enable_crack_output = False
 
 _stdout = None
 _stderr = None
@@ -273,7 +274,6 @@ def register_category(category):
     # parse what level it is set to based on _DEBUG
     # example: *:2,admin:4
     global _DEBUG
-    global _levels
     global _categories
 
     level = 0
