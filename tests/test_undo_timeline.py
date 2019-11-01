@@ -162,7 +162,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertIsNone(clip1.get_parent())
         self.assertIsNone(clip2.get_parent())
 
-        for i in range(4):
+        for _ in range(4):
             # Undo ungrouping.
             self.action_log.undo()
             self.assertTrue(isinstance(clip1.get_parent(), GES.Group))
@@ -208,7 +208,7 @@ class TestTimelineObserver(BaseTestUndoTimeline):
         self.assertEqual(len(clips), 1, clips)
         self.assertEqual(len(clips[0].get_children(False)), 2)
 
-        for i in range(2):
+        for _ in range(2):
             # Undo grouping.
             self.action_log.undo()
             clips = list(self.getTimelineClips())
@@ -447,7 +447,7 @@ class TestLayerObserver(BaseTestUndoTimeline):
             self.assertEqual(2, len(self.layer.get_clips()))
 
         with self.action_log.started("split clip"):
-            clip2 = clip1.split(15 * Gst.SECOND)
+            _clip2 = clip1.split(15 * Gst.SECOND)
             self.assertEqual(3, len(self.layer.get_clips()))
 
         self.action_log.undo()
@@ -1040,9 +1040,9 @@ class TestDragDropUndo(BaseTestUndoTimeline):
             event.get_button.return_value = True, 1
             timeline_ui._button_press_event_cb(None, event)
 
-            def translate_coordinates(widget, x, y):
+            def translate_coordinates_func(widget, x, y):
                 return x, y
-            clip.ui.translate_coordinates = translate_coordinates
+            clip.ui.translate_coordinates = translate_coordinates_func
             event = mock.Mock()
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
             event.x = 1
@@ -1157,8 +1157,8 @@ class TestDragDropUndo(BaseTestUndoTimeline):
 
         # Events emitted while dragging an asset on a separator in the timeline:
         # motion, receive, motion, leave, drop.
-        with mock.patch.object(Gdk, "drag_status") as drag_status_mock:
-            with mock.patch.object(Gtk, "drag_finish") as drag_finish_mock:
+        with mock.patch.object(Gdk, "drag_status") as _drag_status_mock:
+            with mock.patch.object(Gtk, "drag_finish") as _drag_finish_mock:
                 target = mock.Mock()
                 target.name.return_value = URI_TARGET_ENTRY.target
                 timeline_ui.drag_dest_find_target = mock.Mock(return_value=target)
@@ -1180,9 +1180,9 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
 
-                def translate_coordinates(widget, x, y):
+                def translate_coordinates_func(widget, x, y):
                     return x, y
-                timeline_ui.translate_coordinates = translate_coordinates
+                timeline_ui.translate_coordinates = translate_coordinates_func
                 timeline_ui._drag_motion_cb(timeline_ui, None, 0, LAYER_HEIGHT * 2, 0)
                 self.assertFalse(timeline_ui.drag_get_data.called)
                 self.assertIsNotNone(timeline_ui.dragging_element)
