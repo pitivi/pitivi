@@ -20,7 +20,6 @@ pitivi/timeline/elements.py
 pitivi/timeline/timeline.py
 pitivi/utils/extract.py
 pitivi/utils/loggable.py
-pitivi/utils/pipeline.py
 pitivi/utils/ui.py
 pitivi/utils/validate.py
 pitivi/utils/widgets.py
