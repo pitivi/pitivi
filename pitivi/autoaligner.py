@@ -35,7 +35,7 @@ from gettext import gettext as _
 
 import pitivi.configure as configure
 
-from pitivi.utils.ui import beautify_ETA
+from pitivi.utils.ui import beautify_eta
 from pitivi.utils.misc import call_false
 from pitivi.utils.extract import Extractee
 from pitivi.utils.loggable import Loggable
@@ -378,7 +378,7 @@ class ProgressAggregator(ProgressMeter):
         now = time.time()
         remaining = (now - self._start) * (1 - frac) / frac
         for function in self._watchers:
-            function(frac, beautify_ETA(int(remaining * Gst.SECOND)))
+            function(frac, beautify_eta(int(remaining * Gst.SECOND)))
         return False
 
 

@@ -24,7 +24,7 @@ from gi.repository import GES
 from pitivi.dialogs.missingasset import MissingAssetDialog
 from pitivi.editorperspective import EditorPerspective
 from pitivi.project import ProjectManager
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from tests import common
 
 
@@ -91,8 +91,8 @@ class TestEditorPerspective(common.TestCase):
                                         editorperspective._projectManagerMissingUriCb)
             mainloop.quit()
 
-        disconnectAllByFunc(app.project_manager,
-                            editorperspective._projectManagerMissingUriCb)
+        disconnect_all_by_func(app.project_manager,
+                               editorperspective._projectManagerMissingUriCb)
 
         app.project_manager.connect("missing-uri", __pm_missing_uri_cb)
 

@@ -29,25 +29,25 @@ from pitivi.utils.system import System
 from tests import common
 
 
-def clearPresetManagerPaths(preset_manager):
+def clear_preset_manager_paths(preset_manager):
     try:
         shutil.rmtree(preset_manager.user_path)
     except FileNotFoundError:
         pass
 
 
-def countJsonFilesIn(dir_path):
+def count_json_files_in(dir_path):
     return len([filename
                 for filename in os.listdir(dir_path)
                 if filename.endswith(".json")])
 
 
-def countDefaultPresets(preset_manager):
-    return countJsonFilesIn(preset_manager.default_path)
+def count_default_presets(preset_manager):
+    return count_json_files_in(preset_manager.default_path)
 
 
-def countUserPresets(preset_manager):
-    return countJsonFilesIn(preset_manager.user_path)
+def count_user_presets(preset_manager):
+    return count_json_files_in(preset_manager.user_path)
 
 
 class TestPresetBasics(common.TestCase):
@@ -57,7 +57,7 @@ class TestPresetBasics(common.TestCase):
         self.manager._serializePreset = lambda preset: dict(preset.items())
 
     def tearDown(self):
-        clearPresetManagerPaths(self.manager)
+        clear_preset_manager_paths(self.manager)
 
     def testAddPreset(self):
         self.manager.createPreset('preseT onE', {'name1': '1A'})
@@ -116,7 +116,7 @@ class TestAudioPresetsIO(common.TestCase):
         self.manager.user_path = tempfile.mkdtemp()
 
     def tearDown(self):
-        clearPresetManagerPaths(self.manager)
+        clear_preset_manager_paths(self.manager)
 
     def createOtherManager(self):
         other_manager = AudioPresetManager(System())
@@ -128,18 +128,18 @@ class TestAudioPresetsIO(common.TestCase):
                                   {"channels": 6000,
                                    "sample-rate": 44100})
         self.manager.saveAll()
-        self.assertEqual(1, countUserPresets(self.manager))
+        self.assertEqual(1, count_user_presets(self.manager))
 
         self.manager.createPreset("Nappa",
                                   {"channels": 4000,
                                    "sample-rate": 44100})
         self.manager.saveAll()
-        self.assertEqual(2, countUserPresets(self.manager))
+        self.assertEqual(2, count_user_presets(self.manager))
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        total_presets = countDefaultPresets(
-            self.manager) + countUserPresets(self.manager)
+        total_presets = count_default_presets(
+            self.manager) + count_user_presets(self.manager)
         self.assertEqual(total_presets, len(other_manager.presets))
 
     def testNonAsciiFilenamesSaveAndLoad(self):
@@ -153,7 +153,7 @@ class TestAudioPresetsIO(common.TestCase):
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEqual(1 + countDefaultPresets(
+        self.assertEqual(1 + count_default_presets(
             other_manager), len(other_manager.presets))
         snaaaake = other_manager.presets[non_ascii_preset_name]
         self.assertEqual(snake, snaaaake)
@@ -170,7 +170,7 @@ class TestAudioPresetsIO(common.TestCase):
 
         other_manager = self.createOtherManager()
         other_manager.loadAll()
-        self.assertEqual(1 + countDefaultPresets(
+        self.assertEqual(1 + count_default_presets(
             other_manager), len(other_manager.presets))
         other_values = other_manager.presets[preset_name]
         self.assertEqual(values, other_values)
