@@ -202,12 +202,14 @@ def get_edge(structure):
 
 def _release_button_if_needed(scenario, timeline, container, layer_prio,
                               position, y):
-    try:
-        next_actions = scenario.get_actions()
-        for next_action in next_actions[1:]:
-            if next_action.type not in ["wait", "add-layer"]:
-                break
-    except KeyError:
+    next_actions = scenario.get_actions()
+    if len(next_actions) == 1:
+        return
+    next_action = None
+    for next_action in next_actions[1:]:
+        if next_action.type not in ["wait", "add-layer"]:
+            break
+    if not next_action:
         return
 
     need_release = True
