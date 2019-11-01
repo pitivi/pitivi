@@ -46,7 +46,7 @@ from pitivi.mediafilespreviewer import PreviewWidget
 from pitivi.settings import GlobalSettings
 from pitivi.timeline.previewers import AssetPreviewer
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import PathWalker
 from pitivi.utils.misc import quote_uri
@@ -55,7 +55,7 @@ from pitivi.utils.proxy import get_proxy_target
 from pitivi.utils.proxy import ProxyingStrategy
 from pitivi.utils.proxy import ProxyManager
 from pitivi.utils.ui import beautify_asset
-from pitivi.utils.ui import beautify_ETA
+from pitivi.utils.ui import beautify_eta
 from pitivi.utils.ui import FILE_TARGET_ENTRY
 from pitivi.utils.ui import fix_infobar
 from pitivi.utils.ui import info_name
@@ -79,7 +79,7 @@ GlobalSettings.addConfigOption('closeImportDialog',
                                section='clip-library',
                                key='close-import-dialog-after-import',
                                default=True)
-GlobalSettings.addConfigOption('lastClipView',
+GlobalSettings.addConfigOption('last_clip_view',
                                section='clip-library',
                                key='last-clip-view',
                                type_=int,
@@ -177,11 +177,11 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
         size_group.add_widget(self.__keep_open_check)
         size_group.add_widget(hq_proxy_row)
 
-        if self.app.settings.proxyingStrategy == ProxyingStrategy.AUTOMATIC:
+        if self.app.settings.proxying_strategy == ProxyingStrategy.AUTOMATIC:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
             self.hq_combo.props.active = 0
-        elif self.app.settings.proxyingStrategy == ProxyingStrategy.ALL:
+        elif self.app.settings.proxying_strategy == ProxyingStrategy.ALL:
             self.hq_proxy_check.set_active(True)
             self.hq_combo.set_sensitive(True)
             self.hq_combo.props.active = 1
@@ -226,12 +226,12 @@ class FileChooserExtraWidget(Gtk.Box, Loggable):
 
         if self.hq_proxy_check.get_active():
             if self.hq_combo.props.active == 0:
-                self.app.settings.proxyingStrategy = ProxyingStrategy.AUTOMATIC
+                self.app.settings.proxying_strategy = ProxyingStrategy.AUTOMATIC
             else:
-                self.app.settings.proxyingStrategy = ProxyingStrategy.ALL
+                self.app.settings.proxying_strategy = ProxyingStrategy.ALL
         else:
             assert not self.scaled_proxy_check.get_active()
-            self.app.settings.proxyingStrategy = ProxyingStrategy.NOTHING
+            self.app.settings.proxying_strategy = ProxyingStrategy.NOTHING
 
         self.app.settings.auto_scaling_enabled = self.scaled_proxy_check.get_active()
 
@@ -491,9 +491,9 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self.app = app
         self._errors = []
         self._project = None
-        self._draggedPaths = None
+        self._dragged_paths = None
         self.dragged = False
-        self.clip_view = self.app.settings.lastClipView
+        self.clip_view = self.app.settings.last_clip_view
         if self.clip_view not in (SHOW_TREEVIEW, SHOW_ICONVIEW):
             self.clip_view = SHOW_ICONVIEW
         self.import_start_time = time.time()
@@ -530,7 +530,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         self._import_button = builder.get_object("media_import_button")
         self._clipprops_button = builder.get_object("media_props_button")
         self._listview_button = builder.get_object("media_listview_button")
-        searchEntry = builder.get_object("media_search_entry")
+        search_entry = builder.get_object("media_search_entry")
 
         # Store
         self.storemodel = Gtk.ListStore(*STORE_MODEL_STRUCTURE)
@@ -559,13 +559,13 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         # Filtering model for the search box.
         # Use this instead of using self.storemodel directly
-        self.modelFilter = self.storemodel.filter_new()
-        self.modelFilter.set_visible_func(
-            self._set_row_visible_func, data=searchEntry)
+        self.model_filter = self.storemodel.filter_new()
+        self.model_filter.set_visible_func(
+            self._set_row_visible_func, data=search_entry)
 
         # TreeView
         # Displays icon, name, type, length
-        self.treeview = Gtk.TreeView(model=self.modelFilter)
+        self.treeview = Gtk.TreeView(model=self.model_filter)
         self.treeview_scrollwin.add(self.treeview)
         self.treeview.connect(
             "button-press-event", self._treeViewButtonPressEventCb)
@@ -602,7 +602,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
 
         # IconView
-        self.iconview = Gtk.IconView(model=self.modelFilter)
+        self.iconview = Gtk.IconView(model=self.model_filter)
         self.iconview_scrollwin.add(self.iconview)
         self.iconview.connect(
             "button-press-event", self._iconview_button_press_event_cb)
@@ -704,8 +704,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             return
 
         for asset in self._project.list_assets(GES.Extractable):
-            disconnectAllByFunc(asset, self.__assetProxiedCb)
-            disconnectAllByFunc(asset, self.__assetProxyingCb)
+            disconnect_all_by_func(asset, self.__assetProxiedCb)
+            disconnect_all_by_func(asset, self.__assetProxyingCb)
 
         self.__disconnectFromProject()
 
@@ -729,7 +729,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return 1
 
     def getAssetForUri(self, uri):
-        for path in self.modelFilter:
+        for path in self.model_filter:
             asset = path[COL_ASSET]
             info = asset.get_info()
             asset_uri = info.get_uri()
@@ -793,7 +793,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         # Realistically, nobody expects to search for only one character,
         # and skipping that makes a huge difference in responsiveness.
         if len(entry.get_text()) != 1:
-            self.modelFilter.refilter()
+            self.model_filter.refilter()
 
     def _search_entry_icon_press_cb(self, entry, icon_pos, event):
         if icon_pos == Gtk.EntryIconPosition.SECONDARY:
@@ -831,7 +831,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         Args:
             view_type (int): One of SHOW_TREEVIEW or SHOW_ICONVIEW.
         """
-        self.app.settings.lastClipView = view_type
+        self.app.settings.last_clip_view = view_type
         # Gather some info before switching views
         paths = self.getSelectedPaths()
         self._viewUnselectAll()
@@ -983,7 +983,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         if project.loaded:
             if estimated_time:
-                self.__last_proxying_estimate_time = beautify_ETA(int(
+                self.__last_proxying_estimate_time = beautify_eta(int(
                     estimated_time * Gst.SECOND))
 
             # Translators: this string indicates the estimated time
@@ -1308,7 +1308,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self.iconview.unselect_all()
 
     def __stopUsingProxyCb(self, unused_action, unused_parameter):
-        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
+        prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
         self._project.disable_proxies_for_assets(self.getSelectedAssets(),
                                                  hq_proxy=not prefer_original)
 
@@ -1320,7 +1320,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
                                              scaled=True)
 
     def __deleteProxiesCb(self, unused_action, unused_parameter):
-        prefer_original = self.app.settings.proxyingStrategy == ProxyingStrategy.NOTHING
+        prefer_original = self.app.settings.proxying_strategy == ProxyingStrategy.NOTHING
         self._project.disable_proxies_for_assets(self.getSelectedAssets(),
                                                  delete_proxy_file=True,
                                                  hq_proxy=not prefer_original)
@@ -1512,8 +1512,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         Gtk.TreeView.do_button_press_event(treeview, event)
 
         selection = self.treeview.get_selection()
-        if self._draggedPaths:
-            for path in self._draggedPaths:
+        if self._dragged_paths:
+            for path in self._dragged_paths:
                 selection.select_path(path)
 
         return True
@@ -1532,12 +1532,12 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             chain_up = True
 
         if not chain_up:
-            self._draggedPaths = self.getSelectedPaths()
+            self._dragged_paths = self.getSelectedPaths()
         else:
-            self._draggedPaths = None
+            self._dragged_paths = None
 
     def _treeViewButtonReleaseEventCb(self, treeview, event):
-        self._draggedPaths = None
+        self._dragged_paths = None
         selection = self.treeview.get_selection()
         state = event.get_state() & (
             Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK)
@@ -1569,7 +1569,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         Space, Shift+Space, Return or Enter is pressed.
         This method is the same for both iconview and treeview.
         """
-        asset = self.modelFilter[path][COL_ASSET]
+        asset = self.model_filter[path][COL_ASSET]
         self.emit('play', asset)
 
     def _iconview_button_press_event_cb(self, iconview, event):
@@ -1577,8 +1577,8 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
         Gtk.IconView.do_button_press_event(iconview, event)
 
-        if self._draggedPaths:
-            for path in self._draggedPaths:
+        if self._dragged_paths:
+            for path in self._dragged_paths:
                 self.iconview.select_path(path)
 
         self.iconview_cursor_pos = self.iconview.get_path_at_pos(
@@ -1587,7 +1587,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         return True
 
     def _iconview_button_release_event_cb(self, iconview, event):
-        self._draggedPaths = None
+        self._dragged_paths = None
 
         control_mask = event.get_state() & Gdk.ModifierType.CONTROL_MASK
         shift_mask = event.get_state() & Gdk.ModifierType.SHIFT_MASK
@@ -1668,7 +1668,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
     # Used with TreeView and IconView
     def _dnd_drag_data_get_cb(self, view, context, data, info, timestamp):
         paths = self.getSelectedPaths()
-        uris = [self.modelFilter[path][COL_URI] for path in paths]
+        uris = [self.model_filter[path][COL_URI] for path in paths]
         data.set_uris(uris)
 
     def _dnd_drag_begin_cb(self, view, context):
@@ -1679,7 +1679,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         if not paths:
             context.drag_abort(int(time.time()))
         else:
-            row = self.modelFilter[paths[0]]
+            row = self.model_filter[paths[0]]
 
             icon = row[COL_ICON_128]
             icon_height = icon.get_height()
@@ -1723,18 +1723,18 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
 
     def getSelectedItems(self):
         """Gets the URIs of the selected items."""
-        if self._draggedPaths:
-            return [self.modelFilter[path][COL_URI]
-                    for path in self._draggedPaths]
-        return [self.modelFilter[path][COL_URI]
+        if self._dragged_paths:
+            return [self.model_filter[path][COL_URI]
+                    for path in self._dragged_paths]
+        return [self.model_filter[path][COL_URI]
                 for path in self.getSelectedPaths()]
 
     def getSelectedAssets(self):
         """Gets the selected assets."""
-        if self._draggedPaths:
-            return [self.modelFilter[path][COL_ASSET]
-                    for path in self._draggedPaths]
-        return [self.modelFilter[path][COL_ASSET]
+        if self._dragged_paths:
+            return [self.model_filter[path][COL_ASSET]
+                    for path in self._dragged_paths]
+        return [self.model_filter[path][COL_ASSET]
                 for path in self.getSelectedPaths()]
 
     def activateCompactMode(self):

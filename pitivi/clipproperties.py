@@ -34,7 +34,7 @@ from pitivi.effects import HIDDEN_EFFECTS
 from pitivi.undo.timeline import CommitTimelineFinalizingAction
 from pitivi.utils.custom_effect_widgets import setup_custom_effect_widgets
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.misc import disconnectAllByFunc
+from pitivi.utils.misc import disconnect_all_by_func
 from pitivi.utils.pipeline import PipelineError
 from pitivi.utils.ui import disable_scroll
 from pitivi.utils.ui import EFFECT_TARGET_ENTRY
@@ -851,7 +851,7 @@ class TransformationProperties(Gtk.Expander, Loggable):
         if self.source:
             try:
                 self.source.disconnect_by_func(self.__source_property_changed_cb)
-                disconnectAllByFunc(self.source, self._control_bindings_changed)
+                disconnect_all_by_func(self.source, self._control_bindings_changed)
             except TypeError:
                 pass
         self.source = source

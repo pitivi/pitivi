@@ -239,7 +239,7 @@ class EffectsManager(Loggable):
 
         useless_words = ["Video", "Audio", "audio", "effect",
                          _("Video"), _("Audio"), _("Audio").lower(), _("effect")]
-        uselessRe = re.compile(" |".join(useless_words))
+        useless_re = re.compile(" |".join(useless_words))
 
         registry = Gst.Registry.get()
         factories = registry.get_feature_list(Gst.ElementFactory)
@@ -274,7 +274,7 @@ class EffectsManager(Loggable):
                 # Workaround https://bugzilla.gnome.org/show_bug.cgi?id=760566
                 # Add name which identifies the element and is unique.
                 longname = "%s %s" % (longname, name)
-            human_name = uselessRe.sub("", longname).title()
+            human_name = useless_re.sub("", longname).title()
             effect = EffectInfo(name,
                                 media_type,
                                 categories=self._getEffectCategories(name),
@@ -369,8 +369,8 @@ class EffectListWidget(Gtk.Box, Loggable):
 
         self.app = instance
 
-        self._draggedItems = None
-        self._effectType = VIDEO_EFFECT
+        self._dragged_items = None
+        self._effect_type = VIDEO_EFFECT
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
         builder = Gtk.Builder()
@@ -380,8 +380,8 @@ class EffectListWidget(Gtk.Box, Loggable):
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR)
         self.video_togglebutton = builder.get_object("video_togglebutton")
         self.audio_togglebutton = builder.get_object("audio_togglebutton")
-        self.categoriesWidget = builder.get_object("categories")
-        self.searchEntry = builder.get_object("search_entry")
+        self.categories_widget = builder.get_object("categories")
+        self.search_entry = builder.get_object("search_entry")
 
         # Store
         self.storemodel = Gtk.ListStore(
@@ -473,7 +473,7 @@ class EffectListWidget(Gtk.Box, Loggable):
         self._addFactories(self.app.effects.audio_effects, AUDIO_EFFECT)
         return False
 
-    def _addFactories(self, elements, effectType):
+    def _addFactories(self, elements, effect_type):
         for element in elements:
             name = element.get_name()
             if name in HIDDEN_EFFECTS:
@@ -481,25 +481,25 @@ class EffectListWidget(Gtk.Box, Loggable):
             effect_info = self.app.effects.getInfo(name)
             self.storemodel.append([effect_info.human_name,
                                     effect_info.description,
-                                    effectType,
+                                    effect_type,
                                     effect_info.categories,
                                     name,
                                     effect_info.icon])
 
     def populate_categories_widget(self):
-        self.categoriesWidget.get_model().clear()
+        self.categories_widget.get_model().clear()
         icon_column = self.view.get_column(0)
 
-        if self._effectType is VIDEO_EFFECT:
+        if self._effect_type is VIDEO_EFFECT:
             for category in self.app.effects.video_categories:
-                self.categoriesWidget.append_text(category)
+                self.categories_widget.append_text(category)
             icon_column.props.visible = True
         else:
             for category in self.app.effects.audio_categories:
-                self.categoriesWidget.append_text(category)
+                self.categories_widget.append_text(category)
             icon_column.props.visible = False
 
-        self.categoriesWidget.set_active(0)
+        self.categories_widget.set_active(0)
 
     def _dndDragDataGetCb(self, unused_view, drag_context, selection_data, unused_info, unused_timestamp):
         data = bytes(self.getSelectedEffect(), "UTF-8")
@@ -528,9 +528,9 @@ class EffectListWidget(Gtk.Box, Loggable):
             chain_up = not self._rowUnderMouseSelected(view, event)
 
         if chain_up:
-            self._draggedItems = None
+            self._dragged_items = None
         else:
-            self._draggedItems = self.getSelectedEffect()
+            self._dragged_items = self.getSelectedEffect()
 
         Gtk.TreeView.do_button_press_event(view, event)
         return True
@@ -553,8 +553,8 @@ class EffectListWidget(Gtk.Box, Loggable):
             clip.ui.add_effect(effect_info)
 
     def getSelectedEffect(self):
-        if self._draggedItems:
-            return self._draggedItems
+        if self._dragged_items:
+            return self._dragged_items
         unused_model, rows = self.view.get_selection().get_selected_rows()
         path = self.model_filter.convert_path_to_child_path(rows[0])
         return self.storemodel[path][COL_ELEMENT_NAME]
@@ -571,9 +571,9 @@ class EffectListWidget(Gtk.Box, Loggable):
             self.video_togglebutton.set_active(not widget.get_active())
 
         if self.video_togglebutton.get_active():
-            self._effectType = VIDEO_EFFECT
+            self._effect_type = VIDEO_EFFECT
         else:
-            self._effectType = AUDIO_EFFECT
+            self._effect_type = AUDIO_EFFECT
         self.populate_categories_widget()
         self.model_filter.refilter()
 
@@ -587,13 +587,13 @@ class EffectListWidget(Gtk.Box, Loggable):
         entry.set_text("")
 
     def _set_row_visible_func(self, model, model_iter, data):
-        if not self._effectType == model.get_value(model_iter, COL_EFFECT_TYPE):
+        if not self._effect_type == model.get_value(model_iter, COL_EFFECT_TYPE):
             return False
         if model.get_value(model_iter, COL_EFFECT_CATEGORIES) is None:
             return False
-        if self.categoriesWidget.get_active_text() not in model.get_value(model_iter, COL_EFFECT_CATEGORIES):
+        if self.categories_widget.get_active_text() not in model.get_value(model_iter, COL_EFFECT_CATEGORIES):
             return False
-        text = self.searchEntry.get_text().lower()
+        text = self.search_entry.get_text().lower()
         return text in model.get_value(model_iter, COL_DESC_TEXT).lower() or\
             text in model.get_value(model_iter, COL_NAME_TEXT).lower()
 

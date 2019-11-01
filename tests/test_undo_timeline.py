@@ -74,9 +74,9 @@ class BaseTestUndoTimeline(common.TestCase):
         # the timeline creates transitions automatically.
         mainloop = common.create_main_loop()
 
-        def projectLoadedCb(unused_project, unused_timeline):
+        def loaded_cb(project, timeline):
             mainloop.quit()
-        self.app.project_manager.current_project.connect("loaded", projectLoadedCb)
+        self.app.project_manager.current_project.connect("loaded", loaded_cb)
         mainloop.run()
         self.assertTrue(self.timeline.props.auto_transition)
 
@@ -1166,18 +1166,18 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 timeline_ui._drag_motion_cb(None, None, 0, 0, 0)
                 self.assertTrue(timeline_ui.drag_get_data.called)
 
-                self.assertFalse(timeline_ui.dropDataReady)
+                self.assertFalse(timeline_ui.drop_data_ready)
                 selection_data = mock.Mock()
                 selection_data.get_data_type = mock.Mock(return_value=target)
                 selection_data.get_uris.return_value = [asset.props.id]
-                self.assertIsNone(timeline_ui.dropData)
-                self.assertFalse(timeline_ui.dropDataReady)
+                self.assertIsNone(timeline_ui.drop_data)
+                self.assertFalse(timeline_ui.drop_data_ready)
                 timeline_ui._drag_data_received_cb(None, None, 0, 0, selection_data, None, 0)
-                self.assertEqual(timeline_ui.dropData, [asset.props.id])
-                self.assertTrue(timeline_ui.dropDataReady)
+                self.assertEqual(timeline_ui.drop_data, [asset.props.id])
+                self.assertTrue(timeline_ui.drop_data_ready)
 
                 timeline_ui.drag_get_data.reset_mock()
-                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
 
                 def translate_coordinates(widget, x, y):
@@ -1185,11 +1185,11 @@ class TestDragDropUndo(BaseTestUndoTimeline):
                 timeline_ui.translate_coordinates = translate_coordinates
                 timeline_ui._drag_motion_cb(timeline_ui, None, 0, LAYER_HEIGHT * 2, 0)
                 self.assertFalse(timeline_ui.drag_get_data.called)
-                self.assertIsNotNone(timeline_ui.draggingElement)
+                self.assertIsNotNone(timeline_ui.dragging_element)
                 self.assertTrue(timeline_ui.dropping_clips)
 
                 timeline_ui._drag_leave_cb(None, None, None)
-                self.assertIsNone(timeline_ui.draggingElement)
+                self.assertIsNone(timeline_ui.dragging_element)
                 self.assertFalse(timeline_ui.dropping_clips)
 
                 timeline_ui._drag_drop_cb(None, None, 0, 0, 0)

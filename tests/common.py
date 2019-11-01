@@ -76,12 +76,12 @@ os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
 locale.setlocale(locale.LC_ALL, "en_US")
 
 
-def __create_settings(proxyingStrategy=ProxyingStrategy.NOTHING,
-                      numTranscodingJobs=4,
+def __create_settings(proxying_strategy=ProxyingStrategy.NOTHING,
+                      num_transcoding_jobs=4,
                       **additional_settings):
     settings = GlobalSettings()
-    settings.proxyingStrategy = proxyingStrategy
-    settings.numTranscodingJobs = numTranscodingJobs
+    settings.proxying_strategy = proxying_strategy
+    settings.num_transcoding_jobs = num_transcoding_jobs
     for key, value in additional_settings.items():
         setattr(settings, key, value)
     return settings
@@ -158,7 +158,7 @@ class OperationTimeout(Exception):
     pass
 
 
-class checked_operation_duration:
+class CheckedOperationDuration:
 
     def __init__(self, seconds, error_message=None):
         if error_message is None:
@@ -196,9 +196,9 @@ class TestCase(unittest.TestCase, Loggable):
     def gccollect(self):
         ret = 0
         while True:
-            c = gc.collect()
-            ret += c
-            if c == 0:
+            count = gc.collect()
+            ret += count
+            if count == 0:
                 break
         return ret
 
@@ -262,8 +262,8 @@ class TestCase(unittest.TestCase, Loggable):
         unused, xges_path = tempfile.mkstemp(suffix=".xges")
         proj_uri = Gst.filename_to_uri(os.path.abspath(xges_path))
 
-        with open(xges_path, "w") as f:
-            f.write(xges)
+        with open(xges_path, "w") as xges_file:
+            xges_file.write(xges)
 
         return proj_uri
 
