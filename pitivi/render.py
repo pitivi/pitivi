@@ -30,16 +30,16 @@ from gi.repository import Gst
 from gi.repository import Gtk
 
 from pitivi import configure
-from pitivi.check import missing_soft_deps
+from pitivi.check import MISSING_SOFT_DEPS
 from pitivi.preset import EncodingTargetManager
 from pitivi.utils.loggable import Loggable
 from pitivi.utils.misc import path_from_uri
 from pitivi.utils.misc import show_user_manual
 from pitivi.utils.ripple_update_group import RippleUpdateGroup
-from pitivi.utils.ui import audio_channels
-from pitivi.utils.ui import audio_rates
-from pitivi.utils.ui import beautify_ETA
-from pitivi.utils.ui import frame_rates
+from pitivi.utils.ui import AUDIO_CHANNELS
+from pitivi.utils.ui import AUDIO_RATES
+from pitivi.utils.ui import beautify_eta
+from pitivi.utils.ui import FRAME_RATES
 from pitivi.utils.ui import get_combo_value
 from pitivi.utils.ui import set_combo_value
 from pitivi.utils.widgets import GstElementSettingsDialog
@@ -409,7 +409,8 @@ class RenderDialog(Loggable):
         self.notification = None
 
         # Variables to keep track of progress indication timers:
-        self._filesizeEstimateTimer = self._timeEstimateTimer = None
+        self._filesize_estimate_timer = None
+        self._time_estimate_timer = None
         self._is_rendering = False
         self._rendering_is_paused = False
         self._last_timestamp_when_pausing = 0
@@ -420,7 +421,7 @@ class RenderDialog(Loggable):
 
         # Various gstreamer signal connection ID's
         # {object: sigId}
-        self._gstSigId = {}
+        self._gst_signal_handlers_ids = {}
 
         self.render_presets = EncodingTargetManager(project)
         self.render_presets.connect('profile-selected', self._encoding_profile_selected_cb)
@@ -452,9 +453,9 @@ class RenderDialog(Loggable):
         self.preferred_aencoder = self.project.aencoder
         self.__replaced_assets = {}
 
-        self.frame_rate_combo.set_model(frame_rates)
-        self.channels_combo.set_model(audio_channels)
-        self.sample_rate_combo.set_model(audio_rates)
+        self.frame_rate_combo.set_model(FRAME_RATES)
+        self.channels_combo.set_model(AUDIO_CHANNELS)
+        self.sample_rate_combo.set_model(AUDIO_RATES)
         self.__initialize_muxers_model()
         self._displaySettings()
         self._displayRenderSettings()
@@ -465,22 +466,22 @@ class RenderDialog(Loggable):
 
         # Monitor changes
 
-        self.wg = RippleUpdateGroup()
-        self.wg.addVertex(self.frame_rate_combo, signal="changed")
-        self.wg.addVertex(self.channels_combo, signal="changed")
-        self.wg.addVertex(self.sample_rate_combo, signal="changed")
-        self.wg.addVertex(self.muxer_combo, signal="changed")
-        self.wg.addVertex(self.audio_encoder_combo, signal="changed")
-        self.wg.addVertex(self.video_encoder_combo, signal="changed")
-        self.wg.addVertex(self.preset_menubutton,
-                          update_func=self._updatePresetMenuButton)
+        self.widgets_group = RippleUpdateGroup()
+        self.widgets_group.addVertex(self.frame_rate_combo, signal="changed")
+        self.widgets_group.addVertex(self.channels_combo, signal="changed")
+        self.widgets_group.addVertex(self.sample_rate_combo, signal="changed")
+        self.widgets_group.addVertex(self.muxer_combo, signal="changed")
+        self.widgets_group.addVertex(self.audio_encoder_combo, signal="changed")
+        self.widgets_group.addVertex(self.video_encoder_combo, signal="changed")
+        self.widgets_group.addVertex(self.preset_menubutton,
+                                     update_func=self._updatePresetMenuButton)
 
-        self.wg.addEdge(self.frame_rate_combo, self.preset_menubutton)
-        self.wg.addEdge(self.audio_encoder_combo, self.preset_menubutton)
-        self.wg.addEdge(self.video_encoder_combo, self.preset_menubutton)
-        self.wg.addEdge(self.muxer_combo, self.preset_menubutton)
-        self.wg.addEdge(self.channels_combo, self.preset_menubutton)
-        self.wg.addEdge(self.sample_rate_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.frame_rate_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.audio_encoder_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.video_encoder_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.muxer_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.channels_combo, self.preset_menubutton)
+        self.widgets_group.addEdge(self.sample_rate_combo, self.preset_menubutton)
 
     def _encoding_profile_selected_cb(self, unused_target, encoding_profile):
         self._set_encoding_profile(encoding_profile)
@@ -586,10 +587,10 @@ class RenderDialog(Loggable):
         self.audio_settings_button = builder.get_object(
             "audio_settings_button")
         self.frame_rate_combo = builder.get_object("frame_rate_combo")
-        self.frame_rate_combo.set_model(frame_rates)
+        self.frame_rate_combo.set_model(FRAME_RATES)
         self.scale_spinbutton = builder.get_object("scale_spinbutton")
         self.channels_combo = builder.get_object("channels_combo")
-        self.channels_combo.set_model(audio_channels)
+        self.channels_combo.set_model(AUDIO_CHANNELS)
         self.sample_rate_combo = builder.get_object("sample_rate_combo")
         self.muxer_combo = builder.get_object("muxercombobox")
         self.audio_encoder_combo = builder.get_object("audio_encoder_combo")
@@ -796,8 +797,8 @@ class RenderDialog(Loggable):
             if not caps.intersect(ecaps).is_empty():
                 reduced.append((name, value))
 
-        for v in sorted(reduced, key=lambda v: float(v[1])):
-            reduced_model.append(v)
+        for value in sorted(reduced, key=lambda v: float(v[1])):
+            reduced_model.append(value)
         combo.set_model(reduced_model)
 
         set_combo_value(combo, combo_value)
@@ -813,12 +814,12 @@ class RenderDialog(Loggable):
         caps = template.static_caps.get()
         self._update_valid_restriction_values(caps, self.sample_rate_combo,
                                               "audio/x-raw,rate=(int)%d",
-                                              audio_rates,
+                                              AUDIO_RATES,
                                               self.project.audiorate)
 
         self._update_valid_restriction_values(caps, self.channels_combo,
                                               "audio/x-raw,channels=(int)%d",
-                                              audio_channels,
+                                              AUDIO_CHANNELS,
                                               self.project.audiochannels)
 
     def _update_valid_video_restrictions(self, factory):
@@ -831,7 +832,7 @@ class RenderDialog(Loggable):
         caps = template.static_caps.get()
         self._update_valid_restriction_values(
             caps, self.frame_rate_combo,
-            "video/x-raw,framerate=(GstFraction)%d/%d", frame_rates,
+            "video/x-raw,framerate=(GstFraction)%d/%d", FRAME_RATES,
             self.project.videorate,
             caps_template_expander=fraction_expander_func)
 
@@ -923,7 +924,7 @@ class RenderDialog(Loggable):
         self._pipeline.set_state(Gst.State.NULL)
         self._pipeline.set_mode(GES.PipelineFlags.RENDER)
         encodebin = self._pipeline.get_by_name("internal-encodebin")
-        self._gstSigId[encodebin] = encodebin.connect(
+        self._gst_signal_handlers_ids[encodebin] = encodebin.connect(
             "element-added", self.__element_added_cb)
         for element in encodebin.iterate_recurse():
             self.__set_properties(element)
@@ -965,9 +966,9 @@ class RenderDialog(Loggable):
         self.window.show()  # Show the rendering dialog again
 
     def _disconnectFromGst(self):
-        for obj, handler_id in self._gstSigId.items():
+        for obj, handler_id in self._gst_signal_handlers_ids.items():
             obj.disconnect(handler_id)
-        self._gstSigId = {}
+        self._gst_signal_handlers_ids = {}
         try:
             self.project.pipeline.disconnect_by_func(self._updatePositionCb)
         except TypeError:
@@ -979,7 +980,7 @@ class RenderDialog(Loggable):
 
     def _maybe_play_finished_sound(self):
         """Plays a sound to signal the render operation is done."""
-        if "GSound" in missing_soft_deps:
+        if "GSound" in MISSING_SOFT_DEPS:
             return
         from gi.repository import GSound
         sound_context = GSound.Context()
@@ -1077,7 +1078,7 @@ class RenderDialog(Loggable):
         self.progress.connect("pause", self._pauseRender)
         bus = self._pipeline.get_bus()
         bus.add_signal_watch()
-        self._gstSigId[bus] = bus.connect('message', self._busMessageCb)
+        self._gst_signal_handlers_ids[bus] = bus.connect('message', self._busMessageCb)
         self.project.pipeline.connect("position", self._updatePositionCb)
         # Force writing the config now, or the path will be reset
         # if the user opens the rendering dialog again
@@ -1114,12 +1115,12 @@ class RenderDialog(Loggable):
                 length = self.project.ges_timeline.props.duration
                 estimated_time = timediff * length / self.current_position
                 remaining_time = estimated_time - timediff
-                estimate = beautify_ETA(int(remaining_time * Gst.SECOND))
+                estimate = beautify_eta(int(remaining_time * Gst.SECOND))
                 if estimate:
                     self.progress.updateProgressbarETA(estimate)
             return True
         else:
-            self._timeEstimateTimer = None
+            self._time_estimate_timer = None
             self.debug("Stopping the ETA timer")
             return False
 
@@ -1133,7 +1134,7 @@ class RenderDialog(Loggable):
             return True
         else:
             self.debug("Stopping the filesize estimation timer")
-            self._filesizeEstimateTimer = None
+            self._filesize_estimate_timer = None
             return False  # Stop the timer
 
     # GStreamer callbacks
@@ -1192,16 +1193,16 @@ class RenderDialog(Loggable):
 
         # In order to have enough averaging, only display the ETA after 5s
         timediff = time.time() - self._time_started
-        if not self._timeEstimateTimer:
+        if not self._time_estimate_timer:
             if timediff < 6:
                 self.progress.progressbar.set_text(_("Estimating..."))
             else:
-                self._timeEstimateTimer = GLib.timeout_add_seconds(
+                self._time_estimate_timer = GLib.timeout_add_seconds(
                     3, self._updateTimeEstimateCb)
 
         # Filesize is trickier and needs more time to be meaningful.
-        if not self._filesizeEstimateTimer and (fraction > 0.33 or timediff > 180):
-            self._filesizeEstimateTimer = GLib.timeout_add_seconds(
+        if not self._filesize_estimate_timer and (fraction > 0.33 or timediff > 180):
+            self._filesize_estimate_timer = GLib.timeout_add_seconds(
                 5, self._updateFilesizeEstimateCb)
 
     def __element_added_cb(self, unused_bin, gst_element):

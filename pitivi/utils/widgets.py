@@ -353,14 +353,13 @@ class TimeWidget(TextWidget, DynamicWidget):
         if self.default is not None:
             self.setWidgetValue(self.default)
 
-    def connectActivateEvent(self, activateCb):
-        return self.connect("activate", activateCb)
+    def connectActivateEvent(self, activate_cb):
+        return self.connect("activate", activate_cb)
 
-    def connectFocusEvents(self, focusInCb, focusOutCb):
-        fIn = self.text.connect("focus-in-event", focusInCb)
-        fOut = self.text.connect("focus-out-event", focusOutCb)
-
-        return [fIn, fOut]
+    def connectFocusEvents(self, focus_in_cb, focus_out_cb):
+        focus_in_handler_id = self.text.connect("focus-in-event", focus_in_cb)
+        focus_out_handler_id = self.text.connect("focus-out-event", focus_out_cb)
+        return [focus_in_handler_id, focus_out_handler_id]
 
     def setFramerate(self, framerate):
         self._framerate = framerate
@@ -507,8 +506,8 @@ class ChoiceWidget(Gtk.Box, DynamicWidget):
     def setChoices(self, choices):
         self.choices = [choice[0] for choice in choices]
         self.values = [choice[1] for choice in choices]
-        m = Gtk.ListStore(str)
-        self.contents.set_model(m)
+        model = Gtk.ListStore(str)
+        self.contents.set_model(model)
         for choice, unused_value in choices:
             self.contents.append_text(_(choice))
         if len(choices) <= 1:
@@ -1243,14 +1242,14 @@ class ZoomBox(Gtk.Grid, Zoomable):
         self.attach(zoom_fit_btn, 0, 0, 1, 1)
 
         # zooming slider
-        self._zoomAdjustment = Gtk.Adjustment()
-        self._zoomAdjustment.props.lower = 0
-        self._zoomAdjustment.props.upper = Zoomable.zoom_steps
+        self._zoom_adjustment = Gtk.Adjustment()
+        self._zoom_adjustment.props.lower = 0
+        self._zoom_adjustment.props.upper = Zoomable.zoom_steps
         zoomslider = Gtk.Scale.new(
-            Gtk.Orientation.HORIZONTAL, adjustment=self._zoomAdjustment)
-        # Setting _zoomAdjustment's value must be done after we create the
+            Gtk.Orientation.HORIZONTAL, adjustment=self._zoom_adjustment)
+        # Setting _zoom_adjustment's value must be done after we create the
         # zoom slider, otherwise the slider remains at the leftmost position.
-        self._zoomAdjustment.set_value(Zoomable.getCurrentZoomLevel())
+        self._zoom_adjustment.set_value(Zoomable.getCurrentZoomLevel())
         zoomslider.props.draw_value = False
         zoomslider.connect("scroll-event", self._zoom_slider_scroll_cb)
         zoomslider.connect("value-changed", self._zoom_slider_changed_cb)
@@ -1296,11 +1295,11 @@ class ZoomBox(Gtk.Grid, Zoomable):
             Zoomable.setZoomLevel(Zoomable.getCurrentZoomLevel() + delta)
 
     def zoomChanged(self):
-        zoomLevel = self.getCurrentZoomLevel()
-        if int(self._zoomAdjustment.get_value()) != zoomLevel:
+        zoom_level = self.getCurrentZoomLevel()
+        if int(self._zoom_adjustment.get_value()) != zoom_level:
             self._manual_set = True
             try:
-                self._zoomAdjustment.set_value(zoomLevel)
+                self._zoom_adjustment.set_value(zoom_level)
             finally:
                 self._manual_set = False
 

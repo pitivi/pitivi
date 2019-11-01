@@ -55,7 +55,7 @@ def scale_pixbuf(pixbuf, width, height):
 
 
 # Work around https://bugzilla.gnome.org/show_bug.cgi?id=759249
-def disconnectAllByFunc(obj, func):
+def disconnect_all_by_func(obj, func):
     i = 0
     while True:
         i += 1
@@ -113,7 +113,7 @@ def is_valid_file(path):
         return False
 
 
-def isWritable(path):
+def is_writable(path):
     """Returns whether the file/path is writable."""
     try:
         if os.path.isdir(path):
@@ -305,9 +305,9 @@ def unicode_error_dialog():
 
 
 def intersect(v1, v2):
-    s = Gst.Structure('t', t=v1).intersect(Gst.Structure('t', t=v2))
-    if s:
-        return s['t']
+    structure = Gst.Structure('t', t=v1).intersect(Gst.Structure('t', t=v2))
+    if structure:
+        return structure['t']
 
     return None
 
@@ -372,16 +372,16 @@ def fixate_caps_with_default_values(template, restrictions, default_values,
                 elif default_val:
                     struct[field] = default_val
             else:
-                v = None
+                value = None
                 struct_val = struct[field]
                 if prev_val:
-                    v = intersect(struct_val, prev_val)
-                    if v is not None:
-                        struct[field] = v
-                if v is None and default_val:
-                    v = intersect(struct_val, default_val)
-                    if v is not None:
-                        struct[field] = v
+                    value = intersect(struct_val, prev_val)
+                    if value is not None:
+                        struct[field] = value
+                if value is None and default_val:
+                    value = intersect(struct_val, default_val)
+                    if value is not None:
+                        struct[field] = value
                 else:
                     log.debug("utils", "Field %s from %s is plainly fixated",
                               field, struct)

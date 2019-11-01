@@ -41,7 +41,7 @@ from gi.repository.GstPbutils import DiscovererSubtitleInfo
 from gi.repository.GstPbutils import DiscovererVideoInfo
 
 from pitivi.configure import get_pixmap_dir
-from pitivi.utils.loggable import doLog
+from pitivi.utils.loggable import do_log
 from pitivi.utils.loggable import ERROR
 from pitivi.utils.loggable import INFO
 from pitivi.utils.misc import path_from_uri
@@ -456,7 +456,7 @@ def beautify_asset(asset):
         try:
             beautified_string = beautify_stream(stream)
         except NotImplementedError:
-            doLog(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
+            do_log(ERROR, "Beautify", "None", "Cannot beautify %s", stream)
             continue
         if beautified_string:
             res.append(beautified_string)
@@ -630,7 +630,7 @@ def beautify_time_delta(seconds):
     return ", ".join(parts)
 
 
-def beautify_ETA(length_nanos):
+def beautify_eta(length_nanos):
     """Converts the specified duration to a fuzzy estimate.
 
     Intended for progress ETAs, not to indicate a clip's duration.
@@ -716,9 +716,9 @@ def set_combo_value(combo, value):
     combo.props.model.foreach(select_specific_row, found)
 
     if len(found) != 1:
-        doLog(INFO, None, "utils",
-              "Could not set value %s, possible values: %s",
-              (value, [v[0] for v in combo.props.model]))
+        do_log(INFO, None, "utils",
+               "Could not set value %s, possible values: %s",
+               (value, [v[0] for v in combo.props.model]))
         return False
 
     return True
@@ -774,10 +774,10 @@ def fix_infobar(infobar):
     infobar.forall(make_sure_revealer_does_nothing)
 
 
-audio_channels = model((str, int),
+AUDIO_CHANNELS = model((str, int),
                        [(format_audiochannels(ch), ch) for ch in (8, 6, 4, 2, 1)])
 
-frame_rates = model((str, object),
+FRAME_RATES = model((str, object),
                     [(format_framerate(Gst.Fraction(*fps)), Gst.Fraction(*fps)) for fps in (
                         (12, 1),
                         (15, 1),
@@ -793,7 +793,7 @@ frame_rates = model((str, object),
                         (120, 1)
                     )])
 
-audio_rates = model((str, int),
+AUDIO_RATES = model((str, int),
                     [(format_audiorate(rate), rate) for rate in (
                         8000,
                         11025,

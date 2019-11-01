@@ -27,8 +27,8 @@ import os
 import sys
 from gettext import gettext as _
 
-missing_soft_deps = {}
-videosink_factory = None
+MISSING_SOFT_DEPS = {}
+VIDEOSINK_FACTORY = None
 
 
 def _version_to_string(version):
@@ -238,24 +238,24 @@ def _using_broadway_display():
 
 def _check_videosink():
     from gi.repository import Gst
-    global videosink_factory
+    global VIDEOSINK_FACTORY
 
     # If using GdkBroadwayDisplay make sure not to try to use gtkglsink
     # as it would segfault right away.
-    if not videosink_factory and \
+    if not VIDEOSINK_FACTORY and \
             not _using_broadway_display() and \
             "gtkglsink" in os.environ.get("PITIVI_UNSTABLE_FEATURES", ""):
         sink = Gst.ElementFactory.make("gtkglsink", None)
         if sink:
             res = sink.set_state(Gst.State.READY)
             if res == Gst.StateChangeReturn.SUCCESS:
-                videosink_factory = sink.get_factory()
+                VIDEOSINK_FACTORY = sink.get_factory()
                 sink.set_state(Gst.State.NULL)
 
-    if not videosink_factory:
-        videosink_factory = Gst.ElementFactory.find("gtksink")
+    if not VIDEOSINK_FACTORY:
+        VIDEOSINK_FACTORY = Gst.ElementFactory.find("gtksink")
 
-    return videosink_factory
+    return VIDEOSINK_FACTORY
 
 
 def _check_hardware_decoders():
@@ -305,7 +305,7 @@ def check_requirements():
     for dependency in SOFT_DEPENDENCIES:
         dependency.check()
         if not dependency.satisfied:
-            missing_soft_deps[dependency.modulename] = dependency
+            MISSING_SOFT_DEPS[dependency.modulename] = dependency
             print(_("Missing soft dependency:"))
             print(dependency)
 
