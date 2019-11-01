@@ -601,6 +601,12 @@ class EffectListWidget(Gtk.Box, Loggable):
 PROPS_TO_IGNORE = ['name', 'qos', 'silent', 'message', 'parent']
 
 
+def create_widget_accumulator_func(ihint, return_accu, handler_return, *args):
+    """Aborts `create_widget` emission if we got a widget."""
+    continue_emission = handler_return is None
+    return continue_emission, handler_return
+
+
 class EffectsPropertiesManager(GObject.Object, Loggable):
     """Provides and caches UIs for editing effects.
 
@@ -608,19 +614,13 @@ class EffectsPropertiesManager(GObject.Object, Loggable):
         app (Pitivi): The app.
     """
 
-    def create_widget_accumulator(*args):
-        """Aborts `create_widget` emission if we got a widget."""
-        handler_return = args[2]
-        if handler_return is None:
-            return True, handler_return
-        return False, handler_return
-
     __gsignals__ = {
-        "create_widget": (GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
-                          create_widget_accumulator),
+        "create_widget": (
+            GObject.SignalFlags.RUN_LAST, Gtk.Widget, (GstElementSettingsWidget, GES.Effect,),
+            create_widget_accumulator_func),
         "create_property_widget": (
             GObject.SignalFlags.RUN_LAST, object, (GstElementSettingsWidget, GES.Effect, object, object,),
-            create_widget_accumulator),
+            create_widget_accumulator_func),
     }
 
     def do_create_widget(self, effect_widget, effect):
