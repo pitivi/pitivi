@@ -496,7 +496,6 @@ def create_action_parameter(name, desc, mandatory=False, possible_variables=None
 def init():
     global has_validate
     try:
-        from gi.repository import GstValidate
         GstValidate.init()
         has_validate = GES.validate_register_action_types()
         GstValidate.register_action_type("stop", "pitivi",
