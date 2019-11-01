@@ -50,16 +50,16 @@ from pitivi.utils.timeline import Selected
 from pitivi.utils.timeline import Zoomable
 
 
-def handle_uncaught_exception(exctype, value, trace):
+def handle_uncaught_exception_func(exctype, value, trace):
     traceback.print_tb(trace)
     print(value, file=sys.stderr)
     sys.exit(1)
 
 
-sys.excepthook = handle_uncaught_exception
+sys.excepthook = handle_uncaught_exception_func
 
 
-def handle_glog(domain, level, message, udata):
+def handle_glog_func(domain, level, message, udata):
     Gst.debug_print_stack_trace()
     traceback.print_stack()
     print("%s - %s" % (domain, message), file=sys.stderr)
@@ -69,7 +69,7 @@ def handle_glog(domain, level, message, udata):
 # GStreamer Not enabled because of an assertion on caps on the CI server.
 # See https://gitlab.gnome.org/thiblahute/pitivi/-/jobs/66570
 for category in ["Gtk", "Gdk", "GLib-GObject", "GES"]:
-    GLib.log_set_handler(category, GLib.LogLevelFlags.LEVEL_CRITICAL, handle_glog, None)
+    GLib.log_set_handler(category, GLib.LogLevelFlags.LEVEL_CRITICAL, handle_glog_func, None)
 
 detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "0") not in ("0", "")
 os.environ["PITIVI_USER_CACHE_DIR"] = tempfile.mkdtemp(suffix="pitiviTestsuite")
