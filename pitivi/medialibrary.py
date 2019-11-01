@@ -1656,7 +1656,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
             self._project.addUris(uris)
 
     def _drag_data_received_cb(self, widget, context, x, y,
-                               selection, targettype, time):
+                               selection, targettype, time_):
         """Handles data being dragged onto self."""
         self.debug("targettype: %d, selection.data: %r",
                    targettype, selection.get_data())

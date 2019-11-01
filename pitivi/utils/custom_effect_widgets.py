@@ -26,7 +26,7 @@ from gi.repository import Gtk
 
 from pitivi import configure
 from pitivi.utils.loggable import Loggable
-from pitivi.utils.ui import model
+from pitivi.utils.ui import create_model
 from pitivi.utils.widgets import ColorPickerButton
 
 
@@ -356,7 +356,7 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
     # Shape picker
 
     shape_picker = builder.get_object("frei0r-filter-alphaspot::shape")
-    shape_list = model((str, float), [
+    shape_list = create_model((str, float), [
         # ouch...
         ("rectangle", 0.0),
         ("ellipse", 0.26),
@@ -396,7 +396,7 @@ def create_alphaspot_widget(effect_prop_manager, element_setting_widget, element
     # Operation picker
 
     op_picker = builder.get_object("frei0r-filter-alphaspot::operation")
-    op_list = model((str, float), [
+    op_list = create_model((str, float), [
         # ouch...
         ("write on clear", 0.0),
         ("max", 0.21),
