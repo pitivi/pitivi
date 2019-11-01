@@ -108,9 +108,8 @@ class TestLayers(BaseTestTimeline):
             preferred_ges_layer = ges_layers[preferred]
         # The heights of the layers.
         h = [ges_layer.ui.get_allocation().height for ges_layer in ges_layers]
-        s = SEPARATOR_HEIGHT
 
-        def assertLayerAt(ges_layer, y):
+        def assert_layer_at(ges_layer, y):
             result = timeline.get_layer_at(
                 int(y),
                 prefer_ges_layer=preferred_ges_layer,
@@ -121,30 +120,30 @@ class TestLayers(BaseTestTimeline):
                 "Expected %d, got %d at %d" % (ges_layers.index(ges_layer), ges_layers.index(result[0]), y))
 
         # y on the top layer.
-        assertLayerAt(ges_layers[expectations[0]], 0)
-        assertLayerAt(ges_layers[expectations[1]], h[0] / 2 - 1)
-        assertLayerAt(ges_layers[expectations[2]], h[0] / 2)
-        assertLayerAt(ges_layers[expectations[3]], h[0] - 1)
+        assert_layer_at(ges_layers[expectations[0]], 0)
+        assert_layer_at(ges_layers[expectations[1]], h[0] / 2 - 1)
+        assert_layer_at(ges_layers[expectations[2]], h[0] / 2)
+        assert_layer_at(ges_layers[expectations[3]], h[0] - 1)
 
         # y on the separator.
-        assertLayerAt(ges_layers[expectations[4]], h[0])
-        assertLayerAt(ges_layers[expectations[5]], h[0] + s - 1)
+        assert_layer_at(ges_layers[expectations[4]], h[0])
+        assert_layer_at(ges_layers[expectations[5]], h[0] + SEPARATOR_HEIGHT - 1)
 
         # y on the middle layer.
-        assertLayerAt(ges_layers[expectations[6]], h[0] + s)
-        assertLayerAt(ges_layers[expectations[7]], h[0] + s + h[1] / 2 - 1)
-        assertLayerAt(ges_layers[expectations[8]], h[0] + s + h[1] / 2)
-        assertLayerAt(ges_layers[expectations[9]], h[0] + s + h[1] - 1)
+        assert_layer_at(ges_layers[expectations[6]], h[0] + SEPARATOR_HEIGHT)
+        assert_layer_at(ges_layers[expectations[7]], h[0] + SEPARATOR_HEIGHT + h[1] / 2 - 1)
+        assert_layer_at(ges_layers[expectations[8]], h[0] + SEPARATOR_HEIGHT + h[1] / 2)
+        assert_layer_at(ges_layers[expectations[9]], h[0] + SEPARATOR_HEIGHT + h[1] - 1)
 
         # y on the separator.
-        assertLayerAt(ges_layers[expectations[10]], h[0] + s + h[1])
-        assertLayerAt(ges_layers[expectations[11]], h[0] + s + h[1] + s - 1)
+        assert_layer_at(ges_layers[expectations[10]], h[0] + SEPARATOR_HEIGHT + h[1])
+        assert_layer_at(ges_layers[expectations[11]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT - 1)
 
         # y on the bottom layer.
-        assertLayerAt(ges_layers[expectations[12]], h[0] + s + h[1] + s)
-        assertLayerAt(ges_layers[expectations[13]], h[0] + s + h[1] + s + h[2] / 2 - 1)
-        assertLayerAt(ges_layers[expectations[14]], h[0] + s + h[1] + s + h[2] / 2)
-        assertLayerAt(ges_layers[expectations[15]], h[0] + s + h[1] + s + h[2] - 1)
+        assert_layer_at(ges_layers[expectations[12]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT)
+        assert_layer_at(ges_layers[expectations[13]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT + h[2] / 2 - 1)
+        assert_layer_at(ges_layers[expectations[14]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT + h[2] / 2)
+        assert_layer_at(ges_layers[expectations[15]], h[0] + SEPARATOR_HEIGHT + h[1] + SEPARATOR_HEIGHT + h[2] - 1)
 
     def testSetSeparatorsPrelight(self):
         timeline_container = common.create_timeline_container()
@@ -446,20 +445,20 @@ class TestGrouping(BaseTestTimeline):
         self.assertEqual(ges_clip0.props.start, ges_clip1.props.start)
         self.assertEqual(ges_clip0.props.duration, ges_clip1.props.duration)
 
-        bTrackElem0, = ges_clip0.get_children(recursive=False)
-        bTrackElem1, = ges_clip1.get_children(recursive=False)
+        track_elem_0, = ges_clip0.get_children(recursive=False)
+        track_elem_1, = ges_clip1.get_children(recursive=False)
 
-        if bTrackElem0.get_track_type() == GES.TrackType.AUDIO:
+        if track_elem_0.get_track_type() == GES.TrackType.AUDIO:
             aclip = ges_clip0.ui
-            atrackelem = bTrackElem0.ui
+            atrackelem = track_elem_0.ui
             vclip = ges_clip1.ui
-            vtrackelem = bTrackElem1.ui
+            vtrackelem = track_elem_1.ui
         else:
             aclip = ges_clip1.ui
-            atrackelem = bTrackElem1.ui
+            atrackelem = track_elem_1.ui
 
             vclip = ges_clip0.ui
-            vtrackelem = bTrackElem0.ui
+            vtrackelem = track_elem_0.ui
 
         self.assertEqual(aclip.audio_widget, atrackelem)
         self.assertEqual(vclip.video_widget, vtrackelem)
@@ -484,7 +483,7 @@ class TestGrouping(BaseTestTimeline):
             event.get_button.return_value = True, 1
             get_event_widget.return_value = clip1.ui
             timeline._button_press_event_cb(None, event)
-            self.assertIsNotNone(timeline.draggingElement)
+            self.assertIsNotNone(timeline.dragging_element)
 
             # Move it to the right, on the separator below.
             event = mock.Mock()
@@ -593,15 +592,15 @@ class TestEditing(BaseTestTimeline):
             event = mock.Mock()
             event.x = 100
             event.get_button.return_value = True, 1
-            get_event_widget.return_value = clip.ui.rightHandle
+            get_event_widget.return_value = clip.ui.right_handle
             timeline._button_press_event_cb(None, event)
-            self.assertIsNotNone(timeline.draggingElement)
+            self.assertIsNotNone(timeline.dragging_element)
 
             # Drag it to the left, on the separator below.
             event = mock.Mock()
             event.x = 99
             event.get_state.return_value = Gdk.ModifierType.BUTTON1_MASK
-            with mock.patch.object(clip.ui.rightHandle, "translate_coordinates") as translate_coordinates:
+            with mock.patch.object(clip.ui.right_handle, "translate_coordinates") as translate_coordinates:
                 translate_coordinates.return_value = (0, 0)
                 with mock.patch.object(timeline, "get_layer_at") as get_layer_at:
                     get_layer_at.return_value = layer, timeline._separators[1]

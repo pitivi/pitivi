@@ -110,22 +110,21 @@ class TitleEditor(Loggable):
         self.background_color_picker.add(self.color_picker_background_widget)
         self.color_picker_background_widget.connect("value-changed", self._color_picker_value_changed_cb, self.background_color_button, "foreground-color")
 
-        settings = ["valignment", "halignment", "x-absolute", "y-absolute"]
-        for setting in settings:
-            self.settings[setting] = builder.get_object(setting)
+        for widget_id in ("valignment", "halignment", "x-absolute", "y-absolute"):
+            self.settings[widget_id] = builder.get_object(widget_id)
 
-        for n, en in list({_("Absolute"): "absolute",
-                           _("Top"): "top",
-                           _("Center"): "center",
-                           _("Bottom"): "bottom",
-                           _("Baseline"): "baseline"}.items()):
-            self.settings["valignment"].append(en, n)
+        for value_id, text in (("absolute", _("Absolute")),
+                               ("top", _("Top")),
+                               ("center", _("Center")),
+                               ("bottom", _("Bottom")),
+                               ("baseline", _("Baseline"))):
+            self.settings["valignment"].append(value_id, text)
 
-        for n, en in list({_("Absolute"): "absolute",
-                           _("Left"): "left",
-                           _("Center"): "center",
-                           _("Right"): "right"}.items()):
-            self.settings["halignment"].append(en, n)
+        for value_id, text in (("absolute", _("Absolute")),
+                               ("left", _("Left")),
+                               ("center", _("Center")),
+                               ("right", _("Right"))):
+            self.settings["halignment"].append(value_id, text)
 
     def _setChildProperty(self, name, value):
         with self.app.action_log.started("Title change property",
@@ -137,16 +136,16 @@ class TitleEditor(Loggable):
             finally:
                 self._setting_props = False
 
-    def _color_picker_value_changed_cb(self, widget, colorButton, colorLayer):
+    def _color_picker_value_changed_cb(self, widget, color_button, color_layer):
         argb = 0
         argb += (1 * 255) * 256 ** 3
         argb += float(widget.color_r) * 256 ** 2
         argb += float(widget.color_g) * 256 ** 1
         argb += float(widget.color_b) * 256 ** 0
-        self.debug("Setting text %s to %x", colorLayer, argb)
-        self._setChildProperty(colorLayer, argb)
+        self.debug("Setting text %s to %x", color_layer, argb)
+        self._setChildProperty(color_layer, argb)
         rgba = argb_to_gdk_rgba(argb)
-        colorButton.set_rgba(rgba)
+        color_button.set_rgba(rgba)
 
     def _backgroundColorButtonCb(self, widget):
         color = gdk_rgba_to_argb(widget.get_rgba())

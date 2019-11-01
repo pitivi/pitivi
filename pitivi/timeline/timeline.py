@@ -374,15 +374,15 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         # Clip editing.
         # Which clip widget is being edited.
-        self.draggingElement = None
+        self.dragging_element = None
         # The GES.Group in case there are one or more clips being dragged.
         self.dragging_group = None
-        # Which handle of the draggingElement has been clicked, if any.
+        # Which handle of the dragging_element has been clicked, if any.
         # If set, it means we are in a trim operation.
-        self.__clickedHandle = None
+        self.__clicked_handle = None
         # The GES object for controlling the operation.
         self.editing_context = None
-        # Whether draggingElement really got dragged.
+        # Whether dragging_element really got dragged.
         self.__got_dragged = False
         # The x of the event which starts the drag operation.
         self.__drag_start_x = 0
@@ -398,10 +398,10 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         # Set to True when a clip has been dragged because the first
         # button-release-event on the clip should be ignored.
         self.got_dragged = False
-        # Whether the drop data has been received. See self.dropData below.
-        self.dropDataReady = False
+        # Whether the drop data has been received. See self.drop_data below.
+        self.drop_data_ready = False
         # What's being dropped, for example asset URIs.
-        self.dropData = None
+        self.drop_data = None
         # Whether clips have been created in the current drag & drop.
         self.dropping_clips = False
         # The list of (Layer, Clip) tuples dragged into the timeline.
@@ -707,14 +707,14 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         res, button = event.get_button()
         if res and button == 1:
-            self.draggingElement = self._getParentOfType(event_widget, Clip)
+            self.dragging_element = self._getParentOfType(event_widget, Clip)
             if isinstance(event_widget, TrimHandle):
-                self.__clickedHandle = event_widget
-            self.debug("Dragging element is %s", self.draggingElement)
+                self.__clicked_handle = event_widget
+            self.debug("Dragging element is %s", self.dragging_element)
 
-            if self.draggingElement:
+            if self.dragging_element:
                 self.__drag_start_x = event.x
-                self._on_layer = self.draggingElement.layer.ges_layer
+                self._on_layer = self.dragging_element.layer.ges_layer
                 self.dragging_group = self.selection.group()
             else:
                 layer_controls = self._getParentOfType(event_widget, LayerControls)
@@ -743,7 +743,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         allow_seek = not self.__got_dragged
 
         res, button = event.get_button()
-        if self.draggingElement:
+        if self.dragging_element:
             self.dragEnd()
         elif self.__moving_layer:
             self.__endMovingLayer()
@@ -838,9 +838,9 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
                 yield clip
 
     def _motion_notify_event_cb(self, unused_widget, event):
-        if self.draggingElement:
-            if isinstance(self.draggingElement, TransitionClip) and \
-                    not self.__clickedHandle:
+        if self.dragging_element:
+            if isinstance(self.dragging_element, TransitionClip) and \
+                    not self.__clicked_handle:
                 # Don't allow dragging a transition.
                 return False
 
@@ -924,11 +924,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             y (int): The y coordinate relative to the layers box.
         """
         placement = 0
-        self.draggingElement = None
+        self.dragging_element = None
 
-        assets = self._project.assetsForUris(self.dropData)
+        assets = self._project.assetsForUris(self.drop_data)
         if not assets:
-            self._project.addUris(self.dropData)
+            self._project.addUris(self.drop_data)
             return False
 
         ges_clips = []
@@ -959,7 +959,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
         if ges_clips:
             ges_clip = ges_clips[0]
-            self.draggingElement = ges_clip.ui
+            self.dragging_element = ges_clip.ui
             self._on_layer = ges_layer
             self.dropping_clips = True
 
@@ -975,7 +975,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             Gdk.drag_status(context, 0, timestamp)
             return True
 
-        if not self.dropDataReady:
+        if not self.drop_data_ready:
             # We don't know yet the details of what's being dragged.
             # Ask for the details.
             self.drag_get_data(context, target, timestamp)
@@ -994,17 +994,17 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         self._setSeparatorsPrelight(False)
 
         target = self.drag_dest_find_target(context, None)
-        if self.draggingElement:
+        if self.dragging_element:
             self.__last_clips_on_leave = [(clip.get_layer(), clip)
                                           for clip in self.dragging_group.get_children(False)]
-            self.dropDataReady = False
+            self.drop_data_ready = False
             if self.dropping_clips:
                 self.selection.setSelection([], SELECT)
                 for clip in self.dragging_group.get_children(False):
                     clip.get_layer().remove_clip(clip)
                 self._project.pipeline.commit_timeline()
 
-            self.draggingElement = None
+            self.dragging_element = None
             self.__got_dragged = False
             self.dropping_clips = False
             self.dragging_group.ungroup(recursive=False)
@@ -1013,8 +1013,8 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             self.cleanDropData()
 
     def cleanDropData(self):
-        self.dropDataReady = False
-        self.dropData = None
+        self.drop_data_ready = False
+        self.drop_data = None
         self.dropping_clips = False
 
     def _drag_drop_cb(self, unused_widget, context, x, y, timestamp):
@@ -1055,16 +1055,16 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
     def _drag_data_received_cb(self, unused_widget, unused_context, unused_x,
                                unused_y, selection_data, unused_info, timestamp):
         data_type = selection_data.get_data_type().name()
-        if not self.dropDataReady:
+        if not self.drop_data_ready:
             self.__last_clips_on_leave = None
             if data_type == URI_TARGET_ENTRY.target:
-                self.dropData = selection_data.get_uris()
-                self.dropDataReady = True
+                self.drop_data = selection_data.get_uris()
+                self.drop_data_ready = True
             elif data_type == EFFECT_TARGET_ENTRY.target:
                 # Dragging an effect from the Effect Library.
                 factory_name = str(selection_data.get_data(), "UTF-8")
-                self.dropData = factory_name
-                self.dropDataReady = True
+                self.drop_data = factory_name
+                self.drop_data_ready = True
 
     # Handle layers
     def _layer_added_cb(self, unused_ges_timeline, ges_layer):
@@ -1307,19 +1307,19 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
             x (int): The x coordinate relative to the layers box.
             y (int): The y coordinate relative to the layers box.
         """
-        if not self.draggingElement:
+        if not self.dragging_element:
             return
 
         if self.__got_dragged is False:
             self.__got_dragged = True
-            if self.__clickedHandle:
+            if self.__clicked_handle:
                 edit_mode = GES.EditMode.EDIT_TRIM
-                dragging_edge = self.__clickedHandle.edge
+                dragging_edge = self.__clicked_handle.edge
             else:
                 edit_mode = GES.EditMode.EDIT_NORMAL
                 dragging_edge = GES.Edge.EDGE_NONE
 
-            self.editing_context = EditingContext(self.draggingElement.ges_clip,
+            self.editing_context = EditingContext(self.dragging_element.ges_clip,
                                                   self.ges_timeline,
                                                   edit_mode,
                                                   dragging_edge,
@@ -1378,7 +1378,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         if self.editing_context:
             self.__end_snap()
 
-            if self._separator_accepting_drop and self.__on_separators and self.__got_dragged and not self.__clickedHandle:
+            if self._separator_accepting_drop and self.__on_separators and self.__got_dragged and not self.__clicked_handle:
                 priority = self.separator_priority(self.__on_separators[1])
                 ges_layer = self.create_layer(priority)
                 position = self.editing_context.new_position
@@ -1386,11 +1386,11 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
 
             self.editing_context.finish()
 
-        self.draggingElement = None
+        self.dragging_element = None
         if self.dragging_group is not None:
             self.dragging_group.ungroup(recursive=False)
             self.dragging_group = None
-        self.__clickedHandle = None
+        self.__clicked_handle = None
         self.__got_dragged = False
         self.editing_context = None
 
@@ -1974,12 +1974,12 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
         progress_dialog.window.show()
         self.app.action_log.begin("align", toplevel=True)
 
-        def alignedCb():  # Called when alignment is complete
+        def aligned_cb():  # Called when alignment is complete
             self.app.action_log.commit()
             self._project.pipeline.commit_timeline()
             progress_dialog.window.destroy()
 
-        auto_aligner = AutoAligner(self.timeline.selection, alignedCb)
+        auto_aligner = AutoAligner(self.timeline.selection, aligned_cb)
         progress_meter = auto_aligner.start()
         progress_meter.addWatcher(progress_dialog.updatePosition)
 
