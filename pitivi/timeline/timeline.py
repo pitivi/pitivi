@@ -517,7 +517,7 @@ class Timeline(Gtk.EventBox, Zoomable, Loggable):
         layout_width = self.layout.get_allocation().width
         if when_not_in_view:
             x = self.nsToPixel(self.__last_position) - self.hadj.get_value()
-            if x >= 0 and x <= layout_width:
+            if 0 <= x <= layout_width:
                 return
 
         # Deciding the new position of the playhead in the timeline's view.
@@ -2007,7 +2007,7 @@ class TimelineContainer(Gtk.Grid, Zoomable, Loggable):
             for clip in clips:
                 start = clip.get_start()
                 end = start + clip.get_duration()
-                if start < position and end > position:
+                if start < position < end:
                     layer = clip.get_layer()
                     layer.splitting_object = True
                     try:

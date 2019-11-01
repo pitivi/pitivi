@@ -18,7 +18,6 @@ pitivi/medialibrary.py
 pitivi/timeline/timeline.py
 pitivi/utils/extract.py
 pitivi/utils/loggable.py
-pitivi/utils/widgets.py
 tests/test_project.py
 "
 
