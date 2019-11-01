@@ -16,7 +16,6 @@ bin/pitivi.in
 pitivi/autoaligner.py
 pitivi/effects.py
 pitivi/medialibrary.py
-pitivi/project.py
 pitivi/timeline/elements.py
 pitivi/timeline/timeline.py
 pitivi/utils/extract.py
