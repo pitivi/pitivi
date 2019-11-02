@@ -423,7 +423,7 @@ class TestProjectLoading(common.TestCase):
                 asset = medialib.storemodel[0][medialibrary.COL_ASSET]
                 app.project_manager.current_project.disable_proxies_for_assets([asset])
 
-            row, = medialib.storemodel
+            row = medialib.storemodel[0]
             asset = row[medialibrary.COL_ASSET]
             self.assertEqual(medialib._progressbar.get_fraction(), 1.0)
             uri = common.get_sample_uri("1sec_simpsons_trailer.mp4")
@@ -436,7 +436,7 @@ class TestProjectLoading(common.TestCase):
             app.project_manager.current_project.use_proxies_for_assets([asset])
             mainloop.run()
 
-        row, = medialib.storemodel
+        row = medialib.storemodel[0]
         asset = row[medialibrary.COL_ASSET]
         self.assertEqual(medialib._progressbar.is_visible(), False)
         self.assertEqual(asset.props.id, proxy_uri)
