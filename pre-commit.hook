@@ -16,7 +16,6 @@ bin/pitivi.in
 pitivi/autoaligner.py
 pitivi/medialibrary.py
 pitivi/utils/extract.py
-pitivi/utils/loggable.py
 "
 
 PYLINT_IGNORE_ARGS=""
