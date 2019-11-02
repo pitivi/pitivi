@@ -35,13 +35,15 @@ suggestion-mode=yes
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=arguments-differ, # Pylint fails at this with the Gtk do_* methods, so no thanks.
+disable=access-member-before-definition,
+        arguments-differ, # Pylint fails at this with the Gtk do_* methods, so no thanks.
         assignment-from-none, # Most probably subclasses return something else.
         global-statement,
         import-outside-toplevel,
         no-else-return, # Looks better in some cases.
         no-member,
         no-self-use, # We love self.
+        not-an-iterable,
         possibly-unused-variable,
         similarities, # It's expensive and not very useful.
         too-few-public-methods,
