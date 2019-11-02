@@ -750,7 +750,7 @@ class MediaLibraryWidget(Gtk.Box, Loggable):
         view.connect("drag-end", self._dnd_drag_end_cb)
 
     def __updateViewCb(self, unused_model, unused_path, unused_iter=None):
-        if not len(self.storemodel):
+        if len(self.storemodel) == 0:
             self._welcome_infobar.show_all()
         else:
             self._welcome_infobar.hide()
