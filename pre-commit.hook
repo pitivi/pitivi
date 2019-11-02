@@ -17,7 +17,6 @@ pitivi/autoaligner.py
 pitivi/medialibrary.py
 pitivi/utils/extract.py
 pitivi/utils/loggable.py
-tests/test_project.py
 "
 
 PYLINT_IGNORE_ARGS=""
