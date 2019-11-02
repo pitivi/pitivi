@@ -812,61 +812,6 @@ def get_exception_message(exception, frame=-1, filename=None):
         % locals()
 
 
-def reopen_output_files():
-    """Reopens the stdout and stderr output files set by `output_to_files`."""
-    global _stdout, _stderr
-    if not _stdout and not _stderr:
-        debug('log', 'told to reopen log files, but log files not set')
-        return
-
-    def reopen(name, fileno, *args):
-        oldmask = os.umask(0o026)
-        try:
-            f = open(name, 'a+', *args)
-        finally:
-            os.umask(oldmask)
-
-        os.dup2(f.fileno(), fileno)
-
-    if _stdout:
-        reopen(_stdout, sys.stdout.fileno())
-
-    if _stderr:
-        reopen(_stderr, sys.stderr.fileno(), 0)
-        debug('log', 'opened log %r', _stderr)
-
-
-def output_to_files(stdout=None, stderr=None):
-    """Redirects stdout and stderr to the specified files.
-
-    Records the file names so that a future call to reopen_output_files()
-    can open the same files. Installs a SIGHUP handler that will reopen
-    the output files.
-
-    Note that stderr is opened unbuffered, so if it shares a file with
-    stdout then interleaved output may not appear in the order that you
-    expect.
-    """
-    global _stdout, _stderr, _old_hup_handler
-    _stdout, _stderr = stdout, stderr
-    reopen_output_files()
-
-    def sighup(signum, frame):
-        info('log', "Received SIGHUP, reopening logs")
-        reopen_output_files()
-        if _old_hup_handler:
-            info('log', "Calling old SIGHUP handler")
-            _old_hup_handler(signum, frame)
-
-    debug('log', 'installing SIGHUP handler')
-    from . import signal
-    handler = signal.signal(signal.SIGHUP, sighup)
-    if handler in (signal.SIG_DFL, signal.SIG_IGN):
-        _old_hup_handler = None
-    else:
-        _old_hup_handler = handler
-
-
 # base class for loggable objects
 
 
