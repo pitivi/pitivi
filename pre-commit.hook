@@ -14,7 +14,6 @@ export PYTHONPATH=$TOPLEVEL/pitivi/coptimizations/.libs:$PYTHONPATH
 PYLINT_IGNORED_FILES="
 bin/pitivi.in
 pitivi/autoaligner.py
-pitivi/medialibrary.py
 pitivi/utils/extract.py
 "
 
