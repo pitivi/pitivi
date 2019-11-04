@@ -101,7 +101,7 @@ class MarkerAdded(MarkerAction):
     def undo(self):
         self.remove()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("add-marker")
         return st
 
@@ -115,7 +115,7 @@ class MarkerRemoved(MarkerAction):
     def undo(self):
         self.add()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-marker")
         return st
 
@@ -135,7 +135,7 @@ class MarkerMoved(UndoableAutomaticObjectAction):
     def undo(self):
         self.ges_marker_list.move(self.auto_object, self.old_position)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("move-marker")
         return st
 

@@ -119,7 +119,7 @@ def create_timeline_container(**settings):
     project = app.project_manager.new_blank_project()
 
     timeline_container = TimelineContainer(app)
-    timeline_container.setProject(project)
+    timeline_container.set_project(project)
 
     timeline = timeline_container.timeline
     timeline.get_parent = mock.MagicMock(return_value=timeline_container)
@@ -232,7 +232,7 @@ class TestCase(unittest.TestCase, Loggable):
         if detect_leaks:
             self.gctrack()
 
-        self.__zoom_level = Zoomable.getCurrentZoomLevel()
+        self.__zoom_level = Zoomable.get_current_zoom_level()
 
         # TODO: Get rid of Previewer.manager.
         assert hasattr(Previewer, "manager")
@@ -247,7 +247,7 @@ class TestCase(unittest.TestCase, Loggable):
         if detect_leaks:
             self.gccollect()
             self.gcverify()
-        Zoomable.setZoomLevel(self.__zoom_level)
+        Zoomable.set_zoom_level(self.__zoom_level)
 
     # override run() to save a reference to the test result object
     def run(self, result=None):

@@ -7,7 +7,7 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
-    <signal name="configure-event" handler="_configureCb" swapped="no"/>
+    <signal name="configure-event" handler="_configure_cb" swapped="no"/>
     <signal name="response" handler="_response_cb" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
@@ -30,7 +30,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Reset all settings to their default values</property>
-                <signal name="clicked" handler="_factorySettingsButtonCb" swapped="no"/>
+                <signal name="clicked" handler="_factory_settings_button_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -48,7 +48,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip_text" translatable="yes">Revert all settings to the previous values (before you opened the preferences dialog)</property>
-                <signal name="clicked" handler="_revertButtonCb" swapped="no"/>
+                <signal name="clicked" handler="_revert_button_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

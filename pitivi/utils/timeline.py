@@ -90,7 +90,7 @@ class Selection(GObject.Object, Loggable):
         self.can_group = False
         self.can_ungroup = False
 
-    def setSelection(self, objs, mode):
+    def set_selection(self, objs, mode):
         """Updates the current selection.
 
         Args:
@@ -162,12 +162,12 @@ class Selection(GObject.Object, Loggable):
             yield obj, True
 
     def select(self, objs):
-        self.setSelection(objs, SELECT)
+        self.set_selection(objs, SELECT)
 
     def unselect(self, objs):
-        self.setSelection(objs, UNSELECT)
+        self.set_selection(objs, UNSELECT)
 
-    def getSelectedTrackElements(self):
+    def get_selected_track_elements(self):
         """Returns the list of elements contained in this selection.
 
         Returns:
@@ -179,7 +179,7 @@ class Selection(GObject.Object, Loggable):
 
         return set(objects)
 
-    def getSingleClip(self, clip_type=GES.SourceClip):
+    def get_single_clip(self, clip_type=GES.SourceClip):
         """Returns the single-selected clip, if any.
 
         Args:
@@ -295,9 +295,9 @@ class EditingContext(GObject.Object, Loggable):
         if self.__log_actions:
             self.app.action_log.commit("move-clip")
         self.timeline.get_asset().pipeline.commit_timeline()
-        self.timeline.ui.app.gui.editor.viewer.clipTrimPreviewFinished()
+        self.timeline.ui.app.gui.editor.viewer.clip_trim_preview_finished()
 
-    def setMode(self, mode):
+    def set_mode(self, mode):
         """Sets the current editing mode.
 
         Args:
@@ -332,10 +332,10 @@ class EditingContext(GObject.Object, Loggable):
 
         if res and self.mode == GES.EditMode.EDIT_TRIM and self.with_video:
             if self.edge == GES.Edge.EDGE_START:
-                self.timeline.ui.app.gui.editor.viewer.clipTrimPreview(
+                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
                     self.focus, self.focus.props.in_point)
             elif self.edge == GES.Edge.EDGE_END:
-                self.timeline.ui.app.gui.editor.viewer.clipTrimPreview(
+                self.timeline.ui.app.gui.editor.viewer.clip_trim_preview(
                     self.focus, self.focus.props.duration + self.focus.props.in_point)
 
 
@@ -357,11 +357,11 @@ class Zoomable:
     ex : 0.1 = 1 pixel for 10 seconds
     ex : 1.0 = 1 pixel for a second
      Class Methods
-    . pixelToNs(pixels)
-    . nsToPixels(time)
-    . setZoomRatio
+    . pixel_to_ns(pixels)
+    . ns_to_pixels(time)
+    . set_zoom_ratio
     Instance Methods
-    . zoomChanged()
+    . zoom_changed()
     """
 
     sigid = None
@@ -377,9 +377,9 @@ class Zoomable:
 
     def __init__(self):
         # FIXME: ideally we should deprecate this
-        Zoomable.addInstance(self)
+        Zoomable.add_instance(self)
         if Zoomable.zoomratio is None:
-            Zoomable.zoomratio = self.computeZoomRatio(self._cur_zoom)
+            Zoomable.zoomratio = self.compute_zoom_ratio(self._cur_zoom)
 
     def __del__(self):
         if self in Zoomable._instances:
@@ -387,65 +387,60 @@ class Zoomable:
             self._instances.remove(self)
 
     @classmethod
-    def addInstance(cls, instance):
+    def add_instance(cls, instance):
         cls._instances.append(instance)
 
     @classmethod
-    def removeInstance(cls, instance):
+    def remove_instance(cls, instance):
         cls._instances.remove(instance)
 
     @classmethod
-    def setZoomRatio(cls, ratio):
+    def set_zoom_ratio(cls, ratio):
         ratio = min(max(cls.min_zoom, ratio), cls.max_zoom)
         if cls.zoomratio != ratio:
             cls.zoomratio = ratio
             for inst in cls._instances:
-                inst.zoomChanged()
+                inst.zoom_changed()
 
     @classmethod
-    def setZoomLevel(cls, level):
+    def set_zoom_level(cls, level):
         level = int(max(0, min(level, cls.zoom_steps)))
         if level != cls._cur_zoom:
             cls._cur_zoom = level
-            cls.setZoomRatio(cls.computeZoomRatio(level))
+            cls.set_zoom_ratio(cls.compute_zoom_ratio(level))
 
     @classmethod
-    def getCurrentZoomLevel(cls):
+    def get_current_zoom_level(cls):
         return cls._cur_zoom
 
     @classmethod
-    def zoomIn(cls):
-        cls.setZoomLevel(cls._cur_zoom + 1)
+    def zoom_in(cls):
+        cls.set_zoom_level(cls._cur_zoom + 1)
         cls.app.write_action("zoom-in", optional_action_type=True)
 
     @classmethod
-    def zoomOut(cls):
-        cls.setZoomLevel(cls._cur_zoom - 1)
+    def zoom_out(cls):
+        cls.set_zoom_level(cls._cur_zoom - 1)
         cls.app.write_action("zoom-out", optional_action_type=True)
 
     @classmethod
-    def computeZoomRatio(cls, x):
+    def compute_zoom_ratio(cls, x):
         return ((((float(x) / cls.zoom_steps) ** 3) * cls.zoom_range) +
                 cls.min_zoom)
 
     @classmethod
-    def computeZoomLevel(cls, ratio):
+    def compute_zoom_level(cls, ratio):
         return int((
             (max(0, ratio - cls.min_zoom) /
              cls.zoom_range) ** (1.0 / 3.0)) * cls.zoom_steps)
 
     @classmethod
-    def pixelToNs(cls, pixel):
+    def pixel_to_ns(cls, pixel):
         """Returns the duration equivalent of the specified pixel."""
         return int(pixel * Gst.SECOND / cls.zoomratio)
 
     @classmethod
-    def pixelToNsAt(cls, pixel, ratio):
-        """Returns the duration equivalent of the specified pixel."""
-        return int(pixel * Gst.SECOND / ratio)
-
-    @classmethod
-    def nsToPixel(cls, duration):
+    def ns_to_pixel(cls, duration):
         """Returns the pixel equivalent of the specified duration."""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
@@ -454,7 +449,7 @@ class Zoomable:
         return int((float(duration) / Gst.SECOND) * cls.zoomratio)
 
     @classmethod
-    def nsToPixelAccurate(cls, duration):
+    def ns_to_pixel_accurate(cls, duration):
         """Returns the pixel equivalent of the specified duration."""
         # Here, a long time ago (206f3a05), a pissed programmer said:
         # DIE YOU CUNTMUNCH CLOCK_TIME_NONE UBER STUPIDITY OF CRACK BINDINGS !!
@@ -462,5 +457,5 @@ class Zoomable:
             return 0
         return (float(duration) / Gst.SECOND) * cls.zoomratio
 
-    def zoomChanged(self):
+    def zoom_changed(self):
         pass

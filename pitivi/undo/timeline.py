@@ -67,7 +67,7 @@ class TrackElementPropertyChanged(UndoableAction):
         self.track_element.set_child_property(
             self.property_name, self.old_value)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("set-child-property")
         st['element-name'] = self.track_element.get_name()
         st['property'] = self.property_name
@@ -192,7 +192,7 @@ class TrackElementAdded(TrackElementAction):
     def undo(self):
         self.remove()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("container-add-child")
         st["container-name"] = self.clip.get_name()
         st["asset-id"] = self.track_element.get_id()
@@ -217,7 +217,7 @@ class TrackElementRemoved(TrackElementAction):
         self.add()
         self.track_element.props.priority = priority
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("container-remove-child")
         st["container-name"] = self.clip.get_name()
         st["child-name"] = self.track_element.get_name()
@@ -315,7 +315,7 @@ class ClipAdded(ClipAction):
     def undo(self):
         self.remove()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         timeline = self.layer.get_timeline()
         if hasattr(self.layer, "splitting_object") and \
                 self.layer.splitting_object is True:
@@ -358,7 +358,7 @@ class ClipRemoved(ClipAction):
         for action in self.transition_removed_actions:
             action.undo()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         timeline = self.layer.get_timeline()
         if hasattr(timeline, "ui") and timeline.ui\
                 and timeline.ui.editing_context is not None:
@@ -475,7 +475,7 @@ class LayerAdded(UndoableAction):
         self.ges_timeline.remove_layer(self.ges_layer)
         self.ges_timeline.get_asset().pipeline.commit_timeline()
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("add-layer")
         st.set_value("priority", self.ges_layer.props.priority)
         st.set_value("auto-transition", self.ges_layer.props.auto_transition)
@@ -499,7 +499,7 @@ class LayerRemoved(UndoableAction):
     def undo(self):
         self.ges_timeline.add_layer(self.ges_layer)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-layer")
         st.set_value("priority", self.ges_layer.props.priority)
         return st
@@ -524,7 +524,7 @@ class LayerMoved(UndoableAction):
     def undo(self):
         self.ges_layer.props.priority = self.old_priority
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("move-layer")
         st.set_value("priority", self.ges_layer.props.priority)
         return st
@@ -544,7 +544,7 @@ class KeyframeAddedAction(UndoableAction):
     def undo(self):
         self.control_source.unset(self.keyframe.timestamp)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("add-keyframe")
         for key, value in self.action_info.items():
             st.set_value(key, value)
@@ -567,7 +567,7 @@ class KeyframeRemovedAction(UndoableAction):
     def undo(self):
         self.control_source.set(self.keyframe.timestamp, self.keyframe.value)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-keyframe")
         for key, value in self.action_info.items():
             st.set_value(key, value)
@@ -585,12 +585,12 @@ class KeyframeChangedAction(UndoableAction):
         self.new_snapshot = new_snapshot
 
     def do(self):
-        self._applySnapshot(self.new_snapshot)
+        self._apply_snapshot(self.new_snapshot)
 
     def undo(self):
-        self._applySnapshot(self.old_snapshot)
+        self._apply_snapshot(self.old_snapshot)
 
-    def _applySnapshot(self, snapshot):
+    def _apply_snapshot(self, snapshot):
         time, value = snapshot
         self.control_source.set(time, value)
 
@@ -612,7 +612,7 @@ class ControlSourceSetAction(UndoableAction):
         res = self.track_element.remove_control_binding(self.property_name)
         assert res
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("set-control-source")
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
@@ -639,7 +639,7 @@ class ControlSourceRemoveAction(UndoableAction):
         self.track_element.set_control_source(self.control_source,
                                               self.property_name, self.binding_type)
 
-    def asScenarioAction(self):
+    def as_scenario_action(self):
         st = Gst.Structure.new_empty("remove-control-source")
         st.set_value("element-name", self.track_element.get_name())
         st.set_value("property-name", self.property_name)
@@ -665,20 +665,20 @@ class LayerObserver(MetaContainerObserver, Loggable):
         self.keyframe_observers = {}
         self.track_element_observers = {}
 
-        ges_layer.connect("clip-added", self._clipAddedCb)
-        ges_layer.connect("clip-removed", self._clipRemovedCb)
+        ges_layer.connect("clip-added", self._clip_added_cb)
+        ges_layer.connect("clip-removed", self._clip_removed_cb)
         ges_layer.connect("notify::priority", self.__layer_moved_cb)
 
         self.clip_observers = {}
         for ges_clip in ges_layer.get_clips():
-            self._connectToClip(ges_clip)
+            self._connect_to_clip(ges_clip)
 
-    def _connectToClip(self, ges_clip):
-        ges_clip.connect("child-added", self._clipTrackElementAddedCb)
-        ges_clip.connect("child-removed", self._clipTrackElementRemovedCb)
+    def _connect_to_clip(self, ges_clip):
+        ges_clip.connect("child-added", self._clip_track_element_added_cb)
+        ges_clip.connect("child-removed", self._clip_track_element_removed_cb)
 
         for track_element in ges_clip.get_children(recursive=True):
-            self._connectToTrackElement(track_element)
+            self._connect_to_track_element(track_element)
 
         if isinstance(ges_clip, GES.TransitionClip):
             return
@@ -687,12 +687,12 @@ class LayerObserver(MetaContainerObserver, Loggable):
         clip_observer = GObjectObserver(ges_clip, props, self.action_log)
         self.clip_observers[ges_clip] = clip_observer
 
-    def _disconnectFromClip(self, ges_clip):
-        ges_clip.disconnect_by_func(self._clipTrackElementAddedCb)
-        ges_clip.disconnect_by_func(self._clipTrackElementRemovedCb)
+    def _disconnect_from_clip(self, ges_clip):
+        ges_clip.disconnect_by_func(self._clip_track_element_added_cb)
+        ges_clip.disconnect_by_func(self._clip_track_element_removed_cb)
 
         for child in ges_clip.get_children(recursive=True):
-            self._disconnectFromTrackElement(child)
+            self._disconnect_from_track_element(child)
 
         if isinstance(ges_clip, GES.TransitionClip):
             return
@@ -701,16 +701,16 @@ class LayerObserver(MetaContainerObserver, Loggable):
         clip_observer.release()
 
     def _control_binding_added_cb(self, track_element, binding):
-        self._connectToControlSource(track_element, binding)
+        self._connect_to_control_source(track_element, binding)
         action = ControlSourceSetAction(track_element, binding)
         self.action_log.push(action)
 
     def _control_binding_removed_cb(self, track_element, binding):
-        self._disconnectFromControlSource(binding)
+        self._disconnect_from_control_source(binding)
         action = ControlSourceRemoveAction(track_element, binding)
         self.action_log.push(action)
 
-    def _connectToTrackElement(self, track_element):
+    def _connect_to_track_element(self, track_element):
         if isinstance(track_element, GES.VideoTransition):
             ges_clip = track_element.get_toplevel_parent()
             ges_layer = ges_clip.props.layer
@@ -724,7 +724,7 @@ class LayerObserver(MetaContainerObserver, Loggable):
             return
 
         for unused_prop, binding in track_element.get_all_control_bindings().items():
-            self._connectToControlSource(track_element, binding)
+            self._connect_to_control_source(track_element, binding)
         track_element.connect("control-binding-added",
                               self._control_binding_added_cb)
         track_element.connect("control-binding-removed",
@@ -733,18 +733,18 @@ class LayerObserver(MetaContainerObserver, Loggable):
             observer = TrackElementObserver(track_element, self.action_log)
             self.track_element_observers[track_element] = observer
 
-    def _disconnectFromTrackElement(self, track_element):
+    def _disconnect_from_track_element(self, track_element):
         if not isinstance(track_element, GES.VideoTransition):
             track_element.disconnect_by_func(self._control_binding_added_cb)
             track_element.disconnect_by_func(self._control_binding_removed_cb)
         for unused_prop, binding in track_element.get_all_control_bindings().items():
-            self._disconnectFromControlSource(binding)
+            self._disconnect_from_control_source(binding)
         observer = self.track_element_observers.pop(track_element, None)
         # We only keep track of some track_elements.
         if observer:
             observer.release()
 
-    def _connectToControlSource(self, track_element, binding):
+    def _connect_to_control_source(self, track_element, binding):
         control_source = binding.props.control_source
         action_info = {"element-name": track_element.get_name(),
                        "property-name": binding.props.name}
@@ -753,20 +753,20 @@ class LayerObserver(MetaContainerObserver, Loggable):
                                              action_info)
             self.keyframe_observers[control_source] = observer
 
-    def _disconnectFromControlSource(self, binding):
+    def _disconnect_from_control_source(self, binding):
         control_source = binding.props.control_source
         observer = self.keyframe_observers.pop(control_source)
         observer.release()
 
-    def _clipAddedCb(self, layer, clip):
-        self._connectToClip(clip)
+    def _clip_added_cb(self, layer, clip):
+        self._connect_to_clip(clip)
         if isinstance(clip, GES.TransitionClip):
             return
         action = ClipAdded(layer, clip)
         self.action_log.push(action)
 
-    def _clipRemovedCb(self, layer, clip):
-        self._disconnectFromClip(clip)
+    def _clip_removed_cb(self, layer, clip):
+        self._disconnect_from_clip(clip)
         if isinstance(clip, GES.TransitionClip):
             action = TransitionClipRemovedAction.new(layer, clip)
             if action:
@@ -775,14 +775,14 @@ class LayerObserver(MetaContainerObserver, Loggable):
         action = ClipRemoved(layer, clip)
         self.action_log.push(action)
 
-    def _clipTrackElementAddedCb(self, clip, ges_track_element):
-        self._connectToTrackElement(ges_track_element)
+    def _clip_track_element_added_cb(self, clip, ges_track_element):
+        self._connect_to_track_element(ges_track_element)
         action = TrackElementAdded(clip, ges_track_element)
         self.action_log.push(action)
 
-    def _clipTrackElementRemovedCb(self, clip, ges_track_element):
+    def _clip_track_element_removed_cb(self, clip, ges_track_element):
         self.debug("%s REMOVED from %s", ges_track_element, clip)
-        self._disconnectFromTrackElement(ges_track_element)
+        self._disconnect_from_track_element(ges_track_element)
         action = TrackElementRemoved(clip, ges_track_element)
         self.action_log.push(action)
 

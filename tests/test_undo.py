@@ -35,7 +35,7 @@ from tests import common
 class TestUndoableActionStack(common.TestCase):
     """Tests for the UndoableActionStack class."""
 
-    def testUndoDo(self):
+    def test_undo_do(self):
         """Checks an undo() and do() sequence."""
         state = {"actions": 2}
 
@@ -59,7 +59,7 @@ class TestUndoableActionStack(common.TestCase):
         stack.do()
         self.assertEqual(state["actions"], 2)
 
-    def testUndoError(self):
+    def test_undo_error(self):
         """Checks undo a stack containing a failing action."""
         stack = UndoableActionStack("meh")
         action1 = mock.Mock(spec=UndoableAction)
@@ -83,7 +83,7 @@ class TestUndoableActionLog(common.TestCase):
 
     def setUp(self):
         self.log = UndoableActionLog()
-        self._connectToUndoableActionLog(self.log)
+        self._connect_to_undoable_action_log(self.log)
         self.signals = []
 
     def tearDown(self):
@@ -94,30 +94,30 @@ class TestUndoableActionLog(common.TestCase):
         signal_name = args.pop(-1)
         self.signals.append((signal_name, args))
 
-    def _connectToUndoableActionLog(self, log):
+    def _connect_to_undoable_action_log(self, log):
         for signal_name in ("begin", "push", "rollback", "commit", "move"):
             log.connect(signal_name, self._undo_action_log_signal_cb, signal_name)
 
     def _disconnect_from_undoable_action_log(self):
         self.log.disconnect_by_func(self._undo_action_log_signal_cb)
 
-    def testRollbackWrongState(self):
+    def test_rollback_wrong_state(self):
         self.assertRaises(UndoWrongStateError, self.log.rollback)
 
-    def testCommitWrongState(self):
+    def test_commit_wrong_state(self):
         self.assertRaises(UndoWrongStateError, self.log.commit, "")
 
-    def testPushWrongState(self):
+    def test_push_wrong_state(self):
         # no error in this case
         self.log.push(None)
 
-    def testUndoWrongState(self):
+    def test_undo_wrong_state(self):
         self.assertRaises(UndoWrongStateError, self.log.undo)
 
-    def testRedoWrongState(self):
+    def test_redo_wrong_state(self):
         self.assertRaises(UndoWrongStateError, self.log.redo)
 
-    def testCheckpoint(self):
+    def test_checkpoint(self):
         self.log.begin("meh")
         self.log.push(mock.Mock(spec=UndoableAction))
         self.assertRaises(UndoWrongStateError, self.log.checkpoint)
@@ -125,7 +125,7 @@ class TestUndoableActionLog(common.TestCase):
         self.log.checkpoint()
         self.assertNotEqual(self.log._checkpoint, None)
 
-    def testDirty(self):
+    def test_dirty(self):
         self.assertFalse(self.log.dirty())
         self.log.begin("meh")
         self.log.push(mock.Mock(spec=UndoableAction))
@@ -138,7 +138,7 @@ class TestUndoableActionLog(common.TestCase):
         self.log.redo()
         self.assertFalse(self.log.dirty())
 
-    def testCommit(self):
+    def test_commit(self):
         """Checks committing a stack."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
@@ -164,7 +164,7 @@ class TestUndoableActionLog(common.TestCase):
         self.log.begin("meh")
         self.assertRaises(UndoWrongStateError, self.log.commit, "notmeh")
 
-    def testNestedCommit(self):
+    def test_nested_commit(self):
         """Checks two nested commits."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
@@ -214,7 +214,7 @@ class TestUndoableActionLog(common.TestCase):
         # For now, we call the finalizing action only for the top stack.
         action2.do.assert_not_called()
 
-    def testRollback(self):
+    def test_rollback(self):
         """Checks a rollback."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
@@ -232,7 +232,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
-    def testNestedRollback(self):
+    def test_nested_rollback(self):
         """Checks two nested rollbacks."""
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
@@ -266,7 +266,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(len(self.log.undo_stacks), 0)
         self.assertEqual(len(self.log.redo_stacks), 0)
 
-    def testUndoRedo(self):
+    def test_undo_redo(self):
         """Tries an undo() redo() sequence."""
         # begin
         self.log.begin("meh")
@@ -330,7 +330,7 @@ class TestUndoableActionLog(common.TestCase):
         self.assertEqual(action2.do.call_count, 1)
         self.assertEqual(action2.undo.call_count, 1)
 
-    def testOrder(self):
+    def test_order(self):
         """Checks actions are undone and redone in the correct order."""
         order = mock.Mock()
         order.action1 = mock.Mock(spec=UndoableAction)

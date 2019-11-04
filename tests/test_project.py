@@ -40,19 +40,19 @@ class ProjectManagerListener():
 
     def __init__(self, manager):
         self.manager = manager
-        self.connectToProjectManager()
+        self.connect_to_project_manager()
         self._reset()
 
     def _reset(self):
         self.signals = []
 
-    def connectToProjectManager(self):
+    def connect_to_project_manager(self):
         for signal in ("new-project-loading", "new-project-loaded",
                        "new-project-created", "new-project-failed", "missing-uri",
                        "closing-project", "project-closed"):
-            self.manager.connect(signal, self._recordSignal, signal)
+            self.manager.connect(signal, self._record_signal, signal)
 
-    def _recordSignal(self, *args):
+    def _record_signal(self, *args):
         signal = args[-1]
         args = args[1:-1]
         self.signals.append((signal, args))
@@ -64,9 +64,9 @@ class TestProjectManager(common.TestCase):
 
     def setUp(self):
         super(TestProjectManager, self).setUp()
-        self.setupApp()
+        self.setup_app()
 
-    def setupApp(self, app=None):
+    def setup_app(self, app=None):
         if not app:
             app = mock.MagicMock()
         self.manager = ProjectManager(app)
@@ -100,8 +100,8 @@ class TestProjectManager(common.TestCase):
         name, _args = self.signals[2]
         self.assertEqual("new-project-loaded", name, self.signals)
 
-    def testMissingUriForwarded(self):
-        self.setupApp(app=common.create_pitivi_mock())
+    def test_missing_uri_forwarded(self):
+        self.setup_app(app=common.create_pitivi_mock())
         mainloop = common.create_main_loop()
 
         def missing_uri_cb(self, project, error, clip_asset, result):
@@ -118,7 +118,7 @@ class TestProjectManager(common.TestCase):
                 mainloop.run()
         self.assertTrue(result[0], "missing-uri has not been emitted")
 
-    def testLoaded(self):
+    def test_loaded(self):
         mainloop = common.create_main_loop()
 
         def new_project_loaded_cb(project_manager, project):
@@ -135,13 +135,13 @@ class TestProjectManager(common.TestCase):
 
         self.assertFalse(project.at_least_one_asset_missing)
         self.assertTrue(project.loaded)
-        self.assertFalse(project.hasUnsavedModifications())
+        self.assertFalse(project.has_unsaved_modifications())
 
-    def testCloseRunningProjectNoProject(self):
-        self.assertTrue(self.manager.closeRunningProject())
+    def test_close_running_project_no_project(self):
+        self.assertTrue(self.manager.close_running_project())
         self.assertFalse(self.signals)
 
-    def testCloseRunningProjectRefuseFromSignal(self):
+    def test_close_running_project_refuse_from_signal(self):
         def closing_cb(manager, project):
             return False
 
@@ -149,16 +149,16 @@ class TestProjectManager(common.TestCase):
         self.manager.current_project.uri = "file:///ciao"
         self.manager.connect("closing-project", closing_cb)
 
-        self.assertFalse(self.manager.closeRunningProject())
+        self.assertFalse(self.manager.close_running_project())
         self.assertEqual(1, len(self.signals))
         name, args = self.signals[0]
         self.assertEqual("closing-project", name)
         project = args[0]
         self.assertTrue(project is self.manager.current_project)
 
-    def testCloseRunningProject(self):
+    def test_close_running_project(self):
         project = self.manager.new_blank_project()
-        self.assertTrue(self.manager.closeRunningProject())
+        self.assertTrue(self.manager.close_running_project())
         self.assertEqual(5, len(self.signals), self.signals)
 
         name, args = self.signals[-2]
@@ -171,7 +171,7 @@ class TestProjectManager(common.TestCase):
 
         self.assertTrue(self.manager.current_project is None)
 
-    def testNewBlankProject(self):
+    def test_new_blank_project(self):
         self.assertIsNotNone(self.manager.new_blank_project())
         self.assertEqual(3, len(self.signals))
 
@@ -196,7 +196,7 @@ class TestProjectManager(common.TestCase):
         self.assertIsNotNone(project.ges_timeline)
         self.assertIsNotNone(project.ges_timeline.get_marker_list("markers"))
 
-    def testSaveProject(self):
+    def test_save_project(self):
         self.manager.new_blank_project()
 
         unused, path = tempfile.mkstemp(suffix=".xges")
@@ -206,14 +206,14 @@ class TestProjectManager(common.TestCase):
             uri2 = "file://" + os.path.abspath(path2)
 
             # Save the project.
-            self.assertTrue(self.manager.saveProject(uri=uri, backup=False))
+            self.assertTrue(self.manager.save_project(uri=uri, backup=False))
             self.assertTrue(os.path.isfile(path))
 
             # Wait a bit.
             time.sleep(0.1)
 
             # Save the project at a new location.
-            self.assertTrue(self.manager.saveProject(uri2, backup=False))
+            self.assertTrue(self.manager.save_project(uri2, backup=False))
             self.assertTrue(os.path.isfile(path2))
 
             # Make sure the old path and the new path have different mtimes.
@@ -225,7 +225,7 @@ class TestProjectManager(common.TestCase):
             time.sleep(0.1)
 
             # Save project again under the new path (by omitting uri arg)
-            self.assertTrue(self.manager.saveProject(backup=False))
+            self.assertTrue(self.manager.save_project(backup=False))
 
             # regression test for bug 594396
             # make sure we didn't save to the old URI
@@ -236,11 +236,11 @@ class TestProjectManager(common.TestCase):
             os.remove(path)
             os.remove(path2)
 
-    def testMakeBackupUri(self):
+    def test_make_backup_uri(self):
         uri = "file:///tmp/x.xges"
-        self.assertEqual(uri + "~", self.manager._makeBackupURI(uri))
+        self.assertEqual(uri + "~", self.manager._make_backup_u_r_i(uri))
 
-    def testBackupProject(self):
+    def test_backup_project(self):
         self.manager.new_blank_project()
 
         # Assign an uri to the project where it's saved by default.
@@ -248,14 +248,14 @@ class TestProjectManager(common.TestCase):
         uri = "file://" + os.path.abspath(xges_path)
         self.manager.current_project.uri = uri
         # This is where the automatic backup file is saved.
-        backup_uri = self.manager._makeBackupURI(uri)
+        backup_uri = self.manager._make_backup_u_r_i(uri)
 
         # Save the backup
-        self.assertTrue(self.manager.saveProject(
+        self.assertTrue(self.manager.save_project(
             self.manager.current_project, backup=True))
         self.assertTrue(os.path.isfile(path_from_uri(backup_uri)))
 
-        self.manager.closeRunningProject()
+        self.manager.close_running_project()
         self.assertFalse(os.path.isfile(path_from_uri(backup_uri)),
                          "Backup file not deleted when project closed")
 
@@ -314,7 +314,7 @@ class TestProjectLoading(common.TestCase):
         proxy_manager.connect("proxy-ready", proxy_ready_cb)
 
         uris = [common.get_sample_uri("tears_of_steel.webm")]
-        project.addUris(uris)
+        project.add_uris(uris)
 
         mainloop.run()
 
@@ -532,14 +532,14 @@ class TestProjectLoading(common.TestCase):
 
 class TestProjectSettings(common.TestCase):
 
-    def testAudio(self):
+    def test_audio(self):
         project = common.create_project()
         project.audiochannels = 2
         self.assertEqual(2, project.audiochannels)
         project.audiorate = 44100
         self.assertEqual(44100, project.audiorate)
 
-    def testVideo(self):
+    def test_video(self):
         project = common.create_project()
         project.videowidth = 1920
         self.assertEqual(1920, project.videowidth)
@@ -548,10 +548,10 @@ class TestProjectSettings(common.TestCase):
         project.videorate = Gst.Fraction(50, 7)
         self.assertEqual(Gst.Fraction(50, 7), project.videorate)
 
-    def testSetAudioProp(self):
+    def test_set_audio_prop(self):
         timeline = common.create_timeline_container()
         project = timeline.app.project_manager.current_project
-        project.addUris([common.get_sample_uri("mp3_sample.mp3")])
+        project.add_uris([common.get_sample_uri("mp3_sample.mp3")])
 
         audio_track = [t for t in project.ges_timeline.tracks if isinstance(t, GES.AudioTrack)][0]
         mainloop = common.create_main_loop()
@@ -573,7 +573,7 @@ class TestProjectSettings(common.TestCase):
         ccaps = audio_track.props.restriction_caps
         self.assertTrue(ccaps.is_equal_fixed(expected), "%s != %s" % (ccaps, expected))
 
-    def testInitialization(self):
+    def test_initialization(self):
         mainloop = common.create_main_loop()
         uris = collections.deque([
             common.get_sample_uri("flat_colour1_640x480.png"),
@@ -581,12 +581,12 @@ class TestProjectSettings(common.TestCase):
             common.get_sample_uri("1sec_simpsons_trailer.mp4")])
 
         def loaded_cb(project, timeline):
-            project.addUris([uris.popleft()])
+            project.add_uris([uris.popleft()])
 
         def progress_cb(project, progress, estimated_time):
             if progress == 100:
                 if uris:
-                    project.addUris([uris.popleft()])
+                    project.add_uris([uris.popleft()])
                 else:
                     mainloop.quit()
 
@@ -615,7 +615,7 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(400, project.videoheight)
         self.assertEqual(Gst.Fraction(24, 1), project.videorate)
 
-    def testLoad(self):
+    def test_load(self):
         project = Project(uri="fake.xges", app=common.create_pitivi_mock())
         self.assertEqual(project.name, "fake")
         self.assertFalse(project._has_default_video_settings)
@@ -641,7 +641,7 @@ class TestProjectSettings(common.TestCase):
 
         with tempfile.NamedTemporaryFile() as temp_file:
             uri = Gst.filename_to_uri(temp_file.name)
-            manager.saveProject(uri=uri, backup=False)
+            manager.save_project(uri=uri, backup=False)
             app2 = common.create_pitivi_mock(default_scaled_proxy_width=12,
                                              default_scaled_proxy_height=45)
             project2 = ProjectManager(app2).load_project(uri)
@@ -656,7 +656,7 @@ class TestProjectSettings(common.TestCase):
         self.assertEqual(project.scaled_proxy_height, 456)
 
         with tempfile.NamedTemporaryFile() as temp_file:
-            manager.saveProject(uri=uri, backup=False)
+            manager.save_project(uri=uri, backup=False)
             app2 = common.create_pitivi_mock(default_scaled_proxy_width=1,
                                              default_scaled_proxy_height=4)
             project2 = ProjectManager(app2).load_project(uri)
@@ -712,7 +712,7 @@ class TestExportSettings(common.TestCase):
         mainloop = common.create_main_loop()
 
         def loaded_cb(project, timeline):
-            project.addUris([common.get_sample_uri("tears_of_steel.webm")])
+            project.add_uris([common.get_sample_uri("tears_of_steel.webm")])
 
         def progress_cb(project, progress, estimated_time):
             if progress == 100:

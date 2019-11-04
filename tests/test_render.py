@@ -79,7 +79,7 @@ class TestRender(BaseTestMediaLibrary):
         with mock.patch("pitivi.preset.xdg_data_home") as xdg_data_home:
             xdg_data_home.return_value = "/pitivi-dir-which-does-not-exist"
             preset_manager = EncodingTargetManager(project.app)
-            preset_manager.loadAll()
+            preset_manager.load_all()
             self.assertTrue(preset_manager.presets)
             for unused_name, container_profile in preset_manager.presets.items():
                 # Preset name is only set when the project loads it
@@ -102,7 +102,7 @@ class TestRender(BaseTestMediaLibrary):
 
         project.connect("asset-added", asset_added_cb)
         uris = [common.get_sample_uri("tears_of_steel.webm")]
-        project.addUris(uris)
+        project.add_uris(uris)
         mainloop.run()
 
         layer, = project.ges_timeline.get_layers()
@@ -135,10 +135,10 @@ class TestRender(BaseTestMediaLibrary):
         dialog = self.create_rendering_dialog(project)
 
         from pitivi.render import RenderingProgressDialog
-        with mock.patch.object(dialog, "startAction"):
+        with mock.patch.object(dialog, "start_action"):
             with mock.patch.object(RenderingProgressDialog, "__new__"):
                 with mock.patch.object(dialog, "_pipeline"):
-                    return dialog._renderButtonClickedCb(None)
+                    return dialog._render_button_clicked_cb(None)
 
     @skipUnless(*factory_exists("x264enc", "matroskamux"))
     def test_encoder_restrictions(self):
@@ -287,7 +287,7 @@ class TestRender(BaseTestMediaLibrary):
                                    return_value=Gst.filename_to_uri(temp_dir)):
                 with mock.patch.object(dialog.fileentry, "get_text", return_value="outfile"):
                     with mock.patch.object(RenderingProgressDialog, "__new__"):
-                        dialog._renderButtonClickedCb(None)
+                        dialog._render_button_clicked_cb(None)
 
             message = dialog._pipeline.get_bus().timed_pop_filtered(
                 Gst.CLOCK_TIME_NONE,
@@ -315,7 +315,7 @@ class TestRender(BaseTestMediaLibrary):
 
             project = self.app.project_manager.current_project
             timeline_container = TimelineContainer(self.app)
-            timeline_container.setProject(project)
+            timeline_container.set_project(project)
 
             assets = project.list_assets(GES.UriClip)
             asset, = [a for a in assets if "proxy" in a.props.id]
@@ -331,7 +331,7 @@ class TestRender(BaseTestMediaLibrary):
             # Simulate setting the scale to 10%.
             with mock.patch.object(dialog.scale_spinbutton, "get_value",
                                    return_value=10):
-                dialog._scaleSpinbuttonChangedCb(None)
+                dialog._scale_spinbutton_changed_cb(None)
                 self.render(dialog)
 
             self.mainloop.run(until_empty=True)
@@ -350,7 +350,7 @@ class TestRender(BaseTestMediaLibrary):
             project = self.app.project_manager.current_project
             proxy_manager = self.app.proxy_manager
             timeline_container = TimelineContainer(self.app)
-            timeline_container.setProject(project)
+            timeline_container.set_project(project)
             rendering_asset = None
 
             asset, = project.list_assets(GES.UriClip)
@@ -391,17 +391,17 @@ class TestRender(BaseTestMediaLibrary):
             project = self.app.project_manager.current_project
             proxy_manager = self.app.proxy_manager
             timeline_container = TimelineContainer(self.app)
-            timeline_container.setProject(project)
+            timeline_container.set_project(project)
             rendering_asset = None
 
             asset, = project.list_assets(GES.UriClip)
             with mock.patch.object(proxy_manager,
-                                   "isAssetFormatWellSupported",
+                                   "is_asset_format_well_supported",
                                    return_value=False):
                 proxy = self.check_add_proxy(asset, scaled=True)
 
                 # Check that HQ proxy was created
-                hq_uri = self.app.proxy_manager.getProxyUri(asset)
+                hq_uri = self.app.proxy_manager.get_proxy_uri(asset)
                 self.assertTrue(os.path.exists(Gst.uri_get_location(hq_uri)), hq_uri)
 
                 layer, = project.ges_timeline.get_layers()
@@ -447,10 +447,10 @@ class TestRender(BaseTestMediaLibrary):
         project, dialog = self.setup_project_with_profile("youtube")
 
         dialog.window = None  # Make sure the dialog window is never set to Mock.
-        dialog._videoSettingsButtonClickedCb(None)
+        dialog._video_settings_button_clicked_cb(None)
         self.assertEqual(dialog.dialog.elementsettings.get_caps_values(), {"profile": "high"})
 
-        dialog.dialog.elementsettings.caps_widgets["profile"].setWidgetValue("baseline")
+        dialog.dialog.elementsettings.caps_widgets["profile"].set_widget_value("baseline")
         self.assertEqual(dialog.dialog.elementsettings.get_caps_values(), {"profile": "baseline"})
 
         caps = dialog.dialog.get_caps()
@@ -459,7 +459,7 @@ class TestRender(BaseTestMediaLibrary):
         dialog.dialog.ok_btn.emit("clicked")
         self.assert_caps_equal(project.video_profile.get_format(), "video/x-h264,profile=baseline")
 
-        dialog._videoSettingsButtonClickedCb(None)
+        dialog._video_settings_button_clicked_cb(None)
 
         caps = dialog.dialog.get_caps()
         self.assert_caps_equal(caps, "video/x-h264,profile=baseline")

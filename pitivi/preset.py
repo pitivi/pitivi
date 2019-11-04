@@ -78,11 +78,11 @@ class PresetManager(GObject.Object, Loggable):
         self.ordered.set_sort_func(0, sortme)
         self.ordered.set_sort_column_id(0, Gtk.SortType.ASCENDING)
         self.cur_preset = None
-        # Whether to ignore the updateValue calls.
+        # Whether to ignore the update_value calls.
         self.ignore_update_requests = False
         self.system = system
 
-    def setupUi(self, combo, button):
+    def setup_ui(self, combo, button):
         # pylint: disable=attribute-defined-outside-init
         self.combo = combo
         self.button = button
@@ -90,7 +90,7 @@ class PresetManager(GObject.Object, Loggable):
         combo.set_model(self.ordered)
         combo.set_id_column(0)
         combo.set_entry_text_column(0)
-        combo.connect("changed", self._presetChangedCb)
+        combo.connect("changed", self._preset_changed_cb)
 
         entry = combo.get_child()
         alter_style_class("GtkEntry.unsaved", entry, "font-style:italic;")
@@ -99,19 +99,19 @@ class PresetManager(GObject.Object, Loggable):
         menu_model = Gio.Menu()
 
         action = Gio.SimpleAction.new("new", None)
-        action.connect("activate", self._addPresetCb)
+        action.connect("activate", self._add_preset_cb)
         action_group.add_action(action)
         menu_model.append(_("New"), "preset.%s" % action.get_name())
         self.action_new = action
 
         action = Gio.SimpleAction.new("remove", None)
-        action.connect("activate", self._removePresetCb)
+        action.connect("activate", self._remove_preset_cb)
         action_group.add_action(action)
         menu_model.append(_("Remove"), "preset.%s" % action.get_name())
         self.action_remove = action
 
         action = Gio.SimpleAction.new("save", None)
-        action.connect("activate", self._savePresetCb)
+        action.connect("activate", self._save_preset_cb)
         action_group.add_action(action)
         menu_model.append(_("Save"), "preset.%s" % action.get_name())
         self.action_save = action
@@ -120,63 +120,63 @@ class PresetManager(GObject.Object, Loggable):
         menu.insert_action_group("preset", action_group)
         button.set_popup(menu)
 
-    def _presetChangedCb(self, combo):
+    def _preset_changed_cb(self, combo):
         """Handles the selection of a preset."""
         # Check whether the user selected a preset or editing the preset name.
         self.select_preset(combo)
-        self.updateMenuActions()
+        self.update_menu_actions()
 
     def select_preset(self, combo):
         preset_name = combo.get_active_id()
         if preset_name:
             # The user selected a preset.
-            self.restorePreset(preset_name)
+            self.restore_preset(preset_name)
             self.emit("preset-loaded")
 
-    def _addPresetCb(self, unused_action, unused_param):
-        preset_name = self.getNewPresetName()
-        self.createPreset(preset_name)
+    def _add_preset_cb(self, unused_action, unused_param):
+        preset_name = self.get_new_preset_name()
+        self.create_preset(preset_name)
         self.combo.set_active_id(preset_name)
-        self.updateMenuActions()
+        self.update_menu_actions()
 
-    def _removePresetCb(self, unused_action, unused_param):
-        self.removeCurrentPreset()
+    def _remove_preset_cb(self, unused_action, unused_param):
+        self.remove_current_preset()
         entry = self.combo.get_child()
         entry.set_text("")
-        self.updateMenuActions()
+        self.update_menu_actions()
 
-    def _savePresetCb(self, unused_action, unused_param):
+    def _save_preset_cb(self, unused_action, unused_param):
         entry = self.combo.get_child()
         preset_name = entry.get_text()
-        self.saveCurrentPreset(preset_name)
+        self.save_current_preset(preset_name)
         # Useful when a new preset has just been created.
         self.combo.set_active_id(preset_name)
-        self.updateMenuActions()
+        self.update_menu_actions()
 
-    def updateMenuActions(self):
+    def update_menu_actions(self):
         entry = self.combo.get_child()
         preset_name = entry.get_text()
-        can_save = self.isSaveButtonSensitive(preset_name)
+        can_save = self.is_save_button_sensitive(preset_name)
         self.action_save.set_enabled(can_save)
         if can_save:
             entry.get_style_context().add_class("unsaved")
         else:
             entry.get_style_context().remove_class("unsaved")
 
-        can_remove = self.isRemoveButtonSensitive()
+        can_remove = self.is_remove_button_sensitive()
         self.action_remove.set_enabled(can_remove)
 
-        can_create_new = self.isNewButtonSensitive()
+        can_create_new = self.is_new_button_sensitive()
         self.action_new.set_enabled(can_create_new)
 
-    def loadAll(self):
-        self._loadFromDir(self.default_path, extra={"readonly": True})
+    def load_all(self):
+        self._load_from_dir(self.default_path, extra={"readonly": True})
         if os.path.isfile(self.user_path):
             # We used to save presets as a single file instead of a directory
             os.rename(self.user_path, "%s.old" % self.user_path)
-        self._loadFromDir(self.user_path)
+        self._load_from_dir(self.user_path)
 
-    def _loadFromDir(self, presets_dir, extra=None):
+    def _load_from_dir(self, presets_dir, extra=None):
         try:
             files = os.listdir(presets_dir)
         except FileNotFoundError:
@@ -189,10 +189,10 @@ class PresetManager(GObject.Object, Loggable):
                     parser = json.loads(section.read())
                 name = parser["name"]
                 if parser.get("removed"):
-                    self._forgetPreset(name)
+                    self._forget_preset(name)
                     continue
                 try:
-                    preset = self._deserializePreset(parser)
+                    preset = self._deserialize_preset(parser)
                 except DeserializeException as e:
                     self.debug("Failed to load preset %s: %s", filepath, e)
                     continue
@@ -200,42 +200,42 @@ class PresetManager(GObject.Object, Loggable):
                 if extra:
                     for key, value in extra.items():
                         preset[key] = value
-                self._addPreset(name, preset)
+                self._add_preset(name, preset)
 
-    def saveAll(self):
+    def save_all(self):
         """Writes changes to disk for all presets."""
         for preset_name, unused_values in self.ordered:
-            self._savePreset(preset_name)
+            self._save_preset(preset_name)
 
-    def _savePreset(self, preset_name):
+    def _save_preset(self, preset_name):
         if not os.path.exists(self.user_path):
             os.makedirs(self.user_path)
         try:
             file_path = self.presets[preset_name]["filepath"]
         except KeyError:
-            file_path = self._buildFilePath(preset_name)
+            file_path = self._build_file_path(preset_name)
             self.presets[preset_name]["filepath"] = file_path
         with open(file_path, "w") as fout:
             values = self.presets[preset_name]
-            raw = self._serializePreset(values)
+            raw = self._serialize_preset(values)
             raw["name"] = preset_name
             serialized = json.dumps(raw, indent=4)
             fout.write(serialized)
 
-    def _buildFilePath(self, preset_name):
-        file_name = self.system.getUniqueFilename(preset_name + ".json")
+    def _build_file_path(self, preset_name):
+        file_name = self.system.get_unique_filename(preset_name + ".json")
         return os.path.join(self.user_path, file_name)
 
-    def getNewPresetName(self):
+    def get_new_preset_name(self):
         """Gets a unique name for a new preset."""
         name = _("New preset")
         i = 1
-        while self.hasPreset(name):
+        while self.has_preset(name):
             name = _("New preset %d") % i
             i += 1
         return name
 
-    def createPreset(self, name, values=None):
+    def create_preset(self, name, values=None):
         """Creates a preset, overwriting the preset with the same name if any.
 
         Args:
@@ -244,24 +244,24 @@ class PresetManager(GObject.Object, Loggable):
         """
         if not values:
             values = {}
-            self._updatePresetValues(values)
-        self._addPreset(name, values)
+            self._update_preset_values(values)
+        self._add_preset(name, values)
         self.cur_preset = name
 
-    def _addPreset(self, name, values):
-        self._forgetPreset(name)
+    def _add_preset(self, name, values):
+        self._forget_preset(name)
         self.presets[name] = values
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.append((name, values))
 
-    def _renameCurrentPreset(self, new_name):
+    def _rename_current_preset(self, new_name):
         """Changes the name of the current preset."""
         old_name = self.cur_preset
         if old_name == new_name:
             # Nothing to do.
             return
         # If there is one already with this name, make way for this one.
-        self._forgetPreset(new_name)
+        self._forget_preset(new_name)
         for row in self.ordered:
             if row[0] == old_name:
                 row[0] = new_name
@@ -270,37 +270,37 @@ class PresetManager(GObject.Object, Loggable):
         if "filepath" in self.presets[old_name]:
             # If the previous preset had already been saved,
             # delete the file and pop it from the list
-            self.removeCurrentPreset()
+            self.remove_current_preset()
         else:
             # We're renaming an unsaved preset, so just pop it from the list
             self.presets.pop(old_name)
-        new_filepath = self._createUserPresetPath(new_name)
+        new_filepath = self._create_user_preset_path(new_name)
         self.presets[new_name]["filepath"] = new_filepath
         self.cur_preset = new_name
 
-    def _createUserPresetPath(self, preset_name):
+    def _create_user_preset_path(self, preset_name):
         return os.path.join(self.user_path, preset_name + ".json")
 
-    def hasPreset(self, name):
+    def has_preset(self, name):
         name = name.lower()
-        return any(name == preset.lower() for preset in self.getPresetNames())
+        return any(name == preset.lower() for preset in self.get_preset_names())
 
-    def getPresetNames(self):
+    def get_preset_names(self):
         return (row[0] for row in self.ordered)
 
-    def updateValue(self, name, value):
+    def update_value(self, name, value):
         """Updates a value in the current preset, if any."""
         if self.ignore_update_requests:
-            # This is caused by restorePreset, nothing to do.
+            # This is caused by restore_preset, nothing to do.
             return
         if self.cur_preset:
             self.presets[self.cur_preset][name] = value
 
-    def bindWidget(self, propname, setter_func, getter_func):
+    def bind_widget(self, propname, setter_func, getter_func):
         """Links the specified functions to the specified preset property."""
         self.widget_map[propname] = (setter_func, getter_func)
 
-    def restorePreset(self, preset):
+    def restore_preset(self, preset):
         """Selects a preset and copies its values to the widgets.
 
         Args:
@@ -320,22 +320,22 @@ class PresetManager(GObject.Object, Loggable):
         finally:
             self.ignore_update_requests = False
 
-    def saveCurrentPreset(self, new_name=None):
+    def save_current_preset(self, new_name=None):
         """Updates the current preset values from the widgets and saves it."""
         if not self.cur_preset:
-            self.createPreset(new_name)
+            self.create_preset(new_name)
         if new_name:
-            self._renameCurrentPreset(new_name)
+            self._rename_current_preset(new_name)
         values = self.presets[self.cur_preset]
-        self._updatePresetValues(values)
-        self._savePreset(self.cur_preset)
+        self._update_preset_values(values)
+        self._save_preset(self.cur_preset)
 
-    def _updatePresetValues(self, values):
+    def _update_preset_values(self, values):
         """Copies the values from the widgets to the specified values dict."""
         for field, (unused_setter, getter) in self.widget_map.items():
             values[field] = getter()
 
-    def _isCurrentPresetChanged(self, name):
+    def _is_current_preset_changed(self, name):
         """Returns whether the widgets values differ from the preset values."""
         if not self.cur_preset:
             # There is no preset selected, nothing to do.
@@ -347,20 +347,20 @@ class PresetManager(GObject.Object, Loggable):
         return any((values[field] != getter()
                     for field, (setter, getter) in self.widget_map.items()))
 
-    def removeCurrentPreset(self):
+    def remove_current_preset(self):
         name = self.cur_preset
         preset = self.presets[name]
         filepath = preset.get("filepath")
         if filepath:
             if "readonly" in preset:
-                self._markRemoved(name)
+                self._mark_removed(name)
             else:
                 os.remove(filepath)
 
         self.cur_preset = None
-        self._forgetPreset(name)
+        self._forget_preset(name)
 
-    def _forgetPreset(self, name):
+    def _forget_preset(self, name):
         try:
             self.presets.pop(name)
         except KeyError:
@@ -371,25 +371,25 @@ class PresetManager(GObject.Object, Loggable):
                 del self.ordered[i]
                 break
 
-    def _markRemoved(self, name):
+    def _mark_removed(self, name):
         data = json.dumps({"name": name, "removed": True}, indent=4)
-        filepath = self._createUserPresetPath(name)
+        filepath = self._create_user_preset_path(name)
         with open(filepath, "w") as fout:
             fout.write(data)
 
-    def prependPreset(self, name, values):
+    def prepend_preset(self, name, values):
         self.presets[name] = values
         # Note: This generates a "row-inserted" signal in the model.
         self.ordered.prepend((name, values))
 
-    def isSaveButtonSensitive(self, name):
+    def is_save_button_sensitive(self, name):
         """Checks whether the Save button should be enabled.
 
         Args:
             name (str): The new preset name.
         """
         if self.cur_preset:
-            return self._isCurrentPresetChanged(name)
+            return self._is_current_preset_changed(name)
 
         if name:
             # Can be saved as new preset.
@@ -397,21 +397,21 @@ class PresetManager(GObject.Object, Loggable):
 
         return False
 
-    def isRemoveButtonSensitive(self):
+    def is_remove_button_sensitive(self):
         """Checks whether the Remove button should be enabled."""
         if not self.cur_preset:
             return False
         return True
 
-    def isNewButtonSensitive(self):
+    def is_new_button_sensitive(self):
         """Checks whether the New button should be enabled."""
         return bool(self.cur_preset)
 
-    def _projectToPreset(self, project):
+    def _project_to_preset(self, project):
         raise NotImplementedError()
 
-    def matchingPreset(self, project):
-        query = self._projectToPreset(project)
+    def matching_preset(self, project):
+        query = self._project_to_preset(project)
         for name, preset in self.presets.items():
             matches = True
             for key, value in query.items():
@@ -430,7 +430,7 @@ class VideoPresetManager(PresetManager):
         user_path = os.path.join(xdg_data_home(), 'video_presets')
         PresetManager.__init__(self, default_path, user_path, system)
 
-    def _deserializePreset(self, parser):
+    def _deserialize_preset(self, parser):
         width = parser["width"]
         height = parser["height"]
 
@@ -444,7 +444,7 @@ class VideoPresetManager(PresetManager):
             "frame-rate": framerate,
         }
 
-    def _serializePreset(self, preset):
+    def _serialize_preset(self, preset):
         return {
             "width": int(preset["width"]),
             "height": int(preset["height"]),
@@ -452,7 +452,7 @@ class VideoPresetManager(PresetManager):
             "framerate-denom": preset["frame-rate"].denom,
         }
 
-    def _projectToPreset(self, project):
+    def _project_to_preset(self, project):
         return {
             "width": project.videowidth,
             "height": project.videoheight,
@@ -466,7 +466,7 @@ class AudioPresetManager(PresetManager):
         user_path = os.path.join(xdg_data_home(), 'audio_presets')
         PresetManager.__init__(self, default_path, user_path, system)
 
-    def _deserializePreset(self, parser):
+    def _deserialize_preset(self, parser):
         channels = parser["channels"]
         sample_rate = parser["sample-rate"]
 
@@ -475,13 +475,13 @@ class AudioPresetManager(PresetManager):
             "sample-rate": sample_rate,
         }
 
-    def _serializePreset(self, preset):
+    def _serialize_preset(self, preset):
         return {
             "channels": preset["channels"],
             "sample-rate": int(preset["sample-rate"]),
         }
 
-    def _projectToPreset(self, project):
+    def _project_to_preset(self, project):
         return {
             "channels": project.audiochannels,
             "sample-rate": project.audiorate}
@@ -522,9 +522,9 @@ class EncodingTargetManager(PresetManager):
                 continue
 
             self.presets[name] = profile
-            self._addPreset(name, profile)
+            self._add_preset(name, profile)
 
-    def loadAll(self):
+    def load_all(self):
         """Loads profiles from GstEncodingTarget and add them to self.combo.
 
         Override from PresetManager
@@ -533,21 +533,21 @@ class EncodingTargetManager(PresetManager):
             if target.get_category() != GstPbutils.ENCODING_CATEGORY_FILE_EXTENSION:
                 self._add_target(target)
 
-    def createPreset(self, name, values=None):
-        self.saveCurrentPreset(name, validate_name=False)
+    def create_preset(self, name, values=None):
+        self.save_current_preset(name, validate_name=False)
 
-    def getNewPresetName(self):
+    def get_new_preset_name(self):
         """Gets a unique name for a new preset."""
         # Translators: This must contain exclusively low case alphanum and '-'
         name = _("new-profile")
         i = 1
-        while self.hasPreset(name):
+        while self.has_preset(name):
             # Translators: This must contain exclusively low case alphanum and '-'
             name = _("new-profile-%d") % i
             i += 1
         return name
 
-    def saveCurrentPreset(self, new_name, validate_name=True):
+    def save_current_preset(self, new_name, validate_name=True):
         """Saves currently selected profile on disk.
 
         Override from PresetManager
@@ -591,13 +591,13 @@ class EncodingTargetManager(PresetManager):
         with open(self._removed_file_list, 'w') as removed:
             json.dump(self._removed_profiles, removed)
 
-    def removeCurrentPreset(self):
+    def remove_current_preset(self):
         self._removed_profiles.append(self.cur_preset)
         self._save_removed_profiles()
-        self._forgetPreset(self.cur_preset)
+        self._forget_preset(self.cur_preset)
         self.cur_preset = None
 
-    def restorePreset(self, values):
+    def restore_preset(self, values):
         """Raises NotImplemented as it does not make sense for that class.
 
         Override from PresetManager

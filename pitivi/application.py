@@ -140,7 +140,7 @@ class Pitivi(Gtk.Application, Loggable):
 
         self.info('starting up')
         self._setup()
-        self._checkVersion()
+        self._check_version()
 
     def _setup(self):
         # pylint: disable=attribute-defined-outside-init
@@ -156,26 +156,26 @@ class Pitivi(Gtk.Application, Loggable):
         self.project_manager.connect("project-saved", self.__project_saved_cb)
 
         self._create_actions()
-        self._syncDoUndo()
+        self._sync_do_undo()
 
     def _create_actions(self):
         self.shortcuts.register_group("app", _("General"), position=10)
 
         # pylint: disable=attribute-defined-outside-init
         self.undo_action = Gio.SimpleAction.new("undo", None)
-        self.undo_action.connect("activate", self._undoCb)
+        self.undo_action.connect("activate", self._undo_cb)
         self.add_action(self.undo_action)
         self.shortcuts.add("app.undo", ["<Primary>z"],
                            _("Undo the most recent action"))
 
         self.redo_action = Gio.SimpleAction.new("redo", None)
-        self.redo_action.connect("activate", self._redoCb)
+        self.redo_action.connect("activate", self._redo_cb)
         self.add_action(self.redo_action)
         self.shortcuts.add("app.redo", ["<Primary><Shift>z"],
                            _("Redo the most recent action"))
 
         self.quit_action = Gio.SimpleAction.new("quit", None)
-        self.quit_action.connect("activate", self._quitCb)
+        self.quit_action.connect("activate", self._quit_cb)
         self.add_action(self.quit_action)
         self.shortcuts.add("app.quit", ["<Primary>q"], _("Quit"))
 
@@ -230,18 +230,18 @@ class Pitivi(Gtk.Application, Loggable):
         """
         self.debug("shutting down")
         # Refuse to close if we are not done with the current project.
-        if not self.project_manager.closeRunningProject():
+        if not self.project_manager.close_running_project():
             self.warning(
                 "Not closing since running project doesn't want to close")
             return False
         if self.gui:
             self.gui.destroy()
         self.threads.wait_all_threads()
-        self.settings.storeSettings()
+        self.settings.store_settings()
         self.quit()
         return True
 
-    def _setScenarioFile(self, uri):
+    def _set_scenario_file(self, uri):
         if uri:
             project_path = path_from_uri(uri)
         else:
@@ -281,11 +281,11 @@ class Pitivi(Gtk.Application, Loggable):
 
         self.action_log = UndoableActionLog()
         self.action_log.connect("pre-push", self._action_log_pre_push_cb)
-        self.action_log.connect("commit", self._actionLogCommit)
+        self.action_log.connect("commit", self._action_log_commit)
         self.action_log.connect("move", self._action_log_move_cb)
         self.project_observer = ProjectObserver(project, self.action_log)
 
-        self._setScenarioFile(project.get_uri())
+        self._set_scenario_file(project.get_uri())
 
     def __project_saved_cb(self, unused_project_manager, unused_project, uri):
         if uri:
@@ -294,14 +294,14 @@ class Pitivi(Gtk.Application, Loggable):
     def _project_closed_cb(self, unused_project_manager, project):
         if project.loaded:
             self.action_log = None
-            self._syncDoUndo()
+            self._sync_do_undo()
 
         if self._scenario_file:
             self.write_action("stop")
             self._scenario_file.close()
             self._scenario_file = None
 
-    def _checkVersion(self):
+    def _check_version(self):
         """Checks online for new versions of the app."""
         self.info("Requesting version information async")
         giofile = Gio.File.new_for_uri(RELEASES_URL)
@@ -346,41 +346,41 @@ class Pitivi(Gtk.Application, Loggable):
         except Exception as e:
             self.warning("Version info could not be read: %s", e)
 
-    def isLatest(self):
+    def is_latest(self):
         """Whether the app's version is the latest as far as we know."""
         status = self._version_information.get("status")
         return status is None or status.upper() == "CURRENT"
 
-    def getLatest(self):
+    def get_latest(self):
         """Get the latest version of the app or None."""
         return self._version_information.get("current")
 
-    def _quitCb(self, unused_action, unused_param):
+    def _quit_cb(self, unused_action, unused_param):
         self.shutdown()
 
-    def _undoCb(self, unused_action, unused_param):
+    def _undo_cb(self, unused_action, unused_param):
         self.action_log.undo()
 
-    def _redoCb(self, unused_action, unused_param):
+    def _redo_cb(self, unused_action, unused_param):
         self.action_log.redo()
 
     def _show_shortcuts_cb(self, unused_action, unused_param):
         show_shortcuts(self)
 
     def _action_log_pre_push_cb(self, unused_action_log, action):
-        scenario_action = action.asScenarioAction()
+        scenario_action = action.as_scenario_action()
         if scenario_action:
             self.write_action(scenario_action)
 
-    def _actionLogCommit(self, action_log, unused_stack):
+    def _action_log_commit(self, action_log, unused_stack):
         if action_log.is_in_transaction():
             return
-        self._syncDoUndo()
+        self._sync_do_undo()
 
     def _action_log_move_cb(self, action_log, unused_stack):
-        self._syncDoUndo()
+        self._sync_do_undo()
 
-    def _syncDoUndo(self):
+    def _sync_do_undo(self):
         can_undo = self.action_log and bool(self.action_log.undo_stacks)
         self.undo_action.set_enabled(bool(can_undo))
 
@@ -391,10 +391,10 @@ class Pitivi(Gtk.Application, Loggable):
             return
 
         dirty = self.action_log and self.action_log.dirty()
-        self.project_manager.current_project.setModificationState(dirty)
+        self.project_manager.current_project.set_modification_state(dirty)
         # In the tests we do not want to create any gui
         if self.gui is not None:
-            self.gui.editor.showProjectStatus()
+            self.gui.editor.show_project_status()
 
     def simple_inhibit(self, reason, flags):
         """Informs the session manager about actions to be inhibited.

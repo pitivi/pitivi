@@ -156,12 +156,12 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self.offset = hadj.get_value()
         self._update_position()
 
-    def zoomChanged(self):
+    def zoom_changed(self):
         self._update_position()
 
     def _update_position(self):
         for marker in self.layout.get_children():
-            position = self.nsToPixel(marker.position) - self.offset - MARKER_WIDTH / 2
+            position = self.ns_to_pixel(marker.position) - self.offset - MARKER_WIDTH / 2
             self.layout.move(marker, position, 0)
 
     # pylint: disable=arguments-differ
@@ -182,7 +182,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
                     marker_popover.popup()
 
             else:
-                position = self.pixelToNs(event.x + self.offset)
+                position = self.pixel_to_ns(event.x + self.offset)
                 with self.app.action_log.started("Added marker", toplevel=True):
                     self.__markers_container.add(position)
                 self.marker_new.selected = True
@@ -208,7 +208,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         if event_widget is self.marker_moving:
             event_x, unused_y = event_widget.translate_coordinates(self, event.x, event.y)
             event_x = max(0, event_x)
-            position_ns = self.pixelToNs(event_x + self.offset)
+            position_ns = self.pixel_to_ns(event_x + self.offset)
             self.__markers_container.move(self.marker_moving.ges_marker, position_ns)
 
     def _marker_added_cb(self, unused_markers, position, ges_marker):
@@ -216,7 +216,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
 
     def _add_marker(self, position, ges_marker):
         marker = Marker(ges_marker)
-        x = self.nsToPixel(position) - self.offset - MARKER_WIDTH / 2
+        x = self.ns_to_pixel(position) - self.offset - MARKER_WIDTH / 2
         self.layout.put(marker, x, 0)
         marker.show()
         self.marker_new = marker
@@ -236,7 +236,7 @@ class MarkersBox(Gtk.EventBox, Zoomable, Loggable):
         self._move_marker(position, ges_marker)
 
     def _move_marker(self, position, ges_marker):
-        x = self.nsToPixel(position) - self.offset - MARKER_WIDTH / 2
+        x = self.ns_to_pixel(position) - self.offset - MARKER_WIDTH / 2
         self.layout.move(ges_marker.ui, x, 0)
 
 

@@ -30,23 +30,23 @@ class TestLayerControl(common.TestCase):
         timeline = mock.MagicMock()
         ges_layer = GES.Layer()
         layer = Layer(ges_layer, timeline)
-        self.assertEqual(layer.getName(), "Layer 0", "Default name generation failed")
+        self.assertEqual(layer.get_name(), "Layer 0", "Default name generation failed")
 
         ges_layer.set_meta("audio::name", "a")
-        self.assertEqual(layer.getName(), "a", "Cannot use old audio name")
+        self.assertEqual(layer.get_name(), "a", "Cannot use old audio name")
 
         ges_layer.set_meta("video::name", "v")
-        self.assertEqual(layer.getName(), "v", "Cannot use old video name")
+        self.assertEqual(layer.get_name(), "v", "Cannot use old video name")
 
-        layer.setName("vv")
-        self.assertEqual(layer.getName(), "vv")
+        layer.set_name("vv")
+        self.assertEqual(layer.get_name(), "vv")
 
     def test_name_meaningful(self):
         timeline = mock.MagicMock()
         ges_layer = GES.Layer()
         layer = Layer(ges_layer, timeline)
-        layer.setName("Layer 0x")
-        self.assertEqual(layer.getName(), "Layer 0x")
+        layer.set_name("Layer 0x")
+        self.assertEqual(layer.get_name(), "Layer 0x")
 
 
 class TestLayer(common.TestCase):
@@ -61,7 +61,7 @@ class TestLayer(common.TestCase):
         timeline_container = common.create_timeline_container()
         timeline = timeline_container.timeline
         # This will add widgets for the clips in ges_layer and
-        # the layer will use checkMediaTypes which updates the
+        # the layer will use check_media_types which updates the
         # height of layer.control_ui, which now it should not be set.
         self.assertFalse(hasattr(ges_layer, "control_ui"))
         unused_layer = Layer(ges_layer, timeline)

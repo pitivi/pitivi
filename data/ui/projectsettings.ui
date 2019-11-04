@@ -41,7 +41,7 @@
     <property name="title" translatable="yes">Project Settings</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="_responseCb" swapped="no"/>
+    <signal name="response" handler="_response_cb" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>
@@ -281,7 +281,7 @@
                                     <property name="halign">start</property>
                                     <property name="xalign">0.5</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="toggled" handler="_constrainSarButtonToggledCb" swapped="no"/>
+                                    <signal name="toggled" handler="_constrain_sar_button_toggled_cb" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

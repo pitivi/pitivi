@@ -10,7 +10,7 @@
     <property name="window_position">center-on-parent</property>
     <property name="default_width">400</property>
     <property name="type_hint">dialog</property>
-    <signal name="delete-event" handler="_deleteEventCb" swapped="no"/>
+    <signal name="delete-event" handler="_delete_event_cb" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="vbox">
         <property name="visible">True</property>
@@ -28,7 +28,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="toggled" handler="_pauseButtonClickedCb" swapped="no"/>
+                <signal name="toggled" handler="_pause_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -42,7 +42,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_cancelButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_cancel_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -56,7 +56,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_playRenderedFileButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_play_rendered_file_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -86,7 +86,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="_closeButtonClickedCb" swapped="no"/>
+                <signal name="clicked" handler="_close_button_clicked_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

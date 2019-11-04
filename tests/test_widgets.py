@@ -33,7 +33,7 @@ from tests import common
 
 class TestWidgets(common.TestCase):
 
-    def testConstruction(self):
+    def test_construction(self):
         widgets = (
             (PathWidget, "file:///home/", ()),
             (TextWidget, "banana", ()),
@@ -48,34 +48,34 @@ class TestWidgets(common.TestCase):
 
         for widget_class, default, args in widgets:
             widget = widget_class(*args, default=default)
-            self.assertEqual(default, widget.getWidgetDefault())
-            widget.setWidgetToDefault()
-            self.assertEqual(default, widget.getWidgetValue())
-            widget.setWidgetValue(default)
-            self.assertEqual(default, widget.getWidgetValue())
+            self.assertEqual(default, widget.get_widget_default())
+            widget.set_widget_to_default()
+            self.assertEqual(default, widget.get_widget_value())
+            widget.set_widget_value(default)
+            self.assertEqual(default, widget.get_widget_value())
 
-    def testValidation(self):
+    def test_validation(self):
         widget = TextWidget("^([a-zA-Z]+\\s*)+$")
         bad_value = "1"
-        self.assertNotEqual(bad_value, widget.getWidgetValue())
+        self.assertNotEqual(bad_value, widget.get_widget_value())
 
         widget = TextWidget("^\\d+$", ("12", "14"))
         bad_value = "non-digits"
-        self.assertNotEqual(bad_value, widget.getWidgetValue())
+        self.assertNotEqual(bad_value, widget.get_widget_value())
 
 
 class TestFractionWidget(common.TestCase):
 
     def test_widget_text(self):
         widget = FractionWidget()
-        widget.setWidgetValue(Gst.Fraction(1000000, 1))
+        widget.set_widget_value(Gst.Fraction(1000000, 1))
         self.assertEqual(widget.text.get_text(), "1000000:1")
-        widget.setWidgetValue(Gst.Fraction(7504120000000001, 4503600000000002))
+        widget.set_widget_value(Gst.Fraction(7504120000000001, 4503600000000002))
         self.assertEqual(widget.text.get_text(), "7504120000000001:4503600000000002")
 
-    def test_widget_text_magic_M(self):
+    def test_widget_text_magic__m(self):
         widget = FractionWidget()
-        widget.setWidgetValue(Gst.Fraction(1000000000, 1001))
+        widget.set_widget_value(Gst.Fraction(1000000000, 1001))
         self.assertEqual(widget.text.get_text(), "1000000M")
 
 
@@ -88,4 +88,4 @@ class TestGstElementSettingsDialog(common.TestCase):
                                           values)
         widgets = {prop.name: widget
                    for prop, widget in dialog.elementsettings.properties.items()}
-        self.assertEqual(widgets["datarate"].getWidgetValue(), 12)
+        self.assertEqual(widgets["datarate"].get_widget_value(), 12)
