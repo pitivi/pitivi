@@ -4,12 +4,21 @@ short-description: Writing code that looks consistent
 
 # Coding Style Guide
 
+The code must be easy to understand, so it should look consistent.
+
+When entering the development environment, a git
+[pre-commit hook](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pre-commit.hook)
+is set up on your local repo. When you create a commit, the hook
+performs some
+[lightweight checks](https://gitlab.gnome.org/GNOME/pitivi/blob/master/.pre-commit-config.yaml)
+and at the end runs
+[pylint](https://gitlab.gnome.org/GNOME/pitivi/blob/master/pylint.rc)
+in the sandbox to check for all kinds of errors.
+
 We rely on the [Python Style Guide PEP-8](https://www.python.org/dev/peps/pep-0008/)
 
-The only exception to it is regarding the "80 columns" rule.
-Since Python is a very concise/compact language, we can afford to be
-a little bit more flexible on the line length than languages such as C.
 
+## Line length
 When deciding whether or not you should split your line when it exceeds
 79 characters, ask yourself: "Does it truly improve legibility?"
 
@@ -73,13 +82,12 @@ The name of a callback method should:
   class MyClass:
 
      def some_method(self):
-         self.someobject.connect('event', self.__some_object_event_cb)
+         self.someobject.connect("event", self.__some_object_event_cb)
 
      def __some_object_event_cb(self, object, arg):
          print "our callback was called"
 ```
 
-## Imports order
-You can guess the order of the imported modules by looking at some py files.
-The pre-commit hook has authority in this case as it will reorder the imports
-if the order is not good.
+## Docstrings
+We follow the [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+for docstrings.
