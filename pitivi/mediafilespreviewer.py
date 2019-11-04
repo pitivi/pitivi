@@ -254,7 +254,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
                 self.current_preview_type = 'video'
                 self.preview_image.hide()
                 self.player.uri = self.current_selected_uri
-                self.player.setState(Gst.State.PAUSED)
+                self.player.set_simple_state(Gst.State.PAUSED)
                 self.pos_adj.props.upper = duration
                 video_width = video.get_natural_width()
                 video_height = video.get_natural_height()
@@ -288,9 +288,9 @@ class PreviewWidget(Gtk.Grid, Loggable):
             self.description = "\n".join([
                 beautify_stream(audio),
                 _("<b>Duration</b>: %s") % pretty_duration])
-            self.player.setState(Gst.State.NULL)
+            self.player.set_simple_state(Gst.State.NULL)
             self.player.uri = self.current_selected_uri
-            self.player.setState(Gst.State.PAUSED)
+            self.player.set_simple_state(Gst.State.PAUSED)
             self.play_button.show()
             self.seeker.show()
             self.b_zoom_in.hide()
@@ -311,7 +311,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
             # The content played once already and the pipeline is at the end.
             self.at_eos = False
             self.player.simple_seek(0)
-        self.player.setState(Gst.State.PLAYING)
+        self.player.set_simple_state(Gst.State.PLAYING)
         self.is_playing = True
         self.play_button.set_icon_name("media-playback-pause")
         GLib.timeout_add(250, self._update_position)
@@ -319,7 +319,7 @@ class PreviewWidget(Gtk.Grid, Loggable):
 
     def pause(self, state=Gst.State.PAUSED):
         if state is not None:
-            self.player.setState(state)
+            self.player.set_simple_state(state)
         self.is_playing = False
         self.play_button.set_icon_name("media-playback-start")
         self.log("Preview paused")
@@ -349,14 +349,14 @@ class PreviewWidget(Gtk.Grid, Loggable):
         if event.type == Gdk.EventType.BUTTON_PRESS:
             self.countinuous_seek = True
             if self.is_playing:
-                self.player.setState(Gst.State.PAUSED)
+                self.player.set_simple_state(Gst.State.PAUSED)
         elif event.type == Gdk.EventType.BUTTON_RELEASE:
             self.countinuous_seek = False
             value = int(widget.get_value())
             self.player.simple_seek(value)
             self.at_eos = False
             if self.is_playing:
-                self.player.setState(Gst.State.PLAYING)
+                self.player.set_simple_state(Gst.State.PLAYING)
             # Now, allow gobject timeout to continue updating the slider pos:
             self.slider_being_used = False
 

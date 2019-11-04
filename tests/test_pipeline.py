@@ -140,7 +140,7 @@ class TestPipeline(common.TestCase):
         timeline = GES.Timeline()
         pipe.set_timeline(timeline)
 
-        with mock.patch.object(pipe, "getState") as get_state:
+        with mock.patch.object(pipe, "get_simple_state") as get_state:
             get_state.return_value = (0, Gst.State.PAUSED, 0)
             with mock.patch.object(timeline, "commit") as commit:
                 with pipe.commit_timeline_after():

@@ -768,7 +768,7 @@ class TimelineElement(Gtk.Layout, Zoomable, Loggable):
 
         if self.keyframe_curve and self.keyframe_curve.is_drawable():
             project = self.timeline.app.project_manager.current_project
-            if project.pipeline.getState() != Gst.State.PLAYING:
+            if project.pipeline.get_simple_state() != Gst.State.PLAYING:
                 self.propagate_draw(self.keyframe_curve, cr)
 
     # Callbacks

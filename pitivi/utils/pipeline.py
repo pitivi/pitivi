@@ -142,7 +142,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._bus = None
 
     def flushSeek(self):
-        if self.getState() == Gst.State.PLAYING:
+        if self.get_simple_state() == Gst.State.PLAYING:
             self.debug("Playing, no need to flush here!")
             return
 
@@ -151,7 +151,7 @@ class SimplePipeline(GObject.Object, Loggable):
         except PipelineError as e:
             self.warning("Could not flush because: %s", e)
 
-    def setState(self, state):
+    def set_simple_state(self, state):
         """Sets the low-level pipeline to the specified state.
 
         Raises:
@@ -161,7 +161,7 @@ class SimplePipeline(GObject.Object, Loggable):
         """
         self.debug("Setting state to: %r", state)
         if state >= Gst.State.PAUSED:
-            cstate = self.getState()
+            cstate = self.get_simple_state()
             if cstate < Gst.State.PAUSED:
                 if cstate == Gst.State.NULL:
                     timeout = MAX_BRINGING_TO_PAUSED_DURATION
@@ -179,7 +179,7 @@ class SimplePipeline(GObject.Object, Loggable):
             raise PipelineError(
                 "Failure changing state of the Gst.Pipeline to %r, currently reset to NULL" % state)
 
-    def getState(self):
+    def get_simple_state(self):
         """Queries the low-level pipeline for the current state.
 
         This will do an actual query to the underlying GStreamer Pipeline.
@@ -195,18 +195,18 @@ class SimplePipeline(GObject.Object, Loggable):
 
     def play(self):
         """Sets the state to Gst.State.PLAYING."""
-        self.setState(Gst.State.PLAYING)
+        self.set_simple_state(Gst.State.PLAYING)
 
     def pause(self):
         """Sets the state to Gst.State.PAUSED."""
-        self.setState(Gst.State.PAUSED)
+        self.set_simple_state(Gst.State.PAUSED)
 
     def stop(self):
         """Sets the state to Gst.State.READY."""
-        self.setState(Gst.State.READY)
+        self.set_simple_state(Gst.State.READY)
 
     def playing(self):
-        return self.getState() == Gst.State.PLAYING
+        return self.get_simple_state() == Gst.State.PLAYING
 
     def togglePlayback(self):
         if self.playing():
@@ -268,7 +268,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._listening = True
         self._listening_interval = interval
         # if we're in playing, switch it on
-        self._listenToPosition(self.getState() == Gst.State.PLAYING)
+        self._listenToPosition(self.get_simple_state() == Gst.State.PLAYING)
         return True
 
     def deactivatePositionListener(self):
@@ -346,7 +346,7 @@ class SimplePipeline(GObject.Object, Loggable):
         Raises:
             PipelineError: When the seek fails.
         """
-        if self._busy_async or self.getState() < Gst.State.PAUSED:
+        if self._busy_async or self.get_simple_state() < Gst.State.PAUSED:
             self._next_seek = position
             self.info("Setting next seek to %s", self._next_seek)
             return
@@ -474,7 +474,7 @@ class SimplePipeline(GObject.Object, Loggable):
         self._attempted_recoveries += 1
         self.error("Resetting pipeline because error detected during playback. "
                    "Try %d", self._attempted_recoveries)
-        self.setState(Gst.State.NULL)
+        self.set_simple_state(Gst.State.NULL)
         self._recovery_state = self.RecoveryState.STARTED_RECOVERING
         self.pause()
 
@@ -616,7 +616,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             raise PipelineError("Trying to seek while rendering")
 
         st = Gst.Structure.new_empty("seek")
-        if self.getState() == Gst.State.PLAYING:
+        if self.get_simple_state() == Gst.State.PLAYING:
             st.set_value("playback_time", float(
                 self.getPosition()) / Gst.SECOND)
         st.set_value("start", float(position / Gst.SECOND))
@@ -653,7 +653,7 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self.commit_timeline()
 
     def commit_timeline(self):
-        if self._prevent_commits > 0 or self.getState() == Gst.State.NULL:
+        if self._prevent_commits > 0 or self.get_simple_state() == Gst.State.NULL:
             # No need to commit. NLE will do it automatically when
             # changing state from READY to PAUSED.
             return
@@ -668,8 +668,8 @@ class Pipeline(GES.Pipeline, SimplePipeline):
             self.debug("Committing right now")
             self._was_empty = is_empty
 
-    def setState(self, state):
-        SimplePipeline.setState(self, state)
+    def set_simple_state(self, state):
+        SimplePipeline.set_simple_state(self, state)
         if state >= Gst.State.PAUSED and self.props.timeline.is_empty():
             self.debug("No ASYNC_DONE will be emitted on empty timelines")
             self._was_empty = True
