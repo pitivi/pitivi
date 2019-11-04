@@ -4,7 +4,9 @@
 # the dev env with `source bin/pitivi-env`.
 
 if [ -z "${PITIVI_REPO_DIR}" ]; then
-    echo "ERROR: You're not in the Pitivi development environment. Run `source bin/pitivi-env` to enter it. See http://developer.pitivi.org/HACKING.html for details."
+    echo "ERROR: You're not in the Pitivi development environment."
+    echo "       Enter the development environment by running 'source bin/pitivi-env'"
+    echo "       See http://developer.pitivi.org/HACKING.html for details."
     exit 1
 fi
 
